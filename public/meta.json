@@ -1,0 +1,60 @@
+{
+    "name": "owf",
+    "plugins": [
+        {
+            "name": "TailwindCSS",
+            "description": "A utility-first CSS framework packed with classes like flex, pt-4, text-center and rotate-90 that can be composed to build any design, directly in your markup.",
+            "url": "https://tailwindcss.com/docs"
+        },
+        {
+            "name": "CSS / styled-jsx",
+            "description": "Next.js comes with built-in support for CSS and styled-jsx. Styled-jsx is full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).",
+            "url": "https://github.com/vercel/styled-jsx"
+        },
+        {
+            "name": "Fetch",
+            "description": "Next.js has a built-in polyfill for the fetch API. You don't need to worry about using it on either server or client side.",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
+        },
+        {
+            "name": "Axios",
+            "description": "Promise based HTTP client for the browser and node.js.",
+            "url": "https://github.com/axios/axios"
+        },
+        {
+            "name": "Storybook",
+            "description": "Storybook is an open source tool for developing UI components in isolation for React, Vue, Angular, and more. It makes building stunning UIs organized and efficient.",
+            "url": "https://storybook.js.org/docs/react/get-started/introduction"
+        },
+        {
+            "name": "Environment Variables",
+            "description": "Use environment variables in your next.js project for server side, client or both.",
+            "url": "https://github.com/vercel/next.js/tree/canary/examples/environment-variables"
+        },
+        {
+            "name": "SWR",
+            "description": "React Hooks library for data fetching from Vercel",
+            "url": "https://swr.vercel.app/"
+        },
+        {
+            "name": "ESLint",
+            "description": "A pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript. Maintain your code quality with ease.",
+            "url": "https://eslint.org/docs/user-guide/getting-started"
+        },
+        {
+            "name": "Prettier",
+            "description": "An opinionated code formatter; Supports many languages; Integrates with most editors.",
+            "url": "https://prettier.io/docs/en/index.html"
+        },
+        {
+            "name": "lint-staged",
+            "description": " The concept of lint-staged is to run configured linter (or other) tasks on files that are staged in git.",
+            "url": "https://github.com/okonet/lint-staged"
+        },
+        {
+            "name": "Github Actions",
+            "description": "GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub.",
+            "url": "https://docs.github.com/en/actions"
+        }
+    ]
+}
