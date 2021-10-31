@@ -22,6 +22,8 @@ export const theme: Theme = {
       "&:active": {
         transform: "translateY(2px)",
       },
+      transition: "0.2s ease-in-out",
+      cursor: "pointer",
     },
   },
 };
