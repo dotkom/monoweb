@@ -1,10 +1,13 @@
-import React from "react";
 import { AppProps } from "next/app";
-import "tailwindcss/tailwind.css";
-import "@styles/global.css";
+import { ThemeProvider } from "theme-ui";
+import { theme } from "@styles/theme";
 
-function MyApp({ Component, pageProps }: AppProps): JSX.Element {
-    return <Component {...pageProps} />;
+function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
+  return (
+    <ThemeProvider theme={theme}>
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
 }
 
-export default MyApp;
+export default CustomApp;

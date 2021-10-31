@@ -1,16 +1,15 @@
 import React from "react";
-
-import { Container, Header, Main, Footer, Cards } from "@components";
+import { Box, Button, Select } from "theme-ui";
 
 const Home: React.FC = () => {
-    return (
-        <Container>
-            <Header />
-            <Main />
-            <Cards />
-            <Footer />
-        </Container>
-    );
+  return (
+    <Box p={4} sx={styles.box}>
+      <Button>Hello</Button>
+    </Box>
+  );
 };
 
+const styles = {
+  box: {},
+};
 export default Home;
