@@ -1,18 +1,15 @@
-import { ThemeProvider } from "@theme-ui/core";
-import { StoryContext } from "@storybook/react";
+import { addDecorator, configure, StoryContext } from "@storybook/react";
 import { theme } from "../src/styles/theme";
+import { Container, ThemeProvider } from "theme-ui";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
 };
 
-const withTheme = (StoryFn: Function, context: StoryContext) => {
-  return (
-    <>
-      <ThemeProvider theme={theme}>
-        <StoryFn />
-      </ThemeProvider>
-    </>
-  );
-};
-export const decorators = [withTheme];
+addDecorator((story) => (
+  <ThemeProvider theme={theme}>
+    <Container p={4}>{story()}</Container>
+  </ThemeProvider>
+));
+
+configure([require.context("../src/", true, /\.stories\.(tsx|mdx)$/)], module);
