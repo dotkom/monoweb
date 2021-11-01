@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Select } from "theme-ui";
+import { Box, Button } from "theme-ui";
 
 const Home: React.FC = () => {
   return (
