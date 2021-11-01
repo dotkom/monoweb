@@ -10,7 +10,12 @@ export default class Document extends NextDocument {
   render(): JSX.Element {
     return (
       <Html lang="en">
-        <Head />
+        <Head>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter&family=Montserrat&family=Poppins&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
         <body>
           <InitializeColorMode />
           <Main />
