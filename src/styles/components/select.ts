@@ -2,7 +2,7 @@ import type { Theme } from "theme-ui";
 
 const selectTheme: Theme = {
   forms: {
-    input: {
+    select: {
       borderColor: "gray",
       "&:focus": {
         borderColor: "primary",
