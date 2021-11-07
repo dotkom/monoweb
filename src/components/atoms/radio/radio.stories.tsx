@@ -1,7 +1,7 @@
 import { Radio, RadioProps, Label } from "theme-ui";
 
 export default {
-  title : "atoms/Radio",
+  title: "atoms/Radio",
   component: Radio,
 };
 

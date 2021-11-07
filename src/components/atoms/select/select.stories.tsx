@@ -1,7 +1,7 @@
 import { Select, SelectProps } from "theme-ui";
 
 export default {
-  title : "atoms/Select",
+  title: "atoms/Select",
   component: Select,
 };
 

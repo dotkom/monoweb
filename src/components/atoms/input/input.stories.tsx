@@ -1,7 +1,7 @@
 import { Input, InputProps } from "theme-ui";
 
 export default {
-  title : "atoms/Input",
+  title: "atoms/Input",
   component: Input,
 };
 
