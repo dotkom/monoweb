@@ -1,8 +1,8 @@
 import type { Theme } from "theme-ui";
 
-const selectTheme: Theme = {
+const textareaTheme: Theme = {
   forms: {
-    select: {
+    textarea: {
       borderColor: "gray",
       "&:focus": {
         borderColor: "primary",
@@ -12,4 +12,4 @@ const selectTheme: Theme = {
   },
 };
 
-export default selectTheme;
+export default textareaTheme;
