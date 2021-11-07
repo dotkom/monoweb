@@ -1,4 +1,9 @@
 
+import checkbox from "./checkbox";
+import input from "./input";
+import select from "./select";
+import textarea from "./textarea";
+
 import input from "./input";
 import select from "./select";
 import textarea from "./textarea";
@@ -12,6 +17,10 @@ import { text } from "./text";
 const componentThemes: Theme = {
   buttons,
   text,
+  checkbox,
+  input,
+  select,
+  textarea,
   input,
   select,
   textarea,
