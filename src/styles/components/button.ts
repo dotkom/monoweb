@@ -1,6 +1,6 @@
 import type { Theme } from "theme-ui";
 
-export const componentsTheme: Theme = {
+export const buttonTheme: Theme = {
   buttons: {
     base: {
       borderRadius: "4px",
