@@ -10,7 +10,7 @@ const componentThemes: Theme = {
   text,
   input,
   select,
-  textarea
+  textarea,
 };
 
 export default componentThemes;
