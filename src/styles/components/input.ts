@@ -1,6 +1,7 @@
 import type { Theme } from "theme-ui";
 
 const inputTheme: Theme = {
+export const input: Theme["forms"] = {
   forms: {
     input: {
       borderColor: "gray",
