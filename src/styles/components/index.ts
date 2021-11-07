@@ -3,6 +3,7 @@ import checkbox from "./checkbox";
 import input from "./input";
 import select from "./select";
 import textarea from "./textarea";
+import radio from "./radio";
 
 import input from "./input";
 import select from "./select";
@@ -21,11 +22,13 @@ const componentThemes: Theme = {
   input,
   select,
   textarea,
+  radio,
   input,
   select,
   textarea,
   select,
   input,
+
 };
 
 export default componentThemes;
