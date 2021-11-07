@@ -1,6 +1,6 @@
 import type { Theme } from "theme-ui";
 
-const checkboxTheme: Theme = {
+const checkbox: Theme["forms"] = {
   forms: {
     checkbox: {
       borderColor: "blue",
@@ -11,4 +11,4 @@ const checkboxTheme: Theme = {
   },
 };
 
-export default checkboxTheme;
+export default checkbox;

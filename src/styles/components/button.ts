@@ -13,7 +13,7 @@ const getButtonColors = (variant: string) => ({
   },
 });
 
-export const buttons: Theme["buttons"] = {
+const buttons: Theme["buttons"] = {
   base: {
     borderRadius: "4px",
     transition: "0.2s ease-in-out",
@@ -22,3 +22,5 @@ export const buttons: Theme["buttons"] = {
   primary: getButtonColors("primary"),
   secondary: getButtonColors("secondary"),
 };
+
+export default buttons;
