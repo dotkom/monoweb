@@ -1,5 +1,18 @@
 import type { Theme } from "theme-ui";
 
+const getButtonColors = (variant: string) => ({
+  variant: "buttons.base",
+  bg: variant,
+  "&:hover": {
+    bg: `${variant}.light`,
+    transform: "translateY(-1px)",
+  },
+  "&:active": {
+    bg: `${variant}.dark`,
+    transform: "translateY(2px)",
+  },
+});
+
 export const buttonTheme: Theme = {
   buttons: {
     base: {
@@ -7,29 +20,7 @@ export const buttonTheme: Theme = {
       transition: "0.2s ease-in-out",
       cursor: "pointer",
     },
-    primary: {
-      variant: "buttons.base",
-      bg: "#153e75",
-      "&:hover": {
-        bg: "#2c5183",
-        transform: "translateY(-1px)",
-      },
-      "&:active": {
-        bg: "#133869",
-        transform: "translateY(2px)",
-      },
-    },
-    secondary: {
-      variant: "buttons.base",
-      bg: "#F98B00",
-      "&:hover": {
-        bg: "#fa971a",
-        transform: "translateY(-1px)",
-      },
-      "&:active": {
-        bg: "#e07d00",
-        transform: "translateY(2px)",
-      },
-    },
+    primary: getButtonColors("primary"),
+    secondary: getButtonColors("secondary"),
   },
 };
