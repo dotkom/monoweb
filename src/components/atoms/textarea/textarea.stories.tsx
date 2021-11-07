@@ -1,7 +1,7 @@
 import { Textarea, TextareaProps } from "theme-ui";
 
 export default {
-  title: "Textarea",
+  title : "atoms/Textarea",
   component: Textarea,
 };
 

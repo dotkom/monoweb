@@ -1,7 +1,7 @@
 import { Button, ButtonProps } from "theme-ui";
 
 export default {
-  title: "Button",
+  title : "atoms/Button",
   component: Button,
 };
 
