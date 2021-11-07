@@ -1,6 +1,6 @@
 import type { Theme } from "theme-ui";
 
-const textareaTheme: Theme = {
+const textareaTheme: Theme["forms"] = {
   forms: {
     textarea: {
       borderColor: "gray",

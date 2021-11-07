@@ -1,15 +1,16 @@
 import type { Theme } from "theme-ui";
 
-const selectTheme: Theme = {
+const input: Theme["forms"] = {
   forms: {
-    select: {
+    input: {
       borderColor: "gray",
       "&:focus": {
         borderColor: "primary",
+        boxShadow: (theme) => `0 0 0 1px ${theme.colors?.onlineBlue}`,
         outline: "none",
       },
     },
   },
 };
 
-export default selectTheme;
+export default input;
