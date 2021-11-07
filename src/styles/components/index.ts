@@ -1,3 +1,4 @@
 import { buttonTheme } from "./button";
+import inputTheme from "./input";
 
-export default buttonTheme;
+export default { ...buttonTheme, ...inputTheme };
