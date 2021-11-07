@@ -12,7 +12,7 @@ const componentThemes: Theme = {
   checkbox,
   input,
   select,
-  textarea
+  textarea,
 };
 
 export default componentThemes;
