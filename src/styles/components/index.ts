@@ -14,7 +14,7 @@ const componentThemes: Theme = {
   input,
   select,
   textarea,
-  radio
+  radio,
 };
 
 export default componentThemes;
