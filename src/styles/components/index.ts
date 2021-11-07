@@ -8,7 +8,7 @@ const componentThemes: Theme = {
   buttons,
   text,
   select,
-  input
+  input,
 };
 
 export default componentThemes;
