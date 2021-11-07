@@ -13,14 +13,12 @@ const getButtonColors = (variant: string) => ({
   },
 });
 
-export const buttonTheme: Theme = {
-  buttons: {
-    base: {
-      borderRadius: "4px",
-      transition: "0.2s ease-in-out",
-      cursor: "pointer",
-    },
-    primary: getButtonColors("primary"),
-    secondary: getButtonColors("secondary"),
+export const buttons: Theme["buttons"] = {
+  base: {
+    borderRadius: "4px",
+    transition: "0.2s ease-in-out",
+    cursor: "pointer",
   },
+  primary: getButtonColors("primary"),
+  secondary: getButtonColors("secondary"),
 };

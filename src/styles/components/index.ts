@@ -1,7 +1,18 @@
-import { buttonTheme } from "./button";
-import checkboxTheme from "./checkbox";
-import inputTheme from "./input";
-import selectTheme from "./select";
-import textareaTheme from "./textarea";
+import checkbox from "./checkbox";
+import input from "./input";
+import select from "./select";
+import textarea from "./textarea";
+import { Theme } from "theme-ui";
+import { buttons } from "./button";
+import { text } from "./text";
 
-export default { ...buttonTheme, ...inputTheme, ...selectTheme, ...textareaTheme, ...checkboxTheme };
+const componentThemes: Theme = {
+  buttons,
+  text,
+  checkbox,
+  input,
+  select,
+  textarea
+};
+
+export default componentThemes;
