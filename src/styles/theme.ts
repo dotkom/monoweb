@@ -1,5 +1,5 @@
 import type { Theme } from "theme-ui";
-import { buttonTheme } from "./components/button";
+import componentThemes from "./components";
 import { typography } from "./typography";
 
 export const theme: Theme = {
@@ -23,5 +23,5 @@ export const theme: Theme = {
   },
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   ...typography,
-  ...buttonTheme,
+  ...componentThemes,
 };
