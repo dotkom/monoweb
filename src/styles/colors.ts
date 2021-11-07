@@ -7,6 +7,8 @@ export const colors: Theme["colors"] = {
   secondary: { __default: "#F98B00", light: "#fa971a", dark: "#e07d00" },
   highlight: "#e0e",
   muted: "#f6f6ff",
+  onlineBlue: "#0D5474",
+  onlineOrange: "#F9B759",
   modes: {
     dark: {
       text: "#fff",
