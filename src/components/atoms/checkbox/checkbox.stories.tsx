@@ -1,7 +1,7 @@
 import { Checkbox, CheckboxProps, Label } from "theme-ui";
 
 export default {
-  title: "Checkbox",
+  title: "atoms/Checkbox",
   component: Checkbox,
 };
 
