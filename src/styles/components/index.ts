@@ -1,6 +1,16 @@
-import { buttonTheme } from "./button";
-import inputTheme from "./input";
-import selectTheme from "./select";
-import textareaTheme from "./textarea";
+import input from "./input";
+import select from "./select";
+import textarea from "./textarea";
+import { Theme } from "theme-ui";
+import { buttons } from "./button";
+import { text } from "./text";
 
-export default { ...buttonTheme, ...inputTheme, ...selectTheme, ...textareaTheme };
+const componentThemes: Theme = {
+  buttons,
+  text,
+  input,
+  select,
+  textarea
+};
+
+export default componentThemes;
