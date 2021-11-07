@@ -32,4 +32,22 @@ export const componentsTheme: Theme = {
       },
     },
   },
+  badges: {
+    base: {
+      borderRadius: "2px",
+      fontWeight: 900,
+      fontSize: "20px",
+    },
+    subtle: {
+      variant: "badges.base",
+      bg: "background",
+    },
+    solid: {
+      variant: "badges.base",
+      color: "background",
+    },
+    outline: {
+      variant: "badges.base",
+    },
+  },
 };
