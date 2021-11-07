@@ -5,4 +5,4 @@ export default {
   component: Input,
 };
 
-export const input = (props: InputProps) => <Input />
+export const input = (props: InputProps) => <Input />;

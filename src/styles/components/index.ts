@@ -1,7 +1,7 @@
 import { Theme } from "theme-ui";
-import forms from "./form";
 import buttons from "./button";
 import text from "./text";
+import forms from "./forms";
 
 const componentThemes: Theme = {
   buttons,
