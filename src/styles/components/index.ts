@@ -1,3 +1,8 @@
-import { buttonTheme } from "./button";
+import { Theme } from "theme-ui";
+import { buttons } from "./button";
 
-export default buttonTheme;
+const componentThemes: Theme = {
+  buttons,
+};
+
+export default componentThemes;
