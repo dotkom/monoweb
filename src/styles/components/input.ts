@@ -6,7 +6,7 @@ const inputTheme: Theme = {
       borderColor: "gray",
       "&:focus": {
         borderColor: "primary",
-        boxShadow: `0 0 0 2px #888`,
+        boxShadow: (theme) => `0 0 0 1px ${theme.colors?.onlineBlue}`,
         outline: "none",
       },
     },
