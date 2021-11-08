@@ -6,7 +6,7 @@ export default {
     component: Badge,
 };
 
-export const subtleBadge = () => <Badge variant="test"
+export const subtleBadge = (props: BadgeProps) => <Badge variant="test"
     sx={{
     }}
 
