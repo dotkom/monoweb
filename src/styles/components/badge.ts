@@ -21,7 +21,7 @@ const getVariants = (color: string) => ({
   },
 });
 
-export const badges: Theme["badges"] = {
+const badges: Theme["badges"] = {
   base: {
     borderRadius: "2px",
     fontWeight: 900,
@@ -40,6 +40,8 @@ export const badges: Theme["badges"] = {
   grey: getVariants("grey"),
   purple: getVariants("purple"),
 };
+
+export default badges;
 /*
 const colors = ["green", "blue", "red", "grey", "purple"];
 for (const i of colors) {

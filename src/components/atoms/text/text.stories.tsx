@@ -1,7 +1,7 @@
 import { Text, TextProps } from "theme-ui";
 
 export default {
-  title: "Text",
+  title: "atoms/Text",
   component: Text,
 };
 
