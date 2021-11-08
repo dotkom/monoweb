@@ -7,14 +7,4 @@ export const colors: Theme["colors"] = {
   secondary: { __default: "#F98B00", light: "#fa971a", dark: "#e07d00" },
   highlight: "#e0e",
   muted: "#f6f6ff",
-  modes: {
-    dark: {
-      text: "#fff",
-      background: "#000",
-      primary: "#0fc",
-      secondary: "#0cf",
-      highlight: "#f0c",
-      muted: "#011",
-    },
-  },
 };
