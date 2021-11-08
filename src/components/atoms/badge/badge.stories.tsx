@@ -1,11 +1,11 @@
-import { Badge, BadgeProps } from "theme-ui";
+import { Badge } from "theme-ui";
 
 export default {
     title: "atoms/Badge",
     component: Badge,
 };
 
-export const subtleBadge = (props: BadgeProps) => <Badge variant="test">TEST</Badge>
+export const subtleBadge = () => <Badge variant="green.subtle">TEST</Badge>
 
 export const solidBadge = () => <Badge variant="green.solid">TEST</Badge>
 
