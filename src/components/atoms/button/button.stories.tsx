@@ -5,5 +5,7 @@ export default {
   component: Button,
 };
 
-export const primaryButton = (props: ButtonProps) => <Button variant="primary">Default button</Button>;
-export const secondaryButton = (props: ButtonProps) => <Button variant="secondary">Default button</Button>;
+export const defaultButton = (props: ButtonProps) => <Button>Default button</Button>;
+export const orangeButton = (props: ButtonProps) => <Button variant="orange">Orange Button</Button>;
+export const greenButton = (props: ButtonProps) => <Button variant="green">Green Button</Button>;
+export const redButton = (props: ButtonProps) => <Button variant="red">Red Button</Button>;
