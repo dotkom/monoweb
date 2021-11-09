@@ -1,4 +1,4 @@
-import { Theme, ThemeUIStyleObject } from "theme-ui";
+import { Theme } from "theme-ui";
 
 // TODO Add shared forms styles here and spread them
 
