@@ -14,3 +14,4 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 build-storybook.log
+package-lock.json
