@@ -1,4 +1,4 @@
-import Text from "../Text";
+import { Text } from "theme-ui";
 
 export default {
   title: "atoms/forms/Text",

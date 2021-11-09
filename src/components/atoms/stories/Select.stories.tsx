@@ -1,4 +1,4 @@
-import Select from "../Select";
+import { Select } from "theme-ui";
 
 export default {
   title: "atoms/forms/Select",

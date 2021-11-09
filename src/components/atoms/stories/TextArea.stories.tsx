@@ -1,4 +1,4 @@
-import Textarea from "../Textarea";
+import { Textarea } from "theme-ui";
 
 export default {
   title: "atoms/forms/Textarea",

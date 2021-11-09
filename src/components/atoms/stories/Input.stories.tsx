@@ -1,4 +1,4 @@
-import Input from "../Input";
+import { Input } from "theme-ui";
 
 export default {
   title: "atoms/forms/Input",

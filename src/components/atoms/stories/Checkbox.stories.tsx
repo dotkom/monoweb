@@ -1,10 +1,8 @@
-import { Meta, Story } from "@storybook/react";
-import Checkbox from "../Checkbox";
-import Label from "../Label";
+import { Checkbox } from "theme-ui";
 
 export default {
   title: "atoms/forms/Checkbox",
   component: Checkbox,
-} as Meta;
+};
 
 const checkbox = () => <Checkbox defaultChecked={true} />;

@@ -1,5 +1,4 @@
-import Radio from "../Radio";
-import Label from "../Label";
+import { Radio, Label } from "theme-ui";
 
 export default {
   title: "atoms/forms/Radio",

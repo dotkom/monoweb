@@ -1,4 +1,4 @@
-import Button from "../Button";
+import { Button } from "theme-ui";
 
 export default {
   title: "atoms/Button",
