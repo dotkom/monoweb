@@ -1,29 +1,30 @@
 import type { Theme } from "theme-ui";
+import { saturate } from "@theme-ui/color";
 
 const getVariants = (color: string) => ({
   subtle: {
     variant: "badges.base",
     bg: "background",
-    color: `${color}.3`,
+    color: saturate(`${color}.2`, 0.2),
     border: "1px solid",
-    borderColor: `${color}.3`,
+    borderColor: saturate(`${color}.2`, 0.3),
   },
   solid: {
     variant: "badges.base",
     color: "background",
-    bg: `${color}.3`,
+    bg: saturate(`${color}.2`, 0.1),
   },
   outline: {
     variant: "badges.base",
-    color: `${color}.2`,
-    bg: `${color}.8`,
+    color: saturate(`${color}.2`, 0.3),
+    bg: `${color}.9`,
   },
 });
 
 const badges: Theme["badges"] = {
   base: {
-    borderRadius: "2px",
-    fontWeight: "bold",
+    borderRadius: "6px",
+    fontWeight: "600",
   },
   green: getVariants("green"),
   gray: getVariants("gray"),
