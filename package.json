@@ -44,7 +44,8 @@
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [
-            "npm run lint -- --quiet --fix"
+            "yarn lint -- --quiet --fix",
+            "yarn format"
         ]
     },
     "husky": {
