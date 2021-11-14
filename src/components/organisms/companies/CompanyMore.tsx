@@ -15,7 +15,7 @@ export const CompanyMore = (props: CompanyMoreProps) => {
         margin: "auto",
         marginTop: "10vh",
         marginBottom: "10vh",
-        maxWidth: "25%",
+        maxWidth: "35%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

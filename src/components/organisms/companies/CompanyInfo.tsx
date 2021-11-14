@@ -11,7 +11,7 @@ interface CompanyInfoProps {
 export const CompanyInfo = (props: CompanyInfoProps) => {
   const content = props.content.content;
   return (
-    <Box sx={{ maxWidth: "50%", margin: "auto", alignSelf: "center" }}>
+    <Box sx={{ maxWidth: "70%", margin: "auto", alignSelf: "center" }}>
       <PortableText
         content={content}
         className="companyInfo"
