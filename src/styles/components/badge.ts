@@ -5,40 +5,32 @@ const getVariants = (color: string) => ({
   subtle: {
     variant: "badges.base",
     bg: "background",
-    color: darken(color, 0.02),
+    color: `${color}.3`,
     border: "1px solid",
-    borderColor: darken(color, 0.02),
+    borderColor: `${color}.3`,
   },
   solid: {
     variant: "badges.base",
     color: "background",
-    bg: darken(color, 0.02),
+    bg: `${color}.3`,
   },
   outline: {
     variant: "badges.base",
-    color: darken(color, 0.1),
-    bg: lighten(color, 0.6),
+    color: `${color}.2`,
+    bg: `${color}.8`,
   },
 });
 
-export const badges: Theme["badges"] = {
+const badges: Theme["badges"] = {
   base: {
     borderRadius: "2px",
-    fontWeight: 900,
-    fontSize: "20px",
-  },
-  test: {
-    variant: "badges.base",
-    bg: "background",
-    color: darken("green", 0.02),
-    border: "1px solid",
-    borderColor: darken("green", 0.02),
+    fontWeight: "bold",
   },
   green: getVariants("green"),
+  gray: getVariants("gray"),
   blue: getVariants("blue"),
   red: getVariants("red"),
-  grey: getVariants("grey"),
-  purple: getVariants("purple"),
+  orange: getVariants("orange"),
 };
 
 export default badges;
