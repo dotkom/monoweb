@@ -3,7 +3,7 @@ import type { Theme } from "theme-ui";
 export const typography: Theme = {
   fonts: {
     body: '"Poppins",system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-    heading: "inherit",
+    heading: "Poppins",
     monospace: "Menlo, monospace",
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
