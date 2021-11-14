@@ -76,7 +76,7 @@ const gray = {
 
 export const colors: Theme["colors"] = {
   text: "#000",
-  background: gray[12],
+  background: "#FBFCFD",
   primary: blue[3],
   secondary: orange[3],
   accent: green[3],

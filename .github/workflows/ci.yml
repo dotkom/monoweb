@@ -44,7 +44,9 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Run lint
+      - name: Run ESlint
         run: yarn lint
+      - name: Run Prettier check
+        run: yarn format-check
 #            - name: Run tests
 #              run: yarn test
