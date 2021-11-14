@@ -6,7 +6,11 @@ import { CompanyProducts } from "../organisms/companies/CompanyProduct";
 import { CompanyInterestForm } from "../organisms/companies/CompanyInterest";
 import { CompanyHeader } from "../organisms/companies/CompanyHeader";
 
-export const CompanyView = (props) => {
+interface CompanyViewProps {
+  content: any[];
+}
+
+export const CompanyView = (props: CompanyViewProps) => {
   return (
     <Box
       sx={{

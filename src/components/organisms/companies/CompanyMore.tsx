@@ -1,7 +1,13 @@
 import { Box, Heading, Text } from "@theme-ui/components";
 import PortableText from "react-portable-text";
 
-export const CompanyMore = (props) => {
+interface CompanyMoreProps {
+  content: {
+    content: [Record<string, unknown>];
+  };
+}
+
+export const CompanyMore = (props: CompanyMoreProps) => {
   const content = props.content.content;
   return (
     <Box
@@ -21,9 +27,11 @@ export const CompanyMore = (props) => {
         content={content}
         className="companyMore"
         serializers={{
-          h3: (content) => <Heading sx={{ fontSize: 18, marginBottom: "3vh", textAlign: "center" }} {...content} />,
+          h3: (content: [Record<string, unknown>]) => (
+            <Heading sx={{ fontSize: 18, marginBottom: "3vh", textAlign: "center" }} {...content} />
+          ),
           //this does not work atm -- --
-          normal: (children) => <Text sx={{ fontSize: 12 }} {...children} />,
+          normal: (content: [Record<string, unknown>]) => <Text sx={{ fontSize: 12 }} {...content} />,
         }}
       ></PortableText>
     </Box>

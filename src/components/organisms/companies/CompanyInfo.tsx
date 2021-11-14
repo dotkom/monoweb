@@ -2,7 +2,13 @@ import PortableText from "react-portable-text";
 
 import { Heading, Box } from "@theme-ui/components";
 
-export const CompanyInfo = (props) => {
+interface CompanyInfoProps {
+  content: {
+    content: [Record<string, unknown>];
+  };
+}
+
+export const CompanyInfo = (props: CompanyInfoProps) => {
   const content = props.content.content;
   return (
     <Box sx={{ maxWidth: "50%", margin: "auto", alignSelf: "center" }}>
@@ -10,8 +16,10 @@ export const CompanyInfo = (props) => {
         content={content}
         className="companyInfo"
         serializers={{
-          h2: (content) => <Heading sx={{ color: "gray.1", marginTop: "8vh" }} {...content} />,
-          p: ({ content }) => <p className="underText">{content}</p>,
+          h2: (content: [Record<string, unknown>]) => (
+            <Heading sx={{ color: "gray.1", marginTop: "8vh" }} {...content} />
+          ),
+          p: (content: [Record<string, unknown>]) => <p className="underText">{content}</p>,
         }}
       />
     </Box>
