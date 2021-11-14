@@ -1,7 +1,7 @@
 import { Text } from "theme-ui";
 
 export default {
-  title: "atoms/forms/Text",
+  title: "atoms/Text",
   component: Text,
 };
 
