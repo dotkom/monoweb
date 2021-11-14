@@ -91,7 +91,7 @@ const content = [
 
 export const CompanyInfo = (props: [Record<string, unknown>]) => {
   return (
-    <Box sx={{ width: "60%", alignSelf: "center" }}>
+    <Box sx={{ width: "50%", alignSelf: "center" }}>
       <PortableText
         content={content}
         className="companyInfo"

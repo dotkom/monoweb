@@ -1,5 +1,5 @@
 import PortableText from "react-portable-text";
-import { Box, Heading, Text, Button } from "theme-ui";
+import { Box, Heading, Text, Button, Flex } from "theme-ui";
 
 const content = [
   {
@@ -39,19 +39,21 @@ export const CompanyInterestForm = () => {
         marginTop: "5vh",
       }}
     >
-      <Box>
-        <PortableText
-          content={content}
-          className="companyInterest"
-          serializers={{
-            h2: (content) => (
-              <Heading sx={{ color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center" }} {...content} />
-            ),
-            //this does not work atm -- --
-            normal: ({ children }) => <Text sx={{ fontSize: "12px", color: "black.1" }}>{children}</Text>,
-          }}
-        ></PortableText>
-      </Box>
+      <PortableText
+        content={content}
+        className="companyInterest"
+        serializers={{
+          h2: (content) => (
+            <Heading sx={{ color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center" }} {...content} />
+          ),
+          //this does not work atm -- --
+          normal: ({ children }) => (
+            <Flex sx={{ width: "100%", justifyContent: "center" }}>
+              <Text sx={{ fontSize: "12px", color: "black.1", width: "40%", textAlign: "center" }}>{children}</Text>
+            </Flex>
+          ),
+        }}
+      ></PortableText>
       <Button sx={{ marginTop: "5vh" }}>Send Interesse</Button>
     </Box>
   );
