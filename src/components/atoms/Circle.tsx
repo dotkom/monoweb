@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, ThemeUICSSObject } from "theme-ui";
 
 const style: ThemeUICSSObject = {
@@ -6,7 +5,8 @@ const style: ThemeUICSSObject = {
   color: "white",
   textAlign: "center",
   borderRadius: "50%",
-  display: "flex",
+  display: "inline-flex",
+  float: "left",
   flexDirection: "column",
   justifyContent: "center",
 };
