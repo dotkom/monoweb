@@ -13,6 +13,8 @@
         "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
     },
     "dependencies": {
+        "@sanity/block-content-to-react": "^3.0.0",
+        "@sanity/client": "^2.21.10",
         "axios": "^0.21.1",
         "next": "^12.0.1",
         "next-compose-plugins": "^2.2.1",

@@ -6,24 +6,25 @@ import { CompanyProducts } from "../organisms/companies/CompanyProduct";
 import { CompanyInterestForm } from "../organisms/companies/CompanyInterest";
 import { CompanyHeader } from "../organisms/companies/CompanyHeader";
 
-export const CompanyView = (props: [Record<string, unknown>]) => {
+export const CompanyView = (props) => {
   return (
     <Box
       sx={{
         bg: "white",
         display: "flex",
         flexDirection: "column",
-        // set this to `minHeight: '100vh'` for full viewport height
-        minHeight: "100vh",
+        maxWidth: "1048px",
         width: "100%",
+        margin: "auto",
+        // set this to `minHeight: '100vh'` for full viewport height
       }}
     >
-      <CompanyHeader props={props} />
-      <CompanyInterestForm />
-      <CompanyProducts />
-      <CompanyMap />
-      <CompanyInfo props={props} />
-      <CompanyMore />
+      <CompanyHeader content={props.content[0]} />
+      <CompanyInterestForm content={props.content[1]} />
+      <CompanyProducts content={props.content[2]} />
+      {/* <CompanyMap /> */}
+      <CompanyInfo content={props.content[3]} />
+      <CompanyMore content={props.content[4]} />
     </Box>
   );
 };

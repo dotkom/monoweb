@@ -25,15 +25,17 @@ const content = [
     style: "normal",
   },
 ];
-export const CompanyProducts = () => {
+export const CompanyProducts = (props) => {
+  const content = props.content.content;
   return (
     <Box
       sx={{
-        width: "40%",
+        maxWidth: "40%",
         display: "flex",
         flexDirection: "column",
         alignSelf: "center",
         alignItems: "center",
+        margin: "auto",
       }}
     >
       <PortableText
