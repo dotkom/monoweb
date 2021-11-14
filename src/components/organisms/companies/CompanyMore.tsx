@@ -28,7 +28,7 @@ export const CompanyMore = (props: CompanyMoreProps) => {
         className="companyMore"
         serializers={{
           h3: (content: [Record<string, unknown>]) => (
-            <Heading sx={{ fontSize: 18, marginBottom: "3vh", textAlign: "center" }} {...content} />
+            <Heading sx={{ fontSize: 18, marginBottom: "3vh", textAlign: "center", fontWeight: 600 }} {...content} />
           ),
           //this does not work atm -- --
           normal: (content: [Record<string, unknown>]) => <Text sx={{ fontSize: 12 }} {...content} />,

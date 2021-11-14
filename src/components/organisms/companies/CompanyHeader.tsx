@@ -26,7 +26,9 @@ export const CompanyHeader = (props: CompanyHeaderProps) => {
           content={content}
           className="companyTitle"
           serializers={{
-            h1: (content: [Record<string, unknown>]) => <Heading sx={{ color: "gray.1", fontSize: 36 }} {...content} />,
+            h1: (content: [Record<string, unknown>]) => (
+              <Heading sx={{ color: "gray.1", fontSize: 36, fontWeight: "bold" }} {...content} />
+            ),
             p: (content: [Record<string, unknown>]) => <p className="underText">{content}</p>,
           }}
         ></PortableText>

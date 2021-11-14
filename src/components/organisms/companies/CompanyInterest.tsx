@@ -19,7 +19,10 @@ export const CompanyInterestForm = (props) => {
         className="companyInterest"
         serializers={{
           h2: (content) => (
-            <Heading sx={{ color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center" }} {...content} />
+            <Heading
+              sx={{ color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center", fontWeight: 600 }}
+              {...content}
+            />
           ),
           //this does not work atm -- --
           normal: ({ children }) => (

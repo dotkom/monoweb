@@ -17,7 +17,7 @@ export const CompanyInfo = (props: CompanyInfoProps) => {
         className="companyInfo"
         serializers={{
           h2: (content: [Record<string, unknown>]) => (
-            <Heading sx={{ color: "gray.1", marginTop: "8vh" }} {...content} />
+            <Heading sx={{ color: "gray.1", marginTop: "8vh", fontSize: 24, fontWeight: "bold" }} {...content} />
           ),
           p: (content: [Record<string, unknown>]) => <p className="underText">{content}</p>,
         }}
