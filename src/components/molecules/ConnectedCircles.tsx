@@ -12,7 +12,7 @@ const Dotted = (
     height="480px"
     viewBox="0 0 480 480"
     enable-background="new 0 0 480 480"
-    style={{ width: "100%" }}
+    style={{ width: "100%", height: "100%" }}
   >
     <line
       fill="none"
@@ -198,22 +198,24 @@ const Dotted = (
 );
 
 const style: ThemeUICSSObject = {
-  width: "200px",
   float: "left",
-  marginTop: "-205px",
   transform: "rotate(45deg)",
 };
 
-export const ConnectedCircles: React.FC = () => {
+interface ConnectedCircleProps {
+  size: number;
+}
+
+export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size }) => {
   return (
-    <div style={{ textAlign: "left" }}>
-      <Circle size={50}>1</Circle>
-      <Box sx={{ ...style }}>{Dotted}</Box>
-      <Circle size={50}>2</Circle>
-      <Box sx={{ ...style, transform: "rotate(-135deg)", marginTop: "-235px" }}>{Dotted}</Box>
-      <Circle size={50}>3</Circle>
-      <Box sx={{ ...style }}>{Dotted}</Box>
-      <Circle size={50}>4</Circle>
+    <div style={{ width: size }}>
+      <Circle size={size / 15}>1</Circle>
+      <Box sx={{ ...style, width: size / 5, marginTop: -(size / 25) }}>{Dotted}</Box>
+      <Circle size={size / 15}>2</Circle>
+      <Box sx={{ ...style, transform: "rotate(-135deg)", width: size / 5, marginTop: -(size / 10) }}>{Dotted}</Box>
+      <Circle size={size / 15}>3</Circle>
+      <Box sx={{ ...style, width: size / 5, marginTop: -(size / 25) }}>{Dotted}</Box>
+      <Circle size={size / 15}>4</Circle>
     </div>
   );
 };
