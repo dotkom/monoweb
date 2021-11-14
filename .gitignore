@@ -15,3 +15,5 @@ node_modules
 !.yarn/versions
 build-storybook.log
 package-lock.json
+# IDE specific
+.idea
