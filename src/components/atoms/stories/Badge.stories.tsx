@@ -1,7 +1,7 @@
 import { Badge } from "theme-ui";
 
 export default {
-    title: "Badge",
+    title: "atoms/Badge",
     component: Badge,
 };
 
