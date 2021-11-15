@@ -8,7 +8,9 @@ export const parameters = {
 
 addDecorator((story) => (
   <ThemeProvider theme={theme}>
-    <Container p={4}>{story()}</Container>
+    <Container bg="white" p={2}>
+      {story()}
+    </Container>
   </ThemeProvider>
 ));
 
