@@ -1,6 +1,7 @@
 import PortableText from "react-portable-text";
 
 import { Heading, Box } from "@theme-ui/components";
+import { FC } from "react";
 
 interface CompanyInfoProps {
   content: {
@@ -8,10 +9,10 @@ interface CompanyInfoProps {
   };
 }
 
-export const CompanyInfo = (props: CompanyInfoProps) => {
+export const CompanyInfo: FC<CompanyInfoProps> = (props: CompanyInfoProps) => {
   const content = props.content.content;
   return (
-    <Box sx={{ maxWidth: "70%", margin: "auto", alignSelf: "center" }}>
+    <Box sx={{ maxWidth: "768px", margin: "auto", alignSelf: "center" }}>
       <PortableText
         content={content}
         className="companyInfo"

@@ -1,5 +1,5 @@
 import { Text, Heading, Box } from "@theme-ui/components";
-import React from "react";
+import React, { FC } from "react";
 import PortableText from "react-portable-text";
 
 interface CompanyProductsProps {
@@ -8,7 +8,7 @@ interface CompanyProductsProps {
   };
 }
 
-export const CompanyProducts = (props: CompanyProductsProps) => {
+export const CompanyProducts: FC<CompanyProductsProps> = (props: CompanyProductsProps) => {
   const content = props.content.content;
   return (
     <Box

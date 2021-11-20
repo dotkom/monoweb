@@ -1,3 +1,4 @@
+import { FC } from "react";
 import PortableText from "react-portable-text";
 import { Box, Heading, Text, Button, Flex } from "theme-ui";
 
@@ -7,7 +8,7 @@ interface CompanyInterestProps {
   };
 }
 
-export const CompanyInterestForm = (props: CompanyInterestProps) => {
+export const CompanyInterestForm: FC<CompanyInterestProps> = (props: CompanyInterestProps) => {
   const content = props.content.content;
   return (
     <Box

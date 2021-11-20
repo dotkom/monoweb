@@ -2,11 +2,11 @@ import { ThemeStyles } from "theme-ui";
 
 const globalStyles: ThemeStyles["root"] = {
   "html, body, #__next": {
-    width: "100%",
     minHeight: "100vh",
+    fontFamily: "body",
   },
   "#__next": {
-    bg: "#FBFCFD",
+    bg: "#ffffff",
   },
 };
 
