@@ -1,4 +1,4 @@
-import { CompanyView } from "@components/views/CompanyView";
+import { CompanyView } from "@components/views/CompanyView/index";
 import { GetServerSideProps } from "next";
 import React, { FC } from "react";
 import { fetchCompanySectionData } from "src/api/get-company-page";
