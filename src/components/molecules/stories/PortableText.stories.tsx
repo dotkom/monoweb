@@ -9,7 +9,7 @@ const LOREM_BLOCKS = [
   {
     _key: "89a6d852c109",
     _type: "block",
-    children: [{ _key: "c678801e5f16", _type: "span", marks: [], text: "Lorem 1: The followship of Ipsums" }],
+    children: [{ _key: "c678801e5f16", _type: "span", marks: [], text: "Lorem 1: The Fellowship of Ipsums" }],
     markDefs: [],
     style: "h1",
   },
