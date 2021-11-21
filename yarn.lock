@@ -3602,6 +3602,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@theme-ui/color@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@theme-ui/color@npm:0.12.0"
+  dependencies:
+    "@theme-ui/css": 0.12.0
+    polished: ^4.0.5
+  checksum: a77c2b9fa698915d038331483f8cbd322abe9f76115818ed6fb55ad7b3ff6f7aef6b75c5a9d501a8f5d8e8143e1e2db0610495c79520ed59a5f5839d809ceb6f
+  languageName: node
+  linkType: hard
+
 "@theme-ui/components@npm:0.12.0":
   version: 0.12.0
   resolution: "@theme-ui/components@npm:0.12.0"
@@ -11557,6 +11567,7 @@ __metadata:
     "@storybook/addon-links": ^6.1.14
     "@storybook/preset-scss": ^1.0.3
     "@storybook/react": ^6.1.14
+    "@theme-ui/color": ^0.12.0
     "@types/node": ^14.14.13
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
