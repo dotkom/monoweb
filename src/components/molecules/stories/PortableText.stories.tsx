@@ -9,9 +9,9 @@ const LOREM_BLOCKS = [
   {
     _key: "89a6d852c109",
     _type: "block",
-    children: [{ _key: "c678801e5f16", _type: "span", marks: [], text: "The Experience" }],
+    children: [{ _key: "c678801e5f16", _type: "span", marks: [], text: "Lorem 1: The followship of Ipsums" }],
     markDefs: [],
-    style: "h2",
+    style: "h1",
   },
   {
     _key: "6c26df1417a1",
@@ -21,7 +21,7 @@ const LOREM_BLOCKS = [
         _key: "c98dad2e5216",
         _type: "span",
         marks: [],
-        text: "Overall It's been a pretty nice experience building this blog. Svelte has been kind to me. ",
+        text: "This Lorem block is pretty cool",
       },
     ],
     markDefs: [],
@@ -30,7 +30,7 @@ const LOREM_BLOCKS = [
   {
     _key: "a64445fe257b",
     _type: "block",
-    children: [{ _key: "8118f8e1c326", _type: "span", marks: [], text: "Lorem Ipsum" }],
+    children: [{ _key: "8118f8e1c326", _type: "span", marks: [], text: "Lorem 2: Two Ipsums" }],
     markDefs: [],
     style: "h2",
   },
@@ -47,6 +47,13 @@ const LOREM_BLOCKS = [
     ],
     markDefs: [],
     style: "normal",
+  },
+  {
+    _key: "a64445fe257b",
+    _type: "block",
+    children: [{ _key: "8118f8e1c326", _type: "span", marks: [], text: "Lorem 3: Return of the Ipsum" }],
+    markDefs: [],
+    style: "h3",
   },
   {
     _key: "3a385c4bcccb",
