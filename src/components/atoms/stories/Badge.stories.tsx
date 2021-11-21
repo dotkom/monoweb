@@ -19,8 +19,4 @@ export const redSolid = () => <Badge variant="red.solid">RED</Badge>;
 export const redOutline = () => <Badge variant="red.outline">RED</Badge>;
 export const blueSubtle = () => <Badge variant="blue.subtle">BLUE</Badge>;
 export const blueSolid = () => <Badge variant="blue.solid">BLUE</Badge>;
-<<<<<<< HEAD
-export const blueOutline = () => <Badge variant="blue.outline">BLUE</Badge>
-=======
-export const blueOutline = () => <Badge variant="blue.outline">BLUE</Badge>
->>>>>>> a8e549b65e808617ee6817a74cb05c7fbfa21c71
+export const blueOutline = () => <Badge variant="blue.outline">BLUE</Badge>;
