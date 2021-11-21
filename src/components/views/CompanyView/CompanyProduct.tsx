@@ -1,16 +1,15 @@
 /** @jsxImportSource theme-ui */
 
-import { Box } from "@theme-ui/components";
+import { Flex } from "@theme-ui/components";
 import { FC } from "react";
 import { SectionProps } from ".";
 import PortableText from "../../molecules/PortableText";
 
 export const CompanyProducts: FC<SectionProps> = ({ content }) => {
   return (
-    <Box
+    <Flex
       sx={{
         maxWidth: "500px",
-        display: "flex",
         flexDirection: "column",
         alignSelf: "center",
         alignItems: "center",
@@ -31,6 +30,6 @@ export const CompanyProducts: FC<SectionProps> = ({ content }) => {
           p: { fontSize: 14 },
         }}
       ></PortableText>
-    </Box>
+    </Flex>
   );
 };

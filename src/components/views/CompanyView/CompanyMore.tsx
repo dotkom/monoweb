@@ -7,7 +7,8 @@ import PortableText from "../../molecules/PortableText";
 
 export const CompanyMore: FC<SectionProps> = ({ content }) => {
   return (
-    <Box
+    <PortableText
+      blocks={content}
       sx={{
         margin: "auto",
         marginTop: 5,
@@ -18,15 +19,9 @@ export const CompanyMore: FC<SectionProps> = ({ content }) => {
         alignItems: "center",
         alignSelf: "center",
         textAlign: "center",
+        h3: { fontSize: 18, marginBottom: 4, textAlign: "center", fontWeight: 600 },
+        p: { fontSize: 12 },
       }}
-    >
-      <PortableText
-        blocks={content}
-        sx={{
-          h3: { fontSize: 18, marginBottom: 4, textAlign: "center", fontWeight: 600 },
-          p: { fontSize: 12 },
-        }}
-      ></PortableText>
-    </Box>
+    />
   );
 };

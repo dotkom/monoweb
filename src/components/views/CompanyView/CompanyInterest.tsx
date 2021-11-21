@@ -2,16 +2,15 @@
 import { FC } from "react";
 import PortableText from "../../molecules/PortableText";
 
-import { Box, Button } from "theme-ui";
+import { Flex, Button } from "theme-ui";
 import { SectionProps } from ".";
 
 export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
   return (
-    <Box
+    <Flex
       sx={{
         width: "90%",
         margin: "auto",
-        display: "flex",
         flexDirection: "column",
         alignItems: "center",
         alignSelf: "center",
@@ -30,8 +29,8 @@ export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
             margin: "auto",
           },
         }}
-      ></PortableText>
+      />
       <Button sx={{ marginTop: 4, width: "220px", height: "56px" }}>Send Interesse</Button>
-    </Box>
+    </Flex>
   );
 };
