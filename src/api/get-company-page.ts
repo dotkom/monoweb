@@ -1,12 +1,13 @@
+import { BlockContentProps } from "@sanity/block-content-to-react";
 import client from "./sanity"; //that was galant
 
 interface CompanySectionData {
-  sections: [Record<string, unknown>];
+  sections: BlockContentProps["blocks"];
 }
 
 const query = `
-*[_type == "pages"]{
-    sections[]{
+*[_type == "pages" && page_name == "For Companies"]{
+    "sections": sections[]{
       content
     }
   }[0].sections
@@ -14,6 +15,5 @@ const query = `
 
 export const fetchCompanySectionData = async (): Promise<CompanySectionData> => {
   const res = await client.fetch(query);
-  //pages.forEach((component) => console.log(component.data));
   return res;
 };

@@ -8,14 +8,17 @@ import { CompanyMap } from "./CompanyMap";
 import { CompanyMore } from "./CompanyMore";
 import { CompanyProducts } from "./CompanyProduct";
 
-type Content = BlockContentProps["blocks"];
+export type Content = BlockContentProps["blocks"];
 
 interface CompanyViewProps {
-  content: Content[];
+  companyContent: Content[];
+}
+export interface SectionProps {
+  content: Content;
 }
 
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
-  const [headerContent, interestContent, productContent, infoContent, additionalContent] = props.content;
+  const [header, interest, product, info, additional] = props.companyContent;
   return (
     <Box
       sx={{
@@ -28,12 +31,12 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
         // set this to `minHeight: '100vh'` for full viewport height
       }}
     >
-      <CompanyHeader content={headerContent} />
-      <CompanyInterestForm content={interestContent} />
-      <CompanyProducts content={productContent} />
+      <CompanyHeader content={header.content} />
+      <CompanyInterestForm content={interest.content} />
+      <CompanyProducts content={product.content} />
       <CompanyMap />
-      <CompanyInfo content={infoContent} />
-      <CompanyMore content={additionalContent} />
+      <CompanyInfo content={info.content} />
+      <CompanyMore content={additional.content} />
     </Box>
   );
 };

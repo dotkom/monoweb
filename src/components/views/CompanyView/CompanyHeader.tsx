@@ -1,17 +1,10 @@
 /** @jsxImportSource theme-ui */
 import { Box } from "@theme-ui/components";
 import { FC } from "react";
+import { SectionProps } from ".";
 import PortableText from "../../molecules/PortableText";
 
-interface CompanyHeaderProps {
-  content: {
-    content: [Record<string, unknown>];
-  };
-}
-
-export const CompanyHeader: FC<CompanyHeaderProps> = (props: CompanyHeaderProps) => {
-  const content = props.content.content;
-  console.log(props.content.content);
+export const CompanyHeader: FC<SectionProps> = ({ content }) => {
   return (
     <Box
       sx={{

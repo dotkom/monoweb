@@ -3,15 +3,9 @@ import { FC } from "react";
 import PortableText from "../../molecules/PortableText";
 
 import { Box, Button } from "theme-ui";
+import { SectionProps } from ".";
 
-interface CompanyInterestProps {
-  content: {
-    content: [Record<string, unknown>];
-  };
-}
-
-export const CompanyInterestForm: FC<CompanyInterestProps> = (props: CompanyInterestProps) => {
-  const content = props.content.content;
+export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
   return (
     <Box
       sx={{

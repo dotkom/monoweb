@@ -2,15 +2,10 @@
 
 import { Box } from "@theme-ui/components";
 import { FC } from "react";
+import { SectionProps } from ".";
 import PortableText from "../../molecules/PortableText";
-interface CompanyProductsProps {
-  content: {
-    content: [Record<string, unknown>];
-  };
-}
 
-export const CompanyProducts: FC<CompanyProductsProps> = (props: CompanyProductsProps) => {
-  const content = props.content.content;
+export const CompanyProducts: FC<SectionProps> = ({ content }) => {
   return (
     <Box
       sx={{
