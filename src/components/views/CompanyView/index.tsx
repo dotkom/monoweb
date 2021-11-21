@@ -37,3 +37,5 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
     </Box>
   );
 };
+
+export default CompanyView;
