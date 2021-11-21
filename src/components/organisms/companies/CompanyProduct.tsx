@@ -1,7 +1,8 @@
-import { Text, Heading, Box } from "@theme-ui/components";
-import React, { FC } from "react";
-import PortableText from "react-portable-text";
+/** @jsxImportSource theme-ui */
 
+import { Box } from "@theme-ui/components";
+import { FC } from "react";
+import PortableText from "../../molecules/PortableText";
 interface CompanyProductsProps {
   content: {
     content: [Record<string, unknown>];
@@ -13,7 +14,7 @@ export const CompanyProducts: FC<CompanyProductsProps> = (props: CompanyProducts
   return (
     <Box
       sx={{
-        maxWidth: "40%",
+        maxWidth: "500px",
         display: "flex",
         flexDirection: "column",
         alignSelf: "center",
@@ -22,24 +23,17 @@ export const CompanyProducts: FC<CompanyProductsProps> = (props: CompanyProducts
       }}
     >
       <PortableText
-        content={content}
-        className="companyInterest"
-        serializers={{
-          h2: (content: [Record<string, unknown>]) => (
-            <Heading
-              sx={{
-                color: "gray.1",
-                fontSize: 32,
-                fontWeight: "bold",
-                marginBottom: "3vh",
-                marginTop: "4vh ",
-                textAlign: "center",
-              }}
-              {...content}
-            />
-          ),
-          //this does not work atm -- --
-          normal: (content: [Record<string, unknown>]) => <Text sx={{ fontSize: "14px" }} {...content} />,
+        blocks={content}
+        sx={{
+          h2: {
+            color: "gray.1",
+            fontSize: 32,
+            fontWeight: "bold",
+            marginBottom: "3vh",
+            marginTop: "10vh ",
+            textAlign: "center",
+          },
+          p: { fontSize: 14 },
         }}
       ></PortableText>
     </Box>

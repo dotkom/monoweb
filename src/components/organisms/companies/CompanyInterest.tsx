@@ -1,6 +1,8 @@
+/** @jsxImportSource theme-ui */
 import { FC } from "react";
-import PortableText from "react-portable-text";
-import { Box, Heading, Text, Button, Flex } from "theme-ui";
+import PortableText from "../../molecules/PortableText";
+
+import { Box, Button } from "theme-ui";
 
 interface CompanyInterestProps {
   content: {
@@ -23,21 +25,16 @@ export const CompanyInterestForm: FC<CompanyInterestProps> = (props: CompanyInte
       }}
     >
       <PortableText
-        content={content}
-        className="companyInterest"
-        serializers={{
-          h2: (content: [Record<string, unknown>]) => (
-            <Heading
-              sx={{ color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center", fontWeight: 600 }}
-              {...content}
-            />
-          ),
-          //this does not work atm -- --
-          normal: (children: [Record<string, unknown>]) => (
-            <Flex sx={{ width: "100%", justifyContent: "center" }}>
-              <Text sx={{ fontSize: "12px", color: "black.1", width: "40%", textAlign: "center" }} {...children} />
-            </Flex>
-          ),
+        blocks={content}
+        sx={{
+          h2: { color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center", fontWeight: 600 },
+          p: {
+            maxWidth: "400px",
+            fontSize: "12px",
+            color: "black.1",
+            textAlign: "center",
+            margin: "auto",
+          },
         }}
       ></PortableText>
       <Button sx={{ marginTop: "5vh" }}>Send Interesse</Button>

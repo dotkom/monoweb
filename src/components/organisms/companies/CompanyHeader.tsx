@@ -1,6 +1,7 @@
-import { Heading, Box } from "@theme-ui/components";
-import React, { FC } from "react";
-import PortableText from "react-portable-text";
+/** @jsxImportSource theme-ui */
+import { Box } from "@theme-ui/components";
+import { FC } from "react";
+import PortableText from "../../molecules/PortableText";
 
 interface CompanyHeaderProps {
   content: {
@@ -25,14 +26,8 @@ export const CompanyHeader: FC<CompanyHeaderProps> = (props: CompanyHeaderProps)
       <Box sx={{ maxWidth: "1024px", margin: "auto", marginBottom: "20px", marginTop: "10vh" }}>
         <Box sx={{ maxWidth: "768px", width: "100%", margin: "auto", padding: 4 }}>
           <PortableText
-            content={content}
-            className="companyTitle"
-            serializers={{
-              h1: (content: [Record<string, unknown>]) => (
-                <Heading sx={{ color: "gray.1", fontSize: 36, fontWeight: "bold" }} {...content} />
-              ),
-              p: (content: [Record<string, unknown>]) => <p className="underText">{content}</p>,
-            }}
+            blocks={content}
+            sx={{ h1: { color: "gray.1", marginBottom: "3vh", fontSize: 36 }, normal: { fontSize: 14 } }}
           ></PortableText>
         </Box>
       </Box>
