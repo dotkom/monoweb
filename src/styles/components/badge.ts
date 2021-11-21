@@ -23,8 +23,9 @@ const getVariants = (color: string) => ({
 
 const badges: Theme["badges"] = {
   base: {
-    borderRadius: "6px",
+    borderRadius: "5px",
     fontWeight: "600",
+    paddingX: 2,
   },
   green: getVariants("green"),
   gray: getVariants("gray"),
