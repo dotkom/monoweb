@@ -12,4 +12,5 @@ const Home: React.FC = () => {
 const styles = {
   box: {},
 };
+
 export default Home;
