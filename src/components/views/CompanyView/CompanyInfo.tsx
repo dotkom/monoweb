@@ -12,8 +12,8 @@ export const CompanyInfo: FC<SectionProps> = ({ content }) => {
       <PortableText
         blocks={content}
         sx={{
-          h2: { color: "gray.1", marginTop: "8vh", fontSize: 24, fontWeight: "bold" },
-          p: { marginTop: "2vh", fontSize: 14 },
+          h2: { color: "gray.1", marginTop: 4, fontSize: 24, fontWeight: "bold" },
+          p: { marginTop: 3, fontSize: 14 },
         }}
       />
     </Box>

@@ -4,7 +4,7 @@ import React, { FC } from "react";
 //let x = document.body.clientWidth;
 export const CompanyMap: FC = () => {
   return (
-    <Flex sx={{ bg: "#EBF3FE", minHeight: 230, marginTop: "7vh", width: "100%", justifyContent: "center" }}>
+    <Flex sx={{ bg: "#EBF3FE", minHeight: 230, marginTop: "6vh", width: "100%", justifyContent: "center" }}>
       {/*<Flex sx={{ marginTop: "10vh", flexDirection: "column", width: "60%" }}>
         <Box marginLeft={45}>
           <ConnectedCircles size={x * 0.6} lineColor={"#153E75"} circleColor={"blue.3"} />

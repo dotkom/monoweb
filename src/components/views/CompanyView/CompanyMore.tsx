@@ -10,9 +10,9 @@ export const CompanyMore: FC<SectionProps> = ({ content }) => {
     <Box
       sx={{
         margin: "auto",
-        marginTop: "10vh",
-        marginBottom: "10vh",
-        maxWidth: "35%",
+        marginTop: 5,
+        marginBottom: 6,
+        maxWidth: "500px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -23,7 +23,7 @@ export const CompanyMore: FC<SectionProps> = ({ content }) => {
       <PortableText
         blocks={content}
         sx={{
-          h3: { fontSize: 18, marginBottom: "3vh", textAlign: "center", fontWeight: 600 },
+          h3: { fontSize: 18, marginBottom: 4, textAlign: "center", fontWeight: 600 },
           p: { fontSize: 12 },
         }}
       ></PortableText>

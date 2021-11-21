@@ -15,13 +15,13 @@ export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
         flexDirection: "column",
         alignItems: "center",
         alignSelf: "center",
-        marginTop: "5vh",
+        marginTop: 4,
       }}
     >
       <PortableText
         blocks={content}
         sx={{
-          h2: { color: "gray.1", fontSize: 32, marginBottom: "3vh", textAlign: "center", fontWeight: 600 },
+          h2: { color: "gray.1", fontSize: 32, marginBottom: 4, textAlign: "center", fontWeight: 600 },
           p: {
             maxWidth: "400px",
             fontSize: "12px",
@@ -31,7 +31,7 @@ export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
           },
         }}
       ></PortableText>
-      <Button sx={{ marginTop: "5vh" }}>Send Interesse</Button>
+      <Button sx={{ marginTop: 4, width: "220px", height: "56px" }}>Send Interesse</Button>
     </Box>
   );
 };

@@ -16,11 +16,11 @@ export const CompanyHeader: FC<SectionProps> = ({ content }) => {
         margin: "auto",
       }}
     >
-      <Box sx={{ maxWidth: "1024px", margin: "auto", marginBottom: "20px", marginTop: "10vh" }}>
+      <Box sx={{ maxWidth: "1024px", margin: "auto", marginBottom: "20px", marginTop: 5 }}>
         <Box sx={{ maxWidth: "768px", width: "100%", margin: "auto", padding: 4 }}>
           <PortableText
             blocks={content}
-            sx={{ h1: { color: "gray.1", marginBottom: "3vh", fontSize: 36 }, normal: { fontSize: 14 } }}
+            sx={{ h1: { color: "gray.1", marginBottom: 4, fontSize: 36 }, normal: { fontSize: 14 } }}
           ></PortableText>
         </Box>
       </Box>
