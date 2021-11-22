@@ -20,17 +20,7 @@ export interface SectionProps {
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
   const [header, interest, product, info, additional] = props.companyContent;
   return (
-    <Box
-      sx={{
-        bg: "white",
-        display: "flex",
-        flexDirection: "column",
-
-        width: "100%",
-        margin: "auto",
-        // set this to `minHeight: '100vh'` for full viewport height
-      }}
-    >
+    <Box>
       <CompanyHeader content={header.content} />
       <CompanyInterestForm content={interest.content} />
       <CompanyProducts content={product.content} />
