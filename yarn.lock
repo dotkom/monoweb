@@ -2296,18 +2296,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sanity/block-content-to-hyperscript@npm:^2.0.10":
-  version: 2.0.10
-  resolution: "@sanity/block-content-to-hyperscript@npm:2.0.10"
-  dependencies:
-    "@sanity/generate-help-url": ^0.140.0
-    "@sanity/image-url": ^0.140.15
-    hyperscript: ^2.0.2
-    object-assign: ^4.1.1
-  checksum: 3bc91cd5bc0e775737d0e34d15f8d8383cc4ff4a21aeb9e45f9d23c835ffbaff91fe7a3b295295d78261efc90a24a17efe017401238007baaaf2f90a29e1ddd3
-  languageName: node
-  linkType: hard
-
 "@sanity/block-content-to-hyperscript@npm:^3.0.0":
   version: 3.0.0
   resolution: "@sanity/block-content-to-hyperscript@npm:3.0.0"
@@ -2317,18 +2305,6 @@ __metadata:
     hyperscript: ^2.0.2
     object-assign: ^4.1.1
   checksum: 762ce466b265cce02d6be27af4bf6122300f83c6d2bf1ff79cdfb6da5e8433a424909b509d25229ffbef2eba4c5b9cec1c35a43f95d6e636f8fbee3ab3e2b53b
-  languageName: node
-  linkType: hard
-
-"@sanity/block-content-to-react@npm:^2.0.0":
-  version: 2.0.7
-  resolution: "@sanity/block-content-to-react@npm:2.0.7"
-  dependencies:
-    "@sanity/block-content-to-hyperscript": ^2.0.10
-    prop-types: ^15.6.2
-  peerDependencies:
-    react: ">=15.0.0"
-  checksum: 78d978c662b2925d6c4ca6a620e86a01a742dec2578eb4208070048304b9411e19821ff423435ec16b7186be5022f5841989753ea4613dc30d7f1d5e9979e63c
   languageName: node
   linkType: hard
 
@@ -11585,7 +11561,6 @@ __metadata:
     prettier: ^2.4.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-portable-text: ^0.4.0
     swr: ^1.0.1
     theme-ui: ^0.12.0
     typescript: ^4.4.4
@@ -12757,17 +12732,6 @@ __metadata:
     "@popperjs/core": ^2.0.0
     react: ^16.8.0 || ^17
   checksum: 915fcf08e1da4fd48a200074fcdd936f601ee2173f1e730cfed8a54fd47716aa8bf9cce2392463e3bcbe64a096d0baf463809ed2874b94d3a9d430ae6d817b5d
-  languageName: node
-  linkType: hard
-
-"react-portable-text@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "react-portable-text@npm:0.4.0"
-  dependencies:
-    "@sanity/block-content-to-react": ^2.0.0
-  peerDependencies:
-    react: ">16.8.0 || ^17.0.0"
-  checksum: 0a19b72894aeba91b09e3c5ff89118044bb442820b3f1e555709cd7e4434c1762f986db7e6229694e5f9be6bdcbc53a9397fa5b95316c694754466f4da2a0902
   languageName: node
   linkType: hard
 

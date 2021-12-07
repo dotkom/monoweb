@@ -1,23 +1,36 @@
-import { Box, Flex, Grid } from "@theme-ui/components";
+/** @jsxImportSource theme-ui */
+
+import { Box, Flex } from "@theme-ui/components";
 import ConnectedCircles from "@components/molecules/ConnectedCircles";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
+import DescendingDots from "@components/molecules/DescendingDots";
+import { theme } from "@styles/theme";
+
+interface windowProps {
+  width: number;
+  height: number;
+}
+
 //let x = document.body.clientWidth;
 export const CompanyMap: FC = () => {
   return (
-    <Flex sx={{ bg: "#EBF3FE", minHeight: 230, marginTop: "6vh", width: "100%", justifyContent: "center" }}>
-      {/*<Flex sx={{ marginTop: "10vh", flexDirection: "column", width: "60%" }}>
-        <Box marginLeft={45}>
-          <ConnectedCircles size={x * 0.6} lineColor={"#153E75"} circleColor={"blue.3"} />
+    <Flex sx={{ bg: "#EBF3FE", minHeight: 230, marginTop: 60, width: "100%" }}>
+      <Flex sx={{ flexDirection: "column", maxWidth: 768, margin: "auto" }}>
+        <Box sx={{ display: ["flex", "none"] }}>
+          <DescendingDots size={700} circleColor={"blue.3"} />
         </Box>
-        <Grid gap={2} columns={[2, null, 4]}>
-          <Box sx={{ fontSize: 24, fontWeight: 600 }}>Kartlegging</Box>
-          <Box sx={{ fontSize: 24, fontWeight: 600, width: 240 }}>Intern planlegging</Box>
-          <Box marginLeft="8vh" sx={{ fontSize: 24, fontWeight: 600 }}>
-            Tilbud
-          </Box>
-          <Box sx={{ fontSize: 24, fontWeight: 600 }}>Sammarbeid</Box>
-        </Grid>
-  </Flex>*/}
+        <Box sx={{ display: ["none", "flex"] }}>
+          <Flex sx={{ flexDirection: "column" }}>
+            <ConnectedCircles size={650} circleColor={"blue.3"} lineColor={"black"} />
+            <Flex sx={{ flexDirection: "row" }}>
+              <p sx={{ fontWeight: "bold" }}>Kartlegging</p>
+              <p sx={{ marginLeft: 75, fontWeight: "bold" }}>Intern planlegging</p>
+              <p sx={{ marginLeft: 70, fontWeight: "bold" }}>Tilbud</p>
+              <p sx={{ marginLeft: 100, fontWeight: "bold" }}>Sammarbeid</p>
+            </Flex>
+          </Flex>
+        </Box>
+      </Flex>
     </Flex>
   );
 };

@@ -12,7 +12,6 @@ export const CompanyMore: FC<SectionProps> = ({ content }) => {
 
 const styles: ThemeUIStyleObject = {
   margin: "auto",
-  marginTop: 5,
   marginBottom: 6,
   maxWidth: "500px",
   display: "flex",
@@ -20,6 +19,7 @@ const styles: ThemeUIStyleObject = {
   alignItems: "center",
   alignSelf: "center",
   textAlign: "center",
+  padding: 40,
   h3: { fontSize: 18, marginBottom: 4, textAlign: "center", fontWeight: 600 },
   p: { fontSize: 12 },
 };

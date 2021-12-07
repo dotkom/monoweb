@@ -25,6 +25,7 @@ const styles: StyleSX = {
     alignSelf: "center",
     alignItems: "center",
     margin: "auto",
+    padding: 40,
   },
   portableText: {
     h2: {
