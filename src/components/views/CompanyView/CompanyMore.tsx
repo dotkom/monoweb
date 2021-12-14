@@ -1,6 +1,5 @@
 /** @jsxImportSource theme-ui */
 
-import { Box } from "@theme-ui/components";
 import { ThemeUIStyleObject } from "@theme-ui/css";
 import { FC } from "react";
 import { SectionProps } from ".";

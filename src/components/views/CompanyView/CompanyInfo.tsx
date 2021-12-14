@@ -2,7 +2,6 @@
 
 import PortableText from "../../molecules/PortableText";
 
-import { Box } from "@theme-ui/components";
 import { FC } from "react";
 import { SectionProps } from ".";
 import { ThemeUIStyleObject } from "@theme-ui/css";

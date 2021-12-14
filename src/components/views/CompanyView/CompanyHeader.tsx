@@ -7,8 +7,8 @@ import PortableText from "../../molecules/PortableText";
 
 export const CompanyHeader: FC<SectionProps> = ({ content }) => {
   return (
-    <Flex sx={styles.flex}>
-      <Box sx={styles.box}>
+    <Flex sx={styles.wrapper}>
+      <Box sx={styles.container}>
         <PortableText blocks={content} sx={styles.portableText} />
       </Box>
     </Flex>
@@ -16,20 +16,20 @@ export const CompanyHeader: FC<SectionProps> = ({ content }) => {
 };
 
 interface StyleProps {
-  flex: ThemeUIStyleObject | undefined;
-  box: ThemeUIStyleObject | undefined;
+  wrapper: ThemeUIStyleObject | undefined;
+  container: ThemeUIStyleObject | undefined;
   portableText: ThemeUIStyleObject | undefined;
 }
 
 const styles: StyleProps = {
-  flex: {
+  wrapper: {
     bg: "orange.12",
     width: "100%",
     flexDirection: "column",
     alignItems: "center",
     margin: "auto",
   },
-  box: { maxWidth: "1024px", margin: "auto", marginBottom: "20px", marginTop: 5 },
+  container: { maxWidth: "1024px", margin: "auto", marginBottom: "20px", marginTop: 5 },
   portableText: {
     maxWidth: "768px",
     width: "100%",

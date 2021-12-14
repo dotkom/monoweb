@@ -8,18 +8,18 @@ import PortableText from "../../molecules/PortableText";
 
 export const CompanyProducts: FC<SectionProps> = ({ content }) => {
   return (
-    <Flex sx={styles.flex}>
+    <Flex sx={styles.container}>
       <PortableText blocks={content} sx={styles.portableText}></PortableText>
     </Flex>
   );
 };
 interface StyleSX {
-  flex: ThemeUIStyleObject;
+  container: ThemeUIStyleObject;
   portableText: ThemeUIStyleObject;
 }
 
 const styles: StyleSX = {
-  flex: {
+  container: {
     maxWidth: "500px",
     flexDirection: "column",
     alignSelf: "center",

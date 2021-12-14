@@ -7,7 +7,7 @@ import { SectionProps } from ".";
 
 export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
   return (
-    <Flex sx={styles.flex}>
+    <Flex sx={styles.container}>
       <PortableText blocks={content} sx={styles.portableText} />
       <Button sx={styles.button}>Send Interesse</Button>
     </Flex>
@@ -17,7 +17,7 @@ export const CompanyInterestForm: FC<SectionProps> = ({ content }) => {
 interface StyleSX {
   button: ThemeUIStyleObject | undefined;
   portableText: ThemeUIStyleObject | undefined;
-  flex: ThemeUIStyleObject | undefined;
+  container: ThemeUIStyleObject | undefined;
 }
 
 const styles: StyleSX = {
@@ -36,7 +36,7 @@ const styles: StyleSX = {
       margin: "auto",
     },
   },
-  flex: {
+  container: {
     width: "90%",
     margin: "auto",
     flexDirection: "column",
