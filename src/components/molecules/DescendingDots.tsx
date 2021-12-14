@@ -10,7 +10,12 @@ interface DescendingDotsProps {
   circleColor: string;
 }
 
-const styles: ThemeUIStyleObject = {
+interface StyleSX {
+  circle: ThemeUIStyleObject;
+  text: ThemeUIStyleObject;
+}
+
+const styles: StyleSX = {
   circle: { flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 20 },
   text: { fontWeight: "bold", fontSize: "26" },
 };

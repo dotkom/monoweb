@@ -2,9 +2,8 @@
 
 import { Box, Flex } from "@theme-ui/components";
 import ConnectedCircles from "@components/molecules/ConnectedCircles";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import DescendingDots from "@components/molecules/DescendingDots";
-import { theme } from "@styles/theme";
 import { ThemeUIStyleObject } from "theme-ui";
 
 export const CompanyMap: FC = () => {
