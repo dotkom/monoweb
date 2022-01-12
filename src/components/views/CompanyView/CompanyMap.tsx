@@ -2,8 +2,7 @@
 
 import { Box, Flex, Paragraph } from "@theme-ui/components";
 import ConnectedCircles from "@components/molecules/ConnectedCircles";
-import React, { FC } from "react";
-import DescendingDots from "@components/molecules/DescendingDots";
+import { FC } from "react";
 import { ThemeUIStyleObject } from "theme-ui";
 import Circle from "@components/atoms/Circle";
 
