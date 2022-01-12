@@ -1,5 +1,5 @@
 import { BlockContentProps } from "@sanity/block-content-to-react";
-import client from "./sanity"; //that was galant
+import client from "./sanity";
 
 interface CompanySectionData {
   sections: BlockContentProps["blocks"];
