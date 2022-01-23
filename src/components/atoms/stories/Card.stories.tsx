@@ -1,28 +1,28 @@
-import { Card, Paragraph } from "theme-ui";
+import Card from "../Card";
+import Text from "../Text";
 
 export default {
   title: "atoms/Card",
   component: Card,
 };
 
-export const Basic = () => (
-  <Card sx={{ maxWidth: "250px" }}>
-    <Paragraph color="gray.3" sx={{ fontSize: "14px" }}>
-      Word of the Day
-    </Paragraph>
-    <Paragraph>be•nev•o•lent</Paragraph>
-    <Paragraph color="gray.3">adjective</Paragraph>
-    <Paragraph>well meaning and kindly. "a benevolent smile"</Paragraph>
+const Content = () => (
+  <>
+    <Text color="gray">Word of the Day</Text>
+    <p>be•nev•o•lent</p>
+    <Text color="gray">adjective</Text>
+    <p>well meaning and kindly. "a benevolent smile"</p>
+  </>
+);
+
+export const Outline = () => (
+  <Card css={{ maxWidth: "250px" }}>
+    <Content />
   </Card>
 );
 
-export const Outlined = () => (
-  <Card variant="outlined" sx={{ maxWidth: "250px" }}>
-    <Paragraph color="gray.3" sx={{ fontSize: "14px" }}>
-      Word of the Day
-    </Paragraph>
-    <Paragraph>be•nev•o•lent</Paragraph>
-    <Paragraph color="gray.3">adjective</Paragraph>
-    <Paragraph>well meaning and kindly. "a benevolent smile"</Paragraph>
+export const Shadow = () => (
+  <Card css={{ maxWidth: "250px" }} variant="shadow">
+    <Content />
   </Card>
 );

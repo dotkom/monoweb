@@ -36,6 +36,11 @@ const Button = styled("button", {
         "&:hover": { backgroundColor: "$orange6" },
         "&:active": { backgroundColor: "$orange7" },
       },
+      gray: {
+        backgroundColor: "$gray5",
+        "&:hover": { backgroundColor: "$gray6" },
+        "&:active": { backgroundColor: "$gray7" },
+      },
     },
   },
 });
