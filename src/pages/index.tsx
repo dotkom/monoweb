@@ -1,15 +1,8 @@
 import React from "react";
-import { Box, Button } from "theme-ui";
+import Button from "@components/atoms/Button";
 
 const Home: React.FC = () => {
-  return (
-    <Box p={4} sx={styles.box}>
-      <Button>Hello</Button>
-    </Box>
-  );
+  return <Button>Hello</Button>;
 };
 
-const styles = {
-  box: {},
-};
 export default Home;
