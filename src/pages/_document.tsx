@@ -1,5 +1,6 @@
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document";
 import { InitializeColorMode } from "theme-ui";
+import { getCssText } from "stitches.config";
 
 export default class Document extends NextDocument {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
@@ -15,6 +16,7 @@ export default class Document extends NextDocument {
             href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
             rel="stylesheet"
           />
+          <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
         </Head>
         <InitializeColorMode />
         <body>
