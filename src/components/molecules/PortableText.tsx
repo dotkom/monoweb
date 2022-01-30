@@ -6,9 +6,10 @@ import { Paragraph } from "theme-ui";
 
 interface PortableTextProps {
   blocks: BlockContentProps["blocks"];
+  className?: string;
 }
 
-const PortableText: FC<PortableTextProps> = ({ blocks }) => {
+const PortableText: FC<PortableTextProps> = ({ blocks, className }) => {
   const serializers: BlockContentProps["serializers"] = {
     types: {
       block: (props) => {
@@ -20,7 +21,7 @@ const PortableText: FC<PortableTextProps> = ({ blocks }) => {
       },
     },
   };
-  return <BlockContent serializers={serializers} blocks={blocks} />;
+  return <BlockContent className={className} serializers={serializers} blocks={blocks} />;
 };
 
 export default PortableText;
