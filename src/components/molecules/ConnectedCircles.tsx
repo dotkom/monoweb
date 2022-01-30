@@ -1,43 +1,34 @@
-import { Box, ThemeUICSSObject } from "theme-ui";
 import { Circle } from "../atoms/Circle";
-import { DottedLine } from "../atoms/DottedCurve";
-
-const style: ThemeUICSSObject = {
-  float: "left",
-  transform: "rotate(45deg)",
-  position: "relative",
-};
+import { DottedCurve } from "../atoms/DottedCurve";
+import React from "react";
 
 interface ConnectedCircleProps {
-  size: number;
-  lineColor: string;
-  circleColor: string;
+  size: any;
+  color: any;
 }
 
-export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineColor, circleColor }) => {
-  const dynamicSize = size / 50 + "vw";
+export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, color }) => {
   return (
     <div>
-      <Circle size={size / 12} color={circleColor}>
+      <Circle size={size} color={color}>
         1
       </Circle>
-      <Box sx={{ ...style, width: dynamicSize, marginTop: -(size / 250) + "vw" }}>
-        {" "}
-        <DottedLine color={lineColor}></DottedLine>
-      </Box>
-      <Circle size={size / 12} color={circleColor}>
+      <div>
+        <DottedCurve color={color} size={"10vw"}></DottedCurve>
+      </div>
+      <Circle size={size} color={color}>
         2
       </Circle>
-      <Box sx={{ ...style, transform: "rotate(-135deg)", width: dynamicSize, marginTop: -(size / 100) + "vw" }}>
-        <DottedLine color={lineColor}></DottedLine>
-      </Box>
-      <Circle size={size / 12} color={circleColor}>
+      <div>
+        <DottedCurve color={color} size={"10vw"}></DottedCurve>
+      </div>
+      <Circle size={size} color={color}>
         3
       </Circle>
-      <Box sx={{ ...style, width: dynamicSize, marginTop: -(size / 250) + "vw" }}>
-        <DottedLine color={lineColor}></DottedLine>
-      </Box>
-      <Circle size={size / 12} color={circleColor}>
+      <div>
+        <DottedCurve color={color} size={"10vw"}></DottedCurve>
+      </div>
+      <Circle size={size} color={color}>
         4
       </Circle>
     </div>

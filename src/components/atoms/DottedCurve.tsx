@@ -1,8 +1,11 @@
+import React from "react";
+
 interface LineProps {
   color: string;
+  size: string;
 }
 
-export const DottedLine: React.FC<LineProps> = ({ color }) => {
+export const DottedCurve: React.FC<LineProps> = ({ color, size }) => {
   return (
     <svg
       version="1.0"
@@ -14,7 +17,7 @@ export const DottedLine: React.FC<LineProps> = ({ color }) => {
       height="480px"
       viewBox="0 0 480 480"
       enable-background="new 0 0 480 480"
-      style={{ width: "100%", height: "100%", margin: 0 }}
+      style={{ width: size, height: size, margin: 0 }}
     >
       <line
         stroke={color}
@@ -185,4 +188,4 @@ export const DottedLine: React.FC<LineProps> = ({ color }) => {
   );
 };
 
-export default DottedLine;
+export default DottedCurve;

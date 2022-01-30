@@ -1,6 +1,6 @@
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document";
 import { InitializeColorMode } from "theme-ui";
-import { getCssText } from "@stitches/theme";
+import { getCssText } from "@theme";
 
 export default class Document extends NextDocument {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
