@@ -1,10 +1,9 @@
-import { styled } from "../../stitches.config";
+import { styled } from "@theme";
 
 const Card = styled("div", {
   boxSizing: "border-box",
   margin: 0,
   minWidth: 0,
-  backgroundColor: "$white",
   borderRadius: "$3",
   p: 32,
   variants: {

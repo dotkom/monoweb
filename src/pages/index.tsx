@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@components/atoms/Button";
-import { styled } from "@stitches/theme";
+import { styled } from "@theme";
 
 const Home: React.FC = () => {
   return (
