@@ -25,7 +25,7 @@
     },
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/theme/colors.js", "src/theme/utils.js", "src/theme/utils.js"],
   "exclude": ["node_modules"],
   "files": ["./src/types/block-content-to-react.d.ts"]
 }

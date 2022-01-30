@@ -1,3 +1,5 @@
+import { ConfigType } from "@stitches/react/types/config";
+
 const blue = {
   blue1: "#0D2546",
   blue2: "#11325E",
@@ -72,11 +74,12 @@ const gray = {
   gray12: "#EDEEF0",
 };
 
-export const colors = {
+export const colors: ConfigType.Theme["colors"] = {
   ...blue,
   ...orange,
   ...red,
   ...green,
   ...gray,
   white: "#fff",
+  black: "000000",
 };

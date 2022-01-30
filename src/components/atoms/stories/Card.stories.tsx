@@ -22,7 +22,7 @@ export const Outline = () => (
 );
 
 export const Shadow = () => (
-  <Card css={{ maxWidth: "250px" }} variant="shadow">
+  <Card css={{ maxWidth: "250px" }} shadow>
     <Content />
   </Card>
 );
