@@ -1,4 +1,4 @@
-import { styled } from "@stitches/theme";
+import { styled } from "@theme";
 
 const Text = styled("p", {
   fontSize: "14px",

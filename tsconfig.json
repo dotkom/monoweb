@@ -21,11 +21,11 @@
       "@public": ["public"],
       "@styles/*": ["src/styles/*"],
       "@styles": ["src/styles"],
-      "@stitches/theme": ["src/stitches.config.js"]
+      "@theme": ["src/theme/stitches.config.ts"]
     },
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/theme/colors.js", "src/theme/utils.js", "src/theme/utils.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "files": ["./src/types/block-content-to-react.d.ts"]
 }

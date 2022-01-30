@@ -1,9 +1,9 @@
-import { styled } from "@stitches/theme";
+import { styled } from "@theme";
 
 const Button = styled("button", {
   backgroundColor: "$blue5",
   border: "none",
-  borderRadius: "4px",
+  borderRadius: "$2",
   color: "$white",
   cursor: "pointer",
   px: "16px",
