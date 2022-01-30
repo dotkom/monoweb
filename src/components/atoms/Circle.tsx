@@ -17,7 +17,13 @@ interface CircleProps {
 }
 
 export const Circle: React.FC<CircleProps> = ({ children, size, color }) => {
-  return <Box sx={{ ...style, width: size, height: size, fontSize: size * 0.6, bg: color }}>{children}</Box>;
+  const dynamicSize = size / 10 + "vw";
+
+  return (
+    <Box sx={{ ...style, width: dynamicSize, height: dynamicSize, fontSize: size * 0.05 + "vw", bg: color }}>
+      {children}
+    </Box>
+  );
 };
 
 export default Circle;

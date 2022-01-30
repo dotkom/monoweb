@@ -15,28 +15,29 @@ interface ConnectedCircleProps {
 }
 
 export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineColor, circleColor }) => {
+  const dynamicSize = size / 50 + "vw";
   return (
-    <div style={{ width: size }}>
-      <Circle size={size / 15} color={circleColor}>
+    <div>
+      <Circle size={size / 12} color={circleColor}>
         1
       </Circle>
-      <Box sx={{ ...style, width: size / 5, marginTop: -(size / 25) }}>
+      <Box sx={{ ...style, width: dynamicSize, marginTop: -(size / 250) + "vw" }}>
         {" "}
         <DottedLine color={lineColor}></DottedLine>
       </Box>
-      <Circle size={size / 15} color={circleColor}>
+      <Circle size={size / 12} color={circleColor}>
         2
       </Circle>
-      <Box sx={{ ...style, transform: "rotate(-135deg)", width: size / 5, marginTop: -(size / 11) - 10 }}>
+      <Box sx={{ ...style, transform: "rotate(-135deg)", width: dynamicSize, marginTop: -(size / 100) + "vw" }}>
         <DottedLine color={lineColor}></DottedLine>
       </Box>
-      <Circle size={size / 15} color={circleColor}>
+      <Circle size={size / 12} color={circleColor}>
         3
       </Circle>
-      <Box sx={{ ...style, width: size / 5, marginTop: -(size / 25) }}>
+      <Box sx={{ ...style, width: dynamicSize, marginTop: -(size / 250) + "vw" }}>
         <DottedLine color={lineColor}></DottedLine>
       </Box>
-      <Circle size={size / 15} color={circleColor}>
+      <Circle size={size / 12} color={circleColor}>
         4
       </Circle>
     </div>
