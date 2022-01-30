@@ -1,7 +1,7 @@
 import Box from "@components/particles/Box";
-import { CSS } from "@stitches/react";
+import { css } from "@theme";
 
-const circleStyle: CSS = {
+const circleStyle = css({
   color: "$white",
   textAlign: "center",
   borderRadius: "50%",
@@ -10,7 +10,7 @@ const circleStyle: CSS = {
   flexDirection: "column",
   justifyContent: "center",
   margin: 0,
-};
+});
 interface CircleProps {
   size: number;
   color: string;
