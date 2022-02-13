@@ -9,7 +9,7 @@ import Circle from "@components/atoms/Circle";
 export const CompanyMap: FC = () => {
   const steps = ["Kartlegging", "Intern planlegging", "Tilbud", "Sammarbeid"];
   const size = 700;
-  const circleColor = "blue.3";
+  const circleColor = "$blue13";
   return (
     <Flex sx={styles.wrapper}>
       <Flex sx={styles.container}>
@@ -31,7 +31,7 @@ export const CompanyMap: FC = () => {
         </Box>
         <Box sx={styles.textWrapper}>
           <Flex sx={styles.horizontalContainer}>
-            <ConnectedCircles size={750} circleColor={"blue.3"} lineColor={"black"} />
+            <ConnectedCircles size={750} circleColor={circleColor} lineColor={"black"} />
             <Flex>
               <Paragraph sx={styles.p1}>Kartlegging</Paragraph>
               <Paragraph sx={styles.p2}>Intern planlegging</Paragraph>

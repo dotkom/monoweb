@@ -16,6 +16,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset } = 
       blue10: "#B9C5D6",
       blue11: "#D0D8E3",
       blue12: "#E8ECF1",
+      blue13: "#5584be",
       orange1: "#966E35",
       orange2: "#C89247",
       orange3: "#FAB759",
