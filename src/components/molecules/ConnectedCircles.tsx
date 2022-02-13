@@ -18,7 +18,16 @@ interface ConnectedCircleProps {
 
 export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineColor, circleColor }) => {
   return (
-    <Box sx={{ minWidth: size, display: "flex", justifyContent: "center", alignItems: "center", margin: "auto", textAlign: "center" }}>
+    <Box
+      sx={{
+        minWidth: size,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: "auto",
+        textAlign: "center",
+      }}
+    >
       <Circle size={size / 15} color={circleColor}>
         1
       </Circle>

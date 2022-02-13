@@ -9,16 +9,19 @@ const circleStyle = css({
   float: "left",
   flexDirection: "column",
   justifyContent: "center",
-  margin: 0
+  margin: 0,
 });
 interface CircleProps {
   size: number;
   color: string;
 }
 
-
 export const Circle: React.FC<CircleProps> = ({ children, size, color }) => {
-  return <Box className={circleStyle()} css={{ width: size, height: size, fontSize: 0.6 * size, bg: color }}>{children}</Box>;
+  return (
+    <Box className={circleStyle()} css={{ width: size, height: size, fontSize: 0.6 * size, bg: color }}>
+      {children}
+    </Box>
+  );
 };
 
 export default Circle;
