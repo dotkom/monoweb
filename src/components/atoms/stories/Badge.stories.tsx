@@ -5,7 +5,7 @@ export default {
   component: Badge,
 };
 
-export const greenSubltle = () => <Badge variant="green.subtle">GREEn</Badge>;
+export const greenSubtle = () => <Badge variant="green.subtle">GREEN</Badge>;
 export const greenSolid = () => <Badge variant="green.solid">GREEN</Badge>;
 export const greenOutline = () => <Badge variant="green.outline">GREEn</Badge>;
 export const orangeSubtle = () => <Badge variant="orange.subtle">ORANGE</Badge>;
