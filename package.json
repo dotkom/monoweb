@@ -6,7 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "storybook": "start-storybook -p 6006",
+        "storybook": "start-storybook -p 6006 -s ./public",
         "build-storybook": "build-storybook",
         "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
         "format-check": "prettier --check '**/*.{js,jsx,ts,tsx}'",

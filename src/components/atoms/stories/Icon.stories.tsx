@@ -5,4 +5,4 @@ export default {
   component: Icon,
 };
 
-export const AnIcon = () => <Icon src="/icons/github-icon.svg" />;
+export const AnIcon = () => <Icon width="100px" height="100px" src="/icons/youtube-icon.svg" />;
