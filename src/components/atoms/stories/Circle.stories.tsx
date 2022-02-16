@@ -6,17 +6,17 @@ export default {
 };
 
 export const Medium = () => (
-  <Circle size={50} color={"blue.1"}>
+  <Circle size={50} color={"$blue3"}>
     1
   </Circle>
 );
 export const Large = () => (
-  <Circle size={500} color={"red.1"}>
+  <Circle size={500} color={"$red3"}>
     2
   </Circle>
 );
 export const Tiny = () => (
-  <Circle size={25} color={"orange.1"}>
+  <Circle size={25} color={"$orange3"}>
     3
   </Circle>
 );
