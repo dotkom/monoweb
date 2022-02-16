@@ -11,12 +11,13 @@ const CompanyInterestProcess: VFC<CompanyInterestProcessProps> = ({ steps }) => 
     <div className={styles.stepText()}>
       {steps.map((step, index) => (
         <Box
+          key={step}
           css={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "$4 0", marginBottom: "$1" }}
         >
           <Circle size={700 / 15} color="$blue3">
             {index + 1}
           </Circle>
-          <p key={step}>{step}</p>
+          <p>{step}</p>
         </Box>
       ))}
     </div>
