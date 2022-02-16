@@ -8,10 +8,14 @@ export default {
 
 const Content = () => (
   <>
-    <Text color="gray">Word of the Day</Text>
-    <p>be•nev•o•lent</p>
-    <Text color="gray">adjective</Text>
-    <p>well meaning and kindly. "a benevolent smile"</p>
+    <Text as="h1" size="md">
+      Word of the Day
+    </Text>
+    <Text>be•nev•o•lent</Text>
+    <Text size="md" color="$gray3">
+      adjective
+    </Text>
+    <Text>well meaning and kindly. "a benevolent smile"</Text>
   </>
 );
 
