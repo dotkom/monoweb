@@ -1,7 +1,7 @@
-import { createStitches } from "@stitches/react";
 import { utils } from "./utils";
+import * as Stitches from "@stitches/react";
 
-export const { styled, getCssText, css, globalCss, keyframes, prefix, reset } = createStitches({
+export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, theme, config } = Stitches.createStitches({
   theme: {
     colors: {
       blue1: "#0D2546",
@@ -16,6 +16,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset } = 
       blue10: "#B9C5D6",
       blue11: "#D0D8E3",
       blue12: "#E8ECF1",
+      bluebg: "#EBF3FE",
       orange1: "#966E35",
       orange2: "#C89247",
       orange3: "#FAB759",
@@ -72,12 +73,15 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset } = 
       monospace: "Menlo, monospace",
     },
     fontSizes: {
-      1: "12px",
-      2: "14px",
-      3: "16px",
-      4: "20px",
-      5: "24px",
-      6: "32px",
+      xs: "0.75rem",
+      sm: "0.875rem",
+      md: "1rem",
+      lg: "1.125rem",
+      xl: "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem",
+      "5xl": "2.5rem",
     },
     space: {
       1: "4px",
@@ -93,6 +97,11 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset } = 
       3: "8px",
       round: "9999px",
     },
+    sizes: {
+      sm: "48px",
+      md: "768px",
+      lg: "1024px",
+    },
     // fontWeights: {},
     // lineHeights: {},
     // letterSpacings: {},
@@ -102,5 +111,12 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset } = 
     // zIndices: {},
     // transitions: {},
   },
+  media: {
+    bp1: "(min-width: 480px)",
+    bp2: "(min-width: 768px)",
+    bp3: "(min-width: 1024px)",
+  },
   utils: utils,
 });
+
+export type CSS = Stitches.CSS<typeof config>;
