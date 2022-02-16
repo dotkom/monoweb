@@ -2,7 +2,7 @@ import Button from "@components/atoms/Button";
 import PortableText from "@components/molecules/PortableText";
 import Box from "@components/particles/Box";
 import { BlockContentProps } from "@sanity/block-content-to-react";
-import { css, styled } from "@theme";
+import { CSS, css, styled } from "@theme";
 import { VFC } from "react";
 import CompanyInterestProcess from "./CompanyInterestProcess";
 
@@ -20,16 +20,16 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
   return (
     <Box css={{ margin: "auto", maxWidth: "1024px" }}>
       <Box css={{ bg: "$orange12", fullWidth: true }}>
-        <Box className={styles.banner()}>
+        <Box css={styles.banner}>
           <h1 className={styles.bannerTitle()}>
             Er din bedrift på jakt etter skarpe IT-<span className={styles.yellowUnderline()}>studenter?</span>
           </h1>
           <PortableText blocks={header.content} />
         </Box>
       </Box>
-      <Box className={styles.interest()}>
+      <Box css={styles.interest}>
         <Interest blocks={interest.content} />
-        <Button className={styles.button()}>Send Interesse</Button>
+        <Button css={styles.button}>Send Interesse</Button>
       </Box>
       <Product blocks={product.content} />
       <Box css={{ bg: "$bluebg", fullWidth: true }}>
@@ -42,18 +42,12 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
 };
 
 const styles = {
-  info: css({
-    alignSelf: "center",
-    padding: 60,
-    h2: { color: "$gray1", marginTop: "$5", marginBottom: "$1", fontSize: 24, fontWeight: "bold" },
-    p: { marginTop: 3, fontSize: 14 },
-  }),
-  banner: css({
+  banner: {
     maxWidth: "$md",
     margin: "auto",
     padding: "$4",
     fontSize: "$md",
-  }),
+  } as CSS,
   bannerTitle: css({
     color: "$gray1",
     marginBottom: "$4",
@@ -65,11 +59,11 @@ const styles = {
     backgroundRepeat: "no-repeat",
     backgroundPosition: "50% 88%",
   }),
-  interest: css({
+  interest: {
     marginTop: "$5",
     textAlign: "center",
     px: "$3",
-  }),
+  } as CSS,
   interestContent: css({
     "& > h2": {
       fontSize: "$2xl",
@@ -81,10 +75,10 @@ const styles = {
       fontSize: "$sm",
     },
   }),
-  button: css({
+  button: {
     fontSize: "$lg",
     minWidth: "200px",
-  }),
+  } as CSS,
   products: css({
     margin: "$5 auto",
     maxWidth: "$md",
@@ -93,6 +87,12 @@ const styles = {
       marginBottom: "$3",
     },
     px: "$2",
+  }),
+  info: css({
+    alignSelf: "center",
+    padding: 60,
+    h2: { color: "$gray1", marginTop: "$5", marginBottom: "$1", fontSize: 24, fontWeight: "bold" },
+    p: { marginTop: 3, fontSize: 14 },
   }),
   contact: css({
     my: "$6",
@@ -103,7 +103,7 @@ const styles = {
   }),
 };
 
-const Interest = styled(PortableText, styles.interest);
+const Interest = styled(PortableText, styles.interestContent);
 const Product = styled(PortableText, styles.products);
 const Info = styled(PortableText, styles.info);
 const Contact = styled(PortableText, styles.contact);
