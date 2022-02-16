@@ -1,7 +1,7 @@
 import Box from "@components/particles/Box";
-import { css } from "@theme";
+import { CSS } from "@theme";
 
-const circleStyle = css({
+const circleStyle: CSS = {
   color: "$white",
   textAlign: "center",
   borderRadius: "50%",
@@ -10,7 +10,7 @@ const circleStyle = css({
   flexDirection: "column",
   justifyContent: "center",
   margin: 0,
-});
+};
 interface CircleProps {
   size: number;
   color: string;
