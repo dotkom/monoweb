@@ -10,6 +10,8 @@ const Button = styled("button", {
   py: "10px",
   fontWeight: 600,
   display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   transition: "0.2s ease-in-out",
   "&:hover": {
     transform: "translateY(-1px)",
