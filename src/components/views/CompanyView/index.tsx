@@ -90,7 +90,7 @@ const styles = {
   }),
   info: css({
     alignSelf: "center",
-    padding: 60,
+    padding: "$4",
     h2: { color: "$gray1", marginTop: "$5", marginBottom: "$1", fontSize: 24, fontWeight: "bold" },
     p: { marginTop: 3, fontSize: 14 },
   }),
