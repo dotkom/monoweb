@@ -1,6 +1,5 @@
 import Badge from "../Badge";
 
-
 export default {
   title: "atoms/Badge",
   component: Badge,
