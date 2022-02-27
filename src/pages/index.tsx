@@ -1,16 +1,15 @@
 import React from "react";
-import { Box, Button } from "theme-ui";
+import Button from "@components/atoms/Button";
+import { styled } from "@theme";
 
 const Home: React.FC = () => {
   return (
-    <Box p={4} sx={styles.box}>
+    <Box>
       <Button>Hello</Button>
     </Box>
   );
 };
 
-const styles = {
-  box: {},
-};
+const Box = styled("div", {});
 
 export default Home;

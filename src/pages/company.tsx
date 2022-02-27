@@ -1,10 +1,10 @@
-import { CompanyView } from "@components/views/CompanyView";
+import { CompanyView, Content } from "@components/views/CompanyView/index";
 import { GetServerSideProps } from "next";
 import React, { FC } from "react";
 import { fetchCompanySectionData } from "src/api/get-company-page";
 
 interface CompanyProps {
-  sections: [Record<string, unknown>];
+  sections: Content;
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -12,7 +12,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { sections: data } };
 };
 const Company: FC<CompanyProps> = (props: CompanyProps) => {
-  return <CompanyView content={props.sections} />;
+  return <CompanyView companyContent={props.sections} />;
 };
 
 export default Company;

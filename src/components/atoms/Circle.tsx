@@ -1,7 +1,8 @@
-import { Box, ThemeUICSSObject } from "theme-ui";
+import Box from "@components/particles/Box";
+import { CSS } from "@theme";
 
-const style: ThemeUICSSObject = {
-  color: "white",
+const circleStyle: CSS = {
+  color: "$white",
   textAlign: "center",
   borderRadius: "50%",
   display: "inline-flex",
@@ -10,14 +11,13 @@ const style: ThemeUICSSObject = {
   justifyContent: "center",
   margin: 0,
 };
-
 interface CircleProps {
   size: number;
   color: string;
 }
 
 export const Circle: React.FC<CircleProps> = ({ children, size, color }) => {
-  return <Box sx={{ ...style, width: size, height: size, fontSize: size * 0.6, bg: color }}>{children}</Box>;
+  return <Box css={{ width: size, height: size, fontSize: 0.6 * size, bg: color, ...circleStyle }}>{children}</Box>;
 };
 
 export default Circle;

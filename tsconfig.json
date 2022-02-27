@@ -20,10 +20,12 @@
       "@public/*": ["public/*"],
       "@public": ["public"],
       "@styles/*": ["src/styles/*"],
-      "@styles": ["src/styles"]
+      "@styles": ["src/styles"],
+      "@theme": ["src/theme/stitches.config.ts"]
     },
     "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["./src/types/block-content-to-react.d.ts"]
 }

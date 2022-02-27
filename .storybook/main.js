@@ -15,6 +15,8 @@ module.exports = {
       "@emotion/core": resolve("node_modules/@emotion/react"),
       "@emotion/styled": resolve("node_modules/@emotion/styled"),
       "emotion-theming": resolve("node_modules/@emotion/react"),
+      "@theme": resolve("src/theme/stitches.config.ts"),
+      "@components": resolve("src/components"),
     };
     return config;
   },
