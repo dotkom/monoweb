@@ -3,8 +3,9 @@ import Text from "@components/atoms/Text";
 import { VFC } from "react";
 import Image from "next/image";
 import { CSS, css, styled } from "@theme";
-import Box from "@components/particles/Box";
+import { Box, Flex } from "@components/primitives";
 import { DateTime } from "luxon";
+import { FiUsers } from "react-icons/fi";
 
 interface EventCardProps {
   title: string;
@@ -29,6 +30,21 @@ const EventStart = styled("time", {
   fontWeight: "bold",
 });
 
+const EventMetadata = styled("div", {
+  display: "flex",
+  padding: "$2",
+  justifyContent: "space-between",
+  alignItems: "center",
+  $$background: "$colors$red11",
+  variants: {
+    color: {
+      subtle: {
+        backgroundColor: "$$background",
+      },
+    },
+  },
+});
+
 const EventCard: VFC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props;
   const date = DateTime.fromJSDate(eventStart);
@@ -36,7 +52,7 @@ const EventCard: VFC<EventCardProps> = (props) => {
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
       <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="100px" />
       <Box css={{ display: "flex", padding: "$2" }}>
-        <EventStart dateTime={date.toISO()}>
+        <EventStart dateTime={date.toISO()} color="subtle">
           <span className={styles.month()}>{date.toFormat("MMM")}</span>
           <Box css={{ lineHeight: "1.3", fontSize: "$2xl" }}>{date.toFormat("dd")}</Box>
         </EventStart>
@@ -44,6 +60,13 @@ const EventCard: VFC<EventCardProps> = (props) => {
           {title}
         </Text>
       </Box>
+      <EventMetadata>
+        <Box>Badges</Box>
+        <Flex css={{ alignItems: "center", justifyContent: "center" }}>
+          <FiUsers className={styles.icon()} />
+          {attendees}/{capacity}
+        </Flex>
+      </EventMetadata>
     </Card>
   );
 };
@@ -56,10 +79,14 @@ const styles = {
     margin: 0,
     pl: "$3",
     lineHeight: "1.4",
-    fontSize: "$lg",
+    fontSize: "$md",
   } as CSS,
   month: css({
     color: "$blue2",
+  }),
+  icon: css({
+    fontSize: "$xl",
+    paddingRight: "$1",
   }),
 };
 

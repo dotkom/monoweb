@@ -1,4 +1,4 @@
-import Box from "@components/particles/Box";
+import { Box } from "@components/primitives";
 import { CSS } from "@theme";
 
 const circleStyle: CSS = {

@@ -11040,6 +11040,7 @@ __metadata:
     prettier: ^2.4.1
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-icons: ^4.3.1
     swr: ^1.0.1
     theme-ui: ^0.12.0
     typescript: ^4.4.4
@@ -12051,6 +12052,15 @@ __metadata:
     react: ^16.6.0 || ^17.0.0
     react-dom: ^16.6.0 || ^17.0.0
   checksum: af7041314f6ebaefa64f3c06f75cf1ad62602b93228798615c2ca3365065688ee2b8c58bde98a9ae0d728aecfda5a757e9fc7695da3af2a504ff7e5291c716c9
+  languageName: node
+  linkType: hard
+
+"react-icons@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "react-icons@npm:4.3.1"
+  peerDependencies:
+    react: "*"
+  checksum: 2cc608acdd3e906aa3aaee290b8398220639677c949382d86e554020e5dab6a9f1ed7484418aa5272cb5c5c018e1fc9a323d433d901697a76530029f9ecb1263
   languageName: node
   linkType: hard
 

@@ -1,6 +1,6 @@
 import Button from "@components/atoms/Button";
 import PortableText from "@components/molecules/PortableText";
-import Box from "@components/particles/Box";
+import { Box } from "@components/primitives";
 import { BlockContentProps } from "@sanity/block-content-to-react";
 import { CSS, css, styled } from "@theme";
 import { VFC } from "react";
