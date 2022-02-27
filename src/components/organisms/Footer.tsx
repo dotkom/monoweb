@@ -1,4 +1,5 @@
 import { VFC } from "react";
+import { styled } from "@theme";
 
 interface FooterProps {
   test: string;
@@ -11,6 +12,24 @@ const footerStyle = {
   flexDirection: "column",
   justifyContent: "center",
 };
+/*
+const Foot = styled("footer", {
+  margin: 0,
+  color: "White",
+  height: 250,
+  backgroundColor: "#0D2546",
+});
+*/
+
+const A = styled("a", {
+  textAlign: "center",
+
+  fontSize: "1.2em",
+  padding: "1px 10px",
+  color: "White",
+
+  textDecoration: "none",
+});
 
 const Footer: VFC<FooterProps> = ({ test }) => {
   const links = ["PROFIL", "HJEM", "KARRIERE", "WIKI", "BIDRA"];
@@ -18,27 +37,25 @@ const Footer: VFC<FooterProps> = ({ test }) => {
 
   return (
     <footer style={{ width: "100%" }}>
-      <div style={{ backgroundColor: "orange", width: "100%", height: "20px" }} />
-
       <div style={{ ...footerStyle }}>
-        <ul style={{ margin: 0, padding: 0 }}>
+        <div style={{ padding: 0, margin: "auto" }}>
           {links.map((link) => (
-            <li key={link} style={{ display: "inline-block", margin: 16, fontWeight: "bold" }}>
+            <A key={link} style={{ fontWeight: "bold", fontSize: "1.5em" }}>
               {link}
-            </li>
+            </A>
           ))}
-        </ul>
+        </div>
 
-        <ul style={{ margin: 0, padding: 0 }}>
+        <div style={{ padding: 0, margin: "auto" }}>
           {facts.map((fact) => (
-            <li key={fact} style={{ display: "inline-block", margin: 16, fontSize: "16px" }}>
+            <A key={fact} style={{ borderRight: "solid 2px White" }}>
               {fact}
-            </li>
+            </A>
           ))}
-        </ul>
+        </div>
 
-        <p>Feil på nettsiden?</p>
-        <p>
+        <p style={{ margin: "auto" }}>Feil på nettsiden?</p>
+        <p style={{ margin: "auto" }}>
           Ta kontakt med <span style={{ color: "red" }}>Dotkom</span>
         </p>
       </div>
