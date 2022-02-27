@@ -1,65 +1,120 @@
 import { VFC } from "react";
 import { styled } from "@theme";
+import { SlackIcon } from "@components/icons/SlackIcon";
+import { GitHubIcon } from "@components/icons/GitHubIcon";
+import { InstagramIcon } from "@components/icons/InstagramIcon";
+import { FacebookIcon } from "@components/icons/FacebookIcon";
+import { FooterHead } from "./FooterHead";
+import { FooterHat } from "./FooterHat";
 
 interface FooterProps {
   test: string;
 }
 
-const footerStyle = {
-  backgroundColor: "#0D2546",
-  color: "white",
+const Wrapper = styled("div", {
   display: "flex",
   flexDirection: "column",
-  justifyContent: "center",
-};
-/*
-const Foot = styled("footer", {
-  margin: 0,
-  color: "White",
-  height: 250,
-  backgroundColor: "#0D2546",
+  width: "100%",
 });
-*/
 
-const A = styled("a", {
-  textAlign: "center",
+const FooterComponent = styled("footer", {
+  backgroundColor: "$blue1",
+  color: "White",
+  width: "100%",
+  paddingTop: "1.5em",
+  paddingBottom: "2.4em",
+  zIndex: 1000,
+});
 
+const PeePee = styled("p", {
+  margin: 0,
+});
+
+const Dot = styled("span", {
+  color: "$orange2",
+});
+
+const Link = styled("a", {
   fontSize: "1.2em",
   padding: "1px 10px",
-  color: "White",
+  cursor: "pointer",
 
   textDecoration: "none",
+
+  variants: {
+    size: {
+      big: {
+        fontWeight: "bold",
+        fontSize: "1.5em",
+      },
+      small: {
+        "&:not(:last-of-type)": {
+          borderRight: "solid 2px White",
+        },
+      },
+    },
+  },
+});
+
+const Section = styled("div", {
+  textAlign: "center",
+  margin: "auto",
+
+  variants: {
+    marginSize: {
+      small: {
+        marginBottom: "0.5em",
+      },
+      medium: {
+        marginBottom: "1.8em",
+      },
+    },
+  },
 });
 
 const Footer: VFC<FooterProps> = ({ test }) => {
-  const links = ["PROFIL", "HJEM", "KARRIERE", "WIKI", "BIDRA"];
-  const facts = ["Besøksadresse", "Kontaktinformasjon", "Post og faktura"];
+  const bigLinks = ["PROFIL", "HJEM", "KARRIERE", "WIKI", "BIDRA"];
+  const smallLinks = ["Besøksadresse", "Kontaktinformasjon", "Post og faktura"];
 
   return (
-    <footer style={{ width: "100%" }}>
-      <div style={{ ...footerStyle }}>
-        <div style={{ padding: 0, margin: "auto" }}>
-          {links.map((link) => (
-            <A key={link} style={{ fontWeight: "bold", fontSize: "1.5em" }}>
-              {link}
-            </A>
-          ))}
-        </div>
-
-        <div style={{ padding: 0, margin: "auto" }}>
-          {facts.map((fact) => (
-            <A key={fact} style={{ borderRight: "solid 2px White" }}>
-              {fact}
-            </A>
-          ))}
-        </div>
-
-        <p style={{ margin: "auto" }}>Feil på nettsiden?</p>
-        <p style={{ margin: "auto" }}>
-          Ta kontakt med <span style={{ color: "red" }}>Dotkom</span>
-        </p>
+    <Wrapper>
+      <div style={{ width: "100%", position: "relative", marginBottom: "-9px" }}>
+        <FooterHat />
+        <FooterHead />
       </div>
-    </footer>
+
+      <FooterComponent>
+        <Section marginSize="small">
+          <SlackIcon />
+          <GitHubIcon />
+          <InstagramIcon />
+          <FacebookIcon />
+        </Section>
+
+        <Section marginSize="small">
+          {bigLinks.map((link) => (
+            <Link size="big" key={link}>
+              {link}
+            </Link>
+          ))}
+        </Section>
+
+        <Section marginSize="medium">
+          {smallLinks.map((link) => (
+            <Link size="small" key={link}>
+              {link}
+            </Link>
+          ))}
+        </Section>
+
+        <Section>
+          <PeePee>Feil på nettsiden?</PeePee>
+          <PeePee>
+            Ta kontakt med <Dot>Dotkom</Dot>
+          </PeePee>
+        </Section>
+      </FooterComponent>
+    </Wrapper>
   );
 };
 
