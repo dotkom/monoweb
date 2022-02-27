@@ -44,13 +44,12 @@ const InterestGroupCard: React.FC<InterestGroupCardProps> = ({ backgroundImage, 
   const randomColor = TEMPLATE_BACKGROUND_COLORS[getRandomInt(TEMPLATE_BACKGROUND_COLORS.length - 1)];
 
   // if backgroundImage is not provided, use random colored banner
-  const background = backgroundImage ? `url(${backgroundImage})` : randomColor;
+  const backgroundValue = backgroundImage ? `url(${backgroundImage}), ${randomColor}` : randomColor;
 
-  console.log(background);
   return (
     <Card shadow css={{ width: "300px", height: "500px", position: "relative" }}>
       {/* Fallback on randomColor if 'background' fails */}
-      <Banner css={{ background: `${background}, ${randomColor}` }} />
+      <Banner css={{ background: backgroundValue }} />
       <Icon width="100px" height="100px" src={icon} />
       <Heading color="gray">{heading}</Heading>
       <Text color="gray" size="md" css={{ width: "200px", marginRight: "auto", marginLeft: "auto" }}>
