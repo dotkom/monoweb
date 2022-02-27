@@ -5,7 +5,7 @@ import Image from "next/image";
 import { CSS, css, styled } from "@theme";
 import { Box, Flex } from "@components/primitives";
 import { DateTime } from "luxon";
-import { FiUsers } from "react-icons/fi";
+import { FiUsers, FiMapPin, FiClock } from "react-icons/fi";
 
 interface EventCardProps {
   title: string;
@@ -27,6 +27,22 @@ const EventInfo = styled("div", {
 const EventCard: VFC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props;
   const date = DateTime.fromJSDate(eventStart);
+
+  const eventInfo = [
+    {
+      icon: <FiClock />,
+      text: date.toFormat("HH:mm"),
+    },
+    {
+      icon: <FiMapPin />,
+      text: location,
+    },
+    {
+      icon: <FiUsers />,
+      text: `${attendees}/${capacity}`,
+    },
+  ];
+
   return (
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
       <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="150px" />
@@ -41,19 +57,31 @@ const EventCard: VFC<EventCardProps> = (props) => {
           {title}
         </Text>
       </Flex>
+      <Box css={{ pl: "$2" }}>
+        {/* Temp until badges are done*/}
+        {tags.map((tag) => (
+          <Box
+            as="span"
+            css={{
+              backgroundColor: "$red11",
+              color: "$red5",
+              fontWeight: 700,
+              px: "$1",
+              borderRadius: "$2",
+              fontSize: "$xs",
+            }}
+          >
+            {tag}
+          </Box>
+        ))}
+      </Box>
       <EventInfo>
-        <Box>
-          {/* Temp until badges are done*/}
-          {tags.map((tag) => (
-            <Box as="span" css={{ backgroundColor: "$blue10" }}>
-              {tag}
-            </Box>
-          ))}
-        </Box>
-        <Flex css={{ alignItems: "center", justifyContent: "center" }}>
-          <ParticipantIcon />
-          {attendees}/{capacity}
-        </Flex>
+        {eventInfo.map((info) => (
+          <Flex css={styles.infoEntry}>
+            {info.icon}
+            {info.text}
+          </Flex>
+        ))}
       </EventInfo>
     </Card>
   );
@@ -69,12 +97,14 @@ const styles = {
     lineHeight: "1.3",
     fontSize: "$md",
   } as CSS,
+  infoEntry: {
+    alignItems: "center",
+    "& > svg": {
+      fontSize: "$md",
+      pr: "$1",
+    },
+  } as CSS,
 };
-
-const ParticipantIcon = styled(FiUsers, {
-  fontSize: "$xl",
-  paddingRight: "$1",
-});
 
 const Thumbnail = styled(Image, {
   borderTopRightRadius: "$3",

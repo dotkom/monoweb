@@ -8,7 +8,7 @@ export default {
 export const Primary = () => (
   <EventCard
     title="Bedriftspresentasjon med Bekk"
-    eventStart={new Date(2022, 8, 2)}
+    eventStart={new Date(2022, 8, 2, 17, 15)}
     capacity={30}
     attendees={10}
     tags={["Bedpres"]}
