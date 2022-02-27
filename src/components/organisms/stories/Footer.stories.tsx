@@ -6,7 +6,7 @@ import Footer from "../Footer";
 export default {
   title: "Organisms/Footer",
   component: Footer,
-} as ComponentMeta<typeof Button>;
+} as ComponentMeta<typeof Footer>;
 
 const Template: ComponentStory<typeof Footer> = (args) => <Footer {...args} />;
 
