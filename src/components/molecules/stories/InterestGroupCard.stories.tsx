@@ -1,57 +1,28 @@
+import React from "react";
+
+import { ComponentStory, ComponentMeta } from "@storybook/react";
 import InterestGroupCard from "../InterestGroupCard";
-import SquareInterestGroupCard from "../SquareInterestGroupCard";
 
 export default {
+  /* 👇 The title prop is optional.
+   * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: "molecules/InterestGroupCard",
   component: InterestGroupCard,
-};
+} as ComponentMeta<typeof InterestGroupCard>;
+
+//👇 We create a “template” of how args map to rendering
+const Template: ComponentStory<typeof InterestGroupCard> = (args) => <InterestGroupCard {...args} />;
+
+export const Primary = Template.bind({});
 
 const DESC =
   " Interessegruppen for folk som er glad i jul er interessegruppen for, you guessed it, de som er glad i jul.  Gruppens største formål er å spre julens glade budskap, samt spre juleglede når det måtte passe seg.  ";
 
-const LONGDESC =
-  "Hovedoppgaven til interessegruppen er å få samlet mennesker for å spille squash, dra å kite, låne hall for å spille håndball osv. Dvs. sporter/idretter der man gjerne trenger å være flere for å kunne drive med. Vi skal etterstrebe å ha et arrangement";
-
-export const RectangleCard = () => (
-  <InterestGroupCard
-    backgroundImage="/banner.jpeg"
-    description={DESC}
-    heading="Folk som er glad i Jul"
-    icon="/icon.png"
-  />
-);
-
-export const LongDescRectangleCard = () => (
-  <InterestGroupCard
-    backgroundImage="/banner.jpeg"
-    description={LONGDESC}
-    heading="Folk som er glad i Jul"
-    icon="/icon.png"
-  />
-);
-
-export const LongDescRectangleCardRandomBanner = () => (
-  <InterestGroupCard
-    description={LONGDESC}
-    heading="Folk som er glad i Jul"
-    icon="/icon.png"
-  />
-);
-
-export const SquareCard = () => (
-  <SquareInterestGroupCard
-    backgroundImage="/banner.jpeg"
-    description={DESC}
-    heading="Folk som er glad i Jul"
-    icon="/icon.png"
-  />
-);
-
-export const LongDescSquareCard = () => (
-  <SquareInterestGroupCard
-    backgroundImage="/banner.jpeg"
-    description={LONGDESC}
-    heading="Folk som er glad i Jul"
-    icon="/icon.png"
-  />
-);
+Primary.args = {
+  backgroundImage: "/banner.jpeg",
+  description: DESC,
+  heading: "Folk som er glad i Jul",
+  icon: "/icon.png",
+};

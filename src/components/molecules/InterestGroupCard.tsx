@@ -7,6 +7,7 @@ import Icon from "../atoms/Icon";
 function getRandomInt(max: number): number {
   return Math.floor(Math.random() * max);
 }
+
 interface InterestGroupCardProps {
   backgroundImage?: string;
   icon: string;
@@ -40,14 +41,16 @@ const Banner = styled("div", {
 const TEMPLATE_BACKGROUND_COLORS = ["#5E6779", "#2C5183", "#FBBE6A", "#8FB795"];
 
 const InterestGroupCard: React.FC<InterestGroupCardProps> = ({ backgroundImage, icon, heading, description }) => {
-  const background = backgroundImage
-    ? `url(${backgroundImage})`
-    : TEMPLATE_BACKGROUND_COLORS[getRandomInt(TEMPLATE_BACKGROUND_COLORS.length - 1)];
+  const randomColor = TEMPLATE_BACKGROUND_COLORS[getRandomInt(TEMPLATE_BACKGROUND_COLORS.length - 1)];
+
+  // if backgroundImage is not provided, use random colored banner
+  const background = backgroundImage ? `url(${backgroundImage})` : randomColor;
 
   console.log(background);
   return (
     <Card shadow css={{ width: "300px", height: "500px", position: "relative" }}>
-      <Banner css={{ background }} />
+      {/* Fallback on randomColor if 'background' fails */}
+      <Banner css={{ background: `${background}, ${randomColor}` }} />
       <Icon width="100px" height="100px" src={icon} />
       <Heading color="gray">{heading}</Heading>
       <Text color="gray" size="md" css={{ width: "200px", marginRight: "auto", marginLeft: "auto" }}>
