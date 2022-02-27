@@ -4,10 +4,10 @@ import { styled } from "@theme";
 export const Circle = styled(Box, {
   borderRadius: "$round",
   display: "inline-flex",
-  float: "left",
   textAlign: "center",
   flexDirection: "column",
   justifyContent: "center",
+  float: "left",
   margin: 0,
   variants: {
     color: {

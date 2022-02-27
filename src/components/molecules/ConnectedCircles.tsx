@@ -2,46 +2,38 @@
 
 import { Box, ThemeUICSSObject } from "theme-ui";
 import { Circle } from "../atoms/Circle";
-import { DottedLine } from "../atoms/DottedCurve";
-
-const style: ThemeUICSSObject = {
-  float: "left",
-  transform: "rotate(45deg)",
-  position: "relative",
-};
+import { DottedCurve } from "../atoms/DottedCurve";
 
 interface ConnectedCircleProps {
-  size: number;
-  lineColor: string;
-  circleColor: string;
+  size: "small" | "medium" | "large";
+  color: "yellow" | "blue" | "red";
 }
 
-export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineColor, circleColor }) => {
+export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, color }) => {
   return (
-    <Box sx={{ minWidth: size, display: "flex", justifyContent: "center", alignItems: "center", margin: "auto" }}>
-      <Circle size={size / 15} color={circleColor}>
+    <div>
+      <Circle size={size} color={color}>
         1
       </Circle>
-      <Box sx={{ ...style, width: size / 5, marginTop: size / 25 }}>
-        {" "}
-        <DottedLine color={lineColor}></DottedLine>
-      </Box>
-      <Circle size={size / 15} color={circleColor}>
+      <div>
+        <DottedCurve color={color} size={size}></DottedCurve>
+      </div>
+      <Circle size={size} color={color}>
         2
       </Circle>
-      <Box sx={{ ...style, transform: "rotate(-135deg)", width: size / 5, marginTop: -(size / 11) + 24 }}>
-        <DottedLine color={lineColor}></DottedLine>
-      </Box>
-      <Circle size={size / 15} color={circleColor}>
+      <div>
+        <DottedCurve color={color} size={size} flipped={true}></DottedCurve>
+      </div>
+      <Circle size={size} color={color}>
         3
       </Circle>
-      <Box sx={{ ...style, width: size / 5, marginTop: size / 25 }}>
-        <DottedLine color={lineColor}></DottedLine>
-      </Box>
-      <Circle size={size / 15} color={circleColor}>
+      <div>
+        <DottedCurve color={color} size={size}></DottedCurve>
+      </div>
+      <Circle size={size} color={color}>
         4
       </Circle>
-    </Box>
+    </div>
   );
 };
 
