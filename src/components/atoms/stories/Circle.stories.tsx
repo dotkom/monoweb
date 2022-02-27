@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { Circle } from "../Circle";
 
 export default {
@@ -5,18 +6,18 @@ export default {
   component: Circle,
 };
 
-export const Medium = () => (
-  <Circle size={50} color={"$blue3"}>
+export const Small = () => (
+  <Circle size={"small"} color={"blue"}>
     1
   </Circle>
 );
-export const Large = () => (
-  <Circle size={500} color={"$red3"}>
+export const Medium = () => (
+  <Circle size={"medium"} color={"red"}>
     2
   </Circle>
 );
-export const Tiny = () => (
-  <Circle size={25} color={"$orange3"}>
+export const Large = () => (
+  <Circle size={"large"} color={"yellow"}>
     3
   </Circle>
 );

@@ -1,23 +1,47 @@
 import Box from "@components/particles/Box";
-import { CSS } from "@theme";
+import { styled } from "@theme";
 
-const circleStyle: CSS = {
-  color: "$white",
-  textAlign: "center",
-  borderRadius: "50%",
+export const Circle = styled(Box, {
+  borderRadius: "$round",
   display: "inline-flex",
   float: "left",
+  textAlign: "center",
   flexDirection: "column",
   justifyContent: "center",
   margin: 0,
-};
-interface CircleProps {
-  size: number;
-  color: string;
-}
-
-export const Circle: React.FC<CircleProps> = ({ children, size, color }) => {
-  return <Box css={{ width: size, height: size, fontSize: 0.6 * size, bg: color, ...circleStyle }}>{children}</Box>;
-};
+  variants: {
+    color: {
+      blue: {
+        backgroundColor: "$blue3",
+        color: "$white",
+      },
+      yellow: {
+        backgroundColor: "$orange3",
+        color: "$white",
+      },
+      red: {
+        backgroundColor: "$red2",
+        color: "$white",
+      },
+    },
+    size: {
+      small: {
+        width: "5vw",
+        height: "5vw",
+        fontSize: "3.5vw",
+      },
+      medium: {
+        width: "10vw",
+        height: "10vw",
+        fontSize: "7vw",
+      },
+      large: {
+        width: "15vw",
+        height: "15vw",
+        fontSize: "10.5vw",
+      },
+    },
+  },
+});
 
 export default Circle;
