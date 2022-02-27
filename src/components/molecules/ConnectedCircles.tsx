@@ -1,39 +1,59 @@
 /** @jsxImportSource theme-ui */
 
-import { Box, ThemeUICSSObject } from "theme-ui";
+import Box, { Flex } from "@components/particles/Box";
 import { Circle } from "../atoms/Circle";
 import { DottedCurve } from "../atoms/DottedCurve";
 
 interface ConnectedCircleProps {
-  size: "small" | "medium" | "large";
   color: "yellow" | "blue" | "red";
+  steps: string[];
 }
 
-export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, color }) => {
+export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ color, steps }) => {
   return (
-    <div>
-      <Circle size={size} color={color}>
-        1
-      </Circle>
-      <div>
-        <DottedCurve color={color} size={size}></DottedCurve>
-      </div>
-      <Circle size={size} color={color}>
-        2
-      </Circle>
-      <div>
-        <DottedCurve color={color} size={size} flipped={true}></DottedCurve>
-      </div>
-      <Circle size={size} color={color}>
-        3
-      </Circle>
-      <div>
-        <DottedCurve color={color} size={size}></DottedCurve>
-      </div>
-      <Circle size={size} color={color}>
-        4
-      </Circle>
-    </div>
+    <Flex css={{ fontSize: "1.2vw", justifyContent: "center", textAlign: "center", paddingTop: "5vw" }}>
+      <Flex css={{ width: "7vw", justifyContent: "top", flexDirection: "column" }}>
+        <Flex css={{ justifyContent: "center" }}>
+          <Circle size={"small"} color={color}>
+            1
+          </Circle>
+        </Flex>
+        <Box css={{ display: "inline" }}>{steps[0]}</Box>
+      </Flex>
+      <Flex css={{ width: "11vw", justifyContent: "top", margin: " 0 -0.5vw 0 -0.5vw" }}>
+        <DottedCurve color={color} size={"small"}></DottedCurve>
+      </Flex>
+      <Flex css={{ width: "7vw", justifyContent: "top", flexDirection: "column" }}>
+        <Flex css={{ justifyContent: "center" }}>
+          <Circle size={"small"} color={color}>
+            2
+          </Circle>
+        </Flex>
+        <Box css={{ display: "inline" }}>{steps[1]}</Box>
+      </Flex>
+      <Flex css={{ width: "11vw", justifyContent: "top", margin: " 0 -0.5vw 0 -0.5vw" }}>
+        <DottedCurve color={color} size={"small"} flipped={true}></DottedCurve>
+      </Flex>
+      <Flex css={{ width: "7vw", justifyContent: "top", flexDirection: "column" }}>
+        <Flex css={{ justifyContent: "center" }}>
+          <Circle size={"small"} color={color}>
+            3
+          </Circle>
+        </Flex>
+        <Box css={{ display: "inline" }}>{steps[2]}</Box>
+      </Flex>
+      <Flex css={{ width: "11vw", justifyContent: "top", margin: " 0 -0.5vw 0 -0.5vw" }}>
+        <DottedCurve color={color} size={"small"}></DottedCurve>
+      </Flex>
+      <Flex css={{ width: "7vw", justifyContent: "top", flexDirection: "column" }}>
+        <Flex css={{ justifyContent: "center" }}>
+          <Circle size={"small"} color={color}>
+            4
+          </Circle>
+        </Flex>
+        <Box css={{ display: "inline" }}>{steps[3]}</Box>
+      </Flex>
+    </Flex>
   );
 };
 

@@ -9,12 +9,13 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
   const margins = { small: "-5vw", medium: "-10vw", large: "-15vw" };
   let add = 0;
   let margin = "0";
-  if (flipped) {
+  const blueColor = "#153E75";
+  if (!flipped) {
     add = 180;
     margin = margins[size];
   }
   const deg = "rotate(".concat((45 + add).toString(), ")");
-  const style = { float: "left", marginTop: margin };
+  const style: string | number | {} = { float: "left", marginTop: margin };
   return (
     <svg
       version="1.0"
@@ -30,7 +31,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
       style={style}
     >
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -41,7 +42,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="100.4"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -52,7 +53,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="137.7"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -63,7 +64,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="175.3"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -74,7 +75,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="213.3"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -85,7 +86,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="247"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -96,7 +97,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="279.7"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -107,7 +108,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="309.7"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -118,7 +119,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="336.6"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -129,7 +130,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="359.9"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -140,7 +141,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="379.8"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -151,7 +152,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="396.5"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -162,7 +163,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="409"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -173,7 +174,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="416.9"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -184,7 +185,7 @@ export const DottedCurve: React.FC<LineProps> = ({ color, size, flipped }) => {
         y2="420.5"
       />
       <line
-        stroke={color}
+        stroke={blueColor}
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"

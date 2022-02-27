@@ -5,6 +5,9 @@ export default {
   component: ConnectedCircles,
 };
 
-export const Small = () => <ConnectedCircles size={"small"} color={"blue"}></ConnectedCircles>;
-export const Medium = () => <ConnectedCircles size={"medium"} color={"yellow"}></ConnectedCircles>;
-export const Large = () => <ConnectedCircles size={"large"} color={"red"}></ConnectedCircles>;
+export const Small = () => (
+  <ConnectedCircles
+    color={"blue"}
+    steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]}
+  ></ConnectedCircles>
+);

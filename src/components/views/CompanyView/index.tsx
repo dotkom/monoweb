@@ -6,6 +6,7 @@ import { CSS, css, styled } from "@theme";
 import { VFC } from "react";
 import CompanyInterestProcess from "./CompanyInterestProcess";
 import Link from "next/link";
+import ConnectedCircles from "@components/molecules/ConnectedCircles";
 
 export type Content = BlockContentProps["blocks"];
 
@@ -33,7 +34,7 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
       </Box>
       <Product blocks={product.content} />
       <Box css={{ bg: "$bluebg", fullWidth: true }}>
-        <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
+        <ConnectedCircles color={"blue"} steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
       </Box>
       <Info blocks={info.content} />
       <Contact blocks={contact.content} />
