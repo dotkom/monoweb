@@ -1,4 +1,5 @@
 import InterestGroupCard from "../InterestGroupCard";
+import SquareInterestGroupCard from "../SquareInterestGroupCard";
 
 export default {
   title: "molecules/InterestGroupCard",
@@ -17,8 +18,11 @@ export const RectangleCard = () => (
   />
 );
 
-// export const SquareCard = () => (
-//   <InterestGroupCard css={{ maxWidth: "250px" }}>
-//     <Content />
-//   </InterestGroupCard>
-// );
+export const SquareCard = () => (
+  <SquareInterestGroupCard 
+    backgroundImage="/banner.jpeg"
+    description={DESC}
+    heading="Folk som er glad i Jul"
+    icon="/icon.png"
+/>
+);

@@ -17,3 +17,5 @@ build-storybook.log
 package-lock.json
 # IDE specific
 .idea
+# SNYK automatically creates this
+.dccache
