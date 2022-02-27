@@ -4,8 +4,11 @@ import Button from "../atoms/Button";
 import Text from "../atoms/Text";
 import Icon from "../atoms/Icon";
 
+function getRandomInt(max: number): number {
+  return Math.floor(Math.random() * max);
+}
 interface InterestGroupCardProps {
-  backgroundImage: string;
+  backgroundImage?: string;
   icon: string;
   heading: string;
   description: string;
@@ -34,10 +37,17 @@ const Banner = styled("div", {
   backgroundSize: "auto",
 });
 
+const TEMPLATE_BACKGROUND_COLORS = ["#5E6779", "#2C5183", "#FBBE6A", "#8FB795"];
+
 const InterestGroupCard: React.FC<InterestGroupCardProps> = ({ backgroundImage, icon, heading, description }) => {
+  const background = backgroundImage
+    ? `url(${backgroundImage})`
+    : TEMPLATE_BACKGROUND_COLORS[getRandomInt(TEMPLATE_BACKGROUND_COLORS.length - 1)];
+
+  console.log(background);
   return (
     <Card shadow css={{ width: "300px", height: "500px", position: "relative" }}>
-      <Banner css={{ background: `url(${backgroundImage})` }} />
+      <Banner css={{ background }} />
       <Icon width="100px" height="100px" src={icon} />
       <Heading color="gray">{heading}</Heading>
       <Text color="gray" size="md" css={{ width: "200px", marginRight: "auto", marginLeft: "auto" }}>

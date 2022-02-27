@@ -30,6 +30,14 @@ export const LongDescRectangleCard = () => (
   />
 );
 
+export const LongDescRectangleCardRandomBanner = () => (
+  <InterestGroupCard
+    description={LONGDESC}
+    heading="Folk som er glad i Jul"
+    icon="/icon.png"
+  />
+);
+
 export const SquareCard = () => (
   <SquareInterestGroupCard
     backgroundImage="/banner.jpeg"
