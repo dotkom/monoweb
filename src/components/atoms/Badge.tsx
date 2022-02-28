@@ -1,22 +1,5 @@
 import { styled } from "@theme";
 
-const getVariants = (color1: string, color2: string) => ({
-  subtle: {
-    bg: "none",
-    color: color2,
-    border: "1px solid",
-    borderColor: color2,
-  },
-  solid: {
-    color: "$white",
-    bg: color2,
-  },
-  outline: {
-    color: color2,
-    bg: color1,
-  },
-});
-
 const getVariant = () => ({
   color: {
     green: {
