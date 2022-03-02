@@ -1,7 +1,7 @@
 import { VFC } from "react";
 import Circle from "@components/atoms/Circle";
 import { css } from "@theme";
-import Box from "@components/particles/Box";
+import { Box } from "@components/primitives";
 interface CompanyInterestProcessProps {
   steps: string[];
 }

@@ -5,7 +5,6 @@ const Card = styled("div", {
   margin: 0,
   minWidth: 0,
   borderRadius: "$3",
-  p: 32,
   variants: {
     shadow: {
       true: {

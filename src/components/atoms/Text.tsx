@@ -23,6 +23,13 @@ const Text = styled("p", {
         fontSize: "32px",
       },
     },
+    truncate: {
+      true: {
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      },
+    },
   },
 });
 

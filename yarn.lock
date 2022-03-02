@@ -3812,6 +3812,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^2.0.9":
+  version: 2.0.9
+  resolution: "@types/luxon@npm:2.0.9"
+  checksum: 6c99741e1735aca5b784981ecec3a6ad9497b8e46cc3dd0ba625901bb5b34af4c7b1bf33e32b3e8468312ce2850b31f553f712283a8301a0ee1aacb633276738
+  languageName: node
+  linkType: hard
+
 "@types/mdast@npm:^3.0.0":
   version: 3.0.10
   resolution: "@types/mdast@npm:3.0.10"
@@ -9885,6 +9892,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "luxon@npm:2.3.0"
+  checksum: 3d00e1b812a31082cf0d97e844d7354c93891fbd14795756f396ee5656387e21d2c862edb841516114eb391f8314a6cf3848799acc6d59cf9560c88c909b91f0
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^2.0.0, make-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -11007,6 +11021,7 @@ __metadata:
     "@storybook/preset-scss": ^1.0.3
     "@storybook/react": ^6.1.14
     "@theme-ui/color": ^0.12.0
+    "@types/luxon": ^2.0.9
     "@types/node": ^14.14.13
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
@@ -11019,11 +11034,13 @@ __metadata:
     eslint-plugin-prettier: ^3.2.0
     husky: ^4.3.7
     lint-staged: ^10.5.3
+    luxon: ^2.3.0
     next: ^12.1.0
     next-compose-plugins: ^2.2.1
     prettier: ^2.4.1
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-icons: ^4.3.1
     swr: ^1.0.1
     theme-ui: ^0.12.0
     typescript: ^4.4.4
@@ -12035,6 +12052,15 @@ __metadata:
     react: ^16.6.0 || ^17.0.0
     react-dom: ^16.6.0 || ^17.0.0
   checksum: af7041314f6ebaefa64f3c06f75cf1ad62602b93228798615c2ca3365065688ee2b8c58bde98a9ae0d728aecfda5a757e9fc7695da3af2a504ff7e5291c716c9
+  languageName: node
+  linkType: hard
+
+"react-icons@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "react-icons@npm:4.3.1"
+  peerDependencies:
+    react: "*"
+  checksum: 2cc608acdd3e906aa3aaee290b8398220639677c949382d86e554020e5dab6a9f1ed7484418aa5272cb5c5c018e1fc9a323d433d901697a76530029f9ecb1263
   languageName: node
   linkType: hard
 
