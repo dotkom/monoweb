@@ -1,11 +1,12 @@
 import Card from "@components/atoms/Card";
 import Text from "@components/atoms/Text";
-import { VFC } from "react";
+import { FC, useEffect, VFC } from "react";
 import Image from "next/image";
 import { CSS, css, styled } from "@theme";
 import { Box, Flex } from "@components/primitives";
 import { DateTime } from "luxon";
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi";
+import { info } from "console";
 
 interface EventCardProps {
   title: string;
@@ -13,79 +14,81 @@ interface EventCardProps {
   attendees?: number;
   capacity?: number;
   tags: string[];
-  location: string;
+  location: { text: string; link: string };
   thumbnailUrl: string;
 }
-
-const EventInfo = styled("div", {
-  display: "flex",
-  padding: "$2",
-  justifyContent: "space-between",
-  alignItems: "center",
-});
 
 const EventCard: VFC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props;
   const date = DateTime.fromJSDate(eventStart);
 
-  const eventInfo = [
+  let eventInfo = [
     {
       icon: <FiClock />,
       text: date.toFormat("HH:mm"),
     },
-    {
-      icon: <FiMapPin />,
-      text: location,
-    },
-    {
-      icon: <FiUsers />,
-      text: `${attendees}/${capacity}`,
-    },
   ];
+  if (attendees && capacity) {
+    eventInfo = [...eventInfo, { icon: <FiUsers />, text: `${attendees}/${capacity}` }];
+  }
+
+  useEffect(() => {}, []);
 
   return (
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
       <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="150px" />
-      <Flex css={{ padding: "$2" }}>
-        <EventDateContainer dateTime={date.toISO()} color="red">
-          <Box as="span" css={{ color: "$blue2", lineHeight: "1.2" }}>
-            {date.toFormat("MMM")}
-          </Box>
-          <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{date.toFormat("dd")}</Box>
-        </EventDateContainer>
-        <Text as="h2" css={styles.title}>
-          {title}
-        </Text>
+      <Flex css={{ padding: "$2", flexDirection: "column" }}>
+        <HeaderArea>
+          <time dateTime={date.toISO()} color="red" className={styles.dateContainer()}>
+            <Box as="span" css={{ color: "$blue2", lineHeight: "1.2" }}>
+              {date.toFormat("MMM")}
+            </Box>
+            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{date.toFormat("dd")}</Box>
+          </time>
+          <Text as="h2" css={styles.title}>
+            {title}
+          </Text>
+        </HeaderArea>
+        <TagsArea>
+          {/* Temp until badges are done*/}
+          {tags.map((tag) => (
+            <TempBadge>{tag}</TempBadge>
+          ))}
+        </TagsArea>
+        <LocationArea>
+          <FiMapPin />
+          <Text size="lg" as="a" href={location.link} css={styles.locationLink} truncate>
+            {location.text}
+          </Text>
+        </LocationArea>
+        <InfoArea>
+          {eventInfo.map(({ icon, text }) => (
+            <Text size="lg" as="span" css={styles.infoEntry}>
+              {icon}
+              {text}
+            </Text>
+          ))}
+        </InfoArea>
       </Flex>
-      <Box css={{ pl: "$2" }}>
-        {/* Temp until badges are done*/}
-        {tags.map((tag) => (
-          <Box
-            as="span"
-            css={{
-              backgroundColor: "$red11",
-              color: "$red5",
-              fontWeight: 700,
-              px: "$1",
-              borderRadius: "$2",
-              fontSize: "$xs",
-            }}
-          >
-            {tag}
-          </Box>
-        ))}
-      </Box>
-      <EventInfo>
-        {eventInfo.map((info) => (
-          <Flex css={styles.infoEntry}>
-            {info.icon}
-            {info.text}
-          </Flex>
-        ))}
-      </EventInfo>
     </Card>
   );
 };
+
+const TempBadge: FC = ({ children }) => (
+  <Box
+    as="span"
+    css={{
+      backgroundColor: "$red11",
+      color: "$red5",
+      fontWeight: 700,
+      px: "$1",
+      borderRadius: "$2",
+      fontSize: "$xs",
+    }}
+  >
+    {children}
+  </Box>
+);
 
 const styles = {
   title: {
@@ -98,12 +101,30 @@ const styles = {
     fontSize: "$md",
   } as CSS,
   infoEntry: {
+    m: 0,
+    display: "flex",
     alignItems: "center",
     "& > svg": {
-      fontSize: "$md",
-      pr: "$1",
+      mr: "$1",
     },
   } as CSS,
+  locationLink: {
+    color: "$black",
+    textDecoration: "underline",
+    textDecorationColor: "rgba(44, 81, 131,0)",
+    transition: "text-decoration-color 300ms",
+    "&:hover": {
+      color: "$blue4",
+      textDecorationColor: "rgba(44, 81, 131,1)",
+    },
+  } as CSS,
+  dateContainer: css({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "min-content",
+    fontWeight: "bold",
+  }),
 };
 
 const Thumbnail = styled(Image, {
@@ -111,12 +132,20 @@ const Thumbnail = styled(Image, {
   borderTopLeftRadius: "$3",
 });
 
-const EventDateContainer = styled("time", {
+const HeaderArea = styled("div", {
   display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  width: "min-content",
-  fontWeight: "bold",
+  pb: "$2",
+});
+
+const TagsArea = styled("div", {
+  pb: "$2",
+});
+
+const LocationArea = styled("div", styles.infoEntry);
+
+const InfoArea = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
 });
 
 export default EventCard;
