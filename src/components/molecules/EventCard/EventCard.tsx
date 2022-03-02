@@ -1,12 +1,11 @@
 import Card from "@components/atoms/Card";
 import Text from "@components/atoms/Text";
-import { FC, useEffect, VFC } from "react";
+import { FC, VFC } from "react";
 import Image from "next/image";
 import { CSS, css, styled } from "@theme";
 import { Box, Flex } from "@components/primitives";
 import { DateTime } from "luxon";
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi";
-import { info } from "console";
 
 interface EventCardProps {
   title: string;
