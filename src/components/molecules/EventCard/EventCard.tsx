@@ -32,8 +32,6 @@ const EventCard: VFC<EventCardProps> = (props) => {
     eventInfo = [...eventInfo, { icon: <FiUsers />, text: `${attendees}/${capacity}` }];
   }
 
-  useEffect(() => {}, []);
-
   return (
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
       <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="150px" />
