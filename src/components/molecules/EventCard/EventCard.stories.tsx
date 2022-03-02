@@ -1,4 +1,4 @@
-import EventCard from "../EventCard";
+import EventCard from "./EventCard";
 
 export default {
   title: "molecules/EventCard",
