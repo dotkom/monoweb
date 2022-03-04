@@ -1,4 +1,4 @@
-import { Circle } from "../Circle";
+import { Circle } from "./Circle";
 
 export default {
   title: "atoms/Circle",

@@ -1,4 +1,4 @@
-import Card from "@components/atoms/Card";
+import Card from "@components/atoms/Card/Card";
 import Text from "@components/atoms/Text";
 import { FC, VFC } from "react";
 import Image from "next/image";

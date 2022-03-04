@@ -1,4 +1,4 @@
-import Card from "../Card";
+import Card from "./Card";
 import Text from "../Text";
 
 export default {
@@ -20,13 +20,13 @@ const Content = () => (
 );
 
 export const Outline = () => (
-  <Card css={{ maxWidth: "250px" }}>
+  <Card css={{ maxWidth: "250px", padding: "$2" }}>
     <Content />
   </Card>
 );
 
 export const Shadow = () => (
-  <Card css={{ maxWidth: "250px" }} shadow>
+  <Card css={{ maxWidth: "250px", padding: "$2" }} shadow>
     <Content />
   </Card>
 );

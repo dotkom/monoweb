@@ -1,7 +1,7 @@
 /** @jsxImportSource theme-ui */
 
 import { Box, ThemeUICSSObject } from "theme-ui";
-import { Circle } from "../atoms/Circle";
+import { Circle } from "../atoms/Circle/Circle";
 import { DottedLine } from "../atoms/DottedCurve";
 
 const style: ThemeUICSSObject = {
