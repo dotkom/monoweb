@@ -5,7 +5,6 @@ import { BlockContentProps } from "@sanity/block-content-to-react";
 import { CSS, css, styled } from "@theme";
 import { VFC } from "react";
 import CompanyInterestProcess from "./CompanyInterestProcess";
-import Link from "next/link";
 
 export type Content = BlockContentProps["blocks"];
 
@@ -27,9 +26,9 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
       </Box>
       <Box css={styles.interest}>
         <Interest blocks={interest.content} />
-        <Link href="https://new.online.ntnu.no">
+        <a href="https://interesse.online.ntnu.no">
           <Button css={styles.button}>Send Interesse</Button>
-        </Link>
+        </a>
       </Box>
       <Product blocks={product.content} />
       <Box css={{ bg: "$bluebg", fullWidth: true }}>
