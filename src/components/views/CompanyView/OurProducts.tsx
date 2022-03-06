@@ -1,15 +1,12 @@
-import { VFC } from "react";
 import React from "react";
-import Circle from "@components/atoms/Circle";
 import { css } from "@theme";
-import { Box, Flex } from "@components/primitives";
+import { Flex } from "@components/primitives";
 import BedpressIcon from "src/components/icons/BedpressIcon";
 import ItexIcon from "src/components/icons/ItexIcon";
 import OfflineIcon from "src/components/icons/OfflineIcon";
 import UtlysningIcon from "src/components/icons/UtlysningIcon";
 import TecktalksIcon from "src/components/icons/TecktalksIcon";
 import Text from "@components/atoms/Text";
-import text from "@styles/components/text";
 
 const OurProducts = () => {
   return (
