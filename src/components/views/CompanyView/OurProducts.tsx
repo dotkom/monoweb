@@ -1,9 +1,9 @@
 import { css } from "@theme";
 import { Flex } from "@components/primitives";
-import BedpressIcon from "src/components/icons/BedpressIcon";
-import ItexIcon from "src/components/icons/ItexIcon";
-import OfflineIcon from "src/components/icons/OfflineIcon";
-import UtlysningIcon from "src/components/icons/UtlysningIcon";
+import BedpressIcon from "@components/icons/BedpressIcon";
+import ItexIcon from "@components/icons/ItexIcon";
+import OfflineIcon from "@components/icons/OfflineIcon";
+import UtlysningIcon from "@components/icons/UtlysningIcon";
 import TechtalksIcon from "@components/icons/TechtalksIcon";
 import Text from "@components/atoms/Text";
 

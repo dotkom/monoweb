@@ -5,7 +5,7 @@ export { default as LinkedinIcon } from "./LinkedinIcon";
 export { default as NextjsIcon } from "./NextjsIcon";
 export { default as OfflineIcon } from "./OfflineIcon";
 export { default as PankodIcon } from "./PankodIcon";
-export { default as TecktalksIcon } from "./TecktalksIcon";
+export { default as TechtalksIcon } from "./TechtalksIcon";
 export { default as TwitterIcon } from "./TwitterIcon";
 export { default as UtlysningIcon } from "./UtlysningIcon";
 export { default as YoutubeIcon } from "./YoutubeIcon";
