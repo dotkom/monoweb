@@ -35,9 +35,7 @@ const CheckboxIndicator = styled(CheckboxPrimitive.Indicator, {
   display: "flex",
 });
 
-interface CheckboxProps extends CheckboxPrimitive.CheckboxProps {}
-
-const Checkbox: VFC<CheckboxProps> = (props) => {
+const Checkbox: VFC<CheckboxPrimitive.CheckboxProps> = (props) => {
   const [checked, setChecked] = useState<CheckboxPrimitive.CheckedState>(props.defaultChecked || false);
 
   return (
