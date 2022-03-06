@@ -1,4 +1,4 @@
-import PortableText from "react-portable-text";
+import PortableText from "@components/molecules/PortableText";
 
 import { jsx, Text } from "theme-ui";
 import { Heading, Box } from "@theme-ui/components";

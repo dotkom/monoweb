@@ -8,7 +8,7 @@ export interface Article {
   _updatedAt: string;
   tags: string[];
   excerpt: string;
-  cover_image: string;
+  cover_image: { asset: { url: string } };
   content: BlockContentProps["blocks"];
 }
 

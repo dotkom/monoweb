@@ -1,23 +1,25 @@
-import PortableText from "react-portable-text";
+//import PortableText from "react-portable-text";
 
-import { jsx, Text } from "theme-ui";
-import { Heading, Box, Card } from "@theme-ui/components";
+//import { jsx, Text } from "theme-ui";
+//import { Heading, Box, Card } from "@theme-ui/components";
+import Box from "@components/particles/Box";
+import Text from "@components/atoms/Text";
+import Card from "@components/atoms/Card";
+import PortableText from "@components/molecules/PortableText";
 import { FC } from "react";
 import { typography } from "@styles/typography";
 import { colors } from "@styles/colors";
 
 interface ArticleTagsProps {
-  content: {
-    content: [Record<string, unknown>];
-  };
+  content: string[];
 }
 
 export const ArticleTags: FC<ArticleTagsProps> = (props: ArticleTagsProps) => {
-  const content = props.content.content;
+  const content = props.content;
 
   return (
     <Box
-      sx={{
+      css={{
         maxWidth: "60rem",
         margin: "auto",
         display: "flex",
@@ -28,9 +30,9 @@ export const ArticleTags: FC<ArticleTagsProps> = (props: ArticleTagsProps) => {
       }}
     >
       <Card
-        sx={{
-          backgroundColor: colors.gray[11],
-          color: colors.gray[3],
+        css={{
+          backgroundColor: "#DBDDE1",
+          color: "#4C566A",
           borderRadius: "5px",
           height: "1.5rem",
           display: "flex",

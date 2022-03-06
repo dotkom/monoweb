@@ -7,13 +7,11 @@ import { typography } from "@styles/typography";
 import { colors } from "@styles/colors";
 
 interface ArticleSummaryProps {
-  content: {
-    content: [Record<string, unknown>];
-  };
+  content: string;
 }
 
 export const ArticleSummary: FC<ArticleSummaryProps> = (props: ArticleSummaryProps) => {
-  const content = props.content.content;
+  const content = props.content;
 
   return (
     <Box
