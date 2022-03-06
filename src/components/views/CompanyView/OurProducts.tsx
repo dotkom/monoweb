@@ -1,11 +1,10 @@
-import React from "react";
 import { css } from "@theme";
 import { Flex } from "@components/primitives";
 import BedpressIcon from "src/components/icons/BedpressIcon";
 import ItexIcon from "src/components/icons/ItexIcon";
 import OfflineIcon from "src/components/icons/OfflineIcon";
 import UtlysningIcon from "src/components/icons/UtlysningIcon";
-import TecktalksIcon from "src/components/icons/TecktalksIcon";
+import TechtalksIcon from "@components/icons/TechtalksIcon";
 import Text from "@components/atoms/Text";
 
 const OurProducts = () => {
@@ -26,7 +25,7 @@ const OurProducts = () => {
         </Flex>
         <Flex css={{ flexDirection: "column", textAlign: "center" }}>
           <Flex css={{ justifyContent: "center" }}>
-            <TecktalksIcon className={styles.icon()} />
+            <TechtalksIcon className={styles.icon()} />
           </Flex>
           <Text css={{ fontWeight: "bold" }}>Tech Talks</Text>
         </Flex>
