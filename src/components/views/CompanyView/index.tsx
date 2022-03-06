@@ -1,4 +1,4 @@
-import Button from "@components/atoms/Button";
+import Button from "@components/atoms/Button/Button";
 import PortableText from "@components/molecules/PortableText";
 import { Box } from "@components/primitives";
 import { BlockContentProps } from "@sanity/block-content-to-react";
