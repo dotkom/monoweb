@@ -15,6 +15,9 @@ const CheckboxRoot = styled(CheckboxPrimitive.Root, {
   justifyContent: "center",
   boxShadow: `0 2px 10px $black`,
   transition: "background-color 100ms linear",
+  "&:hover": {
+    cursor: "pointer",
+  },
   variants: {
     checked: {
       true: {
