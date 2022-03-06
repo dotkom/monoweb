@@ -32,7 +32,7 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
         </a>
       </Box>
       <Product blocks={product.content} />
-      <OurProducts></OurProducts>
+      <OurProducts />
       <Box css={{ bg: "$bluebg", fullWidth: true }}>
         <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
       </Box>
