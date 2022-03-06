@@ -13,6 +13,7 @@
         "format": "prettier --write '**/*.{js,jsx,ts,tsx}'"
     },
     "dependencies": {
+        "@radix-ui/react-checkbox": "^0.1.5",
         "@sanity/block-content-to-react": "^3.0.0",
         "@sanity/client": "^2.21.10",
         "@stitches/react": "^1.2.6",
@@ -24,6 +25,7 @@
         "prettier": "^2.4.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "react-hook-form": "^7.27.1",
         "react-icons": "^4.3.1",
         "swr": "^1.0.1",
         "theme-ui": "^0.12.0"
