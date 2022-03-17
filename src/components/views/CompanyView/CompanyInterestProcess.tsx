@@ -1,6 +1,7 @@
 import { VFC } from "react";
 import Circle from "@components/atoms/Circle";
 import { css } from "@theme";
+import type { CSS } from "@theme";
 import { Box } from "@components/primitives";
 interface CompanyInterestProcessProps {
   steps: string[];
@@ -8,36 +9,41 @@ interface CompanyInterestProcessProps {
 
 const CompanyInterestProcess: VFC<CompanyInterestProcessProps> = ({ steps }) => {
   return (
-    <div className={styles.stepText()}>
+    <Box css={styles.step}>
       {steps.map((step, index) => (
-        <Box
-          key={step}
-          css={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "$3 0", marginBottom: "$1" }}
-        >
+        <Box key={step} css={styles.stepContainer}>
           <Circle size={700 / 15} color="$blue3">
             {index + 1}
           </Circle>
           <p>{step}</p>
         </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 
 const styles = {
-  stepText: css({
+  step: {
     maxWidth: "$lg",
     padding: "$4 $3",
     mx: "auto",
-    "@bp3": {
-      display: "flex",
-      justifyContent: "space-between",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr 1fr",
+    "@maxLaptop": {
+      gridTemplateColumns: "1fr 1fr",
+      gridTemplateRows: "1fr 1fr",
     },
-  }),
-  line: css({
-    display: "relative",
-    transform: "rotate(45deg)",
-  }),
+    "@maxTablet": {
+      gridTemplateColumns: "1fr",
+    },
+  } as CSS,
+  stepContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    margin: "$3 0",
+    marginBottom: "$1",
+  } as CSS,
 };
 
 export default CompanyInterestProcess;
