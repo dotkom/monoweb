@@ -1,7 +1,7 @@
 import { Box, Flex } from "../primitives";
 import { FC } from "react";
 import { Article } from "src/api/get-article";
-import { CSS, css } from "@theme";
+import { CSS, css, styled } from "@theme";
 import Text from "@components/atoms/Text";
 import PortableText from "@components/molecules/PortableText";
 import Image from "next/image";
@@ -13,7 +13,7 @@ interface ArticleViewProps {
 }
 
 export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
-  const { title, author, _createdAt, tags, excerpt, cover_image, content } = props.article;
+  const { title, author, _createdAt, tags, excerpt, cover_image, content, estimatedReadingTime } = props.article;
 
   const date = DateTime.fromISO(_createdAt);
 
@@ -44,7 +44,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
               Publisert <span className={styles.lightFont()}>{date.toFormat("dd MMM yyyy", { locale: "no" })}</span>
             </Text>
             <Text>
-              6 minutter <span className={styles.lightFont()}>for å lese</span>
+              {estimatedReadingTime} minutter <span className={styles.lightFont()}>for å lese</span>
             </Text>
           </Box>
         </Flex>
@@ -64,7 +64,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
       ) : (
         ""
       )}
-      <PortableText className={styles.content()} blocks={content} />
+      <Content blocks={content} />
     </Flex>
   );
 };
@@ -113,3 +113,5 @@ const styles = {
     paddingBottom: "$4",
   } as CSS,
 };
+
+const Content = styled(PortableText, styles.content);

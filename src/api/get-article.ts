@@ -10,6 +10,7 @@ export interface Article {
   excerpt: string;
   cover_image: { asset: { url: string } };
   content: BlockContentProps["blocks"];
+  estimatedReadingTime: number;
 }
 
 const query = `
@@ -23,7 +24,12 @@ const query = `
     cover_image {
     asset->{url}
       },
-    content
+    content,
+    "numberOfCharacters": length(pt::text(content)),
+    // assumes 5 characters as mean word length
+    "estimatedWordCount": round(length(pt::text(content)) / 5),
+    // Words per minute: 180
+    "estimatedReadingTime": round(length(pt::text(content)) / 5 / 180 )
   }
 `;
 

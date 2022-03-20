@@ -15,7 +15,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 const Article: FC<ArticleProps> = (props: ArticleProps) => {
-  console.log(props);
   return <ArticleView article={props.article} />;
 };
 
