@@ -112,9 +112,9 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
     // transitions: {},
   },
   media: {
-    bp1: "(min-width: 480px)",
-    bp2: "(min-width: 768px)",
-    bp3: "(min-width: 1024px)",
+    maxMobile: "(max-width: 480px)",
+    maxTablet: "(max-width: 768px)",
+    maxLaptop: "(max-width: 1024px)",
   },
   utils: utils,
 });
