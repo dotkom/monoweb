@@ -1,6 +1,4 @@
-import Box from "@components/particles/Box";
 import { ArticleView } from "@components/views/ArticleView";
-import { BlockContentProps } from "@sanity/block-content-to-react";
 import { GetServerSideProps } from "next";
 import React, { FC } from "react";
 import { fetchArticleData } from "src/api/get-article";

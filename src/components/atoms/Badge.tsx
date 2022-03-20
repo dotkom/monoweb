@@ -33,12 +33,12 @@ const Badge = styled("span", {
         color: "$white",
         bg: "$$main",
       },
-      subtle: {
+      outline: {
         bg: "none",
         color: "$$main",
         border: "1px solid $$main",
       },
-      outline: {
+      subtle: {
         color: "$$main",
         bg: "$$secondary",
       },

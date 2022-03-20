@@ -1,34 +1,36 @@
-import Box from "@components/particles/Box";
+import { Box, Flex } from "../primitives";
 import { FC } from "react";
 import { Article } from "src/api/get-article";
-import { CSS, css, styled } from "@theme";
+import { CSS, css } from "@theme";
 import Text from "@components/atoms/Text";
 import PortableText from "@components/molecules/PortableText";
 import Image from "next/image";
+import Badge from "@components/atoms/Badge";
+import { DateTime } from "luxon";
 
 interface ArticleViewProps {
   article: Article;
 }
 
 export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
-  console.log(props);
   const { title, author, _createdAt, tags, excerpt, cover_image, content } = props.article;
+
+  const date = DateTime.fromISO(_createdAt);
+
   return (
-    <Box
+    <Flex
       css={{
         bg: "$white",
-        display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         maxWidth: "$lg",
         margin: "auto",
         fontFamily: "$body",
-        // set this to `minHeight: '100vh'` for full viewport height
       }}
     >
-      <Box css={styles.articleInfo}>
+      <Flex css={styles.articleInfo}>
         <h1 className={styles.title()}>{title}</h1>
-        <Box css={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+        <Flex css={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Box>
             <Text>
               Skrevet av <span className={styles.lightFont()}>{author}</span>
@@ -39,31 +41,36 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
           </Box>
           <Box>
             <Text>
-              Publisert <span className={styles.lightFont()}>{}</span>
+              Publisert <span className={styles.lightFont()}>{date.toFormat("dd MMM yyyy", { locale: "no" })}</span>
             </Text>
             <Text>
               6 minutter <span className={styles.lightFont()}>for å lese</span>
             </Text>
           </Box>
-        </Box>
-        <Box css={styles.tagContainer}>
+        </Flex>
+        <Flex css={styles.tagContainer}>
           {tags.map((tag: String, key: number) => (
-            <p key={key}>{tag}</p>
+            <Badge key={key} variant="subtle" color="gray" css={{ marginRight: "$3" }}>
+              {tag}
+            </Badge>
           ))}
-        </Box>
+        </Flex>
         <Text css={styles.excerpt}>{excerpt}</Text>
-      </Box>
-      <Box css={{ margin: "auto", maxHeight: "$md", paddingBottom: "$5" }}>
-        <Image width={800} height={400} src={cover_image.asset.url} />
-      </Box>
+      </Flex>
+      {cover_image ? (
+        <Box css={{ margin: "auto", maxHeight: "$md", paddingBottom: "$5" }}>
+          <Image width={800} height={400} src={cover_image.asset.url} />
+        </Box>
+      ) : (
+        ""
+      )}
       <PortableText className={styles.content()} blocks={content} />
-    </Box>
+    </Flex>
   );
 };
 
 const styles = {
   articleInfo: {
-    display: "flex",
     flexDirection: "column",
     margin: "auto",
     maxWidth: "$md",
@@ -85,6 +92,7 @@ const styles = {
   excerpt: {
     color: "$black",
     fontSize: "$md",
+    paddingBottom: "$1",
   } as CSS,
   content: css({
     "& > h1, h2, h3": {
@@ -99,10 +107,9 @@ const styles = {
     margin: "auto",
   }),
   tagContainer: {
-    display: "flex",
     flexDirection: "row",
     justifyContent: "flex-start",
     flexWrap: "wrap",
-    paddingBottom: "$2",
+    paddingBottom: "$4",
   } as CSS,
 };
