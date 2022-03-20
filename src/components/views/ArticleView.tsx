@@ -13,7 +13,8 @@ interface ArticleViewProps {
 }
 
 export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
-  const { title, author, _createdAt, tags, excerpt, cover_image, content, estimatedReadingTime } = props.article;
+  const { title, author, photographer, _createdAt, tags, excerpt, cover_image, content, estimatedReadingTime } =
+    props.article;
 
   const date = DateTime.fromISO(_createdAt);
 
@@ -36,7 +37,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
               Skrevet av <span className={styles.lightFont()}>{author}</span>
             </Text>
             <Text>
-              Foto av <span className={styles.lightFont()}>{author}</span>
+              Foto av <span className={styles.lightFont()}>{photographer}</span>
             </Text>
           </Box>
           <Box>

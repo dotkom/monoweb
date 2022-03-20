@@ -4,6 +4,7 @@ import client from "./sanity";
 export interface Article {
   title: string;
   author: string;
+  photographer: string;
   _createdAt: string;
   _updatedAt: string;
   tags: string[];
@@ -17,6 +18,7 @@ const query = `
 *[_type == "article" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
     title,
     author,
+    photographer,
     _createdAt,
     _updatedAt,
     tags,
