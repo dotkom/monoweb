@@ -50,7 +50,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
           </Box>
         </Flex>
         <Flex css={styles.tagContainer}>
-          {tags.map((tag: String, key: number) => (
+          {tags.map((tag: string, key: number) => (
             <Badge key={key} variant="subtle" color="gray" css={{ marginRight: "$3" }}>
               {tag}
             </Badge>
