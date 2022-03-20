@@ -1,20 +1,31 @@
-import Navbar from "@components/organisms/Navbar/Navbar";
+import Navbar, {
+  ContentList,
+  ContentListItem,
+  ContentListItemCallout,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@components/organisms/Navbar/Navbar";
 import { Box } from "@components/primitives";
-import { blackA } from "@radix-ui/colors";
 import MainAvatar from "./Avatar";
 import NavbarLogo from "./NavbarLogo";
+import DropdownMenuDemo from "./UserDropdown";
 
 const Fullbar = () => {
   return (
     <Box
       css={{
-        boxShadow: `0 2px 10px ${blackA.blackA7}`,
+        boxShadow: `0 0.1px 1px #0d0d0d`,
         height: "70px",
         backgroundColor: "white",
         width: "100vw",
         padding: 4,
         borderRadius: 6,
         display: "flex",
+        zIndex: 100,
+        position: "relative",
       }}
     >
       <Box
@@ -33,7 +44,7 @@ const Fullbar = () => {
         </Box>
         <Navbar></Navbar>
         <Box css={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <MainAvatar />
+          <DropdownMenuDemo />
         </Box>
       </Box>
       <Box
@@ -47,7 +58,7 @@ const Fullbar = () => {
           },
         }}
       >
-        <p>Better luck next time :))</p>
+        <p>Better luck next time :)</p>
       </Box>
     </Box>
   );

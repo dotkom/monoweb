@@ -5,7 +5,6 @@ import Fullbar from "@components/organisms/Navbar/Fullbar";
 const Home: React.FC = () => {
   return (
     <Box>
-      <Fullbar />
       <Button>Hello</Button>
     </Box>
   );

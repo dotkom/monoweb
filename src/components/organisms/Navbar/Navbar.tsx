@@ -72,7 +72,7 @@ const itemStyles = {
   borderRadius: 4,
   fontSize: 15,
   color: "#000",
-  "&:focus": { position: "relative", boxShadow: `0 0 0 2px ${violet.violet7}` },
+  "&:focus": { position: "relative" },
   "&:hover": { color: "#959595" },
 };
 
@@ -85,20 +85,9 @@ const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
   gap: 2,
 });
 
-const StyledCaret = styled(CaretDownIcon, {
-  position: "relative",
-  color: violet.violet10,
-  top: 1,
-  "[data-state=open] &": { transform: "rotate(-180deg)" },
-  "@media (prefers-reduced-motion: no-preference)": {
-    transition: "transform 250ms ease",
-  },
-});
-
 const StyledTriggerWithCaret = React.forwardRef(({ children, ...props }, forwardedRef) => (
   <StyledTrigger {...props} ref={forwardedRef}>
     {children}
-    <StyledCaret aria-hidden />
   </StyledTrigger>
 ));
 
@@ -212,6 +201,11 @@ export const ContentList = styled("ul", {
           gridTemplateRows: "repeat(3, 1fr)",
         },
       },
+      three: {
+        width: 400,
+        display: "flex",
+        flexDirection: "column",
+      },
     },
   },
 });
@@ -279,7 +273,7 @@ export const ContentListItemCallout = React.forwardRef(({ children, ...props }, 
           marginBottom: 7,
         }}
       >
-        Radix Primitives
+        Debug
       </LinkTitle>
       <LinkText
         css={{
@@ -288,7 +282,7 @@ export const ContentListItemCallout = React.forwardRef(({ children, ...props }, 
           lineHeight: 1.3,
         }}
       >
-        Unstyled, accessible components for React.
+        Trenger du noen å snakke med?!
       </LinkText>
     </NavigationMenuLink>
   </ListItem>
