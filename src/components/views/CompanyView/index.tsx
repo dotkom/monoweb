@@ -5,6 +5,7 @@ import { BlockContentProps } from "@sanity/block-content-to-react";
 import { CSS, css, styled } from "@theme";
 import { VFC } from "react";
 import CompanyInterestProcess from "./CompanyInterestProcess";
+import OurProducts from "./OurProducts";
 
 export type Content = BlockContentProps["blocks"];
 
@@ -31,6 +32,7 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
         </a>
       </Box>
       <Product blocks={product.content} />
+      <OurProducts />
       <Box css={{ bg: "$bluebg", fullWidth: true }}>
         <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
       </Box>
