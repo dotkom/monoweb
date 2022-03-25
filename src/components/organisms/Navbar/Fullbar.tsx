@@ -10,6 +10,7 @@ import Navbar, {
 } from "@components/organisms/Navbar/Navbar";
 import { Box } from "@components/primitives";
 import MainAvatar from "./Avatar";
+import MobileDropdown from "./MobileDropdown";
 import NavbarLogo from "./NavbarLogo";
 import DropdownMenuDemo from "./UserDropdown";
 
@@ -35,8 +36,7 @@ const Fullbar = () => {
           margin: "auto",
           width: "80%",
           "@media only screen and (max-width: 1200px)": { width: "90%" },
-          "@media only screen and (max-width: 900px)": { width: "100%" },
-          "@media only screen and (max-width: 760px)": { display: "none" },
+          "@media only screen and (max-width: 900px)": { display: "none" },
         }}
       >
         <Box css={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -51,14 +51,14 @@ const Fullbar = () => {
         css={{
           display: "none",
           width: "100%",
-          "@media only screen and (max-width: 760px)": {
+          "@media only screen and (max-width: 900px)": {
             display: "flex",
             justifyContent: "flex-end",
-            alignItems: "flex-end",
+            alignItems: "center",
           },
         }}
       >
-        <p>Better luck next time :)</p>
+        <MobileDropdown />
       </Box>
     </Box>
   );

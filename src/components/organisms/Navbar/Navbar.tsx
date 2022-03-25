@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled, keyframes } from "@stitches/react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
-import { CaretDownIcon } from "@radix-ui/react-icons";
 import { violet, mauve, indigo, purple, blackA } from "@radix-ui/colors";
 
 const enterFromRight = keyframes({
@@ -48,7 +47,6 @@ const StyledMenu = styled(NavigationMenuPrimitive.Root, {
   position: "relative",
   display: "flex",
   justifyContent: "center",
-
   zIndex: 1,
 });
 
@@ -198,7 +196,7 @@ export const ContentList = styled("ul", {
         "@media only screen and (min-width: 600px)": {
           width: 600,
           gridAutoFlow: "column",
-          gridTemplateRows: "repeat(3, 1fr)",
+          gridTemplateRows: "repeat(4, 1fr)",
         },
       },
       three: {
@@ -247,7 +245,7 @@ export const ContentListItemCallout = React.forwardRef(({ children, ...props }, 
   <ListItem css={{ gridRow: "span 3" }}>
     <NavigationMenuLink
       {...props}
-      href="/"
+      href="/https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
       ref={forwardedRef}
       css={{
         display: "flex",
@@ -298,7 +296,28 @@ const ViewportPosition = styled("div", {
   perspective: "2000px",
 });
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
+
 export const NavigationMenuDemo = () => {
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -307,10 +326,10 @@ export const NavigationMenuDemo = () => {
           <NavigationMenuContent>
             <ContentList layout="one">
               <ContentListItemCallout />
-              <ContentListItem href="https://stitches.dev/" title="Stitches">
+              <ContentListItem href="https://stitches.dev/" title="Webshop">
                 CSS-in-JS with best-in-class developer experience.
               </ContentListItem>
-              <ContentListItem href="/colors" title="Colors">
+              <ContentListItem href="/colors" title="Wiki">
                 Beautiful, thought-out palettes with auto dark mode.
               </ContentListItem>
               <ContentListItem href="https://icons.modulz.app/" title="Icons">
@@ -321,26 +340,17 @@ export const NavigationMenuDemo = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Info</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Om oss</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ContentList layout="two">
-              <ContentListItem title="Introduction" href="/docs/primitives/overview/introduction">
-                Build high-quality, accessible design systems and web apps.
+            <ContentList layout="three">
+              <ContentListItem title="Interessegrupper" href="/docs/primitives/overview/introduction">
+                På denne siden finner du informasjon om alle de forskjellige interessegruppene i online.{" "}
               </ContentListItem>
-              <ContentListItem title="Getting started" href="/docs/primitives/overview/getting-started">
-                A quick tutorial to get you up and running with Radix Primitives.
+              <ContentListItem title="Bidra" href="/docs/primitives/overview/styling">
+                Her finner du alle open source prosjekter som online og dotkom jobber med.{" "}
               </ContentListItem>
-              <ContentListItem title="Styling" href="/docs/primitives/overview/styling">
-                Unstyled and compatible with any styling solution.
-              </ContentListItem>
-              <ContentListItem title="Animation" href="/docs/primitives/overview/animation">
-                Use CSS keyframes or any animation library of your choice.
-              </ContentListItem>
-              <ContentListItem title="Accessibility" href="/docs/primitives/overview/accessibility">
-                Tested in a range of browsers and assistive technologies.
-              </ContentListItem>
-              <ContentListItem title="Releases" href="/docs/primitives/overview/releases">
-                Radix Primitives releases and their changelogs.
+              <ContentListItem title="Ressurser" href="/docs/primitives/overview/animation">
+                All informasjon om onlines ressurser.
               </ContentListItem>
             </ContentList>
           </NavigationMenuContent>
@@ -350,7 +360,7 @@ export const NavigationMenuDemo = () => {
           <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink href="https://github.com/radix-ui">Arrangementer</NavigationMenuLink>
+          <NavigationMenuLink href="https://github.com/radix-ui">For Bedrifter</NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuIndicator />

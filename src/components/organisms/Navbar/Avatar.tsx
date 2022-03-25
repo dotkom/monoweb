@@ -5,7 +5,6 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Box } from "@components/primitives";
 
 const StyledAvatar = styled(AvatarPrimitive.Root, {
-  filter: "grayscale()",
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
@@ -15,10 +14,9 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
   width: 45,
   height: 45,
   borderRadius: "100%",
-  backgroundColor: "#FFC0CB",
-  transition: "filter 0.4s ease-in-out",
+  transition: "all 0.5s",
   "&:hover": {
-    filter: "none",
+    transform: "scale(1.1)",
   },
 });
 
@@ -35,7 +33,7 @@ const StyledFallback = styled(AvatarPrimitive.Fallback, {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#",
+  backgroundColor: "#228262",
   color: "white",
   fontSize: 15,
   lineHeight: 1,
