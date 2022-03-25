@@ -1,5 +1,4 @@
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document";
-import { InitializeColorMode } from "theme-ui";
 import { getCssText } from "@theme";
 
 export default class Document extends NextDocument {
@@ -18,7 +17,6 @@ export default class Document extends NextDocument {
           />
           <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
         </Head>
-        <InitializeColorMode />
         <body>
           <Main />
           <NextScript />

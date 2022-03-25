@@ -2,6 +2,7 @@ import { styled } from "@theme";
 
 const Text = styled("p", {
   fontSize: "14px",
+  fontFamily: "$body",
   variants: {
     size: {
       xs: {

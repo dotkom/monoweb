@@ -1,8 +1,7 @@
 /*eslint-disable*/
 import BlockContent, { BlockContentProps } from "@sanity/block-content-to-react";
-import { Heading } from "@theme-ui/components";
 import { FC } from "react";
-import { Paragraph } from "theme-ui";
+import Text from "@components/atoms/Text";
 
 interface PortableTextProps {
   blocks: BlockContentProps["blocks"];
@@ -15,9 +14,9 @@ const PortableText: FC<PortableTextProps> = ({ blocks, className }) => {
       block: (props) => {
         const { style = "normal" } = props.node;
         if (/^h\d/.test(style)) {
-          return <Heading as={style}>{props.children}</Heading>;
+          return <Text as={style}>{props.children}</Text>;
         }
-        return <Paragraph>{props.children}</Paragraph>;
+        return <Text>{props.children}</Text>;
       },
     },
   };

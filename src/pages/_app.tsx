@@ -1,6 +1,4 @@
 import { AppProps } from "next/app";
-import { ThemeProvider } from "theme-ui";
-import { theme } from "@styles/theme";
 import { globalCss } from "@theme";
 
 const globalStyles = globalCss({
@@ -13,11 +11,7 @@ const globalStyles = globalCss({
 
 function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   globalStyles();
-  return (
-    <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
-    </ThemeProvider>
-  );
+  return <Component {...pageProps} />;
 }
 
 export default CustomApp;

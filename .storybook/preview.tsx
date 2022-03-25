@@ -1,7 +1,7 @@
-import { addDecorator, configure, StoryContext } from "@storybook/react";
-import { theme } from "../src/styles/theme";
-import { Container, ThemeProvider } from "theme-ui";
+import { addDecorator, configure } from "@storybook/react";
 import * as NextImage from "next/image";
+import { Box } from "../src/components/primitives";
+import { globalCss } from "../src/theme/stitches.config";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -13,12 +13,9 @@ Object.defineProperty(NextImage, "default", {
   value: (props) => <Image {...props} unoptimized />,
 });
 
-addDecorator((story) => (
-  <ThemeProvider theme={theme}>
-    <Container bg="white" p={2}>
-      {story()}
-    </Container>
-  </ThemeProvider>
-));
+addDecorator((story) => {
+  globalCss();
+  return <Box style={{ padding: "$4", backgroundColor: "$white" }}>{story()}</Box>;
+});
 
 configure([require.context("../src/", true, /\.stories\.(tsx|mdx)$/)], module);
