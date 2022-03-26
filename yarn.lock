@@ -1565,6 +1565,7 @@ __metadata:
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
   checksum: 2176d301cc258ea5c2324402997cf8134ebb212469c0d397591636cea8d3c02f2b3cf9fd58dcb748c7a0dade77ebdc1b10284fa63e608c033a1db52fddc69918
+<<<<<<< HEAD
   languageName: node
   linkType: hard
 
@@ -1587,6 +1588,8 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0
   checksum: eb9607356663c3e158b91ae7b8fde7335c74e6302d1671da1ca0b34142f762e1354bac8cb0bdf5baedf1278912eeea01e103b8f5c59ee107746d1b03f56aa664
+=======
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -1674,6 +1677,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@emotion/memoize@npm:^0.7.1, @emotion/memoize@npm:^0.7.4, @emotion/memoize@npm:^0.7.5":
   version: 0.7.5
   resolution: "@emotion/memoize@npm:0.7.5"
@@ -1704,6 +1708,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> b6e718f (before forwardRef clean up)
 "@emotion/serialize@npm:^0.11.15, @emotion/serialize@npm:^0.11.16":
   version: 0.11.16
   resolution: "@emotion/serialize@npm:0.11.16"
@@ -2143,6 +2149,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
+=======
+"@npmcli/fs@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@npmcli/fs@npm:2.1.0"
+  dependencies:
+    "@gar/promisify": ^1.1.3
+    semver: ^7.3.5
+  checksum: 6ec6d678af6da49f9dac50cd882d7f661934dd278972ffbaacde40d9eaa2871292d634000a0cca9510f6fc29855fbd4af433e1adbff90a524ec3eaf140f1219b
+  languageName: node
+  linkType: hard
+
+>>>>>>> b6e718f (before forwardRef clean up)
 "@npmcli/move-file@npm:^1.0.1, @npmcli/move-file@npm:^1.1.2":
   version: 1.1.2
   resolution: "@npmcli/move-file@npm:1.1.2"
@@ -4281,9 +4300,15 @@ __metadata:
   linkType: hard
 
 "@types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.7, @types/json-schema@npm:^7.0.8":
+<<<<<<< HEAD
   version: 7.0.10
   resolution: "@types/json-schema@npm:7.0.10"
   checksum: 369f12207298e3c8931100ab86c9c60d9217ab930a8ae0b851495f4f30695d3f0eb431eedc8e8d9c69357869899ea0fe6f9d65ddde5ea70415d67ef340dfdd1f
+=======
+  version: 7.0.11
+  resolution: "@types/json-schema@npm:7.0.11"
+  checksum: 527bddfe62db9012fccd7627794bd4c71beb77601861055d87e3ee464f2217c85fca7a4b56ae677478367bbd248dbde13553312b7d4dbc702a2f2bbf60c4018d
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -4409,13 +4434,22 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:*, @types/react@npm:^17.0.0":
+<<<<<<< HEAD
   version: 17.0.41
   resolution: "@types/react@npm:17.0.41"
+=======
+  version: 17.0.43
+  resolution: "@types/react@npm:17.0.43"
+>>>>>>> b6e718f (before forwardRef clean up)
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
+<<<<<<< HEAD
   checksum: 1b086ec0ea5d666f05e19e0724e41278d27a2ca29a2cd71b9d9ab3fe27dba233806eb728d744e092c9fe9637ac738d8c5a05983cde84d215342949b47ecba2ef
+=======
+  checksum: 981b0993f5b3ea9d3488b8cc883201e8ae47ba7732929f788f450a79fd72829e658080d5084e67caa008e58d989b0abc1d5f36ff0a1cda09315ea3a3c0c9dc11
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -5938,17 +5972,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "cacache@npm:^16.0.0":
   version: 16.0.2
   resolution: "cacache@npm:16.0.2"
   dependencies:
     "@npmcli/fs": ^1.0.0
+=======
+"cacache@npm:^16.0.2":
+  version: 16.0.3
+  resolution: "cacache@npm:16.0.3"
+  dependencies:
+    "@npmcli/fs": ^2.1.0
+>>>>>>> b6e718f (before forwardRef clean up)
     "@npmcli/move-file": ^1.1.2
     chownr: ^2.0.0
     fs-minipass: ^2.1.0
     glob: ^7.2.0
     infer-owner: ^1.0.4
+<<<<<<< HEAD
     lru-cache: ^7.5.1
+=======
+    lru-cache: ^7.7.1
+>>>>>>> b6e718f (before forwardRef clean up)
     minipass: ^3.1.6
     minipass-collect: ^1.0.2
     minipass-flush: ^1.0.5
@@ -5960,7 +6006,11 @@ __metadata:
     ssri: ^8.0.1
     tar: ^6.1.11
     unique-filename: ^1.1.1
+<<<<<<< HEAD
   checksum: dced60dc532ed6a6da3feeb7736c5cb38bbbc900e273a04e68e510cc9bd1acab8e61ee86df7b4fe959ef35e39fd74abb4cb4834d221a9a59afa8029f3773eab3
+=======
+  checksum: 9bb9a0bd1b8bee3284c6fa9dcb4b28a62b528dd181f7cd482319611b5d6df295a3594dcefc24d1a4f16162bac50d6facc183ed21935f3d09af6d16f620ea54d3
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -6037,9 +6087,15 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001283, caniuse-lite@npm:^1.0.30001317":
+<<<<<<< HEAD
   version: 1.0.30001319
   resolution: "caniuse-lite@npm:1.0.30001319"
   checksum: 1c03cc4ca019c410d197b76604cd8605077ef124906f3debd3f026568e01a1aa3888cdfcb0d23c0786115b0b3f790486f2aa8e0cce361d3dcc5c92ff3611f73e
+=======
+  version: 1.0.30001320
+  resolution: "caniuse-lite@npm:1.0.30001320"
+  checksum: d1f52e9d8e2316f2dba4c7adb4c5957e535b07a4a90ac5432bef3a83b4dab487f0efaa6eff3cda75a52bf044d09886ec583299595389fe0a92cf135f4f07692e
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -6836,7 +6892,11 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "csstype@npm:^3.0.10, csstype@npm:^3.0.2, csstype@npm:^3.0.4":
+=======
+"csstype@npm:^3.0.2, csstype@npm:^3.0.4":
+>>>>>>> b6e718f (before forwardRef clean up)
   version: 3.0.11
   resolution: "csstype@npm:3.0.11"
   checksum: 95e56abfe9ca219ae065acb4e43f61771a03170eed919127f558dfa168240867aba7629c8d98a201a0dd06d9a5ce82686f0570031c928516c61816adbc7c877f
@@ -7205,9 +7265,15 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.84":
+<<<<<<< HEAD
   version: 1.4.88
   resolution: "electron-to-chromium@npm:1.4.88"
   checksum: a93d364efae8e6f718f1aae0f47914028178ed0b643cc583344127dc547bf1f7fc8df066834233e04629e8df2141eb192bcb2070abdbeeb872e551acbaba2bbf
+=======
+  version: 1.4.94
+  resolution: "electron-to-chromium@npm:1.4.94"
+  checksum: 9eb12e7ef828c74b0d838bdeabd73dc5b008f06f28177eec633fb94836e44a2690778f1f8fefb778dcab0874e797bf839fa89eb198a8c9f6c0757326616b17f8
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -7763,13 +7829,6 @@ __metadata:
     signal-exit: ^3.0.2
     strip-final-newline: ^2.0.0
   checksum: e30d298934d9c52f90f3847704fd8224e849a081ab2b517bbc02f5f7732c24e56a21f14cb96a08256deffeb2d12b2b7cb7e2b014a12fb36f8d3357e06417ed55
-  languageName: node
-  linkType: hard
-
-"exenv@npm:^1.2.0":
-  version: 1.2.2
-  resolution: "exenv@npm:1.2.2"
-  checksum: a894f3b60ab8419e0b6eec99c690a009c8276b4c90655ccaf7d28faba2de3a6b93b3d92210f9dc5efd36058d44f04098f6bbccef99859151104bfd49939904dc
   languageName: node
   linkType: hard
 
@@ -10448,7 +10507,11 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "lru-cache@npm:^7.5.1":
+=======
+"lru-cache@npm:^7.7.1":
+>>>>>>> b6e718f (before forwardRef clean up)
   version: 7.7.1
   resolution: "lru-cache@npm:7.7.1"
   checksum: f362c5a2cfa8ad6fe557ec43dc1b7a9695cce84a5652a43ff813609f782f5da576631e7dfad41878bf19a7a69438f38375178635ee80de269aa314280ca2f59e
@@ -10489,16 +10552,28 @@ __metadata:
   linkType: hard
 
 "make-fetch-happen@npm:^10.0.3":
+<<<<<<< HEAD
   version: 10.0.6
   resolution: "make-fetch-happen@npm:10.0.6"
   dependencies:
     agentkeepalive: ^4.2.1
     cacache: ^16.0.0
+=======
+  version: 10.1.0
+  resolution: "make-fetch-happen@npm:10.1.0"
+  dependencies:
+    agentkeepalive: ^4.2.1
+    cacache: ^16.0.2
+>>>>>>> b6e718f (before forwardRef clean up)
     http-cache-semantics: ^4.1.0
     http-proxy-agent: ^5.0.0
     https-proxy-agent: ^5.0.0
     is-lambda: ^1.0.1
+<<<<<<< HEAD
     lru-cache: ^7.5.1
+=======
+    lru-cache: ^7.7.1
+>>>>>>> b6e718f (before forwardRef clean up)
     minipass: ^3.1.6
     minipass-collect: ^1.0.2
     minipass-fetch: ^2.0.3
@@ -10508,7 +10583,11 @@ __metadata:
     promise-retry: ^2.0.1
     socks-proxy-agent: ^6.1.1
     ssri: ^8.0.1
+<<<<<<< HEAD
   checksum: cf3e745567f114bf161e13dbde402cff916482930936c102543b5c6e5e6409921b05d38d6400c92ed0b43011b185c8f39a9f504c9a1bdb956eeeed39929451a6
+=======
+  checksum: fae1c2f255f6467bf6731344c2c04dd0e1f1899d8ae4698d98e2c86131ba899a418746ebc564493b85d1651d43c93b49f7825a2773edda4285a1c4c5e5ba9168
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -10853,8 +10932,13 @@ __metadata:
   linkType: hard
 
 "minipass-fetch@npm:^2.0.3":
+<<<<<<< HEAD
   version: 2.0.3
   resolution: "minipass-fetch@npm:2.0.3"
+=======
+  version: 2.1.0
+  resolution: "minipass-fetch@npm:2.1.0"
+>>>>>>> b6e718f (before forwardRef clean up)
   dependencies:
     encoding: ^0.1.13
     minipass: ^3.1.6
@@ -10863,7 +10947,11 @@ __metadata:
   dependenciesMeta:
     encoding:
       optional: true
+<<<<<<< HEAD
   checksum: 78a4a509b1e73f5e63b84065969790373b36b04da586744815c7f7f80013f1d786797842cc33cfa517eba0ad2f2142eb0ac808c46738da1c53e0e3aeed81df11
+=======
+  checksum: 1334732859a3f7959ed22589bafd9c40384b885aebb5932328071c33f86b3eb181d54c86919675d1825ab5f1c8e4f328878c863873258d113c29d79a4b0c9c9f
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -11611,7 +11699,6 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-icons: ^4.3.1
-    react-modal: ^3.14.4
     swr: ^1.0.1
     theme-ui: ^0.12.0
     typescript: ^4.4.4
@@ -12191,11 +12278,19 @@ __metadata:
   linkType: hard
 
 "prettier@npm:^2.4.1":
+<<<<<<< HEAD
   version: 2.6.0
   resolution: "prettier@npm:2.6.0"
   bin:
     prettier: bin-prettier.js
   checksum: 3e527ad62279676778a8404d18174d7ca2365ada4caba6eebbcdd9907d1187afd3bc6ade5b4e5f5d4549bb9fb71e45ca8930d71500017635524f8fc05bc52e93
+=======
+  version: 2.6.1
+  resolution: "prettier@npm:2.6.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 78be1f8a3ddfad7c3d8a854b6c8941a3bb1ddfca4225c38d778e0fe1029a55368f71b3bbefff82c689015fbb4d391ec44add957f01308ad2725e01a7c1f37cb6
+>>>>>>> b6e718f (before forwardRef clean up)
   languageName: node
   linkType: hard
 
@@ -12678,25 +12773,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-lifecycles-compat@npm:^3.0.0, react-lifecycles-compat@npm:^3.0.4":
+"react-lifecycles-compat@npm:^3.0.4":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: a904b0fc0a8eeb15a148c9feb7bc17cec7ef96e71188280061fc340043fd6d8ee3ff233381f0e8f95c1cf926210b2c4a31f38182c8f35ac55057e453d6df204f
-  languageName: node
-  linkType: hard
-
-"react-modal@npm:^3.14.4":
-  version: 3.14.4
-  resolution: "react-modal@npm:3.14.4"
-  dependencies:
-    exenv: ^1.2.0
-    prop-types: ^15.7.2
-    react-lifecycles-compat: ^3.0.0
-    warning: ^4.0.3
-  peerDependencies:
-    react: ^0.14.0 || ^15.0.0 || ^16 || ^17
-    react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17
-  checksum: 71457de902d45de390932fb68380c4a72fcd51e64faaf8b96138c3cb402d2e445002220560614ef6035eb349ff933bcbbe35c4cb85fb66c1129e65ad40336b8b
   languageName: node
   linkType: hard
 
@@ -15257,7 +15337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"warning@npm:^4.0.2, warning@npm:^4.0.3":
+"warning@npm:^4.0.2":
   version: 4.0.3
   resolution: "warning@npm:4.0.3"
   dependencies:

@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@components/atoms/Button/Button";
 import { styled } from "@theme";
-import Fullbar from "@components/organisms/Navbar/Fullbar";
+import Navbar from "@components/organisms/Navbar/Navbar";
 const Home: React.FC = () => {
   return (
     <Box>

@@ -4,8 +4,7 @@ import Button from "@components/atoms/Button";
 import { FiX, FiMenu, FiChevronRight, FiArrowRight, FiClock, FiActivity } from "react-icons/fi";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 
-import Link from "next/link";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./Navbar";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./DesktopNavigation";
 
 const StyledMenu = styled(NavigationMenuPrimitive.Root, {
   display: "flex",
@@ -14,24 +13,21 @@ const StyledMenu = styled(NavigationMenuPrimitive.Root, {
 
 const NavigationMenuMobile = StyledMenu;
 
-const MobileDropdownItem = () => {
+const AboutDropDown = () => {
   return (
     <DropdownItemBox>
-      <DropdownItemTitle>INFO</DropdownItemTitle>
+      <DropdownItemTitle>OM OSS</DropdownItemTitle>
       <ItemContainer>
         <NavigationMenuMobile>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
+              <NavigationMenuLink href="https://github.com/radix-ui">Interesegrupper</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
+              <NavigationMenuLink href="https://github.com/radix-ui">Bidra</NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
+              <NavigationMenuLink href="https://github.com/radix-ui">Ressurser</NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenuMobile>
@@ -39,8 +35,6 @@ const MobileDropdownItem = () => {
     </DropdownItemBox>
   );
 };
-
-const ItemText = styled("a", { fontSize: "12px", fontWeight: 600 });
 
 const ItemContainer = styled("div", {
   display: "grid",
@@ -94,9 +88,7 @@ const MobileDropdown = () => {
           </CloseButton>
         </ButtonBox>
         <DropdownItemsContainer>
-          <MobileDropdownItem />
-          <MobileDropdownItem />
-          <MobileDropdownItem />
+          <AboutDropDown />
         </DropdownItemsContainer>
         <DownBox>
           <Button>

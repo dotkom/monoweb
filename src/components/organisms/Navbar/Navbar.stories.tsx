@@ -1,8 +1,8 @@
-import Fullbar from "./Fullbar";
+import Navbar from "./Navbar";
 
 export default {
-  title: "organisms/Fullbar",
-  component: Fullbar,
+  title: "organisms/Navbar",
+  component: Navbar,
 };
 
-export const primary = () => <Fullbar />;
+export const primary = () => <Navbar />;
