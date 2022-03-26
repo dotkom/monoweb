@@ -2,13 +2,14 @@
 import BlockContent, { BlockContentProps } from "@sanity/block-content-to-react";
 import { FC } from "react";
 import Text from "@components/atoms/Text";
+import { styled } from "@theme";
 
 interface PortableTextProps {
   blocks: BlockContentProps["blocks"];
   className?: string;
 }
 
-const PortableText: FC<PortableTextProps> = ({ blocks, className }) => {
+const PortableTextBase: FC<PortableTextProps> = ({ blocks, className }) => {
   const serializers: BlockContentProps["serializers"] = {
     types: {
       block: (props) => {
@@ -22,5 +23,7 @@ const PortableText: FC<PortableTextProps> = ({ blocks, className }) => {
   };
   return <BlockContent className={className} serializers={serializers} blocks={blocks} />;
 };
+
+const PortableText = styled(PortableTextBase);
 
 export default PortableText;

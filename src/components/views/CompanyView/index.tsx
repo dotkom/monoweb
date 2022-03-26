@@ -1,8 +1,9 @@
 import Button from "@components/atoms/Button/Button";
 import PortableText from "@components/molecules/PortableText";
-import { Box } from "@components/primitives";
+import { Box, SpanBox } from "@components/primitives";
+import Text from "@components/atoms/Text";
 import { BlockContentProps } from "@sanity/block-content-to-react";
-import { CSS, css, styled } from "@theme";
+import { CSS, css, createStyles } from "@theme";
 import { VFC } from "react";
 import CompanyInterestProcess from "./CompanyInterestProcess";
 import OurProducts from "./OurProducts";
@@ -19,53 +20,53 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
     <Box css={{ margin: "auto", maxWidth: "1024px" }}>
       <Box css={{ bg: "$orange12", fullWidth: true }}>
         <Box css={styles.banner}>
-          <h1 className={styles.bannerTitle()}>
-            Er din bedrift på jakt etter skarpe IT-<span className={styles.yellowUnderline()}>studenter?</span>
-          </h1>
+          <Text as="h1" css={styles.bannerTitle}>
+            Er din bedrift på jakt etter skarpe IT-<SpanBox css={styles.yellowUnderline}>studenter?</SpanBox>
+          </Text>
           <PortableText blocks={header.content} />
         </Box>
       </Box>
       <Box css={styles.interest}>
-        <Interest blocks={interest.content} />
+        <PortableText blocks={interest.content} css={styles.interestContent} />
         <a href="https://interesse.online.ntnu.no">
           <Button css={styles.button}>Send Interesse</Button>
         </a>
       </Box>
-      <Product blocks={product.content} />
+      <PortableText blocks={product.content} css={styles.products} />
       <OurProducts />
       <Box css={{ bg: "$bluebg", fullWidth: true }}>
         <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
       </Box>
-      <Info blocks={info.content} />
-      <Contact blocks={contact.content} />
+      <PortableText blocks={info.content} css={styles.info} />
+      <PortableText blocks={contact.content} css={styles.contact} />
     </Box>
   );
 };
 
-const styles = {
+const styles = createStyles({
   banner: {
     maxWidth: "$md",
     margin: "auto",
     padding: "$4",
     fontSize: "$md",
-  } as CSS,
-  bannerTitle: css({
+  },
+  bannerTitle: {
     color: "$gray1",
     marginBottom: "$4",
     fontSize: "$4xl",
     lineHeight: "1.4",
-  }),
-  yellowUnderline: css({
+  },
+  yellowUnderline: {
     backgroundImage: 'url("/for-company-text-decor.svg")',
     backgroundRepeat: "no-repeat",
     backgroundPosition: "50% 88%",
-  }),
+  },
   interest: {
     marginTop: "$5",
     textAlign: "center",
     px: "$3",
-  } as CSS,
-  interestContent: css({
+  },
+  interestContent: {
     "& > h2": {
       fontSize: "$2xl",
       marginBottom: "$3",
@@ -75,12 +76,12 @@ const styles = {
       maxWidth: "25rem",
       fontSize: "$sm",
     },
-  }),
+  },
   button: {
     fontSize: "$lg",
     minWidth: "200px",
-  } as CSS,
-  products: css({
+  },
+  products: {
     margin: "$5 auto",
     maxWidth: "$md",
     textAlign: "center",
@@ -88,25 +89,20 @@ const styles = {
       marginBottom: "$3",
     },
     px: "$2",
-  }),
-  info: css({
+  },
+  info: {
     alignSelf: "center",
     padding: "$4",
     h2: { color: "$gray1", marginTop: "$5", marginBottom: "$1", fontSize: 24, fontWeight: "bold" },
     p: { marginTop: 3, fontSize: 14 },
-  }),
-  contact: css({
+  },
+  contact: {
     my: "$6",
     textAlign: "center",
     padding: "$3",
     h3: { fontSize: "$2xl", marginBottom: "$2", textAlign: "center", fontWeight: 600 },
     p: { fontSize: "$md" },
-  }),
-};
-
-const Interest = styled(PortableText, styles.interestContent);
-const Product = styled(PortableText, styles.products);
-const Info = styled(PortableText, styles.info);
-const Contact = styled(PortableText, styles.contact);
+  },
+});
 
 export default CompanyView;
