@@ -15,7 +15,7 @@ Object.defineProperty(NextImage, "default", {
 
 addDecorator((story) => {
   globalCss();
-  return <Box style={{ padding: "$4", backgroundColor: "$white" }}>{story()}</Box>;
+  return <Box css={{ padding: "$4", backgroundColor: "$white" }}>{story()}</Box>;
 });
 
 configure([require.context("../src/", true, /\.stories\.(tsx|mdx)$/)], module);
