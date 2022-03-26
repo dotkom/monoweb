@@ -1,13 +1,7 @@
 import { Box } from "@components/primitives";
-import { CSS } from "@theme";
+import { createStyles, CSS } from "@theme";
 import { Circle } from "../atoms/Circle/Circle";
 import { DottedLine } from "../atoms/DottedCurve";
-
-const style: CSS = {
-  float: "left",
-  transform: "rotate(45deg)",
-  position: "relative",
-};
 
 interface ConnectedCircleProps {
   size: number;
@@ -16,6 +10,7 @@ interface ConnectedCircleProps {
 }
 
 export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineColor, circleColor }) => {
+  const style = styles.circle;
   return (
     <Box css={{ minWidth: size, display: "flex", justifyContent: "center", alignItems: "center", margin: "auto" }}>
       <Circle size={size / 15} color={circleColor}>
@@ -43,5 +38,13 @@ export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineCol
     </Box>
   );
 };
+
+const styles = createStyles({
+  circle: {
+    float: "left",
+    transform: "rotate(45deg)",
+    position: "relative",
+  },
+});
 
 export default ConnectedCircles;

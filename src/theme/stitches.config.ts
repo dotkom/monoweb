@@ -120,3 +120,5 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
 });
 
 export type CSS = Stitches.CSS<typeof config>;
+
+export const createStyles = <T>(style: { [key in keyof T]: CSS }) => style;
