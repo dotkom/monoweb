@@ -1,9 +1,9 @@
 import { styled } from "@stitches/react";
 
 const IconStyle = styled("svg", {
-  fill: "#0D2546",
+  fill: "$blue3",
   "&:hover": {
-    fill: "#7B7A91",
+    fill: "$blue5",
     cursor: "pointer",
   },
 });

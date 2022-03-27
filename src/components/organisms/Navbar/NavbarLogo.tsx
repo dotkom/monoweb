@@ -1,6 +1,4 @@
 import { Box } from "@components/primitives";
-import { styled } from "@stitches/react";
-import Image from "next/image";
 import OnlineIcon from "@components/atoms/OnlineIcon";
 import Link from "next/link";
 

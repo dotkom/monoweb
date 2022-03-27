@@ -1,33 +1,29 @@
-import DesktopNavigation, {
-  ContentList,
-  ContentListItem,
-  ContentListItemCallout,
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@components/organisms/Navbar/DesktopNavigation";
+import DesktopNavigation from "@components/organisms/Navbar/DesktopNavigation";
 import { Box } from "@components/primitives";
 import { useEffect, useState } from "react";
-import MainAvatar from "./Avatar";
 import MobileDropdown from "./MobileDropdown";
 import NavbarLogo from "./NavbarLogo";
 import DropdownMenuDemo from "./UserDropdown";
 
 const Navbar = () => {
   const [color, setColor] = useState("transparent");
+  const [shadow, setShadow] = useState("0 0.1px 0.2px #0d0d0d");
 
   const changeNavbarColor = () => setColor("#fff");
   const revertNavbarColor = () => setColor("transparent");
+
+  const changeShadow = () => setShadow("0 0.1px 1px #0d0d0d");
+  const revertShadow = () => setShadow("0 0.1px 0.2px #0d0d0d");
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 40) {
         changeNavbarColor();
+        changeShadow();
       }
       if (window.scrollY < 40) {
         revertNavbarColor();
+        revertShadow();
       }
     };
 
@@ -42,7 +38,7 @@ const Navbar = () => {
   return (
     <Box
       css={{
-        boxShadow: `0 0.1px 0.2px #0d0d0d`,
+        boxShadow: shadow,
         height: "70px",
         backgroundColor: color,
         width: "100vw",
@@ -50,6 +46,7 @@ const Navbar = () => {
         zIndex: 100,
         position: "fixed",
         top: 0,
+        marginBottom: "70px",
       }}
     >
       <Box
@@ -75,13 +72,24 @@ const Navbar = () => {
           display: "none",
           width: "100%",
           "@media only screen and (max-width: 900px)": {
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
           },
         }}
       >
-        <MobileDropdown />
+        <Box
+          css={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            marginLeft: "30px",
+          }}
+        >
+          <NavbarLogo />
+        </Box>
+        <Box css={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+          <MobileDropdown />
+        </Box>
       </Box>
     </Box>
   );

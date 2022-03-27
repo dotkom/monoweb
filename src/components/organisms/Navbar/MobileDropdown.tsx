@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { styled } from "@stitches/react";
 import Button from "@components/atoms/Button";
-import { FiX, FiMenu, FiChevronRight, FiArrowRight, FiClock, FiActivity } from "react-icons/fi";
+import { FiX, FiMenu, FiArrowRight } from "react-icons/fi";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./DesktopNavigation";
+import { NavigationMenuItem } from "./DesktopNavigation";
+import { NavigationMenuList, NavigationMenuLink } from "./components/desktop";
+import MobileViewport from "./components/mobile/MobileViewport";
 
 const StyledMenu = styled(NavigationMenuPrimitive.Root, {
   display: "flex",
@@ -13,7 +15,7 @@ const StyledMenu = styled(NavigationMenuPrimitive.Root, {
 
 const NavigationMenuMobile = StyledMenu;
 
-const AboutDropDown = () => {
+const AboutDropdown = () => {
   return (
     <DropdownItemBox>
       <DropdownItemTitle>OM OSS</DropdownItemTitle>
@@ -63,32 +65,21 @@ const MobileDropdown = () => {
   const handleOpen = () => setIsOpen("flex");
   const handleClose = () => setIsOpen("none");
 
-  const Container = styled("div", { display: "flex", flexDirection: "column", alginItems: "center" });
+  const Modal = MobileViewport;
 
-  const Modal = styled("div", {
-    position: "absolute",
-    backgroundColor: "#fff",
-    boxShadow: "0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)",
-
-    minWidth: "95vw",
-    flexDirection: "column",
-    marginLeft: "-90vw",
-    display: `${isOpen}`,
-    borderRadius: "5px",
-  });
   return (
     <Container>
       <OpenButton onClick={handleOpen}>
         <FiMenu size={20} />
       </OpenButton>
-      <Modal>
+      <Modal isOpen={isOpen}>
         <ButtonBox>
           <CloseButton onClick={handleClose}>
             <FiX size={20} />
           </CloseButton>
         </ButtonBox>
         <DropdownItemsContainer>
-          <AboutDropDown />
+          <AboutDropdown />
         </DropdownItemsContainer>
         <DownBox>
           <Button>
@@ -144,5 +135,7 @@ const CloseButton = styled("button", {
   },
   zIndex: 1000,
 });
+
+const Container = styled("div", { display: "flex", flexDirection: "column", alginItems: "center" });
 
 export default MobileDropdown;

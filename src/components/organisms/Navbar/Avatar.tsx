@@ -1,8 +1,5 @@
-import * as Avatar from "@radix-ui/react-avatar";
 import { styled } from "@stitches/react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Box } from "@components/primitives";
 
 const StyledAvatar = styled(AvatarPrimitive.Root, {
   display: "inline-flex",
@@ -11,8 +8,8 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
   verticalAlign: "middle",
   overflow: "hidden",
   userSelect: "none",
-  width: 45,
-  height: 45,
+  width: 40,
+  height: 40,
   borderRadius: "100%",
   transition: "all 0.5s",
   "&:hover": {
@@ -33,7 +30,10 @@ const StyledFallback = styled(AvatarPrimitive.Fallback, {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#228262",
+  backgroundColor: "$blue3",
+  "&:hover": {
+    backgroundColor: "$blue5",
+  },
   color: "white",
   fontSize: 15,
   lineHeight: 1,
@@ -47,7 +47,7 @@ const AvatarFallback = StyledFallback;
 const MainAvatar = () => (
   <MenuAvatar>
     <AvatarImage alt="Colm Tuite" />
-    <AvatarFallback delayMs={600}>CT</AvatarFallback>
+    <AvatarFallback delayMs={500}>CT</AvatarFallback>
   </MenuAvatar>
 );
 

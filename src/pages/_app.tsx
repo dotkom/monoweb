@@ -1,16 +1,7 @@
 import { AppProps } from "next/app";
-import { globalCss } from "@theme";
-import Navbar from "@components/organisms/Navbar/Navbar";
+import { globalStyles } from "src/theme/global-style";
 import { Box } from "@components/primitives";
-
-const globalStyles = globalCss({
-  body: {
-    textRendering: "optimizeLegibility",
-    "-webkit-font-smoothing": "antialiased",
-    "-moz-osx-font-smoothing": "grayscale",
-    fontFamily: "$body",
-  },
-});
+import Navbar from "@components/organisms/Navbar";
 
 function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   globalStyles();

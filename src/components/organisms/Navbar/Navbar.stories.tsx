@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+import Navbar from ".";
 
 export default {
   title: "organisms/Navbar",
