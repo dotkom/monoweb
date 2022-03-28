@@ -1,9 +1,9 @@
 import DesktopNavigation from "@components/organisms/Navbar/DesktopNavigation";
-import { Box } from "@components/primitives";
 import { useEffect, useState } from "react";
+import NavbarLogo from "./components/logo";
+import Profile from "./components/profile";
 import MobileDropdown from "./MobileDropdown";
-import NavbarLogo from "./NavbarLogo";
-import DropdownMenuDemo from "./UserDropdown";
+import { styled } from "@stitches/react";
 
 const Navbar = () => {
   const [color, setColor] = useState("transparent");
@@ -36,63 +36,60 @@ const Navbar = () => {
   }, []);
 
   return (
-    <Box
-      css={{
-        boxShadow: shadow,
-        height: "70px",
-        backgroundColor: color,
-        width: "100vw",
-        display: "flex",
-        zIndex: 100,
-        position: "fixed",
-        top: 0,
-        marginBottom: "70px",
-      }}
-    >
-      <Box
-        css={{
-          display: "grid",
-          gridTemplateColumns: "1fr 3fr 1fr",
-          margin: "auto",
-          width: "80%",
-          "@media only screen and (max-width: 1200px)": { width: "90%" },
-          "@media only screen and (max-width: 900px)": { display: "none" },
-        }}
-      >
-        <Box css={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <Container css={{ boxShadow: shadow, backgroundColor: color }}>
+      <DesktopBox>
+        <FlexCenter>
           <NavbarLogo />
-        </Box>
+        </FlexCenter>
         <DesktopNavigation />
-        <Box css={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <DropdownMenuDemo />
-        </Box>
-      </Box>
-      <Box
-        css={{
-          display: "none",
-          width: "100%",
-          "@media only screen and (max-width: 900px)": {
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-          },
-        }}
-      >
-        <Box
-          css={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            marginLeft: "30px",
-          }}
-        >
+        <FlexCenter>
+          <Profile />
+        </FlexCenter>
+      </DesktopBox>
+      <MobileBox>
+        <FlexCenter css={{ justifyContent: "flex-start", marginLeft: "30px" }}>
           <NavbarLogo />
-        </Box>
-        <Box css={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+        </FlexCenter>
+        <FlexCenter css={{ justifyContent: "flex-end" }}>
           <MobileDropdown />
-        </Box>
-      </Box>
-    </Box>
+        </FlexCenter>
+      </MobileBox>
+    </Container>
   );
 };
+
+const MobileBox = styled("div", {
+  display: "none",
+  width: "100%",
+  "@media only screen and (max-width: 900px)": {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+  },
+});
+
+const FlexCenter = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
+
+const DesktopBox = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 3fr 1fr",
+  margin: "auto",
+  width: "80%",
+  "@media only screen and (max-width: 1200px)": { width: "90%" },
+  "@media only screen and (max-width: 900px)": { display: "none" },
+});
+
+const Container = styled("div", {
+  height: "70px",
+  width: "100vw",
+  display: "flex",
+  zIndex: 100,
+  position: "fixed",
+  top: 0,
+  marginBottom: "70px",
+});
 
 export default Navbar;

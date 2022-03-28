@@ -2,62 +2,20 @@ import React, { useState } from "react";
 import { styled } from "@stitches/react";
 import Button from "@components/atoms/Button";
 import { FiX, FiMenu, FiArrowRight } from "react-icons/fi";
-import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 
-import { NavigationMenuItem } from "./DesktopNavigation";
-import { NavigationMenuList, NavigationMenuLink } from "./components/desktop";
 import MobileViewport from "./components/mobile/MobileViewport";
-
-const StyledMenu = styled(NavigationMenuPrimitive.Root, {
-  display: "flex",
-  justifyContent: "center",
-});
-
-const NavigationMenuMobile = StyledMenu;
+import MobileItemList from "./components/mobile/MobileItemList";
+import MobileItem from "./components/mobile/MobileItem";
 
 const AboutDropdown = () => {
   return (
-    <DropdownItemBox>
-      <DropdownItemTitle>OM OSS</DropdownItemTitle>
-      <ItemContainer>
-        <NavigationMenuMobile>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Interesegrupper</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Bidra</NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink href="https://github.com/radix-ui">Ressurser</NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenuMobile>
-      </ItemContainer>
-    </DropdownItemBox>
+    <MobileItemList title="OM OSS">
+      <MobileItem href="https://github.com/radix-ui">Interessegrupper</MobileItem>
+      <MobileItem href="https://github.com/radix-ui">Bidra</MobileItem>
+      <MobileItem href="https://github.com/radix-ui">Ressurser</MobileItem>
+    </MobileItemList>
   );
 };
-
-const ItemContainer = styled("div", {
-  display: "grid",
-  gridTemplateColumns: "repeat(4, 23vw)",
-  rowGap: "10px",
-  "@media only screen and (max-width: 740px)": { gridTemplateColumns: "repeat(3, 30vw)" },
-  "@media only screen and (max-width: 600px)": { gridTemplateColumns: "repeat(2, 42vw)" },
-});
-
-const DropdownItemTitle = styled("p", {
-  fontSize: "14px",
-  fontWeight: 550,
-  color: "$gray5",
-});
-
-const DropdownItemBox = styled("div", {
-  display: "flex",
-  flexDirection: "column",
-  backgroundColor: "transparent",
-  marginTop: "-10px",
-});
 
 const MobileDropdown = () => {
   const [isOpen, setIsOpen] = useState("none");
@@ -92,8 +50,7 @@ const MobileDropdown = () => {
 };
 
 const DropdownItemsContainer = styled("div", {
-  marginTop: "-30px",
-  marginLeft: "30px",
+  marginTop: "70px",
 });
 
 const DownBox = styled("div", {

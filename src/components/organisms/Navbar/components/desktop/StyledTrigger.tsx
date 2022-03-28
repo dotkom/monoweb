@@ -3,6 +3,7 @@ import { itemStyles } from "./StyledLink";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { DesktopProps } from "../../DesktopNavigation";
 import { FC } from "react";
+import { CaretDownIcon } from "@radix-ui/react-icons";
 
 const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
   all: "unset",
@@ -12,9 +13,19 @@ const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
   justifyContent: "space-between",
   gap: 2,
 });
+const StyledCaret = styled(CaretDownIcon, {
+  position: "relative",
+  top: 1,
+  "[data-state=open] &": { transform: "rotate(-180deg)" },
+  "@media (prefers-reduced-motion: no-preference)": {
+    transition: "transform 250ms ease",
+  },
+});
 
 const StyledTriggerWithCaret: FC<DesktopProps> = ({ children, ...props }) => (
-  <StyledTrigger {...props}>{children}</StyledTrigger>
+  <StyledTrigger {...props}>
+    {children} <StyledCaret />
+  </StyledTrigger>
 );
 
 export default StyledTriggerWithCaret;

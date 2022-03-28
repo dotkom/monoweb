@@ -1,6 +1,16 @@
 import { styled } from "@stitches/react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
+const AvatarImage = () => (
+  <StyledAvatar>
+    <StyledImage
+      alt="Colm Tuite"
+      src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHw%3D&w=1000&q=80"
+    />
+    <StyledFallback delayMs={500}>CT</StyledFallback>
+  </StyledAvatar>
+);
+
 const StyledAvatar = styled(AvatarPrimitive.Root, {
   display: "inline-flex",
   alignItems: "center",
@@ -40,15 +50,4 @@ const StyledFallback = styled(AvatarPrimitive.Fallback, {
   fontWeight: 500,
 });
 
-const MenuAvatar = StyledAvatar;
-const AvatarImage = StyledImage;
-const AvatarFallback = StyledFallback;
-
-const MainAvatar = () => (
-  <MenuAvatar>
-    <AvatarImage alt="Colm Tuite" />
-    <AvatarFallback delayMs={500}>CT</AvatarFallback>
-  </MenuAvatar>
-);
-
-export default MainAvatar;
+export default AvatarImage;

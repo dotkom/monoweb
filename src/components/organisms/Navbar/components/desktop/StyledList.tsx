@@ -4,6 +4,7 @@ import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 const StyledList = styled(NavigationMenuPrimitive.List, {
   all: "unset",
   display: "flex",
+  flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
   height: "60px",
