@@ -6,6 +6,7 @@ const globalStyles = globalCss({
     textRendering: "optimizeLegibility",
     "-webkit-font-smoothing": "antialiased",
     "-moz-osx-font-smoothing": "grayscale",
+    fontFamily: "$body",
   },
 });
 
