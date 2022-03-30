@@ -60,13 +60,6 @@ const Navbar = () => {
   );
 };
 
-const styles = createStyles({
-  mobile: {
-    display: "flex",
-    backgroundColor: "$red11",
-  },
-});
-
 const MobileBox = styled("div", {
   display: "none",
   width: "100%",
