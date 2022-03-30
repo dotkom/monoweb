@@ -1,98 +1,151 @@
-import React, { useState } from "react";
+import React from "react";
 import { styled } from "@stitches/react";
-import Button from "@components/atoms/Button";
-import { FiX, FiMenu, FiArrowRight } from "react-icons/fi";
+import { mauve } from "@radix-ui/colors";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+import { FiMenu } from "react-icons/fi";
+import { slideDownAndFade, slideLeftAndFade, slideRightAndFade, slideUpAndFade } from "./keyframes/keyframes";
 
-import MobileViewport from "./components/mobile/MobileViewport";
-import MobileItemList from "./components/mobile/MobileItemList";
-import MobileItem from "./components/mobile/MobileItem";
-
-const AboutDropdown = () => {
-  return (
-    <MobileItemList title="OM OSS">
-      <MobileItem href="https://github.com/radix-ui">Interessegrupper</MobileItem>
-      <MobileItem href="https://github.com/radix-ui">Bidra</MobileItem>
-      <MobileItem href="https://github.com/radix-ui">Ressurser</MobileItem>
-    </MobileItemList>
-  );
-};
-
-const MobileDropdown = () => {
-  const [isOpen, setIsOpen] = useState("none");
-
-  const handleOpen = () => setIsOpen("flex");
-  const handleClose = () => setIsOpen("none");
-
-  const Modal = MobileViewport;
-
-  return (
-    <Container>
-      <OpenButton onClick={handleOpen}>
-        <FiMenu size={20} />
-      </OpenButton>
-      <Modal isOpen={isOpen}>
-        <ButtonBox>
-          <CloseButton onClick={handleClose}>
-            <FiX size={20} />
-          </CloseButton>
-        </ButtonBox>
-        <DropdownItemsContainer>
-          <AboutDropdown />
-        </DropdownItemsContainer>
-        <DownBox>
-          <Button>
-            Profil <FiArrowRight size={18} />
-          </Button>
-        </DownBox>
-      </Modal>
-    </Container>
-  );
-};
-
-const DropdownItemsContainer = styled("div", {
-  marginTop: "70px",
+const StyledContent = styled(DropdownMenuPrimitive.Content, {
+  minWidth: 300,
+  backgroundColor: "white",
+  borderRadius: 6,
+  padding: 5,
+  boxShadow: "0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)",
+  "@media (prefers-reduced-motion: no-preference)": {
+    animationDuration: "400ms",
+    animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+    animationFillMode: "forwards",
+    willChange: "transform, opacity",
+    '&[data-state="open"]': {
+      '&[data-side="top"]': { animationName: slideDownAndFade },
+      '&[data-side="right"]': { animationName: slideLeftAndFade },
+      '&[data-side="bottom"]': { animationName: slideUpAndFade },
+      '&[data-side="left"]': { animationName: slideRightAndFade },
+    },
+  },
 });
 
-const DownBox = styled("div", {
-  width: "100%",
-  backgroundColor: "$bluebg",
-  height: "75px",
+const itemStyles = {
+  all: "unset",
+  fontSize: 16,
+  lineHeight: 1,
+  color: "#000",
+  borderRadius: 3,
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
+  height: 25,
+  padding: "5px",
+  position: "relative",
+  paddingLeft: 25,
+  userSelect: "none",
+  cursor: "pointer",
+
+  "&[data-disabled]": {
+    color: "$gray6",
+    pointerEvents: "none",
+  },
+
+  "&:focus": {
+    color: "$gray9",
+  },
+  variants: {
+    layout: {
+      one: {
+        color: "&red3",
+      },
+    },
+  },
+};
+
+const StyledItem = styled(DropdownMenuPrimitive.Item, { ...itemStyles });
+
+const StyledLabel = styled(DropdownMenuPrimitive.Label, {
+  paddingLeft: 25,
+  fontSize: 12,
+  lineHeight: "25px",
+  color: "$gray2",
 });
 
-const OpenButton = styled("button", {
+const StyledSeparator = styled(DropdownMenuPrimitive.Separator, {
+  height: 1,
+  backgroundColor: "$gray11",
+  margin: 5,
+});
+
+// Exports
+const DropdownMenu = DropdownMenuPrimitive.Root;
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+
+const Box = styled("div", {});
+
+const IconButton = styled("button", {
+  all: "unset",
   marginRight: "20px",
+  height: 35,
+  width: 35,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   backgroundColor: "transparent",
-  border: "none",
-  "&:hover": {
-    color: "Gray",
-    cursor: "pointer",
+  cursor: "pointer",
+  "&:hover": { color: "gray" },
+});
+
+const StyledTriggerItem = styled(DropdownMenuPrimitive.TriggerItem, {
+  '&[data-state="open"]': {
+    backgroundColor: "$blue3",
+    color: "$blue11",
   },
+  ...itemStyles,
 });
 
-const ButtonBox = styled("div", {
-  display: "flex",
-  justifyContent: "right",
-  width: "100%",
-});
+export const DropdownMenuTriggerItem = StyledTriggerItem;
 
-const CloseButton = styled("button", {
-  border: "none",
-  backgroundColor: "#fff",
-  marginTop: "10px",
-  height: "30px",
-  marginRight: "10px",
-  width: "40px",
-  borderRadius: 20,
-  "&:hover": {
-    color: "Gray",
-    cursor: "pointer",
-  },
-  zIndex: 1000,
-});
+export const MobileDropdown = () => (
+  <Box>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <IconButton aria-label="Customise options">
+          <FiMenu size={20} />
+        </IconButton>
+      </DropdownMenuTrigger>
 
-const Container = styled("div", { display: "flex", flexDirection: "column", alginItems: "center" });
+      <StyledContent sideOffset={5}>
+        <StyledItem>Profil</StyledItem>
+        <StyledItem>Dashboard</StyledItem>
+        <StyledItem>Adminpanel</StyledItem>
+
+        <StyledSeparator />
+        <StyledLabel>For studenter</StyledLabel>
+
+        <StyledItem>Webshop</StyledItem>
+        <StyledItem>Wiki</StyledItem>
+        <StyledItem>Offline</StyledItem>
+        <StyledItem>Artikler</StyledItem>
+
+        <StyledSeparator />
+        <StyledLabel>Om oss</StyledLabel>
+        <StyledItem>Interessegrupper</StyledItem>
+        <StyledItem>Om online</StyledItem>
+        <StyledSeparator />
+
+        <StyledItem>For bedrifter</StyledItem>
+        <StyledItem>Karriere</StyledItem>
+        <StyledSeparator />
+        <StyledItem
+          css={{
+            color: "$red3",
+            fontWeight: 600,
+            "&:hover": {
+              color: "$red9",
+            },
+          }}
+        >
+          Logg ut
+        </StyledItem>
+      </StyledContent>
+    </DropdownMenu>
+  </Box>
+);
 
 export default MobileDropdown;

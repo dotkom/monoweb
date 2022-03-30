@@ -12,7 +12,7 @@ const ContentList = styled("ul", {
       one: {
         "@media only screen and (min-width: 600px)": {
           width: 500,
-          gridTemplateColumns: ".75fr 1fr",
+          gridTemplateColumns: "0.75fr 1fr",
         },
       },
       two: {
