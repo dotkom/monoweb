@@ -2,7 +2,6 @@ import { mauve, violet } from "@radix-ui/colors";
 import { styled } from "@stitches/react";
 import { FC } from "react";
 import { NavigationMenuLink } from ".";
-import { DesktopProps } from "../../DesktopNavigation";
 
 export const ListItem = styled("li", {});
 

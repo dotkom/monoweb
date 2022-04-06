@@ -1,9 +1,10 @@
 import { styled } from "@stitches/react";
 import { itemStyles } from "./StyledLink";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
-import { DesktopProps } from "../../DesktopNavigation";
+
 import { FC } from "react";
 import { CaretDownIcon } from "@radix-ui/react-icons";
+import { DesktopProps } from "./DesktopProps";
 
 const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
   all: "unset",

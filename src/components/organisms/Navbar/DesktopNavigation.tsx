@@ -1,6 +1,5 @@
-import React, { FC } from "react";
+import React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
-import { CSS } from "@stitches/react/types/css-util";
 import {
   DebugCard,
   DesktopList,
@@ -13,13 +12,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "./components/desktop";
-
-export interface DesktopProps {
-  children?: Element[] | Element | string;
-  title?: string;
-  href?: string;
-  css?: CSS<{}, {}, {}, {}>;
-}
 
 export const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
