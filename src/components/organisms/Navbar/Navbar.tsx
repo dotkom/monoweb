@@ -37,7 +37,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <Container css={{ boxShadow: shadow, backgroundColor: color }}>
+    <Container css={{ boxShadow: shadow, backgroundColor: color, margin: 0, padding: 0 }}>
       {/*TODO: Split into Mobile Navbar and Desktop Navbar components and use ternary operator*/}
       <DesktopBox>
         <FlexCenter>
