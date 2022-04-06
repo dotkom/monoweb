@@ -1,6 +1,7 @@
 import { addDecorator, configure } from "@storybook/react";
 import * as NextImage from "next/image";
 import { Box } from "../src/components/primitives";
+import { globalStyles } from "../src/theme/global-style";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -18,6 +19,3 @@ addDecorator((story) => {
 });
 
 configure([require.context("../src/", true, /\.stories\.(tsx|mdx)$/)], module);
-function globalStyles() {
-  throw new Error("Function not implemented.");
-}
