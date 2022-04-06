@@ -1,0 +1,55 @@
+@keyframes waive {
+  from {
+    transform: translateX(0px);
+  }
+
+  to {
+    transform: translateX(-176px);
+  }
+}
+
+.parallax :nth-child(1) {
+  animation: waive 20s linear infinite;
+}
+.parallax :nth-child(2) {
+  animation: waive 18s linear infinite;
+}
+.parallax :nth-child(3) {
+  animation: waive 16s linear infinite;
+}
+.parallax :nth-child(4) {
+  animation: waive 14s linear infinite;
+}
+
+.underline {
+  position: relative;
+  text-decoration: none;
+  color: #c89247;
+}
+
+.underline::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0.1em;
+  background-color: #c89247;
+  transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .underline:hover::before {
+    left: 0;
+    right: auto;
+    width: 100%;
+  }
+
+  .simpleUnderline:hover {
+    text-decoration: underline;
+  }
+}
+
+.simpleUnderline {
+  text-decoration: none;
+}
