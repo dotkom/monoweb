@@ -8,7 +8,7 @@ function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <Box css={{ margin: 0, padding: 0 }}>
       <Navbar />
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </Box>
   );
 }
