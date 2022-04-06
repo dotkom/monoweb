@@ -1,4 +1,5 @@
 import { VFC } from "react";
+import { styled } from "@theme";
 import { FacebookIcon } from "@components/icons/FacebookIcon";
 import { GitHubIcon } from "@components/icons/GitHubIcon";
 import { InstagramIcon } from "@components/icons/InstagramIcon";

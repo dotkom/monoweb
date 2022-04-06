@@ -4,8 +4,8 @@ import { SlackIcon } from "@components/icons/SlackIcon";
 import { GitHubIcon } from "@components/icons/GitHubIcon";
 import { InstagramIcon } from "@components/icons/InstagramIcon";
 import { FacebookIcon } from "@components/icons/FacebookIcon";
-import { FooterHead } from "./FooterHead";
 import { FooterHat } from "./FooterHat";
+import "./footer.css";
 
 interface FooterProps {
   test: string;
@@ -30,7 +30,7 @@ const PeePee = styled("p", {
   margin: 0,
 });
 
-const Dot = styled("span", {
+const Dot = styled("a", {
   color: "$orange2",
 });
 
@@ -78,10 +78,7 @@ const Footer: VFC<FooterProps> = ({ test }) => {
 
   return (
     <Wrapper>
-      <div style={{ width: "100%", position: "relative", marginBottom: "-9px" }}>
-        <FooterHat />
-        <FooterHead />
-      </div>
+      <FooterHat />
 
       <FooterComponent>
         <Section marginSize="small">
@@ -93,7 +90,7 @@ const Footer: VFC<FooterProps> = ({ test }) => {
 
         <Section marginSize="small">
           {bigLinks.map((link) => (
-            <Link size="big" key={link}>
+            <Link className="simpleUnderline" size="big" key={link}>
               {link}
             </Link>
           ))}
@@ -110,7 +107,10 @@ const Footer: VFC<FooterProps> = ({ test }) => {
         <Section>
           <PeePee>Feil på nettsiden?</PeePee>
           <PeePee>
-            Ta kontakt med <Dot>Dotkom</Dot>
+            Ta kontakt med{" "}
+            <Dot href="https://gergus.no/" className="underline">
+              Dotkom
+            </Dot>
           </PeePee>
         </Section>
       </FooterComponent>
