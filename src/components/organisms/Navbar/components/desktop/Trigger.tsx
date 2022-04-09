@@ -1,12 +1,12 @@
 import { styled } from "@stitches/react";
-import { itemStyles } from "./StyledLink";
+import { itemStyles } from "./Link";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 
 import { FC } from "react";
 import { CaretDownIcon } from "@radix-ui/react-icons";
 import { DesktopProps } from "./DesktopProps";
 
-const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
+const Trigger = styled(NavigationMenuPrimitive.Trigger, {
   all: "unset",
   ...itemStyles,
   display: "flex",
@@ -14,7 +14,7 @@ const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
   justifyContent: "space-between",
   gap: 2,
 });
-const StyledCaret = styled(CaretDownIcon, {
+const Caret = styled(CaretDownIcon, {
   position: "relative",
   top: 1,
   "[data-state=open] &": { transform: "rotate(-180deg)" },
@@ -23,10 +23,10 @@ const StyledCaret = styled(CaretDownIcon, {
   },
 });
 
-const StyledTriggerWithCaret: FC<DesktopProps> = ({ children, ...props }) => (
-  <StyledTrigger {...props}>
-    {children} <StyledCaret />
-  </StyledTrigger>
+const TriggerWithCaret: FC<DesktopProps> = ({ children, ...props }) => (
+  <Trigger {...props}>
+    {children} <Caret />
+  </Trigger>
 );
 
-export default StyledTriggerWithCaret;
+export default TriggerWithCaret;

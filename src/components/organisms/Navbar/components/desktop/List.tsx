@@ -1,7 +1,7 @@
 import { styled } from "@stitches/react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 
-const StyledList = styled(NavigationMenuPrimitive.List, {
+const List = styled(NavigationMenuPrimitive.List, {
   all: "unset",
   display: "flex",
   flexDirection: "row",
@@ -13,4 +13,4 @@ const StyledList = styled(NavigationMenuPrimitive.List, {
   listStyle: "none",
 });
 
-export default StyledList;
+export default List;

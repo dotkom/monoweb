@@ -1,6 +1,6 @@
-import { styled } from "@stitches/react";
+import { css, styled } from "@theme";
 
-const ContentList = styled("ul", {
+const styles = css({
   display: "grid",
   padding: 22,
   margin: 0,
@@ -30,5 +30,7 @@ const ContentList = styled("ul", {
     },
   },
 });
+
+const ContentList = styled("ul", styles);
 
 export default ContentList;

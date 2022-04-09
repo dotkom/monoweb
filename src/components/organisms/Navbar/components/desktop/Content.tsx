@@ -1,8 +1,8 @@
-import { styled } from "@stitches/react";
+import { styled } from "@theme";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { enterFromLeft, enterFromRight, exitToLeft, exitToRight } from "../../keyframes/keyframes";
 
-const StyledContent = styled(NavigationMenuPrimitive.Content, {
+const Content = styled(NavigationMenuPrimitive.Content, {
   position: "absolute",
   top: 0,
   left: 0,
@@ -18,4 +18,4 @@ const StyledContent = styled(NavigationMenuPrimitive.Content, {
   },
 });
 
-export default StyledContent;
+export default Content;

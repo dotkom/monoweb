@@ -1,14 +1,12 @@
-import AvatarImage from "./AvatarImage";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+import { FiMenu } from "react-icons/fi";
 import { css } from "@theme";
 
-export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-
-const ProfileTrigger = () => {
+const ContentTrigger = () => {
   return (
     <DropdownMenuTrigger asChild>
       <button className={styles.button()}>
-        <AvatarImage />
+        <FiMenu size={20} />
       </button>
     </DropdownMenuTrigger>
   );
@@ -17,15 +15,17 @@ const ProfileTrigger = () => {
 const styles = {
   button: css({
     all: "unset",
-    fontFamily: "inherit",
-    borderRadius: "100%",
-    height: 45,
-    width: 45,
+    marginRight: "20px",
+    height: 35,
+    width: 35,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: "transparent",
+    cursor: "pointer",
+    "&:hover": { color: "gray" },
   }),
 };
 
-export default ProfileTrigger;
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+export default ContentTrigger;

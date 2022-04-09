@@ -1,27 +1,11 @@
 import { mauve, violet } from "@radix-ui/colors";
-import { styled } from "@stitches/react";
+import { css, styled } from "@theme";
 import { FC } from "react";
 import { NavigationMenuLink } from ".";
 import { DesktopProps } from "./DesktopProps";
 
-export const ListItem = styled("li", {});
-
-export const LinkTitle = styled("div", {
-  fontWeight: 500,
-  lineHeight: 1.2,
-  marginBottom: 5,
-  color: violet.violet12,
-});
-
-export const LinkText = styled("p", {
-  all: "unset",
-  color: mauve.mauve11,
-  lineHeight: 1.4,
-  fontWeight: "initial",
-});
-
 const ContentListItem: FC<DesktopProps> = ({ children, title, ...props }) => (
-  <ListItem>
+  <li>
     <NavigationMenuLink
       {...props}
       css={{
@@ -33,7 +17,24 @@ const ContentListItem: FC<DesktopProps> = ({ children, title, ...props }) => (
       <LinkTitle>{title}</LinkTitle>
       <LinkText>{children}</LinkText>
     </NavigationMenuLink>
-  </ListItem>
+  </li>
 );
+
+const title = css({
+  fontWeight: 500,
+  lineHeight: 1.2,
+  marginBottom: 5,
+  color: violet.violet12,
+});
+
+const text = css({
+  all: "unset",
+  color: mauve.mauve11,
+  lineHeight: 1.4,
+  fontWeight: "initial",
+});
+export const LinkTitle = styled("div", title);
+
+export const LinkText = styled("p", text);
 
 export default ContentListItem;

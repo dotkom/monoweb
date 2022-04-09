@@ -12,6 +12,9 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "./components/desktop";
+import Profile from "./components/profile";
+import NavbarLogo from "./components/logo";
+import { styled } from "@stitches/react";
 
 export const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
@@ -84,32 +87,55 @@ const tabs = [
 ];
 
 export const DesktopNavigation = () => (
-  <DesktopNavbarContainer>
-    <NavigationMenuList>
-      {tabs.map((tab) => (
+  <DesktopBox>
+    <FlexCenter>
+      <NavbarLogo />
+    </FlexCenter>
+    <DesktopNavbarContainer>
+      <NavigationMenuList>
+        {tabs.map((tab) => (
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>{tab.name}</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <DesktopList layout={tab.layout as unknown as { [x: string]: "one" | "three" | "two" }}>
+                {tab.card == "debug" && <DebugCard />}
+                {tab.items.map((item) => (
+                  <DesktopListItem href={item.link} title={item.name}>
+                    CSS-in-JS with best-in-class developer experience.
+                  </DesktopListItem>
+                ))}
+              </DesktopList>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        ))}
         <NavigationMenuItem>
-          <NavigationMenuTrigger>{tab.name}</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <DesktopList layout={tab.layout}>
-              {tab.card == "debug" && <DebugCard />}
-              {tab.items.map((item) => (
-                <DesktopListItem href={item.link} title={item.name}>
-                  CSS-in-JS with best-in-class developer experience.
-                </DesktopListItem>
-              ))}
-            </DesktopList>
-          </NavigationMenuContent>
+          <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
         </NavigationMenuItem>
-      ))}
-      <NavigationMenuItem>
-        <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
-      </NavigationMenuItem>
 
-      <DropdownIndicator />
-    </NavigationMenuList>
+        <DropdownIndicator />
+      </NavigationMenuList>
 
-    <DesktopViewport />
-  </DesktopNavbarContainer>
+      <DesktopViewport />
+    </DesktopNavbarContainer>
+    <FlexCenter>
+      <Profile />
+    </FlexCenter>
+  </DesktopBox>
 );
+
+const DesktopBox = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 3fr 1fr",
+  margin: "auto",
+  width: "80%",
+  "@media only screen and (max-width: 1200px)": { width: "90%" },
+  "@media only screen and (max-width: 900px)": { display: "none" },
+});
+
+const FlexCenter = styled("div", {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
 
 export default DesktopNavigation;
