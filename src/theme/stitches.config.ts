@@ -121,7 +121,8 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
 
 export type CSS = Stitches.CSS<typeof config>;
 
-type StyleInput<T extends string> = { [key in T]: ReturnType<typeof css> };
+type StyleInput<T extends string> = { [key in T]: CSS };
+type StyleOutput<T extends string> = { [key in T]: ReturnType<typeof css> };
 
 export const createCSS = <T extends string>(style: StyleInput<T>) => style;
 
@@ -130,13 +131,17 @@ export const createCSS = <T extends string>(style: StyleInput<T>) => style;
  * @example
  * // Returns styles.container()
  * const styles = createStyles({
- *    container: css({ color: "$blue11" })
+ *    container: { color: "$blue11" }
  * })
  *
  * const Text = () => <p className={styles.container()}>Hello World</p>
  *
  * @returns functions to be used in className
  */
-export const createStyles = <T extends string>(styles: StyleInput<T>) => {
-  return styles;
+export const createStyles = <T extends string>(style: StyleInput<T>): StyleOutput<T> => {
+  let styles: { [key in T]: CSS | ReturnType<typeof css> } = style;
+  for (let key in style) {
+    styles[key] = css(style[key] as CSS);
+  }
+  return styles as StyleOutput<T>;
 };
