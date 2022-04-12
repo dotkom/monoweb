@@ -19,3 +19,13 @@ model User {
   email      String   @unique
   password   String
 }
+
+model Company {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  phone       String?
+  email       String? @unique
+  website     String?
+  location    String?
+}

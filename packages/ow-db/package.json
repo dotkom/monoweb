@@ -10,7 +10,8 @@
     "migrate": "prisma migrate dev",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@prisma/client": "^3.11.1"
@@ -22,6 +23,6 @@
   },
   "prisma": {
     "schema": "./prisma/schema.prisma",
-    "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/seed.ts"
+    "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/seed/index.ts"
   }
 }
