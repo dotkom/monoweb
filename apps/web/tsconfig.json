@@ -1,10 +1,26 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components"],
+      "@public/*": ["public/*"],
+      "@public": ["public"],
+      "@styles/*": ["src/styles/*"],
+      "@styles": ["src/styles"],
+      "@theme": ["src/theme/stitches.config.ts"]
+    },
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "outDir": "dist"
+    "isolatedModules": true
   },
-  "include": ["src"]
+  "include": ["./src", "./next-env.d.ts", "**/*.ts"],
+  "exclude": ["node_modules"],
+  "files": ["./src/types/block-content-to-react.d.ts"]
 }

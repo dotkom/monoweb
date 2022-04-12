@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/config/*": ["./config/*"]
+    }
   },
   "include": ["./src/**/*.ts", "./config/*.ts"],
   "exclude": ["./src/resolvers/.generated", "**/node_modules/**", "./dist"]
