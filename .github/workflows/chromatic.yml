@@ -8,10 +8,13 @@ on: push
 jobs:
   chromatic-deployment:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./apps/owf
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [14]
+        node: [16]
     # Job steps
     steps:
       - uses: actions/checkout@v1

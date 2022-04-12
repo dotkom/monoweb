@@ -17,3 +17,9 @@ build-storybook.log
 package-lock.json
 # IDE specific
 .idea
+
+node_modules
+.turbo
+dist/
+.next/
+build/
