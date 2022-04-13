@@ -7,7 +7,7 @@ export const userQuery = queryField("user", {
   args: {
     id: stringArg(),
   },
-  resolve: async (_, args, ctx: Context) => {
+  resolve: async (_, args, ctx) => {
     const { id } = args
     const user = await ctx.userService.getUser(id)
     return user

@@ -17,6 +17,7 @@ const graphqlSchema = makeSchema({
   contextType: {
     module: path.join(__dirname, "context.ts"),
     export: "Context",
+    alias: "ctx",
   },
 })
 

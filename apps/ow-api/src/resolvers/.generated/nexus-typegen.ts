@@ -4,7 +4,7 @@
  */
 
 
-import type { Context } from "./../context"
+import type { Context as ctx } from "./../context"
 
 
 
@@ -131,7 +131,7 @@ export type NexusGenFeaturesConfig = {
 }
 
 export interface NexusGenTypes {
-  context: Context;
+  context: ctx;
   inputTypes: NexusGenInputs;
   rootTypes: NexusGenRootTypes;
   inputTypeShapes: NexusGenInputs & NexusGenEnums & NexusGenScalars;

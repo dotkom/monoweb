@@ -1,4 +1,4 @@
-import { objectType } from "nexus"
+import { list, objectType } from "nexus"
 
 export const User = objectType({
   name: "User",

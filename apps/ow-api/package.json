@@ -5,7 +5,7 @@
   "exports": "./dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development run -T nodemon --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
+    "dev": "NODE_ENV=development run -T nodemon --watch './src/**.{ts}' --watch './config/**.{ts,json}' --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",

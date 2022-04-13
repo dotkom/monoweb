@@ -7,6 +7,6 @@
       "@/config/*": ["./config/*"]
     }
   },
-  "include": ["./src/**/*.ts", "./config/*.ts"],
-  "exclude": ["./src/resolvers/.generated", "**/node_modules/**", "./dist"]
+  "include": ["./src/**/*.ts", "./config/*.ts", "./src/resolvers/.generated/nexus-typegen.ts"],
+  "exclude": ["**/node_modules/**", "./dist"]
 }

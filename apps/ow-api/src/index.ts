@@ -26,7 +26,7 @@ export const apolloConfig: ApolloServerExpressConfig = {
 }
 
 if (process.env.NODE_ENV === "development") {
-  const port = 4000
+  const port = Number(process.env.PORT || 4000)
   createServer(apolloConfig).then((server) => server.listen({ port }))
   logger.info(`Started GraphQL server at http://localhost:${port}/graphql 🚀`)
 }
