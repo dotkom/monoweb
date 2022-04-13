@@ -6,8 +6,7 @@ export const loginMutation = mutationField("login", {
     email: stringArg(),
     password: stringArg(),
   },
-  resolve: async (root, args, context) => {
-    const { email, password } = args
+  resolve: async () => {
     return "Hello World"
   },
 })

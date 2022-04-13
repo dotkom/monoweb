@@ -18,7 +18,7 @@ const userService = initUserService(userRepository)
 
 export const apolloConfig: ApolloServerExpressConfig = {
   schema: graphqlSchema,
-  context: (req: Request, res: Response) => {
+  context: (_req: Request, _res: Response) => {
     return {
       userService,
     }

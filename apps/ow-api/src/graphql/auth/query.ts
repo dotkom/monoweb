@@ -1,5 +1,4 @@
 import { intArg, list, queryField, stringArg } from "nexus"
-import { Context } from "../context"
 import { User } from "./typedefs"
 
 export const userQuery = queryField("user", {
