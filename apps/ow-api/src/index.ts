@@ -3,7 +3,7 @@ import { createServer } from "./server.js"
 import { initUserRepository } from "./repositories/user-repository.js"
 import { initUserService } from "./services/user-service.js"
 import { ApolloServerExpressConfig } from "apollo-server-express"
-import graphqlSchema from "./resolvers/schema.js"
+import graphqlSchema from "./graphql/schema.js"
 import { Request, Response } from "express"
 import prisma from "./repositories/client.js"
 
