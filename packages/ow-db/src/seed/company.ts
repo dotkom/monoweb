@@ -1,5 +1,4 @@
 import { Seeder } from "."
-import { Company, prisma } from ".."
 
 export const seedCompanies: Seeder = async (chance, prisma) => {
   const companyInserts = [...new Array(10)].map(() => ({

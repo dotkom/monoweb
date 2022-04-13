@@ -1,4 +1,4 @@
-import { PrismaClient, User } from ".prisma/client"
+import { User } from ".prisma/client"
 import { Seeder } from "."
 
 export const seedUsers: Seeder = async (chance, prisma) => {

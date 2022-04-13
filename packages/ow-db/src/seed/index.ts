@@ -1,4 +1,4 @@
-import { PrismaClient, User } from ".prisma/client"
+import { PrismaClient } from ".prisma/client"
 import { Chance } from "chance"
 import { seedCompanies } from "./company"
 import { seedUsers } from "./users"
