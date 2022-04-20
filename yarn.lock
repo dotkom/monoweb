@@ -4471,6 +4471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json5@npm:^0.0.29":
+  version: 0.0.29
+  resolution: "@types/json5@npm:0.0.29"
+  checksum: e60b153664572116dfea673c5bda7778dbff150498f44f998e34b5886d8afc47f16799280e4b6e241c0472aef1bc36add771c569c68fc5125fc2ae519a3eb9ac
+  languageName: node
+  linkType: hard
+
 "@types/keyv@npm:^3.1.1":
   version: 3.1.4
   resolution: "@types/keyv@npm:3.1.4"
@@ -4711,15 +4718,6 @@ __metadata:
   version: 1.0.8
   resolution: "@types/tapable@npm:1.0.8"
   checksum: b4b754dd0822c407b8f29ef6b766490721c276880f9e976d92ee2b3ef915f11a05a2442ae36c8978bcd872ad6bc833b0a2c4d267f2d611590668a366bad50652
-  languageName: node
-  linkType: hard
-
-"@types/tsc-watch@npm:^4":
-  version: 4.2.0
-  resolution: "@types/tsc-watch@npm:4.2.0"
-  dependencies:
-    "@types/node": "*"
-  checksum: 1a9ad24214b3c95030778246c0d0a77f75acbb8f1c151a83e2b9566571e540d20cfd57dd73a4a0b9b43810b5d8b47bc25b4086a6a31d520d369de3dfdb9ab535
   languageName: node
   linkType: hard
 
@@ -5547,7 +5545,6 @@ __metadata:
     "@types/config": ^0.0.41
     "@types/cors": ^2
     "@types/express": ^4
-    "@types/tsc-watch": ^4
     "@types/uuid": ^8
     apollo-server-express: ^3.6.6
     apollo-server-lambda: ^3.6.6
@@ -5556,7 +5553,6 @@ __metadata:
     express: ^4.17.3
     graphql: ^16.3.0
     nexus: ^1.3.0
-    tsc-watch: ^4.6.2
     uuid: ^8.3.2
     zod: ^3.14.3
   languageName: unknown
@@ -13245,6 +13241,8 @@ __metadata:
     prettier: ^2.6.1
     ts-jest: ^27.1.4
     ts-node: ^10.7.0
+    tsc-watch: ^5.0.3
+    tsconfig-paths: ^3.14.1
     turbo: ^1.2.0
     typescript: ^4.6.3
   languageName: unknown
@@ -16782,6 +16780,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"strip-bom@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "strip-bom@npm:3.0.0"
+  checksum: 8d50ff27b7ebe5ecc78f1fe1e00fcdff7af014e73cf724b46fb81ef889eeb1015fc5184b64e81a2efe002180f3ba431bdd77e300da5c6685d702780fbf0c8d5b
+  languageName: node
+  linkType: hard
+
 "strip-bom@npm:^4.0.0":
   version: 4.0.0
   resolution: "strip-bom@npm:4.0.0"
@@ -17375,9 +17380,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsc-watch@npm:^4.6.2":
-  version: 4.6.2
-  resolution: "tsc-watch@npm:4.6.2"
+"tsc-watch@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "tsc-watch@npm:5.0.3"
   dependencies:
     cross-spawn: ^7.0.3
     node-cleanup: ^2.1.2
@@ -17388,7 +17393,19 @@ __metadata:
     typescript: "*"
   bin:
     tsc-watch: index.js
-  checksum: 36cf74d45c7c32d2db70f784d153d36c5a010d0d9e138a835c6e7d804a8593f6784688a64deb818e74f84c622c4b73695d1380630e7b24a24ca7d96aeeea5ea5
+  checksum: abd63295dd5fda098a45d27912031e6c35a95f1aa20d7a86d6ad1469580400069e6476f2ffd4b88e37886d016443e60b1ae2dbcaf756e324efc67d0fa713fb15
+  languageName: node
+  linkType: hard
+
+"tsconfig-paths@npm:^3.14.1":
+  version: 3.14.1
+  resolution: "tsconfig-paths@npm:3.14.1"
+  dependencies:
+    "@types/json5": ^0.0.29
+    json5: ^1.0.1
+    minimist: ^1.2.6
+    strip-bom: ^3.0.0
+  checksum: 8afa01c673ebb4782ba53d3a12df97fa837ce524f8ad38ee4e2b2fd57f5ac79abc21c574e9e9eb014d93efe7fe8214001b96233b5c6ea75bd1ea82afe17a4c6d
   languageName: node
   linkType: hard
 

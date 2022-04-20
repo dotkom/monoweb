@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development run -T nodemon --watch './src/**.{ts}' --watch './config/**.{ts,json}' --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
+    "watch": "tsc-watch --project tsconfig.json --onSuccess \"yarn dev\"",
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
@@ -27,10 +28,8 @@
     "@types/config": "^0.0.41",
     "@types/cors": "^2",
     "@types/express": "^4",
-    "@types/tsc-watch": "^4",
     "@types/uuid": "^8",
     "apollo-server-express": "^3.6.6",
-    "express": "^4.17.3",
-    "tsc-watch": "^4.6.2"
+    "express": "^4.17.3"
   }
 }
