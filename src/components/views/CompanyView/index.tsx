@@ -44,16 +44,24 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
 
 const styles = {
   banner: {
+    height: "300px",
     maxWidth: "$md",
     margin: "auto",
     padding: "$4",
     fontSize: "$md",
+    "@media only screen and (max-width: 550px)": {
+      height: "400px",
+    },
+    "@media only screen and (max-width: 400px)": {
+      height: "520px",
+    },
   } as CSS,
   bannerTitle: css({
     color: "$gray1",
     marginBottom: "$4",
     fontSize: "$4xl",
     lineHeight: "1.4",
+    marginTop: "$5",
   }),
   yellowUnderline: css({
     backgroundImage: 'url("/for-company-text-decor.svg")',
