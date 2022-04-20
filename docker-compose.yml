@@ -1,0 +1,14 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+  db:
+    container_name: OwDB
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: owpassword123
+      POSTGRES_USER: ow
+      POSTGRES_DB: ow
+    ports:
+      - 6543:5432
