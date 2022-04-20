@@ -139,8 +139,8 @@ export const createCSS = <T extends string>(style: StyleInput<T>) => style;
  * @returns functions to be used in className
  */
 export const createStyles = <T extends string>(style: StyleInput<T>): StyleOutput<T> => {
-  let styles: { [key in T]: CSS | ReturnType<typeof css> } = style;
-  for (let key in style) {
+  const styles: { [key in T]: CSS | ReturnType<typeof css> } = style;
+  for (const key in style) {
     styles[key] = css(style[key] as CSS);
   }
   return styles as StyleOutput<T>;
