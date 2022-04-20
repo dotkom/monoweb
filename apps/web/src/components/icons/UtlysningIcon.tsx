@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import { SVGProps } from "react"
 
 const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -57,6 +57,6 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
       }}
     />
   </svg>
-);
+)
 
-export default SvgUtlysningIcon;
+export default SvgUtlysningIcon

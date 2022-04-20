@@ -1,4 +1,4 @@
-import { styled } from "@stitches/react";
+import { styled } from "@stitches/react"
 
 const IconStyle = styled("svg", {
   fill: "$blue3",
@@ -6,7 +6,7 @@ const IconStyle = styled("svg", {
     fill: "$blue5",
     cursor: "pointer",
   },
-});
+})
 
 const OnlineIcon = () => {
   return (
@@ -57,7 +57,7 @@ const OnlineIcon = () => {
         </g>
       </g>
     </IconStyle>
-  );
-};
+  )
+}
 
-export default OnlineIcon;
+export default OnlineIcon

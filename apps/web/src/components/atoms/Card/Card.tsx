@@ -1,4 +1,4 @@
-import { styled } from "@theme";
+import { styled } from "@theme"
 
 const Card = styled("div", {
   boxSizing: "border-box",
@@ -21,6 +21,6 @@ const Card = styled("div", {
   defaultVariants: {
     outlined: true,
   },
-});
+})
 
-export default Card;
+export default Card

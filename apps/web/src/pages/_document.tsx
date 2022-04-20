@@ -1,10 +1,10 @@
-import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document";
-import { getCssText } from "@theme";
+import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
+import { getCssText } from "@theme"
 
 export default class Document extends NextDocument {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
-    const initialProps = await NextDocument.getInitialProps(ctx);
-    return { ...initialProps };
+    const initialProps = await NextDocument.getInitialProps(ctx)
+    return { ...initialProps }
   }
 
   render(): JSX.Element {
@@ -22,6 +22,6 @@ export default class Document extends NextDocument {
           <NextScript />
         </body>
       </Html>
-    );
+    )
   }
 }

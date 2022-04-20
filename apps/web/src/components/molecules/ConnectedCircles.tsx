@@ -1,16 +1,16 @@
-import { Box } from "@components/primitives";
-import { createStyles, CSS } from "@theme";
-import { Circle } from "../atoms/Circle/Circle";
-import { DottedLine } from "../atoms/DottedCurve";
+import { Box } from "@components/primitives"
+import { createStyles } from "@theme"
+import { Circle } from "../atoms/Circle/Circle"
+import { DottedLine } from "../atoms/DottedCurve"
 
 interface ConnectedCircleProps {
-  size: number;
-  lineColor: string;
-  circleColor: string;
+  size: number
+  lineColor: string
+  circleColor: string
 }
 
 export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineColor, circleColor }) => {
-  const style = styles.circle;
+  const style = styles.circle
   return (
     <Box css={{ minWidth: size, display: "flex", justifyContent: "center", alignItems: "center", margin: "auto" }}>
       <Circle size={size / 15} color={circleColor}>
@@ -36,8 +36,8 @@ export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineCol
         4
       </Circle>
     </Box>
-  );
-};
+  )
+}
 
 const styles = createStyles({
   circle: {
@@ -45,6 +45,6 @@ const styles = createStyles({
     transform: "rotate(45deg)",
     position: "relative",
   },
-});
+})
 
-export default ConnectedCircles;
+export default ConnectedCircles

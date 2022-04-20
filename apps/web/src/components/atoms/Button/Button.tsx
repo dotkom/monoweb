@@ -1,4 +1,4 @@
-import { styled } from "@theme";
+import { styled } from "@theme"
 
 const Button = styled("button", {
   backgroundColor: "$blue5",
@@ -45,6 +45,6 @@ const Button = styled("button", {
       },
     },
   },
-});
+})
 
-export default Button;
+export default Button

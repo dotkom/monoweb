@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import { SVGProps } from "react"
 
 const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -22,6 +22,6 @@ const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
       }}
     />
   </svg>
-);
+)
 
-export default SvgOfflineIcon;
+export default SvgOfflineIcon

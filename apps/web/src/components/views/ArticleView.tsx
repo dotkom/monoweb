@@ -1,22 +1,22 @@
-import { Box, Flex } from "../primitives";
-import { FC } from "react";
-import { Article } from "src/api/get-article";
-import { CSS, css, styled } from "@theme";
-import Text from "@components/atoms/Text";
-import PortableText from "@components/molecules/PortableText";
-import Image from "next/image";
-import Badge from "@components/atoms/Badge";
-import { DateTime } from "luxon";
+import { Box, Flex } from "../primitives"
+import { FC } from "react"
+import { Article } from "src/api/get-article"
+import { CSS, css, styled } from "@theme"
+import Text from "@components/atoms/Text"
+import PortableText from "@components/molecules/PortableText"
+import Image from "next/image"
+import Badge from "@components/atoms/Badge"
+import { DateTime } from "luxon"
 
 interface ArticleViewProps {
-  article: Article;
+  article: Article
 }
 
 export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
   const { title, author, photographer, _createdAt, tags, excerpt, cover_image, content, estimatedReadingTime } =
-    props.article;
+    props.article
 
-  const date = DateTime.fromISO(_createdAt);
+  const date = DateTime.fromISO(_createdAt)
 
   return (
     <Flex
@@ -67,8 +67,8 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
       )}
       <Content blocks={content} />
     </Flex>
-  );
-};
+  )
+}
 
 const styles = {
   articleInfo: {
@@ -113,6 +113,6 @@ const styles = {
     flexWrap: "wrap",
     paddingBottom: "$4",
   } as CSS,
-};
+}
 
-const Content = styled(PortableText, styles.content);
+const Content = styled(PortableText, styles.content)

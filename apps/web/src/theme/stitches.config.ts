@@ -1,5 +1,5 @@
-import { utils } from "./utils";
-import * as Stitches from "@stitches/react";
+import { utils } from "./utils"
+import * as Stitches from "@stitches/react"
 
 export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, theme, config } = Stitches.createStitches({
   theme: {
@@ -117,14 +117,14 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
     maxLaptop: "(max-width: 1024px)",
   },
   utils: utils,
-});
+})
 
-export type CSS = Stitches.CSS<typeof config>;
+export type CSS = Stitches.CSS<typeof config>
 
-type StyleInput<T extends string> = { [key in T]: CSS };
-type StyleOutput<T extends string> = { [key in T]: ReturnType<typeof css> };
+type StyleInput<T extends string> = { [key in T]: CSS }
+type StyleOutput<T extends string> = { [key in T]: ReturnType<typeof css> }
 
-export const createCSS = <T extends string>(style: StyleInput<T>) => style;
+export const createCSS = <T extends string>(style: StyleInput<T>) => style
 
 /**
  * Solves equations of the form a * x = b
@@ -139,9 +139,9 @@ export const createCSS = <T extends string>(style: StyleInput<T>) => style;
  * @returns functions to be used in className
  */
 export const createStyles = <T extends string>(style: StyleInput<T>): StyleOutput<T> => {
-  const styles: { [key in T]: CSS | ReturnType<typeof css> } = style;
+  const styles: { [key in T]: CSS | ReturnType<typeof css> } = style
   for (const key in style) {
-    styles[key] = css(style[key] as CSS);
+    styles[key] = css(style[key] as CSS)
   }
-  return styles as StyleOutput<T>;
-};
+  return styles as StyleOutput<T>
+}

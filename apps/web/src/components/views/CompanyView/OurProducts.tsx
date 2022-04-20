@@ -1,11 +1,11 @@
-import { css } from "@theme";
-import { Flex } from "@components/primitives";
-import BedpressIcon from "@components/icons/BedpressIcon";
-import ItexIcon from "@components/icons/ItexIcon";
-import OfflineIcon from "@components/icons/OfflineIcon";
-import UtlysningIcon from "@components/icons/UtlysningIcon";
-import TechtalksIcon from "@components/icons/TechtalksIcon";
-import Text from "@components/atoms/Text";
+import { css } from "@theme"
+import { Flex } from "@components/primitives"
+import BedpressIcon from "@components/icons/BedpressIcon"
+import ItexIcon from "@components/icons/ItexIcon"
+import OfflineIcon from "@components/icons/OfflineIcon"
+import UtlysningIcon from "@components/icons/UtlysningIcon"
+import TechtalksIcon from "@components/icons/TechtalksIcon"
+import Text from "@components/atoms/Text"
 
 const OurProducts = () => {
   return (
@@ -45,8 +45,8 @@ const OurProducts = () => {
         </Flex>
       </Flex>
     </Flex>
-  );
-};
+  )
+}
 
 const styles = {
   icon: css({
@@ -63,6 +63,6 @@ const styles = {
       height: "100px",
     },
   }),
-};
+}
 
-export default OurProducts;
+export default OurProducts

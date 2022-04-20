@@ -1,34 +1,34 @@
-import Card from "@components/atoms/Card/Card";
-import Text from "@components/atoms/Text";
-import { FC, VFC } from "react";
-import Image from "next/image";
-import { CSS, css, styled } from "@theme";
-import { Box, Flex } from "@components/primitives";
-import { DateTime } from "luxon";
-import { FiUsers, FiMapPin, FiClock } from "react-icons/fi";
+import Card from "@components/atoms/Card/Card"
+import Text from "@components/atoms/Text"
+import { FC, VFC } from "react"
+import Image from "next/image"
+import { CSS, css, styled } from "@theme"
+import { Box, Flex } from "@components/primitives"
+import { DateTime } from "luxon"
+import { FiUsers, FiMapPin, FiClock } from "react-icons/fi"
 
 interface EventCardProps {
-  title: string;
-  eventStart: Date;
-  attendees?: number;
-  capacity?: number;
-  tags: string[];
-  location: { text: string; link: string };
-  thumbnailUrl: string;
+  title: string
+  eventStart: Date
+  attendees?: number
+  capacity?: number
+  tags: string[]
+  location: { text: string; link: string }
+  thumbnailUrl: string
 }
 
 const EventCard: VFC<EventCardProps> = (props) => {
-  const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props;
-  const date = DateTime.fromJSDate(eventStart);
+  const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props
+  const date = DateTime.fromJSDate(eventStart)
 
   let eventInfo = [
     {
       icon: <FiClock />,
       text: date.toFormat("HH:mm"),
     },
-  ];
+  ]
   if (attendees && capacity) {
-    eventInfo = [...eventInfo, { icon: <FiUsers />, text: `${attendees}/${capacity}` }];
+    eventInfo = [...eventInfo, { icon: <FiUsers />, text: `${attendees}/${capacity}` }]
   }
 
   return (
@@ -68,8 +68,8 @@ const EventCard: VFC<EventCardProps> = (props) => {
         </InfoArea>
       </Flex>
     </Card>
-  );
-};
+  )
+}
 
 const TempBadge: FC = ({ children }) => (
   <Box
@@ -85,7 +85,7 @@ const TempBadge: FC = ({ children }) => (
   >
     {children}
   </Box>
-);
+)
 
 const styles = {
   title: {
@@ -122,27 +122,27 @@ const styles = {
     width: "min-content",
     fontWeight: "bold",
   }),
-};
+}
 
 const Thumbnail = styled(Image, {
   borderTopRightRadius: "$3",
   borderTopLeftRadius: "$3",
-});
+})
 
 const HeaderArea = styled("div", {
   display: "flex",
   pb: "$2",
-});
+})
 
 const TagsArea = styled("div", {
   pb: "$2",
-});
+})
 
-const LocationArea = styled("div", styles.infoEntry);
+const LocationArea = styled("div", styles.infoEntry)
 
 const InfoArea = styled("div", {
   display: "flex",
   justifyContent: "space-between",
-});
+})
 
-export default EventCard;
+export default EventCard

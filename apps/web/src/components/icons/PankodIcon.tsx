@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import { SVGProps } from "react"
 
 const SvgPankodIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -42,6 +42,6 @@ const SvgPankodIcon = (props: SVGProps<SVGSVGElement>) => (
       />
     </g>
   </svg>
-);
+)
 
-export default SvgPankodIcon;
+export default SvgPankodIcon

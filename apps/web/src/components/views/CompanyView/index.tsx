@@ -1,19 +1,19 @@
-import Button from "@components/atoms/Button/Button";
-import PortableText from "@components/molecules/PortableText";
-import { Box } from "@components/primitives";
-import { BlockContentProps } from "@sanity/block-content-to-react";
-import { CSS, css, styled } from "@theme";
-import { VFC } from "react";
-import CompanyInterestProcess from "./CompanyInterestProcess";
-import OurProducts from "./OurProducts";
+import Button from "@components/atoms/Button/Button"
+import PortableText from "@components/molecules/PortableText"
+import { Box } from "@components/primitives"
+import { BlockContentProps } from "@sanity/block-content-to-react"
+import { CSS, css, styled } from "@theme"
+import { VFC } from "react"
+import CompanyInterestProcess from "./CompanyInterestProcess"
+import OurProducts from "./OurProducts"
 
-export type Content = BlockContentProps["blocks"];
+export type Content = BlockContentProps["blocks"]
 
 interface CompanyViewProps {
-  companyContent: Content[];
+  companyContent: Content[]
 }
 export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
-  const [header, interest, product, info, contact] = props.companyContent;
+  const [header, interest, product, info, contact] = props.companyContent
 
   return (
     <Box css={{ margin: "auto", maxWidth: "1024px" }}>
@@ -39,8 +39,8 @@ export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
       <Info blocks={info.content} />
       <Contact blocks={contact.content} />
     </Box>
-  );
-};
+  )
+}
 
 const styles = {
   banner: {
@@ -110,11 +110,11 @@ const styles = {
     h3: { fontSize: "$2xl", marginBottom: "$2", textAlign: "center", fontWeight: 600 },
     p: { fontSize: "$md" },
   }),
-};
+}
 
-const Interest = styled(PortableText, styles.interestContent);
-const Product = styled(PortableText, styles.products);
-const Info = styled(PortableText, styles.info);
-const Contact = styled(PortableText, styles.contact);
+const Interest = styled(PortableText, styles.interestContent)
+const Product = styled(PortableText, styles.products)
+const Info = styled(PortableText, styles.info)
+const Contact = styled(PortableText, styles.contact)
 
-export default CompanyView;
+export default CompanyView

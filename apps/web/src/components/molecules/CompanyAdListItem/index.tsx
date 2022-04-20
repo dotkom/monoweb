@@ -1,1 +1,1 @@
-export { default } from "./CompanyAdListItem";
+export { default } from "./CompanyAdListItem"

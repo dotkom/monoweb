@@ -60,6 +60,6 @@ export const utils = {
           marginLeft: "-50vw",
           marginRight: "-50vw",
         }
-      : {};
+      : {}
   },
-};
+}

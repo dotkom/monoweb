@@ -1,7 +1,7 @@
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { styled } from "@theme";
-import { useState, VFC } from "react";
-import { FiCheck } from "react-icons/fi";
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+import { styled } from "@theme"
+import { useState, VFC } from "react"
+import { FiCheck } from "react-icons/fi"
 
 const CheckboxRoot = styled(CheckboxPrimitive.Root, {
   all: "unset",
@@ -28,15 +28,15 @@ const CheckboxRoot = styled(CheckboxPrimitive.Root, {
       },
     },
   },
-});
+})
 
 const CheckboxIndicator = styled(CheckboxPrimitive.Indicator, {
   color: "$white",
   display: "flex",
-});
+})
 
 const Checkbox: VFC<CheckboxPrimitive.CheckboxProps> = (props) => {
-  const [checked, setChecked] = useState<CheckboxPrimitive.CheckedState>(props.defaultChecked || false);
+  const [checked, setChecked] = useState<CheckboxPrimitive.CheckedState>(props.defaultChecked || false)
 
   return (
     <CheckboxRoot {...props} onCheckedChange={(checked) => setChecked(checked)} checked={checked}>
@@ -44,7 +44,7 @@ const Checkbox: VFC<CheckboxPrimitive.CheckboxProps> = (props) => {
         <FiCheck width="15px" height="15px" />
       </CheckboxIndicator>
     </CheckboxRoot>
-  );
-};
+  )
+}
 
-export default Checkbox;
+export default Checkbox

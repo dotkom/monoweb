@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import { SVGProps } from "react"
 
 const SvgNextjsIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -14,6 +14,6 @@ const SvgNextjsIcon = (props: SVGProps<SVGSVGElement>) => (
       fill="#FFF"
     />
   </svg>
-);
+)
 
-export default SvgNextjsIcon;
+export default SvgNextjsIcon

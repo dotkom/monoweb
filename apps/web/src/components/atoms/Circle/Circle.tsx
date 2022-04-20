@@ -1,5 +1,5 @@
-import { Box } from "@components/primitives";
-import { CSS } from "@theme";
+import { Box } from "@components/primitives"
+import { CSS } from "@theme"
 
 const circleStyle: CSS = {
   color: "$white",
@@ -10,14 +10,14 @@ const circleStyle: CSS = {
   flexDirection: "column",
   justifyContent: "center",
   margin: 0,
-};
+}
 interface CircleProps {
-  size: number;
-  color: string;
+  size: number
+  color: string
 }
 
 export const Circle: React.FC<CircleProps> = ({ children, size, color }) => {
-  return <Box css={{ width: size, height: size, fontSize: 0.6 * size, bg: color, ...circleStyle }}>{children}</Box>;
-};
+  return <Box css={{ width: size, height: size, fontSize: 0.6 * size, bg: color, ...circleStyle }}>{children}</Box>
+}
 
-export default Circle;
+export default Circle

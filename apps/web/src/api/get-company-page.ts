@@ -1,8 +1,8 @@
-import { BlockContentProps } from "@sanity/block-content-to-react";
-import client from "./sanity";
+import { BlockContentProps } from "@sanity/block-content-to-react"
+import client from "./sanity"
 
 interface CompanySectionData {
-  sections: BlockContentProps["blocks"];
+  sections: BlockContentProps["blocks"]
 }
 
 const query = `
@@ -11,9 +11,9 @@ const query = `
       content
     }
   }[0].sections
-`;
+`
 
 export const fetchCompanySectionData = async (): Promise<CompanySectionData> => {
-  const res = await client.fetch(query);
-  return res;
-};
+  const res = await client.fetch(query)
+  return res
+}

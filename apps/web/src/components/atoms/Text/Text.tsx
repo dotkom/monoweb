@@ -1,4 +1,4 @@
-import { styled } from "@theme";
+import { styled } from "@theme"
 
 const Text = styled("p", {
   fontSize: "14px",
@@ -32,6 +32,6 @@ const Text = styled("p", {
       },
     },
   },
-});
+})
 
-export default Text;
+export default Text

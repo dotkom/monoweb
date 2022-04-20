@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import { SVGProps } from "react"
 
 const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -73,6 +73,6 @@ const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
       }}
     />
   </svg>
-);
+)
 
-export default SvgItexIcon;
+export default SvgItexIcon

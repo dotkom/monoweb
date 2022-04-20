@@ -1,6 +1,6 @@
 interface LineProps {
-  color: string;
-  className?: string;
+  color: string
+  className?: string
 }
 
 export const DottedLine: React.FC<LineProps> = ({ color, className }) => {
@@ -184,7 +184,7 @@ export const DottedLine: React.FC<LineProps> = ({ color, className }) => {
         y2="420.6"
       />
     </svg>
-  );
-};
+  )
+}
 
-export default DottedLine;
+export default DottedLine

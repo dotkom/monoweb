@@ -1,23 +1,23 @@
-import { Box } from "@components/primitives";
-import { CSS } from "@theme";
-import { DateTime } from "luxon";
-import { VFC } from "react";
-import Image from "next/image";
-import Badge from "@components/atoms/Badge";
-import Text from "@components/atoms/Text";
+import { Box } from "@components/primitives"
+import { CSS } from "@theme"
+import { DateTime } from "luxon"
+import { VFC } from "react"
+import Image from "next/image"
+import Badge from "@components/atoms/Badge"
+import Text from "@components/atoms/Text"
 
 interface CompanyAdListItemProps {
-  name: string;
-  logo: string;
-  position: string;
-  location: string[];
-  deadline: DateTime;
-  showApplyLink?: boolean;
-  applyLink?: string;
+  name: string
+  logo: string
+  position: string
+  location: string[]
+  deadline: DateTime
+  showApplyLink?: boolean
+  applyLink?: string
 }
 
 const CompanyAdListItem: VFC<CompanyAdListItemProps> = (props) => {
-  const { name, logo, position, location, deadline, applyLink, showApplyLink = false } = props;
+  const { name, logo, position, location, deadline, applyLink, showApplyLink = false } = props
   return (
     <Box css={styles.listItem}>
       <Box>
@@ -33,14 +33,14 @@ const CompanyAdListItem: VFC<CompanyAdListItemProps> = (props) => {
       <Text>{deadline.toFormat("DDD")}</Text>
       {showApplyLink && <Text>{applyLink}</Text>}
     </Box>
-  );
-};
+  )
+}
 
 const styles = {
   listItem: {
     display: "grid",
     gridTemplateColumns: "repeat(5, 1fr)",
   } as CSS,
-};
+}
 
-export default CompanyAdListItem;
+export default CompanyAdListItem

@@ -1,4 +1,4 @@
-import { styled } from "@theme";
+import { styled } from "@theme"
 
 const Badge = styled("span", {
   borderRadius: "$2",
@@ -44,6 +44,6 @@ const Badge = styled("span", {
       },
     },
   },
-});
+})
 
-export default Badge;
+export default Badge

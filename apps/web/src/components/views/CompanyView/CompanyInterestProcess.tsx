@@ -1,9 +1,9 @@
-import { VFC } from "react";
-import Circle from "@components/atoms/Circle";
-import type { CSS } from "@theme";
-import { Box } from "@components/primitives";
+import { VFC } from "react"
+import Circle from "@components/atoms/Circle"
+import type { CSS } from "@theme"
+import { Box } from "@components/primitives"
 interface CompanyInterestProcessProps {
-  steps: string[];
+  steps: string[]
 }
 
 const CompanyInterestProcess: VFC<CompanyInterestProcessProps> = ({ steps }) => {
@@ -18,8 +18,8 @@ const CompanyInterestProcess: VFC<CompanyInterestProcessProps> = ({ steps }) => 
         </Box>
       ))}
     </Box>
-  );
-};
+  )
+}
 
 const styles = {
   step: {
@@ -43,6 +43,6 @@ const styles = {
     margin: "$3 0",
     marginBottom: "$1",
   } as CSS,
-};
+}
 
-export default CompanyInterestProcess;
+export default CompanyInterestProcess
