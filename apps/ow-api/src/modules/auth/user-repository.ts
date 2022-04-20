@@ -1,5 +1,5 @@
 import { PrismaClient } from "@dotkom/db"
-import { InsertUser, mapToUser, User } from "../models/user"
+import { InsertUser, mapToUser, User } from "./user"
 
 export interface UserRepository {
   getUserByID: (id: string) => Promise<User | undefined>

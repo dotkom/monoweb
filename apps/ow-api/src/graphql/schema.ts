@@ -1,11 +1,11 @@
 import { makeSchema } from "nexus"
 import path from "path"
-import * as AuthQuery from "./auth"
+import * as AuthSchea from "@/modules/auth/graphql"
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 const graphqlSchema = makeSchema({
-  types: [AuthQuery],
+  types: [AuthSchea],
   outputs: {
     schema: path.join(__dirname, ".generated/schema.graphql"),
     typegen: path.join(__dirname, ".generated/nexus-typegen.ts"),

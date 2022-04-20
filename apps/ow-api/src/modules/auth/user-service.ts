@@ -1,6 +1,6 @@
-import { NotFoundError } from "../types/errors"
-import { InsertUser, User } from "../models/user"
-import { UserRepository } from "../repositories/user-repository"
+import { NotFoundError } from "../../errors/errors"
+import { InsertUser, User } from "./user"
+import { UserRepository } from "./user-repository"
 
 export interface UserService {
   getUser: (id: User["id"]) => Promise<User>

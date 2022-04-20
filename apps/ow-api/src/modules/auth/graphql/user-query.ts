@@ -1,8 +1,7 @@
 import { intArg, list, queryField, stringArg } from "nexus"
-import { User } from "./typedefs"
 
 export const userQuery = queryField("user", {
-  type: User,
+  type: "User",
   args: {
     id: stringArg(),
   },
@@ -14,7 +13,7 @@ export const userQuery = queryField("user", {
 })
 
 export const usersQuery = queryField("users", {
-  type: list(User),
+  type: list("User"),
   args: {
     limit: intArg({ default: 50 }),
   },

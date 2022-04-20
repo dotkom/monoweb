@@ -1,5 +1,5 @@
 import config from "config"
-import { DBConfig } from "../../config/types"
+import { DBConfig } from "./types"
 import { PrismaClient } from "@dotkom/db"
 
 const dbConfig = config.get<DBConfig>("database")

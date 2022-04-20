@@ -1,8 +1,8 @@
 import { mockDeep } from "jest-mock-extended"
-import { InsertUser } from "../../models/user"
-import { UserRepository } from "../../repositories/user-repository"
+import { InsertUser } from "../user"
 import { initUserService } from "../user-service"
 import { v4 as uuidv4 } from "uuid"
+import { UserRepository } from "../user-repository"
 
 describe("UserService", () => {
   const userRepository = mockDeep<UserRepository>()
