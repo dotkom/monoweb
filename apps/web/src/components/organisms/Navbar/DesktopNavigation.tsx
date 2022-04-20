@@ -94,13 +94,13 @@ export const DesktopNavigation = () => (
     <DesktopNavbarContainer>
       <NavigationMenuList>
         {tabs.map((tab) => (
-          <NavigationMenuItem>
+          <NavigationMenuItem key={tab.name}>
             <NavigationMenuTrigger>{tab.name}</NavigationMenuTrigger>
             <NavigationMenuContent>
               <DesktopList layout={tab.layout as unknown as { [x: string]: "one" | "three" | "two" }}>
                 {tab.card == "debug" && <DebugCard />}
                 {tab.items.map((item) => (
-                  <DesktopListItem href={item.link} title={item.name}>
+                  <DesktopListItem href={item.link} title={item.name} key={`${tab.name}-${item.name}`}>
                     CSS-in-JS with best-in-class developer experience.
                   </DesktopListItem>
                 ))}

@@ -49,7 +49,7 @@ const EventCard: VFC<EventCardProps> = (props) => {
         <TagsArea>
           {/* Temp until badges are done*/}
           {tags.map((tag) => (
-            <TempBadge>{tag}</TempBadge>
+            <TempBadge key={tag}>{tag}</TempBadge>
           ))}
         </TagsArea>
         <LocationArea>
@@ -60,7 +60,7 @@ const EventCard: VFC<EventCardProps> = (props) => {
         </LocationArea>
         <InfoArea>
           {eventInfo.map(({ icon, text }) => (
-            <Text size="lg" as="span" css={styles.infoEntry}>
+            <Text size="lg" as="span" css={styles.infoEntry} key={text}>
               {icon}
               {text}
             </Text>

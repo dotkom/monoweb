@@ -8,8 +8,8 @@
   "scripts": {
     "build": "prisma generate && tsc -p tsconfig.build.json",
     "migrate": "prisma migrate dev",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
+    "lint": "run -T eslint --max-warnings 0 .",
+    "lint:fix": "run -T eslint --fix .",
     "generate": "prisma generate",
     "seed": "prisma db seed"
   },

@@ -60,7 +60,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
       </Flex>
       {cover_image ? (
         <Box css={{ margin: "auto", maxHeight: "$md", paddingBottom: "$5" }}>
-          <Image width={800} height={400} src={cover_image.asset.url} />
+          <Image width={800} height={400} src={cover_image.asset.url} alt="cover image" />
         </Box>
       ) : (
         ""

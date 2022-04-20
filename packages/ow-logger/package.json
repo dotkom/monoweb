@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix ."
+    "lint": "run -T eslint --max-warnings 0 .",
+    "lint:fix": "run -T eslint --fix ."
   },
   "dependencies": {
     "winston": "^3.6.0"

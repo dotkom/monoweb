@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build:prod": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
@@ -23,6 +23,7 @@
     "@sanity/client": "^2.21.10",
     "@stitches/react": "^1.2.6",
     "axios": "^0.21.1",
+    "eslint-config-next": "^12.1.5",
     "luxon": "^2.3.0",
     "next": "^12.1.0",
     "next-compose-plugins": "^2.2.1",

@@ -21,7 +21,7 @@ const CompanyAdListItem: VFC<CompanyAdListItemProps> = (props) => {
   return (
     <Box css={styles.listItem}>
       <Box>
-        <Image src={logo} width="70px" height="40px" />
+        <Image src={logo} width="70px" height="40px" alt={`${name}'s job posting`} />
       </Box>
       <Text>{name}</Text>
       <Box>
