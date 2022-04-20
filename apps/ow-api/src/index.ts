@@ -1,6 +1,6 @@
 import { getLogger } from "@dotkom/logger"
 import { createServer } from "./server.js"
-import { initUserRepository } from "@/modules/auth/user-repository.js"
+import { initUserRepository } from "./modules/auth/user-repository.js"
 import { initUserService } from "./modules/auth/user-service.js"
 import { ApolloServerExpressConfig } from "apollo-server-express"
 import graphqlSchema from "./graphql/schema.js"

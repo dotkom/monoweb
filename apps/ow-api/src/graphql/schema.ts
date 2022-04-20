@@ -1,6 +1,6 @@
 import { makeSchema } from "nexus"
 import path from "path"
-import * as AuthSchema from "@/modules/auth/graphql"
+import * as AuthSchema from "../modules/auth/graphql"
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
