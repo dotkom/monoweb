@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./apps/owf
+        working-directory: ./apps/web
     strategy:
       matrix:
         os: [ubuntu-latest]
