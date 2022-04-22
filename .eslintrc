@@ -28,5 +28,5 @@
       }
     ]
   },
-  "ignorePatterns": ["**/*.stories.tsx", "**/dist", "node_modules"]
+  "ignorePatterns": ["**/*.stories.tsx", "**/dist", "node_modules", "apps/docs"]
 }

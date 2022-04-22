@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./apps/owf
+        working-directory: ./apps/web
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -29,3 +29,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: "./apps/web"
