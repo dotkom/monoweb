@@ -1,0 +1,3 @@
+{
+  "extends": "@dotkom/eslint-config-ow"
+}

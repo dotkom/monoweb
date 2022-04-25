@@ -8,7 +8,7 @@
     "start": "next start",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "lint": "run -T eslint --max-warnings 0 .",
+    "lint2": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
     "test": "run -T jest"
   },
@@ -35,6 +35,7 @@
     "swr": "^1.0.1"
   },
   "devDependencies": {
+    "@dotkom/eslint-config-ow": "workspace:*",
     "@storybook/addon-actions": "^6.1.14",
     "@storybook/addon-essentials": "^6.1.14",
     "@storybook/addon-knobs": "^6.1.14",

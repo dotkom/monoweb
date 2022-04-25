@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development run -T nodemon --watch './src/**.{ts}' --watch './config/**.{ts,json}' --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
     "watch": "tsc-watch --project tsconfig.json --onSuccess \"yarn dev\"",
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
-    "lint2": "run -T eslint --max-warnings 0 .",
+    "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
     "test": "run -T jest"
   },
@@ -25,6 +25,7 @@
     "zod": "^3.14.3"
   },
   "devDependencies": {
+    "@dotkom/eslint-config-ow": "workspace:*",
     "@types/config": "^0.0.41",
     "@types/cors": "^2",
     "@types/express": "^4",
