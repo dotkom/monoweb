@@ -2,7 +2,7 @@ name: "Deploy to lambda mailer"
 on: 
   push:
     paths:
-      - "apps/mailer/handler.js"
+      - "apps/mailer/handler.ts"
     branches:
       - 'master'
 jobs:
@@ -19,4 +19,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: generic-mail-handler
-          source: apps/mailer/handler.js
+          source: apps/mailer/handler.ts
