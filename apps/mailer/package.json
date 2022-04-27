@@ -2,6 +2,11 @@
   "name": "mailer",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "build": "esbuild src/handler.ts --bundle --outfile=dist/handler.js",
+    "lint": "run -T eslint --max-warnings 0 .",
+    "lint:fix": "run -T eslint --fix ."
+  },
   "dependencies": {
     "@types/aws-lambda": "^8.10.95",
     "aws-sdk": "^2.1123.0",
@@ -9,6 +14,7 @@
   },
   "devDependencies": {
     "@dotkom/eslint-config-ow": "workspace:*",
+    "esbuild": "^0.14.38",
     "typescript": "^4.6.3"
   }
 }

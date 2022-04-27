@@ -1,7 +1,6 @@
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda"
-import { SES } from "aws-sdk"
-import { SendEmailRequest } from "aws-sdk/clients/ses"
-import { mailSchema } from "./schema"
+import SES from "aws-sdk/clients/ses"
+import { mailSchema, mapToSES } from "./schema"
 
 const ses = new SES({ region: "eu-north-1" })
 
@@ -16,18 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     return buildReturnStmt(400, res.error.message)
   }
   try {
-    const data: SendEmailRequest = {
-      Source: res.data.sender,
-      Destination: { ToAddresses: [res.data.recipient] },
-      Message: {
-        Subject: { Data: res.data.subject },
-        Body: {
-          Text: {
-            Data: res.data.body,
-          },
-        },
-      },
-    }
+    const data = mapToSES(res.data)
     await ses.sendEmail(data).promise()
   } catch (error) {
     return buildReturnStmt(500, `Failed to send email: ${error}`)
