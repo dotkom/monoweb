@@ -1,13 +1,11 @@
 import { type AWSError } from "aws-sdk"
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda"
 import { initMailService } from "./mail-service"
-import { initMarkdownService } from "./markdown-service"
 import { initTemplateService } from "./template-service"
 import { mailSchema } from "./mail"
 
-const markdownService = initMarkdownService()
 const templateService = initTemplateService()
-const mailService = initMailService(markdownService, templateService)
+const mailService = initMailService()
 
 const response = (code: number, body: string): APIGatewayProxyResult => ({
   statusCode: code,
@@ -19,7 +17,12 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     const raw = JSON.parse(event.body ?? "")
     const data = mailSchema.safeParse(raw)
     if (data.success) {
-      await mailService.send(data.data)
+      await mailService.send({
+        ...data.data,
+        body: templateService.render("base", {
+          body: templateService.transform(data.data.body),
+        }),
+      })
       return response(201, "OK")
     }
     return response(400, data.error.message)

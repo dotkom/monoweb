@@ -1,6 +1,5 @@
 import express, { json, Request, Response } from "express"
 import { initMailService } from "./mail-service"
-import { initMarkdownService } from "./markdown-service"
 import { initTemplateService } from "./template-service"
 import { mailSchema } from "./mail"
 
@@ -10,14 +9,18 @@ const app = express()
 
 app.use(json())
 
-const markdownService = initMarkdownService()
 const templateService = initTemplateService()
-const mailService = initMailService(markdownService, templateService)
+const mailService = initMailService()
 
 app.post("/", async (req: Request, res: Response) => {
   const data = mailSchema.safeParse(req.body)
   if (data.success) {
-    await mailService.send(data.data)
+    await mailService.send({
+      ...data.data,
+      body: templateService.render("base", {
+        body: templateService.transform(data.data.body),
+      }),
+    })
     res.status(201).send("OK")
     return
   }

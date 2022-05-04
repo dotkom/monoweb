@@ -1,27 +1,22 @@
 import { mockDeep } from "jest-mock-extended"
-import { initMailService, MailRequest } from "../mail-service"
-import { TemplateService } from "../template-service"
-import { MarkdownService } from "../markdown-service"
+import { MailRequest, MailService } from "../mail-service";
 
 describe("MailService", () => {
-  const templateService = mockDeep<TemplateService>()
-  const markdownService = mockDeep<MarkdownService>()
-  const mailService = initMailService(markdownService, templateService)
+  const mailService = mockDeep<MailService>()
 
   it("should invoke both markdown and template service with data", async () => {
     const request: MailRequest = {
-      sender: "prokom@online.ntnu.no",
-      recipients: ["dotkom@online.ntnu.no"],
+      sender: "dotkom@online.ntnu.no",
+      recipients: ["mats.jun.larsen@online.ntnu.no"],
       carbonCopy: [],
       blindCarbonCopy: [],
       subject: "Hello world",
       body: "# Hello world",
     }
 
-    templateService.render.mockReturnValueOnce("<html>Hello world</html>")
-    markdownService.transform.mockReturnValueOnce("<h1>Hello world</h1>")
-    await expect(mailService.send(request)).resolves.toBeUndefined()
-    expect(templateService.render).toHaveBeenCalledWith("# Hello world")
-    expect(markdownService.transform).toHaveBeenCalledWith("base", { body: "<h1>Hello world</h1>" })
+    mailService.send.mockResolvedValueOnce(Promise.resolve())
+    const result = await mailService.send(request)
+    expect(result).toBeUndefined()
+    expect(mailService.send).toHaveBeenCalledWith(request)
   })
 })
