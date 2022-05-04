@@ -1,11 +1,13 @@
-import { MailService, initMailService } from "./mail-service"
-import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda"
-import { initMarkdownService } from "./markdown-service"
-import { mailSchema } from "./mail"
 import { type AWSError } from "aws-sdk"
+import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda"
+import { initMailService } from "./mail-service"
+import { initMarkdownService } from "./markdown-service"
+import { initTemplateService } from "./template-service"
+import { mailSchema } from "./mail"
 
 const markdownService = initMarkdownService()
-const mailService: MailService = initMailService(markdownService)
+const templateService = initTemplateService()
+const mailService = initMailService(markdownService, templateService)
 
 const response = (code: number, body: string): APIGatewayProxyResult => ({
   statusCode: code,

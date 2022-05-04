@@ -1,7 +1,8 @@
 import express, { json, Request, Response } from "express"
 import { initMailService } from "./mail-service"
-import { mailSchema } from "./mail"
 import { initMarkdownService } from "./markdown-service"
+import { initTemplateService } from "./template-service"
+import { mailSchema } from "./mail"
 
 // Development server for testing the mailing functionality without requiring
 // to run on AWS Lambda.
@@ -10,7 +11,8 @@ const app = express()
 app.use(json())
 
 const markdownService = initMarkdownService()
-const mailService = initMailService(markdownService)
+const templateService = initTemplateService()
+const mailService = initMailService(markdownService, templateService)
 
 app.post("/", async (req: Request, res: Response) => {
   const data = mailSchema.safeParse(req.body)
