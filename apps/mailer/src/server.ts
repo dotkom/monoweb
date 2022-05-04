@@ -3,6 +3,8 @@ import { initMailService } from "./mail-service"
 import { mailSchema } from "./mail"
 import { initMarkdownService } from "./markdown-service"
 
+// Development server for testing the mailing functionality without requiring
+// to run on AWS Lambda.
 const app = express()
 
 app.use(json())

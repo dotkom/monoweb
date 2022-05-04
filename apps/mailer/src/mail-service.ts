@@ -10,10 +10,9 @@ export interface MailService {
 
 export const initMailService = (markdownService: MarkdownService): MailService => {
   const ses = new SES({ region: "eu-north-1" })
-
   return {
-    send: async (request: MailRequest) => {
-      await ses
+    send: async (request: MailRequest) =>
+      ses
         .sendEmail({
           Source: request.sender,
           Destination: {
@@ -27,12 +26,12 @@ export const initMailService = (markdownService: MarkdownService): MailService =
             },
             Body: {
               Html: {
-                Data: await markdownService.transform(request.body),
+                Data: markdownService.transform(request.body),
               },
             },
           },
         })
         .promise()
-    },
+        .then(() => undefined), // SendEmailResponse only provides an AWS MessageId, discard it
   }
 }
