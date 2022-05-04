@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/lambda.ts --bundle --outfile=dist/lambda.js",
+    "build": "esbuild src/lambda.ts --format=cjs --bundle --outfile=dist/lambda.js",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
     "dev": "node --loader ts-node/esm --experimental-specifier-resolution=node src/server.ts"
