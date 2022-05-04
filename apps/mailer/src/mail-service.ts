@@ -1,5 +1,6 @@
-import { MailSchema } from "./mail"
 import SES from "aws-sdk/clients/ses"
+import { MailSchema } from "./mail"
+import { MarkdownService } from "./markdown-service"
 
 export type MailRequest = MailSchema
 
@@ -7,7 +8,7 @@ export interface MailService {
   send(request: MailRequest): Promise<void>
 }
 
-export const initMailService = (): MailService => {
+export const initMailService = (markdownService: MarkdownService): MailService => {
   const ses = new SES({ region: "eu-north-1" })
 
   return {
@@ -24,9 +25,9 @@ export const initMailService = (): MailService => {
             Data: request.subject,
           },
           Body: {
-            Text: {
-              Data: request.body,
-            },
+            Html: {
+              Data: await markdownService.transform(request.body),
+            }
           },
         },
       }).promise()

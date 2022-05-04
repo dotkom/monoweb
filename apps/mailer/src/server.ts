@@ -1,10 +1,14 @@
 import express, { json, Request, Response } from "express";
 import { initMailService } from "./mail-service";
 import { mailSchema } from "./mail";
+import { initMarkdownService } from "./markdown-service";
 
 const app = express()
+
 app.use(json())
-const mailService = initMailService()
+
+const markdownService = initMarkdownService();
+const mailService = initMailService(markdownService)
 
 app.post("/", async (req: Request, res: Response) => {
   const data = mailSchema.safeParse(req.body)
