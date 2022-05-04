@@ -5,9 +5,9 @@ export interface MarkdownService {
 }
 
 export const initMarkdownService = (): MarkdownService => {
-    return {
-        transform: (markdown: string): string => {
-            return marked.parse(markdown)
-        }
-    }
+  return {
+    transform: (markdown: string): string => {
+      return marked.parse(markdown)
+    },
+  }
 }

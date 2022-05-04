@@ -1,13 +1,13 @@
-import express, { json, Request, Response } from "express";
-import { initMailService } from "./mail-service";
-import { mailSchema } from "./mail";
-import { initMarkdownService } from "./markdown-service";
+import express, { json, Request, Response } from "express"
+import { initMailService } from "./mail-service"
+import { mailSchema } from "./mail"
+import { initMarkdownService } from "./markdown-service"
 
 const app = express()
 
 app.use(json())
 
-const markdownService = initMarkdownService();
+const markdownService = initMarkdownService()
 const mailService = initMailService(markdownService)
 
 app.post("/", async (req: Request, res: Response) => {
@@ -18,6 +18,6 @@ app.post("/", async (req: Request, res: Response) => {
     return
   }
   res.status(400).send(data.error.message)
-});
+})
 
-app.listen(3000, () => console.log("Listening on port 3000"));
+app.listen(3000, () => console.log("Listening on port 3000"))

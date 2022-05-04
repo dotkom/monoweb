@@ -13,24 +13,26 @@ export const initMailService = (markdownService: MarkdownService): MailService =
 
   return {
     send: async (request: MailRequest) => {
-      await ses.sendEmail({
-        Source: request.sender,
-        Destination: {
-          ToAddresses: request.recipients,
-          CcAddresses: request.carbonCopy,
-          BccAddresses: request.blindCarbonCopy,
-        },
-        Message: {
-          Subject: {
-            Data: request.subject,
+      await ses
+        .sendEmail({
+          Source: request.sender,
+          Destination: {
+            ToAddresses: request.recipients,
+            CcAddresses: request.carbonCopy,
+            BccAddresses: request.blindCarbonCopy,
           },
-          Body: {
-            Html: {
-              Data: await markdownService.transform(request.body),
-            }
+          Message: {
+            Subject: {
+              Data: request.subject,
+            },
+            Body: {
+              Html: {
+                Data: await markdownService.transform(request.body),
+              },
+            },
           },
-        },
-      }).promise()
-    }
+        })
+        .promise()
+    },
   }
 }
