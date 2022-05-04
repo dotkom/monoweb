@@ -6,6 +6,7 @@
     "build": "esbuild src/lambda.ts --format=cjs --bundle --outfile=dist/lambda.js",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
+    "test": "run -T jest",
     "dev": "node --loader ts-node/esm --experimental-specifier-resolution=node src/server.ts"
   },
   "dependencies": {
