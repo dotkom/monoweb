@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/lambda.ts --format=cjs --bundle --outfile=dist/lambda.js",
+    "build": "esbuild src/lambda.ts --format=cjs --platform=node --target=node14 --bundle --outfile=dist/lambda.js --external:aws-sdk",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
     "test": "run -T jest",
