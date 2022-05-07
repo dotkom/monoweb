@@ -15,6 +15,10 @@ const response = (code: number, body: string): APIGatewayProxyResult => ({
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const raw = JSON.parse(event.body ?? "")
+
+    // authenticate request based on environment variable in AWS lambda
+    if (raw.token !== process.env.SECRET) return response(401, "Invalid access token")
+
     const data = mailSchema.safeParse(raw)
     if (data.success) {
       await mailService.send({
