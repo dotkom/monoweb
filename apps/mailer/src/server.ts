@@ -13,18 +13,18 @@ const templateService = initTemplateService()
 const mailService = initMailService()
 
 app.post("/", async (req: Request, res: Response) => {
-  const data = mailSchema.safeParse(req.body)
-  if (data.success) {
+  const schema = mailSchema.safeParse(req.body)
+  if (schema.success) {
     await mailService.send({
-      ...data.data,
+      ...schema.data,
       body: templateService.render("base", {
-        body: templateService.transform(data.data.body),
+        body: templateService.transform(schema.data.body),
       }),
     })
     res.status(201).send("OK")
     return
   }
-  res.status(400).send(data.error.message)
+  res.status(400).send(schema.error.message)
 })
 
 app.listen(3000, () => console.log("Listening on port 3000"))
