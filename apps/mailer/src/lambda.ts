@@ -1,7 +1,7 @@
 import { type AWSError } from "aws-sdk"
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda"
 import { initMailService } from "./mail-service"
-import { initTemplateService } from "./template-service"
+import { initTemplateService, templates } from "./template-service"
 import { mailSchema } from "./mail"
 
 const templateService = initTemplateService()
@@ -23,7 +23,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (data.success) {
       await mailService.send({
         ...data.data,
-        body: templateService.render("base", {
+        body: templateService.render(data.data.template, {
           body: templateService.transform(data.data.body),
         }),
       })

@@ -2,7 +2,7 @@ import { template as baseTemplate } from "./templates/base"
 import { marked } from "marked"
 
 // Mapping of templates to their respective functions
-const templates = {
+export const templates = {
   base: baseTemplate,
 } as const
 
