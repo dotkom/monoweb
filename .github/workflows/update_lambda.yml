@@ -2,10 +2,10 @@ name: "Deploy to lambda mailer"
 on: 
   workflow_dispatch:
   push:
-#    paths:
-#      - "apps/mailer/*"
-#    branches:
-#      - 'master'
+    paths:
+      - "apps/mailer/*"
+    branches:
+      - 'master'
 jobs:
   deploy_source:
     name: Deploy lambda from source file
