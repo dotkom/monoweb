@@ -39,20 +39,20 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: "My Site",
+        title: "Monoweb",
         logo: {
-          alt: "My Site Logo",
-          src: "img/logo.svg",
+          alt: "Monoweb",
+          src: "img/online.png",
         },
         items: [
           {
             type: "doc",
             docId: "intro",
             position: "left",
-            label: "Tutorial",
+            label: "Docs",
           },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/dotkom/galactic-thunderdome-x",
             label: "GitHub",
             position: "right",
           },
@@ -74,16 +74,8 @@ const config = {
             title: "Community",
             items: [
               {
-                label: "Stack Overflow",
+                label: "Slack",
                 href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
-              {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
-                label: "Twitter",
-                href: "https://twitter.com/docusaurus",
               },
             ],
           },
@@ -92,7 +84,7 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
+                href: "https://github.com/dotkom",
               },
             ],
           },
