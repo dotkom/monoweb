@@ -66,7 +66,7 @@ const config = {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/intro",
+                to: "/",
               },
             ],
           },
@@ -75,7 +75,11 @@ const config = {
             items: [
               {
                 label: "Slack",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                href: "https://onlinentnu.slack.com",
+              },
+              {
+                label: "Discord",
+                href: "https://discordapp.com/invite/2XB9egU",
               },
             ],
           },
@@ -89,7 +93,6 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
