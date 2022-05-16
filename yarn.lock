@@ -2375,6 +2375,7 @@ __metadata:
     "@types/chance": ^1.1.3
     chance: ^1.1.8
     prisma: ^3.14.0
+    uuidv4: ^6.2.13
   languageName: unknown
   linkType: soft
 
@@ -6034,7 +6035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8":
+"@types/uuid@npm:8.3.4, @types/uuid@npm:^8":
   version: 8.3.4
   resolution: "@types/uuid@npm:8.3.4"
   checksum: 6f11f3ff70f30210edaa8071422d405e9c1d4e53abbe50fdce365150d3c698fe7bbff65c1e71ae080cbfb8fded860dbb5e174da96fdbbdfcaa3fb3daa474d20f
@@ -22674,6 +22675,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:8.3.2, uuid@npm:^8.0.0, uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^3.3.2":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
@@ -22683,12 +22693,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^8.0.0, uuid@npm:^8.3.2":
-  version: 8.3.2
-  resolution: "uuid@npm:8.3.2"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
+"uuidv4@npm:^6.2.13":
+  version: 6.2.13
+  resolution: "uuidv4@npm:6.2.13"
+  dependencies:
+    "@types/uuid": 8.3.4
+    uuid: 8.3.2
+  checksum: 25b3ce1d5860c7fb2232270f20d36c320e52817356cc0dfc88610965e6faced3e7050b3628be08ed08092dffc099288ed24ac0404a2869d59963a2be1939f476
   languageName: node
   linkType: hard
 

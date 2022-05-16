@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id         String       @id @default(uuid())
   username   String
-  created_at DateTime @default(now())
+  created_at DateTime     @default(now())
   first_name String
   last_name  String
-  email      String   @unique
+  email      String       @unique
   password   String
+  punishment Punishment[]
 }
 
 model Company {
@@ -30,11 +31,22 @@ model Company {
   location    String?
 }
 
+model PunishmentRuleSet {
+  id          String       @id @default(uuid())
+  title       String
+  duration    Int
+  description String
+  punishments Punishment[]
+}
+
 model Punishment {
-  id         String @id @default(uuid()) 
-  type       PunishmentType?
-  start_date DateTime @default(now())
-  end_date   DateTime?
+  id         String            @id @default(uuid())
+  type       PunishmentType
+  rule_set   PunishmentRuleSet @relation(fields: [ruleset_id], references: [id])
+  ruleset_id String
+  start_date DateTime          @default(now())
+  user       User              @relation(fields: [user_id], references: [id])
+  user_id    String
 }
 
 enum PunishmentType {
