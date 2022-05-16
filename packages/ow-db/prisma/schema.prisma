@@ -29,3 +29,15 @@ model Company {
   website     String?
   location    String?
 }
+
+model Punishment {
+  id         String @id @default(uuid()) 
+  type       PunishmentType?
+  start_date DateTime @default(now())
+  end_date   DateTime?
+}
+
+enum PunishmentType {
+  SUSPENSION
+  MARK
+}
