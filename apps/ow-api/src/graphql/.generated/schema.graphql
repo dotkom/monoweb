@@ -5,6 +5,7 @@
 """A generic Onlineweb article"""
 type Article {
   author: String!
+  content: String!
   coverImage: String!
   createdAt: String!
   estimatedReadingTime: Int!
@@ -22,7 +23,8 @@ type Mutation {
 
 type Query {
   article(slug: String!): Article!
-  articles(limit: Int! = 10): [Article!]!
+  articles(filterWord: String!, limit: Int! = 10): [Article!]!
+  sortedArticles(limit: Int! = 10): [Article!]!
   user(id: String!): User!
   users(limit: Int! = 50): [User!]!
 }

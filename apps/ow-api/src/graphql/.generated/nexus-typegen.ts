@@ -30,6 +30,7 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Article: { // root type
     author: string; // String!
+    content: string; // String!
     coverImage: string; // String!
     createdAt: string; // String!
     estimatedReadingTime: number; // Int!
@@ -64,6 +65,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   Article: { // field return type
     author: string; // String!
+    content: string; // String!
     coverImage: string; // String!
     createdAt: string; // String!
     estimatedReadingTime: number; // Int!
@@ -80,6 +82,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     article: NexusGenRootTypes['Article']; // Article!
     articles: NexusGenRootTypes['Article'][]; // [Article!]!
+    sortedArticles: NexusGenRootTypes['Article'][]; // [Article!]!
     user: NexusGenRootTypes['User']; // User!
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
@@ -95,6 +98,7 @@ export interface NexusGenFieldTypes {
 export interface NexusGenFieldTypeNames {
   Article: { // field return type name
     author: 'String'
+    content: 'String'
     coverImage: 'String'
     createdAt: 'String'
     estimatedReadingTime: 'Int'
@@ -111,6 +115,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     article: 'Article'
     articles: 'Article'
+    sortedArticles: 'Article'
     user: 'User'
     users: 'User'
   }
@@ -135,6 +140,10 @@ export interface NexusGenArgTypes {
       slug: string; // String!
     }
     articles: { // args
+      filterWord: string; // String!
+      limit: number; // Int!
+    }
+    sortedArticles: { // args
       limit: number; // Int!
     }
     user: { // args

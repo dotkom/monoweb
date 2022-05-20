@@ -14,5 +14,6 @@ export const Article = objectType({
     t.string("coverImage")
     t.int("estimatedReadingTime")
     t.string("photographer")
+    t.string("content")
   },
 })

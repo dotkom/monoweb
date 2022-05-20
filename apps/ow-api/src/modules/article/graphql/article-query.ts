@@ -15,9 +15,21 @@ export const articleQuery = queryField("article", {
 export const articlesQuery = queryField("articles", {
   type: list("Article"),
   args: {
+    filterWord: stringArg(),
     limit: intArg({ default: 10 }),
   },
   resolve: async (_, args, ctx) => {
-    return ctx.articleService.getArticles(args.limit)
+    const { limit } = args
+    return ctx.articleService.getArticles(limit)
+  },
+})
+
+export const getSortedArticlesQuery = queryField("sortedArticles", {
+  type: list("Article"),
+  args: {
+    limit: intArg({ default: 10 }),
+  },
+  resolve: async (_, args, ctx) => {
+    return ctx.articleService.getSortedArticles(args.limit)
   },
 })

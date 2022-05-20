@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { string, z } from "zod"
 import { Article as SanityArticle } from "./repository-types/get-article"
 
 const articleSchema = z.object({
@@ -12,6 +12,7 @@ const articleSchema = z.object({
   coverImage: z.string(),
   estimatedReadingTime: z.number(),
   photographer: z.string(),
+  content: z.string(),
 })
 
 export type Article = z.infer<typeof articleSchema>

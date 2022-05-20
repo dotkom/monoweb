@@ -5,6 +5,7 @@ import { ArticleRepository } from "./article-repository"
 export interface ArticleService {
   getArticle: (slug: Article["slug"]) => Promise<Article>
   getArticles: (limit: number) => Promise<Article[]>
+  getSortedArticles: (limit: number) => Promise<Article[]>
 }
 
 export const initArticleService = (articleRepository: ArticleRepository): ArticleService => ({
@@ -15,6 +16,10 @@ export const initArticleService = (articleRepository: ArticleRepository): Articl
   },
   getArticles: async (limit) => {
     const articles = await articleRepository.getArticles(limit)
+    return articles
+  },
+  getSortedArticles: async (limit) => {
+    const articles = await articleRepository.getArticlesSortedByTitle(limit)
     return articles
   },
 })
