@@ -22,7 +22,7 @@ export const initPunishmentService = (punishmentRepository: PunishmentRepository
   },
 
   getUserPunishments: async (id) => {
-    const punishments = await punishmentRepository.getPunishmentByUser(id)
+    const punishments = await punishmentRepository.getPunishmentByUserID(id)
     if (!punishments) throw new NotFoundError(`Punishments for the user with ID:${id} not found`)
     return punishments
   },

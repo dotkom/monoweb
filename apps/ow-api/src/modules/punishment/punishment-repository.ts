@@ -5,7 +5,7 @@ import { InsertPunishment, mapToPunishment, Punishment } from "./punishment"
 export interface PunishmentRepository {
   getPunishmentByID: (id: string) => Promise<Punishment | undefined>
   createPunishment: (punishmentInsert: InsertPunishment) => Promise<Punishment>
-  getPunishmentByUser: (id: string) => Promise<Punishment[]>
+  getPunishmentByUserID: (id: string) => Promise<Punishment[]>
 }
 
 export const initPunishmentRepository = (client: PrismaClient): PunishmentRepository => {
@@ -28,7 +28,7 @@ export const initPunishmentRepository = (client: PrismaClient): PunishmentReposi
       })
       return mapToPunishment(punishment)
     },
-    getPunishmentByUser: async (id) => {
+    getPunishmentByUserID: async (id) => {
       const punishments = await client.punishment.findMany({ where: { user_id: id } })
       return punishments.map(mapToPunishment)
     },

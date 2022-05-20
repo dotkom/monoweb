@@ -33,8 +33,7 @@ if (process.env.NODE_ENV === "development") {
   const port = Number(process.env.PORT || 4000)
   createServer(apolloConfig).then((server) => server.listen({ port }))
   logger.info(`Started GraphQL server at http://localhost:${port}/graphql 🚀`)
-  const punishment = await punishmentService.getUserPunishments("10e0c6a3-b80f-49e9-a850-4c793f390e72")
-
+  const punishment = await punishmentService.getUserPunishments("09853c50-9a74-4171-befb-d3876bd2eb91")
   punishment.map((punishment) => {
     logger.info(punishment.type)
   })
