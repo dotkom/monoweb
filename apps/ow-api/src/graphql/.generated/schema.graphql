@@ -2,11 +2,27 @@
 ### Do not make changes to this file directly
 
 
+"""A generic Onlineweb article"""
+type Article {
+  author: String!
+  coverImage: String!
+  createdAt: String!
+  estimatedReadingTime: Int!
+  excerpt: String!
+  photographer: String!
+  slug: String!
+  tags: [String!]!
+  title: String!
+  updatedAt: String!
+}
+
 type Mutation {
   login(email: String!, password: String!): String!
 }
 
 type Query {
+  article(slug: String!): Article!
+  articles(limit: Int! = 10): [Article!]!
   user(id: String!): User!
   users(limit: Int! = 50): [User!]!
 }

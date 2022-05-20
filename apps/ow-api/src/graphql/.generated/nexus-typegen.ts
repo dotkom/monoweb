@@ -28,6 +28,18 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Article: { // root type
+    author: string; // String!
+    coverImage: string; // String!
+    createdAt: string; // String!
+    estimatedReadingTime: number; // Int!
+    excerpt: string; // String!
+    photographer: string; // String!
+    slug: string; // String!
+    tags: string[]; // [String!]!
+    title: string; // String!
+    updatedAt: string; // String!
+  }
   Mutation: {};
   Query: {};
   User: { // root type
@@ -50,10 +62,24 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  Article: { // field return type
+    author: string; // String!
+    coverImage: string; // String!
+    createdAt: string; // String!
+    estimatedReadingTime: number; // Int!
+    excerpt: string; // String!
+    photographer: string; // String!
+    slug: string; // String!
+    tags: string[]; // [String!]!
+    title: string; // String!
+    updatedAt: string; // String!
+  }
   Mutation: { // field return type
     login: string; // String!
   }
   Query: { // field return type
+    article: NexusGenRootTypes['Article']; // Article!
+    articles: NexusGenRootTypes['Article'][]; // [Article!]!
     user: NexusGenRootTypes['User']; // User!
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
@@ -67,10 +93,24 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  Article: { // field return type name
+    author: 'String'
+    coverImage: 'String'
+    createdAt: 'String'
+    estimatedReadingTime: 'Int'
+    excerpt: 'String'
+    photographer: 'String'
+    slug: 'String'
+    tags: 'String'
+    title: 'String'
+    updatedAt: 'String'
+  }
   Mutation: { // field return type name
     login: 'String'
   }
   Query: { // field return type name
+    article: 'Article'
+    articles: 'Article'
     user: 'User'
     users: 'User'
   }
@@ -91,6 +131,12 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    article: { // args
+      slug: string; // String!
+    }
+    articles: { // args
+      limit: number; // Int!
+    }
     user: { // args
       id: string; // String!
     }

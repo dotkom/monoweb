@@ -27,6 +27,7 @@ export const apolloConfig: ApolloServerExpressConfig = {
   context: (_req: Request, _res: Response) => {
     return {
       userService,
+      articleService,
     }
   },
 }
@@ -35,4 +36,8 @@ if (process.env.NODE_ENV === "development") {
   const port = Number(process.env.PORT || 4000)
   createServer(apolloConfig).then((server) => server.listen({ port }))
   logger.info(`Started GraphQL server at http://localhost:${port}/graphql 🚀`)
+  const articles = await articleService.getArticles(10)
+  articles.map((article) => {
+    logger.info(article.slug)
+  })
 }

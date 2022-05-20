@@ -13,6 +13,7 @@ export interface Article {
 
 export const getArticleBySlugQuery = `
 *[_type == "article" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
+    slug,
     title,
     author,
     photographer,
@@ -31,6 +32,7 @@ export const getArticleBySlugQuery = `
   }
 `
 export const getArticlesQuery = `*[_type == "article"] | order(_createdAt desc)[0..$limit]{
+    slug, 
     title,
     author,
     photographer,
