@@ -44,7 +44,8 @@ model Punishment {
   type       PunishmentType
   rule_set   PunishmentRuleSet @relation(fields: [ruleset_id], references: [id])
   ruleset_id String
-  start_date DateTime          @default(now())
+  given_date DateTime          @default(now())
+  start_date DateTime
   user       User              @relation(fields: [user_id], references: [id])
   user_id    String
 }

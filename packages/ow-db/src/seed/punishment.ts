@@ -17,7 +17,6 @@ export const seedPunishments: Seeder = async (chance, prisma) => {
   const seedInserts = [...new Array(10)].map(() => ({
     name: chance.name(),
     type: chance.pickone([PunishmentType.MARK, PunishmentType.SUSPENSION]),
-    date: new Date(),
   }))
 
   const promises = seedInserts.map((payload) =>
@@ -25,7 +24,6 @@ export const seedPunishments: Seeder = async (chance, prisma) => {
       data: {
         type: payload.type,
         ruleset_id: rulesetID,
-        start_date: payload.date,
         user_id: chance.pickone(users).id,
       },
     })
