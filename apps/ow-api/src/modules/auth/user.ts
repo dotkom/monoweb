@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { User as PrismaUser } from "@dotkom/db"
 
-const userSchema = z.object({
+export const userSchema = z.object({
   id: z.string().uuid(),
   username: z.string(),
   firstName: z.string(),
