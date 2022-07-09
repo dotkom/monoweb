@@ -4021,6 +4021,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-accordion@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "@radix-ui/react-accordion@npm:0.1.6"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 0.1.0
+    "@radix-ui/react-collapsible": 0.1.6
+    "@radix-ui/react-collection": 0.1.4
+    "@radix-ui/react-compose-refs": 0.1.0
+    "@radix-ui/react-context": 0.1.1
+    "@radix-ui/react-id": 0.1.5
+    "@radix-ui/react-primitive": 0.1.4
+    "@radix-ui/react-use-controllable-state": 0.1.0
+  peerDependencies:
+    react: ^16.8 || ^17.0
+  checksum: 189e889f38466d9fd68d06ad9f24d896476dbc245360df2634ef8c44f530597ebf130e51f58caba57a5eb252126a858096432e6e4d0025a2f4b8aa1530be1e11
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-arrow@npm:0.1.4":
   version: 0.1.4
   resolution: "@radix-ui/react-arrow@npm:0.1.4"
@@ -4065,6 +4084,25 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: 658f249a52e1eec2697aa6c9bb43eb9910a3f6ebdb827bfb5561d94f6afaf80d5fb4cb9231672281e1057296e4fcfdb71b204db138e7a12fef7c3ea38303660c
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-collapsible@npm:0.1.6":
+  version: 0.1.6
+  resolution: "@radix-ui/react-collapsible@npm:0.1.6"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 0.1.0
+    "@radix-ui/react-compose-refs": 0.1.0
+    "@radix-ui/react-context": 0.1.1
+    "@radix-ui/react-id": 0.1.5
+    "@radix-ui/react-presence": 0.1.2
+    "@radix-ui/react-primitive": 0.1.4
+    "@radix-ui/react-use-controllable-state": 0.1.0
+    "@radix-ui/react-use-layout-effect": 0.1.0
+  peerDependencies:
+    react: ^16.8 || ^17.0
+  checksum: b54dc6ece5d2e53a2cdf68da7d4ea3aaa0266da8e34b02de40d33d5fcdc957fd00c8bd0265d03e945f52ac78c191bdbe3ca23e53f39fc6239319c4f2dd17aa5e
   languageName: node
   linkType: hard
 
@@ -18903,6 +18941,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "monorepo@workspace:."
   dependencies:
+    "@radix-ui/react-accordion": ^0.1.6
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.23
     eslint: ^8.12.0
