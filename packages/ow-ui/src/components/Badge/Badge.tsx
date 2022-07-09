@@ -7,24 +7,24 @@ const Badge = styled("span", {
   variants: {
     color: {
       green: {
-        $$main: "$colors$green1",
-        $$secondary: "#C3E8D8",
+        $$main: "$colors$green2",
+        $$secondary: "$colors$green11",
       },
       gray: {
-        $$main: "#718096",
-        $$secondary: "#EDF2F7",
+        $$main: "$colors$gray4",
+        $$secondary: "$colors$gray11",
       },
       blue: {
-        $$main: "#2544da",
-        $$secondary: "#bac4f3",
+        $$main: "$colors$info2",
+        $$secondary: "$colors$info11",
       },
       red: {
-        $$main: "#EB536E",
-        $$secondary: "#FBDDE2",
+        $$main: "$colors$red4",
+        $$secondary: "$colors$red11",
       },
       orange: {
-        $$main: "#F5A623",
-        $$secondary: "#FFF0D0",
+        $$main: "$colors$orange3",
+        $$secondary: "$colors$orange11",
       },
     },
     variant: {
