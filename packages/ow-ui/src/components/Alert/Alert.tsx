@@ -21,7 +21,6 @@ interface AlertIconProps {
   status: AlertProps["status"]
 }
 
-// TODO: style each component
 export const AlertIcon: FC<AlertIconProps> = ({ status }) => {
   switch (status) {
     case "info":
