@@ -22,7 +22,7 @@ const Button = styled("button", {
     backgroundColor: "$blue7",
   },
   variants: {
-    textOnly: {
+    subtle: {
       gray: {
         color: "$gray3",
         backgroundColor: "transparent",

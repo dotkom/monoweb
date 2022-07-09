@@ -106,7 +106,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
       <AlertDialogDescription>{content}</AlertDialogDescription>
       <Flex css={{ justifyContent: "flex-end" }}>
         <AlertDialogCancel asChild>
-          <Button textOnly={"gray"} css={{ marginRight: 25 }}>
+          <Button subtle={"gray"} css={{ marginRight: 25 }}>
             Avbryt
           </Button>
         </AlertDialogCancel>
