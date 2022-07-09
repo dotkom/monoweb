@@ -1,5 +1,5 @@
-import { VFC } from "react";
-import { Icon } from "./Icon";
+import { VFC } from "react"
+import { Icon } from "./Icon"
 
 export const SlackIcon: VFC = () => (
   <Icon>
@@ -31,4 +31,4 @@ export const SlackIcon: VFC = () => (
       />
     </svg>
   </Icon>
-);
+)
