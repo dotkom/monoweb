@@ -17,6 +17,9 @@
     },
     "dev": {
       "cache": false
+    },
+    "storybook": {
+      "outputs": []
     }
   }
 }

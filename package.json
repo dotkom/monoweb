@@ -12,7 +12,7 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "dev": "turbo run dev",
-    "build-storybook": "yarn workspaces owf build-storybook"
+    "storybook": "turbo run storybook --filter=storybook"
   },
   "workspaces": [
     "packages/*",
