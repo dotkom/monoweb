@@ -1,16 +1,6 @@
-import { keyframes } from "@stitches/react";
 import { styled } from "@theme";
 import { VFC } from "react";
-import "./footer.css";
-
-const popup = keyframes({
-  "0%": {
-    transform: "translateX(0px)",
-  },
-  "100%": {
-    transform: "translateX(-176px)",
-  },
-});
+import "./animation.css";
 
 const Wave = styled("div", {
   width: "100%",
@@ -23,7 +13,7 @@ const G = styled("g", {
   transform: "scaleY(0.2) translateY(180px)",
 });
 
-export const FooterHat: VFC = () => (
+export const Waves: VFC = () => (
   <Wave>
     <svg viewBox="0 24 150 25" preserveAspectRatio="none" shape-rendering="auto">
       <defs>
