@@ -1,10 +1,8 @@
 import { styled } from "../../config/stitches.config"
 
 const Button = styled("button", {
-  backgroundColor: "$blue5",
   border: "none",
   borderRadius: "$2",
-  color: "$white",
   cursor: "pointer",
   px: "16px",
   py: "10px",
@@ -13,35 +11,54 @@ const Button = styled("button", {
   alignItems: "center",
   justifyContent: "center",
   transition: "0.2s ease-in-out",
+  color: "$white",
   "&:hover": {
     transform: "translateY(-1px)",
-    backgroundColor: "$blue6",
   },
   "&:active": {
     transform: "translateY(2px)",
-    backgroundColor: "$blue7",
   },
   variants: {
     color: {
+      blue: {
+        $$main: "$colors$blue3",
+        "&:hover": { backgroundColor: "$blue6" },
+        "&:active": { backgroundColor: "$blue7" },
+      },
       green: {
-        backgroundColor: "$green5",
+        $$main: "$colors$green5",
         "&:hover": { backgroundColor: "$green6" },
         "&:active": { backgroundColor: "$green7" },
       },
       red: {
-        backgroundColor: "$red5",
+        $$main: "$colors$red5",
         "&:hover": { backgroundColor: "$red6" },
         "&:active": { backgroundColor: "$red7" },
       },
       orange: {
-        backgroundColor: "$orange5",
+        $$main: "$colors$orange5",
         "&:hover": { backgroundColor: "$orange6" },
         "&:active": { backgroundColor: "$orange7" },
       },
       gray: {
-        backgroundColor: "$gray5",
+        $$main: "$colors$gray5",
         "&:hover": { backgroundColor: "$gray6" },
         "&:active": { backgroundColor: "$gray7" },
+      },
+      info: {
+        $$main: "$colors$info5",
+        "&:hover": { backgroundColor: "$info6" },
+        "&:active": { backgroundColor: "$info7" },
+      },
+    },
+    variant: {
+      solid: {
+        color: "$white",
+        bg: "$$main",
+      },
+      subtle: {
+        color: "$$main",
+        bg: "$$secondary",
       },
     },
   },
