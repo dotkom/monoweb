@@ -1,6 +1,5 @@
 import { Alert } from "./Alert"
-import { ComponentStory, ComponentMeta } from "@storybook/react"
-import Button from "../Button"
+import { ComponentStory } from "@storybook/react"
 
 export default {
   title: "atoms/Alert",
