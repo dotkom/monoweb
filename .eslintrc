@@ -26,6 +26,12 @@
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
     ]
   },
   "ignorePatterns": ["**/*.stories.tsx", "**/dist", "node_modules", "apps/docs"]
