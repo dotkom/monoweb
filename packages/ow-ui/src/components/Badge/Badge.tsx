@@ -2,7 +2,6 @@ import { styled } from "../../config/stitches.config"
 
 const Badge = styled("span", {
   borderRadius: "$2",
-  fontWeight: "600",
   padding: "0 0.5rem",
   display: "inline-block",
   variants: {
