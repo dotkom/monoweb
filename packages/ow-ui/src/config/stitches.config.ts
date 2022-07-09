@@ -120,28 +120,3 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
 })
 
 export type CSS = Stitches.CSS<typeof config>
-
-type StyleInput<T extends string> = { [key in T]: CSS }
-type StyleOutput<T extends string> = { [key in T]: ReturnType<typeof css> }
-
-export const createCSS = <T extends string>(style: StyleInput<T>) => style
-
-/**
- * Solves equations of the form a * x = b
- * @example
- * // Returns styles.container()
- * const styles = createStyles({
- *    container: { color: "$blue11" }
- * })
- *
- * const Text = () => <p className={styles.container()}>Hello World</p>
- *
- * @returns functions to be used in className
- */
-export const createStyles = <T extends string>(style: StyleInput<T>): StyleOutput<T> => {
-  const styles: { [key in T]: CSS | ReturnType<typeof css> } = style
-  for (const key in style) {
-    styles[key] = css(style[key] as CSS)
-  }
-  return styles as StyleOutput<T>
-}
