@@ -1,4 +1,4 @@
-import { styled } from "@theme";
+import { styled } from "@theme"
 
 export const FooterSection = styled("div", {
   textAlign: "center",
@@ -14,4 +14,4 @@ export const FooterSection = styled("div", {
       },
     },
   },
-});
+})

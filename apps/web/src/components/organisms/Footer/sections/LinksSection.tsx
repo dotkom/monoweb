@@ -1,12 +1,12 @@
-import { Fragment, VFC } from "react";
-import { FooterSection } from "../components/FooterSection";
-import { Link } from "../components/Link";
+import { Fragment, VFC } from "react"
+import { FooterSection } from "../components/FooterSection"
+import { Link } from "../components/Link"
 
 interface LinksSectionProps {
   links: {
-    main: string[];
-    second: string[];
-  };
+    main: string[]
+    second: string[]
+  }
 }
 
 export const LinksSection: VFC<LinksSectionProps> = ({ links }) => (
@@ -27,4 +27,4 @@ export const LinksSection: VFC<LinksSectionProps> = ({ links }) => (
       ))}
     </FooterSection>
   </Fragment>
-);
+)

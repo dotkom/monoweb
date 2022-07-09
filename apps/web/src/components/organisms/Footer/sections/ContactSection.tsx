@@ -1,10 +1,10 @@
-import { styled } from "@theme";
-import { VFC } from "react";
-import { FooterSection } from "../components/FooterSection";
+import { styled } from "@theme"
+import { VFC } from "react"
+import { FooterSection } from "../components/FooterSection"
 
 const Text = styled("p", {
   margin: 0,
-});
+})
 
 const FancyLink = styled("a", {
   color: "$orange2",
@@ -25,7 +25,7 @@ const FancyLink = styled("a", {
     right: "auto",
     width: "100%",
   },
-});
+})
 
 export const ContactSection: VFC = () => (
   <FooterSection>
@@ -37,4 +37,4 @@ export const ContactSection: VFC = () => (
       </FancyLink>
     </Text>
   </FooterSection>
-);
+)

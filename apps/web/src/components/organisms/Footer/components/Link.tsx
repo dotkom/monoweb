@@ -1,4 +1,4 @@
-import { styled } from "@theme";
+import { styled } from "@theme"
 
 export const Link = styled("a", {
   fontSize: "1.2em",
@@ -23,4 +23,4 @@ export const Link = styled("a", {
       },
     },
   },
-});
+})

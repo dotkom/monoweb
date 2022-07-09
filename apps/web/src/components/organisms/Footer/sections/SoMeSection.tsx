@@ -1,9 +1,9 @@
-import { FacebookIcon } from "@components/icons/FacebookIcon";
-import { GitHubIcon } from "@components/icons/GitHubIcon";
-import { InstagramIcon } from "@components/icons/InstagramIcon";
-import { SlackIcon } from "@components/icons/SlackIcon";
-import { VFC } from "react";
-import { FooterSection } from "../components/FooterSection";
+import { FacebookIcon } from "@components/icons/FacebookIcon"
+import { GitHubIcon } from "@components/icons/GitHubIcon"
+import { InstagramIcon } from "@components/icons/InstagramIcon"
+import { SlackIcon } from "@components/icons/SlackIcon"
+import { VFC } from "react"
+import { FooterSection } from "../components/FooterSection"
 
 export const SoMeSection: VFC = () => (
   <FooterSection marginSize="small">
@@ -12,4 +12,4 @@ export const SoMeSection: VFC = () => (
     <InstagramIcon />
     <FacebookIcon />
   </FooterSection>
-);
+)
