@@ -106,5 +106,9 @@ export const Orange = () => <Button color="orange">Orange button</Button>
 export const Green = () => <Button color="green">Green button</Button>
 export const Red = () => <Button color="red">Red button</Button>
 export const Gray = () => <Button color="gray">Gray Button</Button>
+<<<<<<< HEAD
 export const TextOnlyGray = () => <Button textOnly={"gray"}>Gray text button</Button>
 >>>>>>> ea3240b (:lipstick: #115 add alert modal component)
+=======
+export const SubtleGray = () => <Button subtle={"gray"}>Gray text button</Button>
+>>>>>>> 0c67aec (:pencil2: #115 change textonly to subtle)

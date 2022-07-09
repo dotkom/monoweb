@@ -19,7 +19,7 @@ const Button = styled("button", {
     transform: "translateY(2px)",
   },
   variants: {
-    textOnly: {
+    subtle: {
       gray: {
         color: "$gray3",
         backgroundColor: "transparent",
