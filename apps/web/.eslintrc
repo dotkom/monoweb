@@ -1,0 +1,18 @@
+{
+  "extends": ["@dotkom/eslint-config-ow", "next/core-web-vitals"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": 0
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true,
+    "jest": true
+  }
+}

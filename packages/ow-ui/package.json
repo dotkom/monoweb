@@ -1,0 +1,10 @@
+{
+  "name": "ow-ui",
+  "packageManager": "yarn@3.2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@stitches/react": "^1.2.8"
+  }
+}

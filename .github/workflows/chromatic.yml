@@ -8,10 +8,13 @@ on: push
 jobs:
   chromatic-deployment:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./apps/web
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [14]
+        node: [16]
     # Job steps
     steps:
       - uses: actions/checkout@v1
@@ -26,3 +29,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: "./apps/web"
