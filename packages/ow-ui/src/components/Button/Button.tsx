@@ -19,6 +19,14 @@ const Button = styled("button", {
     transform: "translateY(2px)",
   },
   variants: {
+    textOnly: {
+      gray: {
+        color: "$gray3",
+        backgroundColor: "transparent",
+        "&:hover": { color: "$gray1", backgroundColor: "transparent" },
+        "&:active": { backgroundColor: "transparent" },
+      },
+    },
     color: {
       blue: {
         $$main: "$colors$blue3",

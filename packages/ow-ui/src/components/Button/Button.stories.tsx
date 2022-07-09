@@ -4,6 +4,7 @@ export default {
   component: Button,
 }
 
+<<<<<<< HEAD
 export const Default = () => (
   <Button color="blue" variant="solid">
     Button
@@ -99,3 +100,11 @@ export const tertiaryGray = () => (
     Button
   </Button>
 )
+=======
+export const Default = () => <Button>Default Button</Button>
+export const Orange = () => <Button color="orange">Orange button</Button>
+export const Green = () => <Button color="green">Green button</Button>
+export const Red = () => <Button color="red">Red button</Button>
+export const Gray = () => <Button color="gray">Gray Button</Button>
+export const TextOnlyGray = () => <Button textOnly={"gray"}>Gray text button</Button>
+>>>>>>> ea3240b (:lipstick: #115 add alert modal component)
