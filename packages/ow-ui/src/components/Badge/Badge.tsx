@@ -7,8 +7,8 @@ const Badge = styled("span", {
   variants: {
     color: {
       green: {
-        $$main: "#43B171",
-        $$secondary: "#D9EFE3",
+        $$main: "$colors$green1",
+        $$secondary: "#C3E8D8",
       },
       gray: {
         $$main: "#718096",
@@ -23,7 +23,7 @@ const Badge = styled("span", {
         $$secondary: "#FBDDE2",
       },
       orange: {
-        $$main: "#FEB515",
+        $$main: "#F5A623",
         $$secondary: "#FFF0D0",
       },
     },
