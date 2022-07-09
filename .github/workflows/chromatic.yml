@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./apps/web
+        working-directory: ./apps/storybook
     strategy:
       matrix:
         os: [ubuntu-latest]
