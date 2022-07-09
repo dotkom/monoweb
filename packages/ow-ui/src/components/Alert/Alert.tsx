@@ -1,33 +1,86 @@
 import { FC } from "react"
-import { FiAlertCircle, FiCheckCircle } from "react-icons/fi"
+import { FiCheckCircle, FiAlertTriangle, FiAlertOctagon, FiInfo } from "react-icons/fi"
+import { css } from "../../config/stitches.config"
 
-interface AlertProps {
+export interface AlertProps {
   status: "info" | "warning" | "success" | "danger"
-  showIcon: boolean
+  text: string
+  showIcon?: boolean
 }
 
-const Alert: FC<AlertProps> = ({ status, showIcon }) => {
+export const Alert: FC<AlertProps> = ({ status, text, showIcon = true }) => {
   return (
-    <div>
-      <AlertIcon status={status} />
+    <div className={styles.root({ status })}>
+      {showIcon && <AlertIcon status={status} />}
+      {text}
     </div>
   )
 }
 
-// TODO: style each component
-export const AlertIcon: FC<{ status: AlertProps["status"] }> = ({ status }) => {
-  switch (status) {
-    case "info":
-      return <FiAlertCircle />
-    case "success":
-      return <FiCheckCircle />
-    case "danger":
-      return <FiAlertCircle />
-    case "warning":
-      return <FiAlertCircle />
-    default:
-      return <FiAlertCircle />
-  }
+interface AlertIconProps {
+  status: AlertProps["status"]
 }
 
-export default Alert
+// TODO: style each component
+export const AlertIcon: FC<AlertIconProps> = ({ status }) => {
+  switch (status) {
+    case "info":
+      return <FiInfo className={styles.icon({ status })} />
+    case "success":
+      return <FiCheckCircle className={styles.icon({ status })} />
+    case "danger":
+      return <FiAlertOctagon className={styles.icon({ status })} />
+    case "warning":
+      return <FiAlertTriangle className={styles.icon({ status })} />
+  }
+}
+const styles = {
+  root: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "$2",
+    fontSize: "$md",
+    fontWeight: "semibold",
+    borderRadius: "$2", // XD
+    variants: {
+      status: {
+        info: {
+          backgroundColor: "$info12",
+          color: "$info1",
+        },
+        success: {
+          backgroundColor: "$green12",
+          color: "$green1",
+        },
+        warning: {
+          backgroundColor: "$orange12",
+          color: "$orange1",
+        },
+        danger: {
+          backgroundColor: "$red12",
+          color: "$red1",
+        },
+      },
+    },
+  }),
+  icon: css({
+    marginRight: "$2",
+    variants: {
+      status: {
+        info: {
+          color: "$info3",
+        },
+        success: {
+          color: "$green3",
+        },
+        warning: {
+          color: "$orange3",
+        },
+        danger: {
+          color: "$red3",
+        },
+      },
+    },
+  }),
+}
