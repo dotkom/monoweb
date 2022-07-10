@@ -81,7 +81,8 @@ export const AlertDialogCancel = AlertDialogPrimitive.Cancel
 const Flex = styled("div", { display: "flex" })
 
 export interface AlertDialogProps {
-  triggerBtnColor?: "red" | "orange" | "gray" | "green"
+  triggerBtnColor?: "green" | "gray" | "blue" | "red" | "orange" | "info"
+  triggerBtnVariant?: "solid" | "subtle" | "tertiary"
   triggerBtnContent: string
   title: string
   content: string
@@ -91,6 +92,7 @@ export interface AlertDialogProps {
 
 const AlertDialog: React.FC<AlertDialogProps> = ({
   triggerBtnColor,
+  triggerBtnVariant,
   triggerBtnContent,
   title,
   content,
@@ -99,19 +101,21 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
 }) => (
   <AlertDialogRoot>
     <AlertDialogTrigger asChild>
-      <Button color={triggerBtnColor}>{triggerBtnContent}</Button>
+      <Button color={triggerBtnColor} variant={triggerBtnVariant}>
+        {triggerBtnContent}
+      </Button>
     </AlertDialogTrigger>
     <AlertDialogContent>
       <AlertDialogTitle>{title}</AlertDialogTitle>
       <AlertDialogDescription>{content}</AlertDialogDescription>
       <Flex css={{ justifyContent: "flex-end" }}>
         <AlertDialogCancel asChild>
-          <Button subtle={"gray"} css={{ marginRight: 25 }}>
+          <Button color="gray" variant="tertiary" css={{ marginRight: 25 }}>
             Avbryt
           </Button>
         </AlertDialogCancel>
         <AlertDialogAction asChild>
-          <Button onClick={action} color="red">
+          <Button onClick={action} color="red" variant="solid">
             {actionText}
           </Button>
         </AlertDialogAction>

@@ -120,6 +120,10 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       md: "768px",
       lg: "1024px",
     },
+    transitions: {
+      color: "color, background-color, border-color, text-decoration-color, fill, stroke",
+      easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
     // fontWeights: {},
     // lineHeights: {},
     // letterSpacings: {},
@@ -127,7 +131,6 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
     // borderStyles: {},
     // shadows: {},
     // zIndices: {},
-    // transitions: {},
   },
   media: {
     maxMobile: "(max-width: 480px)",
