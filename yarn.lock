@@ -4037,6 +4037,21 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: 189e889f38466d9fd68d06ad9f24d896476dbc245360df2634ef8c44f530597ebf130e51f58caba57a5eb252126a858096432e6e4d0025a2f4b8aa1530be1e11
+"@radix-ui/react-alert-dialog@npm:^0.1.7":
+  version: 0.1.7
+  resolution: "@radix-ui/react-alert-dialog@npm:0.1.7"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 0.1.0
+    "@radix-ui/react-compose-refs": 0.1.0
+    "@radix-ui/react-context": 0.1.1
+    "@radix-ui/react-dialog": 0.1.7
+    "@radix-ui/react-primitive": 0.1.4
+    "@radix-ui/react-slot": 0.1.2
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ^16.8 || ^17.0
+  checksum: 07c3a3b609e284fea15314337c532b09638074d7f4234453fca9a7579f690afc909cb8c705b4914503050ffb39234e5ab70a10d69694410c851c0575f3c5b4ad
   languageName: node
   linkType: hard
 
@@ -4140,6 +4155,32 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: 85ed35b6e386706bc3a8d21ff7e2a55d0f452fd8ab89f6c9a6c2e271e390c8788800517589d5606a3bfbcca08741fbcb4b6c695c466a284ae35957d92620c467
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-dialog@npm:0.1.7":
+  version: 0.1.7
+  resolution: "@radix-ui/react-dialog@npm:0.1.7"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 0.1.0
+    "@radix-ui/react-compose-refs": 0.1.0
+    "@radix-ui/react-context": 0.1.1
+    "@radix-ui/react-dismissable-layer": 0.1.5
+    "@radix-ui/react-focus-guards": 0.1.0
+    "@radix-ui/react-focus-scope": 0.1.4
+    "@radix-ui/react-id": 0.1.5
+    "@radix-ui/react-portal": 0.1.4
+    "@radix-ui/react-presence": 0.1.2
+    "@radix-ui/react-primitive": 0.1.4
+    "@radix-ui/react-slot": 0.1.2
+    "@radix-ui/react-use-controllable-state": 0.1.0
+    aria-hidden: ^1.1.1
+    react-remove-scroll: ^2.4.0
+  peerDependencies:
+    react: ^16.8 || ^17.0
+    react-dom: ^16.8 || ^17.0
+  checksum: 19f131abf91ad93717149ad126444a8a273fd77ce74477e35bdb9e5cbc81cd166ba15812a4973d8882c48b03c2b5fdcd554b8dea0675430481abf7829ed8941d
   languageName: node
   linkType: hard
 
@@ -19766,7 +19807,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ow-ui@workspace:packages/ow-ui"
   dependencies:
+    "@radix-ui/colors": ^0.1.8
+    "@radix-ui/react-alert-dialog": ^0.1.7
     "@stitches/react": ^1.2.8
+    "@storybook/react": ^6.5.9
     "@types/react": ^18
     react: ^18.2.0
     react-icons: ^4.4.0
