@@ -1,8 +1,8 @@
 import { css, styled } from "@stitches/react"
 import { IoChevronDownOutline } from "react-icons/io5"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { AlertIcon } from "../Alert/AlertIcon"
 import React, { FC, ReactNode } from "react"
+import { WhiteAlertIcon } from "../Alert/WhiteAlertIcon"
 
 interface IProps {
   children?: ReactNode
@@ -14,7 +14,7 @@ const FlagTrigger: FC<IProps> = React.forwardRef(
     <Header color="success">
       <Trigger {...props} ref={forwardedRef}>
         <LeftContainer>
-          <AlertIcon status={"success"} className={styles.base()} />
+          <WhiteAlertIcon status={"success"} className={styles.base()} />
           {children}
         </LeftContainer>
         <Chevron aria-hidden />
