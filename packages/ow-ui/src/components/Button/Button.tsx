@@ -24,6 +24,14 @@ const Button = styled("button", {
   $$secondary: "$colors$blue11",
   bg: "$$main",
   variants: {
+    subtle: {
+      gray: {
+        color: "$gray3",
+        backgroundColor: "transparent",
+        "&:hover": { color: "$gray1", backgroundColor: "transparent" },
+        "&:active": { backgroundColor: "transparent" },
+      },
+    },
     color: {
       blue: {
         $$main: "$colors$blue3",
