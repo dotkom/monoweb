@@ -129,7 +129,9 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
     // letterSpacings: {},
     // borderWidths: {},
     // borderStyles: {},
-    // shadows: {},
+    shadows: {
+      ring0: "0 0 0 2px $colors$info11",
+    },
     // zIndices: {},
   },
   media: {
