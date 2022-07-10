@@ -4390,6 +4390,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-switch@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@radix-ui/react-switch@npm:0.1.5"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 0.1.0
+    "@radix-ui/react-compose-refs": 0.1.0
+    "@radix-ui/react-context": 0.1.1
+    "@radix-ui/react-label": 0.1.5
+    "@radix-ui/react-primitive": 0.1.4
+    "@radix-ui/react-use-controllable-state": 0.1.0
+    "@radix-ui/react-use-previous": 0.1.1
+    "@radix-ui/react-use-size": 0.1.1
+  peerDependencies:
+    react: ^16.8 || ^17.0
+  checksum: e000cfeff7438a9ae3ff6877d1e86c0e8f1902b4358ff5ed29343ab685c848d03560e6ac379908a40006b7e28c1c17fe03952b70f13d6a444d3a142537d3de80
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-use-body-pointer-events@npm:0.1.1":
   version: 0.1.1
   resolution: "@radix-ui/react-use-body-pointer-events@npm:0.1.1"
@@ -19773,6 +19792,7 @@ __metadata:
   dependencies:
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-alert-dialog": ^0.1.7
+    "@radix-ui/react-switch": ^0.1.5
     "@stitches/react": ^1.2.8
     "@storybook/react": ^6.5.9
     "@types/react": ^18
