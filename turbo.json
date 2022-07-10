@@ -19,7 +19,8 @@
       "cache": false
     },
     "storybook": {
-      "outputs": []
+      "outputs": [],
+      "cache": false
     }
   }
 }
