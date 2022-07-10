@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react"
+import React, { Dispatch, SetStateAction } from "react"
 import { styled } from "@stitches/react"
 import { blackA } from "@radix-ui/colors"
 import * as SwitchPrimitive from "@radix-ui/react-switch"
