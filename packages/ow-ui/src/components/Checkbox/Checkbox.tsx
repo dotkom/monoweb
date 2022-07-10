@@ -1,6 +1,6 @@
 import { Indicator, Root, CheckboxProps as PrimitiveProps } from "@radix-ui/react-checkbox"
 import { FC } from "react"
-import { Label } from "@radix-ui/react-label"
+import * as Label from "@radix-ui/react-label"
 import { IoCheckmarkSharp } from "react-icons/io5"
 import { css } from "../../config/stitches.config"
 
@@ -15,9 +15,9 @@ const Checkbox: FC<CheckboxProps> = ({ label, ...props }) => (
         <IoCheckmarkSharp />
       </Indicator>
     </Root>
-    <Label htmlFor={props.id} className={styles.label()}>
+    <Label.Root htmlFor={props.id} className={styles.label()}>
       {label}
-    </Label>
+    </Label.Root>
   </div>
 )
 
