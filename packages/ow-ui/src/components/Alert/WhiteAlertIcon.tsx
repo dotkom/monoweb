@@ -34,7 +34,7 @@ const styles = {
           color: "$gray12",
         },
         warning: {
-          color: "$gray12",
+          color: "$gray1",
         },
         danger: {
           color: "$gray12",
