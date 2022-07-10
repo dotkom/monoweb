@@ -17,7 +17,7 @@ const Template: ComponentStory<typeof Checkbox> = (args) => {
 }
 
 export const Default = Template.bind({})
-Default.args = { label: "I accept terms and conditions.", id: "default", lab }
+Default.args = { label: "I accept terms and conditions.", id: "default" }
 
 export const Disabled = Template.bind({})
 Disabled.args = { label: "I accept terms and conditions.", disabled: true, id: "disabled" }

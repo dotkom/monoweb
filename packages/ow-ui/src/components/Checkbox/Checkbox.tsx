@@ -1,29 +1,19 @@
-import React from "react"
-import { Indicator, Root, CheckedState, CheckboxProps as PrimitiveProps } from "@radix-ui/react-checkbox"
+import { Indicator, Root, CheckboxProps as PrimitiveProps } from "@radix-ui/react-checkbox"
 import { FC } from "react"
 import { Label } from "@radix-ui/react-label"
 import { IoCheckmarkSharp } from "react-icons/io5"
-import { css, styled } from "../../config/stitches.config"
+import { css } from "../../config/stitches.config"
 
-// Your app...
 export interface CheckboxProps extends PrimitiveProps {
   label: string
 }
 
-const CheckboxIndicator = styled(Indicator, {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-})
-
 const Checkbox: FC<CheckboxProps> = ({ label, ...props }) => (
   <div className={styles.container()}>
     <Root className={styles.checkbox({ checked: !!props.checked, disabled: !!props.disabled })} {...props}>
-      <CheckboxIndicator>
+      <Indicator className={styles.indicator()}>
         <IoCheckmarkSharp />
-      </CheckboxIndicator>
+      </Indicator>
     </Root>
     <Label htmlFor={props.id} className={styles.label()}>
       {label}
@@ -40,6 +30,13 @@ const styles = {
     lineHeight: 1,
     userSelect: "none",
     paddingLeft: "$2",
+  }),
+  indicator: css({
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   }),
   checkbox: css({
     all: "unset",
