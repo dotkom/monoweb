@@ -4,6 +4,7 @@ import * as Stitches from "@stitches/react"
 export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, theme, config } = Stitches.createStitches({
   theme: {
     colors: {
+      blue0: "#091C34",
       blue1: "#0D2546",
       blue2: "#11325E",
       blue3: "#153E75",
@@ -17,6 +18,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       blue11: "#D0D8E3",
       blue12: "#E8ECF1",
       bluebg: "#EBF3FE",
+      orange0: "#B88D00",
       orange1: "#CF9E00",
       orange2: "#EDB500",
       orange3: "#FFC300",
@@ -29,6 +31,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       orange10: "#FFEDB3",
       orange11: "#FFF3CC",
       orange12: "#FFF9E6",
+      red0: "#A30010",
       red1: "#EE0018",
       red2: "#FF1129",
       red3: "#F43145",
@@ -41,6 +44,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       red10: "#FCC2C8",
       red11: "#FDD6DA",
       red12: "#FEEBED",
+      green0: "#226D4E",
       green1: "#29865F",
       green2: "#309F70",
       green3: "#36B37E",
@@ -53,6 +57,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       green10: "#C3E8D8",
       green11: "#D7F0E5",
       green12: "#EBF7F2",
+      gray0: "#22272F",
       gray1: "#2E3440",
       gray2: "#3D4555",
       gray3: "#4C566A",
@@ -65,6 +70,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       gray10: "#C9CCD2",
       gray11: "#DBDDE1",
       gray12: "#EDEEF0",
+      info0: "#274F91",
       info1: "#2F61B0",
       info2: "#3876D9",
       info3: "#3A86FF",

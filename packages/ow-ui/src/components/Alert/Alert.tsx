@@ -30,19 +30,19 @@ const styles = {
       status: {
         info: {
           backgroundColor: "$info12",
-          color: "$info1",
+          color: "$info0",
         },
         success: {
           backgroundColor: "$green12",
-          color: "$green1",
+          color: "$green0",
         },
         warning: {
           backgroundColor: "$orange12",
-          color: "$orange1",
+          color: "$orange0",
         },
         danger: {
           backgroundColor: "$red12",
-          color: "$red1",
+          color: "$red0",
         },
       },
     },
