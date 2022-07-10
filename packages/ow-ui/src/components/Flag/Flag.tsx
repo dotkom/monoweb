@@ -5,14 +5,14 @@ import Content from "./FlagContent"
 
 export interface FlagProps {
   title: string
-  color: string
+  color: "info" | "danger" | "warning" | "success"
 }
 
 const Flag = (props: FlagProps) => (
-  <Container color="success" type="single" defaultValue="item-1" collapsible>
+  <Container type="single" defaultValue="item-1" collapsible>
     <Item value="item-1">
-      <FlagTrigger color="success">{props.title}</FlagTrigger>
-      <Content>Nothing to worry about, everything is going great!</Content>
+      <FlagTrigger color={props.color}>{props.title}</FlagTrigger>
+      <Content color={props.color}>Nothing to worry about, everything is going great!</Content>
     </Item>
   </Container>
 )

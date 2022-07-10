@@ -6,15 +6,15 @@ import { WhiteAlertIcon } from "../Alert/WhiteAlertIcon"
 
 interface IProps {
   children?: ReactNode
-  color?: string
+  color: "info" | "danger" | "warning" | "success"
 }
 
 const FlagTrigger: FC<IProps> = React.forwardRef(
   ({ children, ...props }, forwardedRef: React.ForwardedRef<HTMLButtonElement>) => (
-    <Header color="success">
+    <Header color={props.color}>
       <Trigger {...props} ref={forwardedRef}>
         <LeftContainer>
-          <WhiteAlertIcon status={"success"} className={styles.base()} />
+          <WhiteAlertIcon status={props.color} className={styles.base()} />
           {children}
         </LeftContainer>
         <Chevron aria-hidden />
@@ -35,6 +35,9 @@ const Trigger = styled(AccordionPrimitive.Trigger, {
   fontSize: 16,
   fontWeight: 600,
   lineHeight: 1,
+  "&:hover": {
+    cursor: "pointer",
+  },
 })
 
 const Chevron = styled(IoChevronDownOutline, {
@@ -48,6 +51,9 @@ const Chevron = styled(IoChevronDownOutline, {
 const Header = styled(AccordionPrimitive.Header, {
   all: "unset",
   display: "flex",
+  borderRadius: "5px",
+  borderBottomRightRadius: "0px",
+  borderBottomLeftRadius: "0px",
   variants: {
     color: {
       standard: {
@@ -55,10 +61,10 @@ const Header = styled(AccordionPrimitive.Header, {
         color: "$gray3",
       },
       info: {
-        backgroundColor: "$blue3",
+        backgroundColor: "$info3",
         color: "$gray12",
       },
-      error: {
+      danger: {
         backgroundColor: "$red3",
         color: "$gray12",
       },

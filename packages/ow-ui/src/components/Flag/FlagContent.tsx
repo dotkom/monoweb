@@ -5,14 +5,14 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion"
 
 interface IProps {
   children?: ReactNode
-  color?: string
+  color?: "info" | "danger" | "warning" | "success"
 }
 
 const Content: FC<IProps> = React.forwardRef(
   ({ children, ...props }, forwardedRef: React.ForwardedRef<HTMLDivElement>) => (
-    <ContentWrapper {...props} ref={forwardedRef} color="success">
+    <ContentWrapper {...props} ref={forwardedRef} color={props.color}>
       <div>{children}</div>
-      <CloseButton>Understood!</CloseButton>
+      <CloseButton color={props.color}>Understood!</CloseButton>
     </ContentWrapper>
   )
 )
@@ -31,6 +31,10 @@ const ContentWrapper = styled(AccordionPrimitive.Content, {
   overflow: "hidden",
   paddingLeft: "52px",
   paddingRight: "52px",
+  borderRadius: "5px",
+  borderTopLeftRadius: "0px",
+  borderTopRightRadius: "0px",
+
   fontSize: 16,
   '&[data-state="open"]': {
     animation: `${slideDown} 350ms cubic-bezier(0.87, 0, 0.13, 1) forwards`,
@@ -40,15 +44,11 @@ const ContentWrapper = styled(AccordionPrimitive.Content, {
   },
   variants: {
     color: {
-      standard: {
-        backgroundColor: "$gray12",
-        color: "$gray3",
-      },
       info: {
-        backgroundColor: "$blue3",
+        backgroundColor: "$info3",
         color: "$gray12",
       },
-      error: {
+      danger: {
         backgroundColor: "$red3",
         color: "$gray12",
       },
@@ -75,11 +75,28 @@ const CloseButton = styled("button", {
   fontSize: "16px",
   "&:hover": {
     transform: "translateY(-1px)",
+    cursor: "pointer",
   },
   "&:active": {
     transform: "translateY(2px)",
   },
-  color: "$gray12",
+  variants: {
+    color: {
+      info: {
+        color: "$gray12",
+      },
+      danger: {
+        color: "$gray12",
+      },
+      warning: {
+        color: "$gray1",
+        backgroundColor: "#ECB605",
+      },
+      success: {
+        color: "$gray12",
+      },
+    },
+  },
 })
 
 export default Content
