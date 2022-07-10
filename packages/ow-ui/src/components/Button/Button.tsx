@@ -11,22 +11,19 @@ const Button = styled("button", {
   alignItems: "center",
   justifyContent: "center",
   transition: "0.2s ease-in-out",
-  color: "$white",
   "&:hover": {
     transform: "translateY(-1px)",
+    filter: "brightness(120%)",
   },
   "&:active": {
     transform: "translateY(2px)",
+    filter: "brightness(130%)",
   },
+  color: "$white",
+  $$main: "$colors$blue3",
+  $$secondary: "$colors$blue11",
+  bg: "$$main",
   variants: {
-    subtle: {
-      gray: {
-        color: "$gray3",
-        backgroundColor: "transparent",
-        "&:hover": { color: "$gray1", backgroundColor: "transparent" },
-        "&:active": { backgroundColor: "transparent" },
-      },
-    },
     color: {
       blue: {
         $$main: "$colors$blue3",
