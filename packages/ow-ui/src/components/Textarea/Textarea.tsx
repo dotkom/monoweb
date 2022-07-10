@@ -1,14 +1,14 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react"
 import * as Label from "@radix-ui/react-label"
 import { styled } from "../../config/stitches.config"
-import { AlertIcon } from "../Alert"
+import { AlertIcon } from "../Alert/AlertIcon"
 
 const BaseTextarea = styled("textarea", {
   outline: "none",
   resize: "none",
   padding: "$2",
   border: "2px solid $gray10",
-  font: "$body",
+  fontFamily: "$body",
   borderRadius: "$1",
   backgroundColor: "$gray12",
   "&:disabled": {
@@ -21,10 +21,10 @@ const BaseTextarea = styled("textarea", {
   variants: {
     status: {
       danger: {
-        borderColor: "$red4",
+        borderColor: "$red5",
       },
       success: {
-        borderColor: "$green4",
+        borderColor: "$green5",
       },
     },
   },
@@ -44,13 +44,14 @@ const MessageContainer = styled("div", {
 })
 
 const Message = styled("span", {
+  fontWeight: "600",
   variants: {
     status: {
       danger: {
-        color: "$red4",
+        color: "$red0",
       },
       success: {
-        color: "$green4",
+        color: "$green0",
       },
     },
   },
@@ -69,8 +70,8 @@ export type TextareaProps = ComponentPropsWithoutRef<typeof BaseTextarea> & {
         message: string
       }
     | {
-        status: undefined
-        message: undefined
+        status?: undefined
+        message?: undefined
       }
   )
 
@@ -83,7 +84,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textare
     <InputContainer>
       {label && <InputLabel htmlFor={id}>{label}</InputLabel>}
       <BaseTextarea ref={ref} status={status} id={id} {...rest} />
-      {message && status && (
+      {message && (
         <MessageContainer>
           <AlertIcon status={status} />
           <Message status={status}>{message}</Message>
