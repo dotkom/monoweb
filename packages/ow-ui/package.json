@@ -14,11 +14,13 @@
     "@radix-ui/react-alert-dialog": "^0.1.7",
     "@radix-ui/react-checkbox": "^0.1.5",
     "@radix-ui/react-label": "^0.1.5",
+    "@radix-ui/react-switch": "^0.1.5",
     "@stitches/react": "^1.2.8",
     "react": "^18.2.0",
     "react-icons": "^4.4.0"
   },
   "devDependencies": {
+    "@storybook/react": "^6.5.9",
     "@types/react": "^18"
   }
 }
