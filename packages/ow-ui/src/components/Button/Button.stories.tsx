@@ -9,13 +9,13 @@ export const Default = () => (
     Button
   </Button>
 )
-export const subtleBlue = () => (
-  <Button color="blue" variant="subtle">
+export const lightBlue = () => (
+  <Button color="blue" variant="light">
     Button
   </Button>
 )
-export const tertiaryBlue = () => (
-  <Button color="blue" variant="tertiary">
+export const subtleBlue = () => (
+  <Button color="blue" variant="subtle">
     Button
   </Button>
 )
@@ -25,13 +25,13 @@ export const solidOrange = () => (
     Button
   </Button>
 )
-export const subtleOrange = () => (
-  <Button color="orange" variant="subtle">
+export const lightOrange = () => (
+  <Button color="orange" variant="light">
     Button
   </Button>
 )
-export const tertiaryOrange = () => (
-  <Button color="orange" variant="tertiary">
+export const subtleOrange = () => (
+  <Button color="orange" variant="subtle">
     Button
   </Button>
 )
@@ -41,13 +41,13 @@ export const solidInfo = () => (
     Button
   </Button>
 )
-export const subtleInfo = () => (
-  <Button color="info" variant="subtle">
+export const lightInfo = () => (
+  <Button color="info" variant="light">
     Button
   </Button>
 )
-export const tertiaryInfo = () => (
-  <Button color="info" variant="tertiary">
+export const subtleInfo = () => (
+  <Button color="info" variant="subtle">
     Button
   </Button>
 )
@@ -57,13 +57,13 @@ export const solidGreen = () => (
     Button
   </Button>
 )
-export const subtleGreen = () => (
-  <Button color="green" variant="subtle">
+export const lightGreen = () => (
+  <Button color="green" variant="light">
     Button
   </Button>
 )
-export const tertiaryGreen = () => (
-  <Button color="green" variant="tertiary">
+export const subtleGreen = () => (
+  <Button color="green" variant="subtle">
     Button
   </Button>
 )
@@ -73,13 +73,13 @@ export const solidRed = () => (
     Button
   </Button>
 )
-export const subtleRed = () => (
-  <Button color="red" variant="subtle">
+export const lightRed = () => (
+  <Button color="red" variant="light">
     Button
   </Button>
 )
-export const tertiaryRed = () => (
-  <Button color="red" variant="tertiary">
+export const subtleRed = () => (
+  <Button color="red" variant="subtle">
     Button
   </Button>
 )
@@ -89,13 +89,13 @@ export const solidGray = () => (
     Button
   </Button>
 )
-export const subtleGray = () => (
-  <Button color="gray" variant="subtle">
+export const lightGray = () => (
+  <Button color="gray" variant="light">
     Button
   </Button>
 )
-export const tertiaryGray = () => (
-  <Button color="gray" variant="tertiary">
+export const subtleGray = () => (
+  <Button color="gray" variant="subtle">
     Button
   </Button>
 )

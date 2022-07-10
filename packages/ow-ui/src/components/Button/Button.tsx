@@ -57,13 +57,13 @@ const Button = styled("button", {
         "&:hover": { filter: "brightness(120%)" },
         "&:active": { filter: "brightness(130%)" },
       },
-      subtle: {
+      light: {
         color: "$$main",
         bg: "$$secondary",
         "&:hover": { filter: "brightness(105%)" },
         "&:active": { filter: "brightness(110%)" },
       },
-      tertiary: {
+      subtle: {
         color: "$$main",
         bg: "transparent",
       },
