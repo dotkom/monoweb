@@ -124,6 +124,9 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       color: "color, background-color, border-color, text-decoration-color, fill, stroke",
       easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
     },
+    shadows: {
+      ring0: "0 0 0 2px $colors$info11",
+    },
     // fontWeights: {},
     // lineHeights: {},
     // letterSpacings: {},
