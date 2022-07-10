@@ -63,4 +63,16 @@ export const utils = {
         }
       : {}
   },
+  transitionVariant: (value) => {
+    switch (value) {
+      case "colors":
+        return {
+          transitionProperty: "color, background-color, border-color, text-decoration-color, fill, stroke",
+          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+          transitionDuration: "150ms",
+        }
+      default:
+        return {}
+    }
+  },
 }
