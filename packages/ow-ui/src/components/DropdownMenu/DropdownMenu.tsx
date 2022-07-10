@@ -62,26 +62,18 @@ export type DropdownMenuProps = ComponentProps<typeof RadixDropdownMenu.Root> & 
       }
   )
 
-const DropdownMenu: FC<DropdownMenuProps> = ({
-  disabled = false,
-  isLoading,
-  label,
-  children,
-  open,
-  onOpenChange,
-  ...rest
-}) => {
+const DropdownMenu: FC<DropdownMenuProps> = ({ disabled = false, isLoading, label, children, ...props }) => {
   // TODO: find out if there is a more convenient way to synchronize state here
   //  Radix does not support refs onto the root :(
-  const [expanded, setExpanded] = useState(open)
+  const [expanded, setExpanded] = useState(props.open)
   // Proxy through the component to synchronize state
   const onRootStateChange = (state: boolean) => {
     setExpanded(state)
-    onOpenChange?.(state)
+    props.onOpenChange?.(state)
   }
 
   return (
-    <RadixDropdownMenu.Root {...rest} open={open} onOpenChange={onRootStateChange}>
+    <RadixDropdownMenu.Root {...props} open={props.open} onOpenChange={onRootStateChange}>
       <DropdownTrigger disabled={disabled}>
         {label}
         {expanded ? <IoChevronUpOutline /> : <IoChevronDownOutline />}
