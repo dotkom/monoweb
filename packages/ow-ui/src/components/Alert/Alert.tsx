@@ -1,6 +1,6 @@
 import { FC } from "react"
-import { FiCheckCircle, FiAlertTriangle, FiAlertOctagon, FiInfo } from "react-icons/fi"
 import { css } from "../../config/stitches.config"
+import { AlertIcon } from "./AlertIcon"
 
 export interface AlertProps {
   status: "info" | "warning" | "success" | "danger"
@@ -17,22 +17,6 @@ export const Alert: FC<AlertProps> = ({ status, text, showIcon = true }) => {
   )
 }
 
-interface AlertIconProps {
-  status: AlertProps["status"]
-}
-
-export const AlertIcon: FC<AlertIconProps> = ({ status }) => {
-  switch (status) {
-    case "info":
-      return <FiInfo className={styles.icon({ status })} />
-    case "success":
-      return <FiCheckCircle className={styles.icon({ status })} />
-    case "danger":
-      return <FiAlertOctagon className={styles.icon({ status })} />
-    case "warning":
-      return <FiAlertTriangle className={styles.icon({ status })} />
-  }
-}
 const styles = {
   root: css({
     display: "flex",
@@ -59,25 +43,6 @@ const styles = {
         danger: {
           backgroundColor: "$red12",
           color: "$red1",
-        },
-      },
-    },
-  }),
-  icon: css({
-    marginRight: "$2",
-    variants: {
-      status: {
-        info: {
-          color: "$info3",
-        },
-        success: {
-          color: "$green3",
-        },
-        warning: {
-          color: "$orange3",
-        },
-        danger: {
-          color: "$red3",
         },
       },
     },
