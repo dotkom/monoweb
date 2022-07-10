@@ -19774,6 +19774,7 @@ __metadata:
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-alert-dialog": ^0.1.7
     "@stitches/react": ^1.2.8
+    "@storybook/react": ^6.5.9
     "@types/react": ^18
     react: ^18.2.0
     react-icons: ^4.4.0
