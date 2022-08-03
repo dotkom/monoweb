@@ -1,6 +1,6 @@
 import Card from "@components/atoms/Card/Card"
 import Text from "@components/atoms/Text"
-import { FC, VFC } from "react"
+import { FC, FC } from "react"
 import Image from "next/image"
 import { CSS, css, styled } from "@theme"
 import { Box, Flex } from "@components/primitives"
@@ -17,7 +17,7 @@ interface EventCardProps {
   thumbnailUrl: string
 }
 
-const EventCard: VFC<EventCardProps> = (props) => {
+const EventCard: FC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props
   const date = DateTime.fromJSDate(eventStart)
 

@@ -3,7 +3,7 @@ import PortableText from "@components/molecules/PortableText"
 import { Box } from "@components/primitives"
 import { BlockContentProps } from "@sanity/block-content-to-react"
 import { CSS, css, styled } from "@theme"
-import { VFC } from "react"
+import { FC } from "react"
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
 
@@ -12,7 +12,7 @@ export type Content = BlockContentProps["blocks"]
 interface CompanyViewProps {
   companyContent: Content[]
 }
-export const CompanyView: VFC<CompanyViewProps> = (props: CompanyViewProps) => {
+export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
   const [header, interest, product, info, contact] = props.companyContent
 
   return (

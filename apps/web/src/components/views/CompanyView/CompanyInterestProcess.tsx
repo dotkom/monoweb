@@ -1,4 +1,4 @@
-import { VFC } from "react"
+import { FC } from "react"
 import Circle from "@components/atoms/Circle"
 import type { CSS } from "@theme"
 import { Box } from "@components/primitives"
@@ -6,7 +6,7 @@ interface CompanyInterestProcessProps {
   steps: string[]
 }
 
-const CompanyInterestProcess: VFC<CompanyInterestProcessProps> = ({ steps }) => {
+const CompanyInterestProcess: FC<CompanyInterestProcessProps> = ({ steps }) => {
   return (
     <Box css={styles.step}>
       {steps.map((step, index) => (

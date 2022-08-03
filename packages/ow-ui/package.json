@@ -1,11 +1,11 @@
 {
-  "name": "ow-ui",
+  "name": "@ow/ui",
   "packageManager": "yarn@3.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "run -T tsc -p tsconfig.build.json",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix ."
   },
