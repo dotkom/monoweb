@@ -1,6 +1,6 @@
 /* eslint-disable */
 const withPlugins = require("next-compose-plugins")
-const transpileModules = require("next-transpile-modules")(["@ow/ui"]);
+const transpileModules = require("next-transpile-modules")(["@dotkom/ui"]);
 
 /**
  * @type {import('next').NextConfig}

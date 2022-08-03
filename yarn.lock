@@ -4193,6 +4193,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dotkom/ui@workspace:^, @dotkom/ui@workspace:packages/ow-ui":
+  version: 0.0.0-use.local
+  resolution: "@dotkom/ui@workspace:packages/ow-ui"
+  dependencies:
+    "@radix-ui/colors": ^0.1.8
+    "@radix-ui/react-alert-dialog": ^1.0.0
+    "@radix-ui/react-checkbox": ^1.0.0
+    "@radix-ui/react-label": ^1.0.0
+    "@radix-ui/react-switch": ^1.0.0
+    "@stitches/react": ^1.2.8
+    "@storybook/react": ^6.5.9
+    "@types/react": ^18.0.15
+    react: ^18.2.0
+    react-icons: ^4.4.0
+  languageName: unknown
+  linkType: soft
+
 "@emotion/cache@npm:^10.0.27, @emotion/cache@npm:^10.0.9":
   version: 10.0.29
   resolution: "@emotion/cache@npm:10.0.29"
@@ -5102,23 +5119,6 @@ __metadata:
   checksum: 1388777b507b0c592d53f41b9d182e1a8de7763bc625fc07999b8edbc22325f074e5b3ec90af79c89d6987fdb2325bc66d59f483258543c14a43661621f841b0
   languageName: node
   linkType: hard
-
-"@ow/ui@workspace:packages/ow-ui":
-  version: 0.0.0-use.local
-  resolution: "@ow/ui@workspace:packages/ow-ui"
-  dependencies:
-    "@radix-ui/colors": ^0.1.8
-    "@radix-ui/react-alert-dialog": ^1.0.0
-    "@radix-ui/react-checkbox": ^1.0.0
-    "@radix-ui/react-label": ^1.0.0
-    "@radix-ui/react-switch": ^1.0.0
-    "@stitches/react": ^1.2.8
-    "@storybook/react": ^6.5.9
-    "@types/react": ^18.0.15
-    react: ^18.2.0
-    react-icons: ^4.4.0
-  languageName: unknown
-  linkType: soft
 
 "@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.3":
   version: 0.5.7
@@ -9335,6 +9335,7 @@ __metadata:
     "@dotkom/db": "workspace:^"
     "@dotkom/eslint-config-ow": "workspace:*"
     "@dotkom/logger": "workspace:^"
+    "@dotkom/ui": "workspace:^"
     "@types/aws-lambda": ^8.10.101
     "@types/config": ^3.3.0
     "@types/cors": ^2.8.12
