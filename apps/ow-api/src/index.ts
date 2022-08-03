@@ -5,10 +5,10 @@ import { initUserService } from "./modules/auth/user-service.js"
 import { ApolloServerExpressConfig } from "apollo-server-express"
 import graphqlSchema from "./graphql/schema.js"
 import { Request, Response } from "express"
-import { initPostgres } from "../config/postgres.js"
+import { PrismaClient } from "@dotkom/db"
 
 const logger = getLogger(import.meta.url)
-const client = await initPostgres()
+const client = new PrismaClient()
 
 // Repositories
 const userRepository = initUserRepository(client)

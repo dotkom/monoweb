@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "build": "prisma generate && run -T tsc -p tsconfig.build.json",
     "migrate": "prisma migrate dev",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix .",
