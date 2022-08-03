@@ -10,6 +10,6 @@
     "lint:fix": "run -T eslint --fix ."
   },
   "dependencies": {
-    "winston": "^3.6.0"
+    "winston": "^3.8.1"
   }
 }
