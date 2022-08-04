@@ -14,14 +14,14 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "dev": "turbo run dev",
-    "storybook": "turbo run storybook --filter=storybook"
+    "storybook": "turbo run storybook --filter=docs"
   },
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=16.14",
     "yarn": ">=3.2.0"
   },
   "devDependencies": {

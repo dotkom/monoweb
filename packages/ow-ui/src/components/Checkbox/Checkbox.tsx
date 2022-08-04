@@ -53,6 +53,9 @@ const styles = {
     "&:focus": {
       boxShadow: "$ring0",
     },
+    "&:hover": {
+      cursor: "pointer",
+    },
     variants: {
       checked: {
         true: {

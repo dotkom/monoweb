@@ -1,4 +1,4 @@
-import ModalDialog from "./ModalDialog"
+import { ModalDialog } from "./ModalDialog"
 export default {
   title: "atoms/ModalDialog",
   component: ModalDialog,

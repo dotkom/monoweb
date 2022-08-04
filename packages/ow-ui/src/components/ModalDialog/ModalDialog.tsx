@@ -80,7 +80,7 @@ const AlertDialogCancel = AlertDialogPrimitive.Cancel
 
 const Flex = styled("div", { display: "flex" })
 
-export interface AlertDialogProps {
+export interface ModalDialogProps {
   triggerBtnColor?: "green" | "gray" | "blue" | "red" | "orange" | "info"
   triggerBtnContent: string
   title: string
@@ -89,7 +89,7 @@ export interface AlertDialogProps {
   action: () => void
 }
 
-export const AlertDialog: React.FC<AlertDialogProps> = ({
+export const ModalDialog: React.FC<ModalDialogProps> = ({
   triggerBtnColor,
   triggerBtnContent,
   title,
