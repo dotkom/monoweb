@@ -1,4 +1,6 @@
 # Dependencies
+
+storybook-static
 /node_modules
 
 # Production

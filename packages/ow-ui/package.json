@@ -1,26 +1,26 @@
 {
-  "name": "ow-ui",
+  "name": "@dotkom/ui",
   "packageManager": "yarn@3.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix ."
   },
   "dependencies": {
     "@radix-ui/colors": "^0.1.8",
-    "@radix-ui/react-alert-dialog": "^0.1.7",
-    "@radix-ui/react-checkbox": "^0.1.5",
-    "@radix-ui/react-label": "^0.1.5",
-    "@radix-ui/react-switch": "^0.1.5",
+    "@radix-ui/react-alert-dialog": "^1.0.0",
+    "@radix-ui/react-checkbox": "^1.0.0",
+    "@radix-ui/react-label": "^1.0.0",
+    "@radix-ui/react-switch": "^1.0.0",
     "@stitches/react": "^1.2.8",
     "react": "^18.2.0",
     "react-icons": "^4.4.0"
   },
   "devDependencies": {
     "@storybook/react": "^6.5.9",
-    "@types/react": "^18"
+    "@types/react": "^18.0.15"
   }
 }

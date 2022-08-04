@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import { styled, keyframes } from "@stitches/react"
-import Button from "../Button"
+import { Button } from "../Button"
 import { blackA } from "@radix-ui/colors"
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
@@ -70,19 +70,18 @@ const StyledDescription = styled(AlertDialogPrimitive.Description, {
 })
 
 // Exports
-export const AlertDialogRoot = AlertDialogPrimitive.Root
-export const AlertDialogTrigger = AlertDialogPrimitive.Trigger
-export const AlertDialogContent = Content
-export const AlertDialogTitle = StyledTitle
-export const AlertDialogDescription = StyledDescription
-export const AlertDialogAction = AlertDialogPrimitive.Action
-export const AlertDialogCancel = AlertDialogPrimitive.Cancel
+const AlertDialogRoot = AlertDialogPrimitive.Root
+const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+const AlertDialogContent = Content
+const AlertDialogTitle = StyledTitle
+const AlertDialogDescription = StyledDescription
+const AlertDialogAction = AlertDialogPrimitive.Action
+const AlertDialogCancel = AlertDialogPrimitive.Cancel
 
 const Flex = styled("div", { display: "flex" })
 
-export interface AlertDialogProps {
+export interface ModalDialogProps {
   triggerBtnColor?: "green" | "gray" | "blue" | "red" | "orange" | "info"
-  triggerBtnVariant?: "solid" | "subtle" | "tertiary"
   triggerBtnContent: string
   title: string
   content: string
@@ -90,9 +89,8 @@ export interface AlertDialogProps {
   action: () => void
 }
 
-const AlertDialog: React.FC<AlertDialogProps> = ({
+export const ModalDialog: React.FC<ModalDialogProps> = ({
   triggerBtnColor,
-  triggerBtnVariant,
   triggerBtnContent,
   title,
   content,
@@ -101,7 +99,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
 }) => (
   <AlertDialogRoot>
     <AlertDialogTrigger asChild>
-      <Button color={triggerBtnColor} variant={triggerBtnVariant}>
+      <Button color={triggerBtnColor} variant="solid">
         {triggerBtnContent}
       </Button>
     </AlertDialogTrigger>
@@ -110,7 +108,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
       <AlertDialogDescription>{content}</AlertDialogDescription>
       <Flex css={{ justifyContent: "flex-end" }}>
         <AlertDialogCancel asChild>
-          <Button color="gray" variant="tertiary" css={{ marginRight: 25 }}>
+          <Button color="gray" variant="light" css={{ marginRight: 25 }}>
             Avbryt
           </Button>
         </AlertDialogCancel>
@@ -123,5 +121,3 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
     </AlertDialogContent>
   </AlertDialogRoot>
 )
-
-export default AlertDialog

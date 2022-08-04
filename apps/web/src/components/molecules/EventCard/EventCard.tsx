@@ -1,6 +1,5 @@
-import Card from "@components/atoms/Card/Card"
-import Text from "@components/atoms/Text"
-import { FC, VFC } from "react"
+import { Card, Text } from "@dotkom/ui"
+import { FC } from "react"
 import Image from "next/image"
 import { CSS, css, styled } from "@theme"
 import { Box, Flex } from "@components/primitives"
@@ -17,7 +16,7 @@ interface EventCardProps {
   thumbnailUrl: string
 }
 
-const EventCard: VFC<EventCardProps> = (props) => {
+const EventCard: FC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props
   const date = DateTime.fromJSDate(eventStart)
 
@@ -71,7 +70,7 @@ const EventCard: VFC<EventCardProps> = (props) => {
   )
 }
 
-const TempBadge: FC = ({ children }) => (
+const TempBadge: FC<{ children?: React.ReactNode }> = ({ children }) => (
   <Box
     as="span"
     css={{

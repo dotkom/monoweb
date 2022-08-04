@@ -1,5 +1,5 @@
-import Text from "../Typography"
-import Card from "./Card"
+import { Text } from "../Typography"
+import { Card } from "./Card"
 
 export default {
   title: "atoms/Card",

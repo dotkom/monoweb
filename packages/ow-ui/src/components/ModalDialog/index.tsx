@@ -1,1 +1,2 @@
-export { default } from "./ModalDialog"
+export { ModalDialog } from "./ModalDialog"
+export type { ModalDialogProps } from "./ModalDialog"

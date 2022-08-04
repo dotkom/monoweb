@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsup src/index.ts --format esm --dts --clean --sourcemap",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix ."
   },
   "dependencies": {
-    "winston": "^3.6.0"
+    "winston": "^3.8.1"
   }
 }

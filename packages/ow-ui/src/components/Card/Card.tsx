@@ -1,6 +1,6 @@
 import { styled } from "../../config/stitches.config"
 
-const Card = styled("div", {
+export const Card = styled("div", {
   boxSizing: "border-box",
   margin: 0,
   minWidth: 0,
@@ -22,5 +22,3 @@ const Card = styled("div", {
     outlined: true,
   },
 })
-
-export default Card

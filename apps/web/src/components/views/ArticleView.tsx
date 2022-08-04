@@ -2,11 +2,10 @@ import { Box, Flex } from "../primitives"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
 import { CSS, css, styled } from "@theme"
-import Text from "@components/atoms/Text"
 import PortableText from "@components/molecules/PortableText"
 import Image from "next/image"
-import Badge from "@components/atoms/Badge"
 import { DateTime } from "luxon"
+import { Badge, Text } from "@dotkom/ui"
 
 interface ArticleViewProps {
   article: Article

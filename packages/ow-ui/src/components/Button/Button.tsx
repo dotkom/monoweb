@@ -1,6 +1,6 @@
 import { styled } from "../../config/stitches.config"
 
-const Button = styled("button", {
+export const Button = styled("button", {
   border: "none",
   borderRadius: "$2",
   cursor: "pointer",
@@ -71,4 +71,3 @@ const Button = styled("button", {
   },
 })
 
-export default Button

@@ -1,10 +1,9 @@
 import { Box } from "@components/primitives"
 import { CSS } from "@theme"
 import { DateTime } from "luxon"
-import { VFC } from "react"
+import { FC } from "react"
 import Image from "next/image"
-import Badge from "@components/atoms/Badge"
-import Text from "@components/atoms/Text"
+import { Badge, Text } from "@dotkom/ui"
 
 interface CompanyAdListItemProps {
   name: string
@@ -16,7 +15,7 @@ interface CompanyAdListItemProps {
   applyLink?: string
 }
 
-const CompanyAdListItem: VFC<CompanyAdListItemProps> = (props) => {
+const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
   const { name, logo, position, location, deadline, applyLink, showApplyLink = false } = props
   return (
     <Box css={styles.listItem}>

@@ -16,7 +16,7 @@ export type TextareaProps = ComponentPropsWithoutRef<"textarea"> & {
       }
   )
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(props, ref) {
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(props, ref) {
   const { id, message, label, status, ...rest } = props
 
   return (
@@ -93,5 +93,3 @@ const styles = {
     alignItems: "center",
   }),
 }
-
-export default Textarea

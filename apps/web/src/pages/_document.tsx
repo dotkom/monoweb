@@ -1,5 +1,5 @@
+import { getCssText } from "@dotkom/ui"
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
-import { getCssText } from "@theme"
 
 export default class Document extends NextDocument {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
