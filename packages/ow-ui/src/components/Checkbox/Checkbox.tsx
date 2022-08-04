@@ -8,7 +8,7 @@ export interface CheckboxProps extends PrimitiveProps {
   label: string
 }
 
-const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ...props }, ref) => (
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ...props }, ref) => (
   <div className={styles.container()}>
     <Root ref={ref} className={styles.checkbox({ checked: !!props.checked, disabled: !!props.disabled })} {...props}>
       <Indicator className={styles.indicator()}>
@@ -71,5 +71,3 @@ const styles = {
     },
   }),
 }
-
-export default Checkbox

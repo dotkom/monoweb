@@ -70,13 +70,13 @@ const StyledDescription = styled(AlertDialogPrimitive.Description, {
 })
 
 // Exports
-export const AlertDialogRoot = AlertDialogPrimitive.Root
-export const AlertDialogTrigger = AlertDialogPrimitive.Trigger
-export const AlertDialogContent = Content
-export const AlertDialogTitle = StyledTitle
-export const AlertDialogDescription = StyledDescription
-export const AlertDialogAction = AlertDialogPrimitive.Action
-export const AlertDialogCancel = AlertDialogPrimitive.Cancel
+const AlertDialogRoot = AlertDialogPrimitive.Root
+const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+const AlertDialogContent = Content
+const AlertDialogTitle = StyledTitle
+const AlertDialogDescription = StyledDescription
+const AlertDialogAction = AlertDialogPrimitive.Action
+const AlertDialogCancel = AlertDialogPrimitive.Cancel
 
 const Flex = styled("div", { display: "flex" })
 
@@ -89,7 +89,7 @@ export interface AlertDialogProps {
   action: () => void
 }
 
-const AlertDialog: React.FC<AlertDialogProps> = ({
+export const AlertDialog: React.FC<AlertDialogProps> = ({
   triggerBtnColor,
   triggerBtnContent,
   title,
@@ -121,5 +121,3 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
     </AlertDialogContent>
   </AlertDialogRoot>
 )
-
-export default AlertDialog

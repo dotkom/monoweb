@@ -31,8 +31,8 @@ const StyledThumb = styled(SwitchPrimitive.Thumb, {
 })
 
 // Exports
-export const Switch = StyledSwitch
-export const SwitchThumb = StyledThumb
+const Switch = StyledSwitch
+const SwitchThumb = StyledThumb
 
 const Flex = styled("div", { display: "flex" })
 const Label = styled("label", {
@@ -49,7 +49,7 @@ export interface ToggleProps {
   setIsChecked: Dispatch<SetStateAction<boolean>>
 }
 
-const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setIsChecked }) => {
+export const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setIsChecked }) => {
   return (
     <form>
       <Flex css={{ alignItems: "center" }}>
@@ -63,5 +63,3 @@ const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setIsChecke
     </form>
   )
 }
-
-export default Toggle

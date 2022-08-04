@@ -14,6 +14,7 @@ const circleStyle: CSS = {
 interface CircleProps {
   size: number
   color: string
+  children?: React.ReactNode
 }
 
 export const Circle: React.FC<CircleProps> = ({ children, size, color }) => {

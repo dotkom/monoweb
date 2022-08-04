@@ -1,6 +1,6 @@
 import React from "react"
-import Button from "@components/atoms/Button/Button"
 import { styled } from "@theme"
+import { Button } from "@dotkom/ui"
 
 const Home: React.FC = () => {
   return (

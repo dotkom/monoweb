@@ -5,7 +5,7 @@ import ItexIcon from "@components/icons/ItexIcon"
 import OfflineIcon from "@components/icons/OfflineIcon"
 import UtlysningIcon from "@components/icons/UtlysningIcon"
 import TechtalksIcon from "@components/icons/TechtalksIcon"
-import Text from "@components/atoms/Text"
+import { Text } from "@dotkom/ui"
 
 const OurProducts = () => {
   return (
