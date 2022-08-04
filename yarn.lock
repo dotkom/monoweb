@@ -4193,7 +4193,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dotkom/ui@workspace:^, @dotkom/ui@workspace:packages/ow-ui":
+"@dotkom/ui@workspace:*, @dotkom/ui@workspace:^, @dotkom/ui@workspace:packages/ow-ui":
   version: 0.0.0-use.local
   resolution: "@dotkom/ui@workspace:packages/ow-ui"
   dependencies:
@@ -19940,54 +19940,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"owf@workspace:apps/web":
-  version: 0.0.0-use.local
-  resolution: "owf@workspace:apps/web"
-  dependencies:
-    "@dotkom/eslint-config-ow": "workspace:*"
-    "@radix-ui/colors": ^0.1.8
-    "@radix-ui/react-avatar": ^1.0.0
-    "@radix-ui/react-checkbox": ^1.0.0
-    "@radix-ui/react-dropdown-menu": ^1.0.0
-    "@radix-ui/react-icons": ^1.1.1
-    "@radix-ui/react-navigation-menu": ^1.0.0
-    "@sanity/block-content-to-react": ^3.0.0
-    "@sanity/client": ^2.23.2
-    "@stitches/react": ^1.2.8
-    "@storybook/addon-actions": ^6.5.9
-    "@storybook/addon-essentials": ^6.5.9
-    "@storybook/addon-knobs": ^6.4.0
-    "@storybook/addon-links": ^6.5.9
-    "@storybook/preset-scss": ^1.0.3
-    "@storybook/react": ^6.5.9
-    "@types/luxon": ^2.4.0
-    "@types/node": ^16.11.47
-    "@types/react": ^18.0.15
-    "@types/react-dom": ^18.0.6
-    "@typescript-eslint/eslint-plugin": ^4.33.0
-    "@typescript-eslint/parser": ^4.33.0
-    axios: ^0.21.4
-    chromatic: ^6.7.3
-    eslint: ^7.32.0
-    eslint-config-next: ^12.2.3
-    eslint-config-prettier: ^7.2.0
-    eslint-plugin-prettier: ^3.4.1
-    husky: ^4.3.8
-    lint-staged: ^10.5.4
-    luxon: ^2.5.0
-    next: ^12.2.3
-    next-compose-plugins: ^2.2.1
-    next-transpile-modules: ^9.0.0
-    prettier: ^2.7.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-hook-form: ^7.34.0
-    react-icons: ^4.4.0
-    swr: ^1.3.0
-    typescript: ^4.7.4
-  languageName: unknown
-  linkType: soft
-
 "p-all@npm:^2.1.0":
   version: 2.1.0
   resolution: "p-all@npm:2.1.0"
@@ -26141,6 +26093,55 @@ __metadata:
   checksum: 5149842ccbfbc56fe4f8758957b3f8c8616a281874a5bb84aa1b305e4436a9bad853d21c629a7b8f174902449e1489c7a6c724fccf60965077c5636bd8aed42b
   languageName: node
   linkType: hard
+
+"web@workspace:apps/web":
+  version: 0.0.0-use.local
+  resolution: "web@workspace:apps/web"
+  dependencies:
+    "@dotkom/eslint-config-ow": "workspace:*"
+    "@dotkom/ui": "workspace:*"
+    "@radix-ui/colors": ^0.1.8
+    "@radix-ui/react-avatar": ^1.0.0
+    "@radix-ui/react-checkbox": ^1.0.0
+    "@radix-ui/react-dropdown-menu": ^1.0.0
+    "@radix-ui/react-icons": ^1.1.1
+    "@radix-ui/react-navigation-menu": ^1.0.0
+    "@sanity/block-content-to-react": ^3.0.0
+    "@sanity/client": ^2.23.2
+    "@stitches/react": ^1.2.8
+    "@storybook/addon-actions": ^6.5.9
+    "@storybook/addon-essentials": ^6.5.9
+    "@storybook/addon-knobs": ^6.4.0
+    "@storybook/addon-links": ^6.5.9
+    "@storybook/preset-scss": ^1.0.3
+    "@storybook/react": ^6.5.9
+    "@types/luxon": ^2.4.0
+    "@types/node": ^16.11.47
+    "@types/react": ^18.0.15
+    "@types/react-dom": ^18.0.6
+    "@typescript-eslint/eslint-plugin": ^4.33.0
+    "@typescript-eslint/parser": ^4.33.0
+    axios: ^0.21.4
+    chromatic: ^6.7.3
+    eslint: ^7.32.0
+    eslint-config-next: ^12.2.3
+    eslint-config-prettier: ^7.2.0
+    eslint-plugin-prettier: ^3.4.1
+    husky: ^4.3.8
+    lint-staged: ^10.5.4
+    luxon: ^2.5.0
+    next: ^12.2.3
+    next-compose-plugins: ^2.2.1
+    next-transpile-modules: ^9.0.0
+    prettier: ^2.7.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-hook-form: ^7.34.0
+    react-icons: ^4.4.0
+    swr: ^1.3.0
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
 
 "webidl-conversions@npm:^3.0.0":
   version: 3.0.1

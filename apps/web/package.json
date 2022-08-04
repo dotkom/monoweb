@@ -1,10 +1,10 @@
 {
-  "name": "owf",
+  "name": "web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build:prod": "next build",
+    "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
@@ -13,6 +13,7 @@
     "test": "run -T jest"
   },
   "dependencies": {
+    "@dotkom/ui": "workspace:^",
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-avatar": "^1.0.0",
     "@radix-ui/react-checkbox": "^1.0.0",

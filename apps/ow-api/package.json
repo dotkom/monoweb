@@ -15,7 +15,6 @@
   "dependencies": {
     "@dotkom/db": "workspace:^",
     "@dotkom/logger": "workspace:^",
-    "@dotkom/ui": "workspace:^",
     "@types/aws-lambda": "^8.10.101",
     "apollo-server-lambda": "^3.10.0",
     "config": "^3.3.7",

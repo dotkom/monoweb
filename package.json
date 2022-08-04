@@ -7,7 +7,9 @@
   "private": true,
   "packageManager": "yarn@3.2.0",
   "scripts": {
-    "build": "turbo run build --filter='./packages/**'",
+    "build": "turbo run build",
+    "build:api": "turbo run build --filter=ow-api",
+    "build:web": "turbo run build --filter=web",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
