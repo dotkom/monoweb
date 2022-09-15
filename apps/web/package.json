@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build:prod": "next build",
     "start": "next start",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6007",
     "build-storybook": "build-storybook",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
