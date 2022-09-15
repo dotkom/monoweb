@@ -11,7 +11,7 @@ export const CareerAdView = () => {
   return (
     <Flex
       css={{
-        mt: "$5",
+        mt: "100px",
         justifyContent: "space-around",
       }}
     >
@@ -23,15 +23,16 @@ export const CareerAdView = () => {
       >
         <Box
           css={{
-            height: "100px",
+            height: "80px",
             width: "100%",
           }}
         >
           <Text
             css={{
               margin: "0px",
-              fontSize: "75px",
+              fontSize: "50px",
               textAlign: "center",
+              bg: "$gray11",
             }}
           >
             Bekk
@@ -100,13 +101,92 @@ export const CareerAdView = () => {
 
       <Box
         css={{
-          bg: "$blue5",
           width: "60%",
-          mt: "20px",
           mr: "5%",
         }}
       >
-        Test
+        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px" }}>
+          <Text css={{ margin: "0", fontSize: "30px", fontWeight: "bold" }}>Bekk</Text>
+          <Text css={{ margin: "0", fontSize: "20px" }}>Backend utvikler - Sommerjobb</Text>
+        </Box>
+
+        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px", mt: "$4" }}>
+          <Text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+            condimentum nunc, eget lacinia nisl lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam
+            aliquam, nunc nisi condimentum nunc, eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet,
+            consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi Lorem ipsum dolor sit amet,
+            consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi condimentum nunc, eget lacinia
+            nisl lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam aliquam, nunc nisi condimentum
+            nunc, eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+            euismod, nisl ut aliquam aliquam, nunc nisi
+            <br />
+            <br />
+            lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam aliquam, nunc nisi condimentum nunc,
+            eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod,
+            nisl
+          </Text>
+        </Box>
+
+        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px", mt: "$4" }}>
+          <Text css={{ fontWeight: "bold" }}>You will:</Text>
+          <ul>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+          </ul>
+        </Box>
+
+        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px", mt: "$4" }}>
+          <Text css={{ fontWeight: "bold" }}>We´re looking for someone who has:</Text>
+          <ul>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+            <li>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
+                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
+              </Text>
+            </li>
+          </ul>
+        </Box>
       </Box>
     </Flex>
   )
