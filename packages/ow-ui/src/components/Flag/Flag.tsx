@@ -1,7 +1,7 @@
 import { css } from "@stitches/react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import FlagTrigger from "./Trigger"
-import Content from "./Content"
+import FlagTrigger from "./FlagTrigger"
+import Content from "./FlagContent"
 import { FC, ReactNode } from "react"
 
 export interface FlagProps {

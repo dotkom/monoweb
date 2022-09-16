@@ -1,4 +1,4 @@
-import DefaultFlag from "./DefaultFlag"
+import MonochromeFlag from "./NonCollapsableFlag"
 import Flag from "./Flag"
 
 export default {
@@ -29,22 +29,22 @@ export const Success = () => (
   </Flag>
 )
 export const NoColorDanger = () => (
-  <DefaultFlag title={"Uh Oh!"} status={"danger"}>
+  <MonochromeFlag title={"Uh Oh!"} status={"danger"}>
     You need to take action, something has gone terribly wrong!
-  </DefaultFlag>
+  </MonochromeFlag>
 )
 export const NoColorWarning = () => (
-  <DefaultFlag title={"Uh Oh!"} status={"warning"}>
+  <MonochromeFlag title={"Uh Oh!"} status={"warning"}>
     Pay attention to me, things are not going according to plan.{" "}
-  </DefaultFlag>
+  </MonochromeFlag>
 )
 export const NoColorInfo = () => (
-  <DefaultFlag title={"Uh Oh!"} status={"info"}>
+  <MonochromeFlag title={"Uh Oh!"} status={"info"}>
     This alert needs your attention, but its not super important.{" "}
-  </DefaultFlag>
+  </MonochromeFlag>
 )
 export const NoColorSuccess = () => (
-  <DefaultFlag title={"Uh Oh!"} status={"success"}>
+  <MonochromeFlag title={"Uh Oh!"} status={"success"}>
     Nothing to worry about, everything is going great!{" "}
-  </DefaultFlag>
+  </MonochromeFlag>
 )
