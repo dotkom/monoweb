@@ -2638,6 +2638,7 @@ __metadata:
   resolution: "@dotkom/ui@workspace:packages/ow-ui"
   dependencies:
     "@radix-ui/colors": ^0.1.8
+    "@radix-ui/react-accordion": ^1.0.0
     "@radix-ui/react-alert-dialog": ^1.0.0
     "@radix-ui/react-checkbox": ^1.0.0
     "@radix-ui/react-label": ^1.0.0
@@ -3766,6 +3767,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-accordion@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@radix-ui/react-accordion@npm:1.0.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-collapsible": 1.0.0
+    "@radix-ui/react-collection": 1.0.0
+    "@radix-ui/react-compose-refs": 1.0.0
+    "@radix-ui/react-context": 1.0.0
+    "@radix-ui/react-id": 1.0.0
+    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-use-controllable-state": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: def156414bfb789c70a9529d3efb62aeda2257f60eb8feee2b1a5e077bd1ef9629bae1a785ab2bc523b83a7c8293618a3f27b54a8ac2da2fd9800df690664c94
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-alert-dialog@npm:^1.0.0":
   version: 1.0.0
   resolution: "@radix-ui/react-alert-dialog@npm:1.0.0"
@@ -3831,6 +3852,26 @@ __metadata:
     react: ^16.8 || ^17.0 || ^18.0
     react-dom: ^16.8 || ^17.0 || ^18.0
   checksum: 33f1f57f19632f50dae4514f5149669b22874c0629e21a472275fb4bf48984018fc1fbb17412c5fc1f6238a71ae2f5d969773b19844fdfca3b122f527d57f76b
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-collapsible@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@radix-ui/react-collapsible@npm:1.0.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/primitive": 1.0.0
+    "@radix-ui/react-compose-refs": 1.0.0
+    "@radix-ui/react-context": 1.0.0
+    "@radix-ui/react-id": 1.0.0
+    "@radix-ui/react-presence": 1.0.0
+    "@radix-ui/react-primitive": 1.0.0
+    "@radix-ui/react-use-controllable-state": 1.0.0
+    "@radix-ui/react-use-layout-effect": 1.0.0
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 98acb56ace3441da7bca63ca77eaa43aff5d6b4e702b2d08143e64d984152ca2391426defec577cff1d3d1591b05aa21623a9b3d36ad07118f3c8a78cd263505
   languageName: node
   linkType: hard
 
@@ -17418,7 +17459,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:^12.2.3":
+"next@npm:^12.3.0":
   version: 12.3.0
   resolution: "next@npm:12.3.0"
   dependencies:
@@ -24158,7 +24199,7 @@ __metadata:
     husky: ^4.3.8
     lint-staged: ^10.5.4
     luxon: ^2.5.0
-    next: ^12.2.3
+    next: ^12.3.0
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
     prettier: ^2.7.1
