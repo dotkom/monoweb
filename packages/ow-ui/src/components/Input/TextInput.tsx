@@ -2,15 +2,14 @@ import { Label } from "@radix-ui/react-label"
 import { FC, forwardRef } from "react"
 import { css } from "../../config/stitches.config"
 
-export interface InputProps {
-  id?: string
+export interface InputProps extends React.HTMLProps<HTMLInputElement>{
   placeholder?: string
   label?: string
   withAsterisk?: boolean
-  disabled?: boolean
+  error?: boolean | string
 }
 
-export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, withAsterisk, ...props }, ref) => {
+export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, withAsterisk, error, ...props }, ref) => {
   return (
     <div className={styles.container()}>
       {label && (
@@ -18,7 +17,8 @@ export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, with
           {label} {withAsterisk && <span className={styles.asterisk()}>*</span>}
         </Label>
       )}
-      <input type="text" {...props} ref={ref} className={styles.input()} />
+      <input type="text" {...props} ref={ref} className={styles.input({ error: !!error, disabled: props.disabled })} />
+      {typeof error === "string" && <span className={styles.error()}>{error}</span>}
     </div>
   )
 })
@@ -38,8 +38,29 @@ const styles = {
     padding: "$2 $2",
     border: "1px solid $gray10",
     borderRadius: "$1",
+    transition: "border-color 0.3s ease-out",
+    outline: "none",
     "&:focus": {
-      borderColor: "$blue10"
-    }
+      borderColor: "$info3",
+    },
+    variants: {
+      error: {
+        true: {
+          color: "$red3",
+          borderColor: "$red3",
+        },
+      },
+      disabled: {
+        true: {
+          backgroundColor: "$gray12",
+          cursor: "not-allowed",
+          color: "$gray7"
+        }
+      }
+    },
   }),
+  error: css({
+    fontSize: "$xs",
+    color: "$red3",
+  })
 }

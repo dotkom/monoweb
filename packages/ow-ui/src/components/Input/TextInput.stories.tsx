@@ -19,4 +19,13 @@ const Template: ComponentStory<typeof TextInput> = (args) => {
 export const Default = Template.bind({})
 
 export const Placeholder = Template.bind({})
-Placeholder.args = { placeholder: "Homer Simpson" }
+Placeholder.args = { placeholder: "Chad Thunder" }
+
+export const Error = Template.bind({})
+Error.args = { error: true, value: "Invalid text" }
+
+export const ErrorWithMessage = Template.bind({})
+ErrorWithMessage.args = { error: "Too short", placeholder: "Shrimp gang" }
+
+export const Disabled = Template.bind({})
+Disabled.args = { disabled: true, value: "Do not touch my pringles" }
