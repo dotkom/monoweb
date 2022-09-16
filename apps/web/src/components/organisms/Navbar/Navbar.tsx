@@ -20,8 +20,6 @@ const styles = createStyles({
     width: "100vw",
     display: "flex",
     zIndex: 100,
-    position: "fixed",
-    top: 0,
     marginBottom: "70px",
     transition: "background-color 200ms linear",
     margin: 0,
