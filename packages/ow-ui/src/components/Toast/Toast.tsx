@@ -10,10 +10,9 @@ export interface ToastProps {
 }
 
 const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
-  const style = () => (monochrome ? `${styles.base()}` : `${styles.base({ color: status })}`)
-  const closeStyle = () => (monochrome ? `${styles.close()}` : `${styles.close({ color: status })}`)
+  const styleCheck = monochrome ? undefined : status
   return (
-    <div className={style()}>
+    <div className={styles.base({ color: styleCheck })}>
       <div className={styles.flex()}>
         <AlertIcon status={status} monochrome={!monochrome}></AlertIcon>
         {children}
@@ -21,7 +20,7 @@ const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
       {/* The monochrome value is inverted because we want a white or black icon with colored background*/}
 
       <button className={styles.button()}>
-        <IoCloseOutline aria-hidden className={closeStyle()}></IoCloseOutline>
+        <IoCloseOutline aria-hidden className={styles.close({ color: styleCheck })}></IoCloseOutline>
       </button>
     </div>
   )
