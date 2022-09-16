@@ -2,26 +2,34 @@ import { Label } from "@radix-ui/react-label"
 import { FC, forwardRef } from "react"
 import { css } from "../../config/stitches.config"
 
-export interface InputProps extends React.HTMLProps<HTMLInputElement>{
+export interface InputProps extends React.HTMLProps<HTMLInputElement> {
+  variant?: "brand"
   placeholder?: string
   label?: string
   withAsterisk?: boolean
   error?: boolean | string
 }
 
-export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, withAsterisk, error, ...props }, ref) => {
-  return (
-    <div className={styles.container()}>
-      {label && (
-        <Label htmlFor={props.id} className={styles.label()}>
-          {label} {withAsterisk && <span className={styles.asterisk()}>*</span>}
-        </Label>
-      )}
-      <input type="text" {...props} ref={ref} className={styles.input({ error: !!error, disabled: props.disabled })} />
-      {typeof error === "string" && <span className={styles.error()}>{error}</span>}
-    </div>
-  )
-})
+export const TextInput = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, withAsterisk, error, variant, ...props }, ref) => {
+    return (
+      <div className={styles.container()}>
+        {label && (
+          <Label htmlFor={props.id} className={styles.label()}>
+            {label} {withAsterisk && <span className={styles.asterisk()}>*</span>}
+          </Label>
+        )}
+        <input
+          type="text"
+          {...props}
+          ref={ref}
+          className={styles.input({ variant: variant, error: !!error, disabled: props.disabled })}
+        />
+        {typeof error === "string" && <span className={styles.error()}>{error}</span>}
+      </div>
+    )
+  }
+)
 
 const styles = {
   container: css({
@@ -44,6 +52,12 @@ const styles = {
       borderColor: "$info3",
     },
     variants: {
+      variant: {
+        brand: {
+          borderColor: "$blue3",
+          borderWidth: "2px"
+        },
+      },
       error: {
         true: {
           color: "$red3",
@@ -54,13 +68,13 @@ const styles = {
         true: {
           backgroundColor: "$gray12",
           cursor: "not-allowed",
-          color: "$gray7"
-        }
-      }
+          color: "$gray7",
+        },
+      },
     },
   }),
   error: css({
     fontSize: "$xs",
     color: "$red3",
-  })
+  }),
 }

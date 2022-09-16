@@ -8,7 +8,6 @@ export default {
 }
 
 const Template: ComponentStory<typeof TextInput> = (args) => {
-  const [checked, setChecked] = useState(false)
   return (
     <div style={{ padding: "40px", maxWidth: "300px" }}>
       <TextInput id="name" label="Full name" {...args} />
@@ -17,6 +16,9 @@ const Template: ComponentStory<typeof TextInput> = (args) => {
 }
 
 export const Default = Template.bind({})
+
+export const BrandWithAsterisk = Template.bind({})
+BrandWithAsterisk.args = { variant: "brand", withAsterisk: true }
 
 export const Placeholder = Template.bind({})
 Placeholder.args = { placeholder: "Chad Thunder" }
