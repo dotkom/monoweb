@@ -4467,7 +4467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-actions@npm:6.5.12, @storybook/addon-actions@npm:^6.5.10, @storybook/addon-actions@npm:^6.5.9":
+"@storybook/addon-actions@npm:6.5.12, @storybook/addon-actions@npm:^6.5.12, @storybook/addon-actions@npm:^6.5.9":
   version: 6.5.12
   resolution: "@storybook/addon-actions@npm:6.5.12"
   dependencies:
@@ -4559,7 +4559,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-docs@npm:6.5.12, @storybook/addon-docs@npm:^6.5.10":
+"@storybook/addon-docs@npm:6.5.12, @storybook/addon-docs@npm:^6.5.12":
   version: 6.5.12
   resolution: "@storybook/addon-docs@npm:6.5.12"
   dependencies:
@@ -4606,7 +4606,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-essentials@npm:^6.5.10, @storybook/addon-essentials@npm:^6.5.9":
+"@storybook/addon-essentials@npm:^6.5.12, @storybook/addon-essentials@npm:^6.5.9":
   version: 6.5.12
   resolution: "@storybook/addon-essentials@npm:6.5.12"
   dependencies:
@@ -4666,7 +4666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-interactions@npm:^6.5.10":
+"@storybook/addon-interactions@npm:^6.5.12":
   version: 6.5.12
   resolution: "@storybook/addon-interactions@npm:6.5.12"
   dependencies:
@@ -4729,7 +4729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^6.5.10, @storybook/addon-links@npm:^6.5.9":
+"@storybook/addon-links@npm:^6.5.12, @storybook/addon-links@npm:^6.5.9":
   version: 6.5.12
   resolution: "@storybook/addon-links@npm:6.5.12"
   dependencies:
@@ -5579,7 +5579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react@npm:^6.5.10, @storybook/react@npm:^6.5.9":
+"@storybook/react@npm:^6.5.12, @storybook/react@npm:^6.5.9":
   version: 6.5.12
   resolution: "@storybook/react@npm:6.5.12"
   dependencies:
@@ -10951,13 +10951,13 @@ __metadata:
     "@docusaurus/module-type-aliases": 2.0.1
     "@docusaurus/preset-classic": 2.0.1
     "@mdx-js/react": ^1.6.22
-    "@storybook/addon-actions": ^6.5.10
-    "@storybook/addon-docs": ^6.5.10
-    "@storybook/addon-essentials": ^6.5.10
-    "@storybook/addon-interactions": ^6.5.10
-    "@storybook/addon-links": ^6.5.10
+    "@storybook/addon-actions": ^6.5.12
+    "@storybook/addon-docs": ^6.5.12
+    "@storybook/addon-essentials": ^6.5.12
+    "@storybook/addon-interactions": ^6.5.12
+    "@storybook/addon-links": ^6.5.12
     "@storybook/builder-vite": ^0.2.2
-    "@storybook/react": ^6.5.10
+    "@storybook/react": ^6.5.12
     "@storybook/testing-library": ^0.0.13
     "@tsconfig/docusaurus": ^1.0.6
     "@types/babel__core": ^7.1.19
