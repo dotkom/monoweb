@@ -11,8 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
-    "types": ["jest"]
+    "importHelpers": true
   },
   "exclude": ["node_modules", "packages/**/dist"]
 }
