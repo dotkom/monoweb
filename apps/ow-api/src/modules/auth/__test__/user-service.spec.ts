@@ -2,7 +2,6 @@ import { InsertUser } from "../user"
 import { initUserService } from "../user-service"
 import { v4 as uuidv4 } from "uuid"
 import { initUserRepository } from "../user-repository"
-import { vi } from "vitest"
 import { NotFoundError } from "../../../errors/errors"
 import { PrismaClient } from "@dotkom/db"
 
@@ -21,6 +20,7 @@ describe("UserService", () => {
     const id = uuidv4()
     vi.spyOn(userRepository, "createUser").mockResolvedValueOnce({ id, ...user })
     await expect(userService.register(user)).resolves.toEqual({ id, ...user })
+    expect(userRepository.createUser).toHaveBeenCalledWith(user)
   })
 
   it("fails on unknown id", async () => {

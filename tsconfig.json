@@ -11,7 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "types": ["vitest/globals"]
   },
   "exclude": ["node_modules", "packages/**/dist"]
 }
