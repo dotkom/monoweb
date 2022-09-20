@@ -6755,6 +6755,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/ui@npm:^0.23.4":
+  version: 0.23.4
+  resolution: "@vitest/ui@npm:0.23.4"
+  dependencies:
+    sirv: ^2.0.2
+  checksum: 52ccb6dda1da49d34e4fb18128cb25a7b02f5e39f1d0865a1dd723a386bb615dd7002ecc883a42ea7fbae1999af297f12c1e3de52804989808c332b4fa6e4bbd
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.11.1":
   version: 1.11.1
   resolution: "@webassemblyjs/ast@npm:1.11.1"
@@ -7507,6 +7516,7 @@ __metadata:
     "@types/cors": ^2.8.12
     "@types/express": ^4.17.13
     "@types/uuid": ^8.3.4
+    "@vitest/ui": ^0.23.4
     apollo-server-express: ^3.10.0
     apollo-server-lambda: ^3.10.0
     config: ^3.3.7
@@ -20454,6 +20464,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sirv@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "sirv@npm:2.0.2"
+  dependencies:
+    "@polka/url": ^1.0.0-next.20
+    mrmime: ^1.0.0
+    totalist: ^3.0.0
+  checksum: 6982f8ecee9392d246d7eeea8144e50334fe1b46a4fa942995a844ea88c2d518b17cce781bb09926c9a5692a7002a207d18dfd67af2aa538a15e733dc2042298
+  languageName: node
+  linkType: hard
+
 "sisteransi@npm:^1.0.5":
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
@@ -21682,6 +21703,13 @@ __metadata:
   version: 1.1.0
   resolution: "totalist@npm:1.1.0"
   checksum: dfab80c7104a1d170adc8c18782d6c04b7df08352dec452191208c66395f7ef2af7537ddfa2cf1decbdcfab1a47afbbf0dec6543ea191da98c1c6e1599f86adc
+  languageName: node
+  linkType: hard
+
+"totalist@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "totalist@npm:3.0.0"
+  checksum: ec499bddfc73d5b6c73f8ff68afd7bed286705797f928a11177fee5d1ee80e9052ffcb434638437702e16864bd5490f437a54f79bfea9564e875d34ed3254bca
   languageName: node
   linkType: hard
 
