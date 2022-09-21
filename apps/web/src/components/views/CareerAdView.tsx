@@ -1,11 +1,13 @@
 import { Box, Flex } from "../primitives"
-import { FC } from "react"
-import { Article } from "src/api/get-article"
-import { CSS, css, styled } from "@theme"
+import { CSS } from "@theme"
 import PortableText from "@components/molecules/PortableText"
 import Image from "next/image"
 import { DateTime } from "luxon"
 import { Badge, Button, Text } from "@dotkom/ui"
+import { IoEarth, IoTimeOutline, IoCopyOutline, IoArrowBackOutline } from "react-icons/io5"
+import { BsLinkedin } from "react-icons/bs"
+
+const block = ["<h1>TESSSTTT</h1>", "<Text>TESSSTTT</Text>"]
 
 export const CareerAdView = () => {
   return (
@@ -21,12 +23,7 @@ export const CareerAdView = () => {
           ml: "8%",
         }}
       >
-        <Box
-          css={{
-            height: "80px",
-            width: "100%",
-          }}
-        >
+        <Box>
           <Text
             css={{
               margin: "0px",
@@ -54,47 +51,22 @@ export const CareerAdView = () => {
           }}
         />
 
-        <Text
-          css={{
-            margin: "0px",
-            mt: "$3",
-            borderBottom: "1px solid $gray8",
-            pb: "$3",
-          }}
-        >
-          -- ANDRE MULIGHETER
+        <Text css={styles.info}>
+          <IoArrowBackOutline /> ANDRE MULIGHETER
         </Text>
-        <Text
-          css={{
-            margin: "0px",
-            mt: "$3",
-            borderBottom: "1px solid $gray8",
-            pb: "$3",
-          }}
-        >
-          -- Oslo
+        <Text css={styles.info}>
+          <IoEarth /> Oslo
         </Text>
-        <Text
-          css={{
-            margin: "0px",
-            mt: "$3",
-            borderBottom: "1px solid $gray8",
-            pb: "$3",
-          }}
-        >
-          -- Sommerjobb
+        <Text css={styles.info}>
+          <IoTimeOutline /> Sommerjobb
         </Text>
-        <Text
-          css={{
-            margin: "0px",
-            mt: "$3",
-            borderBottom: "1px solid $gray8",
-            pb: "$3",
-          }}
-        >
-          -- Backend
+        <Text css={styles.info}>
+          <IoCopyOutline /> Backend
         </Text>
-        <Box>Iconer</Box>
+
+        <Box>
+          <BsLinkedin />
+        </Box>
 
         <Button css={{ mt: "$3", width: "80px" }}>Søk</Button>
       </Box>
@@ -105,12 +77,16 @@ export const CareerAdView = () => {
           mr: "5%",
         }}
       >
-        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px" }}>
-          <Text css={{ margin: "0", fontSize: "30px", fontWeight: "bold" }}>Bekk</Text>
+        <Box css={styles.article}>
+          <Text css={{ margin: "0", fontSize: "30px" }}>
+            <b>Bekk</b>
+          </Text>
           <Text css={{ margin: "0", fontSize: "20px" }}>Backend utvikler - Sommerjobb</Text>
         </Box>
 
-        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px", mt: "$4" }}>
+        <PortableText blocks={block} />
+
+        <Box css={styles.article}>
           <Text>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
             condimentum nunc, eget lacinia nisl lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam
@@ -128,8 +104,10 @@ export const CareerAdView = () => {
           </Text>
         </Box>
 
-        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px", mt: "$4" }}>
-          <Text css={{ fontWeight: "bold" }}>You will:</Text>
+        <Box css={styles.article}>
+          <Text>
+            <b>You will:</b>
+          </Text>
           <ul>
             <li>
               <Text>
@@ -158,8 +136,10 @@ export const CareerAdView = () => {
           </ul>
         </Box>
 
-        <Box css={{ borderLeft: "1.5px solid $orange3", pl: "$4", ml: "50px", mt: "$4" }}>
-          <Text css={{ fontWeight: "bold" }}>We´re looking for someone who has:</Text>
+        <Box css={styles.article}>
+          <Text>
+            <b>We´re looking for someone who has:</b>
+          </Text>
           <ul>
             <li>
               <Text>
@@ -190,4 +170,19 @@ export const CareerAdView = () => {
       </Box>
     </Flex>
   )
+}
+
+const styles = {
+  article: {
+    borderLeft: "1.5px solid $orange3",
+    pl: "$4",
+    ml: "50px",
+    mt: "$4",
+  } as CSS,
+  info: {
+    margin: "0px",
+    mt: "$3",
+    borderBottom: "1px solid $gray8",
+    pb: "$3",
+  } as CSS,
 }
