@@ -68,3 +68,18 @@ model Company {
   location    String?
   type        String?
 }
+
+model Event {
+  id          String   @id @default(uuid()) @map("id")
+  title       String   @map("title")
+  subtitle    String?  @map("subtitle")
+  description String?  @map("description")
+  imageUrl    String?  @map("image_url")
+  location    String?  @map("location")
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  public      Boolean  @map("public")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
