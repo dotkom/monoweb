@@ -1,5 +1,6 @@
 import { css } from "@stitches/react"
 import { FC, ReactNode } from "react"
+import toast, { ToastBar, Toaster } from "react-hot-toast"
 import { IoCloseOutline } from "react-icons/io5"
 import { AlertIcon } from "../Alert/AlertIcon"
 
@@ -12,17 +13,26 @@ export interface ToastProps {
 const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
   const styleCheck = monochrome ? undefined : status
   return (
-    <div className={styles.base({ color: styleCheck })}>
-      <div className={styles.flex()}>
-        <AlertIcon status={status} monochrome={!monochrome}></AlertIcon>
-        {children}
-      </div>
-      {/* The monochrome value is inverted because we want a white or black icon with colored background*/}
-
-      <button className={styles.button()}>
-        <IoCloseOutline aria-hidden className={styles.close({ color: styleCheck })}></IoCloseOutline>
-      </button>
-    </div>
+    <Toaster>
+      {(t) => (
+        <>
+          <ToastBar style={{ boxShadow: "none" }} toast={t}>
+            {() => (
+              <div className={styles.base({ color: styleCheck })}>
+                <div className={styles.flex()}>
+                  <AlertIcon status={status} monochrome={!monochrome}></AlertIcon>
+                  {children}
+                </div>
+                {/* The monochrome value is inverted because we want a white or black icon with colored background*/}
+                <button className={styles.button()} onClick={() => toast.dismiss(t.id)}>
+                  <IoCloseOutline aria-hidden className={styles.close({ color: styleCheck })}></IoCloseOutline>
+                </button>
+              </div>
+            )}
+          </ToastBar>
+        </>
+      )}
+    </Toaster>
   )
 }
 
