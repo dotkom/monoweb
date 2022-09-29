@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts --format esm,cjs --target es2020 --dts --clean",
     "lint": "run -T eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix ."
   },

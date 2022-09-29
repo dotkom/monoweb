@@ -116,7 +116,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       round: "9999px",
     },
     sizes: {
-      sm: "48px",
+      sm: "480px",
       md: "768px",
       lg: "1024px",
     },

@@ -38,6 +38,7 @@ const styles = {
   }),
   label: css({
     margin: "$1 0",
+    fontSize: "$md"
   }),
   asterisk: css({
     color: "$red0",

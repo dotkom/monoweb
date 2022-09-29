@@ -1,6 +1,9 @@
-import { globalCss } from "@stitches/react"
+import { globalCss } from "@dotkom/ui"
 
 export const globalStyles = globalCss({
+  html: {
+    fontSize: "14px"
+  },
   body: {
     fontFamily: "$body",
     margin: 0,
