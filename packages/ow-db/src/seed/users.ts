@@ -4,15 +4,16 @@ import { Seeder } from "."
 export const seedUsers: Seeder = async (chance, prisma) => {
   // Generates the required input of random varables
   const userInserts = [...new Array(50)].map(() => {
-    const first_name = chance.first()
-    const last_name = chance.last()
+    const firstName = chance.first()
+    const lastName = chance.last()
 
     const payload = {
-      username: `${first_name.toLocaleLowerCase()}_${last_name.toLocaleLowerCase()}`,
-      first_name,
-      last_name,
+      name: `${firstName.toLocaleLowerCase()}_${lastName.toLocaleLowerCase()}`,
+      firstName,
+      lastName,
+      emailVerified: chance.date(),
+      image: chance.avatar({ protocol: "https" }),
       email: chance.email(),
-      password: chance.string({ length: 12 }),
     }
     return payload
   })
