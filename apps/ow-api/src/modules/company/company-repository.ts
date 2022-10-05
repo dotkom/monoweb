@@ -20,16 +20,9 @@ export const initCompanyRepository = (client: PrismaClient): CompanyRepository =
       return companies.map(mapToCompany)
     },
     createCompany: async (companyInsert) => {
-      const { name, description, email, location, phone, website, type } = companyInsert
       const company = await client.company.create({
         data: {
-          name: name,
-          description: description,
-          phone: phone,
-          email: email,
-          website: website,
-          location: location,
-          type: type,
+          ...companyInsert,
         },
       })
       return mapToCompany(company)
