@@ -67,7 +67,7 @@ model Company {
   website     String
   location    String?
   type        String?
-  Event       Event[]
+  events      Event[] @relation("CompanyEvents")
 }
 
 enum EventStatus {
@@ -95,8 +95,7 @@ model Event {
   end         DateTime    @map("end")
   public      Boolean     @map("public")
   status      EventStatus @map("status")
-  company     Company?    @relation(fields: [companyId], references: [id])
-  companyId   String?     @map("company_id")
+  companies   Company[]   @relation("CompanyEvents")
   organizer   Committee   @relation(fields: [organizerId], references: [id])
   organizerId String      @map("organizer_id")
 
