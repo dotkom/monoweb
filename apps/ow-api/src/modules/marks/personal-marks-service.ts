@@ -3,23 +3,23 @@ import { InsertPersonalMarks, PersonalMarks } from "./personal-marks"
 import { PersonalMarksRepository } from "./personal-marks-repository"
 
 export interface PersonalMarksService {
-  getPersonalMark: (id: PersonalMarks["id"]) => Promise<PersonalMarks>
-  getPersonalMarks: (limit: number) => Promise<PersonalMarks[]>
+  getPersonalMarks: (id: PersonalMarks["id"]) => Promise<PersonalMarks>
+  getAllPersonalMarks: (limit: number) => Promise<PersonalMarks[]>
   register: (payload: InsertPersonalMarks) => Promise<PersonalMarks>
 }
 
 export const initPersonalMarksService = (personalMarksRepository: PersonalMarksRepository): PersonalMarksService => ({
-  getPersonalMark: async (id) => {
-    const personalMarks = await personalMarksRepository.getPersonalMarkByID(id)
+  getPersonalMarks: async (id) => {
+    const personalMarks = await personalMarksRepository.getPersonalMarksByID(id)
     if (!personalMarks) throw new NotFoundError(`PersonalMarks with ID:${id} not found`)
     return personalMarks
   },
-  getPersonalMarks: async (limit) => {
-    const personalMarks = await personalMarksRepository.getPersonalMarks(limit)
-    return personalMarks
+  getAllPersonalMarks: async (limit) => {
+    const allPersonalMarks = await personalMarksRepository.getAllPersonalMarks(limit)
+    return allPersonalMarks
   },
   register: async (payload) => {
-    const personalMarks = await personalMarksRepository.createPersonalMark(payload)
+    const personalMarks = await personalMarksRepository.createPersonalMarks(payload)
     return personalMarks
   },
 })
