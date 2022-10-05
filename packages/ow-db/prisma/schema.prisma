@@ -67,19 +67,67 @@ model Company {
   website     String
   location    String?
   type        String?
+  Event       Event[]
 }
 
-model Event {
-  id          String   @id @default(uuid()) @map("id")
-  title       String   @map("title")
-  subtitle    String?  @map("subtitle")
-  description String?  @map("description")
-  imageUrl    String?  @map("image_url")
-  location    String?  @map("location")
-  startDate   DateTime @map("start_date")
-  endDate     DateTime @map("end_date")
-  public      Boolean  @map("public")
+enum EventStatus {
+  Private @map("private")
+  Public  @map("public")
+}
+
+model Committee {
+  id    String  @id @default(uuid()) @map("id")
+  name  String  @map("name")
+  Event Event[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Event {
+  id          String      @id @default(uuid()) @map("id")
+  title       String      @map("title")
+  subtitle    String?     @map("subtitle")
+  description String?     @map("description")
+  imageUrl    String?     @map("image_url")
+  location    String?     @map("location")
+  start       DateTime    @map("start")
+  end         DateTime    @map("end")
+  public      Boolean     @map("public")
+  status      EventStatus @map("status")
+  company     Company?    @relation(fields: [companyId], references: [id])
+  companyId   String?     @map("company_id")
+  organizer   Committee   @relation(fields: [organizerId], references: [id])
+  organizerId String      @map("organizer_id")
+
+  attendances Attendance[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Attendance {
+  id                 String     @id @default(uuid()) @map("id")
+  event              Event      @relation(fields: [eventId], references: [id])
+  eventId            String     @map("event_id")
+  start              DateTime   @map("start")
+  end                DateTime   @map("end")
+  deregisterDeadline DateTime   @map("deregister_deadline")
+  // criteria Criteria[]
+  attendees          Attendee[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Attendee {
+  id           String     @id @default(uuid()) @map("id")
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendanceId String     @map("attendanceId")
+  eventId      String     @map("event_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique(fields: [attendanceId, eventId])
 }
