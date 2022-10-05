@@ -113,6 +113,7 @@ model Attendance {
   start              DateTime   @map("start")
   end                DateTime   @map("end")
   deregisterDeadline DateTime   @map("deregister_deadline")
+  limit              Int        @default(0) @map("limit")
   // criteria Criteria[]
   attendees          Attendee[]
 
