@@ -15,7 +15,7 @@ export const Profile = () => {
         <DropdownMenuItem disabled>Dashboard</DropdownMenuItem>
         <DropdownMenuItem disabled>Adminpanel</DropdownMenuItem>
         <DropdownMenuItem>Kontakt oss</DropdownMenuItem>
-        <DropdownMenuItem>Log ut</DropdownMenuItem>
+        <DropdownMenuItem>Logg ut</DropdownMenuItem>
 
         <DropdownMenuArrow />
       </DropdownItemsContainer>
