@@ -29,3 +29,22 @@ model Company {
   website     String?
   location    String?
 }
+
+model Mark {
+  id            String  @id @default(uuid())
+  title         String
+  given_at      DateTime @default(now())
+  category      String
+  latest_change DateTime @default(now())
+  details       String
+  given_to      String[]
+
+}
+
+model PersonalMarks {
+  id            String  @id @default(uuid())
+  start_date    DateTime
+  active_marks  String[]
+  end_date      DateTime
+  mark_history  String[]
+}
