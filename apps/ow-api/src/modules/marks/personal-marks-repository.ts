@@ -1,5 +1,6 @@
 import { PrismaClient } from "@dotkom/db"
 import { InsertPersonalMarks, mapToPersonalMarks, PersonalMarks } from "./personal-marks"
+import { MarkCalculations } from "./mark-calculations"
 
 export interface PersonalMarksRepository {
   getPersonalMarksByID: (id: string) => Promise<PersonalMarks | undefined>
@@ -9,7 +10,10 @@ export interface PersonalMarksRepository {
   getActiveMarksByID: (id: string) => Promise<Array<string> | undefined>
 }
 
-export const initPersonalMarksRepository = (client: PrismaClient): PersonalMarksRepository => {
+export const initPersonalMarksRepository = (
+  client: PrismaClient,
+  calculations: MarkCalculations
+): PersonalMarksRepository => {
   const repo: PersonalMarksRepository = {
     getPersonalMarksByID: async (id) => {
       const personalMarks = await client.personalMarks.findUnique({
@@ -34,15 +38,22 @@ export const initPersonalMarksRepository = (client: PrismaClient): PersonalMarks
       return personalMarks?.active_marks
     },
     addActiveMark: async (id, mark) => {
-      const activeMarks = await repo.getActiveMarksByID(id)
-      if (activeMarks == undefined) {
+      const personalMarks = await repo.getPersonalMarksByID(id)
+      if (personalMarks == undefined) {
         return undefined
       }
-      const personalMarks = client.personalMarks.update({
+      const activeMarks = personalMarks.active_marks
+      const amountOfMarks = activeMarks.length
+      let startDate = new Date()
+      if (amountOfMarks) {
+        startDate = personalMarks.start_date
+      }
+      const endDate = calculations.calculateEndDate(startDate, amountOfMarks)
+      const updatedMarks = client.personalMarks.update({
         where: { id },
-        data: { active_marks: [...activeMarks, mark] },
+        data: { active_marks: [...activeMarks, mark], start_date: startDate, end_date: endDate },
       })
-      return personalMarks
+      return updatedMarks
     },
   }
   return repo
