@@ -3,8 +3,8 @@ import { PersonalMarks as PrismaPersonalMarks } from "@dotkom/db"
 
 const personalMarkSchema = z.object({
   id: z.string().uuid(),
-  start_date: z.date(),
-  end_date: z.date(),
+  start_date: z.date().optional(),
+  end_date: z.date().optional(),
   active_marks: z.string().array(),
   mark_history: z.string().array(),
 })
