@@ -1,5 +1,5 @@
 export interface MarkCalculations {
-  calculateEndDate: (startDate: Date, amountOfMarks: number) => Date
+  calculateEndDate: (startDate: Date | null, amountOfMarks: number) => Date | null
   calculateStartDate: () => Date
 }
 
@@ -18,6 +18,9 @@ export const initPersonalMarksRepository = (): MarkCalculations => {
       return startDate
     },
     calculateEndDate: (startDate, amountOfMarks) => {
+      if (!startDate) {
+        return null
+      }
       const endDate = startDate
       for (let i = 0; i < amountOfMarks; i++) {
         endDate.setDate(endDate.getDate() + markDuration)

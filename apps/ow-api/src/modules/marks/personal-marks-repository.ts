@@ -8,6 +8,7 @@ export interface PersonalMarksRepository {
   createPersonalMarks: (personalMarksInsert: InsertPersonalMarks) => Promise<PersonalMarks>
   addActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
   getActiveMarksByID: (id: string) => Promise<Array<string> | undefined>
+  removeActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
 }
 
 export const initPersonalMarksRepository = (
@@ -44,9 +45,32 @@ export const initPersonalMarksRepository = (
       }
       const activeMarks = personalMarks.active_marks
       const amountOfMarks = activeMarks.length
-      let startDate = new Date()
+      let startDate: Date | null = new Date()
       if (amountOfMarks) {
         startDate = personalMarks.start_date
+      }
+      const endDate = calculations.calculateEndDate(startDate, amountOfMarks)
+      const updatedMarks = client.personalMarks.update({
+        where: { id },
+        data: { active_marks: [...activeMarks, mark], start_date: startDate, end_date: endDate },
+      })
+      return updatedMarks
+    },
+    removeActiveMark: async (id, mark: string) => {
+      const personalMarks = await repo.getPersonalMarksByID(id)
+      if (personalMarks == undefined) {
+        return undefined
+      }
+      const activeMarks = personalMarks.active_marks
+      const index = activeMarks.indexOf(mark)
+      console.log(index)
+      if (index !== -1) {
+        activeMarks.splice(index, 1)
+      }
+      const amountOfMarks = activeMarks.length
+      let startDate = personalMarks.start_date
+      if (!amountOfMarks) {
+        startDate = null
       }
       const endDate = calculations.calculateEndDate(startDate, amountOfMarks)
       const updatedMarks = client.personalMarks.update({
