@@ -9,6 +9,7 @@ export interface PersonalMarksRepository {
   addActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
   getActiveMarksByID: (id: string) => Promise<Array<string> | undefined>
   removeActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
+  checkExpiredMarksByID: (id: string) => Promise<PersonalMarks | undefined>
 }
 
 export const initPersonalMarksRepository = (
@@ -50,7 +51,7 @@ export const initPersonalMarksRepository = (
         startDate = personalMarks.start_date
       }
       const endDate = calculations.calculateEndDate(startDate, amountOfMarks)
-      const updatedMarks = client.personalMarks.update({
+      const updatedMarks = await client.personalMarks.update({
         where: { id },
         data: { active_marks: [...activeMarks, mark], start_date: startDate, end_date: endDate },
       })
@@ -73,11 +74,30 @@ export const initPersonalMarksRepository = (
         startDate = null
       }
       const endDate = calculations.calculateEndDate(startDate, amountOfMarks)
-      const updatedMarks = client.personalMarks.update({
+      const updatedMarks = await client.personalMarks.update({
         where: { id },
         data: { active_marks: [...activeMarks, mark], start_date: startDate, end_date: endDate },
       })
       return updatedMarks
+    },
+    checkExpiredMarksByID: async (id) => {
+      const personalMarks = await repo.getPersonalMarksByID(id)
+      if (personalMarks == undefined) {
+        return undefined
+      }
+      const currentDate = new Date()
+      if (personalMarks.end_date && personalMarks.end_date < currentDate) {
+        const updatedMarks = await client.personalMarks.update({
+          where: { id },
+          data: {
+            active_marks: [],
+            start_date: null,
+            end_date: null,
+            mark_history: [...personalMarks.mark_history, ...personalMarks.active_marks],
+          },
+        })
+        return updatedMarks
+      }
     },
   }
   return repo
