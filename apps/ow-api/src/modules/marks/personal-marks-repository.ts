@@ -10,6 +10,7 @@ export interface PersonalMarksRepository {
   getActiveMarksByID: (id: string) => Promise<Array<string> | undefined>
   removeActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
   checkExpiredMarksByID: (id: string) => Promise<PersonalMarks | undefined>
+  userIsCurrentlyMarked: (id: string) => Promise<boolean | undefined>
 }
 
 export const initPersonalMarksRepository = (
@@ -98,6 +99,10 @@ export const initPersonalMarksRepository = (
         })
         return updatedMarks
       }
+    },
+    userIsCurrentlyMarked: async (id) => {
+      const personalMarks = await repo.checkExpiredMarksByID(id)
+      return personalMarks ? (personalMarks.end_date ? true : false) : undefined
     },
   }
   return repo
