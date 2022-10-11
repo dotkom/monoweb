@@ -42,7 +42,7 @@ model Mark {
 }
 
 model PersonalMarks {
-  id            String  @id 
+  userId        String  @id 
   start_date    DateTime?
   active_marks  String[]
   end_date      DateTime?
