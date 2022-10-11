@@ -3,10 +3,10 @@ import { PersonalMarks as PrismaPersonalMarks } from "@dotkom/db"
 
 const personalMarkSchema = z.object({
   id: z.string().uuid(),
-  start_date: z.date().nullable(),
-  end_date: z.date().nullable(),
-  active_marks: z.string().array(),
-  mark_history: z.string().array(),
+  start_date: z.date().nullable().default(null),
+  end_date: z.date().nullable().default(null),
+  active_marks: z.string().array().default([]),
+  mark_history: z.string().array().default([]),
 })
 
 export type PersonalMarks = z.infer<typeof personalMarkSchema>
