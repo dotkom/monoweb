@@ -42,6 +42,9 @@ export const initPersonalMarksRepository = (
     /**
      * Adds all the info about personal marks to a user
      *
+     * @remarks
+     * Id MUST be specified and match the id of a user to work properly. It will NOT get set by default
+     *
      * @param personalMarkInsert - The data to initialize the personal marks with
      * @returns An updated personalMarks object for the user
      */

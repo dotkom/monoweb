@@ -10,7 +10,7 @@ const personalMarkSchema = z.object({
 })
 
 export type PersonalMarks = z.infer<typeof personalMarkSchema>
-export type InsertPersonalMarks = Omit<PersonalMarks, "id">
+export type InsertPersonalMarks = PersonalMarks
 
 export const mapToPersonalMarks = (payload: PrismaPersonalMarks): PersonalMarks => {
   const personalMark: PersonalMarks = {
