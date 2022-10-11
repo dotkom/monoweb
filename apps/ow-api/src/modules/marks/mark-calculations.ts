@@ -3,7 +3,7 @@ export interface MarkCalculations {
   calculateStartDate: () => Date
 }
 
-export const initPersonalMarksRepository = (): MarkCalculations => {
+export const initCalculations = (): MarkCalculations => {
   const markDuration = 20
   const calculations: MarkCalculations = {
     calculateStartDate: () => {
