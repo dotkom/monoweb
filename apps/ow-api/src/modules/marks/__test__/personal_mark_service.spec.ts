@@ -13,10 +13,10 @@ describe("PersonalMarkService", () => {
 
   it("creates a new personalMark", async () => {
     const personalMark: InsertPersonalMarks = {
-      start_date: null,
-      end_date: null,
-      active_marks: [],
-      mark_history: [],
+      start_date: new Date(),
+      end_date: new Date(),
+      active_marks: ["Late feedback"],
+      mark_history: ["Didn't show up to event", "Didn't pay for event in time"],
     }
     const id = uuidv4()
     vi.spyOn(personalMarkRepository, "createPersonalMarks").mockResolvedValueOnce({ id, ...personalMark })

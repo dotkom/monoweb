@@ -7,7 +7,6 @@ export interface PersonalMarksRepository {
   getAllPersonalMarks: (limit: number) => Promise<PersonalMarks[]>
   createPersonalMarks: (personalMarksInsert: InsertPersonalMarks) => Promise<PersonalMarks>
   addActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
-  getActiveMarksByID: (id: string) => Promise<Array<string> | undefined>
   removeActiveMark: (id: string, mark: string) => Promise<PersonalMarks | undefined>
   checkExpiredMarksByID: (id: string) => Promise<PersonalMarks | undefined>
   userIsCurrentlyMarked: (id: string) => Promise<boolean | undefined>
@@ -18,16 +17,34 @@ export const initPersonalMarksRepository = (
   calculations: MarkCalculations
 ): PersonalMarksRepository => {
   const repo: PersonalMarksRepository = {
+    /**
+     * Returns the personal mark data for a user
+     *
+     * @param id - id of the user
+     * @returns Personal mark data for the user
+     */
     getPersonalMarksByID: async (id) => {
       const personalMarks = await client.personalMarks.findUnique({
         where: { id },
       })
       return personalMarks ? mapToPersonalMarks(personalMarks) : undefined
     },
+    /**
+     * Gets a list of all personal marks objects
+     *
+     * @param limit - How many values to return maximum
+     * @returns All the personal marks within the limit
+     */
     getAllPersonalMarks: async (limit: number) => {
       const allPersonalMarks = await client.personalMarks.findMany({ take: limit })
       return allPersonalMarks.map(mapToPersonalMarks)
     },
+    /**
+     * Adds all the info about personal marks to a user
+     *
+     * @param personalMarkInsert - The data to initialize the personal marks with
+     * @returns An updated personalMarks object for the user
+     */
     createPersonalMarks: async (personalMarksInsert) => {
       const personalMarks = await client.personalMarks.create({
         data: {
@@ -36,10 +53,13 @@ export const initPersonalMarksRepository = (
       })
       return mapToPersonalMarks(personalMarks)
     },
-    getActiveMarksByID: async (id) => {
-      const personalMarks = await repo.getPersonalMarksByID(id)
-      return personalMarks?.active_marks
-    },
+    /**
+     * Adds a mark to a users active marks and recalculates the start and end dates
+     *
+     * @param id - ID of the user to check
+     * @param mark - The mark to be added
+     * @returns An updated personalMarks object for the user
+     */
     addActiveMark: async (id, mark) => {
       const personalMarks = await repo.getPersonalMarksByID(id)
       if (personalMarks == undefined) {
@@ -58,6 +78,13 @@ export const initPersonalMarksRepository = (
       })
       return updatedMarks
     },
+    /**
+     * Removes a mark from a users active marks and recalculates the start and end dates
+     *
+     * @param id - ID of the user to check
+     * @param mark - The mark to be removed
+     * @returns An updated personalMarks object for the user
+     */
     removeActiveMark: async (id, mark: string) => {
       const personalMarks = await repo.getPersonalMarksByID(id)
       if (personalMarks == undefined) {
@@ -81,6 +108,13 @@ export const initPersonalMarksRepository = (
       })
       return updatedMarks
     },
+    /**
+     * Checks if the end date for active marks has passed.
+     * Moves all marks to mark history and nullifies start- and end-date if the marks are expired.
+     *
+     * @param id - ID of the user to check
+     * @returns An updated personalMarks object for the user
+     */
     checkExpiredMarksByID: async (id) => {
       const personalMarks = await repo.getPersonalMarksByID(id)
       if (personalMarks == undefined) {
@@ -100,6 +134,13 @@ export const initPersonalMarksRepository = (
         return updatedMarks
       }
     },
+    /**
+     * Calls all the logic needed to check for and update expired marks.
+     * Returns whether or not a user is currently marked
+     *
+     * @param id - ID of the user to check
+     * @returns A boolean value or undefined if the user couldn't be found
+     */
     userIsCurrentlyMarked: async (id) => {
       const personalMarks = await repo.checkExpiredMarksByID(id)
       return personalMarks ? (personalMarks.end_date ? true : false) : undefined
