@@ -18,7 +18,7 @@ describe("CompanyService", () => {
       phone: "+47 123 45 678",
       website: "www.duckmouse.no",
       location: "Mars",
-      type: "Mouse distributor",
+      type: "Other",
     }
     const id = uuidv4()
     vi.spyOn(companyRepository, "createCompany").mockResolvedValueOnce({ id, ...company })

@@ -9,7 +9,7 @@ const companySchema = z.object({
   email: z.string(),
   website: z.string(),
   location: z.string().optional(),
-  type: z.string().optional(),
+  type: z.enum(["Consulting", "Research", "Development", "Other"]).optional(),
 })
 
 export type Company = z.infer<typeof companySchema>
