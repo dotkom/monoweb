@@ -26,6 +26,7 @@ const styles = createStyles({
     transition: "background-color 200ms linear",
     margin: 0,
     padding: 0,
+    backdropFilter: "blur(8px)",
   },
 })
 
