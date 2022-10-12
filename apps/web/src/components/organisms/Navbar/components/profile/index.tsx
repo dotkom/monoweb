@@ -1,17 +1,19 @@
 import { css } from "@dotkomonline/ui"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { styled } from "@stitches/react"
-import React from "react"
 
+import { useRouter } from "next/router"
 import DropdownItemsContainer from "./DropdownItemContainer"
 import ProfileTrigger from "./ProfileTrigger"
 
 export const Profile = () => {
+  const router = useRouter()
+
   return (
     <DropdownMenu>
       <ProfileTrigger />
       <DropdownItemsContainer sideOffset={5}>
-        <DropdownMenuItem>Profil</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push("/profile")}>Profil</DropdownMenuItem>
         <DropdownMenuItem>Saldo</DropdownMenuItem>
         <DropdownMenuItem disabled>Dashboard</DropdownMenuItem>
         <DropdownMenuItem disabled>Adminpanel</DropdownMenuItem>
