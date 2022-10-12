@@ -1,7 +1,6 @@
 import React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import {
-  DebugCard,
   DesktopList,
   DesktopListItem,
   DesktopNavbarContainer,
@@ -21,62 +20,46 @@ export const NavigationMenuItem = NavigationMenuPrimitive.Item
 const tabs = [
   {
     name: "For studenter",
-    layout: "one",
-    card: "debug",
     items: [
       {
         name: "Webshop",
-        link: "https://stitches.dev/",
-        description: "CSS-in-JS with best-in-class developer experience",
+        link: "#",
+        description: "Online shop for Online merch",
       },
       {
         name: "Wiki",
-        link: "https://stitches.dev/",
-        description: "Beautiful, thought-out palettes with auto dark mode",
-      },
-      {
-        name: "Ressurser",
-        link: "https://stitches.dev/",
-        description: "CSS-in-JS with best-in-class developer experience",
+        link: "#",
+        description: "Student wiki med informasjon om NTNU foreninger og Online",
       },
       {
         name: "Artikler",
-        link: "https://stitches.dev/",
+        link: "#",
         description: "Beautiful, thought-out palettes with auto dark mode",
       },
       {
         name: "Offline",
-        link: "https://stitches.dev/",
+        link: "#",
         description: "Beautiful, thought-out palettes with auto dark mode",
       },
     ],
   },
   {
     name: "Om oss",
-    layout: "three",
-    card: "none",
     items: [
       {
         name: "Interessegrupper",
-        link: "/docs/primitives/overview/introduction",
-        description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
-      },
-      {
-        name: "Bidra",
-        link: "/docs/primitives/overview/introduction",
+        link: "#",
         description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
       },
       {
         name: "Om online",
-        link: "/docs/primitives/overview/introduction",
+        link: "#",
         description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
       },
     ],
   },
   {
     name: "For bedrifter",
-    layout: "three",
-    card: "none",
     items: [
       { name: "Kontakt", link: "/company", description: "På denne siden finner du informasjon om alle" },
       { name: "Kvitteringskjema", link: "/company", description: "På denne siden finner du informasjon om alle" },
@@ -97,11 +80,10 @@ export const DesktopNavigation = () => (
           <NavigationMenuItem key={tab.name}>
             <NavigationMenuTrigger>{tab.name}</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <DesktopList layout={tab.layout as unknown as { [x: string]: "one" | "three" | "two" }}>
-                {tab.card == "debug" && <DebugCard />}
+              <DesktopList layout="three">
                 {tab.items.map((item) => (
                   <DesktopListItem href={item.link} title={item.name} key={`${tab.name}-${item.name}`}>
-                    CSS-in-JS with best-in-class developer experience.
+                    {item.description}
                   </DesktopListItem>
                 ))}
               </DesktopList>
@@ -109,7 +91,7 @@ export const DesktopNavigation = () => (
           </NavigationMenuItem>
         ))}
         <NavigationMenuItem>
-          <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
+          <NavigationMenuLink href="#">Karriere</NavigationMenuLink>
         </NavigationMenuItem>
 
         <DropdownIndicator />
