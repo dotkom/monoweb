@@ -12,7 +12,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
-    "types": ["jest"]
+    "types": ["vitest/globals"]
   },
   "exclude": ["node_modules", "packages/**/dist"]
 }

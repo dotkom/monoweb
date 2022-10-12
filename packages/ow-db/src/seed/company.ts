@@ -8,6 +8,7 @@ export const seedCompanies: Seeder = async (chance, prisma) => {
     location: chance.country(),
     phone: chance.phone(),
     website: chance.url(),
+    type: chance.animal(),
   }))
 
   const promises = companyInserts.map((payload) =>

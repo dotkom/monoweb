@@ -5,21 +5,24 @@ import { IoAlertCircle, IoCheckmarkCircle, IoInformationCircle, IoWarning } from
 interface AlertIconProps {
   status: "info" | "warning" | "success" | "danger"
   className?: string
+  monochrome?: boolean
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status, className }) => {
-  const style = `${styles.base({ status })} ${className}`
+export const AlertIcon: FC<AlertIconProps> = ({ status, className, monochrome }) => {
+  const style = () =>
+    monochrome ? `${styles.monochrome({ status })} ${className}` : `${styles.base({ status })} ${className}`
   switch (status) {
     case "info":
-      return <IoInformationCircle className={style} />
+      return <IoInformationCircle className={style()} />
     case "success":
-      return <IoCheckmarkCircle className={style} />
+      return <IoCheckmarkCircle className={style()} />
     case "danger":
-      return <IoAlertCircle className={style} />
+      return <IoAlertCircle className={style()} />
     case "warning":
-      return <IoWarning className={style} />
+      return <IoWarning className={style()} />
   }
 }
+
 const styles = {
   base: css({
     marginRight: "$2",
@@ -38,6 +41,27 @@ const styles = {
         },
         danger: {
           color: "$red3",
+        },
+      },
+    },
+  }),
+  monochrome: css({
+    marginRight: "$2",
+    width: "24px",
+    height: "24px",
+    variants: {
+      status: {
+        info: {
+          color: "$gray12",
+        },
+        success: {
+          color: "$gray12",
+        },
+        warning: {
+          color: "$gray1",
+        },
+        danger: {
+          color: "$gray12",
         },
       },
     },

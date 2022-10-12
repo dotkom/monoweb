@@ -23,9 +23,10 @@ model User {
 model Company {
   id          String  @id @default(uuid())
   name        String
-  description String?
+  description String
   phone       String?
-  email       String? @unique
-  website     String?
+  email       String @unique
+  website     String
   location    String?
+  type        String?
 }
