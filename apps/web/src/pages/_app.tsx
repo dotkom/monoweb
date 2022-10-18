@@ -3,14 +3,24 @@ import { globalStyles } from "src/theme/global-style"
 
 import { SessionProvider } from "next-auth/react"
 import MainLayout from "@/components/layout/MainLayout"
+import { NextPage } from "next"
+import { ReactElement, ReactNode } from "react"
 
-function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function CustomApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
+  const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
   globalStyles()
+
   return (
     <SessionProvider>
-      <MainLayout>
-        <Component {...pageProps} />
-      </MainLayout>
+     {getLayout(<Component {...pageProps} />)}
     </SessionProvider>
   )
 }
