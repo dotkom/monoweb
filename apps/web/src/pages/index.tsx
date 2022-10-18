@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   if (session) {
     return (
       <div>
-        Signed in as {session.user?.email} <br /> 
+        Signed in as {session.user?.email} <br />
         <Button onClick={() => signOut()}>Sign out</Button>
       </div>
     )
@@ -16,7 +16,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      Not signed in <br/>
+      Not signed in <br />
       <Button onClick={() => signIn()}>Sign in</Button>
     </div>
   )

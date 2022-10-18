@@ -6,7 +6,7 @@ export const globalStyles = globalCss({
   },
   "html, body, #__next": {
     width: "100%",
-    height: "100%"
+    height: "100%",
   },
   body: {
     fontFamily: "$body",

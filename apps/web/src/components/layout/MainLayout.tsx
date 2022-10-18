@@ -12,18 +12,17 @@ const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
 }
 
 const styles = {
-    root: css({
-        padding: 0,
-        margin: 0,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
-
-    }),
-    content: css({
-        maxWidth: "$sizes$lg",
-        width:  "100%"
-    })
+  root: css({
+    padding: 0,
+    margin: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  }),
+  content: css({
+    maxWidth: "$sizes$lg",
+    width: "100%",
+  }),
 }
 
 export default MainLayout

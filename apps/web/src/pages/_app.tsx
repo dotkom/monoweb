@@ -18,11 +18,7 @@ function CustomApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
   const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
   globalStyles()
 
-  return (
-    <SessionProvider>
-     {getLayout(<Component {...pageProps} />)}
-    </SessionProvider>
-  )
+  return <SessionProvider>{getLayout(<Component {...pageProps} />)}</SessionProvider>
 }
 
 export default CustomApp
