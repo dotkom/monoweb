@@ -19,7 +19,7 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => {
   return (
     <div className={styles.comingEvent()}>
       <div className={styles.comingEventImageContainer()}>
-        <Image src={props.img} alt={props.title} width={100} height={100} className={styles.comingEvent()}/>
+        <Image src={props.img} alt={props.title} width={100} height={100} className={styles.comingEvent()} />
       </div>
       <div className={styles.comingEventInfoContainer()}>
         <span>

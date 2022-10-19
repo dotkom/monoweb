@@ -6,7 +6,7 @@ import MainLayout from "@/components/layout/MainLayout"
 import { NextPage } from "next"
 import { ReactElement, ReactNode } from "react"
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
 }
 

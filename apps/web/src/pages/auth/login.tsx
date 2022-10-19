@@ -1,5 +1,5 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { Button, Checkbox, css, Text, TextInput } from "@dotkom/ui"
+import { Button, css, Text, TextInput } from "@dotkom/ui"
 import { NextPageWithLayout } from "../_app"
 
 const Login: NextPageWithLayout = () => {
@@ -9,15 +9,16 @@ const Login: NextPageWithLayout = () => {
         <div className={styles.iconContainer()}>
           <OnlineIcon />
         </div>
-        <h1 className={styles.heading()}>Log in to Onlineweb</h1>
+        <h1 className={styles.heading()}>Sign in</h1>
+        <Text className={styles.continueTo()}>Continue to Onlineweb</Text>
         <TextInput id="username" name="username" label="Username" />
         <TextInput id="password" name="password" label="Password" />
         <span className={styles.forgotPassword()}>
           Forgot your <a className={styles.link()}>password?</a>
         </span>
-        <Button className={styles.button()}>Login</Button>
+        <Button className={styles.button()}>Sign in</Button>
         <Text size="sm" className={styles.registerText()}>
-          Don't have an account? <a className={styles.link()}>Sign up</a>
+          Don&apos;t have an account? <a className={styles.link()}>Sign up</a>
         </Text>
       </form>
     </div>
@@ -32,7 +33,10 @@ const styles = {
   layout: css({
     width: "100%",
     height: "100%",
-    background: "linear-gradient(315deg, hsla(215, 90%, 96%, 1) 0%, hsla(46, 100%, 95%, 1) 100%)",
+    background: "white",
+    "@sm": {
+      background: "linear-gradient(315deg, hsla(215, 90%, 96%, 1) 0%, hsla(46, 100%, 95%, 1) 100%)",
+    },
     paddingTop: "$1",
   }),
   container: css({
@@ -42,19 +46,25 @@ const styles = {
     backgroundColor: "$white",
     flexDirection: "column",
     justifyContent: "center",
-    maxWidth: "480px",
-    width: "90%",
-    boxShadow: "$sm",
+    maxWidth: "400px",
+    width: "100%",
+    "@sm": {
+      boxShadow: "$md",
+    },
     borderRadius: "$2",
   }),
   iconContainer: css({
     width: "120px",
+    margin: "0 auto",
   }),
   heading: css({
+    margin: "$3 auto 0 auto",
     fontWeight: "600",
     color: "$blue1",
     fontSize: "$3xl",
-    marginBottom: "$4",
+  }),
+  continueTo: css({
+    textAlign: "center",
   }),
   description: css({
     textAlign: "center",
