@@ -63,7 +63,7 @@ const styles = {
   form: css({
     display: "grid",
     gap: "$2",
-    padding: "$5 $3",
+    padding: "$5 $4",
     width: "100%",
     maxWidth: "380px",
     margin: "0 auto",
