@@ -10,14 +10,14 @@ const Login: NextPageWithLayout = () => {
           <OnlineIcon />
         </div>
         <h1 className={styles.heading()}>Sign in</h1>
-        <Text className={styles.continueTo()}>Continue to Onlineweb</Text>
+        <Text css={{ textAlign: "center" }}>Continue to Onlineweb</Text>
         <TextInput id="username" name="username" label="Username" />
         <TextInput id="password" name="password" label="Password" />
         <span className={styles.forgotPassword()}>
           Forgot your <a className={styles.link()}>password?</a>
         </span>
         <Button className={styles.button()}>Sign in</Button>
-        <Text size="sm" className={styles.registerText()}>
+        <Text size="sm" css={{ textAlign: "center" }}>
           Don&apos;t have an account? <a className={styles.link()}>Sign up</a>
         </Text>
       </form>
@@ -41,11 +41,8 @@ const styles = {
   }),
   container: css({
     margin: "$6 auto 0 auto",
-    padding: "$5 $3",
     display: "flex",
     backgroundColor: "$white",
-    flexDirection: "column",
-    justifyContent: "center",
     maxWidth: "400px",
     width: "100%",
     "@sm": {
@@ -63,15 +60,10 @@ const styles = {
     color: "$blue1",
     fontSize: "$3xl",
   }),
-  continueTo: css({
-    textAlign: "center",
-  }),
-  description: css({
-    textAlign: "center",
-  }),
   form: css({
     display: "grid",
     gap: "$2",
+    padding: "$5 $3",
     width: "100%",
     maxWidth: "380px",
     margin: "0 auto",
@@ -86,9 +78,6 @@ const styles = {
   }),
   link: css({
     color: "$info4",
-  }),
-  registerText: css({
-    textAlign: "center",
   }),
 }
 
