@@ -1,6 +1,6 @@
 import { FC } from "react"
 import Circle from "@components/atoms/Circle"
-import type { CSS } from "@theme"
+import type { CSS } from "@dotkom/ui"
 import { Box } from "@components/primitives"
 interface CompanyInterestProcessProps {
   steps: string[]

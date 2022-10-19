@@ -1,4 +1,4 @@
-import { css, styled } from "@theme"
+import { css, styled } from "@dotkom/ui"
 
 const styles = css({
   display: "grid",

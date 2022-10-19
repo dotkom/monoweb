@@ -3,7 +3,7 @@ import { styled } from "@stitches/react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import DropdownItemsContainer from "./DropdownItemContainer"
 import ProfileTrigger from "./ProfileTrigger"
-import { css } from "@theme"
+import { css } from "@dotkom/ui"
 
 export const Profile = () => {
   return (

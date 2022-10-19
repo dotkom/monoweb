@@ -1,7 +1,7 @@
 import { Card, Text } from "@dotkom/ui"
 import { FC } from "react"
 import Image from "next/image"
-import { CSS, css, styled } from "@theme"
+import { CSS, css, styled } from "@dotkom/ui"
 import { Box, Flex } from "@components/primitives"
 import { DateTime } from "luxon"
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi"

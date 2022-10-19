@@ -1,7 +1,7 @@
 import { Box, Flex } from "../primitives"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
-import { CSS, css, styled } from "@theme"
+import { CSS, css, styled } from "@dotkom/ui"
 import PortableText from "@components/molecules/PortableText"
 import Image from "next/image"
 import { DateTime } from "luxon"
