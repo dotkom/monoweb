@@ -1,4 +1,3 @@
-// @ts-nocheck
 export const utils = {
   // Margins
   m: (value) => ({

@@ -116,7 +116,7 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
       round: "9999px",
     },
     sizes: {
-      sm: "48px",
+      sm: "480px",
       md: "768px",
       lg: "1024px",
     },
@@ -188,11 +188,11 @@ export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, the
     },
   },
   media: {
-    sm: "640px",
-    md: "768px",
-    lg: "1024px",
-    xl: "1280px",
-    "2xl": "1536px",
+    sm: "(min-width: 640px)",
+    md: "(min-width: 768px)",
+    lg: "(min-width: 1024px)",
+    xl: "(min-width: 1280px)",
+    "2xl": "(min-width: 1536px)",
   },
   utils: utils,
 })

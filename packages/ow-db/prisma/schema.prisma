@@ -11,13 +11,51 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String
-  created_at DateTime @default(now())
-  first_name String
-  last_name  String
-  email      String   @unique
-  password   String
+  id            String    @id @default(cuid())
+  name          String?
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
+  email         String?   @unique
+  createdAt     DateTime  @default(now()) @map("created_at")
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userID            String
+  type              String
+  provider          String
+  providerAccountID String  @map("provider_account_id")
+  refreshToken      String? @map("refresh_token") @db.Text
+  accessToken       String? @map("access_token") @db.Text
+  expiresAt         Int?    @map("expires_at")
+  tokenType         String? @map("token_type")
+  scope             String?
+  idToken           String? @map("id_token") @db.Text
+  sessionState      String? @map("session_state")
+
+  user User @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountID])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Company {

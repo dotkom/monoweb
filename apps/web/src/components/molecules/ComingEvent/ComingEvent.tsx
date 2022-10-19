@@ -1,6 +1,7 @@
 import React from "react"
 import { Badge, Text } from "@dotkom/ui"
 import { css } from "@stitches/react"
+import Image from "next/image"
 
 type ComingEventProps = {
   img: string
@@ -18,7 +19,7 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => {
   return (
     <div className={styles.comingEvent()}>
       <div className={styles.comingEventImageContainer()}>
-        <img src={props.img} alt="" className={styles.comingEventImage()} />
+        <Image src={props.img} alt={props.title} width={100} height={100} className={styles.comingEvent()} />
       </div>
       <div className={styles.comingEventInfoContainer()}>
         <span>
@@ -55,9 +56,6 @@ const styles = {
     overflow: "hidden",
   }),
   comingEventImage: css({
-    // Make image height 50px and fit width
-    height: "100px",
-    width: "100px",
     objectFit: "cover",
   }),
   comingEventImageContainer: css({

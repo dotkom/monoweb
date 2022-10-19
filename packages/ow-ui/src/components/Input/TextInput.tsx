@@ -1,5 +1,5 @@
 import { Label } from "@radix-ui/react-label"
-import { FC, forwardRef } from "react"
+import { forwardRef } from "react"
 import { css } from "../../config/stitches.config"
 
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
@@ -38,6 +38,7 @@ const styles = {
   }),
   label: css({
     margin: "$1 0",
+    fontSize: "$md",
   }),
   asterisk: css({
     color: "$red0",
@@ -55,7 +56,7 @@ const styles = {
       variant: {
         brand: {
           borderColor: "$blue3",
-          borderWidth: "2px"
+          borderWidth: "2px",
         },
       },
       error: {

@@ -4,5 +4,6 @@
     "outDir": "dist",
     "declaration": true,
     "jsx": "react-jsx"
-  }
+  },
+  "exclude": ["./src/config/utils.ts"]
 }

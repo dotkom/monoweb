@@ -1,15 +1,25 @@
 import React from "react"
-import { styled } from "@theme"
 import { Button } from "@dotkom/ui"
 
+import { useSession, signIn, signOut } from "next-auth/react"
+
 const Home: React.FC = () => {
+  const { data: session } = useSession()
+  if (session) {
+    return (
+      <div>
+        Signed in as {session.user?.email} <br />
+        <Button onClick={() => signOut()}>Sign out</Button>
+      </div>
+    )
+  }
+
   return (
-    <Box>
-      <Button>Hello</Button>
-    </Box>
+    <div>
+      Not signed in <br />
+      <Button onClick={() => signIn()}>Sign in</Button>
+    </div>
   )
 }
-
-const Box = styled("div", {})
 
 export default Home

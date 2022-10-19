@@ -6,7 +6,7 @@ import { NotFoundError } from "../../../errors/errors"
 import { PrismaClient } from "@dotkom/db"
 
 describe("CompanyService", () => {
-  const prisma = vi.mocked(PrismaClient, true)
+  const prisma = vi.mocked(PrismaClient.prototype, true)
   const companyRepository = initCompanyRepository(prisma)
   const companyService = initCompanyService(companyRepository)
 

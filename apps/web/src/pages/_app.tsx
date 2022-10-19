@@ -1,16 +1,24 @@
 import { AppProps } from "next/app"
 import { globalStyles } from "src/theme/global-style"
-import { Box } from "@components/primitives"
-import Navbar from "@components/organisms/Navbar"
 
-function CustomApp({ Component, pageProps }: AppProps): JSX.Element {
+import { SessionProvider } from "next-auth/react"
+import MainLayout from "@/components/layout/MainLayout"
+import { NextPage } from "next"
+import { ReactElement, ReactNode } from "react"
+
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function CustomApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
+  const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
   globalStyles()
-  return (
-    <Box css={{ margin: 0, padding: 0 }}>
-      <Navbar />
-      <Component {...pageProps} />
-    </Box>
-  )
+
+  return <SessionProvider>{getLayout(<Component {...pageProps} />)}</SessionProvider>
 }
 
 export default CustomApp
