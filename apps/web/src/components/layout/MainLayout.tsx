@@ -2,7 +2,7 @@ import { css } from "@dotkom/ui"
 import React, { FC } from "react"
 import Navbar from "../organisms/Navbar"
 
-const MainLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
+const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className={styles.root()}>
       <Navbar />
