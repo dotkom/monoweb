@@ -1,5 +1,5 @@
 import { css } from "@dotkom/ui"
-import React, { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import Navbar from "../organisms/Navbar"
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
