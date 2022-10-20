@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "exports": "./dist/index.js",
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "NODE_ENV=development run -T nodemon --watch './src/**.{ts}' --watch './config/**.{ts,json}' --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
     "watch": "tsc-watch --project tsconfig.json --onSuccess \"yarn dev\"",
