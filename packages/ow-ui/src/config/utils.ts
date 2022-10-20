@@ -1,12 +1,13 @@
 import type * as Stitches from "@stitches/react"
+import { ConfigType } from "@stitches/react/types/config"
 
-export const utils = {
-  bg: (value: Stitches.ScaleValue<"color">) => {
+export const utils : ConfigType.Utils = {
+  bg: (value: Stitches.PropertyValue<"backgroundColor">) => {
     return {
       background: value,
     }
   },
-  mx: (value: Stitches.ScaleValue<"space">) => {
+  mx: (value: Stitches.PropertyValue<"backgroundColor">) => {
     return {
       marginLeft: value,
       marginRight: value,
