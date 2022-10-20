@@ -1,4 +1,4 @@
-import { Card, Text } from "@dotkom/ui"
+import { Card, Text } from "@dotkomonline/ui"
 import { FC } from "react"
 import Image from "next/image"
 import { CSS, css, styled } from "@dotkom/ui"

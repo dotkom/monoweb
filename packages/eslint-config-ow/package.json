@@ -1,5 +1,5 @@
 {
-  "name": "@dotkom/eslint-config-ow",
+  "name": "@dotkomonline/eslint-config-ow",
   "packageManager": "yarn@3.2.0",
   "version": "1.0.0",
   "main": "index.js",

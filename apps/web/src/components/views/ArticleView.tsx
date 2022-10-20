@@ -5,7 +5,7 @@ import { CSS, css, styled } from "@dotkom/ui"
 import PortableText from "@components/molecules/PortableText"
 import Image from "next/image"
 import { DateTime } from "luxon"
-import { Badge, Text } from "@dotkom/ui"
+import { Badge, Text } from "@dotkomonline/ui"
 
 interface ArticleViewProps {
   article: Article

@@ -1,5 +1,5 @@
 {
-  "extends": ["@dotkom/eslint-config-ow", "next/core-web-vitals"],
+  "extends": ["@dotkomonline/eslint-config-ow", "next/core-web-vitals"],
   "settings": {
     "react": {
       "version": "detect"

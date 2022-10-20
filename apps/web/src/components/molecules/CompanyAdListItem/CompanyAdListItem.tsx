@@ -3,7 +3,7 @@ import { CSS } from "@dotkom/ui"
 import { DateTime } from "luxon"
 import { FC } from "react"
 import Image from "next/image"
-import { Badge, Text } from "@dotkom/ui"
+import { Badge, Text } from "@dotkomonline/ui"
 
 interface CompanyAdListItemProps {
   name: string

@@ -1,5 +1,5 @@
 /* eslint-disable */
-const withTM = require("next-transpile-modules")(["@dotkom/ui"])
+const withTM = require("next-transpile-modules")(["@dotkomonline/ui"])
 
 /**
  * @type {import('next').NextConfig}
