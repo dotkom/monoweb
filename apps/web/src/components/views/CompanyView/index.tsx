@@ -1,7 +1,7 @@
 import PortableText from "@components/molecules/PortableText"
 import { Box } from "@components/primitives"
 import { BlockContentProps } from "@sanity/block-content-to-react"
-import { CSS, css, styled } from "@theme"
+import { CSS, css, styled } from "@dotkom/ui"
 import { FC } from "react"
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"

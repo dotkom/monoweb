@@ -1,7 +1,7 @@
 import { styled } from "@stitches/react"
 import { slideDownAndFade, slideLeftAndFade, slideRightAndFade, slideUpAndFade } from "../../keyframes/keyframes"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
-import { css } from "@theme"
+import { css } from "@dotkom/ui"
 
 const styles = {
   content: css({

@@ -16,7 +16,9 @@ const Login: NextPageWithLayout = () => {
         <span className={styles.forgotPassword()}>
           Forgot your <a className={styles.link()}>password?</a>
         </span>
-        <Button className={styles.button()}>Sign in</Button>
+        <Button className={styles.button()} color="blue">
+          Sign in
+        </Button>
         <Text size="sm" css={{ textAlign: "center" }}>
           Don&apos;t have an account? <a className={styles.link()}>Sign up</a>
         </Text>

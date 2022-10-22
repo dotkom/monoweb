@@ -1,8 +1,7 @@
 import DesktopNavigation from "@components/organisms/Navbar/DesktopNavigation"
 import MobileDropdown from "./MobileDropdown"
-import { styled } from "@stitches/react"
+import { styled, css } from "@dotkom/ui"
 import useWindow from "./useWindow"
-import { createStyles } from "@theme"
 
 const Navbar = () => {
   const [color, shadow] = useWindow()
@@ -14,8 +13,8 @@ const Navbar = () => {
   )
 }
 
-const styles = createStyles({
-  container: {
+const styles = {
+  container: css({
     height: "70px",
     width: "100vw",
     display: "flex",
@@ -25,8 +24,8 @@ const styles = createStyles({
     margin: 0,
     padding: 0,
     backdropFilter: "blur(8px)",
-  },
-})
+  }),
+}
 
 const Container = styled("div", styles.container)
 

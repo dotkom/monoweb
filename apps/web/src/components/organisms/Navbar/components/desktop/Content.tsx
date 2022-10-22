@@ -1,4 +1,4 @@
-import { styled } from "@theme"
+import { styled } from "@dotkom/ui"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { enterFromLeft, enterFromRight, exitToLeft, exitToRight } from "../../keyframes/keyframes"
 

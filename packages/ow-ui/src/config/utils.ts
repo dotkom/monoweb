@@ -1,56 +1,37 @@
-export const utils = {
-  // Margins
-  m: (value) => ({
-    margin: value,
-  }),
-  mt: (value) => ({
-    marginTop: value,
-  }),
-  mr: (value) => ({
-    marginRight: value,
-  }),
-  mb: (value) => ({
-    marginBottom: value,
-  }),
-  ml: (value) => ({
-    marginLeft: value,
-  }),
-  mx: (value) => ({
-    marginLeft: value,
-    marginRight: value,
-  }),
-  my: (value) => ({
-    marginTop: value,
-    marginBottom: value,
-  }),
-  // Paddings
-  p: (value) => ({
-    padding: value,
-  }),
-  pt: (value) => ({
-    paddingTop: value,
-  }),
-  pr: (value) => ({
-    paddingRight: value,
-  }),
-  pb: (value) => ({
-    paddingBottom: value,
-  }),
-  pl: (value) => ({
-    paddingLeft: value,
-  }),
-  px: (value) => ({
-    paddingLeft: value,
-    paddingRight: value,
-  }),
-  py: (value) => ({
-    paddingTop: value,
-    paddingBottom: value,
-  }),
-  bg: (value) => ({
-    backgroundColor: value,
-  }),
-  fullWidth: (value) => {
+import type * as Stitches from "@stitches/react"
+import { ConfigType } from "@stitches/react/types/config"
+
+export const utils: ConfigType.Utils = {
+  bg: (value: Stitches.PropertyValue<"backgroundColor">) => {
+    return {
+      background: value,
+    }
+  },
+  mx: (value: Stitches.PropertyValue<"backgroundColor">) => {
+    return {
+      marginLeft: value,
+      marginRight: value,
+    }
+  },
+  my: (value: Stitches.ScaleValue<"space">) => {
+    return {
+      marginTop: value,
+      marginBottom: value,
+    }
+  },
+  px: (value: Stitches.ScaleValue<"space">) => {
+    return {
+      paddingLeft: value,
+      paddingRight: value,
+    }
+  },
+  py: (value: Stitches.ScaleValue<"space">) => {
+    return {
+      paddingTop: value,
+      paddingBottom: value,
+    }
+  },
+  fullWidth: (value: boolean) => {
     return value === true
       ? {
           width: "100vw",
@@ -62,7 +43,7 @@ export const utils = {
         }
       : {}
   },
-  transitionVariant: (value) => {
+  transitionVariant: (value: string) => {
     switch (value) {
       case "colors":
         return {

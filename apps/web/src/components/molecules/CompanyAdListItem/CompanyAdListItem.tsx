@@ -1,5 +1,5 @@
 import { Box } from "@components/primitives"
-import { CSS } from "@theme"
+import { CSS } from "@dotkom/ui"
 import { DateTime } from "luxon"
 import { FC } from "react"
 import Image from "next/image"
