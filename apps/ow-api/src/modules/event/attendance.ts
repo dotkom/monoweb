@@ -5,7 +5,7 @@ export const attendanceSchema = z.object({
   eventId: z.string().uuid(),
   start: z.date(),
   end: z.date(),
-  deregirsterDeadline: z.date(),
+  deregisterDeadline: z.date(),
   limit: z.number(),
 })
 
