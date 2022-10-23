@@ -1,4 +1,4 @@
-import { css } from "@dotkom/ui"
+import { css } from "@dotkomonline/ui"
 import { Flex } from "@components/primitives"
 import BedpressIcon from "@components/icons/BedpressIcon"
 import ItexIcon from "@components/icons/ItexIcon"

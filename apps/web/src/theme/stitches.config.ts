@@ -1,2 +1,2 @@
-import { createTheme } from "@dotkom/ui"
+import { createTheme } from "@dotkomonline/ui"
 export const onlineTheme = createTheme({})
