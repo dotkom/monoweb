@@ -1,5 +1,5 @@
 import { mauve, violet } from "@radix-ui/colors"
-import { css, styled } from "@dotkom/ui"
+import { css, styled } from "@dotkomonline/ui"
 import { FC } from "react"
 import { NavigationMenuLink } from "."
 import { DesktopProps } from "./DesktopProps"

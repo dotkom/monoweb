@@ -1,9 +1,10 @@
 {
-  "name": "@dotkom/logger",
+  "name": "@dotkomonline/logger",
   "packageManager": "yarn@3.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "private": true,
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean --sourcemap",
     "lint": "run -T eslint --max-warnings 0 .",

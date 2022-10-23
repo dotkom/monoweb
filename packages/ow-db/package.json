@@ -1,10 +1,11 @@
 {
-  "name": "@dotkom/db",
+  "name": "@dotkomonline/db",
   "packageManager": "yarn@3.2.0",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "private": true,
   "scripts": {
     "build": "run generate && tsup src/index.ts --format esm --dts --clean --sourcemap",
     "migrate": "prisma migrate dev",

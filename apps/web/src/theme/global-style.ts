@@ -1,4 +1,4 @@
-import { globalCss } from "@dotkom/ui"
+import { globalCss } from "@dotkomonline/ui"
 
 export const globalStyles = globalCss({
   html: {

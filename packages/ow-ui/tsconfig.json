@@ -5,5 +5,5 @@
     "declaration": true,
     "jsx": "react-jsx"
   },
-  "exclude": ["./src/config/utils.ts"]
+  "exclude": ["./src/config/utils.ts", "dist", ".turbo"]
 }

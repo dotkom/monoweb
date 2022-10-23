@@ -1,5 +1,5 @@
 import React from "react"
-import { Button } from "@dotkom/ui"
+import { Button } from "@dotkomonline/ui"
 
 import { useSession, signIn, signOut } from "next-auth/react"
 

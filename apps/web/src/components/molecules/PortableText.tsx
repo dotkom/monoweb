@@ -1,7 +1,7 @@
 /*eslint-disable*/
 import BlockContent, { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
-import { Text } from "@dotkom/ui"
+import { Text } from "@dotkomonline/ui"
 
 interface PortableTextProps {
   blocks: BlockContentProps["blocks"]

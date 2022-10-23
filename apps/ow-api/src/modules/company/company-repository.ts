@@ -1,4 +1,4 @@
-import { PrismaClient } from "@dotkom/db"
+import { PrismaClient } from "@dotkomonline/db"
 import { InsertCompany, mapToCompany, Company } from "./company"
 
 export interface CompanyRepository {

@@ -1,6 +1,6 @@
 import DesktopNavigation from "@components/organisms/Navbar/DesktopNavigation"
 import MobileDropdown from "./MobileDropdown"
-import { styled, css } from "@dotkom/ui"
+import { styled, css } from "@dotkomonline/ui"
 import useWindow from "./useWindow"
 
 const Navbar = () => {

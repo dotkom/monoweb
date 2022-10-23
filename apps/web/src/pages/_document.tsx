@@ -1,4 +1,4 @@
-import { getCssText } from "@dotkom/ui"
+import { getCssText } from "@dotkomonline/ui"
 import NextDocument, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document"
 
 export default class Document extends NextDocument {

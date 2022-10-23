@@ -1,5 +1,5 @@
 import React from "react"
-import { Badge, Text } from "@dotkom/ui"
+import { Badge, Text } from "@dotkomonline/ui"
 import { css } from "@stitches/react"
 import Image from "next/image"
 

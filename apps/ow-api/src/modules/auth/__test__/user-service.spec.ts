@@ -3,7 +3,7 @@ import { initUserService } from "../user-service"
 import { v4 as uuidv4 } from "uuid"
 import { initUserRepository } from "../user-repository"
 import { NotFoundError } from "../../../errors/errors"
-import { PrismaClient } from "@dotkom/db"
+import { PrismaClient } from "@dotkomonline/db"
 
 describe("UserService", () => {
   const prisma = vi.mocked(PrismaClient.prototype, true)

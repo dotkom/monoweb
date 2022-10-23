@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { Company as PrismaCompany } from "@dotkom/db"
+import { Company as PrismaCompany } from "@dotkomonline/db"
 
 const companySchema = z.object({
   id: z.string().uuid(),

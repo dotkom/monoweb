@@ -1,5 +1,5 @@
-import { getLogger } from "@dotkom/logger"
-import { PrismaClient } from "@dotkom/db"
+import { getLogger } from "@dotkomonline/logger"
+import { PrismaClient } from "@dotkomonline/db"
 import { initUserRepository } from "./modules/auth/user-repository.js"
 import { initUserService } from "./modules/auth/user-service.js"
 import { createServer } from "./server.js"

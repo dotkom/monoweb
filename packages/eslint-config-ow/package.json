@@ -1,8 +1,9 @@
 {
-  "name": "@dotkom/eslint-config-ow",
+  "name": "@dotkomonline/eslint-config-ow",
   "packageManager": "yarn@3.2.0",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",

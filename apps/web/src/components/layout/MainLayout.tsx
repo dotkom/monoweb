@@ -1,4 +1,4 @@
-import { css } from "@dotkom/ui"
+import { css } from "@dotkomonline/ui"
 import { FC, PropsWithChildren } from "react"
 import Navbar from "../organisms/Navbar"
 

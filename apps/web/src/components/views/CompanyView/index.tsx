@@ -1,11 +1,11 @@
 import PortableText from "@components/molecules/PortableText"
 import { Box } from "@components/primitives"
 import { BlockContentProps } from "@sanity/block-content-to-react"
-import { CSS, css, styled } from "@dotkom/ui"
+import { CSS, css, styled } from "@dotkomonline/ui"
 import { FC } from "react"
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
-import { Button } from "@dotkom/ui"
+import { Button } from "@dotkomonline/ui"
 
 export type Content = BlockContentProps["blocks"]
 
