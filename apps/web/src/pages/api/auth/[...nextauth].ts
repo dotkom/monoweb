@@ -22,9 +22,6 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.NEXTAUTH_CLIENT_ID,
     },
   ],
-  pages: {
-    signIn: "/auth/signin",
-  },
 }
 
 export default NextAuth(authOptions)
