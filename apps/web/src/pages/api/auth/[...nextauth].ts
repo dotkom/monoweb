@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           image: profile.picture,
         }
       },
-      clientId: "my-client",
+      clientId: "ow-client",
     },
   ],
 }
