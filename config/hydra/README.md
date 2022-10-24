@@ -4,7 +4,6 @@ SCOPES=openid,email,profile
 ```
 
 ## Create an openid client
-
 ```
 docker-compose exec hydra hydra clients create \
         --endpoint http://127.0.0.1:4445 \
