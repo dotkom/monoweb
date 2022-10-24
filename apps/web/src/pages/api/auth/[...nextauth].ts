@@ -1,23 +1,27 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
 
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
+    {
+      id: "onlineweb",
+      name: "Onlineweb",
+      type: "oauth",
+      wellKnown: "http://127.0.0.1:4444/.well-known/openid-configuration",
+      authorization: { params: { scope: "openid email profile" } },
+      idToken: true,
+      checks: ["pkce", "state"],
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }
       },
-      async authorize(_credentials, _req) {
-        return null
-      },
-    }),
+      clientId: "my-client",
+    },
   ],
-  pages: {
-    signIn: "/auth/signin",
-  },
 }
 
 export default NextAuth(authOptions)
