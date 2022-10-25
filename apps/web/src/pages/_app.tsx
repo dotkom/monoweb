@@ -4,12 +4,22 @@ import { SessionProvider } from "next-auth/react"
 import { AppProps } from "next/app"
 import { ReactElement, ReactNode, useState } from "react"
 
+<<<<<<< HEAD
 import { httpBatchLink } from "@trpc/client"
 
 import MainLayout from "../components/layout/MainLayout"
 import "../styles/globals.css"
 import { globalStyles } from "../theme/global-style"
 import { trpc } from "../utils/trpc"
+=======
+import { SessionProvider } from "next-auth/react"
+import MainLayout from "@/components/layout/MainLayout"
+import { NextPage } from "next"
+import { ReactElement, ReactNode, useState } from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { trpc } from "@/utils/trpc"
+import { httpBatchLink } from "@trpc/client"
+>>>>>>> 8489c56 (test out oidc login)
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
