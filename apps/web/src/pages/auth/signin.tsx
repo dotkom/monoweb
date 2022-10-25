@@ -1,23 +1,45 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
+import { trpc } from "@/utils/trpc"
 import { Button, css, Text, TextInput } from "@dotkomonline/ui"
+import { useRouter } from "next/router"
+import { useForm } from "react-hook-form"
 
 import { NextPageWithLayout } from "../_app"
 
-const Login: NextPageWithLayout = () => {
+const SignInPage: NextPageWithLayout = () => {
+  const router = useRouter()
+  const loginChallenge = router.query["login_challenge"]
+  console.log(loginChallenge)
+  const { register, handleSubmit } = useForm()
+
+  const signIn = trpc.signin.useMutation()
+
   return (
     <div className={styles.container()}>
-      <form className={styles.form()}>
+      <form
+        className={styles.form()}
+        onSubmit={handleSubmit(async (data) => {
+          signIn.mutate(
+            {
+              username: data.username,
+              password: data.password,
+              loginChallenge: loginChallenge as string,
+            },
+            { onSuccess: (data) => console.log(data) }
+          )
+        })}
+      >
         <div className={styles.iconContainer()}>
           <OnlineIcon />
         </div>
         <h1 className={styles.heading()}>Sign in</h1>
         <Text css={{ textAlign: "center" }}>Continue to Onlineweb</Text>
-        <TextInput id="username" name="username" label="Username" />
-        <TextInput id="password" name="password" label="Password" />
+        <TextInput id="username" label="Username" {...register("username")} />
+        <TextInput id="password" label="Password" {...register("password")} />
         <span className={styles.forgotPassword()}>
           Forgot your <a className={styles.link()}>password?</a>
         </span>
-        <Button className={styles.button()} color="blue">
+        <Button className={styles.button()} color="blue" type="submit">
           Sign in
         </Button>
         <Text size="sm" css={{ textAlign: "center" }}>
@@ -28,7 +50,7 @@ const Login: NextPageWithLayout = () => {
   )
 }
 
-Login.getLayout = (page) => {
+SignInPage.getLayout = (page) => {
   return <div className={styles.layout()}>{page}</div>
 }
 
@@ -84,4 +106,4 @@ const styles = {
   }),
 }
 
-export default Login
+export default SignInPage

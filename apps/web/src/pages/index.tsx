@@ -16,7 +16,7 @@ const Home: React.FC = () => {
   return (
     <div>
       Not signed in <br />
-      <Button onClick={() => signIn()}>Sign in</Button>
+      <Button onClick={() => signIn("onlineweb")}>Sign in</Button>
     </div>
   )
 }

@@ -19,7 +19,7 @@ export const initUserService = (userRepository: UserRepository): UserService => 
     return users
   },
   register: async (payload) => {
-    const user = await userRepository.createUser(payload)
+    const user = await userRepository.createUser()
     return user
   },
 })
