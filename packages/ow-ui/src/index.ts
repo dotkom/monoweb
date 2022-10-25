@@ -10,4 +10,3 @@ export * from "./components/Typography"
 export * from "./components/Input"
 
 export * from "./config/stitches.config"
-export { globalStyles } from "./config/global-style"
