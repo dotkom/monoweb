@@ -20,7 +20,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
   return (
     <Box css={styles.listItem}>
       <Box>
-        <Image src={logo} width="70px" height="40px" alt={`${name}'s job posting`} />
+        <Image src={logo} width={70} height={40} alt={`${name}'s job posting`} />
       </Box>
       <Text>{name}</Text>
       <Box>

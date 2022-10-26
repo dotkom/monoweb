@@ -32,7 +32,7 @@ const EventCard: FC<EventCardProps> = (props) => {
 
   return (
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
-      <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="150px" />
+      <Thumbnail src={thumbnailUrl} width={300} height={150} alt="thumbnail" />
       <Flex css={{ padding: "$2", flexDirection: "column" }}>
         <HeaderArea>
           <time dateTime={date.toISO()} color="red" className={styles.dateContainer()}>
