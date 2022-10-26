@@ -3570,6 +3570,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ory/client@npm:^0.2.0-alpha.60":
+  version: 0.2.0-alpha.60
+  resolution: "@ory/client@npm:0.2.0-alpha.60"
+  dependencies:
+    axios: ^0.21.4
+  checksum: 34907bd665fdd01bc2c828009dd4db8ab1accb1e0075d45c46f76aa3270ef68824e90410ff81027f1b006bbfd138f9a01acab6cb5959f11c2915e7ad65c6086d
+  languageName: node
+  linkType: hard
+
 "@panva/hkdf@npm:^1.0.1":
   version: 1.0.2
   resolution: "@panva/hkdf@npm:1.0.2"
@@ -8832,6 +8841,7 @@ __metadata:
     "@dotkomonline/config": "*"
     "@dotkomonline/db": "workspace:^"
     "@dotkomonline/logger": "workspace:^"
+    "@ory/client": ^0.2.0-alpha.60
     "@trpc/server": ^10.0.0-alpha.48
     "@types/aws-lambda": ^8.10.101
     "@types/config": ^3.3.0
