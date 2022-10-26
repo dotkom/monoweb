@@ -4,9 +4,12 @@ name: "Publish Storybook"
 # Event for the workflow
 on: 
   push:
-    - main
+    branches:
+      - main
   pull_request:
-    types: [opened, synchronize]
+    branches:
+      - main
+
 
 
 # List of jobs
