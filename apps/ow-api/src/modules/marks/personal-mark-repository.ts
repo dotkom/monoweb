@@ -1,5 +1,5 @@
 import { PrismaClient } from "@dotkom/db"
-import { InsertPersonalMark, mapToPersonalMark, PersonalMark } from "./personal-mark"
+import { mapToPersonalMark, PersonalMark } from "./personal-mark"
 
 export interface PersonalMarkRepository {
   getPersonalMarksForUser: (userId: string) => Promise<PersonalMark[]>

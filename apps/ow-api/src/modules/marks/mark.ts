@@ -8,6 +8,7 @@ const markSchema = z.object({
   category: z.string(),
   details: z.string(),
   given_to: z.string().array(),
+  duration: z.number(),
 })
 
 export type Mark = z.infer<typeof markSchema>

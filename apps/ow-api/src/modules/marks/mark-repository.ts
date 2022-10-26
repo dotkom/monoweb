@@ -16,7 +16,7 @@ export const initMarkRepository = (client: PrismaClient): MarkRepository => {
       return mark ? mapToMark(mark) : undefined
     },
     getMarks: async (limit: number) => {
-      const marks = await client.mark.findMany({ take: limit })
+      const marks = await client.mark.findMany({ take: limit, orderBy: { given_at: "desc" } })
       return marks.map(mapToMark)
     },
     createMark: async (markInsert) => {

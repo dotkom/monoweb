@@ -39,6 +39,7 @@ model Mark {
   latest_change DateTime       @default(now())
   details       String
   given_to      String[]
+  duration      Int
   PersonalMarks PersonalMark[]
 }
 
