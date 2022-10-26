@@ -6,10 +6,7 @@ const NavbarLogo = () => {
   return (
     <div className={styles.container()}>
       <Link href="/">
-        <a>
-          {" "}
-          <OnlineIcon />
-        </a>
+        <OnlineIcon />
       </Link>
     </div>
   )
