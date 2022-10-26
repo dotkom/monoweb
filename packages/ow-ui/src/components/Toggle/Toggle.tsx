@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction } from "react"
-import { styled } from "@stitches/react"
 import { blackA } from "@radix-ui/colors"
 import * as SwitchPrimitive from "@radix-ui/react-switch"
+import { styled } from "@stitches/react"
+import React, { Dispatch, SetStateAction } from "react"
 
 const StyledSwitch = styled(SwitchPrimitive.Root, {
   all: "unset",

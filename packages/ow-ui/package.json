@@ -7,8 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --target es2020 --clean --dts",
-    "lint": "run -T eslint --max-warnings 0 .",
-    "lint:fix": "run -T eslint --fix ."
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@radix-ui/colors": "^0.1.8",
@@ -23,7 +23,9 @@
   "devDependencies": {
     "@dotkomonline/config": "*",
     "@storybook/react": "^6.5.9",
+    "@types/eslint": "^8",
     "@types/react": "^18.0.15",
+    "eslint": "^8.26.0",
     "tsup": "^6.2.3",
     "vitest": "^0.23.4"
   }

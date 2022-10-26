@@ -1,7 +1,8 @@
 import { Indicator, Root, CheckboxProps as PrimitiveProps } from "@radix-ui/react-checkbox"
-import { forwardRef } from "react"
 import { Label } from "@radix-ui/react-label"
+import { forwardRef } from "react"
 import { IoCheckmarkSharp } from "react-icons/io5"
+
 import { css } from "../../config/stitches.config"
 
 export interface CheckboxProps extends PrimitiveProps {

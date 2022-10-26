@@ -2664,7 +2664,9 @@ __metadata:
     "@radix-ui/react-switch": ^1.0.0
     "@stitches/react": ^1.2.8
     "@storybook/react": ^6.5.9
+    "@types/eslint": ^8
     "@types/react": ^18.0.15
+    eslint: ^8.26.0
     react: ^18.2.0
     react-icons: ^4.4.0
     tsup: ^6.2.3
