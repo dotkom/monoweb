@@ -49,48 +49,39 @@ export const initPersonalMarkService = (
   }
   return service
 }
-const inSummerHoliday = (date: Date) => {
-  return date.getMonth() == 11 || (date.getMonth() == 0 && date.getDay() < 15)
-}
 
-const inWinterHoliday = (date: Date) => {
-  return date.getMonth() > 4 && date.getMonth() + date.getDate() / 100 < 7.15
-}
-
-const calculateEndDate = (startDate: Date, duration: number) => {
-  let date: Date
-  if (inSummerHoliday(startDate)) {
-    date = new Date(startDate.getFullYear(), 7, 15, 2)
-  } else if (inWinterHoliday(startDate)) {
-    date = new Date(startDate.getFullYear() + 1, 0, 15, 2)
-  } else {
-    date = startDate
+const adjustDateForHolidays = (date: Date) => {
+  let additionalDays = 0
+  if (date.getMonth() > 4 && date.getMonth() + date.getDate() / 100 < 7.15) {
+    date = new Date(date.getFullYear(), 7, 15)
+    additionalDays = 75
+  } else if (date.getMonth() == 11) {
+    date = new Date(date.getFullYear() + 1, 0, 15)
+    additionalDays = 45
+  } else if (date.getMonth() == 0 && date.getDate() < 15) {
+    date = new Date(date.getFullYear(), 0, 15)
+    additionalDays = 45
   }
-  const endDate: Date = new Date()
-  endDate.setDate(startDate.getDate() + duration)
-  if (inSummerHoliday(endDate)) {
-    endDate.setDate(endDate.getDate() + 45)
-  } else if (inWinterHoliday(endDate)) {
-    endDate.setDate(endDate.getDate() + 75)
-  }
-  return date
+  return { date: date, additionalDays: additionalDays }
 }
 const getExpiryDate = (marks: Mark[]) => {
   const currentTime = new Date()
   let endDate: Date | null = null
+  const orderedMarks = marks.sort((a, b) => a.given_at.getTime() - b.given_at.getTime())
+  orderedMarks.forEach((mark) => {
+    const date =
+      endDate && mark.given_at.getTime() < endDate.getTime()
+        ? new Date(adjustDateForHolidays(endDate).date.getTime())
+        : new Date(adjustDateForHolidays(mark.given_at).date.getTime())
+    date.setDate(date.getDate() + mark.duration)
 
-  marks.forEach((mark) => {
-    const markEndDate = calculateEndDate(mark.given_at, mark.duration)
-    if (endDate == null) {
-      endDate = markEndDate
-    } else {
-      if (markEndDate > endDate) {
-        endDate.setDate(endDate.getDate() + mark.duration)
-      }
-    }
+    const adjustedEnd = adjustDateForHolidays(date)
+    const adjustedEndDate = new Date(adjustedEnd.date.getTime() + adjustedEnd.additionalDays * 24 * 60 * 60 * 1000)
+
+    endDate = adjustedEndDate
   })
   if (endDate != null && endDate > currentTime) {
     return endDate
   }
-  return endDate
+  return null
 }

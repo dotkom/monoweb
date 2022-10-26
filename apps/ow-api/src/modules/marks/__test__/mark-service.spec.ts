@@ -16,6 +16,8 @@ describe("MarkService", () => {
       category: "",
       details: "",
       given_to: [],
+      given_at: new Date(),
+      duration: 20,
     }
     const id = uuidv4()
     vi.spyOn(markRepository, "createMark").mockResolvedValueOnce({ id, ...mark })
