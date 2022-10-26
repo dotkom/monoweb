@@ -5843,10 +5843,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@types/luxon@npm:2.4.0"
-  checksum: eeb16a1bfe5440464c1a9635700d103cd18d3cd8da6063a1938478e435cfba6ab8e893aa80c95a407e541187c1e997c3e4481322726bc1258551cb8606d0e5ad
+"@types/luxon@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@types/luxon@npm:3.0.2"
+  checksum: e47e199c5d70ce16e4eff54b21fdf385065f1134774109b40c36dba8b5fd29a732b763125e93863d6070dd22ba6a3f18dbdd368cf3748aae9f24bb335c5c210d
   languageName: node
   linkType: hard
 
@@ -15226,10 +15226,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "luxon@npm:2.5.0"
-  checksum: 2fccce6bbdfc8f13c5a8c148ff045ab3b10f4f80cac28dd92575588fffce9b2d7197096d7fedcc61a6245b59f4233507797f530e63f22b9ae4c425dff2909ae3
+"luxon@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "luxon@npm:3.0.4"
+  checksum: d0908c3951da2a10ccf23040210ead23b0da5366a9d0954e7d5db3560189a7bd703d8af1e00084f197effc9cd7158d1bddf32886d98a70d59ce9bc3fe88bbce0
   languageName: node
   linkType: hard
 
@@ -22791,7 +22791,7 @@ __metadata:
     "@storybook/preset-scss": ^1.0.3
     "@storybook/react": ^6.5.9
     "@types/jsdom": ^20
-    "@types/luxon": ^2.4.0
+    "@types/luxon": ^3.0.2
     "@types/node": ^16.11.47
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.6
@@ -22803,7 +22803,7 @@ __metadata:
     husky: ^4.3.8
     jsdom: ^20.0.0
     lint-staged: ^10.5.4
-    luxon: ^2.5.0
+    luxon: ^3.0.4
     next: 13.0.0
     next-auth: ^4.10.3
     next-compose-plugins: ^2.2.1
