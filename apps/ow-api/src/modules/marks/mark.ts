@@ -4,6 +4,7 @@ import { Mark as PrismaMark } from "@dotkom/db"
 const markSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
+  given_at: z.date(),
   category: z.string(),
   details: z.string(),
   given_to: z.string().array(),
