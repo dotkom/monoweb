@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
+  id            String         @id @default(uuid())
   username      String
-  created_at    DateTime        @default(now())
+  created_at    DateTime       @default(now())
   first_name    String
   last_name     String
-  email         String          @unique
+  email         String         @unique
   password      String
-  PersonalMarks PersonalMarks[]
+  PersonalMarks PersonalMark[]
 }
 
 model Company {
@@ -32,17 +32,17 @@ model Company {
 }
 
 model Mark {
-  id            String          @id @default(uuid())
+  id            String         @id @default(uuid())
   title         String
-  given_at      DateTime        @default(now())
+  given_at      DateTime       @default(now())
   category      String
-  latest_change DateTime        @default(now())
+  latest_change DateTime       @default(now())
   details       String
   given_to      String[]
-  PersonalMarks PersonalMarks[]
+  PersonalMarks PersonalMark[]
 }
 
-model PersonalMarks {
+model PersonalMark {
   mark Mark @relation(fields: [markId], references: [id])
   user User @relation(fields: [userId], references: [id])
 
