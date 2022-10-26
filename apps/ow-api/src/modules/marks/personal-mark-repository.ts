@@ -4,6 +4,7 @@ import { InsertPersonalMark, mapToPersonalMark, PersonalMark } from "./personal-
 export interface PersonalMarkRepository {
   getPersonalMarksForUser: (userId: string) => Promise<PersonalMark[]>
   addPersonalMarkToUser: (userId: string, markId: string) => Promise<PersonalMark>
+  removePersonalMark: (userId: string, markId: string) => Promise<PersonalMark>
 }
 
 export const initPersonalMarkRepository = (client: PrismaClient): PersonalMarkRepository => {
@@ -14,16 +15,19 @@ export const initPersonalMarkRepository = (client: PrismaClient): PersonalMarkRe
           userId,
         },
       })
-      if (!personalMark) return undefined
       return personalMark.map(mapToPersonalMark)
     },
-    addPersonalMarkToUser: async (userId: string, markId: string) => {
+    addPersonalMarkToUser: async (markId: string, userId: string) => {
       const personalMark = await client.personalMark.create({
         data: {
           userId,
           markId,
         },
       })
+      return mapToPersonalMark(personalMark)
+    },
+    removePersonalMark: async (markId: string, userId: string) => {
+      const personalMark = await client.personalMark.delete({ where: { markId_userId: { userId, markId } } })
       return mapToPersonalMark(personalMark)
     },
   }
