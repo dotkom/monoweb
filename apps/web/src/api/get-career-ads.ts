@@ -11,6 +11,7 @@ export interface CareerAd {
   company_info: string
   content: BlockContentProps["blocks"]
   link: string
+  slug: string
 }
 
 const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
@@ -25,7 +26,18 @@ const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("dr
   link
 }`
 
-const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]`
+const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]{
+  title,
+  company_name,
+  image { asset->{url} },
+  career_type,
+  location,
+  deadline,
+  company_info,
+  content,
+  link,
+  slug
+}`
 
 export const fetchCareerAd = async (slug: string): Promise<CareerAd> => {
   const res = await client.fetch(adQuery, { slug })
