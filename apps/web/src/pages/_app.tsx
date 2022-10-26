@@ -1,13 +1,12 @@
-import { AppProps } from "next/app"
-import { globalStyles } from "src/theme/global-style"
-
-import { SessionProvider } from "next-auth/react"
 import MainLayout from "@/components/layout/MainLayout"
-import { NextPage } from "next"
-import { ReactElement, ReactNode, useState } from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { trpc } from "@/utils/trpc"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { httpBatchLink } from "@trpc/client"
+import { NextPage } from "next"
+import { SessionProvider } from "next-auth/react"
+import { AppProps } from "next/app"
+import { ReactElement, ReactNode, useState } from "react"
+import { globalStyles } from "src/theme/global-style"
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
