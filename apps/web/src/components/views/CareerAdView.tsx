@@ -3,170 +3,112 @@ import { CSS } from "@theme"
 import PortableText from "@components/molecules/PortableText"
 import Image from "next/image"
 import { DateTime } from "luxon"
-import { Badge, Button, Text } from "@dotkom/ui"
+import { Badge, Button, css, Text } from "@dotkom/ui"
 import { IoEarth, IoTimeOutline, IoCopyOutline, IoArrowBackOutline } from "react-icons/io5"
-import { BsLinkedin } from "react-icons/bs"
+import { BsLinkedin, BsTwitter } from "react-icons/bs"
+import { ImFacebook2 } from "react-icons/im"
+import { FaArrowLeft } from "react-icons/fa"
+import { CareerAd, fetchCareerAd } from "@/api/get-career-ads"
+import { FC } from "react"
 
-const block = ["<h1>TESSSTTT</h1>", "<Text>TESSSTTT</Text>"]
+interface CareerAdViewProps {
+  career: CareerAd
+}
 
-export const CareerAdView = () => {
+export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) => {
+  const { title, company_name, image, career_type, location, deadline, company_info, content, link } = props.career
+
   return (
     <Flex
       css={{
         mt: "100px",
+        width: "80%",
+        display: "flex",
+        mx: "auto",
         justifyContent: "space-around",
       }}
     >
       <Box
         css={{
-          width: "22%",
-          ml: "8%",
+          width: "30%",
         }}
       >
-        <Box>
-          <Text
-            css={{
-              margin: "0px",
-              fontSize: "50px",
-              textAlign: "center",
-              bg: "$gray11",
-            }}
-          >
-            Bekk
-          </Text>
+        <Box css={{ position: "relative", width: "100%", height: "200px" }}>
+          <Image layout="fill" src={image.asset.url} alt="company_image" />
         </Box>
-        <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-          condimentum nunc, eget lacinia nisl lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-          condimentum nunc, eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Sed euismod, nisl ut aliquam aliquam, nunc nisi
-        </Text>
+
+        <Text>{company_info}</Text>
 
         <Box
           css={{
-            my: "$4",
+            mt: "$4",
+            mb: "$5",
             mx: "auto",
-            width: "80%",
-            border: "0.5px solid black",
+            width: "100%",
+            borderBottom: "1px solid black",
           }}
         />
 
-        <Text css={styles.info}>
-          <IoArrowBackOutline /> ANDRE MULIGHETER
-        </Text>
-        <Text css={styles.info}>
-          <IoEarth /> Oslo
-        </Text>
-        <Text css={styles.info}>
-          <IoTimeOutline /> Sommerjobb
-        </Text>
-        <Text css={styles.info}>
-          <IoCopyOutline /> Backend
-        </Text>
-
-        <Box>
-          <BsLinkedin />
+        <Box css={styles.info}>
+          <Box css={{ display: "inline", color: "$blue2", fontSize: "15px", mb: "-3px" }}>
+            <FaArrowLeft />
+          </Box>
+          <Text css={{ margin: "0", fontWeight: "bold", fontSize: "15px", color: "$blue2", pl: "$2" }}>
+            {" "}
+            ANDRE MULIGHETER
+          </Text>
         </Box>
 
-        <Button css={{ mt: "$3", width: "80px" }}>Søk</Button>
-      </Box>
+        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
 
+        <Box css={styles.info}>
+          <Box css={styles.icon}>
+            <IoEarth />
+          </Box>
+          <Text css={{ margin: "0", pl: "$2" }}>{location}</Text>
+        </Box>
+
+        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+
+        <Box css={styles.info}>
+          <Box css={styles.icon}>
+            <IoTimeOutline />
+          </Box>
+          <Text css={{ margin: "0", pl: "$2" }}>{career_type}</Text>
+        </Box>
+
+        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+
+        <Box css={styles.info}>
+          <Box css={styles.icon}>
+            <IoCopyOutline />
+          </Box>
+          <Text css={{ margin: "0", pl: "$2" }}>Backend (ERROR)</Text>
+        </Box>
+
+        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+
+        <Box css={{ color: "$blue2", mt: "$2" }}>
+          <BsLinkedin style={{ margin: "5px" }} />
+          <BsTwitter style={{ margin: "5px" }} />
+          <ImFacebook2 style={{ margin: "5px" }} />
+        </Box>
+        <a href={link}>
+          <Button css={{ mt: "$3", width: "80px" }}>Søk</Button>
+        </a>
+      </Box>
       <Box
         css={{
           width: "60%",
-          mr: "5%",
         }}
       >
         <Box css={styles.article}>
           <Text css={{ margin: "0", fontSize: "30px" }}>
-            <b>Bekk</b>
+            <b>{company_name}</b>
           </Text>
-          <Text css={{ margin: "0", fontSize: "20px" }}>Backend utvikler - Sommerjobb</Text>
+          <Text css={{ margin: "0", fontSize: "20px" }}>{title}</Text>
         </Box>
-
-        <PortableText blocks={block} />
-
-        <Box css={styles.article}>
-          <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-            condimentum nunc, eget lacinia nisl lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam
-            aliquam, nunc nisi condimentum nunc, eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi condimentum nunc, eget lacinia
-            nisl lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam aliquam, nunc nisi condimentum
-            nunc, eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-            euismod, nisl ut aliquam aliquam, nunc nisi
-            <br />
-            <br />
-            lorem eget nunc. Sed euismod, nisl ut aliquam aliquam, nisl ut aliquam aliquam, nunc nisi condimentum nunc,
-            eget lacinia nisl lorem eget nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod,
-            nisl
-          </Text>
-        </Box>
-
-        <Box css={styles.article}>
-          <Text>
-            <b>You will:</b>
-          </Text>
-          <ul>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-          </ul>
-        </Box>
-
-        <Box css={styles.article}>
-          <Text>
-            <b>We´re looking for someone who has:</b>
-          </Text>
-          <ul>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-            <li>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl ut aliquam aliquam, nunc nisi
-                condimentum nunc, eget lacinia nisl lorem eget nunc. Sed{" "}
-              </Text>
-            </li>
-          </ul>
-        </Box>
+        <PortableText blocks={content} className={styles.content()} />
       </Box>
     </Flex>
   )
@@ -179,10 +121,32 @@ const styles = {
     ml: "50px",
     mt: "$4",
   } as CSS,
-  info: {
-    margin: "0px",
-    mt: "$3",
-    borderBottom: "1px solid $gray8",
-    pb: "$3",
+  portable: {
+    borderLeft: "1.5px solid $orange3",
+    pl: "$4",
+    ml: "50px",
+    mt: "$4",
   } as CSS,
+  info: {
+    display: "flex",
+    margin: "0px",
+    my: "$3",
+    alignItems: "center",
+  } as CSS,
+  icon: {
+    display: "inline",
+    color: "$blue2",
+    mb: "-3px",
+  } as CSS,
+  content: css({
+    "h1, ul, p, h2": {
+      borderLeft: "1.5px solid $orange3",
+      pl: "$4",
+      ml: "50px",
+      mt: "$4",
+    },
+    h1: {
+      fontSize: "20px",
+    },
+  }),
 }
