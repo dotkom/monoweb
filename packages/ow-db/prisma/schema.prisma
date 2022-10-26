@@ -21,6 +21,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  Profile       Profile[]
 }
 
 model Account {
@@ -63,7 +64,7 @@ model Company {
   name        String
   description String
   phone       String?
-  email       String @unique
+  email       String  @unique
   website     String
   location    String?
   type        String?
@@ -103,6 +104,18 @@ model Event {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Profile {
+  id          String   @id @default(uuid()) @map("id")
+  userId      String   @map("user_id")
+  phone       String?  @map("phone")
+  studyStart  DateTime @map("study_start")
+  githubUrl   String?  @map("github_url")
+  linkedInUrl String?  @map("linkedin_url")
+  homepageUrl String?  @map("homepage_url")
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Attendance {
