@@ -1,5 +1,5 @@
-import { z } from "zod"
 import { Event as PrismaEvent } from "@dotkomonline/db"
+import { z } from "zod"
 
 export const eventSchema = z.object({
   id: z.string().uuid(),

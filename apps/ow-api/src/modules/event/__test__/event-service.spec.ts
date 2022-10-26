@@ -1,10 +1,11 @@
-import { describe, vi } from "vitest"
-import { PrismaClient } from "@dotkomonline/db"
-import { initEventRepository } from "../event-repository"
 import { NotFoundError } from "@/errors/errors"
-import { initEventService } from "../event-service"
-import { InsertEvent } from "../event"
+import { PrismaClient } from "@dotkomonline/db"
 import { randomUUID } from "crypto"
+import { describe, vi } from "vitest"
+
+import { InsertEvent } from "../event"
+import { initEventRepository } from "../event-repository"
+import { initEventService } from "../event-service"
 
 describe("EventService", () => {
   const prisma = vi.mocked(PrismaClient.prototype)
