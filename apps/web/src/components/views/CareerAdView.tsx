@@ -16,7 +16,21 @@ interface CareerAdViewProps {
 }
 
 export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) => {
-  const { title, company_name, image, career_type, location, deadline, company_info, content, link } = props.career
+  const {
+    title,
+    company_name,
+    image,
+    career_type,
+    location,
+    deadline,
+    company_info,
+    content,
+    link,
+    linkdin,
+    twitter,
+    facebook,
+    career_role,
+  } = props.career
 
   return (
     <Flex
@@ -83,15 +97,15 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <Box css={styles.icon}>
             <IoCopyOutline />
           </Box>
-          <Text css={{ margin: "0", pl: "$2" }}>Backend (ERROR)</Text>
+          <Text css={{ margin: "0", pl: "$2" }}>{career_role}</Text>
         </Box>
 
         <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
 
         <Box css={{ color: "$blue2", mt: "$2" }}>
-          <BsLinkedin style={{ margin: "5px" }} />
-          <BsTwitter style={{ margin: "5px" }} />
-          <ImFacebook2 style={{ margin: "5px" }} />
+          {linkdin && <a style={{textDecoration:"none"}} href={linkdin}><BsLinkedin style={{ margin: "5px" }} /></a>}
+          {twitter && <a style={{textDecoration:"none"}} href={twitter}><BsTwitter style={{ margin: "5px" }} /></a>}
+          {facebook && <a style={{textDecoration:"none"}} href={facebook}><ImFacebook2 style={{ margin: "5px" }} /></a>}
         </Box>
         <a href={link}>
           <Button css={{ mt: "$3", width: "80px" }}>Søk</Button>

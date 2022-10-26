@@ -11,6 +11,11 @@ export interface CareerAd {
   company_info: string
   content: BlockContentProps["blocks"]
   link: string
+  facebook: string
+  instagram: string
+  twitter: string
+  linkdin: string
+  career_role: string
 }
 
 const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
@@ -22,7 +27,11 @@ const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("dr
   deadline,
   company_info,
   content,
-  link
+  link,
+  career_role,
+  facebook,
+  twitter,
+  linkdin
 }`
 
 const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]`
