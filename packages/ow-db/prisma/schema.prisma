@@ -13,14 +13,13 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  firstName     String?   @map("first_name")
-  lastName      String?   @map("last_name")
   email         String?   @unique
-  createdAt     DateTime  @default(now()) @map("created_at")
-  emailVerified DateTime? @map("email_verified")
+  emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  password      String
 }
 
 model Account {
@@ -63,7 +62,7 @@ model Company {
   name        String
   description String
   phone       String?
-  email       String @unique
+  email       String  @unique
   website     String
   location    String?
   type        String?

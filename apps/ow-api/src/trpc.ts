@@ -9,9 +9,9 @@ export const appRouter = t.router({
   signin: t.procedure
     .input(
       z.object({
-        username: z.string(),
+        email: z.string().email(),
         password: z.string(),
-        loginChallenge: z.string(),
+        challenge: z.string(),
       })
     )
     .mutation((req) => {
