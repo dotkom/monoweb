@@ -60,9 +60,9 @@ const inWinterHoliday = (date: Date) => {
 const calculateEndDate = (startDate: Date, duration: number) => {
   let date: Date
   if (inSummerHoliday(startDate)) {
-    date = new Date(startDate.getFullYear(), 7, 15)
+    date = new Date(startDate.getFullYear(), 7, 15, 2)
   } else if (inWinterHoliday(startDate)) {
-    date = new Date(startDate.getFullYear() + 1, 1, 15)
+    date = new Date(startDate.getFullYear() + 1, 0, 15, 2)
   } else {
     date = startDate
   }
