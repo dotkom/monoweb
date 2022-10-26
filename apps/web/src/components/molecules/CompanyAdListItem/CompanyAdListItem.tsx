@@ -21,6 +21,7 @@ interface CompanyAdListItemProps {
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
   //const { name, logo, position, location, deadline, applyLink, showApplyLink = false } = props
   const { company_name, image, career_type, location, deadline, slug } = props.career
+
   return (
     <Box css={styles.listItem}>
       <Flex>
@@ -34,7 +35,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
         </Badge>
       </Box>
       <Text>{location}</Text>
-      <Text>{deadline}</Text>
+      <Text>{DateTime.fromISO(deadline).toFormat("dd.MM.yyyy")}</Text>
     </Box>
   )
 }
