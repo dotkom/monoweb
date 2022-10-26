@@ -1,35 +1,34 @@
 export interface MarkCalculations {
-  calculateEndDate: (startDate: Date | null, amountOfMarks: number) => Date | null
-  calculateStartDate: () => Date
+  calculateEndDate: (startDate: Date, duration: number) => Date
+  getExpiryDate: (marks: { start: Date; duration: number }[]) => Date | null
 }
 
 export const initCalculations = (): MarkCalculations => {
-  const markDuration = 20
   const calculations: MarkCalculations = {
-    calculateStartDate: () => {
-      let startDate = new Date()
-      if (startDate.getMonth() == 11) {
-        startDate = new Date(startDate.getFullYear() + 1, 0, 15, 1)
-      } else if (startDate.getMonth() == 0 && startDate.getDay() < 15) {
-        startDate = new Date(startDate.getFullYear(), 0, 15, 1)
-      } else if (startDate.getMonth() > 4 && startDate.getMonth() + startDate.getDate() / 100 < 7.15) {
-        startDate = new Date(startDate.getFullYear(), 7, 15, 2)
-      }
-      return startDate
-    },
-    calculateEndDate: (startDate, amountOfMarks) => {
-      if (!startDate) {
-        return null
-      }
+    calculateEndDate: (startDate, duration) => {
       const endDate = startDate
-      for (let i = 0; i < amountOfMarks; i++) {
-        endDate.setDate(endDate.getDate() + markDuration)
-        if (endDate.getMonth() == 11 || (endDate.getMonth() == 0 && endDate.getDay() < 15)) {
-          endDate.setDate(endDate.getDate() + 45)
-        } else if (endDate.getMonth() > 4 && endDate.getMonth() + endDate.getDate() / 100 < 7.15) {
-          endDate.setDate(endDate.getDate() + 75)
-        }
+      endDate.setDate(endDate.getDate() + duration)
+      if (endDate.getMonth() == 11 || (endDate.getMonth() == 0 && endDate.getDay() < 15)) {
+        endDate.setDate(endDate.getDate() + 45)
+      } else if (endDate.getMonth() > 4 && endDate.getMonth() + endDate.getDate() / 100 < 7.15) {
+        endDate.setDate(endDate.getDate() + 75)
       }
+      return endDate
+    },
+    getExpiryDate: (marks) => {
+      const sortedMarks = marks.sort((a, b) => a.start.getTime() - b.start.getTime())
+      const currentTime = new Date()
+      let endDate: Date | null = null
+
+      sortedMarks.forEach((mark) => {
+        let markEndDate = calculations.calculateEndDate(mark.start, mark.duration)
+        if (currentTime < markEndDate) {
+          if (endDate) {
+            markEndDate = calculations.calculateEndDate(endDate, mark.duration)
+          }
+          endDate = markEndDate
+        }
+      })
       return endDate
     },
   }
