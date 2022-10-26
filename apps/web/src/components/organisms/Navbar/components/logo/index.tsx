@@ -1,6 +1,7 @@
-import OnlineIcon from "@components/atoms/OnlineIcon"
 import { css } from "@dotkomonline/ui"
 import Link from "next/link"
+
+import OnlineIcon from "@components/atoms/OnlineIcon"
 
 const NavbarLogo = () => {
   return (

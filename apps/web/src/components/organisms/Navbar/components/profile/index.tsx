@@ -1,9 +1,10 @@
-import React from "react"
-import { styled } from "@stitches/react"
+import { css } from "@dotkomonline/ui"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import { styled } from "@stitches/react"
+import React from "react"
+
 import DropdownItemsContainer from "./DropdownItemContainer"
 import ProfileTrigger from "./ProfileTrigger"
-import { css } from "@dotkomonline/ui"
 
 export const Profile = () => {
   return (

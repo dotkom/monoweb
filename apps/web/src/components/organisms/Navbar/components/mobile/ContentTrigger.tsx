@@ -1,6 +1,6 @@
+import { css } from "@dotkomonline/ui"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { FiMenu } from "react-icons/fi"
-import { css } from "@dotkomonline/ui"
 
 const ContentTrigger = () => {
   return (

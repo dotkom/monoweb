@@ -2610,7 +2610,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dotkomonline/config@*, @dotkomonline/config@workspace:*, @dotkomonline/config@workspace:packages/config":
+"@dotkomonline/config@*, @dotkomonline/config@workspace:packages/config":
   version: 0.0.0-use.local
   resolution: "@dotkomonline/config@workspace:packages/config"
   dependencies:
@@ -23178,7 +23178,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web@workspace:apps/web"
   dependencies:
-    "@dotkomonline/config": "workspace:*"
+    "@dotkomonline/config": "*"
     "@dotkomonline/ui": "workspace:^"
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-avatar": ^1.0.0
@@ -23195,6 +23195,7 @@ __metadata:
     "@storybook/addon-links": ^6.5.9
     "@storybook/preset-scss": ^1.0.3
     "@storybook/react": ^6.5.9
+    "@types/eslint": ^8
     "@types/jsdom": ^20
     "@types/luxon": ^2.4.0
     "@types/node": ^16.11.47
@@ -23204,6 +23205,7 @@ __metadata:
     "@vitest/coverage-c8": ^0.23.2
     axios: ^0.21.4
     chromatic: ^6.7.3
+    eslint: ^8.26.0
     eslint-config-next: ^13.0.0
     husky: ^4.3.8
     jsdom: ^20.0.0

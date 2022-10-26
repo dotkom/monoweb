@@ -1,5 +1,7 @@
-import React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+import { styled } from "@stitches/react"
+import React from "react"
+
 import {
   DesktopList,
   DesktopListItem,
@@ -11,9 +13,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "./components/desktop"
-import Profile from "./components/profile"
 import NavbarLogo from "./components/logo"
-import { styled } from "@stitches/react"
+import Profile from "./components/profile"
 
 export const NavigationMenuItem = NavigationMenuPrimitive.Item
 

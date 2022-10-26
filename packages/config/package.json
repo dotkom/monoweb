@@ -6,7 +6,7 @@
   "main": "index.js",
   "private": true,
   "files": [
-    "eslint-preset.cjs",
+    "eslint-preset.js",
     "prettier-preset.js"
   ],
   "dependencies": {
