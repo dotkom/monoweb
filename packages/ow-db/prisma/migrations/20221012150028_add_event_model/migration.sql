@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "EventStatus" AS ENUM ('private', 'public');
+CREATE TYPE "EventStatus" AS ENUM ('PRIVATE', 'PUBLIC');
 
 -- CreateTable
 CREATE TABLE "Committee" (

@@ -8755,6 +8755,7 @@ __metadata:
     express: ^4.18.1
     tsx: ^3.11.0
     uuid: ^8.3.2
+    vite-tsconfig-paths: ^3.5.2
     vitest: ^0.23.4
     zod: ^3.17.10
   languageName: unknown
@@ -24669,6 +24670,20 @@ __metadata:
   peerDependencies:
     vite: ">2.0.0-0"
   checksum: d6d4828fdba639445251b3baf06901f2eb46a98b2741ba5e30e3d791c8a25f8533d23df13c5422eece63cf449865750dcd57e825dbe43b5c985e5edf42b17fea
+  languageName: node
+  linkType: hard
+
+"vite-tsconfig-paths@npm:^3.5.2":
+  version: 3.5.2
+  resolution: "vite-tsconfig-paths@npm:3.5.2"
+  dependencies:
+    debug: ^4.1.1
+    globrex: ^0.1.2
+    recrawl-sync: ^2.0.3
+    tsconfig-paths: ^4.0.0
+  peerDependencies:
+    vite: ">2.0.0-0"
+  checksum: f3159d05fe2033563ccb7b15d9c1c37b1ed71016c7d0106147e898b68309978f7b2c76df841d563dfdff3be631ad22a5271bc869955b37a4ec1ed4ad6bb21655
   languageName: node
   linkType: hard
 
