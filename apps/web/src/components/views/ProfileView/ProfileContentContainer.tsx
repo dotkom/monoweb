@@ -1,45 +1,22 @@
+import { profileItems } from "@/utils/profileLinks"
 import { useRouter } from "next/router"
-import React, { FC, useEffect, useState } from "react"
-import {
-  ProfileLanding,
-  ProfileEntryCard,
-  ProfileGdpr,
-  ProfileMarks,
-  ProfileMembership,
-  ProfilePassword,
-  ProfilePayment,
-  ProfileWarnings,
-} from "./components"
+import { useEffect, useState } from "react"
 
 const ProfileContentContainer = () => {
-  const [title, setTitle] = useState("Min Profil")
+  const [name, setName] = useState("")
   const router = useRouter()
-  useEffect(() => {
-    if (typeof router.query.state === "string") {
-      setTitle(router.query.state)
-    }
-  }, [router.query.state])
 
-  switch (title) {
-    case "Min profil":
-      return <ProfileLanding />
-    case "Personvern":
-      return <ProfileGdpr />
-    case "Prikker & Suspensjoner":
-      return <ProfileMarks />
-    case "Passord":
-      return <ProfilePassword />
-    case "Medlemskap":
-      return <ProfileMembership />
-    case "Betalinger":
-      return <ProfilePayment />
-    case "Varsler":
-      return <ProfileWarnings />
-    case "Adgangskort (NTNU)":
-      return <ProfileEntryCard />
-    default:
-      return <ProfileLanding />
-  }
+  useEffect(() => {
+    if (typeof router.query.slug === "string") {
+      setName(router.query.slug)
+    }
+  }, [router.query.slug])
+
+  const page = profileItems.find((page) => page.slug === name)
+
+  if (!page) return <>No page found</>
+
+  return <>{page?.component}</>
 }
 
 export default ProfileContentContainer

@@ -46,7 +46,7 @@ export const appRouter = t.router({
     )
     .mutation((req) => {
       logger.info(JSON.stringify(req))
-      return { msg: "hello world" }
+      return { msg: `${req.input.username}:${req.input.password} ` }
     }),
 })
 

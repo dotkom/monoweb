@@ -1,23 +1,28 @@
-import { styled, theme, css } from "@dotkom/ui"
+import { css, theme } from "@dotkomonline/ui"
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 
 interface ProfileMenuItemProps {
-  title: string
+  menuItem: {
+    title: string
+    slug: string
+  }
 }
 
-const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ title }) => {
+const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
   const router = useRouter()
-  const [isCurrent, setCurrent] = useState(router.query.state == title ? styles.textBlack() : styles.textGray())
+
+  const { title, slug } = menuItem
+
+  const [isCurrent, setCurrent] = useState(router.query.slug == slug ? styles.textBlack() : styles.textGray())
 
   const handleChange = () => {
-    router.query.state = title
-    router.push(router)
+    router.push(`/profile/${slug}`)
   }
-  console.log(router.query.state)
+
   useEffect(() => {
-    setCurrent(router.query.state == title ? styles.textBlack() : styles.textGray())
-  }, [router.query.state])
+    setCurrent(router.query.slug == slug ? styles.textBlack() : styles.textGray())
+  }, [router.query.slug, slug])
 
   return (
     <div className={styles.heading()} onClick={handleChange}>
