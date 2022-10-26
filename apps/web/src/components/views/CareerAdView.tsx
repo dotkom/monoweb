@@ -10,6 +10,7 @@ import { ImFacebook2 } from "react-icons/im"
 import { FaArrowLeft } from "react-icons/fa"
 import { CareerAd, fetchCareerAd } from "@/api/get-career-ads"
 import { FC } from "react"
+import { MdWorkOutline } from "react-icons/md"
 
 interface CareerAdViewProps {
   career: CareerAd
@@ -87,6 +88,15 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <Box css={styles.info}>
           <Box css={styles.icon}>
             <IoTimeOutline />
+          </Box>
+          <Text css={{ margin: "0", pl: "$2" }}>{DateTime.fromISO(deadline).toFormat("dd.MM.yyyy")}</Text>
+        </Box>
+
+        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+
+        <Box css={styles.info}>
+          <Box css={styles.icon}>
+            <MdWorkOutline />
           </Box>
           <Text css={{ margin: "0", pl: "$2" }}>{career_type}</Text>
         </Box>
