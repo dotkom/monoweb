@@ -39,7 +39,7 @@
     "swr": "^1.3.0"
   },
   "devDependencies": {
-    "@dotkomonline/eslint-config-ow": "workspace:*",
+    "@dotkomonline/config": "workspace:*",
     "@storybook/addon-actions": "^6.5.9",
     "@storybook/addon-essentials": "^6.5.9",
     "@storybook/addon-knobs": "^6.4.0",
