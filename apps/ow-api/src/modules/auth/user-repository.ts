@@ -1,4 +1,5 @@
 import { PrismaClient } from "@dotkomonline/db"
+
 import { InsertUser, mapToUser, User } from "./user"
 
 export interface UserRepository {
