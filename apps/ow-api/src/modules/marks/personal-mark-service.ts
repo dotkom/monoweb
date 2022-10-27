@@ -40,48 +40,47 @@ export const initPersonalMarkService = (
     },
     getExpiryDateForUser: async (userId: string) => {
       const marks = await service.getAllMarksForUser(userId)
-      return getExpiryDate(marks)
+      return service.calculateExpiryDate(marks)
     },
     isUserMarked: async (userId: string) => {
       const marks = await service.getExpiryDateForUser(userId)
       return marks != null
     },
+    adjustDateCalculationForHolidays: (date: Date) => {
+      let additionalDays = 0
+      if (date.getMonth() > 4 && date.getMonth() + date.getDate() / 100 < 7.15) {
+        date = new Date(date.getFullYear(), 7, 15)
+        additionalDays = 75
+      } else if (date.getMonth() == 11) {
+        date = new Date(date.getFullYear() + 1, 0, 15)
+        additionalDays = 45
+      } else if (date.getMonth() == 0 && date.getDate() < 15) {
+        date = new Date(date.getFullYear(), 0, 15)
+        additionalDays = 45
+      }
+      return { date: date, additionalDays: additionalDays }
+    },
+    calculateExpiryDate: (marks: Mark[]) => {
+      const currentTime = new Date()
+      let endDate: Date | null = null
+      const orderedMarks = marks.sort((a, b) => a.given_at.getTime() - b.given_at.getTime())
+      orderedMarks.forEach((mark) => {
+        const date =
+          endDate && mark.given_at.getTime() < endDate.getTime()
+            ? new Date(service.adjustDateCalculationForHolidays(endDate).date.getTime())
+            : new Date(service.adjustDateCalculationForHolidays(mark.given_at).date.getTime())
+        date.setDate(date.getDate() + mark.duration)
+
+        const adjustedEnd = service.adjustDateCalculationForHolidays(date)
+        const adjustedEndDate = new Date(adjustedEnd.date.getTime() + adjustedEnd.additionalDays * 24 * 60 * 60 * 1000)
+
+        endDate = adjustedEndDate
+      })
+      if (endDate != null && endDate > currentTime) {
+        return endDate
+      }
+      return null
+    },
   }
   return service
-}
-
-const adjustDateForHolidays = (date: Date) => {
-  let additionalDays = 0
-  if (date.getMonth() > 4 && date.getMonth() + date.getDate() / 100 < 7.15) {
-    date = new Date(date.getFullYear(), 7, 15)
-    additionalDays = 75
-  } else if (date.getMonth() == 11) {
-    date = new Date(date.getFullYear() + 1, 0, 15)
-    additionalDays = 45
-  } else if (date.getMonth() == 0 && date.getDate() < 15) {
-    date = new Date(date.getFullYear(), 0, 15)
-    additionalDays = 45
-  }
-  return { date: date, additionalDays: additionalDays }
-}
-const getExpiryDate = (marks: Mark[]) => {
-  const currentTime = new Date()
-  let endDate: Date | null = null
-  const orderedMarks = marks.sort((a, b) => a.given_at.getTime() - b.given_at.getTime())
-  orderedMarks.forEach((mark) => {
-    const date =
-      endDate && mark.given_at.getTime() < endDate.getTime()
-        ? new Date(adjustDateForHolidays(endDate).date.getTime())
-        : new Date(adjustDateForHolidays(mark.given_at).date.getTime())
-    date.setDate(date.getDate() + mark.duration)
-
-    const adjustedEnd = adjustDateForHolidays(date)
-    const adjustedEndDate = new Date(adjustedEnd.date.getTime() + adjustedEnd.additionalDays * 24 * 60 * 60 * 1000)
-
-    endDate = adjustedEndDate
-  })
-  if (endDate != null && endDate > currentTime) {
-    return endDate
-  }
-  return null
 }
