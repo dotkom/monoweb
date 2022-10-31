@@ -82,6 +82,7 @@ module.exports = {
   theme: {
     fontFamily: {
       poppins: ['"Poppins"'],
+      sans: ['"Inter var"', "sans-serif"],
     },
     colors: {
       slate,
@@ -89,6 +90,13 @@ module.exports = {
       amber,
       red,
       green,
+    },
+    extend: {
+      fontFamily: {
+        poppins: ['"Poppins"', "sans-serif"],
+        mono: ["Roboto Mono", "monospace"],
+        sans: ['"Inter var"', "sans-serif"],
+      },
     },
   },
 }
