@@ -1,6 +1,7 @@
 import { FC } from "react"
-import { css } from "../../config/stitches.config"
 import { IoAlertCircle, IoCheckmarkCircle, IoInformationCircle, IoWarning } from "react-icons/io5"
+
+import { css } from "../../config/stitches.config"
 
 interface AlertIconProps {
   status: "info" | "warning" | "success" | "danger"

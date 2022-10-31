@@ -1,10 +1,9 @@
-import { AppProps } from "next/app"
-import { globalStyles } from "src/theme/global-style"
-
-import { SessionProvider } from "next-auth/react"
 import MainLayout from "@/components/layout/MainLayout"
 import { NextPage } from "next"
+import { SessionProvider } from "next-auth/react"
+import { AppProps } from "next/app"
 import { ReactElement, ReactNode } from "react"
+import { globalStyles } from "src/theme/global-style"
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode

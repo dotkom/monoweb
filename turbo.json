@@ -27,5 +27,6 @@
       "outputs": [],
       "cache": false
     }
-  }
+  },
+  "globalDependencies": ["$NODE_ENV", "$API_PORT"]
 }

@@ -1,10 +1,11 @@
 import { Card, Text } from "@dotkomonline/ui"
-import { FC } from "react"
-import Image from "next/image"
 import { CSS, css, styled } from "@dotkomonline/ui"
-import { Box, Flex } from "@components/primitives"
 import { DateTime } from "luxon"
+import Image from "next/image"
+import { FC } from "react"
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi"
+
+import { Box, Flex } from "@components/primitives"
 
 interface EventCardProps {
   title: string

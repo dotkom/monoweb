@@ -1,9 +1,10 @@
-import { InsertCompany } from "../company"
-import { initCompanyService } from "../company-service"
-import { v4 as uuidv4 } from "uuid"
-import { initCompanyRepository } from "../company-repository"
-import { NotFoundError } from "../../../errors/errors"
 import { PrismaClient } from "@dotkomonline/db"
+import { v4 as uuidv4 } from "uuid"
+
+import { NotFoundError } from "../../../errors/errors"
+import { InsertCompany } from "../company"
+import { initCompanyRepository } from "../company-repository"
+import { initCompanyService } from "../company-service"
 
 describe("CompanyService", () => {
   const prisma = vi.mocked(PrismaClient.prototype, true)

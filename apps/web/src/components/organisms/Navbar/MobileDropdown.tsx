@@ -1,9 +1,10 @@
-import React from "react"
+import { css } from "@dotkomonline/ui"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import React from "react"
+
 import NavbarLogo from "./components/logo"
 import Content from "./components/mobile/Content"
 import ContentTrigger from "./components/mobile/ContentTrigger"
-import { css } from "@dotkomonline/ui"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 

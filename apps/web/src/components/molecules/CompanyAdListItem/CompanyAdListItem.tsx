@@ -1,9 +1,10 @@
-import { Box } from "@components/primitives"
 import { CSS } from "@dotkomonline/ui"
-import { DateTime } from "luxon"
-import { FC } from "react"
-import Image from "next/image"
 import { Badge, Text } from "@dotkomonline/ui"
+import { DateTime } from "luxon"
+import Image from "next/image"
+import { FC } from "react"
+
+import { Box } from "@components/primitives"
 
 interface CompanyAdListItemProps {
   name: string

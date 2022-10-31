@@ -6,11 +6,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development run -T nodemon --watch './src/**.{ts}' --watch './config/**.{ts,json}' --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
+    "dev": "NODE_ENV=development tsx watch ./src/index.ts",
     "watch": "tsc-watch --project tsconfig.json --onSuccess \"yarn dev\"",
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
-    "lint": "run -T eslint --max-warnings 0 .",
-    "lint:fix": "run -T eslint --fix .",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage"
@@ -26,13 +26,16 @@
     "zod": "^3.17.10"
   },
   "devDependencies": {
-    "@dotkomonline/eslint-config-ow": "workspace:*",
+    "@dotkomonline/config": "*",
     "@types/config": "^3.3.0",
     "@types/cors": "^2.8.12",
+    "@types/eslint": "^8",
     "@types/express": "^4.17.14",
     "@types/uuid": "^8.3.4",
     "@vitest/ui": "^0.23.4",
+    "eslint": "^8.26.0",
     "express": "^4.18.1",
+    "tsx": "^3.11.0",
     "vitest": "^0.23.4"
   }
 }

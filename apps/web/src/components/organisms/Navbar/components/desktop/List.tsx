@@ -1,5 +1,5 @@
-import { styled } from "@stitches/react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+import { styled } from "@stitches/react"
 
 const List = styled(NavigationMenuPrimitive.List, {
   all: "unset",

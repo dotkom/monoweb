@@ -1,5 +1,6 @@
-import { utils } from "./utils"
 import * as Stitches from "@stitches/react"
+
+import { utils } from "./utils"
 
 export const { styled, getCssText, css, globalCss, keyframes, prefix, reset, theme, config, createTheme } =
   Stitches.createStitches({
