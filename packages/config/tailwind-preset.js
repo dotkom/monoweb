@@ -1,7 +1,6 @@
 const brand = {}
 
 const slate = {
-  DEFAULT: "#202425",
   1: "#151718",
   2: "#1a1d1e",
   3: "#202425",
@@ -17,7 +16,6 @@ const slate = {
 }
 
 const blue = {
-  DEFAULT: "#10243e",
   1: "#0f1720",
   2: "#0f1b2d",
   3: "#10243e",
@@ -33,7 +31,6 @@ const blue = {
 }
 
 const amber = {
-  DEFAULT: "#341c00",
   1: "#1f1300",
   2: "#271700",
   3: "#341c00",
@@ -49,7 +46,6 @@ const amber = {
 }
 
 const green = {
-  DEFAULT: "#0f291e",
   1: "#0d1912",
   2: "#0c1f17",
   3: "#0f291e",
@@ -65,7 +61,6 @@ const green = {
 }
 
 const red = {
-  DEFAULT: "#3b1813",
   1: "#1d1412",
   2: "#2a1410",
   3: "#3b1813",
@@ -102,6 +97,23 @@ module.exports = {
         poppins: ['"Poppins"', "sans-serif"],
         mono: ["Roboto Mono", "monospace"],
         sans: ['"Inter var"', "sans-serif"],
+      },
+      colors: {
+        slate: {
+          DEFAULT: slate[3],
+        },
+        blue: {
+          DEFAULT: blue[3],
+        },
+        amber: {
+          DEFAULT: amber[3],
+        },
+        red: {
+          DEFAULT: red[3],
+        },
+        green: {
+          DEFAULT: green[3],
+        },
       },
     },
   },
