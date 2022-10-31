@@ -90,6 +90,7 @@ module.exports = {
       amber,
       red,
       green,
+      brand,
     },
     extend: {
       fontFamily: {
