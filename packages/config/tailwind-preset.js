@@ -77,6 +77,7 @@ const red = {
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // Relative to the project when the preset is loaded from a tailwind.config.js
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     fontFamily: {
