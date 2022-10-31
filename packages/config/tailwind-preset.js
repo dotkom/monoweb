@@ -13,6 +13,7 @@ const slate = {
   10: "#787f85",
   11: "#9ba1a6",
   12: "#ecedee",
+  DEFAULT: slate[3],
 }
 
 const blue = {
@@ -28,6 +29,7 @@ const blue = {
   10: "#369eff",
   11: "#52a9ff",
   12: "#eaf6ff",
+  DEFAULT: blue[3],
 }
 
 const amber = {
@@ -43,6 +45,7 @@ const amber = {
   10: "#ffcb47",
   11: "#f1a10d",
   12: "#fef3dd",
+  DEFAULT: amber[3],
 }
 
 const green = {
@@ -58,6 +61,7 @@ const green = {
   10: "#3cb179",
   11: "#4cc38a",
   12: "#e5fbeb",
+  DEFAULT: green[3],
 }
 
 const red = {
@@ -73,6 +77,7 @@ const red = {
   10: "#ec5e41",
   11: "#f16a50",
   12: "#feefec",
+  DEFAULT: red[3],
 }
 
 /** @type {import('tailwindcss').Config} */
