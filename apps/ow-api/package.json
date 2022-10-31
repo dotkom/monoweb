@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development run -T nodemon --watch './src/**.{ts}' --watch './config/**.{ts,json}' --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts'",
+    "dev": "NODE_ENV=development tsx watch ./src/index.ts",
     "watch": "tsc-watch --project tsconfig.json --onSuccess \"yarn dev\"",
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
     "lint": "eslint --max-warnings 0 .",
@@ -35,6 +35,7 @@
     "@vitest/ui": "^0.23.4",
     "eslint": "^8.26.0",
     "express": "^4.18.1",
+    "tsx": "^3.11.0",
     "vitest": "^0.23.4"
   }
 }
