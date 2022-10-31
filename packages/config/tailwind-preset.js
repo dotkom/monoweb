@@ -1,6 +1,7 @@
 const brand = {}
 
 const slate = {
+  DEFAULT: "#202425",
   1: "#151718",
   2: "#1a1d1e",
   3: "#202425",
@@ -13,10 +14,10 @@ const slate = {
   10: "#787f85",
   11: "#9ba1a6",
   12: "#ecedee",
-  DEFAULT: slate[3],
 }
 
 const blue = {
+  DEFAULT: "#10243e",
   1: "#0f1720",
   2: "#0f1b2d",
   3: "#10243e",
@@ -29,10 +30,10 @@ const blue = {
   10: "#369eff",
   11: "#52a9ff",
   12: "#eaf6ff",
-  DEFAULT: blue[3],
 }
 
 const amber = {
+  DEFAULT: "#341c00",
   1: "#1f1300",
   2: "#271700",
   3: "#341c00",
@@ -45,10 +46,10 @@ const amber = {
   10: "#ffcb47",
   11: "#f1a10d",
   12: "#fef3dd",
-  DEFAULT: amber[3],
 }
 
 const green = {
+  DEFAULT: "#0f291e",
   1: "#0d1912",
   2: "#0c1f17",
   3: "#0f291e",
@@ -61,10 +62,10 @@ const green = {
   10: "#3cb179",
   11: "#4cc38a",
   12: "#e5fbeb",
-  DEFAULT: green[3],
 }
 
 const red = {
+  DEFAULT: "#3b1813",
   1: "#1d1412",
   2: "#2a1410",
   3: "#3b1813",
@@ -77,7 +78,6 @@ const red = {
   10: "#ec5e41",
   11: "#f16a50",
   12: "#feefec",
-  DEFAULT: red[3],
 }
 
 /** @type {import('tailwindcss').Config} */
