@@ -7,5 +7,5 @@ module.exports = {
   arrowParens: "always",
   importOrder: ["^@(dotkom)/(.*)$", "^@lib/(.*)$", "^@components/(.*)$", "^@(server|trpc)/(.*)$", "^~/(.*)$", "^[./]"],
   importOrderSeparation: true,
-  plugins: [require("./merged-prettier-plugin")],
+  plugins: [require("./merged-prettier-plugin"), require("./tailwind-preset")],
 }
