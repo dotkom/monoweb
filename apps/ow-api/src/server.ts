@@ -2,8 +2,8 @@ import express from "express"
 
 import { createExpressMiddleware } from "@trpc/server/adapters/express"
 
-import { createContext } from "./index.js"
-import { appRouter } from "./trpc.js"
+import { createContext } from "./"
+import { appRouter } from "./trpc"
 
 export const createServer = () => {
   const app = express()

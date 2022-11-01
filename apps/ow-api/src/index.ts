@@ -4,9 +4,9 @@ import { getLogger } from "@dotkomonline/logger"
 import { inferAsyncReturnType } from "@trpc/server"
 import { CreateExpressContextOptions } from "@trpc/server/dist/adapters/express"
 
-import { initUserRepository } from "./modules/auth/user-repository.js"
-import { initUserService } from "./modules/auth/user-service.js"
-import { createServer } from "./server.js"
+import { initUserRepository } from "./modules/auth/user-repository"
+import { initUserService } from "./modules/auth/user-service"
+import { createServer } from "./server"
 
 const logger = getLogger(import.meta.url)
 const client = new PrismaClient()
