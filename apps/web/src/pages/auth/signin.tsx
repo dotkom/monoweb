@@ -8,8 +8,7 @@ import type { NextPageWithLayout } from "../_app"
 
 const SignInPage: NextPageWithLayout = () => {
   const router = useRouter()
-  const loginChallenge = router.query["login_challenge"]
-  console.log(loginChallenge)
+  const challenge = router.query["login_challenge"]
   const { register, handleSubmit } = useForm()
 
   const signIn = trpc.signin.useMutation()
@@ -21,9 +20,9 @@ const SignInPage: NextPageWithLayout = () => {
         onSubmit={handleSubmit(async (data) => {
           signIn.mutate(
             {
-              username: data.username,
+              email: data.email,
               password: data.password,
-              loginChallenge: loginChallenge as string,
+              challenge: challenge as string,
             },
             { onSuccess: (data) => console.log(data) }
           )
