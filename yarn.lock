@@ -18530,7 +18530,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.4.17":
+"postcss@npm:^8.1.10, postcss@npm:^8.4.17, postcss@npm:^8.4.18":
   version: 8.4.18
   resolution: "postcss@npm:8.4.18"
   dependencies:
@@ -23554,6 +23554,7 @@ __metadata:
     next-auth: ^4.10.3
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
+    postcss: ^8.4.18
     prettier: ^2.7.1
     react: ^18.2.0
     react-dom: ^18.2.0

@@ -91,6 +91,7 @@ module.exports = {
       red,
       green,
       brand,
+      background: "#000212",
     },
     extend: {
       fontFamily: {
