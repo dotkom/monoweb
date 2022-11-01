@@ -2,7 +2,7 @@
 name: "Publish Storybook"
 
 # Event for the workflow
-on: 
+on:
   push:
     branches:
       - main
@@ -10,15 +10,13 @@ on:
     branches:
       - main
 
-
-
 # List of jobs
 jobs:
   chromatic-deployment:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./apps/docs
+        working-directory: ./apps/storybook
     strategy:
       matrix:
         os: [ubuntu-latest]

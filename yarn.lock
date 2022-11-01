@@ -17859,6 +17859,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"monoweb-storybook@workspace:apps/storybook":
+  version: 0.0.0-use.local
+  resolution: "monoweb-storybook@workspace:apps/storybook"
+  dependencies:
+    "@babel/core": ^7.19.6
+    "@dotkomonline/config": "workspace:*"
+    "@dotkomonline/ui": "workspace:^"
+    "@mdx-js/react": ^1.6.22
+    "@storybook/addon-actions": ^6.5.13
+    "@storybook/addon-docs": ^6.5.13
+    "@storybook/addon-essentials": ^6.5.13
+    "@storybook/addon-interactions": ^6.5.13
+    "@storybook/addon-links": ^6.5.13
+    "@storybook/addon-postcss": ^2.0.0
+    "@storybook/builder-vite": ^0.2.5
+    "@storybook/react": ^6.5.13
+    "@storybook/testing-library": ^0.0.13
+    "@types/babel__core": ^7
+    "@types/react": ^18.0.15
+    autoprefixer: ^10.4.13
+    babel-loader: ^8.2.5
+    postcss: ^8.4.18
+    react: ^18.2.0
+    sb: ^6.5.9
+    storybook: ^6.5.13
+    storybook-dark-mode: ^1.1.2
+    tailwindcss: ^3.2.1
+    typescript: ^4.7.4
+    vite: ^3.0.4
+  languageName: unknown
+  linkType: soft
+
 "move-concurrently@npm:^1.0.1":
   version: 1.0.1
   resolution: "move-concurrently@npm:1.0.1"
@@ -22575,37 +22607,6 @@ __metadata:
   checksum: 911739254084fb85c6726733b39fe744c82b51cfed987c65785c43cc8bea2a2634fdcb5d376cd3d3552232c17e8e6ee3bb24b5a89a84868f76ad484ba574bf79
   languageName: node
   linkType: hard
-
-"storybook@workspace:apps/storybook":
-  version: 0.0.0-use.local
-  resolution: "storybook@workspace:apps/storybook"
-  dependencies:
-    "@babel/core": ^7.19.6
-    "@dotkomonline/ui": "workspace:^"
-    "@mdx-js/react": ^1.6.22
-    "@storybook/addon-actions": ^6.5.13
-    "@storybook/addon-docs": ^6.5.13
-    "@storybook/addon-essentials": ^6.5.13
-    "@storybook/addon-interactions": ^6.5.13
-    "@storybook/addon-links": ^6.5.13
-    "@storybook/addon-postcss": ^2.0.0
-    "@storybook/builder-vite": ^0.2.5
-    "@storybook/react": ^6.5.13
-    "@storybook/testing-library": ^0.0.13
-    "@types/babel__core": ^7
-    "@types/react": ^18.0.15
-    autoprefixer: ^10.4.13
-    babel-loader: ^8.2.5
-    postcss: ^8.4.18
-    react: ^18.2.0
-    sb: ^6.5.9
-    storybook: ^6.5.13
-    storybook-dark-mode: ^1.1.2
-    tailwindcss: ^3.2.1
-    typescript: ^4.7.4
-    vite: ^3.0.4
-  languageName: unknown
-  linkType: soft
 
 "stream-browserify@npm:^2.0.1":
   version: 2.0.2
