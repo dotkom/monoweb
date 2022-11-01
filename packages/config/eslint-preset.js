@@ -26,7 +26,6 @@ module.exports = {
         caughtErrorsIgnorePattern: "^_",
       },
     ],
-    "@typescript-eslint/consistent-type-imports": "warn",
   },
   ignorePatterns: ["**/*.stories.tsx", "**/dist", "node_modules", "apps/docs"],
 }
