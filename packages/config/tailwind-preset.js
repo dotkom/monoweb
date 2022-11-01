@@ -92,6 +92,7 @@ module.exports = {
       green,
       brand,
       background: "#000212",
+      accent: "#FFEDB3",
     },
     extend: {
       fontFamily: {

@@ -4,7 +4,7 @@ import { Button, css, Text, TextInput } from "@dotkomonline/ui"
 import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
 
-import { NextPageWithLayout } from "../_app"
+import type { NextPageWithLayout } from "../_app"
 
 const SignInPage: NextPageWithLayout = () => {
   const router = useRouter()
@@ -15,9 +15,9 @@ const SignInPage: NextPageWithLayout = () => {
   const signIn = trpc.signin.useMutation()
 
   return (
-    <div className={styles.container()}>
+    <div className="bg-slate-1 mx-auto my-0 w-full max-w-[400px] rounded-md pt-16">
       <form
-        className={styles.form()}
+        className="my-0 mx-auto grid gap-2 px-14 py-16"
         onSubmit={handleSubmit(async (data) => {
           signIn.mutate(
             {
@@ -29,11 +29,11 @@ const SignInPage: NextPageWithLayout = () => {
           )
         })}
       >
-        <div className={styles.iconContainer()}>
+        <div className="my-0 mx-auto w-[120px]">
           <OnlineIcon />
         </div>
-        <h1 className={styles.heading()}>Sign in</h1>
-        <Text css={{ textAlign: "center" }}>Continue to Onlineweb</Text>
+        <h1 className="text-accent mx-auto text-2xl font-semibold">Sign in</h1>
+        <p className="text-slate-12 text-center">Continue to Onlineweb</p>
         <TextInput id="username" label="Username" {...register("username")} />
         <TextInput id="password" label="Password" {...register("password")} />
         <span className={styles.forgotPassword()}>
@@ -42,30 +42,20 @@ const SignInPage: NextPageWithLayout = () => {
         <Button className={styles.button()} color="blue" type="submit">
           Sign in
         </Button>
-        <Text size="sm" css={{ textAlign: "center" }}>
+        <p className="text-slate-12 text-center">
           Don&apos;t have an account? <a className={styles.link()}>Sign up</a>
-        </Text>
+        </p>
       </form>
     </div>
   )
 }
 
 SignInPage.getLayout = (page) => {
-  return <div className={styles.layout()}>{page}</div>
+  return <div className="bg-background h-full w-full pt-16">{page}</div>
 }
 
 const styles = {
-  layout: css({
-    width: "100%",
-    height: "100%",
-    background: "white",
-    "@sm": {
-      background: "linear-gradient(315deg, hsla(215, 90%, 96%, 1) 0%, hsla(46, 100%, 95%, 1) 100%)",
-    },
-    paddingTop: "$1",
-  }),
   container: css({
-    margin: "$6 auto 0 auto",
     display: "flex",
     backgroundColor: "$white",
     maxWidth: "400px",
