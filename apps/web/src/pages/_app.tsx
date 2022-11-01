@@ -5,7 +5,7 @@ import { AppProps } from "next/app"
 import { ReactElement, ReactNode } from "react"
 import { globalStyles } from "src/theme/global-style"
 
-import "./globals.css"
+import "../styles/globals.css"
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
