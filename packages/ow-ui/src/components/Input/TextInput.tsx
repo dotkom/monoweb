@@ -2,8 +2,6 @@ import { Label } from "@radix-ui/react-label"
 import { cva } from "cva"
 import { forwardRef } from "react"
 
-import { css } from "../../config/stitches.config"
-
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string
   label?: string
