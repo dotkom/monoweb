@@ -1,82 +1,38 @@
 import { Label } from "@radix-ui/react-label"
+import { cva } from "cva"
 import { forwardRef } from "react"
 
 import { css } from "../../config/stitches.config"
 
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
-  variant?: "brand"
   placeholder?: string
   label?: string
   withAsterisk?: boolean
   error?: boolean | string
 }
 
-export const TextInput = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, withAsterisk, error, variant, ...props }, ref) => {
-    return (
-      <div className={styles.container()}>
-        {label && (
-          <Label htmlFor={props.id} className={styles.label()}>
-            {label} {withAsterisk && <span className={styles.asterisk()}>*</span>}
-          </Label>
-        )}
-        <input
-          type="text"
-          {...props}
-          ref={ref}
-          className={styles.input({ variant: variant, error: !!error, disabled: props.disabled })}
-        />
-        {typeof error === "string" && <span className={styles.error()}>{error}</span>}
-      </div>
-    )
-  }
-)
+export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, withAsterisk, error, ...props }, ref) => {
+  return (
+    <div className="flex flex-col">
+      {label && (
+        <Label htmlFor={props.id} className="mb-2">
+          {label} {withAsterisk && <span className="text-red-11">*</span>}
+        </Label>
+      )}
+      <input type="text" {...props} ref={ref} className={input({ error: !!error, disabled: props.disabled })} />
+      {typeof error === "string" && <span className="text-red-11 mt-1 text-xs">{error}</span>}
+    </div>
+  )
+})
 
-const styles = {
-  container: css({
-    display: "flex",
-    flexDirection: "column",
-  }),
-  label: css({
-    margin: "$1 0",
-    fontSize: "$md",
-  }),
-  asterisk: css({
-    color: "$red0",
-  }),
-  input: css({
-    padding: "$2 $2",
-    border: "1px solid $gray10",
-    borderRadius: "$1",
-    transition: "border-color 0.3s ease-out",
-    outline: "none",
-    "&:focus": {
-      borderColor: "$info3",
+const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-4 rounded-md p-2", {
+  variants: {
+    error: {
+      true: "text-red-11 border-red-7",
+      false: "text-slate-12 border-slate-6",
     },
-    variants: {
-      variant: {
-        brand: {
-          borderColor: "$blue3",
-          borderWidth: "2px",
-        },
-      },
-      error: {
-        true: {
-          color: "$red3",
-          borderColor: "$red3",
-        },
-      },
-      disabled: {
-        true: {
-          backgroundColor: "$gray12",
-          cursor: "not-allowed",
-          color: "$gray7",
-        },
-      },
+    disabled: {
+      true: "cursor-not-allowed text-slate-10",
     },
-  }),
-  error: css({
-    fontSize: "$xs",
-    color: "$red3",
-  }),
-}
+  },
+})
