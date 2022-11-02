@@ -2773,7 +2773,6 @@ __metadata:
   dependencies:
     "@babel/core": ^7.19.6
     "@dotkomonline/config": "workspace:*"
-    "@dotkomonline/ui": "workspace:^"
     "@mdx-js/react": ^1.6.22
     "@storybook/addon-actions": ^6.5.13
     "@storybook/addon-docs": ^6.5.13
