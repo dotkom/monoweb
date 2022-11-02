@@ -9,9 +9,9 @@ export const SoMeSection = () => {
   ]
 
   return (
-    <ul className="mb-4 flex justify-center gap-8">
+    <ul className="mx-8 mb-4 flex sm:justify-center sm:gap-8">
       {icons.map((icon) => (
-        <li key={icon.key} className="w-12 cursor-pointer md:w-16">
+        <li key={icon.key} className="mx-4 w-16 cursor-pointer">
           {icon}
         </li>
       ))}
