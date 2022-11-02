@@ -1,13 +1,9 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { RouterProvider } from "react-router-dom"
+import { FC } from "react";
+import { router } from "./routes/router";
 
-function App() {
+export const App: FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<p>Hello World</p>} />
-      </Routes>
-    </BrowserRouter>
+    <RouterProvider router={router} />
   )
 }
-
-export default App
