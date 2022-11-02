@@ -1,5 +1,6 @@
-import { useState } from "react"
 import { ComponentStory } from "@storybook/react"
+import { useState } from "react"
+
 import { Checkbox } from "./Checkbox"
 
 export default {
@@ -8,7 +9,7 @@ export default {
 }
 
 const Template: ComponentStory<typeof Checkbox> = (args) => {
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(true)
   return (
     <div style={{ padding: "40px" }}>
       <Checkbox {...args} checked={checked} onCheckedChange={(checked) => setChecked(!!checked)} />

@@ -118,6 +118,11 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    require("tailwindcss-radix")({
+      variantPrefix: "rdx",
+    }),
+  ],
 }
 
 // #FFCB47 #fab759
