@@ -1,6 +1,6 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { trpc } from "@/utils/trpc"
-import { Button, css, Text, TextInput } from "@dotkomonline/ui"
+import { Button, TextInput } from "@dotkomonline/ui"
 import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
 
@@ -28,21 +28,21 @@ const SignInPage: NextPageWithLayout = () => {
           )
         })}
       >
-        <div className="my-0 mx-auto w-[120px]">
-          <OnlineIcon />
+        <div className="mx-auto mb-6 w-[120px]">
+          <OnlineIcon className="fill-slate-12" />
         </div>
         <h1 className="text-accent mx-auto text-2xl font-semibold">Sign in</h1>
         <p className="text-slate-12 text-center">Continue to Onlineweb</p>
         <TextInput id="username" label="Username" {...register("username")} />
         <TextInput id="password" label="Password" {...register("password")} />
-        <span className={styles.forgotPassword()}>
-          Forgot your <a className={styles.link()}>password?</a>
+        <span className="text-sm">
+          Forgot your <a className="text-blue-11">password?</a>
         </span>
-        <Button className={styles.button()} color="blue" type="submit">
+        <Button className="my-4 w-full bg-gradient-to-r from-[#0D5474] to-[#153E75] py-3" color="blue" type="submit">
           Sign in
         </Button>
         <p className="text-slate-12 text-center">
-          Don&apos;t have an account? <a className={styles.link()}>Sign up</a>
+          Don&apos;t have an account? <a className="text-blue-11">Sign up</a>
         </p>
       </form>
     </div>
@@ -51,48 +51,6 @@ const SignInPage: NextPageWithLayout = () => {
 
 SignInPage.getLayout = (page) => {
   return <div className="bg-background h-full w-full pt-16">{page}</div>
-}
-
-const styles = {
-  container: css({
-    display: "flex",
-    backgroundColor: "$white",
-    maxWidth: "400px",
-    width: "100%",
-    "@sm": {
-      boxShadow: "$md",
-    },
-    borderRadius: "$2",
-  }),
-  iconContainer: css({
-    width: "120px",
-    margin: "0 auto",
-  }),
-  heading: css({
-    margin: "$3 auto 0 auto",
-    fontWeight: "600",
-    color: "$blue1",
-    fontSize: "$3xl",
-  }),
-  form: css({
-    display: "grid",
-    gap: "$2",
-    padding: "$5 $4",
-    width: "100%",
-    maxWidth: "380px",
-    margin: "0 auto",
-  }),
-  forgotPassword: css({
-    fontSize: "$sm",
-  }),
-  button: css({
-    width: "100%",
-    marginTop: "$3",
-    padding: "12px 0",
-  }),
-  link: css({
-    color: "$info4",
-  }),
 }
 
 export default SignInPage
