@@ -33,7 +33,7 @@ const SignInPage: NextPageWithLayout = () => {
         </div>
         <h1 className="text-accent mx-auto text-2xl font-semibold">Sign in</h1>
         <p className="text-slate-12 text-center">Continue to Onlineweb</p>
-        <TextInput id="username" label="Username" {...register("username")} />
+        <TextInput id="email" label="Email" {...register("email")} />
         <TextInput id="password" label="Password" {...register("password")} />
         <span className="text-sm">
           Forgot your <a className="text-blue-11">password?</a>
@@ -50,7 +50,7 @@ const SignInPage: NextPageWithLayout = () => {
 }
 
 SignInPage.getLayout = (page) => {
-  return <div className="bg-background h-full w-full pt-16">{page}</div>
+  return <div className="bg-slate-1 sm:bg-background h-full w-full pt-16">{page}</div>
 }
 
 export default SignInPage

@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           image: profile.picture,
         }
       },
-      clientId: "ow-client",
+      clientId: process.env.NEXTAUTH_CLIENT_ID,
     },
   ],
 }

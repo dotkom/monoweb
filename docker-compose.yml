@@ -13,6 +13,7 @@ services:
     ports:
       - 6543:5432
   hydra:
+    container_name: hydra
     image: oryd/hydra:v2.0.1
     ports:
       - "4444:4444" # Public port
