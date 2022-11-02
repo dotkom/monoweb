@@ -9,7 +9,7 @@ const links = {
 
 const Footer = () => (
   <footer className="flex w-full flex-col">
-    <div className="bg-blue w-full pt-6 pb-10">
+    <div className="bg-blue w-full py-16">
       <SoMeSection />
       <LinksSection links={links} />
       <ContactSection />

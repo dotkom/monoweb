@@ -1,4 +1,4 @@
-export const SlackIcon = () => (
+const SlackIcon = () => (
   <svg viewBox="0 0 74 73" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="73.3513" height="73" rx="36.5" fill="#FAB759" />
     <path
@@ -27,3 +27,5 @@ export const SlackIcon = () => (
     />
   </svg>
 )
+
+export default SlackIcon

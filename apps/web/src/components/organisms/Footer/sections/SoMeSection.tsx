@@ -1,7 +1,4 @@
-import { FacebookIcon } from "@/components/icons/FacebookIcon"
-import { GitHubIcon } from "@/components/icons/GithubIcon"
-import { InstagramIcon } from "@/components/icons/InstagramIcon"
-import { SlackIcon } from "@/components/icons/SlackIcon"
+import { FacebookIcon, GitHubIcon, InstagramIcon, SlackIcon } from "@/components/icons"
 
 export const SoMeSection = () => {
   const icons = [
@@ -14,7 +11,7 @@ export const SoMeSection = () => {
   return (
     <ul className="mb-4 flex justify-center gap-8">
       {icons.map((icon) => (
-        <li key={icon.key} className="w-16 cursor-pointer">
+        <li key={icon.key} className="w-12 cursor-pointer md:w-16">
           {icon}
         </li>
       ))}
