@@ -1,26 +1,32 @@
+import { cva } from "cva"
+
+import { FooterLinkType } from "../Footer"
+import { FooterLink } from "../components/FooterLink"
+
 interface LinksSectionProps {
-  links: {
-    main: string[]
-    second: string[]
-  }
+  links: FooterLinkType
 }
 
 export const LinksSection = ({ links }: LinksSectionProps) => (
   <div className="mx-12 mb-4 flex items-start gap-8 sm:flex-col sm:items-center sm:gap-0">
-    <div className="my-8 flex flex-col justify-center gap-8 sm:flex-row">
+    <ul className={section()}>
       {links.main.map((link) => (
-        <div className="text-slate-12 cursor-pointer text-xl font-bold" key={link}>
-          {link}
-        </div>
+        <FooterLink label={link} key={link} large />
       ))}
-    </div>
+    </ul>
 
-    <div className="my-8 flex flex-col justify-center gap-8 sm:mt-0 sm:flex-row">
+    <ul className={section({ main: false })}>
       {links.second.map((link) => (
-        <div className="text-slate-12 cursor-pointer text-lg font-medium" key={link}>
-          {link}
-        </div>
+        <FooterLink label={link} key={link} />
       ))}
-    </div>
+    </ul>
   </div>
 )
+
+const section = cva("my-8 flex flex-col justify-center gap-8 sm:flex-row", {
+  variants: {
+    main: {
+      false: "sm:mt-0",
+    },
+  },
+})
