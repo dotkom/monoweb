@@ -10,6 +10,7 @@ export interface PersonalMarkService {
   removePersonalMark: (userId: string, markId: string) => Promise<PersonalMark>
   getAllMarksForUser: (userId: string) => Promise<Mark[]>
   getExpiryDateForUser: (userId: string) => Promise<Date | null>
+  calculateExpiryDate: (marks: Mark[]) => Date | null
 }
 
 export const initPersonalMarkService = (
@@ -72,7 +73,7 @@ export const initPersonalMarkService = (
         date.setDate(date.getDate() + mark.duration)
 
         const adjustedEnd = service.adjustDateCalculationForHolidays(date)
-        const adjustedEndDate = new Date(adjustedEnd.date.getTime() + adjustedEnd.additionalDays * 24 * 60 * 60 * 1000)
+        const adjustedEndDate = new Date(date.getTime() + adjustedEnd.additionalDays * 24 * 60 * 60 * 1000)
 
         endDate = adjustedEndDate
       })
