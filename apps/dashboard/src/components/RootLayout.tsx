@@ -5,7 +5,7 @@ import { Sidebar } from "./Sidebar"
 
 export const RootLayout: FC = () => {
   return (
-    <div className="bg-background">
+    <div className="bg-background flex">
       <Sidebar />
       <main>
         <Outlet />
