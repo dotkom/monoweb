@@ -1,11 +1,14 @@
-import React from "react"
-import ReactDOM from "react-dom"
-import { BrowserRouter } from "react-router-dom"
-import App from "./App"
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
 
-ReactDOM.render(
-  <React.StrictMode>
+import { App } from "./App"
+import "./main.css"
+
+const element = document.querySelector("#root") as HTMLDivElement
+const root = createRoot(element)
+
+root.render(
+  <StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById("root")
+  </StrictMode>
 )
