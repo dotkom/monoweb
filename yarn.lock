@@ -7230,6 +7230,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bcrypt@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@types/bcrypt@npm:5.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: 063c32c7a519d64768dfc0169a319b8244d6a6cb50a355c93992b3c5fee1dbc236526a1111f0e7bb25abc8b0473e5f40a5edfeb8b33cad2a6ea35aa2d7d7db14
+  languageName: node
+  linkType: hard
+
 "@types/body-parser@npm:*":
   version: 1.19.2
   resolution: "@types/body-parser@npm:1.19.2"
@@ -8844,6 +8853,7 @@ __metadata:
     "@ory/client": ^0.2.0-alpha.60
     "@trpc/server": ^10.0.0-alpha.48
     "@types/aws-lambda": ^8.10.101
+    "@types/bcrypt": ^5.0.0
     "@types/config": ^3.3.0
     "@types/cors": ^2.8.12
     "@types/eslint": ^8
