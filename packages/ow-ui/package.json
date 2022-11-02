@@ -17,6 +17,7 @@
     "@radix-ui/react-label": "^1.0.0",
     "@radix-ui/react-switch": "^1.0.0",
     "@stitches/react": "^1.2.8",
+    "clsx": "^1.2.1",
     "cva": "npm:class-variance-authority@^0.2.4",
     "react": "^18.2.0",
     "react-icons": "^4.4.0"

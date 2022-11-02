@@ -1,77 +1,32 @@
 import { Indicator, Root, CheckboxProps as PrimitiveProps } from "@radix-ui/react-checkbox"
 import { Label } from "@radix-ui/react-label"
+import clsx from "clsx"
 import { forwardRef } from "react"
-import { IoCheckmarkSharp } from "react-icons/io5"
-
-import { css } from "../../config/stitches.config"
+import { IoCheckmarkSharp, IoRemoveSharp } from "react-icons/io5"
 
 export interface CheckboxProps extends PrimitiveProps {
   label: string
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ...props }, ref) => (
-  <div className={styles.container()}>
-    <Root ref={ref} className={styles.checkbox({ checked: !!props.checked, disabled: !!props.disabled })} {...props}>
-      <Indicator className={styles.indicator()}>
-        <IoCheckmarkSharp />
+  <div className="flex items-center">
+    <Root
+      ref={ref}
+      className={clsx(
+        "bg-slate-3 h-7 w-7 appearance-none rounded-sm outline-none transition-colors",
+        "hover:bg-slate-4 focus:ring-2",
+        "rdx-state-checked:bg-blue-4 rdx-state-checked:hover:bg-blue-5",
+        "rdx-disabled:bg-slate-5 rdx-state-checked:rdx-disabled:bg-slate-5 rdx-disabled:cursor-not-allowed"
+      )}
+      {...props}
+    >
+      <Indicator className="text-slate-12 rdx-disabled:text-slate-11 flex items-center justify-center">
+        {props.checked === "indeterminate" && <IoRemoveSharp className="h-5 w-5" />}
+        {props.checked === true && <IoCheckmarkSharp className="h-5 w-5" />}
       </Indicator>
     </Root>
-    <Label htmlFor={props.id} className={styles.label()}>
+    <Label htmlFor={props.id} className="select-none pl-2 text-lg leading-none">
       {label}
     </Label>
   </div>
 ))
-
-const styles = {
-  container: css({
-    display: "flex",
-    alignItems: "center",
-  }),
-  label: css({
-    lineHeight: 1,
-    userSelect: "none",
-    paddingLeft: "$2",
-  }),
-  indicator: css({
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  }),
-  checkbox: css({
-    all: "unset",
-    backgroundColor: "white",
-    color: "$white",
-    width: 25,
-    height: 25,
-    borderRadius: 4,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transitionVariant: "colors",
-    border: `2px solid $colors$gray11`,
-    "&:focus": {
-      boxShadow: "$ring0",
-    },
-    "&:hover": {
-      cursor: "pointer",
-    },
-    variants: {
-      checked: {
-        true: {
-          color: "$white",
-          borderColor: "$blue3",
-          backgroundColor: "$blue3",
-        },
-      },
-      disabled: {
-        true: {
-          cursor: "not-allowed",
-          backgroundColor: "$gray10",
-          color: "$gray6",
-        },
-      },
-    },
-  }),
-}

@@ -116,8 +116,16 @@ module.exports = {
           DEFAULT: green[3],
         },
       },
+      ringColor: {
+        DEFAULT: blue[7],
+      },
     },
   },
+  plugins: [
+    require("tailwindcss-radix")({
+      variantPrefix: "rdx",
+    }),
+  ],
 }
 
 // #FFCB47 #fab759
