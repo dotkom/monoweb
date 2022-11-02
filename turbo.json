@@ -28,5 +28,5 @@
       "cache": false
     }
   },
-  "globalDependencies": ["$NODE_ENV", "$API_PORT"]
+  "globalDependencies": ["$NODE_ENV", "$API_PORT", "$DASHBOARD_PORT"]
 }
