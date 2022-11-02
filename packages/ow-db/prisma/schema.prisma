@@ -70,8 +70,8 @@ model Company {
 }
 
 enum EventStatus {
-  Private @map("private")
-  Public  @map("public")
+  PRIVATE @map("private")
+  PUBLIC  @map("public")
 }
 
 model Committee {

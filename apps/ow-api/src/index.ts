@@ -6,6 +6,8 @@ import { CreateExpressContextOptions } from "@trpc/server/dist/adapters/express"
 
 import { initUserRepository } from "./modules/auth/user-repository"
 import { initUserService } from "./modules/auth/user-service"
+import { initEventRepository } from "./modules/event/event-repository.js"
+import { initEventService } from "./modules/event/event-service.js"
 import { createServer } from "./server"
 
 const logger = getLogger(import.meta.url)
@@ -13,12 +15,15 @@ const client = new PrismaClient()
 
 // Repositories
 const userRepository = initUserRepository(client)
+const eventRepository = initEventRepository(client)
 
 // Services
 const userService = initUserService(userRepository)
+const eventService = initEventService(eventRepository)
 
 export const createContext = (_opts: CreateExpressContextOptions) => ({
   userService,
+  eventService,
 })
 
 export type Context = inferAsyncReturnType<typeof createContext>
