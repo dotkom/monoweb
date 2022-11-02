@@ -1,6 +1,9 @@
+const path = require("path")
+const tsconfigPaths = require("vite-tsconfig-paths").default
+
 /** @type {import("@storybook/core-common").StorybookConfig} */
 module.exports = {
-  stories: ["../../../packages/ow-ui/src/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: ["../../../packages/ow-ui/src/**/*.stories.@(js|jsx|ts|tsx)", "../../web/src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
@@ -14,5 +17,15 @@ module.exports = {
   },
   features: {
     storyStoreV7: true,
+  },
+  // @param {import("vite").UserConfig} config
+  async viteFinal(config) {
+    config.plugins.push(
+      tsconfigPaths({
+        projects: [path.resolve(path.dirname(__dirname), "../web", "tsconfig.json")],
+      })
+    )
+
+    return config
   },
 }

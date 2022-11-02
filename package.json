@@ -14,7 +14,7 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "dev": "turbo run dev",
-    "storybook": "turbo run storybook --filter=docs"
+    "storybook": "turbo run storybook --filter=@dotkomonline/storybook"
   },
   "workspaces": [
     "packages/*",
