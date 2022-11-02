@@ -1,5 +1,3 @@
-import { Fragment } from "react"
-
 interface LinksSectionProps {
   links: {
     main: string[]
