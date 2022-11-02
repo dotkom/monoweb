@@ -116,6 +116,9 @@ module.exports = {
           DEFAULT: green[3],
         },
       },
+      ringColor: {
+        DEFAULT: blue[7],
+      },
     },
   },
   plugins: [
