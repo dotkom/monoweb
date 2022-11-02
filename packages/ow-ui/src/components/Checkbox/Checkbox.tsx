@@ -14,7 +14,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ..
       ref={ref}
       className={clsx(
         "bg-slate-3 h-7 w-7 appearance-none rounded-sm outline-none transition-colors",
-        "hover:bg-slate-4 focus:ring-1",
+        "hover:bg-slate-4 focus:ring-blue-7",
         "rdx-state-checked:bg-blue-3 rdx-state-checked:hover:bg-blue-4",
         "rdx-disabled:bg-slate-5 rdx-state-checked:rdx-disabled:bg-slate-5 rdx-disabled:cursor-not-allowed"
       )}
