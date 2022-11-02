@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.18.10",
-    "@docusaurus/core": "2.0.1",
+    "@docusaurus/core": "2.2.0",
     "@docusaurus/preset-classic": "2.0.1",
     "@mdx-js/react": "^1.6.22",
     "babel-loader": "^8.2.5",
