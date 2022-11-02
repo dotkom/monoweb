@@ -2,7 +2,7 @@ import { User as PrismaUser } from "@dotkomonline/db"
 import { z } from "zod"
 
 const userSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string().uuid(),
   name: z.string().optional(),
   email: z.string().email().optional(),
   emailVerified: z.date().optional(),

@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -23,7 +23,7 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userID            String
   type              String
   provider          String
@@ -42,7 +42,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
