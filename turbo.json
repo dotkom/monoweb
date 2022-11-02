@@ -28,5 +28,5 @@
       "cache": false
     }
   },
-  "globalDependencies": ["$NODE_ENV", "$API_PORT", "$NEXTAUTH_CLIENT_ID", "$NEXTAUTH_URL", "$HYDRA_ADMIN_URL"]
+  "globalDependencies": ["$NODE_ENV", "$API_PORT", "$DASHBOARD_PORT","$NEXTAUTH_CLIENT_ID", "$NEXTAUTH_URL", "$HYDRA_ADMIN_URL"]
 }
