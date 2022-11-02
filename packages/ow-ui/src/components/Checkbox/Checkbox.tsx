@@ -2,7 +2,7 @@ import { Indicator, Root, CheckboxProps as PrimitiveProps } from "@radix-ui/reac
 import { Label } from "@radix-ui/react-label"
 import clsx from "clsx"
 import { forwardRef } from "react"
-import { IoCheckmarkSharp } from "react-icons/io5"
+import { IoCheckmarkSharp, IoRemoveSharp } from "react-icons/io5"
 
 export interface CheckboxProps extends PrimitiveProps {
   label: string
@@ -21,7 +21,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ..
       {...props}
     >
       <Indicator className="text-slate-12 rdx-disabled:text-slate-11 flex items-center justify-center">
-        <IoCheckmarkSharp className="h-5 w-5" />
+        {props.checked === "indeterminate" && <IoRemoveSharp className="h-5 w-5" />}
+        {props.checked === true && <IoCheckmarkSharp className="h-5 w-5" />}
       </Indicator>
     </Root>
     <Label htmlFor={props.id} className="select-none pl-2 text-lg leading-none">
