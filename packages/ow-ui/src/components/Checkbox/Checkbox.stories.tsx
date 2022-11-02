@@ -22,3 +22,5 @@ Default.args = { label: "I accept terms and conditions.", id: "default" }
 
 export const Disabled = Template.bind({})
 Disabled.args = { label: "I accept terms and conditions.", disabled: true, id: "disabled" }
+
+export const Intermediate = () => <Checkbox label="select all" checked="indeterminate" id="intermediate" />
