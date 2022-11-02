@@ -1,9 +1,10 @@
+import { Configuration, V0alpha2Api } from "@ory/client"
+import bcrypt from "bcrypt"
+import invariant from "tiny-invariant"
+
 import { NotFoundError } from "../../errors/errors"
 import { User } from "./user"
 import { UserRepository } from "./user-repository"
-import { Configuration, V0alpha2Api } from "@ory/client"
-import invariant from "tiny-invariant"
-import bcrypt from "bcrypt"
 
 export interface UserService {
   getUser: (id: User["id"]) => Promise<User>

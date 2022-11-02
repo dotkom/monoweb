@@ -1,6 +1,7 @@
 import { getLogger } from "@dotkomonline/logger"
-import { initTRPC } from "@trpc/server"
 import { z } from "zod"
+
+import { initTRPC } from "@trpc/server"
 
 export const t = initTRPC.create()
 
