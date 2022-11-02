@@ -1,6 +1,7 @@
 import { css } from "@dotkomonline/ui"
 import { FC, PropsWithChildren } from "react"
 
+import Footer from "../organisms/Footer"
 import Navbar from "../organisms/Navbar"
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
@@ -8,6 +9,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     <div className={styles.root()}>
       <Navbar />
       <main className={styles.content()}>{children}</main>
+      <Footer />
     </div>
   )
 }
