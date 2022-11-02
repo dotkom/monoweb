@@ -1,6 +1,5 @@
 import { Configuration, V0alpha2Api } from "@ory/client"
 import bcrypt from "bcrypt"
-import invariant from "tiny-invariant"
 
 import { NotFoundError } from "../../errors/errors"
 import { User } from "./user"
@@ -46,9 +45,13 @@ export const initUserService = (userRepository: UserRepository): UserService => 
         console.log(body.redirect_to)
       }
       const user = await userRepository.getUserByEmail(email)
-      invariant(user, "User does not exist")
+      if (!user) {
+        throw new Error("User does not exist")
+      }
       const valid = await bcrypt.compare(password, user.password)
-      invariant(valid, "Invalid password")
+      if (!valid) {
+        throw new Error("Invalid password")
+      }
       return true
     },
   }
