@@ -24814,20 +24814,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-tsconfig-paths@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "vite-tsconfig-paths@npm:3.5.0"
-  dependencies:
-    debug: ^4.1.1
-    globrex: ^0.1.2
-    recrawl-sync: ^2.0.3
-    tsconfig-paths: ^4.0.0
-  peerDependencies:
-    vite: ">2.0.0-0"
-  checksum: d6d4828fdba639445251b3baf06901f2eb46a98b2741ba5e30e3d791c8a25f8533d23df13c5422eece63cf449865750dcd57e825dbe43b5c985e5edf42b17fea
-  languageName: node
-  linkType: hard
-
 "vite-tsconfig-paths@npm:^3.5.2":
   version: 3.5.2
   resolution: "vite-tsconfig-paths@npm:3.5.2"
@@ -25143,7 +25129,7 @@ __metadata:
     tsconfig-paths-webpack-plugin: ^4.0.0
     typescript: ^4.7.4
     vite: ^3.1.1
-    vite-tsconfig-paths: ^3.5.0
+    vite-tsconfig-paths: ^3.5.2
     vitest: ^0.23.2
     zod: ^3.19.1
   languageName: unknown

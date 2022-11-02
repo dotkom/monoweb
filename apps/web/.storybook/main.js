@@ -1,20 +1,28 @@
-const path = require("path");
-const resolve = (p) => path.join(process.cwd(), p);
+const tsconfigPaths = require("vite-tsconfig-paths")
+console.log(tsconfigPaths.default())
 
+/** @type {import("@storybook/core-common").StorybookConfig} */
 module.exports = {
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-controls",
-    "@storybook/addon-knobs",
+    "@storybook/addon-interactions",
+    "storybook-dark-mode",
+    "@storybook/addon-postcss",
   ],
-  webpackFinal(config) {
+  framework: "@storybook/react",
+  core: {
+    builder: "@storybook/builder-vite",
+  },
+  features: {
+    storyStoreV7: true,
+  },
+  async viteFinal(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@theme": resolve("src/theme/stitches.config.ts"),
-      "@components": resolve("src/components"),
-    };
-    return config;
+      plugins: [...config.plugins, tsconfigPaths.default()],
+    }
+    return config
   },
-};
+}
