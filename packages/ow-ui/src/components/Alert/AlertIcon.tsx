@@ -6,10 +6,9 @@ import { twMerge } from "tailwind-merge"
 interface AlertIconProps {
   status: "info" | "warning" | "success" | "danger"
   className?: string
-  monochrome?: boolean
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status, className, monochrome }) => {
+export const AlertIcon: FC<AlertIconProps> = ({ status, className }) => {
   const iconProps = { size: 24, stroke: 2, className: twMerge(icon({ status }), className) }
 
   switch (status) {

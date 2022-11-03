@@ -1,7 +1,6 @@
 import { cva } from "cva"
 import { FC, PropsWithChildren } from "react"
 
-import { css } from "../../config/stitches.config"
 import { AlertIcon } from "./AlertIcon"
 
 export interface AlertProps {
