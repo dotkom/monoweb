@@ -1,7 +1,7 @@
+import { IconInfoCircle, IconCircleCheck, IconAlertTriangle, IconAlertCircle } from "@tabler/icons"
+import { cva } from "cva"
 import { FC } from "react"
-import { IoAlertCircle, IoCheckmarkCircle, IoInformationCircle, IoWarning } from "react-icons/io5"
-
-import { css } from "../../config/stitches.config"
+import { twMerge } from "tailwind-merge"
 
 interface AlertIconProps {
   status: "info" | "warning" | "success" | "danger"
@@ -10,61 +10,33 @@ interface AlertIconProps {
 }
 
 export const AlertIcon: FC<AlertIconProps> = ({ status, className, monochrome }) => {
-  const style = () =>
-    monochrome ? `${styles.monochrome({ status })} ${className}` : `${styles.base({ status })} ${className}`
+  const iconProps = { size: 24, stroke: 2, className: twMerge(icon({ status }), className) }
+
   switch (status) {
     case "info":
-      return <IoInformationCircle className={style()} />
+      return <IconInfoCircle {...iconProps} />
     case "success":
-      return <IoCheckmarkCircle className={style()} />
+      return <IconCircleCheck {...iconProps} />
     case "danger":
-      return <IoAlertCircle className={style()} />
+      return <IconAlertCircle {...iconProps} />
     case "warning":
-      return <IoWarning className={style()} />
+      return <IconAlertTriangle {...iconProps} />
   }
 }
 
-const styles = {
-  base: css({
-    marginRight: "$2",
-    width: "24px",
-    height: "24px",
-    variants: {
-      status: {
-        info: {
-          color: "$info3",
-        },
-        success: {
-          color: "$green3",
-        },
-        warning: {
-          color: "$orange3",
-        },
-        danger: {
-          color: "$red3",
-        },
-      },
+const icon = cva("mr-2", {
+  variants: {
+    status: {
+      info: "text-blue-11",
+      success: "text-green-11",
+      danger: "text-red-11",
+      warning: "text-amber-11",
     },
-  }),
-  monochrome: css({
-    marginRight: "$2",
-    width: "24px",
-    height: "24px",
-    variants: {
-      status: {
-        info: {
-          color: "$gray12",
-        },
-        success: {
-          color: "$gray12",
-        },
-        warning: {
-          color: "$gray1",
-        },
-        danger: {
-          color: "$gray12",
-        },
-      },
+    monochrome: {
+      info: "text-slate-11",
+      success: "text-slate-11",
+      danger: "text-slate-11",
+      warning: "text-slate-11",
     },
-  }),
-}
+  },
+})
