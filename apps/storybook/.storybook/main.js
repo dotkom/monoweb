@@ -25,6 +25,9 @@ module.exports = {
         projects: [path.resolve(path.dirname(__dirname), "../web", "tsconfig.json")],
       })
     )
+    config.resolve.fallback = {
+      process: false,
+    }
 
     return config
   },
