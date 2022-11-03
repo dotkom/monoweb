@@ -1,12 +1,13 @@
-import { InsertUser } from "../user"
-import { initUserService } from "../user-service"
+import { PrismaClient } from "@dotkomonline/db"
 import { v4 as uuidv4 } from "uuid"
-import { initUserRepository } from "../user-repository"
+
 import { NotFoundError } from "../../../errors/errors"
-import { PrismaClient } from "@dotkom/db"
+import { InsertUser } from "../user"
+import { initUserRepository } from "../user-repository"
+import { initUserService } from "../user-service"
 
 describe("UserService", () => {
-  const prisma = vi.mocked(PrismaClient, true)
+  const prisma = vi.mocked(PrismaClient.prototype, true)
   const userRepository = initUserRepository(prisma)
   const userService = initUserService(userRepository)
 

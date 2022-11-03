@@ -1,7 +1,9 @@
+import type { CSS } from "@dotkomonline/ui"
 import { FC } from "react"
+
 import Circle from "@components/atoms/Circle"
-import type { CSS } from "@theme"
 import { Box } from "@components/primitives"
+
 interface CompanyInterestProcessProps {
   steps: string[]
 }

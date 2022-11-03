@@ -2,7 +2,13 @@
 name: "Publish Storybook"
 
 # Event for the workflow
-on: push
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 # List of jobs
 jobs:
@@ -10,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: ./apps/docs
+        working-directory: ./apps/storybook
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -29,4 +35,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: "./apps/docs"
+          workingDir: "./apps/storybook"

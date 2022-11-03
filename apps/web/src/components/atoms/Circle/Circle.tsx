@@ -1,5 +1,6 @@
+import { CSS } from "@dotkomonline/ui"
+
 import { Box } from "@components/primitives"
-import { CSS } from "@theme"
 
 const circleStyle: CSS = {
   color: "$white",

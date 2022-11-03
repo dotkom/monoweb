@@ -1,7 +1,9 @@
-import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import express from "express";
-import { appRouter } from "./trpc.js";
-import { createContext } from "./index.js";
+import express from "express"
+
+import { createExpressMiddleware } from "@trpc/server/adapters/express"
+
+import { createContext } from "./index.js"
+import { appRouter } from "./router.js"
 
 export const createServer = () => {
   const app = express()
@@ -11,6 +13,6 @@ export const createServer = () => {
     createContext,
   })
 
-  app.use('/trpc', handler)
+  app.use("/trpc", handler)
   return app
 }

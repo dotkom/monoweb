@@ -1,11 +1,12 @@
-import { css } from "@theme"
-import { Flex } from "@components/primitives"
+import { css } from "@dotkomonline/ui"
+import { Text } from "@dotkomonline/ui"
+
 import BedpressIcon from "@components/icons/BedpressIcon"
 import ItexIcon from "@components/icons/ItexIcon"
 import OfflineIcon from "@components/icons/OfflineIcon"
-import UtlysningIcon from "@components/icons/UtlysningIcon"
 import TechtalksIcon from "@components/icons/TechtalksIcon"
-import { Text } from "@dotkom/ui"
+import UtlysningIcon from "@components/icons/UtlysningIcon"
+import { Flex } from "@components/primitives"
 
 const OurProducts = () => {
   return (

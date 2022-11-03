@@ -1,6 +1,7 @@
+import { css } from "@dotkomonline/ui"
 import { mauve } from "@radix-ui/colors"
-import { css } from "@theme"
 import { FiAlertTriangle } from "react-icons/fi"
+
 import { NavigationMenuLink } from "."
 import { LinkText, LinkTitle } from "./ContentListItem"
 

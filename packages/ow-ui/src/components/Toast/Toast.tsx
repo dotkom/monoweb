@@ -1,6 +1,7 @@
 import { css } from "@stitches/react"
 import { FC, ReactNode } from "react"
 import { IoCloseOutline } from "react-icons/io5"
+
 import { AlertIcon } from "../Alert/AlertIcon"
 
 export interface ToastProps {

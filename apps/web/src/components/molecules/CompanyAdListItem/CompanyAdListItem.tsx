@@ -1,9 +1,10 @@
-import { Box } from "@components/primitives"
-import { CSS } from "@theme"
+import { CSS } from "@dotkomonline/ui"
+import { Badge, Text } from "@dotkomonline/ui"
 import { DateTime } from "luxon"
-import { FC } from "react"
 import Image from "next/image"
-import { Badge, Text } from "@dotkom/ui"
+import { FC } from "react"
+
+import { Box } from "@components/primitives"
 
 interface CompanyAdListItemProps {
   name: string
@@ -20,7 +21,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
   return (
     <Box css={styles.listItem}>
       <Box>
-        <Image src={logo} width="70px" height="40px" alt={`${name}'s job posting`} />
+        <Image src={logo} width={70} height={40} alt={`${name}'s job posting`} />
       </Box>
       <Text>{name}</Text>
       <Box>

@@ -69,5 +69,8 @@ export const Button = styled("button", {
       },
     },
   },
+  defaultVariants: {
+    color: "blue",
+    variant: "solid",
+  },
 })
-

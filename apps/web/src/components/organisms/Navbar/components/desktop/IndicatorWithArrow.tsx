@@ -1,5 +1,6 @@
-import { css, styled } from "@stitches/react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+import { css, styled } from "@stitches/react"
+
 import { fadeIn, fadeOut } from "../../keyframes/keyframes"
 
 const IndicatorWithArrow = () => (

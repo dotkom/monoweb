@@ -1,9 +1,9 @@
-import React from "react"
+import { css } from "@dotkomonline/ui"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import React from "react"
 
 import NavbarLogo from "./components/logo"
 import Content from "./components/mobile/Content"
-import { createStyles } from "@theme"
 import ContentTrigger from "./components/mobile/ContentTrigger"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
@@ -22,26 +22,26 @@ export const MobileDropdown = () => (
   </div>
 )
 
-const styles = createStyles({
-  container: {
+const styles = {
+  container: css({
     display: "none",
     width: "100%",
     "@media only screen and (max-width: 900px)": {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
     },
-  },
-  logoContainer: {
+  }),
+  logoContainer: css({
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-start",
     marginLeft: "30px",
-  },
-  wrapper: {
+  }),
+  wrapper: css({
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
-  },
-})
+  }),
+}
 
 export default MobileDropdown

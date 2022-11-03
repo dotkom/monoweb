@@ -1,7 +1,8 @@
-import { styled } from "@stitches/react"
-import { scaleIn, scaleOut } from "../../keyframes/keyframes"
+import { css } from "@dotkomonline/ui"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
-import { css } from "@theme"
+import { styled } from "@stitches/react"
+
+import { scaleIn, scaleOut } from "../../keyframes/keyframes"
 
 const NavigationMenuViewport = () => (
   <div className={styles.wrapper()}>

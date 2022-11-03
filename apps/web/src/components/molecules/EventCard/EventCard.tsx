@@ -1,10 +1,11 @@
-import { Card, Text } from "@dotkom/ui"
-import { FC } from "react"
-import Image from "next/image"
-import { CSS, css, styled } from "@theme"
-import { Box, Flex } from "@components/primitives"
+import { Card, Text } from "@dotkomonline/ui"
+import { CSS, css, styled } from "@dotkomonline/ui"
 import { DateTime } from "luxon"
+import Image from "next/image"
+import { FC } from "react"
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi"
+
+import { Box, Flex } from "@components/primitives"
 
 interface EventCardProps {
   title: string
@@ -32,7 +33,7 @@ const EventCard: FC<EventCardProps> = (props) => {
 
   return (
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
-      <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="150px" />
+      <Thumbnail src={thumbnailUrl} width={300} height={150} alt="thumbnail" />
       <Flex css={{ padding: "$2", flexDirection: "column" }}>
         <HeaderArea>
           <time dateTime={date.toISO()} color="red" className={styles.dateContainer()}>

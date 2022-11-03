@@ -1,6 +1,6 @@
-import { styled } from "@stitches/react"
+import { css } from "@dotkomonline/ui"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
-import { css } from "@theme"
+import { styled } from "@stitches/react"
 
 const AvatarImage = () => (
   <Avatar>

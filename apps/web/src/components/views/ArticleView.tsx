@@ -1,11 +1,13 @@
-import { Box, Flex } from "../primitives"
+import { CSS, css, styled } from "@dotkomonline/ui"
+import { Badge, Text } from "@dotkomonline/ui"
+import { DateTime } from "luxon"
+import Image from "next/image"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
-import { CSS, css, styled } from "@theme"
+
 import PortableText from "@components/molecules/PortableText"
-import Image from "next/image"
-import { DateTime } from "luxon"
-import { Badge, Text } from "@dotkom/ui"
+
+import { Box, Flex } from "../primitives"
 
 interface ArticleViewProps {
   article: Article

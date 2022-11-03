@@ -1,5 +1,7 @@
+import { css } from "@dotkomonline/ui"
+
 import { Box } from "@components/primitives"
-import { createStyles } from "@theme"
+
 import { Circle } from "../atoms/Circle/Circle"
 import { DottedLine } from "../atoms/DottedCurve"
 
@@ -39,12 +41,12 @@ export const ConnectedCircles: React.FC<ConnectedCircleProps> = ({ size, lineCol
   )
 }
 
-const styles = createStyles({
-  circle: {
+const styles = {
+  circle: css({
     float: "left",
     transform: "rotate(45deg)",
     position: "relative",
-  },
-})
+  }),
+}
 
 export default ConnectedCircles

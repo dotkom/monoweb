@@ -1,25 +1,23 @@
-import OnlineIcon from "@components/atoms/OnlineIcon"
+import { css } from "@dotkomonline/ui"
 import Link from "next/link"
-import { createStyles } from "@theme"
+
+import OnlineIcon from "@components/atoms/OnlineIcon"
 
 const NavbarLogo = () => {
   return (
     <div className={styles.container()}>
       <Link href="/">
-        <a>
-          {" "}
-          <OnlineIcon />
-        </a>
+        <OnlineIcon />
       </Link>
     </div>
   )
 }
 
-const styles = createStyles({
-  container: {
+const styles = {
+  container: css({
     width: "100px",
     height: "45px",
-  },
-})
+  }),
+}
 
 export default NavbarLogo
