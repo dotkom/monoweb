@@ -5,6 +5,8 @@ export interface MarkRepository {
   getMarkByID: (id: string) => Promise<Mark | undefined>
   getMarks: (limit: number) => Promise<Mark[]>
   createMark: (markInsert: InsertMark) => Promise<Mark>
+  updateMark: (id: string, markUpdate: InsertMark) => Promise<Mark>
+  deleteMark: (id: string) => Promise<Mark | undefined>
 }
 
 export const initMarkRepository = (client: PrismaClient): MarkRepository => {
@@ -24,6 +26,21 @@ export const initMarkRepository = (client: PrismaClient): MarkRepository => {
         data: {
           ...markInsert,
         },
+      })
+      return mapToMark(mark)
+    },
+    updateMark: async (id, markUpdate) => {
+      const mark = await client.mark.update({
+        where: { id },
+        data: {
+          ...markUpdate,
+        },
+      })
+      return mapToMark(mark)
+    },
+    deleteMark: async (id) => {
+      const mark = await client.mark.delete({
+        where: { id },
       })
       return mapToMark(mark)
     },
