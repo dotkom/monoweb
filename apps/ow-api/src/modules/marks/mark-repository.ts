@@ -1,4 +1,5 @@
-import { PrismaClient } from "@dotkom/db"
+import { PrismaClient } from "@dotkomonline/db"
+
 import { InsertMark, mapToMark, Mark } from "./mark"
 
 export interface MarkRepository {

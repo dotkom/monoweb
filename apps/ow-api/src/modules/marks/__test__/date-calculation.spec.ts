@@ -1,8 +1,9 @@
-import { Mark } from "../mark"
-import { initMarkService } from "../mark-service"
+import { PrismaClient } from "@dotkomonline/db"
 import { v4 as uuidv4 } from "uuid"
+
+import { Mark } from "../mark"
 import { initMarkRepository } from "../mark-repository"
-import { PrismaClient } from "@dotkom/db"
+import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"
 import { initPersonalMarkService } from "../personal-mark-service"
 
@@ -10,7 +11,7 @@ describe("PersonalMarkDateCalculation", () => {
   const prisma = vi.mocked(PrismaClient, true)
   const personalMarkRepository = initPersonalMarkRepository(prisma)
   const markRepository = initMarkRepository(prisma)
-  const markService = initMarkService(markRepository)
+  const markService = initMarkService(markRepository, personalMarkRepository)
   const personalMarkService = initPersonalMarkService(personalMarkRepository, markService)
 
   // These tests are written to work until the year 3022. If you are reading this in 3022, please update the tests. Let those 4022 guys deal with it.

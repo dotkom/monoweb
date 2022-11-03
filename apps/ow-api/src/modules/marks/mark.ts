@@ -1,5 +1,5 @@
+import { Mark as PrismaMark } from "@dotkomonline/db"
 import { z } from "zod"
-import { Mark as PrismaMark } from "@dotkom/db"
 
 const markSchema = z.object({
   id: z.string().uuid(),
