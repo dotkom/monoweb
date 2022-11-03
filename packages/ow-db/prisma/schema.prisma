@@ -11,21 +11,20 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String?
-  firstName     String?   @map("first_name")
-  lastName      String?   @map("last_name")
   email         String?   @unique
-  createdAt     DateTime  @default(now()) @map("created_at")
-  emailVerified DateTime? @map("email_verified")
+  emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   PersonalMarks PersonalMark[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  password      String
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userID            String
   type              String
   provider          String
@@ -44,7 +43,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -64,7 +63,7 @@ model Company {
   name        String
   description String
   phone       String?
-  email       String @unique
+  email       String  @unique
   website     String
   location    String?
   type        String?

@@ -3,20 +3,16 @@ import { z } from "zod"
 
 const userSchema = z.object({
   id: z.string().uuid(),
-  username: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string().email(),
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  emailVerified: z.date().optional(),
+  image: z.string(),
+  createdAt: z.date(),
+  password: z.string(),
 })
 
 export type User = z.infer<typeof userSchema>
-export type InsertUser = Omit<User, "id">
 
 export const mapToUser = (payload: PrismaUser): User => {
-  const user: User = {
-    ...payload,
-    firstName: payload.first_name,
-    lastName: payload.last_name,
-  }
-  return userSchema.parse(user)
+  return userSchema.parse(payload)
 }

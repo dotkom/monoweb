@@ -1,7 +1,6 @@
-import { NotFoundError } from "@/errors/errors"
-import { EventRepository } from "@/modules/event/event-repository"
-
+import { NotFoundError } from "../../errors/errors"
 import { Event, InsertEvent } from "./event"
+import { EventRepository } from "./event-repository"
 
 export interface EventService {
   create: (payload: InsertEvent) => Promise<Event>
