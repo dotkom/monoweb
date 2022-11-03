@@ -3,5 +3,10 @@
   rel="stylesheet"
 />
 <script>
+  window.process = {
+    env: {
+      NODE_ENV: "test",
+    },
+  }
   window.global = window
 </script>

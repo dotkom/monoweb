@@ -3,7 +3,7 @@ const tsconfigPaths = require("vite-tsconfig-paths").default
 
 /** @type {import("@storybook/core-common").StorybookConfig} */
 module.exports = {
-  stories: ["../../../packages/ow-ui/src/**/*.stories.@(js|jsx|ts|tsx)", "../../web/src/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: ["../../../packages/ow-ui/src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
@@ -25,11 +25,6 @@ module.exports = {
         projects: [path.resolve(path.dirname(__dirname), "../web", "tsconfig.json")],
       })
     )
-    config.define = {
-      ...config.define,
-      "process.env": {},
-    }
-
     return config
   },
 }
