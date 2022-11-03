@@ -1,6 +1,6 @@
-import { t } from "@/trpc.js"
 import { z } from "zod"
 
+import { t } from "../../trpc"
 import { eventSchema } from "../event/event.js"
 
 export const eventRouter = t.router({

@@ -7087,56 +7087,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/client@npm:next":
-  version: 10.0.0-proxy-beta.26
-  resolution: "@trpc/client@npm:10.0.0-proxy-beta.26"
+"@trpc/client@npm:^10.0.0-rc.0":
+  version: 10.0.0-rc.3
+  resolution: "@trpc/client@npm:10.0.0-rc.3"
   peerDependencies:
-    "@trpc/server": 10.0.0-proxy-beta.26
-  checksum: 503d8ff5855cc5fceea68d9300fedf2f4713e7bf3a937ea37dccd194ed4c3d39f9398e24196d8bc5aa7e533c3e4fe9c67f44330491fc2b798bfe2635995124e8
+    "@trpc/server": 10.0.0-rc.3
+  checksum: 5fb1b5930cc30f51cfc6947fb2e66f43a9a1fe3155f6b97ac79d3fd76006dd9ebbda47982b806b25b050b75b2ed8c3dc63dc0eded6746cb3c78a0a118f07e8cf
   languageName: node
   linkType: hard
 
-"@trpc/next@npm:next":
-  version: 10.0.0-proxy-beta.26
-  resolution: "@trpc/next@npm:10.0.0-proxy-beta.26"
+"@trpc/next@npm:^10.0.0-rc.0":
+  version: 10.0.0-rc.3
+  resolution: "@trpc/next@npm:10.0.0-rc.3"
   dependencies:
     react-ssr-prepass: ^1.5.0
   peerDependencies:
     "@tanstack/react-query": ^4.3.8
-    "@trpc/client": 10.0.0-proxy-beta.26
+    "@trpc/client": 10.0.0-rc.3
     "@trpc/react-query": ^10.0.0-proxy-beta.21
-    "@trpc/server": 10.0.0-proxy-beta.26
+    "@trpc/server": 10.0.0-rc.3
     next: "*"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 256bf0f367cb3d1bd8b5c4b18b754d7ffa7481f699aebb88d17a8e6612b53cdecb2423755fb2596953158b69e65581c2902480a7fbf24108d6e5973422a50934
+  checksum: aca657c46f150bfb5ce093b45356e089cbdf762add0820e1eb8a90ca048252da9b1b2ca1c1aa753c24f95758bc9093fb2b2ca486941984d676896956871704e2
   languageName: node
   linkType: hard
 
-"@trpc/react-query@npm:next":
-  version: 10.0.0-proxy-beta.26
-  resolution: "@trpc/react-query@npm:10.0.0-proxy-beta.26"
+"@trpc/react-query@npm:^10.0.0-rc.0":
+  version: 10.0.0-rc.3
+  resolution: "@trpc/react-query@npm:10.0.0-rc.3"
   peerDependencies:
     "@tanstack/react-query": ^4.3.8
-    "@trpc/client": 10.0.0-proxy-beta.26
-    "@trpc/server": 10.0.0-proxy-beta.26
+    "@trpc/client": 10.0.0-rc.3
+    "@trpc/server": 10.0.0-rc.3
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 6edf88485db1db9bcb46353acc51117d26b4b5834da56031d56ea2def8f62b94e5f69da65f793301a16e78a303ee34c4d6cae603765728d586baccf9040a9fb7
+  checksum: c0e4321759f4f8e84d26a7d7036db6891b3c00379d0de6289226ae8176b723612482aa4d2625c676fe46ddeb937be39e86d77331b40bb0a6274c7c72b16a400e
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^10.0.0-alpha.48":
-  version: 10.0.0-proxy-beta.1
-  resolution: "@trpc/server@npm:10.0.0-proxy-beta.1"
-  checksum: 3ea3964d4fafd48760e14439f29cdf6e8d053e1c5d57c254f1f927a3abafda8f89d508e8f01eef50003ab8a0b85e6fd3b367b9cad2e02e32028218cf6963bb51
-  languageName: node
-  linkType: hard
-
-"@trpc/server@npm:next":
-  version: 10.0.0-proxy-beta.26
-  resolution: "@trpc/server@npm:10.0.0-proxy-beta.26"
-  checksum: db9135021cc603455925f40e4e9ffa70490635a28c562cf5fe7d6a6445541c4a1bfab4204465ffe144b7c0a3729ecb996cc888a34917e62379a7fc39c83f328d
+"@trpc/server@npm:^10.0.0-rc.0":
+  version: 10.0.0-rc.3
+  resolution: "@trpc/server@npm:10.0.0-rc.3"
+  checksum: 9b63522cef08c1e1f86daf6aaf63c6675403e19cb5c1973b0b6a1d74c8720ef519cb5d1ac81680ea3a165d2a60eeedb1fed44ee99ec9514a9ae63a9fe062d5d8
   languageName: node
   linkType: hard
 
@@ -8858,7 +8851,7 @@ __metadata:
     "@dotkomonline/db": "workspace:^"
     "@dotkomonline/logger": "workspace:^"
     "@ory/client": ^0.2.0-alpha.60
-    "@trpc/server": ^10.0.0-alpha.48
+    "@trpc/server": ^10.0.0-rc.0
     "@types/aws-lambda": ^8.10.101
     "@types/bcrypt": ^5.0.0
     "@types/config": ^3.3.0
@@ -25112,10 +25105,10 @@ __metadata:
     "@storybook/preset-scss": ^1.0.3
     "@storybook/react": ^6.5.9
     "@tanstack/react-query": ^4.13.0
-    "@trpc/client": next
-    "@trpc/next": next
-    "@trpc/react-query": next
-    "@trpc/server": next
+    "@trpc/client": ^10.0.0-rc.0
+    "@trpc/next": ^10.0.0-rc.0
+    "@trpc/react-query": ^10.0.0-rc.0
+    "@trpc/server": ^10.0.0-rc.0
     "@types/eslint": ^8
     "@types/jsdom": ^20
     "@types/luxon": ^2.4.0

@@ -1,7 +1,7 @@
 import { FC } from "react"
 
 interface IconProps {
-  className: string
+  className?: string
 }
 
 const OnlineIcon: FC<IconProps> = ({ className }) => {

@@ -1,9 +1,9 @@
-import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { trpc } from "@/utils/trpc"
 import { Button, TextInput } from "@dotkomonline/ui"
 import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
 
+import OnlineIcon from "../../components/atoms/OnlineIcon"
+import { trpc } from "../../utils/trpc"
 import type { NextPageWithLayout } from "../_app"
 
 const SignInPage: NextPageWithLayout = () => {

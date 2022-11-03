@@ -6,6 +6,9 @@ import { initTRPC } from "@trpc/server"
 import { Context } from "./index.js"
 
 const logger = getLogger(import.meta.url)
+
+export const t = initTRPC.context<Context>().create()
+
 export const appRouter = t.router({
   signin: t.procedure
     .input(
@@ -22,4 +25,3 @@ export const appRouter = t.router({
 })
 
 export type AppRouter = typeof appRouter
-export const t = initTRPC.context<Context>().create()
