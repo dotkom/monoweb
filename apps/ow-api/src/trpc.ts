@@ -1,9 +1,11 @@
+import { getLogger } from "@dotkomonline/logger"
 import { z } from "zod"
 
 import { initTRPC } from "@trpc/server"
 
 import { Context } from "./context"
 
+const logger = getLogger(import.meta.url)
 // TODO: Superjson
 export const t = initTRPC.context<Context>().create({
   errorFormatter({ shape }) {
@@ -21,7 +23,7 @@ export const appRouter = t.router({
       })
     )
     .mutation((req) => {
-      console.log("XD")
+      logger.info(req.input)
       return { msg: "hello world" }
     }),
 })
