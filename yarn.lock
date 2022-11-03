@@ -25089,6 +25089,7 @@ __metadata:
   dependencies:
     "@dotkomonline/config": "workspace:*"
     "@dotkomonline/db": "workspace:^"
+    "@dotkomonline/logger": "workspace:^"
     "@dotkomonline/ui": "workspace:^"
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-avatar": ^1.0.0
