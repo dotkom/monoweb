@@ -2802,6 +2802,7 @@ __metadata:
     "@radix-ui/react-switch": ^1.0.0
     "@stitches/react": ^1.2.8
     "@storybook/react": ^6.5.9
+    "@tabler/icons": ^1.109.0
     "@types/eslint": ^8
     "@types/react": ^18.0.15
     autoprefixer: ^10.4.13
@@ -2811,6 +2812,7 @@ __metadata:
     postcss: ^8.4.18
     react: ^18.2.0
     react-icons: ^4.4.0
+    tailwind-merge: ^1.7.0
     tailwindcss: ^3.2.1
     tsup: ^6.2.3
     vitest: ^0.23.4
@@ -7006,6 +7008,21 @@ __metadata:
   dependencies:
     defer-to-connect: ^1.0.1
   checksum: 4d9158061c5f397c57b4988cde33a163244e4f02df16364f103971957a32886beb104d6180902cbe8b38cb940e234d9f98a4e486200deca621923f62f50a06fe
+  languageName: node
+  linkType: hard
+
+"@tabler/icons@npm:^1.109.0":
+  version: 1.109.0
+  resolution: "@tabler/icons@npm:1.109.0"
+  peerDependencies:
+    react: ^16.x || 17.x || 18.x
+    react-dom: ^16.x || 17.x || 18.x
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 920d5f34ea92f360c5cd05d1328f83b333dce630113d4d786a0a7df109e1c96435997d0e26523168320b66e4b41e7583d9ba8133a26dca38a107dcb64833ae9c
   languageName: node
   linkType: hard
 
@@ -23222,6 +23239,13 @@ __metadata:
   version: 2.0.16
   resolution: "synchronous-promise@npm:2.0.16"
   checksum: 1a3e5dfa9e3b913452366e182d4cae5c2ffb9de8c9753ecb602539a298e82ab82de951a0b0ecd86b2e2e237b1236eb5e82964c8ce13b2d23f7ecd52767a2b74d
+  languageName: node
+  linkType: hard
+
+"tailwind-merge@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "tailwind-merge@npm:1.7.0"
+  checksum: 3dca4e28513072cad8a4ff0bd5d771b1caddab44b28caf1fd9b3dfb2e86834872f4c721778022de61a21bcab93ba0b38869ca72e7e8d0fe042b2ef5265b0a295
   languageName: node
   linkType: hard
 
