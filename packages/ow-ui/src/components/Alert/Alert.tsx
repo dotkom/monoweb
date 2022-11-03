@@ -21,7 +21,7 @@ export const Alert: FC<PropsWithChildren<AlertProps>> = ({ status, title, childr
   )
 }
 
-const alert = cva("flex justify-center flex-row px-5 py-4 rounded-sm text-base", {
+const alert = cva("flex justify-center flex-row px-5 py-4 rounded-md text-base", {
   variants: {
     status: {
       info: "bg-blue-4",
