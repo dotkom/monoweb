@@ -8,7 +8,7 @@ import { styled } from "../../config/stitches.config"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
 interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
-  color: Color
+  color?: Color
   icon?: React.ReactNode,
   type?: 'submit' | 'reset' | 'button';
 }

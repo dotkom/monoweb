@@ -30,7 +30,7 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       <Box css={styles.interest}>
         <Interest blocks={interest.content} />
         <a href="https://interesse.online.ntnu.no">
-          <Button css={styles.button}>Send Interesse</Button>
+          <Button>Send Interesse</Button>
         </a>
       </Box>
       <Product blocks={product.content} />
