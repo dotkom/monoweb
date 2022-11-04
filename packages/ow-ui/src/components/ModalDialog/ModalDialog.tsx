@@ -100,7 +100,7 @@ export const ModalDialog: React.FC<ModalDialogProps> = ({
 }) => (
   <AlertDialogRoot>
     <AlertDialogTrigger asChild>
-      <Button color={triggerBtnColor} variant="solid">
+      <Button color="red" variant="solid">
         {triggerBtnContent}
       </Button>
     </AlertDialogTrigger>
@@ -109,12 +109,12 @@ export const ModalDialog: React.FC<ModalDialogProps> = ({
       <AlertDialogDescription>{content}</AlertDialogDescription>
       <Flex css={{ justifyContent: "flex-end" }}>
         <AlertDialogCancel asChild>
-          <Button color="gray" variant="light" css={{ marginRight: 25 }}>
+          <Button color="slate" variant="light">
             Avbryt
           </Button>
         </AlertDialogCancel>
         <AlertDialogAction asChild>
-          <Button onClick={action} color="red" variant="solid">
+          <Button color="red" variant="solid" onClick={action}>
             {actionText}
           </Button>
         </AlertDialogAction>

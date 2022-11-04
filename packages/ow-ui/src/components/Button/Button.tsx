@@ -9,10 +9,11 @@ import { styled } from "../../config/stitches.config"
 type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
 interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
   color: Color
-  icon?: React.ReactNode
+  icon?: React.ReactNode,
+  type?: 'submit' | 'reset' | 'button';
 }
 
-export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps>>((props, ref) => {
+export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>((props, ref) => {
   const colorVariants = defaultButton(props.color)
   return (
     <button
@@ -23,6 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
         colorVariants(props)
       )}
       {...props}
+      type={props.type}
       ref={ref}
     >
       <div className="flex items-center">
