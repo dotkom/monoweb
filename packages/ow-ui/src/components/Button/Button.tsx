@@ -49,6 +49,9 @@ const defaultButton = (color: Color) =>
         subtle: subtle({ color: color }),
       },
     },
+    defaultVariants: {
+      variant: "solid",
+    }
   })
 
 const solid = cva("text-slate-12", {
