@@ -2732,7 +2732,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dotkomonline/db@workspace:^, @dotkomonline/db@workspace:packages/ow-db":
+"@dotkomonline/db@workspace:*, @dotkomonline/db@workspace:^, @dotkomonline/db@workspace:packages/ow-db":
   version: 0.0.0-use.local
   resolution: "@dotkomonline/db@workspace:packages/ow-db"
   dependencies:
@@ -2747,7 +2747,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dotkomonline/logger@workspace:^, @dotkomonline/logger@workspace:packages/ow-logger":
+"@dotkomonline/logger@workspace:*, @dotkomonline/logger@workspace:^, @dotkomonline/logger@workspace:packages/ow-logger":
   version: 0.0.0-use.local
   resolution: "@dotkomonline/logger@workspace:packages/ow-logger"
   dependencies:
@@ -25112,8 +25112,8 @@ __metadata:
   resolution: "web@workspace:apps/web"
   dependencies:
     "@dotkomonline/config": "workspace:*"
-    "@dotkomonline/db": "workspace:^"
-    "@dotkomonline/logger": "workspace:^"
+    "@dotkomonline/db": "workspace:*"
+    "@dotkomonline/logger": "workspace:*"
     "@dotkomonline/ui": "workspace:^"
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-avatar": ^1.0.0
