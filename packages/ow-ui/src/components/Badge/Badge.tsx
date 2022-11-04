@@ -2,8 +2,6 @@ import { cva } from "cva"
 import { FC, PropsWithChildren } from "react"
 import { twMerge } from "tailwind-merge"
 
-import { styled } from "../../config/stitches.config"
-
 export interface BadgeProps {
   color: "red" | "green" | "amber" | "blue"
   variant: "subtle" | "filled" | "outline"
