@@ -91,8 +91,6 @@ module.exports = {
       red,
       green,
       brand,
-      background: "#000212",
-      accent: "#FFEDB3",
     },
     extend: {
       fontFamily: {
@@ -101,6 +99,12 @@ module.exports = {
         sans: ['"Inter var"', "sans-serif"],
       },
       colors: {
+        inherit: "inherit",
+        current: "current",
+        transparent: "transparent",
+        background: "#000212",
+        foreground: slate[12],
+        accent: "#FFEDB3",
         slate: {
           DEFAULT: slate[3],
         },
@@ -119,6 +123,9 @@ module.exports = {
       },
       ringColor: {
         DEFAULT: blue[7],
+      },
+      borderRadius: {
+        md: "4px",
       },
     },
   },

@@ -1,6 +1,43 @@
+import { cva } from "cva"
+import type { VariantProps } from "cva"
+import { FC, PropsWithChildren } from "react"
+
 import { styled } from "../../config/stitches.config"
 
-export const Button = styled("button", {
+export type ButtonProps = VariantProps<typeof button>
+
+export const Button: FC<PropsWithChildren<ButtonProps>> = (props) => {
+  return (
+    <button className={button(props)}>
+      <div className="flex">
+        <span className="text-inherit">{props.children}</span>
+      </div>
+    </button>
+  )
+}
+
+const button = cva("border-none rounded-md cursor-pointer px-4 py-2 appearance-none font-semibold", {
+  variants: {
+    color: {
+      blue: "bg-blue-9 text-slate-12",
+      red: "bg-red-9 text-slate-12",
+      amber: "bg-amber-9 text-slate-1",
+      green: "bg-green-9 text-slate-12",
+      slate: "bg-slate-9 text-slate-12",
+    },
+    size: {},
+    disabled: {
+      true: "",
+    },
+    variant: {
+      solid: "",
+      light: "",
+      subtle: "",
+    },
+  },
+})
+
+export const Button2 = styled("button", {
   border: "none",
   borderRadius: "$2",
   cursor: "pointer",
