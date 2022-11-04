@@ -1,39 +1,40 @@
-import { TablerIcon } from "@tabler/icons"
 import clsx from "clsx"
 import { cva } from "cva"
 import type { VariantProps } from "cva"
-import React, { FC, forwardRef, HTMLProps, PropsWithChildren } from "react"
+import React, { forwardRef, HTMLProps, PropsWithChildren } from "react"
 
-import { styled } from "../../config/stitches.config"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
-interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
+
+export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
   color?: Color
-  icon?: React.ReactNode,
-  type?: 'submit' | 'reset' | 'button';
+  icon?: React.ReactNode
+  type?: "submit" | "reset" | "button"
 }
 
-export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>((props, ref) => {
-  const colorVariants = defaultButton(props.color)
-  return (
-    <button
-      className={clsx(
-        "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
-        "transition-transform",
-        "hover:-translate-y-[1px] active:translate-y-[2px]",
-        colorVariants(props)
-      )}
-      {...props}
-      type={props.type}
-      ref={ref}
-    >
-      <div className="flex items-center">
-        <i className="mr-1">{props.icon && props.icon}</i>
-        <span className="text-inherit">{props.children}</span>
-      </div>
-    </button>
-  )
-})
+export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>(
+  (props, ref) => {
+    const colorVariants = defaultButton(props.color)
+    return (
+      <button
+        className={clsx(
+          "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
+          "transition-transform",
+          "hover:-translate-y-[1px] active:translate-y-[2px]",
+          colorVariants(props)
+        )}
+        {...props}
+        type={props.type}
+        ref={ref}
+      >
+        <div className="flex items-center">
+          <i className="mr-1">{props.icon && props.icon}</i>
+          <span className="text-inherit">{props.children}</span>
+        </div>
+      </button>
+    )
+  }
+)
 
 const defaultButton = (color: Color) =>
   cva("", {
@@ -45,6 +46,7 @@ const defaultButton = (color: Color) =>
       variant: {
         light: light({ color: color }),
         solid: solid({ color: color }),
+        subtle: subtle({ color: color }),
       },
     },
   })
@@ -76,5 +78,17 @@ const light = cva("", {
   },
   defaultVariants: {
     color: "blue",
+  },
+})
+
+const subtle = cva("bg-transparent", {
+  variants: {
+    color: {
+      blue: "text-blue-11 hover:bg-blue-2",
+      red: "text-red-11 hover:bg-red-2",
+      green: "text-green-11 hover:bg-green-2",
+      amber: "text-amber-11 hover:bg-amber-2",
+      slate: "text-slate-11 hover:bg-slate-2",
+    },
   },
 })

@@ -11,19 +11,19 @@ export default {
 export const Solid = () => (
   <div className="flex max-w-[500px] flex-wrap justify-around">
     <Button color="blue" variant="solid">
-      Button
+      Blue
     </Button>
     <Button color="red" variant="solid">
-      Button
+      Red
     </Button>
     <Button color="amber" variant="solid">
-      Button
+      Amber
     </Button>
     <Button color="green" variant="solid">
-      Button
+      Green
     </Button>
     <Button color="slate" variant="solid">
-      Button
+      Slate
     </Button>
   </div>
 )
@@ -31,24 +31,43 @@ export const Solid = () => (
 export const Light = () => (
   <div className="flex max-w-[500px] flex-wrap justify-around">
     <Button color="blue" variant="light">
-      Button
+      Blue
     </Button>
     <Button color="red" variant="light">
-      Button
+      Red
     </Button>
     <Button color="amber" variant="light">
-      Button
+      Amber
     </Button>
     <Button color="green" variant="light">
-      Button
+      Green
     </Button>
     <Button color="slate" variant="light">
-      Button
+      Slate
     </Button>
   </div>
 )
+export const Subtle = () => {
+  return <div className="flex max-w-[500px] flex-wrap justify-around">
+    <Button color="blue" variant="subtle">
+      Blue
+    </Button>
+    <Button color="red" variant="subtle">
+      Red
+    </Button>
+    <Button color="amber" variant="subtle">
+      Amber
+    </Button>
+    <Button color="green" variant="subtle">
+      Green
+    </Button>
+    <Button color="slate" variant="subtle">
+      Slate
+    </Button>
+  </div>
+}
 
-export const NonInteractive= () => (
+export const NonInteractive = () => (
   <Button color="blue" variant="light" nonInteractive={true}>
     Button
   </Button>
