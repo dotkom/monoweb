@@ -1,113 +1,78 @@
+import { TablerIcon } from "@tabler/icons"
+import clsx from "clsx"
 import { cva } from "cva"
 import type { VariantProps } from "cva"
-import { FC, PropsWithChildren } from "react"
+import React, { FC, forwardRef, HTMLProps, PropsWithChildren } from "react"
 
 import { styled } from "../../config/stitches.config"
 
-export type ButtonProps = VariantProps<typeof button>
+type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
+interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
+  color: Color
+  icon?: React.ReactNode
+}
 
-export const Button: FC<PropsWithChildren<ButtonProps>> = (props) => {
+export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps>>((props, ref) => {
+  const colorVariants = defaultButton(props.color)
   return (
-    <button className={button(props)}>
-      <div className="flex">
+    <button
+      className={clsx(
+        "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
+        "transition-transform",
+        "hover:-translate-y-[1px] active:translate-y-[2px]",
+        colorVariants(props)
+      )}
+      {...props}
+      ref={ref}
+    >
+      <div className="flex items-center">
+        <i className="mr-1">{props.icon && props.icon}</i>
         <span className="text-inherit">{props.children}</span>
       </div>
     </button>
   )
-}
-
-const button = cva("border-none rounded-md cursor-pointer px-4 py-2 appearance-none font-semibold", {
-  variants: {
-    color: {
-      blue: "bg-blue-9 text-slate-12",
-      red: "bg-red-9 text-slate-12",
-      amber: "bg-amber-9 text-slate-1",
-      green: "bg-green-9 text-slate-12",
-      slate: "bg-slate-9 text-slate-12",
-    },
-    size: {},
-    disabled: {
-      true: "",
-    },
-    variant: {
-      solid: "",
-      light: "",
-      subtle: "",
-    },
-  },
 })
 
-export const Button2 = styled("button", {
-  border: "none",
-  borderRadius: "$2",
-  cursor: "pointer",
-  px: "14px",
-  py: "8px",
-  fontWeight: 600,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "0.2s ease-in-out",
-  "&:hover": {
-    transform: "translateY(-1px)",
-    filter: "brightness(120%)",
-  },
-  "&:active": {
-    transform: "translateY(2px)",
-    filter: "brightness(130%)",
-  },
-  color: "$white",
-  $$main: "$colors$blue3",
-  $$secondary: "$colors$blue11",
-  bg: "$$main",
-  variants: {
-    color: {
-      blue: {
-        $$main: "$colors$blue3",
-        $$secondary: "$colors$blue11",
+const defaultButton = (color: Color) =>
+  cva("", {
+    variants: {
+      size: {},
+      nonInteractive: {
+        true: "opacity-40 pointer-events-none cursor-not-allowed",
       },
-      green: {
-        $$main: "$colors$green3",
-        $$secondary: "$colors$green11",
-      },
-      red: {
-        $$main: "$colors$red3",
-        $$secondary: "$colors$red11",
-      },
-      orange: {
-        $$main: "$colors$orange3",
-        $$secondary: "$colors$orange11",
-      },
-      gray: {
-        $$main: "$colors$gray3",
-        $$secondary: "$colors$gray11",
-      },
-      info: {
-        $$main: "$colors$info3",
-        $$secondary: "$colors$info11",
+      variant: {
+        light: light({ color: color }),
+        solid: solid({ color: color }),
       },
     },
-    variant: {
-      solid: {
-        color: "$white",
-        bg: "$$main",
-        "&:hover": { filter: "brightness(120%)" },
-        "&:active": { filter: "brightness(130%)" },
-      },
-      light: {
-        color: "$$main",
-        bg: "$$secondary",
-        "&:hover": { filter: "brightness(105%)" },
-        "&:active": { filter: "brightness(110%)" },
-      },
-      subtle: {
-        color: "$$main",
-        bg: "transparent",
-      },
+  })
+
+const solid = cva("text-slate-12", {
+  variants: {
+    color: {
+      blue: "bg-blue-9 hover:bg-blue-10",
+      red: "bg-red-9 hover:bg-red-10",
+      amber: "bg-amber-9 text-blue-1 hover:bg-amber-10",
+      green: "bg-green-9 hover:bg-green-10",
+      slate: "bg-slate-9 hover:bg-slate-10",
     },
   },
   defaultVariants: {
     color: "blue",
-    variant: "solid",
+  },
+})
+
+const light = cva("", {
+  variants: {
+    color: {
+      blue: "bg-blue-4 text-blue-11 hover:bg-blue-5",
+      red: "bg-red-4 text-red-11 hover:bg-red-5",
+      amber: "bg-amber-4 text-amber-11 hover:bg-amber-5",
+      green: "bg-green-4 text-green-11 hover:bg-green-5",
+      slate: "bg-slate-4 text-slate-11 hover:bg-slate-5",
+    },
+  },
+  defaultVariants: {
+    color: "blue",
   },
 })
