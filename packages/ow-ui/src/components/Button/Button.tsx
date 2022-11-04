@@ -3,7 +3,6 @@ import { cva } from "cva"
 import type { VariantProps } from "cva"
 import React, { forwardRef, HTMLProps, PropsWithChildren } from "react"
 
-
 type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
 
 export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
@@ -51,7 +50,7 @@ const defaultButton = (color: Color) =>
     },
     defaultVariants: {
       variant: "solid",
-    }
+    },
   })
 
 const solid = cva("text-slate-12", {

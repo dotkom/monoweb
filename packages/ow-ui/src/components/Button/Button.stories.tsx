@@ -1,5 +1,4 @@
 import { IconAdjustments, IconMail, IconMailFast } from "@tabler/icons"
-import { IoSettings } from "react-icons/io5"
 
 import { Button } from "./Button"
 
