@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "private": true,
   "scripts": {
-    "build": "run generate && tsup src/index.ts --format esm --dts --clean --sourcemap",
+    "build": "run generate && tsup src/index.ts --format cjs,esm --dts --clean --sourcemap",
     "migrate": "prisma migrate dev",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
