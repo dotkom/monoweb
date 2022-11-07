@@ -25,7 +25,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
       </Box>
       <Text>{name}</Text>
       <Box>
-        <Badge color="red" variant="subtle">
+        <Badge color="red" variant="light">
           {position}
         </Badge>
       </Box>
