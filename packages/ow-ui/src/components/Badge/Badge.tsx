@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge"
 
 export interface BadgeProps {
   color: "red" | "green" | "amber" | "blue"
-  variant: "subtle" | "filled" | "outline"
+  variant: "light" | "solid" | "outline"
 }
 
 export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, variant }) => {
@@ -12,7 +12,7 @@ export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, vari
   return <span className={style}>{children}</span>
 }
 const styles = {
-  filled: cva("text-slate-12", {
+  solid: cva("text-slate-12", {
     variants: {
       color: {
         red: "bg-red-9",
@@ -23,7 +23,7 @@ const styles = {
     },
   }),
 
-  subtle: cva("", {
+  light: cva("", {
     variants: {
       color: {
         red: "bg-red-4 text-red-11",

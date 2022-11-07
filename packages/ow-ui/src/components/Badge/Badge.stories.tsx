@@ -5,35 +5,35 @@ export default {
   component: Badge,
 }
 
-export const Subtle = () => (
+export const Light = () => (
   <div className="grid gap-2">
-    <Badge color="green" variant="subtle">
+    <Badge color="green" variant="light">
       Green
     </Badge>
-    <Badge color="red" variant="subtle">
+    <Badge color="red" variant="light">
       Red
     </Badge>
-    <Badge color="blue" variant="subtle">
+    <Badge color="blue" variant="light">
       Blue
     </Badge>
-    <Badge color="amber" variant="subtle">
+    <Badge color="amber" variant="light">
       Amber
     </Badge>
   </div>
 )
 
-export const Filled = () => (
+export const Solid = () => (
   <div className="grid gap-2">
-    <Badge color="green" variant="filled">
+    <Badge color="green" variant="solid">
       Red
     </Badge>
-    <Badge color="red" variant="filled">
+    <Badge color="red" variant="solid">
       Red
     </Badge>
-    <Badge color="blue" variant="filled">
+    <Badge color="blue" variant="solid">
       Blue
     </Badge>
-    <Badge color="amber" variant="filled">
+    <Badge color="amber" variant="solid">
       Amber
     </Badge>
   </div>
