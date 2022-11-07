@@ -1,6 +1,12 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "tailwindCSS.experimental.classRegex": [["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]],
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]",
+      "twMerge\\(([^)]*)\\)"
+    ]
+  ],
   "files.associations": {
     "*.css": "tailwindcss"
   },
