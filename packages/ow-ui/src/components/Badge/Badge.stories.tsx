@@ -19,6 +19,9 @@ export const Light = () => (
     <Badge color="amber" variant="light">
       Amber
     </Badge>
+    <Badge color="slate" variant="light">
+      Slate
+    </Badge>
   </div>
 )
 
@@ -36,6 +39,10 @@ export const Solid = () => (
     <Badge color="amber" variant="solid">
       Amber
     </Badge>
+    <Badge color="slate" variant="solid">
+      Slate
+    </Badge>
+    
   </div>
 )
 export const Outline= () => (
@@ -51,6 +58,9 @@ export const Outline= () => (
     </Badge>
     <Badge color="amber" variant="outline">
       Amber
+    </Badge>
+    <Badge color="slate" variant="outline">
+      Slate
     </Badge>
   </div>
 )

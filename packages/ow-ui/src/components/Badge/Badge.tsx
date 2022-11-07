@@ -3,7 +3,7 @@ import { FC, PropsWithChildren } from "react"
 import { twMerge } from "tailwind-merge"
 
 export interface BadgeProps {
-  color: "red" | "green" | "amber" | "blue"
+  color: "red" | "green" | "amber" | "blue" | "slate"
   variant: "light" | "solid" | "outline"
   className?: string
 }
@@ -20,6 +20,7 @@ const styles = {
         blue: "bg-blue-9",
         green: "bg-green-9",
         amber: "bg-amber-9 text-slate-1",
+        slate: "bg-slate-9",
       },
     },
   }),
@@ -31,6 +32,7 @@ const styles = {
         blue: "bg-blue-4 text-blue-11",
         green: "bg-green-4 text-green-11",
         amber: "bg-amber-4 text-amber-11",
+        slate: "bg-slate-4 text-slate-11",
       },
     },
   }),
@@ -42,6 +44,7 @@ const styles = {
         blue: "border-blue-7 text-blue-11 bg-blue-1",
         green: "border-green-7 text-green-11 bg-green-1",
         amber: "border-amber-7 text-amber-11 bg-amber-1",
+        slate: "border-slate-7 text-slate-11 bg-slate-1",
       },
     },
   }),
