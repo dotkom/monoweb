@@ -4,11 +4,12 @@ import { twMerge } from "tailwind-merge"
 
 export interface BadgeProps {
   color: "red" | "green" | "amber" | "blue"
-  variant: "light" | "solid" | "outline"
+  variant: "light" | "solid" | "outline",
+  className?: string
 }
 
-export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, variant }) => {
-  const style = twMerge(styles[variant]({ color }), "flex w-fit items-center rounded-md px-4 font-medium leading-")
+export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, variant,className }) => {
+  const style = twMerge(styles[variant]({ color }), "flex w-fit items-center rounded-md px-4 font-medium", className)
   return <span className={style}>{children}</span>
 }
 const styles = {
