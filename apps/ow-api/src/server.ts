@@ -3,7 +3,7 @@ import express from "express"
 
 import { createExpressMiddleware } from "@trpc/server/adapters/express"
 
-import { createContext } from "./index.js"
+import { createContext } from "./context"
 import { appRouter } from "./router.js"
 
 export const createServer = () => {

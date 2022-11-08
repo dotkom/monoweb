@@ -1,4 +1,4 @@
-import { User as PrismaUser } from "@dotkomonline/db"
+import type { Prisma } from "@dotkomonline/db"
 import { z } from "zod"
 
 const userSchema = z.object({
@@ -13,6 +13,6 @@ const userSchema = z.object({
 
 export type User = z.infer<typeof userSchema>
 
-export const mapToUser = (payload: PrismaUser): User => {
+export const mapToUser = (payload: Prisma.UserGetPayload<null>): User => {
   return userSchema.parse(payload)
 }

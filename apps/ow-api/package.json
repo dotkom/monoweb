@@ -11,6 +11,7 @@
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
+    "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage"
