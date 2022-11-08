@@ -1,7 +1,7 @@
+import { NotFoundError } from "@/errors/errors"
 import { Configuration, V0alpha2Api } from "@ory/client"
 import bcrypt from "bcrypt"
 
-import { NotFoundError } from "../../errors/errors"
 import { User } from "./user"
 import { UserRepository } from "./user-repository"
 

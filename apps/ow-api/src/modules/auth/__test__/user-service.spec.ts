@@ -2,6 +2,7 @@ import { PrismaClient } from "@dotkomonline/db"
 import { v4 as uuidv4 } from "uuid"
 
 import { NotFoundError } from "../../../errors/errors"
+import { User } from "../user"
 import { initUserRepository } from "../user-repository"
 import { initUserService } from "../user-service"
 
@@ -12,15 +13,17 @@ describe("UserService", () => {
 
   it("creates a new user", async () => {
     // TODO: change this when i finish the register function
-    const user = {
-      firstName: "Monkey",
-      lastName: "Markus",
-      email: "monkey@markus.com",
-      username: "monkey_markus",
-    }
     const id = uuidv4()
-    vi.spyOn(userRepository, "createUser").mockResolvedValueOnce({})
-    await expect(userService.register(user.email, "password")).resolves.toEqual({ id, ...user })
+    const user: User = {
+      name: "Markus",
+      email: "monkey@markus.com",
+      id,
+      image: "",
+      createdAt: new Date(2022, 5, 3),
+      password: "hunter2",
+    }
+    vi.spyOn(userRepository, "createUser").mockResolvedValueOnce(user)
+    await expect(userService.register("monkey@markus.com", "password")).resolves.toEqual(user)
     expect(userRepository.createUser).toHaveBeenCalledWith(user)
   })
 
