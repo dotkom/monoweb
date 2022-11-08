@@ -14,7 +14,7 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="">
       Not signed in <br />
       <Button onClick={() => signIn("onlineweb")}>Sign in</Button>
     </div>

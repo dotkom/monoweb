@@ -1,16 +1,17 @@
-import { Box, Flex } from "../primitives"
-import { CSS } from "@theme"
-import PortableText from "@components/molecules/PortableText"
-import Image from "next/image"
-import { DateTime } from "luxon"
-import { Badge, Button, css, Text } from "@dotkom/ui"
-import { IoEarth, IoTimeOutline, IoCopyOutline, IoArrowBackOutline } from "react-icons/io5"
-import { BsLinkedin, BsTwitter } from "react-icons/bs"
-import { ImFacebook2 } from "react-icons/im"
-import { FaArrowLeft } from "react-icons/fa"
 import { CareerAd, fetchCareerAd } from "@/api/get-career-ads"
+import { Badge, Button, css, Text } from "@dotkomonline/ui"
+import { DateTime } from "luxon"
+import Image from "next/image"
 import { FC } from "react"
+import { BsLinkedin, BsTwitter } from "react-icons/bs"
+import { FaArrowLeft } from "react-icons/fa"
+import { ImFacebook2 } from "react-icons/im"
+import { IoEarth, IoTimeOutline, IoCopyOutline, IoArrowBackOutline } from "react-icons/io5"
 import { MdWorkOutline } from "react-icons/md"
+
+import PortableText from "@components/molecules/PortableText"
+
+import { Box, Flex } from "../primitives"
 
 interface CareerAdViewProps {
   career: CareerAd
@@ -34,134 +35,126 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
   } = props.career
 
   return (
-    <Flex
-      css={{
-        mt: "100px",
-        width: "80%",
-        display: "flex",
-        mx: "auto",
-        justifyContent: "space-around",
-      }}
-    >
-      <Box
-        css={{
-          width: "30%",
-        }}
-      >
-        <Box css={{ position: "relative", width: "100%", height: "200px" }}>
-          <Image layout="fill" src={image.asset.url} alt="company_image" />
+    <Flex className="mx-auto mt-10 flex w-10/12 justify-around">
+      <Box className="w-1/3">
+        <Box className="relative">
+          <Image src={image.asset.url} width={200} height={200} alt="company_image" />
         </Box>
 
         <Text>{company_info}</Text>
 
-        <Box
-          css={{
-            mt: "$4",
-            mb: "$5",
-            mx: "auto",
-            width: "100%",
-            borderBottom: "1px solid black",
-          }}
-        />
+        <Box className="border-b-1 mx-auto mt-4 mb-5 w-full border-black" />
 
-        <Box css={styles.info}>
-          <Box css={{ display: "inline", color: "$blue2", fontSize: "15px", mb: "-3px" }}>
+        <Box className={styles.infoTW}>
+          <Box className="mb-1 inline text-xl text-red-11">
             <FaArrowLeft />
           </Box>
-          <Text css={{ margin: "0", fontWeight: "bold", fontSize: "15px", color: "$blue2", pl: "$2" }}>
-            {" "}
-            ANDRE MULIGHETER
-          </Text>
+          <Text className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</Text>
         </Box>
 
-        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+        <Box className="border-b-1 w-full border-black" />
 
-        <Box css={styles.info}>
-          <Box css={styles.icon}>
+        <Box className={styles.infoTW}>
+          <Box className={styles.iconTW}>
             <IoEarth />
           </Box>
-          <Text css={{ margin: "0", pl: "$2" }}>{location}</Text>
+          <Text className="m-0 pl-2">{location}</Text>
         </Box>
 
-        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+        <Box className="border-b-1 w-full border-black" />
 
-        <Box css={styles.info}>
-          <Box css={styles.icon}>
+        <Box className={styles.infoTW}>
+          <Box className={styles.iconTW}>
             <IoTimeOutline />
           </Box>
-          <Text css={{ margin: "0", pl: "$2" }}>{DateTime.fromISO(deadline).toFormat("dd.MM.yyyy")}</Text>
+          <Text className="m-0 pl-2">{DateTime.fromISO(deadline).toFormat("dd.MM.yyyy")}</Text>
         </Box>
 
-        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+        <Box className="border-b-1 w-full border-black" />
 
-        <Box css={styles.info}>
-          <Box css={styles.icon}>
+        <Box className={styles.infoTW}>
+          <Box className={styles.iconTW}>
             <MdWorkOutline />
           </Box>
-          <Text css={{ margin: "0", pl: "$2" }}>{career_type}</Text>
+          <Text className="m-0 pl-2">{career_role}</Text>
         </Box>
 
-        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+        <Box className="border-b-1 w-full border-black" />
 
-        <Box css={styles.info}>
-          <Box css={styles.icon}>
+        <Box className={styles.infoTW}>
+          <Box className={styles.iconTW}>
             <IoCopyOutline />
           </Box>
-          <Text css={{ margin: "0", pl: "$2" }}>{career_role}</Text>
+          <Text className="m-0 pl-2">{career_role}</Text>
         </Box>
 
-        <Box css={{ width: "100%", borderBottom: "1px solid $gray8" }} />
+        <Box className="border-b-1 w-full border-black" />
 
-        <Box css={{ color: "$blue2", mt: "$2" }}>
-          {linkdin && <a style={{textDecoration:"none"}} href={linkdin}><BsLinkedin style={{ margin: "5px" }} /></a>}
-          {twitter && <a style={{textDecoration:"none"}} href={twitter}><BsTwitter style={{ margin: "5px" }} /></a>}
-          {facebook && <a style={{textDecoration:"none"}} href={facebook}><ImFacebook2 style={{ margin: "5px" }} /></a>}
+        <Box className="mt-2 text-red-11">
+          {linkdin && (
+            <a href={linkdin}>
+              <BsLinkedin className="m-2" />
+            </a>
+          )}
+          {twitter && (
+            <a href={twitter}>
+              <BsTwitter className="m-2" />
+            </a>
+          )}
+          {facebook && (
+            <a href={facebook}>
+              <ImFacebook2 className="m-2" />
+            </a>
+          )}
         </Box>
         <a href={link}>
-          <Button css={{ mt: "$3", width: "80px" }}>Søk</Button>
+          <Button className="mt-3 w-20">Søk</Button>
         </a>
       </Box>
-      <Box
-        css={{
-          width: "60%",
-        }}
-      >
-        <Box css={styles.article}>
-          <Text css={{ margin: "0", fontSize: "30px" }}>
+      <Box className="w-2/3">
+        <Box className={styles.articleTW}>
+          <Text className="m-0 text-2xl">
             <b>{company_name}</b>
           </Text>
-          <Text css={{ margin: "0", fontSize: "20px" }}>{title}</Text>
+          <Text className="m-0 text-2xl">{title}</Text>
         </Box>
-        <PortableText blocks={content} className={styles.content()} />
+        <PortableText
+          blocks={content}
+          className="[&>*]:border-l-1.5 ml-50 [&>*]border-amber-9 mt-4 pl-4 [&>h1]:text-2xl"
+        />
       </Box>
     </Flex>
   )
 }
-
+// from css to tailwind
 const styles = {
   article: {
     borderLeft: "1.5px solid $orange3",
     pl: "$4",
     ml: "50px",
     mt: "$4",
-  } as CSS,
+  },
+  articleTW: "border-l-1.5 border-amber-9 pl-4 ml-50 mt-4",
   portable: {
     borderLeft: "1.5px solid $orange3",
     pl: "$4",
     ml: "50px",
     mt: "$4",
-  } as CSS,
+  },
+  portableTW: "border-l-1.5 border-orange3 pl-4 ml-50 mt-4",
   info: {
     display: "flex",
     margin: "0px",
     my: "$3",
     alignItems: "center",
-  } as CSS,
+  },
+  infoTW: "flex my-3 items-center",
   icon: {
     display: "inline",
     color: "$blue2",
     mb: "-3px",
-  } as CSS,
+  },
+  iconTW: "inline text-red-11 mb-3",
   content: css({
     "h1, ul, p, h2": {
       borderLeft: "1.5px solid $orange3",
