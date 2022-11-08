@@ -12,7 +12,7 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit",
-    "build:prod": "tsup src --dts",
+    "build:prod": "tsup src",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage"
