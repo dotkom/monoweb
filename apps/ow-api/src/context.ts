@@ -15,11 +15,9 @@ import { initEventService } from "./modules/event/event-service"
  **/
 export const createContext = async ({ req, res }: trpcExpress.CreateExpressContextOptions) => {
   console.log({ req, res })
-  const client = prisma
-
   // Repositories
-  const userRepository = initUserRepository(client)
-  const eventRepository = initEventRepository(client)
+  const userRepository = initUserRepository(prisma)
+  const eventRepository = initEventRepository(prisma)
 
   // Services
   const userService = initUserService(userRepository)
