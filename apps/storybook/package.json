@@ -19,6 +19,7 @@
     "@types/react": "^18.0.15",
     "autoprefixer": "^10.4.13",
     "babel-loader": "^8.2.5",
+    "next": "^13.0.2",
     "react": "^18.2.0",
     "sb": "^6.5.9",
     "storybook-dark-mode": "^1.1.2",
