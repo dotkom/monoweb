@@ -32,7 +32,7 @@ module.exports = {
           },
           {
             find: "next/image",
-            replacement: path.resolve(__dirname, "./NextImage.js"),
+            replacement: path.resolve(__dirname, "./NextImage.jsx"),
           },
         ],
       },
