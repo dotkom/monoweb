@@ -5,15 +5,14 @@ import "../../web/src/styles/globals.css"
 
 const OriginalNextImage = NextImage.default
 
-Object.defineProperty(NextImage, "default", {
-  configurable: true,
-  value: (props) =>
-    typeof props.src === "string" ? (
-      <OriginalNextImage {...props} unoptimized blurDataURL={props.src} />
-    ) : (
-      <OriginalNextImage {...props} unoptimized />
-    ),
-})
+NextImage.default = (props) =>
+  typeof props.src === "string" ? (
+    <OriginalNextImage {...props} unoptimized blurDataURL={props.src} />
+  ) : (
+    <OriginalNextImage {...props} unoptimized />
+  )
+
+NextImage.__esModule = true
 
 export const parameters = {
   darkMode: {
