@@ -1,4 +1,4 @@
-import { NotFoundError } from "@/errors/errors"
+import { NotFoundError } from "../../../errors/errors"
 import { PrismaClient } from "@dotkomonline/db"
 import { randomUUID } from "crypto"
 import { describe, vi } from "vitest"
