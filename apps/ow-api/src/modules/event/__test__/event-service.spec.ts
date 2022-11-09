@@ -1,8 +1,8 @@
-import { NotFoundError } from "@/errors/errors"
 import { PrismaClient } from "@dotkomonline/db"
 import { randomUUID } from "crypto"
 import { describe, vi } from "vitest"
 
+import { NotFoundError } from "../../../errors/errors"
 import { InsertEvent } from "../event"
 import { initEventRepository } from "../event-repository"
 import { initEventService } from "../event-service"

@@ -11,6 +11,8 @@
     "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node src/database/seed.ts",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
+    "type-check": "tsc --noEmit",
+    "build:prod": "tsup src",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage"
@@ -38,6 +40,7 @@
     "@vitest/ui": "^0.23.4",
     "eslint": "^8.26.0",
     "express": "^4.18.1",
+    "tsup": "^6.4.0",
     "tsx": "^3.11.0",
     "vite-tsconfig-paths": "^3.5.2",
     "vitest": "^0.23.4"

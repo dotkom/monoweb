@@ -1,4 +1,4 @@
-import { Event as PrismaEvent } from "@dotkomonline/db"
+import { Prisma } from "@dotkomonline/db"
 import { z } from "zod"
 
 export const eventSchema = z.object({
@@ -18,6 +18,6 @@ export const eventSchema = z.object({
 export type Event = z.infer<typeof eventSchema>
 export type InsertEvent = Omit<Event, "id">
 
-export const mapToEvent = (payload: PrismaEvent): Event => {
+export const mapToEvent = (payload: Prisma.EventGetPayload<null>): Event => {
   return eventSchema.parse(payload)
 }
