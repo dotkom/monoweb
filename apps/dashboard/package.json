@@ -11,6 +11,8 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.0.2",
+    "@radix-ui/react-dialog": "^1.0.2",
     "@tremor/react": "^1.1.4",
     "clsx": "^1.2.1",
     "install": "^0.13.0",

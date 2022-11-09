@@ -1,9 +1,15 @@
 import { Title, Text, Table, TableHead, TableRow, TableBody, TableHeaderCell, TableCell, Button } from "@tremor/react"
 import { FC } from "react"
 
+import { useFlyout } from "../../../components/Flyout"
+import { EventDetailsDrawer } from "./EventDetailsDrawer"
+
 export const EventPage: FC = () => {
+  const { Flyout, open } = useFlyout(EventDetailsDrawer)
+
   return (
-    <div className="w-full p-6 flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4 p-6">
+      <Flyout />
       <div>
         <Title>Arrangmenter</Title>
         <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
@@ -28,7 +34,7 @@ export const EventPage: FC = () => {
               <TableCell>Sosialt</TableCell>
               <TableCell>25/150</TableCell>
               <TableCell>
-                <Button text="Endre" importance="secondary" handleClick={() => alert("wow")} />
+                <Button text="Endre" importance="secondary" handleClick={open} />
               </TableCell>
             </TableRow>
           </TableBody>
