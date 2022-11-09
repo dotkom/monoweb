@@ -1,8 +1,8 @@
 import { initTRPC } from "@trpc/server"
 
 import { Context } from "./context"
-import { eventRouter } from "./modules/event/event-router";
-import { authRouter } from "./modules/auth/auth-router";
+import { authRouter } from "./modules/auth/auth-router"
+import { eventRouter } from "./modules/event/event-router"
 
 // TODO: Superjson
 export const t = initTRPC.context<Context>().create({
@@ -13,7 +13,7 @@ export const t = initTRPC.context<Context>().create({
 
 export const appRouter = t.router({
   event: eventRouter,
-  auth: authRouter
+  auth: authRouter,
 })
 
 export type AppRouter = typeof appRouter

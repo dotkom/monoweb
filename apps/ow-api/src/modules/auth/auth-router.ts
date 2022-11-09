@@ -1,5 +1,6 @@
-import { z } from "zod";
-import { t } from "../../trpc";
+import { z } from "zod"
+
+import { t } from "../../trpc"
 
 export const authRouter = t.router({
   signin: t.procedure
@@ -10,7 +11,7 @@ export const authRouter = t.router({
         challenge: z.string(),
       })
     )
-    .mutation((req) => {
+    .mutation((_req) => {
       return { msg: "hello world" }
     }),
 })
