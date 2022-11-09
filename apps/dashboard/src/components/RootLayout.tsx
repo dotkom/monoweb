@@ -7,7 +7,7 @@ export const RootLayout: FC = () => {
   return (
     <div className="bg-background flex">
       <Sidebar />
-      <main className="w-full min-h-screen bg-slate-50">
+      <main className="min-h-screen w-full bg-slate-50">
         <Outlet />
       </main>
     </div>
