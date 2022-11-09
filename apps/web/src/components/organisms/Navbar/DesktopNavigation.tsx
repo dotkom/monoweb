@@ -109,7 +109,7 @@ export const DesktopNavigation = () => (
           </NavigationMenuItem>
         ))}
         <NavigationMenuItem>
-          <NavigationMenuLink href="https://github.com/radix-ui">Karriere</NavigationMenuLink>
+          <NavigationMenuLink href="/career">Karriere</NavigationMenuLink>
         </NavigationMenuItem>
 
         <DropdownIndicator />
