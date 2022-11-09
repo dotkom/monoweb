@@ -1,14 +1,14 @@
 import { themes } from "@storybook/theming"
+import * as NextImage from "next/image"
 
-// import * as NextImage from "next/image"
 import "../../web/src/styles/globals.css"
 
-// const OriginalNextImage = NextImage.default
+const OriginalNextImage = NextImage.default
 
-// Object.defineProperty(NextImage, "default", {
-//   configurable: true,
-//   value: (props) => <OriginalNextImage {...props} unoptimized />,
-// })
+Object.defineProperty(NextImage, "default", {
+  configurable: true,
+  value: (props) => <OriginalNextImage {...props} unoptimized />,
+})
 
 export const parameters = {
   darkMode: {

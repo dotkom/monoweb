@@ -39,7 +39,7 @@ const EventCard: FC<EventCardProps> = (props) => {
             <Box as="span" css={{ color: "$blue2", lineHeight: "1.2" }}>
               {format(eventStart, "MMM")}
             </Box>
-            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{format(eventStart, "DD")}</Box>
+            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{format(eventStart, "dd")}</Box>
           </time>
           <Text as="h2" css={styles.title}>
             {title}
