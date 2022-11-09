@@ -12167,7 +12167,9 @@ __metadata:
     "@dotkomonline/config": "workspace:^"
     "@radix-ui/react-alert-dialog": ^1.0.2
     "@radix-ui/react-dialog": ^1.0.2
+    "@tanstack/react-query": ^4.13.0
     "@tremor/react": ^1.1.4
+    "@trpc/client": ^10.0.0-rc.0
     "@types/eslint": ^8
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.6

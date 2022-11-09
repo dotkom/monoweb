@@ -13,7 +13,9 @@
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.2",
     "@radix-ui/react-dialog": "^1.0.2",
+    "@tanstack/react-query": "^4.13.0",
     "@tremor/react": "^1.1.4",
+    "@trpc/client": "^10.0.0-rc.0",
     "clsx": "^1.2.1",
     "install": "^0.13.0",
     "npm": "^8.19.3",
