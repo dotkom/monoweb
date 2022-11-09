@@ -30,6 +30,10 @@ module.exports = {
             find: "@components",
             replacement: path.resolve(__dirname, "../../web/src/components"),
           },
+          {
+            find: "next/image",
+            replacement: path.resolve(__dirname, "./NextImage.js"),
+          },
         ],
       },
       define: {
