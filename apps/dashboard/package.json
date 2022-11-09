@@ -11,7 +11,10 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
+    "@tremor/react": "^1.1.4",
     "clsx": "^1.2.1",
+    "install": "^0.13.0",
+    "npm": "^8.19.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.6.0",

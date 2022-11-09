@@ -5,5 +5,7 @@ module.exports = {
   printWidth: 120,
   endOfLine: "auto",
   arrowParens: "always",
-  plugins: [require("prettier-plugin-tailwindcss")],
+  importOrder: ["^@(dotkom)/(.*)$", "^@lib/(.*)$", "^@components/(.*)$", "^@(server|trpc)/(.*)$", "^~/(.*)$", "^[./]", ".css$"],
+  importOrderSeparation: true,
+  plugins: [require("./merged-prettier-plugin"), require("./tailwind-preset")],
 }
