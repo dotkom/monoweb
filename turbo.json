@@ -10,6 +10,10 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**"]
     },
+    "build:storybook": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static"]
+    },
     "test": {
       "dependsOn": ["lint"],
       "outputs": []
