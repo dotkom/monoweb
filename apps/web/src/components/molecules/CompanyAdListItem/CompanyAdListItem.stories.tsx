@@ -1,4 +1,3 @@
-import { DateTime } from "luxon";
 import CompanyAdListItem from "./CompanyAdListItem";
 
 export default {
@@ -11,7 +10,7 @@ export const SingleAd = () => (
     name="Google"
     position="Sommerjobb"
     location={["Oslo"]}
-    deadline={DateTime.local(2022, 11, 2)}
+    deadline={new Date(2022, 11, 2)}
     logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.svg.png"
   />
 );

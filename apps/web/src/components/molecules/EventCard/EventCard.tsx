@@ -1,6 +1,6 @@
 import { Card, Text } from "@dotkomonline/ui"
 import { CSS, css, styled } from "@dotkomonline/ui"
-import { DateTime } from "luxon"
+import { format, formatISO } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi"
@@ -19,12 +19,11 @@ interface EventCardProps {
 
 const EventCard: FC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props
-  const date = DateTime.fromJSDate(eventStart)
 
   let eventInfo = [
     {
       icon: <FiClock />,
-      text: date.toFormat("HH:mm"),
+      text: format(eventStart, "HH:mm"),
     },
   ]
   if (attendees && capacity) {
@@ -36,11 +35,11 @@ const EventCard: FC<EventCardProps> = (props) => {
       <Thumbnail src={thumbnailUrl} width={300} height={150} alt="thumbnail" />
       <Flex css={{ padding: "$2", flexDirection: "column" }}>
         <HeaderArea>
-          <time dateTime={date.toISO()} color="red" className={styles.dateContainer()}>
+          <time dateTime={formatISO(eventStart)} color="red" className={styles.dateContainer()}>
             <Box as="span" css={{ color: "$blue2", lineHeight: "1.2" }}>
-              {date.toFormat("MMM")}
+              {format(eventStart, "MMM")}
             </Box>
-            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{date.toFormat("dd")}</Box>
+            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{format(eventStart, "DD")}</Box>
           </time>
           <Text as="h2" css={styles.title}>
             {title}
