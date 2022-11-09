@@ -1,18 +1,12 @@
 import { themes } from "@storybook/theming"
-import * as NextImage from "next/image"
+import * as nextImage from "next/image"
 
 import "../../web/src/styles/globals.css"
 
-const OriginalNextImage = NextImage.default
-
-NextImage.default = (props) =>
-  typeof props.src === "string" ? (
-    <OriginalNextImage {...props} unoptimized blurDataURL={props.src} />
-  ) : (
-    <OriginalNextImage {...props} unoptimized />
-  )
-
-NextImage.__esModule = true
+Object.defineProperty(nextImage, "default", {
+  configurable: true,
+  value: (props) => <img {...props} />,
+})
 
 export const parameters = {
   darkMode: {
