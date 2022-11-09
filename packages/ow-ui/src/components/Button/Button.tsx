@@ -1,7 +1,7 @@
-import clsx from "clsx"
 import { cva } from "cva"
 import type { VariantProps } from "cva"
 import React, { forwardRef, HTMLProps, PropsWithChildren } from "react"
+import { twMerge } from "tailwind-merge"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
 
@@ -9,6 +9,7 @@ export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButto
   color?: Color
   icon?: React.ReactNode
   type?: "submit" | "reset" | "button"
+  className?: string
 }
 
 export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>(
@@ -16,17 +17,18 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
     const colorVariants = defaultButton(props.color)
     return (
       <button
-        className={clsx(
+        {...props}
+        className={twMerge(
           "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
           "transition-transform",
           "hover:-translate-y-[1px] active:translate-y-[2px]",
-          colorVariants(props)
+          colorVariants(props),
+          props.className
         )}
-        {...props}
         type={props.type}
         ref={ref}
       >
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <i className="mr-1">{props.icon && props.icon}</i>
           <span className="text-inherit">{props.children}</span>
         </div>
@@ -46,6 +48,7 @@ const defaultButton = (color: Color) =>
         light: light({ color: color }),
         solid: solid({ color: color }),
         subtle: subtle({ color: color }),
+        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
       },
     },
     defaultVariants: {
