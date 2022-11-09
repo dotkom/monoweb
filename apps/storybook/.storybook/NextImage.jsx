@@ -1,4 +1,4 @@
-import NextImage from "next/image"
+import NextImage from "../node_modules/next/image"
 
 export default function (props) {
   return <NextImage unoptimized {...props} />
