@@ -1,5 +1,5 @@
-import { User } from ".prisma/client"
 import { Seeder } from "."
+import { User } from ".prisma/client"
 
 export const seedUsers: Seeder = async (chance, prisma) => {
   // Generates the required input of random varables

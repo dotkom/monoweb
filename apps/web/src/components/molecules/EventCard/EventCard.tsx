@@ -1,10 +1,11 @@
 import { Card, Text } from "@dotkomonline/ui"
-import { FC } from "react"
-import Image from "next/image"
 import { CSS, css, styled } from "@dotkomonline/ui"
-import { Box, Flex } from "@components/primitives"
-import { DateTime } from "luxon"
+import { format, formatISO } from "date-fns"
+import Image from "next/image"
+import { FC } from "react"
 import { FiUsers, FiMapPin, FiClock } from "react-icons/fi"
+
+import { Box, Flex } from "@components/primitives"
 
 interface EventCardProps {
   title: string
@@ -18,12 +19,11 @@ interface EventCardProps {
 
 const EventCard: FC<EventCardProps> = (props) => {
   const { title, eventStart, attendees, capacity, tags, location, thumbnailUrl } = props
-  const date = DateTime.fromJSDate(eventStart)
 
   let eventInfo = [
     {
       icon: <FiClock />,
-      text: date.toFormat("HH:mm"),
+      text: format(eventStart, "HH:mm"),
     },
   ]
   if (attendees && capacity) {
@@ -32,14 +32,14 @@ const EventCard: FC<EventCardProps> = (props) => {
 
   return (
     <Card shadow css={{ maxWidth: "300px", width: "100%" }}>
-      <Thumbnail src={thumbnailUrl} width="300px" layout="responsive" height="150px" />
+      <Thumbnail src={thumbnailUrl} width={300} height={150} alt="thumbnail" />
       <Flex css={{ padding: "$2", flexDirection: "column" }}>
         <HeaderArea>
-          <time dateTime={date.toISO()} color="red" className={styles.dateContainer()}>
+          <time dateTime={formatISO(eventStart)} color="red" className={styles.dateContainer()}>
             <Box as="span" css={{ color: "$blue2", lineHeight: "1.2" }}>
-              {date.toFormat("MMM")}
+              {format(eventStart, "MMM")}
             </Box>
-            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{date.toFormat("dd")}</Box>
+            <Box css={{ lineHeight: "1.2", fontSize: "$2xl" }}>{format(eventStart, "DD")}</Box>
           </time>
           <Text as="h2" css={styles.title}>
             {title}

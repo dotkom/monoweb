@@ -1,5 +1,6 @@
-import { ComponentPropsWithoutRef, forwardRef } from "react"
 import * as Label from "@radix-ui/react-label"
+import { ComponentPropsWithoutRef, forwardRef } from "react"
+
 import { css } from "../../config/stitches.config"
 import { AlertIcon } from "../Alert/AlertIcon"
 

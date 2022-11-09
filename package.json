@@ -14,7 +14,7 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "dev": "turbo run dev",
-    "storybook": "turbo run storybook --filter=docs"
+    "storybook": "turbo run storybook --filter=storybook"
   },
   "workspaces": [
     "packages/*",
@@ -27,7 +27,6 @@
   "devDependencies": {
     "@types/node": "^16.11.47",
     "eslint": "^8.21.0",
-    "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
     "tsc-watch": "^5.0.3",

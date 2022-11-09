@@ -1,11 +1,13 @@
+import { CSS, css, styled } from "@dotkomonline/ui"
+import { Button } from "@dotkomonline/ui"
+import { BlockContentProps } from "@sanity/block-content-to-react"
+import { FC } from "react"
+
 import PortableText from "@components/molecules/PortableText"
 import { Box } from "@components/primitives"
-import { BlockContentProps } from "@sanity/block-content-to-react"
-import { CSS, css, styled } from "@dotkomonline/ui"
-import { FC } from "react"
+
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
-import { Button } from "@dotkomonline/ui"
 
 export type Content = BlockContentProps["blocks"]
 
@@ -28,7 +30,7 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       <Box css={styles.interest}>
         <Interest blocks={interest.content} />
         <a href="https://interesse.online.ntnu.no">
-          <Button css={styles.button}>Send Interesse</Button>
+          <Button>Send Interesse</Button>
         </a>
       </Box>
       <Product blocks={product.content} />

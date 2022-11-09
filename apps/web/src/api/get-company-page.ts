@@ -1,4 +1,5 @@
 import { BlockContentProps } from "@sanity/block-content-to-react"
+
 import client from "./sanity"
 
 interface CompanySectionData {

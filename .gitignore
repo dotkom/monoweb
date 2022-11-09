@@ -24,3 +24,5 @@ dist/
 .next/
 build/
 coverage
+
+storybook-static

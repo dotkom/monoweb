@@ -1,11 +1,13 @@
-import { Box, Flex } from "../primitives"
+import { CSS, css, styled } from "@dotkomonline/ui"
+import { Badge, Text } from "@dotkomonline/ui"
+import { format } from "date-fns"
+import Image from "next/image"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
-import { CSS, css, styled } from "@dotkomonline/ui"
+
 import PortableText from "@components/molecules/PortableText"
-import Image from "next/image"
-import { DateTime } from "luxon"
-import { Badge, Text } from "@dotkomonline/ui"
+
+import { Box, Flex } from "../primitives"
 
 interface ArticleViewProps {
   article: Article
@@ -15,7 +17,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
   const { title, author, photographer, _createdAt, tags, excerpt, cover_image, content, estimatedReadingTime } =
     props.article
 
-  const date = DateTime.fromISO(_createdAt)
+  const date = new Date(_createdAt)
 
   return (
     <Flex
@@ -41,7 +43,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
           </Box>
           <Box>
             <Text>
-              Publisert <span className={styles.lightFont()}>{date.toFormat("dd MMM yyyy", { locale: "no" })}</span>
+              Publisert <span className={styles.lightFont()}>{format(date, "dd MMM yyyy")}</span>
             </Text>
             <Text>
               {estimatedReadingTime} minutter <span className={styles.lightFont()}>for å lese</span>
@@ -50,7 +52,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
         </Flex>
         <Flex css={styles.tagContainer}>
           {tags.map((tag: string, key: number) => (
-            <Badge key={key} variant="subtle" color="gray" css={{ marginRight: "$3" }}>
+            <Badge key={key} variant="light" color="slate">
               {tag}
             </Badge>
           ))}

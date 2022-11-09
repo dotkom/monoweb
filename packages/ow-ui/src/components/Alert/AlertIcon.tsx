@@ -1,69 +1,21 @@
+import { IconInfoCircle, IconCircleCheck, IconAlertTriangle, IconAlertCircle } from "@tabler/icons"
 import { FC } from "react"
-import { css } from "../../config/stitches.config"
-import { IoAlertCircle, IoCheckmarkCircle, IoInformationCircle, IoWarning } from "react-icons/io5"
 
 interface AlertIconProps {
   status: "info" | "warning" | "success" | "danger"
-  className?: string
-  monochrome?: boolean
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status, className, monochrome }) => {
-  const style = () =>
-    monochrome ? `${styles.monochrome({ status })} ${className}` : `${styles.base({ status })} ${className}`
+export const AlertIcon: FC<AlertIconProps> = ({ status }) => {
+  const iconProps = { size: 24, stroke: 2 }
+
   switch (status) {
     case "info":
-      return <IoInformationCircle className={style()} />
+      return <IconInfoCircle {...iconProps} className="text-blue-11" />
     case "success":
-      return <IoCheckmarkCircle className={style()} />
+      return <IconCircleCheck {...iconProps} className="text-green-11" />
     case "danger":
-      return <IoAlertCircle className={style()} />
+      return <IconAlertCircle {...iconProps} className="text-red-11" />
     case "warning":
-      return <IoWarning className={style()} />
+      return <IconAlertTriangle {...iconProps} className="text-amber-11" />
   }
-}
-
-const styles = {
-  base: css({
-    marginRight: "$2",
-    width: "24px",
-    height: "24px",
-    variants: {
-      status: {
-        info: {
-          color: "$info3",
-        },
-        success: {
-          color: "$green3",
-        },
-        warning: {
-          color: "$orange3",
-        },
-        danger: {
-          color: "$red3",
-        },
-      },
-    },
-  }),
-  monochrome: css({
-    marginRight: "$2",
-    width: "24px",
-    height: "24px",
-    variants: {
-      status: {
-        info: {
-          color: "$gray12",
-        },
-        success: {
-          color: "$gray12",
-        },
-        warning: {
-          color: "$gray1",
-        },
-        danger: {
-          color: "$gray12",
-        },
-      },
-    },
-  }),
 }

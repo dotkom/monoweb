@@ -1,5 +1,6 @@
 import { styled } from "@dotkomonline/ui"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+
 import { enterFromLeft, enterFromRight, exitToLeft, exitToRight } from "../../keyframes/keyframes"
 
 const Content = styled(NavigationMenuPrimitive.Content, {

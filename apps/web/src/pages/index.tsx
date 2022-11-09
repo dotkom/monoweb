@@ -1,7 +1,6 @@
-import React from "react"
 import { Button } from "@dotkomonline/ui"
-
 import { useSession, signIn, signOut } from "next-auth/react"
+import React from "react"
 
 const Home: React.FC = () => {
   const { data: session } = useSession()

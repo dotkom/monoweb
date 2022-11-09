@@ -1,5 +1,7 @@
-import { Box } from "@components/primitives"
 import { css } from "@dotkomonline/ui"
+
+import { Box } from "@components/primitives"
+
 import { Circle } from "../atoms/Circle/Circle"
 import { DottedLine } from "../atoms/DottedCurve"
 

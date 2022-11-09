@@ -1,3 +1,5 @@
+import { IconAdjustments, IconMail, IconMailFast } from "@tabler/icons"
+
 import { Button } from "./Button"
 
 export default {
@@ -5,98 +7,78 @@ export default {
   component: Button,
 }
 
-export const Default = () => (
-  <Button color="blue" variant="solid">
-    Button
-  </Button>
+export const Solid = () => (
+  <div className="flex max-w-[500px] flex-wrap justify-around">
+    <Button color="blue" variant="solid">
+      Blue
+    </Button>
+    <Button color="red" variant="solid">
+      Red
+    </Button>
+    <Button color="amber" variant="solid">
+      Amber
+    </Button>
+    <Button color="green" variant="solid">
+      Green
+    </Button>
+    <Button color="slate" variant="solid">
+      Slate
+    </Button>
+  </div>
 )
-export const lightBlue = () => (
-  <Button color="blue" variant="light">
-    Button
-  </Button>
+
+export const Light = () => (
+  <div className="flex max-w-[500px] flex-wrap justify-around">
+    <Button color="blue" variant="light">
+      Blue
+    </Button>
+    <Button color="red" variant="light">
+      Red
+    </Button>
+    <Button color="amber" variant="light">
+      Amber
+    </Button>
+    <Button color="green" variant="light">
+      Green
+    </Button>
+    <Button color="slate" variant="light">
+      Slate
+    </Button>
+  </div>
 )
-export const subtleBlue = () => (
-  <Button color="blue" variant="subtle">
+export const Subtle = () => {
+  return <div className="flex max-w-[500px] flex-wrap justify-around">
+    <Button color="blue" variant="subtle">
+      Blue
+    </Button>
+    <Button color="red" variant="subtle">
+      Red
+    </Button>
+    <Button color="amber" variant="subtle">
+      Amber
+    </Button>
+    <Button color="green" variant="subtle">
+      Green
+    </Button>
+    <Button color="slate" variant="subtle">
+      Slate
+    </Button>
+  </div>
+}
+
+export const NonInteractive = () => (
+  <Button color="blue" variant="light" nonInteractive={true}>
     Button
   </Button>
 )
 
-export const solidOrange = () => (
-  <Button color="orange" variant="solid">
-    Button
-  </Button>
-)
-export const lightOrange = () => (
-  <Button color="orange" variant="light">
-    Button
-  </Button>
-)
-export const subtleOrange = () => (
-  <Button color="orange" variant="subtle">
-    Button
-  </Button>
-)
-
-export const solidInfo = () => (
-  <Button color="info" variant="solid">
-    Button
-  </Button>
-)
-export const lightInfo = () => (
-  <Button color="info" variant="light">
-    Button
-  </Button>
-)
-export const subtleInfo = () => (
-  <Button color="info" variant="subtle">
-    Button
-  </Button>
-)
-
-export const solidGreen = () => (
-  <Button color="green" variant="solid">
-    Button
-  </Button>
-)
-export const lightGreen = () => (
-  <Button color="green" variant="light">
-    Button
-  </Button>
-)
-export const subtleGreen = () => (
-  <Button color="green" variant="subtle">
-    Button
-  </Button>
-)
-
-export const solidRed = () => (
-  <Button color="red" variant="solid">
-    Button
-  </Button>
-)
-export const lightRed = () => (
-  <Button color="red" variant="light">
-    Button
-  </Button>
-)
-export const subtleRed = () => (
-  <Button color="red" variant="subtle">
-    Button
-  </Button>
-)
-
-export const solidGray = () => (
-  <Button color="gray" variant="solid">
-    Button
-  </Button>
-)
-export const lightGray = () => (
-  <Button color="gray" variant="light">
-    Button
-  </Button>
-)
-export const subtleGray = () => (
-  <Button color="gray" variant="subtle">
-    Button
-  </Button>
+export const Icon = () => (
+  <div className="flex max-w-[200px] flex-wrap justify-around">
+    <Button color="blue" variant="light" icon={<IconAdjustments size={16} />}>
+      Settings
+    </Button>
+    <Button color="blue" variant="solid" icon={<IconMail size={16} />}>
+      Mail
+    </Button>
+  </div>
 )

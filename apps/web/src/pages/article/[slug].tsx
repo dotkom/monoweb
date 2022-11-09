@@ -1,8 +1,9 @@
-import { ArticleView } from "@components/views/ArticleView"
 import { GetServerSideProps } from "next"
-import React, { FC } from "react"
+import { FC } from "react"
 import { fetchArticleData } from "src/api/get-article"
 import { Article } from "src/api/get-article"
+
+import { ArticleView } from "@components/views/ArticleView"
 
 interface ArticleProps {
   article: Article
@@ -14,8 +15,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return { props: { article: data } }
 }
 
-const Article: FC<ArticleProps> = (props: ArticleProps) => {
+const ArticlePage: FC<ArticleProps> = (props: ArticleProps) => {
   return <ArticleView article={props.article} />
 }
 
-export default Article
+export default ArticlePage

@@ -1,9 +1,10 @@
-import { InsertUser } from "../user"
-import { initUserService } from "../user-service"
-import { v4 as uuidv4 } from "uuid"
-import { initUserRepository } from "../user-repository"
-import { NotFoundError } from "../../../errors/errors"
 import { PrismaClient } from "@dotkomonline/db"
+import { v4 as uuidv4 } from "uuid"
+
+import { NotFoundError } from "../../../errors/errors"
+import { User } from "../user"
+import { initUserRepository } from "../user-repository"
+import { initUserService } from "../user-service"
 
 describe("UserService", () => {
   const prisma = vi.mocked(PrismaClient.prototype, true)
@@ -11,15 +12,18 @@ describe("UserService", () => {
   const userService = initUserService(userRepository)
 
   it("creates a new user", async () => {
-    const user: InsertUser = {
-      firstName: "Monkey",
-      lastName: "Markus",
-      email: "monkey@markus.com",
-      username: "monkey_markus",
-    }
+    // TODO: change this when i finish the register function
     const id = uuidv4()
-    vi.spyOn(userRepository, "createUser").mockResolvedValueOnce({ id, ...user })
-    await expect(userService.register(user)).resolves.toEqual({ id, ...user })
+    const user: User = {
+      name: "Markus",
+      email: "monkey@markus.com",
+      id,
+      image: "",
+      createdAt: new Date(2022, 5, 3),
+      password: "hunter2",
+    }
+    vi.spyOn(userRepository, "createUser").mockResolvedValueOnce(user)
+    await expect(userService.register("monkey@markus.com", "password")).resolves.toEqual(user)
     expect(userRepository.createUser).toHaveBeenCalledWith(user)
   })
 

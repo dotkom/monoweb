@@ -1,6 +1,7 @@
-import AvatarImage from "./AvatarImage"
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { css } from "@dotkomonline/ui"
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+
+import AvatarImage from "./AvatarImage"
 
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 

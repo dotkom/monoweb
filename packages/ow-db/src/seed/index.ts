@@ -1,7 +1,8 @@
-import { PrismaClient } from ".prisma/client"
 import { Chance } from "chance"
+
 import { seedCompanies } from "./company"
 import { seedUsers } from "./users"
+import { PrismaClient } from ".prisma/client"
 
 export type Seeder = (chance: Chance.Chance, prisma: PrismaClient) => Promise<void>
 

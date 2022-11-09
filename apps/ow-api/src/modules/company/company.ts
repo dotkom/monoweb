@@ -1,5 +1,5 @@
+import { Prisma } from "@dotkomonline/db"
 import { z } from "zod"
-import { Company as PrismaCompany } from "@dotkomonline/db"
 
 const companySchema = z.object({
   id: z.string().uuid(),
@@ -15,6 +15,6 @@ const companySchema = z.object({
 export type Company = z.infer<typeof companySchema>
 export type InsertCompany = Omit<Company, "id">
 
-export const mapToCompany = (payload: PrismaCompany): Company => {
+export const mapToCompany = (payload: Prisma.CompanyGetPayload<null>): Company => {
   return companySchema.parse(payload)
 }
