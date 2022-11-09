@@ -1,7 +1,10 @@
 import { Text, Title } from "@tremor/react"
 import { FC } from "react"
 
-export const EventDetailsDrawer: FC = () => {
+import { FlyoutChildProps, useFlyout } from "../../../components/Flyout"
+
+export const EventDetailsDrawer: FC<FlyoutChildProps> = ({ useFlyoutContext }) => {
+  const { close } = useFlyoutContext()
   return (
     <div className="w-full p-6">
       <Title>Åre 2022</Title>
