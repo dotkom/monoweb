@@ -7,7 +7,12 @@ const OriginalNextImage = NextImage.default
 
 Object.defineProperty(NextImage, "default", {
   configurable: true,
-  value: (props) => <OriginalNextImage {...props} unoptimized />,
+  value: (props) => React.createElement(OriginalNextImage, { ...props, unoptimized: true }),
+})
+
+Object.defineProperty(NextImage, "__esModule", {
+  configurable: true,
+  value: true,
 })
 
 export const parameters = {
