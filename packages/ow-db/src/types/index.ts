@@ -1,4 +1,5 @@
-import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable, CompanyTable } from "./event"
+import { CompanyTable, EventCompanyTable } from "./company"
+import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable } from "./event"
 import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
 
 export interface Database {
@@ -11,4 +12,5 @@ export interface Database {
   attendance: AttendanceTable
   committee: CommitteeTable
   attendee: AttendeeTable
+  eventCompany: EventCompanyTable
 }

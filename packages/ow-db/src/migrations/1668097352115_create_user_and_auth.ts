@@ -13,8 +13,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     name: { type: "varchar(250)" },
     email: { type: "varchar(250)", notNull: true, unique: true },
     email_verified: { type: "timestamp" },
-    image: { type: "varchar(250)" },
     password: { type: "varchar(250)", notNull: true },
+    image: { type: "varchar(250)" },
   })
 
   pgm.createTable("session", {

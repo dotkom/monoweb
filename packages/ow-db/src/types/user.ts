@@ -1,21 +1,23 @@
 import { Generated } from "kysely"
+
 import { Timestamp } from "./common"
 
 export interface UserTable {
   id: Generated<string>
-  name: string | null
-  email: string | null
-  emailVerified: Timestamp| null
-  image: string | null
   createdAt: Generated<Timestamp>
+  name: string | null
+  email: string
+  emailVerified: Timestamp | null
   password: string
+  image: string | null
 }
 
 export interface SessionTable {
   id: Generated<string>
+  creadetAt: Generated<Timestamp>
   sessionToken: string
-  userID: string
   expires: Date
+  userID: string
 }
 
 export interface VerificationTokenTable {
@@ -26,7 +28,7 @@ export interface VerificationTokenTable {
 
 export interface AccountTable {
   id: Generated<string>
-  userID: string
+  createdAt: Generated<Timestamp>
   type: string
   provider: string
   providerAccountID: string
@@ -37,4 +39,6 @@ export interface AccountTable {
   scope: string | null
   idToken: string | null
   sessionState: string | null
+
+  userID: string
 }
