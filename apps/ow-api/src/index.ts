@@ -1,54 +1,46 @@
 import { getLogger } from "@dotkomonline/logger"
-import { Kysely, PostgresDialect, Generated, ColumnType, Selectable, Insertable, Updateable } from "kysely"
+import {
+  Kysely,
+  PostgresDialect,
+  Generated,
+  ColumnType,
+  Selectable,
+  Insertable,
+  Updateable,
+  CamelCasePlugin,
+} from "kysely"
 import pg from "pg"
+import { v4 } from "uuid"
 
 import { createServer } from "./server"
 
 const logger = getLogger(import.meta.url)
 
-interface CompanyTable {
-  id: Generated<string>
-  name: string
-  description: string
-  phone: string | undefined
-  email: string
-  website: string
-  location: string | null
-  type: string | null
-}
 
-interface Database {
-  company: CompanyTable
-}
-
-const db = new Kysely<Database>({
-  dialect: new PostgresDialect({
-    pool: new pg.Pool({
-      user: "ow",
-      password: "owpassword123",
-      host: "localhost",
-      database: "ow",
-      port: 6543,
-    }),
-  }),
-})
-
-const { id } = await db
-  .insertInto("company")
-  .values({
-    name: "hei",
-    description: "AJ",
-    email: "asdj",
-    website: "asd",
-    location: "askd",
-    phone: "ajksld",
-    type: "ur mome",
-  })
-  .returning("id")
+const user = await db
+  .selectFrom("Company")
+  .selectAll()
   .executeTakeFirstOrThrow()
 
-const a = await db.selectFrom("company").selectAll().execute()
-a[0].description
+console.log(user)
+
+// const { id } = await db
+//   .insertInto("Company")
+//   .values({
+//     id: v4(),
+//     name: "hei",
+//     description: "AJ",
+//     email: "asdj",
+//     website: "asd",
+//     location: "askd",
+//     phone: "ajksld",
+//     type: "ur mome",
+//   })
+//   .returning("id")
+//   .executeTakeFirstOrThrow()
+
+//   console.log(id)
+console.log(await db.selectFrom("Company").selectAll().where("Company.email", "=", "asdj").executeTakeFirstOrThrow())
 
 // if (process.env.NODE_ENV === "development") {
 //   const port = Number(process.env.API_PORT || 4000)

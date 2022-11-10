@@ -15,7 +15,8 @@
     "seed": "prisma db seed"
   },
   "dependencies": {
-    "@prisma/client": "^4.1.1"
+    "@prisma/client": "^4.1.1",
+    "kysely": "^0.22.0"
   },
   "devDependencies": {
     "@types/chance": "^1.1.3",

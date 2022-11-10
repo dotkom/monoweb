@@ -2741,6 +2741,7 @@ __metadata:
     "@types/eslint": ^8
     chance: ^1.1.8
     eslint: ^8.26.0
+    kysely: ^0.22.0
     prisma: ^4.1.1
     tsup: ^6.2.1
     tsx: ^3.9.0
