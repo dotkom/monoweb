@@ -1,46 +1,26 @@
+import { Database } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import {
-  Kysely,
-  PostgresDialect,
-  Generated,
-  ColumnType,
-  Selectable,
-  Insertable,
-  Updateable,
-  CamelCasePlugin,
-} from "kysely"
+import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
 import pg from "pg"
-import { v4 } from "uuid"
-
-import { createServer } from "./server"
 
 const logger = getLogger(import.meta.url)
 
+const db = new Kysely<Database>({
+  dialect: new PostgresDialect({
+    pool: new pg.Pool({
+      host: "localhost",
+      port: 6543,
+      database: "ow",
+      user: "ow",
+      password: "owpassword123",
+    }),
+  }),
+  plugins: [new CamelCasePlugin()]
+})
 
-const user = await db
-  .selectFrom("Company")
-  .selectAll()
-  .executeTakeFirstOrThrow()
 
-console.log(user)
-
-// const { id } = await db
-//   .insertInto("Company")
-//   .values({
-//     id: v4(),
-//     name: "hei",
-//     description: "AJ",
-//     email: "asdj",
-//     website: "asd",
-//     location: "askd",
-//     phone: "ajksld",
-//     type: "ur mome",
-//   })
-//   .returning("id")
-//   .executeTakeFirstOrThrow()
-
-//   console.log(id)
-console.log(await db.selectFrom("Company").selectAll().where("Company.email", "=", "asdj").executeTakeFirstOrThrow())
+const res = await db.selectFrom("owUser").selectAll().execute()
+console.log(res)
 
 // if (process.env.NODE_ENV === "development") {
 //   const port = Number(process.env.API_PORT || 4000)

@@ -2744,6 +2744,7 @@ __metadata:
     eslint: ^8.26.0
     kysely: ^0.22.0
     kysely-codegen: ^0.8.0
+    node-pg-migrate: ^6.2.2
     pg: ^8.8.0
     prisma: ^4.1.1
     tsup: ^6.2.1
@@ -7731,7 +7732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/pg@npm:^8":
+"@types/pg@npm:^8, @types/pg@npm:^8.0.0":
   version: 8.6.5
   resolution: "@types/pg@npm:8.6.5"
   dependencies:
@@ -11674,6 +11675,13 @@ __metadata:
   version: 1.2.0
   resolution: "decamelize@npm:1.2.0"
   checksum: ad8c51a7e7e0720c70ec2eeb1163b66da03e7616d7b98c9ef43cce2416395e84c1e9548dd94f5f6ffecfee9f8b94251fc57121a8b021f2ff2469b2bae247b8aa
+  languageName: node
+  linkType: hard
+
+"decamelize@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "decamelize@npm:5.0.1"
+  checksum: 7c3b1ed4b3e60e7fbc00a35fb248298527c1cdfe603e41dfcf05e6c4a8cb9efbee60630deb677ed428908fb4e74e322966c687a094d1478ddc9c3a74e9dc7140
   languageName: node
   linkType: hard
 
@@ -18184,7 +18192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
+"mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4, mkdirp@npm:~1.0.0":
   version: 1.0.4
   resolution: "mkdirp@npm:1.0.4"
   bin:
@@ -18659,6 +18667,22 @@ __metadata:
     util: ^0.11.0
     vm-browserify: ^1.0.1
   checksum: 41fa7927378edc0cb98a8cc784d3f4a47e43378d3b42ec57a23f81125baa7287c4b54d6d26d062072226160a3ce4d8b7a62e873d2fb637aceaddf71f5a26eca0
+  languageName: node
+  linkType: hard
+
+"node-pg-migrate@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "node-pg-migrate@npm:6.2.2"
+  dependencies:
+    "@types/pg": ^8.0.0
+    decamelize: ^5.0.0
+    mkdirp: ~1.0.0
+    yargs: ~17.3.0
+  peerDependencies:
+    pg: ">=4.3.0 <9.0.0"
+  bin:
+    node-pg-migrate: bin/node-pg-migrate
+  checksum: 219eb20fb31aede2e04d7091c229421be6eb18a399e84f00c7a72b14a03e2111527f3e724a4765a8dd962d97d71b610af0a345a6e9edb5b5909b51ed41a777ab
   languageName: node
   linkType: hard
 
@@ -26256,6 +26280,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yargs-parser@npm:^21.0.0":
+  version: 21.1.1
+  resolution: "yargs-parser@npm:21.1.1"
+  checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
+  languageName: node
+  linkType: hard
+
 "yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
@@ -26268,6 +26299,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"yargs@npm:~17.3.0":
+  version: 17.3.1
+  resolution: "yargs@npm:17.3.1"
+  dependencies:
+    cliui: ^7.0.2
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.0.0
+  checksum: 64fc2e32c56739f1d14d2d24acd17a6944c3c8e3e3558f09fc1953ac112e868cc16013d282886b9d5be22187f8b9ed4f60741a6b1011f595ce2718805a656852
   languageName: node
   linkType: hard
 
