@@ -23,7 +23,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     committee_id: { type: "uuid", references: "committee" },
   })
 
-  // Create a table from the Attendance Model
   pgm.createTable("attendance", {
     id: "id",
     created_at: "created_at",
