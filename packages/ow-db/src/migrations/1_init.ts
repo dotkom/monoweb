@@ -1,61 +1,5 @@
 import { Generated, Kysely, sql } from "kysely"
-
-interface CompanyTable {
-  id: Generated<string>
-  name: string
-  description: string
-  phone: string | undefined
-  email: string
-  website: string
-  location: string | null
-  type: string | null
-}
-
-interface UserTable {
-  id: Generated<string>
-  name: string | null
-  email: string | null
-  emailVerified: Date | null
-  image: string | null
-  createdAt: Generated<Date>
-  password: string
-}
-
-interface SessionTable {
-  id: Generated<string>
-  sessionToken: string
-  userId: string
-  expires: Date
-}
-
-interface VerificationTokenTable {
-  identifier: string
-  token: string
-  expires: Date
-}
-
-interface AccountTable {
-  id: Generated<string>
-  userId: string
-  type: string
-  provider: string
-  providerAccountId: string
-  refreshToken: string | null
-  accessToken: string | null
-  expiresAt: number | null
-  tokenType: string | null
-  scope: string | null
-  idToken: string | null
-  sessionState: string | null
-}
-
-interface Database {
-  company: CompanyTable
-  user: UserTable
-  session: SessionTable
-  verificationToken: VerificationTokenTable
-  account: AccountTable
-}
+import { Database } from "../types"
 
 const uuid = sql`gen_random_uuid()`
 
@@ -109,4 +53,42 @@ export const up = async (db: Kysely<Database>) => {
     .addColumn("id_token", "varchar(100)")
     .addColumn("session_state", "varchar(100)")
     .addUniqueConstraint("account_provider_provider_account_id_unique", ["provider", "provider_account_id"])
+
+  // Those below should be double checked
+  await db.schema
+    .createTable("event")
+    .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(uuid))
+    .addColumn("title", "varchar(420)", (col) => col.notNull())
+    .addColumn("subtitle", "varchar(200)")
+    .addColumn("description", "text")
+    .addColumn("start", "timestamp", (col) => col.notNull())
+    .addColumn("end", "timestamp", (col) => col.notNull())
+    .addColumn("location", "varchar(200)")
+    .addColumn("organizer_id", "uuid", (col) => col.references("company.id").onDelete("set null")) // set null?
+    .addColumn("public", "boolean", (col) => col.notNull().defaultTo(false))
+    .addColumn("image_url", "varchar(250)")
+    .addColumn("status", "varchar(100)", (col) => col.notNull().defaultTo("draft"))
+
+  await db.schema
+    .createTable("committee")
+    .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(uuid))
+    .addColumn("name", "varchar(100)", (col) => col.notNull())
+    .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade").notNull())
+
+  await db.schema
+    .createTable("event_user")
+    .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(uuid))
+    .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade").notNull())
+    .addColumn("user_id", "uuid", (col) => col.references("user.id").onDelete("cascade").notNull())
+
+  await db.schema
+    .createTable("event_committee")
+    .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(uuid))
+    .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade").notNull())
+    .addColumn("committee_id", "uuid", (col) => col.references("committee.id").onDelete("cascade").notNull())
+
+  await db.schema
+    .createTable("committee_user")
+    .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(uuid))
+    .addColumn("committee_id", "uuid", (col)
 }
