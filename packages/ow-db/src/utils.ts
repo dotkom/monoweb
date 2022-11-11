@@ -15,10 +15,10 @@ export const createTableWithDefaults = (tableName: string, options: DefaultOptio
     table = table.addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
   }
   if (options.createdAt) {
-    table = table.addColumn("created_at", "timestamp", (col) => col.notNull().defaultTo(sql`now()`))
+    table = table.addColumn("created_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
   }
   if (options.updatedAt) {
-    table = table.addColumn("updated_at", "timestamp", (col) => col.notNull().defaultTo(sql`now()`))
+    table = table.addColumn("updated_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
   }
   return table
 }
