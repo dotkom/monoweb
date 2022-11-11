@@ -2736,6 +2736,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@dotkomonline/db@workspace:packages/ow-db"
   dependencies:
+    "@dotkomonline/logger": "workspace:*"
     "@prisma/client": ^4.1.1
     "@types/chance": ^1.1.3
     "@types/eslint": ^8
