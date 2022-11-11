@@ -1,2 +1,2 @@
 export * from "./types"
-export { migrator } from "./run_migrations"
+export { migrator } from "./migrator"

@@ -11642,6 +11642,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"db-migrator@workspace:apps/db-migrator":
+  version: 0.0.0-use.local
+  resolution: "db-migrator@workspace:apps/db-migrator"
+  dependencies:
+    "@dotkomonline/db": "workspace:*"
+    tsx: ^3.12.0
+  languageName: unknown
+  linkType: soft
+
 "debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.0, debug@npm:^2.6.8, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
@@ -24339,6 +24348,23 @@ __metadata:
   bin:
     tsx: dist/cli.js
   checksum: 07b5230d1bd5242eac13915553564721c5e879e6827ddfd18dbfff297dea96dcf8ec5671071679b9df8697612e8c57e5685b60af09a499f67391df919a60f682
+  languageName: node
+  linkType: hard
+
+"tsx@npm:^3.12.0":
+  version: 3.12.0
+  resolution: "tsx@npm:3.12.0"
+  dependencies:
+    "@esbuild-kit/cjs-loader": ^2.4.0
+    "@esbuild-kit/core-utils": ^3.0.0
+    "@esbuild-kit/esm-loader": ^2.5.0
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.js
+  checksum: 932baaddd9e3ac376d0999aa704ce2514a0b213352c7235dd7906e580d6bbc4514fa02db97db18a1124d321075b432f5d1aed9b18e39fb154f003e76a3f77b10
   languageName: node
   linkType: hard
 

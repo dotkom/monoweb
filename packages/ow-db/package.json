@@ -9,13 +9,11 @@
   "private": true,
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --target es2020 --dts --clean --sourcemap",
-    "migrate3": "tsx ./src/run_migrations.ts",
     "migrate2": "prisma migrate dev",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "generate": "prisma generate",
-    "seed": "tsx ./src/seed.ts",
-    "migrate": "tsx ../../node_modules/.bin/node-pg-migrate -j ts -m ./src/migrations --tsconfig ./tsconfig.json"
+    "seed": "tsx ./src/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.1.1",

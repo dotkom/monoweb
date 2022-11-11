@@ -1,6 +1,5 @@
 import { promises as fs } from "fs"
-import { url } from "inspector"
-import { CamelCasePlugin, FileMigrationProvider, Kysely, MigrationResultSet, Migrator, PostgresDialect } from "kysely"
+import { CamelCasePlugin, FileMigrationProvider, Kysely, Migrator, PostgresDialect } from "kysely"
 import * as path from "path"
 import pg from "pg"
 
@@ -24,6 +23,6 @@ export const migrator = new Migrator({
   provider: new FileMigrationProvider({
     fs,
     path,
-    migrationFolder: new URL("../migrations", import.meta.url).pathname,
+    migrationFolder: new URL("../src/migrations", import.meta.url).pathname,
   }),
 })
