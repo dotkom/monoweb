@@ -14,16 +14,16 @@ export interface UserTable {
 
 export interface SessionTable {
   id: Generated<string>
-  creadetAt: Generated<Timestamp>
+  createdAt: Generated<Timestamp>
   sessionToken: string
-  expires: Date
+  expires: Timestamp
   userID: string
 }
 
 export interface VerificationTokenTable {
   identifier: string
   token: string
-  expires: Date
+  expires: Timestamp
 }
 
 export interface AccountTable {
@@ -39,6 +39,8 @@ export interface AccountTable {
   scope: string | null
   idToken: string | null
   sessionState: string | null
+  oauthTokenSecret: string | null
+  oauthToken: string | null
 
   userID: string
 }
