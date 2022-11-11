@@ -14,7 +14,7 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "generate": "prisma generate",
-    "seed": "prisma db seed",
+    "seed": "tsx ./src/seed.ts",
     "migrate": "tsx ../../node_modules/.bin/node-pg-migrate -j ts -m ./src/migrations --tsconfig ./tsconfig.json"
   },
   "dependencies": {

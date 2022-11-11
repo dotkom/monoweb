@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Kysely, sql } from "kysely"
 
 import { Database } from "../types"

@@ -1,5 +1,5 @@
 import { promises as fs } from "fs"
-import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from "kysely"
+import { CamelCasePlugin, FileMigrationProvider, Kysely, Migrator, PostgresDialect } from "kysely"
 import * as path from "path"
 import pg from "pg"
 
@@ -15,6 +15,7 @@ const db = new Kysely<Database>({
       password: "owpassword123",
     }),
   }),
+  plugins: [new CamelCasePlugin()],
 })
 
 const migrator = new Migrator({

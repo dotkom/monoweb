@@ -6,6 +6,9 @@ type DefaultOptions = {
   updatedAt?: boolean
 }
 
+/**
+ * Creates a table with default common fields.
+ */
 export const createTableWithDefaults = (tableName: string, options: DefaultOptions, schema: SchemaModule) => {
   let table = schema.createTable(tableName)
   if (options.id) {
