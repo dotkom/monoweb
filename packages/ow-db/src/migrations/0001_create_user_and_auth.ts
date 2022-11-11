@@ -7,22 +7,21 @@ export async function up(db: Kysely<Database>): Promise<void> {
   await createTableWithDefaults("ow_user", { id: true, createdAt: true }, db.schema)
     .addColumn("name", "varchar(255)")
     .addColumn("email", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("email_verified", "boolean", (col) => col.notNull().defaultTo(sql`false`))
+    .addColumn("email_verified", "timestamptz", (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn("password", "varchar(255)", (col) => col.notNull())
     .addColumn("image", "varchar(255)")
     .execute()
 
-  // Copy the pgm session table from the old migration and convert it into a Kysely migration
   await createTableWithDefaults("session", { id: true, createdAt: true }, db.schema)
     .addColumn("session_token", "text", (col) => col.notNull().unique())
-    .addColumn("expires", "timestamp", (col) => col.notNull())
+    .addColumn("expires", "timestamptz", (col) => col.notNull())
     .addColumn("user_id", "uuid", (col) => col.references("ow_user.id").onDelete("cascade").notNull())
     .execute()
 
   await createTableWithDefaults("verification_token", { id: true }, db.schema)
     .addColumn("identifier", "varchar(250)", (col) => col.notNull().unique())
     .addColumn("token", "varchar(250)", (col) => col.notNull())
-    .addColumn("expires", "timestamp", (col) => col.notNull())
+    .addColumn("expires", "timestamptz", (col) => col.notNull())
     .execute()
 
   await db.schema
@@ -43,6 +42,8 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn("scope", "varchar(100)")
     .addColumn("id_token", "text")
     .addColumn("session_state", "varchar(100)")
+    .addColumn("oauth_token_secret", "text")
+    .addColumn("oauth_token", "text")
     .addColumn("user_id", "uuid", (col) => col.notNull().references("ow_user.id").onDelete("cascade"))
     .execute()
 

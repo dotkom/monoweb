@@ -8,8 +8,8 @@ export async function up(db: Kysely<Database>) {
 
   await createTableWithDefaults("event", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("title", "varchar(255)", (col) => col.notNull())
-    .addColumn("start", "timestamp", (col) => col.notNull())
-    .addColumn("end", "timestamp", (col) => col.notNull())
+    .addColumn("start", "timestamptz", (col) => col.notNull())
+    .addColumn("end", "timestamptz", (col) => col.notNull())
     .addColumn("status", sql`event_status`, (col) => col.notNull())
     .addColumn("public", "boolean", (col) => col.notNull())
     .addColumn("description", "text")
@@ -20,9 +20,9 @@ export async function up(db: Kysely<Database>) {
     .execute()
 
   await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("start", "timestamp", (col) => col.notNull())
-    .addColumn("end", "timestamp", (col) => col.notNull())
-    .addColumn("deregister_deadline", "timestamp", (col) => col.notNull())
+    .addColumn("start", "timestamptz", (col) => col.notNull())
+    .addColumn("end", "timestamptz", (col) => col.notNull())
+    .addColumn("deregister_deadline", "timestamptz", (col) => col.notNull())
     .addColumn("limit", "integer", (col) => col.notNull())
     .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade"))
     .execute()
