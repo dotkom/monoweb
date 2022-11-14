@@ -2737,7 +2737,6 @@ __metadata:
   resolution: "@dotkomonline/db@workspace:packages/ow-db"
   dependencies:
     "@dotkomonline/logger": "workspace:*"
-    "@prisma/client": ^4.1.1
     "@types/chance": ^1.1.3
     "@types/eslint": ^8
     "@types/pg": ^8
@@ -2747,7 +2746,6 @@ __metadata:
     kysely-codegen: ^0.8.0
     node-pg-migrate: ^6.2.2
     pg: ^8.8.0
-    prisma: ^4.1.1
     tsup: ^6.2.1
     tsx: ^3.9.0
   languageName: unknown
@@ -3736,34 +3734,6 @@ __metadata:
   version: 1.0.0-next.21
   resolution: "@polka/url@npm:1.0.0-next.21"
   checksum: c7654046d38984257dd639eab3dc770d1b0340916097b2fac03ce5d23506ada684e05574a69b255c32ea6a144a957c8cd84264159b545fca031c772289d88788
-  languageName: node
-  linkType: hard
-
-"@prisma/client@npm:^4.1.1":
-  version: 4.3.1
-  resolution: "@prisma/client@npm:4.3.1"
-  dependencies:
-    "@prisma/engines-version": 4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b
-  peerDependencies:
-    prisma: "*"
-  peerDependenciesMeta:
-    prisma:
-      optional: true
-  checksum: 2e3e6319bb0974f9ab67ab4620b775f82c54e00c4690db59bbd4736967c1afae7b4487ac54a78d221b7f898287b387422c7e8de026dfd66e97c1ca1e79eb06f7
-  languageName: node
-  linkType: hard
-
-"@prisma/engines-version@npm:4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b":
-  version: 4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b
-  resolution: "@prisma/engines-version@npm:4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b"
-  checksum: 268eb72da6ef70f3e0ce9c43f1b1500af3df24adb0589972f2fbbb949e5f3847c0c2377998537ad425995f78ad59cd06e65e1b07040d0ea937cefe02e441a5d1
-  languageName: node
-  linkType: hard
-
-"@prisma/engines@npm:4.3.1":
-  version: 4.3.1
-  resolution: "@prisma/engines@npm:4.3.1"
-  checksum: a407ecb8e15373890d82fc01682ddb1c473c7a5e81e07b603bdf3064bad936ee7cfa9d3ac68d5c4b845f476df53b92b705e7ec6a24a7364354ac78eb9084cbcc
   languageName: node
   linkType: hard
 
@@ -20588,18 +20558,6 @@ __metadata:
   peerDependencies:
     react: ">=0.14.9"
   checksum: c18806dcbc4c0b4fd6fd15bd06b4f7c0a6da98d93af235c3e970854994eb9b59e23315abb6cfc29e69da26d36709a47e25da85ab27fed81b6812f0a52caf6dfa
-  languageName: node
-  linkType: hard
-
-"prisma@npm:^4.1.1":
-  version: 4.3.1
-  resolution: "prisma@npm:4.3.1"
-  dependencies:
-    "@prisma/engines": 4.3.1
-  bin:
-    prisma: build/index.js
-    prisma2: build/index.js
-  checksum: f97133c11ecbb09a40c0ec006af50e8789f3b76376e29d5eb041b1592d2c289af22bcb9b5c49789ffb8bbe0b24f470c1ec668a94194c5859e18b601398cf80c8
   languageName: node
   linkType: hard
 
