@@ -1,5 +1,4 @@
 import { Database } from "@dotkomonline/db"
-import { getLogger } from "@dotkomonline/logger"
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
 import pg from "pg"
 

@@ -1,5 +1,5 @@
 import Chance from "chance"
-import { CamelCasePlugin, Insertable, Kysely, PostgresDialect, sql } from "kysely"
+import { CamelCasePlugin, Insertable, Kysely, PostgresDialect } from "kysely"
 import pg from "pg"
 
 import { Database } from "./types"
@@ -28,7 +28,7 @@ for (let i = 0; i < 5; i++) {
   })
 }
 
-const res = await db.insertInto("owUser").values(values).returningAll().execute()
+const res = await db.insertInto("ow_user").values(values).returningAll().execute()
 console.log(res)
 
 process.exit()

@@ -1,7 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { Insertable, Kysely } from "kysely"
 
-import { InsertCompany, mapToCompany, Company } from "./company"
+import { mapToCompany, Company } from "./company"
 
 export interface CompanyRepository {
   getCompanyByID: (id: string) => Promise<Company | undefined>
