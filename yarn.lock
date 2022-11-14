@@ -11629,6 +11629,7 @@ __metadata:
   resolution: "db-migrator@workspace:apps/db-migrator"
   dependencies:
     "@dotkomonline/db": "workspace:*"
+    "@dotkomonline/logger": "workspace:*"
     "@faker-js/faker": ^7.6.0
     "@types/pg": ^8
     chalk: ^5.1.2

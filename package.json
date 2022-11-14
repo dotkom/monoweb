@@ -15,6 +15,7 @@
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "dev": "dotenv -e .env.local -- turbo run dev",
+    "migrate": "dotenv -e .env.local -- turbo run migrate",
     "storybook": "turbo run storybook --filter=storybook"
   },
   "workspaces": [

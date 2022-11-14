@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { logger } from "."
+
 const envSchame = z.object({
   DB_HOST: z.string(),
   DB_PORT: z.string().transform(Number),
@@ -11,7 +13,7 @@ const envSchame = z.object({
 const parsed = envSchame.safeParse(process.env)
 
 if (!parsed.success) {
-  console.error("❌ Invalid environment variables:", JSON.stringify(parsed.error.format(), null, 4))
+  logger.error("❌ Invalid environment variables:", JSON.stringify(parsed.error.format(), null, 4))
   process.exit(1)
 }
 

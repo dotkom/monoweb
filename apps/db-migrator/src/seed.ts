@@ -1,8 +1,9 @@
 import { Database } from "@dotkomonline/db"
 import { faker } from "@faker-js/faker"
 import { addHours } from "date-fns"
-import { Insertable, Selectable, sql } from "kysely"
+import { Insertable, Selectable, SelectQueryBuilder, sql } from "kysely"
 
+import { logger } from "."
 import { db } from "./db"
 
 faker.seed(69)
@@ -43,71 +44,66 @@ const createRandomAttendance = (eventIDs: string[]): Insertable<Database["attend
   }
 }
 
-const users = Array.from({ length: 15 }).map(() => createRandomUser())
-await db
-  .insertInto("ow_user")
-  .values(users)
-  .returning("id")
-  .onConflict((oc) =>
-    oc.column("id").doUpdateSet({
-      name: (eb) => eb.ref("excluded.name"),
-      password: (eb) => eb.ref("excluded.password"),
-      image: (eb) => eb.ref("excluded.image"),
-    })
-  )
-  .execute()
+export const seed = async () => {
+  const users = Array.from({ length: 15 }).map(() => createRandomUser())
+  const event = Array.from({ length: 15 }).map(() => createRandomEvent())
+  const attendance = Array.from({ length: 15 }).map(() => createRandomAttendance(event.map((e) => e.id!!)))
 
-const event = Array.from({ length: 15 }).map(() => createRandomEvent())
-await db
-  .insertInto("event")
-  .values(event)
-  .returning("id")
-  .onConflict((oc) =>
-    oc.column("id").doUpdateSet({
-      title: (eb) => eb.ref("excluded.title"),
-      description: (eb) => eb.ref("excluded.description"),
-      start: (eb) => eb.ref("excluded.start"),
-      end: (eb) => eb.ref("excluded.end"),
-      location: (eb) => eb.ref("excluded.location"),
-      public: (eb) => eb.ref("excluded.public"),
-      status: (eb) => eb.ref("excluded.status"),
-    })
-  )
-  .execute()
+  await db
+    .insertInto("ow_user")
+    .values(users)
+    .returning("id")
+    .onConflict((oc) =>
+      oc.column("id").doUpdateSet({
+        name: (eb) => eb.ref("excluded.name"),
+        password: (eb) => eb.ref("excluded.password"),
+        image: (eb) => eb.ref("excluded.image"),
+      })
+    )
+    .execute()
 
-const attendance = Array.from({ length: 15 }).map(() => createRandomAttendance(event.map((e) => e.id!!)))
-await db
-  .insertInto("attendance")
-  .values(attendance)
-  .returning("id")
-  .onConflict((oc) =>
-    oc.column("id").doUpdateSet({
-      start: (eb) => eb.ref("excluded.start"),
-      end: (eb) => eb.ref("excluded.end"),
-      deregisterDeadline: (eb) => eb.ref("excluded.deregisterDeadline"),
-      limit: (eb) => eb.ref("excluded.limit"),
-    })
-  )
-  .execute()
+  await db
+    .insertInto("event")
+    .values(event)
+    .returning("id")
+    .onConflict((oc) =>
+      oc.column("id").doUpdateSet({
+        title: (eb) => eb.ref("excluded.title"),
+        description: (eb) => eb.ref("excluded.description"),
+        start: (eb) => eb.ref("excluded.start"),
+        end: (eb) => eb.ref("excluded.end"),
+        location: (eb) => eb.ref("excluded.location"),
+        public: (eb) => eb.ref("excluded.public"),
+        status: (eb) => eb.ref("excluded.status"),
+      })
+    )
+    .execute()
 
-// const userQuery = await db.selectFrom("ow_user").selectAll().execute()
-// const eventQuery = await db.selectFrom("event").selectAll().execute()
-// const attendanceQuery = await db.selectFrom("attendance").selectAll().execute()
-// console.log(userQuery)
-// console.log(eventQuery)
-// console.log(attendanceQuery)
+  await db
+    .insertInto("attendance")
+    .values(attendance)
+    .returning("id")
+    .onConflict((oc) =>
+      oc.column("id").doUpdateSet({
+        start: (eb) => eb.ref("excluded.start"),
+        end: (eb) => eb.ref("excluded.end"),
+        deregisterDeadline: (eb) => eb.ref("excluded.deregisterDeadline"),
+        limit: (eb) => eb.ref("excluded.limit"),
+      })
+    )
+    .execute()
 
-// Finds all events with their attendances
-type Attendance = Selectable<Database["attendance"]>
-
-const query = await db
-  .selectFrom("event")
-  .leftJoin("attendance", "attendance.eventID", "event.id")
-  .selectAll("event")
-  .select(
-    sql<Attendance[]>`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as("attendances")
-  )
-  .groupBy("event.id")
-  .execute()
-
-console.log(query.map((x) => x.attendances))
+  // Finds all events with their attendances
+  await db
+    .selectFrom("event")
+    .leftJoin("attendance", "attendance.eventID", "event.id")
+    .selectAll("event")
+    .select(
+      sql<
+        Selectable<Database["attendance"][]>
+      >`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as("attendances")
+    )
+    .groupBy("event.id")
+    .execute()
+  logger.info("Done seeding")
+}
