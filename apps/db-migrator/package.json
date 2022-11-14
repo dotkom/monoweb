@@ -4,20 +4,24 @@
   "type": "module",
   "dependencies": {
     "@dotkomonline/db": "workspace:*",
+    "@faker-js/faker": "^7.6.0",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
+    "date-fns": "^2.29.3",
     "kysely": "^0.22.0",
     "pg": "^8.8.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {
     "@types/pg": "^8",
+    "dotenv-cli": "^6.0.0",
     "tsx": "^3.12.0",
     "typescript": "^4.8.4"
   },
   "scripts": {
     "db:migrate": "tsx ./src/index.ts -- latest",
     "db:migrate-down": "tsx ./src/index.ts -- down",
-    "db:migrate-up": "tsx ./src/index.ts -- up"
+    "db:migrate-up": "tsx ./src/index.ts -- up",
+    "seed": "dotenv -e ../../.env.local -- tsx ./src/seed.ts"
   }
 }

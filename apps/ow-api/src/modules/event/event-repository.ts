@@ -1,6 +1,7 @@
 import { Database } from "@dotkomonline/db"
-import { Insertable, Kysely } from "kysely"
+import { Insertable, Kysely, sql } from "kysely"
 
+import { Attendance } from "./attendance"
 import { Event, mapToEvent } from "./event"
 
 export interface EventRepository {
@@ -19,7 +20,20 @@ export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
     return events.map(mapToEvent)
   },
   getEventByID: async (id) => {
-    const event = await db.selectFrom("event").selectAll().where("id", "=", id).executeTakeFirst()
+    // TODO: move the attendance query to a helper
+    const event = await db
+      .selectFrom("event")
+      .where("id", "=", id)
+      .leftJoin("attendance", "attendance.eventID", "event.id")
+      .selectAll("event")
+      .select(
+        sql<Attendance[]>`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as(
+          "attendances"
+        )
+      )
+      .groupBy("event.id")
+      .executeTakeFirst()
+
     return event ? mapToEvent(event) : undefined
   },
 })

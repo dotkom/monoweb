@@ -3054,6 +3054,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@faker-js/faker@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "@faker-js/faker@npm:7.6.0"
+  checksum: 942af6221774e8c98a0eb6bc75265e05fb81a941170377666c3439aab9495dd321d6beedc5406f07e6ad44262b3e43c20961f666d116ad150b78e7437dd1bb2b
+  languageName: node
+  linkType: hard
+
 "@floating-ui/core@npm:^0.7.3":
   version: 0.7.3
   resolution: "@floating-ui/core@npm:0.7.3"
@@ -11622,9 +11629,12 @@ __metadata:
   resolution: "db-migrator@workspace:apps/db-migrator"
   dependencies:
     "@dotkomonline/db": "workspace:*"
+    "@faker-js/faker": ^7.6.0
     "@types/pg": ^8
     chalk: ^5.1.2
     commander: ^9.4.1
+    date-fns: ^2.29.3
+    dotenv-cli: ^6.0.0
     kysely: ^0.22.0
     pg: ^8.8.0
     tsx: ^3.12.0
