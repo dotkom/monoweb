@@ -6,7 +6,6 @@
     "@dotkomonline/db": "workspace:*",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
-    "dotenv": "^16.0.3",
     "kysely": "^0.22.0",
     "pg": "^8.8.0",
     "zod": "^3.19.1"
@@ -17,6 +16,8 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "tsx ./src/index.ts"
+    "db:migrate": "tsx ./src/index.ts -- latest",
+    "db:migrate-down": "tsx ./src/index.ts -- down",
+    "db:migrate-up": "tsx ./src/index.ts -- up"
   }
 }

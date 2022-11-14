@@ -14,7 +14,7 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
-    "dev": "turbo run dev",
+    "dev": "dotenv -- turbo run dev",
     "storybook": "turbo run storybook --filter=storybook"
   },
   "workspaces": [
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.47",
+    "dotenv-cli": "^6.0.0",
     "eslint": "^8.21.0",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",

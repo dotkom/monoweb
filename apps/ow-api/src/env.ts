@@ -1,7 +1,4 @@
-import dotenv from "dotenv"
 import { z } from "zod"
-
-dotenv.config({ path: "../../.env" })
 
 const envSchame = z.object({
   DB_HOST: z.string(),
