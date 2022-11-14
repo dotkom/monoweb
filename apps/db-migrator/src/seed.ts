@@ -1,7 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { faker } from "@faker-js/faker"
 import { addHours } from "date-fns"
-import { Insertable, Selectable, SelectQueryBuilder, sql } from "kysely"
+import { Insertable, Selectable, sql } from "kysely"
 
 import { logger } from "."
 import { db } from "./db"

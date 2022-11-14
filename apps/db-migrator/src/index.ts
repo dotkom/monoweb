@@ -1,6 +1,6 @@
 import { createMigrator } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { program, Argument, Option } from "commander"
+import { program, Argument } from "commander"
 import { MigrationResultSet } from "kysely"
 
 import { db } from "./db"
