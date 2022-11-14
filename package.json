@@ -16,6 +16,7 @@
     "test": "turbo run test",
     "dev": "dotenv -e .env.local -- turbo run dev",
     "migrate": "dotenv -e .env.local -- turbo run migrate",
+    "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed",
     "storybook": "turbo run storybook --filter=storybook"
   },
   "workspaces": [
