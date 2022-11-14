@@ -1,4 +1,4 @@
-import { PrismaClient } from "@dotkomonline/db"
+import { Kysely } from "kysely"
 import { v4 as uuidv4 } from "uuid"
 
 import { NotFoundError } from "../../../errors/errors"
@@ -7,8 +7,8 @@ import { initCompanyRepository } from "../company-repository"
 import { initCompanyService } from "../company-service"
 
 describe("CompanyService", () => {
-  const prisma = vi.mocked(PrismaClient.prototype, true)
-  const companyRepository = initCompanyRepository(prisma)
+  const db = vi.mocked(Kysely.prototype, true)
+  const companyRepository = initCompanyRepository(db)
   const companyService = initCompanyService(companyRepository)
 
   it("creates a new company", async () => {
@@ -22,9 +22,9 @@ describe("CompanyService", () => {
       type: "Other",
     }
     const id = uuidv4()
-    vi.spyOn(companyRepository, "createCompany").mockResolvedValueOnce({ id, ...company })
-    await expect(companyService.register(company)).resolves.toEqual({ id, ...company })
-    expect(companyRepository.createCompany).toHaveBeenCalledWith(company)
+    vi.spyOn(companyRepository, "create").mockResolvedValueOnce({ id, ...company })
+    await expect(companyService.createCompany(company)).resolves.toEqual({ id, ...company })
+    expect(companyRepository.create).toHaveBeenCalledWith(company)
   })
 
   it("fails on unknown id", async () => {

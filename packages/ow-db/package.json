@@ -9,14 +9,11 @@
   "private": true,
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --target es2020 --dts --clean --sourcemap",
-    "migrate2": "prisma migrate dev",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "generate": "prisma generate",
     "seed": "tsx ./src/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.1.1",
     "kysely": "^0.22.0",
     "pg": "^8.8.0"
   },
@@ -29,12 +26,7 @@
     "eslint": "^8.26.0",
     "kysely-codegen": "^0.8.0",
     "node-pg-migrate": "^6.2.2",
-    "prisma": "^4.1.1",
     "tsup": "^6.2.1",
     "tsx": "^3.9.0"
-  },
-  "prisma": {
-    "schema": "./prisma/schema.prisma",
-    "seed": "ts-node ./src/seed/index.ts"
   }
 }

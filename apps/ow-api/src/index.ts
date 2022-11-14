@@ -3,21 +3,23 @@ import { getLogger } from "@dotkomonline/logger"
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
 import pg from "pg"
 
-// const db = new Kysely<Database>({
-//   dialect: new PostgresDialect({
-//     pool: new pg.Pool({
-//       host: "localhost",
-//       port: 6543,
-//       database: "ow",
-//       user: "ow",
-//       password: "owpassword123",
-//     }),
-//   }),
-//   plugins: [new CamelCasePlugin()],
-// })
+import { env } from "./env"
 
-// const res = await db.selectFrom("owUser").selectAll().execute()
-// console.log(res)
+const db = new Kysely<Database>({
+  dialect: new PostgresDialect({
+    pool: new pg.Pool({
+      host: env.DB_HOST,
+      port: env.DB_PORT,
+      database: env.DB_NAME,
+      user: env.DB_USER,
+      password: env.DB_PASSWORD,
+    }),
+  }),
+  plugins: [new CamelCasePlugin()],
+})
+
+const res = await db.selectFrom("ow_user").selectAll().execute()
+console.log(res)
 
 // if (process.env.NODE_ENV === "development") {
 //   const port = Number(process.env.API_PORT || 4000)

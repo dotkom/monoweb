@@ -3,14 +3,14 @@ import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable } from "./ev
 import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
 
 export interface Database {
-  owUser: UserTable
+  ow_user: UserTable
   company: CompanyTable
   session: SessionTable
-  verificationToken: VerificationTokenTable
+  verification_token: VerificationTokenTable
   account: AccountTable
   event: EventTable
   attendance: AttendanceTable
   committee: CommitteeTable
   attendee: AttendeeTable
-  eventCompany: EventCompanyTable
+  event_company: EventCompanyTable
 }
