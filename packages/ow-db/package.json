@@ -10,8 +10,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --target es2020 --dts --clean --sourcemap",
     "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
-    "seed": "tsx ./src/seed.ts"
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "kysely": "^0.22.0",
