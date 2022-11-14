@@ -1,5 +1,5 @@
+import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
-import { v4 as uuidv4 } from "uuid"
 
 import { NotFoundError } from "../../../errors/errors"
 import { InsertCompany } from "../company"
@@ -21,14 +21,14 @@ describe("CompanyService", () => {
       location: "Mars",
       type: "Other",
     }
-    const id = uuidv4()
+    const id = randomUUID()
     vi.spyOn(companyRepository, "create").mockResolvedValueOnce({ id, ...company })
     await expect(companyService.createCompany(company)).resolves.toEqual({ id, ...company })
     expect(companyRepository.create).toHaveBeenCalledWith(company)
   })
 
   it("fails on unknown id", async () => {
-    const unknownID = uuidv4()
+    const unknownID = randomUUID()
     vi.spyOn(companyRepository, "getCompanyByID").mockResolvedValueOnce(undefined)
     await expect(companyService.getCompany(unknownID)).rejects.toThrow(NotFoundError)
     expect(companyRepository.getCompanyByID).toHaveBeenCalledWith(unknownID)

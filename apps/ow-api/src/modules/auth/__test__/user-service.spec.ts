@@ -1,10 +1,7 @@
-import { Database } from "@dotkomonline/db"
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
-import { v4 as uuidv4 } from "uuid"
 
 import { NotFoundError } from "../../../errors/errors"
-import { User } from "../user"
 import { initUserRepository } from "../user-repository"
 import { initUserService } from "../user-service"
 
@@ -28,7 +25,7 @@ describe("UserService", () => {
   })
 
   it("fails on unknown id", async () => {
-    const unknownID = uuidv4()
+    const unknownID = randomUUID()
     vi.spyOn(userRepository, "getUserByID").mockResolvedValueOnce(undefined)
     await expect(userService.getUser(unknownID)).rejects.toThrow(NotFoundError)
     expect(userRepository.getUserByID).toHaveBeenCalledWith(unknownID)
