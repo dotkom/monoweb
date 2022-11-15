@@ -32,7 +32,10 @@ program
       }
     }
     if (res.results) {
-      res.results.forEach((r) => logger.info(r))
+      logger.info(
+        "Migrating...\n" +
+          res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}`).join("\n")
+      )
     } else if (res.error) {
       logger.error(res.error)
     }
