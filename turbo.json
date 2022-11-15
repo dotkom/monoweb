@@ -11,7 +11,7 @@
     },
     "build:storybook": {
       "dependsOn": ["^build"],
-      "outputs": ["storybook-static"]
+      "outputs": ["./apps/storybook/storybook-static"]
     },
     "test": {
       "dependsOn": ["lint"],
