@@ -1,4 +1,5 @@
-import { Prisma } from "@dotkomonline/db"
+import { Database } from "@dotkomonline/db"
+import { Selectable } from "kysely"
 import { z } from "zod"
 
 const companySchema = z.object({
@@ -15,6 +16,6 @@ const companySchema = z.object({
 export type Company = z.infer<typeof companySchema>
 export type InsertCompany = Omit<Company, "id">
 
-export const mapToCompany = (payload: Prisma.CompanyGetPayload<null>): Company => {
+export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
   return companySchema.parse(payload)
 }

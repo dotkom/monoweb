@@ -4,7 +4,7 @@ node_modules
 .next
 # environment variables
 .env
-.env.*
+.env.production
 !.env.example
 .pnp.*
 .yarn/*

@@ -1,8 +1,11 @@
-import { prisma } from "@dotkomonline/db"
+import { Database } from "@dotkomonline/db"
+import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely"
+import pg from "pg"
 
 import type { inferAsyncReturnType } from "@trpc/server"
 import * as trpcExpress from "@trpc/server/adapters/express"
 
+import { env } from "./env"
 import { initUserRepository } from "./modules/auth/user-repository"
 import { initUserService } from "./modules/auth/user-service"
 import { initEventRepository } from "./modules/event/event-repository"
@@ -15,9 +18,21 @@ import { initEventService } from "./modules/event/event-service"
  **/
 export const createContext = async ({ req, res }: trpcExpress.CreateExpressContextOptions) => {
   console.log({ req, res })
+  const db = new Kysely<Database>({
+    dialect: new PostgresDialect({
+      pool: new pg.Pool({
+        host: env.DB_HOST,
+        port: env.DB_PORT,
+        database: env.DB_NAME,
+        user: env.DB_USER,
+        password: env.DB_PASSWORD,
+      }),
+    }),
+    plugins: [new CamelCasePlugin()],
+  })
   // Repositories
-  const userRepository = initUserRepository(prisma)
-  const eventRepository = initEventRepository(prisma)
+  const userRepository = initUserRepository(db)
+  const eventRepository = initEventRepository(db)
 
   // Services
   const userService = initUserService(userRepository)
