@@ -22,7 +22,12 @@ body:
       description: Add any other information related to the bug here, screenshots if applicable.
   - type: textarea
     attributes:
-      label: 📜 Provide environment information
-      description: Describe the device and OS information        
+      label: 🖥️ Provide environment information
+      description: Describe the device and OS information   
+      value: |
+        - OS/Device: 
+        - Browser: 
+        - Version:
+        
     validations:
       required: true
