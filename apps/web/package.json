@@ -62,7 +62,7 @@
     "@vitejs/plugin-react": "^2.1.0",
     "@vitest/coverage-c8": "^0.23.2",
     "autoprefixer": "^10.4.13",
-    "chromatic": "^6.7.3",
+    "chromatic": "^6.11.4",
     "cva": "npm:class-variance-authority@^0.2.4",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.0",
