@@ -23,7 +23,6 @@ body:
   - type: textarea
     attributes:
       label: 📜 Provide environment information
-      description: Describe the device and OS information
-      value: |        
+      description: Describe the device and OS information        
     validations:
       required: true
