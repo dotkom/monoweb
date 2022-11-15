@@ -4,7 +4,7 @@ import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
 export async function up(db: Kysely<Database>) {
-  await createTableWithDefaults("company", { id: true, createdAt: true }, db.schema)
+  await createTableWithDefaults("Company", { id: true, createdAt: true }, db.schema)
     .addColumn("name", "varchar(100)", (col) => col.notNull())
     .addColumn("description", "text", (col) => col.notNull())
     .addColumn("phone", "varchar(69)")
@@ -15,12 +15,12 @@ export async function up(db: Kysely<Database>) {
     .execute()
 
   // Create a table for committee based on the old migration
-  await createTableWithDefaults("committee", { id: true, createdAt: true }, db.schema)
+  await createTableWithDefaults("Committee", { id: true, createdAt: true }, db.schema)
     .addColumn("name", "varchar(100)", (col) => col.notNull())
     .execute()
 }
 
 export async function down(db: Kysely<Database>) {
-  await db.schema.dropTable("committee").execute()
-  await db.schema.dropTable("company").execute()
+  await db.schema.dropTable("Committee").execute()
+  await db.schema.dropTable("Company").execute()
 }
