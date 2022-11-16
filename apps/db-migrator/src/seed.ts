@@ -8,7 +8,7 @@ import { db } from "./db"
 
 faker.seed(69)
 
-const createRandomUser = (): Insertable<Database["ow_user"]> => {
+const createRandomUser = (): Insertable<Database["User"]> => {
   return {
     id: faker.datatype.uuid(),
     name: faker.name.firstName(),
@@ -18,7 +18,7 @@ const createRandomUser = (): Insertable<Database["ow_user"]> => {
   }
 }
 
-const createRandomEvent = (): Insertable<Database["event"]> => {
+const createRandomEvent = (): Insertable<Database["Event"]> => {
   const start = faker.date.future()
   return {
     id: faker.datatype.uuid(),
@@ -33,7 +33,7 @@ const createRandomEvent = (): Insertable<Database["event"]> => {
   }
 }
 
-const createRandomAttendance = (eventIDs: string[]): Insertable<Database["attendance"]> => {
+const createRandomAttendance = (eventIDs: string[]): Insertable<Database["Attendance"]> => {
   return {
     id: faker.datatype.uuid(),
     eventID: faker.helpers.arrayElement(eventIDs),
@@ -52,7 +52,7 @@ export const seed = async () => {
   )
 
   await db
-    .insertInto("ow_user")
+    .insertInto("User")
     .values(users)
     .returning("id")
     .onConflict((oc) =>
@@ -65,7 +65,7 @@ export const seed = async () => {
     .execute()
 
   await db
-    .insertInto("event")
+    .insertInto("Event")
     .values(event)
     .returning("id")
     .onConflict((oc) =>
@@ -82,7 +82,7 @@ export const seed = async () => {
     .execute()
 
   await db
-    .insertInto("attendance")
+    .insertInto("Attendance")
     .values(attendance)
     .returning("id")
     .onConflict((oc) =>
@@ -97,15 +97,15 @@ export const seed = async () => {
 
   // Finds all events with their attendances
   await db
-    .selectFrom("event")
-    .leftJoin("attendance", "attendance.eventID", "event.id")
-    .selectAll("event")
+    .selectFrom("Event")
+    .leftJoin("Attendance", "Attendance.eventID", "Event.id")
+    .selectAll("Event")
     .select(
       sql<
-        Selectable<Database["attendance"][]>
+        Selectable<Database["Attendance"][]>
       >`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as("attendances")
     )
-    .groupBy("event.id")
+    .groupBy("Event.id")
     .execute()
   logger.info("Done seeding")
 }

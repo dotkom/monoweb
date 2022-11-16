@@ -16,6 +16,6 @@ export const eventSchema = z.object({
 
 export type Event = z.infer<typeof eventSchema>
 
-export const mapToEvent = (payload: Selectable<Database["event"]>): Event => {
+export const mapToEvent = (payload: Selectable<Database["Event"]>): Event => {
   return eventSchema.parse(payload)
 }

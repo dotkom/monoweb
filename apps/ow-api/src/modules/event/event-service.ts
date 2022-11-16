@@ -5,7 +5,7 @@ import { NotFoundError } from "../../errors/errors"
 import { Event } from "./event"
 import { EventRepository } from "./event-repository"
 
-type EventTable = Database["event"]
+type EventTable = Database["Event"]
 
 export interface EventService {
   create: (payload: Insertable<EventTable>) => Promise<Event>

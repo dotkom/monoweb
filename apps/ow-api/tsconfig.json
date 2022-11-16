@@ -8,6 +8,6 @@
       "@/config/*": ["./config/*"]
     }
   },
-  "include": ["./src/**/*.ts", "./config/*.ts", "src/graphql/.generated/nexus-typegen.ts"],
-  "exclude": ["**/node_modules/**", "./dist"]
+  "include": ["./src/**/*.ts", "./config/*.ts"],
+  "exclude": ["**/node_modules/**", "**/dist"]
 }
