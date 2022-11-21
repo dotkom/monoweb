@@ -22,7 +22,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.2.1",
     "tailwindcss-radix": "^2.6.1"
