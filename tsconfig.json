@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
-    "lib": ["es2020"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -13,6 +13,5 @@
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "types": ["vitest/globals"]
-  },
-  "exclude": ["node_modules", "packages/**/dist"]
+  }
 }

@@ -13,7 +13,7 @@
     "@dotkomonline/logger": "workspace:*",
     "@faker-js/faker": "^7.6.0",
     "@types/eslint": "^8",
-    "@types/pg": "^8",
+    "@types/pg": "^8.6.5",
     "date-fns": "^2.29.3",
     "dotenv-cli": "^6.0.0",
     "eslint": "^8.27.0",
