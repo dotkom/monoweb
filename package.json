@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
+    "build": "turbo run build --filter=@dotkomonline/*",
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "turbo run build:prod --filter=web",
     "build:storybook": "turbo run build:storybook --filter=storybook",
