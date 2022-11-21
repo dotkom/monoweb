@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "private": true,
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean --sourcemap",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --sourcemap",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "run -T eslint --fix ."
   },
