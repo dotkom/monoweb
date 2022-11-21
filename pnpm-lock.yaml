@@ -30,7 +30,7 @@ importers:
 
   apps/dashboard:
     specifiers:
-      '@dotkomonline/config': workspace:^1.0.0
+      '@dotkomonline/config': workspace:*
       '@types/eslint': ^8
       '@types/react': ^18.0.15
       '@types/react-dom': ^18.0.6
@@ -67,7 +67,7 @@ importers:
 
   apps/db-migrator:
     specifiers:
-      '@dotkomonline/db': workspace:1.0.0
+      '@dotkomonline/db': workspace:*
       '@dotkomonline/logger': workspace:*
       '@faker-js/faker': ^7.6.0
       '@types/eslint': ^8
@@ -103,7 +103,7 @@ importers:
   apps/ow-api:
     specifiers:
       '@dotkomonline/config': '*'
-      '@dotkomonline/db': workspace:^1.0.0
+      '@dotkomonline/db': workspace:*
       '@dotkomonline/logger': workspace:*
       '@ory/client': ^0.2.0-alpha.60
       '@trpc/server': ^10.0.0-rc.0
@@ -160,8 +160,8 @@ importers:
   apps/storybook:
     specifiers:
       '@babel/core': ^7.19.6
-      '@dotkomonline/config': workspace:1.0.0
-      '@dotkomonline/ui': workspace:0.1.0-beta.0
+      '@dotkomonline/config': workspace:*
+      '@dotkomonline/ui': workspace:*
       '@mdx-js/react': ^1.6.22
       '@storybook/addon-actions': ^6.5.13
       '@storybook/addon-docs': ^6.5.13
@@ -219,10 +219,10 @@ importers:
   apps/web:
     specifiers:
       '@dotkomonline/auth': '*'
-      '@dotkomonline/config': workspace:1.0.0
-      '@dotkomonline/db': workspace:1.0.0
+      '@dotkomonline/config': workspace:*
+      '@dotkomonline/db': workspace:*
       '@dotkomonline/logger': workspace:*
-      '@dotkomonline/ui': workspace:0.1.0-beta.0
+      '@dotkomonline/ui': workspace:*
       '@radix-ui/colors': ^0.1.8
       '@radix-ui/react-avatar': ^1.0.0
       '@radix-ui/react-checkbox': ^1.0.0
