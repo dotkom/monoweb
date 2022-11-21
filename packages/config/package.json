@@ -1,6 +1,5 @@
 {
   "name": "@dotkomonline/config",
-  "packageManager": "yarn@3.2.0",
   "sideEffects": false,
   "version": "1.0.0",
   "main": "index.js",

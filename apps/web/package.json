@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@dotkomonline/auth": "*",
     "@dotkomonline/ui": "workspace:^",
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-avatar": "^1.0.0",
@@ -33,7 +34,7 @@
     "axios": "^0.21.4",
     "date-fns": "^2.29.3",
     "next": "13.0.0",
-    "next-auth": "^4.10.3",
+    "next-auth": "^4.17.0",
     "next-compose-plugins": "^2.2.1",
     "next-transpile-modules": "^9.0.0",
     "prettier": "^2.7.1",

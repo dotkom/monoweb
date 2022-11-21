@@ -1,6 +1,5 @@
 {
   "name": "@dotkomonline/storybook",
-  "packageManager": "yarn@3.2.0",
   "devDependencies": {
     "@babel/core": "^7.19.6",
     "@dotkomonline/config": "workspace:*",

@@ -1,6 +1,5 @@
 {
   "name": "@dotkomonline/logger",
-  "packageManager": "yarn@3.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

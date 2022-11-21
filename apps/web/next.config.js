@@ -1,15 +1,21 @@
 /* eslint-disable */
-const withTM = require("next-transpile-modules")(["@dotkomonline/ui"])
+const withTM = require("next-transpile-modules")(["@dotkomonline/ui", "@dotkomonline/auth"])
 
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = {
+const config = {
+  reactStrictMode: true,
   swcMinify: true,
   images: {
     domains: ["cdn.sanity.io"],
   },
-  reactStrictMode: true,
+  experimental: {
+    transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth"],
+  },
+  eslint: {
+    ignoreDuringBuilds: !!process.env.CI,
+  },
 }
 
-module.exports = withTM(nextConfig)
+module.exports = withTM(config)
