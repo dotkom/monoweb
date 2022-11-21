@@ -24,7 +24,7 @@
     "tailwind-merge": "^1.7.0"
   },
   "devDependencies": {
-    "@dotkomonline/config": "workspace:*",
+    "@dotkomonline/config": "*",
     "@storybook/react": "^6.5.9",
     "@types/eslint": "^8",
     "@types/react": "^18.0.15",

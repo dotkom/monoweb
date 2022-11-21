@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@dotkomonline/auth": "*",
-    "@dotkomonline/ui": "workspace:^",
+    "@dotkomonline/ui": "workspace:0.1.0-beta.0",
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-avatar": "^1.0.0",
     "@radix-ui/react-checkbox": "^1.0.0",
@@ -46,8 +46,8 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
-    "@dotkomonline/config": "workspace:*",
-    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/config": "workspace:1.0.0",
+    "@dotkomonline/db": "workspace:1.0.0",
     "@dotkomonline/logger": "workspace:*",
     "@storybook/addon-actions": "^6.5.9",
     "@storybook/addon-essentials": "^6.5.9",

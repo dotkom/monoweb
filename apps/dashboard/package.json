@@ -18,7 +18,7 @@
     "react-router-dom": "6.4.3"
   },
   "devDependencies": {
-    "@dotkomonline/config": "workspace:^",
+    "@dotkomonline/config": "workspace:^1.0.0",
     "@types/eslint": "^8",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",

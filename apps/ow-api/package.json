@@ -18,8 +18,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@dotkomonline/db": "workspace:^",
-    "@dotkomonline/logger": "workspace:^",
+    "@dotkomonline/db": "workspace:^1.0.0",
+    "@dotkomonline/logger": "workspace:*",
     "@ory/client": "^0.2.0-alpha.60",
     "@trpc/server": "^10.0.0-rc.0",
     "@types/aws-lambda": "^8.10.101",
