@@ -1,40 +1,19 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "node_modules/@dotkomonline/auth/next-auth.d.ts",
-    "next-env.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "node_modules/@dotkomonline/auth/next-auth.d.ts", "next-env.d.ts"],
   "exclude": [],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@components": [
-        "src/components"
-      ],
-      "@public/*": [
-        "public/*"
-      ],
-      "@public": [
-        "public"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
-      "@styles": [
-        "src/styles"
-      ],
-      "@theme": [
-        "src/theme/stitches.config.ts"
-      ]
+      "@/*": ["./src/*"],
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components"],
+      "@public/*": ["public/*"],
+      "@public": ["public"],
+      "@styles/*": ["src/styles/*"],
+      "@styles": ["src/styles"],
+      "@theme": ["src/theme/stitches.config.ts"]
     },
     "incremental": true
   }

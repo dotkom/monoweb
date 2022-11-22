@@ -6,6 +6,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "module": "esnext",
+    "importHelpers": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
