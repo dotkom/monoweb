@@ -6,6 +6,7 @@
   "types": "./src/index.ts",
   "private": true,
   "scripts": {
+    "clean": "rm -rf .turbo node_modules",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix ."
   },
