@@ -16,6 +16,6 @@ const companySchema = z.object({
 export type Company = z.infer<typeof companySchema>
 export type InsertCompany = Omit<Company, "id">
 
-export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
+export const mapToCompany = (payload: Selectable<Database["Company"]>): Company => {
   return companySchema.parse(payload)
 }

@@ -4,6 +4,5 @@
     "outDir": "dist",
     "declaration": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/migrations"]
+  "include": ["./**/*.ts"]
 }

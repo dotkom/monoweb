@@ -6,7 +6,6 @@
   "types": "./src/index.ts",
   "private": true,
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --target es2020 --dts --clean --sourcemap",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix ."
   },

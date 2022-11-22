@@ -1,4 +1,4 @@
-import { appRouter } from "@/router"
+import { appRouter } from "./router"
 import cors from "cors"
 import express from "express"
 
