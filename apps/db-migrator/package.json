@@ -2,7 +2,7 @@
   "name": "db-migrator",
   "type": "module",
   "dependencies": {
-    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/db": "*",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
     "kysely": "^0.22.0",
@@ -10,7 +10,7 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
-    "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/logger": "*",
     "@faker-js/faker": "^7.6.0",
     "@types/eslint": "^8",
     "@types/pg": "^8.6.5",

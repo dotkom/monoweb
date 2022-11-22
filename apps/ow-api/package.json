@@ -18,8 +18,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/db": "*",
+    "@dotkomonline/logger": "*",
     "@ory/client": "^0.2.0-alpha.60",
     "@trpc/server": "^10.0.0-rc.0",
     "@types/aws-lambda": "^8.10.101",
@@ -31,7 +31,7 @@
     "zod": "^3.17.10"
   },
   "devDependencies": {
-    "@dotkomonline/config": "workspace:*",
+    "@dotkomonline/config": "*",
     "@types/bcrypt": "^5.0.0",
     "@types/config": "^3.3.0",
     "@types/cors": "^2.8.12",
