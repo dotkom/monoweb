@@ -105,6 +105,7 @@ importers:
       '@dotkomonline/config': '*'
       '@dotkomonline/db': '*'
       '@dotkomonline/logger': '*'
+      '@dotkomonline/types': '*'
       '@ory/client': ^0.2.0-alpha.60
       '@trpc/server': ^10.0.0-rc.0
       '@types/aws-lambda': ^8.10.101
@@ -142,6 +143,7 @@ importers:
       zod: 3.19.1
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
+      '@dotkomonline/types': link:../../packages/types
       '@types/bcrypt': 5.0.0
       '@types/config': 3.3.0
       '@types/cors': 2.8.12

@@ -1,5 +1,5 @@
+import { Company, InsertCompany } from "@dotkomonline/types"
 import { NotFoundError } from "../../errors/errors"
-import { Company, InsertCompany } from "./company"
 import { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {

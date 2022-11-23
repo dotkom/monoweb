@@ -1,7 +1,10 @@
 import { Database } from "@dotkomonline/db"
-import { Insertable, Kysely } from "kysely"
+import { Company, CompanySchema } from "@dotkomonline/types"
+import { Insertable, Kysely, Selectable } from "kysely"
 
-import { mapToCompany, Company } from "./company"
+export const mapToCompany = (payload: Selectable<Database["Company"]>): Company => {
+  return CompanySchema.parse(payload)
+}
 
 export interface CompanyRepository {
   getCompanyByID: (id: string) => Promise<Company | undefined>
