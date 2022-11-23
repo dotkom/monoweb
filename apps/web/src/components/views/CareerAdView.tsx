@@ -1,6 +1,7 @@
 import { CareerAd, fetchCareerAd } from "@/api/get-career-ads"
 import { Badge, Button, css, Text } from "@dotkomonline/ui"
-import { DateTime } from "luxon"
+import { IconArrowNarrowLeft, IconGlobe } from "@tabler/icons"
+import { format } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
 import { BsLinkedin, BsTwitter } from "react-icons/bs"
@@ -11,7 +12,7 @@ import { MdWorkOutline } from "react-icons/md"
 
 import PortableText from "@components/molecules/PortableText"
 
-import { Box, Flex } from "../primitives"
+import { Flex } from "../primitives"
 
 interface CareerAdViewProps {
   career: CareerAd
@@ -35,62 +36,58 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
   } = props.career
 
   return (
-    <Flex className="mx-auto mt-10 flex w-10/12 justify-around">
-      <Box className="w-1/3">
-        <Box className="relative">
-          <Image src={image.asset.url} width={200} height={200} alt="company_image" />
-        </Box>
+    <div className="mx-auto mt-10 flex w-10/12 justify-between">
+      <div className="w-1/3">
+        <div className="relative pb-10">
+          <Image src={image.asset.url} width={4000} height={250} alt="company_image" />
+        </div>
 
         <Text>{company_info}</Text>
 
-        <Box className="border-b-1 mx-auto mt-4 mb-5 w-full border-black" />
+        <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
 
-        <Box className={styles.infoTW}>
-          <Box className="mb-1 inline text-xl text-red-11">
-            <FaArrowLeft />
-          </Box>
+        <div className={styles.infoTW}>
+          <IconArrowNarrowLeft size={30} className="text-red-11 inline" />
           <Text className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</Text>
-        </Box>
+        </div>
 
-        <Box className="border-b-1 w-full border-black" />
+        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <Box className={styles.infoTW}>
-          <Box className={styles.iconTW}>
-            <IoEarth />
-          </Box>
+        <div className={styles.infoTW}>
+            <IconGlobe className="text-red-11" size={20} />
           <Text className="m-0 pl-2">{location}</Text>
-        </Box>
+        </div>
 
-        <Box className="border-b-1 w-full border-black" />
+        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <Box className={styles.infoTW}>
-          <Box className={styles.iconTW}>
+        <div className={styles.infoTW}>
+          <div className={styles.iconTW}>
             <IoTimeOutline />
-          </Box>
-          <Text className="m-0 pl-2">{DateTime.fromISO(deadline).toFormat("dd.MM.yyyy")}</Text>
-        </Box>
+          </div>
+          <Text className="m-0 pl-2">{deadline}</Text>
+        </div>
 
-        <Box className="border-b-1 w-full border-black" />
+        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <Box className={styles.infoTW}>
-          <Box className={styles.iconTW}>
+        <div className={styles.infoTW}>
+          <div className={styles.iconTW}>
             <MdWorkOutline />
-          </Box>
+          </div>
           <Text className="m-0 pl-2">{career_role}</Text>
-        </Box>
+        </div>
 
-        <Box className="border-b-1 w-full border-black" />
+        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <Box className={styles.infoTW}>
-          <Box className={styles.iconTW}>
+        <div className={styles.infoTW}>
+          <div className={styles.iconTW}>
             <IoCopyOutline />
-          </Box>
+          </div>
           <Text className="m-0 pl-2">{career_role}</Text>
-        </Box>
+        </div>
 
-        <Box className="border-b-1 w-full border-black" />
+        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <Box className="mt-2 text-red-11">
+        <div className="text-red-11 mt-2 ">
           {linkdin && (
             <a href={linkdin}>
               <BsLinkedin className="m-2" />
@@ -106,24 +103,24 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
               <ImFacebook2 className="m-2" />
             </a>
           )}
-        </Box>
+        </div>
         <a href={link}>
-          <Button className="mt-3 w-20">Søk</Button>
+          <Button className="bg-red-11 mt-3 w-20">Søk</Button>
         </a>
-      </Box>
-      <Box className="w-2/3">
-        <Box className={styles.articleTW}>
+      </div>
+      <div className="w-2/3">
+        <div className={styles.articleTW}>
           <Text className="m-0 text-2xl">
             <b>{company_name}</b>
           </Text>
-          <Text className="m-0 text-2xl">{title}</Text>
-        </Box>
+          <Text className="m-0 text-2xl ">{title}</Text>
+        </div>
         <PortableText
           blocks={content}
-          className="[&>*]:border-l-1.5 ml-50 [&>*]border-amber-9 mt-4 pl-4 [&>h1]:text-2xl"
+          className="[&>*]:border-l-1.5 ml-50 [&>*]border-amber-9 mt-4 pl-4 [&>h1]:text-5xl"
         />
-      </Box>
-    </Flex>
+      </div>
+    </div>
   )
 }
 // from css to tailwind
@@ -154,7 +151,7 @@ const styles = {
     color: "$blue2",
     mb: "-3px",
   },
-  iconTW: "inline text-red-11 mb-3",
+  iconTW: "inline text-red-11 mb-[-3px]",
   content: css({
     "h1, ul, p, h2": {
       borderLeft: "1.5px solid $orange3",
