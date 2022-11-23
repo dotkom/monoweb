@@ -15,7 +15,7 @@ const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
   return (
     <div className={styles.base({ color: styleCheck })}>
       <div className={styles.flex()}>
-        <AlertIcon status={status} monochrome={!monochrome}></AlertIcon>
+        <AlertIcon status={status}></AlertIcon>
         {children}
       </div>
       {/* The monochrome value is inverted because we want a white or black icon with colored background*/}

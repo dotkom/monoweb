@@ -21,6 +21,7 @@ export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
   },
   getEventByID: async (id) => {
     // TODO: move the attendance query to a helper
+
     const event = await db
       .selectFrom("Event")
       .where("id", "=", id)
