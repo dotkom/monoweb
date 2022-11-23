@@ -1,18 +1,13 @@
-import { CareerAd, fetchCareerAd } from "@/api/get-career-ads"
-import { Badge, Button, css, Text } from "@dotkomonline/ui"
+import { CareerAd } from "@/api/get-career-ads"
+import { Button, css, Text } from "@dotkomonline/ui"
 import { IconArrowNarrowLeft, IconGlobe } from "@tabler/icons"
-import { format } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
 import { BsLinkedin, BsTwitter } from "react-icons/bs"
-import { FaArrowLeft } from "react-icons/fa"
 import { ImFacebook2 } from "react-icons/im"
-import { IoEarth, IoTimeOutline, IoCopyOutline, IoArrowBackOutline } from "react-icons/io5"
+import { IoTimeOutline, IoCopyOutline } from "react-icons/io5"
 import { MdWorkOutline } from "react-icons/md"
-
 import PortableText from "@components/molecules/PortableText"
-
-import { Flex } from "../primitives"
 
 interface CareerAdViewProps {
   career: CareerAd
@@ -54,7 +49,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
         <div className={styles.infoTW}>
-            <IconGlobe className="text-red-11" size={20} />
+          <IconGlobe className="text-red-11" size={20} />
           <Text className="m-0 pl-2">{location}</Text>
         </div>
 
@@ -109,15 +104,15 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         </a>
       </div>
       <div className="w-2/3">
-        <div className={styles.articleTW}>
-          <Text className="m-0 text-2xl">
+        <div className={"border-amber-9 ml-8 mt-2 border-l-[1px] pl-4"}>
+          <Text className="m-0 text-4xl">
             <b>{company_name}</b>
           </Text>
-          <Text className="m-0 text-2xl ">{title}</Text>
+          <Text className="m-0 text-3xl ">{title}</Text>
         </div>
         <PortableText
           blocks={content}
-          className="[&>*]:border-l-1.5 ml-50 [&>*]border-amber-9 mt-4 pl-4 [&>h1]:text-5xl"
+          className="[&>*]:border-amber-9 [&>*]:text-amber-12 my-12 ml-8 [&>*]:border-l-[1px] [&>*]:pl-8"
         />
       </div>
     </div>
