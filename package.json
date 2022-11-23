@@ -17,7 +17,8 @@
     "migrate": "dotenv -e .env.local -- turbo run migrate",
     "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed",
     "storybook": "turbo run storybook --filter=storybook",
-    "type-check": "turbo run type-check" 
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean"
   },
   "workspaces": [
     "packages/*",

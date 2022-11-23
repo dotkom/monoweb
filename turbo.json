@@ -35,6 +35,9 @@
       "cache": false,
       "dependsOn": []
     },
+    "clean": {
+      "cache": false
+    },
     "storybook": {
       "outputs": [],
       "cache": false
