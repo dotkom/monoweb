@@ -11,7 +11,7 @@ const SignInPage: NextPageWithLayout = () => {
   const challenge = router.query["login_challenge"]
   const { register, handleSubmit } = useForm()
 
-  const signIn = trpc.signin.useMutation()
+  const signIn = trpc.auth.signin.useMutation()
 
   return (
     <div className="bg-slate-1 mx-auto my-0 w-full max-w-[400px] rounded-md pt-16">

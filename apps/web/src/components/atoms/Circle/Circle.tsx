@@ -1,8 +1,6 @@
-import { CSS } from "@dotkomonline/ui"
-
 import { Box } from "@components/primitives"
 
-const circleStyle: CSS = {
+const circleStyle = {
   color: "$white",
   textAlign: "center",
   borderRadius: "50%",

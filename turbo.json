@@ -1,14 +1,20 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "baseBranch": "origin/main",
   "pipeline": {
     "build": {
-      "outputs": ["dist/**", ".next/**"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": ["**/dist"]
     },
     "build:prod": {
       "dependsOn": ["^build"],
       "outputs": [".next/**"]
+    },
+    "build:storybook": {
+      "dependsOn": ["^build"],
+      "outputs": ["./apps/storybook/storybook-static/**"]
+    },
+    "type-check": {
+      "outputs": []
     },
     "test": {
       "dependsOn": ["lint"],
@@ -21,20 +27,31 @@
       "outputs": []
     },
     "dev": {
+      "dependsOn": ["migrate"],
       "cache": false
+    },
+    "migrate": {
+      "env": ["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME"],
+      "cache": false,
+      "dependsOn": []
     },
     "storybook": {
       "outputs": [],
       "cache": false
     }
   },
-  "globalDependencies": [
-    "$NODE_ENV",
-    "$API_PORT",
-    "$DASHBOARD_PORT",
-    "$NEXTAUTH_CLIENT_ID",
-    "$NEXTAUTH_URL",
-    "$HYDRA_ADMIN_URL",
-    "$NEXT_PUBLIC_DEBUG"
+  "globalEnv": [
+    "NODE_ENV",
+    "API_PORT",
+    "DASHBOARD_PORT",
+    "NEXTAUTH_CLIENT_ID",
+    "NEXTAUTH_URL",
+    "HYDRA_ADMIN_URL",
+    "NEXT_PUBLIC_DEBUG",
+    "DB_HOST",
+    "DB_PORT",
+    "DB_USER",
+    "DB_PASSWORD",
+    "DB_NAME"
   ]
 }
