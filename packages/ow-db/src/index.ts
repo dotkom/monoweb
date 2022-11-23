@@ -1,1 +1,2 @@
-export * from "@prisma/client"
+export * from "./types"
+export { createMigrator } from "./migrator"

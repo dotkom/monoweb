@@ -1,6 +1,5 @@
 {
   "name": "@dotkomonline/config",
-  "packageManager": "yarn@3.2.0",
   "sideEffects": false,
   "version": "1.0.0",
   "main": "index.js",
@@ -11,8 +10,8 @@
     "tailwind-preset.js"
   ],
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
     "eslint-config-next": "^13.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-turbo": "^0.0.4",
@@ -23,7 +22,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.2.1",
     "tailwindcss-radix": "^2.6.1"

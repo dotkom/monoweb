@@ -11,7 +11,7 @@ const SignInPage: NextPageWithLayout = () => {
   const challenge = router.query["login_challenge"]
   const { register, handleSubmit } = useForm()
 
-  const signIn = trpc.signin.useMutation()
+  const signIn = trpc.auth.signin.useMutation()
 
   return (
     <div className="bg-slate-1 mx-auto my-0 w-full max-w-[400px] rounded-md pt-16">
@@ -38,7 +38,7 @@ const SignInPage: NextPageWithLayout = () => {
         <span className="text-sm">
           Forgot your <a className="text-blue-11">password?</a>
         </span>
-        <Button className="my-4 w-full bg-gradient-to-r from-[#0D5474] to-[#153E75] py-3" color="blue" type="submit">
+        <Button className="my-4" variant="gradient" type="submit">
           Sign in
         </Button>
         <p className="text-slate-12 text-center">

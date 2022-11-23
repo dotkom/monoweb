@@ -4,35 +4,50 @@ name: "Publish Storybook"
 # Event for the workflow
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize]
 
 # List of jobs
 jobs:
   chromatic-deployment:
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: ./apps/storybook
     strategy:
       matrix:
         os: [ubuntu-latest]
         node: [16]
     # Job steps
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v3
         with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          fetch-depth: 0 # 👈 Required to retrieve git history
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: false
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: yarn
+        run: pnpm install
+      - name: Build storybook
+        run: pnpm build:storybook
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: "./apps/storybook"
+          workingDir: ./apps/storybook

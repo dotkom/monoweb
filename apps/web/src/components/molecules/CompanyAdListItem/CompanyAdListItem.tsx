@@ -1,6 +1,6 @@
 import { CSS } from "@dotkomonline/ui"
 import { Badge, Text } from "@dotkomonline/ui"
-import { DateTime } from "luxon"
+import { format } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
 
@@ -11,7 +11,7 @@ interface CompanyAdListItemProps {
   logo: string
   position: string
   location: string[]
-  deadline: DateTime
+  deadline: Date
   showApplyLink?: boolean
   applyLink?: string
 }
@@ -25,12 +25,12 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
       </Box>
       <Text>{name}</Text>
       <Box>
-        <Badge color="red" variant="subtle">
+        <Badge color="red" variant="light">
           {position}
         </Badge>
       </Box>
       <Text>{location.concat("")}</Text>
-      <Text>{deadline.toFormat("DDD")}</Text>
+      <Text>{format(deadline, "DDD")}</Text>
       {showApplyLink && <Text>{applyLink}</Text>}
     </Box>
   )

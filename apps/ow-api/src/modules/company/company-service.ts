@@ -5,7 +5,7 @@ import { CompanyRepository } from "./company-repository"
 export interface CompanyService {
   getCompany: (id: Company["id"]) => Promise<Company>
   getCompanies: (limit: number) => Promise<Company[]>
-  register: (payload: InsertCompany) => Promise<Company>
+  createCompany: (payload: InsertCompany) => Promise<Company>
 }
 
 export const initCompanyService = (companyRepository: CompanyRepository): CompanyService => ({
@@ -18,8 +18,9 @@ export const initCompanyService = (companyRepository: CompanyRepository): Compan
     const companies = await companyRepository.getCompanies(limit)
     return companies
   },
-  register: async (payload) => {
-    const company = await companyRepository.createCompany(payload)
+  createCompany: async (payload) => {
+    const company = await companyRepository.create(payload)
+    if (!company) throw new Error("Failed to create company")
     return company
   },
 })

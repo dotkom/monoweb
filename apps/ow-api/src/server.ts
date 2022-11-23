@@ -1,10 +1,10 @@
+import { appRouter } from "./router"
 import cors from "cors"
 import express from "express"
 
 import { createExpressMiddleware } from "@trpc/server/adapters/express"
 
-import { createContext } from "./index.js"
-import { appRouter } from "./router.js"
+import { createContext } from "./context"
 
 export const createServer = () => {
   const app = express()

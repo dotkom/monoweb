@@ -8,7 +8,7 @@ export interface CheckboxProps extends PrimitiveProps {
   label: string
 }
 
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ...props }, ref) => (
+export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(({ label, ...props }, ref) => (
   <div className="flex items-center">
     <Root
       ref={ref}
