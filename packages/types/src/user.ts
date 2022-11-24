@@ -12,9 +12,9 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>
 
-export const InsertUserSchema = UserSchema.omit({
+export const UserWriteSchema = UserSchema.partial({
   id: true,
   createdAt: true,
 })
 
-export type InsertUser = z.infer<typeof InsertUserSchema>
+export type UserWrite = z.infer<typeof UserWriteSchema>

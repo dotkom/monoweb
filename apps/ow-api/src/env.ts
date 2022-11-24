@@ -8,6 +8,9 @@ const envSchema = z.object({
   DB_NAME: z.string(),
 })
 
+const xd = z.string().optional().parse(null)
+console.log(xd)
+
 const parsed = envSchema.safeParse(process.env)
 
 if (!parsed.success) {

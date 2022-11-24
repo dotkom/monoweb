@@ -1,5 +1,5 @@
 import { Database } from "@dotkomonline/db"
-import { Company, CompanySchema } from "@dotkomonline/types"
+import { Company, CompanySchema, CompanyWrite, UserWrite } from "@dotkomonline/types"
 import { Insertable, Kysely, Selectable } from "kysely"
 
 export const mapToCompany = (payload: Selectable<Database["Company"]>): Company => {
@@ -9,7 +9,7 @@ export const mapToCompany = (payload: Selectable<Database["Company"]>): Company 
 export interface CompanyRepository {
   getCompanyByID: (id: string) => Promise<Company | undefined>
   getCompanies: (limit: number) => Promise<Company[]>
-  create: (values: Insertable<Database["Company"]>) => Promise<Company | undefined>
+  create: (values: CompanyWrite) => Promise<Company | undefined>
 }
 
 export const initCompanyRepository = (db: Kysely<Database>): CompanyRepository => {
@@ -22,8 +22,17 @@ export const initCompanyRepository = (db: Kysely<Database>): CompanyRepository =
       const companies = await db.selectFrom("Company").selectAll().limit(limit).execute()
       return companies.map(mapToCompany)
     },
-    create: async (companyInsert) => {
-      const company = await db.insertInto("Company").values(companyInsert).returningAll().executeTakeFirst()
+    create: async (val) => {
+      const company = await db
+        .insertInto("Company")
+        .values({
+          name: val.name,
+          description: val.description,
+          email: val.email,
+          website: val.website,
+        })
+        .returningAll()
+        .executeTakeFirst()
       return company ? mapToCompany(company) : company
     },
   }

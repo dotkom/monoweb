@@ -1,4 +1,4 @@
-import { Generated } from "kysely"
+import { Generated, Insertable } from "kysely"
 
 import { Timestamp } from "./common"
 
@@ -13,6 +13,8 @@ export interface CompanyTable {
   location: string | null
   type: string | null
 }
+type XD = Insertable<CompanyTable>
+type XD2 = XD["createdAt"]
 
 export interface EventCompanyTable {
   eventID: string

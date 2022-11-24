@@ -2,7 +2,7 @@ import { Generated } from "kysely"
 
 import { Timestamp } from "./common"
 
-type EventStatus = "tba" | "open"
+type EventStatus = "TBA" | "PUBLIC" | "NO_LIMIT" | "ATTENDANCE"
 
 export interface EventTable {
   id: Generated<string>
@@ -12,6 +12,7 @@ export interface EventTable {
   start: Timestamp
   end: Timestamp
   status: EventStatus
+  type: string
   public: boolean
   description: string | null
   subtitle: string | null
