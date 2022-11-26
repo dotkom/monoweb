@@ -1,10 +1,10 @@
+import { EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 
 import { t } from "../../trpc"
-import { eventSchema } from "../event/event.js"
 
 export const eventRouter = t.router({
-  create: t.procedure.input(eventSchema.omit({ id: true })).mutation(({ input, ctx }) => {
+  create: t.procedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
     return ctx.eventService.create(input)
   }),
   all: t.procedure

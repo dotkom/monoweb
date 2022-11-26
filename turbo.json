@@ -10,8 +10,7 @@
       "outputs": [".next/**"]
     },
     "build:storybook": {
-      "dependsOn": ["^build"],
-      "outputs": ["./apps/storybook/storybook-static/**"]
+      "outputs": ["storybook-static/**"]
     },
     "type-check": {
       "outputs": []

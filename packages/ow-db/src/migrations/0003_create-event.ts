@@ -4,13 +4,14 @@ import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
 export async function up(db: Kysely<Database>) {
-  await db.schema.createType("event_status").asEnum(["tba", "open"]).execute()
+  await db.schema.createType("event_status").asEnum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]).execute()
 
   await createTableWithDefaults("Event", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("title", "varchar(255)", (col) => col.notNull())
     .addColumn("start", "timestamptz", (col) => col.notNull())
     .addColumn("end", "timestamptz", (col) => col.notNull())
     .addColumn("status", sql`event_status`, (col) => col.notNull())
+    .addColumn("type", "varchar(255)", (col) => col.notNull())
     .addColumn("public", "boolean", (col) => col.notNull())
     .addColumn("description", "text")
     .addColumn("subtitle", "varchar(255)")

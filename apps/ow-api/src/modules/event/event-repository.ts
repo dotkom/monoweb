@@ -1,8 +1,8 @@
 import { Database } from "@dotkomonline/db"
-import { Insertable, Kysely, sql } from "kysely"
+import { Attendance, Event, EventSchema } from "@dotkomonline/types"
+import { Insertable, Kysely, Selectable, sql } from "kysely"
 
-import { Attendance } from "./attendance"
-import { Event, mapToEvent } from "./event"
+const mapToEvent = (data: Selectable<Database["Event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
   createEvent: (data: Insertable<Database["Event"]>) => Promise<Event | undefined>

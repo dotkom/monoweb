@@ -1,9 +1,8 @@
 import { Database } from "@dotkomonline/db"
 import { faker } from "@faker-js/faker"
 import { addHours } from "date-fns"
-import { Insertable, Selectable, sql } from "kysely"
+import { Insertable } from "kysely"
 
-import { logger } from "."
 import { db } from "./db"
 
 faker.seed(69)
@@ -29,7 +28,8 @@ const createRandomEvent = (): Insertable<Database["Event"]> => {
     end: addHours(start, 8),
     location: faker.address.streetAddress(),
     public: faker.datatype.boolean(),
-    status: faker.helpers.arrayElement(["open", "tba"]),
+    status: faker.helpers.arrayElement(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
+    type: faker.helpers.arrayElement(["BEDPRES", "ACADEMIC"]),
   }
 }
 
@@ -77,6 +77,7 @@ export const seed = async () => {
         location: (eb) => eb.ref("excluded.location"),
         public: (eb) => eb.ref("excluded.public"),
         status: (eb) => eb.ref("excluded.status"),
+        type: (eb) => eb.ref("excluded.type"),
       })
     )
     .execute()
@@ -94,18 +95,4 @@ export const seed = async () => {
       })
     )
     .execute()
-
-  // Finds all events with their attendances
-  await db
-    .selectFrom("Event")
-    .leftJoin("Attendance", "Attendance.eventID", "Event.id")
-    .selectAll("Event")
-    .select(
-      sql<
-        Selectable<Database["Attendance"][]>
-      >`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as("attendances")
-    )
-    .groupBy("Event.id")
-    .execute()
-  logger.info("Done seeding")
 }

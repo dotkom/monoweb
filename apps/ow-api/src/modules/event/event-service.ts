@@ -1,14 +1,10 @@
-import { Database } from "@dotkomonline/db"
-import { Insertable } from "kysely"
+import { Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
-import { Event } from "./event"
 import { EventRepository } from "./event-repository"
 
-type EventTable = Database["Event"]
-
 export interface EventService {
-  create: (payload: Insertable<EventTable>) => Promise<Event>
+  create: (payload: EventWrite) => Promise<Event>
   getEvent: (id: Event["id"]) => Promise<Event>
   getEvents: (limit: number, offset?: number) => Promise<Event[]>
 }

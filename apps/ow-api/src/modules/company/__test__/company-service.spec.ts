@@ -1,8 +1,8 @@
+import { Company } from "@dotkomonline/types"
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
-import { InsertCompany } from "../company"
 import { initCompanyRepository } from "../company-repository"
 import { initCompanyService } from "../company-service"
 
@@ -12,7 +12,7 @@ describe("CompanyService", () => {
   const companyService = initCompanyService(companyRepository)
 
   it("creates a new company", async () => {
-    const company: InsertCompany = {
+    const company: Omit<Company, "id"> = {
       name: "Duckmouse",
       description: "We sell computer-mouses with ducks inside of them",
       email: "coolguys@company.com",
@@ -20,6 +20,7 @@ describe("CompanyService", () => {
       website: "www.duckmouse.no",
       location: "Mars",
       type: "Other",
+      createdAt: new Date(),
     }
     const id = randomUUID()
     vi.spyOn(companyRepository, "create").mockResolvedValueOnce({ id, ...company })

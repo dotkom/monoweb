@@ -1,17 +1,16 @@
 import { Generated } from "kysely"
 
-import { Timestamp } from "./common"
-
-type EventStatus = "tba" | "open"
+type EventStatus = "TBA" | "PUBLIC" | "NO_LIMIT" | "ATTENDANCE"
 
 export interface EventTable {
   id: Generated<string>
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Generated<Date>
+  updatedAt: Generated<Date>
   title: string
-  start: Timestamp
-  end: Timestamp
+  start: Date
+  end: Date
   status: EventStatus
+  type: string
   public: boolean
   description: string | null
   subtitle: string | null
@@ -22,26 +21,26 @@ export interface EventTable {
 
 export interface AttendanceTable {
   id: Generated<string>
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
-  start: Timestamp
-  end: Timestamp
-  deregisterDeadline: Timestamp
+  createdAt: Generated<Date>
+  updatedAt: Generated<Date>
+  start: Date
+  end: Date
+  deregisterDeadline: Date
   limit: number
   eventID: string
 }
 
 export interface AttendeeTable {
   id: Generated<string>
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Generated<Date>
+  updatedAt: Generated<Date>
   userID: string
   attendanceID: string
 }
 
 export interface CommitteeTable {
   id: Generated<string>
-  createdAt: Generated<Timestamp>
-  updatedAt: Generated<Timestamp>
+  createdAt: Generated<Date>
+  updatedAt: Generated<Date>
   name: string
 }

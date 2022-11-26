@@ -1,7 +1,10 @@
 import { Database } from "@dotkomonline/db"
-import { Kysely } from "kysely"
+import { Kysely, Selectable } from "kysely"
+import { type User, UserSchema } from "@dotkomonline/types"
 
-import { mapToUser, User } from "./user"
+export const mapToUser = (payload: Selectable<Database["User"]>): User => {
+  return UserSchema.parse(payload)
+}
 
 export interface UserRepository {
   getUserByID: (id: string) => Promise<User | undefined>

@@ -1,3 +1,4 @@
+import { Event } from "@dotkomonline/types"
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
@@ -11,7 +12,7 @@ describe("EventService", () => {
   const eventRepository = initEventRepository(db)
   const eventService = initEventService(eventRepository)
 
-  const payload = {
+  const payload: Omit<Event, "id"> = {
     title: "Kotlin og spillutvikling med Bekk",
     subtitle: "Bekk kommer for å holde kurs i kotlin og spillutvikling!",
     imageUrl:
@@ -21,8 +22,11 @@ describe("EventService", () => {
     public: false,
     start: new Date(),
     end: new Date(),
-    status: "open",
-  } as const
+    createdAt: new Date(2022, 1, 1),
+    updatedAt: new Date(2022, 1, 1),
+    status: "PUBLIC",
+    type: "BEDPRES",
+  }
 
   it("creates a new event", async () => {
     const id = randomUUID()
