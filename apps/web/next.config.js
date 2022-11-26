@@ -1,5 +1,5 @@
 /* eslint-disable */
-const withTM = require("next-transpile-modules")(["@dotkomonline/ui", "@dotkomonline/auth"])
+const withTM = require("next-transpile-modules")(["@dotkomonline/ui", "@dotkomonline/auth", "core-api"])
 
 /**
  * @type {import('next').NextConfig}
@@ -11,7 +11,7 @@ const config = {
     domains: ["cdn.sanity.io"],
   },
   experimental: {
-    transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth"],
+    transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth", "core-api"],
   },
   eslint: {
     ignoreDuringBuilds: !!process.env.CI,

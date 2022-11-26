@@ -1,8 +1,8 @@
 {
-  "name": "api",
+  "name": "core-api",
   "version": "1.0.0",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "type": "module",
   "private": true,
   "scripts": {
@@ -15,16 +15,18 @@
   },
   "dependencies": {
     "@dotkomonline/db": "*",
+    "@dotkomonline/auth": "*",
     "@ory/client": "^0.2.0-alpha.60",
     "@trpc/server": "^10.0.0",
     "bcrypt": "^5.1.0",
     "kysely": "^0.22.0",
     "pg": "^8.8.0",
+    "superjson": "^1.11.0",
     "zod": "^3.17.10"
   },
   "devDependencies": {
-    "@dotkomonline/logger": "*",
     "@dotkomonline/config": "*",
+    "@dotkomonline/logger": "*",
     "@dotkomonline/types": "*",
     "@types/bcrypt": "^5.0.0",
     "@types/config": "^3.3.0",
