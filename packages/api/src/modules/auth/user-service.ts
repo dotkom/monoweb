@@ -1,6 +1,5 @@
 import { User } from "@dotkomonline/types"
 import { Configuration, V0alpha2Api } from "@ory/client"
-import bcrypt from "bcrypt"
 
 import { NotFoundError } from "../../errors/errors"
 import { UserRepository } from "./user-repository"
@@ -30,11 +29,11 @@ export const initUserService = (userRepository: UserRepository): UserService => 
       return users
     },
     register: async (email, password) => {
-      const salt = await bcrypt.genSalt(10)
-      const hashedPassword = await bcrypt.hash(password, salt)
-      const user = await userRepository.createUser(email, hashedPassword)
-      if (!user) throw new Error("Failed to create user")
-      return user
+      // const salt = await bcrypt.genSalt(10)
+      // const hashedPassword = await bcrypt.hash(password, salt)
+      // const user = await userRepository.createUser(email, hashedPassword)
+      throw new Error("Failed to create user")
+      // return user
     },
     signIn: async (email, password, challenge) => {
       const { data } = await hydraAdmin.adminGetOAuth2LoginRequest(challenge)
@@ -49,8 +48,7 @@ export const initUserService = (userRepository: UserRepository): UserService => 
       if (!user) {
         throw new Error("User does not exist")
       }
-      const valid = await bcrypt.compare(password, user.password)
-      if (!valid) {
+      if (!true) {
         throw new Error("Invalid password")
       }
       return true

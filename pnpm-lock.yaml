@@ -125,7 +125,7 @@ importers:
       pg: ^8.8.0
       tsup: ^6.4.0
       tsx: ^3.11.0
-      typescript: ^4.9.3
+      typescript: ^4.8.4
       vite-tsconfig-paths: ^3.5.2
       vitest: ^0.23.4
       zod: ^3.17.10
@@ -218,6 +218,7 @@ importers:
 
   apps/web:
     specifiers:
+      '@dotkomonline/api': '*'
       '@dotkomonline/auth': '*'
       '@dotkomonline/config': '*'
       '@dotkomonline/db': '*'
@@ -254,7 +255,6 @@ importers:
       autoprefixer: ^10.4.13
       axios: ^0.21.4
       chromatic: ^6.7.3
-      core-api: '*'
       cva: npm:class-variance-authority@^0.2.4
       date-fns: ^2.29.3
       eslint: ^8.26.0
@@ -264,6 +264,7 @@ importers:
       lint-staged: ^10.5.4
       next: ^13.0.5
       next-auth: ^4.17.0
+      pg: ^8.8.0
       postcss: ^8.4.18
       prettier: ^2.7.1
       react: ^18.2.0
@@ -277,9 +278,9 @@ importers:
       vite: ^3.1.1
       vite-tsconfig-paths: ^3.5.0
       vitest: ^0.23.2
-      z: ^1.0.9
       zod: ^3.19.1
     dependencies:
+      '@dotkomonline/api': link:../../packages/api
       '@dotkomonline/auth': link:../../packages/auth
       '@dotkomonline/ui': link:../../packages/ow-ui
       '@next/env': 13.0.4
@@ -298,17 +299,16 @@ importers:
       '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
       '@trpc/server': 10.0.0
       axios: 0.21.4
-      core-api: link:../../packages/api
       date-fns: 2.29.3
       next: 13.0.5_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.17.0_7iuvftg57tblwyxclfkwku5xo4
+      pg: 8.8.0
       prettier: 2.7.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.39.5_react@18.2.0
       react-icons: 4.6.0_react@18.2.0
       superjson: 1.11.0
-      z: 1.0.9
       zod: 3.19.1
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
@@ -9998,17 +9998,6 @@ packages:
       type-detect: 4.0.8
     dev: true
 
-  /deep-equal/1.1.1:
-    resolution: {integrity: sha512-yd9c5AdiqVcR+JjcwUQb9DkhJc8ngNr0MahEBGvDiJw8puWab2yZlh+nkasOnZP+EGTAP6rRp2JzJhJZzvNF8g==}
-    dependencies:
-      is-arguments: 1.1.1
-      is-date-object: 1.0.5
-      is-regex: 1.1.4
-      object-is: 1.1.5
-      object-keys: 1.1.1
-      regexp.prototype.flags: 1.4.3
-    dev: false
-
   /deep-equal/2.1.0:
     resolution: {integrity: sha512-2pxgvWu3Alv1PoWEyVg7HS8YhGlUFUV7N5oOvfL6d+7xAmLSemMwv/c8Zv/i9KFzxV5Kt5CAvQc70fLwVuf4UA==}
     dependencies:
@@ -11669,12 +11658,6 @@ packages:
       rimraf: 3.0.2
     dev: true
 
-  /flat/2.0.2:
-    resolution: {integrity: sha512-b/cdFAr468cVs8XoG62dbGf9YegchdgEPX6sP7rppE0a4+RZF19kseTiDKGA1rIr3hOvOD0QIlSmaFlOlT0gfA==}
-    dependencies:
-      is-buffer: 1.1.6
-    dev: false
-
   /flatted/3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
@@ -12698,11 +12681,6 @@ packages:
   /inline-style-parser/0.1.1:
     resolution: {integrity: sha512-7NXolsK4CAS5+xvdj5OMMbI962hU/wvwoxk+LWR9Ek9bVtyuuYScDN6eS0rUm6TxApFpw7CX1o4uJzcd4AyD3Q==}
 
-  /install/0.10.4:
-    resolution: {integrity: sha512-+IRyOastuPmLVx9zlVXJoKErSqz1Ma5at9A7S8yfsj3W+Kg95faPoh3bPDtMrZ/grz4PRmXzrswmlzfLlYyLOw==}
-    engines: {node: '>= 0.10'}
-    dev: false
-
   /internal-slot/1.0.3:
     resolution: {integrity: sha512-O0DB1JC/sPyZl7cIo78n5dR7eUSwwpYPiXRhTzNxZVAMUuB8vlnRFyLxdrVToks6XPLVnFfbzaVd5WLjhgg+vA==}
     engines: {node: '>= 0.4'}
@@ -12773,6 +12751,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       has-tostringtag: 1.0.0
+    dev: true
 
   /is-arrayish/0.2.1:
     resolution: {integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==}
@@ -14515,6 +14494,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.1.4
+    dev: true
 
   /object-keys/1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
@@ -19166,25 +19146,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  /z/1.0.9:
-    resolution: {integrity: sha512-Vocq47YR4WoT+4wu80VsJwKi0Y92R20Vqq7AxghN9KFIa4J4CUae1uKnwtv4w33QvjnKjb/7rWHRC93TFQc0jA==}
-    engines: {node: '>= 6.0.0'}
-    dependencies:
-      deep-equal: 1.1.1
-      flat: 2.0.2
-      install: 0.10.4
-      js-function-reflector: github.com/leonardiwagner/js-function-reflector/f3a1295909cf870bbb7bb136ca53796fc3e87c17
-    dev: false
-
   /zod/3.19.1:
     resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
     dev: false
 
   /zwitch/1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
-
-  github.com/leonardiwagner/js-function-reflector/f3a1295909cf870bbb7bb136ca53796fc3e87c17:
-    resolution: {commit: f3a1295909cf870bbb7bb136ca53796fc3e87c17, repo: git+ssh://git@github.com/leonardiwagner/js-function-reflector.git, type: git}
-    name: js-function-reflector
-    version: 1.3.0
-    dev: false

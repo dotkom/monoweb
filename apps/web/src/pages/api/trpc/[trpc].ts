@@ -1,4 +1,4 @@
-import { appRouter, createContext } from "core-api"
+import { appRouter, createContext } from "@dotkomonline/api"
 import { createNextApiHandler } from "@trpc/server/adapters/next"
 
 // export API handler

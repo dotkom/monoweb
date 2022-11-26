@@ -11,7 +11,7 @@ const config = {
     domains: ["cdn.sanity.io"],
   },
   experimental: {
-    transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth", "@dotkomonline/types", "core-api"],
+    transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth", "@dotkomonline/types", "@dotkomonline/api"],
   },
   eslint: {
     ignoreDuringBuilds: !!process.env.CI,

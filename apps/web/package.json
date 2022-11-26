@@ -17,6 +17,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@dotkomonline/api": "*",
     "@dotkomonline/auth": "*",
     "@dotkomonline/ui": "*",
     "@next/env": "^13.0.4",
@@ -35,17 +36,16 @@
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
     "axios": "^0.21.4",
-    "core-api": "*",
     "date-fns": "^2.29.3",
     "next": "^13.0.5",
     "next-auth": "^4.17.0",
+    "pg": "^8.8.0",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
     "react-icons": "^4.4.0",
     "superjson": "^1.11.0",
-    "z": "^1.0.9",
     "zod": "^3.19.1"
   },
   "devDependencies": {

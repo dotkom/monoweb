@@ -1,7 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { getServerSession, Session } from "@dotkomonline/auth"
 import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely"
-import pg from "pg"
+import { Pool } from "pg"
 
 import type { inferAsyncReturnType } from "@trpc/server"
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
@@ -18,7 +18,7 @@ type CreateContextOptions = {
 export const createContextInner = async (opts: CreateContextOptions) => {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
-      pool: new pg.Pool({
+      pool: new Pool({
         connectionString: process.env.DATABASE_URL as string,
       }),
     }),
