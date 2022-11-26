@@ -16,8 +16,7 @@ export type Company = z.infer<typeof CompanySchema>
 
 export const CompanyWriteSchema = CompanySchema.partial({
   id: true,
-  createdAt: true
+  createdAt: true,
 })
-
 
 export type CompanyWrite = z.infer<typeof CompanyWriteSchema>

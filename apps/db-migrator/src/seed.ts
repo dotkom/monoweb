@@ -95,5 +95,4 @@ export const seed = async () => {
       })
     )
     .execute()
-
-  // Finds all events with their attendances
+}

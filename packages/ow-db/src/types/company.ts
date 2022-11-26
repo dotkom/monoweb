@@ -1,4 +1,4 @@
-import { Generated, Insertable } from "kysely"
+import { Generated } from "kysely"
 
 export interface CompanyTable {
   id: Generated<string>
