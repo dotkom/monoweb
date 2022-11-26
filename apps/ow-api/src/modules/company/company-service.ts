@@ -1,11 +1,11 @@
-import { Company, InsertCompany } from "@dotkomonline/types"
+import { Company, CompanyWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../errors/errors"
 import { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
   getCompany: (id: Company["id"]) => Promise<Company>
   getCompanies: (limit: number) => Promise<Company[]>
-  createCompany: (payload: InsertCompany) => Promise<Company>
+  createCompany: (payload: CompanyWrite) => Promise<Company>
 }
 
 export const initCompanyService = (companyRepository: CompanyRepository): CompanyService => ({
