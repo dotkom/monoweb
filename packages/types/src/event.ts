@@ -52,4 +52,4 @@ export const AttendanceWriteSchema = AttendanceSchema.partial({
   updatedAt: true,
 })
 
-export type WriteAttendance = z.infer<typeof EventSchema>
+export type AttendanceWrite = z.infer<typeof EventSchema>

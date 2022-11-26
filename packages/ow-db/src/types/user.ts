@@ -1,6 +1,5 @@
 import { Generated } from "kysely"
 
-
 export interface UserTable {
   id: Generated<string>
   createdAt: Generated<Date>
