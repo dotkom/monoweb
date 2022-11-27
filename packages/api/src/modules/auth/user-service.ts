@@ -1,5 +1,6 @@
 import { User } from "@dotkomonline/types"
 import { Configuration, V0alpha2Api } from "@ory/client"
+import argon2 from "argon2"
 
 import { NotFoundError } from "../../errors/errors"
 import { UserRepository } from "./user-repository"
@@ -28,14 +29,16 @@ export const initUserService = (userRepository: UserRepository): UserService => 
       const users = await userRepository.getUsers(limit)
       return users
     },
-    register: async (_email, _password) => {
-      // const salt = await bcrypt.genSalt(10)
-      // const hashedPassword = await bcrypt.hash(password, salt)
-      // const user = await userRepository.createUser(email, hashedPassword)
-      throw new Error("Failed to create user")
-      // return user
+    register: async (email, password) => {
+      const hashedPassword = await argon2.hash(password)
+      const user = await userRepository.createUser(email, hashedPassword)
+      if (!user) {
+        throw new Error("Failed to create user")
+      }
+      return user
+
     },
-    signIn: async (email, _password, challenge) => {
+    signIn: async (email, password, challenge) => {
       const { data } = await hydraAdmin.adminGetOAuth2LoginRequest(challenge)
       if (data.skip) {
         // You can apply logic here, for example update the number of times the user logged in.
@@ -48,7 +51,8 @@ export const initUserService = (userRepository: UserRepository): UserService => 
       if (!user) {
         throw new Error("User does not exist")
       }
-      if (!true) {
+      const correctPassword = await argon2.verify(user.password, password)
+      if (!correctPassword) {
         throw new Error("Invalid password")
       }
       return true
