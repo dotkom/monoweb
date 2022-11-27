@@ -50,6 +50,9 @@
     "NEXTAUTH_URL",
     "NEXTAUTH_SECRET",
     "HYDRA_ADMIN_URL",
-    "NEXT_PUBLIC_DEBUG"
+    "NEXT_PUBLIC_DEBUG",
+    "DATABASE_URL",
+    "VERCEL_URL",
+    "PORT"
   ]
 }
