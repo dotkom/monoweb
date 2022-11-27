@@ -25,7 +25,7 @@ const SignInPage: NextPageWithLayout = () => {
           signIn.mutate({
             email: data.email,
             password: data.password,
-            challenge: challenge as string,
+            challenge: String(challenge),
           })
         })}
       >

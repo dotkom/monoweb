@@ -36,7 +36,6 @@ export const initUserService = (userRepository: UserRepository): UserService => 
         throw new Error("Failed to create user")
       }
       return user
-
     },
     signIn: async (email, password, challenge) => {
       const { data } = await hydraAdmin.adminGetOAuth2LoginRequest(challenge)
