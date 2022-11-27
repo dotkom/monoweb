@@ -12,9 +12,9 @@ const SignInPage: NextPageWithLayout = () => {
   const { register, handleSubmit } = useForm()
 
   const signIn = trpc.auth.signin.useMutation({
-    onSuccess(data) {
+    onSuccess: (data) => {
       console.log(data)
-    },
+    }
   })
 
   return (
