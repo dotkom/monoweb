@@ -24,7 +24,7 @@ const SignInPage: NextPageWithLayout = () => {
         className="my-0 mx-auto grid gap-2 px-14 py-16"
         onSubmit={handleSubmit(async (data) => {
           if (typeof challenge != "string") {
-            return;
+            return
           }
           signIn.mutate({
             email: data.email,
