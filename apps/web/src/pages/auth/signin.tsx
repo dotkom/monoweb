@@ -1,7 +1,7 @@
 import { Button, TextInput } from "@dotkomonline/ui"
 import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
-import {z} from "zod"
+import { z } from "zod"
 
 import OnlineIcon from "../../components/atoms/OnlineIcon"
 import { trpc } from "../../utils/trpc"
@@ -9,7 +9,7 @@ import type { NextPageWithLayout } from "../_app"
 
 const SignInPage: NextPageWithLayout = () => {
   const router = useRouter()
-  const challenge = z.string().parse(router.query["login_challenge"])
+  const challenge = router.query["login_challenge"]
   const { register, handleSubmit } = useForm()
 
   const signIn = trpc.auth.signin.useMutation({
@@ -18,16 +18,18 @@ const SignInPage: NextPageWithLayout = () => {
     },
   })
 
-
   return (
     <div className="bg-slate-1 mx-auto my-0 w-full max-w-[400px] rounded-md pt-16">
       <form
         className="my-0 mx-auto grid gap-2 px-14 py-16"
         onSubmit={handleSubmit(async (data) => {
+          if (typeof challenge != "string") {
+            return;
+          }
           signIn.mutate({
             email: data.email,
             password: data.password,
-            challenge: challenge,
+            challenge: z.string().parse(challenge),
           })
         })}
       >
