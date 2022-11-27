@@ -28,14 +28,14 @@ export const initUserService = (userRepository: UserRepository): UserService => 
       const users = await userRepository.getUsers(limit)
       return users
     },
-    register: async (email, password) => {
+    register: async (_email, _password) => {
       // const salt = await bcrypt.genSalt(10)
       // const hashedPassword = await bcrypt.hash(password, salt)
       // const user = await userRepository.createUser(email, hashedPassword)
       throw new Error("Failed to create user")
       // return user
     },
-    signIn: async (email, password, challenge) => {
+    signIn: async (email, _password, challenge) => {
       const { data } = await hydraAdmin.adminGetOAuth2LoginRequest(challenge)
       if (data.skip) {
         // You can apply logic here, for example update the number of times the user logged in.

@@ -14,7 +14,7 @@ const SignInPage: NextPageWithLayout = () => {
   const signIn = trpc.auth.signin.useMutation({
     onSuccess: (data) => {
       console.log(data)
-    }
+    },
   })
 
   return (
