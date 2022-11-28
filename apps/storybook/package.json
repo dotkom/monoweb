@@ -3,7 +3,7 @@
   "devDependencies": {
     "@babel/core": "^7.19.6",
     "@dotkomonline/config": "*",
-    "@mdx-js/react": "^1.6.22",
+    "@mdx-js/react": "^2.1.5",
     "@storybook/addon-actions": "^6.5.13",
     "@storybook/addon-docs": "^6.5.13",
     "@storybook/addon-essentials": "^6.5.13",
