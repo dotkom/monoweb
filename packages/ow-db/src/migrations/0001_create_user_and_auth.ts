@@ -1,9 +1,10 @@
 import { Kysely, sql } from "kysely"
 
-import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
-export async function up(db: Kysely<Database>): Promise<void> {
+// Kysely reccomends using "any" in migrations
+
+export async function up(db: Kysely<any>): Promise<void> {
   await createTableWithDefaults("User", { id: true, createdAt: true }, db.schema)
     .addColumn("name", "varchar(255)")
     .addColumn("email", "varchar(255)", (col) => col.notNull().unique())
@@ -55,7 +56,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .execute()
 }
 
-export async function down(db: Kysely<Database>): Promise<void> {
+export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable("Account").execute()
   await db.schema.dropTable("VerificationToken").execute()
   await db.schema.dropTable("Session").execute()

@@ -1,9 +1,8 @@
 import { Kysely, sql } from "kysely"
 
-import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
-export async function up(db: Kysely<Database>) {
+export async function up(db: Kysely<any>) {
   await db.schema.createType("event_status").asEnum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]).execute()
 
   await createTableWithDefaults("Event", { id: true, createdAt: true, updatedAt: true }, db.schema)
@@ -48,7 +47,7 @@ export async function up(db: Kysely<Database>) {
     .execute()
 }
 
-export async function down(db: Kysely<Database>): Promise<void> {
+export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable("Attendee").execute()
   await db.schema.dropTable("Attendance").execute()
   await db.schema.dropTable("EventCompany").execute()

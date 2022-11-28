@@ -1,9 +1,8 @@
 import { Kysely } from "kysely"
 
-import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
-export async function up(db: Kysely<Database>) {
+export async function up(db: Kysely<any>) {
   await createTableWithDefaults("Company", { id: true, createdAt: true }, db.schema)
     .addColumn("name", "varchar(100)", (col) => col.notNull())
     .addColumn("description", "text", (col) => col.notNull())
@@ -20,7 +19,7 @@ export async function up(db: Kysely<Database>) {
     .execute()
 }
 
-export async function down(db: Kysely<Database>) {
+export async function down(db: Kysely<any>) {
   await db.schema.dropTable("Committee").execute()
   await db.schema.dropTable("Company").execute()
 }
