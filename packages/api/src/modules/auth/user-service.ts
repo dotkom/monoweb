@@ -1,5 +1,5 @@
 import { User } from "@dotkomonline/types"
-import { Configuration, V0alpha2Api } from "@ory/client"
+import { Configuration, OAuth2Api } from "@ory/client"
 import argon2 from "argon2"
 
 import { NotFoundError } from "../../errors/errors"
@@ -13,7 +13,7 @@ export interface UserService {
 }
 
 export const initUserService = (userRepository: UserRepository): UserService => {
-  const hydraAdmin = new V0alpha2Api(
+  const hydraAdmin = new OAuth2Api(
     new Configuration({
       basePath: process.env.HYDRA_ADMIN_URL,
     })
@@ -38,10 +38,10 @@ export const initUserService = (userRepository: UserRepository): UserService => 
       return user
     },
     signIn: async (email, password, challenge) => {
-      const { data } = await hydraAdmin.adminGetOAuth2LoginRequest(challenge)
+      const { data } = await hydraAdmin.getOAuth2LoginRequest(challenge)
       if (data.skip) {
         // You can apply logic here, for example update the number of times the user logged in.
-        const { data: body } = await hydraAdmin.adminAcceptOAuth2LoginRequest(challenge, {
+        const { data: body } = await hydraAdmin.acceptOAuth2LoginRequest(challenge, {
           subject: String(data.subject),
         })
         console.log(body.redirect_to)
