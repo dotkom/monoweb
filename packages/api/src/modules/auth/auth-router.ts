@@ -12,6 +12,7 @@ export const authRouter = t.router({
       })
     )
     .mutation((_req) => {
+      console.log(_req)
       return { msg: "hello world" }
     }),
 })

@@ -6,3 +6,5 @@ export const appRouter = t.router({
   event: eventRouter,
   auth: authRouter,
 })
+
+export type AppRouter = typeof appRouter

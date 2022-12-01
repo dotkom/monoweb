@@ -30,7 +30,7 @@
       "cache": false
     },
     "migrate": {
-      "env": ["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME"],
+      "env": ["DATABASE_URL"],
       "cache": false,
       "dependsOn": []
     },
@@ -48,12 +48,11 @@
     "DASHBOARD_PORT",
     "NEXTAUTH_CLIENT_ID",
     "NEXTAUTH_URL",
+    "NEXTAUTH_SECRET",
     "HYDRA_ADMIN_URL",
     "NEXT_PUBLIC_DEBUG",
-    "DB_HOST",
-    "DB_PORT",
-    "DB_USER",
-    "DB_PASSWORD",
-    "DB_NAME"
+    "DATABASE_URL",
+    "VERCEL_URL",
+    "PORT"
   ]
 }
