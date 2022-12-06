@@ -7,7 +7,7 @@ import { db } from "./db"
 
 faker.seed(69)
 
-const createRandomUser = (): Insertable<Database["User"]> => {
+const createRandomUser = (): Insertable<Database["owUser"]> => {
   return {
     id: faker.datatype.uuid(),
     name: faker.name.firstName(),
@@ -17,7 +17,7 @@ const createRandomUser = (): Insertable<Database["User"]> => {
   }
 }
 
-const createRandomEvent = (): Insertable<Database["Event"]> => {
+const createRandomEvent = (): Insertable<Database["event"]> => {
   const start = faker.date.future()
   return {
     id: faker.datatype.uuid(),
@@ -33,7 +33,7 @@ const createRandomEvent = (): Insertable<Database["Event"]> => {
   }
 }
 
-const createRandomAttendance = (eventIDs: string[]): Insertable<Database["Attendance"]> => {
+const createRandomAttendance = (eventIDs: string[]): Insertable<Database["attendance"]> => {
   return {
     id: faker.datatype.uuid(),
     eventID: faker.helpers.arrayElement(eventIDs),
@@ -52,7 +52,7 @@ export const seed = async () => {
   )
 
   await db
-    .insertInto("User")
+    .insertInto("owUser")
     .values(users)
     .returning("id")
     .onConflict((oc) =>
@@ -65,7 +65,7 @@ export const seed = async () => {
     .execute()
 
   await db
-    .insertInto("Event")
+    .insertInto("event")
     .values(event)
     .returning("id")
     .onConflict((oc) =>
@@ -83,7 +83,7 @@ export const seed = async () => {
     .execute()
 
   await db
-    .insertInto("Attendance")
+    .insertInto("attendance")
     .values(attendance)
     .returning("id")
     .onConflict((oc) =>

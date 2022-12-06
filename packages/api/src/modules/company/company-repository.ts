@@ -2,7 +2,7 @@ import { Database } from "@dotkomonline/db"
 import { Company, CompanySchema, CompanyWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
 
-export const mapToCompany = (payload: Selectable<Database["Company"]>): Company => {
+export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
   return CompanySchema.parse(payload)
 }
 
@@ -15,16 +15,16 @@ export interface CompanyRepository {
 export const initCompanyRepository = (db: Kysely<Database>): CompanyRepository => {
   const repo: CompanyRepository = {
     getCompanyByID: async (id) => {
-      const company = await db.selectFrom("Company").selectAll().where("id", "=", id).executeTakeFirst()
+      const company = await db.selectFrom("company").selectAll().where("id", "=", id).executeTakeFirst()
       return company ? mapToCompany(company) : undefined
     },
     getCompanies: async (limit: number) => {
-      const companies = await db.selectFrom("Company").selectAll().limit(limit).execute()
+      const companies = await db.selectFrom("company").selectAll().limit(limit).execute()
       return companies.map(mapToCompany)
     },
     create: async (val) => {
       const company = await db
-        .insertInto("Company")
+        .insertInto("company")
         .values({
           name: val.name,
           description: val.description,
