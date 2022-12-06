@@ -3,7 +3,7 @@ import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable } from "./ev
 import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
 
 export interface Database {
-  user: UserTable
+  owUser: UserTable
   company: CompanyTable
   session: SessionTable
   verificationToken: VerificationTokenTable
