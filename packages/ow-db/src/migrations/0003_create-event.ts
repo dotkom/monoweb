@@ -19,7 +19,7 @@ export async function up(db: Kysely<any>) {
     .addColumn("committee_id", "uuid", (col) => col.references("committee.id").onDelete("set null"))
     .execute()
 
-  await createTableWithDefaults("ettendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
+  await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("start", "timestamptz", (col) => col.notNull())
     .addColumn("end", "timestamptz", (col) => col.notNull())
     .addColumn("deregister_deadline", "timestamptz", (col) => col.notNull())
@@ -28,7 +28,7 @@ export async function up(db: Kysely<any>) {
     .execute()
 
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("user_id", "uuid", (col) => col.references("user.id").onDelete("cascade"))
+    .addColumn("user_id", "uuid", (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("attendance_id", "uuid", (col) => col.references("attendance.id").onDelete("cascade"))
     .execute()
 
