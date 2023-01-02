@@ -1,9 +1,11 @@
 import { Button } from "@dotkomonline/ui"
 import { useSession, signIn, signOut } from "next-auth/react"
+import { useRouter } from "next/router"
 import React from "react"
 
 const Home: React.FC = () => {
   const { data: session, status } = useSession()
+  const router = useRouter()
   if (session) {
     return (
       <div>
@@ -17,7 +19,8 @@ const Home: React.FC = () => {
   return (
     <div>
       Not signed in <br />
-      <Button onClick={() => signIn("onlineweb")}>Sign in</Button>
+      <Button onClick={() => signIn("onlineweb")}>Login</Button>
+      <Button onClick={() => router.push("/auth/signup")}>Sign up</Button>
     </div>
   )
 }
