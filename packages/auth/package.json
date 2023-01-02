@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@dotkomonline/db": "*",
+    "@next-auth/upstash-redis-adapter": "^3.0.3",
+    "@upstash/redis": "^1.18.1",
     "next": "13.0.4",
     "next-auth": "^4.17.0",
     "react": "18.2.0",
