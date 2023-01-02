@@ -13,10 +13,9 @@ serve:
         - localhost:3000
 
 urls:
-  self:
-  consent: http://new.online.no/auth/consent
-  login: http://new.online.ntnu.no/auth/login
-  logout: http://new.online.ntnu.no/auth/logout
+  consent: https://new.online.ntnu.no/auth/consent
+  login: https://new.online.ntnu.no/auth/login
+  logout: https://new.online.ntnu.no/auth/logout
 
 oidc:
   subject_identifiers:
