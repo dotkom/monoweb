@@ -22,7 +22,7 @@ services:
     command: serve -c /etc/config/hydra/hydra.yml all --dev
     volumes:
       - type: bind
-        source: ./packages/config/hydra
+        source: ./packages/config/hydra/local
         target: /etc/config/hydra
     environment:
       - DSN=postgres://hydra:secret@hydra-db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
@@ -38,7 +38,7 @@ services:
     command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
     volumes:
       - type: bind
-        source: ./packages/config/hydra
+        source: ./packages/config/hydra/local
         target: /etc/config/hydra
     restart: on-failure
     depends_on:
