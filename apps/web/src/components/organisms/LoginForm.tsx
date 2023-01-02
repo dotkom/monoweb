@@ -22,7 +22,6 @@ const LoginForm: FC<PropsWithChildren<LoginFormProps>> = ({ challenge, children 
 
   return (
     <form
-      className="my-0 mx-auto grid gap-2 px-14 py-16"
       onSubmit={handleSubmit(async (data) => {
         login.mutate({
           email: data.email,
