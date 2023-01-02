@@ -3,11 +3,10 @@ import { z } from "zod"
 export const UserSchema = z.object({
   id: z.string().uuid(),
   createdAt: z.date(),
-  name: z.string().optional(),
+  name: z.string().nullish(),
   email: z.string(),
-  emailVerified: z.date().optional(),
-  password: z.string(),
-  image: z.string().optional(),
+  emailVerified: z.date().nullish(),
+  image: z.string().nullish(),
 })
 
 export type User = z.infer<typeof UserSchema>

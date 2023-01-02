@@ -15,7 +15,7 @@ export interface SessionTable {
   createdAt: Generated<Date>
   sessionToken: string
   expires: Date
-  userID: string
+  userId: string
 }
 
 export interface VerificationTokenTable {
@@ -29,7 +29,7 @@ export interface AccountTable {
   createdAt: Generated<Date>
   type: string
   provider: string
-  providerAccountID: string
+  providerAccountId: string
   refreshToken: string | null
   accessToken: string | null
   expiresAt: number | null
@@ -40,5 +40,5 @@ export interface AccountTable {
   oauthTokenSecret: string | null
   oauthToken: string | null
 
-  userID: string
+  userId: string
 }
