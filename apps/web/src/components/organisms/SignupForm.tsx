@@ -23,6 +23,7 @@ export const SignupForm = () => {
 
   return (
     <form
+      className="my-0 mx-auto grid gap-2 px-14 py-16"
       onSubmit={handleSubmit(async (data) => {
         if (data.password1 != data.password2) {
           setError("password2", { message: "Passwords do not match" })
