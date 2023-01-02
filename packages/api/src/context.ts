@@ -10,6 +10,7 @@ import { initUserRepository } from "./modules/auth/user-repository"
 import { initUserService } from "./modules/auth/user-service"
 import { initEventRepository } from "./modules/event/event-repository"
 import { initEventService } from "./modules/event/event-service"
+import { Configuration, OAuth2Api as HydraApiClient } from "@ory/client"
 
 type CreateContextOptions = {
   session: Session | null
@@ -24,11 +25,18 @@ export const createContextInner = async (opts: CreateContextOptions) => {
     }),
     plugins: [new CamelCasePlugin()],
   })
+
+  const hydraAdmin = new HydraApiClient(
+    new Configuration({
+      basePath: process.env.HYDRA_ADMIN_URL,
+    })
+  )
+
   const userRepository = initUserRepository(db)
   const eventRepository = initEventRepository(db)
 
   // Services
-  const userService = initUserService(userRepository)
+  const userService = initUserService(userRepository, hydraAdmin)
   const eventService = initEventService(eventRepository)
   return {
     session: opts.session,
