@@ -1,5 +1,5 @@
 import { User, UserWrite } from "@dotkomonline/types"
-import { Configuration, OAuth2Api } from "@ory/client"
+import { OAuth2Api as HydraApiClient } from "@ory/client"
 import argon2 from "argon2"
 
 import { NotFoundError } from "../../errors/errors"
@@ -10,19 +10,13 @@ type RedirectLink = { redirectTo: string }
 export interface UserService {
   getUser: (id: User["id"]) => Promise<User>
   getUsers: (limit: number) => Promise<User[]>
-  signUp: (userInsert: UserWrite, password: string) => Promise<User>
+  signUp: (userInsert: UserWrite, password: string) => Promise<User & { password: string }>
   login: (email: string, password: string, challenge: string, remember?: boolean) => Promise<RedirectLink>
   consent: (challenge: string) => Promise<RedirectLink & { user?: User }>
   skipLogin: (challenge: string) => Promise<RedirectLink | { message: string }>
 }
 
-export const initUserService = (userRepository: UserRepository) => {
-  const hydraAdmin = new OAuth2Api(
-    new Configuration({
-      basePath: process.env.HYDRA_ADMIN_URL,
-    })
-  )
-
+export const initUserService = (userRepository: UserRepository, hydraAdmin: HydraApiClient) => {
   const service: UserService = {
     getUser: async (id) => {
       const user = await userRepository.getUserByID(id)
@@ -39,7 +33,7 @@ export const initUserService = (userRepository: UserRepository) => {
       if (!user) {
         throw new Error("Failed to create user")
       }
-      return user
+      return { ...user, password: hashedPassword }
     },
 
     login: async (email, password, challenge, remember = false) => {
