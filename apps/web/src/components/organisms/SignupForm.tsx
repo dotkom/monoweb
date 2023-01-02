@@ -4,6 +4,7 @@ import { Button, TextInput } from "@dotkomonline/ui"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import OnlineIcon from "../atoms/OnlineIcon"
+import { signIn } from "next-auth/react"
 
 interface FormData {
   email: string
@@ -14,7 +15,11 @@ interface FormData {
 
 export const SignupForm = () => {
   const { register, handleSubmit, setError } = useForm<FormData>()
-  const signup = trpc.auth.signup.useMutation({ onSettled: (res) => console.log(res) })
+  const signup = trpc.auth.signup.useMutation({
+    onSuccess: () => {
+      signIn("onlineweb")
+    },
+  })
 
   return (
     <form
@@ -25,6 +30,7 @@ export const SignupForm = () => {
         }
         signup.mutate({
           email: data.email,
+          name: data.name,
           password: data.password1,
         })
       })}

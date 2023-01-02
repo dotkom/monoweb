@@ -3,11 +3,12 @@ import { useSession, signIn, signOut } from "next-auth/react"
 import React from "react"
 
 const Home: React.FC = () => {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   if (session) {
     return (
       <div>
-        Signed in as {session.user?.email} <br />
+        {status}
+        {JSON.stringify(session)}
         <Button onClick={() => signOut()}>Sign out</Button>
       </div>
     )

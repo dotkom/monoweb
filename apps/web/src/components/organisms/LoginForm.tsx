@@ -1,6 +1,7 @@
 import { trpc } from "@/utils/trpc"
 import { TextInput, Button } from "@dotkomonline/ui"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { FC, PropsWithChildren } from "react"
 import { useForm } from "react-hook-form"
 import OnlineIcon from "../atoms/OnlineIcon"
@@ -11,10 +12,11 @@ interface LoginFormProps {
 
 const LoginForm: FC<PropsWithChildren<LoginFormProps>> = ({ challenge, children }) => {
   const { register, handleSubmit } = useForm()
+  const router = useRouter()
 
   const login = trpc.auth.login.useMutation({
     onSuccess: (data) => {
-      console.log(data)
+      router.push(data.redirectTo)
     },
   })
 
