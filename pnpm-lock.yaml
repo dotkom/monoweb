@@ -197,7 +197,7 @@ importers:
       '@vitest/coverage-c8': ^0.26.0
       argon2: ^0.30.2
       autoprefixer: ^10.4.13
-      axios: ^0.21.4
+      axios: ^0.27.0
       chromatic: ^6.7.3
       clsx: ^1.2.1
       cva: npm:class-variance-authority@^0.2.4
@@ -247,7 +247,7 @@ importers:
       '@trpc/server': 10.0.0
       '@upstash/redis': 1.18.1
       argon2: 0.30.2
-      axios: 0.21.4
+      axios: 0.27.2
       clsx: 1.2.1
       date-fns: 2.29.3
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
@@ -308,7 +308,7 @@ importers:
       '@types/pg': ^8.6.5
       '@vitest/ui': ^0.26.0
       argon2: ^0.30.2
-      axios: ^0.21.4
+      axios: ^0.27.0
       eslint: ^8.26.0
       kysely: ^0.22.0
       pg: ^8.8.0
@@ -323,7 +323,7 @@ importers:
       '@ory/client': 1.0.1
       '@trpc/server': 10.0.0
       argon2: 0.30.2
-      axios: 0.21.4
+      axios: 0.27.2
       kysely: 0.22.0
       pg: 8.8.0
       superjson: 1.11.0
@@ -8484,7 +8484,6 @@ packages:
 
   /asynckit/0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
-    dev: true
 
   /at-least-node/1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
@@ -8537,6 +8536,15 @@ packages:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
       follow-redirects: 1.15.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -9433,7 +9441,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: true
 
   /comma-separated-tokens/1.0.8:
     resolution: {integrity: sha512-GHuDRO12Sypu2cV70d1dkA2EUmXHgntrzbpvOB+Qy+49ypNfGgFQIC2fhhXbnyrJRynDCAARsT7Ou0M6hirpfw==}
@@ -9976,7 +9983,6 @@ packages:
   /delayed-stream/1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-    dev: true
 
   /delegates/1.0.0:
     resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
@@ -11735,7 +11741,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    dev: true
 
   /form-urlencoded/2.0.9:
     resolution: {integrity: sha512-fWUzNiOnYa126vFAT6TFXd1mhJrvD8IqmQ9ilZPjkLYQfaRreBr5fIUoOpPlWtqaAG64nzoE7u5zSetifab9IA==}
