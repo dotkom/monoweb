@@ -1,27 +1,31 @@
+import { User } from "@dotkomonline/types"
+import { OAuth2Api } from "@ory/client"
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
 import { initUserRepository } from "../user-repository"
 import { initUserService } from "../user-service"
+import argon2 from "argon2"
 
 describe("UserService", () => {
   const db = vi.mocked(Kysely.prototype, true)
+  const hydra = vi.mocked(OAuth2Api.prototype, true)
   const userRepository = initUserRepository(db)
-  const userService = initUserService(userRepository)
+  const userService = initUserService(userRepository, hydra)
 
   it("creates a new user", async () => {
-    // TODO: change this when i finish the register function
     const id = randomUUID()
-    const user = {
+    const user: User = {
       id: id,
       email: "monkey@markus.com",
-      password: "password",
+      name: "Markus",
       createdAt: new Date("2021-01-01"),
     }
     vi.spyOn(userRepository, "createUser").mockResolvedValueOnce(user)
-    const res = await userService.register(user.email, user.password)
-    expect(res.email).toEqual(user.email)
+    const { password, ...userRes } = await userService.signUp(user, "password")
+    await expect(argon2.verify(password, "password")).resolves.toBe(true)
+    expect(userRes).toEqual(user)
   })
 
   it("fails on unknown id", async () => {

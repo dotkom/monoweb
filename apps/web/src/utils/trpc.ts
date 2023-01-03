@@ -1,5 +1,5 @@
 import { createTRPCNext } from "@trpc/next"
-import { httpBatchLink, loggerLink } from "@trpc/client"
+import { CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
 import type { AppRouter } from "@dotkomonline/api"
 import superjson from "superjson"
@@ -11,22 +11,28 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}` // dev SSR should use localhost
 }
 
+const config: CreateTRPCClientOptions<AppRouter> = {
+  transformer: superjson,
+  links: [
+    loggerLink({
+      enabled: (opts) =>
+        process.env.NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
+    }),
+    httpBatchLink({
+      url: `${getBaseUrl()}/api/trpc`,
+    }),
+  ],
+}
+
+// Vanilla fetch client
+export const trpcClient = createTRPCProxyClient<AppRouter>(config)
+
+// React query trpc
 export const trpc = createTRPCNext<AppRouter>({
   config() {
-    return {
-      transformer: superjson,
-      links: [
-        loggerLink({
-          enabled: (opts) =>
-            process.env.NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
-        }),
-        httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
-    }
+    return config
   },
-  ssr: false,
+  ssr: true,
 })
 
 /**

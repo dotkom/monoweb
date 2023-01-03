@@ -71,7 +71,7 @@ export const Subtle = () => {
 export const Gradient = () => <Button variant="gradient">Button</Button>
 
 export const NonInteractive = () => (
-  <Button color="blue" variant="light" nonInteractive={true}>
+  <Button color="blue" variant="light" disabled>
     Button
   </Button>
 )
