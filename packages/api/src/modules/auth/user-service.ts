@@ -77,8 +77,11 @@ export const initUserService = (userRepository: UserRepository, hydraAdmin: Hydr
       //     // baz: 'bar'
       //   },
       // }
+      if (!res.data.subject) {
+        throw new Error("No subject in auth found")
+      }
 
-      const user = await userRepository.getUserByEmail(res.data.subject!!)
+      const user = await userRepository.getUserByEmail(res.data.subject)
       const consentRes = await hydraAdmin.acceptOAuth2ConsentRequest(challenge, {
         grant_scope: grantScope,
         session: {

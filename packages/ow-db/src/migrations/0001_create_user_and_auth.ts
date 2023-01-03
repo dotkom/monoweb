@@ -1,4 +1,4 @@
-import { Kysely, sql } from "kysely"
+import { Kysely } from "kysely"
 
 import { createTableWithDefaults } from "../utils"
 

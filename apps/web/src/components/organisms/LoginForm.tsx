@@ -10,7 +10,7 @@ interface LoginFormProps {
   challenge: string
 }
 
-const LoginForm: FC<PropsWithChildren<LoginFormProps>> = ({ challenge, children }) => {
+const LoginForm: FC<PropsWithChildren<LoginFormProps>> = ({ challenge }) => {
   const { register, handleSubmit } = useForm()
   const router = useRouter()
 

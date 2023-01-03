@@ -1,4 +1,4 @@
-import { User, UserWrite } from "@dotkomonline/types"
+import { User } from "@dotkomonline/types"
 import { OAuth2Api } from "@ory/client"
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"

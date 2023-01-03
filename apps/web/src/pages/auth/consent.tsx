@@ -1,10 +1,10 @@
 import { AuthLayout } from "@/components/layout/AuthLayout"
 import { trpcClient } from "@/utils/trpc"
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
+import { GetServerSidePropsContext } from "next"
 
 import { NextPageWithLayout } from "../_app"
 
-const ConsentPage: NextPageWithLayout = (props) => {
+const ConsentPage: NextPageWithLayout = () => {
   return (
     <form>
       <h1>Consent</h1>

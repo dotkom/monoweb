@@ -11,7 +11,7 @@ import { globalStyles } from "../theme/global-style"
 import { trpc } from "@/utils/trpc"
 
 // TODO: App directory?
-export type NextPageWithLayout<P = {}> = NextPage<P> & {
+export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
   getLayout?: (page: ReactElement) => ReactNode
 }
 

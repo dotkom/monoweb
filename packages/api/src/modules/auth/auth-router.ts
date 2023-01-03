@@ -1,4 +1,4 @@
-import { UserSchema, UserWriteSchema } from "@dotkomonline/types"
+import { UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 
 import { t } from "../../trpc"
