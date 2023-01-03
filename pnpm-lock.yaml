@@ -200,7 +200,7 @@ importers:
       axios: ^0.21.4
       chromatic: ^6.7.3
       clsx: ^1.2.1
-      cva: npm:class-variance-authority@^0.2.4
+      cva: npm:class-variance-authority@^0.4.0
       date-fns: ^2.29.3
       eslint: ^8.26.0
       eslint-config-next: ^13.0.0
@@ -279,7 +279,7 @@ importers:
       '@vitest/coverage-c8': 0.23.4_jsdom@20.0.3
       autoprefixer: 10.4.13_postcss@8.4.19
       chromatic: 6.11.4
-      cva: /class-variance-authority/0.2.4_typescript@4.9.3
+      cva: /class-variance-authority/0.4.0_typescript@4.9.3
       eslint: 8.28.0
       eslint-config-next: 13.0.4_hsf322ms6xhhd4b5ne6lb74y4a
       husky: 4.3.8
@@ -442,7 +442,7 @@ importers:
       '@types/react': ^18.0.15
       autoprefixer: ^10.4.13
       clsx: ^1.2.1
-      cva: npm:class-variance-authority@^0.2.4
+      cva: npm:class-variance-authority@^0.4.0
       eslint: ^8.26.0
       postcss: ^8.4.18
       react: ^18.2.0
@@ -461,7 +461,7 @@ importers:
       '@stitches/react': 1.2.8_react@18.2.0
       '@tabler/icons': 1.112.0_react@18.2.0
       clsx: 1.2.1
-      cva: /class-variance-authority/0.2.4_typescript@4.9.3
+      cva: /class-variance-authority/0.4.0_typescript@4.9.3
       react: 18.2.0
       react-icons: 4.6.0_react@18.2.0
       tailwind-merge: 1.8.0
@@ -9289,8 +9289,8 @@ packages:
       isobject: 3.0.1
       static-extend: 0.1.2
 
-  /class-variance-authority/0.2.4_typescript@4.9.3:
-    resolution: {integrity: sha512-JJKn9ESARiNEBBRdTSPB9/SwaPb+wi19DMX/r8BVSyp1dxHa3JyUxa2GQjEVag5rBi+O3pL64UZ0XhnQsMz+3w==}
+  /class-variance-authority/0.4.0_typescript@4.9.3:
+    resolution: {integrity: sha512-74enNN8O9ZNieycac/y8FxqgyzZhZbxmCitAtAeUrLPlxjSd5zA7LfpprmxEcOmQBnaGs5hYhiSGnJ0mqrtBLQ==}
     peerDependencies:
       typescript: '>= 4.5.5 < 5'
     peerDependenciesMeta:

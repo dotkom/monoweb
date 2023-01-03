@@ -71,7 +71,7 @@
     "@vitest/coverage-c8": "^0.23.2",
     "autoprefixer": "^10.4.13",
     "chromatic": "^6.7.3",
-    "cva": "npm:class-variance-authority@^0.2.4",
+    "cva": "npm:class-variance-authority@^0.4.0",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.0",
     "husky": "^4.3.8",
