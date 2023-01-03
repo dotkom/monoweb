@@ -23,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
           "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
           "transition-transform",
           "hover:-translate-y-[1px] active:translate-y-[2px]",
-          colorVariants(props),
+          colorVariants({ disabled: !!props.disabled, variant: props.variant }),
           props.className
         )}
         type={props.type}
