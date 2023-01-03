@@ -37,7 +37,7 @@ const LoginForm: FC<PropsWithChildren<LoginFormProps>> = ({ challenge }) => {
       <h1 className="text-accent mx-auto text-2xl font-semibold">Login</h1>
       <p className="text-slate-12 text-center">Continue to Onlineweb</p>
       <TextInput id="email" label="Email" {...register("email")} />
-      <TextInput id="password" label="Password" {...register("password")} />
+      <TextInput id="password" label="Password" type="password" {...register("password")} />
       <span className="text-sm">
         Forgot your <a className="text-blue-11">password?</a>
       </span>

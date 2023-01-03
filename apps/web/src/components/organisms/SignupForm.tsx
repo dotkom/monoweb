@@ -42,8 +42,8 @@ export const SignupForm = () => {
 
       <TextInput id="email" label="Email" {...register("email")} required />
       <TextInput id="name" label="Full name" {...register("name")} />
-      <TextInput id="password" label="Password" {...register("password1")} required />
-      <TextInput id="password2" label="Verify password" {...register("password2")} required />
+      <TextInput id="password" label="Password" type="password" {...register("password1")} required />
+      <TextInput id="password2" label="Verify password" type="password" {...register("password2")} required />
       <Button className="my-4" variant="gradient" type="submit" disabled={signup.isLoading}>
         Sign up
       </Button>
