@@ -44,7 +44,7 @@ export const SignupForm = () => {
       <TextInput id="name" label="Full name" {...register("name")} />
       <TextInput id="password" label="Password" {...register("password1")} required />
       <TextInput id="password2" label="Verify password" {...register("password2")} required />
-      <Button className="my-4" variant="gradient" type="submit">
+      <Button className="my-4" variant="gradient" type="submit" disabled={signup.isLoading}>
         Sign up
       </Button>
       <p className="text-slate-12 mb-4 text-center">

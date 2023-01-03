@@ -41,7 +41,7 @@ const LoginForm: FC<PropsWithChildren<LoginFormProps>> = ({ challenge, children 
       <span className="text-sm">
         Forgot your <a className="text-blue-11">password?</a>
       </span>
-      <Button className="my-4" variant="gradient" type="submit">
+      <Button className="my-4" variant="gradient" type="submit" disabled={login.isLoading}>
         Login
       </Button>
       <p className="text-slate-12 text-center">
