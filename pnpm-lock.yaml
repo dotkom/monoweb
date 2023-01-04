@@ -77,7 +77,7 @@ importers:
       date-fns: ^2.29.3
       dotenv-cli: ^6.0.0
       eslint: ^8.27.0
-      kysely: ^0.22.0
+      kysely: ^0.23.0
       pg: ^8.8.0
       tsx: ^3.12.0
       typescript: ^4.9.3
@@ -86,7 +86,7 @@ importers:
       '@dotkomonline/db': link:../../packages/ow-db
       chalk: 5.1.2
       commander: 9.4.1
-      kysely: 0.22.0
+      kysely: 0.23.3
       pg: 8.8.0
       zod: 3.19.1
     devDependencies:
@@ -310,7 +310,7 @@ importers:
       argon2: ^0.30.2
       axios: ^0.27.0
       eslint: ^8.26.0
-      kysely: ^0.22.0
+      kysely: ^0.23.0
       pg: ^8.8.0
       superjson: ^1.11.0
       typescript: ^4.9.3
@@ -324,7 +324,7 @@ importers:
       '@trpc/server': 10.0.0
       argon2: 0.30.2
       axios: 0.27.2
-      kysely: 0.22.0
+      kysely: 0.23.3
       pg: 8.8.0
       superjson: 1.11.0
       zod: 3.19.1
@@ -395,7 +395,7 @@ importers:
       '@types/pg': ^8.6.5
       chance: ^1.1.8
       eslint: ^8.26.0
-      kysely: ^0.22.0
+      kysely: ^0.23.0
       kysely-codegen: ^0.9.0
       node-pg-migrate: ^6.2.2
       pg: ^8.8.0
@@ -403,7 +403,7 @@ importers:
       tsx: ^3.9.0
       typescript: ^4.9.3
     dependencies:
-      kysely: 0.22.0
+      kysely: 0.23.3
       pg: 8.8.0
     devDependencies:
       '@dotkomonline/logger': link:../ow-logger
@@ -411,7 +411,7 @@ importers:
       '@types/pg': 8.6.5
       chance: 1.1.9
       eslint: 8.28.0
-      kysely-codegen: 0.9.0_kysely@0.22.0+pg@8.8.0
+      kysely-codegen: 0.9.0_kysely@0.23.3+pg@8.8.0
       node-pg-migrate: 6.2.2_pg@8.8.0
       tsup: 6.5.0_typescript@4.9.3
       tsx: 3.12.1
@@ -13344,7 +13344,7 @@ packages:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
     dev: false
 
-  /kysely-codegen/0.9.0_kysely@0.22.0+pg@8.8.0:
+  /kysely-codegen/0.9.0_kysely@0.23.3+pg@8.8.0:
     resolution: {integrity: sha512-VCkrEY0WPwObvT4LGJkwLn29DXmvwG2oAv94qa+yAXDPAWtYTfO8NQSqyeEiNHEWmuKI+Sl+ANSn63by2Xn1tw==}
     hasBin: true
     peerDependencies:
@@ -13362,14 +13362,14 @@ packages:
     dependencies:
       chalk: 4.1.2
       dotenv: 16.0.3
-      kysely: 0.22.0
+      kysely: 0.23.3
       micromatch: 4.0.5
       minimist: 1.2.7
       pg: 8.8.0
     dev: true
 
-  /kysely/0.22.0:
-    resolution: {integrity: sha512-ZE3qWtnqLOalodzfK5QUEcm7AEulhxsPNuKaGFsC3XiqO92vMLm+mAHk/NnbSIOtC4RmGm0nsv700i8KDp1gfQ==}
+  /kysely/0.23.3:
+    resolution: {integrity: sha512-spRhosWRLkI0Ox8PRBdstskdRfvoLPsJ5GEpDA/PPrX6NwuiygdsFxHBrMkdU3CX+VxLhj4Wn5P7rFAwaf7JuA==}
     engines: {node: '>=14.0.0'}
 
   /language-subtag-registry/0.3.22:
