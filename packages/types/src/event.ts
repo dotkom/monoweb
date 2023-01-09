@@ -28,8 +28,11 @@ export const EventWriteSchema = EventSchema.partial({
 export type EventWrite = z.infer<typeof EventWriteSchema>
 
 export const AttendeeSchema = z.object({
+  id: z.string(),
   attendanceId: z.string(),
   userId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 })
 
 export const AttendanceSchema = z.object({
@@ -45,6 +48,7 @@ export const AttendanceSchema = z.object({
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>
+export type Attendee = z.infer<typeof AttendeeSchema>
 
 export const AttendanceWriteSchema = AttendanceSchema.partial({
   id: true,
@@ -52,4 +56,11 @@ export const AttendanceWriteSchema = AttendanceSchema.partial({
   updatedAt: true,
 })
 
-export type AttendanceWrite = z.infer<typeof EventSchema>
+export const AttendeeWriteSchema = AttendeeSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
+
+export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
+export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>

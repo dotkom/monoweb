@@ -5,7 +5,7 @@ import { t } from "../../trpc"
 
 export const eventRouter = t.router({
   create: t.procedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.eventService.create(input)
+    return ctx.eventService.createEvent(input)
   }),
   all: t.procedure
     .input(
@@ -18,6 +18,6 @@ export const eventRouter = t.router({
       return ctx.eventService.getEvents(input.limit, input.offset)
     }),
   get: t.procedure.input(z.string().uuid()).query(({ input, ctx }) => {
-    return ctx.eventService.getEvent(input)
+    return ctx.eventService.getEventById(input)
   }),
 })

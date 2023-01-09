@@ -30,19 +30,19 @@ describe("EventService", () => {
 
   it("creates a new event", async () => {
     const id = randomUUID()
-    vi.spyOn(eventRepository, "createEvent").mockResolvedValueOnce({ id, ...payload })
-    const event = await eventService.create(payload)
+    vi.spyOn(eventRepository, "create").mockResolvedValueOnce({ id, ...payload })
+    const event = await eventService.createEvent(payload)
     expect(event).toEqual({ id, ...payload })
-    expect(eventRepository.createEvent).toHaveBeenCalledWith(payload)
+    expect(eventRepository.create).toHaveBeenCalledWith(payload)
   })
 
   it("finds events by id", async () => {
     const id = randomUUID()
-    vi.spyOn(eventRepository, "getEventByID").mockResolvedValueOnce(undefined)
-    const missing = eventService.getEvent(id)
+    vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(undefined)
+    const missing = eventService.getEventById(id)
     await expect(missing).rejects.toThrow(NotFoundError)
-    vi.spyOn(eventRepository, "getEventByID").mockResolvedValueOnce({ id, ...payload })
-    const real = await eventService.getEvent(id)
+    vi.spyOn(eventRepository, "getById").mockResolvedValueOnce({ id, ...payload })
+    const real = await eventService.getEventById(id)
     expect(real).toEqual({ id, ...payload })
   })
 })
