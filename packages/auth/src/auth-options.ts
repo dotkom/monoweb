@@ -6,8 +6,8 @@ export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: UpstashRedisAdapter(
     new Redis({
-      url: process.env.UPSTASH_REDIS_URL as string,
-      token: process.env.UPSTASH_REDIS_TOKEN as string,
+      url: process.env.UPSTASH_REDIS_REST_URL as string,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
     }),
     { baseKeyPrefix: "ow:" }
   ),
