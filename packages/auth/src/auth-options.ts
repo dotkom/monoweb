@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
       return url.startsWith(baseUrl) ? `${baseUrl}/` : baseUrl
     },
     async session({ session, user }) {
-      if (session.user.id && user.id) {
+      if (user.id) {
         session.user.id = user.id
       }
       return session
