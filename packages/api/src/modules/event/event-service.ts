@@ -5,7 +5,7 @@ import { AttendanceRepository } from "./attendee-repository"
 import { EventRepository } from "./event-repository"
 
 export interface EventService {
-  createEvent: (payload: EventWrite) => Promise<Event>
+  create: (payload: EventWrite) => Promise<Event>
   getEventById: (id: Event["id"]) => Promise<Event>
   getEvents: (limit: number, offset?: number) => Promise<Event[]>
   updateEvent: (id: Event["id"], eventUpdate: EventWrite) => Promise<Event>
@@ -16,7 +16,7 @@ export const initEventService = (
   eventRepository: EventRepository,
   attendanceRepository: AttendanceRepository
 ): EventService => ({
-  createEvent: async (payload) => {
+  create: async (payload) => {
     const event = await eventRepository.create(payload)
     if (!event) throw new Error("Failed to create event")
     return event
@@ -39,8 +39,8 @@ export const initEventService = (
     }
     return event
   },
-  addAttendancePool: async (eventID, attendanceWrite) => {
-    const attendance = await attendanceRepository.createAttendance({ ...attendanceWrite, eventID: eventID })
+  addAttendancePool: async (eventId, attendanceWrite) => {
+    const attendance = await attendanceRepository.createAttendance({ ...attendanceWrite, eventId })
     return attendance
   },
 })
