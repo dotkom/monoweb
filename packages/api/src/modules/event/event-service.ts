@@ -1,6 +1,7 @@
 import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
+import { AttendanceRepository } from "./attendee-repository"
 import { EventRepository } from "./event-repository"
 
 export interface EventService {
@@ -11,7 +12,10 @@ export interface EventService {
   addAttendancePool: (eventID: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
 }
 
-export const initEventService = (eventRepository: EventRepository): EventService => ({
+export const initEventService = (
+  eventRepository: EventRepository,
+  attendanceRepository: AttendanceRepository
+): EventService => ({
   createEvent: async (payload) => {
     const event = await eventRepository.create(payload)
     if (!event) throw new Error("Failed to create event")
@@ -36,7 +40,7 @@ export const initEventService = (eventRepository: EventRepository): EventService
     return event
   },
   addAttendancePool: async (eventID, attendanceWrite) => {
-    const attendance = await eventRepository.createAttendance(eventID, attendanceWrite)
+    const attendance = await attendanceRepository.createAttendance({ ...attendanceWrite, eventID: eventID })
     return attendance
   },
 })
