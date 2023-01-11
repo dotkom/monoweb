@@ -1,7 +1,7 @@
 import { NotFoundError } from "../../errors/errors"
-import { InsertMark, Mark } from "./mark"
+import { InsertMark, Mark } from "@dotkomonline/types/src/mark"
 import { MarkRepository } from "./mark-repository"
-import { PersonalMark } from "./personal-mark"
+import { PersonalMark } from "@dotkomonline/types/src/personal-mark"
 import { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface MarkService {

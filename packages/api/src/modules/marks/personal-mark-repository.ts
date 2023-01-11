@@ -1,6 +1,10 @@
-import { mapToPersonalMark, PersonalMark } from "./personal-mark"
+import { PersonalMark, personalMarkSchema } from "@dotkomonline/types/src/personal-mark"
 import { Database } from "@dotkomonline/db"
-import { Kysely } from "kysely"
+import { Kysely, Selectable } from "kysely"
+
+export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark => {
+  return personalMarkSchema.parse(payload)
+}
 
 export interface PersonalMarkRepository {
   getPersonalMarksForUser: (userId: string) => Promise<PersonalMark[]>

@@ -5,7 +5,6 @@ export interface MarkTable {
   title: string
   givenAt: Generated<Date>
   category: string
-  latestChange: Generated<Date>
   details: string
   givenTo: string[]
   duration: number

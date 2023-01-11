@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 import { Kysely } from "kysely"
 
-import { Mark } from "../mark"
+import { Mark } from "@dotkomonline/types/src/mark"
 import { initMarkRepository } from "../mark-repository"
 import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"

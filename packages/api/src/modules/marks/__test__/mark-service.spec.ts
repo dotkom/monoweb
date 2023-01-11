@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid"
 import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
-import { InsertMark } from "../mark"
+import { InsertMark } from "@dotkomonline/types/src/mark"
 import { initMarkRepository } from "../mark-repository"
 import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"

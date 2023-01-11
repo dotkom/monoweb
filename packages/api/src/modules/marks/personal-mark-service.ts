@@ -1,8 +1,8 @@
 import { NotFoundError } from "../../errors/errors"
-import { PersonalMark } from "./personal-mark"
+import { PersonalMark } from "@dotkomonline/types/src/personal-mark"
 import { PersonalMarkRepository } from "./personal-mark-repository"
 import { MarkService } from "./mark-service"
-import { Mark } from "./mark"
+import { Mark } from "@dotkomonline/types/src/mark"
 
 export interface PersonalMarkService {
   getPersonalMarksForUser: (userId: string) => Promise<PersonalMark[]>
@@ -24,7 +24,7 @@ export const initPersonalMarkService = (
       return personalMarks
     },
     addPersonalMarkToUser: async (userId: string, markId: string) => {
-      const mark = markService.getMark(markId)
+      const mark = await markService.getMark(markId)
       if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
       const personalMark = await personalMarkRepository.addPersonalMarkToUser(userId, markId)
       if (!personalMark) throw new NotFoundError(`PersonalMark could not be created`)

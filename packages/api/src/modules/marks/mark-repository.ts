@@ -1,6 +1,10 @@
 import { Database } from "@dotkomonline/db"
-import { Kysely } from "kysely"
-import { InsertMark, mapToMark, Mark } from "./mark"
+import { Kysely, Selectable } from "kysely"
+import { InsertMark, markSchema, Mark } from "@dotkomonline/types/src/mark"
+
+export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
+  return markSchema.parse(payload)
+}
 
 export interface MarkRepository {
   getMarkByID: (id: string) => Promise<Mark | undefined>
