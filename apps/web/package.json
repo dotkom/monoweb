@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@dotkomonline/config": "*",
+    "trpc-playground": "^1.0.4",
     "@dotkomonline/db": "*",
     "@dotkomonline/logger": "*",
     "@types/cors": "^2.8.13",
