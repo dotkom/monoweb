@@ -1,4 +1,5 @@
-import { PersonalMark as PrismaPersonalMark } from "@dotkomonline/db"
+import { Database } from "@dotkomonline/db"
+import { Selectable } from "kysely"
 import { z } from "zod"
 
 const personalMarkSchema = z.object({
@@ -9,9 +10,6 @@ const personalMarkSchema = z.object({
 export type PersonalMark = z.infer<typeof personalMarkSchema>
 export type InsertPersonalMark = PersonalMark
 
-export const mapToPersonalMark = (payload: PrismaPersonalMark): PersonalMark => {
-  const personalMark: PersonalMark = {
-    ...payload,
-  }
-  return personalMarkSchema.parse(personalMark)
+export const mapToPersonalMark = (payload: Selectable<Database["PersonalMark"]>): PersonalMark => {
+  return personalMarkSchema.parse(payload)
 }

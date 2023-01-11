@@ -1,22 +1,20 @@
-import { Mark as PrismaMark } from "@dotkomonline/db"
+import { Database } from "@dotkomonline/db"
+import { Selectable } from "kysely"
 import { z } from "zod"
 
 const markSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
-  given_at: z.date(),
+  givenAt: z.date(),
   category: z.string(),
   details: z.string(),
-  given_to: z.string().array(),
+  givenTo: z.string().array(),
   duration: z.number(),
 })
 
 export type Mark = z.infer<typeof markSchema>
 export type InsertMark = Omit<Mark, "id">
 
-export const mapToMark = (payload: PrismaMark): Mark => {
-  const mark: Mark = {
-    ...payload,
-  }
-  return markSchema.parse(mark)
+export const mapToMark = (payload: Selectable<Database["Mark"]>): Mark => {
+  return markSchema.parse(payload)
 }

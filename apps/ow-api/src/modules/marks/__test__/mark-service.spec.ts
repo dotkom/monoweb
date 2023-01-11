@@ -1,5 +1,5 @@
-import { PrismaClient } from "@dotkomonline/db"
 import { v4 as uuidv4 } from "uuid"
+import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
 import { InsertMark } from "../mark"
@@ -8,7 +8,7 @@ import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"
 
 describe("MarkService", () => {
-  const prisma = vi.mocked(PrismaClient, true)
+  const prisma = vi.mocked(Kysely.prototype, true)
 
   const personalMarkRepository = initPersonalMarkRepository(prisma)
   const markRepository = initMarkRepository(prisma)
@@ -19,8 +19,8 @@ describe("MarkService", () => {
       title: "",
       category: "",
       details: "",
-      given_to: [],
-      given_at: new Date(),
+      givenTo: [],
+      givenAt: new Date(),
       duration: 20,
     }
     const id = uuidv4()

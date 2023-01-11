@@ -1,5 +1,5 @@
-import { PrismaClient } from "@dotkomonline/db"
 import { v4 as uuidv4 } from "uuid"
+import { Kysely } from "kysely"
 
 import { Mark } from "../mark"
 import { initMarkRepository } from "../mark-repository"
@@ -8,7 +8,7 @@ import { initPersonalMarkRepository } from "../personal-mark-repository"
 import { initPersonalMarkService } from "../personal-mark-service"
 
 describe("PersonalMarkDateCalculation", () => {
-  const prisma = vi.mocked(PrismaClient, true)
+  const prisma = vi.mocked(Kysely.prototype, true)
   const personalMarkRepository = initPersonalMarkRepository(prisma)
   const markRepository = initMarkRepository(prisma)
   const markService = initMarkService(markRepository, personalMarkRepository)
@@ -24,8 +24,8 @@ describe("PersonalMarkDateCalculation", () => {
         title: "Test",
         category: "Test",
         details: "Test",
-        given_at: start_date,
-        given_to: [],
+        givenAt: start_date,
+        givenTo: [],
         duration: 24,
       },
     ]
@@ -42,8 +42,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: start_date,
-          given_to: [],
+          givenAt: start_date,
+          givenTo: [],
           duration: 22,
         },
         {
@@ -51,8 +51,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: start_date,
-          given_to: [],
+          givenAt: start_date,
+          givenTo: [],
           duration: 23,
         },
       ]
@@ -68,8 +68,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: start_date_winter,
-          given_to: [],
+          givenAt: start_date_winter,
+          givenTo: [],
           duration: 30,
         },
       ]
@@ -81,8 +81,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: start_date_summer,
-          given_to: [],
+          givenAt: start_date_summer,
+          givenTo: [],
           duration: 31,
         },
       ]
@@ -103,8 +103,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: old_date,
-          given_to: [],
+          givenAt: old_date,
+          givenTo: [],
           duration: 20,
         },
         {
@@ -112,8 +112,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: old_date,
-          given_to: [],
+          givenAt: old_date,
+          givenTo: [],
           duration: 24,
         },
         {
@@ -121,8 +121,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: start_date,
-          given_to: [],
+          givenAt: start_date,
+          givenTo: [],
           duration: 21,
         },
       ]
@@ -138,8 +138,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: old_date,
-          given_to: [],
+          givenAt: old_date,
+          givenTo: [],
           duration: 1000,
         },
       ]
@@ -153,8 +153,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: start_date,
-          given_to: [],
+          givenAt: start_date,
+          givenTo: [],
           duration: 10,
         },
         {
@@ -162,8 +162,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: new Date("3022-10-12"),
-          given_to: [],
+          givenAt: new Date("3022-10-12"),
+          givenTo: [],
           duration: 10,
         },
         {
@@ -171,8 +171,8 @@ describe("PersonalMarkDateCalculation", () => {
           title: "Test",
           category: "Test",
           details: "Test",
-          given_at: new Date("3022-10-05"),
-          given_to: [],
+          givenAt: new Date("3022-10-05"),
+          givenTo: [],
           duration: 10,
         },
       ]

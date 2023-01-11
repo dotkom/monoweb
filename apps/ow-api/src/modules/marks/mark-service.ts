@@ -9,9 +9,9 @@ export interface MarkService {
   getMarks: (limit: number) => Promise<Mark[]>
   createMark: (payload: InsertMark) => Promise<Mark>
   updateMark: (id: string, payload: InsertMark) => Promise<Mark>
-  removeMarkFromUser: (userId: string, markId: string) => Promise<[Mark, PersonalMark]>
-  addMarkToUser: (userId: string, markId: string) => Promise<[Mark, PersonalMark]>
-  deleteMark: (id: string) => Promise<Mark | undefined>
+  removeMarkFromUser: (userId: string, markId: string) => Promise<[Mark | undefined, PersonalMark | undefined]>
+  addMarkToUser: (userId: string, markId: string) => Promise<[Mark, PersonalMark | undefined]>
+  deleteMark: (id: string) => Promise<Mark>
 }
 
 export const initMarkService = (
@@ -30,16 +30,18 @@ export const initMarkService = (
     },
     createMark: async (payload: InsertMark) => {
       const mark = await markRepository.createMark(payload)
+      if (!mark) throw new NotFoundError(`Mark could not be created`)
       return mark
     },
     updateMark: async (id: string, payload: InsertMark) => {
       const mark = await markRepository.updateMark(id, payload)
+      if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
       return mark
     },
     removeMarkFromUser: async (userId: string, markId: string) => {
       const mark = await service.getMark(markId)
-      if (userId in mark.given_to) {
-        mark.given_to = mark.given_to.filter((id: string) => id !== userId)
+      if (userId in mark.givenTo) {
+        mark.givenTo = mark.givenTo.filter((id: string) => id !== userId)
         const markInfo = await Promise.all([
           markRepository.updateMark(markId, mark),
           personalMarkRepository.removePersonalMark(userId, markId),
@@ -51,8 +53,8 @@ export const initMarkService = (
     addMarkToUser: async (userId: string, markId: string) => {
       const mark = await service.getMark(markId)
       if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
-      if (!(userId in mark.given_to)) {
-        mark.given_to.push(userId)
+      if (!(userId in mark.givenTo)) {
+        mark.givenTo.push(userId)
         const markInfo = await Promise.all([
           service.updateMark(markId, mark),
           personalMarkRepository.addPersonalMarkToUser(userId, markId),
@@ -64,10 +66,11 @@ export const initMarkService = (
     deleteMark: async (id: string) => {
       const mark = await service.getMark(id)
       if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
-      mark.given_to.forEach(async (userId) => {
+      mark.givenTo.forEach(async (userId) => {
         await service.removeMarkFromUser(userId, id)
       })
       const removedMark = await markRepository.deleteMark(id)
+      if (!removedMark) throw new NotFoundError(`Mark with ID:${id} not found`)
       return removedMark
     },
   }

@@ -27,10 +27,12 @@ export const initPersonalMarkService = (
       const mark = markService.getMark(markId)
       if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
       const personalMark = await personalMarkRepository.addPersonalMarkToUser(userId, markId)
+      if (!personalMark) throw new NotFoundError(`PersonalMark could not be created`)
       return personalMark
     },
     removePersonalMark: async (userId: string, markId: string) => {
       const personalMark = await personalMarkRepository.removePersonalMark(userId, markId)
+      if (!personalMark) throw new NotFoundError(`PersonalMark could not be removed`)
       return personalMark
     },
     getAllMarksForUser: async (userId: string) => {
@@ -41,10 +43,13 @@ export const initPersonalMarkService = (
     },
     getExpiryDateForUser: async (userId: string) => {
       const marks = await service.getAllMarksForUser(userId)
-      return service.calculateExpiryDate(marks)
+      if (!marks) throw new NotFoundError(`Marks for user with ID:${userId} not found`)
+      const expiryDate = service.calculateExpiryDate(marks)
+      return expiryDate
     },
     isUserMarked: async (userId: string) => {
       const marks = await service.getExpiryDateForUser(userId)
+      if (!marks) throw new NotFoundError(`Marks for user with ID:${userId} not found`)
       return marks != null
     },
     adjustDateCalculationForHolidays: (date: Date) => {
@@ -64,12 +69,12 @@ export const initPersonalMarkService = (
     calculateExpiryDate: (marks: Mark[]) => {
       const currentTime = new Date()
       let endDate: Date | null = null
-      const orderedMarks = marks.sort((a, b) => a.given_at.getTime() - b.given_at.getTime())
+      const orderedMarks = marks.sort((a, b) => a.givenAt.getTime() - b.givenAt.getTime())
       orderedMarks.forEach((mark) => {
         const date =
-          endDate && mark.given_at.getTime() < endDate.getTime()
+          endDate && mark.givenAt.getTime() < endDate.getTime()
             ? new Date(service.adjustDateCalculationForHolidays(endDate).date.getTime())
-            : new Date(service.adjustDateCalculationForHolidays(mark.given_at).date.getTime())
+            : new Date(service.adjustDateCalculationForHolidays(mark.givenAt).date.getTime())
         date.setDate(date.getDate() + mark.duration)
 
         const adjustedEnd = service.adjustDateCalculationForHolidays(date)
