@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const markSchema = z.object({
+export const MarkSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
   givenAt: z.date(),
@@ -10,5 +10,5 @@ export const markSchema = z.object({
   duration: z.number(),
 })
 
-export type Mark = z.infer<typeof markSchema>
+export type Mark = z.infer<typeof MarkSchema>
 export type InsertMark = Omit<Mark, "id">

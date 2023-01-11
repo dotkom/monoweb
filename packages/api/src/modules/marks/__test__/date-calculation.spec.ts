@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from "uuid"
+import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
-import { Mark } from "@dotkomonline/types/src/mark"
+import { Mark } from "@dotkomonline/types"
 import { initMarkRepository } from "../mark-repository"
 import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"
@@ -20,7 +20,7 @@ describe("PersonalMarkDateCalculation", () => {
     const start_date = new Date("3022-10-01")
     const marks = [
       {
-        id: uuidv4(),
+        id: randomUUID(),
         title: "Test",
         category: "Test",
         details: "Test",
@@ -38,7 +38,7 @@ describe("PersonalMarkDateCalculation", () => {
       const start_date = new Date("3022-10-01")
       const marks = [
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -47,7 +47,7 @@ describe("PersonalMarkDateCalculation", () => {
           duration: 22,
         },
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -64,7 +64,7 @@ describe("PersonalMarkDateCalculation", () => {
       const start_date_winter = new Date("3022-11-01")
       const winter_marks = [
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -77,7 +77,7 @@ describe("PersonalMarkDateCalculation", () => {
       const start_date_summer = new Date("3022-05-01")
       const summer_marks = [
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -99,7 +99,7 @@ describe("PersonalMarkDateCalculation", () => {
       const old_date = new Date("1970-01-01")
       const marks = [
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -108,7 +108,7 @@ describe("PersonalMarkDateCalculation", () => {
           duration: 20,
         },
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -117,7 +117,7 @@ describe("PersonalMarkDateCalculation", () => {
           duration: 24,
         },
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -134,7 +134,7 @@ describe("PersonalMarkDateCalculation", () => {
       const old_date = new Date("1970-01-01")
       const marks = [
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -149,7 +149,7 @@ describe("PersonalMarkDateCalculation", () => {
       const start_date = new Date("3022-10-01")
       const marks = [
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -158,7 +158,7 @@ describe("PersonalMarkDateCalculation", () => {
           duration: 10,
         },
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",
@@ -167,7 +167,7 @@ describe("PersonalMarkDateCalculation", () => {
           duration: 10,
         },
         {
-          id: uuidv4(),
+          id: randomUUID(),
           title: "Test",
           category: "Test",
           details: "Test",

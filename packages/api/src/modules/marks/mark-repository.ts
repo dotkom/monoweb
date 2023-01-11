@@ -1,9 +1,9 @@
 import { Database } from "@dotkomonline/db"
 import { Kysely, Selectable } from "kysely"
-import { InsertMark, markSchema, Mark } from "@dotkomonline/types/src/mark"
+import { InsertMark, MarkSchema, Mark } from "@dotkomonline/types"
 
 export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
-  return markSchema.parse(payload)
+  return MarkSchema.parse(payload)
 }
 
 export interface MarkRepository {

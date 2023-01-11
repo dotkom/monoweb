@@ -1,8 +1,8 @@
 import { NotFoundError } from "../../errors/errors"
-import { PersonalMark } from "@dotkomonline/types/src/personal-mark"
 import { PersonalMarkRepository } from "./personal-mark-repository"
 import { MarkService } from "./mark-service"
-import { Mark } from "@dotkomonline/types/src/mark"
+import { Mark, PersonalMark } from "@dotkomonline/types"
+import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
 
 export interface PersonalMarkService {
   getPersonalMarksForUser: (userId: string) => Promise<PersonalMark[]>
@@ -54,8 +54,10 @@ export const initPersonalMarkService = (
     },
     adjustDateCalculationForHolidays: (date: Date) => {
       let additionalDays = 0
-      if (date.getMonth() > 4 && date.getMonth() + date.getDate() / 100 < 7.15) {
-        date = new Date(date.getFullYear(), 7, 15)
+      if (
+        isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
+      ) {
+        date = set(date, { month: 7, date: 15 })
         additionalDays = 75
       } else if (date.getMonth() == 11) {
         date = new Date(date.getFullYear() + 1, 0, 15)
@@ -69,16 +71,16 @@ export const initPersonalMarkService = (
     calculateExpiryDate: (marks: Mark[]) => {
       const currentTime = new Date()
       let endDate: Date | null = null
-      const orderedMarks = marks.sort((a, b) => a.givenAt.getTime() - b.givenAt.getTime())
+      const orderedMarks = marks.sort((a, b) => compareAsc(a.givenAt, b.givenAt))
       orderedMarks.forEach((mark) => {
         const date =
-          endDate && mark.givenAt.getTime() < endDate.getTime()
+          endDate && isBefore(mark.givenAt, endDate)
             ? new Date(service.adjustDateCalculationForHolidays(endDate).date.getTime())
             : new Date(service.adjustDateCalculationForHolidays(mark.givenAt).date.getTime())
         date.setDate(date.getDate() + mark.duration)
 
         const adjustedEnd = service.adjustDateCalculationForHolidays(date)
-        const adjustedEndDate = new Date(date.getTime() + adjustedEnd.additionalDays * 24 * 60 * 60 * 1000)
+        const adjustedEndDate = add(date, { days: adjustedEnd.additionalDays })
 
         endDate = adjustedEndDate
       })

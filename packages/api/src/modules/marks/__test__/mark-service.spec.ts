@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from "uuid"
+import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
-import { InsertMark } from "@dotkomonline/types/src/mark"
+import { InsertMark } from "@dotkomonline/types"
 import { initMarkRepository } from "../mark-repository"
 import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"
@@ -23,14 +23,14 @@ describe("MarkService", () => {
       givenAt: new Date(),
       duration: 20,
     }
-    const id = uuidv4()
+    const id = randomUUID()
     vi.spyOn(markRepository, "createMark").mockResolvedValueOnce({ id, ...mark })
     await expect(markService.createMark(mark)).resolves.toEqual({ id, ...mark })
     expect(markRepository.createMark).toHaveBeenCalledWith(mark)
   })
 
   it("fails on unknown id", async () => {
-    const unknownID = uuidv4()
+    const unknownID = randomUUID()
     vi.spyOn(markRepository, "getMarkByID").mockResolvedValueOnce(undefined)
     await expect(markService.getMark(unknownID)).rejects.toThrow(NotFoundError)
     expect(markRepository.getMarkByID).toHaveBeenCalledWith(unknownID)

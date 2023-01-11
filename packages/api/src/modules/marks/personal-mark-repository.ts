@@ -1,4 +1,4 @@
-import { PersonalMark, personalMarkSchema } from "@dotkomonline/types/src/personal-mark"
+import { PersonalMark, personalMarkSchema } from "@dotkomonline/types"
 import { Database } from "@dotkomonline/db"
 import { Kysely, Selectable } from "kysely"
 
