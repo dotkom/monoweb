@@ -10,6 +10,6 @@ const personalMarkSchema = z.object({
 export type PersonalMark = z.infer<typeof personalMarkSchema>
 export type InsertPersonalMark = PersonalMark
 
-export const mapToPersonalMark = (payload: Selectable<Database["PersonalMark"]>): PersonalMark => {
+export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark => {
   return personalMarkSchema.parse(payload)
 }

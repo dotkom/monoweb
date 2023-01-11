@@ -15,6 +15,6 @@ const markSchema = z.object({
 export type Mark = z.infer<typeof markSchema>
 export type InsertMark = Omit<Mark, "id">
 
-export const mapToMark = (payload: Selectable<Database["Mark"]>): Mark => {
+export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
   return markSchema.parse(payload)
 }

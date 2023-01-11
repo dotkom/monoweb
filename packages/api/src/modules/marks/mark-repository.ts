@@ -13,27 +13,27 @@ export interface MarkRepository {
 export const initMarkRepository = (db: Kysely<Database>): MarkRepository => {
   const repo: MarkRepository = {
     getMarkByID: async (id) => {
-      const mark = await db.selectFrom("Mark").selectAll().where("id", "=", id).executeTakeFirst()
+      const mark = await db.selectFrom("mark").selectAll().where("id", "=", id).executeTakeFirst()
       return mark ? mapToMark(mark) : undefined
     },
     getMarks: async (limit) => {
-      const marks = await db.selectFrom("Mark").selectAll().limit(limit).execute()
+      const marks = await db.selectFrom("mark").selectAll().limit(limit).execute()
       return marks.map(mapToMark)
     },
     createMark: async (markInsert) => {
       const mark = await db
-        .insertInto("Mark")
+        .insertInto("mark")
         .values({ ...markInsert })
         .returningAll()
         .executeTakeFirst()
       return mark ? mapToMark(mark) : undefined
     },
     updateMark: async (id, markUpdate) => {
-      const mark = await db.updateTable("Mark").set(markUpdate).where("id", "=", id).returningAll().executeTakeFirst()
+      const mark = await db.updateTable("mark").set(markUpdate).where("id", "=", id).returningAll().executeTakeFirst()
       return mark ? mapToMark(mark) : undefined
     },
     deleteMark: async (id) => {
-      const mark = await db.deleteFrom("Mark").where("id", "=", id).returningAll().executeTakeFirst()
+      const mark = await db.deleteFrom("mark").where("id", "=", id).returningAll().executeTakeFirst()
       return mark ? mapToMark(mark) : undefined
     },
   }

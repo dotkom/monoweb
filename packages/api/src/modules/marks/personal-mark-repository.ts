@@ -11,12 +11,12 @@ export interface PersonalMarkRepository {
 export const initPersonalMarkRepository = (db: Kysely<Database>): PersonalMarkRepository => {
   const repo: PersonalMarkRepository = {
     getPersonalMarksForUser: async (userId: string) => {
-      const marks = await db.selectFrom("PersonalMark").selectAll().where("PersonalMark.userId", "=", userId).execute()
+      const marks = await db.selectFrom("personalMark").selectAll().where("personalMark.userId", "=", userId).execute()
       return marks.map(mapToPersonalMark)
     },
     addPersonalMarkToUser: async (userId: string, markId: string) => {
       const personalMark = await db
-        .insertInto("PersonalMark")
+        .insertInto("personalMark")
         .values({ userId, markId })
         .returningAll()
         .executeTakeFirst()
@@ -24,7 +24,7 @@ export const initPersonalMarkRepository = (db: Kysely<Database>): PersonalMarkRe
     },
     removePersonalMark: async (userId: string, markId: string) => {
       const personalMark = await db
-        .deleteFrom("PersonalMark")
+        .deleteFrom("personalMark")
         .where("userId", "=", userId)
         .where("markId", "=", markId)
         .returningAll()
