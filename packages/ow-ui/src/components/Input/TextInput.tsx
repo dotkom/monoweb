@@ -5,16 +5,15 @@ import { forwardRef } from "react"
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string
   label?: string
-  withAsterisk?: boolean
   error?: boolean | string
 }
 
-export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, withAsterisk, error, ...props }, ref) => {
+export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, error, ...props }, ref) => {
   return (
     <div className="flex flex-col">
       {label && (
         <Label htmlFor={props.id} className="mb-2">
-          {label} {withAsterisk && <span className="text-red-11">*</span>}
+          {label} {props.required && <span className="text-red-11">*</span>}
         </Label>
       )}
       <input type="text" {...props} ref={ref} className={input({ error: !!error, disabled: props.disabled })} />

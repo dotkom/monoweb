@@ -1,10 +1,8 @@
 import { Generated } from "kysely"
 
-import { Timestamp } from "./common"
-
 export interface CompanyTable {
   id: Generated<string>
-  createdAt: Generated<Timestamp>
+  createdAt: Generated<Date>
   name: string
   description: string
   email: string

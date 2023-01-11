@@ -10,6 +10,7 @@ export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButto
   icon?: React.ReactNode
   type?: "submit" | "reset" | "button"
   className?: string
+  disabled?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>(
@@ -22,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
           "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
           "transition-transform",
           "hover:-translate-y-[1px] active:translate-y-[2px]",
-          colorVariants(props),
+          colorVariants({ disabled: !!props.disabled, variant: props.variant }),
           props.className
         )}
         type={props.type}
@@ -41,7 +42,7 @@ const defaultButton = (color: Color) =>
   cva("", {
     variants: {
       size: {},
-      nonInteractive: {
+      disabled: {
         true: "opacity-40 pointer-events-none cursor-not-allowed",
       },
       variant: {

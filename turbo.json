@@ -10,8 +10,7 @@
       "outputs": [".next/**"]
     },
     "build:storybook": {
-      "dependsOn": ["^build"],
-      "outputs": ["./apps/storybook/storybook-static/**"]
+      "outputs": ["storybook-static/**"]
     },
     "type-check": {
       "outputs": []
@@ -31,7 +30,7 @@
       "cache": false
     },
     "migrate": {
-      "env": ["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME"],
+      "env": ["DATABASE_URL"],
       "cache": false,
       "dependsOn": []
     },
@@ -48,13 +47,16 @@
     "API_PORT",
     "DASHBOARD_PORT",
     "NEXTAUTH_CLIENT_ID",
+    "NEXTAUTH_CLIENT_SECRET",
     "NEXTAUTH_URL",
+    "NEXTAUTH_SECRET",
     "HYDRA_ADMIN_URL",
+    "HYDRA_PUBLIC_URL",
     "NEXT_PUBLIC_DEBUG",
-    "DB_HOST",
-    "DB_PORT",
-    "DB_USER",
-    "DB_PASSWORD",
-    "DB_NAME"
+    "DATABASE_URL",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "VERCEL_URL",
+    "PORT"
   ]
 }

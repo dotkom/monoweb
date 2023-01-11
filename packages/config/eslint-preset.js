@@ -16,6 +16,12 @@ module.exports = {
       plugins: ["@typescript-eslint"],
       parser: "@typescript-eslint/parser",
     },
+    {
+      "files": ["packages/ow-db/src/migrations/*"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
   ],
   rules: {
     "@typescript-eslint/no-unused-vars": [
