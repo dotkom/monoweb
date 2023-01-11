@@ -13,6 +13,6 @@ const userSchema = z.object({
 })
 
 export type User = z.infer<typeof userSchema>
-export const mapToUser = (payload: Selectable<Database["User"]>): User => {
+export const mapToUser = (payload: Selectable<Database["owUser"]>): User => {
   return userSchema.parse(payload)
 }

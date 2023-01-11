@@ -4,7 +4,7 @@ import { MarkTable, PersonalMarkTable } from "./marks"
 import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
 
 export interface Database {
-  User: UserTable
+  owUser: UserTable
   Company: CompanyTable
   Session: SessionTable
   VerificationToken: VerificationTokenTable

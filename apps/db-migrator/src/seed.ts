@@ -8,7 +8,7 @@ import { db } from "./db"
 
 faker.seed(69)
 
-const createRandomUser = (): Insertable<Database["User"]> => {
+const createRandomUser = (): Insertable<Database["owUser"]> => {
   return {
     id: faker.datatype.uuid(),
     name: faker.name.firstName(),
@@ -52,7 +52,7 @@ export const seed = async () => {
   )
 
   await db
-    .insertInto("User")
+    .insertInto("owUser")
     .values(users)
     .returning("id")
     .onConflict((oc) =>
