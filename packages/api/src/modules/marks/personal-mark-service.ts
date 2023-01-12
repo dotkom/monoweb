@@ -43,14 +43,11 @@ export const initPersonalMarkService = (
     },
     getExpiryDateForUser: async (userId: string) => {
       const marks = await service.getAllMarksForUser(userId)
-      if (!marks) throw new NotFoundError(`Marks for user with ID:${userId} not found`)
       const expiryDate = service.calculateExpiryDate(marks)
       return expiryDate
     },
     isUserMarked: async (userId: string) => {
-      const marks = await service.getExpiryDateForUser(userId)
-      if (!marks) throw new NotFoundError(`Marks for user with ID:${userId} not found`)
-      return marks != null
+      return service.getExpiryDateForUser(userId) !== null
     },
     adjustDateIfStartingInHoliday: (date: Date) => {
       if (
