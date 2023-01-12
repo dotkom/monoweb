@@ -22,6 +22,7 @@ describe("MarkService", () => {
       givenTo: [],
       givenAt: new Date(),
       duration: 20,
+      updatedAt: new Date(),
     }
     const id = randomUUID()
     vi.spyOn(markRepository, "createMark").mockResolvedValueOnce({ id, ...mark })

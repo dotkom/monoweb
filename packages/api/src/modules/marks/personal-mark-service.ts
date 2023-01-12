@@ -10,7 +10,7 @@ export interface PersonalMarkService {
   removePersonalMark: (userId: string, markId: string) => Promise<PersonalMark>
   getAllMarksForUser: (userId: string) => Promise<Mark[]>
   getExpiryDateForUser: (userId: string) => Promise<Date | null>
-  calculateExpiryDate: (marks: Mark[]) => Date | null
+  calculateExpiryDate: (marks: { givenAt: Date; duration: number }[]) => Date | null
 }
 
 export const initPersonalMarkService = (
@@ -77,7 +77,7 @@ export const initPersonalMarkService = (
       }
       return add(date, { days: additionalDays })
     },
-    calculateExpiryDate: (marks: Mark[]) => {
+    calculateExpiryDate: (marks: { givenAt: Date; duration: number }[]) => {
       const currentTime = new Date()
       let endDate: Date | null = null
       const orderedMarks = marks.sort((a, b) => compareAsc(a.givenAt, b.givenAt))

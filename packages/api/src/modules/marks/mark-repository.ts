@@ -33,7 +33,12 @@ export const initMarkRepository = (db: Kysely<Database>): MarkRepository => {
       return mark ? mapToMark(mark) : undefined
     },
     updateMark: async (id, markUpdate) => {
-      const mark = await db.updateTable("mark").set(markUpdate).where("id", "=", id).returningAll().executeTakeFirst()
+      const mark = await db
+        .updateTable("mark")
+        .set({ ...markUpdate, updatedAt: new Date() })
+        .where("id", "=", id)
+        .returningAll()
+        .executeTakeFirst()
       return mark ? mapToMark(mark) : undefined
     },
     deleteMark: async (id) => {

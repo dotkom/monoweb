@@ -8,6 +8,7 @@ export interface MarkTable {
   details: string
   givenTo: string[]
   duration: number
+  updatedAt: Generated<Date>
 }
 
 export interface PersonalMarkTable {

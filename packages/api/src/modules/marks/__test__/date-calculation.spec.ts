@@ -21,11 +21,7 @@ describe("PersonalMarkDateCalculation", () => {
     const marks = [
       {
         id: randomUUID(),
-        title: "Test",
-        category: "Test",
-        details: "Test",
         givenAt: start_date,
-        givenTo: [],
         duration: 24,
       },
     ]
@@ -39,20 +35,12 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: start_date,
-          givenTo: [],
           duration: 22,
         },
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: start_date,
-          givenTo: [],
           duration: 23,
         },
       ]
@@ -65,11 +53,7 @@ describe("PersonalMarkDateCalculation", () => {
       const winter_marks = [
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: start_date_winter,
-          givenTo: [],
           duration: 30,
         },
       ]
@@ -78,11 +62,7 @@ describe("PersonalMarkDateCalculation", () => {
       const summer_marks = [
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: start_date_summer,
-          givenTo: [],
           duration: 31,
         },
       ]
@@ -100,29 +80,17 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: old_date,
-          givenTo: [],
           duration: 20,
         },
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: old_date,
-          givenTo: [],
           duration: 24,
         },
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: start_date,
-          givenTo: [],
           duration: 21,
         },
       ]
@@ -135,11 +103,7 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: old_date,
-          givenTo: [],
           duration: 1000,
         },
       ]
@@ -150,29 +114,17 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: start_date,
-          givenTo: [],
           duration: 10,
         },
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: new Date("3022-10-12"),
-          givenTo: [],
           duration: 10,
         },
         {
           id: randomUUID(),
-          title: "Test",
-          category: "Test",
-          details: "Test",
           givenAt: new Date("3022-10-05"),
-          givenTo: [],
           duration: 10,
         },
       ]

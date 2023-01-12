@@ -4,7 +4,7 @@ import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
 export async function up(db: Kysely<Database>) {
-  await createTableWithDefaults("mark", { id: true, createdAt: false, updatedAt: false }, db.schema)
+  await createTableWithDefaults("mark", { id: true, createdAt: false, updatedAt: true }, db.schema)
     .addColumn("title", "varchar(255)", (col) => col.notNull())
     .addColumn("given_at", "timestamptz", (col) => col.notNull())
     .addColumn("category", "varchar(255)", (col) => col.notNull())
