@@ -52,42 +52,48 @@ export const initPersonalMarkService = (
       if (!marks) throw new NotFoundError(`Marks for user with ID:${userId} not found`)
       return marks != null
     },
-    adjustDateCalculationForHolidays: (date: Date) => {
-      let additionalDays = 0
+    adjustDateIfStartingInHoliday: (date: Date) => {
       if (
         isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
       ) {
         date = set(date, { month: 7, date: 15 })
+      } else if (date.getMonth() == 11) {
+        date = set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
+      } else if (date.getMonth() == 0 && date.getDate() < 15) {
+        date = set(date, { month: 0, date: 15 })
+      }
+      return date
+    },
+    adjustDateIfEndingInHoliday: (date: Date) => {
+      let additionalDays = 0
+      if (
+        isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
+      ) {
         additionalDays = 75
       } else if (date.getMonth() == 11) {
-        date = new Date(date.getFullYear() + 1, 0, 15)
         additionalDays = 45
       } else if (date.getMonth() == 0 && date.getDate() < 15) {
-        date = new Date(date.getFullYear(), 0, 15)
         additionalDays = 45
       }
-      return { date: date, additionalDays: additionalDays }
+      return add(date, { days: additionalDays })
     },
     calculateExpiryDate: (marks: Mark[]) => {
       const currentTime = new Date()
       let endDate: Date | null = null
       const orderedMarks = marks.sort((a, b) => compareAsc(a.givenAt, b.givenAt))
-      orderedMarks.forEach((mark) => {
+
+      for (const mark of orderedMarks) {
         const date =
           endDate && isBefore(mark.givenAt, endDate)
-            ? new Date(service.adjustDateCalculationForHolidays(endDate).date.getTime())
-            : new Date(service.adjustDateCalculationForHolidays(mark.givenAt).date.getTime())
+            ? new Date(service.adjustDateIfStartingInHoliday(endDate).getTime())
+            : new Date(service.adjustDateIfStartingInHoliday(mark.givenAt).getTime())
         date.setDate(date.getDate() + mark.duration)
 
-        const adjustedEnd = service.adjustDateCalculationForHolidays(date)
-        const adjustedEndDate = add(date, { days: adjustedEnd.additionalDays })
-
-        endDate = adjustedEndDate
-      })
-      if (endDate != null && endDate > currentTime) {
-        return endDate
+        endDate = service.adjustDateIfEndingInHoliday(date)
       }
-      return null
+
+      if (!endDate || endDate < currentTime) return null
+      return endDate
     },
   }
   return service
