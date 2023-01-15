@@ -47,7 +47,7 @@ export const initPersonalMarkService = (
       return expiryDate
     },
     isUserMarked: async (userId: string) => {
-      return service.getExpiryDateForUser(userId) !== null
+      return (await service.getExpiryDateForUser(userId)) !== null
     },
     adjustDateIfStartingInHoliday: (date: Date) => {
       if (
