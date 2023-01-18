@@ -1,13 +1,21 @@
 {
   "extends": "../../tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "node_modules/@dotkomonline/auth/next-auth.d.ts",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "outDir": "dist",
-    "lib": [
-      "dom"
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
     ]
-  },
-  "include": ["src"]
+  }
 }

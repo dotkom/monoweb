@@ -1,12 +1,13 @@
-import { Title, Text, Table, TableHead, TableRow, TableBody, TableHeaderCell, TableCell, Button } from "@tremor/react"
-import { FC } from "react"
+"use client"
 
-import { useFlyout } from "../../../components/Flyout"
-import { useModal } from "../../../components/Modal"
+import { Title, Text, Table, TableHead, TableRow, TableBody, TableHeaderCell, TableCell, Button } from "@tremor/react"
+
+import { useFlyout } from "../../components/Flyout"
+import { useModal } from "../../components/Modal"
 import { EventCreationModal } from "./EventCreationModal"
 import { EventDetailsFlyout } from "./EventDetailsFlyout"
 
-export const EventPage: FC = () => {
+export default function EventPage() {
   const { Flyout, open: openDetailsFlyout } = useFlyout(EventDetailsFlyout)
   const { Modal, open: openCreationModal } = useModal(EventCreationModal)
 
@@ -21,13 +22,15 @@ export const EventPage: FC = () => {
       <div className="rounded bg-white shadow">
         <Table>
           <TableHead>
-            <TableHeaderCell>Arrangement</TableHeaderCell>
-            <TableHeaderCell>Startdato</TableHeaderCell>
-            <TableHeaderCell>Sluttdato</TableHeaderCell>
-            <TableHeaderCell>Arrangør</TableHeaderCell>
-            <TableHeaderCell>Type</TableHeaderCell>
-            <TableHeaderCell>Plasser</TableHeaderCell>
-            <TableHeaderCell>Konfigurer</TableHeaderCell>
+            <TableRow>
+              <TableHeaderCell>Arrangement</TableHeaderCell>
+              <TableHeaderCell>Startdato</TableHeaderCell>
+              <TableHeaderCell>Sluttdato</TableHeaderCell>
+              <TableHeaderCell>Arrangør</TableHeaderCell>
+              <TableHeaderCell>Type</TableHeaderCell>
+              <TableHeaderCell>Plasser</TableHeaderCell>
+              <TableHeaderCell>Konfigurer</TableHeaderCell>
+            </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
