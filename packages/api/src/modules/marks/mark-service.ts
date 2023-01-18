@@ -1,7 +1,6 @@
 import { NotFoundError } from "../../errors/errors"
-import { MarkWrite, Mark, PersonalMark } from "@dotkomonline/types"
+import { MarkWrite, Mark } from "@dotkomonline/types"
 import { MarkRepository } from "./mark-repository"
-import { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface MarkService {
   getMark: (id: string) => Promise<Mark>
@@ -11,10 +10,7 @@ export interface MarkService {
   deleteMark: (id: string) => Promise<Mark>
 }
 
-export const initMarkService = (
-  markRepository: MarkRepository,
-  personalMarkRepository: PersonalMarkRepository
-): MarkService => {
+export const initMarkService = (markRepository: MarkRepository): MarkService => {
   const service = {
     getMark: async (id: string) => {
       const mark = await markRepository.getMarkByID(id)
