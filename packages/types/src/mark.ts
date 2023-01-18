@@ -12,4 +12,4 @@ export const MarkSchema = z.object({
 })
 
 export type Mark = z.infer<typeof MarkSchema>
-export type InsertMark = Omit<Mark, "id">
+export type MarkWrite = Omit<Mark, "id">

@@ -1,6 +1,6 @@
 import { Database } from "@dotkomonline/db"
 import { Kysely, Selectable } from "kysely"
-import { InsertMark, MarkSchema, Mark } from "@dotkomonline/types"
+import { MarkWrite, MarkSchema, Mark } from "@dotkomonline/types"
 
 export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
   return MarkSchema.parse(payload)
@@ -9,8 +9,8 @@ export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
 export interface MarkRepository {
   getMarkByID: (id: string) => Promise<Mark | undefined>
   getMarks: (limit: number) => Promise<Mark[]>
-  createMark: (markInsert: InsertMark) => Promise<Mark | undefined>
-  updateMark: (id: string, markUpdate: InsertMark) => Promise<Mark | undefined>
+  createMark: (markInsert: MarkWrite) => Promise<Mark | undefined>
+  updateMark: (id: string, markUpdate: MarkWrite) => Promise<Mark | undefined>
   deleteMark: (id: string) => Promise<Mark | undefined>
 }
 

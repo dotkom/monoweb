@@ -6,4 +6,4 @@ export const personalMarkSchema = z.object({
 })
 
 export type PersonalMark = z.infer<typeof personalMarkSchema>
-export type InsertPersonalMark = PersonalMark
+export type PersonalMarkWrite = PersonalMark

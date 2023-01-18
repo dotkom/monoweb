@@ -2,7 +2,7 @@ import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
-import { InsertMark } from "@dotkomonline/types"
+import { MarkWrite } from "@dotkomonline/types"
 import { initMarkRepository } from "../mark-repository"
 import { initMarkService } from "../mark-service"
 import { initPersonalMarkRepository } from "../personal-mark-repository"
@@ -15,7 +15,7 @@ describe("MarkService", () => {
   const markService = initMarkService(markRepository, personalMarkRepository)
 
   it("creates a new mark", async () => {
-    const mark: InsertMark = {
+    const mark: MarkWrite = {
       title: "",
       category: "",
       details: "",

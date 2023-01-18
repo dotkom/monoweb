@@ -1,13 +1,13 @@
 import { NotFoundError } from "../../errors/errors"
-import { InsertMark, Mark, PersonalMark } from "@dotkomonline/types"
+import { MarkWrite, Mark, PersonalMark } from "@dotkomonline/types"
 import { MarkRepository } from "./mark-repository"
 import { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface MarkService {
   getMark: (id: string) => Promise<Mark>
   getMarks: (limit: number) => Promise<Mark[]>
-  createMark: (payload: InsertMark) => Promise<Mark>
-  updateMark: (id: string, payload: InsertMark) => Promise<Mark>
+  createMark: (payload: MarkWrite) => Promise<Mark>
+  updateMark: (id: string, payload: MarkWrite) => Promise<Mark>
   removeMarkFromUser: (userId: string, markId: string) => Promise<[Mark | undefined, PersonalMark | undefined]>
   addMarkToUser: (userId: string, markId: string) => Promise<[Mark, PersonalMark | undefined]>
   deleteMark: (id: string) => Promise<Mark>
@@ -27,12 +27,12 @@ export const initMarkService = (
       const marks = await markRepository.getMarks(limit)
       return marks
     },
-    createMark: async (payload: InsertMark) => {
+    createMark: async (payload: MarkWrite) => {
       const mark = await markRepository.createMark(payload)
       if (!mark) throw new NotFoundError(`Mark could not be created`)
       return mark
     },
-    updateMark: async (id: string, payload: InsertMark) => {
+    updateMark: async (id: string, payload: MarkWrite) => {
       const mark = await markRepository.updateMark(id, payload)
       if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
       return mark
@@ -65,11 +65,8 @@ export const initMarkService = (
     deleteMark: async (id: string) => {
       const mark = await service.getMark(id)
       if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
-      mark.givenTo.forEach(async (userId) => {
-        await service.removeMarkFromUser(userId, id)
-      })
       const removedMark = await markRepository.deleteMark(id)
-      if (!removedMark) throw new NotFoundError(`Mark with ID:${id} not found`)
+      if (!removedMark) throw new NotFoundError(`Could not delete mark with ID:${id}`)
       return removedMark
     },
   }
