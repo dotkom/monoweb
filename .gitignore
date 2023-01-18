@@ -16,6 +16,7 @@ node_modules
 .turbo
 dist/
 .next/
+.yarn
 build/
 coverage
 
