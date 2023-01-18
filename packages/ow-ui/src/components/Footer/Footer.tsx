@@ -1,6 +1,6 @@
-import { ContactSection } from "./sections/ContactSection"
-import { LinksSection } from "./sections/LinksSection"
-import { SoMeSection } from "./sections/SoMeSection"
+import { ContactSection } from "./Sections/ContactSection"
+import { LinksSection } from "./Sections/LinksSection"
+import { SoMeSection } from "./Sections/SoMeSection"
 
 export interface FooterLinkType {
   main: string[]
@@ -12,12 +12,10 @@ const footerLinks: FooterLinkType = {
   second: ["Besøksadresse", "Kontaktinformasjon", "Post og faktura"],
 }
 
-const Footer = () => (
+export const Footer = () => (
   <footer className="bg-blue flex w-full flex-col py-16">
     <SoMeSection />
     <LinksSection links={footerLinks} />
     <ContactSection />
   </footer>
 )
-
-export default Footer

@@ -1,0 +1,31 @@
+---
+import Footer from "@/components/Footer.astro"
+import "../app.css"
+
+export interface Props {
+  title: string
+}
+
+const { title } = Astro.props
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>{title || "Fadderukene | Linjeforeningen Online"}</title>
+  </head>
+  <body class="flex flex-col min-h-screen bg-slate-12 text-blue-1">
+    <main>
+      <slot />
+    </main>
+
+    <div class="flex flex-col items-center justify-center mt-auto relative w-full">
+      <Footer />
+    </div>
+  </body>
+</html>

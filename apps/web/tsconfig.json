@@ -5,37 +5,23 @@
     "**/*.tsx",
     "node_modules/@dotkomonline/auth/next-auth.d.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/ow-ui/src/components/Footer/FooterLink.tsx",
+    "../../packages/ow-ui/src/components/Footer/FooterLink.tsx"
   ],
   "exclude": [],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@components": [
-        "src/components"
-      ],
-      "@public/*": [
-        "public/*"
-      ],
-      "@public": [
-        "public"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
-      "@styles": [
-        "src/styles"
-      ],
-      "@theme": [
-        "src/theme/stitches.config.ts"
-      ]
+      "@/*": ["./src/*"],
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components"],
+      "@public/*": ["public/*"],
+      "@public": ["public"],
+      "@styles/*": ["src/styles/*"],
+      "@styles": ["src/styles"],
+      "@theme": ["src/theme/stitches.config.ts"]
     },
     "incremental": true,
     "plugins": [

@@ -1,11 +1,6 @@
-import { css } from "@dotkomonline/ui"
+import { BedpressIcon, css, ItexIcon, OfflineIcon, TechtalksIcon, UtlysningIcon } from "@dotkomonline/ui"
 import { Text } from "@dotkomonline/ui"
 
-import BedpressIcon from "@components/icons/BedpressIcon"
-import ItexIcon from "@components/icons/ItexIcon"
-import OfflineIcon from "@components/icons/OfflineIcon"
-import TechtalksIcon from "@components/icons/TechtalksIcon"
-import UtlysningIcon from "@components/icons/UtlysningIcon"
 import { Flex } from "@components/primitives"
 
 const OurProducts = () => {
