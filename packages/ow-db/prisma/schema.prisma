@@ -18,6 +18,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  Profile       Profile[]
   createdAt     DateTime  @default(now()) @map("created_at")
   password      String
   Profile       Profile[]
