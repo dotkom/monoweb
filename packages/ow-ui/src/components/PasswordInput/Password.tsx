@@ -17,8 +17,7 @@ export interface InputProps extends React.HTMLProps<HTMLInputElement> {
 
 export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({label, withAsterisk, error, inputInfo, eyeColor, ...props}, ref) => {
   const [visible,setVisibility] = useState(false)
-  const Icon = visible ? <IconEyeOff onClick={() => setVisibility(visibility => !visibility)}/> 
-    : <IconEyeCheck onClick={() => setVisibility(visibility => !visibility)}/>;
+  const Icon = visible ? <IconEyeOff onClick={() => setVisibility(visibility => !visibility)}/> : <IconEyeCheck onClick={() => setVisibility(visibility => !visibility)}/>;
   const InputType = visible ? "text" : "password";
   
   return (
