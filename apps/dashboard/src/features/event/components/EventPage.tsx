@@ -2,14 +2,18 @@ import { Title, Text, Table, TableHead, TableRow, TableBody, TableHeaderCell, Ta
 import { FC } from "react"
 
 import { useFlyout } from "../../../components/Flyout"
-import { EventDetailsDrawer } from "./EventDetailsDrawer"
+import { useModal } from "../../../components/Modal"
+import { EventCreationModal } from "./EventCreationModal"
+import { EventDetailsFlyout } from "./EventDetailsFlyout"
 
 export const EventPage: FC = () => {
-  const { Flyout, open } = useFlyout(EventDetailsDrawer)
+  const { Flyout, open: openDetailsFlyout } = useFlyout(EventDetailsFlyout)
+  const { Modal, open: openCreationModal } = useModal(EventCreationModal)
 
   return (
     <div className="flex w-full flex-col gap-4 p-6">
       <Flyout />
+      <Modal />
       <div>
         <Title>Arrangmenter</Title>
         <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
@@ -34,14 +38,14 @@ export const EventPage: FC = () => {
               <TableCell>Sosialt</TableCell>
               <TableCell>25/150</TableCell>
               <TableCell>
-                <Button text="Endre" importance="secondary" handleClick={open} />
+                <Button text="Endre" importance="secondary" handleClick={openDetailsFlyout} />
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </div>
 
-      <Button text="Opprett nytt arrangement" />
+      <Button text="Opprett nytt arrangement" handleClick={openCreationModal} />
     </div>
   )
 }

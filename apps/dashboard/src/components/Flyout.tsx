@@ -9,7 +9,7 @@ type FlyoutContextState = {
 
 type UseFlyoutContext = () => FlyoutContextState
 export type FlyoutChildProps = {
-  useFlyoutContext: UseFlyoutContext
+  close: () => void
 }
 
 export const useFlyout = (Component: FC<FlyoutChildProps>) => {
@@ -30,7 +30,7 @@ export const useFlyout = (Component: FC<FlyoutChildProps>) => {
         <RadixDialog.Portal>
           <RadixDialog.Overlay className="fixed inset-0 bg-zinc-900/75" />
           <RadixDialog.Content className="fixed top-0 right-0 z-50 h-full w-3/5 border-l bg-slate-50 shadow">
-            <Component useFlyoutContext={useFlyoutContext} />
+            <Component close={close} />
           </RadixDialog.Content>
         </RadixDialog.Portal>
       </RadixDialog.Root>

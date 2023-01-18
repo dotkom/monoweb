@@ -1,10 +1,9 @@
 import { Text, Title } from "@tremor/react"
 import { FC } from "react"
 
-import { FlyoutChildProps, useFlyout } from "../../../components/Flyout"
+import { ModalChildProps } from "../../../components/Modal"
 
-export const EventDetailsDrawer: FC<FlyoutChildProps> = ({ useFlyoutContext }) => {
-  const { close } = useFlyoutContext()
+export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
   return (
     <div className="w-full p-6">
       <Title>Åre 2022</Title>
