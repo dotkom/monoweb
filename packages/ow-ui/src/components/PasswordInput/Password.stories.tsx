@@ -20,4 +20,4 @@ const TemplatePassword: ComponentStory<typeof PasswordInput> = (args) => {
 
 
 export const Password = TemplatePassword.bind({})
-Password.args = { placeholder: "Pass your word", inputInfo: "At least one password in password", eyeColor: "white"}
+Password.args = { placeholder: "Pass your word", inputInfo: "At least one password in password", eyeColor: "gray"}

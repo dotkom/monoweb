@@ -12,7 +12,7 @@ export interface InputProps extends React.HTMLProps<HTMLInputElement> {
     withAsterisk?: boolean
     error?: boolean | string
     inputInfo?: string
-    eyeColor: "default" | "slate" | "white"
+    eyeColor: "default" | "slate" | "gray"
   }
 
 export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({label, withAsterisk, error, inputInfo, eyeColor, ...props}, ref) => {
@@ -54,7 +54,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({label, w
         color: {
             default: "text-solid",
             slate: "text-slate-7",
-            white: "text-slate-11" 
+            gray: "text-slate-11" 
         }
     }
   })
