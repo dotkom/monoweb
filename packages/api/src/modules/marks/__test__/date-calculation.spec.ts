@@ -8,10 +8,10 @@ import { initPersonalMarkRepository } from "../personal-mark-repository"
 import { initPersonalMarkService } from "../personal-mark-service"
 
 describe("PersonalMarkDateCalculation", () => {
-  const prisma = vi.mocked(Kysely.prototype, true)
-  const personalMarkRepository = initPersonalMarkRepository(prisma)
-  const markRepository = initMarkRepository(prisma)
-  const markService = initMarkService(markRepository, personalMarkRepository)
+  const db = vi.mocked(Kysely.prototype, true)
+  const personalMarkRepository = initPersonalMarkRepository(db)
+  const markRepository = initMarkRepository(db)
+  const markService = initMarkService(markRepository)
   const personalMarkService = initPersonalMarkService(personalMarkRepository, markService)
 
   // These tests are written to work until the year 3022. If you are reading this in 3022, please update the tests. Let those 4022 guys deal with it.

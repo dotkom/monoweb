@@ -5,14 +5,11 @@ import { NotFoundError } from "../../../errors/errors"
 import { MarkWrite } from "@dotkomonline/types"
 import { initMarkRepository } from "../mark-repository"
 import { initMarkService } from "../mark-service"
-import { initPersonalMarkRepository } from "../personal-mark-repository"
 
 describe("MarkService", () => {
-  const prisma = vi.mocked(Kysely.prototype, true)
-
-  const personalMarkRepository = initPersonalMarkRepository(prisma)
-  const markRepository = initMarkRepository(prisma)
-  const markService = initMarkService(markRepository, personalMarkRepository)
+  const db = vi.mocked(Kysely.prototype, true)
+  const markRepository = initMarkRepository(db)
+  const markService = initMarkService(markRepository)
 
   it("creates a new mark", async () => {
     const mark: MarkWrite = {
