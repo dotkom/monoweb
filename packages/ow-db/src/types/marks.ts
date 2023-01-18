@@ -6,7 +6,6 @@ export interface MarkTable {
   givenAt: Generated<Date>
   category: string
   details: string
-  givenTo: string[]
   duration: number
   updatedAt: Generated<Date>
 }

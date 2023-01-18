@@ -9,7 +9,6 @@ export async function up(db: Kysely<Database>) {
     .addColumn("given_at", "timestamptz", (col) => col.notNull())
     .addColumn("category", "varchar(255)", (col) => col.notNull())
     .addColumn("details", "text")
-    .addColumn("given_to", "varchar(255)")
     .addColumn("duration", "integer", (col) => col.notNull())
     .execute()
 

@@ -8,8 +8,8 @@ export interface MarkService {
   getMarks: (limit: number) => Promise<Mark[]>
   createMark: (payload: MarkWrite) => Promise<Mark>
   updateMark: (id: string, payload: MarkWrite) => Promise<Mark>
-  removeMarkFromUser: (userId: string, markId: string) => Promise<[Mark | undefined, PersonalMark | undefined]>
-  addMarkToUser: (userId: string, markId: string) => Promise<[Mark, PersonalMark | undefined]>
+  removeMarkFromUser: (userId: string, markId: string) => Promise<(PersonalMark | Mark)[]>
+  addMarkToUser: (userId: string, markId: string) => Promise<(PersonalMark | Mark)[]>
   deleteMark: (id: string) => Promise<Mark>
 }
 
@@ -39,28 +39,24 @@ export const initMarkService = (
     },
     removeMarkFromUser: async (userId: string, markId: string) => {
       const mark = await service.getMark(markId)
-      if (userId in mark.givenTo) {
-        mark.givenTo = mark.givenTo.filter((id: string) => id !== userId)
-        const markInfo = await Promise.all([
-          markRepository.updateMark(markId, mark),
-          personalMarkRepository.removePersonalMark(userId, markId),
-        ])
-        return markInfo
-      }
-      throw new NotFoundError(`User with ID:${userId} does not have mark with ID:${markId}`)
+      if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
+      const personalMark = await personalMarkRepository.getPersonalMark(userId, markId)
+      if (!personalMark) throw new NotFoundError(`Personal mark with mark ID:${markId} and user ID:${userId} not found`)
+      const removedPersonalMark = await personalMarkRepository.removePersonalMark(userId, markId)
+      if (!removedPersonalMark)
+        throw new NotFoundError(`Could not remove personal mark with mark ID:${markId} and user ID:${userId}`)
+      return [mark, removedPersonalMark]
     },
     addMarkToUser: async (userId: string, markId: string) => {
       const mark = await service.getMark(markId)
       if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
-      if (!(userId in mark.givenTo)) {
-        mark.givenTo.push(userId)
-        const markInfo = await Promise.all([
-          service.updateMark(markId, mark),
-          personalMarkRepository.addPersonalMarkToUser(userId, markId),
-        ])
-        return markInfo
-      }
-      throw new Error(`User with ID:${userId} already has mark with ID:${markId}`)
+      const personalMark = await personalMarkRepository.getPersonalMark(userId, markId)
+      if (personalMark)
+        throw new NotFoundError(`Personal mark with mark ID:${markId} and user ID:${userId} already exists`)
+      const createdPersonalMark = await personalMarkRepository.addPersonalMarkToUser(userId, markId)
+      if (!createdPersonalMark)
+        throw new NotFoundError(`Could not add personal mark with ID:${markId} and user ID ${userId}`)
+      return [mark, createdPersonalMark]
     },
     deleteMark: async (id: string) => {
       const mark = await service.getMark(id)

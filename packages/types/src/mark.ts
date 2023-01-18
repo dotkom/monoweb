@@ -7,7 +7,6 @@ export const MarkSchema = z.object({
   updatedAt: z.date(),
   category: z.string(),
   details: z.string(),
-  givenTo: z.string().array(),
   duration: z.number(),
 })
 

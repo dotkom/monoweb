@@ -10,6 +10,7 @@ export interface PersonalMarkRepository {
   getPersonalMarksForUser: (userId: string) => Promise<PersonalMark[]>
   addPersonalMarkToUser: (userId: string, markId: string) => Promise<PersonalMark | undefined>
   removePersonalMark: (userId: string, markId: string) => Promise<PersonalMark | undefined>
+  getPersonalMark: (userId: string, markId: string) => Promise<PersonalMark | undefined>
 }
 
 export const initPersonalMarkRepository = (db: Kysely<Database>): PersonalMarkRepository => {
@@ -32,6 +33,15 @@ export const initPersonalMarkRepository = (db: Kysely<Database>): PersonalMarkRe
         .where("userId", "=", userId)
         .where("markId", "=", markId)
         .returningAll()
+        .executeTakeFirst()
+      return personalMark ? mapToPersonalMark(personalMark) : personalMark
+    },
+    getPersonalMark: async (userId: string, markId: string) => {
+      const personalMark = await db
+        .selectFrom("personalMark")
+        .selectAll()
+        .where("userId", "=", userId)
+        .where("markId", "=", markId)
         .executeTakeFirst()
       return personalMark ? mapToPersonalMark(personalMark) : personalMark
     },

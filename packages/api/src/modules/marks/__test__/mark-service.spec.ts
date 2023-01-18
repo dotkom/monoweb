@@ -19,7 +19,6 @@ describe("MarkService", () => {
       title: "",
       category: "",
       details: "",
-      givenTo: [],
       givenAt: new Date(),
       duration: 20,
       updatedAt: new Date(),
