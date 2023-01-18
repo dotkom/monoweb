@@ -1,5 +1,5 @@
 ---
-import Footer from "@/components/Footer.astro"
+import Footer from "@/components/common/Footer.astro"
 import "../app.css"
 
 export interface Props {
@@ -19,7 +19,7 @@ const { title } = Astro.props
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title || "Fadderukene | Linjeforeningen Online"}</title>
   </head>
-  <body class="flex flex-col min-h-screen bg-slate-12 text-blue-1">
+  <body class="flex flex-col min-h-screen bg-background text-blue-12">
     <main>
       <slot />
     </main>

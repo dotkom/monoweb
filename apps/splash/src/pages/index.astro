@@ -1,10 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro"
-import Hero from "@/components/Hero.svelte"
-import BuddyWeeks from "@/components/BuddyWeeks.svelte"
+import Hero from "@/components/sections/Hero.svelte"
+import BuddyWeeks from "@/components/sections/BuddyWeeks.svelte"
+import Events from "@/components/sections/Events.svelte"
+import Join from "@/components/sections/Join.svelte"
+import Debug from "@/components/sections/Debug.svelte"
 ---
 
 <Layout title="Welcome to Astro.">
-  <Hero />
-  <BuddyWeeks />
+  <div class="flex flex-col justify-start items-center space-y-8">
+    <Hero />
+    <BuddyWeeks />
+    <Events />
+    <Join />
+    <Debug />
+  </div>
 </Layout>
