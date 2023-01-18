@@ -1,39 +1,39 @@
-import {defineField, defineType} from 'sanity'
-import {sectionPreview} from './section_preview'
+import { defineField, defineType } from "sanity"
+import { sectionPreview } from "./section_preview"
 
 const badgeSection = defineType({
-  title: 'Badge Section',
-  name: 'badge_section',
-  type: 'object',
+  title: "Badge Section",
+  name: "badge_section",
+  type: "object",
   fields: [
     defineField({
-      title: 'Section Name',
-      name: 'section_name',
-      type: 'string',
+      title: "Section Name",
+      name: "section_name",
+      type: "string",
     }),
     defineField({
-      title: 'Content',
-      name: 'content',
-      type: 'array',
-      of: [{type: 'block'}],
+      title: "Content",
+      name: "content",
+      type: "array",
+      of: [{ type: "block" }],
     }),
     defineField({
-      title: 'Badges',
-      name: 'badges',
-      type: 'array',
+      title: "Badges",
+      name: "badges",
+      type: "array",
       of: [
         {
-          title: 'Badge',
-          name: 'badge',
-          type: 'object',
+          title: "Badge",
+          name: "badge",
+          type: "object",
           fields: [
             {
-              name: 'badge_title',
-              type: 'string',
+              name: "badge_title",
+              type: "string",
             },
             {
-              name: 'badge_url',
-              type: 'image',
+              name: "badge_url",
+              type: "image",
             },
           ],
         },
