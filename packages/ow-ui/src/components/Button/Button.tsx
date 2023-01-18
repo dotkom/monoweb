@@ -1,5 +1,5 @@
-import { cva } from "cva"
 import type { VariantProps } from "cva"
+import { cva } from "cva"
 import React, { forwardRef, HTMLProps, PropsWithChildren } from "react"
 import { twMerge } from "tailwind-merge"
 
@@ -29,7 +29,7 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
         ref={ref}
       >
         <div className="flex items-center justify-center">
-          <i className="mr-1">{props.icon && props.icon}</i>
+          {props.icon && <i className="mr-1">{props.icon && props.icon}</i>}
           <span className="text-inherit">{props.children}</span>
         </div>
       </button>
@@ -93,7 +93,7 @@ const subtle = cva("bg-transparent", {
       red: "text-red-11 hover:bg-red-2",
       green: "text-green-11 hover:bg-green-2",
       amber: "text-amber-11 hover:bg-amber-2",
-      slate: "text-slate-11 hover:bg-slate-2",
+      slate: "text-slate-11 hover:bg-slate-8",
     },
   },
 })

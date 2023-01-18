@@ -40,7 +40,8 @@ const styles = {
   }),
   heading: css({
     color: theme.colors.gray6,
-    padding: "0px 0px 5px 3px",
+    padding: "10px 0px 10px 3px",
+    maxWidth: "150px",
     "&:hover": {
       cursor: "pointer",
     },

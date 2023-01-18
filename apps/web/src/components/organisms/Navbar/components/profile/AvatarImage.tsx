@@ -2,11 +2,17 @@ import { css } from "@dotkomonline/ui"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 import { styled } from "@stitches/react"
 
-const AvatarImage = () => (
-  <Avatar>
+interface IAvatar {
+  radius?: string
+}
+
+const AvatarImage: React.FC<IAvatar> = ({radius = "40px"}) => (
+
+  <Avatar >
     <Image
       alt="Colm Tuite"
       src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHw%3D&w=1000&q=80"
+      style={{width: radius}}
     />
     <Fallback delayMs={500}>CT</Fallback>
   </Avatar>
@@ -20,8 +26,6 @@ const styles = {
     verticalAlign: "middle",
     overflow: "hidden",
     userSelect: "none",
-    width: 40,
-    height: 40,
     borderRadius: "100%",
     transition: "all 0.5s",
     "&:hover": {

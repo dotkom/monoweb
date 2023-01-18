@@ -56,7 +56,7 @@ export const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setI
         <Label htmlFor="s1" css={{ paddingRight: 15 }}>
           {label}
         </Label>
-        <Switch id="s1" disabled={disabled} onChange={() => setIsChecked(!isChecked)}>
+        <Switch id="s1" disabled={disabled} checked={isChecked} onCheckedChange={() => setIsChecked(!isChecked)}>
           <SwitchThumb />
         </Switch>
       </Flex>

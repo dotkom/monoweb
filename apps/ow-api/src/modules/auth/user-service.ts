@@ -12,7 +12,6 @@ export interface UserService {
   signIn: (email: string, password: string, challenge: string) => Promise<boolean>
 }
 
-<<<<<<< HEAD
 export const initUserService = (userRepository: UserRepository): UserService => {
   const hydraAdmin = new V0alpha2Api(
     new Configuration({
@@ -57,20 +56,3 @@ export const initUserService = (userRepository: UserRepository): UserService => 
     },
   }
 }
-=======
-export const initUserService = (userRepository: UserRepository): UserService => ({
-  getUser: async (id) => {
-    const user = await userRepository.getUserByID(id)
-    if (!user) throw new NotFoundError(`User with ID:${id} not found`)
-    return user
-  },
-  getUsers: async (limit) => {
-    const users = await userRepository.getUsers(limit)
-    return users
-  },
-  register: async (payload) => {
-    const user = await userRepository.createUser()
-    return user
-  },
-})
->>>>>>> 8489c56 (test out oidc login)

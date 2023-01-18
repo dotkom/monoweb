@@ -24,6 +24,7 @@ const styles = {
   heading: css({
     fontSize: theme.fontSizes["3xl"],
     fontWeight: theme.fontWeights.medium,
+    color: '$black'
   }),
   horizontalLine: css({
     border: "0.5px solid",
@@ -33,6 +34,7 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     width: "100%",
+    marginTop: '42.5px'
   }),
 }
 
