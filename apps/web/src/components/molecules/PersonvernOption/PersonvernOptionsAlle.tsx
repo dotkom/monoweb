@@ -1,11 +1,15 @@
+import { css, Toggle } from "@dotkomonline/ui"
+import { blackA } from "@radix-ui/colors"
+import { GridIcon } from "@radix-ui/react-icons"
+import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
+
 import PersonvernOption from "./PersonvernOption"
 
-export default {
-  title: "molecules/PersonvernOption",
-  component: PersonvernOption,
-}
+// interface PersonvernAlleProps {
+//   children: ReactNode
+// }
 
-const personList = [
+export const personList = [
   { key: 0, optionsText: "Brukerprofil synlig for andre brukere", state: false },
   { key: 1, optionsText: "Vis brukernavn i brukerprofil", state: false },
   { key: 2, optionsText: "Vis epostadresse i brukerprofil", state: false },
@@ -15,22 +19,20 @@ const personList = [
   { key: 6, optionsText: "Tillate at bilder av deg på offentlige arrangementer kan legges ut", state: false },
 ]
 
-// return (
-//   <div>
-//     {
-//       React.Children.toArray(
-//         personList.map(({key, value}) => <div> {value} </div>)
-//       )
-//     }
-//   </div>
-// );
+const PersonvernOptionAlle: FC = () => {
+  const [isChecked, setIsChecked] = useState<boolean>(false)
 
-export const BasicStory = () => {
+  useEffect(() => {
+    console.log(isChecked)
+  }, [isChecked])
+
   return (
-    <div style={{ display: "flex", gap: "30px", flexDirection: "column" }}>
+    <div className="mt-10 flex w-full flex-col">
       {personList.map((title) => {
         return <PersonvernOption key={title.key}>{title.optionsText}</PersonvernOption>
       })}
     </div>
   )
 }
+
+export default PersonvernOptionAlle

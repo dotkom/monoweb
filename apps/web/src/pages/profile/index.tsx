@@ -1,18 +1,23 @@
+import PersonvernOption from "@/components/molecules/PersonvernOption"
+import PersonvernOptionAlle from "@/components/molecules/PersonvernOption/PersonvernOptionsAlle"
+import PersonvernOptionSide from "@/components/molecules/PersonvernOption/PersonvernSide"
 import ProfileMenuContainer from "@/components/organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer"
-import { css, styled, theme } from "@dotkom/ui"
-import React from "react"
 import ProfileContentContainer from "@/components/views/ProfileView/ProfileContentContainer"
+import { css, styled, theme } from "@dotkomonline/ui"
+import React from "react"
 
 interface ProfileProps {}
 
 const index: React.FC<ProfileProps> = ({}) => {
   return (
-    <Container>
-      <Heading>Profil</Heading>
+    <Container className="bg-background">
+      <Heading className="mb-6">Profil</Heading>
       <HorizontalLine />
-      <ContentWrapper>
+      <ContentWrapper className="mt-11">
         <ProfileMenuContainer />
         <ProfileContentContainer />
+        <PersonvernOptionSide />
+
       </ContentWrapper>
     </Container>
   )

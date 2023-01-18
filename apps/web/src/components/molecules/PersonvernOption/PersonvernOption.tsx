@@ -1,68 +1,32 @@
 import { css, Toggle } from "@dotkomonline/ui"
 import { blackA } from "@radix-ui/colors"
 import { GridIcon } from "@radix-ui/react-icons"
-import { SetStateAction, FC, ReactNode } from "react"
+import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
+
+import personList from "./PersonvernOption"
 
 interface PersonvernProps {
   children: ReactNode
 }
 
 const PersonvernOption: FC<PersonvernProps> = ({ children }) => {
-  let isChecked: boolean = false
+  const [isChecked, setIsChecked] = useState<boolean>(false)
+
+  useEffect(() => {
+    console.log(isChecked)
+  }, [isChecked])
 
   return (
-    <div className={styles.container()}>
-      <div className={styles.row1()}>
-        <p className={styles.textElement()}>{children}</p>
-        <div className={styles.togglePos()}>
-          <Toggle
-            label={""}
-            isChecked={false}
-            setIsChecked={function (value: SetStateAction<boolean>): void {
-              console.log(isChecked)
-              throw new Error("Function not implemented.")
-            }}
-          ></Toggle>
+    <div className="bg-background w-full">
+      <div className="mt-4 flex w-[calc(50%+21px)] min-w-[464px] flex-row justify-between ">
+        <p className=" m-0 w-full flex-auto p-1 text-sm font-normal not-italic">{children}</p>
+        <div className="w-15 m-0 flex-auto p-0">
+          <Toggle label={""} isChecked={isChecked} setIsChecked={setIsChecked}></Toggle>
         </div>
       </div>
-      <hr className={styles.line()} />
+      <hr className="border-slate-12 border-1 m-[0.5px] mt-4 w-full p-0 " />
     </div>
   )
-}
-
-const styles = {
-  container: css({
-    width: "100%",
-  }),
-  row1: css({
-    display: "flex",
-    flexDirection: "row",
-    minWidth: "580px",
-    width: "calc(50% + 21px)",
-    justifyContent: "space-between",
-  }),
-  textElement: css({
-    gridColumn: 1,
-    padding: 3,
-    margin: 0,
-    fontStyle: "normal",
-    fontWeight: 500,
-    fontSize: "14px",
-    lineHeight: "20px",
-  }),
-  line: css({
-    height: "1px",
-    border: "none",
-    backgroundColor: "gray",
-    padding: 0,
-    marginTop: "15px",
-    width: "100%",
-  }),
-  togglePos: css({
-    gridColumn: 2,
-    padding: 0,
-    margin: 0,
-  }),
 }
 
 export default PersonvernOption

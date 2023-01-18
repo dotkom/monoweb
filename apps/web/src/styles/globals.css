@@ -20,6 +20,8 @@
   h5,
   h6,
   p,
+  ul,
+  li,
   span {
     @apply text-slate-12;
   }
