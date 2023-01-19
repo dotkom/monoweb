@@ -1,8 +1,7 @@
 import { cva } from "cva"
 import { forwardRef, HTMLInputTypeAttribute, ReactComponentElement, ReactElement, useState } from "react"
 import { Label } from "@radix-ui/react-label"
-import { IconEyeCheck, IconEyeOff, IconEye} from "@tabler/icons"
-import { slate } from "@radix-ui/colors"
+import { IconEyeCheck, IconEyeOff} from "@tabler/icons"
 
 
 
@@ -30,11 +29,11 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({label, w
             <span className="text-xs">{inputInfo}</span>
             <div className="relative">
               <input type={InputType} {...props} ref={ref} className={input({error: !!error})} />
-                {typeof error === "string" && <span className="text-red-11 mt-1 text-xs"></span>}
                 <div>
                     <span className={eye({color: eyeColor})}>{Icon}</span>
                 </div>
             </div>
+            {typeof error === "string" && <span className="text-red-11 mt-1 text-xs">{error}</span>}
         </div>
     )
   })
@@ -43,7 +42,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({label, w
   const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2 w-full ", {
     variants: {
       error: {
-        true: "text-red-11 border-red-7",
+        true:"text-slate-12 border-red-7",
         false: "text-slate-12 border-slate-6",
       },
     },
