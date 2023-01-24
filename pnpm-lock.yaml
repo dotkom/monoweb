@@ -38,9 +38,9 @@ importers:
       '@next/font': ^13.1.1
       '@radix-ui/react-alert-dialog': ^1.0.2
       '@radix-ui/react-dialog': ^1.0.2
+      '@tanstack/react-query': ^4.18.0
       '@tremor/react': ^1.1.4
       '@trpc/client': ^10.0.0
-      '@trpc/next': ^10.0.0
       '@trpc/react-query': ^10.0.0
       '@trpc/server': ^10.0.0
       '@types/eslint': ^8
@@ -70,10 +70,10 @@ importers:
       '@next/font': 13.1.1
       '@radix-ui/react-alert-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
       '@radix-ui/react-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
+      '@tanstack/react-query': 4.18.0_biqbaboplfbrettd7655fr4n2y
       '@tremor/react': 1.6.1_biqbaboplfbrettd7655fr4n2y
       '@trpc/client': 10.0.0_@trpc+server@10.0.0
-      '@trpc/next': 10.0.0_4p2uwqo5zdmofe7h7bivnque34
-      '@trpc/react-query': 10.0.0_iid2koucbibwrwxy46e7xqvejm
+      '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
       '@trpc/server': 10.0.0
       clsx: 1.2.1
       next: 13.1.2_biqbaboplfbrettd7655fr4n2y
@@ -9506,26 +9506,6 @@ packages:
       '@trpc/server': 10.0.0
     dev: false
 
-  /@trpc/next/10.0.0_4p2uwqo5zdmofe7h7bivnque34:
-    resolution: {integrity: sha512-ka7N2fFTGDsfX5wctyJzTV6Ci6godGA0s75gWoeTU1gAsXzE9Hkt/ozarzlrcpiFSjLBeGhIyuB4RbFN29VGTw==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.0.0
-      '@trpc/react-query': ^10.0.0-proxy-beta.21
-      '@trpc/server': 10.0.0
-      next: '*'
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@trpc/client': 10.0.0_@trpc+server@10.0.0
-      '@trpc/react-query': 10.0.0_iid2koucbibwrwxy46e7xqvejm
-      '@trpc/server': 10.0.0
-      next: 13.1.2_biqbaboplfbrettd7655fr4n2y
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-ssr-prepass: 1.5.0_react@18.2.0
-    dev: false
-
   /@trpc/next/10.0.0_qd2chkaz7iti4ggpwsiktgrqdu:
     resolution: {integrity: sha512-ka7N2fFTGDsfX5wctyJzTV6Ci6godGA0s75gWoeTU1gAsXzE9Hkt/ozarzlrcpiFSjLBeGhIyuB4RbFN29VGTw==}
     peerDependencies:
@@ -9545,21 +9525,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-ssr-prepass: 1.5.0_react@18.2.0
-    dev: false
-
-  /@trpc/react-query/10.0.0_iid2koucbibwrwxy46e7xqvejm:
-    resolution: {integrity: sha512-5+Lux1kT0HGmoo606Xq9cPssYZBZeeBwLTmmKwLagGYTbgxaWF+T0LMbqmkL3E8U8KBj9BPUm1PgFGWsJMdf+A==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.0.0
-      '@trpc/server': 10.0.0
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@trpc/client': 10.0.0_@trpc+server@10.0.0
-      '@trpc/server': 10.0.0
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@trpc/react-query/10.0.0_n4fy2lr7pb63ahuwirmw6eo44i:
