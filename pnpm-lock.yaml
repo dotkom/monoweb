@@ -34,6 +34,7 @@ importers:
       '@dotkomonline/auth': '*'
       '@dotkomonline/config': '*'
       '@dotkomonline/ui': '*'
+      '@next-auth/upstash-redis-adapter': ^3.0.3
       '@next/font': ^13.1.1
       '@radix-ui/react-alert-dialog': ^1.0.2
       '@radix-ui/react-dialog': ^1.0.2
@@ -46,7 +47,6 @@ importers:
       '@types/node': ^16.11.47
       '@types/react': ^18.0.15
       '@types/react-dom': ^18.0.6
-      '@upstash/redis': ^1.18.1
       autoprefixer: ^10.4.13
       clsx: ^1.2.1
       eslint: ^8.26.0
@@ -57,6 +57,7 @@ importers:
       prettier: ^2.7.1
       react: 18.2.0
       react-dom: 18.2.0
+      react-icons: ^4.6.0
       superjson: ^1.11.0
       tailwindcss: ^3.2.1
       tslib: ^2.4.1
@@ -65,6 +66,7 @@ importers:
       '@dotkomonline/api': link:../../packages/api
       '@dotkomonline/auth': link:../../packages/auth
       '@dotkomonline/ui': link:../../packages/ow-ui
+      '@next-auth/upstash-redis-adapter': 3.0.3_next-auth@4.17.0
       '@next/font': 13.1.1
       '@radix-ui/react-alert-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
       '@radix-ui/react-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
@@ -73,12 +75,12 @@ importers:
       '@trpc/next': 10.0.0_4p2uwqo5zdmofe7h7bivnque34
       '@trpc/react-query': 10.0.0_iid2koucbibwrwxy46e7xqvejm
       '@trpc/server': 10.0.0
-      '@upstash/redis': 1.18.1
       clsx: 1.2.1
       next: 13.1.2_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.17.0_7jnwqgtpcnwg4nzft4b6xlzlfi
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-icons: 4.6.0_react@18.2.0
       superjson: 1.11.0
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
@@ -4872,6 +4874,16 @@ packages:
       call-me-maybe: 1.0.2
       glob-to-regexp: 0.3.0
     dev: true
+
+  /@next-auth/upstash-redis-adapter/3.0.3_next-auth@4.17.0:
+    resolution: {integrity: sha512-AH3FEZtWDjS7U0RZyB/5RJaPa2ZRWlU5n0fa3rLnyX5FMR0jmpz5yRxqSKgohs9QfC66K/rOBvZOlAKQF1GTgw==}
+    peerDependencies:
+      '@upstash/redis': ^1.0.1
+      next-auth: ^4
+    dependencies:
+      next-auth: 4.17.0_7jnwqgtpcnwg4nzft4b6xlzlfi
+      uuid: 8.3.2
+    dev: false
 
   /@next-auth/upstash-redis-adapter/3.0.3_pnwh7fhazfefccysd676na2e6m:
     resolution: {integrity: sha512-AH3FEZtWDjS7U0RZyB/5RJaPa2ZRWlU5n0fa3rLnyX5FMR0jmpz5yRxqSKgohs9QfC66K/rOBvZOlAKQF1GTgw==}
