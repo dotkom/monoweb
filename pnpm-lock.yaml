@@ -43,6 +43,7 @@ importers:
       '@tanstack/react-query': ^4.18.0
       '@tremor/react': ^1.6.1
       '@trpc/client': ^10.0.0
+      '@trpc/next': ^10.0.0
       '@trpc/react-query': ^10.0.0
       '@trpc/server': ^10.0.0
       '@types/eslint': ^8
@@ -79,6 +80,7 @@ importers:
       '@tanstack/react-query': 4.18.0_biqbaboplfbrettd7655fr4n2y
       '@tremor/react': 1.6.1_biqbaboplfbrettd7655fr4n2y
       '@trpc/client': 10.0.0_@trpc+server@10.0.0
+      '@trpc/next': 10.0.0_xrephbwkykzfyuqurkts6e4hvu
       '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
       '@trpc/server': 10.0.0
       clsx: 1.2.1
@@ -9596,6 +9598,27 @@ packages:
       '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
       '@trpc/server': 10.0.0
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-ssr-prepass: 1.5.0_react@18.2.0
+    dev: false
+
+  /@trpc/next/10.0.0_xrephbwkykzfyuqurkts6e4hvu:
+    resolution: {integrity: sha512-ka7N2fFTGDsfX5wctyJzTV6Ci6godGA0s75gWoeTU1gAsXzE9Hkt/ozarzlrcpiFSjLBeGhIyuB4RbFN29VGTw==}
+    peerDependencies:
+      '@tanstack/react-query': ^4.3.8
+      '@trpc/client': 10.0.0
+      '@trpc/react-query': ^10.0.0-proxy-beta.21
+      '@trpc/server': 10.0.0
+      next: '*'
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@tanstack/react-query': 4.18.0_biqbaboplfbrettd7655fr4n2y
+      '@trpc/client': 10.0.0_@trpc+server@10.0.0
+      '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
+      '@trpc/server': 10.0.0
+      next: 13.1.2_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-ssr-prepass: 1.5.0_react@18.2.0
