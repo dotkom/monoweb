@@ -14,7 +14,6 @@ export default function EventPage() {
   const { Modal, open: openCreationModal } = useModal(EventCreationModal)
 
   const { data = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
-  // TODO: use tanstack table
 
   return (
     <div className="flex w-full flex-col gap-4 p-6">
