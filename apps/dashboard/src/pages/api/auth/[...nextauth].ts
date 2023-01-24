@@ -1,6 +1,4 @@
 import NextAuth, { DefaultUser, NextAuthOptions } from "next-auth"
-import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter"
-import { Redis } from "@upstash/redis"
 
 // TODO: find a nicer way to do this
 process.env.NEXTAUTH_URL = "http://localhost:3002"
@@ -33,7 +31,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async session({ session, user, token }) {
+    async session({ session, user: _, token }) {
       if (token.sub) {
         session.user.id = token.sub
       }
