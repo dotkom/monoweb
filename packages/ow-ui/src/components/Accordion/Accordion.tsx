@@ -1,23 +1,24 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import React from "react"
+import * as React from "react"
+import { AccordionContainer, AccordionContent, AccordionItem, AccordionTrigger } from "./AccordionComponents"
 
-export function AccordionComponent() {
+export interface AccordionItem {
+  title: string
+  content: string
+}
+
+interface AccordionProps {
+  items: AccordionItem[]
+}
+
+export const Accordion: React.FC<AccordionProps> = ({ items }) => {
   return (
-    <Accordion type="single" collapsible className="w-[450px]">
-      <AccordionItem value="item-1">
-        <AccordionTrigger>Is it accessible?</AccordionTrigger>
-        <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-2">
-        <AccordionTrigger>Is it styled?</AccordionTrigger>
-        <AccordionContent>
-          Yes. It comes with default styles that matches the other components' aesthetic.
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-3">
-        <AccordionTrigger>Is it animated?</AccordionTrigger>
-        <AccordionContent>Yes. It's animated by default, but you can disable it if you prefer.</AccordionContent>
-      </AccordionItem>
-    </Accordion>
+    <AccordionContainer type="single" collapsible className="w-[450px]">
+      {items.map((item) => (
+        <AccordionItem value={`item-${item.title}`}>
+          <AccordionTrigger>{item.title}</AccordionTrigger>
+          <AccordionContent>{item.content}</AccordionContent>
+        </AccordionItem>
+      ))}
+    </AccordionContainer>
   )
 }

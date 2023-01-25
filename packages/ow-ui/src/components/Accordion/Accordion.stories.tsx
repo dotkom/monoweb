@@ -1,28 +1,25 @@
-import { Alert } from "./Alert"
 import { ComponentStory } from "@storybook/react"
+import React from "react"
+import { Accordion, AccordionItem } from "./Accordion"
 
 export default {
-  title: "atoms/Alert",
-  component: Alert,
+  title: "atoms/Accordion",
+  component: Accordion,
 }
 
-const Template: ComponentStory<typeof Alert> = (args) => (
+const items: AccordionItem[] = [
+  { title: "Is it accessible?", content: "Yes. It adheres to the WAI-ARIA design pattern." },
+  {
+    title: "Is it styled?",
+    content: "Yes. It comes with default styles that matches the other components aesthetic.",
+  },
+  { title: "Is it animated?", content: "Yes. It's animated by default, but you can disable it if you prefer." },
+]
+
+const Template: ComponentStory<typeof Accordion> = (args) => (
   <div className="max-w-[400px]">
-    <Alert
-      {...args}
-      children="Something happened! You made a mistake and there is no going back, your data was lost forever!"
-    />
+    <Accordion items={items} />
   </div>
 )
 
-export const Info = Template.bind({})
-Info.args = { status: "info", title: "This is a very informative alert" }
-
-export const Success = Template.bind({})
-Success.args = { status: "success", title: "This is a success message" }
-
-export const Warning = Template.bind({})
-Warning.args = { status: "warning", title: "This is a warning alert - check this out!" }
-
-export const Danger = Template.bind({})
-Danger.args = { status: "danger", title: "The apocalypse is coming and zombies are on the loose" }
+export const Example = Template.bind({})
