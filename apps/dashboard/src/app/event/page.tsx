@@ -12,7 +12,7 @@ export default function EventPage() {
   const { Flyout, open: openDetailsFlyout } = useFlyout(EventDetailsFlyout)
   const { Modal, open: openCreationModal } = useModal(EventCreationModal)
 
-  const { data, error, isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
+  const { data = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
   // TODO: use tanstack table
 
   return (
@@ -24,9 +24,9 @@ export default function EventPage() {
         <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
       </div>
       <div className="rounded bg-white shadow">
-        {JSON.stringify(error, null, 2)}
-        {isLoading && "Loading event data"}
-        {!isLoading && (
+        {isLoading ? (
+          "Loading"
+        ) : (
           <Table>
             <TableHead>
               <TableRow>
@@ -40,17 +40,19 @@ export default function EventPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>Åre</TableCell>
-                <TableCell>2022-01-01</TableCell>
-                <TableCell>2022-01-05</TableCell>
-                <TableCell>Arrkom</TableCell>
-                <TableCell>Sosialt</TableCell>
-                <TableCell>25/150</TableCell>
-                <TableCell>
-                  <Button text="Endre" importance="secondary" handleClick={openDetailsFlyout} />
-                </TableCell>
-              </TableRow>
+              {data.map((event) => (
+                <TableRow key={event.id}>
+                  <TableCell>{event.title}</TableCell>
+                  <TableCell>{event.start.toLocaleTimeString()}</TableCell>
+                  <TableCell>{event.end.toLocaleTimeString()}</TableCell>
+                  <TableCell>{event.committeeID ?? "Ingen"}</TableCell>
+                  <TableCell>{event.type}</TableCell>
+                  <TableCell>0/0</TableCell>
+                  <TableCell>
+                    <Button text="Endre" importance="secondary" handleClick={openDetailsFlyout} />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         )}

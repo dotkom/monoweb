@@ -10,11 +10,11 @@ export const EventSchema = z.object({
   status: z.enum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
   type: z.string(), // TODO:
   public: z.boolean(),
-  description: z.string().optional(),
-  subtitle: z.string().optional(),
-  imageUrl: z.string().optional(),
-  location: z.string().optional(),
-  committeeID: z.string().optional(),
+  description: z.string().nullish(),
+  subtitle: z.string().nullish(),
+  imageUrl: z.string().nullish(),
+  location: z.string().nullish(),
+  committeeID: z.string().nullish(),
 })
 
 export type Event = z.infer<typeof EventSchema>
