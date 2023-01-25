@@ -5,6 +5,7 @@ import { Sidebar } from "../components/Sidebar"
 import { AuthProvider } from "./AuthProvider"
 import { unstable_getServerSession } from "next-auth"
 import { authOptions } from "../pages/api/auth/[...nextauth]"
+import { QueryProvider } from "./QueryProvider"
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await unstable_getServerSession(authOptions)
@@ -19,8 +20,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body>
         <div className="bg-background flex">
           <AuthProvider session={session}>
-            <Sidebar />
-            <main className="min-h-screen w-full bg-slate-50">{children}</main>
+            <QueryProvider>
+              <Sidebar />
+              <main className="min-h-screen w-full bg-slate-50">{children}</main>
+            </QueryProvider>
           </AuthProvider>
         </div>
       </body>
