@@ -36,8 +36,8 @@ program
         "Migrating...\n" +
           res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}`).join("\n")
       )
-    } else if (res.error) {
-      logger.error(res.error)
+    } else {
+      logger.warn(res)
     }
 
     if (option.withSeed) {

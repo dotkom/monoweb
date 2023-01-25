@@ -14,9 +14,9 @@ export const CompanySchema = z.object({
 
 export type Company = z.infer<typeof CompanySchema>
 
-export const InsertCompanySchema = CompanySchema.omit({
+export const CompanyWriteSchema = CompanySchema.partial({
   id: true,
   createdAt: true,
 })
 
-export type InsertCompany = z.infer<typeof InsertCompanySchema>
+export type CompanyWrite = z.infer<typeof CompanyWriteSchema>

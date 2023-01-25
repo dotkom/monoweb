@@ -1,16 +1,19 @@
 import { CompanyTable, EventCompanyTable } from "./company"
 import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable } from "./event"
+import { MarkTable, PersonalMarkTable } from "./marks"
 import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
 
 export interface Database {
-  User: UserTable
-  Company: CompanyTable
-  Session: SessionTable
-  VerificationToken: VerificationTokenTable
-  Account: AccountTable
-  Event: EventTable
-  Attendance: AttendanceTable
-  Committee: CommitteeTable
-  Attendee: AttendeeTable
-  EventCompany: EventCompanyTable
+  owUser: UserTable
+  company: CompanyTable
+  session: SessionTable
+  verificationToken: VerificationTokenTable
+  account: AccountTable
+  event: EventTable
+  attendance: AttendanceTable
+  committee: CommitteeTable
+  attendee: AttendeeTable
+  eventCompany: EventCompanyTable
+  mark: MarkTable
+  personalMark: PersonalMarkTable
 }

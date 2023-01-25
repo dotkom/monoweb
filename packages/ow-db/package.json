@@ -12,7 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "kysely": "^0.22.0",
+    "kysely": "^0.23.0",
     "pg": "^8.8.0"
   },
   "devDependencies": {
@@ -21,7 +21,7 @@
     "@types/pg": "^8.6.5",
     "chance": "^1.1.8",
     "eslint": "^8.26.0",
-    "kysely-codegen": "^0.8.0",
+    "kysely-codegen": "^0.9.0",
     "node-pg-migrate": "^6.2.2",
     "tsup": "^6.2.1",
     "tsx": "^3.9.0",

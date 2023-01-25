@@ -1,0 +1,42 @@
+{
+  "name": "@dotkomonline/api",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@dotkomonline/auth": "*",
+    "@dotkomonline/db": "*",
+    "@ory/client": "^1.0.1",
+    "@trpc/server": "^10.0.0",
+    "argon2": "^0.30.2",
+    "axios": "^0.27.0",
+    "date-fns": "^2.29.3",
+    "kysely": "^0.23.0",
+    "pg": "^8.8.0",
+    "superjson": "^1.11.0",
+    "zod": "^3.17.10"
+  },
+  "devDependencies": {
+    "@dotkomonline/config": "*",
+    "@dotkomonline/logger": "*",
+    "@dotkomonline/types": "*",
+    "@types/config": "^3.3.0",
+    "@types/eslint": "^8",
+    "@types/pg": "^8.6.5",
+    "@vitest/ui": "^0.26.0",
+    "eslint": "^8.26.0",
+    "typescript": "^4.9.3",
+    "vite-tsconfig-paths": "^3.5.2",
+    "vitest": "^0.26.0"
+  }
+}

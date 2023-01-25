@@ -1,46 +1,33 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { NextPage } from "next"
 import { SessionProvider } from "next-auth/react"
 import { AppProps } from "next/app"
-import { ReactElement, ReactNode, useState } from "react"
+import { ReactElement, ReactNode } from "react"
 
-import { httpBatchLink } from "@trpc/client"
+import type { Session } from "next-auth"
 
 import MainLayout from "../components/layout/MainLayout"
 import "../styles/globals.css"
 import { globalStyles } from "../theme/global-style"
-import { trpc } from "../utils/trpc"
+import { trpc } from "@/utils/trpc"
 
-export type NextPageWithLayout = NextPage & {
+// TODO: App directory?
+export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
   getLayout?: (page: ReactElement) => ReactNode
 }
 
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
+type CustomAppProps<P> = AppProps & {
+  Component: NextPageWithLayout<P>
+  pageProps: {
+    session: Session | null
+  }
 }
 
-function CustomApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
+function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element {
   globalStyles()
+
   const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
 
-  const [queryClient] = useState(() => new QueryClient())
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: "http://localhost:4000/trpc",
-        }),
-      ],
-    })
-  )
-
-  return (
-    <SessionProvider>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
-      </trpc.Provider>
-    </SessionProvider>
-  )
+  return <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
 }
 
-export default CustomApp
+export default trpc.withTRPC(CustomApp)

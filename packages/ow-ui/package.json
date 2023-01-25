@@ -2,8 +2,8 @@
   "name": "@dotkomonline/ui",
   "version": "0.1.0-beta.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "build": "tsup --entry src --entry !src/**/*.stories.* --format esm,cjs --target es2020 --dts --clean --sourcemap",
     "clean": "rm -rf node_modules",
@@ -20,7 +20,7 @@
     "@stitches/react": "^1.2.8",
     "@tabler/icons": "^1.109.0",
     "clsx": "^1.2.1",
-    "cva": "npm:class-variance-authority@^0.2.4",
+    "cva": "npm:class-variance-authority@^0.4.0",
     "react": "^18.2.0",
     "react-icons": "^4.4.0",
     "tailwind-merge": "^1.7.0"
@@ -35,6 +35,6 @@
     "postcss": "^8.4.18",
     "tailwindcss": "^3.2.1",
     "tsup": "^6.2.3",
-    "vitest": "^0.23.4"
+    "vitest": "^0.26.0"
   }
 }
