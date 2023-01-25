@@ -7,6 +7,9 @@ export const eventRouter = t.router({
   create: t.procedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
     return ctx.eventService.create(input)
   }),
+  edit: t.procedure.input(EventWriteSchema).mutation(({ input: changes, ctx }) => {
+    return ctx.eventService.editEvent(changes);
+  }),
   all: t.procedure
     .input(
       z.object({
