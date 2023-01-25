@@ -1,6 +1,7 @@
 import { themes } from "@storybook/theming"
 
-import "../../web/src/styles/globals.css"
+import "tailwindcss/tailwind.css"
+
 
 export const parameters = {
   darkMode: {
@@ -17,6 +18,6 @@ export const parameters = {
 
 export const decorators = [
   (Story) => {
-    return <Story />
+    return <div className="dark"><Story /></div>
   },
 ]
