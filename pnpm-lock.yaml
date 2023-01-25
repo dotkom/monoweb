@@ -34,7 +34,6 @@ importers:
       '@dotkomonline/auth': '*'
       '@dotkomonline/config': '*'
       '@dotkomonline/ui': '*'
-      '@next-auth/upstash-redis-adapter': ^3.0.3
       '@next/font': ^13.1.1
       '@radix-ui/react-alert-dialog': ^1.0.2
       '@radix-ui/react-dialog': ^1.0.2
@@ -58,7 +57,6 @@ importers:
       prettier: ^2.7.1
       react: 18.2.0
       react-dom: 18.2.0
-      react-icons: ^4.6.0
       superjson: ^1.11.0
       tailwindcss: ^3.2.1
       tslib: ^2.4.1
@@ -67,7 +65,6 @@ importers:
       '@dotkomonline/api': link:../../packages/api
       '@dotkomonline/auth': link:../../packages/auth
       '@dotkomonline/ui': link:../../packages/ow-ui
-      '@next-auth/upstash-redis-adapter': 3.0.3_pnwh7fhazfefccysd676na2e6m
       '@next/font': 13.1.1
       '@radix-ui/react-alert-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
       '@radix-ui/react-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
@@ -82,7 +79,6 @@ importers:
       next-auth: 4.17.0_7jnwqgtpcnwg4nzft4b6xlzlfi
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-icons: 4.6.0_react@18.2.0
       superjson: 1.11.0
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
@@ -4884,7 +4880,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@upstash/redis': 1.18.1
-      next-auth: 4.17.0_7jnwqgtpcnwg4nzft4b6xlzlfi
+      next-auth: 4.17.0_q76c2b4vyoegvsbrcwkfvimnai
       uuid: 8.3.2
     dev: false
 
@@ -11744,7 +11740,7 @@ packages:
       mississippi: 3.0.0
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 6.0.2
       unique-filename: 1.1.1
@@ -18918,17 +18914,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
-
-  /promise-inflight/1.0.1_bluebird@3.7.2:
-    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
-    peerDependencies:
-      bluebird: '*'
-    peerDependenciesMeta:
-      bluebird:
-        optional: true
-    dependencies:
-      bluebird: 3.7.2
 
   /promise.allsettled/1.0.6:
     resolution: {integrity: sha512-22wJUOD3zswWFqgwjNHa1965LvqTX87WPu/lreY2KSd7SVcERfuZ4GfUaOnJNnvtoIv2yXT/W00YIGMetXtFXg==}

@@ -13,7 +13,6 @@
     "@dotkomonline/api": "*",
     "@dotkomonline/auth": "*",
     "@dotkomonline/ui": "*",
-    "@next-auth/upstash-redis-adapter": "^3.0.3",
     "@next/font": "^13.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.2",
     "@radix-ui/react-dialog": "^1.0.2",
@@ -28,7 +27,6 @@
     "next-auth": "^4.17.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.6.0",
     "superjson": "^1.11.0"
   },
   "devDependencies": {
