@@ -244,6 +244,7 @@ importers:
       '@trpc/next': ^10.0.0
       '@trpc/react-query': ^10.0.0
       '@trpc/server': ^10.0.0
+      '@types/cors': ^2.8.13
       '@types/eslint': ^8
       '@types/jsdom': ^20
       '@types/node': ^16.11.47
@@ -257,6 +258,7 @@ importers:
       axios: ^0.27.0
       chromatic: ^6.7.3
       clsx: ^1.2.1
+      cors: ^2.8.5
       cva: npm:class-variance-authority@^0.4.0
       date-fns: ^2.29.3
       eslint: ^8.26.0
@@ -306,6 +308,7 @@ importers:
       argon2: 0.30.2
       axios: 0.27.2
       clsx: 1.2.1
+      cors: 2.8.5
       date-fns: 2.29.3
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.17.0_q76c2b4vyoegvsbrcwkfvimnai
@@ -327,6 +330,7 @@ importers:
       '@storybook/addon-links': 6.5.13_biqbaboplfbrettd7655fr4n2y
       '@storybook/preset-scss': 1.0.3
       '@storybook/react': 6.5.13_gpshdmfc4w665ax2rx6w5ydgtu
+      '@types/cors': 2.8.13
       '@types/eslint': 8.4.10
       '@types/jsdom': 20.0.1
       '@types/node': 16.18.3
@@ -9614,6 +9618,12 @@ packages:
     resolution: {integrity: sha512-9kZSbl3/X3TVNowLCu5HFQdQmD+4287Om55avknEYkuo6R2dDrsp/EXEHUFvfYeG7m1eJ0WYGj+cbcUIhARJAQ==}
     dev: true
 
+  /@types/cors/2.8.13:
+    resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}
+    dependencies:
+      '@types/node': 18.11.9
+    dev: true
+
   /@types/d3-array/3.0.4:
     resolution: {integrity: sha512-nwvEkG9vYOc0Ic7G7kwgviY4AQlTfYGIZ0fqB7CQHXGyYM6nO7kJh5EguSNA3jfh4rq7Sb7eMVq8isuvg2/miQ==}
     dev: false
@@ -11717,7 +11727,7 @@ packages:
       mississippi: 3.0.0
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
-      promise-inflight: 1.0.1
+      promise-inflight: 1.0.1_bluebird@3.7.2
       rimraf: 2.7.1
       ssri: 6.0.2
       unique-filename: 1.1.1
@@ -12336,6 +12346,14 @@ packages:
 
   /core-util-is/1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
+
+  /cors/2.8.5:
+    resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
+    engines: {node: '>= 0.10'}
+    dependencies:
+      object-assign: 4.1.1
+      vary: 1.1.2
+    dev: false
 
   /cosmiconfig/6.0.0:
     resolution: {integrity: sha512-xb3ZL6+L8b9JLLCx3ZdoZy4+2ECphCMo2PwqgP1tlfVq6M6YReyzBJtvWWtbDSpNr9hn96pkCiZqUcFEc+54Qg==}
@@ -13699,7 +13717,7 @@ packages:
       debug: 4.3.4
       enhanced-resolve: 5.10.0
       eslint: 8.28.0
-      eslint-plugin-import: 2.26.0_vc54pluhgv7booofyyjouvuf74
+      eslint-plugin-import: 2.26.0_d5vn4nsvkp5ugznurcfxmdkaeu
       get-tsconfig: 4.2.0
       globby: 13.1.2
       is-core-module: 2.11.0
@@ -14683,18 +14701,6 @@ packages:
         optional: true
     dev: false
 
-  /follow-redirects/1.15.2_debug@2.6.9:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 2.6.9
-    dev: false
-
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
@@ -15045,7 +15051,7 @@ packages:
       create-error-class: 3.0.2
       debug: 2.6.9
       decompress-response: 3.3.0
-      follow-redirects: 1.15.2_debug@2.6.9
+      follow-redirects: 1.15.2
       form-urlencoded: 2.0.9
       into-stream: 3.1.0
       is-plain-object: 2.0.4
@@ -18891,6 +18897,17 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+    dev: true
+
+  /promise-inflight/1.0.1_bluebird@3.7.2:
+    resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
+    peerDependencies:
+      bluebird: '*'
+    peerDependenciesMeta:
+      bluebird:
+        optional: true
+    dependencies:
+      bluebird: 3.7.2
 
   /promise.allsettled/1.0.6:
     resolution: {integrity: sha512-22wJUOD3zswWFqgwjNHa1965LvqTX87WPu/lreY2KSd7SVcERfuZ4GfUaOnJNnvtoIv2yXT/W00YIGMetXtFXg==}
