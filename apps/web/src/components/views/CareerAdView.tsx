@@ -1,12 +1,12 @@
 import { CareerAd } from "@/api/get-career-ads"
 import { Button, css, Text } from "@dotkomonline/ui"
-import { IconArrowNarrowLeft, IconGlobe } from "@tabler/icons"
 import Image from "next/image"
 import { FC } from "react"
-import { BsLinkedin, BsTwitter } from "react-icons/bs"
+import { BsLinkedin, BsTwitter, BsArrowLeft } from "react-icons/bs"
 import { ImFacebook2 } from "react-icons/im"
 import { IoTimeOutline, IoCopyOutline } from "react-icons/io5"
 import { MdWorkOutline } from "react-icons/md"
+import { TbGlobe } from "react-icons/tb"
 import PortableText from "@components/molecules/PortableText"
 
 interface CareerAdViewProps {
@@ -42,14 +42,14 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
 
         <div className={styles.infoTW}>
-          <IconArrowNarrowLeft size={30} className="text-blue-9 inline" />
+          <BsArrowLeft size={20} className="text-blue-9 inline" />
           <Text className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</Text>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
         <div className={styles.infoTW}>
-          <IconGlobe className="text-blue-9" size={20} />
+          <TbGlobe className="text-blue-9" size={20} />
           <Text className="m-0 pl-2">{location}</Text>
         </div>
 
