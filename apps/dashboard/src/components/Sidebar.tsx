@@ -9,7 +9,7 @@ import Link from "next/link"
 const sections = [
   {
     name: "Arrangementer",
-    children: [["Arrangementer", "/event/events"]],
+    children: [["Arrangementer", "/event"]],
   },
 ] as const
 
