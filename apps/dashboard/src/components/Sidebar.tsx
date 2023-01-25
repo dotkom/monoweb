@@ -11,6 +11,10 @@ const sections = [
     name: "Arrangementer",
     children: [["Arrangementer", "/event"]],
   },
+  {
+    name: "Prikker",
+    children: [["Prikker", "/marks"]],
+  },
 ] as const
 
 export const Sidebar: FC = () => {

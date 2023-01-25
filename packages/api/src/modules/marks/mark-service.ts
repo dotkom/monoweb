@@ -1,11 +1,11 @@
 import { NotFoundError } from "../../errors/errors"
-import { MarkWrite, Mark } from "@dotkomonline/types"
+import { MarkWrite, Mark, MarkWriteOptionalDuration } from "@dotkomonline/types"
 import { MarkRepository } from "./mark-repository"
 
 export interface MarkService {
   getMark: (id: string) => Promise<Mark>
-  getMarks: (limit: number) => Promise<Mark[]>
-  createMark: (payload: MarkWrite) => Promise<Mark>
+  getMarks: (limit: number, offset: number | undefined) => Promise<Mark[]>
+  createMark: (payload: MarkWriteOptionalDuration) => Promise<Mark>
   updateMark: (id: string, payload: MarkWrite) => Promise<Mark>
   deleteMark: (id: string) => Promise<Mark>
 }
@@ -17,12 +17,13 @@ export const initMarkService = (markRepository: MarkRepository): MarkService => 
       if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
       return mark
     },
-    getMarks: async (limit: number) => {
-      const marks = await markRepository.getMarks(limit)
+    getMarks: async (limit: number, offset: number | undefined) => {
+      if (!offset) offset = 0
+      const marks = await markRepository.getMarks(limit, offset)
       return marks
     },
-    createMark: async (payload: MarkWrite) => {
-      const mark = await markRepository.createMark(payload)
+    createMark: async (payload: MarkWriteOptionalDuration) => {
+      const mark = await markRepository.createMark({ ...payload, duration: payload.duration || 20 })
       if (!mark) throw new NotFoundError(`Mark could not be created`)
       return mark
     },

@@ -11,6 +11,10 @@ import { initUserService } from "./modules/auth/user-service"
 import { initEventRepository } from "./modules/event/event-repository"
 import { initEventService } from "./modules/event/event-service"
 import { Configuration, OAuth2Api as HydraApiClient } from "@ory/client"
+import { initMarkRepository } from "./modules/marks/mark-repository"
+import { initMarkService } from "./modules/marks/mark-service"
+import { initPersonalMarkRepository } from "./modules/marks/personal-mark-repository"
+import { initPersonalMarkService } from "./modules/marks/personal-mark-service"
 
 type CreateContextOptions = {
   session: Session | null
@@ -34,14 +38,21 @@ export const createContextInner = async (opts: CreateContextOptions) => {
 
   const userRepository = initUserRepository(db)
   const eventRepository = initEventRepository(db)
+  const markRepository = initMarkRepository(db)
+  const personalMarkRepository = initPersonalMarkRepository(db)
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
   const eventService = initEventService(eventRepository)
+  const markService = initMarkService(markRepository)
+  const personalMarkService = initPersonalMarkService(personalMarkRepository, markService)
+
   return {
     session: opts.session,
     userService,
     eventService,
+    markService,
+    personalMarkService,
   }
 }
 

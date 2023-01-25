@@ -8,7 +8,7 @@ export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
 
 export interface MarkRepository {
   getMarkByID: (id: string) => Promise<Mark | undefined>
-  getMarks: (limit: number) => Promise<Mark[]>
+  getMarks: (limit: number, offset: number) => Promise<Mark[]>
   createMark: (markInsert: MarkWrite) => Promise<Mark | undefined>
   updateMark: (id: string, markUpdate: MarkWrite) => Promise<Mark | undefined>
   deleteMark: (id: string) => Promise<Mark | undefined>
@@ -20,8 +20,8 @@ export const initMarkRepository = (db: Kysely<Database>): MarkRepository => {
       const mark = await db.selectFrom("mark").selectAll().where("id", "=", id).executeTakeFirst()
       return mark ? mapToMark(mark) : undefined
     },
-    getMarks: async (limit) => {
-      const marks = await db.selectFrom("mark").selectAll().limit(limit).execute()
+    getMarks: async (limit, offset) => {
+      const marks = await db.selectFrom("mark").selectAll().limit(limit).offset(offset).execute()
       return marks.map(mapToMark)
     },
     createMark: async (markInsert) => {

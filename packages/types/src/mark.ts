@@ -11,4 +11,17 @@ export const MarkSchema = z.object({
 })
 
 export type Mark = z.infer<typeof MarkSchema>
-export type MarkWrite = Omit<Mark, "id">
+
+export const MarkWriteSchema = MarkSchema.partial({
+  id: true,
+  givenAt: true,
+  updatedAt: true,
+})
+
+export type MarkWrite = z.infer<typeof MarkWriteSchema>
+
+export const MarkWriteOptionalDurationSchema = MarkWriteSchema.partial({
+  duration: true,
+})
+
+export type MarkWriteOptionalDuration = z.infer<typeof MarkWriteOptionalDurationSchema>
