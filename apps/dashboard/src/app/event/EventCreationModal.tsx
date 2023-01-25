@@ -20,7 +20,7 @@ export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
       subtitle: null,
       imageUrl: null,
       location: null,
-      committeeID: null,
+      committeeId: null,
     },
   })
   const utils = trpc.useContext()

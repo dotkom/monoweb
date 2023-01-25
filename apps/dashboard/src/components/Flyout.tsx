@@ -5,7 +5,7 @@ import { createContext, FC, useContext, useState } from "react"
 
 type FlyoutContextState<T> = {
   isOpen: boolean
-  open: (data: T) => void
+  open: (data: T | null) => void
   close: () => void
   data: T | null
 }
@@ -13,7 +13,7 @@ type FlyoutContextState<T> = {
 type UseFlyoutContext<T> = () => FlyoutContextState<T>
 export type FlyoutChildProps<T> = {
   close: () => void
-  payload: T
+  payload: T | null
 }
 
 export const useFlyout = <T,>(Component: FC<FlyoutChildProps<T>>) => {
@@ -30,9 +30,6 @@ export const useFlyout = <T,>(Component: FC<FlyoutChildProps<T>>) => {
 
   const FlyoutChild: FC = () => {
     const { isOpen, open, close } = useFlyoutContext()
-    if (!payload) {
-      throw new Error("Illegal state, payload cannot be null when opened")
-    }
     return (
       <RadixDialog.Root open={isOpen} onOpenChange={(s) => (s ? open(payload) : close())}>
         <RadixDialog.Portal>
@@ -45,7 +42,7 @@ export const useFlyout = <T,>(Component: FC<FlyoutChildProps<T>>) => {
     )
   }
 
-  const openFlyout = (data: T) => {
+  const openFlyout = (data: T | null) => {
     setOpen(true)
     setPayload(data)
   }

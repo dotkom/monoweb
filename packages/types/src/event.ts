@@ -4,7 +4,7 @@ export const EventSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  title: z.string(),
+  title: z.string().min(1),
   start: z.date(),
   end: z.date(),
   status: z.enum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
@@ -14,7 +14,7 @@ export const EventSchema = z.object({
   subtitle: z.string().nullable(),
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
-  committeeID: z.string().nullish(), // TOOD bug??
+  committeeId: z.string().nullable(),
 })
 
 export type Event = z.infer<typeof EventSchema>

@@ -46,7 +46,7 @@ export default function EventPage() {
                   <TableCell>{event.title}</TableCell>
                   <TableCell>{event.start.toLocaleTimeString()}</TableCell>
                   <TableCell>{event.end.toLocaleTimeString()}</TableCell>
-                  <TableCell>{event.committeeID ?? "Ingen"}</TableCell>
+                  <TableCell>{event.committeeId ?? "Ingen"}</TableCell>
                   <TableCell>{event.type}</TableCell>
                   <TableCell>0/0</TableCell>
                   <TableCell>
