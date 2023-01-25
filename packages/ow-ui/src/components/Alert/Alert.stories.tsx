@@ -8,7 +8,10 @@ export default {
 
 const Template: ComponentStory<typeof Alert> = (args) => (
   <div className="max-w-[400px]">
-    <Alert {...args} children="Something happened! You made a mistake and there is no going back, your data was lost forever!"/>
+    <Alert
+      {...args}
+      children="Something happened! You made a mistake and there is no going back, your data was lost forever!"
+    />
   </div>
 )
 
