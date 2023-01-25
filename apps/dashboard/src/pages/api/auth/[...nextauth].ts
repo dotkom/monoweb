@@ -1,7 +1,8 @@
 import NextAuth, { DefaultUser, NextAuthOptions } from "next-auth"
 
-// TODO: find a nicer way to do this
-process.env.NEXTAUTH_URL = "http://localhost:3002"
+if (process.env.NODE_ENV === "development") {
+  process.env.NEXTAUTH_URL = "http://localhost:3002"
+}
 
 export const authOptions: NextAuthOptions = {
   // TODO: use next-auth default jwt adapter
