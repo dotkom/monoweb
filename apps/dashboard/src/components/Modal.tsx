@@ -31,7 +31,7 @@ export const useModal = (Component: FC<ModalChildProps>) => {
       <RadixDialog.Root open={isOpen} onOpenChange={(s) => (s ? open() : close())}>
         <RadixDialog.Portal>
           <RadixDialog.Overlay className="fixed inset-0 bg-zinc-900/75" />
-          <RadixDialog.Content className="fixed top-0 right-1/2 z-50 h-full w-3/5 border-l bg-slate-50 shadow">
+          <RadixDialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-[90vw] max-w-[900px] -translate-x-1/2 -translate-y-1/2 border-l bg-slate-50 shadow">
             <Component close={close} />
           </RadixDialog.Content>
         </RadixDialog.Portal>

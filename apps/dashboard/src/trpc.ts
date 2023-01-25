@@ -1,5 +1,5 @@
-import { createTRPCNext } from "@trpc/next"
-import { CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
+import { createTRPCReact } from "@trpc/react-query"
+import { CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
 import type { AppRouter } from "@dotkomonline/api"
 import superjson from "superjson"
@@ -10,7 +10,7 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}` // dev SSR should use localhost
 }
 
-const config: CreateTRPCClientOptions<AppRouter> = {
+export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
   transformer: superjson,
   links: [
     loggerLink({
@@ -23,16 +23,8 @@ const config: CreateTRPCClientOptions<AppRouter> = {
   ],
 }
 
-// Vanilla fetch client
-export const trpcClient = createTRPCProxyClient<AppRouter>(config)
-
 // React query trpc
-export const trpc = createTRPCNext<AppRouter>({
-  config() {
-    return config
-  },
-  ssr: true,
-})
+export const trpc = createTRPCReact<AppRouter>()
 
 /**
  * Inference helpers for input types
