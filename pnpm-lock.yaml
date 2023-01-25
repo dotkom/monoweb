@@ -69,26 +69,26 @@ importers:
       '@radix-ui/react-alert-dialog': 1.0.2_5ndqzdd6t4rivxsukjv3i3ak2q
       '@radix-ui/react-dialog': 1.0.2_5ndqzdd6t4rivxsukjv3i3ak2q
       '@tremor/react': 1.6.1_biqbaboplfbrettd7655fr4n2y
-      '@trpc/client': 10.0.0_@trpc+server@10.0.0
-      '@trpc/next': 10.0.0_4p2uwqo5zdmofe7h7bivnque34
-      '@trpc/react-query': 10.0.0_iid2koucbibwrwxy46e7xqvejm
-      '@trpc/server': 10.0.0
-      '@upstash/redis': 1.18.1
+      '@trpc/client': 10.9.0_@trpc+server@10.9.0
+      '@trpc/next': 10.9.0_shpf4y33wfvp3xwt6sji6cuqxu
+      '@trpc/react-query': 10.9.0_lqhze5ge5erbdb2s6k7jhwmpke
+      '@trpc/server': 10.9.0
+      '@upstash/redis': 1.19.3
       clsx: 1.2.1
       next: 13.1.2_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.18.10_7jnwqgtpcnwg4nzft4b6xlzlfi
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      superjson: 1.11.0
+      superjson: 1.12.2
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
       '@types/eslint': 8.4.10
-      '@types/node': 16.18.3
-      '@types/react': 18.0.25
-      '@types/react-dom': 18.0.9
+      '@types/node': 16.18.11
+      '@types/react': 18.0.27
+      '@types/react-dom': 18.0.10
       autoprefixer: 10.4.13_postcss@8.4.21
-      eslint: 8.28.0
-      eslint-config-next: 13.1.5_hsf322ms6xhhd4b5ne6lb74y4a
+      eslint: 8.32.0
+      eslint-config-next: 13.1.5_7uibuqfxkfaozanbtbziikiqje
       postcss: 8.4.21
       prettier: 2.8.3
       tailwindcss: 3.2.4_postcss@8.4.21
@@ -8428,36 +8428,36 @@ packages:
       - react-dom
     dev: false
 
-  /@trpc/client/10.0.0_@trpc+server@10.0.0:
-    resolution: {integrity: sha512-qxYbpFvokyL0SHSck/roBvG5/tORm+jTqzr+hnwyCghE4MQ0EGoyBImgdgUDAkTEjdarYTy1I3YplUw48QF4gQ==}
+  /@trpc/client/10.9.0_@trpc+server@10.9.0:
+    resolution: {integrity: sha512-id6318qpgqllNOuBp7nuciXFPXCe+zae5d4r1hze6Eyp5fFFNO58TqA+4Q44KIcHgpfWyW2egs6iPeql3PrdKA==}
     peerDependencies:
       '@trpc/server': 10.9.0
     dependencies:
       '@trpc/server': 10.9.0
     dev: false
 
-  /@trpc/next/10.0.0_4p2uwqo5zdmofe7h7bivnque34:
-    resolution: {integrity: sha512-ka7N2fFTGDsfX5wctyJzTV6Ci6godGA0s75gWoeTU1gAsXzE9Hkt/ozarzlrcpiFSjLBeGhIyuB4RbFN29VGTw==}
+  /@trpc/next/10.9.0_shpf4y33wfvp3xwt6sji6cuqxu:
+    resolution: {integrity: sha512-h/W8VHMki/fw7vHNMs1Ku7bLqccjpiKCE1wkqbvHfBOO1ARDmarRbuK6dLqJilip/f7jkFXcrxwB+eNgK4+6Wg==}
     peerDependencies:
       '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.0.0
-      '@trpc/react-query': ^10.0.0-proxy-beta.21
-      '@trpc/server': 10.0.0
+      '@trpc/client': 10.9.0
+      '@trpc/react-query': ^10.8.0
+      '@trpc/server': 10.9.0
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@trpc/client': 10.0.0_@trpc+server@10.0.0
-      '@trpc/react-query': 10.0.0_iid2koucbibwrwxy46e7xqvejm
-      '@trpc/server': 10.0.0
+      '@trpc/client': 10.9.0_@trpc+server@10.9.0
+      '@trpc/react-query': 10.9.0_lqhze5ge5erbdb2s6k7jhwmpke
+      '@trpc/server': 10.9.0
       next: 13.1.2_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-ssr-prepass: 1.5.0_react@18.2.0
     dev: false
 
-  /@trpc/next/10.0.0_qd2chkaz7iti4ggpwsiktgrqdu:
-    resolution: {integrity: sha512-ka7N2fFTGDsfX5wctyJzTV6Ci6godGA0s75gWoeTU1gAsXzE9Hkt/ozarzlrcpiFSjLBeGhIyuB4RbFN29VGTw==}
+  /@trpc/next/10.9.0_zf4dmnjasp57goshgvidib2hkq:
+    resolution: {integrity: sha512-h/W8VHMki/fw7vHNMs1Ku7bLqccjpiKCE1wkqbvHfBOO1ARDmarRbuK6dLqJilip/f7jkFXcrxwB+eNgK4+6Wg==}
     peerDependencies:
       '@tanstack/react-query': ^4.3.8
       '@trpc/client': 10.9.0
@@ -8477,22 +8477,7 @@ packages:
       react-ssr-prepass: 1.5.0_react@18.2.0
     dev: false
 
-  /@trpc/react-query/10.0.0_iid2koucbibwrwxy46e7xqvejm:
-    resolution: {integrity: sha512-5+Lux1kT0HGmoo606Xq9cPssYZBZeeBwLTmmKwLagGYTbgxaWF+T0LMbqmkL3E8U8KBj9BPUm1PgFGWsJMdf+A==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.9.0
-      '@trpc/server': 10.9.0
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@trpc/client': 10.0.0_@trpc+server@10.0.0
-      '@trpc/server': 10.0.0
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@trpc/react-query/10.9.0_ppuhhcybd7lnolnkl2lyf33kka:
+  /@trpc/react-query/10.9.0_22wgxldzdfxutowffn2dykkd3i:
     resolution: {integrity: sha512-I7xtdFj/AETwc9HfY2bGxKINij39r26LvfIiTBfz2pBj1ELrcgucWmPeI2eS6pon/uI1E9Nqa6fQCg/zkg764Q==}
     peerDependencies:
       '@tanstack/react-query': ^4.3.8
@@ -8501,7 +8486,24 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
+      '@tanstack/react-query': 4.23.0_biqbaboplfbrettd7655fr4n2y
+      '@trpc/client': 10.9.0_@trpc+server@10.9.0
+      '@trpc/server': 10.9.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@trpc/react-query/10.9.0_lqhze5ge5erbdb2s6k7jhwmpke:
+    resolution: {integrity: sha512-I7xtdFj/AETwc9HfY2bGxKINij39r26LvfIiTBfz2pBj1ELrcgucWmPeI2eS6pon/uI1E9Nqa6fQCg/zkg764Q==}
+    peerDependencies:
+      '@tanstack/react-query': ^4.3.8
       '@trpc/client': 10.9.0
+      '@trpc/server': 10.9.0
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@trpc/client': 10.9.0_@trpc+server@10.9.0
+      '@trpc/server': 10.9.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
@@ -10062,22 +10064,6 @@ packages:
     dependencies:
       browserslist: 4.21.4
       caniuse-lite: 1.0.30001448
-      fraction.js: 4.2.0
-      normalize-range: 0.1.2
-      picocolors: 1.0.0
-      postcss: 8.4.21
-      postcss-value-parser: 4.2.0
-    dev: true
-
-  /autoprefixer/10.4.13_postcss@8.4.21:
-    resolution: {integrity: sha512-49vKpMqcZYsJjwotvt4+h/BCjJVnhGwcLpDt5xkcaOG3eLrG/HUYLagrihYsQ+qrIBgIzX1Rw7a6L8I/ZA1Atg==}
-    engines: {node: ^10 || ^12 || >=14}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.1.0
-    dependencies:
-      browserslist: 4.21.4
-      caniuse-lite: 1.0.30001434
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
