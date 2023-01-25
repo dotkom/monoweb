@@ -7,9 +7,10 @@ import { useModal } from "../../components/Modal"
 import { EventCreationModal } from "./EventCreationModal"
 import { EventDetailsFlyout } from "./EventDetailsFlyout"
 import { trpc } from "../../trpc"
+import { Event } from "@dotkomonline/types"
 
 export default function EventPage() {
-  const { Flyout, open: openDetailsFlyout } = useFlyout(EventDetailsFlyout)
+  const { Flyout, open: openDetailsFlyout } = useFlyout<Event>(EventDetailsFlyout)
   const { Modal, open: openCreationModal } = useModal(EventCreationModal)
 
   const { data = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
@@ -36,7 +37,7 @@ export default function EventPage() {
                 <TableHeaderCell>Arrangør</TableHeaderCell>
                 <TableHeaderCell>Type</TableHeaderCell>
                 <TableHeaderCell>Plasser</TableHeaderCell>
-                <TableHeaderCell>Konfigurer</TableHeaderCell>
+                <TableHeaderCell>Detaljer</TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -49,7 +50,7 @@ export default function EventPage() {
                   <TableCell>{event.type}</TableCell>
                   <TableCell>0/0</TableCell>
                   <TableCell>
-                    <Button text="Endre" importance="secondary" handleClick={openDetailsFlyout} />
+                    <Button text="Endre" importance="secondary" handleClick={() => openDetailsFlyout(event)} />
                   </TableCell>
                 </TableRow>
               ))}
