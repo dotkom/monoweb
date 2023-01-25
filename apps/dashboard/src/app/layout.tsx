@@ -2,8 +2,13 @@ import type { PropsWithChildren } from "react"
 import "../main.css"
 import "@tremor/react/dist/esm/tremor.css"
 import { Sidebar } from "../components/Sidebar"
+import { AuthProvider } from "./AuthProvider"
+import { unstable_getServerSession } from "next-auth"
+import { authOptions } from "../pages/api/auth/[...nextauth]"
 
-export default function RootLayout({ children }: PropsWithChildren) {
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const session = await unstable_getServerSession(authOptions)
+
   return (
     <html lang="en">
       {/*
@@ -13,8 +18,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <head />
       <body>
         <div className="bg-background flex">
-          <Sidebar />
-          <main className="min-h-screen w-full bg-slate-50">{children}</main>
+          <AuthProvider session={session}>
+            <Sidebar />
+            <main className="min-h-screen w-full bg-slate-50">{children}</main>
+          </AuthProvider>
         </div>
       </body>
     </html>
