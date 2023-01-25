@@ -13,11 +13,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return { props: { career: data } }
 }
 
-const CareerAd: FC<CareerProps> = (props: CareerProps) => {
-  if (!props.career) {
-    return <div className="text-blue-12">404 - Cant connect to Sanity</div>
-  }
-  return <CareerAdView career={props.career} />
+const CareerAdPage: FC<CareerProps> = (props: CareerProps) => {
+  return props.career ? <CareerAdView career={props.career} /> : <div>404 - Sanity not found</div>
 }
 
-export default CareerAd
+export default CareerAdPage
