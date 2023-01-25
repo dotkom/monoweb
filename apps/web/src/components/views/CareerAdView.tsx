@@ -42,14 +42,14 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
 
         <div className={styles.infoTW}>
-          <IconArrowNarrowLeft size={30} className="text-red-11 inline" />
+          <IconArrowNarrowLeft size={30} className="text-blue-9 inline" />
           <Text className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</Text>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
         <div className={styles.infoTW}>
-          <IconGlobe className="text-red-11" size={20} />
+          <IconGlobe className="text-blue-9" size={20} />
           <Text className="m-0 pl-2">{location}</Text>
         </div>
 
@@ -80,27 +80,27 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <Text className="m-0 pl-2">{career_role}</Text>
         </div>
 
-        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
+        <div className="bg-slate-9 mt-7 mb-3 h-[0.5px] w-full" />
 
-        <div className="text-red-11 mt-2 ">
+        <div className="text-blue-9">
           {linkdin && (
             <a href={linkdin}>
-              <BsLinkedin className="m-2" />
+              <BsLinkedin className="m-1 inline-block" />
             </a>
           )}
           {twitter && (
             <a href={twitter}>
-              <BsTwitter className="m-2" />
+              <BsTwitter className="m-1 inline-block" />
             </a>
           )}
           {facebook && (
             <a href={facebook}>
-              <ImFacebook2 className="m-2" />
+              <ImFacebook2 className="m-1 inline-block" />
             </a>
           )}
         </div>
         <a href={link}>
-          <Button className="bg-red-11 mt-3 w-20">Søk</Button>
+          <Button className="bg-blue-8 mt-3 w-20">Søk</Button>
         </a>
       </div>
       <div className="w-2/3">
@@ -146,7 +146,7 @@ const styles = {
     color: "$blue2",
     mb: "-3px",
   },
-  iconTW: "inline text-red-11 mb-[-3px]",
+  iconTW: "inline text-blue-9 mb-[-3px]",
   content: css({
     "h1, ul, p, h2": {
       borderLeft: "1.5px solid $orange3",
