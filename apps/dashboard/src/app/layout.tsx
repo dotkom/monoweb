@@ -1,7 +1,6 @@
 import type { PropsWithChildren } from "react"
 import "../main.css"
 import "@tremor/react/dist/esm/tremor.css"
-import "react-datepicker/dist/react-datepicker.css"
 import { Sidebar } from "../components/Sidebar"
 import { AuthProvider } from "./AuthProvider"
 import { unstable_getServerSession } from "next-auth"

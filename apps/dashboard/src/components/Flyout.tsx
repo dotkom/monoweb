@@ -30,6 +30,9 @@ export const useFlyout = <T,>(Component: FC<FlyoutChildProps<T>>) => {
 
   const FlyoutChild: FC = () => {
     const { isOpen, open, close } = useFlyoutContext()
+    if (!payload) {
+      throw new Error("Illegal state, payload cannot be null when opened")
+    }
     return (
       <RadixDialog.Root open={isOpen} onOpenChange={(s) => (s ? open(payload) : close())}>
         <RadixDialog.Portal>
