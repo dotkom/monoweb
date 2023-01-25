@@ -37,7 +37,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
-  const eventService = initEventService(eventRepository)
+  const eventService = initEventService(eventRepository);
   return {
     session: opts.session,
     userService,

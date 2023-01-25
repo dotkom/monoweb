@@ -6,7 +6,8 @@ import { EventRepository } from "./event-repository"
 export interface EventService {
   create: (payload: EventWrite) => Promise<Event>
   getEvent: (id: Event["id"]) => Promise<Event>
-  getEvents: (limit: number, offset?: number) => Promise<Event[]>
+  getEvents: (limit: number, offset?: number) => Promise<Event[]>,
+  editEvent: (payload: EventWrite) => Promise<Event>
 }
 
 export const initEventService = (eventRepository: EventRepository): EventService => ({
@@ -26,4 +27,9 @@ export const initEventService = (eventRepository: EventRepository): EventService
     }
     return event
   },
+  editEvent: async (payload) => {
+    const event = await eventRepository.editEvent(payload)
+    if (!event) throw new Error("Failed to edit event")
+    return event
+  }
 })
