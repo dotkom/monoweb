@@ -1,10 +1,20 @@
-import { IconAdjustments, IconMail, IconMailFast } from "@tabler/icons"
+import { IconAdjustments, IconMail } from "@tabler/icons"
 
 import { Button } from "./Button"
 
 export default {
   title: "atoms/Button",
   component: Button,
+}
+
+export const Sizes = () => {
+  return (
+    <div className="flex max-w-[500px] flex-wrap justify-around">
+      <Button size="sm">Attend</Button>
+      <Button size="md">Attend</Button>
+      <Button size="lg">Attend</Button>
+    </div>
+  )
 }
 
 export const Solid = () => (
@@ -69,6 +79,7 @@ export const Subtle = () => {
 }
 
 export const Gradient = () => <Button variant="gradient">Button</Button>
+export const Brand = () => <Button variant="brand">Button</Button>
 
 export const NonInteractive = () => (
   <Button color="blue" variant="light" disabled>

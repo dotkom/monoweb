@@ -428,6 +428,7 @@ importers:
       eslint-plugin-react: ^7.30.1
       prettier-plugin-tailwindcss: ^0.2.0
       tailwindcss: ^3.2.1
+      tailwindcss-animate: ^1.0.5
       tailwindcss-radix: ^2.6.1
     dependencies:
       '@typescript-eslint/eslint-plugin': 5.44.0_sxexbzgkfjmi7szvkanmlm4qwy
@@ -439,6 +440,7 @@ importers:
       eslint-plugin-react: 7.31.11
       prettier-plugin-tailwindcss: 0.2.1
       tailwindcss: 3.2.4
+      tailwindcss-animate: 1.0.5_tailwindcss@3.2.4
       tailwindcss-radix: 2.6.1
     devDependencies:
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.4
@@ -15568,6 +15570,14 @@ packages:
 
   /tailwind-merge/1.8.0:
     resolution: {integrity: sha512-tER/2SbYRdfPYg6m4pDWZSlbymLTmDi+dx4iCsJmgmz4UDGzgnVelOvBe3GNtGCw9Bmc4MiObfJJbKeVL+KnMQ==}
+    dev: false
+
+  /tailwindcss-animate/1.0.5_tailwindcss@3.2.4:
+    resolution: {integrity: sha512-UU3qrOJ4lFQABY+MVADmBm+0KW3xZyhMdRvejwtXqYOL7YjHYxmuREFAZdmVG5LPe5E9CAst846SLC4j5I3dcw==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+    dependencies:
+      tailwindcss: 3.2.4
     dev: false
 
   /tailwindcss-radix/2.6.1:

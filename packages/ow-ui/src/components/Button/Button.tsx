@@ -41,7 +41,11 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
 const defaultButton = (color: Color) =>
   cva("", {
     variants: {
-      size: {},
+      size: {
+        sm: "text-sm px-3 h-9 font-medium",
+        md: "text-md px-4 h-11 font-semibold",
+        lg: "text-lg px-5 h-13 font-bold",
+      },
       disabled: {
         true: "opacity-40 pointer-events-none cursor-not-allowed",
       },
@@ -50,10 +54,12 @@ const defaultButton = (color: Color) =>
         solid: solid({ color: color }),
         subtle: subtle({ color: color }),
         gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
+        brand: "bg-brand text-slate-12 hover:bg-brand-dark active:bg-brand-darker",
       },
     },
     defaultVariants: {
-      variant: "solid",
+      variant: "brand",
+      size: "md",
     },
   })
 
