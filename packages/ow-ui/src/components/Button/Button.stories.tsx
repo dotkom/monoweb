@@ -1,3 +1,4 @@
+import { StoryObj } from "@storybook/react"
 import { IconAdjustments, IconMail } from "@tabler/icons"
 
 import { Button } from "./Button"
@@ -6,94 +7,78 @@ export default {
   title: "atoms/Button",
   component: Button,
 }
+type Story = StoryObj<typeof Button>
+export const Default: Story = { args: { children: "Button", variant: "brand" } }
 
-export const Sizes = () => {
-  return (
-    <div className="flex max-w-[500px] flex-wrap justify-around">
-      <Button size="sm">Attend</Button>
-      <Button size="md">Attend</Button>
-      <Button size="lg">Attend</Button>
-    </div>
-  )
+export const Gradient: Story = {
+  ...Default,
+  args: { ...Default.args, variant: "gradient" },
 }
 
-export const Solid = () => (
-  <div className="flex max-w-[500px] flex-wrap justify-around">
-    <Button color="blue" variant="solid">
-      Blue
-    </Button>
-    <Button color="red" variant="solid">
-      Red
-    </Button>
-    <Button color="amber" variant="solid">
-      Amber
-    </Button>
-    <Button color="green" variant="solid">
-      Green
-    </Button>
-    <Button color="slate" variant="solid">
-      Slate
-    </Button>
-  </div>
-)
-
-export const Light = () => (
-  <div className="flex max-w-[500px] flex-wrap justify-around">
-    <Button color="blue" variant="light">
-      Blue
-    </Button>
-    <Button color="red" variant="light">
-      Red
-    </Button>
-    <Button color="amber" variant="light">
-      Amber
-    </Button>
-    <Button color="green" variant="light">
-      Green
-    </Button>
-    <Button color="slate" variant="light">
-      Slate
-    </Button>
-  </div>
-)
-export const Subtle = () => {
-  return (
-    <div className="flex max-w-[500px] flex-wrap justify-around">
-      <Button color="blue" variant="subtle">
-        Blue
-      </Button>
-      <Button color="red" variant="subtle">
-        Red
-      </Button>
-      <Button color="amber" variant="subtle">
-        Amber
-      </Button>
-      <Button color="green" variant="subtle">
-        Green
-      </Button>
-      <Button color="slate" variant="subtle">
-        Slate
-      </Button>
-    </div>
-  )
+export const Link: Story = {
+  ...Default,
+  args: { ...Default.args, variant: "link" },
+}
+export const Outline: Story = {
+  ...Default,
+  args: { ...Default.args, variant: "outline" },
 }
 
-export const Gradient = () => <Button variant="gradient">Button</Button>
-export const Brand = () => <Button variant="brand">Button</Button>
+const MultiStory = (args: Story["args"][]) => ({
+  render: () => (
+    <div className="flex max-w-[500px] flex-wrap justify-around">
+      {args.map((props) => (
+        <Button {...props} />
+      ))}
+    </div>
+  ),
+})
 
-export const NonInteractive = () => (
-  <Button color="blue" variant="light" disabled>
-    Button
-  </Button>
-)
+export const Sizes = MultiStory([
+  { children: "Button", size: "sm" },
+  { children: "Button", size: "md" },
+  { children: "Button", size: "lg" },
+])
 
-export const Icon = () => (
-  <div className="flex max-w-[200px] flex-wrap justify-around">
-    <Button color="blue" variant="light" icon={<IconAdjustments size={16} />}>
-      Settings
-    </Button>
-    <Button color="blue" variant="solid" icon={<IconMail size={16} />}>
-      Mail
-    </Button>
-  </div>
-)
+export const Solid = MultiStory([
+  { children: "Blue", color: "blue", variant: "solid" },
+  { children: "Red", color: "red", variant: "solid" },
+  { children: "Amber", color: "amber", variant: "solid" },
+  { children: "Green", color: "green", variant: "solid" },
+  { children: "Slate", color: "slate", variant: "solid" },
+])
+
+export const Light = MultiStory([
+  { children: "Blue", color: "blue", variant: "light" },
+  { children: "Red", color: "red", variant: "light" },
+  { children: "Amber", color: "amber", variant: "light" },
+  { children: "Green", color: "green", variant: "light" },
+  { children: "Slate", color: "slate", variant: "light" },
+])
+
+export const Subtle = MultiStory([
+  { children: "Blue", color: "blue", variant: "subtle" },
+  { children: "Red", color: "red", variant: "subtle" },
+  { children: "Amber", color: "amber", variant: "subtle" },
+  { children: "Green", color: "green", variant: "subtle" },
+  { children: "Slate", color: "slate", variant: "subtle" },
+])
+
+export const Disabled: Story = {
+  args: {
+    children: "Button",
+    disabled: true,
+  },
+}
+
+export const WithIcon = MultiStory([
+  { children: "Settings", color: "blue", variant: "light", icon: <IconAdjustments size={16} /> },
+  { children: "Mail", color: "blue", variant: "solid", icon: <IconMail size={16} /> },
+])
+
+export const Loading: Story = {
+  args: {
+    children: "Submitting form",
+    loading: true,
+  },
+}
