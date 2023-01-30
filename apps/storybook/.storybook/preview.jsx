@@ -12,7 +12,7 @@ export const parameters = {
     values: [{ name: "black", value: "#000212" }],
   },
   docs: {
-    theme: themes.dark,
+    theme: {...themes.dark, fontBase:'"Poppins"'},
   },
 }
 

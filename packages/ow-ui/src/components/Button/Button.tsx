@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
 
-export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
+export interface ButtonProps extends VariantProps<ReturnType<typeof buttonStyles>> {
   color?: Color
   icon?: React.ReactNode
   type?: "submit" | "reset" | "button"
@@ -15,17 +15,11 @@ export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButto
 
 export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>(
   (props, ref) => {
-    const colorVariants = defaultButton(props.color)
+    const colorVariants = buttonStyles(props.color)
     return (
       <button
         {...props}
-        className={twMerge(
-          "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
-          "transition-transform",
-          "hover:-translate-y-[1px] active:translate-y-[2px]",
-          colorVariants({ disabled: !!props.disabled, variant: props.variant }),
-          props.className
-        )}
+        className={twMerge(colorVariants({ disabled: !!props.disabled, variant: props.variant }), props.className)}
         type={props.type}
         ref={ref}
       >
@@ -38,30 +32,37 @@ export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProp
   }
 )
 
-const defaultButton = (color: Color) =>
-  cva("", {
-    variants: {
-      size: {
-        sm: "text-sm px-3 h-9 font-medium",
-        md: "text-md px-4 h-11 font-semibold",
-        lg: "text-lg px-5 h-13 font-bold",
+export const buttonStyles = (color: Color) =>
+  cva(
+    [
+      "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
+      "transition-transform",
+      "hover:-translate-y-[1px] active:translate-y-[2px]",
+    ],
+    {
+      variants: {
+        size: {
+          sm: "text-sm px-3 h-9 font-medium",
+          md: "text-md px-4 h-11 font-semibold",
+          lg: "text-lg px-5 h-13 font-bold",
+        },
+        disabled: {
+          true: "opacity-40 pointer-events-none cursor-not-allowed",
+        },
+        variant: {
+          light: light({ color: color }),
+          solid: solid({ color: color }),
+          subtle: subtle({ color: color }),
+          gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
+          brand: "bg-brand text-slate-12 hover:bg-brand-dark active:bg-brand-darker",
+        },
       },
-      disabled: {
-        true: "opacity-40 pointer-events-none cursor-not-allowed",
+      defaultVariants: {
+        variant: "brand",
+        size: "md",
       },
-      variant: {
-        light: light({ color: color }),
-        solid: solid({ color: color }),
-        subtle: subtle({ color: color }),
-        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
-        brand: "bg-brand text-slate-12 hover:bg-brand-dark active:bg-brand-darker",
-      },
-    },
-    defaultVariants: {
-      variant: "brand",
-      size: "md",
-    },
-  })
+    }
+  )
 
 const solid = cva("text-slate-12", {
   variants: {
