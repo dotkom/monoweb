@@ -36,6 +36,7 @@ export const buttonStyles = (color: Color) =>
   cva(
     [
       "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
+      "focus:ring-2 focus:ring-slate-11 focus:outline-none",
       "transition-transform",
       "hover:-translate-y-[1px] active:translate-y-[2px]",
     ],
