@@ -68,13 +68,15 @@ export const buttonStyles = cva(
   }
 )
 
-const getColorStyles = (variant: VariantProps<typeof buttonStyles>["variant"], color: Color) => {
+export const getColorStyles = (variant: VariantProps<typeof buttonStyles>["variant"], color: Color) => {
   switch (variant) {
     case "solid":
       return `bg-${color}-9 hover:bg-${color}-10` as const
     case "light":
       return `bg-${color}-4 text-${color}-11 hover:bg-${color}-5` as const
     case "subtle":
-      return `text-${color}-11 hover:bg-${color}-2` as const
+      return `bg-transparent text-${color}-11 hover:bg-${color}-2` as const
+    default:
+      return ""
   }
 }

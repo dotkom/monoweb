@@ -4,7 +4,7 @@ import * as React from "react"
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import { cn } from "../../utils"
 import { Button } from "../Button"
-import { buttonStyles } from "../Button/Button"
+import { buttonStyles, getColorStyles } from "../Button/Button"
 
 const AlertDialog = AlertDialogPrimitive.Root
 
@@ -80,7 +80,11 @@ const AlertDialogAction = React.forwardRef<
   <AlertDialogPrimitive.Action
     ref={ref}
     {...props}
-    className={cn(buttonStyles("red")({ size: "md", variant: props.desctructive ? "solid" : "brand" }), className)}
+    className={cn(
+      buttonStyles({ size: "md", variant: props.desctructive ? "solid" : "brand" }),
+      props.desctructive && getColorStyles("solid", "red"),
+      className
+    )}
   />
 ))
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
@@ -91,7 +95,7 @@ const AlertDialogCancel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonStyles("slate")({ variant: "subtle", size: "md" }), className)}
+    className={cn(buttonStyles({ variant: "subtle", size: "md" }), getColorStyles("subtle", "slate"), className)}
     {...props}
   />
 ))
