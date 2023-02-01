@@ -1,4 +1,4 @@
-import BlockContent, { BlockContentProps } from "@sanity/block-content-to-react"
+import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
 import PT from "react-portable-text"
 import clsx from "clsx"
