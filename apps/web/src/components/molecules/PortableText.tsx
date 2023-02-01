@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
 import PT from "react-portable-text"
