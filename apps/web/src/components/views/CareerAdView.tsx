@@ -40,22 +40,22 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
 
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
 
-        <div className={styles.infoTW}>
+        <div className={"my-3 flex items-center"}>
           <BsArrowLeft size={20} className="text-blue-9 inline" />
           <Text className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</Text>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <div className={styles.infoTW}>
+        <div className={"my-3 flex items-center"}>
           <TbGlobe className="text-blue-9" size={20} />
           <Text className="m-0 pl-2">{location}</Text>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <div className={styles.infoTW}>
-          <div className={styles.iconTW}>
+        <div className={"my-3 flex items-center"}>
+          <div className={"text-blue-9 mb-[-3px] inline"}>
             <IoTimeOutline />
           </div>
           <Text className="m-0 pl-2">{deadline}</Text>
@@ -63,8 +63,8 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <div className={styles.infoTW}>
-          <div className={styles.iconTW}>
+        <div className={"my-3 flex items-center"}>
+          <div className={"text-blue-9 mb-[-3px] inline"}>
             <MdWorkOutline />
           </div>
           <Text className="m-0 pl-2">{career_role}</Text>
@@ -72,8 +72,8 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
 
-        <div className={styles.infoTW}>
-          <div className={styles.iconTW}>
+        <div className={"my-3 flex items-center"}>
+          <div className={"text-blue-9 mb-[-3px] inline"}>
             <IoCopyOutline />
           </div>
           <Text className="m-0 pl-2">{career_role}</Text>
@@ -116,45 +116,4 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
       </div>
     </div>
   )
-}
-// from css to tailwind
-const styles = {
-  article: {
-    borderLeft: "1.5px solid $orange3",
-    pl: "$4",
-    ml: "50px",
-    mt: "$4",
-  },
-  articleTW: "border-l-1.5 border-amber-9 pl-4 ml-50 mt-4",
-  portable: {
-    borderLeft: "1.5px solid $orange3",
-    pl: "$4",
-    ml: "50px",
-    mt: "$4",
-  },
-  portableTW: "border-l-1.5 border-orange3 pl-4 ml-50 mt-4",
-  info: {
-    display: "flex",
-    margin: "0px",
-    my: "$3",
-    alignItems: "center",
-  },
-  infoTW: "flex my-3 items-center",
-  icon: {
-    display: "inline",
-    color: "$blue2",
-    mb: "-3px",
-  },
-  iconTW: "inline text-blue-9 mb-[-3px]",
-  content: css({
-    "h1, ul, p, h2": {
-      borderLeft: "1.5px solid $orange3",
-      pl: "$4",
-      ml: "50px",
-      mt: "$4",
-    },
-    h1: {
-      fontSize: "20px",
-    },
-  }),
 }
