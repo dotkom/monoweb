@@ -6,6 +6,7 @@ import { Box, Flex} from "@components/primitives"
 
 interface InterestgroupProps { 
     logoURL?: string;
+    logoPalette?: Object;
     //If no logoURL is provided, the logo becomes $blue2
 
     bannerColor?: string;
@@ -17,17 +18,22 @@ interface InterestgroupProps {
 }
 
 const Interestgroup: FC<InterestgroupProps> = (props) => {
-    const { logoURL, bannerColor, bannerImageURL, interestgroupName, children, linkToWiki } = props
+    const { logoURL, logoPalette, bannerColor, bannerImageURL, interestgroupName, children, linkToWiki } = props
+    console.log(logoPalette)
     return (
-    <Box className="flex rounded-xl flex-col max-w-sm overflow-hidden bg-blue-3">
-        <Flex className="grid justify-center mb-6" css={{backgroundColor: `${bannerColor}`}}>
-            {bannerImageURL && <Image src={bannerImageURL} fill object-fit="cover" alt={""} />}
+    <Box className="flex rounded-xl flex-col max-w-sm h-full overflow-hidden bg-blue-3">
+        {/* <Flex className="grid justify-center mb-6" css={{backgroundColor: `${bannerColor}`}}> */}
+        <Flex className="grid justify-center mb-6" css={
+            bannerImageURL ?
+            {backgroundImage: `url(${bannerImageURL})`, backgroundSize: "cover", backgroundPosition: "center"} :
+            {backgroundColor: `${bannerColor}`}} >
             <Box className={styles.bannerImage()}>
                 {
                 logoURL ? 
-                <img src={logoURL} className="rounded-full"/> :
-                <Box className="rounded-full w-24 h-24 flex bg-foreground"/>
+                <img src={logoURL} className="rounded-full w-32 h-32 border-8 bg-slate-12 border-slate-12 flex"/> :
+                <Box className="rounded-full w-32 h-32 flex bg-foreground"/>
                 }
+                
             </Box>
         </Flex>
         <div className="flex flex-col justify-between h-full text-center py-6 px-3">
@@ -55,12 +61,6 @@ const styles = {
         alignItems: "center",
         paddingBottom: "$2",
         height: "80px",
-    }),
-    contentStyle: css({
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        padding: '20px',
     }),
     groupNameStyle: css({
         marginBottom: '0px',

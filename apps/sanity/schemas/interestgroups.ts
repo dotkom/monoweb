@@ -21,15 +21,21 @@ export const interestgroupsSchema = defineType({
         ]
         // must contain 100 words
     }), defineField({
-        name: "interestgroup_logo",
+        name: "logo_url",
         title: "Interessegruppe logo",
         type: "image",
+        //add crop and aspect ratio
+        options: {
+            hotspot: true,
+        }
+
     }), defineField({
         name: "wiki_link",
         title: "Wiki link",
         type: "url",
-    }), defineField({
-        name: "banner_image",
+    }),
+    defineField({
+        name: "bannerimage_url",
         title: "Banner bilde",
         type: "image",
     }),
