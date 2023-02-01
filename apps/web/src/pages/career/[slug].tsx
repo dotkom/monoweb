@@ -7,7 +7,7 @@ interface CareerProps {
   career: CareerAd
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<CareerProps> = async (ctx) => {
   const slug = ctx.query.slug as string
   const data = await fetchCareerAd(slug)
   return { props: { career: data } }
