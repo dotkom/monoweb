@@ -57,7 +57,6 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
       react-hook-form: ^7.38.0
-      react-router-dom: ^6.8.0
       superjson: ^1.11.0
       tslib: ^2.4.1
       typescript: ^4.9.4
@@ -83,7 +82,6 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.39.5_react@18.2.0
-      react-router-dom: 6.8.0_biqbaboplfbrettd7655fr4n2y
       superjson: 1.11.0
       zod: 3.20.2
     devDependencies:
@@ -6179,11 +6177,6 @@ packages:
     resolution: {integrity: sha512-d0O68AYy/9oeEy1DdC07bz1/ZXX+DqCskRd3i4JzLSTXwefzaepQrKjXC7aNM8lTHjFLDO0pDgaEiQ7jEk+HVg==}
     dependencies:
       '@babel/runtime': 7.20.1
-    dev: false
-
-  /@remix-run/router/1.3.1:
-    resolution: {integrity: sha512-+eun1Wtf72RNRSqgU7qM2AMX/oHp+dnx7BHk1qhK5ZHzdHTUU4LA1mGG1vT+jMc8sbhG3orvsfOmryjzx2PzQw==}
-    engines: {node: '>=14'}
     dev: false
 
   /@rexxars/eventsource-polyfill/1.0.0:
@@ -19324,29 +19317,6 @@ packages:
       tslib: 2.4.1
       use-callback-ref: 1.3.0_fan5qbzahqtxlm5dzefqlqx5ia
       use-sidecar: 1.1.2_fan5qbzahqtxlm5dzefqlqx5ia
-    dev: false
-
-  /react-router-dom/6.8.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-hQouduSTywGJndE86CXJ2h7YEy4HYC6C/uh19etM+79FfQ6cFFFHnHyDlzO4Pq0eBUI96E4qVE5yUjA00yJZGQ==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      react: '>=16.8'
-      react-dom: '>=16.8'
-    dependencies:
-      '@remix-run/router': 1.3.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-router: 6.8.0_react@18.2.0
-    dev: false
-
-  /react-router/6.8.0_react@18.2.0:
-    resolution: {integrity: sha512-760bk7y3QwabduExtudhWbd88IBbuD1YfwzpuDUAlJUJ7laIIcqhMvdhSVh1Fur1PE8cGl84L0dxhR3/gvHF7A==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      react: '>=16.8'
-    dependencies:
-      '@remix-run/router': 1.3.1
-      react: 18.2.0
     dev: false
 
   /react-rx/2.1.3_react@18.2.0+rxjs@7.8.0:
