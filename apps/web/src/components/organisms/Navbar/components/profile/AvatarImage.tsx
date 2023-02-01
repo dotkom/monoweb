@@ -4,15 +4,18 @@ import { styled } from "@stitches/react"
 
 interface IAvatar {
   radius?: string
+  src?: string | null | undefined
 }
 
-const AvatarImage: React.FC<IAvatar> = ({radius = "40px"}) => (
-
-  <Avatar >
+const AvatarImage: React.FC<IAvatar> = ({ radius = "40px", src }) => (
+  <Avatar>
     <Image
       alt="Colm Tuite"
-      src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHw%3D&w=1000&q=80"
-      style={{width: radius}}
+      src={
+        src ||
+        "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHw%3D&w=1000&q=80"
+      }
+      style={{ width: radius }}
     />
     <Fallback delayMs={500}>CT</Fallback>
   </Avatar>

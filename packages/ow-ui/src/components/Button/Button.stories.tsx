@@ -47,27 +47,31 @@ export const Light = () => (
   </div>
 )
 export const Subtle = () => {
-  return <div className="flex max-w-[500px] flex-wrap justify-around">
-    <Button color="blue" variant="subtle">
-      Blue
-    </Button>
-    <Button color="red" variant="subtle">
-      Red
-    </Button>
-    <Button color="amber" variant="subtle">
-      Amber
-    </Button>
-    <Button color="green" variant="subtle">
-      Green
-    </Button>
-    <Button color="slate" variant="subtle">
-      Slate
-    </Button>
-  </div>
+  return (
+    <div className="flex max-w-[500px] flex-wrap justify-around">
+      <Button color="blue" variant="subtle">
+        Blue
+      </Button>
+      <Button color="red" variant="subtle">
+        Red
+      </Button>
+      <Button color="amber" variant="subtle">
+        Amber
+      </Button>
+      <Button color="green" variant="subtle">
+        Green
+      </Button>
+      <Button color="slate" variant="subtle">
+        Slate
+      </Button>
+    </div>
+  )
 }
 
+export const Gradient = () => <Button variant="gradient">Button</Button>
+
 export const NonInteractive = () => (
-  <Button color="blue" variant="light" nonInteractive={true}>
+  <Button color="blue" variant="light" disabled>
     Button
   </Button>
 )

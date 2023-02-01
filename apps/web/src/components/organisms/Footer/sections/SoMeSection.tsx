@@ -1,4 +1,4 @@
-import { FacebookIcon, GitHubIcon, InstagramIcon, SlackIcon } from "@/components/icons"
+import { FacebookIcon, GitHubIcon, InstagramIcon, SlackIcon } from "../../../icons"
 
 export const SoMeSection = () => {
   const icons = [

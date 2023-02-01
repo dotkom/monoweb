@@ -1,5 +1,6 @@
 import AvatarImage from "@/components/organisms/Navbar/components/profile/AvatarImage"
 import { Button, TextInput } from "@dotkomonline/ui"
+import { useSession } from "next-auth/react"
 
 interface IFormInput {
   name: string
@@ -18,13 +19,17 @@ const FormInput: React.FC<IFormInput> = ({ name }) => {
 }
 
 const Landing = () => {
+  const { data } = useSession()
+
+  const { id, email, image, name } = data?.user || {}
+
   return (
     <div className="w-full">
       <div className="flex w-full items-end">
-        <AvatarImage radius="128px" />
+        <AvatarImage src={image} radius="128px" />
         <div className="ml-8 flex w-full justify-between">
           <div>
-            <p className="text-slate text-[32px] font-medium tracking-[-0.06em]">Olivia Andersson</p>
+            <p className="text-slate text-[32px] font-medium tracking-[-0.06em]">{name}</p>
             <p className="text-slate text-[14px]">Update your photo and personal details</p>
           </div>
           <div className="flex items-center gap-2">

@@ -4,15 +4,9 @@ node_modules
 .next
 # environment variables
 .env
-.env.*
+.env.production
 !.env.example
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
 build-storybook.log
 package-lock.json
 # IDE specific
@@ -22,6 +16,7 @@ node_modules
 .turbo
 dist/
 .next/
+.yarn
 build/
 coverage
 
