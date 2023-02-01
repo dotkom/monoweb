@@ -18,7 +18,6 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
     title,
     company_name,
     image,
-    career_type,
     location,
     deadline,
     company_info,
