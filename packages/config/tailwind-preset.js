@@ -127,12 +127,19 @@ module.exports = {
       borderRadius: {
         md: "4px",
       },
+      typography: ({ theme }) => ({
+        DEFAULT: {
+          "--tw-prose-invert-bullets": theme("colors.amber.12"),
+          "--tw-prose-bullets": theme("colors.amber.12"),
+        },
+      }),
     },
   },
   plugins: [
     require("tailwindcss-radix")({
       variantPrefix: "rdx",
     }),
+    require("@tailwindcss/typography"),
   ],
 }
 

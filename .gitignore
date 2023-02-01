@@ -20,3 +20,4 @@ build/
 coverage
 
 storybook-static
+apps/dashboards/.vscode/settings.json

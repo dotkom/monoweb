@@ -1,26 +1,21 @@
 /*eslint-disable*/
-import BlockContent, { BlockContentProps } from "@sanity/block-content-to-react"
+import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
-import { Text } from "@dotkomonline/ui"
-
+import PT from "react-portable-text"
+import clsx from "clsx"
 interface PortableTextProps {
   blocks: BlockContentProps["blocks"]
   className?: string
 }
-
-const PortableText: FC<PortableTextProps> = ({ blocks, className }) => {
-  const serializers: BlockContentProps["serializers"] = {
-    types: {
-      block: (props) => {
-        const { style = "normal" } = props.node
-        if (/^h\d/.test(style)) {
-          return <Text as={style}>{props.children}</Text>
-        }
-        return <Text>{props.children}</Text>
-      },
-    },
-  }
-  return <BlockContent className={className} serializers={serializers} blocks={blocks} />
-}
+const PortableText: FC<PortableTextProps> = ({ blocks, className }) => (
+  <PT
+    content={blocks}
+    className={clsx("prose prose-invert", className)}
+    serializers={{
+      li: ({ children }: any) => <li className="marker:text-amber-12 ml-4">{children}</li>,
+      someCustomType: PortableText,
+    }}
+  />
+)
 
 export default PortableText
