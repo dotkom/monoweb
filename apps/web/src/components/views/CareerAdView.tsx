@@ -1,5 +1,5 @@
 import { CareerAd } from "@/api/get-career-ads"
-import { Button, css, Text } from "@dotkomonline/ui"
+import { Button, Text } from "@dotkomonline/ui"
 import Image from "next/image"
 import { FC } from "react"
 import { BsLinkedin, BsTwitter, BsArrowLeft } from "react-icons/bs"
