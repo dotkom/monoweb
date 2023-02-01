@@ -5,6 +5,7 @@
 @layer base {
   html {
     font-size: 14px;
+    background-color: rgb(0, 2, 19);
   }
 
   html,
