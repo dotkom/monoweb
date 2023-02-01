@@ -1,4 +1,4 @@
-const config = require("@dotkomonline/config/eslint-preset")
+const config = require("packages/config/eslint-preset.js")
 
 module.exports = {
   ...config,
