@@ -1,6 +1,6 @@
 import { cva } from "cva"
 import type { VariantProps } from "cva"
-import React, { forwardRef, HTMLProps, PropsWithChildren } from "react"
+import React, { forwardRef } from "react"
 import { cn } from "../../utils"
 import { IconLoader2 } from "@tabler/icons"
 
