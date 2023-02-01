@@ -16,7 +16,7 @@ export interface EventTable {
   subtitle: string | null
   imageUrl: string | null
   location: string | null
-  committeeID: string | null
+  committeeId: string | null
 }
 
 export interface AttendanceTable {
