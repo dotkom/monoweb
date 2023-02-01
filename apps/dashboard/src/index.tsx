@@ -7,6 +7,8 @@ import { RouterProvider } from "@tanstack/react-router"
 import { router } from "./router"
 import "./eui.mjs"
 
+globalThis.global = globalThis
+
 const root = document.querySelector<HTMLDivElement>("#root")
 if (root === null) {
   throw new Error("missing dom root")

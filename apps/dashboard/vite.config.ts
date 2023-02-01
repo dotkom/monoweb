@@ -9,5 +9,8 @@ export default defineConfig({
   build: {
     outDir: "build",
   },
+  optimizeDeps: {
+    include: ["lodash"],
+  },
   plugins: [react()],
 })

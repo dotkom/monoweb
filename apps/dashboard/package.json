@@ -26,6 +26,7 @@
     "@hookform/resolvers": "^2.9.10",
     "@tanstack/react-query": "^4.18.0",
     "@tanstack/react-router": "0.0.1-beta.68",
+    "@tanstack/react-table": "^8.7.9",
     "@trpc/client": "^10.0.0",
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
@@ -48,6 +49,6 @@
     "prettier": "^2.7.1",
     "tslib": "^2.4.1",
     "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "vite": "^3.2.5"
   }
 }

@@ -42,6 +42,7 @@ importers:
       '@hookform/resolvers': ^2.9.10
       '@tanstack/react-query': ^4.18.0
       '@tanstack/react-router': 0.0.1-beta.68
+      '@tanstack/react-table': ^8.7.9
       '@trpc/client': ^10.0.0
       '@trpc/react-query': ^10.0.0
       '@trpc/server': ^10.0.0
@@ -60,7 +61,7 @@ importers:
       superjson: ^1.11.0
       tslib: ^2.4.1
       typescript: ^4.9.4
-      vite: ^4.0.4
+      vite: ^3.2.5
       zod: ^3.20.2
     dependencies:
       '@dotkomonline/api': link:../../packages/api
@@ -74,6 +75,7 @@ importers:
       '@hookform/resolvers': 2.9.10_react-hook-form@7.39.5
       '@tanstack/react-query': 4.18.0_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-router': 0.0.1-beta.68_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-table': 8.7.9_biqbaboplfbrettd7655fr4n2y
       '@trpc/client': 10.0.0_@trpc+server@10.0.0
       '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
       '@trpc/server': 10.0.0
@@ -89,13 +91,13 @@ importers:
       '@types/eslint': 8.4.10
       '@types/react': 18.0.25
       '@types/react-dom': 18.0.9
-      '@vitejs/plugin-react': 3.0.1_vite@4.0.4
+      '@vitejs/plugin-react': 3.0.1_vite@3.2.5
       eslint: 8.28.0
       jsdom: 20.0.3
       prettier: 2.8.3
       tslib: 2.4.1
       typescript: 4.9.5
-      vite: 4.0.4
+      vite: 3.2.5
 
   apps/db-migrator:
     specifiers:
@@ -9517,6 +9519,18 @@ packages:
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
+  /@tanstack/react-table/8.7.9_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-6MbbQn5AupSOkek1+6IYu+1yZNthAKTRZw9tW92Vi6++iRrD1GbI3lKTjJalf8lEEKOqapPzQPE20nywu0PjCA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      '@tanstack/table-core': 8.7.9
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
   /@tanstack/react-virtual/3.0.0-beta.29_react@18.2.0:
     resolution: {integrity: sha512-Vwjh/h9J4W6qtlQ7nPmhT6bXueS4mDMXJxJM2lRU6KPGwlWezKp/3NI4ZLAgDqZIxDOkeXq9iERsNxyB7MKHNg==}
     peerDependencies:
@@ -9537,6 +9551,11 @@ packages:
 
   /@tanstack/store/0.0.1-beta.62:
     resolution: {integrity: sha512-0XNKx+H7Wj/mt4hqWIDQcWtGiVInWqwSQY1JkQwf5vzhG10hpRsnvnufcVQc5MDPXPt/4PDHlJAVUp2gj7OCKA==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /@tanstack/table-core/8.7.9:
+    resolution: {integrity: sha512-4RkayPMV1oS2SKDXfQbFoct1w5k+pvGpmX18tCXMofK/VDRdA2hhxfsQlMvsJ4oTX8b0CI4Y3GDKn5T425jBCw==}
     engines: {node: '>=12'}
     dev: false
 
@@ -10412,6 +10431,22 @@ packages:
       - supports-color
     dev: true
 
+  /@vitejs/plugin-react/3.0.1_vite@3.2.5:
+    resolution: {integrity: sha512-mx+QvYwIbbpOIJw+hypjnW1lAbKDHtWK5ibkF/V1/oMBu8HU/chb+SnqJDAsLq1+7rGqjktCEomMTM5KShzUKQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^4.0.0
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/plugin-transform-react-jsx-self': 7.18.6_@babel+core@7.20.12
+      '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.20.12
+      magic-string: 0.27.0
+      react-refresh: 0.14.0
+      vite: 3.2.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@vitejs/plugin-react/3.0.1_vite@4.0.4:
     resolution: {integrity: sha512-mx+QvYwIbbpOIJw+hypjnW1lAbKDHtWK5ibkF/V1/oMBu8HU/chb+SnqJDAsLq1+7rGqjktCEomMTM5KShzUKQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -10426,6 +10461,7 @@ packages:
       vite: 4.0.4
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@vitest/coverage-c8/0.26.3_jsdom@20.0.3:
     resolution: {integrity: sha512-sjmVYPozajWY2DawzuvhYX6hEe/LD6p2xv9VmPvh1zzDeNNVCAnyLcvXoaSMQD522x9bqciuyPrlrnh2iNkE/w==}
@@ -22424,6 +22460,39 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /vite/3.2.5:
+    resolution: {integrity: sha512-4mVEpXpSOgrssFZAOmGIr85wPHKvaDAcXqxVxVRZhljkJOMZi1ibLibzjLHzJvcok8BMguLc7g1W6W/GqZbLdQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.15.15
+      postcss: 8.4.21
+      resolve: 1.22.1
+      rollup: 2.79.1
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
   /vite/4.0.4:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -22455,6 +22524,7 @@ packages:
       rollup: 3.10.0
     optionalDependencies:
       fsevents: 2.3.2
+    dev: false
 
   /vite/4.0.4_@types+node@18.11.9:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}

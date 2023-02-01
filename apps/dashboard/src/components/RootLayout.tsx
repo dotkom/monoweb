@@ -9,15 +9,19 @@ import {
   EuiHeaderLogo,
   EuiFlexGroup,
 } from "@elastic/eui"
-import { Outlet } from "@tanstack/react-router"
+import { Outlet, useRouter } from "@tanstack/react-router"
 import { Sidebar } from "./Sidebar"
 
 export const RootLayout: FC = () => {
+  const router = useRouter()
+
   return (
     <EuiFlexGroup direction="column" gutterSize="none" style={{ minHeight: "100vh" }}>
       <EuiHeader>
         <EuiHeaderSectionItem border="right">
-          <EuiHeaderLogo href="/">OnlineWeb Dashboard</EuiHeaderLogo>
+          <EuiHeaderLogo href="#" onClick={() => router.navigate({ to: "/" })}>
+            OnlineWeb Dashboard
+          </EuiHeaderLogo>
         </EuiHeaderSectionItem>
         <EuiHeaderSectionItem>
           <EuiHeaderLink href="https://new.online.ntnu.no">Tilbake til OnlineWeb</EuiHeaderLink>
