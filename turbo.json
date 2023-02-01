@@ -26,7 +26,6 @@
       "outputs": []
     },
     "dev": {
-      "dependsOn": ["migrate"],
       "cache": false
     },
     "migrate": {
@@ -50,6 +49,8 @@
     "NEXTAUTH_CLIENT_SECRET",
     "NEXTAUTH_URL",
     "NEXTAUTH_SECRET",
+    "NEXTAUTH_DASHBOARD_CLIENT_ID",
+    "NEXTAUTH_DASHBOARD_CLIENT_SECRET",
     "HYDRA_ADMIN_URL",
     "HYDRA_PUBLIC_URL",
     "NEXT_PUBLIC_DEBUG",
