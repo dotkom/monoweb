@@ -17,7 +17,7 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="">
+    <div>
       Not signed in <br />
       <Button onClick={() => signIn("onlineweb")}>Login</Button>
       <Button onClick={() => router.push("/auth/signup")}>Sign up</Button>
