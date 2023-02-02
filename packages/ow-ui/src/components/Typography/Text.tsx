@@ -1,16 +1,14 @@
 import { cva, type VariantProps } from "cva"
-import { FC, ReactNode } from "react"
-import { twMerge } from "tailwind-merge"
+import * as React from "react"
+import { cn } from "../../utils"
 
 export interface TextProps extends VariantProps<typeof text> {
-  children?: ReactNode
+  children?: React.ReactNode
   className?: string
 }
 
-export const Text: FC<TextProps> = (props) => {
-  return (
-    <p className={twMerge(props.className, text({ size: props.size, truncate: props.truncate }))}>{props.children}</p>
-  )
+export const Text: React.FC<TextProps> = (props) => {
+  return <p className={cn(props.className, text({ size: props.size, truncate: props.truncate }))}>{props.children}</p>
 }
 
 const text = cva("text-slate-12", {
