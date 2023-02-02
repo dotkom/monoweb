@@ -57,7 +57,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
             </Badge>
           ))}
         </Flex>
-        <Text css={styles.excerpt}>{excerpt}</Text>
+        <Text className="pb-1 text-black">{excerpt}</Text>
       </Flex>
       {cover_image ? (
         <Box css={{ margin: "auto", maxHeight: "$md", paddingBottom: "$5" }}>
@@ -91,11 +91,6 @@ const styles = {
     lineHeight: "1.4",
     textAlign: "center",
   }),
-  excerpt: {
-    color: "$black",
-    fontSize: "$md",
-    paddingBottom: "$1",
-  } as CSS,
   content: css({
     "& > h1, h2, h3": {
       color: "$blue4",
