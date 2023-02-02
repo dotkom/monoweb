@@ -1,13 +1,15 @@
 import { cva, VariantProps } from "cva"
 import { FC, ReactNode } from "react"
+import { twMerge } from "tailwind-merge"
 
 export interface CardProps extends VariantProps<typeof card> {
   children?: ReactNode
+  className?: string
 }
 
 export const Card: FC<CardProps> = (props) => {
   return (
-    <div {...props} className={card(props)}>
+    <div className={twMerge(props.className, card({ shadow: props.shadow, outlined: props.outlined }))}>
       {props.children}
     </div>
   )

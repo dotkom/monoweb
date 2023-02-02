@@ -1,46 +1,7 @@
-import { blackA } from "@radix-ui/colors"
 import * as SwitchPrimitive from "@radix-ui/react-switch"
-import { styled } from "@stitches/react"
 import React, { Dispatch, SetStateAction } from "react"
-
-const StyledSwitch = styled(SwitchPrimitive.Root, {
-  all: "unset",
-  width: 42,
-  height: 25,
-  backgroundColor: "$gray10",
-  borderRadius: "9999px",
-  position: "relative",
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
-  WebkitTapHighlightColor: "rgba(0, 0, 0, 0)",
-  "&:focus": { boxShadow: `0 0 0 2px $colors$info1` },
-  '&[data-state="checked"]': { backgroundColor: "$blue3" },
-  "&:disabled": { backgroundColor: "$gray11" },
-})
-
-const StyledThumb = styled(SwitchPrimitive.Thumb, {
-  display: "block",
-  width: 21,
-  height: 21,
-  backgroundColor: "white",
-  borderRadius: "9999px",
-  boxShadow: `0 2px 2px ${blackA.blackA7}`,
-  transition: "transform 100ms",
-  transform: "translateX(2px)",
-  willChange: "transform",
-  '&[data-state="checked"]': { transform: "translateX(19px)" },
-})
-
-// Exports
-const Switch = StyledSwitch
-const SwitchThumb = StyledThumb
-
-const Flex = styled("div", { display: "flex" })
-const Label = styled("label", {
-  color: "$gray1",
-  fontSize: 15,
-  lineHeight: 1,
-  userSelect: "none",
-})
+import { Label } from "@radix-ui/react-label"
+import { Text } from "../Typography"
 
 export interface ToggleProps {
   label: string
@@ -52,14 +13,19 @@ export interface ToggleProps {
 export const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setIsChecked }) => {
   return (
     <form>
-      <Flex css={{ alignItems: "center" }}>
-        <Label htmlFor="s1" css={{ paddingRight: 15 }}>
-          {label}
+      <div className="flex items-center">
+        <Label htmlFor="s1" className="pr-2">
+          <Text>{label}</Text>
         </Label>
-        <Switch id="s1" disabled={disabled} onChange={() => setIsChecked(!isChecked)}>
-          <SwitchThumb />
-        </Switch>
-      </Flex>
+        <SwitchPrimitive.Root
+          className="all-unset bg-slate-10 rdx-state-checked:bg-blue-3 disabled:bg-slate-11 relative h-[25px] w-[42px] rounded-full shadow"
+          id="s1"
+          disabled={disabled}
+          onChange={() => setIsChecked(!isChecked)}
+        >
+          <SwitchPrimitive.Thumb className="rdx-state-checked:translate-x-[19px] block h-[21px] w-[21px] rounded-full bg-white shadow transition-transform duration-1000 will-change-transform" />
+        </SwitchPrimitive.Root>
+      </div>
     </form>
   )
 }
