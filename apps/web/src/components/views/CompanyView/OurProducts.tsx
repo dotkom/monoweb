@@ -16,19 +16,19 @@ const OurProducts = () => {
           <Flex css={{ justifyContent: "center" }}>
             <ItexIcon className={styles.icon()} />
           </Flex>
-          <Text css={{ fontWeight: "bold" }}>ITEX</Text>
+          <Text className="font-bold">ITEX</Text>
         </Flex>
         <Flex css={{ flexDirection: "column", textAlign: "center" }}>
           <Flex css={{ justifyContent: "center" }}>
             <BedpressIcon className={styles.icon()} />
           </Flex>
-          <Text css={{ fontWeight: "bold" }}>Bedriftsarrangement</Text>
+          <Text className="font-bold">Bedriftsarrangement</Text>
         </Flex>
         <Flex css={{ flexDirection: "column", textAlign: "center" }}>
           <Flex css={{ justifyContent: "center" }}>
             <TechtalksIcon className={styles.icon()} />
           </Flex>
-          <Text css={{ fontWeight: "bold" }}>Tech Talks</Text>
+          <Text className="font-bold">Tech Talks</Text>
         </Flex>
       </Flex>
       <Flex css={{ justifyContent: "space-evenly" }}>
@@ -36,13 +36,13 @@ const OurProducts = () => {
           <Flex css={{ justifyContent: "center" }}>
             <UtlysningIcon className={styles.icon()} />
           </Flex>
-          <Text css={{ fontWeight: "bold" }}>Stillingsutlysning</Text>
+          <Text className="font-bold">Stillingsutlysning</Text>
         </Flex>
         <Flex css={{ flexDirection: "column", textAlign: "center" }}>
           <Flex css={{ justifyContent: "center" }}>
             <OfflineIcon className={styles.icon()} />
           </Flex>
-          <Text css={{ fontWeight: "bold" }}>Annonse i Offline</Text>
+          <Text className="font-bold">Annonse i Offline</Text>
         </Flex>
       </Flex>
     </Flex>
