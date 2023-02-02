@@ -6,7 +6,7 @@ import { EventCreationModal } from "./EventCreationModal"
 import { EventDetailsFlyout } from "./EventDetailsFlyout"
 import { trpc } from "../../trpc"
 import { Event } from "@dotkomonline/types"
-import { Button } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
 
 export default function EventPage() {
   const { Flyout, open: openDetailsFlyout } = useFlyout<Event>(EventDetailsFlyout)
@@ -20,8 +20,8 @@ export default function EventPage() {
       <Flyout />
       <Modal />
       <div>
-        <h1>Arrangmenter</h1>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</p>
+        <Title>Arrangmenter</Title>
+        <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
       </div>
       <div className="rounded bg-white shadow">
         {isLoading ? (

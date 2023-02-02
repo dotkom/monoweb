@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { ErrorMessage } from "@hookform/error-message"
 import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { trpc } from "../../trpc"
-import { Button } from "@dotkomonline/ui"
+import { Button, Text, Title } from "@dotkomonline/ui"
 
 export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
   const {
@@ -34,17 +34,17 @@ export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
     close()
   }
   return (
-    <div className="h-full w-full border bg-white p-6">
-      <h1>Opprett nytt arrangement</h1>
+    <div className="h-full w-full p-6">
+      <Title>Opprett nytt arrangement</Title>
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <label htmlFor="title">
-          <p>Event tittel</p>
+          <Text>Event tittel</Text>
           <input {...register("title")} id="title" />
           <ErrorMessage errors={errors} name="title" />
         </label>
 
         <label htmlFor="start">
-          <p>Event start time</p>
+          <Text>Event start time</Text>
           <input
             {...register("start", {
               valueAsDate: true,
@@ -56,7 +56,7 @@ export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
         </label>
 
         <label htmlFor="end">
-          <p>Event end time</p>
+          <Text>Event end time</Text>
           <input
             {...register("end", {
               valueAsDate: true,
@@ -68,7 +68,7 @@ export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
         </label>
 
         <label htmlFor="status">
-          <p>Event status</p>
+          <Text>Event status</Text>
           <select {...register("status")}>
             <option value="TBA">TBA</option>
             <option value="PUBLIC">Public</option>
@@ -79,13 +79,13 @@ export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
         </label>
 
         <label htmlFor="type">
-          <p>Event type</p>
+          <Text>Event type</Text>
           <input {...register("type")} />
           <ErrorMessage errors={errors} name="type" />
         </label>
 
         <label htmlFor="public">
-          <p>Public event</p>
+          <Text>Public event</Text>
           <input type="checkbox" {...register("public")} />
           <ErrorMessage errors={errors} name="public" />
         </label>
