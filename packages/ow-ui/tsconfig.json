@@ -5,6 +5,8 @@
     "declaration": true,
     "jsx": "react-jsx"
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["./**/*.stories.ts"]
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
 }

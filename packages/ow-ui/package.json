@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@dotkomonline/config": "*",
-    "@storybook/react": "^6.5.9",
+    "@storybook/react": "^7.0.0-beta.34",
     "@types/react": "^18.0.15",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.26.0",
