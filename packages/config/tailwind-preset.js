@@ -1,4 +1,10 @@
-const brand = {}
+const brand = {
+  lighter: "#1277A5",
+  light: "#106A93",
+  DEFAULT: "#0d5474",
+  dark: "#0A425C",
+  darker: "#083549",
+}
 
 const slate = {
   1: "#151718",
@@ -78,19 +84,16 @@ const red = {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   // Relative to the project when the preset is loaded from a tailwind.config.js
+  darkMode: ["class", '[data-theme="dark"]'],
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ow-ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    fontFamily: {
-      poppins: ['"Poppins"'],
-      sans: ['"Inter var"', "sans-serif"],
-    },
     colors: {
-      slate,
-      blue,
-      amber,
-      red,
-      green,
-      brand,
+      slate: { ...slate, DEFAULT: slate[3] },
+      blue: { ...blue, DEFAULT: blue[3] },
+      amber: { ...amber, DEFAULT: amber[3] },
+      red: { ...red, DEFAULT: red[3] },
+      green: { ...green, DEFAULT: green[3] },
+      brand: brand,
     },
     extend: {
       fontFamily: {
@@ -105,21 +108,20 @@ module.exports = {
         background: "#000212",
         foreground: slate[12],
         accent: "#FFEDB3",
-        slate: {
-          DEFAULT: slate[3],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
-        blue: {
-          DEFAULT: blue[3],
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
         },
-        amber: {
-          DEFAULT: amber[3],
-        },
-        red: {
-          DEFAULT: red[3],
-        },
-        green: {
-          DEFAULT: green[3],
-        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
       ringColor: {
         DEFAULT: blue[7],
@@ -140,6 +142,7 @@ module.exports = {
       variantPrefix: "rdx",
     }),
     require("@tailwindcss/typography"),
+    require("tailwindcss-animate"),
   ],
 }
 
