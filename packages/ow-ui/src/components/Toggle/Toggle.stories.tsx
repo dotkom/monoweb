@@ -3,7 +3,7 @@ import { Label } from "../Label"
 import { Toggle } from "./Toggle"
 
 export default {
-  title: "atoms/Toggle",
+  title: "Toggle",
   component: Toggle,
 }
 type Story = StoryObj<typeof Toggle>

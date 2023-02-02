@@ -1,10 +1,12 @@
-import { StoryObj } from "@storybook/react"
+import { Meta, StoryObj } from "@storybook/react"
 import { Textarea } from "./Textarea"
 
-export default {
+const meta: Meta<typeof Textarea> = {
   title: "Textarea",
   component: Textarea,
 }
+export default meta
+
 type Story = StoryObj<typeof Textarea>
 export const Default: Story = { args: { placeholder: "Write a love letter to Online." } }
 
