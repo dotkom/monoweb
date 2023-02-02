@@ -1,15 +1,16 @@
-import { cva, VariantProps } from "cva"
-import { FC, ReactNode } from "react"
-import { twMerge } from "tailwind-merge"
+import { cva } from "cva"
+import type { VariantProps } from "cva"
+import * as React from "react"
+import { cn } from "../../utils"
 
 export interface CardProps extends VariantProps<typeof card> {
-  children?: ReactNode
+  children?: React.ReactNode
   className?: string
 }
 
-export const Card: FC<CardProps> = (props) => {
+export const Card: React.FC<CardProps> = (props) => {
   return (
-    <div className={twMerge(props.className, card({ shadow: props.shadow, outlined: props.outlined }))}>
+    <div className={cn(props.className, card({ shadow: props.shadow, outlined: props.outlined }))}>
       {props.children}
     </div>
   )
