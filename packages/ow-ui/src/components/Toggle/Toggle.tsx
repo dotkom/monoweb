@@ -1,31 +1,24 @@
-import * as SwitchPrimitive from "@radix-ui/react-switch"
-import React, { Dispatch, SetStateAction } from "react"
-import { Label } from "@radix-ui/react-label"
-import { Text } from "../Typography"
+import * as React from "react"
+import * as SwitchPrimitives from "@radix-ui/react-switch"
+import { cn } from "../../utils"
 
-export interface ToggleProps {
-  label: string
-  disabled?: boolean
-  isChecked: boolean
-  setIsChecked: Dispatch<SetStateAction<boolean>>
-}
-
-export const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setIsChecked }) => {
-  return (
-    <form>
-      <div className="flex items-center">
-        <Label htmlFor="s1" className="pr-2">
-          <Text>{label}</Text>
-        </Label>
-        <SwitchPrimitive.Root
-          className="all-unset bg-slate-10 rdx-state-checked:bg-blue-3 disabled:bg-slate-11 relative h-[25px] w-[42px] rounded-full shadow"
-          id="s1"
-          disabled={disabled}
-          onChange={() => setIsChecked(!isChecked)}
-        >
-          <SwitchPrimitive.Thumb className="rdx-state-checked:translate-x-[19px] block h-[21px] w-[21px] rounded-full bg-white shadow transition-transform duration-1000 will-change-transform" />
-        </SwitchPrimitive.Root>
-      </div>
-    </form>
-  )
-}
+export const Toggle = React.forwardRef<
+  React.ElementRef<typeof SwitchPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
+>(({ className, ...props }, ref) => (
+  <SwitchPrimitives.Root
+    className={cn(
+      "focus:ring-slate-7 data-[state=unchecked]:bg-slate-6 data-[state=checked]:bg-blue-8 peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      className
+    )}
+    {...props}
+    ref={ref}
+  >
+    <SwitchPrimitives.Thumb
+      className={cn(
+        "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=unchecked]:translate-x-0 data-[state=checked]:translate-x-5"
+      )}
+    />
+  </SwitchPrimitives.Root>
+))
+Toggle.displayName = SwitchPrimitives.Root.displayName
