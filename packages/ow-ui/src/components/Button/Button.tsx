@@ -68,6 +68,11 @@ export const buttonStyles = cva(
   }
 )
 
+// bg-amber-9 hover:bg-amber-10 bg-amber-4 text-amber-11 hover:bg-amber-5 hover:bg-amber-2
+// bg-red-9 hover:bg-red-10 bg-red-4 text-red-11 hover:bg-red-5 hover:bg-red-2
+// bg-blue-9 hover:bg-blue-10 bg-blue-4 text-blue-11 hover:bg-blue-5 hover:bg-blue-2
+// bg-slate-9 hover:bg-slate-10 bg-slate-4 text-slate-11 hover:bg-slate-5 hover:bg-slate-2
+// bg-green-9 hover:bg-green-10 bg-green-4 text-green-11 hover:bg-green-5 hover:bg-green-2
 export const getColorStyles = (variant: VariantProps<typeof buttonStyles>["variant"], color: Color) => {
   switch (variant) {
     case "solid":

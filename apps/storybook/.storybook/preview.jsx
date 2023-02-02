@@ -1,7 +1,7 @@
 import { themes } from "@storybook/theming"
 
 import "tailwindcss/tailwind.css"
-
+import "@dotkomonline/ui/tailwind.css"
 
 export const parameters = {
   darkMode: {
@@ -18,6 +18,6 @@ export const parameters = {
 
 export const decorators = [
   (Story) => {
-    return <div className="dark"><Story /></div>
+    return <div className="dark" data-theme="dark"><Story /></div>
   },
 ]
