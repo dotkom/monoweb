@@ -1,8 +1,9 @@
 import * as Label from "@radix-ui/react-label"
 import { ComponentPropsWithoutRef, forwardRef } from "react"
 
-import { css } from "../../config/stitches.config"
 import { AlertIcon } from "../Alert/AlertIcon"
+import { cva } from "cva"
+import { Text } from "../Typography"
 
 export type TextareaProps = ComponentPropsWithoutRef<"textarea"> & {
   label?: string
@@ -21,76 +22,40 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   const { id, message, label, status, ...rest } = props
 
   return (
-    <div className={styles.inputContainer()}>
+    <div className="flex w-full flex-col gap-1">
       {label && (
-        <Label.Root htmlFor={id} className={styles.label()}>
+        <Label.Root htmlFor={id} className="font-bold">
           {label}
         </Label.Root>
       )}
-      <textarea className={styles.base({ status })} ref={ref} id={id} {...rest} />
+      <textarea className={base({ status })} ref={ref} id={id} {...rest} />
       {message && (
-        <div className={styles.messageContainer()}>
+        <div className="text-md flex items-center">
           <AlertIcon status={status} />
-          <span className={styles.message({ status })}>{message}</span>
+          <Text className={displayMessage({ status })}>{message}</Text>
         </div>
       )}
     </div>
   )
 })
 
-const styles = {
-  base: css({
-    outline: "none",
-    resize: "none",
-    padding: "$2",
-    border: "2px solid $gray10",
-    fontFamily: "$body",
-    borderRadius: "$1",
-    backgroundColor: "$gray12",
-    "&:disabled": {
-      backgroundColor: "$gray11",
-      cursor: "not-allowed",
-    },
-    "&:focus": {
-      borderColor: "$info4",
-    },
+const base = cva(
+  "outline-none resize-none p-2 border border-slate-10 bg-slate-12 disabled:bg-slate-11 disabled:cursor-not-allowed focus:border-info-4",
+  {
     variants: {
       status: {
-        danger: {
-          borderColor: "$red5",
-        },
-        success: {
-          borderColor: "$green5",
-        },
+        danger: "border-red-5",
+        success: "border-green-5",
       },
     },
-  }),
-  label: css({
-    fontWeight: "bold",
-    fontFamily: "$body",
-  }),
-  inputContainer: css({
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-    gap: "$1",
-  }),
-  message: css({
-    fontWeight: "600",
-    variants: {
-      status: {
-        danger: {
-          color: "$red0",
-        },
-        success: {
-          color: "$green0",
-        },
-      },
+  }
+)
+
+const displayMessage = cva("font-bold", {
+  variants: {
+    status: {
+      danger: "text-red-0",
+      success: "text-green-0",
     },
-  }),
-  messageContainer: css({
-    fontSize: "$md",
-    display: "flex",
-    alignItems: "center",
-  }),
-}
+  },
+})
