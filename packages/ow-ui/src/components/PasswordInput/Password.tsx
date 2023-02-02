@@ -2,6 +2,7 @@ import { cva } from "cva"
 import { forwardRef, useState } from "react"
 import { Label } from "@radix-ui/react-label"
 import { IconEyeCheck, IconEyeOff } from "@tabler/icons"
+import { Text } from "../Typography"
 
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string
@@ -19,13 +20,15 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
     const InputType = visible ? "text" : "password"
 
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-1">
         {label && (
-          <Label htmlFor={props.id} className="mb-2">
-            {label} {withAsterisk && <span className="text-red-11">*</span>}
+          <Label htmlFor={props.id} className="mb-1">
+            <Text>
+              {label} {withAsterisk && <span className="text-red-11">*</span>}
+            </Text>
           </Label>
         )}
-        <span className="text-xs">{inputInfo}</span>
+        <Text size="xs">{inputInfo}</Text>
         <div className="relative">
           <input type={InputType} {...props} ref={ref} className={input({ error: !!error })} />
           <div>
