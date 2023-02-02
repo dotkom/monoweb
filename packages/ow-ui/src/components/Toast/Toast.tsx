@@ -1,8 +1,8 @@
-import { css } from "@stitches/react"
 import { FC, ReactNode } from "react"
 import { IoCloseOutline } from "react-icons/io5"
 
 import { AlertIcon } from "../Alert/AlertIcon"
+import { cva } from "cva"
 
 export interface ToastProps {
   monochrome?: boolean
@@ -11,94 +11,44 @@ export interface ToastProps {
 }
 
 const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
-  const styleCheck = monochrome ? undefined : status
+  const styleCheck = monochrome ? "monochrome" : status
   return (
-    <div className={styles.base({ color: styleCheck })}>
-      <div className={styles.flex()}>
+    <div className={base({ color: styleCheck })}>
+      <div className="flex">
         <AlertIcon status={status}></AlertIcon>
         {children}
       </div>
       {/* The monochrome value is inverted because we want a white or black icon with colored background*/}
 
-      <button className={styles.button()}>
-        <IoCloseOutline aria-hidden className={styles.close({ color: styleCheck })}></IoCloseOutline>
+      <button className="ml-auto border-0 bg-transparent transition-transform hover:-translate-y-[1px] active:translate-y-[2px]">
+        <IoCloseOutline aria-hidden className={close({ color: styleCheck })}></IoCloseOutline>
       </button>
     </div>
   )
 }
 
-const styles = {
-  base: css({
-    display: "flex",
-    alignItems: "center",
-    width: "352px",
-    height: "22px",
-    padding: "22px",
-    borderRadius: 5,
-    backgroundColor: "white",
-    color: "$gray1",
-    boxShadow: `0px 8px 12px rgba(9, 30, 66, 0.15), 0px 0px 1px rgba(9, 30, 66, 0.31)`,
-    variants: {
-      color: {
-        danger: {
-          backgroundColor: "$red3",
-          color: "$gray12",
-        },
-        warning: {
-          backgroundColor: "$orange3",
-        },
-        info: {
-          backgroundColor: "$info3",
-          color: "$gray12",
-        },
-        success: {
-          backgroundColor: "$green3",
-          color: "$gray12",
-        },
-      },
+const base = cva("flex align-center p-2 rounded max-w-[360px] text-slate-1 shadow-md", {
+  variants: {
+    color: {
+      danger: "bg-red-9 text-slate-12",
+      warning: "bg-amber-9",
+      info: "bg-blue-9 text-slate-12",
+      success: "bg-green-9 text-slate-12",
+      monochrome: "bg-white",
     },
-  }),
-  close: css({
-    width: "24px",
-    height: "24px",
-    color: "$gray1",
-    variants: {
-      color: {
-        danger: {
-          backgroundColor: "$red3",
-          color: "$gray12",
-        },
-        warning: {
-          backgroundColor: "$orange3",
-        },
-        info: {
-          backgroundColor: "$info3",
-          color: "$gray12",
-        },
-        success: {
-          backgroundColor: "$green3",
-          color: "$gray12",
-        },
-      },
+  },
+})
+
+const close = cva("w-6 h-6 text-slate-1", {
+  variants: {
+    color: {
+      danger: "bg-red-9 text-slate-12",
+      warning: "bg-amber-9",
+      info: "bg-blue-9 text-slate-12",
+      success: "bg-green-9 text-slate-12",
+      monochrome: "",
     },
-  }),
-  button: css({
-    border: "none",
-    backgroundColor: "transparent",
-    marginLeft: "auto",
-    "&:hover": {
-      transform: "translateY(-1px)",
-      color: "$gray3",
-      cursor: "pointer",
-    },
-    "&:active": {
-      transform: "translateY(1px)",
-      color: "$gray2",
-    },
-  }),
-  flex: css({
-    display: "flex",
-  }),
-}
+  },
+})
 
 export default Toast
