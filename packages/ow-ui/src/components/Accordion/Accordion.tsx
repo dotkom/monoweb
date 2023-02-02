@@ -9,11 +9,7 @@ const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
-    ref={ref}
-    className={cn(" border-b-slate-11 border-b dark:border-b-slate-700", className)}
-    {...props}
-  />
+  <AccordionPrimitive.Item ref={ref} className={cn(" border-b-slate-11 border-b", className)} {...props} />
 ))
 AccordionItem.displayName = "AccordionItem"
 

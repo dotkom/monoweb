@@ -16,6 +16,6 @@ export const parameters = {
 
 export const decorators = [
   (Story) => {
-    return <div className="text-slate-12" data-theme="dark"><Story /></div>
+    return <div className="text-slate-12 text-[14px]" data-theme="dark"><Story /></div>
   },
 ]
