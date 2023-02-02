@@ -31,6 +31,13 @@ module.exports = {
         background: "var(--color-background)",
         foreground: "var(--color-slate-12)",
         accent: "#FFEDB3",
+        brand: {
+          lighter: "#1277A5",
+          light: "#106A93",
+          DEFAULT: "#0d5474",
+          dark: "#0A425C",
+          darker: "#083549",
+        },
       },
       keyframes: {
         "accordion-down": {
