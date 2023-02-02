@@ -258,6 +258,7 @@ importers:
       lint-staged: ^10.5.4
       next: ^13.1.0
       next-auth: ^4.17.0
+      next-themes: ^0.2.1
       pg: ^8.8.0
       postcss: ^8.4.18
       prettier: ^2.7.1
@@ -305,6 +306,7 @@ importers:
       date-fns: 2.29.3
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.17.0_q76c2b4vyoegvsbrcwkfvimnai
+      next-themes: 0.2.1_q76c2b4vyoegvsbrcwkfvimnai
       pg: 8.8.0
       prettier: 2.7.1
       react: 18.2.0
@@ -13030,6 +13032,18 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       uuid: 8.3.2
+    dev: false
+
+  /next-themes/0.2.1_q76c2b4vyoegvsbrcwkfvimnai:
+    resolution: {integrity: sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==}
+    peerDependencies:
+      next: '*'
+      react: '*'
+      react-dom: '*'
+    dependencies:
+      next: 13.1.1_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /next/13.0.4_mqvh5p7ejg4taogoj6tpk3gd5a:
