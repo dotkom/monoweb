@@ -167,6 +167,7 @@ importers:
     specifiers:
       '@babel/core': ^7.19.6
       '@dotkomonline/config': '*'
+      '@dotkomonline/ui': '*'
       '@mdx-js/react': ^1.6.22
       '@storybook/addon-actions': ^7.0.0-beta.34
       '@storybook/addon-docs': ^7.0.0-beta.34
@@ -189,6 +190,7 @@ importers:
     devDependencies:
       '@babel/core': 7.20.2
       '@dotkomonline/config': link:../../packages/config
+      '@dotkomonline/ui': link:../../packages/ow-ui
       '@mdx-js/react': 1.6.22_react@18.2.0
       '@storybook/addon-actions': 7.0.0-beta.34_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-docs': 7.0.0-beta.34_biqbaboplfbrettd7655fr4n2y
