@@ -1,5 +1,12 @@
+const colors = require("./colors.cjs")
+/**
+ * Yes this looks hacky as fuck, but is needed for the color intellisense
+ */
 const createColorScale = (name) => {
-  const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [step, `var(--color-${name}-${step})`])
+  const entries = /** @type {const} */ [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [
+    step,
+    `hsl(var(--color-${name}-${step}, ${colors[`${name}Dark`][`${name}${step}`]}) / <alpha-value>)`,
+  ])
   // Give the default the third step on the scale
   entries.push(["DEFAULT", `var(--color-${name}-3`])
   return Object.fromEntries(entries)
@@ -29,8 +36,8 @@ module.exports = {
         current: "current",
         transparent: "transparent",
         white: "#ffffee",
-        background: "var(--color-background)",
-        foreground: "var(--color-slate-12)",
+        background: "var(--color-background)", //#asjkdl
+        foreground: "hsl(var(--color-slate-12) / <alpha-value>)",
         accent: "#FFEDB3",
         brand: {
           lighter: "#1277A5",

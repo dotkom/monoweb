@@ -8,7 +8,6 @@ import type { Session } from "next-auth"
 import MainLayout from "../components/layout/MainLayout"
 import { globalStyles } from "@/theme/global-style"
 import { trpc } from "@/utils/trpc"
-import "@dotkomonline/ui/tailwind.css"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
 

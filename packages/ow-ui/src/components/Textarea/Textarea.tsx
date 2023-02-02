@@ -1,61 +1,67 @@
-import * as Label from "@radix-ui/react-label"
-import { ComponentPropsWithoutRef, forwardRef } from "react"
-
-import { AlertIcon } from "../Alert/AlertIcon"
+import { IconAlertCircle } from "@tabler/icons"
 import { cva } from "cva"
-import { Text } from "../Typography"
 
-export type TextareaProps = ComponentPropsWithoutRef<"textarea"> & {
+import * as React from "react"
+import { cn } from "../../utils"
+import { Label } from "../Label"
+
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
-} & (
-    | {
-        status: "success" | "danger"
-        message: string
-      }
-    | {
-        status?: undefined
-        message?: undefined
-      }
-  )
+  status?: "success" | "warning" | "danger"
+  error?: string
+  message?: string
+}
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(props, ref) {
-  const { id, message, label, status, ...rest } = props
-
-  return (
-    <div className="flex w-full flex-col gap-1">
-      {label && (
-        <Label.Root htmlFor={id} className="font-bold">
-          {label}
-        </Label.Root>
-      )}
-      <textarea className={base({ status })} ref={ref} id={id} {...rest} />
-      {message && (
-        <div className="text-md flex items-center">
-          <AlertIcon status={status} />
-          <Text className={displayMessage({ status })}>{message}</Text>
-        </div>
-      )}
-    </div>
-  )
-})
-
-const base = cva(
-  "outline-none resize-none p-2 border border-slate-10 bg-slate-12 disabled:bg-slate-11 disabled:cursor-not-allowed focus:border-info-4",
-  {
-    variants: {
-      status: {
-        danger: "border-red-5",
-        success: "border-green-5",
-      },
-    },
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, error, status, message, label, ...props }, ref) => {
+    return (
+      <div className="grid w-full gap-2">
+        {label && <Label htmlFor={props.id}>{label}</Label>}
+        <textarea
+          className={cn(
+            "border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9 focus:ring-slate-8 flex h-20 w-full rounded-md border bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-2 disabled:opacity-50 ",
+            statusVariants({ status: status ? status : error ? "danger" : undefined }), // Error implies danger
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {message && <p className={displayMessage({ status })}>{message}</p>}
+        {error && (
+          <div className={displayMessage({ status: "danger" })}>
+            <IconAlertCircle size={20} className="mr-1" />
+            <p>
+              <span className="font-bold">Error:&nbsp;</span>
+              {error}
+            </p>
+          </div>
+        )}
+      </div>
+    )
   }
 )
+Textarea.displayName = "Textarea"
 
-const displayMessage = cva("font-bold", {
+export { Textarea }
+
+const statusVariants = cva("", {
   variants: {
     status: {
-      danger: "text-red-0",
-      success: "text-green-0",
+      danger: "border-red-7",
+      error: "border-red-7",
+      warning: "border-amber-7",
+      success: "border-green-7",
+    },
+  },
+})
+
+const displayMessage = cva("text-sm inline-flex", {
+  variants: {
+    status: {
+      error: "text-red-11",
+      danger: "text-red-11",
+      success: "text-green-11",
+      warning: "text-amber-11",
     },
   },
 })
