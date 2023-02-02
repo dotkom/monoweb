@@ -1,6 +1,5 @@
 "use client"
 
-import { Text, Title } from "@tremor/react"
 import { FC } from "react"
 
 import { OnlineIcon } from "./OnlineIcon"
@@ -24,10 +23,10 @@ export const Sidebar: FC = () => {
       <div className="flex flex-col gap-2 overflow-y-auto p-3">
         {sections.map((section) => (
           <div key={section.name} className="flex flex-col">
-            <Title>{section.name}</Title>
+            <h1>{section.name}</h1>
             {section.children.map(([label, href]) => (
               <Link className="" key={label} href={href}>
-                <Text>{label}</Text>
+                <p>{label}</p>
               </Link>
             ))}
           </div>
