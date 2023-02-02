@@ -1,13 +1,16 @@
-import { StoryObj } from "@storybook/react"
+import { Meta, StoryObj } from "@storybook/react"
 import { IconAdjustments, IconMail } from "@tabler/icons"
 
 import { Button } from "./Button"
 
-export default {
-  title: "atoms/Button",
+const meta: Meta<typeof Button> = {
+  title: "Button",
   component: Button,
 }
+export default meta
+
 type Story = StoryObj<typeof Button>
+
 export const Default: Story = { args: { children: "Button", variant: "brand" } }
 
 export const Gradient: Story = {

@@ -1,13 +1,14 @@
-import { ComponentStory } from "@storybook/react"
-import React from "react"
+import { Meta, StoryObj } from "@storybook/react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "."
 
-export default {
-  title: "atoms/Tabs",
+const meta: Meta<typeof Tabs> = {
+  title: "Tabs",
   component: Tabs,
 }
 
-const Template: ComponentStory<typeof Tabs> = (args) => (
+export default meta
+
+export const Default = () => (
   <Tabs defaultValue="account" className="w-[400px]">
     <TabsList>
       <TabsTrigger value="account">Account</TabsTrigger>
@@ -25,5 +26,3 @@ const Template: ComponentStory<typeof Tabs> = (args) => (
     </TabsContent>
   </Tabs>
 )
-
-export const Example = Template.bind({})

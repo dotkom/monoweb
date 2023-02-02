@@ -1,7 +1,7 @@
 import { Text } from "./Text"
 
 export default {
-  title: "atoms/Text",
+  title: "Text",
   component: Text,
 }
 
