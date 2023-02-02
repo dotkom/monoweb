@@ -1,5 +1,3 @@
-"use client"
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,9 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./ModalDialog"
+} from "./Dialog"
 import { Button } from "../Button"
-import React from "react"
 
 export default {
   title: "atoms/ModalDialog",
