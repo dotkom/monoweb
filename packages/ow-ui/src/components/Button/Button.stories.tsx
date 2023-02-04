@@ -1,5 +1,5 @@
+import { Icon } from "@iconify-icon/react"
 import { Meta, StoryObj } from "@storybook/react"
-import { IconAdjustments, IconMail } from "@tabler/icons"
 
 import { Button } from "./Button"
 
@@ -75,8 +75,8 @@ export const Disabled: Story = {
 }
 
 export const WithIcon = MultiStory([
-  { children: "Settings", color: "blue", variant: "light", icon: <IconAdjustments size={16} /> },
-  { children: "Mail", color: "blue", variant: "solid", icon: <IconMail size={16} /> },
+  { children: "Settings", color: "blue", variant: "light", icon: <Icon icon="tabler:adjustments" width={16} /> },
+  { children: "Mail", color: "blue", variant: "solid", icon: <Icon icon="tabler:mail" width={16} /> },
 ])
 
 export const Loading: Story = {

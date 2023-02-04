@@ -1,21 +1,43 @@
-import { IconInfoCircle, IconCircleCheck, IconAlertTriangle, IconAlertCircle } from "@tabler/icons"
+import { Icon } from "@iconify-icon/react"
+import { cva, VariantProps } from "cva"
 import { FC } from "react"
+import { cn } from "../../utils"
 
-interface AlertIconProps {
-  status: "info" | "warning" | "success" | "danger"
+interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
+  className?: string
+  size: number
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status }) => {
-  const iconProps = { size: 24, stroke: 2 }
+export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => {
+  return (
+    <>
+      <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
+    </>
+  )
+}
 
+const iconKey = (status: AlertIconProps["status"]) => {
   switch (status) {
     case "info":
-      return <IconInfoCircle {...iconProps} className="text-blue-11" />
+      return "tabler:info-circle"
     case "success":
-      return <IconCircleCheck {...iconProps} className="text-green-11" />
+      return "tabler:circle-check"
     case "danger":
-      return <IconAlertCircle {...iconProps} className="text-red-11" />
+      return "tabler:alert-circle"
     case "warning":
-      return <IconAlertTriangle {...iconProps} className="text-amber-11" />
+      return "tabler:alert-triangle"
+    default:
+      return "tabler:error-404"
   }
 }
+
+const iconVariant = cva("", {
+  variants: {
+    status: {
+      info: "text-blue-11",
+      success: "text-green-11",
+      danger: "text-red-11",
+      warning: "text-amber-11",
+    },
+  },
+})
