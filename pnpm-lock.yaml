@@ -502,7 +502,6 @@ importers:
       '@radix-ui/react-tabs': ^1.0.2
       '@stitches/react': ^1.2.8
       '@storybook/react': ^7.0.0-beta.34
-      '@tabler/icons': ^1.109.0
       '@types/react': ^18.0.15
       autoprefixer: ^10.4.13
       clsx: ^1.2.1
@@ -524,7 +523,6 @@ importers:
       '@radix-ui/react-switch': 1.0.1_react@18.2.0
       '@radix-ui/react-tabs': 1.0.2_react@18.2.0
       '@stitches/react': 1.2.8_react@18.2.0
-      '@tabler/icons': 1.112.0_react@18.2.0
       clsx: 1.2.1
       cva: /class-variance-authority/0.4.0_typescript@4.9.3
       react: 18.2.0
@@ -6634,20 +6632,6 @@ packages:
     resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
     dependencies:
       tslib: 2.4.1
-    dev: false
-
-  /@tabler/icons/1.112.0_react@18.2.0:
-    resolution: {integrity: sha512-M1FmEXqeOUG1iZOLue1aLKEl+E3HHU1JaXb/LmZuOjOWuhHHpfQnSv+mgSmupehophq5piwSPhqnytt1Uh6oLw==}
-    peerDependencies:
-      react: ^16.x || 17.x || 18.x
-      react-dom: ^16.x || 17.x || 18.x
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      react: 18.2.0
     dev: false
 
   /@tailwindcss/typography/0.5.9_tailwindcss@3.2.4:
