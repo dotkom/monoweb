@@ -5,7 +5,7 @@ import { cn } from "../../utils"
 
 interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
   className?: string
-  size: number
+  size?: number
 }
 
 export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => {

@@ -12,8 +12,8 @@ export interface AlertProps {
 export const Alert: FC<PropsWithChildren<AlertProps>> = ({ status, title, children, showIcon = true }) => {
   return (
     <div className={alert({ status })}>
-      <div className="mr-2">{showIcon && <AlertIcon status={status} />}</div>
-      <div className="ml-4 flex flex-col">
+      <div className="mr-3">{showIcon && <AlertIcon status={status} />}</div>
+      <div className="flex flex-col">
         <span className={alertTitle({ status })}>{title}</span>
         <div className="text-slate-12">{children}</div>
       </div>
