@@ -2,7 +2,7 @@ import { cva } from "cva"
 import type { VariantProps } from "cva"
 import React, { forwardRef } from "react"
 import { cn } from "../../utils"
-import { IconLoader2 } from "@tabler/icons"
+import { Icon } from "@iconify-icon/react"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green"
 
@@ -29,7 +29,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
     >
       <div className="flex items-center justify-center">
         {(props.loading || props.icon) && (
-          <i className="mr-1">{props.loading ? <IconLoader2 size={16} className="animate-spin" /> : props.icon}</i>
+          <i className="mr-1 flex">
+            {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+          </i>
         )}
         <span className="text-inherit">{props.children}</span>
       </div>

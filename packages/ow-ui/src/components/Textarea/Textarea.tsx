@@ -1,8 +1,8 @@
-import { IconAlertCircle } from "@tabler/icons"
 import { cva } from "cva"
 
 import * as React from "react"
 import { cn } from "../../utils"
+import { AlertIcon } from "../Alert/AlertIcon"
 import { Label } from "../Label"
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -29,7 +29,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {message && <p className={displayMessage({ status })}>{message}</p>}
         {error && (
           <div className={displayMessage({ status: "danger" })}>
-            <IconAlertCircle size={20} className="mr-1" />
+            <AlertIcon size={20} status="danger" className="mr-1" />
             <p>
               <span className="font-bold">Error:&nbsp;</span>
               {error}

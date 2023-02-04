@@ -1,8 +1,8 @@
 import { FC, ReactNode } from "react"
-import { IoCloseOutline } from "react-icons/io5"
 
 import { AlertIcon } from "../Alert/AlertIcon"
 import { cva } from "cva"
+import { Icon } from "@iconify-icon/react"
 
 export interface ToastProps {
   monochrome?: boolean
@@ -21,7 +21,7 @@ const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
       {/* The monochrome value is inverted because we want a white or black icon with colored background*/}
 
       <button className="ml-auto border-0 bg-transparent transition-transform hover:-translate-y-[1px] active:translate-y-[2px]">
-        <IoCloseOutline aria-hidden className={close({ color: styleCheck })}></IoCloseOutline>
+        <Icon icon="tabler:x" aria-hidden className={close({ color: styleCheck })} width={24} />
       </button>
     </div>
   )

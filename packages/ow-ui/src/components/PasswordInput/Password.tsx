@@ -1,8 +1,8 @@
 import { cva } from "cva"
 import { forwardRef, useState } from "react"
 import { Label } from "@radix-ui/react-label"
-import { IconEyeCheck, IconEyeOff } from "@tabler/icons"
 import { Text } from "../Typography"
+import { Icon } from "@iconify-icon/react"
 
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string
@@ -16,7 +16,6 @@ export interface InputProps extends React.HTMLProps<HTMLInputElement> {
 export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
   ({ label, withAsterisk, error, inputInfo, eyeColor, ...props }, ref) => {
     const [visible, setVisibility] = useState(false)
-    const Icon = visible ? IconEyeOff : IconEyeCheck
     const InputType = visible ? "text" : "password"
 
     return (
@@ -33,7 +32,11 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
           <input type={InputType} {...props} ref={ref} className={input({ error: !!error })} />
           <div>
             <span className={eye({ color: eyeColor })}>
-              <Icon onClick={() => setVisibility((visibility) => !visibility)} />
+              <Icon
+                width={24}
+                icon={visible ? "tabler:eye-check" : "tabler:eye-off"}
+                onClick={() => setVisibility((visibility) => !visibility)}
+              />
             </span>
           </div>
         </div>
@@ -52,7 +55,7 @@ const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate
   },
 })
 
-const eye = cva("absolute top-2 right-2 hover: cursor-pointer", {
+const eye = cva("absolute top-2 right-2 flex hover: cursor-pointer", {
   variants: {
     color: {
       default: "text-solid",

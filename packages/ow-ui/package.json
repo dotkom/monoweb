@@ -24,11 +24,11 @@
     "clsx": "^1.2.1",
     "cva": "npm:class-variance-authority@^0.4.0",
     "react": "^18.2.0",
-    "react-icons": "^4.4.0",
     "tailwind-merge": "^1.7.0"
   },
   "devDependencies": {
     "@dotkomonline/config": "*",
+    "@iconify-icon/react": "^1.0.3",
     "@storybook/react": "^7.0.0-beta.34",
     "@types/react": "^18.0.15",
     "autoprefixer": "^10.4.13",
