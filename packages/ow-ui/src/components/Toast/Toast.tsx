@@ -2,7 +2,7 @@ import { FC, ReactNode } from "react"
 
 import { AlertIcon } from "../Alert/AlertIcon"
 import { cva } from "cva"
-import { Icon } from "@iconify-icon/react"
+import { Icon } from "../Icon"
 
 export interface ToastProps {
   monochrome?: boolean

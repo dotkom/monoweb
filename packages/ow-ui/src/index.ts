@@ -9,5 +9,7 @@ export * from "./components/Toggle"
 export * from "./components/Typography"
 export * from "./components/Input"
 export * from "./components/Label"
+export * from "./components/Icon"
 
 export * from "./config/stitches.config"
+export * from "./utils"
