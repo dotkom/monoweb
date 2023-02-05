@@ -498,6 +498,7 @@ importers:
       '@radix-ui/react-alert-dialog': ^1.0.0
       '@radix-ui/react-checkbox': ^1.0.0
       '@radix-ui/react-label': ^1.0.0
+      '@radix-ui/react-navigation-menu': ^1.0.0
       '@radix-ui/react-switch': ^1.0.0
       '@radix-ui/react-tabs': ^1.0.2
       '@stitches/react': ^1.2.8
@@ -515,11 +516,13 @@ importers:
       typescript: ^4.9.3
       vitest: ^0.26.0
     dependencies:
+      '@iconify-icon/react': 1.0.3_react@18.2.0
       '@radix-ui/colors': 0.1.8
       '@radix-ui/react-accordion': 1.1.0_react@18.2.0
       '@radix-ui/react-alert-dialog': 1.0.2_fan5qbzahqtxlm5dzefqlqx5ia
       '@radix-ui/react-checkbox': 1.0.1_react@18.2.0
       '@radix-ui/react-label': 1.0.0_react@18.2.0
+      '@radix-ui/react-navigation-menu': 1.1.1_react@18.2.0
       '@radix-ui/react-switch': 1.0.1_react@18.2.0
       '@radix-ui/react-tabs': 1.0.2_react@18.2.0
       '@stitches/react': 1.2.8_react@18.2.0
@@ -529,7 +532,6 @@ importers:
       tailwind-merge: 1.8.0
     devDependencies:
       '@dotkomonline/config': link:../config
-      '@iconify-icon/react': 1.0.3_react@18.2.0
       '@storybook/react': 7.0.0-beta.34_eetduzquwu67aqoq5644t6dxzu
       '@types/react': 18.0.25
       autoprefixer: 10.4.13_postcss@8.4.19
@@ -3478,11 +3480,11 @@ packages:
     dependencies:
       iconify-icon: 1.0.3
       react: 18.2.0
-    dev: true
+    dev: false
 
   /@iconify/types/2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
-    dev: true
+    dev: false
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
@@ -4675,6 +4677,30 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
+  /@radix-ui/react-navigation-menu/1.1.1_react@18.2.0:
+    resolution: {integrity: sha512-Khgf+LwqYfUpbFAHcFPDMj6ZrWxnwCgC96liLYwE48x9YJbXGlutOWzZaSzrgl82xS+PwoPLQunfDe/i4ZITRA==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@radix-ui/primitive': 1.0.0
+      '@radix-ui/react-collection': 1.0.1_react@18.2.0
+      '@radix-ui/react-compose-refs': 1.0.0_react@18.2.0
+      '@radix-ui/react-context': 1.0.0_react@18.2.0
+      '@radix-ui/react-direction': 1.0.0_react@18.2.0
+      '@radix-ui/react-dismissable-layer': 1.0.2_react@18.2.0
+      '@radix-ui/react-id': 1.0.0_react@18.2.0
+      '@radix-ui/react-presence': 1.0.0_react@18.2.0
+      '@radix-ui/react-primitive': 1.0.1_react@18.2.0
+      '@radix-ui/react-use-callback-ref': 1.0.0_react@18.2.0
+      '@radix-ui/react-use-controllable-state': 1.0.0_react@18.2.0
+      '@radix-ui/react-use-layout-effect': 1.0.0_react@18.2.0
+      '@radix-ui/react-use-previous': 1.0.0_react@18.2.0
+      '@radix-ui/react-visually-hidden': 1.0.1_react@18.2.0
+      react: 18.2.0
+    dev: false
+
   /@radix-ui/react-popper/1.0.0_2zx2umvpluuhvlq44va5bta2da:
     resolution: {integrity: sha512-k2dDd+1Wl0XWAMs9ZvAxxYsB9sOsEhrFQV4CINd7IUZf0wfdye4OHen9siwxvZImbzhgVeKTJi68OQmPRvVdMg==}
     peerDependencies:
@@ -4984,6 +5010,17 @@ packages:
       '@radix-ui/react-primitive': 1.0.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@radix-ui/react-visually-hidden/1.0.1_react@18.2.0:
+    resolution: {integrity: sha512-K1hJcCMfWfiYUibRqf3V8r5Drpyf7rh44jnrwAbdvI5iCCijilBBeyQv9SKidYNZIopMdCyR9FnIjkHxHN0FcQ==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@radix-ui/react-primitive': 1.0.1_react@18.2.0
+      react: 18.2.0
     dev: false
 
   /@radix-ui/rect/1.0.0:
@@ -11582,7 +11619,7 @@ packages:
     resolution: {integrity: sha512-pyWLbx8IBfD2G3M0hULuvUBwoowrZtXEKyeAXhD2AlbNYTSDPmWGhgPYaRAnVIuBjMAZ4dCyEHmaYgnlDZc0XQ==}
     dependencies:
       '@iconify/types': 2.0.0
-    dev: true
+    dev: false
 
   /iconv-lite/0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}

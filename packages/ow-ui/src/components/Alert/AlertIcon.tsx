@@ -1,4 +1,4 @@
-import { Icon } from "@iconify-icon/react"
+import { Icon } from "../Icon"
 import { cva, VariantProps } from "cva"
 import { FC } from "react"
 import { cn } from "../../utils"

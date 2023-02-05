@@ -1,4 +1,4 @@
-import { Icon } from "@iconify-icon/react"
+import { Icon } from "../Icon"
 import { Meta, StoryObj } from "@storybook/react"
 
 import { Button } from "./Button"

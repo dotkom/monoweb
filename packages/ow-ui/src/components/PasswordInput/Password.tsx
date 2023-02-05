@@ -2,7 +2,7 @@ import { cva } from "cva"
 import { forwardRef, useState } from "react"
 import { Label } from "@radix-ui/react-label"
 import { Text } from "../Typography"
-import { Icon } from "@iconify-icon/react"
+import { Icon } from "../Icon"
 
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string

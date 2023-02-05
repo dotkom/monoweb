@@ -2,7 +2,7 @@ import { cva } from "cva"
 import type { VariantProps } from "cva"
 import React, { forwardRef } from "react"
 import { cn } from "../../utils"
-import { Icon } from "@iconify-icon/react"
+import { Icon } from "../Icon"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green"
 
