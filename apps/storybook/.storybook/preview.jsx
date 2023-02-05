@@ -1,6 +1,8 @@
 import { themes } from "@storybook/theming"
 import "@dotkomonline/config/tailwind.css"
 
+
+
 export const parameters = {
   darkMode: {
     current: "dark",
@@ -11,11 +13,11 @@ export const parameters = {
   },
   docs: {
     theme: {...themes.dark, fontBase:'"Poppins"'},
-  },
+  }
 }
 
 export const decorators = [
   (Story) => {
-    return <div className="text-slate-12 text-[14px]" data-theme="dark"><Story /></div>
+    return <div className="text-slate-12 font-poppins" data-theme="dark"><Story /></div>
   },
 ]
