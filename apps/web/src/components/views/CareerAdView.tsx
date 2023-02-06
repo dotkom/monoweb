@@ -49,7 +49,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
 
         <div className={"my-3 flex items-center"}>
           <TbGlobe className="text-blue-9" size={20} />
-          <Text className="m-0 pl-2">{location}</Text>
+          <p className="m-0 pl-2">{location}</p>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
@@ -58,7 +58,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <div className={"text-blue-9 mb-[-3px] inline"}>
             <IoTimeOutline />
           </div>
-          <Text className="m-0 pl-2">{deadline}</Text>
+          <p className="m-0 pl-2">{deadline}</p>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
@@ -67,7 +67,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <div className={"text-blue-9 mb-[-3px] inline"}>
             <MdWorkOutline />
           </div>
-          <Text className="m-0 pl-2">{career_role}</Text>
+          <p className="m-0 pl-2">{career_role}</p>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
@@ -76,7 +76,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <div className={"text-blue-9 mb-[-3px] inline"}>
             <IoCopyOutline />
           </div>
-          <Text className="m-0 pl-2">{career_role}</Text>
+          <p className="m-0 pl-2">{career_role}</p>
         </div>
 
         <div className="bg-slate-9 mt-7 mb-3 h-[0.5px] w-full" />
@@ -104,10 +104,10 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
       </div>
       <div className="w-2/3">
         <div className={"border-amber-9 ml-8 mt-2 border-l-[1px] pl-4"}>
-          <Text className="m-0 text-4xl">
+          <p className="m-0 text-4xl">
             <b>{company_name}</b>
-          </Text>
-          <Text className="m-0 text-3xl ">{title}</Text>
+          </p>
+          <p className="m-0 text-3xl ">{title}</p>
         </div>
         <PortableText
           blocks={content}

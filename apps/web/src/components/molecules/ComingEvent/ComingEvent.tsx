@@ -1,4 +1,4 @@
-import { Badge, Text } from "@dotkomonline/ui"
+import { Badge } from "@dotkomonline/ui"
 import Image from "next/image"
 import React from "react"
 
@@ -23,13 +23,11 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => {
         <span>
           <span>{/* PLACEHOLDER */}</span>
           <div>
-            <Text className="m-0" size="lg">
-              {props.title}
-            </Text>
-            <Text className="m-0">{props.date}</Text>
-            <Text className="m-0">
+            <p className="m-0">{props.title}</p>
+            <p className="m-0">{props.date}</p>
+            <p className="m-0">
               {props.attending}/{props.max_attending}
-            </Text>
+            </p>
           </div>
         </span>
       </div>
@@ -38,7 +36,7 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => {
         {props.tag}
       </Badge>
       <a href={props.info_link}>
-        <Text className="absolute bottom-3 right-3 m-0">Info</Text>
+        <p className="absolute bottom-3 right-3 m-0">Info</p>
       </a>
     </div>
   )
