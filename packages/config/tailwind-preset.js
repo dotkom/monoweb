@@ -3,11 +3,11 @@ const colors = require("@radix-ui/colors")
 const createColorScale = (name) => {
   const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [
     step,
-    `hsl(var(--color-${name}-${step}, ${colors[`${name}Dark`][`${name}${step}`]}) / <alpha-value>`,
+    `hsl(var(--color-${name}-${step}, ${colors[`${name}Dark`][`${name}${step}`]}) / <alpha-value>)`,
   ])
 
   // Give the default the third step on the scale
-  entries.push(["DEFAULT", `hsl(var(--color-${name}-3, ${colors[`${name}Dark`][`${name}3`]}) / <alpha-value>`])
+  entries.push(["DEFAULT", `hsl(var(--color-${name}-3, ${colors[`${name}Dark`][`${name}3`]}) / <alpha-value>)`])
   return Object.fromEntries(entries)
 }
 
