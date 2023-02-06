@@ -16,6 +16,7 @@
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-accordion": "^1.1.0",
     "@radix-ui/react-alert-dialog": "^1.0.0",
+    "@radix-ui/react-avatar": "^1.0.0",
     "@radix-ui/react-checkbox": "^1.0.0",
     "@radix-ui/react-label": "^1.0.0",
     "@radix-ui/react-navigation-menu": "^1.0.0",

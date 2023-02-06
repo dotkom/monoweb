@@ -503,12 +503,12 @@ importers:
       '@radix-ui/colors': ^0.1.8
       '@radix-ui/react-accordion': ^1.1.0
       '@radix-ui/react-alert-dialog': ^1.0.0
+      '@radix-ui/react-avatar': ^1.0.0
       '@radix-ui/react-checkbox': ^1.0.0
       '@radix-ui/react-label': ^1.0.0
       '@radix-ui/react-navigation-menu': ^1.0.0
       '@radix-ui/react-switch': ^1.0.0
       '@radix-ui/react-tabs': ^1.0.2
-      '@stitches/react': ^1.2.8
       '@storybook/react': ^7.0.0-beta.34
       '@types/react': ^18.0.15
       '@types/react-dom': ^18.0.6
@@ -529,12 +529,12 @@ importers:
       '@radix-ui/colors': 0.1.8
       '@radix-ui/react-accordion': 1.1.0_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-alert-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
+      '@radix-ui/react-avatar': 1.0.1_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-checkbox': 1.0.1_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-label': 1.0.0_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-navigation-menu': 1.1.1_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-switch': 1.0.1_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-tabs': 1.0.2_biqbaboplfbrettd7655fr4n2y
-      '@stitches/react': 1.2.8_react@18.2.0
       clsx: 1.2.1
       cva: /class-variance-authority/0.4.0_typescript@4.9.3
       react: 18.2.0
