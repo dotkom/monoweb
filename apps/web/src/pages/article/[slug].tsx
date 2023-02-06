@@ -52,10 +52,17 @@ export const getStaticProps: GetStaticProps<{}, { slug: string }> = async (ctx) 
     }
   }
   const article = await sanityClient.fetch<Article>(ARTICLE_QUERY, { slug })
-  return { props: { article } }
+  if (!article) {
+    return {
+      notFound: true,
+      revalidate: 3600,
+    }
+  }
+  return { props: { article }, revalidate: 3600 }
 }
 
 const ArticlePage: FC<ArticleProps> = (props: ArticleProps) => {
+  if (!props.article) return <div>404</div>
   return <ArticleView article={props.article} />
 }
 
