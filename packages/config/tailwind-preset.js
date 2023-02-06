@@ -24,6 +24,7 @@ module.exports = {
       amber: createColorScale("amber"),
       red: createColorScale("red"),
       green: createColorScale("green"),
+      indigo: createColorScale("indigo"),
     },
     extend: {
       fontFamily: {
