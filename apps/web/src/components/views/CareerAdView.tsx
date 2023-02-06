@@ -1,5 +1,5 @@
 import { CareerAd } from "@/api/get-career-ads"
-import { Button, Text } from "@dotkomonline/ui"
+import { Button } from "@dotkomonline/ui"
 import Image from "next/image"
 import { FC } from "react"
 import { BsLinkedin, BsTwitter, BsArrowLeft } from "react-icons/bs"
@@ -36,13 +36,13 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <Image src={image.asset.url} width={4000} height={250} alt="company_image" />
         </div>
 
-        <Text>{company_info}</Text>
+        <h1>{company_info}</h1>
 
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
 
         <div className={"my-3 flex items-center"}>
           <BsArrowLeft size={20} className="text-blue-9 inline" />
-          <Text className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</Text>
+          <h2 className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</h2>
         </div>
 
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />

@@ -6,7 +6,6 @@ import { ReactElement, ReactNode } from "react"
 import type { Session } from "next-auth"
 
 import MainLayout from "../components/layout/MainLayout"
-import { globalStyles } from "@/theme/global-style"
 import { trpc } from "@/utils/trpc"
 import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
@@ -28,8 +27,6 @@ type CustomAppProps<P> = AppProps & {
 }
 
 function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element {
-  globalStyles()
-
   const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
 
   return (

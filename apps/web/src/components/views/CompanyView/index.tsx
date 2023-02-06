@@ -1,4 +1,3 @@
-import { CSS, css, styled } from "@dotkomonline/ui"
 import { Button } from "@dotkomonline/ui"
 import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
