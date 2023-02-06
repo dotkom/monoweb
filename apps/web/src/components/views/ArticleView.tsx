@@ -17,42 +17,45 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
   const date = new Date(_createdAt)
 
   return (
-    <div className="mx-auto flex max-w-screen-xl flex-col">
-      <div>
+    <div className="mx-auto flex w-full flex-col px-6">
+      <div className="mx-auto max-w-[75ch]">
         <h1>{title}</h1>
         <div className="flex flex-row justify-between">
-          <div>
-            <p>
-              Skrevet av <span>{author}</span>
-            </p>
-            <p>
-              Foto av <span>{photographer}</span>
-            </p>
-          </div>
-          <div>
-            <p>
-              Publisert <span>{format(date, "dd MMM yyyy")}</span>
-            </p>
-            <p>
-              {estimatedReadingTime} minutter <span>for å lese</span>
-            </p>
-          </div>
+          <ul className="text-slate-11 m-0 my-4 grid w-full grid-cols-2 grid-rows-2 [&>li>span]:font-bold">
+            <li>
+              <span>Skrevet av&nbsp;</span>
+              {author}
+            </li>
+            <li>
+              <span>Foto av&nbsp;</span>
+              {photographer}
+            </li>
+            <li>
+              <span>Publisert&nbsp;</span>
+              {format(date, "dd MMM yyyy")}
+            </li>
+            <li>
+              <span>{estimatedReadingTime} minutter&nbsp;</span> for å lese
+            </li>
+          </ul>
         </div>
-        <div className="flex flex-row flex-wrap justify-start pb-4">
+        <div className="grid max-w-fit grid-flow-col-dense gap-3">
           {tags.map((tag: string, key: number) => (
-            <Badge key={key} variant="light" color="slate">
+            <Badge key={key} variant="light" color="slate" className="font-bold">
               {tag}
             </Badge>
           ))}
         </div>
-        <p className="pb-1 text-black">{excerpt}</p>
+        <p className="my-10 font-bold">{excerpt}</p>
       </div>
       {cover_image && (
-        <div className="mx-auto max-h-[400px]">
-          <Image width={800} height={400} src={cover_image.asset.url} alt="cover image" />
+        <div className="mx-auto mb-10 max-h-[440]">
+          <Image width={800} height={440} src={cover_image.asset.url} alt="cover image" />
         </div>
       )}
-      <PortableText className="prose" blocks={content} />
+      <div className="prose md:prose-lg dark:prose-invert mx-auto max-w-[75ch]">
+        <PortableText blocks={content} />
+      </div>
     </div>
   )
 }

@@ -1,0 +1,22 @@
+h1 {
+  @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+}
+h2 {
+  @apply border-b-slate-7 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+}
+
+h3 {
+  @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
+}
+
+h4 {
+  @apply mt-8 scroll-m-20 text-xl font-semibold tracking-tight;
+}
+
+blockquote {
+  @apply border-slate-7 text-slate-1 mt-6 border-l-2 pl-6 italic;
+}
+
+code {
+  @apply bg-slate-2 text-slate-11 relative rounded py-[0.2rem] px-[0.3rem] font-mono text-sm font-semibold;
+}
