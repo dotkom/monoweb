@@ -7,6 +7,7 @@ import React, { FC, useEffect } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
+import { ProfileMenu } from "./ProfileMenu"
 import { MenuLink } from "./types"
 
 const links: MenuLink[] = [
@@ -45,7 +46,6 @@ const links: MenuLink[] = [
 ]
 
 export const Navbar = () => {
-  const router = useRouter()
   return (
     <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
       <div className="border-blue-12/20 flex h-16 border-b">
@@ -55,20 +55,7 @@ export const Navbar = () => {
         </Link>
         <MainNavigation links={links} />
         <div className="flex flex-grow items-center justify-end md:flex-grow-0">
-          <Button
-            variant="subtle"
-            className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-            onClick={() => signIn("onlineweb")}
-          >
-            Log in
-          </Button>
-          <Button
-            variant="gradient"
-            className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-            onClick={() => router.push("/auth/signup")}
-          >
-            Sign up
-          </Button>
+          <ProfileMenu />
         </div>
       </div>
     </header>

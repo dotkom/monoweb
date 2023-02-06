@@ -34,7 +34,7 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
         <NavigationMenuContent>
           <ul className="grid w-[600px] gap-3 p-4 md:grid-cols-2">
             {link.items.map((item) => (
-              <NavigationMenuLink asChild>
+              <NavigationMenuLink asChild key={`${link.title}-${item.title}`}>
                 <Link
                   href={item.href}
                   className="hover:bg-slate-3 focus:bg-slate-3 text-slate-12 block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors "
