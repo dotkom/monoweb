@@ -1,18 +1,18 @@
+import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC, PropsWithChildren } from "react"
-import {
-  PortableText as ReactPortableText,
-  type PortableTextProps as ReactPortableTextProps,
-} from "@portabletext/react"
-
+import PT from "react-portable-text"
+import clsx from "clsx"
 interface PortableTextProps {
-  blocks: ReactPortableTextProps["value"]
+  blocks: BlockContentProps["blocks"]
   className?: string
 }
-const PortableText: FC<PortableTextProps> = ({ blocks }) => (
-  <ReactPortableText
-    value={blocks}
-    components={{
-      listItem: ({ children }: PropsWithChildren) => <li className="marker:text-amber-12 ml-4">{children}</li>,
+const PortableText: FC<PortableTextProps> = ({ blocks, className }) => (
+  <PT
+    content={blocks}
+    className={clsx("prose", className)}
+    serializers={{
+      li: ({ children }: PropsWithChildren) => <li className="marker:text-amber-12 ml-4">{children}</li>,
+      someCustomType: PortableText,
     }}
   />
 )
