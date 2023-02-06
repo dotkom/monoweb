@@ -69,18 +69,18 @@
     --color-slate-11: 206 6% 43.5%;
     --color-slate-12: 206 24% 9%;
 
-    --color-indigo1: 225, 60%, 99.4%;
-    --color-indigo2: 223, 100%, 98.6%;
-    --color-indigo3: 223, 98.4%, 97.1%;
-    --color-indigo4: 223, 92.9%, 95%;
-    --color-indigo5: 224, 87.1%, 92%;
-    --color-indigo6: 224, 81.9%, 87.8%;
-    --color-indigo7: 225, 77.4%, 82.1%;
-    --color-indigo8: 226, 75.4%, 74.5%;
-    --color-indigo9: 226, 70%, 55.5%;
-    --color-indigo10: 226, 58.6%, 51.3%;
-    --color-indigo11: 226, 55%, 45%;
-    --color-indigo12: 226, 62%, 17%;
+    --color-indigo-1: 225 60% 99.4%;
+    --color-indigo-2: 223 100% 98.6%;
+    --color-indigo-3: 223 98.4% 97.1%;
+    --color-indigo-4: 223 92.9% 95%;
+    --color-indigo-5: 224 87.1% 92%;
+    --color-indigo-6: 224 81.9% 87.8%;
+    --color-indigo-7: 225 77.4% 82.1%;
+    --color-indigo-8: 226 75.4% 74.5%;
+    --color-indigo-9: 226 70% 55.5%;
+    --color-indigo-10: 226 58.6% 51.3%;
+    --color-indigo-11: 226 55% 45%;
+    --color-indigo-12: 226 62% 17%;
 
     --color-background: #ffffee;
   }
@@ -157,18 +157,18 @@
     --color-slate-11: 206 6% 63%;
     --color-slate-12: 210 6% 93%;
 
-    --color-indigo1: 229, 24%, 10%;
-    --color-indigo2: 230, 36.4%, 12.9%;
-    --color-indigo3: 228, 43.3%, 17.5%;
-    --color-indigo4: 227, 47.2%, 21%;
-    --color-indigo5: 227, 50%, 24.1%;
-    --color-indigo6: 226, 52.9%, 28.2%;
-    --color-indigo7: 226, 56%, 34.5%;
-    --color-indigo8: 226, 58.2%, 44.1%;
-    --color-indigo9: 226, 70%, 55.5%;
-    --color-indigo10: 227, 75.2%, 61.6%;
-    --color-indigo11: 228, 100%, 75.9%;
-    --color-indigo12: 226, 83%, 96.3%;
+    --color-indigo-1: 229 24% 10%;
+    --color-indigo-2: 230 36.4% 12.9%;
+    --color-indigo-3: 228 43.3% 17.5%;
+    --color-indigo-4: 227 47.2% 21%;
+    --color-indigo-5: 227 50% 24.1%;
+    --color-indigo-6: 226 52.9% 28.2%;
+    --color-indigo-7: 226 56% 34.5%;
+    --color-indigo-8: 226 58.2% 44.1%;
+    --color-indigo-9: 226 70% 55.5%;
+    --color-indigo-10: 227 75.2% 61.6%;
+    --color-indigo-11: 228 100% 75.9%;
+    --color-indigo-12: 226 83% 96.3%;
 
     --color-background: #000212;
   }
