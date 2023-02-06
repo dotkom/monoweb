@@ -24,7 +24,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
         </div>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content className="animate-in fade-in-20 h-screen w-screen bg-[#131620]">
+        <Popover.Content className="animate-in fade-in-20 bg-indigo-1 h-screen w-screen">
           <NavigationMenu className="[&>div]:w-full">
             <NavigationMenuList className="flex-col">
               {links.map((link) => (
@@ -33,7 +33,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                   {"items" in link ? (
                     <>
                       {link.items.map((item) => (
-                        <MobileMenuItem link={item} />
+                        <MobileMenuItem link={item} key={`menu-item-${item.title}`} />
                       ))}
                     </>
                   ) : (
@@ -54,7 +54,7 @@ const MobileMenuItem = ({ link }: { link: MenuLink }) => {
   return (
     <NavigationMenuLink asChild>
       <Link
-        href={"/"}
+        href={"href" in link ? link.href : "#"}
         className="border-blue-12/10 mx-8 flex h-14 w-[calc(100%-theme(space.16))] items-center border-b text-lg font-semibold"
       >
         {link.title}
