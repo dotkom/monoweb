@@ -54,8 +54,8 @@ export const buttonStyles = cva(
         lg: "text-lg px-5 h-13 font-bold",
       },
       variant: {
-        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
-        brand: "bg-brand text-slate-12 hover:bg-brand-dark active:bg-brand-darker",
+        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-white ",
+        brand: "bg-brand text-white hover:bg-brand-dark active:bg-brand-darker",
         outline: "bg-transparent border-2 border-slate-11 hover:bg-slate-4 focus:ring-blue-10 text-slate-11",
         solid: "text-slate-12",
         light: "text-current",
