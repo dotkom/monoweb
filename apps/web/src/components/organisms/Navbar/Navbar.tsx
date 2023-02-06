@@ -1,12 +1,8 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { Button, cn, Icon } from "@dotkomonline/ui"
-import { signIn } from "next-auth/react"
 import Link from "next/link"
-import { useRouter } from "next/router"
-import React, { FC, useEffect } from "react"
+import React from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
 import { ProfileMenu } from "./ProfileMenu"
 import { MenuLink } from "./types"
 
