@@ -5,7 +5,7 @@ import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = () => {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { data: _session, status } = useSession()
 
   if (status === "loading") {
     return <Icon icon="tabler:loader-2" className="animate-spin" />
