@@ -6,9 +6,11 @@ import { ReactElement, ReactNode } from "react"
 import type { Session } from "next-auth"
 
 import MainLayout from "../components/layout/MainLayout"
-import "../styles/globals.css"
-import { globalStyles } from "../theme/global-style"
+import { globalStyles } from "@/theme/global-style"
 import { trpc } from "@/utils/trpc"
+import "@dotkomonline/config/tailwind.css"
+import "../styles/globals.css"
+import { ThemeProvider } from "next-themes"
 
 // TODO: App directory?
 export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
@@ -27,7 +29,11 @@ function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element 
 
   const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
 
-  return <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
+  return (
+    <ThemeProvider>
+      <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
+    </ThemeProvider>
+  )
 }
 
 export default trpc.withTRPC(CustomApp)
