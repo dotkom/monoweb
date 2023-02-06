@@ -3,10 +3,10 @@ import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
 
 import PortableText from "@components/molecules/PortableText"
-import { Box } from "@components/primitives"
 
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
+import { Title } from "@dotkomonline/ui"
 
 export type Content = BlockContentProps["blocks"]
 
@@ -17,105 +17,35 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
   const [header, interest, product, info, contact] = props.companyContent
 
   return (
-    <Box css={{ margin: "auto", maxWidth: "1024px" }}>
-      <Box css={{ bg: "$orange12", fullWidth: true }}>
-        <Box css={styles.banner}>
-          <h1 className={styles.bannerTitle()}>
-            Er din bedrift på jakt etter skarpe IT-<span className={styles.yellowUnderline()}>studenter?</span>
-          </h1>
-          <PortableText blocks={header.content} />
-        </Box>
-      </Box>
-      <Box css={styles.interest}>
-        <Interest blocks={interest.content} />
-        <a href="https://interesse.online.ntnu.no">
+    <div className="flex flex-col gap-6 text-center">
+      <div className="bg-amber-2 w-full rounded-lg">
+        <div className="mx-auto flex h-[520px] max-w-[768px] flex-col items-center p-4 md:h-[300px] lg:h-[220px]">
+          <Title className="text-slate-1 mt-5 mb-4 text-4xl leading-[1.4]">
+            Er din bedrift på jakt etter skarpe IT-
+            <span style={{ backgroundPosition: "50% 88%" }} className="bg-[url(/for-company-text-decor.svg)]">
+              studenter?
+            </span>
+          </Title>
+          <PortableText className="prose text-center" blocks={header.content} />
+        </div>
+      </div>
+      <div className="mt-5 flex flex-col items-center px-3 text-center ">
+        <PortableText className="prose" blocks={interest.content} />
+        <a href="https://interesse.online.ntnu.no" className="mt-4">
           <Button>Send Interesse</Button>
         </a>
-      </Box>
-      <Product blocks={product.content} />
+      </div>
+      <PortableText className="prose my-5 mx-auto max-w-[768px] px-2 text-center" blocks={product.content} />
       <OurProducts />
-      <Box css={{ bg: "$bluebg", fullWidth: true }}>
+      <div className="bg-blue-5 w-full rounded-lg">
         <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
-      </Box>
-      <Info blocks={info.content} />
-      <Contact blocks={contact.content} />
-    </Box>
+      </div>
+      <PortableText className="prose self-center p-4" blocks={info.content} />
+      <div className="mx-auto flex flex-col items-center p-4">
+        <PortableText className="prose my-6 p-3 text-center" blocks={contact.content} />
+      </div>
+    </div>
   )
 }
-
-const styles = {
-  banner: {
-    height: "300px",
-    maxWidth: "$md",
-    margin: "auto",
-    padding: "$4",
-    fontSize: "$md",
-    "@media only screen and (max-width: 550px)": {
-      height: "400px",
-    },
-    "@media only screen and (max-width: 400px)": {
-      height: "520px",
-    },
-  } as CSS,
-  bannerTitle: css({
-    color: "$gray1",
-    marginBottom: "$4",
-    fontSize: "$4xl",
-    lineHeight: "1.4",
-    marginTop: "$5",
-  }),
-  yellowUnderline: css({
-    backgroundImage: 'url("/for-company-text-decor.svg")',
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "50% 88%",
-  }),
-  interest: {
-    marginTop: "$5",
-    textAlign: "center",
-    px: "$3",
-  } as CSS,
-  interestContent: css({
-    "& > h2": {
-      fontSize: "$2xl",
-      marginBottom: "$3",
-    },
-    "& > p": {
-      margin: "$4 auto",
-      maxWidth: "25rem",
-      fontSize: "$sm",
-    },
-  }),
-  button: {
-    fontSize: "$lg",
-    minWidth: "200px",
-  } as CSS,
-  products: css({
-    margin: "$5 auto",
-    maxWidth: "$md",
-    textAlign: "center",
-    "& > h2": {
-      marginBottom: "$3",
-    },
-    px: "$2",
-  }),
-  info: css({
-    alignSelf: "center",
-    padding: "$4",
-    h2: { color: "$gray1", marginTop: "$5", marginBottom: "$1", fontSize: 24, fontWeight: "bold" },
-    p: { marginTop: 3, fontSize: 14 },
-  }),
-  contact: css({
-    my: "$6",
-    textAlign: "center",
-    padding: "$3",
-    h3: { fontSize: "$2xl", marginBottom: "$2", textAlign: "center", fontWeight: 600 },
-    p: { fontSize: "$md" },
-  }),
-}
-
-const Interest = styled(PortableText, styles.interestContent)
-const Product = styled(PortableText, styles.products)
-const Info = styled(PortableText, styles.info)
-const Contact = styled(PortableText, styles.contact)
 
 export default CompanyView

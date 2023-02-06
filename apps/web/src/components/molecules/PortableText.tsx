@@ -1,5 +1,4 @@
 /*eslint-disable*/
-import { cn } from "@dotkomonline/ui"
 import { FC } from "react"
 import {
   PortableText as ReactPortableText,
