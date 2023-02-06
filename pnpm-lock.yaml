@@ -230,7 +230,6 @@ importers:
       '@radix-ui/react-popover': ^1.0.3
       '@sanity/block-content-to-react': ^3.0.0
       '@sanity/client': ^2.23.2
-      '@stitches/react': ^1.2.8
       '@tailwindcss/typography': ^0.5.8
       '@tanstack/react-query': ^4.18.0
       '@trpc/client': ^10.0.0
@@ -295,7 +294,6 @@ importers:
       '@radix-ui/react-popover': 1.0.3_2zx2umvpluuhvlq44va5bta2da
       '@sanity/block-content-to-react': 3.0.0_react@18.2.0
       '@sanity/client': 2.23.2
-      '@stitches/react': 1.2.8_react@18.2.0
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.4
       '@tanstack/react-query': 4.18.0_biqbaboplfbrettd7655fr4n2y
       '@trpc/client': 10.0.0_@trpc+server@10.0.0
@@ -5410,14 +5408,6 @@ packages:
   /@sinclair/typebox/0.25.21:
     resolution: {integrity: sha512-gFukHN4t8K4+wVC+ECqeqwzBDeFeTzBXroBTqE6vcWrQGbEUpHO7LYdG0f4xnvYq4VOEwITSlHlp0JBAIFMS/g==}
     dev: true
-
-  /@stitches/react/1.2.8_react@18.2.0:
-    resolution: {integrity: sha512-9g9dWI4gsSVe8bNLlb+lMkBYsnIKCZTmvqvDG+Avnn69XfmHZKiaMrx7cgTaddq7aTPPmXiTsbFcUy0xgI4+wA==}
-    peerDependencies:
-      react: '>= 16.3.0'
-    dependencies:
-      react: 18.2.0
-    dev: false
 
   /@storybook/addon-actions/7.0.0-beta.34_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-Caok+YojBgBpvyh+2AtQPu1HcoADNpEJbjvz5JDBhnVDUcUUhyhlvM5oq7sKrfAcgSDLBh0zFCsYLcn0YzVXOA==}

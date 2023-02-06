@@ -10,6 +10,9 @@ import { globalStyles } from "@/theme/global-style"
 import { trpc } from "@/utils/trpc"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
+import { Poppins } from "@next/font/google"
+
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 
 // TODO: App directory?
 export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
@@ -30,7 +33,9 @@ function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element 
 
   return (
     <ThemeProvider>
-      <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
+      <SessionProvider session={pageProps.session}>
+        <div className={poppins.variable}>{getLayout(<Component {...pageProps} />)}</div>
+      </SessionProvider>
     </ThemeProvider>
   )
 }
