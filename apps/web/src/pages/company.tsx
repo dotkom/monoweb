@@ -13,9 +13,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { sections: data } }
 }
 const Company: FC<CompanyProps> = (props: CompanyProps) => {
-  // return <CompanyView companyContent={props.sections} />
-
-  return <div>{JSON.stringify(props.sections, null, 2)}</div>
+  if (!props.sections) {
+    return null
+  }
+  return <CompanyView companyContent={props.sections} />
 }
 
 export default Company

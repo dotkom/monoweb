@@ -1,6 +1,4 @@
-/*eslint-disable*/
-import { cn } from "@dotkomonline/ui"
-import { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import {
   PortableText as ReactPortableText,
   type PortableTextProps as ReactPortableTextProps,
@@ -14,7 +12,7 @@ const PortableText: FC<PortableTextProps> = ({ blocks }) => (
   <ReactPortableText
     value={blocks}
     components={{
-      listItem: ({ children }: any) => <li className="marker:text-amber-12 ml-4">{children}</li>,
+      listItem: ({ children }: PropsWithChildren) => <li className="marker:text-amber-12 ml-4">{children}</li>,
     }}
   />
 )
