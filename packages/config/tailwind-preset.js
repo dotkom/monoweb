@@ -27,7 +27,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        poppins: ['"Poppins"', "sans-serif"],
+        poppins: 'var(--font-poppins, "Poppins")',
         mono: ["Roboto Mono", "monospace"],
         sans: ['"Inter var"', "sans-serif"],
       },

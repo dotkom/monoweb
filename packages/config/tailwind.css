@@ -85,12 +85,6 @@
     --color-background: #ffffee;
   }
 
-  html,
-  body {
-    font-family: var(--font-poppins, "Poppins");
-    font-size: 14px;
-  }
-
   [data-theme="dark"] {
     --color-blue-1: 212 35% 9.2%;
     --color-blue-2: 216 50% 11.8%;
