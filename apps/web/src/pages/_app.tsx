@@ -6,7 +6,6 @@ import { ReactElement, ReactNode } from "react"
 import type { Session } from "next-auth"
 
 import MainLayout from "../components/layout/MainLayout"
-import { globalStyles } from "@/theme/global-style"
 import { trpc } from "@/utils/trpc"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
@@ -27,8 +26,6 @@ type CustomAppProps<P> = AppProps & {
 }
 
 function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element {
-  globalStyles()
-
   const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
 
   return (

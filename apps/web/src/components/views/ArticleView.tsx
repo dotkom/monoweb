@@ -1,13 +1,10 @@
-import { CSS, css, styled } from "@dotkomonline/ui"
-import { Badge, Text } from "@dotkomonline/ui"
+import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
 
 import PortableText from "@components/molecules/PortableText"
-
-import { Box, Flex } from "../primitives"
 
 interface ArticleViewProps {
   article: Article
@@ -20,95 +17,42 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
   const date = new Date(_createdAt)
 
   return (
-    <Flex
-      css={{
-        bg: "$white",
-        flexDirection: "column",
-        justifyContent: "center",
-        maxWidth: "$lg",
-        margin: "auto",
-        fontFamily: "$body",
-      }}
-    >
-      <Flex css={styles.articleInfo}>
-        <h1 className={styles.title()}>{title}</h1>
-        <Flex css={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Box>
-            <Text>
-              Skrevet av <span className={styles.lightFont()}>{author}</span>
-            </Text>
-            <Text>
-              Foto av <span className={styles.lightFont()}>{photographer}</span>
-            </Text>
-          </Box>
-          <Box>
-            <Text>
-              Publisert <span className={styles.lightFont()}>{format(date, "dd MMM yyyy")}</span>
-            </Text>
-            <Text>
-              {estimatedReadingTime} minutter <span className={styles.lightFont()}>for å lese</span>
-            </Text>
-          </Box>
-        </Flex>
-        <Flex css={styles.tagContainer}>
+    <div className="mx-auto flex max-w-screen-xl flex-col">
+      <div>
+        <h1>{title}</h1>
+        <div className="flex flex-row justify-between">
+          <div>
+            <p>
+              Skrevet av <span>{author}</span>
+            </p>
+            <p>
+              Foto av <span>{photographer}</span>
+            </p>
+          </div>
+          <div>
+            <p>
+              Publisert <span>{format(date, "dd MMM yyyy")}</span>
+            </p>
+            <p>
+              {estimatedReadingTime} minutter <span>for å lese</span>
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row flex-wrap justify-start pb-4">
           {tags.map((tag: string, key: number) => (
             <Badge key={key} variant="light" color="slate">
               {tag}
             </Badge>
           ))}
-        </Flex>
-        <Text className="pb-1 text-black">{excerpt}</Text>
-      </Flex>
-      {cover_image ? (
-        <Box css={{ margin: "auto", maxHeight: "$md", paddingBottom: "$5" }}>
+        </div>
+        <p className="pb-1 text-black">{excerpt}</p>
+      </div>
+      {cover_image && (
+        <div className="mx-auto max-h-[400px]">
           <Image width={800} height={400} src={cover_image.asset.url} alt="cover image" />
-        </Box>
-      ) : (
-        ""
+        </div>
       )}
-      <Content blocks={content} />
-    </Flex>
+      <PortableText className="prose" blocks={content} />
+    </div>
   )
 }
-
-const styles = {
-  articleInfo: {
-    flexDirection: "column",
-    margin: "auto",
-    maxWidth: "$md",
-    fontSize: "$sm",
-    color: "$gray2",
-    fontWeight: "bold",
-    padding: "$4",
-  } as CSS,
-  lightFont: css({
-    fontWeight: "normal",
-  }),
-  title: css({
-    fontSize: "$5xl",
-    marginBottom: "$2",
-    color: "$black",
-    lineHeight: "1.4",
-    textAlign: "center",
-  }),
-  content: css({
-    "& > h1, h2, h3": {
-      color: "$blue4",
-      paddingTop: "$4",
-    },
-    "& > p": {
-      color: "$black",
-      fontSize: "$sm",
-    },
-    maxWidth: "$md",
-    margin: "auto",
-  }),
-  tagContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    flexWrap: "wrap",
-    paddingBottom: "$4",
-  } as CSS,
-}
-
-const Content = styled(PortableText, styles.content)

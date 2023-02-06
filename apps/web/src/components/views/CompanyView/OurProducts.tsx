@@ -1,6 +1,3 @@
-import { css } from "@dotkomonline/ui"
-import { Text } from "@dotkomonline/ui"
-
 import BedpressIcon from "@components/icons/BedpressIcon"
 import ItexIcon from "@components/icons/ItexIcon"
 import OfflineIcon from "@components/icons/OfflineIcon"
