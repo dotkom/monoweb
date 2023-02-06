@@ -1,6 +1,5 @@
-/*eslint-disable*/
 import { BlockContentProps } from "@sanity/block-content-to-react"
-import { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import PT from "react-portable-text"
 import clsx from "clsx"
 interface PortableTextProps {
@@ -12,7 +11,7 @@ const PortableText: FC<PortableTextProps> = ({ blocks, className }) => (
     content={blocks}
     className={clsx("prose prose-invert", className)}
     serializers={{
-      li: ({ children }: any) => <li className="marker:text-amber-12 ml-4">{children}</li>,
+      li: ({ children }: PropsWithChildren) => <li className="marker:text-amber-12 ml-4">{children}</li>,
       someCustomType: PortableText,
     }}
   />
