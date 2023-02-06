@@ -9,7 +9,7 @@ interface PortableTextProps {
 const PortableText: FC<PortableTextProps> = ({ blocks, className }) => (
   <PT
     content={blocks}
-    className={clsx("prose prose-invert", className)}
+    className={clsx("prose", className)}
     serializers={{
       li: ({ children }: PropsWithChildren) => <li className="marker:text-amber-12 ml-4">{children}</li>,
       someCustomType: PortableText,
