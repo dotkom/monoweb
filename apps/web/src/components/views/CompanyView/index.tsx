@@ -1,7 +1,7 @@
 import { Button } from "@dotkomonline/ui"
 import { FC } from "react"
 
-import PortableText, { PortableTextProps } from "@components/molecules/PortableText"
+import PortableText, { PortableTextProps } from "@/components/molecules/PortableText"
 
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
