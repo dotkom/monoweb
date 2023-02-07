@@ -7,6 +7,8 @@ import type { Session } from "next-auth"
 
 import MainLayout from "../components/layout/MainLayout"
 import { trpc } from "@/utils/trpc"
+
+import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import { Poppins } from "@next/font/google"

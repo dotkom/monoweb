@@ -1,12 +1,10 @@
 import { Button } from "@dotkomonline/ui"
-import { useSession, signIn, signOut } from "next-auth/react"
-import { useRouter } from "next/router"
+import { useSession, signOut } from "next-auth/react"
 import React from "react"
 import { useTheme } from "next-themes"
 
 const Home: React.FC = () => {
   const { data: session, status } = useSession()
-  const router = useRouter()
   const { setTheme } = useTheme()
   if (session) {
     return (
@@ -25,7 +23,7 @@ const Home: React.FC = () => {
       <Button onClick={() => setTheme("light")}>Make it light</Button>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse efficitur mollis lacus eu suscipit. Fusce
       consequat justo eget suscipit fermentum. Etiam aliquet nibh vel augue egestas porttitor. Fusce molestie laoreet
-      nisl, at dignissim turpis consectetur eu. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur
+      nisl, at dignissim turpis consectetur eu. Interdm et malesuada fames ac ante ipsum primis in faucibus. Curabitur
       nibh dolor, tempus eget pretium et, accumsan vitae lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       Donec pellentesque ligula neque, a convallis lectus dapibus sit amet. Sed facilisis arcu purus, non pharetra metus
       convallis a. Fusce sed ligula sed nibh egestas dignissim. Vivamus at ante finibus, dignissim velit sed, imperdiet

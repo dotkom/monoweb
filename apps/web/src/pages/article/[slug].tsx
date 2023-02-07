@@ -1,13 +1,11 @@
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next"
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
 
 import sanityClient from "@/api/sanity"
 import { ArticleView } from "@components/views/ArticleView"
 
-interface ArticleProps {
-  article: Article
-}
+type ArticleProps = InferGetStaticPropsType<typeof getStaticProps>
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const slugs = await sanityClient.fetch<string[]>(`
@@ -44,7 +42,7 @@ const ARTICLE_QUERY = `
   }
 `
 
-export const getStaticProps: GetStaticProps<{}, { slug: string }> = async (ctx) => {
+export const getStaticProps: GetStaticProps<{ article: Article }, { slug: string }> = async (ctx) => {
   const slug = ctx.params?.slug
   if (!slug) {
     return {

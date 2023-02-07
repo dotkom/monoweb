@@ -8,7 +8,7 @@ export interface TextProps extends VariantProps<typeof text> {
 }
 
 export const Text: FC<TextProps> = (props) => {
-  return <p className={cn(props.className, text({ size: props.size, truncate: props.truncate }))}>{props.children}</p>
+  return <p className={cn(text({ size: props.size, truncate: props.truncate }), props.className)}>{props.children}</p>
 }
 
 const text = cva("text-slate-12", {

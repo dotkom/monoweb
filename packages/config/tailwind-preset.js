@@ -1,14 +1,13 @@
-const colors = require("./colors.cjs")
-/**
- * Yes this looks hacky as fuck, but is needed for the color intellisense
- */
+const colors = require("@radix-ui/colors")
+
 const createColorScale = (name) => {
-  const entries = /** @type {const} */ [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [
+  const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [
     step,
     `hsl(var(--color-${name}-${step}, ${colors[`${name}Dark`][`${name}${step}`]}) / <alpha-value>)`,
   ])
+
   // Give the default the third step on the scale
-  entries.push(["DEFAULT", `var(--color-${name}-3`])
+  entries.push(["DEFAULT", `hsl(var(--color-${name}-3, ${colors[`${name}Dark`][`${name}3`]}) / <alpha-value>)`])
   return Object.fromEntries(entries)
 }
 
