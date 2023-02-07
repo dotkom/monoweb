@@ -1,14 +1,13 @@
 import { Button } from "@dotkomonline/ui"
-import { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
 
-import PortableText from "@components/molecules/PortableText"
+import PortableText, { PortableTextProps } from "@components/molecules/PortableText"
 
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
 import { Title } from "@dotkomonline/ui"
 
-export type Content = BlockContentProps["blocks"]
+export type Content = { content: PortableTextProps["blocks"] }
 
 interface CompanyViewProps {
   companyContent: Content[]

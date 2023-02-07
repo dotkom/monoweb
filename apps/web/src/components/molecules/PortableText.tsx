@@ -5,7 +5,7 @@ import {
   type PortableTextProps as ReactPortableTextProps,
 } from "@portabletext/react"
 
-interface PortableTextProps {
+export interface PortableTextProps {
   blocks: ReactPortableTextProps["value"]
   className?: string
 }

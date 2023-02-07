@@ -1,4 +1,4 @@
-import { BlockContentProps } from "@sanity/block-content-to-react"
+import { PortableTextProps } from "@/components/molecules/PortableText"
 import client from "./sanity"
 
 export interface CareerAd {
@@ -9,7 +9,7 @@ export interface CareerAd {
   location: string
   deadline: string
   company_info: string
-  content: BlockContentProps["blocks"]
+  content: PortableTextProps["blocks"]
   link: string
   facebook: string
   instagram: string
