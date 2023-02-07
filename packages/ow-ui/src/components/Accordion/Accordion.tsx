@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "../../utils"
-import { IconChevronDown } from "@tabler/icons"
+import { Icon } from "../Icon"
 
 const Accordion = AccordionPrimitive.Root
 
@@ -9,11 +9,7 @@ const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
-    ref={ref}
-    className={cn(" border-b-slate-11 border-b dark:border-b-slate-700", className)}
-    {...props}
-  />
+  <AccordionPrimitive.Item ref={ref} className={cn(" border-b-slate-11 border-b", className)} {...props} />
 ))
 AccordionItem.displayName = "AccordionItem"
 
@@ -25,13 +21,13 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "text-foreground flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        "text-foreground flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>iconify-icon]:rotate-180",
         className
       )}
       {...props}
     >
       {children}
-      <IconChevronDown className="h-4 w-4 transition-transform duration-200" />
+      <Icon icon="tabler:chevron-down" className="h-4 w-4 transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ))

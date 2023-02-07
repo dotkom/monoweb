@@ -2,7 +2,7 @@ import { cva } from "cva"
 import type { VariantProps } from "cva"
 import React, { forwardRef } from "react"
 import { cn } from "../../utils"
-import { IconLoader2 } from "@tabler/icons"
+import { Icon } from "../Icon"
 
 type Color = "blue" | "red" | "amber" | "slate" | "green"
 
@@ -29,7 +29,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
     >
       <div className="flex items-center justify-center">
         {(props.loading || props.icon) && (
-          <i className="mr-1">{props.loading ? <IconLoader2 size={16} className="animate-spin" /> : props.icon}</i>
+          <i className="mr-1 flex">
+            {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+          </i>
         )}
         <span className="text-inherit">{props.children}</span>
       </div>
@@ -52,8 +54,8 @@ export const buttonStyles = cva(
         lg: "text-lg px-5 h-13 font-bold",
       },
       variant: {
-        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
-        brand: "bg-brand text-slate-12 hover:bg-brand-dark active:bg-brand-darker",
+        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-white ",
+        brand: "bg-brand text-white hover:bg-brand-dark active:bg-brand-darker",
         outline: "bg-transparent border-2 border-slate-11 hover:bg-slate-4 focus:ring-blue-10 text-slate-11",
         solid: "text-slate-12",
         light: "text-current",

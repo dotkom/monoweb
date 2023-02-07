@@ -1,13 +1,11 @@
-import { ComponentStory } from "@storybook/react"
-import React from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./Accordion"
 
 export default {
-  title: "atoms/Accordion",
+  title: "Accordion",
   component: Accordion,
 }
 
-const Template: ComponentStory<typeof Accordion> = (args) => (
+export const Default = () => (
   <div className="max-w-[400px]">
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
@@ -27,5 +25,3 @@ const Template: ComponentStory<typeof Accordion> = (args) => (
     </Accordion>
   </div>
 )
-
-export const Example = Template.bind({})

@@ -1,13 +1,16 @@
-import { StoryObj } from "@storybook/react"
-import { IconAdjustments, IconMail } from "@tabler/icons"
+import { Icon } from "../Icon"
+import { Meta, StoryObj } from "@storybook/react"
 
 import { Button } from "./Button"
 
-export default {
-  title: "atoms/Button",
+const meta: Meta<typeof Button> = {
+  title: "Button",
   component: Button,
 }
+export default meta
+
 type Story = StoryObj<typeof Button>
+
 export const Default: Story = { args: { children: "Button", variant: "brand" } }
 
 export const Gradient: Story = {
@@ -72,8 +75,8 @@ export const Disabled: Story = {
 }
 
 export const WithIcon = MultiStory([
-  { children: "Settings", color: "blue", variant: "light", icon: <IconAdjustments size={16} /> },
-  { children: "Mail", color: "blue", variant: "solid", icon: <IconMail size={16} /> },
+  { children: "Settings", color: "blue", variant: "light", icon: <Icon icon="tabler:adjustments" width={16} /> },
+  { children: "Mail", color: "blue", variant: "solid", icon: <Icon icon="tabler:mail" width={16} /> },
 ])
 
 export const Loading: Story = {
