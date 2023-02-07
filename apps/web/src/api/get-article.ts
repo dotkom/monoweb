@@ -1,5 +1,4 @@
-import { BlockContentProps } from "@sanity/block-content-to-react"
-
+import { PortableTextProps } from "@/components/molecules/PortableText"
 import client from "./sanity"
 
 export interface Article {
@@ -11,7 +10,7 @@ export interface Article {
   tags: string[]
   excerpt: string
   cover_image: { asset: { url: string } }
-  content: BlockContentProps["blocks"]
+  content: PortableTextProps["blocks"]
   estimatedReadingTime: number
 }
 

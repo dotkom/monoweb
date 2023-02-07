@@ -1,65 +1,25 @@
-import { blackA } from "@radix-ui/colors"
-import * as SwitchPrimitive from "@radix-ui/react-switch"
-import { styled } from "@stitches/react"
-import React, { Dispatch, SetStateAction } from "react"
+import * as React from "react"
+import * as SwitchPrimitives from "@radix-ui/react-switch"
+import { cn } from "../../utils"
 
-const StyledSwitch = styled(SwitchPrimitive.Root, {
-  all: "unset",
-  width: 42,
-  height: 25,
-  backgroundColor: "$gray10",
-  borderRadius: "9999px",
-  position: "relative",
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
-  WebkitTapHighlightColor: "rgba(0, 0, 0, 0)",
-  "&:focus": { boxShadow: `0 0 0 2px $colors$info1` },
-  '&[data-state="checked"]': { backgroundColor: "$blue3" },
-  "&:disabled": { backgroundColor: "$gray11" },
-})
+export interface ToggleProps extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {}
 
-const StyledThumb = styled(SwitchPrimitive.Thumb, {
-  display: "block",
-  width: 21,
-  height: 21,
-  backgroundColor: "white",
-  borderRadius: "9999px",
-  boxShadow: `0 2px 2px ${blackA.blackA7}`,
-  transition: "transform 100ms",
-  transform: "translateX(2px)",
-  willChange: "transform",
-  '&[data-state="checked"]': { transform: "translateX(19px)" },
-})
-
-// Exports
-const Switch = StyledSwitch
-const SwitchThumb = StyledThumb
-
-const Flex = styled("div", { display: "flex" })
-const Label = styled("label", {
-  color: "$gray1",
-  fontSize: 15,
-  lineHeight: 1,
-  userSelect: "none",
-})
-
-export interface ToggleProps {
-  label: string
-  disabled?: boolean
-  isChecked: boolean
-  setIsChecked: Dispatch<SetStateAction<boolean>>
-}
-
-export const Toggle: React.FC<ToggleProps> = ({ label, disabled, isChecked, setIsChecked }) => {
-  return (
-    <form>
-      <Flex css={{ alignItems: "center" }}>
-        <Label htmlFor="s1" css={{ paddingRight: 15 }}>
-          {label}
-        </Label>
-        <Switch id="s1" disabled={disabled} onChange={() => setIsChecked(!isChecked)}>
-          <SwitchThumb />
-        </Switch>
-      </Flex>
-    </form>
+export const Toggle = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, ToggleProps>(
+  ({ className, ...props }, ref) => (
+    <SwitchPrimitives.Root
+      className={cn(
+        "focus:ring-slate-7 data-[state=unchecked]:bg-slate-6 data-[state=checked]:bg-blue-8 peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      {...props}
+      ref={ref}
+    >
+      <SwitchPrimitives.Thumb
+        className={cn(
+          "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=unchecked]:translate-x-0 data-[state=checked]:translate-x-5"
+        )}
+      />
+    </SwitchPrimitives.Root>
   )
-}
+)
+Toggle.displayName = SwitchPrimitives.Root.displayName

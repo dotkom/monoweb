@@ -1,24 +1,32 @@
-import { styled } from "../../config/stitches.config"
+import { cva } from "cva"
+import type { VariantProps } from "cva"
+import * as React from "react"
+import { cn } from "../../utils"
 
-export const Card = styled("div", {
-  boxSizing: "border-box",
-  margin: 0,
-  minWidth: 0,
-  borderRadius: "$3",
+export interface CardProps extends VariantProps<typeof card> {
+  children?: React.ReactNode
+  className?: string
+}
+
+export const Card: React.FC<CardProps> = (props) => {
+  return (
+    <div className={cn(props.className, card({ shadow: props.shadow, outlined: props.outlined }))}>
+      {props.children}
+    </div>
+  )
+}
+
+const card = cva("box-border m-0 min-w-0 border p-1 rounded", {
   variants: {
     shadow: {
-      true: {
-        boxShadow:
-          "1.1px 0.6px 5.2px -5px rgba(0, 0, 0, 0.022),2.4px 1.2px 13px -5px rgba(0, 0, 0, 0.031),4.4px 2.2px 26.6px -5px rgba(0, 0, 0, 0.039),9px 4.5px 54.8px -5px rgba(0, 0, 0, 0.048),40px 20px 150px -5px rgba(0, 0, 0, 0.07)",
-      },
+      true: "shadow-md",
     },
     outlined: {
-      true: {
-        border: "1px solid $gray12",
-      },
+      true: "border-slate-12",
     },
   },
   defaultVariants: {
     outlined: true,
+    shadow: false,
   },
 })

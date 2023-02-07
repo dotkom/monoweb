@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url(@dotkomonline/config/tailwind.css);
+@import url(@dotkomonline/config/typography.css);
 
 @layer base {
   html {
@@ -10,22 +9,11 @@
   html,
   body,
   #__next {
-    @apply h-full w-full;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  span {
-    @apply text-slate-12;
+    @apply bg-indigo-1 h-full w-full;
   }
 
   body {
-    @apply font-poppins m-0;
+    @apply m-0;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

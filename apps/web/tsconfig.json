@@ -33,9 +33,6 @@
       "@styles": [
         "src/styles"
       ],
-      "@theme": [
-        "src/theme/stitches.config.ts"
-      ]
     },
     "incremental": true,
     "plugins": [

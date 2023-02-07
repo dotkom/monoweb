@@ -1,10 +1,7 @@
-import { CSS } from "@dotkomonline/ui"
-import { Badge, Text } from "@dotkomonline/ui"
+import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
-
-import { Box } from "@components/primitives"
 
 interface CompanyAdListItemProps {
   name: string
@@ -19,28 +16,21 @@ interface CompanyAdListItemProps {
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
   const { name, logo, position, location, deadline, applyLink, showApplyLink = false } = props
   return (
-    <Box css={styles.listItem}>
-      <Box>
+    <div className="grid grid-cols-5">
+      <div>
         <Image src={logo} width={70} height={40} alt={`${name}'s job posting`} />
-      </Box>
-      <Text>{name}</Text>
-      <Box>
+      </div>
+      <p>{name}</p>
+      <div>
         <Badge color="red" variant="light">
           {position}
         </Badge>
-      </Box>
-      <Text>{location.concat("")}</Text>
-      <Text>{format(deadline, "DDD")}</Text>
-      {showApplyLink && <Text>{applyLink}</Text>}
-    </Box>
+      </div>
+      <span>{location.concat("")}</span>
+      <span>{format(deadline, "DDD")}</span>
+      {showApplyLink && <p>{applyLink}</p>}
+    </div>
   )
-}
-
-const styles = {
-  listItem: {
-    display: "grid",
-    gridTemplateColumns: "repeat(5, 1fr)",
-  } as CSS,
 }
 
 export default CompanyAdListItem

@@ -1,9 +1,8 @@
-import { BlockContentProps } from "@sanity/block-content-to-react"
-
+import { PortableTextProps } from "@/components/molecules/PortableText"
 import client from "./sanity"
 
 interface CompanySectionData {
-  sections: BlockContentProps["blocks"]
+  sections: PortableTextProps["blocks"]
 }
 
 const query = `

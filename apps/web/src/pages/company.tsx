@@ -5,7 +5,7 @@ import { fetchCompanySectionData } from "src/api/get-company-page"
 import { CompanyView, Content } from "@components/views/CompanyView/index"
 
 interface CompanyProps {
-  sections: Content
+  sections: Content[]
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {

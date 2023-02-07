@@ -1,34 +1,16 @@
-import { css } from "@dotkomonline/ui"
 import { FC, PropsWithChildren } from "react"
 
 import Footer from "../organisms/Footer"
-import Navbar from "../organisms/Navbar"
+import { Navbar } from "../organisms/Navbar/Navbar"
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className={styles.root()}>
+    <div className="font-poppins m-0 flex h-screen flex-col items-center justify-between p-0">
       <Navbar />
-      <main className={styles.content()}>{children}</main>
+      <main className="w-100 mb-auto mt-20 max-w-screen-lg">{children}</main>
       <Footer />
     </div>
   )
-}
-
-const styles = {
-  root: css({
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }),
-  content: css({
-    maxWidth: "$sizes$lg",
-    width: "100%",
-    marginBottom: "auto",
-  }),
 }
 
 export default MainLayout

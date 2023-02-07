@@ -23,10 +23,11 @@ module.exports = {
       amber: createColorScale("amber"),
       red: createColorScale("red"),
       green: createColorScale("green"),
+      indigo: createColorScale("indigo"),
     },
     extend: {
       fontFamily: {
-        poppins: ['"Poppins"', "sans-serif"],
+        poppins: ["var(--font-poppins, 'Poppins')"],
         mono: ["Roboto Mono", "monospace"],
         sans: ['"Inter var"', "sans-serif"],
       },
@@ -34,8 +35,9 @@ module.exports = {
         inherit: "inherit",
         current: "current",
         transparent: "transparent",
-        background: "var(--color-background)",
-        foreground: "var(--color-slate-12)",
+        white: "#ffffee",
+        background: "var(--color-background)", //#asjkdl
+        foreground: "hsl(var(--color-slate-12) / <alpha-value>)",
         accent: "#FFEDB3",
         brand: {
           lighter: "#1277A5",

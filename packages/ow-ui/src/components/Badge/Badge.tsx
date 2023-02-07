@@ -1,6 +1,6 @@
 import { cva } from "cva"
 import { FC, PropsWithChildren } from "react"
-import { twMerge } from "tailwind-merge"
+import { cn } from "../../utils"
 
 export interface BadgeProps {
   color: "red" | "green" | "amber" | "blue" | "slate"
@@ -9,7 +9,7 @@ export interface BadgeProps {
 }
 
 export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, variant, className }) => {
-  const style = twMerge(styles[variant]({ color }), "flex w-fit items-center rounded-md px-4 font-medium", className)
+  const style = cn(styles[variant]({ color }), "flex w-fit items-center rounded-md px-4 font-medium", className)
   return <span className={style}>{children}</span>
 }
 const styles = {
