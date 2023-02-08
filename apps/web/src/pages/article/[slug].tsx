@@ -3,7 +3,7 @@ import { FC } from "react"
 import { Article } from "src/api/get-article"
 
 import sanityClient from "@/api/sanity"
-import { ArticleView } from "@components/views/ArticleView"
+import { ArticleView } from "@/components/views/ArticleView"
 
 type ArticleProps = InferGetStaticPropsType<typeof getStaticProps>
 

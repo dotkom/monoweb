@@ -7,7 +7,7 @@ import { ImFacebook2 } from "react-icons/im"
 import { IoTimeOutline, IoCopyOutline } from "react-icons/io5"
 import { MdWorkOutline } from "react-icons/md"
 import { TbGlobe } from "react-icons/tb"
-import PortableText from "@components/molecules/PortableText"
+import PortableText from "@/components/molecules/PortableText"
 
 interface CareerAdViewProps {
   career: CareerAd

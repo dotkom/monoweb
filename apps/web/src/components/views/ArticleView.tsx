@@ -4,7 +4,7 @@ import Image from "next/image"
 import { FC } from "react"
 import { Article } from "src/api/get-article"
 
-import PortableText from "@components/molecules/PortableText"
+import PortableText from "@/components/molecules/PortableText"
 
 interface ArticleViewProps {
   article: Article
