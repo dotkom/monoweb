@@ -13,6 +13,6 @@ export interface CompanyTable {
 }
 
 export interface EventCompanyTable {
-  eventID: string
-  companyID: string
+  eventId: string
+  companyId: string
 }

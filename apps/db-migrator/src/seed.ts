@@ -33,10 +33,10 @@ const createRandomEvent = (): Insertable<Database["event"]> => {
   }
 }
 
-const createRandomAttendance = (eventIDs: string[]): Insertable<Database["attendance"]> => {
+const createRandomAttendance = (eventIds: string[]): Insertable<Database["attendance"]> => {
   return {
     id: faker.datatype.uuid(),
-    eventID: faker.helpers.arrayElement(eventIDs),
+    eventId: faker.helpers.arrayElement(eventIds),
     start: faker.date.future(),
     end: faker.date.future(),
     deregisterDeadline: faker.date.future(),
