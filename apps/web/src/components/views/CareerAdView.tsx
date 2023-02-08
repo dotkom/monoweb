@@ -36,14 +36,16 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <Image src={image.asset.url} width={4000} height={250} alt="company_image" />
         </div>
 
-        <h1>{company_info}</h1>
+        <p>{company_info}</p>
 
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
-        <div className="my-3 flex items-center">
-          <BsArrowLeft size={20} className="text-blue-9 inline" />
-          <h2 className="m-0 pl-2 text-xl font-bold text-blue-500"> ANDRE MULIGHETER</h2>
-        </div>
-        <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
+        <a href="/career">
+          <div className="flex items-center">
+            <BsArrowLeft size={20} className="text-blue-9 mb-2 inline" />
+            <h2 className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</h2>
+          </div>
+        </a>
+        <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <TbGlobe className="text-blue-9" size={20} />
           <p className="m-0 pl-2">{location}</p>
@@ -96,7 +98,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <p className="m-0 text-4xl font-bold">{company_name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div className="[&>*]:border-amber-9 [&>*]:text-amber-12 my-12 ml-8 flex flex-col gap-6 [&>*]:border-l-[1px] [&>*]:pl-4">
+        <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col gap-6 [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
           <PortableText blocks={content} />
         </div>
       </div>
