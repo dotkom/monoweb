@@ -5,7 +5,7 @@ importers:
   .:
     specifiers:
       '@types/node': ^16.11.47
-      dotenv-cli: ^6.0.0
+      dotenv-cli: ^7.0.0
       eslint: ^8.21.0
       prettier: ^2.7.1
       ts-node: ^10.9.1
@@ -16,7 +16,7 @@ importers:
       vitest: ^0.26.0
     devDependencies:
       '@types/node': 16.18.3
-      dotenv-cli: 6.0.0
+      dotenv-cli: 7.0.0
       eslint: 8.28.0
       prettier: 2.7.1
       ts-node: 10.9.1_fvpuwgkpfe3dm3hnpcpbcxmb3y
@@ -111,7 +111,7 @@ importers:
       chalk: ^5.1.2
       commander: ^9.4.1
       date-fns: ^2.29.3
-      dotenv-cli: ^6.0.0
+      dotenv-cli: ^7.0.0
       eslint: ^8.27.0
       kysely: ^0.23.0
       pg: ^8.8.0
@@ -131,7 +131,7 @@ importers:
       '@types/eslint': 8.4.10
       '@types/pg': 8.6.5
       date-fns: 2.29.3
-      dotenv-cli: 6.0.0
+      dotenv-cli: 7.0.0
       eslint: 8.28.0
       tsx: 3.12.1
       typescript: 4.9.3
@@ -9274,13 +9274,13 @@ packages:
       is-obj: 2.0.0
     dev: false
 
-  /dotenv-cli/6.0.0:
-    resolution: {integrity: sha512-qXlCOi3UMDhCWFKe0yq5sg3X+pJAz+RQDiFN38AMSbUrnY3uZshSfDJUAge951OS7J9gwLZGfsBlWRSOYz/TRg==}
+  /dotenv-cli/7.0.0:
+    resolution: {integrity: sha512-XfMzVdpdDTRnlcgvFLg3lSyiLXqFxS4tH7RbK5IxkC4XIUuxPyrGoDufkfLjy/dA28EILzEu+mros6h8aQmyGg==}
     hasBin: true
     dependencies:
       cross-spawn: 7.0.3
       dotenv: 16.0.3
-      dotenv-expand: 8.0.3
+      dotenv-expand: 10.0.0
       minimist: 1.2.7
     dev: true
 
@@ -9291,11 +9291,6 @@ packages:
 
   /dotenv-expand/5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
-    dev: true
-
-  /dotenv-expand/8.0.3:
-    resolution: {integrity: sha512-SErOMvge0ZUyWd5B0NXMQlDkN+8r+HhVUsxgOO7IoPDOdDRD2JjExpN6y3KnFR66jsJMwSn1pqIivhU5rcJiNg==}
-    engines: {node: '>=12'}
     dev: true
 
   /dotenv/16.0.3:
