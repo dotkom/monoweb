@@ -25,7 +25,7 @@ export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
     const event = await db
       .selectFrom("event")
       .where("id", "=", id)
-      .leftJoin("attendance", "attendance.eventID", "event.id")
+      .leftJoin("attendance", "attendance.eventId", "event.id")
       .selectAll("event")
       .select(
         sql<Attendance[]>`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as(
