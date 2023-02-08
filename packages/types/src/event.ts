@@ -28,8 +28,8 @@ export const EventWriteSchema = EventSchema.partial({
 export type EventWrite = z.infer<typeof EventWriteSchema>
 
 export const AttendeeSchema = z.object({
-  attendanceID: z.string(),
-  userID: z.string(),
+  attendanceId: z.string(),
+  userId: z.string(),
 })
 
 export const AttendanceSchema = z.object({
@@ -40,7 +40,7 @@ export const AttendanceSchema = z.object({
   end: z.date(),
   deregisterDeadline: z.date(),
   limit: z.number(),
-  eventID: z.string(),
+  eventId: z.string(),
   attendees: z.array(AttendeeSchema),
 })
 
