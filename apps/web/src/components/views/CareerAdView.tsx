@@ -98,7 +98,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <p className="m-0 text-4xl font-bold">{company_name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col gap-6 [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:border-b-0 [&>h2]:m-0">
+        <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col gap-6 [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
           <PortableText blocks={content} />
         </div>
       </div>
