@@ -16,7 +16,7 @@ const ProfileContentContainer = () => {
 
   if (!page) return <>No page found</>
 
-  return <>{page?.component}</>
+  return <div className="mx-5 min-w-[600px]">{page?.component}</div>
 }
 
 export default ProfileContentContainer
