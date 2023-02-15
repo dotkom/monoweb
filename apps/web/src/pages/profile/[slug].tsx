@@ -6,7 +6,7 @@ import { Session } from "next-auth"
 import { getSession } from "next-auth/react"
 import React, { useState } from "react"
 
-const index: React.FC = ({ user }) => {
+const Index: React.FC = ({ user }) => {
   const [editMode, setEditMode] = useState(false)
 
   return (
@@ -35,4 +35,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 }
 
-export default index
+export default Index
