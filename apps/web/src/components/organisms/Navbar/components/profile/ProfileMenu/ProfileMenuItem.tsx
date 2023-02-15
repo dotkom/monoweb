@@ -13,38 +13,21 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
   const { title, slug } = menuItem
 
-  const [isCurrent, setCurrent] = useState(router.query.slug == slug ? "black" : "gray")
+  const [isCurrent, setCurrent] = useState(router.query.slug == slug ? "text-white" : "text-slate-7")
 
   const handleChange = () => {
     router.push(`/profile/${slug}`)
   }
 
-  // useEffect(() => {
-  //   setCurrent(router.query.slug == slug ? styles.textBlack() : styles.textGray())
-  // }, [router.query.slug, slug])
+  useEffect(() => {
+    setCurrent(router.query.slug == slug ? "text-white" : "text-slate-7")
+  }, [router.query.slug, slug])
 
   return (
-    <div onClick={handleChange}>
+    <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer">
       <p className={isCurrent}>{title}</p>
     </div>
   )
 }
-
-// const styles = {
-//   textBlack: css({
-//     color: theme.colors.black,
-//   }),
-//   textGray: css({
-//     color: theme.colors.gray6,
-//   }),
-//   heading: css({
-//     color: theme.colors.gray6,
-//     padding: "10px 0px 10px 3px",
-//     maxWidth: "150px",
-//     "&:hover": {
-//       cursor: "pointer",
-//     },
-//   }),
-// }
 
 export default ProfileMenuItem

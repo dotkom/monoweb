@@ -10,16 +10,16 @@ const index: React.FC = ({ user }) => {
   const [editMode, setEditMode] = useState(false)
 
   return (
-    <Container>
-      <Heading>Profil</Heading>
-      <HorizontalLine />
-      <ContentWrapper>
+    <div className="m-y-[100px] m-x-auto max-w-[1000px]">
+      <h1>Profil</h1>
+      <hr />
+      <div className="mt-[42.5px] flex w-full flex-row">
         <ProfileMenuContainer />
         <ProfileContext.Provider value={{ user, editMode, setEditMode }}>
           <ProfileContentContainer />
         </ProfileContext.Provider>
-      </ContentWrapper>
-    </Container>
+      </div>
+    </div>
   )
 }
 export const isAuthenticated = (data: Session | null) => {
@@ -34,32 +34,5 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   }
 }
-
-// const styles = {
-//   container: css({
-//     maxWidth: "1000px",
-//     margin: "100px auto",
-//   }),
-//   heading: css({
-//     fontSize: theme.fontSizes["3xl"],
-//     fontWeight: theme.fontWeights.medium,
-//     color: "$black",
-//   }),
-//   horizontalLine: css({
-//     border: "0.5px solid",
-//     borderColor: theme.colors.gray12,
-//   }),
-//   contentWrapper: css({
-//     display: "flex",
-//     flexDirection: "row",
-//     width: "100%",
-//     marginTop: "42.5px",
-//   }),
-// }
-//
-// const Container = styled("div", styles.container)
-// const Heading = styled("h1", styles.heading)
-// const HorizontalLine = styled("hr", styles.horizontalLine)
-// const ContentWrapper = styled("div", styles.contentWrapper)
 
 export default index
