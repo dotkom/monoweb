@@ -25,8 +25,10 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "focus:bg-indigo-2 data-[state=open]:bg-slate-3 flex cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm font-medium outline-none",
+      "data-[state=open]:bg-slate-7 flex cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm font-medium outline-none",
       inset && "pl-8",
+      "data-[state=open]:bg-slate-3 data-[state=open]:dark:bg-slate-7",
+      "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
     )}
     {...props}
@@ -45,7 +47,8 @@ const DropdownMenuSubContent = React.forwardRef<
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     className={cn(
-      "animate-in slide-in-from-left-1 border-slate-7 text-slate-12 bg-slate-3 z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
+      "animate-in slide-in-from-left-1 border-slate-7 text-slate-11 z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
+      "bg-slate-1 dark:bg-slate-5",
       className
     )}
     {...props}
@@ -62,7 +65,8 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "animate-in data-[side=right]:slide-in-from-left-2 data-[side=left]:slide-in-from-right-2 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 border-slate-7 text-slate-11 bg-slate-4 z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
+        "animate-in data-[side=right]:slide-in-from-left-2 data-[side=left]:slide-in-from-right-2 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 border-slate-7 text-slate-11 z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
+        "bg-slate-1 dark:bg-slate-5",
         className
       )}
       {...props}
@@ -80,8 +84,9 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "focus:bg-slate-2 relative flex cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded py-1.5 px-2 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
+      "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
     )}
     {...props}
@@ -96,7 +101,8 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      "focus:bg-slate-2 relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
     )}
     checked={checked}
@@ -119,14 +125,15 @@ const DropdownMenuRadioItem = React.forwardRef<
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm font-medium outline-none focus:bg-slate-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm font-medium outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "focus:bg-slate-3 focus:dark:bg-slate-7",
       className
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <DropdownMenuPrimitive.ItemIndicator>
-        <Icon icon="tabler:circle" width={12} />
+      <DropdownMenuPrimitive.ItemIndicator className="grid place-content-center">
+        <Icon icon="tabler:circle" width={6} className="bg-slate-11 rounded-full" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}

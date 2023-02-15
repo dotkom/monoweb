@@ -9,14 +9,21 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Icon,
 } from "@dotkomonline/ui"
 import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { FC, PropsWithChildren } from "react"
+import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = () => {
@@ -64,6 +71,7 @@ export const ProfileMenu = () => {
 }
 
 const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
+  const { setTheme, theme } = useTheme()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -114,6 +122,32 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
             <span>Rapporter en feil</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Icon icon="tabler:sun" className="mr-2 h-4 w-4" />
+            <span>Theme</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
+                <DropdownMenuRadioItem value="light">
+                  <Icon icon="tabler:sun" className="mr-2 h-4 w-4" />
+                  <span>Light theme</span>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="dark">
+                  <Icon icon="tabler:moon" className="mr-2 h-4 w-4" />
+                  <span>Dark theme</span>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="right">
+                  <Icon icon="tabler:device-desktop" className="mr-2 h-4 w-4" />
+                  <span>System</span>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
