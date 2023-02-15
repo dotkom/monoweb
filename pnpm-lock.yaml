@@ -412,6 +412,7 @@ importers:
 
   packages/config:
     specifiers:
+      '@radix-ui/colors': ^0.1.8
       '@tailwindcss/typography': ^0.5.8
       '@typescript-eslint/eslint-plugin': ^5.44.0
       '@typescript-eslint/parser': ^5.44.0
@@ -430,6 +431,7 @@ importers:
       tailwindcss-radix: ^2.6.1
       typescript: ^4.9.5
     devDependencies:
+      '@radix-ui/colors': 0.1.8
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.4
       '@typescript-eslint/eslint-plugin': 5.44.0_gpmmmdmp4n2n2rn3bmqeq4zasa
       '@typescript-eslint/parser': 5.44.0_4vsywjlpuriuw3tl5oq6zy5a64
@@ -497,6 +499,7 @@ importers:
       '@radix-ui/react-alert-dialog': ^1.0.0
       '@radix-ui/react-avatar': ^1.0.0
       '@radix-ui/react-checkbox': ^1.0.0
+      '@radix-ui/react-dropdown-menu': ^1.0.0
       '@radix-ui/react-label': ^1.0.0
       '@radix-ui/react-navigation-menu': ^1.0.0
       '@radix-ui/react-switch': ^1.0.0
@@ -523,6 +526,7 @@ importers:
       '@radix-ui/react-alert-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
       '@radix-ui/react-avatar': 1.0.1_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-checkbox': 1.0.1_biqbaboplfbrettd7655fr4n2y
+      '@radix-ui/react-dropdown-menu': 1.0.0_2zx2umvpluuhvlq44va5bta2da
       '@radix-ui/react-label': 1.0.0_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-navigation-menu': 1.1.1_biqbaboplfbrettd7655fr4n2y
       '@radix-ui/react-switch': 1.0.1_biqbaboplfbrettd7655fr4n2y
@@ -4255,7 +4259,6 @@ packages:
 
   /@radix-ui/colors/0.1.8:
     resolution: {integrity: sha512-jwRMXYwC0hUo0mv6wGpuw254Pd9p/R6Td5xsRpOmaWkUHlooNWqVcadgyzlRumMq3xfOTXwJReU0Jv+EIy4Jbw==}
-    dev: false
 
   /@radix-ui/primitive/1.0.0:
     resolution: {integrity: sha512-3e7rn8FDMin4CgeL7Z/49smCA3rFYY3Ha2rUQ7HRWFadS5iCRw08ZgVT1LaNTCNqgvrUiyczLflrVrF0SRQtNA==}
