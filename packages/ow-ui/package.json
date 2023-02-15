@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@iconify-icon/react": "^1.0.3",
+    "@internationalized/date": "^3.0.2",
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-accordion": "^1.1.0",
     "@radix-ui/react-alert-dialog": "^1.0.0",
@@ -22,6 +23,9 @@
     "@radix-ui/react-navigation-menu": "^1.0.0",
     "@radix-ui/react-switch": "^1.0.0",
     "@radix-ui/react-tabs": "^1.0.2",
+    "@react-aria/datepicker": "^3.2.1",
+    "@react-aria/overlays": "^3.12.1",
+    "@react-stately/datepicker": "^3.2.1",
     "clsx": "^1.2.1",
     "cva": "npm:class-variance-authority@^0.4.0",
     "react": "^18.2.0",
