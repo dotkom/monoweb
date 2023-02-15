@@ -1,6 +1,4 @@
-import { ProfileContext } from "@/components/views/ProfileView/context/ProfileContext"
 import { profileItems } from "@/utils/profileLinks"
-import { useState } from "react"
 import ProfileMenuItem from "./ProfileMenuItem"
 
 const ProfileMenuContainer = () => {

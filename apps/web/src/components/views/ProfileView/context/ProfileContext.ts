@@ -4,15 +4,9 @@ import { createContext, Dispatch, SetStateAction } from "react"
 interface IProfileContext {
   editMode: boolean
   setEditMode: Dispatch<SetStateAction<boolean>>
-  user: User | {}
+  user: User | object
   profileDetails?: any
-  setProfileDetails?: any
+  setProfileDetails?: Dispatch<SetStateAction<boolean>>
 }
 
-export const ProfileContext = createContext<IProfileContext>({
-  editMode: false,
-  setEditMode: () => {},
-  user: {},
-  profileDetails: {},
-  setProfileDetails: () => {},
-})
+export const ProfileContext = createContext<IProfileContext | null>(null)
