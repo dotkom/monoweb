@@ -15,13 +15,16 @@ module.exports = {
       extends: ["plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/eslint-recommended"],
       plugins: ["@typescript-eslint"],
       parser: "@typescript-eslint/parser",
+      rules: {
+        "@typescript-eslint/no-empty-interface": 0,
+      },
     },
     {
-      "files": ["packages/ow-db/src/migrations/*"],
-      "rules": {
-        "@typescript-eslint/no-explicit-any": "off"
-      }
-    }
+      files: ["packages/ow-db/src/migrations/*"],
+      rules: {
+        "@typescript-eslint/no-explicit-any": "off",
+      },
+    },
   ],
   rules: {
     "@typescript-eslint/no-unused-vars": [

@@ -16,7 +16,7 @@ export interface EventTable {
   subtitle: string | null
   imageUrl: string | null
   location: string | null
-  committeeID: string | null
+  committeeId: string | null
 }
 
 export interface AttendanceTable {
@@ -27,15 +27,15 @@ export interface AttendanceTable {
   end: Date
   deregisterDeadline: Date
   limit: number
-  eventID: string
+  eventId: string
 }
 
 export interface AttendeeTable {
   id: Generated<string>
   createdAt: Generated<Date>
   updatedAt: Generated<Date>
-  userID: string
-  attendanceID: string
+  userId: string
+  attendanceId: string
 }
 
 export interface CommitteeTable {

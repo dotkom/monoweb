@@ -1,100 +1,84 @@
 import { cva } from "cva"
 import type { VariantProps } from "cva"
-import React, { forwardRef, HTMLProps, PropsWithChildren } from "react"
-import { twMerge } from "tailwind-merge"
+import React, { forwardRef } from "react"
+import { cn } from "../../utils"
+import { Icon } from "../Icon"
 
-type Color = "blue" | "red" | "amber" | "slate" | "green" | undefined
+type Color = "blue" | "red" | "amber" | "slate" | "green"
 
-export interface ButtonProps extends VariantProps<ReturnType<typeof defaultButton>> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonStyles> {
   color?: Color
   icon?: React.ReactNode
-  type?: "submit" | "reset" | "button"
-  className?: string
-  disabled?: boolean
+  loading?: boolean
 }
 
-export const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps & HTMLProps<HTMLButtonElement>>>(
-  (props, ref) => {
-    const colorVariants = defaultButton(props.color)
-    return (
-      <button
-        {...props}
-        className={twMerge(
-          "cursor-pointer appearance-none rounded-md border-none px-4 py-2 font-semibold",
-          "transition-transform",
-          "hover:-translate-y-[1px] active:translate-y-[2px]",
-          colorVariants({ disabled: !!props.disabled, variant: props.variant }),
-          props.className
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+  return (
+    <button
+      {...props}
+      disabled={props.disabled || props.loading}
+      className={cn(
+        buttonStyles({ variant: props.variant, size: props.size }),
+        props.color && getColorStyles(props.variant, props.color),
+        props.color === "amber" && props.variant === "solid" && "text-slate-1",
+        "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40",
+        props.className
+      )}
+      type={props.type}
+      ref={ref}
+    >
+      <div className="flex items-center justify-center">
+        {(props.loading || props.icon) && (
+          <i className="mr-1 flex">
+            {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+          </i>
         )}
-        type={props.type}
-        ref={ref}
-      >
-        <div className="flex items-center justify-center">
-          <i className="mr-1">{props.icon && props.icon}</i>
-          <span className="text-inherit">{props.children}</span>
-        </div>
-      </button>
-    )
-  }
-)
+        <span className="text-inherit">{props.children}</span>
+      </div>
+    </button>
+  )
+})
 
-const defaultButton = (color: Color) =>
-  cva("", {
+export const buttonStyles = cva(
+  [
+    "cursor-pointer appearance-none rounded-md px-4 py-2 font-semibold",
+    "focus:ring-2 focus:ring-slate-11 focus:outline-none",
+    "transition-transform",
+    "hover:-translate-y-[1px] active:translate-y-[2px]",
+  ],
+  {
     variants: {
-      size: {},
-      disabled: {
-        true: "opacity-40 pointer-events-none cursor-not-allowed",
+      size: {
+        sm: "text-sm px-3 h-9 font-medium",
+        md: "text-md px-4 h-11 font-semibold",
+        lg: "text-lg px-5 h-13 font-bold",
       },
       variant: {
-        light: light({ color: color }),
-        solid: solid({ color: color }),
-        subtle: subtle({ color: color }),
-        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-slate-12 ",
+        gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-white ",
+        brand: "bg-brand text-white hover:bg-brand-dark active:bg-brand-darker",
+        outline: "bg-transparent border-2 border-slate-11 hover:bg-slate-4 focus:ring-blue-10 text-slate-11",
+        solid: "text-slate-12",
+        light: "text-current",
+        subtle: "bg-transparent",
+        link: "bg-transparent underline-offset-4 hover:underline text-slate-11 hover:translate-y-0 active:translate-y-0",
       },
     },
     defaultVariants: {
-      variant: "solid",
+      variant: "brand",
+      size: "md",
     },
-  })
+  }
+)
 
-const solid = cva("text-slate-12", {
-  variants: {
-    color: {
-      blue: "bg-blue-9 hover:bg-blue-10",
-      red: "bg-red-9 hover:bg-red-10",
-      amber: "bg-amber-9 text-blue-1 hover:bg-amber-10",
-      green: "bg-green-9 hover:bg-green-10",
-      slate: "bg-slate-9 hover:bg-slate-10",
-    },
-  },
-  defaultVariants: {
-    color: "blue",
-  },
-})
-
-const light = cva("", {
-  variants: {
-    color: {
-      blue: "bg-blue-4 text-blue-11 hover:bg-blue-5",
-      red: "bg-red-4 text-red-11 hover:bg-red-5",
-      amber: "bg-amber-4 text-amber-11 hover:bg-amber-5",
-      green: "bg-green-4 text-green-11 hover:bg-green-5",
-      slate: "bg-slate-4 text-slate-11 hover:bg-slate-5",
-    },
-  },
-  defaultVariants: {
-    color: "blue",
-  },
-})
-
-const subtle = cva("bg-transparent", {
-  variants: {
-    color: {
-      blue: "text-blue-11 hover:bg-blue-2",
-      red: "text-red-11 hover:bg-red-2",
-      green: "text-green-11 hover:bg-green-2",
-      amber: "text-amber-11 hover:bg-amber-2",
-      slate: "text-slate-11 hover:bg-slate-2",
-    },
-  },
-})
+export const getColorStyles = (variant: VariantProps<typeof buttonStyles>["variant"], color: Color) => {
+  switch (variant) {
+    case "solid":
+      return `bg-${color}-9 hover:bg-${color}-10` as const
+    case "light":
+      return `bg-${color}-4 text-${color}-11 hover:bg-${color}-5` as const
+    case "subtle":
+      return `bg-transparent text-${color}-11 hover:bg-${color}-2` as const
+    default:
+      return ""
+  }
+}

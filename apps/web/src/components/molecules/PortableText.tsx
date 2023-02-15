@@ -1,26 +1,21 @@
 /*eslint-disable*/
-import BlockContent, { BlockContentProps } from "@sanity/block-content-to-react"
 import { FC } from "react"
-import { Text } from "@dotkomonline/ui"
+import {
+  PortableText as ReactPortableText,
+  type PortableTextProps as ReactPortableTextProps,
+} from "@portabletext/react"
 
-interface PortableTextProps {
-  blocks: BlockContentProps["blocks"]
+export interface PortableTextProps {
+  blocks: ReactPortableTextProps["value"]
   className?: string
 }
-
-const PortableText: FC<PortableTextProps> = ({ blocks, className }) => {
-  const serializers: BlockContentProps["serializers"] = {
-    types: {
-      block: (props) => {
-        const { style = "normal" } = props.node
-        if (/^h\d/.test(style)) {
-          return <Text as={style}>{props.children}</Text>
-        }
-        return <Text>{props.children}</Text>
-      },
-    },
-  }
-  return <BlockContent className={className} serializers={serializers} blocks={blocks} />
-}
+const PortableText: FC<PortableTextProps> = ({ blocks }) => (
+  <ReactPortableText
+    value={blocks}
+    components={{
+      listItem: ({ children }: any) => <li className="marker:text-amber-12 ml-4">{children}</li>,
+    }}
+  />
+)
 
 export default PortableText

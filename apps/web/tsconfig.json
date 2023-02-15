@@ -15,27 +15,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@components": [
-        "src/components"
-      ],
-      "@public/*": [
-        "public/*"
-      ],
-      "@public": [
-        "public"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
-      "@styles": [
-        "src/styles"
-      ],
-      "@theme": [
-        "src/theme/stitches.config.ts"
-      ]
     },
     "incremental": true,
     "plugins": [

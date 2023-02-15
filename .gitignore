@@ -19,5 +19,7 @@ dist/
 .yarn
 build/
 coverage
+**/.vscode
 
 storybook-static
+apps/dashboards/.vscode/settings.json
