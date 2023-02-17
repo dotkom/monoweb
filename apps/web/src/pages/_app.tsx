@@ -12,6 +12,7 @@ import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import { Poppins } from "@next/font/google"
+import { cn } from "@dotkomonline/ui"
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 
@@ -33,7 +34,7 @@ function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element 
   return (
     <ThemeProvider>
       <SessionProvider session={pageProps.session}>
-        <div className={poppins.variable}>{getLayout(<Component {...pageProps} />)}</div>
+        <div className={cn(poppins.variable, "h-full w-full")}>{getLayout(<Component {...pageProps} />)}</div>
       </SessionProvider>
     </ThemeProvider>
   )

@@ -20,9 +20,9 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from "@dotkomonline/ui"
-import { signIn, useSession } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import { FC, PropsWithChildren } from "react"
+import { FC, MouseEventHandler, PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
@@ -120,11 +120,12 @@ const linkGroups: Link[][] = [
   ],
 ]
 
+// TODO: link
 const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-60">
         <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
         {linkGroups.map((group) => (
           <>
@@ -143,7 +144,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
         <DropdownMenuSeparator />
         <ThemeMenuSub />
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>
           <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
