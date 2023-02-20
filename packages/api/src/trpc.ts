@@ -3,9 +3,10 @@ import superjson from "superjson"
 
 import { Context } from "./context"
 
+export const transformer = superjson
 // TODO: Superjson
 export const t = initTRPC.context<Context>().create({
-  transformer: superjson,
+  transformer,
   errorFormatter({ shape }) {
     return shape
   },

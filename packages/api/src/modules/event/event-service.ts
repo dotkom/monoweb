@@ -7,9 +7,9 @@ import { EventRepository } from "./event-repository"
 export interface EventService {
   create: (payload: EventWrite) => Promise<Event>
   getEventById: (id: Event["id"]) => Promise<Event>
-  getEvents: (limit: number, offset?: number) => Promise<Event[]>
+  getEvents: () => Promise<Event[]>
   updateEvent: (id: Event["id"], eventUpdate: EventWrite) => Promise<Event>
-  addAttendancePool: (eventID: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
+  addAttendancePool: (eventId: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
 }
 
 export const initEventService = (
@@ -21,8 +21,8 @@ export const initEventService = (
     if (!event) throw new Error("Failed to create event")
     return event
   },
-  getEvents: async (limit, offset) => {
-    const events = await eventRepository.get(limit, offset)
+  getEvents: async () => {
+    const events = await eventRepository.get()
     return events
   },
   getEventById: async (id) => {
