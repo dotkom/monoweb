@@ -1,10 +1,8 @@
-import { Button, TextInput } from "@dotkomonline/ui"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
 import { User } from "next-auth"
 import { useSession } from "next-auth/react"
-import { useContext, useEffect, useState } from "react"
-import { ProfileContext } from "../context/ProfileContext"
+import { useEffect, useState } from "react"
 
 interface IFormInput {
   name: string
@@ -12,22 +10,11 @@ interface IFormInput {
 }
 
 const FormInput: React.FC<IFormInput> = ({ name, value }) => {
-  const { editMode, profileDetails, setProfileDetails } = useContext(ProfileContext)
-
   return (
     <>
       <div className="flex w-[450px] items-center justify-between">
         <label>{name}</label>
-        {editMode ? (
-          <TextInput
-            placeholder={name}
-            value={value ?? ""}
-            onChange={(e) => setProfileDetails({ ...profileDetails, email: e.target.value })}
-            className="w-full"
-          />
-        ) : (
-          <p className="text-slate-12 flex min-h-[37px] items-center">{value ?? name}</p>
-        )}
+        <p className="text-slate-12 flex min-h-[37px] items-center">{value ?? name}</p>
       </div>
       <hr className="border-slate-12 my-5 w-full" />
     </>
@@ -36,24 +23,10 @@ const FormInput: React.FC<IFormInput> = ({ name, value }) => {
 
 const Landing: NextPage = () => {
   const { data } = useSession()
-  const profileContext = useContext(ProfileContext)
-  const { editMode, setEditMode } = profileContext
-  const toggleEditMode = () => setEditMode(!editMode)
 
   const { id, email, image, name } = data?.user || {}
 
-  // Handler for when profile values are saved
-  const handleSaveProfile = () => {
-    // Do some data validation and store in DB
-    // someDBCall()
-
-    toggleEditMode()
-  }
-
   const [tempDetails, setTempDetails] = useState<User | null>()
-
-  profileContext.profileDetails = tempDetails
-  profileContext.setProfileDetails = setTempDetails
 
   useEffect(() => {
     setTempDetails({
@@ -73,18 +46,7 @@ const Landing: NextPage = () => {
             <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{name}</p>
             <p className="text-slate-12 text-[14px]">Update your photo and personal details</p>
           </div>
-          <div className="flex items-center gap-2">
-            {editMode ? (
-              <>
-                <Button variant={"subtle"} color="slate" onClick={toggleEditMode}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveProfile}>Save</Button>{" "}
-              </>
-            ) : (
-              <Button onClick={toggleEditMode}>Edit</Button>
-            )}
-          </div>
+          <div className="flex items-center gap-2"></div>
         </div>
       </div>
       <div className="mt-12">
