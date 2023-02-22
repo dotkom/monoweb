@@ -22,7 +22,7 @@ import {
 } from "@dotkomonline/ui"
 import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import { FC, MouseEventHandler, PropsWithChildren } from "react"
+import { FC, PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
