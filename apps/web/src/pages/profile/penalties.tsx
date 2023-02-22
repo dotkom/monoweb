@@ -1,13 +1,12 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { ProfileLanding } from "@/components/views/ProfileView/components"
 import { NextPageWithLayout } from "../_app"
 
-const LandingPage: NextPageWithLayout = () => {
-  return <ProfileLanding />
+const PenaltiesPage: NextPageWithLayout = () => {
+  return <div>Penalties</div>
 }
 
-LandingPage.getLayout = (page) => {
+PenaltiesPage.getLayout = (page) => {
   return (
     <MainLayout>
       <ProfileLayout>{page}</ProfileLayout>
@@ -15,4 +14,4 @@ LandingPage.getLayout = (page) => {
   )
 }
 
-export default LandingPage
+export default PenaltiesPage

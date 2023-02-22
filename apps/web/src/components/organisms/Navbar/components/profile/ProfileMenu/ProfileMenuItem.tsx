@@ -13,15 +13,15 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
   const { title, slug } = menuItem
 
-  const [isCurrent, setCurrent] = useState(router.query.slug == slug ? "text-white" : "text-slate-7")
+  const [isCurrent, setCurrent] = useState(router.pathname == slug ? "text-white" : "text-slate-7")
 
   const handleChange = () => {
-    router.push(`/profile/${slug}`)
+    router.push(slug)
   }
 
   useEffect(() => {
-    setCurrent(router.query.slug == slug ? "text-white" : "text-slate-7")
-  }, [router.query.slug, slug])
+    setCurrent(router.pathname == slug ? "text-white" : "text-slate-7")
+  }, [router.pathname, slug])
 
   return (
     <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer">

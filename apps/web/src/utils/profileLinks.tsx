@@ -13,47 +13,38 @@ import {
 export const profileItems = [
   {
     title: "Min profil",
-    slug: "me",
-    component: <ProfileLanding />,
+    slug: "/profile",
   },
   {
     title: "Personvern",
-    slug: "privacy",
-    component: <ProfilePrivacy />,
+    slug: "/profile/privacy",
   },
   {
     title: "Prikker & Suspensjoner",
-    slug: "penalties",
-    component: <ProfileMarks />,
+    slug: "/profile/penalties",
   },
   {
     title: "Passord",
-    slug: "password",
-    component: <ProfilePassword />,
+    slug: "/profile/password",
   },
   {
     title: "Epost",
-    slug: "email",
-    component: <ProfileEmail />,
+    slug: "/profile/email",
   },
   {
     title: "Medlemskap",
-    slug: "membership",
-    component: <ProfileMembership />,
+    slug: "/profile/membership",
   },
   {
     title: "Betalinger",
-    slug: "payments",
-    component: <ProfilePayment />,
+    slug: "/profile/payments",
   },
   {
     title: "Varsler",
-    slug: "notifications",
-    component: <ProfileNotifications />,
+    slug: "/profile/notifications",
   },
   {
     title: "Adgangskort (NTNU)",
-    slug: "access-card",
-    component: <ProfileEntryCard />,
+    slug: "/profile/access-card",
   },
 ]

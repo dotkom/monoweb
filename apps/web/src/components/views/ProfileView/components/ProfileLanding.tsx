@@ -1,4 +1,4 @@
-import { isAuthenticated } from "@/pages/profile/[slug]"
+import { isAuthenticated } from "@/components/layout/ProfileLayout"
 import { Button, TextInput } from "@dotkomonline/ui"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"

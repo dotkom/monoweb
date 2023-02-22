@@ -1,27 +1,28 @@
-import ProfileMenuContainer from "@/components/organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer"
-import { ProfileContext } from "@/components/views/ProfileView/context/ProfileContext"
-import ProfileContentContainer from "@/components/views/ProfileView/ProfileContentContainer"
 import { GetServerSideProps } from "next"
 import { Session } from "next-auth"
 import { getSession } from "next-auth/react"
-import React, { useState } from "react"
+import { FC, PropsWithChildren, useState } from "react"
+import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer"
+import { ProfileContext } from "../views/ProfileView/context/ProfileContext"
 
-const Index: React.FC = ({ user }) => {
+const ProfileLayout: FC<PropsWithChildren> = ({ user, children }) => {
   const [editMode, setEditMode] = useState(false)
 
+  console.log(user)
   return (
-    <div className="m-y-[100px] m-x-auto max-w-[1000px]">
+    <div className="m-x-auto max-w-[1000px]">
       <h1>Profil</h1>
       <hr />
       <div className="mt-[42.5px] flex w-full flex-row">
         <ProfileMenuContainer />
         <ProfileContext.Provider value={{ user, editMode, setEditMode }}>
-          <ProfileContentContainer />
+          <div className="mx-5 min-w-[600px]">{children}</div>
         </ProfileContext.Provider>
       </div>
     </div>
   )
 }
+
 export const isAuthenticated = (data: Session | null) => {
   return data != null && data?.user.id
 }
@@ -35,4 +36,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 }
 
-export default Index
+export default ProfileLayout
