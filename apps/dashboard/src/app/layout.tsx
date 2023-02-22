@@ -17,7 +17,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <MantineColorSchemeProvider>
           <MantineProvider>
             <AuthProvider session={session}>
-              s
               <QueryProvider>
                 <ApplicationShell>{children}</ApplicationShell>
               </QueryProvider>
