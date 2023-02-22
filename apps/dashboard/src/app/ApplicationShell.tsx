@@ -1,13 +1,28 @@
 "use client"
 
 import { FC, PropsWithChildren } from "react"
-import { AppShell, Flex, Box, Title, Group, Header, Navbar, Button, NavLink, Text, Image } from "@mantine/core"
+import {
+  AppShell,
+  Flex,
+  Box,
+  Title,
+  Group,
+  Header,
+  Navbar,
+  Button,
+  NavLink,
+  Text,
+  Image,
+  useMantineColorScheme,
+} from "@mantine/core"
 import Link from "next/link"
 import { Icon } from "@iconify/react"
 import { useSelectedLayoutSegment } from "next/navigation"
 import { signIn, signOut, useSession } from "next-auth/react"
 
 const ApplicationHeader: FC = () => {
+  const colorScheme = useMantineColorScheme()
+
   return (
     <Header height={60}>
       <Group className="h-full" px="sm" position="apart">
@@ -19,11 +34,16 @@ const ApplicationHeader: FC = () => {
             OnlineWeb Dashboard
           </Title>
         </Flex>
-        <a href="https://new.online.ntnu.no">
-          <Button variant="outline" leftIcon={<Icon icon="material-symbols:arrow-back" />}>
-            Tilbake til OW
+        <Group>
+          <Button variant="subtle" onClick={() => colorScheme.toggleColorScheme()}>
+            <Icon icon="mdi:theme-light-dark" width={28} height={28} />
           </Button>
-        </a>
+          <a href="https://new.online.ntnu.no">
+            <Button variant="outline" leftIcon={<Icon icon="material-symbols:arrow-back" />}>
+              Tilbake til OW
+            </Button>
+          </a>
+        </Group>
       </Group>
     </Header>
   )
@@ -31,9 +51,16 @@ const ApplicationHeader: FC = () => {
 
 const SIDEBAR_LINKS = [
   {
+    icon: "material-symbols:wheelchair-pickup",
     href: "/event",
     label: "Arrangementer",
     targetSegment: "event",
+  },
+  {
+    icon: "lucide:tent",
+    href: "/committee",
+    label: "Komiteer",
+    targetSegment: "committee",
   },
 ]
 
@@ -43,12 +70,12 @@ const ApplicationSidebar: FC = () => {
   return (
     <Navbar width={{ base: 360 }}>
       <Navbar.Section grow>
-        {SIDEBAR_LINKS.map(({ href, label, targetSegment }) => (
+        {SIDEBAR_LINKS.map(({ href, label, targetSegment, icon }) => (
           <Link key={href} href={href} className="no-underline active:no-underline">
             <NavLink
               active={segment === targetSegment}
               childrenOffset="xl"
-              icon={<Icon icon="material-symbols:wheelchair-pickup" />}
+              icon={<Icon icon={icon} />}
               label={<Text size="xl">{label}</Text>}
             />
           </Link>
@@ -102,7 +129,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
       navbar={<ApplicationSidebar />}
       header={<ApplicationHeader />}
       styles={(theme) => ({
-        main: { backgroundColor: theme.colors.gray[0] },
+        main: { backgroundColor: theme.colorScheme === "light" ? theme.colors.gray[0] : theme.colors.gray[9] },
       })}
     >
       {children}
