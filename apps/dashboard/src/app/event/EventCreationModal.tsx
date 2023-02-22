@@ -1,4 +1,4 @@
-import { Text, Title } from "@tremor/react"
+import { Text, Title } from "@mantine/core"
 import { FC } from "react"
 
 import { ModalChildProps } from "../../components/Modal"

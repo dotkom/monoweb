@@ -1,6 +1,6 @@
 "use client"
 
-import { Title, Text, Table, TableHead, TableRow, TableBody, TableHeaderCell, TableCell, Button } from "@tremor/react"
+import { Title, Text, Table, Button } from "@mantine/core"
 
 import { useFlyout } from "../../components/Flyout"
 import { useModal } from "../../components/Modal"
@@ -29,37 +29,37 @@ export default function EventPage() {
           "Loading"
         ) : (
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>Arrangement</TableHeaderCell>
-                <TableHeaderCell>Startdato</TableHeaderCell>
-                <TableHeaderCell>Sluttdato</TableHeaderCell>
-                <TableHeaderCell>Arrangør</TableHeaderCell>
-                <TableHeaderCell>Type</TableHeaderCell>
-                <TableHeaderCell>Plasser</TableHeaderCell>
-                <TableHeaderCell>Detaljer</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+            <thead>
+              <tr>
+                <td>Arrangement</td>
+                <td>Startdato</td>
+                <td>Sluttdato</td>
+                <td>Arrangør</td>
+                <td>Type</td>
+                <td>Plasser</td>
+                <td>Detaljer</td>
+              </tr>
+            </thead>
+            <tbody>
               {data.map((event) => (
-                <TableRow key={event.id}>
-                  <TableCell>{event.title}</TableCell>
-                  <TableCell>{event.start.toLocaleTimeString()}</TableCell>
-                  <TableCell>{event.end.toLocaleTimeString()}</TableCell>
-                  <TableCell>{event.committeeId ?? "Ingen"}</TableCell>
-                  <TableCell>{event.type}</TableCell>
-                  <TableCell>0/0</TableCell>
-                  <TableCell>
-                    <Button text="Endre" importance="secondary" handleClick={() => openDetailsFlyout(event)} />
-                  </TableCell>
-                </TableRow>
+                <tr key={event.id}>
+                  <td>{event.title}</td>
+                  <td>{event.start.toLocaleTimeString()}</td>
+                  <td>{event.end.toLocaleTimeString()}</td>
+                  <td>{event.committeeId ?? "Ingen"}</td>
+                  <td>{event.type}</td>
+                  <td>0/0</td>
+                  <td>
+                    <Button onClick={() => openDetailsFlyout(event)}>Endre</Button>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
+            </tbody>
           </Table>
         )}
       </div>
 
-      <Button text="Opprett nytt arrangement" handleClick={openCreationModal} />
+      <Button onClick={openCreationModal}>Opprett nytt arrangement</Button>
     </div>
   )
 }
