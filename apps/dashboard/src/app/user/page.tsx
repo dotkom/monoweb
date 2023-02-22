@@ -48,7 +48,7 @@ const UsersTable: FC<UsersTableProps> = ({ users }) => {
     columnHelper.accessor("emailVerified", {
       header: () => "Email Verifisert",
     }),
-    columnHelper.accessor((committee) => committee, {
+    columnHelper.accessor((user) => user, {
       id: "actions",
       header: () => "Detailjer",
       cell: (info) => <UsersTableDetailsCell user={info.getValue()} />,
