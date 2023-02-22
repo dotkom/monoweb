@@ -34,26 +34,26 @@ const EventTable: FC<EventTableProps> = ({ events }) => {
   const columnHelper = createColumnHelper<Event>()
   const columns = [
     columnHelper.accessor("title", {
-      header: () => <td>Arrangementnavn</td>,
+      header: () => "Arrangementnavn",
     }),
     columnHelper.accessor("start", {
-      header: () => <td>Startdato</td>,
-      cell: (info) => <td>{info.getValue().toLocaleDateString()}</td>,
+      header: () => "Startdato",
+      cell: (info) => info.getValue().toLocaleDateString(),
     }),
     columnHelper.accessor("end", {
-      header: () => <td>Sluttdato</td>,
-      cell: (info) => <td>{info.getValue().toLocaleDateString()}</td>,
+      header: () => "Sluttdato",
+      cell: (info) => info.getValue().toLocaleDateString(),
     }),
     columnHelper.accessor("committeeId", {
-      header: () => <td>Arrangør</td>,
-      cell: (info) => <td>{info.getValue() ?? "Ingen arrangør"}</td>,
+      header: () => "Arrangør",
+      cell: (info) => info.getValue() ?? "Ingen arrangør",
     }),
     columnHelper.accessor("type", {
-      header: () => <td>Type</td>,
+      header: () => "Type",
     }),
     columnHelper.accessor((evt) => evt, {
       id: "actions",
-      header: () => <td>Detaljer</td>,
+      header: () => "Detaljer",
       cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
     }),
   ]
@@ -95,7 +95,7 @@ const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
   return (
     <>
       <Button variant="outline" onClick={() => setOpen(true)}>
-        Detailjer
+        Detaljer
       </Button>
       {isOpen && <EventDetailsModal event={event} close={() => setOpen(false)} />}
     </>

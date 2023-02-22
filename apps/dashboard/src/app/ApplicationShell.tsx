@@ -31,9 +31,16 @@ const ApplicationHeader: FC = () => {
 
 const SIDEBAR_LINKS = [
   {
+    icon: "material-symbols:wheelchair-pickup",
     href: "/event",
     label: "Arrangementer",
     targetSegment: "event",
+  },
+  {
+    icon: "lucide:tent",
+    href: "/committee",
+    label: "Komiteer",
+    targetSegment: "committeee",
   },
 ]
 
@@ -43,12 +50,12 @@ const ApplicationSidebar: FC = () => {
   return (
     <Navbar width={{ base: 360 }}>
       <Navbar.Section grow>
-        {SIDEBAR_LINKS.map(({ href, label, targetSegment }) => (
+        {SIDEBAR_LINKS.map(({ href, label, targetSegment, icon }) => (
           <Link key={href} href={href} className="no-underline active:no-underline">
             <NavLink
               active={segment === targetSegment}
               childrenOffset="xl"
-              icon={<Icon icon="material-symbols:wheelchair-pickup" />}
+              icon={<Icon icon={icon} />}
               label={<Text size="xl">{label}</Text>}
             />
           </Link>
