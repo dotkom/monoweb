@@ -8,7 +8,6 @@ import { ProfileContext } from "../views/ProfileView/context/ProfileContext"
 const ProfileLayout: FC<PropsWithChildren> = ({ user, children }) => {
   const [editMode, setEditMode] = useState(false)
 
-  console.log(user)
   return (
     <div className="m-x-auto max-w-[1000px]">
       <h1>Profil</h1>

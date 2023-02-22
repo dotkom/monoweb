@@ -68,7 +68,7 @@ const Landing: NextPage = () => {
       image,
       name,
     })
-  }, [data?.user])
+  }, [id, email, image, name])
 
   return (
     <div className="w-full">

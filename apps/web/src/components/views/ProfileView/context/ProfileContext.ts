@@ -5,7 +5,7 @@ interface IProfileContext {
   editMode: boolean
   setEditMode: Dispatch<SetStateAction<boolean>>
   user: User | object
-  profileDetails?: any
+  profileDetails?: string
   setProfileDetails?: Dispatch<SetStateAction<boolean>>
 }
 
