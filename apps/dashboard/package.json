@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@dotkomonline/config": "*",
-    "@type/eslint": "^8",
+    "@types/eslint": "^8",
     "@types/node": "^16.11.47",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
