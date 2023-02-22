@@ -27,4 +27,7 @@ export const authRouter = t.router({
   skipLogin: t.procedure.input(z.object({ challenge: z.string() })).mutation(({ input, ctx }) => {
     return ctx.userService.skipLogin(input.challenge)
   }),
+  getUsers: t.procedure.input(z.object({ limit: z.number().optional() })).query(async ({ input, ctx }) => {
+    return await ctx.userService.getUsers(input.limit ?? 10)
+  }),
 })
