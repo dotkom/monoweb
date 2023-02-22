@@ -1,65 +1,103 @@
 "use client"
 
-import { Title, Text, Table, TableHead, TableRow, TableBody, TableHeaderCell, TableCell, Button } from "@tremor/react"
+import { Title, Text, Table, Button, Flex } from "@mantine/core"
 
-import { useFlyout } from "../../components/Flyout"
-import { useModal } from "../../components/Modal"
-import { EventCreationModal } from "./EventCreationModal"
-import { EventDetailsFlyout } from "./EventDetailsFlyout"
 import { trpc } from "../../trpc"
 import { Event } from "@dotkomonline/types"
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { FC, useState } from "react"
+import { EventDetailsModal } from "./EventDetailsModal"
+import { EventCreationModal } from "./EventCreationModal"
 
 export default function EventPage() {
-  const { Flyout, open: openDetailsFlyout } = useFlyout<Event>(EventDetailsFlyout)
-  const { Modal, open: openCreationModal } = useModal(EventCreationModal)
-
-  const { data = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
-  // TODO: use tanstack table
+  const [isCreationOpen, setCreationOpen] = useState(false)
+  const { data: events = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
 
   return (
-    <div className="flex w-full flex-col gap-4 p-6">
-      <Flyout />
-      <Modal />
+    <Flex direction="column" p="md" gap="md">
       <div>
         <Title>Arrangmenter</Title>
-        <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
+        <Text>Oversikt over eksisterende arrangementer</Text>
       </div>
-      <div className="rounded bg-white shadow">
-        {isLoading ? (
-          "Loading"
-        ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>Arrangement</TableHeaderCell>
-                <TableHeaderCell>Startdato</TableHeaderCell>
-                <TableHeaderCell>Sluttdato</TableHeaderCell>
-                <TableHeaderCell>Arrangør</TableHeaderCell>
-                <TableHeaderCell>Type</TableHeaderCell>
-                <TableHeaderCell>Plasser</TableHeaderCell>
-                <TableHeaderCell>Detaljer</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((event) => (
-                <TableRow key={event.id}>
-                  <TableCell>{event.title}</TableCell>
-                  <TableCell>{event.start.toLocaleTimeString()}</TableCell>
-                  <TableCell>{event.end.toLocaleTimeString()}</TableCell>
-                  <TableCell>{event.committeeId ?? "Ingen"}</TableCell>
-                  <TableCell>{event.type}</TableCell>
-                  <TableCell>0/0</TableCell>
-                  <TableCell>
-                    <Button text="Endre" importance="secondary" handleClick={() => openDetailsFlyout(event)} />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+      <div className="rounded bg-white shadow">{isLoading ? "Loading" : <EventTable events={events} />}</div>
+      {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
+      <div>
+        <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
       </div>
+    </Flex>
+  )
+}
 
-      <Button text="Opprett nytt arrangement" handleClick={openCreationModal} />
-    </div>
+type EventTableProps = { events: Event[] }
+
+const EventTable: FC<EventTableProps> = ({ events }) => {
+  const columnHelper = createColumnHelper<Event>()
+  const columns = [
+    columnHelper.accessor("title", {
+      header: () => <td>Arrangementnavn</td>,
+    }),
+    columnHelper.accessor("start", {
+      header: () => <td>Startdato</td>,
+      cell: (info) => <td>{info.getValue().toLocaleDateString()}</td>,
+    }),
+    columnHelper.accessor("end", {
+      header: () => <td>Sluttdato</td>,
+      cell: (info) => <td>{info.getValue().toLocaleDateString()}</td>,
+    }),
+    columnHelper.accessor("committeeId", {
+      header: () => <td>Arrangør</td>,
+      cell: (info) => <td>{info.getValue() ?? "Ingen arrangør"}</td>,
+    }),
+    columnHelper.accessor("type", {
+      header: () => <td>Type</td>,
+    }),
+    columnHelper.accessor((evt) => evt, {
+      id: "actions",
+      header: () => <td>Detaljer</td>,
+      cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
+    }),
+  ]
+  const table = useReactTable({
+    data: events,
+    getCoreRowModel: getCoreRowModel(),
+    columns,
+  })
+
+  return (
+    <Table>
+      <thead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  )
+}
+
+type EventTableDetailsCellProps = { event: Event }
+
+const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
+  const [isOpen, setOpen] = useState(false)
+
+  return (
+    <>
+      <Button variant="outline" onClick={() => setOpen(true)}>
+        Detailjer
+      </Button>
+      {isOpen && <EventDetailsModal event={event} close={() => setOpen(false)} />}
+    </>
   )
 }
