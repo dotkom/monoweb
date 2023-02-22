@@ -67,7 +67,7 @@ const SIDEBAR_LINKS = [
     href: "/user",
     label: "Brukere",
     targetSegment: "user",
-  }
+  },
 ]
 
 const ApplicationSidebar: FC = () => {
