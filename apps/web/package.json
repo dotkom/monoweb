@@ -52,7 +52,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
     "react-icons": "^4.7.1",
-    "superjson": "^1.11.0",
+    "superjson": "^1.12.2",
     "zod": "^3.19.1"
   },
   "devDependencies": {
