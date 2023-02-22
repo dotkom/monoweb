@@ -1,8 +1,6 @@
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
-import { User } from "next-auth"
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
 
 interface IFormInput {
   name: string
@@ -24,18 +22,7 @@ const FormInput: React.FC<IFormInput> = ({ name, value }) => {
 const Landing: NextPage = () => {
   const { data } = useSession()
 
-  const { id, email, image, name } = data?.user || {}
-
-  const [tempDetails, setTempDetails] = useState<User | null>()
-
-  useEffect(() => {
-    setTempDetails({
-      id,
-      email,
-      image,
-      name,
-    })
-  }, [id, email, image, name])
+  const { email, name } = data?.user || {}
 
   return (
     <div className="w-full">

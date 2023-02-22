@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useState } from "react"
+import { FC, PropsWithChildren, useState } from "react"
 import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer"
 import { ProfileContext } from "../views/ProfileView/context/ProfileContext"
 
