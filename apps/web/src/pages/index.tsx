@@ -1,11 +1,9 @@
 import { Button } from "@dotkomonline/ui"
 import { useSession, signOut } from "next-auth/react"
 import React from "react"
-import { useTheme } from "next-themes"
 
 const Home: React.FC = () => {
   const { data: session, status } = useSession()
-  const { setTheme } = useTheme()
   if (session) {
     return (
       <div>
@@ -19,8 +17,6 @@ const Home: React.FC = () => {
   return (
     <div>
       Not signed in <br />
-      <Button onClick={() => setTheme("dark")}>Make it dark</Button>
-      <Button onClick={() => setTheme("light")}>Make it light</Button>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse efficitur mollis lacus eu suscipit. Fusce
       consequat justo eget suscipit fermentum. Etiam aliquet nibh vel augue egestas porttitor. Fusce molestie laoreet
       nisl, at dignissim turpis consectetur eu. Interdm et malesuada fames ac ante ipsum primis in faucibus. Curabitur

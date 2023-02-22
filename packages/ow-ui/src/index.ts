@@ -12,5 +12,6 @@ export * from "./components/Icon"
 export * from "./components/Avatar"
 export * from "./components/Circle"
 export * from "./components/Text"
+export * from "./components/DropdownMenu"
 
 export * from "./utils"
