@@ -40,7 +40,7 @@ const SIDEBAR_LINKS = [
     icon: "lucide:tent",
     href: "/committee",
     label: "Komiteer",
-    targetSegment: "committeee",
+    targetSegment: "committee",
   },
 ]
 
