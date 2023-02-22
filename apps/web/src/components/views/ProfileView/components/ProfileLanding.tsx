@@ -1,4 +1,3 @@
-import { isAuthenticated } from "@/components/layout/ProfileLayout"
 import { Button, TextInput } from "@dotkomonline/ui"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
@@ -40,11 +39,6 @@ const Landing: NextPage = () => {
   const profileContext = useContext(ProfileContext)
   const { editMode, setEditMode } = profileContext
   const toggleEditMode = () => setEditMode(!editMode)
-
-  if (!isAuthenticated(data) || !data?.user) {
-    // Some logic to redirect user
-    console.log("User is not authenticated")
-  }
 
   const { id, email, image, name } = data?.user || {}
 
