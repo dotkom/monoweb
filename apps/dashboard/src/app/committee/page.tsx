@@ -19,9 +19,7 @@ export default function CommitteePage() {
         <Title>Komiteer</Title>
         <Text>Oversikt over eksisterende komiteer</Text>
       </div>
-      <div className="rounded bg-white shadow">
-        {isLoading ? "Loading" : <CommitteeTable committees={committees} />}
-      </div>
+      <div className="rounded shadow">{isLoading ? "Loading" : <CommitteeTable committees={committees} />}</div>
       {isCreationOpen && <CommitteeCreationModal close={() => setCreationOpen(false)} />}
       <div>
         <Button onClick={() => setCreationOpen(true)}>Opprett nytt komitee</Button>
