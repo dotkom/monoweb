@@ -8,7 +8,7 @@ export const EventSchema = z.object({
   start: z.date(),
   end: z.date(),
   status: z.enum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
-  type: z.enum(["SOCIAL", "COMAPNY"]),
+  type: z.enum(["SOCIAL", "COMPANY"]),
   public: z.boolean(),
   description: z.string().nullable(),
   subtitle: z.string().nullable(),
