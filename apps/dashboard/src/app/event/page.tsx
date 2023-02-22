@@ -1,6 +1,6 @@
 "use client"
 
-import { Title, Text, Table, Button, Flex } from "@mantine/core"
+import { Title, Text, Table, Button, Flex, Loader } from "@mantine/core"
 
 import { trpc } from "../../trpc"
 import { Event } from "@dotkomonline/types"
@@ -11,7 +11,12 @@ import { EventCreationModal } from "./EventCreationModal"
 
 export default function EventPage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: events = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
+  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
+  const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery({
+    offset: 0,
+    limit: 50,
+  })
+  const isLoading = isEventsLoading || isCommitteesLoading
 
   return (
     <Flex direction="column" p="md" gap="md">
@@ -19,11 +24,19 @@ export default function EventPage() {
         <Title>Arrangmenter</Title>
         <Text>Oversikt over eksisterende arrangementer</Text>
       </div>
-      <div className="rounded bg-white shadow">{isLoading ? "Loading" : <EventTable events={events} />}</div>
-      {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
-      <div>
-        <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
-      </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div>
+            <EventTable events={events} />
+          </div>
+          {isCreationOpen && <EventCreationModal committees={committees} close={() => setCreationOpen(false)} />}
+          <div>
+            <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
+          </div>
+        </>
+      )}
     </Flex>
   )
 }

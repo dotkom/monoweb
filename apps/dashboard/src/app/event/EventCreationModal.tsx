@@ -4,15 +4,16 @@ import { FC } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ErrorMessage } from "@hookform/error-message"
-import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
+import { Committee, EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { trpc } from "../../trpc"
 import { DateTimeInput } from "../../components/DateTimeInput"
 
 export type EventCreationModalProps = {
   close: () => void
+  committees: Committee[]
 }
 
-export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
+export const EventCreationModal: FC<EventCreationModalProps> = ({ close, committees }) => {
   const {
     control,
     register,
@@ -64,6 +65,21 @@ export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
             name="end"
             render={({ field }) => (
               <DateTimeInput label="Sluttidspunkt" withAsterisk value={field.value} onChange={field.onChange} />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="committeeId"
+            render={({ field }) => (
+              <Select
+                label="Arrangør"
+                placeholder="Arrkom"
+                data={committees.map((committee) => ({ value: committee.id, label: committee.name }))}
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.committeeId && <ErrorMessage errors={errors} name="committeeId" />}
+              />
             )}
           />
 
