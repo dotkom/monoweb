@@ -62,6 +62,12 @@ const SIDEBAR_LINKS = [
     label: "Komiteer",
     targetSegment: "committee",
   },
+  {
+    icon: "mdi:account-group",
+    href: "/user",
+    label: "Brukere",
+    targetSegment: "user",
+  },
 ]
 
 const ApplicationSidebar: FC = () => {

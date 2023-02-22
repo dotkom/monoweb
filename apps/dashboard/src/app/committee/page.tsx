@@ -38,7 +38,7 @@ const CommitteeTable: FC<CommitteeTableProps> = ({ committees }) => {
     }),
     columnHelper.accessor((committee) => committee, {
       id: "actions",
-      header: () => "Detailjer",
+      header: () => "Detaljer",
       cell: (info) => <CommitteeTableDetailsCell committee={info.getValue()} />,
     }),
   ]
