@@ -52,10 +52,10 @@ importers:
       '@types/eslint': ^8
       '@types/node': ^16.11.47
       '@types/react': ^18.0.15
-      '@types/react-datepicker': ^4.8.0
       '@types/react-dom': ^18.0.6
       autoprefixer: ^10.4.13
       clsx: ^1.2.1
+      dayjs: ^1.11.7
       eslint: ^8.26.0
       eslint-config-next: ^13.1.2
       next: 13.1.6
@@ -80,7 +80,7 @@ importers:
       '@hookform/resolvers': 2.9.10_react-hook-form@7.39.5
       '@iconify/react': 4.1.0_react@18.2.0
       '@mantine/core': 5.10.4_tdmjt5fhhegbb6xhdsdox3kfmu
-      '@mantine/dates': 5.10.4_w2lpbdlwtgp7g3weri36xd7vam
+      '@mantine/dates': 5.10.4_cshids4fm2bh7nhcqqy7euof4e
       '@mantine/hooks': 5.10.4_react@18.2.0
       '@mantine/notifications': 5.10.4_zvr3twhaqlaxovla5vk46k3pgm
       '@next/font': 13.1.1
@@ -92,6 +92,7 @@ importers:
       '@trpc/react-query': 10.0.0_n4fy2lr7pb63ahuwirmw6eo44i
       '@trpc/server': 10.0.0
       clsx: 1.2.1
+      dayjs: 1.11.7
       next: 13.1.6_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.17.0_3vryta7zmbcsw4rrqf4axjqggm
       react: 18.2.0
@@ -103,7 +104,6 @@ importers:
       '@types/eslint': 8.4.10
       '@types/node': 16.18.3
       '@types/react': 18.0.25
-      '@types/react-datepicker': 4.8.0_biqbaboplfbrettd7655fr4n2y
       '@types/react-dom': 18.0.9
       autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.28.0
@@ -3836,7 +3836,7 @@ packages:
       - '@types/react'
     dev: false
 
-  /@mantine/dates/5.10.4_w2lpbdlwtgp7g3weri36xd7vam:
+  /@mantine/dates/5.10.4_cshids4fm2bh7nhcqqy7euof4e:
     resolution: {integrity: sha512-x9nUMyxnhcjGjJUS7TVYDRJkkl/hj7bN5ihGMtLoOR83c5c8XohvZ0u+Z3BbM+OF8S3GT6uHiVrBAN3c6Hcy3A==}
     peerDependencies:
       '@mantine/core': 5.10.4
@@ -3847,6 +3847,7 @@ packages:
       '@mantine/core': 5.10.4_tdmjt5fhhegbb6xhdsdox3kfmu
       '@mantine/hooks': 5.10.4_react@18.2.0
       '@mantine/utils': 5.10.4_react@18.2.0
+      dayjs: 1.11.7
       react: 18.2.0
     dev: false
 
@@ -4434,10 +4435,6 @@ packages:
 
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
-    dev: true
-
-  /@popperjs/core/2.11.6:
-    resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: true
 
   /@portabletext/react/1.0.6_react@18.2.0:
@@ -7116,18 +7113,6 @@ packages:
       '@types/react': 18.0.25
     dev: false
 
-  /@types/react-datepicker/4.8.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-20uzZsIf4moPAjjHDfPvH8UaOHZBxrkiQZoLS3wgKq8Xhp+95gdercLEdoA7/I8nR9R5Jz2qQkdMIM+Lq4AS1A==}
-    dependencies:
-      '@popperjs/core': 2.11.6
-      '@types/react': 18.0.25
-      date-fns: 2.29.3
-      react-popper: 2.3.0_r6q5zrenym2zg7je7hgi674bti
-    transitivePeerDependencies:
-      - react
-      - react-dom
-    dev: true
-
   /@types/react-dom/18.0.9:
     resolution: {integrity: sha512-qnVvHxASt/H7i+XG1U1xMiY5t+IHcPGUK7TDMDzom08xa7e86eCeKOiLZezwCKVxJn6NEiiy2ekgX8aQssjIKg==}
     dependencies:
@@ -9186,6 +9171,10 @@ packages:
 
   /date-now/1.0.1:
     resolution: {integrity: sha512-yiizelQCqYLUEVT4zqYihOW6Ird7Qyc6fD3Pv5xGxk4+Jz0rsB1dMN2KyNV6jgOHYh5K+sPGCSOknQN4Upa3pg==}
+    dev: false
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: false
 
   /debounce/1.0.0:
@@ -14472,6 +14461,7 @@ packages:
 
   /react-fast-compare/3.2.0:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
+    dev: false
 
   /react-focus-lock/2.9.2_react@18.2.0:
     resolution: {integrity: sha512-5JfrsOKyA5Zn3h958mk7bAcfphr24jPoMoznJ8vaJF6fUrPQ8zrtEd3ILLOK8P5jvGxdMd96OxWNjDzATfR2qw==}
@@ -14534,20 +14524,6 @@ packages:
   /react-lifecycles-compat/3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
     dev: false
-
-  /react-popper/2.3.0_r6q5zrenym2zg7je7hgi674bti:
-    resolution: {integrity: sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==}
-    peerDependencies:
-      '@popperjs/core': ^2.0.0
-      react: ^16.8.0 || ^17 || ^18
-      react-dom: ^16.8.0 || ^17 || ^18
-    dependencies:
-      '@popperjs/core': 2.11.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-fast-compare: 3.2.0
-      warning: 4.0.3
-    dev: true
 
   /react-refractor/2.1.7_react@18.2.0:
     resolution: {integrity: sha512-avNxSSsnjYg+BKpO8LVCK14KRn5pLZ+8DInMiUEeZPL6hs0SN0zafl3mJIxavGQPKyihqbXqzq4CYNflJQjaaw==}
@@ -17226,12 +17202,6 @@ packages:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
     dependencies:
       makeerror: 1.0.12
-    dev: true
-
-  /warning/4.0.3:
-    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
-    dependencies:
-      loose-envify: 1.4.0
     dev: true
 
   /watchpack/2.4.0:

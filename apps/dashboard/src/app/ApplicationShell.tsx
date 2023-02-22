@@ -44,7 +44,7 @@ const ApplicationSidebar: FC = () => {
     <Navbar width={{ base: 360 }}>
       <Navbar.Section grow>
         {SIDEBAR_LINKS.map(({ href, label, targetSegment }) => (
-          <Link key={href} href={href} className="next-link">
+          <Link key={href} href={href} className="no-underline active:no-underline">
             <NavLink
               active={segment === targetSegment}
               childrenOffset="xl"
