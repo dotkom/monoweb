@@ -23,13 +23,6 @@ export default function UsersPage() {
   )
 }
 
-type UsersTableProfilePicture = { src?: string | null }
-
-const UsersTableProfilePicture: FC<UsersTableProfilePicture> = ({ src }) => {
-  if (src) return <Image width={40} height={40} src={src} alt="profile picture" radius={99999} />
-  else return <Icon width={40} height={40} icon="mdi:account-circle" />
-}
-
 type UsersTableProps = { users: User[] }
 
 const UsersTable: FC<UsersTableProps> = ({ users }) => {
@@ -37,7 +30,14 @@ const UsersTable: FC<UsersTableProps> = ({ users }) => {
   const columns = [
     columnHelper.accessor("image", {
       header: () => "Bilde",
-      cell: (info) => <UsersTableProfilePicture src={info.getValue()} />,
+      cell: (info) => {
+        const image = info.getValue()
+        return image !== null ? (
+          <Image width={40} height={40} src={image} alt="profile picture" radius={99999} />
+        ) : (
+          <Icon width={40} height={40} icon="mdi:account-circle" />
+        )
+      },
     }),
     columnHelper.accessor("name", {
       header: () => "Navn",
@@ -50,7 +50,7 @@ const UsersTable: FC<UsersTableProps> = ({ users }) => {
     }),
     columnHelper.accessor((user) => user, {
       id: "actions",
-      header: () => "Detailjer",
+      header: () => "Detaljer",
       cell: (info) => <UsersTableDetailsCell user={info.getValue()} />,
     }),
   ]
