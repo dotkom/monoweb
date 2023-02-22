@@ -1,7 +1,20 @@
 "use client"
 
 import { FC, PropsWithChildren } from "react"
-import { AppShell, Flex, Box, Title, Group, Header, Navbar, Button, NavLink, Text, Image } from "@mantine/core"
+import {
+  AppShell,
+  Flex,
+  Box,
+  Title,
+  Group,
+  Header,
+  Navbar,
+  Button,
+  NavLink,
+  Text,
+  Image,
+  useMantineTheme,
+} from "@mantine/core"
 import Link from "next/link"
 import { Icon } from "@iconify/react"
 import { useSelectedLayoutSegment } from "next/navigation"
@@ -10,7 +23,7 @@ import { signIn, signOut, useSession } from "next-auth/react"
 const ApplicationHeader: FC = () => {
   return (
     <Header height={60}>
-      <Group className="h-full" px="sm" position="apart">
+      <Group sx={{ height: "100%" }} px="sm" position="apart">
         <Flex align="center" columnGap="sm">
           <Link href="/">
             <Image src="/Online_bla_o.png" alt="Online Logo" width={32} height={32} />
@@ -39,12 +52,13 @@ const SIDEBAR_LINKS = [
 
 const ApplicationSidebar: FC = () => {
   const segment = useSelectedLayoutSegment()
+  const theme = useMantineTheme()
   const { data, status } = useSession()
   return (
     <Navbar width={{ base: 360 }}>
       <Navbar.Section grow>
         {SIDEBAR_LINKS.map(({ href, label, targetSegment }) => (
-          <Link key={href} href={href} className="no-underline active:no-underline">
+          <Link key={href} href={href} className="next-link">
             <NavLink
               active={segment === targetSegment}
               childrenOffset="xl"
@@ -55,7 +69,13 @@ const ApplicationSidebar: FC = () => {
         ))}
       </Navbar.Section>
       <Navbar.Section>
-        <Box className="border-gray-2 border-t p-3">
+        <Box
+          sx={{
+            paddingTop: theme.spacing.sm,
+            borderTop: `1px solid ${theme.colors.gray[2]}`,
+            padding: theme.spacing.xs,
+          }}
+        >
           <Group position="apart">
             {status === "authenticated" && data !== null ? (
               <>

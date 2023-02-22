@@ -1,20 +1,15 @@
-import { Checkbox, Modal, Button, Select, TextInput, Flex } from "@mantine/core"
+import { Text, Title } from "@mantine/core"
 import { FC } from "react"
 
-import { Controller, useForm } from "react-hook-form"
+import { ModalChildProps } from "../../components/Modal"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ErrorMessage } from "@hookform/error-message"
 import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { trpc } from "../../trpc"
-import { DateTimeInput } from "../../components/DateTimeInput"
 
-export type EventCreationModalProps = {
-  close: () => void
-}
-
-export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
+export const EventCreationModal: FC<ModalChildProps> = ({ close }) => {
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -26,8 +21,6 @@ export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
       imageUrl: null,
       location: null,
       committeeId: null,
-      start: new Date(),
-      end: new Date(),
     },
   })
   const utils = trpc.useContext()
@@ -41,65 +34,64 @@ export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
     close()
   }
   return (
-    <Modal centered title="Opprett nytt arrangement" opened onClose={close}>
+    <div className="h-full w-full border bg-white p-6">
+      <Title>Opprett nytt arrangement</Title>
       <form onSubmit={handleSubmit(onFormSubmit)}>
-        <Flex direction="column" gap="md">
-          <TextInput
-            placeholder="Åre 2024"
-            label="Arrangementnavn"
-            error={errors.title && <ErrorMessage errors={errors} name="title" />}
-            withAsterisk
-            {...register("title")}
-          />
-          <Controller
-            control={control}
-            name="start"
-            render={({ field }) => (
-              <DateTimeInput label="Starttidspunkt" withAsterisk value={field.value} onChange={field.onChange} />
-            )}
-          />
+        <label htmlFor="title">
+          <Text>Event tittel</Text>
+          <input {...register("title")} id="title" />
+          <ErrorMessage errors={errors} name="title" />
+        </label>
 
-          <Controller
-            control={control}
-            name="end"
-            render={({ field }) => (
-              <DateTimeInput label="Sluttidspunkt" withAsterisk value={field.value} onChange={field.onChange} />
-            )}
+        <label htmlFor="start">
+          <Text>Event start time</Text>
+          <input
+            {...register("start", {
+              valueAsDate: true,
+            })}
+            id="start"
+            type="datetime-local"
           />
+          <ErrorMessage errors={errors} name="start" />
+        </label>
 
-          <Controller
-            control={control}
-            name="status"
-            render={({ field }) => (
-              <Select
-                label="Event status"
-                placeholder="Velg en"
-                data={[
-                  { value: "TBA", label: "TBA" },
-                  { value: "PUBLIC", label: "Public" },
-                  { value: "NO_LIMIT", label: "No Limit" },
-                  { value: "ATTENDANCE", label: "Attendance" },
-                ]}
-                withAsterisk
-                value={field.value}
-                onChange={field.onChange}
-                error={errors.status && <ErrorMessage errors={errors} name="status" />}
-              />
-            )}
+        <label htmlFor="end">
+          <Text>Event end time</Text>
+          <input
+            {...register("end", {
+              valueAsDate: true,
+            })}
+            id="end"
+            type="datetime-local"
           />
+          <ErrorMessage errors={errors} name="end" />
+        </label>
 
-          <TextInput
-            placeholder="Sosialt"
-            label="Arrangementtype"
-            withAsterisk
-            error={errors.type && <ErrorMessage errors={errors} name="type" />}
-            {...register("type")}
-          />
+        <label htmlFor="status">
+          <Text>Event status</Text>
+          <select {...register("status")}>
+            <option value="TBA">TBA</option>
+            <option value="PUBLIC">Public</option>
+            <option value="NO LIMIT">No limit</option>
+            <option value="ATTENDANCE">Attendance</option>
+          </select>
+          <ErrorMessage errors={errors} name="status" />
+        </label>
 
-          <Checkbox label="Offentlig arrangement" {...register("public")} />
-          <Button type="submit">Lag nytt event</Button>
-        </Flex>
+        <label htmlFor="type">
+          <Text>Event type</Text>
+          <input {...register("type")} />
+          <ErrorMessage errors={errors} name="type" />
+        </label>
+
+        <label htmlFor="public">
+          <Text>Public event</Text>
+          <input type="checkbox" {...register("public")} />
+          <ErrorMessage errors={errors} name="public" />
+        </label>
+
+        <button type="submit">Lag nytt event</button>
       </form>
-    </Modal>
+    </div>
   )
 }
