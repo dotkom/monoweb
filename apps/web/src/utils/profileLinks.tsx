@@ -1,15 +1,3 @@
-import {
-  ProfileEmail,
-  ProfileEntryCard,
-  ProfileLanding,
-  ProfileMarks,
-  ProfileMembership,
-  ProfileNotifications,
-  ProfilePassword,
-  ProfilePayment,
-  ProfilePrivacy,
-} from "@/components/views/ProfileView/components"
-
 export const profileItems = [
   {
     title: "Min profil",
