@@ -27,7 +27,7 @@ const FormInput: React.FC<IFormInput> = ({ name, value }) => {
             className="w-full"
           />
         ) : (
-          <p className="text-slate flex min-h-[37px] items-center">{value ?? name}</p>
+          <p className="text-slate-12 flex min-h-[37px] items-center">{value ?? name}</p>
         )}
       </div>
       <hr className="border-slate-12 my-5 w-full" />
@@ -76,8 +76,8 @@ const Landing: NextPage = () => {
         <Avatar></Avatar>
         <div className="ml-8 flex w-full justify-between">
           <div>
-            <p className="text-slate text-[32px] font-medium tracking-[-0.06em]">{name}</p>
-            <p className="text-slate text-[14px]">Update your photo and personal details</p>
+            <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{name}</p>
+            <p className="text-slate-12 text-[14px]">Update your photo and personal details</p>
           </div>
           <div className="flex items-center gap-2">
             {editMode ? (
@@ -94,19 +94,19 @@ const Landing: NextPage = () => {
         </div>
       </div>
       <div className="mt-12">
-        <p className="text-slate text-[28px] font-medium tracking-[-0.06em]">Kontakt</p>
+        <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Kontakt</p>
         <FormInput name="Brukernavn" value={name} />
         <FormInput name="Telefon" />
         <FormInput name="Epost" value={email} />
       </div>
       <div className="mt-12">
-        <p className="text-slate text-[28px] font-medium tracking-[-0.06em]">Studie</p>
+        <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Studie</p>
         <FormInput name="Klassetrinn" />
         <FormInput name="Startår" />
         <p className="text-slate text-center font-bold">Insert studieløp progress</p>
       </div>
       <div className="mt-12">
-        <p className="text-slate text-[28px] font-medium tracking-[-0.06em]">Eksterne sider</p>
+        <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Eksterne sider</p>
         <FormInput name="GitHub" />
         <FormInput name="LinkedIn" />
         <FormInput name="Hjemmeside" />
