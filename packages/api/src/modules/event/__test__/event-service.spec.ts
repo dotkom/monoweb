@@ -25,7 +25,8 @@ describe("EventService", () => {
     createdAt: new Date(2022, 1, 1),
     updatedAt: new Date(2022, 1, 1),
     status: "PUBLIC",
-    type: "BEDPRES",
+    type: "COMPANY",
+    committeeId: null,
   }
 
   it("creates a new event", async () => {
