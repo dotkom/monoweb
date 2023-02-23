@@ -3,10 +3,10 @@
 import { Title, Text, Table, Button, Flex, Loader } from "@mantine/core"
 
 import { trpc } from "../../trpc"
-import { Event } from "@dotkomonline/types"
+import { Committee, Event } from "@dotkomonline/types"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC, useState } from "react"
-import { EventDetailsModal } from "./EventDetailsModal"
+import { EventDetailsContext, EventDetailsModal } from "./EventDetailsModal"
 import { EventCreationModal } from "./EventCreationModal"
 
 export default function EventPage() {
@@ -29,7 +29,7 @@ export default function EventPage() {
       ) : (
         <>
           <div>
-            <EventTable events={events} />
+            <EventTable events={events} committees={committees} />
           </div>
           {isCreationOpen && <EventCreationModal committees={committees} close={() => setCreationOpen(false)} />}
           <div>
@@ -41,9 +41,9 @@ export default function EventPage() {
   )
 }
 
-type EventTableProps = { events: Event[] }
+type EventTableProps = { events: Event[]; committees: Committee[] }
 
-const EventTable: FC<EventTableProps> = ({ events }) => {
+const EventTable: FC<EventTableProps> = ({ events, committees }) => {
   const columnHelper = createColumnHelper<Event>()
   const columns = [
     columnHelper.accessor("title", {
@@ -67,7 +67,7 @@ const EventTable: FC<EventTableProps> = ({ events }) => {
     columnHelper.accessor((evt) => evt, {
       id: "actions",
       header: () => "Detaljer",
-      cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
+      cell: (info) => <EventTableDetailsCell committees={committees} event={info.getValue()} />,
     }),
   ]
   const table = useReactTable({
@@ -100,9 +100,9 @@ const EventTable: FC<EventTableProps> = ({ events }) => {
   )
 }
 
-type EventTableDetailsCellProps = { event: Event }
+type EventTableDetailsCellProps = { event: Event; committees: Committee[] }
 
-const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
+const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ committees, event }) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
@@ -110,7 +110,16 @@ const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
       <Button variant="outline" onClick={() => setOpen(true)}>
         Detaljer
       </Button>
-      {isOpen && <EventDetailsModal event={event} close={() => setOpen(false)} />}
+      {isOpen && (
+        <EventDetailsContext.Provider
+          value={{
+            event,
+            committees,
+          }}
+        >
+          <EventDetailsModal close={() => setOpen(false)} />
+        </EventDetailsContext.Provider>
+      )}
     </>
   )
 }
