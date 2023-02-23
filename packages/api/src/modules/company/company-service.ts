@@ -4,7 +4,7 @@ import { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
   getCompany: (id: Company["id"]) => Promise<Company>
-  getCompanies: (limit: number) => Promise<Company[]>
+  getCompanies: (limit: number, offset?: number) => Promise<Company[]>
   createCompany: (payload: CompanyWrite) => Promise<Company>
 }
 
@@ -14,8 +14,8 @@ export const initCompanyService = (companyRepository: CompanyRepository): Compan
     if (!company) throw new NotFoundError(`Company with ID:${id} not found`)
     return company
   },
-  getCompanies: async (limit) => {
-    const companies = await companyRepository.getCompanies(limit)
+  getCompanies: async (limit, offset = 0) => {
+    const companies = await companyRepository.getCompanies(limit, offset)
     return companies
   },
   createCompany: async (payload) => {

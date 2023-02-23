@@ -8,7 +8,7 @@ export const mapToCompany = (payload: Selectable<Database["company"]>): Company 
 
 export interface CompanyRepository {
   getCompanyByID: (id: string) => Promise<Company | undefined>
-  getCompanies: (limit: number) => Promise<Company[]>
+  getCompanies: (limit: number, offset?: number) => Promise<Company[]>
   create: (values: CompanyWrite) => Promise<Company | undefined>
 }
 
@@ -18,8 +18,8 @@ export const initCompanyRepository = (db: Kysely<Database>): CompanyRepository =
       const company = await db.selectFrom("company").selectAll().where("id", "=", id).executeTakeFirst()
       return company ? mapToCompany(company) : undefined
     },
-    getCompanies: async (limit: number) => {
-      const companies = await db.selectFrom("company").selectAll().limit(limit).execute()
+    getCompanies: async (limit: number, offset = 0) => {
+      const companies = await db.selectFrom("company").selectAll().offset(offset).limit(limit).execute()
       return companies.map(mapToCompany)
     },
     create: async (val) => {
