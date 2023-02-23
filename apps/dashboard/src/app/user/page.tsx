@@ -35,7 +35,7 @@ const UsersTable: FC<UsersTableProps> = ({ users }) => {
         return image !== null ? (
           <Image width={40} height={40} src={image} alt="profile picture" radius={99999} />
         ) : (
-          <Icon width={40} height={40} icon="mdi:account-circle" />
+          <Icon width={40} height={40} icon="tabler:user-circle" />
         )
       },
     }),

@@ -36,10 +36,10 @@ const ApplicationHeader: FC = () => {
         </Flex>
         <Group>
           <Button variant="subtle" onClick={() => colorScheme.toggleColorScheme()}>
-            <Icon icon="mdi:theme-light-dark" width={28} height={28} />
+            <Icon icon="tabler:sun-moon" width={28} height={28} />
           </Button>
           <a href="https://new.online.ntnu.no">
-            <Button variant="outline" leftIcon={<Icon icon="material-symbols:arrow-back" />}>
+            <Button variant="outline" leftIcon={<Icon icon="tabler:arrow-left" />}>
               Tilbake til OW
             </Button>
           </a>
@@ -51,19 +51,19 @@ const ApplicationHeader: FC = () => {
 
 const SIDEBAR_LINKS = [
   {
-    icon: "material-symbols:wheelchair-pickup",
+    icon: "tabler:wheelchair",
     href: "/event",
     label: "Arrangementer",
     targetSegment: "event",
   },
   {
-    icon: "lucide:tent",
+    icon: "tabler:tent",
     href: "/committee",
     label: "Komiteer",
     targetSegment: "committee",
   },
   {
-    icon: "mdi:account-group",
+    icon: "tabler:user-circle",
     href: "/user",
     label: "Brukere",
     targetSegment: "user",
@@ -96,7 +96,7 @@ const ApplicationSidebar: FC = () => {
                   {data.user.image !== null ? (
                     <Image width={40} height={40} radius={9999} src={data.user.image ?? "/"} alt="Profile picture" />
                   ) : (
-                    <Icon width={40} height={40} icon="mdi:account-circle" />
+                    <Icon width={40} height={40} icon="tabler:user-circle" />
                   )}
                   <Box>
                     <Text size="sm" weight={500}>
