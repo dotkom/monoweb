@@ -104,12 +104,23 @@ export const EventCreationModal: FC<EventCreationModalProps> = ({ close, committ
             )}
           />
 
-          <TextInput
-            placeholder="Sosialt"
-            label="Arrangementtype"
-            withAsterisk
-            error={errors.type && <ErrorMessage errors={errors} name="type" />}
-            {...register("type")}
+          <Controller
+            control={control}
+            name="type"
+            render={({ field }) => (
+              <Select
+                label="Event type"
+                placeholder="Velg en"
+                data={[
+                  { value: "COMPANY", label: "Sosialt" },
+                  { value: "SOCIAL", label: "Bedriftsarrangement" },
+                ]}
+                withAsterisk
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.type && <ErrorMessage errors={errors} name="type" />}
+              />
+            )}
           />
 
           <Checkbox label="Offentlig arrangement" {...register("public")} />
