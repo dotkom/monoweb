@@ -19,7 +19,6 @@ export const authOptions: NextAuthOptions = {
       wellKnown: `${process.env.HYDRA_PUBLIC_URL as string}/.well-known/openid-configuration`,
       authorization: { params: { grant_type: "authorization_code", scope: "openid email profile" } },
       profile(profile) {
-        console.log({ profile })
         return {
           email: profile.sub,
           id: profile.user.id,

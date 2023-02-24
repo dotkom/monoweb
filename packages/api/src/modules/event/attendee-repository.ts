@@ -42,7 +42,6 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
   async getAttendancesByEventId(eventId: string) {
     const res = await this.db.selectFrom("attendance").selectAll().where("eventId", "=", eventId).execute()
-    console.log(res)
     return res ? res.map((r) => AttendanceSchema.parse(r)) : []
   }
 }
