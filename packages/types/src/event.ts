@@ -44,7 +44,6 @@ export const AttendanceSchema = z.object({
   deregisterDeadline: z.date(),
   limit: z.number(),
   eventId: z.string(),
-  attendees: z.array(AttendeeSchema),
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>

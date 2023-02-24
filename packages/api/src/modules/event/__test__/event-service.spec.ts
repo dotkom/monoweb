@@ -39,10 +39,10 @@ describe("EventService", () => {
   it("finds events by id", async () => {
     const id = randomUUID()
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(undefined)
-    const missing = eventService.getEventById(id)
+    const missing = eventService.getById(id)
     await expect(missing).rejects.toThrow(NotFoundError)
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce({ id, ...payload })
-    const real = await eventService.getEventById(id)
+    const real = await eventService.getById(id)
     expect(real).toEqual({ id, ...payload })
   })
 })

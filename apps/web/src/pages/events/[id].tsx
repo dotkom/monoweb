@@ -1,14 +1,22 @@
-import { GetStaticPaths, GetStaticProps, GetStaticPropsContext, InferGetStaticPropsType } from "next"
-import { useRouter } from "next/router"
+import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
 import { createProxySSGHelpers } from "@trpc/react-query/ssg"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/api"
-import { RouterOutputs } from "@/utils/trpc"
 import { FC } from "react"
-
-type Event = RouterOutputs["event"]["get"]
+import { trpc } from "@/utils/trpc"
+import { Button } from "@dotkomonline/ui"
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-  return <div>{JSON.stringify(props, null, 2)}</div>
+  const { data: attendance } = trpc.event.getAttendance.useQuery({ eventId: props.event.id })
+  const { mutate } = trpc.event.addAttendance.useMutation()
+
+  return (
+    <div>
+      <h1>Event</h1>
+      <pre>{JSON.stringify(props.event, null, 2)}</pre>
+      <h2>Attendance</h2>
+      <pre>{JSON.stringify(attendance, null, 2)}</pre>
+    </div>
+  )
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -38,13 +46,13 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
   if (!id) {
     return { notFound: true }
   }
-  await ssg.event.get.fetch(id)
+  const event = await ssg.event.get.fetch(id)
 
   return {
     props: {
-      trpcState: ssg.dehydrate,
+      event,
     },
-    revalidate: 3600,
+    revalidate: 86400,
   }
 }
 

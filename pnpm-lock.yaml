@@ -270,6 +270,7 @@ importers:
       lint-staged: ^10.5.4
       next: ^13.1.6
       next-auth: ^4.17.0
+      next-superjson-plugin: ^0.5.4
       next-themes: ^0.2.1
       pg: ^8.8.0
       postcss: ^8.4.18
@@ -315,6 +316,7 @@ importers:
       date-fns: 2.29.3
       next: 13.1.6_biqbaboplfbrettd7655fr4n2y
       next-auth: 4.17.0_3vryta7zmbcsw4rrqf4axjqggm
+      next-superjson-plugin: 0.5.4_6hb7bebdisxcpyppymkqpiq3a4
       next-themes: 0.2.1_3vryta7zmbcsw4rrqf4axjqggm
       pg: 8.8.0
       prettier: 2.7.1
@@ -3692,7 +3694,7 @@ packages:
       debug: 4.3.4
       espree: 9.4.1
       globals: 13.20.0
-      ignore: 5.2.0
+      ignore: 5.2.4
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       minimatch: 3.1.2
@@ -11331,7 +11333,7 @@ packages:
       dir-glob: 3.0.1
       fast-glob: 3.2.12
       glob: 7.2.3
-      ignore: 5.2.0
+      ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
     dev: false
@@ -11354,7 +11356,7 @@ packages:
     dependencies:
       dir-glob: 3.0.1
       fast-glob: 3.2.12
-      ignore: 5.2.0
+      ignore: 5.2.4
       merge2: 1.4.1
       slash: 4.0.0
     dev: true
@@ -11637,11 +11639,11 @@ packages:
   /ignore/5.2.0:
     resolution: {integrity: sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==}
     engines: {node: '>= 4'}
+    dev: true
 
   /ignore/5.2.4:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
-    dev: true
 
   /immer/9.0.18:
     resolution: {integrity: sha512-eAPNpsj7Ax1q6Y/3lm2PmlwRcFzpON7HSNQ3ru5WQH1/PSpnyed/HpNOELl2CxLKoj4r+bAHgdyKqW5gc2Se1A==}
@@ -13065,6 +13067,17 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       uuid: 8.3.2
+    dev: false
+
+  /next-superjson-plugin/0.5.4_6hb7bebdisxcpyppymkqpiq3a4:
+    resolution: {integrity: sha512-AUAqdL+yv/jqnkd583jffimRYbfbztkKkNf7qv0WhOVUGW0cIFYdtQHbOEseeCHK95hcPy7rDZY94nujjjRseQ==}
+    peerDependencies:
+      next: ^13
+      superjson: ^1
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+      next: 13.1.6_biqbaboplfbrettd7655fr4n2y
+      superjson: 1.12.2
     dev: false
 
   /next-themes/0.2.1_3vryta7zmbcsw4rrqf4axjqggm:

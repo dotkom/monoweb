@@ -13,6 +13,7 @@ import { Kysely } from "kysely"
 export interface AttendanceRepository {
   createAttendance: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
+  getAttendancesByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
@@ -32,11 +33,16 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const res = await this.db
       .insertInto("attendee")
       .values({
-        userID: attendeeWrite.userID,
-        attendanceID: attendeeWrite.attendanceID,
+        userId: attendeeWrite.userId,
+        attendanceId: attendeeWrite.attendanceId,
       })
       .returningAll()
       .executeTakeFirst()
     return AttendeeSchema.parse(res)
+  }
+  async getAttendancesByEventId(eventId: string) {
+    const res = await this.db.selectFrom("attendance").selectAll().where("eventId", "=", eventId).execute()
+    console.log(res)
+    return res ? res.map((r) => AttendanceSchema.parse(r)) : []
   }
 }

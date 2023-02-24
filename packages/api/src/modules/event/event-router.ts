@@ -1,16 +1,30 @@
-import { EventWriteSchema } from "@dotkomonline/types"
+import { EventWriteSchema, EventSchema, AttendanceWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 
-import { t } from "../../trpc"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const eventRouter = t.router({
-  create: t.procedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.eventService.createEvent(input)
+  create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
+    return ctx.eventService.create(input)
   }),
-  all: t.procedure.query(({ ctx }) => {
-    return ctx.eventService.getEvents()
+  all: publicProcedure.query(({ ctx }) => {
+    return ctx.eventService.list()
   }),
-  get: t.procedure.input(z.string().uuid()).query(({ input, ctx }) => {
-    return ctx.eventService.getEventById(input)
+  get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
+    return ctx.eventService.getById(input)
   }),
+  addAttendance: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
+    const attendance = await ctx.eventService.addAttendance(input.eventId, input)
+    return attendance
+  }),
+  getAttendance: publicProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const attendance = await ctx.eventService.listAttendance(input.eventId)
+      return attendance
+    }),
 })

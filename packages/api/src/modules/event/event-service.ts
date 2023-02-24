@@ -6,10 +6,11 @@ import { EventRepository } from "./event-repository"
 
 export interface EventService {
   create: (payload: EventWrite) => Promise<Event>
-  getEventById: (id: Event["id"]) => Promise<Event>
-  getEvents: () => Promise<Event[]>
-  updateEvent: (id: Event["id"], eventUpdate: EventWrite) => Promise<Event>
-  addAttendancePool: (eventId: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
+  getById: (id: Event["id"]) => Promise<Event>
+  list: () => Promise<Event[]>
+  update: (id: Event["id"], eventUpdate: EventWrite) => Promise<Event>
+  addAttendance: (eventId: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
+  listAttendance: (eventId: Event["id"]) => Promise<Attendance[]>
 }
 
 export const initEventService = (
@@ -21,26 +22,30 @@ export const initEventService = (
     if (!event) throw new Error("Failed to create event")
     return event
   },
-  getEvents: async () => {
+  list: async () => {
     const events = await eventRepository.get()
     return events
   },
-  getEventById: async (id) => {
+  getById: async (id) => {
     const event = await eventRepository.getById(id)
     if (!event) {
       throw new NotFoundError(`Event with ID:${id} not found`)
     }
     return event
   },
-  updateEvent: async (id, eventUpdate) => {
+  update: async (id, eventUpdate) => {
     const event = await eventRepository.update(id, eventUpdate)
     if (!event) {
       throw new NotFoundError(`Could not update Event(${id})`)
     }
     return event
   },
-  addAttendancePool: async (eventId, attendanceWrite) => {
+  addAttendance: async (eventId, attendanceWrite) => {
     const attendance = await attendanceRepository.createAttendance({ ...attendanceWrite, eventId })
+    return attendance
+  },
+  listAttendance: async (eventId) => {
+    const attendance = await attendanceRepository.getAttendancesByEventId(eventId)
     return attendance
   },
 })
