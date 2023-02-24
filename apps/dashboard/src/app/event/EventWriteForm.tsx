@@ -5,6 +5,7 @@ import { Controller, useForm } from "react-hook-form"
 import { DateTimeInput } from "../../components/DateTimeInput"
 import { Committee, EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { ComponentMapping, useAutoForm } from "../../autoform/form";
 
 type EventWriteFormComponentProps = {
   committees: Committee[]

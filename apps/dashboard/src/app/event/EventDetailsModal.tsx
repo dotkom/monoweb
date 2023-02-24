@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react"
 import { EventDetailsCommittees } from "./EventCommitteeDetailsForm"
 import { trpc } from "../../trpc"
 import { useEventWriteForm } from "./EventWriteForm"
+import { ComponentMapping, useAutoForm } from "../../autoform/form";
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Companies</h1>
@@ -43,21 +44,20 @@ export type EventDetailsModalProps = {
 }
 
 export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
-  const { event, committees } = useEventDetailsContext()
+  const { event } = useEventDetailsContext()
   const theme = useMantineTheme()
-  const utils = trpc.useContext()
-  const create = trpc.event.edit.useMutation({
-    onSuccess: () => {
-      utils.event.all.invalidate()
+  const Form = useAutoForm({
+    schema: EventWriteSchema,
+    defaultValues: {
+      title: 'Foo'
     },
-  })
-  const onFormSubmit = (data: EventWrite) => {
-    const result = EventWriteSchema.required({ id: true }).parse(data)
-    create.mutate(result)
-    close()
-  }
-  const FormComponent = useEventWriteForm(onFormSubmit, {
-    ...event,
+    mapping: ComponentMapping,
+    props: {
+      title: {
+        withAsterisk: true
+      }
+    },
+    onFormSubmit: (data) => { console.log(data) },
   })
   return (
     <Modal title={<Title order={2}>Arrangementdetaljer for '{event.title}'</Title>} fullScreen opened onClose={close}>
@@ -71,7 +71,7 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
         <Grid.Col span={1}>
           <Card withBorder shadow="sm">
             <Text>Endre arrangement</Text>
-            <FormComponent committees={committees} />
+            <Form />
           </Card>
         </Grid.Col>
         <Grid.Col span={1}>
