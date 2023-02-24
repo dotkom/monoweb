@@ -13,6 +13,19 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
     <div>
       <h1>Event</h1>
       <pre>{JSON.stringify(props.event, null, 2)}</pre>
+      <Button
+        onClick={() =>
+          mutate({
+            start: new Date(),
+            end: new Date(),
+            deregisterDeadline: new Date(),
+            eventId: props.event.id,
+            limit: 20,
+          })
+        }
+      >
+        Add attendance group
+      </Button>
       <h2>Attendance</h2>
       <pre>{JSON.stringify(attendance, null, 2)}</pre>
     </div>
