@@ -129,14 +129,14 @@ importers:
       pg: ^8.8.0
       tsx: ^3.12.0
       typescript: ^4.9.3
-      zod: ^3.19.1
+      zod: ^3.20.6
     dependencies:
       '@dotkomonline/db': link:../../packages/ow-db
       chalk: 5.1.2
       commander: 9.4.1
       kysely: 0.23.3
       pg: 8.8.0
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       '@dotkomonline/logger': link:../../packages/ow-logger
       '@faker-js/faker': 7.6.0
@@ -286,7 +286,7 @@ importers:
       typescript: ^4.9.3
       vite: ^3.1.1
       vitest: ^0.28.0
-      zod: ^3.19.1
+      zod: ^3.20.6
     dependencies:
       '@dotkomonline/api': link:../../packages/api
       '@dotkomonline/auth': link:../../packages/auth
@@ -325,7 +325,7 @@ importers:
       react-hook-form: 7.39.5_react@18.2.0
       react-icons: 4.7.1_react@18.2.0
       superjson: 1.12.2
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
       '@dotkomonline/db': link:../../packages/ow-db
@@ -348,7 +348,7 @@ importers:
       lint-staged: 10.5.4
       postcss: 8.4.19
       tailwindcss: 3.2.4_postcss@8.4.19
-      trpc-playground: 1.0.4_r63ah6is2wclx3y5crc6goglta
+      trpc-playground: 1.0.4_duya7rv6ahkyff774un2ykz6j4
       tslib: 2.4.1
       typescript: 4.9.3
       vite: 3.2.4_@types+node@16.18.3
@@ -376,7 +376,7 @@ importers:
       superjson: ^1.12.2
       typescript: ^4.9.3
       vitest: ^0.28.0
-      zod: ^3.17.10
+      zod: ^3.20.6
     dependencies:
       '@dotkomonline/auth': link:../auth
       '@dotkomonline/db': link:../ow-db
@@ -388,7 +388,7 @@ importers:
       kysely: 0.23.3
       pg: 8.8.0
       superjson: 1.12.2
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       '@dotkomonline/config': link:../config
       '@dotkomonline/logger': link:../ow-logger
@@ -567,9 +567,9 @@ importers:
     specifiers:
       eslint: ^8.28.0
       typescript: ^4.9.3
-      zod: ^3.19.1
+      zod: ^3.20.6
     dependencies:
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       eslint: 8.28.0
       typescript: 4.9.3
@@ -16195,7 +16195,7 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: false
 
-  /trpc-playground/1.0.4_r63ah6is2wclx3y5crc6goglta:
+  /trpc-playground/1.0.4_duya7rv6ahkyff774un2ykz6j4:
     resolution: {integrity: sha512-6nVf1o2LNoo1g6oTS24yajoH7xV4CFjxGAbAH7qLXqa3yo9qB5QHsWLbrm1hNt51SyCG++P0zHJaCdVfgvEVDg==}
     peerDependencies:
       '@trpc/server': ^10
@@ -16206,8 +16206,8 @@ packages:
       '@trpc/server': 10.12.0
       lodash: 4.17.21
       uttp: 0.1.3
-      zod: 3.19.1
-      zod-to-ts: 1.1.2_mkwmprc7oyb3grronxuch43asa
+      zod: 3.20.6
+      zod-to-ts: 1.1.2_smdenmxoowiolzuisonwzirhxy
     transitivePeerDependencies:
       - '@types/node'
       - express
@@ -17719,15 +17719,15 @@ packages:
       readable-stream: 3.6.0
     dev: false
 
-  /zod-to-ts/1.1.2_mkwmprc7oyb3grronxuch43asa:
+  /zod-to-ts/1.1.2_smdenmxoowiolzuisonwzirhxy:
     resolution: {integrity: sha512-IZdM0Ga1l/vQnrNy63aV3qsLNchD0aUYZEtXcyt8A3xA7+erFO0zeImEcUH5qNLA6tXDTjRpcWp0paoVoH/D0A==}
     peerDependencies:
       typescript: ^4.9.4
       zod: ^3
     dependencies:
       typescript: 4.9.3
-      zod: 3.19.1
+      zod: 3.20.6
     dev: true
 
-  /zod/3.19.1:
-    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
+  /zod/3.20.6:
+    resolution: {integrity: sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==}

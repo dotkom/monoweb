@@ -3,12 +3,12 @@ import {
   Attendance,
   AttendanceSchema,
   AttendanceWrite,
-  Attendee,
   AttendeeSchema,
   AttendeeWrite,
   Event,
 } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { Kysely, sql } from "kysely"
+import { AttendeeTable } from "@dotkomonline/db/src/types/event"
 
 export interface AttendanceRepository {
   createAttendance: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
@@ -37,11 +37,22 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         attendanceId: attendeeWrite.attendanceId,
       })
       .returningAll()
-      .executeTakeFirst()
+      .executeTakeFirstOrThrow()
+      .catch((err) => console.log(err))
+    console.log({ res })
     return AttendeeSchema.parse(res)
   }
   async getAttendancesByEventId(eventId: string) {
-    const res = await this.db.selectFrom("attendance").selectAll().where("eventId", "=", eventId).execute()
+    const res = await this.db
+      .selectFrom("attendance")
+      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
+      .selectAll("attendance")
+      .select(
+        sql<AttendeeTable[]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
+      )
+      .groupBy("attendance.id")
+      .where("eventId", "=", eventId)
+      .execute()
     return res ? res.map((r) => AttendanceSchema.parse(r)) : []
   }
 }

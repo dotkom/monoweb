@@ -7,24 +7,37 @@ import { Button } from "@dotkomonline/ui"
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const { data: attendance } = trpc.event.getAttendance.useQuery({ eventId: props.event.id })
-  const { mutate } = trpc.event.addAttendance.useMutation()
+  const { mutate: addAttendance } = trpc.event.addAttendance.useMutation()
+  const { mutate: attendEvent } = trpc.event.attend.useMutation()
+  const utils = trpc.useContext()
 
   return (
     <div>
       <h1>Event</h1>
       <pre>{JSON.stringify(props.event, null, 2)}</pre>
       <Button
-        onClick={() =>
-          mutate({
+        onClick={async () => {
+          await addAttendance({
             start: new Date(),
             end: new Date(),
             deregisterDeadline: new Date(),
             eventId: props.event.id,
             limit: 20,
           })
-        }
+          utils.event.getAttendance.invalidate()
+        }}
       >
         Add attendance group
+      </Button>
+      <Button
+        onClick={async () => {
+          await attendEvent({
+            eventId: props.event.id,
+          })
+          utils.event.getAttendance.invalidate()
+        }}
+      >
+        Join random group
       </Button>
       <h2>Attendance</h2>
       <pre>{JSON.stringify(attendance, null, 2)}</pre>

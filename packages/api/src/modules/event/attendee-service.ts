@@ -11,15 +11,19 @@ export interface AttendService {
   registerForAttendance: (eventId: Event["id"], userId: User["id"], attended: boolean) => Promise<void>
 }
 
-class AttendServiceImpl implements AttendService {
+export class AttendServiceImpl implements AttendService {
   constructor(private readonly attendanceRepository: AttendanceRepository) {}
 
   async canAttend(eventId: string) {
     return new Date()
   }
   async registerForEvent(userId: string, eventId: string) {
+    const pools = await this.attendanceRepository.getAttendancesByEventId(eventId)
     // TODO: Find the correct attendance pool
-    return undefined
+    const pool = pools[Math.floor(Math.random() * pools.length)]
+    const attendee = await this.attendanceRepository.createAttendee({ attendanceId: pool.id, userId })
+    console.log(attendee)
+    return attendee
   }
 
   async deregisterForEvent(eventId: string, userId: string) {

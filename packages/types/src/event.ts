@@ -29,10 +29,10 @@ export type EventWrite = z.infer<typeof EventWriteSchema>
 
 export const AttendeeSchema = z.object({
   id: z.string(),
-  attendanceId: z.string(),
-  userId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  attendanceId: z.string().uuid(),
+  userId: z.string().uuid(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 })
 
 export const AttendanceSchema = z.object({
@@ -44,6 +44,7 @@ export const AttendanceSchema = z.object({
   deregisterDeadline: z.date(),
   limit: z.number(),
   eventId: z.string(),
+  attendees: z.array(AttendeeSchema),
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>
@@ -53,6 +54,7 @@ export const AttendanceWriteSchema = AttendanceSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
+  attendees: true,
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.omit({
