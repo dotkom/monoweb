@@ -1,10 +1,10 @@
 import { Card, Grid, Modal, Text, Tabs, Title, useMantineTheme } from "@mantine/core"
 import { createContext, FC, useContext } from "react"
-import { Committee, Event, EventWrite, EventWriteSchema } from "@dotkomonline/types"
+import { Event, EventWriteSchema } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { EventDetailsCommittees } from "./EventCommitteeDetailsForm"
 import { trpc } from "../../trpc"
-import { useEventWriteForm } from "./EventWriteForm"
+import { useEventWriteForm } from "./Form";
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Companies</h1>
@@ -43,22 +43,17 @@ export type EventDetailsModalProps = {
 
 export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
   const { event } = useEventDetailsContext()
-  const { data: committees = [] } = trpc.committee.all.useQuery({ limit: 50 })
   const theme = useMantineTheme()
   const utils = trpc.useContext()
-  const create = trpc.event.edit.useMutation({
+  const edit = trpc.event.edit.useMutation({
     onSuccess: () => {
       utils.event.all.invalidate()
     },
   })
-  const onFormSubmit = (data: EventWrite) => {
+  const FormComponent = useEventWriteForm((data) => {
     const result = EventWriteSchema.required({ id: true }).parse(data)
-    create.mutate(result)
-    close()
-  }
-  const FormComponent = useEventWriteForm(onFormSubmit, {
-    ...event,
-  })
+    edit.mutate(result)
+  }, { ...event }, "Oppdater arrangement")
   return (
     <Modal title={<Title order={2}>Arrangementdetaljer for '{event.title}'</Title>} fullScreen opened onClose={close}>
       <Grid
@@ -71,7 +66,7 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
         <Grid.Col span={1}>
           <Card withBorder shadow="sm">
             <Text>Endre arrangement</Text>
-            <FormComponent committees={committees} />
+            {FormComponent}
           </Card>
         </Grid.Col>
         <Grid.Col span={1}>

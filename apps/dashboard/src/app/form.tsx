@@ -1,6 +1,16 @@
 import { z } from "zod"
 import { FC, ReactElement } from "react"
-import { Button, Checkbox, CheckboxProps, Flex, Select, SelectProps, TextInput, TextInputProps } from "@mantine/core"
+import {
+  Button,
+  Checkbox,
+  CheckboxProps,
+  Flex,
+  Select,
+  SelectProps, Textarea,
+  TextareaProps,
+  TextInput,
+  TextInputProps,
+} from "@mantine/core";
 import {
   Control,
   Controller,
@@ -79,6 +89,20 @@ export function createCheckboxInput<F extends FieldValues>({
   }
 }
 
+export function createTextareaInput<F extends FieldValues>({
+  ...props
+}: Omit<TextareaProps, 'error'>): InputProducerResult<F> {
+  return ({ name, state, register, control }) => {
+    return (
+      <Textarea
+        {...register(name)}
+        {...props}
+        error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+      />
+    )
+  }
+}
+
 export function createTextInput<F extends FieldValues>({
   ...props
 }: Omit<TextInputProps, "error">): InputProducerResult<F> {
@@ -93,7 +117,7 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
-function entriesOf<T extends Record<string, unknown>, K extends keyof T = keyof T>(obj: T): [K, T[K]][] {
+function entriesOf<T extends Record<string, unknown>, K extends keyof T & string>(obj: T): [K, T[K]][] {
   return Object.entries(obj) as [K, T[K]][]
 }
 
@@ -125,7 +149,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc!
     return <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
   })
-
+  
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <Flex direction="column" gap="md">
