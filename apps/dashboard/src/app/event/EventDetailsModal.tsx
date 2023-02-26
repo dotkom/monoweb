@@ -28,7 +28,6 @@ const SIDEBAR_LINKS = [
 /** Context consisting of everything required to use and render the form */
 export const EventDetailsContext = createContext<{
   event: Event
-  committees: Committee[]
 } | null>(null)
 export const useEventDetailsContext = () => {
   const ctx = useContext(EventDetailsContext)
@@ -43,7 +42,8 @@ export type EventDetailsModalProps = {
 }
 
 export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
-  const { event, committees } = useEventDetailsContext()
+  const { event } = useEventDetailsContext()
+  const { data: committees = [] } = trpc.committee.all.useQuery({ limit: 50 })
   const theme = useMantineTheme()
   const utils = trpc.useContext()
   const create = trpc.event.edit.useMutation({

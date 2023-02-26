@@ -1,7 +1,6 @@
 "use client"
 
 import { Title, Text, Table, Button, Flex, Loader } from "@mantine/core"
-
 import { trpc } from "../../trpc"
 import { Committee, Event } from "@dotkomonline/types"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -31,7 +30,7 @@ export default function EventPage() {
           <div>
             <EventTable events={events} committees={committees} />
           </div>
-          {isCreationOpen && <EventCreationModal committees={committees} close={() => setCreationOpen(false)} />}
+          {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
           <div>
             <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
           </div>
@@ -111,12 +110,7 @@ const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ committees, eve
         Detaljer
       </Button>
       {isOpen && (
-        <EventDetailsContext.Provider
-          value={{
-            event,
-            committees,
-          }}
-        >
+        <EventDetailsContext.Provider value={{ event }}>
           <EventDetailsModal close={() => setOpen(false)} />
         </EventDetailsContext.Provider>
       )}
