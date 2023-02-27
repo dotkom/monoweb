@@ -6,12 +6,23 @@ import { useEventWriteForm } from "../Form"
 import { EventWriteSchema } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { FC } from "react"
-import { EventDetailsCommittees } from "./EventCommitteeDetailsForm"
 import { useEventDetailsContext } from "./provider"
 import Link from "next/link"
 
 const EventDetailsCompanies: FC = () => {
-  return <h1>Companies</h1>
+  return <h1>Bedrifter</h1>
+}
+
+const EventDetailsCommittees: FC = () => {
+  return <h1>Komiteer</h1>
+}
+
+const EventDetailsFeedbackForms: FC = () => {
+  return <h1>Tilbakemelding</h1>
+}
+
+const EventDetailsAttendance: FC = () => {
+  return <h1>Påmelding</h1>
 }
 
 const SIDEBAR_LINKS = [
@@ -26,6 +37,18 @@ const SIDEBAR_LINKS = [
     label: "Komiteer",
     slug: "committee",
     component: EventDetailsCompanies,
+  },
+  {
+    icon: "tabler:forms",
+    label: "Tilbakemeldingsskjema",
+    slug: "feedback-form",
+    component: EventDetailsFeedbackForms,
+  },
+  {
+    icon: "tabler:calendar-event",
+    label: "Påmelding",
+    slug: "attendance",
+    component: EventDetailsAttendance,
   },
 ]
 
