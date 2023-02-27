@@ -1,17 +1,8 @@
 import { Modal } from "@mantine/core"
 import { FC } from "react"
 
-import { EventWriteSchema } from "@dotkomonline/types"
 import { trpc } from "../../trpc"
-import {
-  createCheckboxInput,
-  createDateTimeInput,
-  createSelectInput,
-  createTextareaInput,
-  createTextInput,
-  useFormBuilder,
-} from "../form";
-import { useEventWriteForm } from "./Form";
+import { useEventWriteForm } from "./Form"
 
 export type EventCreationModalProps = {
   close: () => void

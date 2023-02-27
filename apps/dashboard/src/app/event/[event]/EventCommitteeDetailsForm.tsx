@@ -1,6 +1,6 @@
 import { FC } from "react"
-import { useEventDetailsContext } from "./EventDetailsModal"
-import { createTextInput, useFormBuilder } from "../form"
+import { useEventDetailsContext } from "./provider"
+import { createTextInput, useFormBuilder } from "../../form"
 import { EventWriteSchema } from "@dotkomonline/types"
 
 export const EventDetailsCommittees: FC = () => {

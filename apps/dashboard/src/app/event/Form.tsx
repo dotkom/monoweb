@@ -1,15 +1,13 @@
 import {
   createCheckboxInput,
-  createDateTimeInput, createSelectInput,
+  createDateTimeInput,
+  createSelectInput,
   createTextareaInput,
   createTextInput,
   useFormBuilder,
-} from "../form";
-import { EventWrite, EventWriteSchema } from "@dotkomonline/types";
-import { trpc } from "../../trpc";
-import { UseTRPCMutationResult } from "@trpc/react-query/shared";
-import { TRPCClientErrorLike } from "@trpc/client";
-import { z } from "zod";
+} from "../form"
+import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
+import { trpc } from "../../trpc"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   committeeId: null,
@@ -23,7 +21,7 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
 export const useEventWriteForm = (
   onSubmit: (data: EventWrite) => void,
   defaultValues: Partial<EventWrite> = EVENT_FORM_DEFAULT_VALUES,
-  label: string = "Opprett arrangement"
+  label = "Opprett arrangement"
 ) => {
   const { data: committees = [] } = trpc.committee.all.useQuery({ limit: 50 })
   return useFormBuilder({
@@ -39,7 +37,8 @@ export const useEventWriteForm = (
       }),
       subtitle: createTextInput({
         label: "Ingress",
-        placeholder: "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!!",
+        placeholder:
+          "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!!",
       }),
       description: createTextareaInput({
         label: "Beskrivelse",

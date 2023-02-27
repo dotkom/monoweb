@@ -6,11 +6,12 @@ import {
   CheckboxProps,
   Flex,
   Select,
-  SelectProps, Textarea,
+  SelectProps,
+  Textarea,
   TextareaProps,
   TextInput,
   TextInputProps,
-} from "@mantine/core";
+} from "@mantine/core"
 import {
   Control,
   Controller,
@@ -36,7 +37,7 @@ type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 export function createSelectInput<F extends FieldValues>({
   ...props
 }: Omit<SelectProps, "error">): InputProducerResult<F> {
-  return ({ name, state, register, control }) => {
+  return function FormSelectInput({ name, state, control }) {
     return (
       <Controller
         control={control}
@@ -57,7 +58,7 @@ export function createSelectInput<F extends FieldValues>({
 export function createDateTimeInput<F extends FieldValues>({
   ...props
 }: Omit<DateTimeInputProps, "error">): InputProducerResult<F> {
-  return ({ name, state, register, control }) => {
+  return function FormDateTimeInput({ name, state, control }) {
     return (
       <Controller
         control={control}
@@ -78,7 +79,7 @@ export function createDateTimeInput<F extends FieldValues>({
 export function createCheckboxInput<F extends FieldValues>({
   ...props
 }: Omit<CheckboxProps, "error">): InputProducerResult<F> {
-  return ({ name, state, register, control }) => {
+  return function FormCheckboxInput({ name, state, register }) {
     return (
       <Checkbox
         {...register(name)}
@@ -91,8 +92,8 @@ export function createCheckboxInput<F extends FieldValues>({
 
 export function createTextareaInput<F extends FieldValues>({
   ...props
-}: Omit<TextareaProps, 'error'>): InputProducerResult<F> {
-  return ({ name, state, register, control }) => {
+}: Omit<TextareaProps, "error">): InputProducerResult<F> {
+  return function TextareaInput({ name, state, register }) {
     return (
       <Textarea
         {...register(name)}
@@ -106,7 +107,7 @@ export function createTextareaInput<F extends FieldValues>({
 export function createTextInput<F extends FieldValues>({
   ...props
 }: Omit<TextInputProps, "error">): InputProducerResult<F> {
-  return ({ name, state, register, control }) => {
+  return function FormTextInput({ name, state, register }) {
     return (
       <TextInput
         {...register(name)}
@@ -146,10 +147,13 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   })
 
   const components = entriesOf(fields).map(([name, fc]) => {
-    const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc!
+    if (!fc) {
+      throw new Error()
+    }
+    const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
     return <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
   })
-  
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <Flex direction="column" gap="md">

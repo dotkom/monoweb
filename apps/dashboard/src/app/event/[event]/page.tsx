@@ -1,10 +1,14 @@
-import { Card, Grid, Modal, Text, Tabs, Title, useMantineTheme } from "@mantine/core"
-import { createContext, FC, useContext } from "react"
-import { Event, EventWriteSchema } from "@dotkomonline/types"
+"use client"
+
+import { Box, Button, Card, Grid, Group, Tabs, Text, Title, useMantineTheme } from "@mantine/core"
+import { trpc } from "../../../trpc"
+import { useEventWriteForm } from "../Form"
+import { EventWriteSchema } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
+import { FC } from "react"
 import { EventDetailsCommittees } from "./EventCommitteeDetailsForm"
-import { trpc } from "../../trpc"
-import { useEventWriteForm } from "./Form";
+import { useEventDetailsContext } from "./provider"
+import Link from "next/link"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Companies</h1>
@@ -25,23 +29,7 @@ const SIDEBAR_LINKS = [
   },
 ]
 
-/** Context consisting of everything required to use and render the form */
-export const EventDetailsContext = createContext<{
-  event: Event
-} | null>(null)
-export const useEventDetailsContext = () => {
-  const ctx = useContext(EventDetailsContext)
-  if (ctx === null) {
-    throw new Error("useEventDetailsContext called without Provider in tree")
-  }
-  return ctx
-}
-
-export type EventDetailsModalProps = {
-  close: () => void
-}
-
-export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
+export default function EventDetailsPage() {
   const { event } = useEventDetailsContext()
   const theme = useMantineTheme()
   const utils = trpc.useContext()
@@ -50,15 +38,27 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
       utils.event.all.invalidate()
     },
   })
-  const FormComponent = useEventWriteForm((data) => {
-    const result = EventWriteSchema.required({ id: true }).parse(data)
-    edit.mutate(result)
-  }, { ...event }, "Oppdater arrangement")
+  const FormComponent = useEventWriteForm(
+    (data) => {
+      const result = EventWriteSchema.required({ id: true }).parse(data)
+      edit.mutate(result)
+    },
+    { ...event },
+    "Oppdater arrangement"
+  )
   return (
-    <Modal title={<Title order={2}>Arrangementdetaljer for '{event.title}'</Title>} fullScreen opened onClose={close}>
+    <Box p="md">
+      <Group position="apart">
+        <Title>{event.title}</Title>
+        <Link href="/event">
+          <Button variant="subtle" leftIcon={<Icon icon="tabler:arrow-back" />}>
+            Tilbake til oversikt
+          </Button>
+        </Link>
+      </Group>
       <Grid
         columns={2}
-        gutter="xl"
+        gutter="md"
         styles={{
           backgroundColor: theme.colorScheme === "light" ? theme.colors.gray[0] : theme.colors.gray[9],
         }}
@@ -80,7 +80,7 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
                 ))}
               </Tabs.List>
               {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
-                <Tabs.Panel value={slug}>
+                <Tabs.Panel key={slug} value={slug}>
                   <Component />
                 </Tabs.Panel>
               ))}
@@ -88,6 +88,6 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
           </Card>
         </Grid.Col>
       </Grid>
-    </Modal>
+    </Box>
   )
 }
