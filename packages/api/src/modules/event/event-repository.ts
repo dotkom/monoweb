@@ -1,11 +1,12 @@
 import { Database } from "@dotkomonline/db"
-import { Attendance, Event, EventSchema } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable, sql } from "kysely"
+import { Attendance, Event, EventSchema, EventWrite } from "@dotkomonline/types"
+import { Kysely, Selectable, sql } from "kysely"
 
 const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
-  createEvent: (data: Insertable<Database["event"]>) => Promise<Event | undefined>
+  createEvent: (data: EventWrite) => Promise<Event | undefined>
+  editEvent: (id: Event["id"], data: Omit<EventWrite, "id">) => Promise<Event | undefined>
   getEvents: (limit: number, offset?: number) => Promise<Event[]>
   getEventByID: (id: string) => Promise<Event | undefined>
 }
@@ -18,6 +19,10 @@ export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
   getEvents: async (limit, offset = 0) => {
     const events = await db.selectFrom("event").selectAll().limit(limit).offset(offset).execute()
     return events.map(mapToEvent)
+  },
+  editEvent: async (id, data) => {
+    const event = await db.updateTable("event").set(data).where("id", "=", id).returningAll().executeTakeFirst()
+    return event ? mapToEvent(event) : undefined
   },
   getEventByID: async (id) => {
     // TODO: move the attendance query to a helper
