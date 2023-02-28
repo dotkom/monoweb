@@ -20,6 +20,7 @@ describe("EventCompanyService", () => {
     type: "Consulting",
     website: "https://bekk.no",
     location: "Oslo & Trondheim",
+    image: null,
   }
 
   it("creates links a company to an event", async () => {

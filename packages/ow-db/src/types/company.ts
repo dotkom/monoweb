@@ -10,6 +10,7 @@ export interface CompanyTable {
   phone: string | null
   location: string | null
   type: string | null
+  image: string | null
 }
 
 export interface EventCompanyTable {
