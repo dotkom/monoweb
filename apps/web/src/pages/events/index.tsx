@@ -2,7 +2,7 @@ import { trpc } from "@/utils/trpc"
 import Link from "next/link"
 
 const EventPage = () => {
-  const { data: events, isLoading } = trpc.event.all.useQuery({ limit: 10 })
+  const { data: events, isLoading } = trpc.event.all.useQuery()
   if (isLoading) return <div>Loading...</div>
   return (
     <ul className="list-disc">
