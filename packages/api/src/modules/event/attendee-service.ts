@@ -19,10 +19,8 @@ export class AttendServiceImpl implements AttendService {
   }
   async registerForEvent(userId: string, eventId: string) {
     const pools = await this.attendanceRepository.getAttendancesByEventId(eventId)
-    // TODO: Find the correct attendance pool
     const pool = pools[Math.floor(Math.random() * pools.length)]
     const attendee = await this.attendanceRepository.createAttendee({ attendanceId: pool.id, userId })
-    console.log(attendee)
     return attendee
   }
 
