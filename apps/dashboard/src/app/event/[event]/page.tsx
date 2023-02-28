@@ -8,13 +8,10 @@ import { Icon } from "@iconify/react"
 import { FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import Link from "next/link"
+import { EventCompaniesPage } from "./EventCompaniesPage"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Bedrifter</h1>
-}
-
-const EventDetailsCommittees: FC = () => {
-  return <h1>Komiteer</h1>
 }
 
 const EventDetailsFeedbackForms: FC = () => {
@@ -30,7 +27,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:building-warehouse",
     label: "Bedrifter",
     slug: "event",
-    component: EventDetailsCommittees,
+    component: EventCompaniesPage,
   },
   {
     icon: "tabler:tent",
@@ -103,7 +100,7 @@ export default function EventDetailsPage() {
                 ))}
               </Tabs.List>
               {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
-                <Tabs.Panel key={slug} value={slug}>
+                <Tabs.Panel mt="md" key={slug} value={slug}>
                   <Component />
                 </Tabs.Panel>
               ))}
