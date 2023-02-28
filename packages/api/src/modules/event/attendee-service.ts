@@ -1,6 +1,3 @@
-interface AttendeeService {
-  attendEvent: (eventID: string, userId: string) => Promise<Attendee>
-}
 import { Attendee, Event, User } from "@dotkomonline/types"
 import { AttendanceRepository } from "./attendee-repository"
 
@@ -14,7 +11,7 @@ export interface AttendService {
 export class AttendServiceImpl implements AttendService {
   constructor(private readonly attendanceRepository: AttendanceRepository) {}
 
-  async canAttend(eventId: string) {
+  async canAttend(_eventId: string) {
     return new Date()
   }
   async registerForEvent(userId: string, eventId: string) {
@@ -24,8 +21,10 @@ export class AttendServiceImpl implements AttendService {
     return attendee
   }
 
-  async deregisterForEvent(eventId: string, userId: string) {
+  async deregisterForEvent(_eventId: string, _userId: string) {
     return undefined
   }
-  async registerForAttendance(eventId: string, userId: string, attended: boolean) {}
+  async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {
+    return
+  }
 }
