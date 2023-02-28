@@ -1,16 +1,9 @@
-import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter"
-import { Redis } from "@upstash/redis"
 import { type NextAuthOptions } from "next-auth"
 
 export const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
-  adapter: UpstashRedisAdapter(
-    new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL as string,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-    }),
-    { baseKeyPrefix: "ow:" }
-  ),
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     {
       id: "onlineweb",
@@ -31,23 +24,15 @@ export const authOptions: NextAuthOptions = {
     },
   ],
   callbacks: {
-    async signIn({ profile }) {
-      return !!profile
-    },
     async redirect({ url, baseUrl }) {
       return url.startsWith(baseUrl) ? `${baseUrl}/` : baseUrl
     },
-    async session({ session, user }) {
-      if (user.id) {
-        session.user.id = user.id
+    async session({ session, token }) {
+      console.log(token)
+      if (token.sub) {
+        session.user.id = token.sub
       }
       return session
-    },
-    async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token
-      }
-      return token
     },
   },
 }
