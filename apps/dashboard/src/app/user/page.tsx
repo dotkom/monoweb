@@ -1,13 +1,14 @@
 "use client"
 
-import { Title, Text, Table, Button, Image, Flex } from "@mantine/core"
+import { Title, Text, Button, Image, Flex } from "@mantine/core"
 
 import { trpc } from "../../trpc"
 import { User } from "@dotkomonline/types"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { FC, useState } from "react"
-import { UserDetailsModal } from "./UserDetailsModal"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { FC } from "react"
 import { Icon } from "@iconify/react"
+import { GenericTable } from "../../components/GenericTable"
+import Link from "next/link"
 
 export default function UsersPage() {
   const { data: users = [], isLoading } = trpc.auth.getUsers.useQuery({})
@@ -18,7 +19,7 @@ export default function UsersPage() {
         <Title>Komiteer</Title>
         <Text>Oversikt over eksisterende komiteer</Text>
       </div>
-      <div className="rounded shadow">{isLoading ? "Loading" : <UsersTable users={users} />}</div>
+      {isLoading ? "Loading" : <UsersTable users={users} />}
     </Flex>
   )
 }
@@ -60,41 +61,17 @@ const UsersTable: FC<UsersTableProps> = ({ users }) => {
     columns,
   })
 
-  return (
-    <Table>
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  )
+  return <GenericTable table={table} />
 }
 
 type UsersTableDetailsCellProps = { user: User }
 
 const UsersTableDetailsCell: FC<UsersTableDetailsCellProps> = ({ user }) => {
-  const [isOpen, setOpen] = useState(false)
-
   return (
-    <>
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        Detaljer
+    <Link href={`/user/${user.id}`}>
+      <Button variant="outline" leftIcon={<Icon icon="tabler:list-details" />}>
+        Se detailjer
       </Button>
-      {isOpen && <UserDetailsModal user={user} close={() => setOpen(false)} />}
-    </>
+    </Link>
   )
 }

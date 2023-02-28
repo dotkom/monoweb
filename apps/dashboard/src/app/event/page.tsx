@@ -1,18 +1,18 @@
 "use client"
 
-import { Title, Text, Table, Button, Flex, Loader } from "@mantine/core"
+import { Title, Text, Button, Flex, Loader } from "@mantine/core"
 import { trpc } from "../../trpc"
 import { Event } from "@dotkomonline/types"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC, useState } from "react"
 import { EventCreationModal } from "./EventCreationModal"
 import { Icon } from "@iconify/react"
 import Link from "next/link"
+import { GenericTable } from "../../components/GenericTable"
 
 export default function EventPage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
-  const isLoading = isEventsLoading
+  const { data: events = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
 
   return (
     <Flex direction="column" p="md" gap="md">
@@ -24,9 +24,7 @@ export default function EventPage() {
         <Loader />
       ) : (
         <>
-          <div>
-            <EventTable events={events} />
-          </div>
+          <EventTable events={events} />
           {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
           <div>
             <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
@@ -72,28 +70,7 @@ const EventTable: FC<EventTableProps> = ({ events }) => {
     columns,
   })
 
-  return (
-    <Table>
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  )
+  return <GenericTable table={table} />
 }
 
 type EventTableDetailsCellProps = { event: Event }
