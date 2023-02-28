@@ -5,21 +5,23 @@ import { AttendanceRepository } from "./attendee-repository"
 import { EventRepository } from "./event-repository"
 
 export interface EventService {
-  create: (payload: EventWrite) => Promise<Event>
+  create: (eventCreate: EventWrite) => Promise<Event>
   getById: (id: Event["id"]) => Promise<Event>
   list: () => Promise<Event[]>
-  update: (id: Event["id"], eventUpdate: EventWrite) => Promise<Event>
   addAttendance: (eventId: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
   listAttendance: (eventId: Event["id"]) => Promise<Attendance[]>
+  editEvent: (id: Event["id"], payload: Omit<EventWrite, "id">) => Promise<Event>
 }
 
 export const initEventService = (
   eventRepository: EventRepository,
   attendanceRepository: AttendanceRepository
 ): EventService => ({
-  create: async (payload) => {
-    const event = await eventRepository.create(payload)
-    if (!event) throw new Error("Failed to create event")
+  create: async (eventCreate) => {
+    const event = await eventRepository.create(eventCreate)
+    if (!event) {
+      throw new Error("Failed to create event")
+    }
     return event
   },
   list: async () => {
@@ -33,15 +35,15 @@ export const initEventService = (
     }
     return event
   },
-  update: async (id, eventUpdate) => {
+  editEvent: async (id, eventUpdate) => {
     const event = await eventRepository.update(id, eventUpdate)
     if (!event) {
       throw new NotFoundError(`Could not update Event(${id})`)
     }
     return event
   },
-  addAttendance: async (eventId, attendanceWrite) => {
-    const attendance = await attendanceRepository.createAttendance({ ...attendanceWrite, eventId })
+  addAttendance: async (eventId, attendanceCreate) => {
+    const attendance = await attendanceRepository.createAttendance({ ...attendanceCreate, eventId })
     return attendance
   },
   listAttendance: async (eventId) => {

@@ -1,6 +1,6 @@
 import { Database } from "@dotkomonline/db"
 import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable } from "kysely"
+import { Kysely, Selectable } from "kysely"
 import { z } from "zod"
 
 const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
@@ -8,10 +8,10 @@ const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(da
 const keys = EventSchema.keyof()
 
 export interface EventRepository {
-  create: (data: Insertable<Database["event"]>) => Promise<Event>
+  create: (data: EventWrite) => Promise<Event | undefined>
+  update: (id: Event["id"], data: Omit<EventWrite, "id">) => Promise<Event>
   get: (cursor?: Event["id"], orderBy?: z.infer<typeof keys>, limit?: number) => Promise<Event[]>
   getById: (id: string) => Promise<Event | undefined>
-  update: (eventID: string, data: EventWrite) => Promise<Event>
 }
 
 export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
@@ -38,13 +38,8 @@ export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
     const event = await db.selectFrom("event").selectAll().where("id", "=", id).executeTakeFirst()
     return event ? mapToEvent(event) : undefined
   },
-  update: async (eventID: string, data) => {
-    const event = await db
-      .updateTable("event")
-      .set(data)
-      .where("id", "=", eventID)
-      .returningAll()
-      .executeTakeFirstOrThrow()
+  update: async (id, data) => {
+    const event = await db.updateTable("event").set(data).where("id", "=", id).returningAll().executeTakeFirstOrThrow()
     return mapToEvent(event)
   },
 })

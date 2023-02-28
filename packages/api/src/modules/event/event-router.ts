@@ -7,6 +7,15 @@ export const eventRouter = t.router({
   create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
     return ctx.eventService.create(input)
   }),
+  edit: t.procedure
+    .input(
+      EventWriteSchema.required({
+        id: true,
+      })
+    )
+    .mutation(({ input: changes, ctx }) => {
+      return ctx.eventService.editEvent(changes.id, changes)
+    }),
   all: publicProcedure.query(({ ctx }) => {
     return ctx.eventService.list()
   }),
