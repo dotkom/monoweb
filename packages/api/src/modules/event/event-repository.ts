@@ -19,7 +19,7 @@ export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
     const event = await db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
     return mapToEvent(event)
   },
-  get: async (cursor, orderBy = "createdAt", limit = 20) => {
+  get: async (cursor, _orderBy = "createdAt", limit = 20) => {
     let query = db.selectFrom("event").selectAll()
     if (cursor) {
       query = query.where("id", ">", cursor)
