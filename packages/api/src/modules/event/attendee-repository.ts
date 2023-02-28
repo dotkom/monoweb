@@ -3,6 +3,7 @@ import {
   Attendance,
   AttendanceSchema,
   AttendanceWrite,
+  Attendee,
   AttendeeSchema,
   AttendeeWrite,
   Event,
