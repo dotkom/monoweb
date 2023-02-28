@@ -7,12 +7,15 @@ export interface EventService {
   create: (payload: EventWrite) => Promise<Event>
   getEvent: (id: Event["id"]) => Promise<Event>
   getEvents: (limit: number, offset?: number) => Promise<Event[]>
+  editEvent: (id: Event["id"], payload: Omit<EventWrite, "id">) => Promise<Event>
 }
 
 export const initEventService = (eventRepository: EventRepository): EventService => ({
   create: async (payload) => {
     const event = await eventRepository.createEvent(payload)
-    if (!event) throw new Error("Failed to create event")
+    if (!event) {
+      throw new Error("Failed to create event")
+    }
     return event
   },
   getEvents: async (limit, offset) => {
@@ -23,6 +26,13 @@ export const initEventService = (eventRepository: EventRepository): EventService
     const event = await eventRepository.getEventByID(id)
     if (!event) {
       throw new NotFoundError(`Event with ID:${id} not found`)
+    }
+    return event
+  },
+  editEvent: async (id, payload) => {
+    const event = await eventRepository.editEvent(id, payload)
+    if (!event) {
+      throw new Error("Failed to edit event")
     }
     return event
   },

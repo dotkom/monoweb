@@ -129,14 +129,14 @@ importers:
       pg: ^8.8.0
       tsx: ^3.12.0
       typescript: ^4.9.3
-      zod: ^3.19.1
+      zod: ^3.20.6
     dependencies:
       '@dotkomonline/db': link:../../packages/ow-db
       chalk: 5.1.2
       commander: 9.4.1
       kysely: 0.23.3
       pg: 8.8.0
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       '@dotkomonline/logger': link:../../packages/ow-logger
       '@faker-js/faker': 7.6.0
@@ -284,7 +284,7 @@ importers:
       typescript: ^4.9.3
       vite: ^3.1.1
       vitest: ^0.28.0
-      zod: ^3.19.1
+      zod: ^3.20.6
     dependencies:
       '@dotkomonline/api': link:../../packages/api
       '@dotkomonline/auth': link:../../packages/auth
@@ -322,7 +322,7 @@ importers:
       react-hook-form: 7.39.5_react@18.2.0
       react-icons: 4.7.1_react@18.2.0
       superjson: 1.12.2
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       '@dotkomonline/config': link:../../packages/config
       '@dotkomonline/db': link:../../packages/ow-db
@@ -372,7 +372,7 @@ importers:
       superjson: ^1.12.2
       typescript: ^4.9.3
       vitest: ^0.28.0
-      zod: ^3.17.10
+      zod: ^3.20.6
     dependencies:
       '@dotkomonline/auth': link:../auth
       '@dotkomonline/db': link:../ow-db
@@ -384,7 +384,7 @@ importers:
       kysely: 0.23.3
       pg: 8.8.0
       superjson: 1.12.2
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       '@dotkomonline/config': link:../config
       '@dotkomonline/logger': link:../ow-logger
@@ -563,9 +563,9 @@ importers:
     specifiers:
       eslint: ^8.28.0
       typescript: ^4.9.3
-      zod: ^3.19.1
+      zod: ^3.20.6
     dependencies:
-      zod: 3.19.1
+      zod: 3.20.6
     devDependencies:
       eslint: 8.28.0
       typescript: 4.9.3
@@ -17580,6 +17580,6 @@ packages:
       readable-stream: 3.6.0
     dev: false
 
-  /zod/3.19.1:
-    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
+  /zod/3.20.6:
+    resolution: {integrity: sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==}
     dev: false
