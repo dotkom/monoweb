@@ -38,10 +38,3 @@ export interface AttendeeTable {
   userId: string
   attendanceId: string
 }
-
-export interface CommitteeTable {
-  id: Generated<string>
-  createdAt: Generated<Date>
-  updatedAt: Generated<Date>
-  name: string
-}
