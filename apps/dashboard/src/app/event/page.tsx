@@ -1,17 +1,16 @@
 "use client"
 
 import { Title, Text, Table, Button, Flex, Loader } from "@mantine/core"
-
 import { trpc } from "../../trpc"
-import { Event } from "@dotkomonline/types"
+import { Committee, Event } from "@dotkomonline/types"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC, useState } from "react"
-import { EventDetailsModal } from "./EventDetailsModal"
+import { EventDetailsContext, EventDetailsModal } from "./EventDetailsModal"
 import { EventCreationModal } from "./EventCreationModal"
 
 export default function EventPage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
+  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery()
   const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery({
     offset: 0,
     limit: 50,
@@ -29,9 +28,9 @@ export default function EventPage() {
       ) : (
         <>
           <div>
-            <EventTable events={events} />
+            <EventTable events={events} committees={committees} />
           </div>
-          {isCreationOpen && <EventCreationModal committees={committees} close={() => setCreationOpen(false)} />}
+          {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
           <div>
             <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
           </div>
@@ -41,9 +40,9 @@ export default function EventPage() {
   )
 }
 
-type EventTableProps = { events: Event[] }
+type EventTableProps = { events: Event[]; committees: Committee[] }
 
-const EventTable: FC<EventTableProps> = ({ events }) => {
+const EventTable: FC<EventTableProps> = ({ events, committees }) => {
   const columnHelper = createColumnHelper<Event>()
   const columns = [
     columnHelper.accessor("title", {
@@ -67,7 +66,7 @@ const EventTable: FC<EventTableProps> = ({ events }) => {
     columnHelper.accessor((evt) => evt, {
       id: "actions",
       header: () => "Detaljer",
-      cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
+      cell: (info) => <EventTableDetailsCell committees={committees} event={info.getValue()} />,
     }),
   ]
   const table = useReactTable({
@@ -100,7 +99,7 @@ const EventTable: FC<EventTableProps> = ({ events }) => {
   )
 }
 
-type EventTableDetailsCellProps = { event: Event }
+type EventTableDetailsCellProps = { event: Event; committees: Committee[] }
 
 const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
   const [isOpen, setOpen] = useState(false)
@@ -110,7 +109,11 @@ const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
       <Button variant="outline" onClick={() => setOpen(true)}>
         Detaljer
       </Button>
-      {isOpen && <EventDetailsModal event={event} close={() => setOpen(false)} />}
+      {isOpen && (
+        <EventDetailsContext.Provider value={{ event }}>
+          <EventDetailsModal close={() => setOpen(false)} />
+        </EventDetailsContext.Provider>
+      )}
     </>
   )
 }
