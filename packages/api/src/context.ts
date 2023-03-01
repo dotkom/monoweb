@@ -8,8 +8,8 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
 
 import { initUserRepository } from "./modules/auth/user-repository"
 import { initUserService } from "./modules/auth/user-service"
-import { initEventRepository } from "./modules/event/event-repository"
-import { initEventService } from "./modules/event/event-service"
+import { EventRepositoryImpl } from "./modules/event/event-repository"
+import { EventServiceImpl } from "./modules/event/event-service"
 import { initCommitteeService } from "./modules/committee/committee-service"
 import { initCommitteeRepository } from "./modules/committee/committee-repository"
 import { initCompanyService } from "./modules/company/company-service"
@@ -39,14 +39,14 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   )
 
   const userRepository = initUserRepository(db)
-  const eventRepository = initEventRepository(db)
+  const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = initCommitteeRepository(db)
   const companyRepository = initCompanyRepository(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
-  const eventService = initEventService(eventRepository, attendanceRepository)
+  const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
   const attendService = new AttendServiceImpl(attendanceRepository)
   const committeeService = initCommitteeService(committeeRepository)
   const companyService = initCompanyService(companyRepository)
