@@ -4,13 +4,15 @@ import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
 
 import { NotFoundError } from "../../../errors/errors"
-import { initEventRepository } from "../event-repository"
-import { initEventService } from "../event-service"
+import { AttendanceRepositoryImpl } from "../attendee-repository"
+import { EventRepositoryImpl } from "../event-repository"
+import { EventServiceImpl } from "../event-service"
 
 describe("EventService", () => {
   const db = vi.mocked(Kysely.prototype)
-  const eventRepository = initEventRepository(db)
-  const eventService = initEventService(eventRepository)
+  const eventRepository = new EventRepositoryImpl(db)
+  const attendanceRepository = new AttendanceRepositoryImpl(db)
+  const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
 
   const payload: Omit<Event, "id"> = {
     title: "Kotlin og spillutvikling med Bekk",
@@ -31,19 +33,19 @@ describe("EventService", () => {
 
   it("creates a new event", async () => {
     const id = randomUUID()
-    vi.spyOn(eventRepository, "createEvent").mockResolvedValueOnce({ id, ...payload })
+    vi.spyOn(eventRepository, "create").mockResolvedValueOnce({ id, ...payload })
     const event = await eventService.create(payload)
     expect(event).toEqual({ id, ...payload })
-    expect(eventRepository.createEvent).toHaveBeenCalledWith(payload)
+    expect(eventRepository.create).toHaveBeenCalledWith(payload)
   })
 
   it("finds events by id", async () => {
     const id = randomUUID()
-    vi.spyOn(eventRepository, "getEventByID").mockResolvedValueOnce(undefined)
-    const missing = eventService.getEvent(id)
+    vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(undefined)
+    const missing = eventService.getById(id)
     await expect(missing).rejects.toThrow(NotFoundError)
-    vi.spyOn(eventRepository, "getEventByID").mockResolvedValueOnce({ id, ...payload })
-    const real = await eventService.getEvent(id)
+    vi.spyOn(eventRepository, "getById").mockResolvedValueOnce({ id, ...payload })
+    const real = await eventService.getById(id)
     expect(real).toEqual({ id, ...payload })
   })
 })

@@ -1,39 +1,63 @@
-import { Event, EventWrite } from "@dotkomonline/types"
+import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
+import { AttendanceRepository } from "./attendee-repository"
 import { EventRepository } from "./event-repository"
 
 export interface EventService {
-  create: (payload: EventWrite) => Promise<Event>
-  getEvent: (id: Event["id"]) => Promise<Event>
-  getEvents: (limit: number, offset?: number) => Promise<Event[]>
-  editEvent: (id: Event["id"], payload: Omit<EventWrite, "id">) => Promise<Event>
+  create(eventCreate: EventWrite): Promise<Event>
+  getById(id: Event["id"]): Promise<Event>
+  list(): Promise<Event[]>
+  addAttendance(eventId: Event["id"], attendanceWrite: AttendanceWrite): Promise<Attendance>
+  listAttendance(eventId: Event["id"]): Promise<Attendance[]>
+  editEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>
 }
 
-export const initEventService = (eventRepository: EventRepository): EventService => ({
-  create: async (payload) => {
-    const event = await eventRepository.createEvent(payload)
+export class EventServiceImpl implements EventService {
+  constructor(
+    private readonly eventRepository: EventRepository,
+    private readonly attendanceRepository: AttendanceRepository
+  ) {}
+
+  async create(eventCreate: EventWrite): Promise<Event> {
+    const event = await this.eventRepository.create(eventCreate)
     if (!event) {
       throw new Error("Failed to create event")
     }
     return event
-  },
-  getEvents: async (limit, offset) => {
-    const events = await eventRepository.getEvents(limit, offset)
+  }
+
+  async list(): Promise<Event[]> {
+    const events = await this.eventRepository.all()
     return events
-  },
-  getEvent: async (id) => {
-    const event = await eventRepository.getEventByID(id)
+  }
+
+  async getById(id: Event["id"]): Promise<Event> {
+    const event = await this.eventRepository.getById(id)
     if (!event) {
       throw new NotFoundError(`Event with ID:${id} not found`)
     }
     return event
-  },
-  editEvent: async (id, payload) => {
-    const event = await eventRepository.editEvent(id, payload)
+  }
+
+  async editEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
+    const event = await this.eventRepository.update(id, eventUpdate)
     if (!event) {
-      throw new Error("Failed to edit event")
+      throw new NotFoundError(`Could not update Event(${id})`)
     }
     return event
-  },
-})
+  }
+
+  async addAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
+    const attendance = await this.attendanceRepository.createAttendance({
+      ...attendanceCreate,
+      eventId,
+    })
+    return attendance
+  }
+
+  async listAttendance(eventId: Event["id"]): Promise<Attendance[]> {
+    const attendance = await this.attendanceRepository.getAttendancesByEventId(eventId)
+    return attendance
+  }
+}
