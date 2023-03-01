@@ -1,10 +1,10 @@
-import { EventWriteSchema } from "@dotkomonline/types"
+import { EventWriteSchema, EventSchema, AttendanceWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 
-import { t } from "../../trpc"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const eventRouter = t.router({
-  create: t.procedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
+  create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
     return ctx.eventService.create(input)
   }),
   edit: t.procedure
@@ -16,17 +16,34 @@ export const eventRouter = t.router({
     .mutation(({ input: changes, ctx }) => {
       return ctx.eventService.editEvent(changes.id, changes)
     }),
-  all: t.procedure
+  all: publicProcedure.query(({ ctx }) => {
+    return ctx.eventService.list()
+  }),
+  get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
+    return ctx.eventService.getById(input)
+  }),
+  addAttendance: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
+    const attendance = await ctx.eventService.addAttendance(input.eventId, input)
+    return attendance
+  }),
+  getAttendance: publicProcedure
     .input(
       z.object({
-        limit: z.number(),
-        offset: z.number().optional(),
+        eventId: EventSchema.shape.id,
       })
     )
-    .query(({ input, ctx }) => {
-      return ctx.eventService.getEvents(input.limit, input.offset)
+    .query(async ({ input, ctx }) => {
+      const attendance = await ctx.eventService.listAttendance(input.eventId)
+      return attendance
     }),
-  get: t.procedure.input(z.string().uuid()).query(({ input, ctx }) => {
-    return ctx.eventService.getEvent(input)
-  }),
+  attend: protectedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.attendService.registerForEvent(ctx.session.user.id, input.eventId)
+      return res
+    }),
 })

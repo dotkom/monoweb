@@ -13,7 +13,7 @@
     "zod": "^3.20.6"
   },
   "devDependencies": {
-    "typescript": "^4.9.3",
-    "eslint": "^8.28.0"
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.3"
   }
 }
