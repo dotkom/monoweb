@@ -1,6 +1,6 @@
 import { Card, Grid, Modal, Text, Tabs, Title, useMantineTheme } from "@mantine/core"
 import { createContext, FC, useContext } from "react"
-import { Committee, Event, EventWrite, EventWriteSchema } from "@dotkomonline/types"
+import { Event, EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { EventDetailsCommittees } from "./EventCommitteeDetailsForm"
 import { trpc } from "../../trpc"
@@ -60,7 +60,12 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
     ...event,
   })
   return (
-    <Modal title={<Title order={2}>Arrangementdetaljer for '{event.title}'</Title>} fullScreen opened onClose={close}>
+    <Modal
+      title={<Title order={2}>Arrangementdetaljer for &apos;{event.title}&apos;</Title>}
+      fullScreen
+      opened
+      onClose={close}
+    >
       <Grid
         columns={2}
         gutter="xl"
@@ -85,7 +90,7 @@ export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
                 ))}
               </Tabs.List>
               {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
-                <Tabs.Panel value={slug}>
+                <Tabs.Panel key={slug} value={slug}>
                   <Component />
                 </Tabs.Panel>
               ))}

@@ -14,7 +14,7 @@ export const useEventWriteForm = (
   onSubmit: (data: EventWrite) => void,
   defaultValues?: Partial<EventWrite>
 ): FC<EventWriteFormComponentProps> => {
-  return ({ committees }) => {
+  return function EventWriteForm({ committees }) {
     const {
       control,
       register,

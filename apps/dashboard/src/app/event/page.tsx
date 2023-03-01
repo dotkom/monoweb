@@ -10,7 +10,7 @@ import { EventCreationModal } from "./EventCreationModal"
 
 export default function EventPage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
+  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery()
   const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery({
     offset: 0,
     limit: 50,
@@ -101,7 +101,7 @@ const EventTable: FC<EventTableProps> = ({ events, committees }) => {
 
 type EventTableDetailsCellProps = { event: Event; committees: Committee[] }
 
-const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ committees, event }) => {
+const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
   const [isOpen, setOpen] = useState(false)
 
   return (
