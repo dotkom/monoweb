@@ -1,3 +1,4 @@
+import { Cursor } from "@/utils/db-utils"
 import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
@@ -7,7 +8,7 @@ import { EventRepository } from "./event-repository"
 export interface EventService {
   create(eventCreate: EventWrite): Promise<Event>
   getById(id: Event["id"]): Promise<Event>
-  list(): Promise<Event[]>
+  list(take: number, cursor?: Cursor): Promise<Event[]>
   addAttendance(eventId: Event["id"], attendanceWrite: AttendanceWrite): Promise<Attendance>
   listAttendance(eventId: Event["id"]): Promise<Attendance[]>
   editEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>
@@ -27,8 +28,8 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async list(): Promise<Event[]> {
-    const events = await this.eventRepository.all()
+  async list(take: number, cursor?: Cursor): Promise<Event[]> {
+    const events = await this.eventRepository.all(take, cursor)
     return events
   }
 
@@ -49,7 +50,7 @@ export class EventServiceImpl implements EventService {
   }
 
   async addAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
-    const attendance = await this.attendanceRepository.createAttendance({
+    const attendance = await this.attendanceRepository.create({
       ...attendanceCreate,
       eventId,
     })
@@ -57,7 +58,7 @@ export class EventServiceImpl implements EventService {
   }
 
   async listAttendance(eventId: Event["id"]): Promise<Attendance[]> {
-    const attendance = await this.attendanceRepository.getAttendancesByEventId(eventId)
+    const attendance = await this.attendanceRepository.getById(eventId)
     return attendance
   }
 }

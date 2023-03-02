@@ -1,3 +1,4 @@
+import { CursorSchema } from "@/utils/db-utils"
 import { EventWriteSchema, EventSchema, AttendanceWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 
@@ -16,9 +17,16 @@ export const eventRouter = t.router({
     .mutation(({ input: changes, ctx }) => {
       return ctx.eventService.editEvent(changes.id, changes)
     }),
-  all: publicProcedure.query(({ ctx }) => {
-    return ctx.eventService.list()
-  }),
+  all: publicProcedure
+    .input(
+      z.object({
+        take: z.number().positive().default(20),
+        cursor: CursorSchema.optional(),
+      })
+    )
+    .query(({ input, ctx }) => {
+      return ctx.eventService.list(input.take, input.cursor)
+    }),
   get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
     return ctx.eventService.getById(input)
   }),

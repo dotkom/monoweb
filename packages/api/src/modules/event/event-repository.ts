@@ -1,16 +1,14 @@
 import { Database } from "@dotkomonline/db"
 import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
-import { z } from "zod"
+import { Cursor, paginateQuery } from "@/utils/db-utils"
 
 const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
-
-const keys = EventSchema.keyof()
 
 export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
   update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
-  all(cursor?: Event["id"], orderBy?: z.infer<typeof keys>, limit?: number): Promise<Event[]>
+  all(take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
 
@@ -30,17 +28,10 @@ export class EventRepositoryImpl implements EventRepository {
       .executeTakeFirstOrThrow()
     return mapToEvent(event)
   }
-  async all(cursor?: Event["id"], _orderBy?: z.infer<typeof keys>, limit?: number): Promise<Event[]> {
-    let query = this.db.selectFrom("event").selectAll()
+  async all(take: number, cursor?: Cursor): Promise<Event[]> {
+    let query = this.db.selectFrom("event").selectAll().limit(take)
     if (cursor) {
-      query = query.where("id", ">", cursor)
-    }
-    // TODO: no ordering for now
-    // if (orderBy) {
-    //   query = query.orderBy("createdAt", "desc")
-    // }
-    if (limit) {
-      query = query.limit(limit)
+      query = paginateQuery(query, cursor)
     }
     const events = await query.execute()
     return events.map(mapToEvent)
