@@ -6,6 +6,11 @@ export const CursorSchema = z.object({
   createdAt: z.date(),
 })
 
+export const PaginateInputSchema = z.object({
+  take: z.number().positive().default(20),
+  cursor: CursorSchema.optional(),
+})
+
 export type Cursor = z.infer<typeof CursorSchema>
 
 export const paginateQuery = (qb: AnySelectQueryBuilder, cursor: Cursor) => {

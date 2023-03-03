@@ -1,39 +1,45 @@
+import { Cursor, paginateQuery } from "@/utils/db-utils"
 import { Database } from "@dotkomonline/db"
 import { Committee, CommitteeSchema, CommitteeWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
 
-export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => {
+const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => {
   return CommitteeSchema.parse(payload)
 }
 
 export interface CommitteeRepository {
-  getCommitteeById: (id: string) => Promise<Committee | undefined>
-  getCommittees: (limit: number, offset?: number) => Promise<Committee[]>
-  create: (values: CommitteeWrite) => Promise<Committee>
+  getById(id: string): Promise<Committee | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<Committee[]>
+  create(values: CommitteeWrite): Promise<Committee>
 }
 
-export const initCommitteeRepository = (db: Kysely<Database>): CommitteeRepository => {
-  const repo: CommitteeRepository = {
-    getCommitteeById: async (id) => {
-      const committee = await db.selectFrom("committee").selectAll().where("id", "=", id).executeTakeFirst()
-      return committee ? mapToCommittee(committee) : undefined
-    },
-    getCommittees: async (limit, offset = 0) => {
-      const committees = await db.selectFrom("committee").selectAll().offset(offset).limit(limit).execute()
-      return committees.map(mapToCommittee)
-    },
-    create: async (values) => {
-      const committee = await db
-        .insertInto("committee")
-        .values({
-          name: values.name,
-        })
-        .returningAll()
-        // It should not be possible for this to throw, since there are no
-        // restrictions on creating committees, as name is not unique.
-        .executeTakeFirstOrThrow()
-      return mapToCommittee(committee)
-    },
+export class CommitteeRepositoryImpl implements CommitteeRepository {
+  constructor(private db: Kysely<Database>) {}
+
+  async getById(id: string) {
+    const committee = await this.db.selectFrom("committee").selectAll().where("id", "=", id).executeTakeFirst()
+    return committee ? mapToCommittee(committee) : undefined
   }
-  return repo
+
+  async getAll(take: number, cursor?: Cursor) {
+    let query = this.db.selectFrom("committee").selectAll().limit(take)
+    if (cursor) {
+      query = paginateQuery(query, cursor)
+    }
+    const committees = await query.execute()
+    return committees.map(mapToCommittee)
+  }
+
+  async create(values: CommitteeWrite) {
+    const committee = await this.db
+      .insertInto("committee")
+      .values({
+        name: values.name,
+      })
+      .returningAll()
+      // It should not be possible for this to throw, since there are no
+      // restrictions on creating committees, as name is not unique.
+      .executeTakeFirstOrThrow()
+    return mapToCommittee(committee)
+  }
 }
