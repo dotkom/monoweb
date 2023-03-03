@@ -1,7 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
-import { Cursor } from "../../utils/db-utils"
+import { Cursor, paginateQuery } from "../../utils/db-utils"
 
 const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
