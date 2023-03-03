@@ -6,10 +6,16 @@ export const CursorSchema = z.object({
   createdAt: z.date(),
 })
 
-export const PaginateInputSchema = z.object({
-  take: z.number().positive().default(20),
-  cursor: CursorSchema.optional(),
-})
+export const PaginateInputSchema = z
+  .object({
+    take: z.number().positive(),
+    cursor: CursorSchema.optional(),
+  })
+  .optional()
+  .default({
+    take: 20,
+    cursor: undefined,
+  })
 
 export type Cursor = z.infer<typeof CursorSchema>
 
