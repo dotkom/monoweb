@@ -1,4 +1,4 @@
-import { Cursor, paginateQuery } from "@/utils/db-utils"
+import { Cursor, paginateQuery } from "../../utils/db-utils"
 import { Database } from "@dotkomonline/db"
 import { Committee, CommitteeSchema, CommitteeWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
