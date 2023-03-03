@@ -8,7 +8,7 @@ const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(da
 export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
   update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
-  all(take: number, cursor?: Cursor): Promise<Event[]>
+  getAll(take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
 
@@ -28,7 +28,7 @@ export class EventRepositoryImpl implements EventRepository {
       .executeTakeFirstOrThrow()
     return mapToEvent(event)
   }
-  async all(take: number, cursor?: Cursor): Promise<Event[]> {
+  async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
     let query = this.db.selectFrom("event").selectAll().limit(take)
     if (cursor) {
       query = paginateQuery(query, cursor)

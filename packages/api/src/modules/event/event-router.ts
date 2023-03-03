@@ -6,7 +6,7 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const eventRouter = t.router({
   create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.eventService.create(input)
+    return ctx.eventService.createEvent(input)
   }),
   edit: t.procedure
     .input(
@@ -15,7 +15,7 @@ export const eventRouter = t.router({
       })
     )
     .mutation(({ input: changes, ctx }) => {
-      return ctx.eventService.editEvent(changes.id, changes)
+      return ctx.eventService.updateEvent(changes.id, changes)
     }),
   all: publicProcedure
     .input(
@@ -25,10 +25,10 @@ export const eventRouter = t.router({
       })
     )
     .query(({ input, ctx }) => {
-      return ctx.eventService.list(input.take, input.cursor)
+      return ctx.eventService.getEvents(input.take, input.cursor)
     }),
   get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
-    return ctx.eventService.getById(input)
+    return ctx.eventService.getEventById(input)
   }),
   addAttendance: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
     const attendance = await ctx.eventService.addAttendance(input.eventId, input)
