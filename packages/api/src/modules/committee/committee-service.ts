@@ -1,7 +1,7 @@
 import { Committee, CommitteeWrite } from "@dotkomonline/types"
 import { CommitteeRepository } from "./committee-repository"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "@/utils/db-utils"
+import { Cursor } from "../../utils/db-utils"
 
 export interface CommitteeService {
   getCommittee(id: Committee["id"]): Promise<Committee>

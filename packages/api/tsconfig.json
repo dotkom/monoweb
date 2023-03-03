@@ -7,12 +7,12 @@
     "index.ts",
     "node_modules/@dotkomonline/auth/next-auth.d.ts"
   ],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-    },
-  }
+  // "compilerOptions": {
+  //   "baseUrl": ".",
+  //   "paths": {
+  //     "@/*": [
+  //       "./src/*"
+  //     ],
+  //   },
+  // }
 }

@@ -1,4 +1,4 @@
-import { PaginateInputSchema } from "@/utils/db-utils"
+import { PaginateInputSchema } from "../../utils/db-utils"
 import { EventWriteSchema, EventSchema, AttendanceWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 

@@ -1,4 +1,4 @@
-import { PaginateInputSchema } from "@/utils/db-utils"
+import { PaginateInputSchema } from "../../utils/db-utils"
 import { CommitteeWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { t } from "../../trpc"

@@ -1,6 +1,6 @@
-import { Cursor } from "@/utils/db-utils"
 import { Company, CompanyWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../errors/errors"
+import { Cursor } from "../../utils/db-utils"
 import { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {

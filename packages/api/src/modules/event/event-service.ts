@@ -1,7 +1,7 @@
-import { Cursor } from "@/utils/db-utils"
 import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
+import { Cursor } from "../../utils/db-utils"
 import { AttendanceRepository } from "./attendee-repository"
 import { EventRepository } from "./event-repository"
 

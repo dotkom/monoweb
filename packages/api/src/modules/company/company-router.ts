@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { t } from "../../trpc"
 import { CompanyWriteSchema } from "@dotkomonline/types"
-import { PaginateInputSchema } from "@/utils/db-utils"
+import { PaginateInputSchema } from "../../utils/db-utils"
 
 export const companyRouter = t.router({
   create: t.procedure.input(CompanyWriteSchema).mutation(({ input, ctx }) => {
