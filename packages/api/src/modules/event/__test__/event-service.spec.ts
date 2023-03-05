@@ -34,7 +34,7 @@ describe("EventService", () => {
   it("creates a new event", async () => {
     const id = randomUUID()
     vi.spyOn(eventRepository, "create").mockResolvedValueOnce({ id, ...payload })
-    const event = await eventService.create(payload)
+    const event = await eventService.createEvent(payload)
     expect(event).toEqual({ id, ...payload })
     expect(eventRepository.create).toHaveBeenCalledWith(payload)
   })
@@ -42,10 +42,10 @@ describe("EventService", () => {
   it("finds events by id", async () => {
     const id = randomUUID()
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(undefined)
-    const missing = eventService.getById(id)
+    const missing = eventService.getEventById(id)
     await expect(missing).rejects.toThrow(NotFoundError)
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce({ id, ...payload })
-    const real = await eventService.getById(id)
+    const real = await eventService.getEventById(id)
     expect(real).toEqual({ id, ...payload })
   })
 })

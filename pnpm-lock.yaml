@@ -377,6 +377,7 @@ importers:
       pg: ^8.8.0
       superjson: ^1.12.2
       typescript: ^4.9.3
+      vite-tsconfig-paths: ^4.0.5
       vitest: ^0.28.0
       zod: ^3.20.6
     dependencies:
@@ -401,6 +402,7 @@ importers:
       '@vitest/ui': 0.28.4
       eslint: 8.28.0
       typescript: 4.9.3
+      vite-tsconfig-paths: 4.0.5_typescript@4.9.3
       vitest: 0.28.4_@vitest+ui@0.28.4
 
   packages/auth:
@@ -16291,6 +16293,19 @@ packages:
       typescript: 4.9.5
     dev: true
 
+  /tsconfck/2.0.3_typescript@4.9.3:
+    resolution: {integrity: sha512-o3DsPZO1+C98KqHMdAbWs30zpxD30kj8r9OLA4ML1yghx4khNDzaaShNalfluh8ZPPhzKe3qyVCP1HiZszSAsw==}
+    engines: {node: ^14.13.1 || ^16 || >=18}
+    hasBin: true
+    peerDependencies:
+      typescript: ^4.3.5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 4.9.3
+    dev: true
+
   /tsconfig-paths/3.14.1:
     resolution: {integrity: sha512-fxDhWnFSLt3VuTwtvJt5fpwxBHg5AdKWMsgcPOOIilyjymcYVZoCQF8fvFRezCNfblEXmi+PcM1eYHeOAgXCOQ==}
     dependencies:
@@ -17017,6 +17032,17 @@ packages:
       - sugarss
       - supports-color
       - terser
+    dev: true
+
+  /vite-tsconfig-paths/4.0.5_typescript@4.9.3:
+    resolution: {integrity: sha512-/L/eHwySFYjwxoYt1WRJniuK/jPv+WGwgRGBYx3leciR5wBeqntQpUE6Js6+TJemChc+ter7fDBKieyEWDx4yQ==}
+    dependencies:
+      debug: 4.3.4
+      globrex: 0.1.2
+      tsconfck: 2.0.3_typescript@4.9.3
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
     dev: true
 
   /vite/3.2.4:
