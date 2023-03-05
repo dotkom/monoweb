@@ -1,4 +1,4 @@
-import { AnySelectQueryBuilder, SimpleReferenceExpression, sql, WhereInterface } from "kysely"
+import { AnySelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
 export const CursorSchema = z.object({
