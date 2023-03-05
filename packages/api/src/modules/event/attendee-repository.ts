@@ -12,15 +12,15 @@ import { Kysely, sql } from "kysely"
 import { AttendeeTable } from "@dotkomonline/db/src/types/event"
 
 export interface AttendanceRepository {
-  createAttendance: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
+  create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
-  getAttendancesByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
+  getById: (eventId: Event["id"]) => Promise<Attendance[]>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async createAttendance(attendanceWrite: AttendanceWrite) {
+  async create(attendanceWrite: AttendanceWrite) {
     const res = await this.db
       .insertInto("attendance")
       .values({
@@ -43,7 +43,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     console.log({ res })
     return AttendeeSchema.parse(res)
   }
-  async getAttendancesByEventId(eventId: string) {
+  async getById(eventId: string) {
     const res = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")

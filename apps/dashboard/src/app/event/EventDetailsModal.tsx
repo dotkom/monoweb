@@ -43,7 +43,7 @@ export type EventDetailsModalProps = {
 
 export const EventDetailsModal: FC<EventDetailsModalProps> = ({ close }) => {
   const { event } = useEventDetailsContext()
-  const { data: committees = [] } = trpc.committee.all.useQuery({ limit: 50 })
+  const { data: committees = [] } = trpc.committee.all.useQuery()
   const theme = useMantineTheme()
   const utils = trpc.useContext()
   const create = trpc.event.edit.useMutation({

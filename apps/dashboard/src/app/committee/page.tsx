@@ -11,7 +11,7 @@ import { CommitteeCreationModal } from "./CommitteeCreationModal"
 
 export default function CommitteePage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: committees = [], isLoading } = trpc.committee.all.useQuery({ offset: 0, limit: 50 })
+  const { data: committees = [], isLoading } = trpc.committee.all.useQuery()
 
   return (
     <Flex direction="column" p="md" gap="md">
