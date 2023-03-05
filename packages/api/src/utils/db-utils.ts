@@ -17,6 +17,8 @@ export const PaginateInputSchema = z
 export type Cursor = z.infer<typeof CursorSchema>
 
 export function paginateQuery(qb: AnySelectQueryBuilder, cursor: Cursor) {
+  // This is not camelcased due to the query not going through the camelcase plugin.
+  // This is an exception.
   return qb
     .where(sql`(created_at, id)`, "<", sql`(${cursor.createdAt}, ${cursor.id})`)
     .orderBy("created_at", "desc")
