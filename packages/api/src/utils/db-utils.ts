@@ -1,4 +1,4 @@
-import { AnySelectQueryBuilder } from "kysely"
+import { AnySelectQueryBuilder, SimpleReferenceExpression, sql, WhereInterface } from "kysely"
 import { z } from "zod"
 
 export const CursorSchema = z.object({
@@ -16,10 +16,9 @@ export const PaginateInputSchema = z
 
 export type Cursor = z.infer<typeof CursorSchema>
 
-export const paginateQuery = (qb: AnySelectQueryBuilder, cursor: Cursor) => {
+export function paginateQuery(qb: AnySelectQueryBuilder, cursor: Cursor) {
   return qb
-    .where((qb) => qb.where("createdAt", "=", cursor.createdAt).where("id", "<", cursor.id))
-    .orWhere("createdAt", "<", cursor.createdAt)
-    .orderBy("createdAt", "desc")
+    .where(sql`(created_at, id)`, "<", sql`(${cursor.createdAt}, ${cursor.id})`)
+    .orderBy("created_at", "desc")
     .orderBy("id", "desc")
 }

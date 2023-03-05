@@ -32,6 +32,8 @@ export class EventRepositoryImpl implements EventRepository {
     let query = this.db.selectFrom("event").selectAll().limit(take)
     if (cursor) {
       query = paginateQuery(query, cursor)
+    } else {
+      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
     }
     const events = await query.execute()
     return events.map(mapToEvent)
