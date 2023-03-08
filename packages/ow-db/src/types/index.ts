@@ -1,6 +1,7 @@
 import { CompanyTable, EventCompanyTable } from "./company"
 import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable } from "./event"
 import { MarkTable, PersonalMarkTable } from "./marks"
+import { ProfileTable } from "./profile"
 import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
 
 export interface Database {
@@ -16,4 +17,5 @@ export interface Database {
   eventCompany: EventCompanyTable
   mark: MarkTable
   personalMark: PersonalMarkTable
+  profile: ProfileTable
 }

@@ -13,6 +13,8 @@ import { initEventService } from "./modules/event/event-service"
 import { initCommitteeService } from "./modules/committee/committee-service"
 import { initCommitteeRepository } from "./modules/committee/committee-repository"
 import { Configuration, OAuth2Api as HydraApiClient } from "@ory/client"
+import { initProfileRepository } from "./modules/profile/profile-repsoitory"
+import { initProfileService } from "./modules/profile/profile-service"
 
 type CreateContextOptions = {
   session: Session | null
@@ -37,16 +39,20 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   const userRepository = initUserRepository(db)
   const eventRepository = initEventRepository(db)
   const committeeRepository = initCommitteeRepository(db)
+  const profileRepository = initProfileRepository(db)
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
   const eventService = initEventService(eventRepository)
   const committeeService = initCommitteeService(committeeRepository)
+  const profileService = initProfileService(profileRepository)
+  console.log(profileService.getPrivacy("d"))
   return {
     session: opts.session,
     userService,
     eventService,
     committeeService,
+    profileService,
   }
 }
 
