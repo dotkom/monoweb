@@ -2,7 +2,7 @@ import { Company, Event } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import { Database } from "@dotkomonline/db"
 import { mapToCompany } from "../company/company-repository"
-import { Cursor } from "../../utils/db-utils"
+import { Cursor, paginateQuery } from "../../utils/db-utils"
 
 export interface EventCompanyRepository {
   addCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
