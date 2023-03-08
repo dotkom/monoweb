@@ -18,10 +18,10 @@ export const authOptions: NextAuthOptions = {
       authorization: { params: { grant_type: "authorization_code", scope: "openid email profile" } },
       profile(profile): DefaultUser {
         return {
-          email: profile.sub,
+          email: profile.user.emailAddresses[0].emailAddress,
           id: profile.user.id,
-          image: profile.user.image,
-          name: profile.user.name,
+          image: profile.user.profileImageUrl,
+          name: profile.user.username,
         }
       },
       clientId: process.env.NEXTAUTH_DASHBOARD_CLIENT_ID as string,
