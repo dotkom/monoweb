@@ -1,13 +1,15 @@
 "use client"
 
-import { Title, Text, Table, Button, Flex } from "@mantine/core"
+import { Title, Text, Button, Flex } from "@mantine/core"
 
 import { trpc } from "../../trpc"
 import { Committee } from "@dotkomonline/types"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC, useState } from "react"
-import { CommitteeDetailsModal } from "./CommitteeDetailsModal"
 import { CommitteeCreationModal } from "./CommitteeCreationModal"
+import { GenericTable } from "../../components/GenericTable"
+import { Icon } from "@iconify/react"
+import Link from "next/link"
 
 export default function CommitteePage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
@@ -19,7 +21,7 @@ export default function CommitteePage() {
         <Title>Komiteer</Title>
         <Text>Oversikt over eksisterende komiteer</Text>
       </div>
-      <div className="rounded shadow">{isLoading ? "Loading" : <CommitteeTable committees={committees} />}</div>
+      {isLoading ? "Loading" : <CommitteeTable committees={committees} />}
       {isCreationOpen && <CommitteeCreationModal close={() => setCreationOpen(false)} />}
       <div>
         <Button onClick={() => setCreationOpen(true)}>Opprett nytt komitee</Button>
@@ -48,41 +50,17 @@ const CommitteeTable: FC<CommitteeTableProps> = ({ committees }) => {
     columns,
   })
 
-  return (
-    <Table>
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  )
+  return <GenericTable table={table} />
 }
 
 type CommitteeTableDetailsCellProps = { committee: Committee }
 
 const CommitteeTableDetailsCell: FC<CommitteeTableDetailsCellProps> = ({ committee }) => {
-  const [isOpen, setOpen] = useState(false)
-
   return (
-    <>
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        Detaljer
+    <Link href={`/committee/${committee.id}`}>
+      <Button variant="outline" leftIcon={<Icon icon="tabler:list-details" />}>
+        Se detailjer
       </Button>
-      {isOpen && <CommitteeDetailsModal committee={committee} close={() => setOpen(false)} />}
-    </>
+    </Link>
   )
 }
