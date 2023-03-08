@@ -1,7 +1,7 @@
 import { NextPage } from "next"
-import { SessionProvider } from "next-auth/react"
 import { AppProps } from "next/app"
 import { ReactElement, ReactNode } from "react"
+import { ClerkProvider } from "@clerk/nextjs"
 
 import type { Session } from "next-auth"
 
@@ -13,6 +13,7 @@ import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import { Poppins } from "@next/font/google"
 import { cn } from "@dotkomonline/ui"
+import { SessionProvider } from "next-auth/react"
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 
@@ -33,9 +34,9 @@ function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element 
 
   return (
     <ThemeProvider>
-      <SessionProvider session={pageProps.session}>
+      <ClerkProvider {...pageProps}>
         <div className={cn(poppins.variable, "h-full w-full")}>{getLayout(<Component {...pageProps} />)}</div>
-      </SessionProvider>
+      </ClerkProvider>
     </ThemeProvider>
   )
 }

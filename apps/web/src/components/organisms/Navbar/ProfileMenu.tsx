@@ -20,34 +20,34 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from "@dotkomonline/ui"
-import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { FC, PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
+import { useAuth } from "@clerk/nextjs"
 
 export const ProfileMenu = () => {
   const router = useRouter()
-  const { data: _session, status } = useSession()
+  const { isSignedIn, isLoaded, signOut } = useAuth()
 
-  if (status === "loading") {
+  if (!isLoaded) {
     return <Icon icon="tabler:loader-2" className="animate-spin" />
   }
 
-  if (status === "unauthenticated") {
+  if (!isSignedIn) {
     return (
       <>
         <Button
           variant="subtle"
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-          onClick={() => signIn("onlineweb")}
+          onClick={() => router.push("/sign-in")}
         >
           Log in
         </Button>
         <Button
           variant="gradient"
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          onClick={() => router.push("/auth/signup")}
+          onClick={() => router.push("/sign-up")}
         >
           Sign up
         </Button>
@@ -122,6 +122,7 @@ const linkGroups: Link[][] = [
 
 // TODO: link
 const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
+  const { signOut } = useAuth()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>

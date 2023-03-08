@@ -17,6 +17,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.11.5",
+    "@clerk/themes": "^1.4.4",
     "@dotkomonline/api": "*",
     "@dotkomonline/auth": "*",
     "@dotkomonline/ui": "*",
