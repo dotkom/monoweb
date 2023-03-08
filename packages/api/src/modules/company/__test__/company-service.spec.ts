@@ -21,6 +21,7 @@ describe("CompanyService", () => {
       location: "Mars",
       type: "Other",
       createdAt: new Date(),
+      image: null,
     }
     const id = randomUUID()
     vi.spyOn(companyRepository, "create").mockResolvedValueOnce({ id, ...company })
