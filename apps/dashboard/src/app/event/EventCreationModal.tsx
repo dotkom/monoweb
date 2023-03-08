@@ -8,7 +8,6 @@ export type EventCreationModalProps = {
 }
 
 export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
-  const { data: committees = [] } = trpc.committee.all.useQuery()
   const utils = trpc.useContext()
   const create = trpc.event.create.useMutation({
     onSuccess: () => {

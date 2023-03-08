@@ -25,35 +25,32 @@ describe("EventCompanyService", () => {
 
   it("creates links a company to an event", async () => {
     const id = randomUUID()
-    vi.spyOn(eventCompanyRepository, "addCompany").mockResolvedValueOnce([bekk])
+    vi.spyOn(eventCompanyRepository, "addCompany").mockResolvedValueOnce(undefined)
     const event = await eventCompanyService.addCompany(id, bekk.id)
-    expect(event).toEqual([bekk])
+    expect(event).toEqual(undefined)
     expect(eventCompanyRepository.addCompany).toHaveBeenCalledWith(id, bekk.id)
   })
 
   it("gets all companies related to an event", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "getCompaniesByEventId").mockResolvedValueOnce([bekk])
-    const companies = await eventCompanyService.getCompaniesByEventId(id)
+    const companies = await eventCompanyService.getCompaniesByEventId(id, 20, undefined)
     expect(companies).toEqual([bekk])
-    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id)
+    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id, 20, undefined)
   })
 
   it("deletes companies from an event", async () => {
     const id = randomUUID()
-    vi.spyOn(eventCompanyRepository, "deleteCompany").mockResolvedValueOnce([])
+    vi.spyOn(eventCompanyRepository, "deleteCompany").mockResolvedValueOnce(undefined)
     const companies = await eventCompanyService.deleteCompany(id, bekk.id)
-    expect(companies).toEqual([])
+    expect(companies).toEqual(undefined)
     expect(eventCompanyRepository.deleteCompany).toHaveBeenCalledWith(id, bekk.id)
   })
 
   it("silently deletes missing links", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "deleteCompany").mockResolvedValueOnce(undefined)
-    vi.spyOn(eventCompanyRepository, "getCompaniesByEventId").mockResolvedValueOnce([])
-    const companies = await eventCompanyService.deleteCompany(id, bekk.id)
-    expect(companies).toEqual([])
+    await eventCompanyService.deleteCompany(id, bekk.id)
     expect(eventCompanyRepository.deleteCompany).toHaveBeenCalledWith(id, bekk.id)
-    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id)
   })
 })

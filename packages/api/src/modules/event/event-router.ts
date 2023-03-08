@@ -66,7 +66,14 @@ export const eventRouter = t.router({
     .mutation(({ input, ctx }) => {
       return ctx.eventCompanyService.deleteCompany(input.id, input.company)
     }),
-  getCompanies: publicProcedure.input(EventSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.eventCompanyService.getCompaniesByEventId(input)
-  }),
+  getCompanies: publicProcedure
+    .input(
+      z.object({
+        id: EventSchema.shape.id,
+        pagination: PaginateInputSchema,
+      })
+    )
+    .query(({ input, ctx }) => {
+      return ctx.eventCompanyService.getCompaniesByEventId(input.id, input.pagination.take, input.pagination.cursor)
+    }),
 })

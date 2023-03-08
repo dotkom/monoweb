@@ -11,9 +11,10 @@ import { z } from "zod"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()
-  const { data: eventCompanies = [], isLoading: isEventCompaniesLoading } = trpc.event.getCompanies.useQuery(event.id)
-  const { data: companies = [], isLoading: isCompaniesLoading } = trpc.company.all.useQuery({ limit: 50 })
-  const isLoading = isEventCompaniesLoading || isCompaniesLoading
+  const { data: eventCompanies = [] } = trpc.event.getCompanies.useQuery({
+    id: event.id,
+  })
+  const { data: companies = [] } = trpc.company.all.useQuery({ take: 999 })
   const utils = trpc.useContext()
   const { mutate: deleteCompanyMutate } = trpc.event.deleteCompany.useMutation({
     onSuccess: () => {
