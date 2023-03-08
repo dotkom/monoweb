@@ -7,7 +7,7 @@
     "commander": "^9.4.1",
     "kysely": "^0.23.0",
     "pg": "^8.8.0",
-    "zod": "^3.19.1"
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "@dotkomonline/logger": "*",

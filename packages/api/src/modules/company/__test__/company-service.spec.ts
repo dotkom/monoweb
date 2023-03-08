@@ -3,13 +3,13 @@ import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
 import { NotFoundError } from "../../../errors/errors"
-import { initCompanyRepository } from "../company-repository"
-import { initCompanyService } from "../company-service"
+import { CompanyRepositoryImpl } from "../company-repository"
+import { CompanyServiceImpl } from "../company-service"
 
 describe("CompanyService", () => {
   const db = vi.mocked(Kysely.prototype, true)
-  const companyRepository = initCompanyRepository(db)
-  const companyService = initCompanyService(companyRepository)
+  const companyRepository = new CompanyRepositoryImpl(db)
+  const companyService = new CompanyServiceImpl(companyRepository)
 
   it("creates a new company", async () => {
     const company: Omit<Company, "id"> = {
@@ -30,8 +30,8 @@ describe("CompanyService", () => {
 
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
-    vi.spyOn(companyRepository, "getCompanyByID").mockResolvedValueOnce(undefined)
+    vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(undefined)
     await expect(companyService.getCompany(unknownID)).rejects.toThrow(NotFoundError)
-    expect(companyRepository.getCompanyByID).toHaveBeenCalledWith(unknownID)
+    expect(companyRepository.getById).toHaveBeenCalledWith(unknownID)
   })
 })

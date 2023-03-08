@@ -1,6 +1,7 @@
 import { Generated } from "kysely"
 
 type EventStatus = "TBA" | "PUBLIC" | "NO_LIMIT" | "ATTENDANCE"
+type EventType = "SOCIAL" | "COMPANY"
 
 export interface EventTable {
   id: Generated<string>
@@ -10,7 +11,7 @@ export interface EventTable {
   start: Date
   end: Date
   status: EventStatus
-  type: string
+  type: EventType
   public: boolean
   description: string | null
   subtitle: string | null
@@ -36,11 +37,4 @@ export interface AttendeeTable {
   updatedAt: Generated<Date>
   userId: string
   attendanceId: string
-}
-
-export interface CommitteeTable {
-  id: Generated<string>
-  createdAt: Generated<Date>
-  updatedAt: Generated<Date>
-  name: string
 }

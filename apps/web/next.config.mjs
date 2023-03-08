@@ -12,6 +12,7 @@ const config = {
   },
   experimental: {
     appDir: true,
+    swcPlugins: [["next-superjson-plugin", {}]],
   },
   transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth", "@dotkomonline/types", "@dotkomonline/api"],
   eslint: {

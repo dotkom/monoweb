@@ -8,13 +8,16 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
 
 import { initUserRepository } from "./modules/auth/user-repository"
 import { initUserService } from "./modules/auth/user-service"
-import { initEventRepository } from "./modules/event/event-repository"
-import { initEventService } from "./modules/event/event-service"
-import { initCommitteeService } from "./modules/committee/committee-service"
-import { initCommitteeRepository } from "./modules/committee/committee-repository"
+import { EventRepositoryImpl } from "./modules/event/event-repository"
+import { EventServiceImpl } from "./modules/event/event-service"
+
 import { Configuration, OAuth2Api as HydraApiClient } from "@ory/client"
-import { initProfileRepository } from "./modules/profile/profile-repsoitory"
-import { initProfileService } from "./modules/profile/profile-service"
+import { AttendanceRepositoryImpl } from "./modules/event/attendee-repository"
+import { AttendServiceImpl } from "./modules/event/attendee-service"
+import { CompanyRepositoryImpl } from "./modules/company/company-repository"
+import { CommitteeRepositoryImpl } from "./modules/committee/committee-repository"
+import { CommitteeServiceImpl } from "./modules/committee/committee-service"
+import { CompanyServiceImpl } from "./modules/company/company-service"
 
 type CreateContextOptions = {
   session: Session | null
@@ -37,22 +40,24 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   )
 
   const userRepository = initUserRepository(db)
-  const eventRepository = initEventRepository(db)
-  const committeeRepository = initCommitteeRepository(db)
-  const profileRepository = initProfileRepository(db)
+  const eventRepository = new EventRepositoryImpl(db)
+  const committeeRepository = new CommitteeRepositoryImpl(db)
+  const companyRepository = new CompanyRepositoryImpl(db)
+  const attendanceRepository = new AttendanceRepositoryImpl(db)
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
-  const eventService = initEventService(eventRepository)
-  const committeeService = initCommitteeService(committeeRepository)
-  const profileService = initProfileService(profileRepository)
-  console.log(profileService.getPrivacy("d"))
+  const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
+  const attendService = new AttendServiceImpl(attendanceRepository)
+  const committeeService = new CommitteeServiceImpl(committeeRepository)
+  const companyService = new CompanyServiceImpl(companyRepository)
   return {
     session: opts.session,
     userService,
     eventService,
     committeeService,
-    profileService,
+    companyService,
+    attendService,
   }
 }
 
