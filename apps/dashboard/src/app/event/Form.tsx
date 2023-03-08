@@ -23,7 +23,7 @@ export const useEventWriteForm = (
   defaultValues: Partial<EventWrite> = EVENT_FORM_DEFAULT_VALUES,
   label = "Opprett arrangement"
 ) => {
-  const { data: committees = [] } = trpc.committee.all.useQuery({ limit: 50 })
+  const { data: committees = [] } = trpc.committee.all.useQuery({ take: 999 })
   return useFormBuilder({
     schema: EventWriteSchema,
     defaultValues,

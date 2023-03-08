@@ -12,7 +12,7 @@ import { GenericTable } from "../../components/GenericTable"
 
 export default function EventPage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: events = [], isLoading } = trpc.event.all.useQuery({ offset: 0, limit: 50 })
+  const { data: events = [], isLoading } = trpc.event.all.useQuery()
 
   return (
     <Flex direction="column" p="md" gap="md">

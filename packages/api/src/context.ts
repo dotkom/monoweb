@@ -10,15 +10,16 @@ import { initUserRepository } from "./modules/auth/user-repository"
 import { initUserService } from "./modules/auth/user-service"
 import { EventRepositoryImpl } from "./modules/event/event-repository"
 import { EventServiceImpl } from "./modules/event/event-service"
-import { initCommitteeService } from "./modules/committee/committee-service"
-import { initCommitteeRepository } from "./modules/committee/committee-repository"
-import { initCompanyService } from "./modules/company/company-service"
-import { initCompanyRepository } from "./modules/company/company-repository"
+
 import { Configuration, OAuth2Api as HydraApiClient } from "@ory/client"
 import { AttendanceRepositoryImpl } from "./modules/event/attendee-repository"
 import { AttendServiceImpl } from "./modules/event/attendee-service"
-import { EventCompanyRepository, EventCompanyRepositoryImpl } from "./modules/event/event-company-repository"
-import { EventCompanyService, EventCompanyServiceImpl } from "./modules/event/event-company-service"
+import { EventCompanyRepositoryImpl } from "./modules/event/event-company-repository"
+import { EventCompanyServiceImpl } from "./modules/event/event-company-service"
+import { CompanyRepositoryImpl } from "./modules/company/company-repository"
+import { CommitteeRepositoryImpl } from "./modules/committee/committee-repository"
+import { CommitteeServiceImpl } from "./modules/committee/committee-service"
+import { CompanyServiceImpl } from "./modules/company/company-service"
 
 type CreateContextOptions = {
   session: Session | null
@@ -42,18 +43,18 @@ export const createContextInner = async (opts: CreateContextOptions) => {
 
   const userRepository = initUserRepository(db)
   const eventRepository = new EventRepositoryImpl(db)
-  const committeeRepository = initCommitteeRepository(db)
-  const companyRepository = initCompanyRepository(db)
+  const committeeRepository = new CommitteeRepositoryImpl(db)
+  const companyRepository = new CompanyRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
-  const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
+  const eventCompanyRepository = new EventCompanyRepositoryImpl(db)
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
   const attendService = new AttendServiceImpl(attendanceRepository)
-  const committeeService = initCommitteeService(committeeRepository)
-  const companyService = initCompanyService(companyRepository)
-  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
+  const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
+  const committeeService = new CommitteeServiceImpl(committeeRepository)
+  const companyService = new CompanyServiceImpl(companyRepository)
   return {
     session: opts.session,
     userService,
