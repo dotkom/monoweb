@@ -1,5 +1,4 @@
-import { User, UserWrite } from "@dotkomonline/types"
-import { OAuth2Api as HydraApiClient } from "@ory/client"
+import { User } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
 import { UserRepository } from "./user-repository"
@@ -9,7 +8,7 @@ export interface UserService {
   getUsers: (limit: number) => Promise<User[]>
 }
 
-export const initUserService = (userRepository: UserRepository, hydraAdmin: HydraApiClient) => {
+export const initUserService = (userRepository: UserRepository) => {
   const service: UserService = {
     getUser: async (id) => {
       const user = await userRepository.getUserByID(id)

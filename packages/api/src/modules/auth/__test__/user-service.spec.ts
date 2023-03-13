@@ -1,4 +1,3 @@
-import { OAuth2Api } from "@ory/client"
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 
@@ -8,9 +7,8 @@ import { initUserService } from "../user-service"
 
 describe("UserService", () => {
   const db = vi.mocked(Kysely.prototype, true)
-  const hydra = vi.mocked(OAuth2Api.prototype, true)
   const userRepository = initUserRepository(db)
-  const userService = initUserService(userRepository, hydra)
+  const userService = initUserService(userRepository)
 
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
