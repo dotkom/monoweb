@@ -7,7 +7,11 @@ urls:
     issuer: http://127.0.0.1:4444
   consent: http://127.0.0.1:3000/api/oauth2/consent
   login: http://127.0.0.1:3000/api/oauth2/login
+<<<<<<< Updated upstream
   logout: http://127.0.0.1:3000/auth/logout
+=======
+  logout: http://127.0.0.1:3000/sign-out
+>>>>>>> Stashed changes
 
 secrets:
   system:

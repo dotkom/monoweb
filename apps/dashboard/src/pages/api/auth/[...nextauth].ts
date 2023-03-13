@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import NextAuth, { DefaultUser, NextAuthOptions } from "next-auth"
 
 if (process.env.NODE_ENV === "development") {
@@ -40,5 +41,9 @@ export const authOptions: NextAuthOptions = {
     },
   },
 }
+=======
+import { authOptions } from "@dotkomonline/auth"
+import NextAuth from "next-auth"
+>>>>>>> Stashed changes
 
 export default NextAuth(authOptions)

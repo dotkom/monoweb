@@ -2,8 +2,11 @@ import { NextPage } from "next"
 import { AppProps } from "next/app"
 import { ReactElement, ReactNode } from "react"
 import { ClerkProvider } from "@clerk/nextjs"
+<<<<<<< Updated upstream
 
 import type { Session } from "next-auth"
+=======
+>>>>>>> Stashed changes
 
 import MainLayout from "../components/layout/MainLayout"
 import { trpc } from "@/utils/trpc"
@@ -24,9 +27,6 @@ export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
 
 type CustomAppProps<P> = AppProps & {
   Component: NextPageWithLayout<P>
-  pageProps: {
-    session: Session | null
-  }
 }
 
 function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element {
