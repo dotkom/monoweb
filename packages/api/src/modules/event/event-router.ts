@@ -2,6 +2,7 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { CompanySchema, EventSchema, EventWriteSchema, AttendanceWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../utils/db-utils"
+import { attendanceRouter } from "./attendance-router"
 
 export const eventRouter = t.router({
   create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
@@ -22,30 +23,7 @@ export const eventRouter = t.router({
   get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
     return ctx.eventService.getEventById(input)
   }),
-  addAttendance: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
-    const attendance = await ctx.eventService.addAttendance(input.eventId, input)
-    return attendance
-  }),
-  getAttendance: publicProcedure
-    .input(
-      z.object({
-        eventId: EventSchema.shape.id,
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const attendance = await ctx.eventService.listAttendance(input.eventId)
-      return attendance
-    }),
-  attend: protectedProcedure
-    .input(
-      z.object({
-        eventId: EventSchema.shape.id,
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendService.registerForEvent(ctx.auth.userId, input.eventId)
-      return res
-    }),
+  attendance: attendanceRouter,
   addCompany: protectedProcedure
     .input(
       z.object({
