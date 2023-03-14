@@ -28,7 +28,7 @@ import { useAuth } from "@clerk/nextjs"
 
 export const ProfileMenu = () => {
   const router = useRouter()
-  const { isSignedIn, isLoaded, signOut } = useAuth()
+  const { isSignedIn, isLoaded } = useAuth()
 
   if (!isLoaded) {
     return <Icon icon="tabler:loader-2" className="animate-spin" />

@@ -43,7 +43,7 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendService.registerForEvent(ctx.session.user.id, input.eventId)
+      const res = await ctx.attendService.registerForEvent(ctx.auth.userId, input.eventId)
       return res
     }),
   addCompany: protectedProcedure

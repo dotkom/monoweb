@@ -2,21 +2,13 @@ import { NextPage } from "next"
 import { AppProps } from "next/app"
 import { ReactElement, ReactNode } from "react"
 import { ClerkProvider } from "@clerk/nextjs"
-<<<<<<< Updated upstream
-
-import type { Session } from "next-auth"
-=======
->>>>>>> Stashed changes
-
 import MainLayout from "../components/layout/MainLayout"
 import { trpc } from "@/utils/trpc"
-
 import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import { Poppins } from "@next/font/google"
 import { cn } from "@dotkomonline/ui"
-import { SessionProvider } from "next-auth/react"
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 

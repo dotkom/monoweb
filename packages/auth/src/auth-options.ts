@@ -23,6 +23,7 @@ export const authOptions: NextAuthOptions = {
       type: "oauth",
       wellKnown: `${process.env.HYDRA_PUBLIC_URL as string}/.well-known/openid-configuration`,
       authorization: { params: { grant_type: "authorization_code", scope: "openid email profile" } },
+      /* eslint-disable */
       profile(profile: any) {
         return {
           email: profile.user.emailAddresses[0].emailAddress,
@@ -31,6 +32,7 @@ export const authOptions: NextAuthOptions = {
           name: profile.user.username,
         }
       },
+      /* eslint-enable */
       clientId: process.env.NEXTAUTH_DASHBOARD_CLIENT_ID as string,
       clientSecret: process.env.NEXTAUTH_DASHBOARD_CLIENT_SECRET as string,
     },
@@ -44,10 +46,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub
       }
       return session
-    },
-    async jwt({ token, user, account, profile, isNewUser }) {
-      console.log({ account, token, profile })
-      return token
     },
   },
 }

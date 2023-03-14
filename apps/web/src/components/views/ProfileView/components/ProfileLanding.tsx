@@ -20,7 +20,7 @@ const FormInput: React.FC<IFormInput> = ({ name, value }) => {
 }
 
 const Landing: NextPage = () => {
-  const { isLoaded, isSignedIn, user } = useUser()
+  const { user } = useUser()
 
   return (
     <div className="w-full">
