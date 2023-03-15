@@ -1,5 +1,5 @@
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
-import { CompanySchema, EventSchema, EventWriteSchema, AttendanceWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../utils/db-utils"
 import { attendanceRouter } from "./attendance-router"
