@@ -14,6 +14,7 @@ export interface UserRepository {
   getUserByEmail: (email: string) => Promise<User | undefined>
 }
 
+// TODO: Delete these/ use webhooks instead from clerk
 export const initUserRepository = (db: Kysely<Database>): UserRepository => {
   const repo: UserRepository = {
     getUserByID: async (id) => {
