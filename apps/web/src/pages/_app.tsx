@@ -1,13 +1,9 @@
 import { NextPage } from "next"
-import { SessionProvider } from "next-auth/react"
 import { AppProps } from "next/app"
 import { ReactElement, ReactNode } from "react"
-
-import type { Session } from "next-auth"
-
+import { ClerkProvider } from "@clerk/nextjs"
 import MainLayout from "../components/layout/MainLayout"
 import { trpc } from "@/utils/trpc"
-
 import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
@@ -23,9 +19,6 @@ export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
 
 type CustomAppProps<P> = AppProps & {
   Component: NextPageWithLayout<P>
-  pageProps: {
-    session: Session | null
-  }
 }
 
 function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element {
@@ -33,9 +26,9 @@ function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element 
 
   return (
     <ThemeProvider>
-      <SessionProvider session={pageProps.session}>
+      <ClerkProvider {...pageProps}>
         <div className={cn(poppins.variable, "h-full w-full")}>{getLayout(<Component {...pageProps} />)}</div>
-      </SessionProvider>
+      </ClerkProvider>
     </ThemeProvider>
   )
 }

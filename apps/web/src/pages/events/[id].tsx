@@ -6,9 +6,9 @@ import { trpc } from "@/utils/trpc"
 import { Button } from "@dotkomonline/ui"
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-  const { data: attendance } = trpc.event.getAttendance.useQuery({ eventId: props.event.id })
-  const { mutate: addAttendance } = trpc.event.addAttendance.useMutation()
-  const { mutate: attendEvent } = trpc.event.attend.useMutation()
+  const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: props.event.id })
+  const { mutate: addAttendance } = trpc.event.attendance.add.useMutation()
+  const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
   const utils = trpc.useContext()
 
   return (
@@ -24,7 +24,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
             eventId: props.event.id,
             limit: 20,
           })
-          utils.event.getAttendance.invalidate()
+          utils.event.attendance.get.invalidate()
         }}
       >
         Add attendance group
@@ -34,7 +34,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
           await attendEvent({
             eventId: props.event.id,
           })
-          utils.event.getAttendance.invalidate()
+          utils.event.attendance.get.invalidate()
         }}
       >
         Join random group
@@ -49,7 +49,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const ssg = createProxySSGHelpers({
     router: appRouter,
     ctx: await createContextInner({
-      session: null,
+      auth: null,
     }),
     transformer: transformer,
   })
@@ -64,7 +64,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
   const ssg = createProxySSGHelpers({
     router: appRouter,
     ctx: await createContextInner({
-      session: null,
+      auth: null,
     }),
     transformer: transformer,
   })

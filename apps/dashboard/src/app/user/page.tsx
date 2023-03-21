@@ -2,8 +2,7 @@
 
 import { Title, Text, Button, Image, Flex } from "@mantine/core"
 
-import { trpc } from "../../trpc"
-import { User } from "@dotkomonline/types"
+import { RouterOutputs, trpc } from "../../trpc"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC } from "react"
 import { Icon } from "@iconify/react"
@@ -23,13 +22,15 @@ export default function UsersPage() {
     </Flex>
   )
 }
+type Users = RouterOutputs["auth"]["getUsers"]
+type User = Users[number]
 
-type UsersTableProps = { users: User[] }
+type UsersTableProps = { users: Users }
 
 const UsersTable: FC<UsersTableProps> = ({ users }) => {
   const columnHelper = createColumnHelper<User>()
   const columns = [
-    columnHelper.accessor("image", {
+    columnHelper.accessor("profileImageUrl", {
       header: () => "Bilde",
       cell: (info) => {
         const image = info.getValue()
@@ -40,14 +41,17 @@ const UsersTable: FC<UsersTableProps> = ({ users }) => {
         )
       },
     }),
-    columnHelper.accessor("name", {
+    columnHelper.accessor("username", {
       header: () => "Navn",
     }),
-    columnHelper.accessor("email", {
+    columnHelper.accessor("emailAddresses", {
       header: () => "Email",
-    }),
-    columnHelper.accessor("emailVerified", {
-      header: () => "Email Verifisert",
+      cell: (info) => {
+        return info
+          .getValue()
+          .map((email) => email.emailAddress)
+          .join(",")
+      },
     }),
     columnHelper.accessor((user) => user, {
       id: "actions",
