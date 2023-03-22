@@ -14,7 +14,7 @@ const config = {
     appDir: true,
     swcPlugins: [["next-superjson-plugin", {}]],
   },
-  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth", "@dotkomonline/types", "@dotkomonline/api"],
+  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/types", "@dotkomonline/api"],
   eslint: {
     ignoreDuringBuilds: !!process.env.CI,
   },

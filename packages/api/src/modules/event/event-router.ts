@@ -1,14 +1,14 @@
-import { PaginateInputSchema } from "../../utils/db-utils"
-import { EventWriteSchema, EventSchema, AttendanceWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
-
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { CompanySchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
+import { z } from "zod"
+import { PaginateInputSchema } from "../../utils/db-utils"
+import { attendanceRouter } from "./attendance-router"
 
 export const eventRouter = t.router({
   create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
     return ctx.eventService.createEvent(input)
   }),
-  edit: t.procedure
+  edit: protectedProcedure
     .input(
       EventWriteSchema.required({
         id: true,
@@ -23,28 +23,35 @@ export const eventRouter = t.router({
   get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
     return ctx.eventService.getEventById(input)
   }),
-  addAttendance: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
-    const attendance = await ctx.eventService.addAttendance(input.eventId, input)
-    return attendance
-  }),
-  getAttendance: publicProcedure
+  attendance: attendanceRouter,
+  addCompany: protectedProcedure
     .input(
       z.object({
-        eventId: EventSchema.shape.id,
+        id: EventSchema.shape.id,
+        company: CompanySchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => {
-      const attendance = await ctx.eventService.listAttendance(input.eventId)
-      return attendance
+    .mutation(({ input, ctx }) => {
+      return ctx.eventCompanyService.addCompany(input.id, input.company)
     }),
-  attend: protectedProcedure
+  deleteCompany: protectedProcedure
     .input(
       z.object({
-        eventId: EventSchema.shape.id,
+        id: EventSchema.shape.id,
+        company: CompanySchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendService.registerForEvent(ctx.session.user.id, input.eventId)
-      return res
+    .mutation(({ input, ctx }) => {
+      return ctx.eventCompanyService.deleteCompany(input.id, input.company)
+    }),
+  getCompanies: publicProcedure
+    .input(
+      z.object({
+        id: EventSchema.shape.id,
+        pagination: PaginateInputSchema,
+      })
+    )
+    .query(({ input, ctx }) => {
+      return ctx.eventCompanyService.getCompaniesByEventId(input.id, input.pagination.take, input.pagination.cursor)
     }),
 })

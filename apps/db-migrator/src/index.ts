@@ -1,4 +1,4 @@
-import { createMigrator } from "@dotkomonline/db"
+import { createMigrator } from "@dotkomonline/db/src/migrator"
 import { getLogger } from "@dotkomonline/logger"
 import { program, Argument } from "commander"
 import { MigrationResultSet } from "kysely"

@@ -1,18 +1,18 @@
 "use client"
 
-import { Title, Text, Table, Button, Flex, Loader } from "@mantine/core"
+import { Title, Text, Button, Flex, Loader } from "@mantine/core"
 import { trpc } from "../../trpc"
-import { Committee, Event } from "@dotkomonline/types"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { Event } from "@dotkomonline/types"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC, useState } from "react"
-import { EventDetailsContext, EventDetailsModal } from "./EventDetailsModal"
 import { EventCreationModal } from "./EventCreationModal"
+import { Icon } from "@iconify/react"
+import Link from "next/link"
+import { GenericTable } from "../../components/GenericTable"
 
 export default function EventPage() {
   const [isCreationOpen, setCreationOpen] = useState(false)
-  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery()
-  const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery()
-  const isLoading = isEventsLoading || isCommitteesLoading
+  const { data: events = [], isLoading } = trpc.event.all.useQuery()
 
   return (
     <Flex direction="column" p="md" gap="md">
@@ -24,9 +24,7 @@ export default function EventPage() {
         <Loader />
       ) : (
         <>
-          <div>
-            <EventTable events={events} committees={committees} />
-          </div>
+          <EventTable events={events} />
           {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
           <div>
             <Button onClick={() => setCreationOpen(true)}>Opprett nytt arrangement</Button>
@@ -37,9 +35,9 @@ export default function EventPage() {
   )
 }
 
-type EventTableProps = { events: Event[]; committees: Committee[] }
+type EventTableProps = { events: Event[] }
 
-const EventTable: FC<EventTableProps> = ({ events, committees }) => {
+const EventTable: FC<EventTableProps> = ({ events }) => {
   const columnHelper = createColumnHelper<Event>()
   const columns = [
     columnHelper.accessor("title", {
@@ -63,7 +61,7 @@ const EventTable: FC<EventTableProps> = ({ events, committees }) => {
     columnHelper.accessor((evt) => evt, {
       id: "actions",
       header: () => "Detaljer",
-      cell: (info) => <EventTableDetailsCell committees={committees} event={info.getValue()} />,
+      cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
     }),
   ]
   const table = useReactTable({
@@ -72,45 +70,17 @@ const EventTable: FC<EventTableProps> = ({ events, committees }) => {
     columns,
   })
 
-  return (
-    <Table>
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  )
+  return <GenericTable table={table} />
 }
 
-type EventTableDetailsCellProps = { event: Event; committees: Committee[] }
+type EventTableDetailsCellProps = { event: Event }
 
 const EventTableDetailsCell: FC<EventTableDetailsCellProps> = ({ event }) => {
-  const [isOpen, setOpen] = useState(false)
-
   return (
-    <>
-      <Button variant="outline" onClick={() => setOpen(true)}>
-        Detaljer
+    <Link href={`/event/${event.id}`}>
+      <Button variant="outline" leftIcon={<Icon icon="tabler:list-details" />}>
+        Se detailjer
       </Button>
-      {isOpen && (
-        <EventDetailsContext.Provider value={{ event }}>
-          <EventDetailsModal close={() => setOpen(false)} />
-        </EventDetailsContext.Provider>
-      )}
-    </>
+    </Link>
   )
 }

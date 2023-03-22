@@ -10,6 +10,7 @@ export const CompanySchema = z.object({
   website: z.string(),
   location: z.string().optional(),
   type: z.enum(["Consulting", "Research", "Development", "Other"]).optional(),
+  image: z.string().nullable(),
 })
 
 export type Company = z.infer<typeof CompanySchema>

@@ -1,15 +1,15 @@
+"use client"
 import type { PropsWithChildren } from "react"
 import { AuthProvider } from "./AuthProvider"
-import { unstable_getServerSession } from "next-auth"
-import { authOptions } from "../pages/api/auth/[...nextauth]"
 import { QueryProvider } from "./QueryProvider"
 import { MantineColorSchemeProvider, MantineProvider } from "./MantineProvider"
 import { ApplicationShell } from "./ApplicationShell"
 import "./root.css"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@dotkomonline/auth"
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await unstable_getServerSession(authOptions)
-
+  const session = await getServerSession(authOptions)
   return (
     <html lang="en">
       <head />
