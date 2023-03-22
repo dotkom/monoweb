@@ -11,7 +11,6 @@ export const ProfileSchema = z.object({
   allowPictures: z.boolean(),
 })
 export const ProfileWriteSchema = ProfileSchema.partial({
-  userId: true,
   updatedAt: true,
 })
 

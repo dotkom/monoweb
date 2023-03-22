@@ -15,19 +15,8 @@ export class ProfileRepositoryImpl implements ProfileRepository {
     const profile = await this.db.selectFrom("profile").selectAll().where("userId", "=", id).executeTakeFirst()
     return profile ? mapToProfile(profile) : undefined
   }
-  async createProfile(values: ProfileWrite): Promise<Profile> {
-    const profile = await this.db
-      .insertInto("profile")
-      .values({
-        allowPictures: values.allowPictures,
-        showAdress: values.showAdress,
-        showEmail: values.showEmail,
-        showName: values.showName,
-        visibleForOtherUsers: values.visibleForOtherUsers,
-        visibleInEvents: values.visibleInEvents,
-      })
-      .returningAll()
-      .executeTakeFirst()
+  async createProfile(values: ProfileWrite): Promise<Profile | undefined> {
+    const profile = await this.db.insertInto("profile").values(values).returningAll().executeTakeFirst()
 
     return profile ? mapToProfile(profile) : profile
   }

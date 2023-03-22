@@ -1,6 +1,8 @@
+import { Generated } from "kysely"
+
 export interface ProfileTable {
   userId: string
-  updatedAt: Date
+  updatedAt: Generated<Date>
   showName: boolean
   visibleForOtherUsers: boolean
   showEmail: boolean
