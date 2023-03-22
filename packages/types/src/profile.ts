@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const ProfileSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string(),
   updatedAt: z.date(),
   showName: z.boolean(),
   visibleForOtherUsers: z.boolean(),

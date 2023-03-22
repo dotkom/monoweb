@@ -3,7 +3,7 @@ import { z } from "zod"
 import { publicProcedure, t } from "../../trpc"
 
 export const profileRouter = t.router({
-  get: publicProcedure.input(z.string()).mutation(({ input, ctx }) => {
+  get: publicProcedure.input(z.string()).query(({ input, ctx }) => {
     return ctx.profileService.getPrivacy(input)
   }),
   create: publicProcedure.input(ProfileWriteSchema).mutation(({ input, ctx }) => {
