@@ -15,6 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Career: FC<CareerProps> = (props: CareerProps) => {
   return <CareerView careers={props.careers} />
+  // return <div>404 - Sanity not found</div>
 }
 
 export default Career
