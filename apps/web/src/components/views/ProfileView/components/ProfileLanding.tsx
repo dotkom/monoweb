@@ -1,3 +1,4 @@
+import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
 import { useSession } from "next-auth/react"
@@ -46,8 +47,12 @@ const Landing: NextPage = () => {
         <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Studie</p>
         <FormInput name="Klassetrinn" />
         <FormInput name="Startår" />
-        <p className="text-slate text-center font-bold">Insert studieløp progress</p>
       </div>
+      {/* !!!Trenger mer funksjonalitet (year er satt manuelt her)!!! */}
+      <div className="mt-12">
+        <StudentProgress year={0} />
+      </div>
+      {/* !!!-------------!!! */}
       <div className="mt-12">
         <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Eksterne sider</p>
         <FormInput name="GitHub" />
