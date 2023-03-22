@@ -18,6 +18,8 @@ import { CompanyRepositoryImpl } from "./modules/company/company-repository"
 import { CommitteeRepositoryImpl } from "./modules/committee/committee-repository"
 import { CommitteeServiceImpl } from "./modules/committee/committee-service"
 import { CompanyServiceImpl } from "./modules/company/company-service"
+import { ProfileRepositoryImpl } from "./modules/profile/profile-repsoitory"
+import { ProfileServiceImpl } from "./modules/profile/profile-service"
 
 type CreateContextOptions = {
   session: Session | null
@@ -44,6 +46,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const companyRepository = new CompanyRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
+  const profileRepository = new ProfileRepositoryImpl(db)
 
   // Services
   const userService = initUserService(userRepository, hydraAdmin)
@@ -51,6 +54,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   const attendService = new AttendServiceImpl(attendanceRepository)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
   const companyService = new CompanyServiceImpl(companyRepository)
+  const profileService = new ProfileServiceImpl(profileRepository)
   return {
     session: opts.session,
     userService,
@@ -58,6 +62,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
     committeeService,
     companyService,
     attendService,
+    profileService,
   }
 }
 

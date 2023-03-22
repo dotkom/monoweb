@@ -1,18 +1,22 @@
 import { NotFoundError } from "../../errors/errors"
-import { Profile } from "@dotkomonline/types"
+import { Profile, ProfileWrite } from "@dotkomonline/types"
 import { ProfileRepository } from "./profile-repsoitory"
 
 export interface ProfileService {
   getPrivacy: (id: string) => Promise<Profile>
+  createProfile: (values: Profile) => Promise<Profile>
 }
 
-export const initProfileService = (profileRepository: ProfileRepository): ProfileService => {
-  const service = {
-    getPrivacy: async (id: string) => {
-      const profile = await profileRepository.getPrivacyOptionsById(id)
-      if (!profile) throw new NotFoundError(`Profile for user with ID:${id} was not found`)
-      return profile
-    },
+export class ProfileServiceImpl implements ProfileService {
+  constructor(private readonly profileRepository: ProfileRepository) {}
+  async getPrivacy(id: string): Promise<Profile> {
+    const profile = await this.profileRepository.getPrivacyOptionsById(id)
+    if (!profile) throw new NotFoundError(`Profile for user with ID:${id} was not found`)
+    return profile
   }
-  return service
+  async createProfile(values: ProfileWrite): Promise<Profile> {
+    const profile = await this.profileRepository.createProfile(values)
+    if (!profile) throw new NotFoundError(`We were not able to create a profile with that ID`)
+    return profile
+  }
 }

@@ -1,20 +1,34 @@
 import { Database } from "@dotkomonline/db"
 import { sql, Kysely, Selectable } from "kysely"
-import { ProfileSchema } from "@dotkomonline/types"
+import { Profile, ProfileSchema, ProfileWrite } from "@dotkomonline/types"
 
 const mapToProfile = (data: Selectable<Database["profile"]>) => ProfileSchema.parse(data)
 
 export interface ProfileRepository {
-  getPrivacyOptionsById(id: string): Promise<undefined>
+  getPrivacyOptionsById(id: string): Promise<Profile | undefined>
+  createProfile(profile: ProfileWrite): Promise<Profile | undefined>
 }
 
-export const initProfileRepository = (db: Kysely<Database>): ProfileRepository => {
-  const repo: ProfileRepository = {
-    async getPrivacyOptionsById(id: string): Promise<undefined> {
-      const data = await db.selectFrom("profile").selectAll
-      console.log(id)
-      return data
-    },
+export class ProfileRepositoryImpl implements ProfileRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+  async getPrivacyOptionsById(id: string): Promise<Profile | undefined> {
+    const profile = await this.db.selectFrom("profile").selectAll().where("userId", "=", id).executeTakeFirst()
+    return profile ? mapToProfile(profile) : undefined
   }
-  return repo
+  async createProfile(values: ProfileWrite): Promise<Profile> {
+    const profile = await this.db
+      .insertInto("profile")
+      .values({
+        allowPictures: values.allowPictures,
+        showAdress: values.showAdress,
+        showEmail: values.showEmail,
+        showName: values.showName,
+        visibleForOtherUsers: values.visibleForOtherUsers,
+        visibleInEvents: values.visibleInEvents,
+      })
+      .returningAll()
+      .executeTakeFirst()
+
+    return profile ? mapToProfile(profile) : profile
+  }
 }

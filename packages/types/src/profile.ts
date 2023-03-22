@@ -1,14 +1,19 @@
 import { z } from "zod"
 
 export const ProfileSchema = z.object({
-  id: z.string().uuid(),
-  title: z.string(),
-  givenAt: z.date(),
+  userId: z.string().uuid(),
   updatedAt: z.date(),
-  category: z.string(),
-  details: z.string(),
-  duration: z.number(),
+  showName: z.boolean(),
+  visibleForOtherUsers: z.boolean(),
+  showEmail: z.boolean(),
+  showAdress: z.boolean(),
+  visibleInEvents: z.boolean(),
+  allowPictures: z.boolean(),
+})
+export const ProfileWriteSchema = ProfileSchema.partial({
+  userId: true,
+  updatedAt: true,
 })
 
 export type Profile = z.infer<typeof ProfileSchema>
-export type ProfileWrite = Omit<Profile, "id">
+export type ProfileWrite = z.infer<typeof ProfileWriteSchema>
