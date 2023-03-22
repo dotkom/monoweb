@@ -27,6 +27,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
     twitter,
     facebook,
     career_role,
+    slug
   } = props.career
 
   return (

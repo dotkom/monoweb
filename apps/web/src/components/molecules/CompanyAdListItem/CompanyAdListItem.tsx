@@ -1,9 +1,10 @@
+import { CareerAd } from "@/api/get-career-ads"
 import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
 import { FC } from "react"
 
-interface CompanyAdListItemProps {
+interface CompanyAdListItemProps {  
   /*
   name: string
   logo: string
@@ -18,6 +19,8 @@ interface CompanyAdListItemProps {
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props) => {
   //const { name, logo, position, location, deadline, applyLink, showApplyLink = false } = props
   const { company_name, image, career_type, location, deadline, slug } = props.career
+
+  return <h1>{slug.current}</h1>
 
   return (
     <div className="grid grid-cols-5">

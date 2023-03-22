@@ -16,6 +16,7 @@ export interface CareerAd {
   twitter: string
   linkdin: string
   career_role: string
+  slug: { current: string }
 }
 
 const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
@@ -31,7 +32,8 @@ const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("dr
   career_role,
   facebook,
   twitter,
-  linkdin
+  linkdin,
+  slug
 }`
 
 const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]`
