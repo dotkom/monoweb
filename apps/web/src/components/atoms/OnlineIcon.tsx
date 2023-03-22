@@ -1,16 +1,13 @@
-import { styled } from "@stitches/react"
+import { FC } from "react"
 
-const IconStyle = styled("svg", {
-  fill: "$blue3",
-  "&:hover": {
-    fill: "$blue5",
-    cursor: "pointer",
-  },
-})
+interface IconProps {
+  className?: string
+}
 
-const OnlineIcon = () => {
+const OnlineIcon: FC<IconProps> = ({ className }) => {
   return (
-    <IconStyle
+    <svg
+      className={className}
       width="100%"
       height="100%"
       viewBox="0 0 643 167"
@@ -56,7 +53,7 @@ const OnlineIcon = () => {
           </g>
         </g>
       </g>
-    </IconStyle>
+    </svg>
   )
 }
 

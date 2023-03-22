@@ -1,45 +1,43 @@
+import { Icon } from "../Icon"
+import { cva, VariantProps } from "cva"
 import { FC } from "react"
-import { css } from "../../config/stitches.config"
-import { IoAlertCircle, IoCheckmarkCircle, IoInformationCircle, IoWarning } from "react-icons/io5"
+import { cn } from "../../utils"
 
-interface AlertIconProps {
-  status: "info" | "warning" | "success" | "danger"
+interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
   className?: string
+  size?: number
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status, className }) => {
-  const style = `${styles.base({ status })} ${className}`
+export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => {
+  return (
+    <>
+      <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
+    </>
+  )
+}
+
+const iconKey = (status: AlertIconProps["status"]) => {
   switch (status) {
     case "info":
-      return <IoInformationCircle className={style} />
+      return "tabler:info-circle"
     case "success":
-      return <IoCheckmarkCircle className={style} />
+      return "tabler:circle-check"
     case "danger":
-      return <IoAlertCircle className={style} />
+      return "tabler:alert-circle"
     case "warning":
-      return <IoWarning className={style} />
+      return "tabler:alert-triangle"
+    default:
+      return "tabler:error-404"
   }
 }
-const styles = {
-  base: css({
-    marginRight: "$2",
-    width: "24px",
-    height: "24px",
-    variants: {
-      status: {
-        info: {
-          color: "$info3",
-        },
-        success: {
-          color: "$green3",
-        },
-        warning: {
-          color: "$orange3",
-        },
-        danger: {
-          color: "$red3",
-        },
-      },
+
+const iconVariant = cva("", {
+  variants: {
+    status: {
+      info: "text-blue-11",
+      success: "text-green-11",
+      danger: "text-red-11",
+      warning: "text-amber-11",
     },
-  }),
-}
+  },
+})

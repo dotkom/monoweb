@@ -1,95 +1,67 @@
-import { ComponentPropsWithoutRef, forwardRef } from "react"
-import * as Label from "@radix-ui/react-label"
-import { css } from "../../config/stitches.config"
+import { cva } from "cva"
+
+import * as React from "react"
+import { cn } from "../../utils"
 import { AlertIcon } from "../Alert/AlertIcon"
+import { Label } from "../Label"
 
-export type TextareaProps = ComponentPropsWithoutRef<"textarea"> & {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
-} & (
-    | {
-        status: "success" | "danger"
-        message: string
-      }
-    | {
-        status?: undefined
-        message?: undefined
-      }
-  )
+  status?: "success" | "warning" | "danger"
+  error?: string
+  message?: string
+}
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(props, ref) {
-  const { id, message, label, status, ...rest } = props
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, error, status, message, label, ...props }, ref) => {
+    return (
+      <div className="grid w-full gap-2">
+        {label && <Label htmlFor={props.id}>{label}</Label>}
+        <textarea
+          className={cn(
+            "border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9 focus:ring-slate-8 flex h-20 w-full rounded-md border bg-transparent py-2 px-3 text-sm focus:outline-none focus:ring-2 disabled:opacity-50 ",
+            statusVariants({ status: status ? status : error ? "danger" : undefined }), // Error implies danger
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {message && <p className={displayMessage({ status })}>{message}</p>}
+        {error && (
+          <div className={displayMessage({ status: "danger" })}>
+            <AlertIcon size={20} status="danger" className="mr-1" />
+            <p>
+              <span className="font-bold">Error:&nbsp;</span>
+              {error}
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }
+)
+Textarea.displayName = "Textarea"
 
-  return (
-    <div className={styles.inputContainer()}>
-      {label && (
-        <Label.Root htmlFor={id} className={styles.label()}>
-          {label}
-        </Label.Root>
-      )}
-      <textarea className={styles.base({ status })} ref={ref} id={id} {...rest} />
-      {message && (
-        <div className={styles.messageContainer()}>
-          <AlertIcon status={status} />
-          <span className={styles.message({ status })}>{message}</span>
-        </div>
-      )}
-    </div>
-  )
+export { Textarea }
+
+const statusVariants = cva("", {
+  variants: {
+    status: {
+      danger: "border-red-7",
+      error: "border-red-7",
+      warning: "border-amber-7",
+      success: "border-green-7",
+    },
+  },
 })
 
-const styles = {
-  base: css({
-    outline: "none",
-    resize: "none",
-    padding: "$2",
-    border: "2px solid $gray10",
-    fontFamily: "$body",
-    borderRadius: "$1",
-    backgroundColor: "$gray12",
-    "&:disabled": {
-      backgroundColor: "$gray11",
-      cursor: "not-allowed",
+const displayMessage = cva("text-sm inline-flex", {
+  variants: {
+    status: {
+      error: "text-red-11",
+      danger: "text-red-11",
+      success: "text-green-11",
+      warning: "text-amber-11",
     },
-    "&:focus": {
-      borderColor: "$info4",
-    },
-    variants: {
-      status: {
-        danger: {
-          borderColor: "$red5",
-        },
-        success: {
-          borderColor: "$green5",
-        },
-      },
-    },
-  }),
-  label: css({
-    fontWeight: "bold",
-    fontFamily: "$body",
-  }),
-  inputContainer: css({
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-    gap: "$1",
-  }),
-  message: css({
-    fontWeight: "600",
-    variants: {
-      status: {
-        danger: {
-          color: "$red0",
-        },
-        success: {
-          color: "$green0",
-        },
-      },
-    },
-  }),
-  messageContainer: css({
-    fontSize: "$md",
-    display: "flex",
-    alignItems: "center",
-  }),
-}
+  },
+})

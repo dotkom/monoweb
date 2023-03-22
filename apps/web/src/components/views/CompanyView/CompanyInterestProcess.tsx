@@ -1,48 +1,23 @@
 import { FC } from "react"
-import Circle from "@components/atoms/Circle"
-import type { CSS } from "@theme"
-import { Box } from "@components/primitives"
+import { Circle } from "@dotkomonline/ui/"
+
 interface CompanyInterestProcessProps {
   steps: string[]
 }
 
 const CompanyInterestProcess: FC<CompanyInterestProcessProps> = ({ steps }) => {
   return (
-    <Box css={styles.step}>
+    <div className="mx-auto grid max-w-[1024px] grid-cols-1 py-4 px-3 md:grid-cols-2 lg:grid-cols-4">
       {steps.map((step, index) => (
-        <Box key={step} css={styles.stepContainer}>
-          <Circle size={700 / 15} color="$blue3">
+        <div key={step} className="mb-1 flex flex-col items-center py-3">
+          <Circle size={700 / 15} color="bg-blue-3">
             {index + 1}
           </Circle>
           <p>{step}</p>
-        </Box>
+        </div>
       ))}
-    </Box>
+    </div>
   )
-}
-
-const styles = {
-  step: {
-    maxWidth: "$lg",
-    padding: "$4 $3",
-    mx: "auto",
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr 1fr 1fr",
-    "@maxLaptop": {
-      gridTemplateColumns: "1fr 1fr",
-      gridTemplateRows: "1fr 1fr",
-    },
-    "@maxTablet": {
-      gridTemplateColumns: "1fr",
-    },
-  } as CSS,
-  stepContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    margin: "$3 0",
-    marginBottom: "$1",
-  } as CSS,
 }
 
 export default CompanyInterestProcess

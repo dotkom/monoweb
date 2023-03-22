@@ -1,15 +1,14 @@
 import React from "react"
-import { styled } from "@theme"
-import { Button } from "@dotkom/ui"
+import { useAuth } from "@clerk/nextjs"
 
 const Home: React.FC = () => {
+  const auth = useAuth()
   return (
-    <Box>
-      <Button>Hello</Button>
-    </Box>
+    <div>
+      <p>Homepage</p>
+      <pre>{JSON.stringify(auth, null, 2)}</pre>
+    </div>
   )
 }
-
-const Box = styled("div", {})
 
 export default Home

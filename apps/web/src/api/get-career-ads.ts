@@ -1,4 +1,4 @@
-import { BlockContentProps } from "@sanity/block-content-to-react"
+import { PortableTextProps } from "@/components/molecules/PortableText"
 import client from "./sanity"
 
 export interface CareerAd {
@@ -9,9 +9,13 @@ export interface CareerAd {
   location: string
   deadline: string
   company_info: string
-  content: BlockContentProps["blocks"]
+  content: PortableTextProps["blocks"]
   link: string
-  slug: string
+  facebook: string
+  instagram: string
+  twitter: string
+  linkdin: string
+  career_role: string
 }
 
 const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
@@ -23,21 +27,14 @@ const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("dr
   deadline,
   company_info,
   content,
-  link
+  link,
+  career_role,
+  facebook,
+  twitter,
+  linkdin
 }`
 
-const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]{
-  title,
-  company_name,
-  image { asset->{url} },
-  career_type,
-  location,
-  deadline,
-  company_info,
-  content,
-  link,
-  slug
-}`
+const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]`
 
 export const fetchCareerAd = async (slug: string): Promise<CareerAd> => {
   const res = await client.fetch(adQuery, { slug })

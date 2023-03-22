@@ -1,14 +1,19 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "baseBranch": "origin/main",
   "pipeline": {
     "build": {
-      "outputs": ["dist/**", ".next/**"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": ["**/dist"]
     },
     "build:prod": {
       "dependsOn": ["^build"],
       "outputs": [".next/**"]
+    },
+    "build:storybook": {
+      "outputs": ["storybook-static/**"]
+    },
+    "type-check": {
+      "outputs": []
     },
     "test": {
       "dependsOn": ["lint"],
@@ -23,9 +28,36 @@
     "dev": {
       "cache": false
     },
+    "migrate": {
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "dependsOn": []
+    },
+    "clean": {
+      "cache": false
+    },
     "storybook": {
       "outputs": [],
       "cache": false
     }
-  }
+  },
+  "globalEnv": [
+    "NODE_ENV",
+    "API_PORT",
+    "DASHBOARD_PORT",
+    "NEXTAUTH_CLIENT_ID",
+    "NEXTAUTH_CLIENT_SECRET",
+    "NEXTAUTH_URL",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_DASHBOARD_CLIENT_ID",
+    "NEXTAUTH_DASHBOARD_CLIENT_SECRET",
+    "HYDRA_ADMIN_URL",
+    "HYDRA_PUBLIC_URL",
+    "NEXT_PUBLIC_DEBUG",
+    "DATABASE_URL",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "VERCEL_URL",
+    "PORT"
+  ]
 }

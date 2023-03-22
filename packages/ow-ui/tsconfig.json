@@ -4,5 +4,9 @@
     "outDir": "dist",
     "declaration": true,
     "jsx": "react-jsx"
-  }
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
 }

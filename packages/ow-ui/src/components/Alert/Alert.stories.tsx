@@ -1,25 +1,48 @@
 import { Alert } from "./Alert"
-import { ComponentStory } from "@storybook/react"
+import { StoryObj } from "@storybook/react"
 
 export default {
-  title: "atoms/Alert",
+  title: "Alert",
   component: Alert,
 }
 
-const Template: ComponentStory<typeof Alert> = (args) => (
-  <div style={{ maxWidth: "800px" }}>
-    <Alert {...args} />
-  </div>
-)
+type Story = StoryObj<typeof Alert>
 
-export const Info = Template.bind({})
-Info.args = { status: "info", text: "This is a very informative alert" }
+export const Info: Story = {
+  render: (args) => (
+    <div className="max-w-[400px]">
+      <Alert
+        {...args}
+        children="Something happened! You made a mistake and there is no going back, your data was lost forever!"
+      />
+    </div>
+  ),
+  args: {
+    status: "info",
+    title: "This is a very informative alert",
+  },
+}
 
-export const Success = Template.bind({})
-Success.args = { status: "success", text: "This is a success message" }
+export const Success: Story = {
+  ...Info,
+  args: {
+    status: "success",
+    title: "This is a success message",
+  },
+}
 
-export const Warning = Template.bind({})
-Warning.args = { status: "warning", text: "This is a warning alert - check this out!" }
+export const Warning: Story = {
+  ...Info,
+  args: {
+    status: "warning",
+    title: "This is a warning message",
+  },
+}
 
-export const Danger = Template.bind({})
-Danger.args = { status: "danger", text: "The apocalypse is coming and zombies are on the loose" }
+export const Danger: Story = {
+  ...Info,
+  args: {
+    status: "danger",
+    title: "This is a danger message",
+  },
+}

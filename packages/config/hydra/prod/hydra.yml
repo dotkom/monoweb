@@ -1,0 +1,24 @@
+serve:
+  cookies:
+    same_site_mode: Lax
+  admin:
+    cors:
+      allowed_origins:
+        - https://*.online.ntnu.no
+        - localhost:3000
+  public:
+    cors:
+      allowed_origins:
+        - https://*.online.ntnu.no
+        - localhost:3000
+
+urls:
+  consent: https://new.online.ntnu.no/auth/consent
+  login: https://new.online.ntnu.no/auth/login
+  logout: https://new.online.ntnu.no/auth/logout
+
+oidc:
+  subject_identifiers:
+    supported_types:
+      - pairwise
+      - public

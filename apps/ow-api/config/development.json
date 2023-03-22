@@ -1,9 +1,0 @@
-{
-  "database": {
-    "host": "localhost",
-    "port": 6543,
-    "database": "ow",
-    "user": "ow",
-    "password": "owpassword123"
-  }
-}

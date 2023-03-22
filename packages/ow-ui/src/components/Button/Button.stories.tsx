@@ -1,102 +1,87 @@
+import { Icon } from "../Icon"
+import { Meta, StoryObj } from "@storybook/react"
+
 import { Button } from "./Button"
 
-export default {
-  title: "atoms/Button",
+const meta: Meta<typeof Button> = {
+  title: "Button",
   component: Button,
 }
+export default meta
 
-export const Default = () => (
-  <Button color="blue" variant="solid">
-    Button
-  </Button>
-)
-export const lightBlue = () => (
-  <Button color="blue" variant="light">
-    Button
-  </Button>
-)
-export const subtleBlue = () => (
-  <Button color="blue" variant="subtle">
-    Button
-  </Button>
-)
+type Story = StoryObj<typeof Button>
 
-export const solidOrange = () => (
-  <Button color="orange" variant="solid">
-    Button
-  </Button>
-)
-export const lightOrange = () => (
-  <Button color="orange" variant="light">
-    Button
-  </Button>
-)
-export const subtleOrange = () => (
-  <Button color="orange" variant="subtle">
-    Button
-  </Button>
-)
+export const Default: Story = { args: { children: "Button", variant: "brand" } }
 
-export const solidInfo = () => (
-  <Button color="info" variant="solid">
-    Button
-  </Button>
-)
-export const lightInfo = () => (
-  <Button color="info" variant="light">
-    Button
-  </Button>
-)
-export const subtleInfo = () => (
-  <Button color="info" variant="subtle">
-    Button
-  </Button>
-)
+export const Gradient: Story = {
+  ...Default,
+  args: { ...Default.args, variant: "gradient" },
+}
 
-export const solidGreen = () => (
-  <Button color="green" variant="solid">
-    Button
-  </Button>
-)
-export const lightGreen = () => (
-  <Button color="green" variant="light">
-    Button
-  </Button>
-)
-export const subtleGreen = () => (
-  <Button color="green" variant="subtle">
-    Button
-  </Button>
-)
+export const Link: Story = {
+  ...Default,
+  args: { ...Default.args, variant: "link" },
+}
+export const Outline: Story = {
+  ...Default,
+  args: { ...Default.args, variant: "outline" },
+}
 
-export const solidRed = () => (
-  <Button color="red" variant="solid">
-    Button
-  </Button>
-)
-export const lightRed = () => (
-  <Button color="red" variant="light">
-    Button
-  </Button>
-)
-export const subtleRed = () => (
-  <Button color="red" variant="subtle">
-    Button
-  </Button>
-)
+const MultiStory = (args: Story["args"][]) => ({
+  render: () => (
+    <div className="flex max-w-[500px] flex-wrap justify-around">
+      {args.map((props) => (
+        <Button {...props} />
+      ))}
+    </div>
+  ),
+})
 
-export const solidGray = () => (
-  <Button color="gray" variant="solid">
-    Button
-  </Button>
-)
-export const lightGray = () => (
-  <Button color="gray" variant="light">
-    Button
-  </Button>
-)
-export const subtleGray = () => (
-  <Button color="gray" variant="subtle">
-    Button
-  </Button>
-)
+export const Sizes = MultiStory([
+  { children: "Button", size: "sm" },
+  { children: "Button", size: "md" },
+  { children: "Button", size: "lg" },
+])
+
+export const Solid = MultiStory([
+  { children: "Blue", color: "blue", variant: "solid" },
+  { children: "Red", color: "red", variant: "solid" },
+  { children: "Amber", color: "amber", variant: "solid" },
+  { children: "Green", color: "green", variant: "solid" },
+  { children: "Slate", color: "slate", variant: "solid" },
+])
+
+export const Light = MultiStory([
+  { children: "Blue", color: "blue", variant: "light" },
+  { children: "Red", color: "red", variant: "light" },
+  { children: "Amber", color: "amber", variant: "light" },
+  { children: "Green", color: "green", variant: "light" },
+  { children: "Slate", color: "slate", variant: "light" },
+])
+
+export const Subtle = MultiStory([
+  { children: "Blue", color: "blue", variant: "subtle" },
+  { children: "Red", color: "red", variant: "subtle" },
+  { children: "Amber", color: "amber", variant: "subtle" },
+  { children: "Green", color: "green", variant: "subtle" },
+  { children: "Slate", color: "slate", variant: "subtle" },
+])
+
+export const Disabled: Story = {
+  args: {
+    children: "Button",
+    disabled: true,
+  },
+}
+
+export const WithIcon = MultiStory([
+  { children: "Settings", color: "blue", variant: "light", icon: <Icon icon="tabler:adjustments" width={16} /> },
+  { children: "Mail", color: "blue", variant: "solid", icon: <Icon icon="tabler:mail" width={16} /> },
+])
+
+export const Loading: Story = {
+  args: {
+    children: "Submitting form",
+    loading: true,
+  },
+}

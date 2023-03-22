@@ -1,76 +1,60 @@
-import { Indicator, Root, CheckboxProps as PrimitiveProps } from "@radix-ui/react-checkbox"
-import { forwardRef } from "react"
-import { Label } from "@radix-ui/react-label"
-import { IoCheckmarkSharp } from "react-icons/io5"
-import { css } from "../../config/stitches.config"
+import * as React from "react"
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+import { cn } from "../../utils"
+import { Label } from "../Label"
+import { Icon } from "../Icon"
 
-export interface CheckboxProps extends PrimitiveProps {
-  label: string
+export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {
+  label?: string
 }
 
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, ...props }, ref) => (
-  <div className={styles.container()}>
-    <Root ref={ref} className={styles.checkbox({ checked: !!props.checked, disabled: !!props.disabled })} {...props}>
-      <Indicator className={styles.indicator()}>
-        <IoCheckmarkSharp />
-      </Indicator>
-    </Root>
-    <Label htmlFor={props.id} className={styles.label()}>
-      {label}
-    </Label>
-  </div>
-))
+export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(
+  ({ className, label, ...props }, ref) => (
+    <div className="flex items-center">
+      <CheckboxPrimitive.Root
+        ref={ref}
+        className={cn(
+          "border-slate-7 focus:ring-blue-7  peer h-6 w-6 shrink-0 rounded-sm border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ",
+          "hover:border-slate-8 transition-colors",
+          "rdx-state-checked:bg-blue- rdx-state-checked:hover:bg-blue-6",
+          className
+        )}
+        {...props}
+      >
+        <CheckboxPrimitive.Indicator className={cn("grid w-full place-content-center")}>
+          {props.checked === true && <Icon icon="tabler:check" width={21} />}
+          {props.checked === "indeterminate" && <Icon icon="tabler:minus" width={21} />}
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
+      {label && (
+        <Label className="pl-3" htmlFor={props.id}>
+          {label}
+        </Label>
+      )}
+    </div>
+  )
+)
+Checkbox.displayName = CheckboxPrimitive.Root.displayName
 
-const styles = {
-  container: css({
-    display: "flex",
-    alignItems: "center",
-  }),
-  label: css({
-    lineHeight: 1,
-    userSelect: "none",
-    paddingLeft: "$2",
-  }),
-  indicator: css({
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  }),
-  checkbox: css({
-    all: "unset",
-    backgroundColor: "white",
-    color: "$white",
-    width: 25,
-    height: 25,
-    borderRadius: 4,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transitionVariant: "colors",
-    border: `2px solid $colors$gray11`,
-    "&:focus": {
-      boxShadow: "$ring0",
-    },
-    "&:hover": {
-      cursor: "pointer",
-    },
-    variants: {
-      checked: {
-        true: {
-          color: "$white",
-          borderColor: "$blue3",
-          backgroundColor: "$blue3",
-        },
-      },
-      disabled: {
-        true: {
-          cursor: "not-allowed",
-          backgroundColor: "$gray10",
-          color: "$gray6",
-        },
-      },
-    },
-  }),
-}
+// export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(({ label, ...props }, ref) => (
+//   <div className="flex items-center">
+//     <Root
+//       ref={ref}
+//       className={clsx(
+//         // "bg-slate-3 h-7 w-7 appearance-none rounded-sm outline-none transition-colors",
+//         // "hover:bg-slate-4 focus:ring-2",
+//         // "rdx-state-checked:bg-blue-4 ",
+//         // "rdx-disabled:bg-slate-5 rdx-state-checked:rdx-disabled:bg-slate-5 rdx-disabled:cursor-not-allowed"
+//       )}
+//       {...props}
+//     >
+//       <Indicator className="text-slate-12 rdx-disabled:text-slate-11 flex items-center justify-center">
+//         {props.checked === "indeterminate" && <IoRemoveSharp className="h-5 w-5" />}
+//         {props.checked === true && <IoCheckmarkSharp className="h-5 w-5" />}
+//       </Indicator>
+//     </Root>
+//     <Label htmlFor={props.id} className="select-none pl-2 text-lg leading-none">
+//       {label}
+//     </Label>
+//   </div>
+// ))
