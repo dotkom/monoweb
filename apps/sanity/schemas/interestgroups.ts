@@ -39,5 +39,11 @@ export const interestgroupsSchema = defineType({
         title: "Banner bilde",
         type: "image",
     }),
+    defineField({
+        name: "bannercolor",
+        title: "Banner farge",
+        type: "color",
+    }),
+    
   ],
 })
