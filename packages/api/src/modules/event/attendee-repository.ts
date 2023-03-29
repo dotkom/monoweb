@@ -15,6 +15,8 @@ export interface AttendanceRepository {
   create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
   getById: (eventId: Event["id"]) => Promise<Attendance[]>
+  getAttendeeById: (userId: string) => Promise<Attendee>
+  updateAttendee: (attendeeWrite: AttendeeWrite, userId: string) => Promise<Attendee>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
@@ -36,6 +38,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .values({
         userId: attendeeWrite.userId,
         attendanceId: attendeeWrite.attendanceId,
+        attended: attendeeWrite.attended,
       })
       .returningAll()
       .executeTakeFirstOrThrow()
@@ -43,6 +46,12 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     console.log({ res })
     return AttendeeSchema.parse(res)
   }
+
+  async getAttendeeById(userId: string) {
+    const res = await this.db.selectFrom("attendee").where("userId", "=", userId).executeTakeFirst()
+    return AttendeeSchema.parse(res)
+  }
+
   async getById(eventId: string) {
     const res = await this.db
       .selectFrom("attendance")
@@ -55,5 +64,14 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .where("eventId", "=", eventId)
       .execute()
     return res ? res.map((r) => AttendanceSchema.parse(r)) : []
+  }
+  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string) {
+    const res = await this.db
+      .updateTable("attendee")
+      .set({ ...attendeeWrite, updatedAt: new Date() })
+      .where("id", "=", userId)
+      .returningAll()
+      .executeTakeFirst()
+    return AttendeeSchema.parse(res)
   }
 }

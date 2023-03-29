@@ -4,7 +4,7 @@ import { CommitteeServiceImpl } from "./committee/committee-service"
 import { CompanyRepositoryImpl } from "./company/company-repository"
 import { CompanyServiceImpl } from "./company/company-service"
 import { AttendanceRepositoryImpl } from "./event/attendee-repository"
-import { AttendServiceImpl } from "./event/attendee-service"
+import { AttendanceServiceImpl } from "./event/attendee-service"
 import { EventRepositoryImpl } from "./event/event-repository"
 import { EventServiceImpl } from "./event/event-service"
 import { kysely } from "@dotkomonline/db"
@@ -23,7 +23,7 @@ export const initServices = () => {
   // Services
   const userService = new UserServiceImpl(clerkClient)
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
-  const attendService = new AttendServiceImpl(attendanceRepository)
+  const attendService = new AttendanceServiceImpl(attendanceRepository)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
   const companyService = new CompanyServiceImpl(companyRepository)
   const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
