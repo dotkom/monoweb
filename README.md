@@ -4,7 +4,7 @@ https://owdocs.vercel.app
 
 ## Development
 
-1. `pnpm` to install packages
+1. `pnpm i` to install packages
 2. `pnpm build` to build packages
 3. `docker-compose up` to start Hydra and databases
 4. If you want authentication (optional), run:
