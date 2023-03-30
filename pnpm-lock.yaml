@@ -38,7 +38,6 @@ importers:
       '@mantine/core': ^6.0.5
       '@mantine/dates': ^6.0.5
       '@mantine/hooks': ^6.0.5
-      '@mantine/notifications': ^6.0.5
       '@next/font': ^13.2.4
       '@radix-ui/react-alert-dialog': ^1.0.2
       '@radix-ui/react-dialog': ^1.0.2
@@ -81,7 +80,6 @@ importers:
       '@mantine/core': 6.0.5_jwgrj66tkguguitmdlayjwtk54
       '@mantine/dates': 6.0.5_iad4dgcql7fsu7pywtgcwm53za
       '@mantine/hooks': 6.0.5_react@18.2.0
-      '@mantine/notifications': 6.0.5_6pfxqekc6uqvckei2gzq5evb7y
       '@next/font': 13.2.4
       '@radix-ui/react-alert-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
       '@radix-ui/react-dialog': 1.0.2_2zx2umvpluuhvlq44va5bta2da
@@ -4190,22 +4188,6 @@ packages:
       react: '>=16.8.0'
     dependencies:
       react: 18.2.0
-    dev: false
-
-  /@mantine/notifications/6.0.5_6pfxqekc6uqvckei2gzq5evb7y:
-    resolution: {integrity: sha512-JNYKQ24gHMOUVR9rg5piJwjT219pTTy36LoEsbOl8mAK17u/QrFtRVnvChIbvje49ALRuLuRtvHDJfdL8vojvg==}
-    peerDependencies:
-      '@mantine/core': 6.0.5
-      '@mantine/hooks': 6.0.5
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@mantine/core': 6.0.5_jwgrj66tkguguitmdlayjwtk54
-      '@mantine/hooks': 6.0.5_react@18.2.0
-      '@mantine/utils': 6.0.5_react@18.2.0
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-transition-group: 4.4.2_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /@mantine/styles/6.0.5_sogmqz4enknxtkxk3k5s6bqwnq:
@@ -9619,13 +9601,6 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
-
-  /dom-helpers/5.2.1:
-    resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
-    dependencies:
-      '@babel/runtime': 7.21.0
-      csstype: 3.1.1
-    dev: false
 
   /dom-walk/0.1.2:
     resolution: {integrity: sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==}
@@ -15049,20 +15024,6 @@ packages:
       use-latest: 1.2.1_fan5qbzahqtxlm5dzefqlqx5ia
     transitivePeerDependencies:
       - '@types/react'
-    dev: false
-
-  /react-transition-group/4.4.2_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==}
-    peerDependencies:
-      react: '>=16.6.0'
-      react-dom: '>=16.6.0'
-    dependencies:
-      '@babel/runtime': 7.21.0
-      dom-helpers: 5.2.1
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react/18.2.0:
