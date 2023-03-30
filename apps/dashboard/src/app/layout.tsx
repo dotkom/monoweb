@@ -1,4 +1,3 @@
-"use client"
 import type { PropsWithChildren } from "react"
 import { AuthProvider } from "./AuthProvider"
 import { QueryProvider } from "./QueryProvider"

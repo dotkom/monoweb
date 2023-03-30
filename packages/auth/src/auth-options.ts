@@ -33,8 +33,8 @@ export const authOptions: NextAuthOptions = {
         }
       },
       /* eslint-enable */
-      clientId: process.env.NEXTAUTH_DASHBOARD_CLIENT_ID as string,
-      clientSecret: process.env.NEXTAUTH_DASHBOARD_CLIENT_SECRET as string,
+      clientId: process.env.NEXTAUTH_CLIENT_ID as string,
+      clientSecret: process.env.NEXTAUTH_CLIENT_SECRET as string,
     },
   ],
   session: {
