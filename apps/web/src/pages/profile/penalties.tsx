@@ -2,49 +2,35 @@ import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
 import { Icon } from "@dotkomonline/ui"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
 
 const PenaltiesPage: NextPageWithLayout = () => {
   return (
-    <div className="ml-3 flex flex-col space-y-12">
-      <p className="text-[28px] font-medium">Prikker</p>
-      <div className="flex flex-col">
-        <p className="text-[24px] font-medium">Aktive Prikker</p>
-        {activePenalties}
-      </div>
-      <div>
-        <p className="text-[24px] font-medium">Gamle Prikker</p>
-        {oldPenalties}
-      </div>
-      <div className="flex flex-col space-y-2">
-        <p className="text-[24px] font-medium">Suspensjoner</p>
-        {suspensions}
-      </div>
-      <div>
-        <p className="text-[24px] font-medium">PrikkeRegler</p>
-        <Accordion className="max-w-[590px]" type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="ml-1 text-lg">Prikkeregler</AccordionTrigger>
-            <AccordionContent className="ml-4">
-              {" "}
-              <PenaltyRules />{" "}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
-    </div>
-  )
-}
-
-
-
-const PenaltyHeader = () => {
-  return (
-    <div className="flex items-center">
-      <Icon icon="pajamas:cancel" className="w-4" />
-      <p className="ml-2">Prikker og Suspensjoner</p>
-    </div>
-  )
-}
+        <div className="flex flex-col space-y-5 ml-3">
+          <p className="text-3xl">Prikker</p>
+          <div>
+            <p className="text-2xl">Aktive Prikker</p>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+          <div>
+            <p className="text-2xl">Gamle Prikker</p>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+          <div>
+            <p className="text-2xl">PrikkeRegler</p>
+          </div>
+        </div>
+)}
 
 PenaltiesPage.getLayout = (page) => {
   return (
@@ -91,7 +77,7 @@ const PenaltyAccordion = (props: AccordionSetup) => {
         <AccordionContent className="ml-4">
           <div className="flex flex-col space-y-4">
             <p>
-            
+
               Du har fått en prikk på grunn av {props.details} den {givenAtDate}
             </p>
             <p className="text-lg">
