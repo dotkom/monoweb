@@ -1,12 +1,13 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
+import ProfileEntryCard from "@/components/views/ProfileView/components/ProfileEntryCard"
 import { NextPageWithLayout } from "../_app"
 
-const AccessCardPage: NextPageWithLayout = () => {
-  return <div>Access card</div>
+const EntryCard: NextPageWithLayout = () => {
+  return <ProfileEntryCard />
 }
 
-AccessCardPage.getLayout = (page) => {
+EntryCard.getLayout = (page) => {
   return (
     <MainLayout>
       <ProfileLayout>{page}</ProfileLayout>
@@ -14,4 +15,4 @@ AccessCardPage.getLayout = (page) => {
   )
 }
 
-export default AccessCardPage
+export default EntryCard

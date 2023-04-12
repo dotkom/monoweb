@@ -17,6 +17,10 @@ const ProfilePrivacy = () => {
       </p>
       <PrivacyModule />
       {/* <ProfileMyData /> */}
+<<<<<<< HEAD
+=======
+      {/* <ProfileMembership /> */}
+>>>>>>> 10e5362 (Added from old laptop)
     </div>
   )
 }
