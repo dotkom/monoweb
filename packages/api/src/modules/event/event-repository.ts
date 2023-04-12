@@ -9,7 +9,7 @@ export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
   update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
-  getAllByCompany(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]>
+  getAllByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
 
@@ -39,7 +39,7 @@ export class EventRepositoryImpl implements EventRepository {
     const events = await query.execute()
     return events.map(mapToEvent)
   }
-  async getAllByCompany(companyId: string, take: number, cursor?: Cursor): Promise<Event[]> {
+  async getAllByCompanyId(companyId: string, take: number, cursor?: Cursor): Promise<Event[]> {
     let query = this.db
       .selectFrom("event")
       .leftJoin("eventCompany", "eventCompany.eventId", "event.id")

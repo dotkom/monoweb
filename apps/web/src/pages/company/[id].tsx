@@ -9,9 +9,9 @@ import { useRouter } from "next/router";
 import { NextPageWithLayout } from "../_app";
 import MainLayout from "@/components/layout/MainLayout";
 
-const testData = {
+const testData: Company = {
     "id":"7c45f557-0ae2-4153-9934-375dc8c94f7b",
-    "createdAt":"2023-02-28T17:23:45.329Z",
+    "createdAt":new Date("2023-02-28T17:23:45.329Z"),
     "name":"Bekk",
     "description":"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis aperiam distinctio corrupti, quod, nemo adipisci quae labore dicta in reiciendis animi, dolore excepturi nam suscipit necessitatibus reprehenderit aut error neque.",
     "phone":"+47 123 45 678",
@@ -32,15 +32,19 @@ interface CompanyProps {
 //     return { props: { company: data } }
 // }
 
-const CompanyPage: NextPageWithLayout = () => {
+const CompanyPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
     const router = useRouter()
     const { id } = router.query as { id: string }
 
-    // const { data, isLoading } = trpc.company.get.useQuery(id)
+    const { data: eventsData, isLoading: isLoadingEvents } = trpc.event.allByCompany.useQuery({ id })
+
+    // const { data } = trpc.company.get.useQuery(id)
+
+    // if (!data) return <p>Not found</p>
     // if (isLoading) return <div>Loading...</div>
     // return <pre>{JSON.stringify(data)}</pre>
     // return <div>{id}</div>
-    return <IndividualCompanyView company={testData} />
+    return <IndividualCompanyView company={props.company} events={eventsData} isLoadingEvents={isLoadingEvents} />
 }
 
 // CompanyPage.getLayout = (page) => {
@@ -57,41 +61,41 @@ const CompanyPage: NextPageWithLayout = () => {
 
 
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-//     const ssg = createProxySSGHelpers({
-//       router: appRouter,
-//       ctx: await createContextInner({
-//         auth: null,
-//       }),
-//       transformer: transformer,
-//     })
-//     const companies = await ssg.company.all.fetch()
-//     return {
-//       paths: companies.map(({ id }) => ({ params: { id } })),
-//       fallback: "blocking",
-//     }
-//   }
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: await createContextInner({
+    auth: null,
+    }),
+    transformer: transformer,
+  })
+  const companies = await ssg.company.all.fetch()
+  return {
+    paths: companies.map(({ id }) => ({ params: { id } })),
+    fallback: "blocking",
+  }
+}
   
-//   export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
-//     const ssg = createProxySSGHelpers({
-//       router: appRouter,
-//       ctx: await createContextInner({
-//         auth: null,
-//       }),
-//       transformer: transformer,
-//     })
-//     const id = ctx.params?.id
-//     if (!id) {
-//       return { notFound: true }
-//     }
-//     const company = await ssg.company.get.fetch(id)
-  
-//     return {
-//       props: {
-//         company,
-//       },
-//       revalidate: 86400,
-//     }
-//   }
+export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: await createContextInner({
+      auth: null,
+    }),
+    transformer: transformer,
+  })
+  const id = ctx.params?.id
+  if (!id) {
+    return { notFound: true }
+  }
+  const company = await ssg.company.get.fetch(id)
+
+  return {
+    props: {
+      company,
+    },
+    revalidate: 86400,
+  }
+}
 
 export default CompanyPage

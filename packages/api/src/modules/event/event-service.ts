@@ -1,4 +1,4 @@
-import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
+import { Attendance, AttendanceWrite, Company, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
@@ -32,6 +32,11 @@ export class EventServiceImpl implements EventService {
 
   async getEvents(take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAll(take, cursor)
+    return events
+  }
+
+  async getEventsByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByCompanyId(companyId, take, cursor)
     return events
   }
 
