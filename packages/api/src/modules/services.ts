@@ -11,6 +11,8 @@ import { kysely } from "@dotkomonline/db"
 import { EventCompanyServiceImpl } from "./event/event-company-service"
 import { EventCompanyRepositoryImpl } from "./event/event-company-repository"
 import { clerkClient } from "@clerk/nextjs/server"
+import { initMarkService } from "./marks/mark-service"
+import { initMarkRepository } from "./marks/mark-repository"
 
 export const initServices = () => {
   const db = kysely
@@ -19,6 +21,7 @@ export const initServices = () => {
   const companyRepository = new CompanyRepositoryImpl(db)
   const eventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
+  const MarkRepository = initMarkRepository(db)
 
   // Services
   const userService = new UserServiceImpl(clerkClient)
@@ -27,6 +30,7 @@ export const initServices = () => {
   const committeeService = new CommitteeServiceImpl(committeeRepository)
   const companyService = new CompanyServiceImpl(companyRepository)
   const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
+  const markService = initMarkService(MarkRepository)
 
   return {
     userService,
@@ -35,5 +39,6 @@ export const initServices = () => {
     companyService,
     attendService,
     eventCompanyService,
+    markService,
   }
 }
