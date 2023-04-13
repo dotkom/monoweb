@@ -35,11 +35,6 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]> {
-    const events = await this.eventRepository.getAllByCompanyId(companyId, take, cursor)
-    return events
-  }
-
   async getEventById(id: Event["id"]): Promise<Event> {
     const event = await this.eventRepository.getById(id)
     if (!event) {

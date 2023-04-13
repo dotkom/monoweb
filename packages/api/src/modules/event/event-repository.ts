@@ -1,15 +1,14 @@
 import { Database } from "@dotkomonline/db"
-import { Company, Event, EventSchema, EventWrite } from "@dotkomonline/types"
+import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
 import { Cursor, paginateQuery } from "../../utils/db-utils"
 
-const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
+export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
   update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
-  getAllByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
 
@@ -31,21 +30,6 @@ export class EventRepositoryImpl implements EventRepository {
   }
   async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
     let query = this.db.selectFrom("event").selectAll().limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
-    }
-    const events = await query.execute()
-    return events.map(mapToEvent)
-  }
-  async getAllByCompanyId(companyId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    let query = this.db
-      .selectFrom("event")
-      .leftJoin("eventCompany", "eventCompany.eventId", "event.id")
-      .selectAll("event")
-      .where("eventCompany.companyId", "=", companyId)
-      .limit(take)
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
