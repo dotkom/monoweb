@@ -1,19 +1,20 @@
-import { GetServerSideProps } from "next"
-import { FC } from "react"
-import { fetchCompanySectionData } from "src/api/get-company-page"
+import { trpc } from "@/utils/trpc"
+import Link from "next/link"
 
-import { CompanyView, Content } from "@/components/views/CompanyView"
+const CompanyPage = () => {
+    const { data, isLoading } = trpc.company.all.useQuery()
 
-interface CompanyProps {
-  sections: Content[]
+    if (isLoading) return <p>Loading...</p>
+
+    return (
+        <ul className="text-2xl text-center text-blue-11">
+            {data?.map((company) => (
+                <li className="text-blue-11 hover:text-blue-9 cursor-pointer" key={company.id}>
+                    <Link href={`company/${company.id}`}>{company.name}</Link>
+                </li>
+            ))}
+        </ul>
+    )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data = await fetchCompanySectionData()
-  return { props: { sections: data } }
-}
-const Company: FC<CompanyProps> = (props: CompanyProps) => {
-  return <CompanyView companyContent={props.sections} />
-}
-
-export default Company
+export default CompanyPage
