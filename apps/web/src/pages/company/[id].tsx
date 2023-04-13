@@ -5,6 +5,7 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/api"
 import { trpc } from "@/utils/trpc"
 import { useRouter } from "next/router"
+import { Company } from "@dotkomonline/types"
 
 const CompanyPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const router = useRouter()
@@ -42,7 +43,14 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
   if (!id) {
     return { notFound: true }
   }
-  const company = await ssg.company.get.fetch(id)
+
+  let company: Company;
+  try {
+    company = await ssg.company.get.fetch(id)
+  }
+  catch (e) {
+    return { notFound: true }
+  }
 
   return {
     props: {
