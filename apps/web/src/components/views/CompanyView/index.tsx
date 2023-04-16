@@ -2,6 +2,7 @@ import { FC } from "react"
 import { Company, Event } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { CompanyEventList } from "./CompanyEventList"
+import Link from "next/link"
 
 interface CompanyViewProps {
   company: Company
@@ -24,9 +25,9 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
           <div className="border-blue-7 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
             {image && (
               <div className="mb-4 h-fit w-full overflow-hidden rounded-lg bg-[#fff]">
-                <a href={website} target="_blank">
+                <Link href={website} target="_blank">
                   <img src={image} alt="Company logo" className="w-full" />
-                </a>
+                </Link>
               </div>
             )}
 

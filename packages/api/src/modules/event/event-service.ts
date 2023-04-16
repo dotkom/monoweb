@@ -1,4 +1,4 @@
-import { Attendance, AttendanceWrite, Company, Event, EventWrite } from "@dotkomonline/types"
+import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
