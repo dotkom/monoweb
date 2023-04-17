@@ -3,23 +3,27 @@ import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
 import { Icon } from "@dotkomonline/ui"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
+import { DotFilledIcon} from "@radix-ui/react-icons"
 import { trpc } from "@/utils/trpc"
 
 const PenaltiesPage: NextPageWithLayout = () => {
   return (
-        <div className="flex flex-col space-y-5 ml-3">
-          <p className="text-3xl">Prikker</p>
+        <div className="flex flex-col space-y-7 ml-3">
+          <p className="text-2xl">Prikker</p>
           <div className="flex flex-col">
-            <p className="text-2xl bg-blue-6">Aktive Prikker</p>
-            <Accordion className="pt-0" type="single" collapsible>
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="text-lg">Is it accessible?</AccordionTrigger>
-                <AccordionContent>It is here</AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <p className="text-xl bg-blue-6">Aktive Prikker</p>
+            <PenaltyAccordion header={"Hallo"} content={"ashsh"} />
           </div>
           <div>
-            <p className="text-2xl">PrikkeRegler</p>
+            <p className="text-xl">Gamle Prikker</p>
+            <PenaltyAccordion header={"Flexet hook med 05"} content={"Utløpt"} />
+            <PenaltyAccordion header={"Ble ikke med på shots i Åre"} content={"Utløpt"} />
+          </div>
+          <div>
+            <p className="text-xl">Suspensjoner</p>
+          </div>
+          <div>
+            <p className="text-xl">PrikkeRegler</p>
           </div>
         </div>
 )}
@@ -34,6 +38,22 @@ PenaltiesPage.getLayout = (page) => {
     </MainLayout>
   )
 }
+
+
+interface AccordionSetup {
+    header : String;
+    content: String;
+}
+
+const PenaltyAccordion = (props : AccordionSetup) => {
+  return (
+  <Accordion type="single" collapsible>
+    <AccordionItem value="item-1">
+      <AccordionTrigger className="text-lg ml-1"><span className="flex"><DotFilledIcon className="mt-1"/>{props.header}</span></AccordionTrigger>
+      <AccordionContent className="ml-4">{props.content}</AccordionContent>
+    </AccordionItem>
+  </Accordion>
+)}
 
 interface AccordionSetup {
   title: string
