@@ -7,19 +7,20 @@ import { trpc } from "@/utils/trpc"
 
 const PenaltiesPage: NextPageWithLayout = () => {
   return (
-        <div className="flex flex-col space-y-7 ml-3">
+        <div className="flex flex-col space-y-12 ml-3">
           <p className="text-2xl">Prikker</p>
           <div className="flex flex-col">
-            <p className="text-xl bg-blue-6">Aktive Prikker</p>
-            <PenaltyAccordion header={"Hallo"} content={"ashsh"} />
+            <p className="text-xl">Aktive Prikker</p>
+            <PenaltyAccordion header={"Møtte ikke opp på sin egen Dåp"} content={"Info her"} />
           </div>
           <div>
             <p className="text-xl">Gamle Prikker</p>
             <PenaltyAccordion header={"Flexet hook med 05"} content={"Utløpt"} />
             <PenaltyAccordion header={"Ble ikke med på shots i Åre"} content={"Utløpt"} />
           </div>
-          <div>
+          <div className="flex flex-col space-y-2">
             <p className="text-xl">Suspensjoner</p>
+            <p>Du har ingen suspensjoner</p>
           </div>
           <div>
             <p className="text-xl">PrikkeRegler</p>
@@ -37,8 +38,8 @@ PenaltiesPage.getLayout = (page) => {
 
 
 interface AccordionSetup {
-    header : String;
-    content: String;
+    header?: String;
+    content?: String;
 }
 
 const PenaltyAccordion = (props : AccordionSetup) => {
