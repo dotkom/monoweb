@@ -1,4 +1,5 @@
 import { Event } from "@dotkomonline/types"
+import Link from "next/link"
 import { FC } from "react"
 
 interface CompanyEventListProps {
@@ -17,7 +18,7 @@ export const CompanyEventList: FC<CompanyEventListProps> = (props: CompanyEventL
         ) : (
           (props.events || []).map((event) => (
             <li key={event.id}>
-              <a
+              <Link
                 href={`/events/${event.id}`}
                 className="bg-blue-3 text-blue-12 hover:bg-blue-4 flex w-full cursor-pointer flex-row gap-x-2 rounded-md px-3 py-2"
               >
@@ -28,7 +29,7 @@ export const CompanyEventList: FC<CompanyEventListProps> = (props: CompanyEventL
                 <div className="ml-auto">
                   <span className="text-end">1/10</span>
                 </div>
-              </a>
+              </Link>
             </li>
           ))
         )}
