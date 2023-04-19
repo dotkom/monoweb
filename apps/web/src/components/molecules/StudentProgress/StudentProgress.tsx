@@ -1,39 +1,63 @@
+interface IStudentProgressComponent {
+    year: number
+    id: number
+}
+
 interface IStudentProgress {
     year: number
 }
 
+const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => {
+    return (
+      <div
+        className={`${
+          year <= id - 1 ? "border-[#153e75]" : "border-[#36b37e]"
+        } flex h-[45px] w-[45px] items-center  justify-around rounded-[50%] border-[5px] border-solid`}
+      >
+        <div
+          className={`${year <= id - 1 ? "bg-[#153e75]" : "bg-[#36b37e]"} h-[20px] w-[20px] rounded-[50%] text-center`}
+        >
+          {id}
+        </div>
+      </div>
+    )
+  }
+
+  const HorizontalLine: React.FC<IStudentProgressComponent> = ({year, id}) => {
+    return (
+      <div className={`${year <= id - 1 ? "bg-[#153e75]" : "bg-[#36b37e]"} m-[-1px] h-[5px] w-[30px] self-center`} />
+    )
+  }
+
+  const VerticalLine: React.FC<IStudentProgressComponent> = ({year, id}) => {
+    return (
+        <div className={`${year <= id-1 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[5px] h-[50px] self-center z-10`} />
+
+    )
+  }
+
 const StudentProgress: React.FC<IStudentProgress> = ({year}) => {
-        return (
-            <>
-                <div className="flex w-full items-center justify-between">
-                    <p>Studieløp</p>
-                    <div className="flex flex-row">
-                        <div className={`${year <= 0 ? "border-[#153e75]" : "border-[#36b37e]"} w-[45px] h-[45px] border-[5px] border-solid rounded-[50%] flex justify-around items-center`}>
-                            <div className={`${year <= 0 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[20px] h-[20px] rounded-[50%] text-center`}>1</div>
-                        </div>
-                        <div className={`${year <= 0 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[30px] h-[5px] self-center m-[-1px]`}></div>
-                        <div className={`${year <= 1 ? "border-[#153e75]" : "border-[#36b37e]"} w-[45px] h-[45px] border-[5px] border-solid rounded-[50%] flex justify-around items-center`}>
-                            <div className={`${year <= 1 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[20px] h-[20px] rounded-[50%] text-center`}>2</div>
-                        </div>
-                        <div className={`${year <= 1 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[30px] h-[5px] self-center m-[-1px]`}></div>
-                        <div className={`${year <= 2 ? "border-[#153e75]" : "border-[#36b37e]"} w-[45px] h-[45px] border-[5px] border-solid rounded-[50%] flex justify-around items-center`}>
-                            <div className={`${year <= 2 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[20px] h-[20px] rounded-[50%] text-center`}>3</div>
-                        </div>
-                        <div className={`${year <= 2 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[30px] h-[5px] self-center m-[-1px]`}></div>
-                        <div className={`${year <= 2 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[5px] h-[50px] self-center z-10`}></div>
-                        <div className={`${year <= 3 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[30px] h-[5px] self-center m-[-1px]`}></div>
-                        <div className={`${year <= 3 ? "border-[#153e75]" : "border-[#36b37e]"} w-[45px] h-[45px] border-[5px] border-solid rounded-[50%] flex justify-around items-center`}>
-                            <div className={`${year <= 3 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[20px] h-[20px] rounded-[50%] text-center`}>4</div>
-                        </div>
-                        <div className={`${year <= 4 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[30px] h-[5px] self-center m-[-1px]`}></div>
-                        <div className={`${year <= 4 ? "border-[#153e75]" : "border-[#36b37e]"} w-[45px] h-[45px] border-[5px] border-solid  rounded-[50%] flex justify-around items-center`}>
-                            <div className={`${year <= 4 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[20px] h-[20px] rounded-[50%] text-center`}>5</div>
-                        </div>
-                    </div>
+    return (
+        <>
+            <div className="flex w-full items-center justify-between">
+                <p>Studieløp</p>
+                <div className="flex flex-row">
+                    <ProgressCircle year={year} id={1} />
+                    <HorizontalLine year={year} id={1} />
+                    <ProgressCircle year={year} id={2} />
+                    <HorizontalLine year={year} id={2} />
+                    <ProgressCircle year={year} id={3} />
+                    <HorizontalLine year={year} id={3} />
+                    <VerticalLine year={year} id={3} />
+                    <HorizontalLine year={year} id={4} />
+                    <ProgressCircle year={year} id={4} />
+                    <HorizontalLine year={year} id={5} />
+                    <ProgressCircle year={year} id={5} />
                 </div>
-                <hr className="border-slate-12 my-5 w-full" />
-            </>
-        )
+            </div>
+            <hr className="border-slate-12 my-5 w-full" />
+        </>
+    )
 }
 
 export default StudentProgress
