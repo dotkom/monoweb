@@ -1,9 +1,10 @@
 import { ZodSchema } from "zod"
+import { render } from "@react-email/render"
 
 export class InvalidTemplateArguments extends Error {}
 
 export function createTemplate<T>(validationSchema: ZodSchema<T>) {
-  return (options: TemplateWithoutArguments<T>): TemplateDescription<T> => ({
+  return (options: TemplateOptions<T>): TemplateDescription<T> => ({
     arguments: validationSchema,
     key: options.key,
     render: (data) => {
@@ -11,15 +12,18 @@ export function createTemplate<T>(validationSchema: ZodSchema<T>) {
       if (!result.success) {
         throw new InvalidTemplateArguments("Invalid arguments passed to email template: " + result.error.message)
       }
-      return options.render(result.data)
+      const jsx = options.render(result.data)
+      return render(jsx)
     },
   })
 }
 
 export type TemplateArguments<T> = T extends TemplateDescription<infer U> ? U : never
-export type TemplateWithoutArguments<T> = Omit<TemplateDescription<T>, "arguments">
+export type TemplateOptions<T> = {
+  render: (options: T) => JSX.Element
+} & Pick<TemplateDescription<T>, "key">
 export type TemplateDescription<T> = {
   key: string
   arguments: ZodSchema<T>
-  render: (options: T) => JSX.Element
+  render: (options: T) => string
 }

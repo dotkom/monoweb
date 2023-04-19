@@ -1,4 +1,3 @@
-import { render } from "@react-email/render"
 import { SES } from "@aws-sdk/client-ses"
 import { HelloEmailTemplate, InvalidTemplateArguments, TemplateDescription } from "@dotkomonline/emails"
 import { NextApiRequest, NextApiResponse } from "next"
@@ -35,9 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).send({ error: "Invalid template name" })
   }
   try {
-    const jsx = emailTemplate.render(args)
-    const html = render(jsx)
-
+    const html = emailTemplate.render(args)
     await emailService.sendEmail({
       Source: source,
       Destination: {
