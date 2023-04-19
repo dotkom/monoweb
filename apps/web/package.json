@@ -17,9 +17,11 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.301.0",
     "@clerk/nextjs": "^4.11.5",
     "@clerk/themes": "^1.4.4",
     "@dotkomonline/api": "*",
+    "@dotkomonline/emails": "*",
     "@dotkomonline/ui": "*",
     "@next/env": "^13.1.6",
     "@next/font": "^13.1.6",
@@ -32,6 +34,7 @@
     "@radix-ui/react-icons": "^1.1.1",
     "@radix-ui/react-navigation-menu": "^1.0.0",
     "@radix-ui/react-popover": "^1.0.3",
+    "@react-email/render": "^0.0.6",
     "@sanity/client": "^4.0.1",
     "@tailwindcss/typography": "^0.5.8",
     "@tanstack/react-query": "^4.18.0",
