@@ -44,11 +44,10 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
     return { notFound: true }
   }
 
-  let company: Company;
+  let company: Company
   try {
     company = await ssg.company.get.fetch(id)
-  }
-  catch (e) {
+  } catch (e) {
     return { notFound: true }
   }
 
