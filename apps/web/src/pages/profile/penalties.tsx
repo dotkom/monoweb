@@ -11,12 +11,12 @@ const PenaltiesPage: NextPageWithLayout = () => {
           <p className="text-2xl">Prikker</p>
           <div className="flex flex-col">
             <p className="text-xl">Aktive Prikker</p>
-            <PenaltyAccordion header={"Møtte ikke opp på sin egen Dåp"} content={"Info her"} />
+            <PenaltyAccordion reason={"Møtte ikke opp på sin egen Dåp"} category={"Sosialt"} expirationDate={"29.01.2023"} />
           </div>
           <div>
             <p className="text-xl">Gamle Prikker</p>
-            <PenaltyAccordion header={"Flexet hook med 05"} content={"Utløpt"} />
-            <PenaltyAccordion header={"Ble ikke med på shots i Åre"} content={"Utløpt"} />
+            <PenaltyAccordion reason={"Flexet hook med 05"} category={"Sosialt"} expirationDate={"29.01.2023"} />
+            <PenaltyAccordion reason={"Ble ikke med på shots i Åre"} category={"Sosialt"} expirationDate={"29.01.2023"} />
           </div>
           <div className="flex flex-col space-y-2">
             <p className="text-xl">Suspensjoner</p>
@@ -38,16 +38,23 @@ PenaltiesPage.getLayout = (page) => {
 
 
 interface AccordionSetup {
-    header?: String;
-    content?: String;
+    reason?: String;
+    category: String;
+    expirationDate: String
 }
 
 const PenaltyAccordion = (props : AccordionSetup) => {
   return (
   <Accordion type="single" collapsible>
     <AccordionItem value="item-1">
-      <AccordionTrigger className="text-lg ml-1"><span className="flex"><DotFilledIcon className="mt-1"/>{props.header}</span></AccordionTrigger>
-      <AccordionContent className="ml-4">{props.content}</AccordionContent>
+      <AccordionTrigger className="text-lg ml-1"><span className="flex"><DotFilledIcon className="mt-1"/>{props.reason}</span></AccordionTrigger>
+      <AccordionContent className="ml-4">
+        <div className="flex flex-col space-y-4">
+        <p> Du har fått en prikk på grunn av {props.reason}</p>
+        <p><span className="font-bold text-lg">Katergori:</span> {props.category}</p>
+        <p><span className="font-bold text-lg">Utløpsdato:</span> {props.expirationDate}</p>
+        </div>
+      </AccordionContent>
     </AccordionItem>
   </Accordion>
 )}
