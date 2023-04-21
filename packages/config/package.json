@@ -7,6 +7,7 @@
   "files": [
     "eslint-preset.js",
     "prettier-preset.js",
+    "tailwind-preset.d.ts",
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
