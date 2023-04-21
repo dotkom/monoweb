@@ -38,9 +38,9 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
               </div>
             )}
 
-            <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg [&>*]:flex [&>*]:items-center [&>*]:gap-x-2">
+            <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
               {icons.map(({ icon, text, href }, index) => (
-                <div key={index}>
+                <div key={index} className="flex items-center gap-x-2">
                   <Icon icon={icon} width="28"></Icon>
                   {href === null ? (
                     <span>{text}</span>
