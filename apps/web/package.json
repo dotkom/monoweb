@@ -17,9 +17,11 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.301.0",
     "@clerk/nextjs": "^4.11.5",
     "@clerk/themes": "^1.4.4",
     "@dotkomonline/api": "*",
+    "@dotkomonline/emails": "*",
     "@dotkomonline/ui": "*",
     "@next/env": "^13.1.6",
     "@next/font": "^13.1.6",
