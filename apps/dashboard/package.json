@@ -21,7 +21,7 @@
     "@mantine/core": "^6.0.9",
     "@mantine/dates": "^6.0.9",
     "@mantine/hooks": "^6.0.9",
-    "@next/font": "^13.1.6",
+    "@next/font": "^13.3.1",
     "@radix-ui/react-alert-dialog": "^1.0.2",
     "@radix-ui/react-dialog": "^1.0.2",
     "@tanstack/react-query": "^4.18.0",
