@@ -14,8 +14,8 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemP
   const color = career_type == "Sommerjobb" ? "amber" : career_type == "Fulltid" ? "red" : "blue"
 
   return (
-    <div className="flex items-center h-16 border-slate-11 border-b justify-between">
-      <div className="flex w-1/4 items-center h-10 overflow-hidden gap-2">
+    <div className="border-slate-11 flex h-16 items-center justify-between border-b">
+      <div className="flex h-10 w-1/4 items-center gap-2 overflow-hidden">
         <Image src={image.asset.url} width={70} height={40} alt={`${company_name}'s job posting`} />
         <p>{company_name}</p>
       </div>
@@ -27,7 +27,9 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemP
       </div>
       <span className="w-[17.5%]">{location.concat("")}</span>
       <span className="w-[17.5%]">{format(new Date(deadline), "dd.MM.yyyy")}</span>
-      <a className="w-[15%]" href={`/career/${slug.current}`}>Les mer</a>
+      <a className="w-[15%]" href={`/career/${slug.current}`}>
+        Les mer
+      </a>
     </div>
   )
 }
