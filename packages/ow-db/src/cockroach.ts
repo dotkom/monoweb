@@ -1,4 +1,4 @@
-import { PostgresAdapter, PostgresDialect } from "kysely";
+import { PostgresAdapter, PostgresDialect } from "kysely"
 
 export class CockroachAdapter extends PostgresAdapter {
   override acquireMigrationLock(): Promise<void> {
