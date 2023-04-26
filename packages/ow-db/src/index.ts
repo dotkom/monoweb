@@ -1,8 +1,9 @@
 import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely"
-import { Pool } from "pg"
+import pg from "pg"
 import { Database } from "./types"
 
 export * from "./types"
+export { CockroachDialect } from "./cockroach"
 
 declare global {
   // allow global `var` declarations
@@ -14,7 +15,7 @@ export const kysely =
   global.kysely ||
   new Kysely<Database>({
     dialect: new PostgresDialect({
-      pool: new Pool({
+      pool: new pg.Pool({
         connectionString: process.env.DATABASE_URL as string,
       }),
     }),
