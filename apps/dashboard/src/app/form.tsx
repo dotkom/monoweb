@@ -24,7 +24,7 @@ import {
 } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ErrorMessage } from "@hookform/error-message"
-import { DateTimeInput, DateTimeInputProps } from "../components/DateTimeInput"
+import { DateTimePicker, DateTimePickerProps } from "@mantine/dates"
 
 type InputFieldContext<T extends FieldValues> = {
   name: FieldValue<T>
@@ -57,15 +57,16 @@ export function createSelectInput<F extends FieldValues>({
 
 export function createDateTimeInput<F extends FieldValues>({
   ...props
-}: Omit<DateTimeInputProps, "error">): InputProducerResult<F> {
+}: Omit<DateTimePickerProps, "error">): InputProducerResult<F> {
   return function FormDateTimeInput({ name, state, control }) {
     return (
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
-          <DateTimeInput
+          <DateTimePicker
             {...props}
+            defaultValue={Date.now()}
             value={field.value}
             onChange={field.onChange}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
