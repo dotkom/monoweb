@@ -1,4 +1,3 @@
-import { Accordion } from "@dotkomonline/ui";
 
 const PenaltyRules = () =>  {
     return (
