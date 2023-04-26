@@ -8,6 +8,7 @@ import { IoTimeOutline, IoCopyOutline } from "react-icons/io5"
 import { MdWorkOutline } from "react-icons/md"
 import { TbGlobe } from "react-icons/tb"
 import PortableText from "@/components/molecules/PortableText"
+import Link from "next/link"
 
 interface CareerAdViewProps {
   career: CareerAd
@@ -27,7 +28,6 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
     twitter,
     facebook,
     career_role,
-    slug
   } = props.career
 
   return (
@@ -40,12 +40,12 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <p>{company_info}</p>
 
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
-        <a href="/career">
+        <Link href="/career">
           <div className="flex items-center">
             <BsArrowLeft size={20} className="text-blue-9 mb-2 inline" />
             <h2 className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</h2>
           </div>
-        </a>
+        </Link>
         <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <TbGlobe className="text-blue-9" size={20} />
@@ -75,24 +75,24 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="bg-slate-9 mt-7 mb-3 h-[0.5px] w-full" />
         <div className="text-blue-9">
           {linkdin && (
-            <a href={linkdin}>
+            <Link href={linkdin}>
               <BsLinkedin className="m-1 inline-block" />
-            </a>
+            </Link>
           )}
           {twitter && (
-            <a href={twitter}>
+            <Link href={twitter}>
               <BsTwitter className="m-1 inline-block" />
-            </a>
+            </Link>
           )}
           {facebook && (
-            <a href={facebook}>
+            <Link href={facebook}>
               <ImFacebook2 className="m-1 inline-block" />
-            </a>
+            </Link>
           )}
         </div>
-        <a href={link}>
+        <Link href={link}>
           <Button className="bg-blue-8 mt-3 w-20">Søk</Button>
-        </a>
+        </Link>
       </div>
       <div className="w-2/3">
         <div className="border-amber-9 ml-8 mt-2 border-l-[1px] pl-4">

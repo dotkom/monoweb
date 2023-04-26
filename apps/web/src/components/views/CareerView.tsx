@@ -7,14 +7,14 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
 
   return (
     <div>
-      <div className="absolute left-0 h-[250px] top-[56px] z-0 w-full opacity-30 bg-amber-9" />
+      <div className="bg-amber-9·absolute·left-0·top-[56px]·z-0·h-[250px]·w-full·opacity-30" />
       <div className="absolute left-0 h-[250px] top-[56px] z-10 flex w-full flex-col justify-center">
         <div className="m-auto h-[200px] max-w-[800px] p-5 text-center">
           <p className="leading-1.4 mt-5 text-4xl font-bold">
             Er du på jakt etter{" "}
             <span className="bg-center bg-no-repeat bg-amber-6">jobb</span>?
           </p>
-          <p className="leading-1.4 text-2xl font-bold mt-7">
+          <p className="leading-1.4 mt-7·text-2xl·font-bold">
             Her har du en liste over bedrifter som er ute etter deg som informatikkstudent!
           </p>
         </div>
