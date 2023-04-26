@@ -24,7 +24,8 @@
     "apps/*"
   ],
   "engines": {
-    "node": ">=16.13"
+    "node": ">=16.13",
+    "pnpm": ">=8"
   },
   "devDependencies": {
     "dotenv-cli": "^7.0.0",
