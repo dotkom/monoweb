@@ -7,7 +7,7 @@ export interface CareerProps {
   careers: CareerAd[]
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const data = await fetchCareerAds()
   return { props: { careers: data } }
 }

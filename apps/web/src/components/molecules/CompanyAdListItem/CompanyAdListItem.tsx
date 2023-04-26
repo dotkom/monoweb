@@ -9,7 +9,7 @@ interface CompanyAdListItemProps {
 }
 
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemProps) => {
-  const { company_name, image, career_type, location, deadline, slug, link } = props.career
+  const { company_name, image, career_type, location, deadline, slug } = props.career
 
   const color = career_type == "Sommerjobb" ? "amber" : career_type == "Fulltid" ? "red" : "blue"
 
