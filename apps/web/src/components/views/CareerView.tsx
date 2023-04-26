@@ -12,10 +12,10 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
         <div className="m-auto h-[200px] max-w-[800px] p-5 text-center">
           <p className="leading-1.4 mt-5 text-4xl font-bold">
             Er du på jakt etter{" "}
-            <span className="bg-50% bg-[url('/for-company-text-decor.svg')] bg-center bg-no-repeat">jobb</span>?
+            <span className="bg-center bg-no-repeat bg-amber-6">jobb</span>?
           </p>
           <p className="leading-1.4 text-2xl font-bold mt-7">
-            Bedrifter betaler 15 000 for å være med på denne lista så pls søk eller så får ikke Online penger uwu
+            Her har du en liste over bedrifter som er ute etter deg som informatikkstudent!
           </p>
         </div>
       </div>
