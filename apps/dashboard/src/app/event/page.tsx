@@ -4,7 +4,7 @@ import { Title, Text, Button, Flex, Loader } from "@mantine/core"
 import { trpc } from "../../trpc"
 import { Event } from "@dotkomonline/types"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { FC, useState } from "react"
+import { FC, useMemo, useState } from "react"
 import { EventCreationModal } from "./EventCreationModal"
 import { Icon } from "@iconify/react"
 import Link from "next/link"
@@ -38,32 +38,42 @@ export default function EventPage() {
 type EventTableProps = { events: Event[] }
 
 const EventTable: FC<EventTableProps> = ({ events }) => {
+  const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery({ take: 999 })
   const columnHelper = createColumnHelper<Event>()
-  const columns = [
-    columnHelper.accessor("title", {
-      header: () => "Arrangementnavn",
-    }),
-    columnHelper.accessor("start", {
-      header: () => "Startdato",
-      cell: (info) => info.getValue().toLocaleDateString(),
-    }),
-    columnHelper.accessor("end", {
-      header: () => "Sluttdato",
-      cell: (info) => info.getValue().toLocaleDateString(),
-    }),
-    columnHelper.accessor("committeeId", {
-      header: () => "Arrangør",
-      cell: (info) => info.getValue() ?? "Ingen arrangør",
-    }),
-    columnHelper.accessor("type", {
-      header: () => "Type",
-    }),
-    columnHelper.accessor((evt) => evt, {
-      id: "actions",
-      header: () => "Detaljer",
-      cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
-    }),
-  ]
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("title", {
+        header: () => "Arrangementnavn",
+      }),
+      columnHelper.accessor("start", {
+        header: () => "Startdato",
+        cell: (info) => info.getValue().toLocaleDateString(),
+      }),
+      columnHelper.accessor("end", {
+        header: () => "Sluttdato",
+        cell: (info) => info.getValue().toLocaleDateString(),
+      }),
+      columnHelper.accessor("committeeId", {
+        header: () => "Arrangør",
+        cell: (info) => {
+          if (isCommitteesLoading) {
+            return "Laster..."
+          }
+          const match = committees.find((committee) => committee.id === info.getValue())
+          return match?.name ?? "Ingen arrangør"
+        },
+      }),
+      columnHelper.accessor("type", {
+        header: () => "Type",
+      }),
+      columnHelper.accessor((evt) => evt, {
+        id: "actions",
+        header: () => "Detaljer",
+        cell: (info) => <EventTableDetailsCell event={info.getValue()} />,
+      }),
+    ],
+    [committees, isCommitteesLoading, columnHelper]
+  )
   const table = useReactTable({
     data: events,
     getCoreRowModel: getCoreRowModel(),
