@@ -6,14 +6,16 @@ import { useSearchParams } from "next/navigation"
 
 const SignInPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams()
-  const challenge = searchParams.get("login_challenge")
+  const redirectUrl = searchParams.get("login_challenge")
+    ? `/api/oauth2/login?login_challenge=${searchParams}`
+    : undefined
   return (
     <SignIn
       path="/sign-in"
       routing="path"
       signUpUrl="/sign-up"
       appearance={{ baseTheme: dark }}
-      redirectUrl={challenge ? `/api/oauth2/login?login_challenge=${challenge}` : undefined}
+      redirectUrl={redirectUrl}
     />
   )
 }
