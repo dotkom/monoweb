@@ -30,24 +30,21 @@ const ProfileMembership = () => {
         <AccordionItem value="item-1">
           <AccordionTrigger>Aktive søknader</AccordionTrigger>
           <AccordionContent>
-          <h3>Medlemskap- og studieretningssøknad for Hanna Lunne</h3>
-            {/* MÅ HA SKIKKELIG KODE HER OG IKKE BARE MITT EKSEMPEL */}
+          <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
             Du har ingen aktive søknader.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger>Avslåtte søknader</AccordionTrigger>
           <AccordionContent>
-          <h3>Medlemskap- og studieretningssøknad for Hanna Lunne</h3>
-            {/* MÅ HA SKIKKELIG KODE HER OG IKKE BARE MITT EKSEMPEL */}
+          <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
             Du har ingen aktive søknader.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
           <AccordionTrigger>Godkjente søknader</AccordionTrigger>
           <AccordionContent>
-            <h3>Medlemskap- og studieretningssøknad for Hanna Lunne</h3>
-            {/* MÅ HA SKIKKELIG KODE HER OG IKKE BARE MITT EKSEMPEL */}
+            <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
             <table>
               <tr>
                 <td className="min-w-56 w-2/5 font-semibold">Opprettet dato:</td>

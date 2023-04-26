@@ -15,18 +15,15 @@ const ProfileEntryCard = () => {
       <p>Derfra hentes RFID koden.</p>
       <h3>Nåværende registrert kort</h3>
       <p>
-        <b>EM kode:</b> 1234567890 {/* Må endres */}
+        <b>EM kode:</b> 1234567890
       </p>
       <p>
-        <b>RFID:</b> 0987654321 {/* Må endres */}
+        <b>RFID:</b> 5678901234 
       </p>
       <h3>Nytt kort</h3>
-      <label>EM kort</label>
-      <TextInput />
-      <input className="ml-10" type="text" id="emInput" />
-      <h2>Grafisk representasjon</h2>
-      <p>Kortet som vises under er kun en grafisk representasjon, som veiledning for å finne EM koden:</p>
-      <Button color="blue" variant="solid">
+      <label>EM nummer (se studentkort)</label>
+      <TextInput className="mt-3"/>
+      <Button color="blue" variant="solid" className="mt-3 mb-10">
         Lagre
       </Button>
     </div>
