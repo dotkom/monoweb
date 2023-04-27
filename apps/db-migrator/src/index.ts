@@ -36,16 +36,18 @@ program
         "Migrating...\n" +
           res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}`).join("\n")
       )
-    } else {
-      logger.warn("Failed to run migrations, error:")
-      logger.warn(JSON.stringify(res))
+    }
+
+    if (res.error) {
+      logger.warn("Error while running migrations:")
+      logger.warn(JSON.stringify(res.error))
     }
 
     if (option.withSeed) {
       const { seed } = await import("./seed")
       await seed()
     }
-    process.exit()
+    process.exit(0);
   })
 
 program.parse()
