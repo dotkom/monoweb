@@ -38,16 +38,19 @@ program
       )
     }
 
-    if (res.error) {
-      logger.warn("Error while running migrations:")
-      logger.warn(JSON.stringify(res.error))
-    }
-
     if (option.withSeed) {
       const { seed } = await import("./seed")
       await seed()
     }
+
+    if (res.error) {
+      logger.warn("Error while running migrations:")
+      logger.warn(JSON.stringify(res.error))
+      process.exit(1);
+    }
+
     process.exit(0);
+
   })
 
 program.parse()
