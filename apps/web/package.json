@@ -24,7 +24,6 @@
     "@dotkomonline/emails": "*",
     "@dotkomonline/ui": "*",
     "@next/env": "^13.3.1",
-    "@next/font": "^13.1.6",
     "@ory/client": "^1.0.1",
     "@portabletext/react": "^2.0.1",
     "@radix-ui/colors": "^0.1.8",

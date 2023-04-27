@@ -15,7 +15,7 @@ importers:
         version: 2.8.4
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+        version: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       tsc-watch:
         specifier: ^6.0.0
         version: 6.0.0(typescript@4.9.5)
@@ -67,9 +67,6 @@ importers:
       '@mantine/hooks':
         specifier: ^6.0.9
         version: 6.0.9(react@18.2.0)
-      '@next/font':
-        specifier: ^13.3.1
-        version: 13.3.1
       '@radix-ui/react-alert-dialog':
         specifier: ^1.0.2
         version: 1.0.2(@types/react@18.2.0)(react-dom@18.2.0)(react@18.2.0)
@@ -227,7 +224,7 @@ importers:
         version: 18.2.0
       sanity:
         specifier: ^3.0.0
-        version: 3.2.4(@types/node@18.16.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6)
+        version: 3.2.4(@types/node@16.18.25)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6)
       styled-components:
         specifier: ^5.2.0
         version: 5.3.6(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -312,7 +309,7 @@ importers:
         version: 4.9.3
       vite:
         specifier: ^3.0.4
-        version: 3.2.4(@types/node@18.16.1)
+        version: 3.2.4(@types/node@16.18.25)
 
   apps/web:
     dependencies:
@@ -337,9 +334,6 @@ importers:
       '@next/env':
         specifier: ^13.3.1
         version: 13.3.1
-      '@next/font':
-        specifier: ^13.1.6
-        version: 13.1.6
       '@ory/client':
         specifier: ^1.0.1
         version: 1.0.1
@@ -409,9 +403,6 @@ importers:
       next-auth:
         specifier: ^4.22.1
         version: 4.22.1(next@13.3.1)(react-dom@18.2.0)(react@18.2.0)
-      next-superjson-plugin:
-        specifier: ^0.5.4
-        version: 0.5.4(next@13.3.1)(superjson@1.12.3)
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@13.3.1)(react-dom@18.2.0)(react@18.2.0)
@@ -4562,7 +4553,7 @@ packages:
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@4.9.3)
       typescript: 4.9.3
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     dev: true
 
   /@jridgewell/gen-mapping@0.1.1:
@@ -4816,14 +4807,6 @@ packages:
     dependencies:
       glob: 7.1.7
     dev: true
-
-  /@next/font@13.1.6:
-    resolution: {integrity: sha512-AITjmeb1RgX1HKMCiA39ztx2mxeAyxl4ljv2UoSBUGAbFFMg8MO7YAvjHCgFhD39hL7YTbFjol04e/BPBH5RzQ==}
-    dev: false
-
-  /@next/font@13.3.1:
-    resolution: {integrity: sha512-S8Shizt4xlHDItXTAowEoyktiaLIEzTxJeXPaRu+VDeb21yXu7kMX2DUQE5Un+kb/ViCaAdWlyltCuS2sywEjA==}
-    dev: false
 
   /@next/swc-darwin-arm64@13.3.1:
     resolution: {integrity: sha512-UXPtriEc/pBP8luSLSCZBcbzPeVv+SSjs9cH/KygTbhmACye8/OOXRZO13Z2Wq1G0gLmEAIHQAOuF+vafPd2lw==}
@@ -6668,7 +6651,7 @@ packages:
       rollup: 3.10.0
       slash: 3.0.0
       typescript: 4.9.3
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7187,7 +7170,7 @@ packages:
       react: 18.2.0
       react-docgen: 6.0.0-alpha.3
       react-dom: 18.2.0(react@18.2.0)
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - glob
@@ -8175,7 +8158,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.20.12)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8191,7 +8174,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.20.12)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 4.0.4(@types/node@18.16.1)
+      vite: 4.0.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -8607,7 +8590,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       glob: 7.2.3
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       lazystream: 1.0.1
       lodash.defaults: 4.2.0
       lodash.difference: 4.5.0
@@ -10081,7 +10064,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       globby: 11.1.0
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       is-glob: 4.0.3
       is-path-cwd: 2.2.0
       is-path-inside: 3.0.3
@@ -12026,7 +12009,6 @@ packages:
 
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
-    dev: true
 
   /grapheme-splitter@1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
@@ -12898,7 +12880,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.16.1
+      '@types/node': 16.18.25
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true
@@ -12974,7 +12956,7 @@ packages:
       babel-core: 7.0.0-bridge.0(@babel/core@7.20.12)
       chalk: 4.1.2
       flow-parser: 0.193.0
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       micromatch: 3.1.10
       neo-async: 2.6.2
       node-dir: 0.1.17
@@ -13088,7 +13070,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /jsx-ast-utils@3.3.3:
@@ -13834,17 +13816,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       uuid: 8.3.2
-    dev: false
-
-  /next-superjson-plugin@0.5.4(next@13.3.1)(superjson@1.12.3):
-    resolution: {integrity: sha512-AUAqdL+yv/jqnkd583jffimRYbfbztkKkNf7qv0WhOVUGW0cIFYdtQHbOEseeCHK95hcPy7rDZY94nujjjRseQ==}
-    peerDependencies:
-      next: ^13
-      superjson: ^1
-    dependencies:
-      hoist-non-react-statics: 3.3.2
-      next: 13.3.1(@babel/core@7.20.2)(react-dom@18.2.0)(react@18.2.0)
-      superjson: 1.12.3
     dev: false
 
   /next-themes@0.2.1(next@13.3.1)(react-dom@18.2.0)(react@18.2.0):
@@ -14699,7 +14670,7 @@ packages:
     dependencies:
       lilconfig: 2.0.6
       postcss: 8.4.19
-      ts-node: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       yaml: 1.10.2
 
   /postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.9.1):
@@ -14716,7 +14687,7 @@ packages:
     dependencies:
       lilconfig: 2.0.6
       postcss: 8.4.21
-      ts-node: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       yaml: 1.10.2
 
   /postcss-load-config@3.1.4(postcss@8.4.23)(ts-node@10.9.1):
@@ -14733,7 +14704,7 @@ packages:
     dependencies:
       lilconfig: 2.0.6
       postcss: 8.4.23
-      ts-node: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       yaml: 1.10.2
     dev: true
 
@@ -15822,7 +15793,7 @@ packages:
       diff-match-patch: 1.0.5
     dev: false
 
-  /sanity@3.2.4(@types/node@18.16.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6):
+  /sanity@3.2.4(@types/node@16.18.25)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6):
     resolution: {integrity: sha512-CQMXAlRrW0awRJprHIAfj6v1CSmwaUCzt7sdIuMtvAVmgZCWx+wODtYD7a1wItXDI83A4AS3j38YikQotXJTeg==}
     engines: {node: '>=14.18.0'}
     hasBin: true
@@ -15935,7 +15906,7 @@ packages:
       ts-md5: 1.3.1
       use-device-pixel-ratio: 1.1.2(react@18.2.0)
       use-hot-module-reload: 1.0.2(react@18.2.0)
-      vite: 4.0.4(@types/node@18.16.1)
+      vite: 4.0.4(@types/node@16.18.25)
       yargs: 17.3.1
     transitivePeerDependencies:
       - '@types/node'
@@ -17232,7 +17203,7 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /ts-node@10.9.1(@types/node@18.16.1)(typescript@4.9.5):
+  /ts-node@10.9.1(@types/node@16.18.25)(typescript@4.9.5):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -17251,7 +17222,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 18.16.1
+      '@types/node': 16.18.25
       acorn: 8.8.1
       acorn-walk: 8.2.0
       arg: 4.1.3
@@ -18048,41 +18019,6 @@ packages:
       rollup: 3.10.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
-
-  /vite@4.0.4(@types/node@18.16.1):
-    resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 18.16.1
-      esbuild: 0.16.17
-      postcss: 8.4.21
-      resolve: 1.22.1
-      rollup: 3.10.0
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: false
 
   /vitest@0.28.4(@vitest/ui@0.28.4):
     resolution: {integrity: sha512-sfWIy0AdlbyGRhunm+TLQEJrFH9XuRPdApfubsyLcDbCRrUX717BRQKInTgzEfyl2Ipi1HWoHB84Nqtcwxogcg==}
@@ -18272,7 +18208,7 @@ packages:
     engines: {node: '>=10.13.0'}
     dependencies:
       glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /webcrypto-core@1.7.6:
@@ -18493,7 +18429,7 @@ packages:
   /write-file-atomic@2.4.3:
     resolution: {integrity: sha512-GaETH5wwsX+GcnzhPgKcKjJ6M2Cq3/iZp1WyY/X1CSqrW+jVNM9Y7D8EC2sM4ZG/V8wZlSniJnCKWPmBYAucRQ==}
     dependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
     dev: true
