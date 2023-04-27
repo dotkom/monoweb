@@ -9,9 +9,9 @@ export async function up(db: Kysely<any>) {
 }
 
 export async function down(db: Kysely<any>) {
-  await db.schema.dropType("event_type").execute()
   await db.schema
     .alterTable("committee")
     .dropColumn("type")
     .execute()
+  await db.schema.dropType("event_type").ifExists().execute()
 }
