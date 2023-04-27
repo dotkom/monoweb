@@ -38,7 +38,7 @@ program
       )
     } else {
       logger.warn("Failed to run migrations, error:")
-      logger.warn(JSON.stringify(res));
+      logger.warn(JSON.stringify(res))
     }
 
     if (option.withSeed) {
