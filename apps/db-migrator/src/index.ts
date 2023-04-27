@@ -37,7 +37,8 @@ program
           res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}`).join("\n")
       )
     } else {
-      logger.warn(res)
+      logger.warn("Failed to run migrations, error:")
+      logger.warn(JSON.stringify(res));
     }
 
     if (option.withSeed) {
