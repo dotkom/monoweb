@@ -13,13 +13,14 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
+      ]
     },
     "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "strictNullChecks": true
   }
 }
