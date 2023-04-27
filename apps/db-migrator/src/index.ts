@@ -46,11 +46,10 @@ program
     if (res.error) {
       logger.warn("Error while running migrations:")
       logger.warn(JSON.stringify(res.error))
-      process.exit(1);
+      process.exit(1)
     }
 
-    process.exit(0);
-
+    process.exit(0)
   })
 
 program.parse()
