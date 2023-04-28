@@ -1,7 +1,7 @@
 import { Generated } from "kysely"
 
 type EventStatus = "TBA" | "PUBLIC" | "NO_LIMIT" | "ATTENDANCE"
-type EventType = "SOCIAL" | "COMPANY"
+type EventType = "SOCIAL" | "COMPANY" | "ACADEMIC" | "BEDPRES"
 
 export interface EventTable {
   id: Generated<string>

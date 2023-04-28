@@ -15,16 +15,16 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.11.5",
-    "@dotkomonline/db": "*",
     "@dotkomonline/auth": "*",
+    "@dotkomonline/db": "*",
     "@ory/client": "^1.0.1",
-    "@trpc/server": "^10.12.0",
+    "@trpc/server": "^10.21.2",
     "axios": "^0.27.0",
     "date-fns": "^2.29.3",
     "kysely": "^0.23.0",
     "pg": "^8.8.0",
-    "superjson": "^1.12.2",
-    "zod": "^3.20.6"
+    "superjson": "^1.12.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@dotkomonline/config": "*",
@@ -34,8 +34,8 @@
     "@types/eslint": "^8",
     "@types/pg": "^8.6.5",
     "@vitest/ui": "^0.28.0",
-    "eslint": "^8.26.0",
-    "typescript": "^4.9.3",
+    "eslint": "^8.39.0",
+    "typescript": "^4.9.5",
     "vite-tsconfig-paths": "^4.0.5",
     "vitest": "^0.28.0"
   }

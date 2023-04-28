@@ -7,7 +7,7 @@ import { trpc } from "@/utils/trpc"
 import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
-import { Poppins } from "@next/font/google"
+import { Poppins } from "next/font/google"
 import { cn } from "@dotkomonline/ui"
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
