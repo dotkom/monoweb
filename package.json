@@ -8,7 +8,7 @@
   "scripts": {
     "build": "turbo run build --filter=@dotkomonline/*",
     "build:api": "turbo run build --filter=ow-api",
-    "build:web": "turbo run build:prod --filter=web",
+    "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.0.0",
-    "eslint": "^8.34.0",
+    "eslint": "^8.39.0",
     "prettier": "^2.8.4",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.0",

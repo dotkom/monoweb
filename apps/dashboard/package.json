@@ -10,8 +10,8 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
-    "@dotkomonline/auth": "*",
     "@dotkomonline/api": "*",
+    "@dotkomonline/auth": "*",
     "@dotkomonline/types": "*",
     "@dotkomonline/ui": "*",
     "@emotion/react": "^11.10.5",
@@ -21,14 +21,13 @@
     "@mantine/core": "^6.0.9",
     "@mantine/dates": "^6.0.9",
     "@mantine/hooks": "^6.0.9",
-    "@next/font": "^13.3.1",
     "@radix-ui/react-alert-dialog": "^1.0.2",
     "@radix-ui/react-dialog": "^1.0.2",
     "@tanstack/react-query": "^4.18.0",
     "@tanstack/react-table": "^8.7.9",
-    "@trpc/client": "^10.12.0",
-    "@trpc/react-query": "^10.12.0",
-    "@trpc/server": "^10.12.0",
+    "@trpc/client": "^10.21.2",
+    "@trpc/react-query": "^10.21.2",
+    "@trpc/server": "^10.21.2",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "next": "^13.3.1",
@@ -36,23 +35,23 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
-    "superjson": "^1.12.2",
-    "zod": "^3.20.6"
+    "superjson": "^1.12.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@dotkomonline/config": "*",
     "@types/eslint": "^8",
-    "@types/node": "^16.11.47",
-    "@types/react": "^18.0.15",
-    "@types/react-dom": "^18.0.6",
+    "@types/node": "^16.18.25",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
     "autoprefixer": "^10.4.13",
-    "eslint": "^8.26.0",
+    "eslint": "^8.39.0",
     "eslint-config-next": "^13.3.1",
     "open-color": "^1.9.1",
     "postcss": "^8.4.21",
     "prettier": "^2.7.1",
     "tailwindcss": "^3.2.1",
     "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.5"
   }
 }
