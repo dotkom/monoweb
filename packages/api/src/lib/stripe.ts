@@ -8,19 +8,16 @@ interface StripeAccountDetails {
 
 const stripeAccountsMap = new Map<string, StripeAccountDetails>()
 
-if (process.env.NODE_ENV === "production") {
-  stripeAccountsMap.set("monowebStripe", {
-    publicKey: process.env.MONOWEB_STRIPE_PUBLIC_KEY as string,
-    secretKey: process.env.MONOWEB_STRIPE_SECRET_KEY as string,
-    webhookSecret: process.env.MONOWEB_STRIPE_WEBHOOK_SECRET as string,
-  })
-} else {
-  stripeAccountsMap.set("testStripe", {
-    publicKey: process.env.TEST_STRIPE_PUBLIC_KEY as string,
-    secretKey: process.env.TEST_STRIPE_SECRET_KEY as string,
-    webhookSecret: process.env.TEST_STRIPE_WEBHOOK_SECRET as string,
-  })
-}
+stripeAccountsMap.set("fagkomStripe", {
+  publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
+  secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
+  webhookSecret: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET as string,
+})
+stripeAccountsMap.set("trikomStripe", {
+  publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY as string,
+  secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY as string,
+  webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET as string,
+})
 
 const lookupMap = new Map<string, Omit<StripeAccountDetails, "publicKey">>(
   Array.from(stripeAccountsMap.values()).map((a) => [
