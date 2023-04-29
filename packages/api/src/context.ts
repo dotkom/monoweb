@@ -7,8 +7,6 @@ import { getServerSession } from "@dotkomonline/auth"
 type AuthContextProps = {
   auth: {
     userId: string
-    username: string | null | undefined
-    email: string | null | undefined
   } | null
 }
 export const createContextInner = async (opts: AuthContextProps) => {
@@ -22,13 +20,10 @@ export const createContextInner = async (opts: AuthContextProps) => {
 export const createContext = async (opts: CreateNextContextOptions) => {
   const clerkAuth = getAuth(opts.req)
   // samesite through clerk
-  if (clerkAuth.user) {
-    const user = clerkAuth.user
+  if (clerkAuth.userId) {
     return createContextInner({
       auth: {
-        username: user.username,
-        userId: user.id,
-        email: user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress,
+        userId: clerkAuth.userId,
       },
     })
   }
@@ -37,9 +32,7 @@ export const createContext = async (opts: CreateNextContextOptions) => {
   if (auth?.user) {
     return createContextInner({
       auth: {
-        username: auth.user.name,
         userId: auth.user.id,
-        email: auth.user.email,
       },
     })
   }
