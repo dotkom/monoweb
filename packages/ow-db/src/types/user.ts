@@ -3,11 +3,6 @@ import { Generated } from "kysely"
 export interface UserTable {
   id: Generated<string>
   createdAt: Generated<Date>
-  name: string | null
-  email: string
-  emailVerified: Date | null
-  password: string
-  image: string | null
 }
 
 export interface SessionTable {
