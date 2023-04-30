@@ -3,6 +3,7 @@
   "type": "module",
   "dependencies": {
     "@dotkomonline/db": "*",
+    "@dotkomonline/types": "*",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
     "kysely": "^0.23.0",
