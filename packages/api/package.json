@@ -26,7 +26,11 @@
     "superjson": "^1.12.3",
     "zod": "^3.21.4"
   },
+  "peerDependencies": {
+    "next": "^13.3.1"
+  },
   "devDependencies": {
+    "@clerk/backend": "^0.17.2",
     "@dotkomonline/config": "*",
     "@dotkomonline/logger": "*",
     "@dotkomonline/types": "*",
