@@ -1,5 +1,5 @@
-import { Database } from '@dotkomonline/db';
-import { Insertable } from 'kysely';
+import { Database } from "@dotkomonline/db"
+import { Insertable } from "kysely"
 
 export const attendees: Insertable<Database["attendee"]>[] = [
   {
