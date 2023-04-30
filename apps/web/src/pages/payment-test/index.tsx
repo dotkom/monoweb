@@ -126,8 +126,10 @@ const PaymentTestPage: FC = () => {
       <h1>Payment Test</h1>
 
       {/* Use migration fixtures instead */}
-      {/* <button onClick={onSeedClick}>Create and insert seed data</button>
-      {isSeeding && <p>Seeding...</p>} */}
+      <button onClick={onSeedClick} className="hidden">
+        Create and insert seed data
+      </button>
+      {isSeeding && <p>Seeding...</p>}
 
       <div>
         <h3>Products</h3>
