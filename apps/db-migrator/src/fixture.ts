@@ -15,12 +15,7 @@ export const runFixtures = async () => {
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
-        name: (eb) => eb.ref("excluded.name"),
         createdAt: (eb) => eb.ref("excluded.createdAt"),
-        email: (eb) => eb.ref("excluded.email"),
-        emailVerified: (eb) => eb.ref("excluded.emailVerified"),
-        password: (eb) => eb.ref("excluded.password"),
-        image: (eb) => eb.ref("excluded.image"),
       })
     )
     .execute()
