@@ -15,7 +15,7 @@ importers:
         version: 2.8.4
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+        version: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       tsc-watch:
         specifier: ^6.0.0
         version: 6.0.0(typescript@4.9.5)
@@ -164,6 +164,9 @@ importers:
       '@dotkomonline/db':
         specifier: '*'
         version: link:../../packages/ow-db
+      '@dotkomonline/types':
+        specifier: '*'
+        version: link:../../packages/types
       chalk:
         specifier: ^5.1.2
         version: 5.1.2
@@ -224,7 +227,7 @@ importers:
         version: 18.2.0
       sanity:
         specifier: ^3.0.0
-        version: 3.2.4(@types/node@18.16.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6)
+        version: 3.2.4(@types/node@16.18.25)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6)
       styled-components:
         specifier: ^5.2.0
         version: 5.3.6(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -309,7 +312,7 @@ importers:
         version: 4.9.5
       vite:
         specifier: ^3.0.4
-        version: 3.2.4(@types/node@18.16.1)
+        version: 3.2.4(@types/node@16.18.25)
 
   apps/web:
     dependencies:
@@ -4553,7 +4556,7 @@ packages:
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@4.9.5)
       typescript: 4.9.5
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     dev: true
 
   /@jridgewell/gen-mapping@0.1.1:
@@ -6338,7 +6341,7 @@ packages:
       '@storybook/csf-plugin': 7.0.0-beta.34
       '@storybook/csf-tools': 7.0.0-beta.34
       '@storybook/global': 5.0.0
-      '@storybook/mdx2-csf': 1.1.0-next.0
+      '@storybook/mdx2-csf': 1.1.0-next.1
       '@storybook/node-logger': 7.0.0-beta.34
       '@storybook/postinstall': 7.0.0-beta.34
       '@storybook/preview-api': 7.0.0-beta.34
@@ -6636,7 +6639,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.39
       '@storybook/core-common': 7.0.0-beta.39(glob@7.2.3)
       '@storybook/csf-plugin': 7.0.0-beta.39
-      '@storybook/mdx2-csf': 1.1.0-next.0
+      '@storybook/mdx2-csf': 1.1.0-next.1
       '@storybook/node-logger': 7.0.0-beta.39
       '@storybook/preview': 7.0.0-beta.39
       '@storybook/preview-api': 7.0.0-beta.39
@@ -6651,7 +6654,7 @@ packages:
       rollup: 3.10.0
       slash: 3.0.0
       typescript: 4.9.5
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7066,8 +7069,8 @@ packages:
     resolution: {integrity: sha512-E/wvYu31hVHvCKb1wVyHSnX6WvpuGuk2cPBo8BGZAqA53QeDYuLTdgvcSqA0mRZKioMvNZzlf03FsYfMGxyKWQ==}
     dev: true
 
-  /@storybook/mdx2-csf@1.1.0-next.0:
-    resolution: {integrity: sha512-DeXEULA683XaoNJpAwqJU4lKnpCAACdIiSDqCuAfKzhHYAv11snQ8VjPrtR1I0WcWG4ATi+TawT1dWFnsYhhAQ==}
+  /@storybook/mdx2-csf@1.1.0-next.1:
+    resolution: {integrity: sha512-ONvFBZySHsBIkUYGrUM8FCG2tDKf663TIErztPSOghOpmBGyFLjSsXJHkNWiRi4c740PoemLqJd2XZZVlXRVLQ==}
     dev: true
 
   /@storybook/node-logger@6.5.13:
@@ -7170,7 +7173,7 @@ packages:
       react: 18.2.0
       react-docgen: 6.0.0-alpha.3
       react-dom: 18.2.0(react@18.2.0)
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - glob
@@ -8050,7 +8053,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.20.12)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.4(@types/node@18.16.1)
+      vite: 3.2.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8066,7 +8069,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.20.12)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 4.0.4(@types/node@18.16.1)
+      vite: 4.0.4(@types/node@16.18.25)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -12747,7 +12750,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.16.1
+      '@types/node': 16.18.25
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true
@@ -12937,7 +12940,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /jsx-ast-utils@3.3.3:
@@ -14537,7 +14540,7 @@ packages:
     dependencies:
       lilconfig: 2.0.6
       postcss: 8.4.19
-      ts-node: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       yaml: 1.10.2
 
   /postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.9.1):
@@ -14554,7 +14557,7 @@ packages:
     dependencies:
       lilconfig: 2.0.6
       postcss: 8.4.21
-      ts-node: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       yaml: 1.10.2
 
   /postcss-load-config@3.1.4(postcss@8.4.23)(ts-node@10.9.1):
@@ -14571,7 +14574,7 @@ packages:
     dependencies:
       lilconfig: 2.0.6
       postcss: 8.4.23
-      ts-node: 10.9.1(@types/node@18.16.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@16.18.25)(typescript@4.9.5)
       yaml: 1.10.2
     dev: true
 
@@ -15660,7 +15663,7 @@ packages:
       diff-match-patch: 1.0.5
     dev: false
 
-  /sanity@3.2.4(@types/node@18.16.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6):
+  /sanity@3.2.4(@types/node@16.18.25)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.6):
     resolution: {integrity: sha512-CQMXAlRrW0awRJprHIAfj6v1CSmwaUCzt7sdIuMtvAVmgZCWx+wODtYD7a1wItXDI83A4AS3j38YikQotXJTeg==}
     engines: {node: '>=14.18.0'}
     hasBin: true
@@ -15773,7 +15776,7 @@ packages:
       ts-md5: 1.3.1
       use-device-pixel-ratio: 1.1.2(react@18.2.0)
       use-hot-module-reload: 1.0.2(react@18.2.0)
-      vite: 4.0.4(@types/node@18.16.1)
+      vite: 4.0.4(@types/node@16.18.25)
       yargs: 17.3.1
     transitivePeerDependencies:
       - '@types/node'
@@ -17070,7 +17073,7 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /ts-node@10.9.1(@types/node@18.16.1)(typescript@4.9.5):
+  /ts-node@10.9.1(@types/node@16.18.25)(typescript@4.9.5):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -17089,7 +17092,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 18.16.1
+      '@types/node': 16.18.25
       acorn: 8.8.1
       acorn-walk: 8.2.0
       arg: 4.1.3
@@ -17871,41 +17874,6 @@ packages:
       rollup: 3.10.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
-
-  /vite@4.0.4(@types/node@18.16.1):
-    resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 18.16.1
-      esbuild: 0.16.17
-      postcss: 8.4.21
-      resolve: 1.22.1
-      rollup: 3.10.0
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: false
 
   /vitest@0.28.4(@vitest/ui@0.28.4):
     resolution: {integrity: sha512-sfWIy0AdlbyGRhunm+TLQEJrFH9XuRPdApfubsyLcDbCRrUX717BRQKInTgzEfyl2Ipi1HWoHB84Nqtcwxogcg==}
