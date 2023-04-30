@@ -27,8 +27,6 @@ export class TransactionServiceImpl implements TransactionService {
     stripePublicKey: string,
     userId: User["id"]
   ): Promise<{ redirectUrl: string }> {
-    userId // shut up lint its only temporary
-
     const product = await this.productRepository.getById(productId)
     if (!product) {
       throw new Error("Product not found")
@@ -86,7 +84,7 @@ export class TransactionServiceImpl implements TransactionService {
 
     await this.transactionRepository.create({
       productId: product.id,
-      userId: "a0468df9-0de0-4629-a541-44bb89b1c71f", // Mats' userId. Set to userId when ankkha fixes users
+      userId: userId,
       status: "UNPAID",
       paymentProviderId: stripePublicKey,
       paymentProviderOrderId: session.id,
