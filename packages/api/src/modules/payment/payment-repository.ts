@@ -14,6 +14,7 @@ export interface PaymentRepository {
     data: Partial<Omit<PaymentWrite, "id">>
   ): Promise<Payment>
   getById(id: string): Promise<Payment | undefined>
+  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Payment[]>
   getAllByUserId(id: string, take: number, cursor?: Cursor): Promise<Payment[]>
   getAllByProductId(id: string, take: number, cursor?: Cursor): Promise<Payment[]>
@@ -65,6 +66,16 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     const payment = await this.db.selectFrom("payment").selectAll().where("id", "=", id).executeTakeFirst()
 
     return payment ? mapToPayment(payment) : undefined
+  }
+
+  async getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined> {
+    const Payment = await this.db
+      .selectFrom("payment")
+      .selectAll()
+      .where("paymentProviderOrderId", "=", paymentProviderOrderId)
+      .executeTakeFirst()
+
+    return Payment ? mapToPayment(Payment) : undefined
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Payment[]> {

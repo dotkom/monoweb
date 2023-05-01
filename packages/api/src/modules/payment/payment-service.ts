@@ -1,9 +1,11 @@
 import { PaymentProvider, Product, User } from "@dotkomonline/types"
-import { getStripeObject, readableStripeAccounts } from "../../lib/stripe"
 
 import { EventRepository } from "../event/event-repository"
-import { PaymentRepository } from "./payment-repository"
 import { ProductRepository } from "./product-repository"
+import { PaymentRepository } from "./payment-repository"
+import { getStripeObject, readableStripeAccounts } from "./../../lib/stripe"
+import { getVippsObject } from "../../lib/vipps"
+import { randomUUID } from "crypto"
 
 export interface PaymentService {
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
@@ -14,8 +16,15 @@ export interface PaymentService {
     cancelRedirectUrl: string,
     userId: User["id"]
   ): Promise<{ redirectUrl: string }>
+  createVippsCheckoutSessionForProductId(
+    productId: Product["id"],
+    vippsClientId: string,
+    userId: string
+  ): Promise<{ redirectUrl: string }>
   fullfillStripeCheckoutSession(stripeSessionId: string): Promise<void>
+  fullfillVippsCheckoutSession(vippsOrderId: string, vippsClientId: string): Promise<void>
   expireStripeCheckoutSession(stripeSessionId: string): Promise<void>
+  expireVippsCheckoutSession(vippsOrderId: string): Promise<void>
 }
 
 export class PaymentServiceImpl implements PaymentService {
@@ -33,19 +42,16 @@ export class PaymentServiceImpl implements PaymentService {
     }))
   }
 
-  async createStripeCheckoutSessionForProductId(
+  async prepareCreateCheckoutSession(
     productId: Product["id"],
-    stripePublicKey: string,
-    successRedirectUrl: string,
-    cancelRedirectUrl: string,
-    userId: User["id"]
-  ): Promise<{ redirectUrl: string }> {
+    paymentProviderId: string
+  ): Promise<{ product: Product; productName: string }> {
     const product = await this.productRepository.getById(productId)
     if (!product) {
       throw new Error("Product not found")
     }
 
-    if (!product.paymentProviders.find((p) => p.paymentProviderId === stripePublicKey)) {
+    if (!product.paymentProviders.find((p) => p.paymentProviderId === paymentProviderId)) {
       throw new Error("The stripe public key supplied is not a valid payment provider for this product")
     }
 
@@ -63,6 +69,18 @@ export class PaymentServiceImpl implements PaymentService {
           break
       }
     }
+
+    return { product, productName }
+  }
+
+  async createStripeCheckoutSessionForProductId(
+    productId: Product["id"],
+    stripePublicKey: string,
+    successRedirectUrl: string,
+    cancelRedirectUrl: string,
+    userId: User["id"]
+  ): Promise<{ redirectUrl: string }> {
+    const { product, productName } = await this.prepareCreateCheckoutSession(productId, stripePublicKey)
 
     const stripe = getStripeObject(stripePublicKey)
     if (!stripe) {
@@ -108,8 +126,67 @@ export class PaymentServiceImpl implements PaymentService {
     }
   }
 
+  async createVippsCheckoutSessionForProductId(
+    productId: Product["id"],
+    vippsClientId: string,
+    userId: User["id"],
+    redirectUrl?: string
+  ): Promise<{ redirectUrl: string }> {
+    const { product, productName } = await this.prepareCreateCheckoutSession(productId, vippsClientId)
+
+    const vipps = getVippsObject(vippsClientId)
+    if (!vipps) {
+      throw new Error("No vipps account found for the given client id")
+    }
+
+    const orderId = randomUUID()
+    const data = await vipps.createWebRedirectPayment(
+      "NOK",
+      product.amount * 100, // in øre
+      "WALLET",
+      orderId,
+      `Payment for ${productName}`,
+      redirectUrl
+    )
+
+    await this.paymentRepository.create({
+      productId: product.id,
+      userId: userId,
+      status: "UNPAID",
+      paymentProviderId: vippsClientId,
+      paymentProviderOrderId: orderId,
+    })
+
+    return {
+      redirectUrl: data.redirectUrl,
+    }
+  }
+
   async fullfillStripeCheckoutSession(stripeSessionId: string): Promise<void> {
     await this.paymentRepository.updateByPaymentProviderOrderId(stripeSessionId, {
+      status: "PAID",
+    })
+  }
+
+  async fullfillVippsCheckoutSession(vippsClientId: string, vippsOrderId: string): Promise<void> {
+    const payment = await this.paymentRepository.getByPaymentProviderOrderId(vippsOrderId)
+    if (!payment) {
+      throw new Error("payment not found")
+    }
+
+    const product = await this.productRepository.getById(payment.productId)
+    if (!product) {
+      throw new Error("Product not found")
+    }
+
+    const vipps = getVippsObject(vippsClientId)
+    if (!vipps) {
+      throw new Error("No vipps account found for the given client id")
+    }
+
+    await vipps.capturePayment(vippsOrderId, "NOK", product.amount * 100)
+
+    await this.paymentRepository.updateByPaymentProviderOrderId(vippsOrderId, {
       status: "PAID",
     })
   }
@@ -119,5 +196,28 @@ export class PaymentServiceImpl implements PaymentService {
     // NB: This does not mean that all expired sessions are deleted. Only the
     // ones that was actually received by the webhook.
     await this.paymentRepository.deleteByPaymentProviderOrderId(stripeSessionId)
+  }
+
+  async expireVippsCheckoutSession(vippsOrderId: string): Promise<void> {
+    await this.paymentRepository.deleteByPaymentProviderOrderId(vippsOrderId)
+  }
+
+  async refundVippsPayment(vippsClientId: string, vippsOrderId: string): Promise<void> {
+    const payment = await this.paymentRepository.getByPaymentProviderOrderId(vippsOrderId)
+    if (!payment) {
+      throw new Error("payment not found")
+    }
+
+    const product = await this.productRepository.getById(payment.productId)
+    if (!product) {
+      throw new Error("Product not found")
+    }
+
+    const vipps = getVippsObject(vippsClientId)
+    if (!vipps) {
+      throw new Error("No vipps account found for the given client id")
+    }
+
+    await vipps.refundPayment(vippsOrderId, "NOK", product.amount * 100)
   }
 }

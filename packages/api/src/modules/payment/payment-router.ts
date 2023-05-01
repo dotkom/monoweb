@@ -26,4 +26,18 @@ export const paymentRouter = t.router({
         ctx.auth.userId
       )
     }),
+  createVippsCheckoutSession: protectedProcedure
+    .input(
+      z.object({
+        productId: z.string().uuid(),
+        vippsClientId: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.paymentService.createVippsCheckoutSessionForProductId(
+        input.productId,
+        input.vippsClientId,
+        ctx.auth.userId
+      )
+    }),
 })

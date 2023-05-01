@@ -69,16 +69,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   switch (event.name) {
     case "AUTHORIZED": // Payment was authorized on the user's phone
-      await ctx.transactionService.fullfillVippsCheckoutSession(clientId, event.reference)
+      await ctx.paymentService.fullfillVippsCheckoutSession(clientId, event.reference)
       break
     case "CANCELLED":
     case "EXPIRED":
     case "ABORTED":
     case "TERMINATED":
-      await ctx.transactionService.expireVippsCheckoutSession(event.reference)
+      await ctx.paymentService.expireVippsCheckoutSession(event.reference)
       break
     case "REFUNDED":
-      await ctx.transactionService.refundVippsPayment(clientId, event.reference)
+      await ctx.paymentService.refundVippsPayment(clientId, event.reference)
     default:
       break
   }
