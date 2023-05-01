@@ -195,6 +195,11 @@ const PaymentTestPage: FC = () => {
         <input id="providerId" type="text" value={providerId} onChange={(e) => setProviderId(e.target.value)} />
       </fieldset>
 
+      <fieldset className="flex flex-col gap-y-1">
+        <label htmlFor="stripeWebhookCommand">Stripe Local Webhook Command (copy only)</label>
+        <input id="stripeWebhookCommand" type="text" readOnly value={providerId ? (`stripe listen --forward-to localhost:3000/api/payment/stripe/${providerId}`) : ""} />
+      </fieldset>
+
       <button onClick={onCheckoutClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
         Proceed to stripe checkout
       </button>
