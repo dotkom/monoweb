@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const ProductPaymentProviderSchema = z.object({
   productId: z.string().uuid(),
-  paymentProvider: z.enum(["STRIPE"]), // include VIPPS later
+  paymentProvider: z.enum(["STRIPE", "VIPPS"]),
   paymentProviderId: z.string(), // Stripe = public_key | Vipps = client_id
 })
 

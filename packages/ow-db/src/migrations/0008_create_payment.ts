@@ -4,7 +4,7 @@ import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
 export async function up(db: Kysely<Database>) {
-  await db.schema.createType("payment_provider").asEnum(["STRIPE"]).execute()
+  await db.schema.createType("payment_provider").asEnum(["STRIPE", "VIPPS"]).execute()
   await db.schema.createType("product_type").asEnum(["EVENT"]).execute()
   await db.schema.createType("payment_status").asEnum(["UNPAID", "PAID", "REFUNDED"]).execute()
 

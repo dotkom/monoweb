@@ -1,6 +1,6 @@
 import { Generated } from "kysely"
 
-type PaymentProvider = "STRIPE" // include VIPPS later
+type PaymentProvider = "STRIPE" | "VIPPS"
 type ProductType = "EVENT" // inlude WEBSHOP later
 type PaymentStatus = "UNPAID" | "PAID" | "REFUNDED"
 
