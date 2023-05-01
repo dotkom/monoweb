@@ -9,14 +9,14 @@ interface StripeAccountDetails {
 const stripeAccountsMap = new Map<string, StripeAccountDetails>()
 
 stripeAccountsMap.set("fagkomStripe", {
-  publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
-  secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
-  webhookSecret: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET as string,
+  publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY!,
+  secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY!,
+  webhookSecret: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET!,
 })
 stripeAccountsMap.set("trikomStripe", {
-  publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY as string,
-  secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY as string,
-  webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET as string,
+  publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY!,
+  secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY!,
+  webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET!,
 })
 
 const lookupMap = new Map<string, Omit<StripeAccountDetails, "publicKey">>(
@@ -45,9 +45,5 @@ export function getStripeObject(publicKey: string): Stripe | undefined {
 
 export function getStripeWebhookSecret(publicKey: string): string | undefined {
   const accountDetails = lookupMap.get(publicKey)
-  if (!accountDetails) {
-    return
-  }
-
-  return accountDetails.webhookSecret
+  return accountDetails?.webhookSecret
 }
