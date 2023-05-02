@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { ContactSection } from "./sections/ContactSection"
 import { LinksSection } from "./sections/LinksSection"
 import { SoMeSection } from "./sections/SoMeSection"
@@ -17,6 +18,8 @@ const Footer = () => (
     <SoMeSection />
     <LinksSection links={footerLinks} />
     <ContactSection />
+    {/* Built with   */}
+    <Image className="mt-4 self-center" src="/vercel.svg" alt="vercel" width={150} height={30} />
   </footer>
 )
 
