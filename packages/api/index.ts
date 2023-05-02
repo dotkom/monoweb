@@ -7,3 +7,4 @@ export { transformer } from "./src/transformer"
 
 export { clerkHandler } from "./src/handlers/clerk-webhook"
 export { stripeHandler } from "./src/handlers/stripe-webhook"
+export { vippsHandler } from "./src/handlers/vipps-webhook"
