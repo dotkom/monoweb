@@ -1,20 +1,20 @@
-import * as LocalStripeLib from "../../../../src/lib/stripe"
+import * as LocalStripeLib from "../../../lib/stripe"
 
-import { Event, Product, Transaction } from "@dotkomonline/types"
+import { Event, Payment, Product } from "@dotkomonline/types"
 import { describe, vi } from "vitest"
 
 import { EventRepositoryImpl } from "../../event/event-repository"
 import { Kysely } from "kysely"
+import { PaymentRepositoryImpl } from "../payment-repository"
+import { PaymentServiceImpl } from "../payment-service"
 import { ProductRepositoryImpl } from "../product-repository"
 import Stripe from "stripe"
-import { TransactionRepositoryImpl } from "../payment-repository"
-import { TransactionServiceImpl } from "../payment-service"
 import { eventPayload } from "../../event/__test__/event-service.spec"
 import { paymentProvidersPayload } from "./product-payment-provider.spec"
 import { productPayload } from "./product-service.spec"
 import { randomUUID } from "crypto"
 
-export const transactionPayload: Omit<Transaction, "id"> = {
+export const paymentPayload: Omit<Payment, "id"> = {
   createdAt: new Date(2022, 1, 1),
   updatedAt: new Date(2022, 1, 1),
   productId: randomUUID(),
@@ -100,20 +100,20 @@ const stripeResponseCheckoutSessionPayload: Stripe.Response<Stripe.Checkout.Sess
   },
 }
 
-describe("TransactionService", () => {
+describe("PaymentService", () => {
   const db = vi.mocked(Kysely.prototype)
-  const transactionRepository = new TransactionRepositoryImpl(db)
+  const paymentRepository = new PaymentRepositoryImpl(db)
   const productRepository = new ProductRepositoryImpl(db)
   const eventRepository = new EventRepositoryImpl(db)
-  const transactionService = new TransactionServiceImpl(transactionRepository, productRepository, eventRepository)
+  const paymentService = new PaymentServiceImpl(paymentRepository, productRepository, eventRepository)
 
   // const stripe = vi.mocked(Stripe.prototype)
   const stripe = new Stripe("doesntmatter", { apiVersion: "2022-11-15" })
   // console.log("CHECKOOUT", stripe.checkout.sessions)
   vi.spyOn(LocalStripeLib, "getStripeObject").mockResolvedValue(stripe)
 
-  const transactionPayloadExtended: Transaction = {
-    ...transactionPayload,
+  const paymentPayloadExtended: Payment = {
+    ...paymentPayload,
     id: randomUUID(),
   }
 
@@ -137,9 +137,11 @@ describe("TransactionService", () => {
   it("creates a new stripe checkout session", async () => {
     // test that a valid payment provider is required
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(productPayloadExtended)
-    const call = transactionService.createStripeCheckoutSessionForProductId(
+    const call = paymentService.createStripeCheckoutSessionForProductId(
       productPayloadExtended.id,
       "obviouslyInvalidPaymentProviderId",
+      "https://example.com/successRedirectUrl",
+      "https://example.com/cancelRedirectUrl",
       randomUUID()
     )
     await expect(call).rejects.toThrow()
@@ -148,11 +150,13 @@ describe("TransactionService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(productPayloadExtended)
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(eventPayloadExtended)
     vi.spyOn(stripe.checkout.sessions, "create").mockResolvedValueOnce(stripeResponseCheckoutSessionPayloadExtended)
-    vi.spyOn(transactionRepository, "create").mockResolvedValueOnce(undefined)
+    vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(undefined)
     expect(
-      await transactionService.createStripeCheckoutSessionForProductId(
+      await paymentService.createStripeCheckoutSessionForProductId(
         productPayloadExtended.id,
         productPayloadExtended.paymentProviders.at(0)?.paymentProviderId ?? "",
+        "https://example.com/successRedirectUrl",
+        "https://example.com/cancelRedirectUrl",
         eventPayloadExtended.id
       )
     ).toEqual({
@@ -163,11 +167,11 @@ describe("TransactionService", () => {
   it("fullfill a stripe checkout session", async () => {
     const sessionId = stripeResponseCheckoutSessionPayloadExtended.id
 
-    vi.spyOn(transactionRepository, "updateByPaymentProviderOrderId").mockResolvedValueOnce({
-      ...transactionPayloadExtended,
+    vi.spyOn(paymentRepository, "updateByPaymentProviderOrderId").mockResolvedValueOnce({
+      ...paymentPayloadExtended,
       status: "PAID",
     })
-    await expect(transactionService.fullfillStripeCheckoutSession(sessionId)).resolves.toEqual(undefined)
-    expect(transactionRepository.updateByPaymentProviderOrderId).toHaveBeenCalledWith(sessionId, { status: "PAID" })
+    await expect(paymentService.fullfillStripeCheckoutSession(sessionId)).resolves.toEqual(undefined)
+    expect(paymentRepository.updateByPaymentProviderOrderId).toHaveBeenCalledWith(sessionId, { status: "PAID" })
   })
 })
