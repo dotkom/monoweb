@@ -201,7 +201,7 @@ const PaymentTestPage: FC = () => {
           id="stripeWebhookCommand"
           type="text"
           readOnly
-          value={providerId ? `stripe listen --forward-to localhost:3000/api/payment/stripe/${providerId}` : ""}
+          value={providerId ? `stripe listen --forward-to localhost:3000/api/webhooks/stripe/${providerId}` : ""}
         />
       </fieldset>
 

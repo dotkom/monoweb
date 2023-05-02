@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { getStripeObject, getStripeWebhookSecret } from "@dotkomonline/api/src/lib/stripe"
+import { getStripeObject, getStripeWebhookSecret } from "../lib/stripe"
 
 import Stripe from "stripe"
-import { createContextInner } from "@dotkomonline/api"
+import { bufferRequest } from "../utils/request-utils"
+import { createContextInner } from "../context"
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     res.status(405).end()
     return
@@ -24,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let event: Stripe.Event
   try {
-    const body = await buffer(req)
+    const body = await bufferRequest(req)
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
   } catch (e) {
     const err = e as Error
@@ -51,27 +52,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   res.status(200).end()
-}
-
-// Everything below is required by stripe
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
-
-const buffer = (req: NextApiRequest) => {
-  return new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = []
-
-    req.on("data", (chunk: Buffer) => {
-      chunks.push(chunk)
-    })
-
-    req.on("end", () => {
-      resolve(Buffer.concat(chunks))
-    })
-
-    req.on("error", reject)
-  })
 }
