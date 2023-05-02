@@ -19,7 +19,7 @@ const Footer = () => (
     <LinksSection links={footerLinks} />
     <ContactSection />
     {/* Built with   */}
-    <Image className="self-center mt-4" src="/vercel.svg" alt="vercel" width={150} height={30}/>
+    <Image className="mt-4 self-center" src="/vercel.svg" alt="vercel" width={150} height={30} />
   </footer>
 )
 
