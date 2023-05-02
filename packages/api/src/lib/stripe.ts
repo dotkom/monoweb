@@ -6,28 +6,28 @@ interface StripeAccountDetails {
   webhookSecret: string
 }
 
-const stripeAccountsMap = new Map<string, StripeAccountDetails>()
-
-stripeAccountsMap.set("fagkomStripe", {
-  publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
-  secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
-  webhookSecret: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET as string,
-})
-stripeAccountsMap.set("trikomStripe", {
-  publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY as string,
-  secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY as string,
-  webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET as string,
-})
+const stripeAccounts: {[accountOwner: string]: StripeAccountDetails} = {
+  fagkomStripe: {
+    publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
+    secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
+    webhookSecret: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET as string,
+  },
+  trikomStripe: {
+    publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY as string,
+    secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY as string,
+    webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET as string,
+  }
+} as const
 
 const lookupMap = new Map<string, Omit<StripeAccountDetails, "publicKey">>(
-  Array.from(stripeAccountsMap.values()).map((a) => [
+  Array.from(Object.values(stripeAccounts)).map((a) => [
     a.publicKey,
     { secretKey: a.secretKey, webhookSecret: a.webhookSecret },
   ])
 )
 
 export const stripePublicIds = Array.from(lookupMap.keys())
-export const readableStripeAccounts = Array.from(stripeAccountsMap.entries()).map(([k, v]) => ({
+export const readableStripeAccounts = Array.from(Object.entries(stripeAccounts)).map(([k, v]) => ({
   alias: k,
   publicKey: v.publicKey,
 }))
