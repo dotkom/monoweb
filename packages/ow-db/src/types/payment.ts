@@ -2,7 +2,7 @@ import { Generated } from "kysely"
 
 type PaymentProvider = "STRIPE" // include VIPPS later
 type ProductType = "EVENT" // inlude WEBSHOP later
-type TransactionStatus = "UNPAID" | "PAID" | "REFUNDED"
+type PaymentStatus = "UNPAID" | "PAID" | "REFUNDED"
 
 export interface ProductTable {
   id: Generated<string>
@@ -14,7 +14,7 @@ export interface ProductTable {
   deletedAt: Date | null
 }
 
-export interface TransactionTable {
+export interface PaymentTable {
   id: Generated<string>
   createdAt: Generated<Date>
   updatedAt: Generated<Date>
@@ -22,7 +22,7 @@ export interface TransactionTable {
   userId: string
   paymentProviderId: string
   paymentProviderOrderId: string
-  status: TransactionStatus
+  status: PaymentStatus
 }
 
 export interface ProductPaymentProviderTable {

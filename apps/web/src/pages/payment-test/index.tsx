@@ -38,7 +38,7 @@ const PaymentTestPage: FC = () => {
   const [providerId, setProviderId] = useState("")
   const [isActuallyLoading, setIsActuallyLoading] = useState(false)
 
-  const createCheckout = trpc.payment.transaction.createStripeCheckoutSession.useMutation({
+  const createCheckout = trpc.payment.createStripeCheckoutSession.useMutation({
     onSuccess: (data) => {
       router.push(data.redirectUrl)
     },

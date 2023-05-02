@@ -41,7 +41,7 @@ export const ProductWriteSchema = ProductSchema.omit({
 
 export type ProductWrite = z.infer<typeof ProductWriteSchema>
 
-export const TransactionSchema = z.object({
+export const PaymentSchema = z.object({
   id: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -52,12 +52,12 @@ export const TransactionSchema = z.object({
   status: z.enum(["UNPAID", "PAID", "REFUNDED"]),
 })
 
-export type Transaction = z.infer<typeof TransactionSchema>
+export type Payment = z.infer<typeof PaymentSchema>
 
-export const TransactionWriteSchema = TransactionSchema.omit({
+export const PaymentWriteSchema = PaymentSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 })
 
-export type TransactionWrite = z.infer<typeof TransactionWriteSchema>
+export type PaymentWrite = z.infer<typeof PaymentWriteSchema>
