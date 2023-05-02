@@ -9,6 +9,8 @@ export interface TransactionService {
   createStripeCheckoutSessionForProductId(
     productId: Product["id"],
     stripePublicKey: string,
+    successRedirectUrl: string,
+    cancelRedirectUrl: string,
     userId: User["id"]
   ): Promise<{ redirectUrl: string }>
   fullfillStripeCheckoutSession(stripeSessionId: string): Promise<void>
@@ -25,6 +27,8 @@ export class TransactionServiceImpl implements TransactionService {
   async createStripeCheckoutSessionForProductId(
     productId: Product["id"],
     stripePublicKey: string,
+    successRedirectUrl: string,
+    cancelRedirectUrl: string,
     userId: User["id"]
   ): Promise<{ redirectUrl: string }> {
     const product = await this.productRepository.getById(productId)
@@ -74,8 +78,8 @@ export class TransactionServiceImpl implements TransactionService {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:3000/payment-test/success", // should be changed later down the line
-      cancel_url: "http://localhost:3000/payment-test/cancel",
+      success_url: successRedirectUrl,
+      cancel_url: cancelRedirectUrl,
     })
 
     if (!session.url) {

@@ -62,6 +62,8 @@ const PaymentTestPage: FC = () => {
     createCheckout.mutate({
       productId,
       stripePublicKey: providerId,
+      successRedirectUrl: window.location.href + "/success",
+      cancelRedirectUrl: window.location.href + "/cancel",
     })
   }
 
