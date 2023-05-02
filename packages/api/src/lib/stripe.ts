@@ -6,7 +6,7 @@ interface StripeAccountDetails {
   webhookSecret: string
 }
 
-const stripeAccounts: {[accountOwner: string]: StripeAccountDetails} = {
+const stripeAccounts: { [accountOwner: string]: StripeAccountDetails } = {
   fagkomStripe: {
     publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
     secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
@@ -16,7 +16,7 @@ const stripeAccounts: {[accountOwner: string]: StripeAccountDetails} = {
     publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY as string,
     secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY as string,
     webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET as string,
-  }
+  },
 } as const
 
 const lookupMap = new Map<string, Omit<StripeAccountDetails, "publicKey">>(
