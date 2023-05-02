@@ -31,7 +31,7 @@ export const ProductSchema = z.object({
 
 export type Product = z.infer<typeof ProductSchema>
 
-export const ProductWriteSchema = ProductSchema.partial({
+export const ProductWriteSchema = ProductSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -54,7 +54,7 @@ export const TransactionSchema = z.object({
 
 export type Transaction = z.infer<typeof TransactionSchema>
 
-export const TransactionWriteSchema = TransactionSchema.partial({
+export const TransactionWriteSchema = TransactionSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
