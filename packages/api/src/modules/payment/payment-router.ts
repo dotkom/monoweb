@@ -31,12 +31,14 @@ export const paymentRouter = t.router({
       z.object({
         productId: z.string().uuid(),
         vippsClientId: z.string(),
+        redirectUrl: z.string().url(),
       })
     )
     .mutation(({ input, ctx }) => {
       return ctx.paymentService.createVippsCheckoutSessionForProductId(
         input.productId,
         input.vippsClientId,
+        input.redirectUrl,
         ctx.auth.userId
       )
     }),
