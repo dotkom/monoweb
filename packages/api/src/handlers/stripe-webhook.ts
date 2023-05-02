@@ -40,10 +40,10 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
 
     switch (event.type.split(".").at(-1)) {
       case "completed":
-        await ctx.transactionService.fullfillStripeCheckoutSession(sessionId)
+        await ctx.paymentService.fullfillStripeCheckoutSession(sessionId)
         break
       case "expired":
-        await ctx.transactionService.expireStripeCheckoutSession(sessionId)
+        await ctx.paymentService.expireStripeCheckoutSession(sessionId)
         break
       default:
         // console.log(`Unhandled event type: ${event.type}`)
