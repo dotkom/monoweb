@@ -7,11 +7,13 @@ import { EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
+  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: Event["id"]): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
-  addAttendance(eventId: Event["id"], attendanceWrite: AttendanceWrite): Promise<Attendance>
+
+  createAttendance(eventId: Event["id"], attendanceWrite: AttendanceWrite): Promise<Attendance>
   listAttendance(eventId: Event["id"]): Promise<Attendance[]>
-  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>
+  createWaitlist(eventId: Event["id"]): Promise<Attendance>
 }
 
 export class EventServiceImpl implements EventService {
@@ -49,7 +51,7 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async addAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
+  async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
     const attendance = await this.attendanceRepository.create({
       ...attendanceCreate,
       eventId,
@@ -58,7 +60,28 @@ export class EventServiceImpl implements EventService {
   }
 
   async listAttendance(eventId: Event["id"]): Promise<Attendance[]> {
-    const attendance = await this.attendanceRepository.getById(eventId)
+    const attendance = await this.attendanceRepository.getByEventId(eventId)
     return attendance
+  }
+
+  async createWaitlist(eventId: Event["id"]): Promise<Attendance> {
+    const event = await this.getEventById(eventId)
+    if (event.waitlist !== null) {
+      throw new Error(`Attempted to create waitlist for event ${eventId}`)
+    }
+    const waitlist = await this.attendanceRepository.create({
+      eventId,
+      start: new Date(),
+      end: new Date(),
+      deregisterDeadline: new Date(),
+      limit: 999999,
+      min: 0,
+      max: 0,
+    })
+    await this.eventRepository.update(eventId, {
+      ...event,
+      waitlist: waitlist.id,
+    })
+    return waitlist
   }
 }

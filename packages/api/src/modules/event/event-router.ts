@@ -1,9 +1,9 @@
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
-import { CompanySchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
+import { EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "../../utils/db-utils"
 import { attendanceRouter } from "./attendance-router"
-import { eventCompanyRouter } from "./event-company-router";
+import { eventCompanyRouter } from "./event-company-router"
 
 export const eventRouter = t.router({
   add: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {

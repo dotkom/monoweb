@@ -29,6 +29,7 @@ describe("EventService", () => {
     status: "PUBLIC",
     type: "COMPANY",
     committeeId: null,
+    waitlist: null,
   }
 
   it("creates a new event", async () => {

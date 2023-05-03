@@ -1,7 +1,7 @@
-import { CompanySchema, EventSchema } from "@dotkomonline/types";
+import { CompanySchema, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
-import { PaginateInputSchema } from "../../utils/db-utils";
+import { PaginateInputSchema } from "../../utils/db-utils"
 
 export const eventCompanyRouter = t.router({
   add: protectedProcedure
@@ -12,7 +12,7 @@ export const eventCompanyRouter = t.router({
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.eventCompanyService.addCompany(input.id, input.company)
+      return ctx.eventCompanyService.createCompany(input.id, input.company)
     }),
   delete: protectedProcedure
     .input(

@@ -15,7 +15,7 @@ export const EventSchema = z.object({
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
   committeeId: z.string().nullable(),
-  waitlist: z.string().uuid().nullable()
+  waitlist: z.string().uuid().nullable(),
 })
 
 export type Event = z.infer<typeof EventSchema>
