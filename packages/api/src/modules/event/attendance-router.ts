@@ -3,7 +3,7 @@ import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
-  add: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
+  create: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
     const attendance = await ctx.eventService.createAttendance(input.eventId, input)
     return attendance
   }),

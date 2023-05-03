@@ -21,7 +21,7 @@ export const EventCompaniesPage: FC = () => {
       utils.event.company.get.invalidate()
     },
   })
-  const { mutate: addCompanyMutate } = trpc.event.company.add.useMutation({
+  const { mutate: addCompanyMutate } = trpc.event.company.create.useMutation({
     onSuccess: () => {
       utils.event.company.get.invalidate()
     },

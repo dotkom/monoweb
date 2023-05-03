@@ -6,7 +6,7 @@ import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 
 export const eventRouter = t.router({
-  add: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
+  create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
     return ctx.eventService.createEvent(input)
   }),
   edit: protectedProcedure
