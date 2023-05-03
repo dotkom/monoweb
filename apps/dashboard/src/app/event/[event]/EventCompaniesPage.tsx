@@ -11,19 +11,19 @@ import { z } from "zod"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()
-  const { data: eventCompanies = [] } = trpc.event.getCompanies.useQuery({
+  const { data: eventCompanies = [] } = trpc.event.company.get.useQuery({
     id: event.id,
   })
   const { data: companies = [] } = trpc.company.all.useQuery({ take: 999 })
   const utils = trpc.useContext()
-  const { mutate: deleteCompanyMutate } = trpc.event.deleteCompany.useMutation({
+  const { mutate: deleteCompanyMutate } = trpc.event.company.delete.useMutation({
     onSuccess: () => {
-      utils.event.getCompanies.invalidate()
+      utils.event.company.get.invalidate()
     },
   })
-  const { mutate: addCompanyMutate } = trpc.event.addCompany.useMutation({
+  const { mutate: addCompanyMutate } = trpc.event.company.create.useMutation({
     onSuccess: () => {
-      utils.event.getCompanies.invalidate()
+      utils.event.company.get.invalidate()
     },
   })
   const columnHelper = createColumnHelper<Company>()
