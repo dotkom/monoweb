@@ -6,7 +6,7 @@ interface StripeAccountDetails {
   webhookSecret: string
 }
 
-const stripeAccounts: { [accountOwner: string]: StripeAccountDetails } = {
+const stripeAccounts = {
   fagkomStripe: {
     publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
     secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
