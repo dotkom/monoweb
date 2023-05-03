@@ -9,7 +9,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   const { id } = props
   const { data } = trpc.event.get.useQuery(id)
   const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
-  const { mutate: addAttendance } = trpc.event.attendance.add.useMutation()
+  const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
   const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
   const utils = trpc.useContext()
 
