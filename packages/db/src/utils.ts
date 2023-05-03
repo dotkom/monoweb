@@ -22,3 +22,4 @@ export const createTableWithDefaults = (tableName: string, options: DefaultOptio
   }
   return table
 }
+

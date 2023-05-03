@@ -9,7 +9,8 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/pg": "^8.10.3",
     "eslint": "^8.50.0",
+    "kysely-codegen": "^0.10.1",
     "typescript": "^5.2.2"
   }
 }

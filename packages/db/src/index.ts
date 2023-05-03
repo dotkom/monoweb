@@ -1,10 +1,11 @@
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
 import { env } from "@dotkomonline/env"
-import { Database } from "./types"
 import pg from "pg"
+import { DB } from "./db"
 
-export * from "./types"
 export { CockroachDialect } from "./cockroach"
+
+export type Database = DB
 
 declare global {
   // allow global `var` declarations
