@@ -27,7 +27,7 @@
     "apps/*"
   ],
   "engines": {
-    "node": ">=16.13",
+    "node": ">=18.13",
     "pnpm": ">=8"
   },
   "devDependencies": {
