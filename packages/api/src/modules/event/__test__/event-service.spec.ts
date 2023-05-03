@@ -8,7 +8,7 @@ import { EventServiceImpl } from "../event-service"
 import { Kysely } from "kysely"
 import { randomUUID } from "crypto"
 
-export const eventPayload: Omit<Event, "id"> = {
+const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",
   subtitle: "Bekk kommer for å holde kurs i kotlin og spillutvikling!",
   imageUrl:
@@ -23,6 +23,7 @@ export const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   committeeId: null,
+  waitlist: null,
 }
 
 describe("EventService", () => {

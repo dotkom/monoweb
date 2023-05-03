@@ -4,7 +4,7 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
   add: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
-    const attendance = await ctx.eventService.addAttendance(input.eventId, input)
+    const attendance = await ctx.eventService.createAttendance(input.eventId, input)
     return attendance
   }),
   get: publicProcedure
@@ -26,5 +26,14 @@ export const attendanceRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       const res = await ctx.attendanceService.registerForEvent(ctx.auth.userId, input.eventId)
       return res
+    }),
+  createWaitlist: protectedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.eventService.createWaitlist(input.eventId)
     }),
 })
