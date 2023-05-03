@@ -11,8 +11,6 @@ export const serverSchema = z.object({
   HYDRA_ADMIN_URL: z.string(),
   NEXTAUTH_CLIENT_ID: z.string(),
   NEXTAUTH_SECRET: z.string(),
-  UPSTASH_REDIS_REST_URL: z.string(),
-  UPSTASH_REDIS_REST_TOKEN: z.string(),
   CLERK_SECRET_KEY: z.string()
 })
 
