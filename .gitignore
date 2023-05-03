@@ -11,6 +11,8 @@ build-storybook.log
 package-lock.json
 # IDE specific
 .idea
+# typescript
+*.tsbuildinfo
 
 node_modules
 .turbo
