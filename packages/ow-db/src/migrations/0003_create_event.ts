@@ -10,7 +10,6 @@ export async function up(db: Kysely<any>) {
     .addColumn("start", "timestamptz", (col) => col.notNull())
     .addColumn("end", "timestamptz", (col) => col.notNull())
     .addColumn("status", sql`event_status`, (col) => col.notNull())
-    .addColumn("type", "varchar(255)", (col) => col.notNull())
     .addColumn("public", "boolean", (col) => col.notNull())
     .addColumn("description", "text")
     .addColumn("subtitle", "varchar(255)")

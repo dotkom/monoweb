@@ -39,6 +39,8 @@ program
           res = await migrator.migrateDown()
           if (res.results && !res.error) {
             res.results.forEach((r) => logger.info(`${r.direction} ${r.migrationName}: ${r.status}`))
+          } else {
+            break
           }
         } while (res.results && res.results.length > 0 && !res.results[0].migrationName.startsWith("0001"))
 
