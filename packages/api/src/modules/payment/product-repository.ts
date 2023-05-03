@@ -84,7 +84,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   async delete(id: Product["id"]): Promise<void> {
-    // Soft delete since we don't want transactions to ever be deleted or miss context
+    // Soft delete since we don't want payments to ever be deleted or miss context
     await this.db.updateTable("product").set({ deletedAt: new Date() }).where("id", "=", id).execute()
   }
 
