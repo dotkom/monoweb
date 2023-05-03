@@ -4,7 +4,7 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { PaginateInputSchema } from "../../utils/db-utils"
 
 export const eventCompanyRouter = t.router({
-  add: protectedProcedure
+  create: protectedProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
