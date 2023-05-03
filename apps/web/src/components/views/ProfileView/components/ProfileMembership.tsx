@@ -26,7 +26,7 @@ const ProfileMembership = () => {
 
       <p>NB! Godkjente og avslåtte søknader havner nederst på siden, sjekk der før du sender inn nye søknader!</p>
 
-      <Accordion type="single" collapsible>
+      <Accordion type="single" collapsible className="mb-10">
         <AccordionItem value="item-1">
           <AccordionTrigger>Aktive søknader</AccordionTrigger>
           <AccordionContent>

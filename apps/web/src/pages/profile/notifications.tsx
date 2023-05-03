@@ -1,9 +1,10 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
+import ProfileNotifications from "@/components/views/ProfileView/components/ProfileNotifications"
 
 const NotifcationPage: NextPageWithLayout = () => {
-  return <div>Notification</div>
+  return <ProfileNotifications />
 }
 
 NotifcationPage.getLayout = (page) => {

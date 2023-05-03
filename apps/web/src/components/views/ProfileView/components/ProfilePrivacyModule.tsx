@@ -3,7 +3,7 @@ import { blackA } from "@radix-ui/colors"
 import { GridIcon } from "@radix-ui/react-icons"
 import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
 
-import PersonvernOption from "./ProfilePrivacyOption"
+import PersonvernOption from "./ProfileToggleOption"
 
 export const personList = [
   { key: 0, optionsText: "Brukerprofil synlig for andre brukere", state: false },
