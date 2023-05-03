@@ -55,9 +55,10 @@ program
 
     if (!handlesItself) {
       if (res.results) {
+        const errorFmt = res.error ? `: '${res.error}'` : ""
         logger.info(
           "Migrating...\n" +
-            res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}`).join("\n")
+            res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}${errorFmt}`).join("\n")
         )
       } else {
         logger.warn(res)
