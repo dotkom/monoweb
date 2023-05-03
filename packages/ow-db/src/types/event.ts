@@ -18,6 +18,7 @@ export interface EventTable {
   imageUrl: string | null
   location: string | null
   committeeId: string | null
+  waitlist: string | null
 }
 
 export interface AttendanceTable {
@@ -29,6 +30,8 @@ export interface AttendanceTable {
   deregisterDeadline: Date
   limit: number
   eventId: string
+  min: number
+  max: number
 }
 
 export interface AttendeeTable {

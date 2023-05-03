@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const EventSchema = z.object({
-  id: z.string(),
+  id: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   title: z.string().min(1),
@@ -15,6 +15,7 @@ export const EventSchema = z.object({
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
   committeeId: z.string().nullable(),
+  waitlist: z.string().uuid().nullable()
 })
 
 export type Event = z.infer<typeof EventSchema>
@@ -45,6 +46,8 @@ export const AttendanceSchema = z.object({
   limit: z.number(),
   eventId: z.string(),
   attendees: z.array(AttendeeSchema),
+  min: z.number().min(0).max(5),
+  max: z.number().min(0).max(5),
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>
