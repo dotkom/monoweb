@@ -1,9 +1,11 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
+import EmailView from "@/components/views/ProfileView/components/EmailView"
 
 const EmailPage: NextPageWithLayout = () => {
-  return <div>Email</div>
+  const mockEmails = ["testbruker@test.com", "nestetest@test.com"]
+  return <EmailView emails={mockEmails} />
 }
 
 EmailPage.getLayout = (page) => {
