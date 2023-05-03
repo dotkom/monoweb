@@ -19,7 +19,9 @@ const Footer = () => (
     <LinksSection links={footerLinks} />
     <ContactSection />
     {/* Built with   */}
-    <Image className="mt-4 self-center" src="/vercel.svg" alt="vercel" width={150} height={30} />
+    <a href="https://vercel.com?utm_source=dotkom&utm_campaign=oss">
+      <Image className="mt-4 self-center" src="/vercel.svg" alt="vercel" width={150} height={30} />
+    </a>
   </footer>
 )
 
