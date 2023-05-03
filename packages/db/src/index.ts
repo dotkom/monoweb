@@ -1,7 +1,7 @@
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
 import { env } from "@dotkomonline/env"
 import pg from "pg"
-import { DB } from "./db"
+import { DB } from "./db.generated"
 
 export { CockroachDialect } from "./cockroach"
 

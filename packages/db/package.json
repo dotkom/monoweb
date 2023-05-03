@@ -10,7 +10,7 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit",
-    "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.d.ts --camel-case --dialect postgres"
+    "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
