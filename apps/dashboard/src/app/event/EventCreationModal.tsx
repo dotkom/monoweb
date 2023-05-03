@@ -9,7 +9,7 @@ export type EventCreationModalProps = {
 
 export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
   const utils = trpc.useContext()
-  const create = trpc.event.create.useMutation({
+  const create = trpc.event.add.useMutation({
     onSuccess: () => {
       utils.event.all.invalidate()
     },

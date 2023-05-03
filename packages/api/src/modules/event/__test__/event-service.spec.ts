@@ -1,11 +1,11 @@
 import { describe, vi } from "vitest"
 
-import { AttendanceRepositoryImpl } from "../attendee-repository"
 import { Event } from "@dotkomonline/types"
+import { NotFoundError } from "../../../errors/errors"
+import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
 import { Kysely } from "kysely"
-import { NotFoundError } from "../../../errors/errors"
 import { randomUUID } from "crypto"
 
 export const eventPayload: Omit<Event, "id"> = {

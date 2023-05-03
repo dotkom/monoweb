@@ -24,7 +24,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendService.registerForEvent(ctx.auth.userId, input.eventId)
+      const res = await ctx.attendanceService.registerForEvent(ctx.auth.userId, input.eventId)
       return res
     }),
 })
