@@ -1,6 +1,7 @@
-import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely"
-import pg from "pg"
+import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
+
 import { Database } from "./types"
+import pg from "pg"
 
 export * from "./types"
 export { CockroachDialect } from "./cockroach"

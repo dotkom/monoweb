@@ -6,6 +6,8 @@ import { db } from "./db"
 import { eventCompany } from "./fixtures/event-company"
 import { events } from "./fixtures/event"
 import { marks } from "./fixtures/mark"
+import { productPaymentProviders } from "./fixtures/product-payment-provider"
+import { products } from "./fixtures/product"
 import { users } from "./fixtures/user"
 
 export const runFixtures = async () => {
@@ -125,5 +127,27 @@ export const runFixtures = async () => {
         duration: (eb) => eb.ref("excluded.duration"),
       })
     )
+    .execute()
+
+  await db
+    .insertInto("product")
+    .values(products)
+    .returning("id")
+    .onConflict((oc) =>
+      oc.column("id").doUpdateSet({
+        createdAt: (eb) => eb.ref("excluded.createdAt"),
+        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
+        type: (eb) => eb.ref("excluded.type"),
+        objectId: (eb) => eb.ref("excluded.objectId"),
+        amount: (eb) => eb.ref("excluded.amount"),
+        deletedAt: (eb) => eb.ref("excluded.deletedAt"),
+      })
+    )
+    .execute()
+
+  await db
+    .insertInto("productPaymentProvider")
+    .values(productPaymentProviders)
+    .onConflict((oc) => oc.columns(["productId", "paymentProviderId"]).doNothing())
     .execute()
 }
