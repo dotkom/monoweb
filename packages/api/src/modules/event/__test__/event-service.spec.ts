@@ -4,7 +4,7 @@ import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
 
 import { NotFoundError } from "../../../errors/errors"
-import { AttendanceRepositoryImpl } from "../attendee-repository"
+import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
 

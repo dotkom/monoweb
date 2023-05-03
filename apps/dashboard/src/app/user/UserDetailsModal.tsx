@@ -9,7 +9,7 @@ export type UserDetailsModalProps = {
 
 export const UserDetailsModal: FC<UserDetailsModalProps> = ({ user, close }) => {
   return (
-    <Modal centered title={user.name} opened onClose={close}>
+    <Modal centered title={user.id} opened onClose={close}>
       Hello world
     </Modal>
   )

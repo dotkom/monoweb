@@ -15,13 +15,13 @@ import {
 import {
   Control,
   Controller,
-  DeepPartial,
+  DeepPartial, DefaultValues,
   FieldValue,
   FieldValues,
   FormState,
   useForm,
-  UseFormRegister,
-} from "react-hook-form"
+  UseFormRegister
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ErrorMessage } from "@hookform/error-message"
 import { DateTimePicker, DateTimePickerProps } from "@mantine/dates"
@@ -66,7 +66,7 @@ export function createDateTimeInput<F extends FieldValues>({
         render={({ field }) => (
           <DateTimePicker
             {...props}
-            defaultValue={Date.now()}
+            defaultValue={new Date()}
             value={field.value}
             onChange={field.onChange}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
@@ -128,9 +128,7 @@ type FormBuilderOptions<T extends z.ZodRawShape> = {
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
-  defaultValues?: DeepPartial<{
-    [K in keyof z.infer<z.ZodObject<T>>]: z.infer<T[K]>
-  }>
+  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
   onSubmit: (data: z.infer<z.ZodObject<T>>) => void
 }

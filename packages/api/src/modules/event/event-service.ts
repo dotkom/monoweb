@@ -2,7 +2,7 @@ import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/ty
 
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
-import { AttendanceRepository } from "./attendee-repository"
+import { AttendanceRepository } from "./attendance-repository"
 import { EventRepository } from "./event-repository"
 
 export interface EventService {

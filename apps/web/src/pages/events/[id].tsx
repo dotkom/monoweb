@@ -25,6 +25,8 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
             deregisterDeadline: new Date(),
             eventId: id,
             limit: 20,
+            max: 5,
+            min: 1,
           })
           utils.event.attendance.get.invalidate()
         }}
