@@ -5,7 +5,7 @@ import { mapToCompany } from "../company/company-repository"
 import { Cursor, paginateQuery } from "../../utils/db-utils"
 
 export interface EventCompanyRepository {
-  addCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
+  createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
   deleteCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
   getCompaniesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Company[]>
 }
@@ -13,7 +13,7 @@ export interface EventCompanyRepository {
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async addCompany(id: Event["id"], company: Company["id"]) {
+  async createCompany(id: Event["id"], company: Company["id"]) {
     await this.db
       .insertInto("eventCompany")
       .values({

@@ -25,10 +25,10 @@ describe("EventCompanyService", () => {
 
   it("creates links a company to an event", async () => {
     const id = randomUUID()
-    vi.spyOn(eventCompanyRepository, "addCompany").mockResolvedValueOnce(undefined)
-    const event = await eventCompanyService.addCompany(id, bekk.id)
+    vi.spyOn(eventCompanyRepository, "createCompany").mockResolvedValueOnce(undefined)
+    const event = await eventCompanyService.createCompany(id, bekk.id)
     expect(event).toEqual(undefined)
-    expect(eventCompanyRepository.addCompany).toHaveBeenCalledWith(id, bekk.id)
+    expect(eventCompanyRepository.createCompany).toHaveBeenCalledWith(id, bekk.id)
   })
 
   it("gets all companies related to an event", async () => {
