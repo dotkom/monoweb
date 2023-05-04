@@ -1,11 +1,11 @@
+import { AttendanceRepositoryImpl } from "./event/attendance-repository"
+import { AttendanceServiceImpl } from "./event/attendance-service"
 import { CommitteeRepositoryImpl } from "./committee/committee-repository"
 import { CommitteeServiceImpl } from "./committee/committee-service"
 import { CompanyRepositoryImpl } from "./company/company-repository"
 import { CompanyServiceImpl } from "./company/company-service"
 import { EventCompanyRepositoryImpl } from "./event/event-company-repository"
 import { EventCompanyServiceImpl } from "./event/event-company-service"
-import { AttendanceRepositoryImpl } from "./event/attendance-repository"
-import { AttendanceServiceImpl } from "./event/attendance-service"
 import { EventRepositoryImpl } from "./event/event-repository"
 import { EventServiceImpl } from "./event/event-service"
 import { PaymentRepositoryImpl } from "./payment/payment-repository"
@@ -14,6 +14,8 @@ import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-
 import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service"
 import { ProductRepositoryImpl } from "./payment/product-repository"
 import { ProductServiceImpl } from "./payment/product-service"
+import { RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
+import { RefundRequestServiceImpl } from "./payment/refund-request-service"
 import { UserRepositoryImpl } from "./auth/user-repository"
 import { UserServiceImpl } from "./auth/user-service"
 import { clerkClient } from "@clerk/nextjs/server"
@@ -30,6 +32,7 @@ export const initServices = () => {
   const productRepository = new ProductRepositoryImpl(db)
   const paymentRepository = new PaymentRepositoryImpl(db)
   const productPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(db)
+  const refundRequestRepository = new RefundRequestRepositoryImpl(db)
 
   // Services
   const userService = new UserServiceImpl(userRepository, clerkClient)
@@ -39,8 +42,14 @@ export const initServices = () => {
   const companyService = new CompanyServiceImpl(companyRepository)
   const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
   const productService = new ProductServiceImpl(productRepository)
-  const paymentService = new PaymentServiceImpl(paymentRepository, productRepository, eventRepository)
+  const paymentService = new PaymentServiceImpl(
+    paymentRepository,
+    productRepository,
+    eventRepository,
+    refundRequestRepository
+  )
   const productPaymentProviderService = new ProductPaymentProviderServiceImpl(productPaymentProviderRepository)
+  const refundRequestService = new RefundRequestServiceImpl(refundRequestRepository, paymentService)
 
   return {
     userService,
@@ -52,5 +61,6 @@ export const initServices = () => {
     productService,
     paymentService,
     productPaymentProviderService,
+    refundRequestService,
   }
 }

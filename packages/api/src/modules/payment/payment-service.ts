@@ -4,6 +4,7 @@ import { getStripeObject, readableStripeAccounts } from "../../lib/stripe"
 import { EventRepository } from "../event/event-repository"
 import { PaymentRepository } from "./payment-repository"
 import { ProductRepository } from "./product-repository"
+import { RefundRequestRepository } from "./refund-request-repository"
 
 export interface PaymentService {
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
@@ -16,15 +17,16 @@ export interface PaymentService {
   ): Promise<{ redirectUrl: string }>
   fullfillStripeCheckoutSession(stripeSessionId: string, intentId: string): Promise<void>
   expireStripeCheckoutSession(stripeSessionId: string): Promise<void>
-  refundStripePaymentById(paymentId: string): Promise<void>
-  refundStripePaymentByStripeOrderId(stripeOrderId: string): Promise<void>
+  refundStripePaymentById(paymentId: string, checkRefundRequest?: boolean): Promise<void>
+  refundStripePaymentByStripeOrderId(stripeOrderId: string, checkRefundRequest?: boolean): Promise<void>
 }
 
 export class PaymentServiceImpl implements PaymentService {
   constructor(
     private readonly paymentRepository: PaymentRepository,
     private readonly productRepository: ProductRepository,
-    private readonly eventRepository: EventRepository
+    private readonly eventRepository: EventRepository,
+    private readonly refundRequestRepository: RefundRequestRepository
   ) {}
 
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[] {
@@ -124,37 +126,61 @@ export class PaymentServiceImpl implements PaymentService {
     await this.paymentRepository.deleteByPaymentProviderSessionId(stripeSessionId)
   }
 
-  async commonRefundSetup(paymentId?: string, stripeOrderId?: string): Promise<Payment> {
-    if (!paymentId && !stripeOrderId) {
-      throw new Error("Either paymentId or stripeOrderId must be supplied")
+  async commonRefundSetup(
+    paymentId?: string,
+    paymentProviderOrderId?: string,
+    checkRefundRequest: boolean = true
+  ): Promise<Payment> {
+    if (!paymentId && !paymentProviderOrderId) {
+      throw new Error("Either paymentId or paymentProviderOrderId must be supplied")
     }
 
     let payment: Payment | undefined
     if (paymentId) {
       payment = await this.paymentRepository.getById(paymentId)
-    } else if (stripeOrderId) {
-      payment = await this.paymentRepository.getByPaymentProviderOrderId(stripeOrderId)
+    } else if (paymentProviderOrderId) {
+      payment = await this.paymentRepository.getByPaymentProviderOrderId(paymentProviderOrderId)
     }
 
     if (!payment) {
       throw new Error("Payment not found")
     }
 
+    const product = await this.productRepository.getById(payment.productId)
+    if (!product) {
+      throw new Error("Product not found")
+    }
+
+    if (!product.isRefundable) {
+      throw new Error("Product is not refundable")
+    }
+
     if (payment.status !== "PAID") {
       throw new Error("Payment is not in the correct state to be refunded")
+    }
+
+    if (checkRefundRequest) {
+      const refundRequest = await this.refundRequestRepository.getByPaymentId(payment.id)
+      if (!refundRequest) {
+        throw new Error("Refund request not found")
+      }
+
+      if (refundRequest.status !== "APPROVED") {
+        throw new Error("Refund request needs to be approved for the payment to be refunded")
+      }
     }
 
     return payment
   }
 
-  async refundStripePaymentById(paymentId: string): Promise<void> {
-    const payment = await this.commonRefundSetup(paymentId, undefined)
+  async refundStripePaymentById(paymentId: string, checkRefundRequest: boolean = true): Promise<void> {
+    const payment = await this.commonRefundSetup(paymentId, undefined, checkRefundRequest)
 
     await this.refundStripePaymentByStripeOrderId(payment.paymentProviderOrderId as string)
   }
 
-  async refundStripePaymentByStripeOrderId(stripeOrderId: string): Promise<void> {
-    const payment = await this.commonRefundSetup(undefined, stripeOrderId)
+  async refundStripePaymentByStripeOrderId(stripeOrderId: string, checkRefundRequest: boolean = true): Promise<void> {
+    const payment = await this.commonRefundSetup(undefined, stripeOrderId, checkRefundRequest)
 
     const stripe = getStripeObject(payment.paymentProviderId)
     if (!stripe) {

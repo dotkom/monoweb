@@ -11,6 +11,8 @@ export interface ProductTable {
   type: ProductType
   objectId: string | null
   amount: number
+  isRefundable: boolean
+  refundNeedsApproval: boolean
   deletedAt: Date | null
 }
 
@@ -30,4 +32,15 @@ export interface ProductPaymentProviderTable {
   productId: string
   paymentProvider: PaymentProvider
   paymentProviderId: string // client_id or public_key
+}
+
+export interface RefundRequestTable {
+  id: Generated<string>
+  createdAt: Generated<Date>
+  updatedAt: Generated<Date>
+  paymentId: string
+  userId: string
+  reason: string
+  status: "PENDING" | "APPROVED" | "REJECTED"
+  handledBy: string | null
 }

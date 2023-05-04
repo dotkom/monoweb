@@ -1,10 +1,12 @@
 import { productRouter } from "./product-router"
 import { protectedProcedure } from "../../trpc"
+import { refundRequestRouter } from "./refund-request-router"
 import { t } from "../../trpc"
 import { z } from "zod"
 
 export const paymentRouter = t.router({
   product: productRouter,
+  refundRequest: refundRequestRouter,
   getPaymentProviders: protectedProcedure.query(({ ctx }) => {
     return ctx.paymentService.getPaymentProviders()
   }),
