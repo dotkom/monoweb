@@ -48,16 +48,21 @@ export const PaymentSchema = z.object({
   productId: z.string().uuid(),
   userId: z.string(),
   paymentProviderId: z.string(), // Stripe = payment_intent_id | Vipps = order_id
-  paymentProviderOrderId: z.string(),
+  paymentProviderSessionId: z.string(), // Stripe = checkout session id
+  paymentProviderOrderId: z.string().nullable(), // Stripe = payment intent id
   status: z.enum(["UNPAID", "PAID", "REFUNDED"]),
 })
 
 export type Payment = z.infer<typeof PaymentSchema>
 
-export const PaymentWriteSchema = PaymentSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-})
+export const PaymentWriteSchema = PaymentSchema
+  .partial({
+    paymentProviderOrderId: true,
+  })
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
 
 export type PaymentWrite = z.infer<typeof PaymentWriteSchema>

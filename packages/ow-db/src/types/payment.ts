@@ -21,7 +21,8 @@ export interface PaymentTable {
   productId: string
   userId: string
   paymentProviderId: string
-  paymentProviderOrderId: string
+  paymentProviderSessionId: string
+  paymentProviderOrderId: string | null
   status: PaymentStatus
 }
 

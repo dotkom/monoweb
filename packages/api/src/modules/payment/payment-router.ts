@@ -26,4 +26,13 @@ export const paymentRouter = t.router({
         ctx.auth.userId
       )
     }),
+  refundStripePayment: protectedProcedure
+    .input(
+      z.object({
+        paymentId: z.string().uuid(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.paymentService.refundStripePaymentById(input.paymentId)
+    }),
 })

@@ -27,6 +27,7 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const body = await bufferRequest(req)
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
+    console.log(event)
   } catch (e) {
     const err = e as Error
     res.status(400).send(`Webhook Error: ${err.message}`)
@@ -40,7 +41,8 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
 
     switch (event.type.split(".").at(-1)) {
       case "completed":
-        await ctx.paymentService.fullfillStripeCheckoutSession(sessionId)
+        const intentId = data.payment_intent as string
+        await ctx.paymentService.fullfillStripeCheckoutSession(sessionId, intentId)
         break
       case "expired":
         await ctx.paymentService.expireStripeCheckoutSession(sessionId)

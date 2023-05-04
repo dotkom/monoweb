@@ -36,6 +36,7 @@ const PaymentTestPage: FC = () => {
   const router = useRouter()
   const [productId, setProductId] = useState("")
   const [providerId, setProviderId] = useState("")
+  const [paymentId, setPaymentId] = useState("")
   const [isActuallyLoading, setIsActuallyLoading] = useState(false)
 
   const createCheckout = trpc.payment.createStripeCheckoutSession.useMutation({
@@ -46,6 +47,12 @@ const PaymentTestPage: FC = () => {
 
   const fetchProduct = trpc.payment.product.get.useQuery(productId, {
     enabled: false,
+  })
+
+  const refundPayment = trpc.payment.refundStripePayment.useMutation({
+    onSuccess: () => {
+      alert("Successfully Refunded!")
+    }
   })
 
   const changeEvent = (event: FormEvent<HTMLInputElement>) => {
@@ -70,6 +77,12 @@ const PaymentTestPage: FC = () => {
   const onFetchClick = () => {
     setIsActuallyLoading(true)
     fetchProduct.refetch()
+  }
+
+  const onRefundClick = () => {
+    refundPayment.mutate({
+      paymentId: paymentId,
+    })
   }
 
   const seedPaymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
@@ -218,6 +231,15 @@ const PaymentTestPage: FC = () => {
       {((isActuallyLoading && fetchProduct.isLoading) || createCheckout.isLoading) && <div>Loading...</div>}
 
       {fetchProduct.data && <pre>{JSON.stringify(fetchProduct.data, null, 4)}</pre>}
+
+      <fieldset className="flex flex-col gap-y-1">
+        <label htmlFor="paymentId">PaymentId</label>
+        <input id="paymentId" type="text" value={paymentId} onChange={(e) => setPaymentId(e.target.value)} />
+      </fieldset>
+
+      <button onClick={onRefundClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+        Refund PaymentId
+      </button>
     </div>
   )
 }
