@@ -49,7 +49,12 @@ export const initServices = () => {
     refundRequestRepository
   )
   const productPaymentProviderService = new ProductPaymentProviderServiceImpl(productPaymentProviderRepository)
-  const refundRequestService = new RefundRequestServiceImpl(refundRequestRepository, paymentService)
+  const refundRequestService = new RefundRequestServiceImpl(
+    refundRequestRepository,
+    paymentRepository,
+    productRepository,
+    paymentService
+  )
 
   return {
     userService,

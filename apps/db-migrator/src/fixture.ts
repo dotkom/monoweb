@@ -144,6 +144,8 @@ export const runFixtures = async () => {
         objectId: (eb) => eb.ref("excluded.objectId"),
         amount: (eb) => eb.ref("excluded.amount"),
         deletedAt: (eb) => eb.ref("excluded.deletedAt"),
+        isRefundable: (eb) => eb.ref("excluded.isRefundable"),
+        refundRequiresApproval: (eb) => eb.ref("excluded.refundRequiresApproval"),
       })
     )
     .execute()

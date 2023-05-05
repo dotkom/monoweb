@@ -27,7 +27,7 @@ export const ProductSchema = z.object({
   amount: z.number(), // price
   paymentProviders: z.array(PaymentProviderSchema),
   isRefundable: z.boolean(),
-  refundNeedsApproval: z.boolean(), // typically by bankkom
+  refundRequiresApproval: z.boolean(), // typically by bankkom
   deletedAt: z.date().nullable(), // null = not deleted
 })
 

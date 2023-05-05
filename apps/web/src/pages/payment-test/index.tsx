@@ -31,6 +31,8 @@ const PaymentTestPage: FC = () => {
     type: "EVENT",
     objectId: "6b0e48c1-bc27-4901-9cc9-31c8076ef5ac",
     amount: 6969,
+    isRefundable: true,
+    refundRequiresApproval: true,
   })
 
   const router = useRouter()
@@ -49,10 +51,10 @@ const PaymentTestPage: FC = () => {
     enabled: false,
   })
 
-  const refundPayment = trpc.payment.refundStripePayment.useMutation({
+  const refundPayment = trpc.payment.refundPayment.useMutation({
     onSuccess: () => {
       alert("Successfully Refunded!")
-    }
+    },
   })
 
   const changeEvent = (event: FormEvent<HTMLInputElement>) => {
@@ -126,6 +128,8 @@ const PaymentTestPage: FC = () => {
           type: "EVENT",
           objectId: data[i].id,
           amount: i == 0 ? 250 : 2300,
+          isRefundable: true,
+          refundRequiresApproval: true,
         })
       }
     },

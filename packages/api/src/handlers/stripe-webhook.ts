@@ -27,7 +27,6 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const body = await bufferRequest(req)
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
-    console.log(event)
   } catch (e) {
     const err = e as Error
     res.status(400).send(`Webhook Error: ${err.message}`)

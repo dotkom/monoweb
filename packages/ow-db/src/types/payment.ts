@@ -12,7 +12,7 @@ export interface ProductTable {
   objectId: string | null
   amount: number
   isRefundable: boolean
-  refundNeedsApproval: boolean
+  refundRequiresApproval: boolean
   deletedAt: Date | null
 }
 

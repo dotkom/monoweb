@@ -1,13 +1,19 @@
 import { PaginateInputSchema } from "./../../utils/db-utils"
-import { RefundRequestWriteSchema } from "@dotkomonline/types"
 import { protectedProcedure } from "./../../trpc"
 import { t } from "../../trpc"
 import { z } from "zod"
 
 export const refundRequestRouter = t.router({
-  create: protectedProcedure.input(RefundRequestWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.refundRequestService.createRefundRequest(input)
-  }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        paymentId: z.string().uuid(),
+        reason: z.string().min(0).max(255),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.refundRequestService.createRefundRequest(input.paymentId, ctx.auth.userId, input.reason)
+    }),
   edit: protectedProcedure
     .input(z.object({ id: z.string().uuid(), reason: z.string().min(0).max(255) }))
     .mutation(({ input, ctx }) => {
