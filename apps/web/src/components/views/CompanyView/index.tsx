@@ -1,7 +1,8 @@
-import { FC } from "react"
 import { Company, Event } from "@dotkomonline/types"
+
+import { EventList } from "@/components/organisms/EventList"
+import { FC } from "react"
 import { Icon } from "@dotkomonline/ui"
-import { CompanyEventList } from "./CompanyEventList"
 import Image from "next/image"
 
 interface CompanyViewProps {
@@ -59,8 +60,8 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
 
       {/* TODO: Redesign later */}
       <div className="flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <CompanyEventList title={`Kommende arrangementer`} events={props.events} isLoading={props.isLoadingEvents} />
-        <CompanyEventList title={`Åpne jobbtilbud`} events={props.events} isLoading={props.isLoadingEvents} />{" "}
+        <EventList title={`Kommende arrangementer`} events={props.events} isLoading={props.isLoadingEvents} />
+        <EventList title={`Åpne jobbtilbud`} events={props.events} isLoading={props.isLoadingEvents} />{" "}
         {/* TODO: Separate listings list later */}
       </div>
     </div>
