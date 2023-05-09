@@ -34,7 +34,7 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
             {image && (
               <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
                 <a href={website} target="_blank" rel="noreferrer">
-                  <Image src={image} alt="Company logo" layout="fill" objectFit="contain" className="w-full" />
+                  <Image src={image} alt="Company logo" fill style={{ objectFit: "contain" }} className="w-full" />
                 </a>
               </div>
             )}
