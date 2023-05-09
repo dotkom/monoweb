@@ -1,11 +1,12 @@
-import { FC } from "react"
-import { CompanyView } from "@/components/views/CompanyView"
 import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
-import { createProxySSGHelpers } from "@trpc/react-query/ssg"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/api"
+
+import { Company } from "@dotkomonline/types"
+import { CompanyView } from "@/components/views/CompanyView"
+import { FC } from "react"
+import { createServerSideHelpers } from "@trpc/react-query/server"
 import { trpc } from "@/utils/trpc"
 import { useRouter } from "next/router"
-import { Company } from "@dotkomonline/types"
 
 const CompanyPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const router = useRouter()
@@ -17,7 +18,7 @@ const CompanyPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) 
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const ssg = createProxySSGHelpers({
+  const ssg = createServerSideHelpers({
     router: appRouter,
     ctx: await createContextInner({
       auth: null,
@@ -32,7 +33,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
-  const ssg = createProxySSGHelpers({
+  const ssg = createServerSideHelpers({
     router: appRouter,
     ctx: await createContextInner({
       auth: null,
