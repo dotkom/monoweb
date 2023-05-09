@@ -3,7 +3,7 @@ import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
 import { Cursor, paginateQuery } from "../../utils/db-utils"
 
-const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
+export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>

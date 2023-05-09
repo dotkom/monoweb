@@ -6,6 +6,7 @@ export interface EventCompanyService {
   createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
   deleteCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
   getCompaniesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Company[]>
+  getEventsByCompanyId: (id: Company["id"], take: number, cursor?: Cursor) => Promise<Event[]>
 }
 
 export class EventCompanyServiceImpl implements EventCompanyService {
@@ -26,5 +27,10 @@ export class EventCompanyServiceImpl implements EventCompanyService {
 
   async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
     return await this.eventCompanyRepository.getCompaniesByEventId(id, take, cursor)
+  }
+
+  async getEventsByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]> {
+    const events = await this.eventCompanyRepository.getEventsByCompanyId(companyId, take, cursor)
+    return events
   }
 }
