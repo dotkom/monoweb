@@ -12,7 +12,7 @@ export async function up(db: Kysely<Database>) {
     .addColumn("type", sql`product_type`, (col) => col.notNull())
     .addColumn("object_id", "uuid", (col) => col.unique())
     .addColumn("amount", "integer", (col) => col.notNull())
-    .addColumn("deletedAt", "timestamptz")
+    .addColumn("deleted_at", "timestamptz")
     .execute()
 
   await createTableWithDefaults("payment", { id: true, createdAt: true, updatedAt: true }, db.schema)

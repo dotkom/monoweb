@@ -8,17 +8,18 @@ const mapToPayment = (data: Selectable<Database["payment"]>) => PaymentSchema.pa
 
 export interface PaymentRepository {
   create(data: PaymentWrite): Promise<Payment | undefined>
-  update(id: Payment["id"], data: Omit<PaymentWrite, "id">): Promise<Payment>
-  updateByPaymentProviderOrderId(
-    paymentProviderOrderId: string,
+  update(id: Payment["id"], data: Partial<Omit<PaymentWrite, "id">>): Promise<Payment>
+  updateByPaymentProviderSessionId(
+    paymentProviderSessionId: string,
     data: Partial<Omit<PaymentWrite, "id">>
   ): Promise<Payment>
   getById(id: string): Promise<Payment | undefined>
+  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Payment[]>
   getAllByUserId(id: string, take: number, cursor?: Cursor): Promise<Payment[]>
   getAllByProductId(id: string, take: number, cursor?: Cursor): Promise<Payment[]>
   delete(id: Payment["id"]): Promise<void>
-  deleteByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<void>
+  deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void>
 }
 
 export class PaymentRepositoryImpl implements PaymentRepository {
@@ -30,7 +31,7 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     return mapToPayment(payment)
   }
 
-  async update(id: Payment["id"], data: Omit<PaymentWrite, "id">): Promise<Payment> {
+  async update(id: Payment["id"], data: Partial<Omit<PaymentWrite, "id">>): Promise<Payment> {
     const payment = await this.db
       .updateTable("payment")
       .set({
@@ -44,8 +45,8 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     return mapToPayment(payment)
   }
 
-  async updateByPaymentProviderOrderId(
-    paymentProviderOrderId: string,
+  async updateByPaymentProviderSessionId(
+    paymentProviderSessionId: string,
     data: Partial<Omit<PaymentWrite, "id">>
   ): Promise<Payment> {
     const payment = await this.db
@@ -54,7 +55,7 @@ export class PaymentRepositoryImpl implements PaymentRepository {
         ...data,
         updatedAt: new Date(),
       })
-      .where("paymentProviderOrderId", "=", paymentProviderOrderId)
+      .where("paymentProviderSessionId", "=", paymentProviderSessionId)
       .returningAll()
       .executeTakeFirstOrThrow()
 
@@ -63,6 +64,16 @@ export class PaymentRepositoryImpl implements PaymentRepository {
 
   async getById(id: string): Promise<Payment | undefined> {
     const payment = await this.db.selectFrom("payment").selectAll().where("id", "=", id).executeTakeFirst()
+
+    return payment ? mapToPayment(payment) : undefined
+  }
+
+  async getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined> {
+    const payment = await this.db
+      .selectFrom("payment")
+      .selectAll()
+      .where("paymentProviderOrderId", "=", paymentProviderOrderId)
+      .executeTakeFirst()
 
     return payment ? mapToPayment(payment) : undefined
   }
@@ -110,7 +121,7 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     await this.db.deleteFrom("payment").where("id", "=", id).execute()
   }
 
-  async deleteByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<void> {
-    await this.db.deleteFrom("payment").where("paymentProviderOrderId", "=", paymentProviderOrderId).execute()
+  async deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void> {
+    await this.db.deleteFrom("payment").where("paymentProviderSessionId", "=", paymentProviderSessionId).execute()
   }
 }

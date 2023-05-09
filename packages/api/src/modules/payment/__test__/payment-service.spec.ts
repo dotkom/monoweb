@@ -13,6 +13,7 @@ import { eventPayload } from "../../event/__test__/event-service.spec"
 import { paymentProvidersPayload } from "./product-payment-provider.spec"
 import { productPayload } from "./product-service.spec"
 import { randomUUID } from "crypto"
+import { RefundRequestRepositoryImpl } from "../refund-request-repository"
 
 export const paymentPayload: Omit<Payment, "id"> = {
   createdAt: new Date(2022, 1, 1),
@@ -20,11 +21,21 @@ export const paymentPayload: Omit<Payment, "id"> = {
   productId: randomUUID(),
   userId: randomUUID(),
   paymentProviderId: randomUUID(),
+  paymentProviderSessionId: randomUUID(),
   paymentProviderOrderId: randomUUID(),
   status: "UNPAID",
 }
 
-// from https://stripe.com/docs/api/checkout/sessions/object
+// from https://stripe.com/docs/api
+const stripeCommonResponse = {
+  lastResponse: {
+    headers: {},
+    requestId: "",
+    statusCode: 200,
+    apiVersion: "",
+  },
+}
+
 const stripeCheckoutSessionPayload: Stripe.Checkout.Session = {
   id: "cs_test_a1bDGGheY2eWr2pmrhWtgbhi1rNQZZKvpvmfB22ZUGH0054KlYnxY7vdKJ",
   object: "checkout.session",
@@ -92,12 +103,78 @@ const stripeCheckoutSessionPayload: Stripe.Checkout.Session = {
 
 const stripeResponseCheckoutSessionPayload: Stripe.Response<Stripe.Checkout.Session> = {
   ...stripeCheckoutSessionPayload,
-  lastResponse: {
-    headers: {},
-    requestId: "",
-    statusCode: 200,
-    apiVersion: "",
+  ...stripeCommonResponse,
+}
+
+const stripePaymentIntentPayload: Stripe.PaymentIntent = {
+  id: "pi_1EUpj3402SsOrryzsjcGJynl",
+  object: "payment_intent",
+  amount: 1099,
+  amount_capturable: 0,
+  amount_details: {
+    tip: {},
   },
+  amount_received: 0,
+  application: null,
+  application_fee_amount: null,
+  automatic_payment_methods: null,
+  canceled_at: null,
+  cancellation_reason: null,
+  capture_method: "automatic",
+  client_secret: "pi_1EUpj3402SsOrryzsjcGJynl_secret_olQZd8x5WnY1qRas1VMPTJ49H",
+  confirmation_method: "automatic",
+  created: 1556606761,
+  currency: "nok",
+  customer: null,
+  description: null,
+  invoice: null,
+  last_payment_error: null,
+  latest_charge: "ch_3N2LNSBUPu88CNb00Gnv2UsM",
+  livemode: false,
+  metadata: {},
+  next_action: null,
+  on_behalf_of: null,
+  payment_method: null,
+  payment_method_options: {},
+  payment_method_types: ["card"],
+  processing: null,
+  receipt_email: null,
+  review: null,
+  setup_future_usage: null,
+  shipping: null,
+  statement_descriptor: null,
+  statement_descriptor_suffix: null,
+  status: "requires_payment_method",
+  transfer_data: null,
+  transfer_group: null,
+  source: "",
+}
+
+const stripeResponsePaymentIntentPayload: Stripe.Response<Stripe.PaymentIntent> = {
+  ...stripePaymentIntentPayload,
+  ...stripeCommonResponse,
+}
+
+const stripeRefundPayload: Stripe.Refund = {
+  id: "re_3N4UKBBUPu88CNb01SnDBZ0m",
+  object: "refund",
+  amount: 25000,
+  balance_transaction: "txn_3N4UKBBUPu88CNb01IGCoFDI",
+  charge: "ch_3N2LNSBUPu88CNb00Gnv2UsM",
+  created: 1683315101,
+  currency: "nok",
+  metadata: {},
+  payment_intent: "pi_3N4UKBBUPu88CNb01vub5H95",
+  reason: null,
+  receipt_number: null,
+  source_transfer_reversal: null,
+  status: "succeeded",
+  transfer_reversal: null,
+}
+
+const stripeResponseRefundPayload: Stripe.Response<Stripe.Refund> = {
+  ...stripeRefundPayload,
+  ...stripeCommonResponse,
 }
 
 describe("PaymentService", () => {
@@ -105,11 +182,15 @@ describe("PaymentService", () => {
   const paymentRepository = new PaymentRepositoryImpl(db)
   const productRepository = new ProductRepositoryImpl(db)
   const eventRepository = new EventRepositoryImpl(db)
-  const paymentService = new PaymentServiceImpl(paymentRepository, productRepository, eventRepository)
+  const refundRequestRepository = new RefundRequestRepositoryImpl(db)
+  const paymentService = new PaymentServiceImpl(
+    paymentRepository,
+    productRepository,
+    eventRepository,
+    refundRequestRepository
+  )
 
-  // const stripe = vi.mocked(Stripe.prototype)
   const stripe = new Stripe("doesntmatter", { apiVersion: "2022-11-15" })
-  // console.log("CHECKOOUT", stripe.checkout.sessions)
   vi.spyOn(LocalStripeLib, "getStripeObject").mockResolvedValue(stripe)
 
   const paymentPayloadExtended: Payment = {
@@ -165,13 +246,76 @@ describe("PaymentService", () => {
   })
 
   it("fullfill a stripe checkout session", async () => {
-    const sessionId = stripeResponseCheckoutSessionPayloadExtended.id
+    const { id: sessionId, payment_intent: paymentProviderOrderId } = stripeResponseCheckoutSessionPayloadExtended
 
-    vi.spyOn(paymentRepository, "updateByPaymentProviderOrderId").mockResolvedValueOnce({
+    vi.spyOn(paymentRepository, "updateByPaymentProviderSessionId").mockResolvedValueOnce({
       ...paymentPayloadExtended,
       status: "PAID",
     })
-    await expect(paymentService.fullfillStripeCheckoutSession(sessionId)).resolves.toEqual(undefined)
-    expect(paymentRepository.updateByPaymentProviderOrderId).toHaveBeenCalledWith(sessionId, { status: "PAID" })
+    await expect(
+      paymentService.fullfillStripeCheckoutSession(sessionId, paymentProviderOrderId as string)
+    ).resolves.toEqual(undefined)
+    expect(paymentRepository.updateByPaymentProviderSessionId).toHaveBeenCalledWith(sessionId, {
+      status: "PAID",
+      paymentProviderOrderId: paymentProviderOrderId,
+    })
+  })
+
+  it("fails to refund a non-refundable payment", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "PAID" })
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: false })
+
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    await expect(call).rejects.toThrow("Product is not refundable")
+  })
+
+  it("fails to refund an unpaid payment", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "UNPAID" })
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
+
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    await expect(call).rejects.toThrow("Payment is not in the correct state to be refunded")
+  })
+
+  it("fails to refund an already refunded payment", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "REFUNDED" })
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
+
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    await expect(call).rejects.toThrow("Payment is not in the correct state to be refunded")
+  })
+
+  it("fails to directly refund a payment that requires an approved refund request", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "PAID" })
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
+      ...productPayloadExtended,
+      isRefundable: true,
+      refundRequiresApproval: true,
+    })
+    vi.spyOn(refundRequestRepository, "getByPaymentId").mockResolvedValueOnce(undefined)
+
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    await expect(call).rejects.toThrow("Product requires a refund request to be refunded")
+  })
+
+  it("successfully directly refunds a payment", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({
+      ...paymentPayloadExtended,
+      status: "PAID",
+      paymentProviderId: paymentProvidersPayload.at(0)?.paymentProviderId ?? "",
+    })
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
+      ...productPayloadExtended,
+      isRefundable: true,
+      refundRequiresApproval: false,
+      paymentProviders: paymentProvidersPayload,
+    })
+    vi.spyOn(stripe.paymentIntents, "retrieve").mockResolvedValueOnce(stripeResponsePaymentIntentPayload)
+    vi.spyOn(stripe.refunds, "create").mockResolvedValueOnce(stripeResponseRefundPayload)
+    vi.spyOn(paymentRepository, "update").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "REFUNDED" })
+
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    await expect(call).resolves.toEqual(undefined)
+    expect(paymentRepository.update).toHaveBeenCalledWith(paymentPayloadExtended.id, { status: "REFUNDED" })
   })
 })

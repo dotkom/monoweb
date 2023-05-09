@@ -3,7 +3,7 @@ import { AttendanceTable, AttendeeTable, EventTable } from "./event"
 import { CommitteeTable, EventCommitteeTable } from "./committee"
 import { CompanyTable, EventCompanyTable } from "./company"
 import { MarkTable, PersonalMarkTable } from "./marks"
-import { PaymentTable, ProductPaymentProviderTable, ProductTable } from "./payment"
+import { PaymentTable, ProductPaymentProviderTable, ProductTable, RefundRequestTable } from "./payment"
 
 export interface Database {
   owUser: UserTable
@@ -22,4 +22,5 @@ export interface Database {
   product: ProductTable
   payment: PaymentTable
   productPaymentProvider: ProductPaymentProviderTable
+  refundRequest: RefundRequestTable
 }
