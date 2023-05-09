@@ -14,6 +14,8 @@ export const productPayload: Omit<Product, "id"> = {
   objectId: randomUUID(),
   amount: 999,
   paymentProviders: [],
+  isRefundable: true,
+  refundRequiresApproval: true,
   deletedAt: null,
 }
 

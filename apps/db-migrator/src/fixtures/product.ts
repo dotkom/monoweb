@@ -10,6 +10,8 @@ export const products: Insertable<Database["product"]>[] = [
     objectId: "abdcc9c3-6d6a-4767-8d8a-608d8c091eb1",
     amount: 250,
     deletedAt: null,
+    isRefundable: true,
+    refundRequiresApproval: true,
   },
   {
     id: "564c269a-a6bd-4fc9-b278-e8543d679421",
@@ -19,5 +21,7 @@ export const products: Insertable<Database["product"]>[] = [
     objectId: "395fa3ec-2e2b-4cd6-829b-0388761b6917",
     amount: 6969,
     deletedAt: null,
+    isRefundable: false,
+    refundRequiresApproval: false,
   },
 ]

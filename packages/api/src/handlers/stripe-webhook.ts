@@ -40,7 +40,8 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
 
     switch (event.type.split(".").at(-1)) {
       case "completed":
-        await ctx.paymentService.fullfillStripeCheckoutSession(sessionId)
+        const intentId = data.payment_intent as string
+        await ctx.paymentService.fullfillStripeCheckoutSession(sessionId, intentId)
         break
       case "expired":
         await ctx.paymentService.expireStripeCheckoutSession(sessionId)

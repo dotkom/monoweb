@@ -72,6 +72,7 @@ export const runFixtures = async () => {
         imageUrl: (eb) => eb.ref("excluded.imageUrl"),
         location: (eb) => eb.ref("excluded.location"),
         committeeId: (eb) => eb.ref("excluded.committeeId"),
+        waitlist: (eb) => eb.ref("excluded.waitlist"),
       })
     )
     .execute()
@@ -95,6 +96,8 @@ export const runFixtures = async () => {
         deregisterDeadline: (eb) => eb.ref("excluded.deregisterDeadline"),
         limit: (eb) => eb.ref("excluded.limit"),
         eventId: (eb) => eb.ref("excluded.eventId"),
+        min: (eb) => eb.ref("excluded.min"),
+        max: (eb) => eb.ref("excluded.max"),
       })
     )
     .execute()
@@ -141,6 +144,8 @@ export const runFixtures = async () => {
         objectId: (eb) => eb.ref("excluded.objectId"),
         amount: (eb) => eb.ref("excluded.amount"),
         deletedAt: (eb) => eb.ref("excluded.deletedAt"),
+        isRefundable: (eb) => eb.ref("excluded.isRefundable"),
+        refundRequiresApproval: (eb) => eb.ref("excluded.refundRequiresApproval"),
       })
     )
     .execute()

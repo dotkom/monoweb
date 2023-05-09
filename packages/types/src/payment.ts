@@ -26,6 +26,8 @@ export const ProductSchema = z.object({
   objectId: z.string().uuid().nullable(), // The OW object this product is linked to e.g. eventId, webshopItemId. null if not linked
   amount: z.number(), // price
   paymentProviders: z.array(PaymentProviderSchema),
+  isRefundable: z.boolean(),
+  refundRequiresApproval: z.boolean(), // typically by bankkom
   deletedAt: z.date().nullable(), // null = not deleted
 })
 
@@ -48,16 +50,40 @@ export const PaymentSchema = z.object({
   productId: z.string().uuid(),
   userId: z.string(),
   paymentProviderId: z.string(), // Stripe = payment_intent_id | Vipps = order_id
-  paymentProviderOrderId: z.string(),
+  paymentProviderSessionId: z.string(), // Stripe = checkout session id
+  paymentProviderOrderId: z.string().nullable(), // Stripe = payment intent id
   status: z.enum(["UNPAID", "PAID", "REFUNDED"]),
 })
 
 export type Payment = z.infer<typeof PaymentSchema>
 
-export const PaymentWriteSchema = PaymentSchema.omit({
+export const PaymentWriteSchema = PaymentSchema.partial({
+  paymentProviderOrderId: true,
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 })
 
 export type PaymentWrite = z.infer<typeof PaymentWriteSchema>
+
+export const RefundRequestSchema = z.object({
+  id: z.string().uuid(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  paymentId: z.string().uuid(),
+  userId: z.string(),
+  reason: z.string().min(1).max(255),
+  status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
+  handledBy: z.string().nullable(), // user that either approved or rejected the request
+})
+
+export type RefundRequest = z.infer<typeof RefundRequestSchema>
+
+export const RefundRequestWriteSchema = RefundRequestSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
+
+export type RefundRequestWrite = z.infer<typeof RefundRequestWriteSchema>
