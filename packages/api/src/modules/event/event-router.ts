@@ -26,6 +26,11 @@ export const eventRouter = t.router({
     .query(({ input, ctx }) => {
       return ctx.eventCompanyService.getEventsByCompanyId(input.id, input.paginate.take, input.paginate.cursor)
     }),
+  allByCommittee: publicProcedure
+    .input(z.object({ id: z.string().uuid(), paginate: PaginateInputSchema }))
+    .query(({ input, ctx }) => {
+      return ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
+    }),
   get: publicProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
     return ctx.eventService.getEventById(input)
   }),
