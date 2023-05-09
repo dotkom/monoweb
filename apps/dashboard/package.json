@@ -41,7 +41,7 @@
   "devDependencies": {
     "@dotkomonline/config": "*",
     "@types/eslint": "^8",
-    "@types/node": "^16.18.25",
+    "@types/node": "^18.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.1",
     "autoprefixer": "^10.4.13",
