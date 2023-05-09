@@ -1966,7 +1966,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.18.6
       '@babel/helper-validator-identifier': 7.19.1
       '@babel/template': 7.20.7
-      '@babel/traverse': 7.20.12(supports-color@5.5.0)
+      '@babel/traverse': 7.21.4(supports-color@5.5.0)
       '@babel/types': 7.20.7
     transitivePeerDependencies:
       - supports-color
@@ -2079,7 +2079,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.20.7
-      '@babel/traverse': 7.20.12(supports-color@5.5.0)
+      '@babel/traverse': 7.21.4(supports-color@5.5.0)
       '@babel/types': 7.20.7
     transitivePeerDependencies:
       - supports-color
@@ -3137,7 +3137,7 @@ packages:
       '@babel/plugin-transform-unicode-escapes': 7.18.10(@babel/core@7.20.2)
       '@babel/plugin-transform-unicode-regex': 7.18.6(@babel/core@7.20.2)
       '@babel/preset-modules': 0.1.5(@babel/core@7.20.2)
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.4
       babel-plugin-polyfill-corejs2: 0.3.3(@babel/core@7.20.2)
       babel-plugin-polyfill-corejs3: 0.6.0(@babel/core@7.20.2)
       babel-plugin-polyfill-regenerator: 0.4.1(@babel/core@7.20.2)
