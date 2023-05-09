@@ -1,50 +1,69 @@
-import { Button } from "@dotkomonline/ui"
+import { Company, Event } from "@dotkomonline/types"
+
+import { EventList } from "@/components/organisms/EventList"
 import { FC } from "react"
-
-import PortableText, { PortableTextProps } from "@/components/molecules/PortableText"
-
-import CompanyInterestProcess from "./CompanyInterestProcess"
-import OurProducts from "./OurProducts"
-import { Title } from "@dotkomonline/ui"
-
-export type Content = { content: PortableTextProps["blocks"] }
+import { Icon } from "@dotkomonline/ui"
+import Image from "next/image"
 
 interface CompanyViewProps {
-  companyContent: Content[]
+  company: Company
+  events?: Event[]
+  isLoadingEvents: boolean
 }
+
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
-  const [header, interest, product, info, contact] = props.companyContent
+  const { name, description, phone, email, website, location, type, image } = props.company
+
+  const icons = [
+    { icon: "material-symbols:location-on", text: location, href: null },
+    { icon: "ph:globe-bold", text: "Nettside", href: website },
+    { icon: "material-symbols:mail", text: email, href: `mailto:${email}` },
+    { icon: "material-symbols:phone-enabled", text: phone, href: `tel:${phone}` },
+  ]
 
   return (
-    <div className="flex flex-col gap-6 text-center">
-      <div className="bg-amber-2 w-full rounded-lg">
-        <div className="mx-auto flex h-[520px] max-w-[768px] flex-col items-center p-4 md:h-[300px] lg:h-[220px]">
-          <Title className="text-slate-1 mt-5 mb-4 text-4xl leading-[1.4]">
-            Er din bedrift på jakt etter skarpe IT-
-            <span style={{ backgroundPosition: "50% 88%" }} className="bg-[url(/for-company-text-decor.svg)]">
-              studenter?
-            </span>
-          </Title>
-          <PortableText className="prose text-center" blocks={header.content} />
+    <div className="mx-auto mb-20 flex w-[90vw] max-w-screen-lg flex-col gap-y-16">
+      <div className="flex flex-col gap-y-6">
+        <div className="border-blue-8 flex w-full items-end justify-between gap-x-2 border-b-2 pb-2">
+          <h1>{name}</h1>
+          <div className="text-blue-11 text-2xl">{type}</div>
+        </div>
+
+        <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
+          <div className="border-blue-7 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
+            {image && (
+              <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
+                <a href={website} target="_blank" rel="noreferrer">
+                  <Image src={image} alt="Company logo" fill style={{ objectFit: "contain" }} className="w-full" />
+                </a>
+              </div>
+            )}
+
+            <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
+              {icons.map(({ icon, text, href }, index) => (
+                <div key={index} className="flex items-center gap-x-2">
+                  <Icon icon={icon} width="28"></Icon>
+                  {href === null ? (
+                    <span>{text}</span>
+                  ) : (
+                    <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
+                      {text ? text : "N/A"}
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <p>{description}</p>
         </div>
       </div>
-      <div className="mt-5 flex flex-col items-center px-3 text-center ">
-        <PortableText className="prose" blocks={interest.content} />
-        <a href="https://interesse.online.ntnu.no" className="mt-4">
-          <Button>Send Interesse</Button>
-        </a>
-      </div>
-      <PortableText className="prose my-5 mx-auto max-w-[768px] px-2 text-center" blocks={product.content} />
-      <OurProducts />
-      <div className="bg-blue-5 w-full rounded-lg">
-        <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
-      </div>
-      <PortableText className="prose self-center p-4" blocks={info.content} />
-      <div className="mx-auto flex flex-col items-center p-4">
-        <PortableText className="prose my-6 p-3 text-center" blocks={contact.content} />
+
+      {/* TODO: Redesign later */}
+      <div className="flex flex-col gap-x-16 gap-y-12 lg:flex-row">
+        <EventList title={`Kommende arrangementer`} events={props.events} isLoading={props.isLoadingEvents} />
+        <EventList title={`Åpne jobbtilbud`} events={props.events} isLoading={props.isLoadingEvents} />{" "}
+        {/* TODO: Separate listings list later */}
       </div>
     </div>
   )
 }
-
-export default CompanyView
