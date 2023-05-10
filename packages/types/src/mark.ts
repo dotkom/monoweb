@@ -2,9 +2,9 @@ import { z } from "zod"
 
 export const MarkSchema = z.object({
   id: z.string().uuid(),
-  title: z.string(),
-  givenAt: z.date(),
+  createdAt: z.date(),
   updatedAt: z.date(),
+  title: z.string(),
   category: z.string(),
   details: z.string(),
   duration: z.number(),
