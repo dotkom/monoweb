@@ -11,6 +11,8 @@ build-storybook.log
 package-lock.json
 # IDE specific
 .idea
+# typescript
+*.tsbuildinfo
 
 node_modules
 .turbo
@@ -19,6 +21,7 @@ dist/
 build/
 coverage
 **/.vscode
+.vscode
 
 storybook-static
 apps/dashboards/.vscode/settings.json

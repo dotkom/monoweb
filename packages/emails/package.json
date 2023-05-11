@@ -1,0 +1,39 @@
+{
+  "name": "@dotkomonline/emails",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix ."
+  },
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dotkomonline/config": "*",
+    "@react-email/button": "^0.0.8",
+    "@react-email/column": "^0.0.7",
+    "@react-email/container": "^0.0.8",
+    "@react-email/font": "^0.0.1",
+    "@react-email/head": "^0.0.5",
+    "@react-email/heading": "^0.0.8",
+    "@react-email/hr": "^0.0.5",
+    "@react-email/html": "^0.0.4",
+    "@react-email/img": "^0.0.5",
+    "@react-email/link": "^0.0.5",
+    "@react-email/render": "^0.0.7",
+    "@react-email/section": "^0.0.9",
+    "@react-email/tailwind": "^0.0.7",
+    "@react-email/text": "^0.0.5",
+    "react": "^18.2.0",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8",
+    "@types/node": "^16.18.25",
+    "@types/react": "^18.2.0",
+    "eslint": "^8.39.0",
+    "prettier": "^2.7.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.5"
+  }
+}

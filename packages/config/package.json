@@ -7,6 +7,7 @@
   "files": [
     "eslint-preset.js",
     "prettier-preset.js",
+    "tailwind-preset.d.ts",
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
@@ -16,11 +17,12 @@
     "access": "public"
   },
   "devDependencies": {
+    "@radix-ui/colors": "^0.1.8",
     "@tailwindcss/typography": "^0.5.8",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
     "@typescript-eslint/parser": "^5.44.0",
-    "eslint": "^8.33.0",
-    "eslint-config-next": "^13.0.0",
+    "eslint": "^8.39.0",
+    "eslint-config-next": "^13.3.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-turbo": "^0.0.7",
     "eslint-plugin-prettier": "^4.2.1",

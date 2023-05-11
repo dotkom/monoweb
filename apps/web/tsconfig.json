@@ -3,7 +3,6 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "node_modules/@dotkomonline/auth/next-auth.d.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
@@ -14,13 +13,14 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
+      ]
     },
     "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "strictNullChecks": true
   }
 }

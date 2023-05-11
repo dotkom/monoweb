@@ -11,8 +11,7 @@ export const serverSchema = z.object({
   HYDRA_ADMIN_URL: z.string(),
   NEXTAUTH_CLIENT_ID: z.string(),
   NEXTAUTH_SECRET: z.string(),
-  UPSTASH_REDIS_REST_URL: z.string(),
-  UPSTASH_REDIS_REST_TOKEN: z.string(),
+  CLERK_SECRET_KEY: z.string()
 })
 
 /**
@@ -22,6 +21,7 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
   NEXT_PUBLIC_HYDRA_PUBLIC_URL: z.string(),
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string()
 })
 
 /**
@@ -32,4 +32,5 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   NEXT_PUBLIC_HYDRA_PUBLIC_URL: process.env.HYDRA_PUBLIC_URL,
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 }

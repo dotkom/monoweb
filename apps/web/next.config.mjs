@@ -8,12 +8,13 @@ const config = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["cdn.sanity.io"],
+    domains: ["cdn.sanity.io", "onlineweb4-prod.s3.eu-north-1.amazonaws.com"],
   },
   experimental: {
     appDir: true,
+    swcPlugins: [["next-superjson-plugin", {}]]
   },
-  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/auth", "@dotkomonline/types", "@dotkomonline/api"],
+  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/types", "@dotkomonline/api"],
   eslint: {
     ignoreDuringBuilds: !!process.env.CI,
   },

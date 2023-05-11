@@ -1,7 +1,7 @@
 import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
+import { useUser } from "@clerk/nextjs"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
-import { useSession } from "next-auth/react"
 
 interface IFormInput {
   name: string
@@ -21,9 +21,7 @@ const FormInput: React.FC<IFormInput> = ({ name, value }) => {
 }
 
 const Landing: NextPage = () => {
-  const { data } = useSession()
-
-  const { email, name } = data?.user || {}
+  const { user } = useUser()
 
   return (
     <div className="w-full">
@@ -31,7 +29,7 @@ const Landing: NextPage = () => {
         <Avatar></Avatar>
         <div className="ml-8 flex w-full justify-between">
           <div>
-            <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{name}</p>
+            <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{user?.username}</p>
             <p className="text-slate-12 text-[14px]">Update your photo and personal details</p>
           </div>
           <div className="flex items-center gap-2"></div>
@@ -39,9 +37,9 @@ const Landing: NextPage = () => {
       </div>
       <div className="mt-12">
         <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Kontakt</p>
-        <FormInput name="Brukernavn" value={name} />
+        <FormInput name="Brukernavn" value={user?.username} />
         <FormInput name="Telefon" />
-        <FormInput name="Epost" value={email} />
+        <FormInput name="Epost" value={user?.primaryEmailAddress?.emailAddress} />
       </div>
       <div className="mt-12">
         <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Studie</p>

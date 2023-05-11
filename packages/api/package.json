@@ -14,19 +14,24 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.11.5",
     "@dotkomonline/auth": "*",
     "@dotkomonline/db": "*",
     "@ory/client": "^1.0.1",
-    "@trpc/server": "^10.0.0",
-    "argon2": "^0.30.2",
+    "@trpc/server": "^10.21.2",
     "axios": "^0.27.0",
     "date-fns": "^2.29.3",
     "kysely": "^0.23.0",
     "pg": "^8.8.0",
-    "superjson": "^1.11.0",
-    "zod": "^3.17.10"
+    "stripe": "^12.2.0",
+    "superjson": "^1.12.3",
+    "zod": "^3.21.4"
+  },
+  "peerDependencies": {
+    "next": "^13.3.1"
   },
   "devDependencies": {
+    "@clerk/backend": "^0.17.2",
     "@dotkomonline/config": "*",
     "@dotkomonline/logger": "*",
     "@dotkomonline/types": "*",
@@ -34,8 +39,9 @@
     "@types/eslint": "^8",
     "@types/pg": "^8.6.5",
     "@vitest/ui": "^0.28.0",
-    "eslint": "^8.26.0",
-    "typescript": "^4.9.3",
+    "eslint": "^8.39.0",
+    "typescript": "^4.9.5",
+    "vite-tsconfig-paths": "^4.0.5",
     "vitest": "^0.28.0"
   }
 }

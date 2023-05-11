@@ -1,40 +1,45 @@
 import { Database } from "@dotkomonline/db"
-import { Attendance, Event, EventSchema } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable, sql } from "kysely"
+import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
+import { Kysely, Selectable } from "kysely"
+import { Cursor, paginateQuery } from "../../utils/db-utils"
 
-const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
+export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
-  createEvent: (data: Insertable<Database["event"]>) => Promise<Event | undefined>
-  getEvents: (limit: number, offset?: number) => Promise<Event[]>
-  getEventByID: (id: string) => Promise<Event | undefined>
+  create(data: EventWrite): Promise<Event | undefined>
+  update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
+  getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  getById(id: string): Promise<Event | undefined>
 }
 
-export const initEventRepository = (db: Kysely<Database>): EventRepository => ({
-  createEvent: async (data) => {
-    const event = await db.insertInto("event").values(data).returningAll().executeTakeFirst()
-    return event ? mapToEvent(event) : undefined
-  },
-  getEvents: async (limit, offset = 0) => {
-    const events = await db.selectFrom("event").selectAll().limit(limit).offset(offset).execute()
-    return events.map(mapToEvent)
-  },
-  getEventByID: async (id) => {
-    // TODO: move the attendance query to a helper
+export class EventRepositoryImpl implements EventRepository {
+  constructor(private readonly db: Kysely<Database>) {}
 
-    const event = await db
-      .selectFrom("event")
+  async create(data: EventWrite): Promise<Event | undefined> {
+    const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
+    return mapToEvent(event)
+  }
+  async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
+    const event = await this.db
+      .updateTable("event")
+      .set(data)
       .where("id", "=", id)
-      .leftJoin("attendance", "attendance.eventId", "event.id")
-      .selectAll("event")
-      .select(
-        sql<Attendance[]>`COALESCE(json_agg(attendance) FILTER (WHERE attendance.id IS NOT NULL), '[]')`.as(
-          "attendances"
-        )
-      )
-      .groupBy("event.id")
-      .executeTakeFirst()
-
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    return mapToEvent(event)
+  }
+  async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
+    let query = this.db.selectFrom("event").selectAll().limit(take)
+    if (cursor) {
+      query = paginateQuery(query, cursor)
+    } else {
+      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+    }
+    const events = await query.execute()
+    return events.map(mapToEvent)
+  }
+  async getById(id: string): Promise<Event | undefined> {
+    const event = await this.db.selectFrom("event").selectAll().where("id", "=", id).executeTakeFirst()
     return event ? mapToEvent(event) : undefined
-  },
-})
+  }
+}

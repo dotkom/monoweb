@@ -1,16 +1,21 @@
-import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter"
-import { Redis } from "@upstash/redis"
+import { DefaultSession } from "next-auth"
 import { type NextAuthOptions } from "next-auth"
 
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string
+      // ...other properties
+      // role: UserRole;
+    } & DefaultSession["user"]
+  }
+}
+
 export const authOptions: NextAuthOptions = {
+  // TODO: use next-auth default jwt adapter
+  //  context: it failed because for some reason, user would be undefined in
+  //  session callback. investigate later
   // Configure one or more authentication providers
-  adapter: UpstashRedisAdapter(
-    new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL as string,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-    }),
-    { baseKeyPrefix: "ow:" }
-  ),
   providers: [
     {
       id: "onlineweb",
@@ -18,37 +23,29 @@ export const authOptions: NextAuthOptions = {
       type: "oauth",
       wellKnown: `${process.env.HYDRA_PUBLIC_URL as string}/.well-known/openid-configuration`,
       authorization: { params: { grant_type: "authorization_code", scope: "openid email profile" } },
-      profile(profile) {
-        console.log({ profile })
+      /* eslint-disable */
+      profile(profile: any) {
         return {
-          email: profile.sub,
+          email: profile.user.emailAddresses[0].emailAddress,
           id: profile.user.id,
-          image: profile.user.image,
-          name: profile.user.name,
+          image: profile.user.profileImageUrl,
+          name: profile.user.username,
         }
       },
-      clientId: process.env.NEXTAUTH_CLIENT_ID as string,
-      clientSecret: process.env.NEXTAUTH_CLIENT_SECRET as string,
+      /* eslint-enable */
+      clientId: process.env.NEXTAUTH_DASHBOARD_CLIENT_ID as string,
+      clientSecret: process.env.NEXTAUTH_DASHBOARD_CLIENT_SECRET as string,
     },
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    async signIn({ profile }) {
-      return !!profile
-    },
-    async redirect({ url, baseUrl }) {
-      return url.startsWith(baseUrl) ? `${baseUrl}/` : baseUrl
-    },
-    async session({ session, user }) {
-      if (user.id) {
-        session.user.id = user.id
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub
       }
       return session
-    },
-    async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token
-      }
-      return token
     },
   },
 }

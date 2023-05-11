@@ -1,61 +1,44 @@
-import { Database } from "@dotkomonline/db"
-import { getServerSession, Session } from "@dotkomonline/auth"
-import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely"
-import { Pool } from "pg"
-
 import type { inferAsyncReturnType } from "@trpc/server"
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
+import { getAuth } from "@clerk/nextjs/server"
+import { initServices } from "./modules/services"
+import { getServerSession } from "@dotkomonline/auth"
 
-import { initUserRepository } from "./modules/auth/user-repository"
-import { initUserService } from "./modules/auth/user-service"
-import { initEventRepository } from "./modules/event/event-repository"
-import { initEventService } from "./modules/event/event-service"
-import { initCommitteeService } from "./modules/committee/committee-service"
-import { initCommitteeRepository } from "./modules/committee/committee-repository"
-import { Configuration, OAuth2Api as HydraApiClient } from "@ory/client"
-
-type CreateContextOptions = {
-  session: Session | null
+type AuthContextProps = {
+  auth: {
+    userId: string
+  } | null
 }
-
-export const createContextInner = async (opts: CreateContextOptions) => {
-  const db = new Kysely<Database>({
-    dialect: new PostgresDialect({
-      pool: new Pool({
-        connectionString: process.env.DATABASE_URL as string,
-      }),
-    }),
-    plugins: [new CamelCasePlugin()],
-  })
-
-  const hydraAdmin = new HydraApiClient(
-    new Configuration({
-      basePath: process.env.HYDRA_ADMIN_URL,
-    })
-  )
-
-  const userRepository = initUserRepository(db)
-  const eventRepository = initEventRepository(db)
-  const committeeRepository = initCommitteeRepository(db)
-
-  // Services
-  const userService = initUserService(userRepository, hydraAdmin)
-  const eventService = initEventService(eventRepository)
-  const committeeService = initCommitteeService(committeeRepository)
+export const createContextInner = async (opts: AuthContextProps) => {
+  const services = initServices()
   return {
-    session: opts.session,
-    userService,
-    eventService,
-    committeeService,
+    ...services,
+    auth: opts.auth,
   }
 }
 
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const session = await getServerSession(opts)
+  const clerkAuth = getAuth(opts.req)
+  // samesite through clerk
+  if (clerkAuth.userId) {
+    return createContextInner({
+      auth: {
+        userId: clerkAuth.userId,
+      },
+    })
+  }
+  // corss site through ory hydra
+  const auth = await getServerSession(opts)
+  if (auth?.user) {
+    return createContextInner({
+      auth: {
+        userId: auth.user.id,
+      },
+    })
+  }
 
-  return await createContextInner({
-    session,
-  })
+  // Not authed
+  return createContextInner({ auth: null })
 }
 
 export type Context = inferAsyncReturnType<typeof createContext>

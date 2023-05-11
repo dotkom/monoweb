@@ -1,7 +1,9 @@
+import { AccountTable, SessionTable, UserTable, VerificationTokenTable } from "./user"
+import { AttendanceTable, AttendeeTable, EventTable } from "./event"
+import { CommitteeTable, EventCommitteeTable } from "./committee"
 import { CompanyTable, EventCompanyTable } from "./company"
-import { EventTable, AttendanceTable, AttendeeTable, CommitteeTable } from "./event"
 import { MarkTable, PersonalMarkTable } from "./marks"
-import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
+import { PaymentTable, ProductPaymentProviderTable, ProductTable, RefundRequestTable } from "./payment"
 
 export interface Database {
   owUser: UserTable
@@ -14,6 +16,11 @@ export interface Database {
   committee: CommitteeTable
   attendee: AttendeeTable
   eventCompany: EventCompanyTable
+  eventCommittee: EventCommitteeTable
   mark: MarkTable
   personalMark: PersonalMarkTable
+  product: ProductTable
+  payment: PaymentTable
+  productPaymentProvider: ProductPaymentProviderTable
+  refundRequest: RefundRequestTable
 }

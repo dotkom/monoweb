@@ -30,6 +30,7 @@ const createRandomEvent = (): Insertable<Database["event"]> => {
     public: faker.datatype.boolean(),
     status: faker.helpers.arrayElement(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
     type: faker.helpers.arrayElement(["BEDPRES", "ACADEMIC"]),
+    waitlist: null,
   }
 }
 
@@ -41,6 +42,8 @@ const createRandomAttendance = (eventIds: string[]): Insertable<Database["attend
     end: faker.date.future(),
     deregisterDeadline: faker.date.future(),
     limit: faker.datatype.number({ min: 5, max: 100 }),
+    min: 0,
+    max: 0,
   }
 }
 
