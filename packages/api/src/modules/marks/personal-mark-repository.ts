@@ -1,16 +1,17 @@
 import { Cursor, paginateQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
-import { Mark, PersonalMark, User, personalMarkSchema } from "@dotkomonline/types"
+import { Mark, PersonalMark, PersonalMarkSchema, User } from "@dotkomonline/types"
 
 import { Database } from "@dotkomonline/db"
 import { mapToMark } from "./mark-repository"
 
 export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark => {
-  return personalMarkSchema.parse(payload)
+  return PersonalMarkSchema.parse(payload)
 }
 
 export interface PersonalMarkRepository {
-  getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
+  getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
+  getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
   addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
   removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
   getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
@@ -19,11 +20,28 @@ export interface PersonalMarkRepository {
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]> {
+  async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]> {
+    let query = this.db
+      .selectFrom("personalMark")
+      .leftJoin("mark", "personalMark.markId", "mark.id")
+      .selectAll("personalMark")
+      .where("userId", "=", userId)
+      .limit(take)
+    if (cursor) {
+      query = paginateQuery(query, cursor)
+    } else {
+      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+    }
+    const marks = await query.execute()
+    return marks.map(mapToPersonalMark)
+  }
+
+  async getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]> {
     let query = this.db
       .selectFrom("mark")
       .leftJoin("personalMark", "mark.id", "personalMark.markId")
       .selectAll("mark")
+      .where("personalMark.userId", "=", userId)
       .limit(take)
     if (cursor) {
       query = paginateQuery(query, cursor)
