@@ -1,7 +1,6 @@
 import { Kysely } from "kysely"
 import { MarkRepositoryImpl } from "../mark-repository"
-import { MarkServiceImpl } from './../mark-service';
-import { MarkWrite } from "@dotkomonline/types"
+import { MarkServiceImpl } from "./../mark-service"
 import { NotFoundError } from "../../../errors/errors"
 import { randomUUID } from "crypto"
 
@@ -11,7 +10,7 @@ describe("MarkService", () => {
   const markService = new MarkServiceImpl(markRepository)
 
   it("creates a new mark", async () => {
-    const mark: MarkWrite = {
+    const mark = {
       title: "",
       category: "",
       details: "",
