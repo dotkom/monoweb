@@ -2,7 +2,7 @@ import { Generated } from "kysely"
 
 export interface MarkTable {
   id: Generated<string>
-  createdAt: Generated<Date>  // todo replace givenAt everywhere
+  createdAt: Generated<Date>
   updatedAt: Generated<Date>
   title: string
   category: string

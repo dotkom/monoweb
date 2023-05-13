@@ -12,7 +12,7 @@ export const MarkSchema = z.object({
 
 export type Mark = z.infer<typeof MarkSchema>
 
-export const MarkWriteSchema = MarkSchema.omit({
+export const MarkWriteSchema = MarkSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
