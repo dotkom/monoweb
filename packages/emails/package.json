@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8",
-    "@types/node": "^16.18.25",
+    "@types/node": "^18.0.0",
     "@types/react": "^18.2.0",
     "eslint": "^8.39.0",
     "prettier": "^2.7.1",
