@@ -49,6 +49,9 @@ export const runFixtures = async () => {
       oc.column("id").doUpdateSet({
         createdAt: (eb) => eb.ref("excluded.createdAt"),
         name: (eb) => eb.ref("excluded.name"),
+        description: (eb) => eb.ref("excluded.description"),
+        email: (eb) => eb.ref("excluded.email"),
+        image: (eb) => eb.ref("excluded.image"),
       })
     )
     .execute()
