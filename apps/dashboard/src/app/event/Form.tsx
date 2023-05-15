@@ -10,19 +10,27 @@ import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { trpc } from "../../trpc"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
-  committeeId: null,
   start: new Date(),
   end: new Date(),
   description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
   imageUrl: null,
   location: null,
+  subtitle: null,
+  waitlist: null,
+  committeeId: null,
 }
 
-export const useEventWriteForm = (
-  onSubmit: (data: EventWrite) => void,
-  defaultValues: Partial<EventWrite> = EVENT_FORM_DEFAULT_VALUES,
-  label = "Opprett arrangement"
-) => {
+type UseEventWriteFormProps = {
+  onSubmit: (data: EventWrite) => void
+  defaultValues?: Partial<EventWrite>
+  label?: string
+}
+
+export const useEventWriteForm = ({
+  onSubmit,
+  label = "Opprett arrangement",
+  defaultValues = EVENT_FORM_DEFAULT_VALUES,
+}: UseEventWriteFormProps) => {
   const { data: committees = [] } = trpc.committee.all.useQuery({ take: 999 })
   return useFormBuilder({
     schema: EventWriteSchema,
@@ -82,6 +90,7 @@ export const useEventWriteForm = (
           { value: "SOCIAL", label: "Sosialt" },
           { value: "COMPANY", label: "Bedriftsarrangement" },
         ],
+        withAsterisk: true,
       }),
       public: createCheckboxInput({
         label: "Offentlig arrangement",
