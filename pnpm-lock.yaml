@@ -174,8 +174,8 @@ importers:
         specifier: ^9.4.1
         version: 9.4.1
       kysely:
-        specifier: ^0.23.0
-        version: 0.23.3
+        specifier: ^0.24.0
+        version: 0.24.0
       pg:
         specifier: ^8.8.0
         version: 8.8.0
@@ -534,8 +534,8 @@ importers:
         specifier: ^2.29.3
         version: 2.29.3
       kysely:
-        specifier: ^0.23.0
-        version: 0.23.3
+        specifier: ^0.24.0
+        version: 0.24.0
       next:
         specifier: ^13.3.1
         version: 13.3.1(@babel/core@7.20.2)(react-dom@18.2.0)(react@18.2.0)
@@ -747,8 +747,8 @@ importers:
   packages/ow-db:
     dependencies:
       kysely:
-        specifier: ^0.23.0
-        version: 0.23.3
+        specifier: ^0.24.0
+        version: 0.24.0
       pg:
         specifier: ^8.8.0
         version: 8.8.0
@@ -770,7 +770,7 @@ importers:
         version: 8.39.0
       kysely-codegen:
         specifier: ^0.10.0
-        version: 0.10.0(kysely@0.23.3)(pg@8.8.0)
+        version: 0.10.0(kysely@0.24.0)(pg@8.8.0)
       node-pg-migrate:
         specifier: ^6.2.2
         version: 6.2.2(pg@8.8.0)
@@ -12776,7 +12776,7 @@ packages:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
     dev: false
 
-  /kysely-codegen@0.10.0(kysely@0.23.3)(pg@8.8.0):
+  /kysely-codegen@0.10.0(kysely@0.24.0)(pg@8.8.0):
     resolution: {integrity: sha512-EV2v9yr9N9WrUPrURvFl5FPTtz39npsi1p1tLpJwEcFeOAKAPJruBpAASvnZWdqu5Pw/aaTssStE3qcI2sfxMQ==}
     hasBin: true
     peerDependencies:
@@ -12794,14 +12794,14 @@ packages:
     dependencies:
       chalk: 4.1.2
       dotenv: 16.0.3
-      kysely: 0.23.3
+      kysely: 0.24.0
       micromatch: 4.0.5
       minimist: 1.2.8
       pg: 8.8.0
     dev: true
 
-  /kysely@0.23.3:
-    resolution: {integrity: sha512-spRhosWRLkI0Ox8PRBdstskdRfvoLPsJ5GEpDA/PPrX6NwuiygdsFxHBrMkdU3CX+VxLhj4Wn5P7rFAwaf7JuA==}
+  /kysely@0.24.0:
+    resolution: {integrity: sha512-FhiqVasbbZQ+9x2pt95i+6Ofv74pB3Z9/0VAVn4S0geTohHQnLNVDnOVLtOz9eBv6x03QZAhOd7dr+lNRarBUg==}
     engines: {node: '>=14.0.0'}
 
   /language-subtag-registry@0.3.22:
