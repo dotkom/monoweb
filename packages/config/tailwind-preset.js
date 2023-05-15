@@ -82,14 +82,6 @@ module.exports = {
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
   ],
-  safelist: [
-    {
-      pattern: /text-(blue|amber|red|green|indigo)-11/,
-    },
-    {
-      pattern: /border-(blue|amber|red|green|indigo)-8/,
-    },
-  ],
 }
 
 // #FFCB47 #fab759

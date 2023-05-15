@@ -7,9 +7,22 @@ export interface EntryDetailLayoutProps {
   color?: "BLUE" | "GREEN" | "AMBER"
 }
 
-export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({ children, title, type, color }) => {
-  const borderColorClass = color ? `border-${color.toLowerCase()}-8` : "border-blue-8"
-  const textColorClass = color ? `text-${color.toLowerCase()}-11` : "text-blue-11"
+export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({
+  children,
+  title,
+  type,
+  color = "BLUE",
+}) => {
+  const borderColorClass = cn({
+    "border-blue-8": color === "BLUE",
+    "border-green-8": color === "GREEN",
+    "border-amber-8": color === "AMBER",
+  })
+  const textColorClass = cn({
+    "text-blue-11": color === "BLUE",
+    "text-green-11": color === "GREEN",
+    "text-amber-11": color === "AMBER",
+  })
 
   return (
     <div className="mx-auto mb-20 flex w-[90vw] max-w-screen-lg flex-col gap-y-16">
