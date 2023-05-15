@@ -5,6 +5,9 @@ export interface CommitteeTable {
   createdAt: Generated<Date>
   updatedAt: Generated<Date>
   name: string
+  description: string
+  email: string | null
+  image: string | null
 }
 
 export interface EventCommitteeTable {
