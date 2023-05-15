@@ -477,8 +477,8 @@ importers:
         specifier: ^6.7.3
         version: 6.11.4
       cva:
-        specifier: npm:class-variance-authority@^0.4.0
-        version: /class-variance-authority@0.4.0(typescript@4.9.5)
+        specifier: npm:class-variance-authority@^0.6.0
+        version: /class-variance-authority@0.6.0(typescript@4.9.5)
       eslint:
         specifier: ^8.39.0
         version: 8.39.0
@@ -836,8 +836,8 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1
       cva:
-        specifier: npm:class-variance-authority@^0.4.0
-        version: /class-variance-authority@0.4.0(typescript@4.9.5)
+        specifier: npm:class-variance-authority@^0.6.0
+        version: /class-variance-authority@0.6.0(typescript@4.9.5)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -9111,14 +9111,15 @@ packages:
       static-extend: 0.1.2
     dev: true
 
-  /class-variance-authority@0.4.0(typescript@4.9.5):
-    resolution: {integrity: sha512-74enNN8O9ZNieycac/y8FxqgyzZhZbxmCitAtAeUrLPlxjSd5zA7LfpprmxEcOmQBnaGs5hYhiSGnJ0mqrtBLQ==}
+  /class-variance-authority@0.6.0(typescript@4.9.5):
+    resolution: {integrity: sha512-qdRDgfjx3GRb9fpwpSvn+YaidnT7IUJNe4wt5/SWwM+PmUwJUhQRk/8zAyNro0PmVfmen2635UboTjIBXXxy5A==}
     peerDependencies:
-      typescript: '>= 4.5.5 < 5'
+      typescript: '>= 4.5.5 < 6'
     peerDependenciesMeta:
       typescript:
         optional: true
     dependencies:
+      clsx: 1.2.1
       typescript: 4.9.5
 
   /classnames@2.3.2:
@@ -9179,7 +9180,6 @@ packages:
   /clsx@1.2.1:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
-    dev: false
 
   /codemirror@6.0.1(@lezer/common@1.0.2):
     resolution: {integrity: sha512-J8j+nZ+CdWmIeFIGXEFbFPtpiYacFMDR8GlHK3IyHQJMCaVRfGx9NT+Hxivv1ckLWPvNdZqndbr/7lVhrf/Svg==}
