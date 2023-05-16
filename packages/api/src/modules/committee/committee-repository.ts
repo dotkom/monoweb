@@ -1,7 +1,8 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { Database } from "@dotkomonline/db"
 import { Committee, CommitteeSchema, CommitteeWrite } from "@dotkomonline/types"
+import { Cursor, paginateQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
+
+import { Database } from "@dotkomonline/db"
 
 const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => {
   return CommitteeSchema.parse(payload)
@@ -33,9 +34,7 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   async create(values: CommitteeWrite) {
     const committee = await this.db
       .insertInto("committee")
-      .values({
-        name: values.name,
-      })
+      .values(values)
       .returningAll()
       // It should not be possible for this to throw, since there are no
       // restrictions on creating committees, as name is not unique.
