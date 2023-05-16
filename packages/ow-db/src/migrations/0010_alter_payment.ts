@@ -12,9 +12,10 @@ export async function up(db: Kysely<any>) {
 
   await db.schema
     .alterTable("payment")
-    .addColumn("payment_provider_session_id", "text", (col) => col.notNull())
-    .alterColumn("payment_provider_order_id", (col) => col.dropNotNull())
+    .renameColumn("payment_provider_order_id", "payment_provider_session_id")
     .execute()
+
+  await db.schema.alterTable("payment").addColumn("payment_provider_order_id", "text").execute()
 
   await createTableWithDefaults("refund_request", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("payment_id", "uuid", (col) => col.unique().references("payment.id").onDelete("cascade"))
@@ -26,10 +27,11 @@ export async function up(db: Kysely<any>) {
 }
 
 export async function down(db: Kysely<any>) {
+  await db.schema.alterTable("payment").dropColumn("payment_provider_order_id").execute()
+
   await db.schema
     .alterTable("payment")
-    .dropColumn("payment_provider_session_id")
-    .alterColumn("payment_provider_order_id", (col) => col.setNotNull())
+    .renameColumn("payment_provider_session_id", "payment_provider_order_id")
     .execute()
 
   await db.schema.alterTable("product").dropColumn("is_refundable").dropColumn("refund_requires_approval").execute()
