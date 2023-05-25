@@ -6,7 +6,7 @@
     "@dotkomonline/types": "*",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
-    "kysely": "^0.23.0",
+    "kysely": "^0.24.0",
     "pg": "^8.8.0",
     "zod": "^3.21.4"
   },
