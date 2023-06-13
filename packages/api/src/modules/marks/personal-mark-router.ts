@@ -1,9 +1,10 @@
-import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
+
 import { PaginateInputSchema } from "../../utils/db-utils"
+import { z } from "zod"
 
 export const personalMarkRouter = t.router({
-  allForUser: protectedProcedure
+  getByUser: protectedProcedure
     .input(z.object({ id: z.string().uuid(), paginate: PaginateInputSchema }))
     .query(({ input, ctx }) => {
       return ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
