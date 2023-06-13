@@ -4,7 +4,7 @@ version: "3.2"
 services:
   hydra:
     container_name: hydra
-    image: oryd/hydra:v2.0.3
+    image: oryd/hydra:v2.2.0
     ports:
       - "4444:4444" # Public port
       - "4445:4445" # Admin port
@@ -25,7 +25,7 @@ services:
     networks:
       - intranet
   hydra-migrate:
-    image: oryd/hydra:v2.0.3
+    image: oryd/hydra:v2.2.0
     environment:
       - DSN=${HYDRA_DATABASE_URL}
       - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=${OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT}
