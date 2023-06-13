@@ -127,7 +127,7 @@ export const runFixtures = async () => {
       oc.column("id").doUpdateSet({
         updatedAt: (eb) => eb.ref("excluded.updatedAt"),
         title: (eb) => eb.ref("excluded.title"),
-        givenAt: (eb) => eb.ref("excluded.givenAt"),
+        createdAt: (eb) => eb.ref("excluded.createdAt"),
         category: (eb) => eb.ref("excluded.category"),
         details: (eb) => eb.ref("excluded.details"),
         duration: (eb) => eb.ref("excluded.duration"),
