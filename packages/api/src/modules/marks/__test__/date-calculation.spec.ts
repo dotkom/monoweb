@@ -1,18 +1,18 @@
-import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
-
 import { Mark } from "@dotkomonline/types"
-import { initMarkRepository } from "../mark-repository"
-import { initMarkService } from "../mark-service"
-import { initPersonalMarkRepository } from "../personal-mark-repository"
-import { initPersonalMarkService } from "../personal-mark-service"
+import { MarkRepositoryImpl } from "../mark-repository"
+import { MarkServiceImpl } from "../mark-service"
+import { PersonalMarkRepositoryImpl } from "../personal-mark-repository"
+import { PersonalMarkServiceImpl } from "../personal-mark-service"
+import { randomUUID } from "crypto"
 
 describe("PersonalMarkDateCalculation", () => {
   const db = vi.mocked(Kysely.prototype, true)
-  const personalMarkRepository = initPersonalMarkRepository(db)
-  const markRepository = initMarkRepository(db)
-  const markService = initMarkService(markRepository)
-  const personalMarkService = initPersonalMarkService(personalMarkRepository, markService)
+
+  const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
+  const markRepository = new MarkRepositoryImpl(db)
+  const markService = new MarkServiceImpl(markRepository)
+  const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
 
   // These tests are written to work until the year 3022. If you are reading this in 3022, please update the tests. Let those 4022 guys deal with it.
 
@@ -21,7 +21,7 @@ describe("PersonalMarkDateCalculation", () => {
     const marks = [
       {
         id: randomUUID(),
-        givenAt: startDate,
+        createdAt: startDate,
         duration: 24,
       },
     ]
@@ -35,12 +35,12 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          givenAt: startDate,
+          createdAt: startDate,
           duration: 22,
         },
         {
           id: randomUUID(),
-          givenAt: startDate,
+          createdAt: startDate,
           duration: 23,
         },
       ]
@@ -53,7 +53,7 @@ describe("PersonalMarkDateCalculation", () => {
       const winterMarks = [
         {
           id: randomUUID(),
-          givenAt: startDateWinter,
+          createdAt: startDateWinter,
           duration: 30,
         },
       ]
@@ -62,7 +62,7 @@ describe("PersonalMarkDateCalculation", () => {
       const summerMarks = [
         {
           id: randomUUID(),
-          givenAt: startDateSummer,
+          createdAt: startDateSummer,
           duration: 31,
         },
       ]
@@ -80,17 +80,17 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          givenAt: oldDate,
+          createdAt: oldDate,
           duration: 20,
         },
         {
           id: randomUUID(),
-          givenAt: oldDate,
+          createdAt: oldDate,
           duration: 24,
         },
         {
           id: randomUUID(),
-          givenAt: startDate,
+          createdAt: startDate,
           duration: 21,
         },
       ]
@@ -103,7 +103,7 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          givenAt: oldDate,
+          createdAt: oldDate,
           duration: 1000,
         },
       ]
@@ -114,17 +114,17 @@ describe("PersonalMarkDateCalculation", () => {
       const marks = [
         {
           id: randomUUID(),
-          givenAt: startDate,
+          createdAt: startDate,
           duration: 10,
         },
         {
           id: randomUUID(),
-          givenAt: new Date("3022-10-12"),
+          createdAt: new Date("3022-10-12"),
           duration: 10,
         },
         {
           id: randomUUID(),
-          givenAt: new Date("3022-10-05"),
+          createdAt: new Date("3022-10-05"),
           duration: 10,
         },
       ]

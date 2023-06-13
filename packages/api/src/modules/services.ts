@@ -8,8 +8,12 @@ import { EventCompanyRepositoryImpl } from "./event/event-company-repository"
 import { EventCompanyServiceImpl } from "./event/event-company-service"
 import { EventRepositoryImpl } from "./event/event-repository"
 import { EventServiceImpl } from "./event/event-service"
+import { MarkRepositoryImpl } from "./marks/mark-repository"
+import { MarkServiceImpl } from "./marks/mark-service"
 import { PaymentRepositoryImpl } from "./payment/payment-repository"
 import { PaymentServiceImpl } from "./payment/payment-service"
+import { PersonalMarkRepositoryImpl } from "./marks/personal-mark-repository"
+import { PersonalMarkServiceImpl } from "./marks/personal-mark-service"
 import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-provider-repository"
 import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service"
 import { ProductRepositoryImpl } from "./payment/product-repository"
@@ -33,6 +37,8 @@ export const initServices = () => {
   const paymentRepository = new PaymentRepositoryImpl(db)
   const productPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(db)
   const refundRequestRepository = new RefundRequestRepositoryImpl(db)
+  const markRepository = new MarkRepositoryImpl(db)
+  const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
 
   // Services
   const userService = new UserServiceImpl(userRepository, clerkClient)
@@ -55,6 +61,8 @@ export const initServices = () => {
     productRepository,
     paymentService
   )
+  const markService = new MarkServiceImpl(markRepository)
+  const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
 
   return {
     userService,
@@ -67,5 +75,7 @@ export const initServices = () => {
     paymentService,
     productPaymentProviderService,
     refundRequestService,
+    markService,
+    personalMarkService,
   }
 }
