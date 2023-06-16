@@ -1,16 +1,16 @@
 "use client"
 
-import { Title, Text, Button, Image, Flex } from "@mantine/core"
-
+import { Button, Flex, Image, Text, Title } from "@mantine/core"
 import { RouterOutputs, trpc } from "../../trpc"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+
 import { FC } from "react"
-import { Icon } from "@iconify/react"
 import { GenericTable } from "../../components/GenericTable"
+import { Icon } from "@iconify/react"
 import Link from "next/link"
 
 export default function UsersPage() {
-  const { data: users = [], isLoading } = trpc.auth.getUsers.useQuery({})
+  const { data: users = [], isLoading } = trpc.user.getUsers.useQuery({})
 
   return (
     <Flex direction="column" p="md" gap="md">
@@ -22,7 +22,7 @@ export default function UsersPage() {
     </Flex>
   )
 }
-type Users = RouterOutputs["auth"]["getUsers"]
+type Users = RouterOutputs["user"]["getUsers"]
 type User = Users[number]
 
 type UsersTableProps = { users: Users }
