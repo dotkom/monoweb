@@ -6,8 +6,11 @@ import {
   ColorScheme,
   useMantineColorScheme,
 } from "@mantine/core"
+import { Notifications } from "@mantine/notifications"
 import { FC, PropsWithChildren, useState } from "react"
 import { useColorScheme } from "@mantine/hooks"
+
+export const MantineNotificationsProvider: FC = () => <Notifications />
 
 export const MantineProvider: FC<PropsWithChildren> = ({ children }) => {
   const { colorScheme } = useMantineColorScheme()
