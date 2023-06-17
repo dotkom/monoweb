@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { FC, ReactElement } from "react"
+import { FC } from "react"
 import {
   Button,
   Checkbox,
@@ -139,7 +139,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   defaultValues,
   label,
   onSubmit,
-}: FormBuilderOptions<T>): ReactElement {
+}: FormBuilderOptions<T>): FC {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -153,15 +153,17 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     return <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
   })
 
-  return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Flex direction="column" gap="md">
-        {components}
+  return function Form() {
+    return (
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Flex direction="column" gap="md">
+          {components}
 
-        <div>
-          <Button type="submit">{label}</Button>
-        </div>
-      </Flex>
-    </form>
-  )
+          <div>
+            <Button type="submit">{label}</Button>
+          </div>
+        </Flex>
+      </form>
+    )
+  }
 }

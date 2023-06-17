@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react"
 import { AuthProvider } from "./AuthProvider"
 import { QueryProvider } from "./QueryProvider"
-import { MantineColorSchemeProvider, MantineProvider } from "./MantineProvider"
+import { MantineColorSchemeProvider, MantineNotificationsProvider, MantineProvider } from "./MantineProvider"
 import { ApplicationShell } from "./ApplicationShell"
 import "./root.css"
 
@@ -12,6 +12,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body>
         <MantineColorSchemeProvider>
           <MantineProvider>
+            <MantineNotificationsProvider />
             <AuthProvider>
               <QueryProvider>
                 <ApplicationShell>{children}</ApplicationShell>
