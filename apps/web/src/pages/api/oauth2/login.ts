@@ -9,14 +9,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(400).json({ error: "No login challenge found in request." })
     return
   }
-  const { data: loginBody } = await hydraAdmin.getOAuth2LoginRequest(challenge)
+  const { data: loginBody } = await hydraAdmin.getOAuth2LoginRequest({
+    loginChallenge: challenge,
+  })
   const { userId } = getAuth(req)
 
   if (loginBody.skip || userId) {
-    const { data: acceptLogin } = await hydraAdmin.acceptOAuth2LoginRequest(loginBody.challenge, {
-      subject: userId || loginBody.subject,
-      // remember: true,
-      // remember_for: 3600,
+    const { data: acceptLogin } = await hydraAdmin.acceptOAuth2LoginRequest({
+      loginChallenge: loginBody.challenge,
+      acceptOAuth2LoginRequest: {
+        subject: userId || loginBody.subject,
+        // remember: true,
+        // remember_for: 3600,
+      },
     })
     res.redirect(acceptLogin.redirect_to)
   } else {

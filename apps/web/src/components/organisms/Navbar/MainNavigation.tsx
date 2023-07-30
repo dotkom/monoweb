@@ -40,7 +40,7 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
                   className="hover:bg-slate-3 focus:bg-slate-3 block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors "
                 >
                   <div className="text-slate-12 text-sm font-bold leading-none">{item.title}</div>
-                  <p className="line-clamp-2 text-slate-11 text-sm font-medium leading-snug">{item.description}</p>
+                  <p className="text-slate-11 line-clamp-2 text-sm font-medium leading-snug">{item.description}</p>
                 </Link>
               </NavigationMenuLink>
             ))}
