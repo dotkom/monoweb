@@ -10,18 +10,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return
   }
 
-  const { data: consentBody } = await hydraAdmin.getOAuth2ConsentRequest(challenge)
+  const { data: consentBody } = await hydraAdmin.getOAuth2ConsentRequest({
+    consentChallenge: challenge,
+  })
   const { userId } = getAuth(req)
 
   // if (consentBody.skip && subject) {
   if (userId) {
     const grantScope = ["openid", "email", "profile"]
     const user = await clerkClient.users.getUser(userId)
-    const { data: acceptConsent } = await hydraAdmin.acceptOAuth2ConsentRequest(consentBody.challenge, {
-      grant_scope: grantScope,
-      session: {
-        id_token: {
-          user,
+    const { data: acceptConsent } = await hydraAdmin.acceptOAuth2ConsentRequest({
+      consentChallenge: consentBody.challenge,
+      acceptOAuth2ConsentRequest: {
+        grant_scope: grantScope,
+        session: {
+          id_token: {
+            user,
+          },
         },
       },
     })

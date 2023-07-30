@@ -32,7 +32,7 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => {
         </span>
       </div>
 
-      <Badge color="green" variant="solid" className="absolute top-3 right-3">
+      <Badge color="green" variant="solid" className="absolute right-3 top-3">
         {props.tag}
       </Badge>
       <a href={props.info_link}>

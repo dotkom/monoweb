@@ -1,6 +1,6 @@
 import { PrivacyPermissions, PrivacyPermissionsWrite, User } from "@dotkomonline/types"
 
-import { User as ClerkUser } from "@clerk/nextjs/dist/api"
+import { User as ClerkUser } from "@clerk/nextjs/api"
 import { NotFoundError } from "../../errors/errors"
 import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserRepository } from "./user-repository"
