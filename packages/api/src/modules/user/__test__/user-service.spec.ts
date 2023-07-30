@@ -27,7 +27,7 @@ const notificationPermissionsPayload: Omit<NotificationPermissions, "userId"> = 
   newArticles: true,
   standardNotifications: true,
   groupMessages: true,
-  prikkereglerUpdates: true, // should not be able to disable
+  markRulesUpdates: true, // should not be able to disable
   receipts: true,
   registrationByAdministrator: true,
   registrationStart: true,

@@ -8,7 +8,7 @@ export const NotificationPermissionsSchema = z.object({
   newArticles: z.boolean(),
   standardNotifications: z.boolean(),
   groupMessages: z.boolean(),
-  prikkereglerUpdates: z.boolean(), // should not be able to disable
+  markRulesUpdates: z.boolean(), // should not be able to disable
   receipts: z.boolean(),
   registrationByAdministrator: z.boolean(),
   registrationStart: z.boolean(),

@@ -8,7 +8,7 @@ export async function up(db: Kysely<any>) {
     .addColumn("new_articles", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("standard_notifications", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("group_messages", "boolean", (col) => col.notNull().defaultTo(true))
-    .addColumn("prikkeregler_updates", "boolean", (col) => col.notNull().defaultTo(true))
+    .addColumn("markRules_updates", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("receipts", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("registration_by_administrator", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("registration_start", "boolean", (col) => col.notNull().defaultTo(true))

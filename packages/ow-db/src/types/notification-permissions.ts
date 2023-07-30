@@ -8,7 +8,7 @@ export interface NotificationPermissionsTable {
   newArticles: boolean
   standardNotifications: boolean
   groupMessages: boolean
-  prikkereglerUpdates: boolean
+  markRulesUpdates: boolean
   receipts: boolean
   registrationByAdministrator: boolean
   registrationStart: boolean
