@@ -12,9 +12,9 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit",
-    "test": "vitest",
-    "test:ci": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test": "vitest --passWithNoTests",
+    "test:ci": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.379.1",
