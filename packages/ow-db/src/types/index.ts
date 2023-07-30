@@ -6,6 +6,7 @@ import { MarkTable, PersonalMarkTable } from "./marks"
 import { PaymentTable, ProductPaymentProviderTable, ProductTable, RefundRequestTable } from "./payment"
 
 import { PrivacyPermissionsTable } from "./privacy-permissions"
+import { NotificationPermissionsTable } from "./notification-permissions"
 
 export interface Database {
   owUser: UserTable
@@ -26,4 +27,5 @@ export interface Database {
   productPaymentProvider: ProductPaymentProviderTable
   refundRequest: RefundRequestTable
   privacyPermissions: PrivacyPermissionsTable
+  notificationPermissions: NotificationPermissionsTable
 }
