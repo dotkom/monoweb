@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             user,
           },
         },
-      }
+      },
     })
     res.redirect(acceptConsent.redirect_to)
   } else {

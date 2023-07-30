@@ -16,7 +16,7 @@ export const HelloEmailTemplate = createTemplate(input)({
   key: "hello-world",
   render: ({ name }) => (
     <Html>
-      <Tailwind config={TailwindConfig as TailwindProps['config']}>
+      <Tailwind config={TailwindConfig as TailwindProps["config"]}>
         <Container>
           <Heading>Hello world</Heading>
           <Text className="text-amber-12 text-4xl">This is a special message especially for you {name}!</Text>
