@@ -9,7 +9,7 @@
   },
   "main": "src/index.ts",
   "dependencies": {
-    "@dotkomonline/config": "*",
+    "@dotkomonline/config": "^1.0.0",
     "@react-email/button": "^0.0.8",
     "@react-email/column": "^0.0.7",
     "@react-email/container": "^0.0.8",
@@ -28,12 +28,12 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/eslint": "^8",
-    "@types/node": "^18.0.0",
-    "@types/react": "^18.2.0",
-    "eslint": "^8.39.0",
-    "prettier": "^2.7.1",
-    "tslib": "^2.4.1",
+    "@types/eslint": "^8.44.1",
+    "@types/node": "^18.17.1",
+    "@types/react": "^18.2.17",
+    "eslint": "^8.46.0",
+    "prettier": "^2.8.8",
+    "tslib": "^2.6.1",
     "typescript": "^4.9.5"
   }
 }
