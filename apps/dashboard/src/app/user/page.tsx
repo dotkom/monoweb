@@ -15,8 +15,8 @@ export default function UsersPage() {
   return (
     <Flex direction="column" p="md" gap="md">
       <div>
-        <Title>Komiteer</Title>
-        <Text>Oversikt over eksisterende komiteer</Text>
+        <Title>Brukere</Title>
+        <Text>Oversikt over brukere</Text>
       </div>
       {isLoading ? "Loading" : <UsersTable users={users} />}
     </Flex>
