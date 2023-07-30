@@ -25,6 +25,7 @@ import { UserRepositoryImpl } from "./user/user-repository"
 import { UserServiceImpl } from "./user/user-service"
 import { clerkClient } from "@clerk/nextjs/server"
 import { kysely } from "@dotkomonline/db"
+import { NotificationPermissionsRepositoryImpl } from "./user/notification-permissions-repository"
 
 export const initServices = () => {
   const db = kysely
@@ -41,9 +42,15 @@ export const initServices = () => {
   const markRepository = new MarkRepositoryImpl(db)
   const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
+  const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
 
   // Services
-  const userService = new UserServiceImpl(userRepository, privacyPermissionsRepository, clerkClient)
+  const userService = new UserServiceImpl(
+    userRepository,
+    privacyPermissionsRepository,
+    notificationPermissionsRepository,
+    clerkClient
+  )
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
   const attendanceService = new AttendanceServiceImpl(attendanceRepository)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
