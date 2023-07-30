@@ -19,7 +19,7 @@ importers:
         version: 2.8.8
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
+        version: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
       tsc-watch:
         specifier: ^6.0.4
         version: 6.0.4(typescript@4.9.5)
@@ -234,7 +234,7 @@ importers:
         version: 18.2.0
       sanity:
         specifier: ^3.14.4
-        version: 3.14.4(@types/node@20.4.5)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11)
+        version: 3.14.4(@types/node@18.17.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11)
       styled-components:
         specifier: ^5.3.11
         version: 5.3.11(@babel/core@7.22.9)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -319,7 +319,7 @@ importers:
         version: 4.9.5
       vite:
         specifier: ^3.2.7
-        version: 3.2.7(@types/node@20.4.5)
+        version: 3.2.7(@types/node@18.17.1)
 
   apps/web:
     dependencies:
@@ -747,6 +747,9 @@ importers:
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
+      tailwindcss:
+        specifier: 3.3.3
+        version: 3.3.3(ts-node@10.9.1)
       tslib:
         specifier: ^2.6.1
         version: 2.6.1
@@ -4783,7 +4786,7 @@ packages:
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@4.9.5)
       typescript: 4.9.5
-      vite: 3.2.7(@types/node@20.4.5)
+      vite: 3.2.7(@types/node@18.17.1)
     dev: true
 
   /@jridgewell/gen-mapping@0.3.3:
@@ -7528,7 +7531,7 @@ packages:
       remark-slug: 6.1.0
       rollup: 3.27.0
       typescript: 4.9.5
-      vite: 3.2.7(@types/node@20.4.5)
+      vite: 3.2.7(@types/node@18.17.1)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8049,7 +8052,7 @@ packages:
       react: 18.2.0
       react-docgen: 6.0.0-alpha.3
       react-dom: 18.2.0(react@18.2.0)
-      vite: 3.2.7(@types/node@20.4.5)
+      vite: 3.2.7(@types/node@18.17.1)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - supports-color
@@ -8992,7 +8995,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.22.9)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.7(@types/node@20.4.5)
+      vite: 3.2.7(@types/node@18.17.1)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9007,7 +9010,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.22.5(@babel/core@7.22.9)
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.22.9)
       react-refresh: 0.14.0
-      vite: 4.4.7(@types/node@20.4.5)
+      vite: 4.4.7(@types/node@18.17.1)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -13462,7 +13465,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.4.5
+      '@types/node': 18.17.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true
@@ -15205,7 +15208,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.21
-      ts-node: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
       yaml: 1.10.2
     dev: false
 
@@ -15223,7 +15226,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.27
-      ts-node: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
       yaml: 1.10.2
     dev: true
 
@@ -15241,7 +15244,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.27
-      ts-node: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
       yaml: 2.3.1
 
   /postcss-loader@4.3.0(postcss@7.0.39)(webpack@5.88.2):
@@ -16361,7 +16364,7 @@ packages:
       diff-match-patch: 1.0.5
     dev: false
 
-  /sanity@3.14.4(@types/node@20.4.5)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11):
+  /sanity@3.14.4(@types/node@18.17.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11):
     resolution: {integrity: sha512-uugcF0JcPTNnUa6/WtXLTc0gxis3tWuc5GqGbpo43nwy6Cb3RrrFc9xURDV14w41/833miHCD6noyS1TKzRcyQ==}
     engines: {node: '>=14.18.0'}
     hasBin: true
@@ -16473,7 +16476,7 @@ packages:
       use-device-pixel-ratio: 1.1.2(react@18.2.0)
       use-hot-module-reload: 1.0.3(react@18.2.0)
       use-sync-external-store: 1.2.0(react@18.2.0)
-      vite: 4.4.7(@types/node@20.4.5)
+      vite: 4.4.7(@types/node@18.17.1)
       yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
@@ -17557,7 +17560,7 @@ packages:
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
-  /ts-node@10.9.1(@types/node@20.4.5)(typescript@4.9.5):
+  /ts-node@10.9.1(@types/node@18.17.1)(typescript@4.9.5):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -17576,7 +17579,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.4.5
+      '@types/node': 18.17.1
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
@@ -18253,40 +18256,6 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite@3.2.7(@types/node@20.4.5):
-    resolution: {integrity: sha512-29pdXjk49xAP0QBr0xXqu2s5jiQIXNvE/xwd0vUizYT2Hzqe4BksNNoWllFVXJf4eLZ+UlVQmXfB4lWrc+t18g==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 20.4.5
-      esbuild: 0.15.18
-      postcss: 8.4.27
-      resolve: 1.22.2
-      rollup: 2.79.1
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /vite@4.4.7(@types/node@18.17.1):
     resolution: {integrity: sha512-6pYf9QJ1mHylfVh39HpuSfMPojPSKVxZvnclX1K1FyZ1PXDOcLBibdq5t1qxJSnL63ca8Wf4zts6mD8u8oc9Fw==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -18321,7 +18290,6 @@ packages:
       rollup: 3.27.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /vite@4.4.7(@types/node@20.4.5):
     resolution: {integrity: sha512-6pYf9QJ1mHylfVh39HpuSfMPojPSKVxZvnclX1K1FyZ1PXDOcLBibdq5t1qxJSnL63ca8Wf4zts6mD8u8oc9Fw==}
@@ -18357,6 +18325,7 @@ packages:
       rollup: 3.27.0
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /vitest@0.33.0(@vitest/ui@0.33.0):
     resolution: {integrity: sha512-1CxaugJ50xskkQ0e969R/hW47za4YXDUfWJDxip1hwbnhUjYolpfUn2AMOulqG/Dtd9WYAtkHmM/m3yKVrEejQ==}
