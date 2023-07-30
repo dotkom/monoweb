@@ -19,7 +19,7 @@ export const CompanyInfoView: FC<CompanyInfoViewProps> = (props: CompanyInfoView
     <div className="flex flex-col gap-6 text-center">
       <div className="bg-amber-2 w-full rounded-lg">
         <div className="mx-auto flex h-[520px] max-w-[768px] flex-col items-center p-4 md:h-[300px] lg:h-[220px]">
-          <Title className="text-slate-1 mt-5 mb-4 text-4xl leading-[1.4]">
+          <Title className="text-slate-1 mb-4 mt-5 text-4xl leading-[1.4]">
             Er din bedrift på jakt etter skarpe IT-
             <span style={{ backgroundPosition: "50% 88%" }} className="bg-[url(/for-company-text-decor.svg)]">
               studenter?
@@ -34,7 +34,7 @@ export const CompanyInfoView: FC<CompanyInfoViewProps> = (props: CompanyInfoView
           <Button>Send Interesse</Button>
         </a>
       </div>
-      <PortableText className="prose my-5 mx-auto max-w-[768px] px-2 text-center" blocks={product.content} />
+      <PortableText className="prose mx-auto my-5 max-w-[768px] px-2 text-center" blocks={product.content} />
       <OurProducts />
       <div className="bg-blue-5 w-full rounded-lg">
         <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />

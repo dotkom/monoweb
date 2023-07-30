@@ -37,7 +37,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
 
         <p>{company_info}</p>
 
-        <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
+        <div className="bg-slate-12 mx-auto mb-14 mt-10 h-[0.5px] w-full" />
         <Link href="/career">
           <div className="flex items-center">
             <Icon icon="mdi:arrow-left" className="text-blue-9" width={20} height={20} />
@@ -70,7 +70,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           </div>
           <p className="m-0 pl-2">{career_role}</p>
         </div>
-        <div className="bg-slate-9 mt-7 mb-3 h-[0.5px] w-full" />
+        <div className="bg-slate-9 mb-3 mt-7 h-[0.5px] w-full" />
         <div className="text-blue-9">
           {linkdin && (
             <Link href={linkdin}>
