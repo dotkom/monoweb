@@ -19,7 +19,7 @@ importers:
         version: 2.8.8
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
+        version: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
       tsc-watch:
         specifier: ^6.0.4
         version: 6.0.4(typescript@4.9.5)
@@ -234,7 +234,7 @@ importers:
         version: 18.2.0
       sanity:
         specifier: ^3.14.4
-        version: 3.14.4(@types/node@18.17.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11)
+        version: 3.14.4(@types/node@20.4.5)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11)
       styled-components:
         specifier: ^5.3.11
         version: 5.3.11(@babel/core@7.22.9)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
@@ -319,7 +319,7 @@ importers:
         version: 4.9.5
       vite:
         specifier: ^3.2.7
-        version: 3.2.7(@types/node@18.17.1)
+        version: 3.2.7(@types/node@20.4.5)
 
   apps/web:
     dependencies:
@@ -797,15 +797,15 @@ importers:
   packages/ow-logger:
     dependencies:
       winston:
-        specifier: ^3.8.2
-        version: 3.8.2
+        specifier: ^3.10.0
+        version: 3.10.0
     devDependencies:
       eslint:
-        specifier: ^8.39.0
-        version: 8.39.0
+        specifier: ^8.46.0
+        version: 8.46.0
       tsup:
-        specifier: ^6.2.3
-        version: 6.5.0(postcss@8.4.21)(ts-node@10.9.1)(typescript@4.9.5)
+        specifier: ^6.7.0
+        version: 6.7.0(ts-node@10.9.1)(typescript@4.9.5)
 
   packages/ow-ui:
     dependencies:
@@ -5068,7 +5068,7 @@ packages:
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@4.9.5)
       typescript: 4.9.5
-      vite: 3.2.7(@types/node@18.17.1)
+      vite: 3.2.7(@types/node@20.4.5)
     dev: true
 
   /@jridgewell/gen-mapping@0.3.3:
@@ -8038,7 +8038,7 @@ packages:
       remark-slug: 6.1.0
       rollup: 3.27.0
       typescript: 4.9.5
-      vite: 3.2.7(@types/node@18.17.1)
+      vite: 3.2.7(@types/node@20.4.5)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8675,7 +8675,7 @@ packages:
       react: 18.2.0
       react-docgen: 6.0.0-alpha.3
       react-dom: 18.2.0(react@18.2.0)
-      vite: 3.2.7(@types/node@18.17.1)
+      vite: 3.2.7(@types/node@20.4.5)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - supports-color
@@ -9439,6 +9439,10 @@ packages:
     resolution: {integrity: sha512-Q5vtl1W5ue16D+nIaW8JWebSSraJVlK+EthKn7e7UcD4KWsaSJ8BqGPXNaPghgtcn/fhvrN17Tv8ksUsQpiplw==}
     dev: true
 
+  /@types/triple-beam@1.3.2:
+    resolution: {integrity: sha512-txGIh+0eDFzKGC25zORnswy+br1Ha7hj5cMVwKIU7+s0U2AxxJru/jZSMU6OC9MJWP6+pc/hc6ZjyZShpsyY2g==}
+    dev: false
+
   /@types/unist@2.0.7:
     resolution: {integrity: sha512-cputDpIbFgLUaGQn6Vqg3/YsJwxUwHLO13v3i5ouxT4lat0khip9AEWxtERujXV9wxIB1EyF97BSJFt6vpdI8g==}
 
@@ -9698,7 +9702,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.22.9)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 3.2.7(@types/node@18.17.1)
+      vite: 3.2.7(@types/node@20.4.5)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9713,7 +9717,7 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.22.5(@babel/core@7.22.9)
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.22.9)
       react-refresh: 0.14.0
-      vite: 4.4.7(@types/node@18.17.1)
+      vite: 4.4.7(@types/node@20.4.5)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -13422,7 +13426,7 @@ packages:
     resolution: {integrity: sha512-OMcX/4IC/uqEPVgGeyfN22LJk6AZrMkRZHxcHBMBvHScDGgwTm2GT2Wkgtocyd3JfZffjj2kYUDXXII0Fk9W0g==}
     dependencies:
       inherits: 2.0.4
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: false
 
   /from@0.1.7:
@@ -14609,7 +14613,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 20.4.5
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true
@@ -15142,14 +15146,15 @@ packages:
       is-unicode-supported: 0.1.0
     dev: true
 
-  /logform@2.4.2:
-    resolution: {integrity: sha512-W4c9himeAwXEdZ05dQNerhFz2XG80P9Oj0loPUMV23VC2it0orMHQhJm4hdnnor3rd1HsGf6a2lPwBM1zeXHGw==}
+  /logform@2.5.1:
+    resolution: {integrity: sha512-9FyqAm9o9NKKfiAKfZoYo9bGXXuwMkxQiQttkT4YjjVtQVIQtK6LmVtlxmCaFswo6N4AfEkHqZTV0taDtPotNg==}
     dependencies:
       '@colors/colors': 1.5.0
+      '@types/triple-beam': 1.3.2
       fecha: 4.2.3
       ms: 2.1.3
-      safe-stable-stringify: 2.4.1
-      triple-beam: 1.3.0
+      safe-stable-stringify: 2.4.3
+      triple-beam: 1.4.1
     dev: false
 
   /loose-envify@1.4.0:
@@ -16421,7 +16426,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.21
-      ts-node: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
       yaml: 1.10.2
 
   /postcss-load-config@4.0.1(postcss@8.4.27)(ts-node@10.9.1):
@@ -16438,7 +16443,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.27
-      ts-node: 10.9.1(@types/node@18.17.1)(typescript@4.9.5)
+      ts-node: 10.9.1(@types/node@20.4.5)(typescript@4.9.5)
       yaml: 2.3.1
 
   /postcss-loader@4.3.0(postcss@7.0.39)(webpack@5.88.2):
@@ -17327,18 +17332,6 @@ packages:
       string_decoder: 0.10.31
     dev: false
 
-  /readable-stream@2.3.7:
-    resolution: {integrity: sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==}
-    dependencies:
-      core-util-is: 1.0.3
-      inherits: 2.0.4
-      isarray: 1.0.0
-      process-nextick-args: 2.0.1
-      safe-buffer: 5.1.2
-      string_decoder: 1.1.1
-      util-deprecate: 1.0.2
-    dev: false
-
   /readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
     dependencies:
@@ -17348,14 +17341,6 @@ packages:
       process-nextick-args: 2.0.1
       safe-buffer: 5.1.2
       string_decoder: 1.1.1
-      util-deprecate: 1.0.2
-
-  /readable-stream@3.6.0:
-    resolution: {integrity: sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==}
-    engines: {node: '>= 6'}
-    dependencies:
-      inherits: 2.0.4
-      string_decoder: 1.3.0
       util-deprecate: 1.0.2
 
   /readable-stream@3.6.2:
@@ -17660,8 +17645,8 @@ packages:
       is-regex: 1.1.4
     dev: true
 
-  /safe-stable-stringify@2.4.1:
-    resolution: {integrity: sha512-dVHE6bMtS/bnL2mwualjc6IxEv1F+OCUpA46pKUj6F8uDbUM0jCCulPqRNPSnWwGNKx5etqMjZYdXtrm5KJZGA==}
+  /safe-stable-stringify@2.4.3:
+    resolution: {integrity: sha512-e2bDA2WJT0wxseVd4lsDP4+3ONX6HpMXQa1ZhFQ7SU+GjvORCmShbCMltrtIDfkYhVHrOcPtj+KhmDBdPdZD1g==}
     engines: {node: '>=10'}
     dev: false
 
@@ -17679,7 +17664,7 @@ packages:
       diff-match-patch: 1.0.5
     dev: false
 
-  /sanity@3.14.4(@types/node@18.17.1)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11):
+  /sanity@3.14.4(@types/node@20.4.5)(react-dom@18.2.0)(react@18.2.0)(styled-components@5.3.11):
     resolution: {integrity: sha512-uugcF0JcPTNnUa6/WtXLTc0gxis3tWuc5GqGbpo43nwy6Cb3RrrFc9xURDV14w41/833miHCD6noyS1TKzRcyQ==}
     engines: {node: '>=14.18.0'}
     hasBin: true
@@ -17791,7 +17776,7 @@ packages:
       use-device-pixel-ratio: 1.1.2(react@18.2.0)
       use-hot-module-reload: 1.0.3(react@18.2.0)
       use-sync-external-store: 1.2.0(react@18.2.0)
-      vite: 4.4.7(@types/node@18.17.1)
+      vite: 4.4.7(@types/node@20.4.5)
       yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
@@ -18636,7 +18621,7 @@ packages:
       end-of-stream: 1.4.4
       fs-constants: 1.0.0
       inherits: 2.0.4
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
 
   /tar@6.1.15:
     resolution: {integrity: sha512-/zKt9UyngnxIT/EAGYuxaMYgOIJiP81ab9ZfkILq4oNLPFX50qyYmu7jRj9qeXoxmJHjGlbH0+cm2uy1WCs10A==}
@@ -18877,8 +18862,9 @@ packages:
     hasBin: true
     dev: true
 
-  /triple-beam@1.3.0:
-    resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
+  /triple-beam@1.4.1:
+    resolution: {integrity: sha512-aZbgViZrg1QNcG+LULa7nhZpJTZSLm/mXnHXnbAbjmN5aSa0y7V+wvv6+4WaBtpISJzThKy+PIPxc1Nq1EJ9mg==}
+    engines: {node: '>= 14.0.0'}
     dev: false
 
   /trpc-playground@1.0.4(@trpc/server@10.36.0)(@types/node@18.17.1)(typescript@4.9.5)(zod@3.21.4):
@@ -18925,7 +18911,7 @@ packages:
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
-  /ts-node@10.9.1(@types/node@18.17.1)(typescript@4.9.5):
+  /ts-node@10.9.1(@types/node@20.4.5)(typescript@4.9.5):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -18944,7 +18930,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 18.17.1
+      '@types/node': 20.4.5
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
@@ -19719,6 +19705,40 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /vite@3.2.7(@types/node@20.4.5):
+    resolution: {integrity: sha512-29pdXjk49xAP0QBr0xXqu2s5jiQIXNvE/xwd0vUizYT2Hzqe4BksNNoWllFVXJf4eLZ+UlVQmXfB4lWrc+t18g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 20.4.5
+      esbuild: 0.15.18
+      postcss: 8.4.27
+      resolve: 1.22.2
+      rollup: 2.79.1
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
   /vite@4.4.7(@types/node@18.17.1):
     resolution: {integrity: sha512-6pYf9QJ1mHylfVh39HpuSfMPojPSKVxZvnclX1K1FyZ1PXDOcLBibdq5t1qxJSnL63ca8Wf4zts6mD8u8oc9Fw==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -19753,6 +19773,7 @@ packages:
       rollup: 3.27.0
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /vite@4.4.7(@types/node@20.4.5):
     resolution: {integrity: sha512-6pYf9QJ1mHylfVh39HpuSfMPojPSKVxZvnclX1K1FyZ1PXDOcLBibdq5t1qxJSnL63ca8Wf4zts6mD8u8oc9Fw==}
@@ -19788,7 +19809,6 @@ packages:
       rollup: 3.27.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /vitest@0.33.0(@vitest/ui@0.33.0):
     resolution: {integrity: sha512-1CxaugJ50xskkQ0e969R/hW47za4YXDUfWJDxip1hwbnhUjYolpfUn2AMOulqG/Dtd9WYAtkHmM/m3yKVrEejQ==}
@@ -20120,25 +20140,25 @@ packages:
     resolution: {integrity: sha512-YpZzcUzBedhlTAfJg6vJDlyEai/IFMIVcaEZZyl3UXIl4gmqRpU7AE89AHLkbzLUsv0NVmw7ts+iztqKxxPW1Q==}
     engines: {node: '>= 6.4.0'}
     dependencies:
-      logform: 2.4.2
-      readable-stream: 3.6.0
-      triple-beam: 1.3.0
+      logform: 2.5.1
+      readable-stream: 3.6.2
+      triple-beam: 1.4.1
     dev: false
 
-  /winston@3.8.2:
-    resolution: {integrity: sha512-MsE1gRx1m5jdTTO9Ld/vND4krP2To+lgDoMEHGGa4HIlAUyXJtfc7CxQcGXVyz2IBpw5hbFkj2b/AtUdQwyRew==}
+  /winston@3.10.0:
+    resolution: {integrity: sha512-nT6SIDaE9B7ZRO0u3UvdrimG0HkB7dSTAgInQnNR2SOPJ4bvq5q79+pXLftKmP52lJGW15+H5MCK0nM9D3KB/g==}
     engines: {node: '>= 12.0.0'}
     dependencies:
       '@colors/colors': 1.5.0
       '@dabh/diagnostics': 2.0.3
       async: 3.2.4
       is-stream: 2.0.1
-      logform: 2.4.2
+      logform: 2.5.1
       one-time: 1.0.0
-      readable-stream: 3.6.0
-      safe-stable-stringify: 2.4.1
+      readable-stream: 3.6.2
+      safe-stable-stringify: 2.4.3
       stack-trace: 0.0.10
-      triple-beam: 1.3.0
+      triple-beam: 1.4.1
       winston-transport: 4.5.0
     dev: false
 
