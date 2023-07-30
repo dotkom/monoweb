@@ -2,11 +2,9 @@ import { CareerAd } from "@/api/get-career-ads"
 import { Button } from "@dotkomonline/ui"
 import Image from "next/image"
 import { FC } from "react"
-import { BsLinkedin, BsTwitter, BsArrowLeft } from "react-icons/bs"
-import { ImFacebook2 } from "react-icons/im"
-import { IoTimeOutline, IoCopyOutline } from "react-icons/io5"
-import { MdWorkOutline } from "react-icons/md"
-import { TbGlobe } from "react-icons/tb"
+
+import { Icon } from "@dotkomonline/ui"
+
 import PortableText from "@/components/molecules/PortableText"
 import Link from "next/link"
 
@@ -42,33 +40,33 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="bg-slate-12 mx-auto mt-10 mb-14 h-[0.5px] w-full" />
         <Link href="/career">
           <div className="flex items-center">
-            <BsArrowLeft size={20} className="text-blue-9 mb-2 inline" />
+            <Icon icon="mdi:arrow-left" className="text-blue-9" width={20} height={20} />
             <h2 className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</h2>
           </div>
         </Link>
         <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
-          <TbGlobe className="text-blue-9" size={20} />
+          <Icon icon="mdi:globe" className="text-blue-9" width={20} height={20} />
           <p className="m-0 pl-2">{location}</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-9 mb-[-3px] inline">
-            <IoTimeOutline />
+            <Icon icon="mdi:clock-outline" className="text-blue-9" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{deadline}</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-9 mb-[-3px] inline">
-            <MdWorkOutline />
+            <Icon icon="mdi:briefcase-outline" className="text-blue-9" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{career_role}</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-9 mb-[-3px] inline">
-            <IoCopyOutline />
+            <Icon icon="mdi:content-copy" className="text-blue-9" width={20} height={20} />
           </div>
           <p className="m-0 pl-2">{career_role}</p>
         </div>
@@ -76,17 +74,17 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="text-blue-9">
           {linkdin && (
             <Link href={linkdin}>
-              <BsLinkedin className="m-1 inline-block" />
+              <Icon width={40} height={40} icon="devicon:linkedin" className="m-1 inline-block" />
             </Link>
           )}
           {twitter && (
             <Link href={twitter}>
-              <BsTwitter className="m-1 inline-block" />
+              <Icon width={40} height={40} icon="devicon:twitter" className="m-1 inline-block" />
             </Link>
           )}
           {facebook && (
             <Link href={facebook}>
-              <ImFacebook2 className="m-1 inline-block" />
+              <Icon width={40} height={40} icon="devicon:facebook" className="m-1 inline-block" />
             </Link>
           )}
         </div>
