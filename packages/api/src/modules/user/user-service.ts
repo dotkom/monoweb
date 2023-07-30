@@ -1,10 +1,17 @@
-import { PrivacyPermissions, PrivacyPermissionsWrite, User } from "@dotkomonline/types"
+import {
+  NotificationPermissions,
+  NotificationPermissionsWrite,
+  PrivacyPermissions,
+  PrivacyPermissionsWrite,
+  User,
+} from "@dotkomonline/types"
 
 import { User as ClerkUser } from "@clerk/nextjs/dist/api"
 import { NotFoundError } from "../../errors/errors"
 import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserRepository } from "./user-repository"
 import { clerkClient } from "@clerk/nextjs/server"
+import { NotificationPermissionsRepository } from "./notification-permissions-repository"
 
 export interface UserService {
   getClerkUser(id: User["id"]): Promise<ClerkUser>
@@ -23,6 +30,7 @@ export class UserServiceImpl implements UserService {
   constructor(
     private userRepository: UserRepository,
     private privacyPermissionsRepository: PrivacyPermissionsRepository,
+    private notificationPermissionsRepository: NotificationPermissionsRepository,
     private clerk: typeof clerkClient
   ) {}
 
@@ -74,5 +82,28 @@ export class UserServiceImpl implements UserService {
     }
 
     return privacyPermissions
+  }
+
+  async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
+    let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id)
+
+    if (!notificationPermissions) {
+      notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id })
+    }
+
+    return notificationPermissions
+  }
+
+  async updateNotificationPermissionsForUserId(
+    id: string,
+    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
+  ): Promise<NotificationPermissions> {
+    let notificationPermissions = await this.notificationPermissionsRepository.update(id, data)
+
+    if (!notificationPermissions) {
+      notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id, ...data })
+    }
+
+    return notificationPermissions
   }
 }
