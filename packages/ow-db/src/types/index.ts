@@ -5,6 +5,8 @@ import { CompanyTable, EventCompanyTable } from "./company"
 import { MarkTable, PersonalMarkTable } from "./marks"
 import { PaymentTable, ProductPaymentProviderTable, ProductTable, RefundRequestTable } from "./payment"
 
+import { PrivacyPermissionsTable } from "./privacy-permissions"
+
 export interface Database {
   owUser: UserTable
   company: CompanyTable
@@ -23,4 +25,5 @@ export interface Database {
   payment: PaymentTable
   productPaymentProvider: ProductPaymentProviderTable
   refundRequest: RefundRequestTable
+  privacyPermissions: PrivacyPermissionsTable
 }
