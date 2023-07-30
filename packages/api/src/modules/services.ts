@@ -14,14 +14,15 @@ import { PaymentRepositoryImpl } from "./payment/payment-repository"
 import { PaymentServiceImpl } from "./payment/payment-service"
 import { PersonalMarkRepositoryImpl } from "./marks/personal-mark-repository"
 import { PersonalMarkServiceImpl } from "./marks/personal-mark-service"
+import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository"
 import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-provider-repository"
 import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service"
 import { ProductRepositoryImpl } from "./payment/product-repository"
 import { ProductServiceImpl } from "./payment/product-service"
 import { RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { UserRepositoryImpl } from "./auth/user-repository"
-import { UserServiceImpl } from "./auth/user-service"
+import { UserRepositoryImpl } from "./user/user-repository"
+import { UserServiceImpl } from "./user/user-service"
 import { clerkClient } from "@clerk/nextjs/server"
 import { kysely } from "@dotkomonline/db"
 
@@ -39,9 +40,10 @@ export const initServices = () => {
   const refundRequestRepository = new RefundRequestRepositoryImpl(db)
   const markRepository = new MarkRepositoryImpl(db)
   const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
+  const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
 
   // Services
-  const userService = new UserServiceImpl(userRepository, clerkClient)
+  const userService = new UserServiceImpl(userRepository, privacyPermissionsRepository, clerkClient)
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
   const attendanceService = new AttendanceServiceImpl(attendanceRepository)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
