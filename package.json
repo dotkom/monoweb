@@ -8,13 +8,16 @@
   "scripts": {
     "build": "turbo run build --filter=@dotkomonline/*",
     "build:api": "turbo run build --filter=ow-api",
-    "build:web": "turbo run build:prod --filter=web",
+    "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "dev": "dotenv -e .env -- turbo run dev",
     "migrate": "dotenv -e .env -- turbo run migrate",
+    "migrate-down": "dotenv -e .env -- turbo run migrate -- down",
+    "migrate-down-all": "dotenv -e .env -- turbo run migrate -- down-all",
     "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed",
+    "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean"
@@ -24,21 +27,21 @@
     "apps/*"
   ],
   "engines": {
-    "node": ">=16.13",
+    "node": ">=18.13",
     "pnpm": ">=8"
   },
   "devDependencies": {
     "dotenv-cli": "^7.0.0",
-    "eslint": "^8.34.0",
+    "eslint": "^8.39.0",
     "prettier": "^2.8.4",
     "ts-node": "^10.9.1",
-    "tsc-watch": "^5.0.3",
+    "tsc-watch": "^6.0.0",
     "tsup": "^6.6.3",
     "turbo": "^1.8.2",
     "typescript": "^4.9.5",
-    "vitest": "^0.28.5"
+    "vitest": "^0.33.0"
   },
   "volta": {
-    "node": "18.13.0"
+    "node": "18.16.0"
   }
 }

@@ -3,11 +3,12 @@
   "type": "module",
   "dependencies": {
     "@dotkomonline/db": "*",
+    "@dotkomonline/types": "*",
     "chalk": "^5.1.2",
     "commander": "^9.4.1",
-    "kysely": "^0.23.0",
+    "kysely": "^0.24.0",
     "pg": "^8.8.0",
-    "zod": "^3.20.6"
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@dotkomonline/logger": "*",
@@ -16,9 +17,9 @@
     "@types/pg": "^8.6.5",
     "date-fns": "^2.29.3",
     "dotenv-cli": "^7.0.0",
-    "eslint": "^8.27.0",
+    "eslint": "^8.39.0",
     "tsx": "^3.12.0",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.5"
   },
   "scripts": {
     "migrate": "tsx ./src/index.ts",

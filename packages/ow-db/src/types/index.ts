@@ -1,8 +1,11 @@
-import { CompanyTable, EventCompanyTable } from "./company"
-import { EventTable, AttendanceTable, AttendeeTable } from "./event"
-import { MarkTable, PersonalMarkTable } from "./marks"
-import { UserTable, SessionTable, VerificationTokenTable, AccountTable } from "./user"
+import { AccountTable, SessionTable, UserTable, VerificationTokenTable } from "./user"
+import { AttendanceTable, AttendeeTable, EventTable } from "./event"
 import { CommitteeTable, EventCommitteeTable } from "./committee"
+import { CompanyTable, EventCompanyTable } from "./company"
+import { MarkTable, PersonalMarkTable } from "./marks"
+import { PaymentTable, ProductPaymentProviderTable, ProductTable, RefundRequestTable } from "./payment"
+
+import { PrivacyPermissionsTable } from "./privacy-permissions"
 
 export interface Database {
   owUser: UserTable
@@ -18,4 +21,9 @@ export interface Database {
   eventCommittee: EventCommitteeTable
   mark: MarkTable
   personalMark: PersonalMarkTable
+  product: ProductTable
+  payment: PaymentTable
+  productPaymentProvider: ProductPaymentProviderTable
+  refundRequest: RefundRequestTable
+  privacyPermissions: PrivacyPermissionsTable
 }

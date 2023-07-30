@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { FC, ReactElement } from "react"
+import { FC } from "react"
 import {
   Button,
   Checkbox,
@@ -15,7 +15,7 @@ import {
 import {
   Control,
   Controller,
-  DeepPartial,
+  DefaultValues,
   FieldValue,
   FieldValues,
   FormState,
@@ -66,7 +66,7 @@ export function createDateTimeInput<F extends FieldValues>({
         render={({ field }) => (
           <DateTimePicker
             {...props}
-            defaultValue={Date.now()}
+            defaultValue={new Date()}
             value={field.value}
             onChange={field.onChange}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
@@ -128,9 +128,7 @@ type FormBuilderOptions<T extends z.ZodRawShape> = {
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
-  defaultValues?: DeepPartial<{
-    [K in keyof z.infer<z.ZodObject<T>>]: z.infer<T[K]>
-  }>
+  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
   onSubmit: (data: z.infer<z.ZodObject<T>>) => void
 }
@@ -141,7 +139,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   defaultValues,
   label,
   onSubmit,
-}: FormBuilderOptions<T>): ReactElement {
+}: FormBuilderOptions<T>): FC {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -155,15 +153,17 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     return <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
   })
 
-  return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Flex direction="column" gap="md">
-        {components}
+  return function Form() {
+    return (
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Flex direction="column" gap="md">
+          {components}
 
-        <div>
-          <Button type="submit">{label}</Button>
-        </div>
-      </Flex>
-    </form>
-  )
+          <div>
+            <Button type="submit">{label}</Button>
+          </div>
+        </Flex>
+      </form>
+    )
+  }
 }

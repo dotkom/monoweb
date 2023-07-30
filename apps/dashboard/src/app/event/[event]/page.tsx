@@ -1,14 +1,12 @@
 "use client"
 
-import { Box, Button, Card, Grid, Group, Tabs, Text, Title, useMantineTheme } from "@mantine/core"
-import { trpc } from "../../../trpc"
-import { useEventWriteForm } from "../Form"
-import { EventWriteSchema } from "@dotkomonline/types"
+import { Box, Button, Card, Grid, Group, Tabs, Title, useMantineTheme } from "@mantine/core"
 import { Icon } from "@iconify/react"
 import { FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import Link from "next/link"
 import { EventCompaniesPage } from "./EventCompaniesPage"
+import { EventEditCard } from "./EventEditCard"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Bedrifter</h1>
@@ -52,20 +50,6 @@ const SIDEBAR_LINKS = [
 export default function EventDetailsPage() {
   const { event } = useEventDetailsContext()
   const theme = useMantineTheme()
-  const utils = trpc.useContext()
-  const edit = trpc.event.edit.useMutation({
-    onSuccess: () => {
-      utils.event.all.invalidate()
-    },
-  })
-  const FormComponent = useEventWriteForm(
-    (data) => {
-      const result = EventWriteSchema.required({ id: true }).parse(data)
-      edit.mutate(result)
-    },
-    { ...event },
-    "Oppdater arrangement"
-  )
   return (
     <Box p="md">
       <Group position="apart">
@@ -84,10 +68,7 @@ export default function EventDetailsPage() {
         }}
       >
         <Grid.Col span={1}>
-          <Card withBorder shadow="sm">
-            <Text>Endre arrangement</Text>
-            {FormComponent}
-          </Card>
+          <EventEditCard />
         </Grid.Col>
         <Grid.Col span={1}>
           <Card withBorder shadow="sm">

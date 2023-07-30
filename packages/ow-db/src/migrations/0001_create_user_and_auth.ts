@@ -5,12 +5,8 @@ import { createTableWithDefaults } from "../utils"
 // Kysely reccomends using "any" in migrations
 
 export async function up(db: Kysely<any>): Promise<void> {
-  await createTableWithDefaults("ow_user", { id: true, createdAt: true }, db.schema)
-    .addColumn("name", "varchar(255)")
-    .addColumn("email", "varchar(255)", (col) => col.notNull().unique())
-    .addColumn("email_verified", "timestamptz")
-    .addColumn("password", "varchar(255)", (col) => col.notNull())
-    .addColumn("image", "varchar(255)")
+  await createTableWithDefaults("ow_user", { createdAt: true }, db.schema)
+    .addColumn("id", "text", (col) => col.primaryKey())
     .execute()
 }
 

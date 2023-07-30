@@ -1,28 +1,32 @@
 import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
-import { createProxySSGHelpers } from "@trpc/react-query/ssg"
+import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/api"
 import { FC } from "react"
 import { trpc } from "@/utils/trpc"
 import { Button } from "@dotkomonline/ui"
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-  const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: props.event.id })
-  const { mutate: addAttendance } = trpc.event.attendance.add.useMutation()
+  const { id } = props
+  const { data } = trpc.event.get.useQuery(id)
+  const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
+  const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
   const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
   const utils = trpc.useContext()
 
   return (
     <div>
       <h1>Event</h1>
-      <pre>{JSON.stringify(props.event, null, 2)}</pre>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
       <Button
         onClick={async () => {
           await addAttendance({
             start: new Date(),
             end: new Date(),
             deregisterDeadline: new Date(),
-            eventId: props.event.id,
+            eventId: id,
             limit: 20,
+            min: 1,
+            max: 5,
           })
           utils.event.attendance.get.invalidate()
         }}
@@ -32,7 +36,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
       <Button
         onClick={async () => {
           await attendEvent({
-            eventId: props.event.id,
+            eventId: id,
           })
           utils.event.attendance.get.invalidate()
         }}
@@ -46,14 +50,15 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const ssg = createProxySSGHelpers({
+  const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: await createContextInner({
       auth: null,
     }),
-    transformer: transformer,
+    transformer, // optional - adds superjson serialization
   })
-  const events = await ssg.event.all.fetch()
+
+  const events = await helpers.event.all.fetch()
   return {
     paths: events.map(({ id }) => ({ params: { id } })),
     fallback: "blocking",
@@ -61,22 +66,24 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
-  const ssg = createProxySSGHelpers({
+  const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: await createContextInner({
       auth: null,
     }),
-    transformer: transformer,
+    transformer, // optional - adds superjson serialization
   })
+
   const id = ctx.params?.id
   if (!id) {
     return { notFound: true }
   }
-  const event = await ssg.event.get.fetch(id)
+  await helpers.event.get.prefetch(id)
 
   return {
     props: {
-      event,
+      trpcState: helpers.dehydrate(),
+      id,
     },
     revalidate: 86400,
   }

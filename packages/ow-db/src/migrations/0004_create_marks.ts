@@ -13,13 +13,14 @@ export async function up(db: Kysely<Database>) {
     .execute()
 
   await db.schema
-    .createTable("personalMark")
-    .addColumn("markId", "uuid", (col) => col.references("Mark.id").onDelete("cascade"))
-    .addColumn("userId", "uuid", (col) => col.references("User.id").onDelete("cascade"))
+    .createTable("personal_mark")
+    .addColumn("mark_id", "uuid", (col) => col.references("mark.id").onDelete("cascade"))
+    .addColumn("user_id", "text", (col) => col.references("owUser.id").onDelete("cascade"))
+    .addPrimaryKeyConstraint("personal_mark_pk", ["mark_id", "user_id"])
     .execute()
 }
 
 export async function down(db: Kysely<Database>): Promise<void> {
-  await db.schema.dropTable("PersonalMark").execute()
-  await db.schema.dropTable("Mark").execute()
+  await db.schema.dropTable("personal_mark").execute()
+  await db.schema.dropTable("mark").execute()
 }

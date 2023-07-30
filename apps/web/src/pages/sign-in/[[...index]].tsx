@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 
 const SignInPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams()
-  const challenge = searchParams.get("login_challenge")
+  const challenge = searchParams && searchParams.get("login_challenge")
   return (
     <SignIn
       path="/sign-in"

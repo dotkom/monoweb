@@ -1,7 +1,7 @@
 import { Generated } from "kysely"
 
 type EventStatus = "TBA" | "PUBLIC" | "NO_LIMIT" | "ATTENDANCE"
-type EventType = "SOCIAL" | "COMPANY"
+type EventType = "SOCIAL" | "COMPANY" | "ACADEMIC" | "BEDPRES"
 
 export interface EventTable {
   id: Generated<string>
@@ -18,6 +18,7 @@ export interface EventTable {
   imageUrl: string | null
   location: string | null
   committeeId: string | null
+  waitlist: string | null
 }
 
 export interface AttendanceTable {
@@ -29,6 +30,8 @@ export interface AttendanceTable {
   deregisterDeadline: Date
   limit: number
   eventId: string
+  min: number
+  max: number
 }
 
 export interface AttendeeTable {
