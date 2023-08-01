@@ -1,7 +1,7 @@
 import { ProductPaymentProviderWriteSchema, ProductWriteSchema } from "@dotkomonline/types"
 import { protectedProcedure, t } from "../../trpc"
 
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { z } from "zod"
 
 export const productRouter = t.router({

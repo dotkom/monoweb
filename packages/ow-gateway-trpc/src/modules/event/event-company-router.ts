@@ -1,7 +1,7 @@
 import { CompanySchema, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 
 export const eventCompanyRouter = t.router({
   create: protectedProcedure

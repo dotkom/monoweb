@@ -1,4 +1,4 @@
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { protectedProcedure } from "../../trpc"
 import { t } from "../../trpc"
 import { z } from "zod"

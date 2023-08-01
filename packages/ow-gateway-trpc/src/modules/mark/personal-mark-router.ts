@@ -1,6 +1,6 @@
 import { protectedProcedure, t } from "../../trpc"
 
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { z } from "zod"
 
 export const personalMarkRouter = t.router({

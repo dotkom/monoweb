@@ -1,4 +1,4 @@
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { CommitteeWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { t } from "../../trpc"

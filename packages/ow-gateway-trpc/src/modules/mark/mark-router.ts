@@ -1,5 +1,5 @@
 import { MarkWriteSchema } from "@dotkomonline/types"
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { personalMarkRouter } from "./personal-mark-router"
 import { protectedProcedure } from "./../../trpc"
 import { t } from "../../trpc"

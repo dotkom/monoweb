@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 import Stripe from "stripe"
 import { bufferRequest } from "../request-utils"
-import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/ow-core"
+import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 
 export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {

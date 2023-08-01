@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@clerk/backend": "^0.26.0",
-    "@dotkomonline/ow-core": "workspace:*",
+    "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@ory/client": "^1.1.41"
   },

@@ -668,7 +668,7 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
-  packages/ow-core:
+  packages/core:
     dependencies:
       '@clerk/nextjs':
         specifier: ^4.23.1
@@ -780,9 +780,9 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../ow-db
-      '@dotkomonline/ow-core':
+      '@dotkomonline/core':
         specifier: workspace:*
-        version: link:../ow-core
+        version: link:../core
       '@ory/client':
         specifier: ^1.1.41
         version: 1.1.41
@@ -832,9 +832,9 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../ow-db
-      '@dotkomonline/ow-core':
+      '@dotkomonline/core':
         specifier: workspace:*
-        version: link:../ow-core
+        version: link:../core
       '@ory/client':
         specifier: ^1.1.41
         version: 1.1.41

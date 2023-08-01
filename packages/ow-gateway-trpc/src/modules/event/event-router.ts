@@ -1,7 +1,7 @@
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 

@@ -17,7 +17,7 @@
     "@clerk/nextjs": "^4.23.1",
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/ow-core": "workspace:*",
+    "@dotkomonline/core": "workspace:*",
     "@ory/client": "^1.1.41",
     "@trpc/server": "^10.36.0",
     "axios": "^0.27.2",

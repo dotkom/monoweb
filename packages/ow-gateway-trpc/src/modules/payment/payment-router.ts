@@ -3,7 +3,7 @@ import { protectedProcedure } from "../../trpc"
 import { refundRequestRouter } from "./refund-request-router"
 import { t } from "../../trpc"
 import { z } from "zod"
-import { PaginateInputSchema } from "@dotkomonline/ow-core"
+import { PaginateInputSchema } from "@dotkomonline/core"
 
 export const paymentRouter = t.router({
   product: productRouter,

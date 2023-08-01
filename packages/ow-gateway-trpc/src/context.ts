@@ -2,7 +2,7 @@ import type { inferAsyncReturnType } from "@trpc/server"
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
 import { getAuth } from "@clerk/nextjs/server"
 import { getServerSession } from "@dotkomonline/auth"
-import { createServiceLayer } from "@dotkomonline/ow-core"
+import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 
 type AuthContextProps = {
