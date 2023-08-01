@@ -1,4 +1,4 @@
-import { stripeHandler } from "@dotkomonline/ow-gateway-edge"
+import { stripeHandler } from "@dotkomonline/gateway-edge"
 
 export default stripeHandler
 

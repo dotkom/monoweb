@@ -334,9 +334,9 @@ importers:
       '@dotkomonline/emails':
         specifier: workspace:*
         version: link:../../packages/emails
-      '@dotkomonline/ow-gateway-edge':
+      '@dotkomonline/gateway-edge':
         specifier: workspace:*
-        version: link:../../packages/ow-gateway-edge
+        version: link:../../packages/gateway-edge
       '@dotkomonline/ow-gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/ow-gateway-trpc
@@ -772,7 +772,7 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
-  packages/ow-gateway-edge:
+  packages/gateway-edge:
     dependencies:
       '@clerk/backend':
         specifier: ^0.26.0
