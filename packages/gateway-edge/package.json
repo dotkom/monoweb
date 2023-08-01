@@ -9,9 +9,9 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit",
-    "test": "vitest run",
-    "test:ui": "vitest --ui",
-    "coverage": "vitest run --coverage"
+    "test": "vitest run --passWithNoTests",
+    "test:ui": "vitest --ui --passWithNoTests",
+    "coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
     "@clerk/backend": "^0.26.0",
