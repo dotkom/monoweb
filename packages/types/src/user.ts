@@ -6,8 +6,10 @@ export const UserSchema = z.object({
 })
 
 export type User = z.infer<typeof UserSchema>
+export type UserId = User["id"]
 
 export const UserWriteSchema = UserSchema.omit({
+  id: true,
   createdAt: true,
 })
 

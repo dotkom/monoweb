@@ -1,7 +1,7 @@
 import { createTRPCReact } from "@trpc/react-query"
 import { CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
-import type { AppRouter } from "@dotkomonline/api"
+import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
 
 const getBaseUrl = () => {

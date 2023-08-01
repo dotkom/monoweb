@@ -10,8 +10,8 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
-    "@dotkomonline/api": "workspace:*",
     "@dotkomonline/auth": "workspace:*",
+    "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@emotion/react": "^11.11.1",
