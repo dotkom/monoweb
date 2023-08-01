@@ -1,3 +1,3 @@
-import { clerkHandler } from "@dotkomonline/api"
+import { clerkHandler } from "@dotkomonline/ow-gateway-edge"
 
 export default clerkHandler

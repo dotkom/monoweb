@@ -1,11 +1,9 @@
-// pages/api/trpc-playground.ts
-import { appRouter } from "@dotkomonline/api"
+import { appRouter } from "@dotkomonline/ow-gateway-trpc"
 import { NextApiHandler } from "next"
 import { nextHandler } from "trpc-playground/handlers/next"
 
 const setupHandler = nextHandler({
   router: appRouter,
-  // tRPC api path, pages/api/trpc/[trpc].ts in this case
   trpcApiEndpoint: "/api/trpc",
   playgroundEndpoint: "/api/trpc-playground",
   request: {
