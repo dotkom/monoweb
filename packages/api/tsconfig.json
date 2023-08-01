@@ -6,12 +6,4 @@
     "**/*.tsx",
     "index.ts",
   ],
-  // "compilerOptions": {
-  //   "baseUrl": ".",
-  //   "paths": {
-  //     "@/*": [
-  //       "./src/*"
-  //     ],
-  //   },
-  // }
 }
