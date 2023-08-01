@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
-import { appRouter, createContextInner, transformer } from "@dotkomonline/api"
+import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 
 import { Company } from "@dotkomonline/types"
 import { CompanyView } from "@/components/views/CompanyView"

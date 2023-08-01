@@ -1,7 +1,7 @@
 import { dirname, join } from "path"
 /** @type {import("@storybook/core-common").StorybookConfig} */
 module.exports = {
-  stories: ["../../../packages/ow-ui/src/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: ["../../../packages/ui/src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
