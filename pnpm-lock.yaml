@@ -188,7 +188,7 @@ importers:
     devDependencies:
       '@dotkomonline/logger':
         specifier: '*'
-        version: link:../../packages/ow-logger
+        version: link:../../packages/logger
       '@faker-js/faker':
         specifier: ^7.6.0
         version: 7.6.0
@@ -457,7 +457,7 @@ importers:
         version: link:../../packages/db
       '@dotkomonline/logger':
         specifier: '*'
-        version: link:../../packages/ow-logger
+        version: link:../../packages/logger
       '@types/cors':
         specifier: ^2.8.13
         version: 2.8.13
@@ -712,7 +712,7 @@ importers:
         version: link:../config
       '@dotkomonline/logger':
         specifier: workspace:*
-        version: link:../ow-logger
+        version: link:../logger
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
@@ -743,7 +743,7 @@ importers:
     devDependencies:
       '@dotkomonline/logger':
         specifier: workspace:*
-        version: link:../ow-logger
+        version: link:../logger
       '@types/chance':
         specifier: ^1.1.3
         version: 1.1.3
@@ -795,7 +795,7 @@ importers:
         version: link:../config
       '@dotkomonline/logger':
         specifier: workspace:*
-        version: link:../ow-logger
+        version: link:../logger
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
@@ -874,7 +874,7 @@ importers:
         version: link:../config
       '@dotkomonline/logger':
         specifier: workspace:*
-        version: link:../ow-logger
+        version: link:../logger
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
@@ -900,7 +900,7 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@vitest/ui@0.33.0)
 
-  packages/ow-logger:
+  packages/logger:
     dependencies:
       winston:
         specifier: ^3.10.0
