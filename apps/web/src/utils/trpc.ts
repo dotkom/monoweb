@@ -1,7 +1,7 @@
 import { createTRPCNext } from "@trpc/next"
 import { CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
-import type { AppRouter } from "@dotkomonline/ow-gateway-trpc"
+import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
 
 const getBaseUrl = () => {

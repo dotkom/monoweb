@@ -1,4 +1,4 @@
-import { appRouter, createContext } from "@dotkomonline/ow-gateway-trpc"
+import { appRouter, createContext } from "@dotkomonline/gateway-trpc"
 import { createNextApiHandler } from "@trpc/server/adapters/next"
 import { applyCorsMiddleware } from "@/middlewares/cors"
 

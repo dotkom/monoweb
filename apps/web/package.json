@@ -19,7 +19,7 @@
     "@clerk/themes": "^1.7.5",
     "@dotkomonline/emails": "workspace:*",
     "@dotkomonline/gateway-edge": "workspace:*",
-    "@dotkomonline/ow-gateway-trpc": "workspace:*",
+    "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@next/env": "^13.4.12",

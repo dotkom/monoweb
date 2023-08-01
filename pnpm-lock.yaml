@@ -37,9 +37,9 @@ importers:
       '@dotkomonline/auth':
         specifier: workspace:*
         version: link:../../packages/auth
-      '@dotkomonline/ow-gateway-trpc':
+      '@dotkomonline/gateway-trpc':
         specifier: workspace:*
-        version: link:../../packages/ow-gateway-trpc
+        version: link:../../packages/gateway-trpc
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -337,9 +337,9 @@ importers:
       '@dotkomonline/gateway-edge':
         specifier: workspace:*
         version: link:../../packages/gateway-edge
-      '@dotkomonline/ow-gateway-trpc':
+      '@dotkomonline/gateway-trpc':
         specifier: workspace:*
-        version: link:../../packages/ow-gateway-trpc
+        version: link:../../packages/gateway-trpc
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -821,7 +821,7 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@vitest/ui@0.33.0)
 
-  packages/ow-gateway-trpc:
+  packages/gateway-trpc:
     dependencies:
       '@clerk/nextjs':
         specifier: ^4.23.1

@@ -1,5 +1,5 @@
 {
-  "name": "@dotkomonline/ow-gateway-trpc",
+  "name": "@dotkomonline/gateway-trpc",
   "version": "1.0.0",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
-import { appRouter, createContextInner, transformer } from "@dotkomonline/ow-gateway-trpc"
+import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 
 import { Committee } from "@dotkomonline/types"
 import { CommitteeView } from "@/components/views/CommitteeView"

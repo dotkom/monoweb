@@ -1,4 +1,4 @@
-import { appRouter } from "@dotkomonline/ow-gateway-trpc"
+import { appRouter } from "@dotkomonline/gateway-trpc"
 import { NextApiHandler } from "next"
 import { nextHandler } from "trpc-playground/handlers/next"
 

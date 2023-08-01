@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
 import { createServerSideHelpers } from "@trpc/react-query/server"
-import { appRouter, createContextInner, transformer } from "@dotkomonline/ow-gateway-trpc"
+import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 import { FC } from "react"
 import { trpc } from "@/utils/trpc"
 import { Button } from "@dotkomonline/ui"
