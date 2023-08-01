@@ -166,7 +166,7 @@ importers:
     dependencies:
       '@dotkomonline/db':
         specifier: workspace:*
-        version: link:../../packages/ow-db
+        version: link:../../packages/db
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -454,7 +454,7 @@ importers:
         version: link:../../packages/config
       '@dotkomonline/db':
         specifier: ^1.0.0
-        version: link:../../packages/ow-db
+        version: link:../../packages/db
       '@dotkomonline/logger':
         specifier: '*'
         version: link:../../packages/ow-logger
@@ -678,7 +678,7 @@ importers:
         version: link:../auth
       '@dotkomonline/db':
         specifier: workspace:*
-        version: link:../ow-db
+        version: link:../db
       '@ory/client':
         specifier: ^1.1.41
         version: 1.1.41
@@ -732,7 +732,7 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@vitest/ui@0.33.0)
 
-  packages/ow-db:
+  packages/db:
     dependencies:
       kysely:
         specifier: ^0.24.2
@@ -779,7 +779,7 @@ importers:
         version: 0.26.0
       '@dotkomonline/db':
         specifier: workspace:*
-        version: link:../ow-db
+        version: link:../db
       '@dotkomonline/core':
         specifier: workspace:*
         version: link:../core
@@ -831,7 +831,7 @@ importers:
         version: link:../auth
       '@dotkomonline/db':
         specifier: workspace:*
-        version: link:../ow-db
+        version: link:../db
       '@dotkomonline/core':
         specifier: workspace:*
         version: link:../core
