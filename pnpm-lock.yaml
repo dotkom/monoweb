@@ -334,9 +334,9 @@ importers:
       '@dotkomonline/emails':
         specifier: workspace:*
         version: link:../../packages/emails
-      '@dotkomonline/gateway-edge':
+      '@dotkomonline/gateway-edge-nextjs':
         specifier: workspace:*
-        version: link:../../packages/gateway-edge
+        version: link:../../packages/gateway-edge-nextjs
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
@@ -712,7 +712,7 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
-  packages/gateway-edge:
+  packages/gateway-edge-nextjs:
     dependencies:
       '@clerk/backend':
         specifier: ^0.26.0

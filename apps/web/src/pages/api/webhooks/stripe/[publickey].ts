@@ -1,4 +1,4 @@
-import { stripeHandler } from "@dotkomonline/gateway-edge"
+import { stripeHandler } from "@dotkomonline/gateway-edge-nextjs"
 
 export default stripeHandler
 
