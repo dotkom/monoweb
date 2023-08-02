@@ -16,7 +16,7 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["lint"],
+      "dependsOn": ["lint", "type-check"],
       "outputs": []
     },
     "lint": {
@@ -44,6 +44,7 @@
   "globalEnv": [
     "NODE_ENV",
     "API_PORT",
+    "CLERK_SECRET_KEY",
     "DASHBOARD_PORT",
     "NEXTAUTH_CLIENT_ID",
     "NEXTAUTH_CLIENT_SECRET",

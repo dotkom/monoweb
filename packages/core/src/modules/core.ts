@@ -15,7 +15,6 @@ import { PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
 import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository"
 import { NotificationPermissionsRepositoryImpl } from "./user/notification-permissions-repository"
 import { UserServiceImpl } from "./user/user-service"
-import { clerkClient } from "@clerk/nextjs/server"
 import { EventServiceImpl } from "./event/event-service"
 import { AttendanceServiceImpl } from "./event/attendance-service"
 import { CommitteeServiceImpl } from "./committee/committee-service"
@@ -27,10 +26,16 @@ import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-pro
 import { RefundRequestServiceImpl } from "./payment/refund-request-service"
 import { MarkServiceImpl } from "./mark/mark-service"
 import { PersonalMarkServiceImpl } from "./mark/personal-mark-service"
+import { ClerkClient } from "@clerk/clerk-sdk-node/dist/types/types"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
-export const createServiceLayer = async (db: Kysely<Database>) => {
+export type ServerLayerOptions = {
+  db: Kysely<Database>
+  clerkClient: ClerkClient
+}
+
+export const createServiceLayer = async ({ db, clerkClient }: ServerLayerOptions) => {
   const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const companyRepository = new CompanyRepositoryImpl(db)

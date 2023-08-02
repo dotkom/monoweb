@@ -6,12 +6,12 @@ import {
   User,
 } from "@dotkomonline/types"
 
-import { User as ClerkUser } from "@clerk/nextjs/api"
+import { User as ClerkUser } from "@clerk/clerk-sdk-node"
 import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserRepository } from "./user-repository"
-import { clerkClient } from "@clerk/nextjs/server"
 import { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { NotFoundError } from "../../errors/errors"
+import { ClerkClient } from "@clerk/clerk-sdk-node/dist/types/types"
 
 export interface UserService {
   getClerkUser(id: User["id"]): Promise<ClerkUser>
@@ -31,7 +31,7 @@ export class UserServiceImpl implements UserService {
     private userRepository: UserRepository,
     private privacyPermissionsRepository: PrivacyPermissionsRepository,
     private notificationPermissionsRepository: NotificationPermissionsRepository,
-    private clerk: typeof clerkClient
+    private clerk: ClerkClient
   ) {}
 
   async getClerkUser(id: ClerkUser["id"]) {
