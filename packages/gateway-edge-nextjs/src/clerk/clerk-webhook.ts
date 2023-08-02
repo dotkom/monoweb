@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
 import { WebhookEvent } from "@clerk/clerk-sdk-node"
-import { createServiceLayer, defaultClerkClient } from "@dotkomonline/core";
+import { createServiceLayer, defaultClerkClient } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 
 export async function clerkHandler(req: NextApiRequest, res: NextApiResponse) {
