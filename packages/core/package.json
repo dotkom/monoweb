@@ -17,7 +17,7 @@
     "@clerk/clerk-sdk-node": "^4.12.1",
     "@dotkomonline/db": "workspace:*",
     "date-fns": "^2.30.0",
-    "kysely": "^0.24.2",
+    "kysely": "^0.26.0",
     "stripe": "^12.16.0",
     "zod": "^3.21.4"
   },
