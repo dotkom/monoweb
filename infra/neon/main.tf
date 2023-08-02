@@ -22,4 +22,8 @@ resource "neon_database" "example" {
   owner_name = neon_role.monoweb.name
   branch_id  = neon_project.monoweb.branch.id
   project_id = neon_project.monoweb.id
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
