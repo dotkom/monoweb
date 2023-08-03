@@ -405,8 +405,8 @@ importers:
         specifier: ^10.36.0
         version: 10.36.0
       axios:
-        specifier: 0.21.4
-        version: 0.21.4
+        specifier: 0.27.2
+        version: 0.27.2
       clsx:
         specifier: ^1.2.1
         version: 1.2.1
@@ -8618,6 +8618,15 @@ packages:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
       follow-redirects: 1.15.2(debug@4.3.4)
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /axios@0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.2(debug@4.3.4)
+      form-data: 4.0.0
     transitivePeerDependencies:
       - debug
     dev: false
