@@ -46,7 +46,7 @@ services:
     networks:
       - intranet
   hydra-db:
-    image: postgres:11.16
+    image: postgres:15.4
     ports:
       - "5432:5432"
     environment:
