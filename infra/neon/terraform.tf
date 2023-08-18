@@ -9,8 +9,8 @@ terraform {
 
   required_providers {
     neon = {
-      source  = "terraform-community-providers/neon"
-      version = "~> 0.1.4"
+      source  = "dotkom/neon"
+      version = "~> 0.1.1"
     }
   }
 }
