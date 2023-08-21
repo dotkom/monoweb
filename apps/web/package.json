@@ -17,8 +17,9 @@
     "@aws-sdk/client-ses": "^3.379.1",
     "@clerk/nextjs": "^4.23.1",
     "@clerk/themes": "^1.7.5",
-    "@dotkomonline/api": "workspace:*",
     "@dotkomonline/emails": "workspace:*",
+    "@dotkomonline/gateway-edge-nextjs": "workspace:*",
+    "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@next/env": "^13.4.12",
@@ -39,7 +40,7 @@
     "@trpc/next": "^10.36.0",
     "@trpc/react-query": "^10.36.0",
     "@trpc/server": "^10.36.0",
-    "axios": "0.21.4",
+    "axios": "0.27.2",
     "clsx": "^1.2.1",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
@@ -68,14 +69,14 @@
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.14",
     "chromatic": "^6.20.0",
-    "cva": "npm:class-variance-authority@^0.6.1",
+    "cva": "npm:class-variance-authority@^0.7.0",
     "eslint": "^8.46.0",
     "eslint-config-next": "^13.4.12",
-    "jsdom": "^21.1.2",
+    "jsdom": "^22.0.0",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
     "trpc-playground": "^1.0.4",
     "tslib": "^2.6.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.0"
   }
 }

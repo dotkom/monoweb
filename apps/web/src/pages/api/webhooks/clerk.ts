@@ -1,3 +1,3 @@
-import { clerkHandler } from "@dotkomonline/api"
+import { clerkHandler } from "@dotkomonline/gateway-edge-nextjs"
 
 export default clerkHandler

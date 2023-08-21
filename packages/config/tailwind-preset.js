@@ -15,7 +15,7 @@ const createColorScale = (name) => {
 module.exports = {
   // Relative to the project when the preset is loaded from a tailwind.config.js
   darkMode: ["class", '[data-theme="dark"]'],
-  content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ow-ui/src/**/*.{js,ts,jsx,tsx}"],
+  content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     colors: {
       slate: createColorScale("slate"),
