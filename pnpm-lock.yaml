@@ -777,6 +777,9 @@ importers:
       next:
         specifier: ^13.3.1
         version: 13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
+      next-auth:
+        specifier: ^4.22.3
+        version: 4.22.3(next@13.4.12)(react-dom@18.2.0)(react@18.2.0)
       superjson:
         specifier: ^1.13.1
         version: 1.13.1

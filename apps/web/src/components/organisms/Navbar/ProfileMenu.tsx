@@ -20,33 +20,32 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from "@dotkomonline/ui"
-import { useRouter } from "next/router"
 import { FC, PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
-import {signIn, signOut, useSession} from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react"
 
 export const ProfileMenu = () => {
   const { status } = useSession()
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return <Icon icon="tabler:loader-2" className="animate-spin" />
   }
 
-  if (status === 'unauthenticated') {
+  if (status === "unauthenticated") {
     return (
       <>
         <Button
           variant="subtle"
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-          onClick={() => signIn('cognito')}
+          onClick={() => signIn("cognito")}
         >
           Log in
         </Button>
         <Button
           variant="gradient"
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          onClick={() => signIn('cognito')}
+          onClick={() => signIn("cognito")}
         >
           Sign up
         </Button>

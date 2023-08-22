@@ -22,7 +22,8 @@
     "zod": "^3.21.4"
   },
   "peerDependencies": {
-    "next": "^13.3.1"
+    "next": "^13.3.1",
+    "next-auth": "^4.22.3"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",

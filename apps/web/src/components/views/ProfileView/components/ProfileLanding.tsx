@@ -1,6 +1,6 @@
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
-import {User} from "next-auth";
+import { User } from "next-auth"
 
 interface IFormInput {
   name: string

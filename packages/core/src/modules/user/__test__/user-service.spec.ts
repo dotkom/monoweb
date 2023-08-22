@@ -40,7 +40,7 @@ describe("UserService", () => {
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
+    notificationPermissionsRepository
   )
 
   const userId = randomUUID()

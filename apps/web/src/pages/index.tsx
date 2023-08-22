@@ -1,5 +1,5 @@
 import React from "react"
-import {useSession} from "next-auth/react";
+import { useSession } from "next-auth/react"
 
 const Home: React.FC = () => {
   const auth = useSession()

@@ -2,6 +2,8 @@ import type { inferAsyncReturnType } from "@trpc/server"
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
 import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
+import { authOptions } from "@dotkomonline/auth/src/web.app"
+import { getServerSession } from "next-auth"
 
 type AuthContextProps = {
   auth: {
@@ -18,6 +20,14 @@ export const createContextInner = async (opts: AuthContextProps) => {
 }
 
 export const createContext = async (opts: CreateNextContextOptions) => {
+  const session = await getServerSession(opts.req, opts.res, authOptions)
+  if (session !== null) {
+    return createContextInner({
+      auth: {
+        userId: session.user.id,
+      },
+    })
+  }
   return createContextInner({ auth: null })
 }
 

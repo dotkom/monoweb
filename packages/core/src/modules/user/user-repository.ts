@@ -1,6 +1,6 @@
 import { Database } from "@dotkomonline/db"
 import { Kysely, Selectable } from "kysely"
-import {type User, UserId, UserSchema, UserWrite} from "@dotkomonline/types"
+import { type User, UserId, UserSchema, UserWrite } from "@dotkomonline/types"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => {
   return UserSchema.parse(payload)

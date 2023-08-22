@@ -3,7 +3,8 @@ import {
   NotificationPermissionsWrite,
   PrivacyPermissions,
   PrivacyPermissionsWrite,
-  User, UserWrite,
+  User,
+  UserWrite,
 } from "@dotkomonline/types"
 
 import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
@@ -26,7 +27,7 @@ export class UserServiceImpl implements UserService {
   constructor(
     private userRepository: UserRepository,
     private privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private notificationPermissionsRepository: NotificationPermissionsRepository,
+    private notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
   async getAllUsers(limit: number) {
     const users = await this.userRepository.getAll(limit)
