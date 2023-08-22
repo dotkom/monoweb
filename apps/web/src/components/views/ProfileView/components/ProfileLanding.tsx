@@ -1,4 +1,3 @@
-import { useUser } from "@clerk/nextjs"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
 

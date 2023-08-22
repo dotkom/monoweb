@@ -26,16 +26,14 @@ import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-pro
 import { RefundRequestServiceImpl } from "./payment/refund-request-service"
 import { MarkServiceImpl } from "./mark/mark-service"
 import { PersonalMarkServiceImpl } from "./mark/personal-mark-service"
-import { ClerkClient } from "@clerk/clerk-sdk-node/dist/types/types"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
 export type ServerLayerOptions = {
   db: Kysely<Database>
-  clerkClient: ClerkClient
 }
 
-export const createServiceLayer = async ({ db, clerkClient }: ServerLayerOptions) => {
+export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const companyRepository = new CompanyRepositoryImpl(db)
@@ -54,8 +52,7 @@ export const createServiceLayer = async ({ db, clerkClient }: ServerLayerOptions
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    clerkClient
+    notificationPermissionsRepository
   )
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
   const attendanceService = new AttendanceServiceImpl(attendanceRepository)

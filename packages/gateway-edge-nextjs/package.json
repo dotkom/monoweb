@@ -14,7 +14,6 @@
     "coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@clerk/clerk-sdk-node": "^4.12.1",
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "stripe": "^12.16.0"

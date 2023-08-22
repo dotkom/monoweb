@@ -1,5 +1,4 @@
 import React from "react"
-import { useAuth } from "@clerk/nextjs"
 
 const Home: React.FC = () => {
   const auth = useAuth()

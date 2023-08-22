@@ -15,8 +15,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.379.1",
-    "@clerk/nextjs": "^4.23.1",
-    "@clerk/themes": "^1.7.5",
+    "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/emails": "workspace:*",
     "@dotkomonline/gateway-edge-nextjs": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
@@ -24,7 +23,6 @@
     "@dotkomonline/ui": "workspace:*",
     "@next/env": "^13.4.12",
     "@next/font": "^13.4.12",
-    "@ory/client": "^1.1.41",
     "@portabletext/react": "^2.0.3",
     "@radix-ui/colors": "^0.1.9",
     "@radix-ui/react-avatar": "^1.0.3",

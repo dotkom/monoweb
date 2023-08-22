@@ -24,7 +24,6 @@ import { useRouter } from "next/router"
 import { FC, PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
-import { useAuth } from "@clerk/nextjs"
 
 export const ProfileMenu = () => {
   const router = useRouter()
