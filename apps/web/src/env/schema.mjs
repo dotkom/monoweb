@@ -9,7 +9,6 @@ export const serverSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]),
   DATABASE_URL: z.string(),
   HYDRA_ADMIN_URL: z.string(),
-  NEXTAUTH_CLIENT_ID: z.string(),
   NEXTAUTH_SECRET: z.string(),
   CLERK_SECRET_KEY: z.string()
 })

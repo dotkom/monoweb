@@ -1,3 +1,3 @@
-export { authOptions } from "./src/auth-options"
-export { getServerSession } from "./src/get-session"
+export { getAuthOptions } from "./src/auth-options"
+export type * from "./src/auth-options"
 export type { Session } from "next-auth"

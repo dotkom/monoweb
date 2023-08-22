@@ -1,6 +1,6 @@
-import {DefaultSession, DefaultUser, User} from "next-auth"
+import { DefaultSession, DefaultUser, User } from "next-auth"
 import { type NextAuthOptions } from "next-auth"
-import CognitoProvider from "next-auth/providers/cognito";
+import CognitoProvider from "next-auth/providers/cognito"
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -16,25 +16,33 @@ declare module "next-auth" {
   }
 }
 
-export const authOptions: NextAuthOptions = {
+export type AuthOptions = {
+  cognitoClientId: string
+  cognitoClientSecret: string
+  cognitoIssuer: string
+}
+
+export const getAuthOptions = ({
+  cognitoClientId,
+  cognitoClientSecret,
+  cognitoIssuer,
+}: AuthOptions): NextAuthOptions => ({
   providers: [
-      CognitoProvider({
-        clientId: process.env.DASHBOARD_COGNITO_CLIENT_ID as string,
-        clientSecret: process.env.DASHBOARD_COGNITO_CLIENT_SECRET as string,
-        issuer: process.env.DASHBOARD_COGNITO_ISSUER as string,
-        profile: (profile): User => {
-          const middleName = profile.middle_name !== undefined
-            ? profile.middle_name + ' '
-              : ''
-          const name = `${profile.given_name} ${middleName} ${profile.family_name}`
-          return {
-            id: profile.sub,
-            name,
-            email: profile.email,
-            image: profile.picture ?? undefined
-          }
+    CognitoProvider({
+      clientId: cognitoClientId,
+      clientSecret: cognitoClientSecret,
+      issuer: cognitoIssuer,
+      profile: (profile): User => {
+        const middleName = profile.middle_name !== undefined ? profile.middle_name + " " : ""
+        const name = `${profile.given_name} ${middleName} ${profile.family_name}`
+        return {
+          id: profile.sub,
+          name,
+          email: profile.email,
+          image: profile.picture ?? undefined,
         }
-      }),
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -47,4 +55,4 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
-}
+})
