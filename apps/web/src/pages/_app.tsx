@@ -8,10 +8,10 @@ import "../styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import { Poppins } from "next/font/google"
 import { cn } from "@dotkomonline/ui"
+import {SessionProvider} from "next-auth/react";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 
-// TODO: App directory?
 export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
   getLayout?: (page: ReactElement) => ReactNode
 }
@@ -24,9 +24,11 @@ function CustomApp<P>({ Component, pageProps }: CustomAppProps<P>): JSX.Element 
   const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>)
 
   return (
-    <ThemeProvider>
+    <SessionProvider>
+      <ThemeProvider>
         <div className={cn(poppins.variable, "h-full w-full")}>{getLayout(<Component {...pageProps} />)}</div>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }
 

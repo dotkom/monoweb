@@ -1,5 +1,6 @@
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
+import {User} from "next-auth";
 
 interface IFormInput {
   name: string
@@ -18,16 +19,14 @@ const FormInput: React.FC<IFormInput> = ({ name, value }) => {
   )
 }
 
-const Landing: NextPage = () => {
-  const { user } = useUser()
-
+const Landing: NextPage<{ user: User }> = ({ user }) => {
   return (
     <div className="w-full">
       <div className="flex w-full items-end">
         <Avatar></Avatar>
         <div className="ml-8 flex w-full justify-between">
           <div>
-            <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{user?.username}</p>
+            <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{user.name}</p>
             <p className="text-slate-12 text-[14px]">Update your photo and personal details</p>
           </div>
           <div className="flex items-center gap-2"></div>
@@ -35,9 +34,8 @@ const Landing: NextPage = () => {
       </div>
       <div className="mt-12">
         <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Kontakt</p>
-        <FormInput name="Brukernavn" value={user?.username} />
         <FormInput name="Telefon" />
-        <FormInput name="Epost" value={user?.primaryEmailAddress?.emailAddress} />
+        <FormInput name="Epost" value={user.email} />
       </div>
       <div className="mt-12">
         <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Studie</p>
