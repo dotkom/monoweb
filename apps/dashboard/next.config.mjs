@@ -10,7 +10,7 @@ const config = {
   experimental: {
     appDir: true,
   },
-  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/types","@dotkomonline/auth", "@dotkomonline/api"],
+  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/types","@dotkomonline/auth", "@dotkomonline/env", "@dotkomonline/api"],
   eslint: {
     ignoreDuringBuilds: !!process.env.CI,
   },

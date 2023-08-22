@@ -519,6 +519,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
       next:
         specifier: ^13.4.12
         version: 13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
