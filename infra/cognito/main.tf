@@ -35,6 +35,34 @@ resource "aws_cognito_user_pool" "cognito" {
     }
   }
 
+  schema {
+    name                = "given_name"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = true
+  }
+
+  schema {
+    name                = "family_name"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = true
+  }
+
+  schema {
+    name                = "middle_name"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = false
+  }
+
+  schema {
+    name                = "gender"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = true
+  }
+
   account_recovery_setting {
     recovery_mechanism {
       name     = "verified_email"
@@ -46,6 +74,8 @@ resource "aws_cognito_user_pool" "cognito" {
 resource "aws_cognito_user_pool_client" "monoweb" {
   name         = "monoweb"
   user_pool_id = aws_cognito_user_pool.cognito.id
+
+  supported_identity_providers = ["COGNITO"]
 
   access_token_validity                = 1
   allowed_oauth_flows_user_pool_client = true
@@ -64,8 +94,31 @@ resource "aws_cognito_user_pool_client" "monoweb" {
   )
 }
 
-resource "aws_cognito_user_pool_domain" "domain" {
+resource "aws_cognito_user_pool_client" "dashboard" {
+  name         = "dashboard"
   user_pool_id = aws_cognito_user_pool.cognito.id
-  domain       = "auth.${terraform.workspace}.online.ntnu.no"
+
+  supported_identity_providers = ["COGNITO"]
+
+  access_token_validity                = 1
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+
+  generate_secret = true
+  callback_urls = concat(
+    ["https://dashboard.${terraform.workspace}.online.ntnu.no/api/auth/callback/google"],
+    terraform.workspace == "dev"
+    ? ["http://localhost:3002/api/auth/callback/cognito"]
+    : [],
+    terraform.workspace == "prd"
+    ? ["https://dashboard.online.ntnu.no/api/auth/callback/google"]
+    : []
+  )
+}
+
+resource "aws_cognito_user_pool_domain" "domain" {
+  user_pool_id    = aws_cognito_user_pool.cognito.id
+  domain          = "auth.${terraform.workspace}.online.ntnu.no"
   certificate_arn = aws_acm_certificate.domain_certificate.arn
 }
