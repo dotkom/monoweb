@@ -3,7 +3,7 @@ import {
   NotificationPermissionsWrite,
   PrivacyPermissions,
   PrivacyPermissionsWrite,
-  User,
+  User, UserWrite,
 } from "@dotkomonline/types"
 
 import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
@@ -14,7 +14,7 @@ import { NotFoundError } from "../../errors/errors"
 export interface UserService {
   getUser(id: User["id"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
-  createUser(id: string): Promise<User>
+  createUser(input: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: string,
@@ -34,13 +34,13 @@ export class UserServiceImpl implements UserService {
   }
 
   async getUser(id: User["id"]) {
-    const user = await this.userRepository.getByID(id)
+    const user = await this.userRepository.getById(id)
     if (!user) throw new NotFoundError(`User with ID:${id} not found`)
     return user
   }
 
-  async createUser(id: string) {
-    const res = await this.userRepository.create({ id: id })
+  async createUser(input: UserWrite) {
+    const res = await this.userRepository.create(input)
     return res
   }
 
