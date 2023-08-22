@@ -1,41 +1,40 @@
-import { DefaultSession } from "next-auth"
+import {DefaultSession, DefaultUser, User} from "next-auth"
 import { type NextAuthOptions } from "next-auth"
+import CognitoProvider from "next-auth/providers/cognito";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"]
+    user: User
+    id: string
+  }
+
+  interface User extends DefaultUser {
+    id: string
+    name: string
+    email: string
+    image?: string
   }
 }
 
 export const authOptions: NextAuthOptions = {
-  // TODO: use next-auth default jwt adapter
-  //  context: it failed because for some reason, user would be undefined in
-  //  session callback. investigate later
-  // Configure one or more authentication providers
   providers: [
-    {
-      id: "onlineweb",
-      name: "Onlineweb",
-      type: "oauth",
-      wellKnown: `${process.env.HYDRA_PUBLIC_URL as string}/.well-known/openid-configuration`,
-      authorization: { params: { grant_type: "authorization_code", scope: "openid email profile" } },
-      /* eslint-disable */
-      profile(profile: any) {
-        return {
-          email: profile.user.emailAddresses[0].emailAddress,
-          id: profile.user.id,
-          image: profile.user.profileImageUrl,
-          name: profile.user.username,
+      CognitoProvider({
+        clientId: process.env.DASHBOARD_COGNITO_CLIENT_ID as string,
+        clientSecret: process.env.DASHBOARD_COGNITO_CLIENT_SECRET as string,
+        issuer: process.env.DASHBOARD_COGNITO_ISSUER as string,
+        profile: (profile): User => {
+          const middleName = profile.middle_name !== undefined
+            ? profile.middle_name + ' '
+              : ''
+          const name = `${profile.given_name} ${middleName} ${profile.family_name}`
+          return {
+            id: profile.sub,
+            name,
+            email: profile.email,
+            image: profile.picture ?? undefined
+          }
         }
-      },
-      /* eslint-enable */
-      clientId: process.env.NEXTAUTH_DASHBOARD_CLIENT_ID as string,
-      clientSecret: process.env.NEXTAUTH_DASHBOARD_CLIENT_SECRET as string,
-    },
+      }),
   ],
   session: {
     strategy: "jwt",
