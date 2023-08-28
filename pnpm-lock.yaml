@@ -174,6 +174,9 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -194,7 +197,7 @@ importers:
         version: 3.21.4
     devDependencies:
       '@dotkomonline/logger':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/logger
       '@faker-js/faker':
         specifier: ^7.6.0
@@ -335,9 +338,15 @@ importers:
       '@dotkomonline/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@dotkomonline/emails':
         specifier: workspace:*
         version: link:../../packages/emails
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@dotkomonline/gateway-edge-nextjs':
         specifier: workspace:*
         version: link:../../packages/gateway-edge-nextjs
@@ -451,13 +460,10 @@ importers:
         version: 3.21.4
     devDependencies:
       '@dotkomonline/config':
-        specifier: ^1.0.0
+        specifier: workspace:*
         version: link:../../packages/config
-      '@dotkomonline/db':
-        specifier: ^1.0.0
-        version: link:../../packages/db
       '@dotkomonline/logger':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/logger
       '@types/cors':
         specifier: ^2.8.13
@@ -598,6 +604,9 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
@@ -635,6 +644,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
       kysely:
         specifier: ^0.26.0
         version: 0.26.0
@@ -655,7 +667,7 @@ importers:
   packages/emails:
     dependencies:
       '@dotkomonline/config':
-        specifier: ^1.0.0
+        specifier: workspace:*
         version: link:../config
       '@react-email/button':
         specifier: ^0.0.10
@@ -805,6 +817,9 @@ importers:
 
   packages/logger:
     dependencies:
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
       winston:
         specifier: ^3.10.0
         version: 3.10.0

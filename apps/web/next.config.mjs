@@ -11,10 +11,16 @@ const config = {
     appDir: true,
     swcPlugins: [["next-superjson-plugin", {}]]
   },
-  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/types", "@dotkomonline/api"],
-  eslint: {
-    ignoreDuringBuilds: !!process.env.CI,
-  },
+  transpilePackages: [
+    "@dotkomonline/auth",
+    "@dotkomonline/db",
+    "@dotkomonline/env",
+    "@dotkomonline/emails",
+    "@dotkomonline/gateway-edge-nextjs",
+    "@dotkomonline/gateway-trpc",
+    "@dotkomonline/types",
+    "@dotkomonline/ui",
+  ],
 }
 
 export default config
