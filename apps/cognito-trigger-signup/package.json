@@ -1,0 +1,26 @@
+{
+  "name": "@dotkomonline/cognito-trigger-signup",
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.398.0",
+    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/env": "workspace:*",
+    "@dotkomonline/core": "workspace:*",
+    "@dotkomonline/types": "workspace:*",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.119",
+    "@types/eslint": "^8.44.1",
+    "eslint": "^8.46.0",
+    "tsup": "^7.2.0",
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "build": "tsup src/lambda.ts",
+    "bundle": "echo '{\"type\":\"module\"}' > dist/package.json && cd dist && zip -r build.zip package.json lambda.js lambda.js.map",
+    "release:dev": "aws s3 cp dist/build.zip s3://cognito-trigger-dev.online.ntnu.no/cognito-trigger-signup-lambda.zip"
+  }
+}

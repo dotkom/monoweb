@@ -63,11 +63,27 @@ resource "aws_cognito_user_pool" "cognito" {
     required            = true
   }
 
+  schema {
+    name                = "phone_number"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = false
+  }
+
   account_recovery_setting {
     recovery_mechanism {
       name     = "verified_email"
       priority = 1
     }
+  }
+
+  lambda_config {
+    post_confirmation = aws_lambda_function.cognito_trigger_signup.arn
+  }
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = [schema]
   }
 }
 
@@ -121,4 +137,9 @@ resource "aws_cognito_user_pool_domain" "domain" {
   user_pool_id    = aws_cognito_user_pool.cognito.id
   domain          = "auth.${terraform.workspace}.online.ntnu.no"
   certificate_arn = aws_acm_certificate.domain_certificate.arn
+
+  depends_on = [
+    aws_acm_certificate.domain_certificate,
+    aws_acm_certificate_validation.certificate_validation
+  ]
 }
