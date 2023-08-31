@@ -1,5 +1,5 @@
 {
-  "name": "monorepo",
+  "name": "@dotkomonline/root",
   "version": "1.0.0",
   "description": "A monorepo for Node apps",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
@@ -9,6 +9,10 @@
     "build": "turbo run build --filter=@dotkomonline/*",
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
+    "build:cognito-trigger-signup": "turbo run build --filter=@dotkomonline/cognito-trigger-signup",
+    "docker:cognito-trigger-signup:dev": "docker build --platform linux/amd64 -t cognito-trigger-signup:dev -f ./apps/cognito-trigger-signup/Dockerfile .",
+    "release:cognito-trigger-signup:dev": "docker tag cognito-trigger-signup:dev 891459268445.dkr.ecr.eu-north-1.amazonaws.com/cognito-trigger-signup-dev:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/cognito-trigger-signup-dev:latest",
+    "ecr-login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",

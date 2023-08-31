@@ -19,8 +19,6 @@
   "scripts": {
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "build": "tsup src/lambda.ts",
-    "bundle": "echo '{\"type\":\"module\"}' > dist/package.json && cd dist && zip -r build.zip package.json lambda.js lambda.js.map",
-    "release:dev": "aws s3 cp dist/build.zip s3://cognito-trigger-dev.online.ntnu.no/cognito-trigger-signup-lambda.zip"
+    "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json"
   }
 }

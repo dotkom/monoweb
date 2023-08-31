@@ -24,9 +24,7 @@ resource "aws_lambda_permission" "cognito" {
 resource "aws_lambda_function" "cognito_trigger_signup" {
   function_name    = "cognito-trigger-signup-${terraform.workspace}"
   role             = aws_iam_role.trigger_execution_role.arn
-  handler          = "lambda.handler"
-  runtime          = "nodejs18.x"
   timeout          = 10
-  s3_bucket         = aws_s3_object.lambda_trigger_signup.bucket
-  s3_key            = aws_s3_object.lambda_trigger_signup.key
+  image_uri        = "${aws_ecr_repository.cognito_trigger_signup.repository_url}:latest"
+  package_type     = "Image"
 }
