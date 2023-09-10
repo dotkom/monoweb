@@ -7,7 +7,6 @@ import { UserRepositoryImpl } from "../user-repository"
 import { UserServiceImpl } from "../user-service"
 import { randomUUID } from "crypto"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
-import { defaultClerkClient } from "../../../lib/clerk"
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {
   createdAt: new Date(2022, 1, 1),
@@ -34,20 +33,14 @@ const notificationPermissionsPayload: Omit<NotificationPermissions, "userId"> = 
 }
 
 describe("UserService", () => {
-  vi.mock("../../../../lib/clerk", async () => {
-    return { defaultClerkClient: {} }
-  })
-
   const db = vi.mocked(Kysely.prototype)
   const userRepository = new UserRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
-  const clerk = vi.mocked(defaultClerkClient)
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    clerk
+    notificationPermissionsRepository
   )
 
   const userId = randomUUID()

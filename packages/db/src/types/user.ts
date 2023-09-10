@@ -3,6 +3,7 @@ import { Generated } from "kysely"
 export interface UserTable {
   id: Generated<string>
   createdAt: Generated<Date>
+  cognitoSub: string
 }
 
 export interface SessionTable {

@@ -1,11 +1,11 @@
 import winston, { format } from "winston"
-
+import { env } from "@dotkomonline/env"
 export type { Logger } from "winston"
 
 export const getLogger = (path: string) => {
   return winston.createLogger({
     level: "info",
-    silent: process.env.NODE_ENV === "test",
+    silent: env.NODE_ENV === "test",
     format: format.json(),
     transports: [
       new winston.transports.Console({

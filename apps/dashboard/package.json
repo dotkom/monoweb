@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@dotkomonline/auth": "workspace:*",
+    "@dotkomonline/env": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
