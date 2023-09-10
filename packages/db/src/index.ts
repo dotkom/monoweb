@@ -1,5 +1,5 @@
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
-
+import { env } from "@dotkomonline/env"
 import { Database } from "./types"
 import pg from "pg"
 
@@ -17,12 +17,12 @@ export const kysely =
   new Kysely<Database>({
     dialect: new PostgresDialect({
       pool: new pg.Pool({
-        connectionString: process.env.DATABASE_URL as string,
+        connectionString: env.DATABASE_URL,
       }),
     }),
     plugins: [new CamelCasePlugin()],
   })
 
-if (process.env.NODE_ENV !== "production") {
+if (env.NODE_ENV !== "production") {
   global.kysely = kysely
 }
