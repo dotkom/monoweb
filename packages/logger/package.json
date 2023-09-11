@@ -1,0 +1,20 @@
+{
+  "name": "@dotkomonline/logger",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dotkomonline/env": "workspace:*",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.46.0"
+  }
+}

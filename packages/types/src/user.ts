@@ -1,17 +1,15 @@
 import { z } from "zod"
 
 export const UserSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
   createdAt: z.date(),
-  name: z.string().nullish(),
-  email: z.string(),
-  emailVerified: z.date().nullish(),
-  image: z.string().nullish(),
+  cognitoSub: z.string().uuid(),
 })
 
 export type User = z.infer<typeof UserSchema>
+export type UserId = User["id"]
 
-export const UserWriteSchema = UserSchema.partial({
+export const UserWriteSchema = UserSchema.omit({
   id: true,
   createdAt: true,
 })

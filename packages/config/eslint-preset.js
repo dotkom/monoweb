@@ -20,7 +20,7 @@ module.exports = {
       },
     },
     {
-      files: ["packages/ow-db/src/migrations/*"],
+      files: ["packages/db/src/migrations/*"],
       rules: {
         "@typescript-eslint/no-explicit-any": "off",
       },

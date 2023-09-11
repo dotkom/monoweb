@@ -1,4 +1,3 @@
-# Use postgres/example user/password credentials
 version: "3.2"
 
 services:
@@ -12,49 +11,3 @@ services:
       POSTGRES_DB: ow
     ports:
       - 6543:5432
-  hydra:
-    container_name: hydra
-    image: oryd/hydra:v2.0.3
-    ports:
-      - "4444:4444" # Public port
-      - "4445:4445" # Admin port
-      - "5555:5555" # Port for hydra token user
-    command: serve -c /etc/config/hydra/hydra.yml all --dev
-    volumes:
-      - type: bind
-        source: ./packages/config/hydra/local
-        target: /etc/config/hydra
-    environment:
-      - DSN=postgres://hydra:secret@hydra-db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
-    restart: unless-stopped
-    depends_on:
-      - hydra-migrate
-    networks:
-      - intranet
-  hydra-migrate:
-    image: oryd/hydra:v2.0.3
-    environment:
-      - DSN=postgres://hydra:secret@hydra-db:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
-    command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
-    volumes:
-      - type: bind
-        source: ./packages/config/hydra/local
-        target: /etc/config/hydra
-    restart: on-failure
-    depends_on:
-      - hydra-db
-    networks:
-      - intranet
-  hydra-db:
-    image: postgres:11.16
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=hydra
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=hydra
-    networks:
-      - intranet
-
-networks:
-  intranet:

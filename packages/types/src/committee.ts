@@ -4,6 +4,9 @@ export const CommitteeSchema = z.object({
   id: z.string().uuid(),
   createdAt: z.date(),
   name: z.string(),
+  description: z.string(),
+  email: z.string(),
+  image: z.string().nullable(),
 })
 
 export type Committee = z.infer<typeof CommitteeSchema>

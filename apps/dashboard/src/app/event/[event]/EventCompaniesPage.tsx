@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useMemo } from "react"
 import { useEventDetailsContext } from "./provider"
 import { trpc } from "../../../trpc"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -8,59 +8,79 @@ import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
 import { createSelectInput, useFormBuilder } from "../../form"
 import { z } from "zod"
+import { useQueryNotification } from "../../../notifications"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()
-  const { data: eventCompanies = [] } = trpc.event.getCompanies.useQuery({
+  const createNotification = useQueryNotification()
+  const deleteNotification = useQueryNotification()
+  const { data: eventCompanies = [] } = trpc.event.company.get.useQuery({
     id: event.id,
   })
   const { data: companies = [] } = trpc.company.all.useQuery({ take: 999 })
   const utils = trpc.useContext()
-  const { mutate: deleteCompanyMutate } = trpc.event.deleteCompany.useMutation({
+  const { mutate: deleteCompanyMutate } = trpc.event.company.delete.useMutation({
     onSuccess: () => {
-      utils.event.getCompanies.invalidate()
+      deleteNotification.complete({
+        title: "Bedrift fjernet",
+        message: "Bedriften har blitt fjernet fra arrangørlisten.",
+      })
+      utils.event.company.get.invalidate()
     },
   })
-  const { mutate: addCompanyMutate } = trpc.event.addCompany.useMutation({
+  const { mutate: createCompanyMutate } = trpc.event.company.create.useMutation({
     onSuccess: () => {
-      utils.event.getCompanies.invalidate()
+      createNotification.complete({
+        title: "Bedrift lagt til",
+        message: "Bedriften har blitt lagt til arrangørlisten.",
+      })
+      utils.event.company.get.invalidate()
     },
   })
   const columnHelper = createColumnHelper<Company>()
-  const columns = [
-    columnHelper.accessor((eventCompany) => eventCompany, {
-      id: "eventCompany",
-      header: () => "Navn",
-      cell: (info) => {
-        const name = companies.find((x) => x.id === info.getValue().id)?.name ?? "Ingen navn"
-        const image = info.getValue().image
-        return image !== null ? (
-          <Group>
-            <Image width={40} height={40} fit="contain" src={image} alt="company logo" />
-            {name}
-          </Group>
-        ) : (
-          <Group>
-            <Icon width={40} height={40} icon="tabler:user-circle" />
-            {name}
-          </Group>
-        )
-      },
-    }),
-    columnHelper.accessor((eventCompany) => eventCompany, {
-      id: "actions",
-      header: () => "Verktøy",
-      cell: (info) => {
-        const id = info.getValue().id
-        const onClick = () => deleteCompanyMutate({ id: event.id, company: id })
-        return (
-          <Button variant="outline" leftIcon={<Icon icon="tabler:trash" />} onClick={onClick}>
-            Fjern
-          </Button>
-        )
-      },
-    }),
-  ]
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor((eventCompany) => eventCompany, {
+        id: "eventCompany",
+        header: () => "Navn",
+        cell: (info) => {
+          const name = companies.find((x) => x.id === info.getValue().id)?.name ?? "Ingen navn"
+          const image = info.getValue().image
+          return image !== null ? (
+            <Group>
+              <Image width={40} height={40} fit="contain" src={image} alt="company logo" />
+              {name}
+            </Group>
+          ) : (
+            <Group>
+              <Icon width={40} height={40} icon="tabler:user-circle" />
+              {name}
+            </Group>
+          )
+        },
+      }),
+      columnHelper.accessor((eventCompany) => eventCompany, {
+        id: "actions",
+        header: () => "Verktøy",
+        cell: (info) => {
+          const id = info.getValue().id
+          const onClick = () => {
+            deleteCompanyMutate({ id: event.id, company: id })
+            deleteNotification.loading({
+              title: "Fjerner bedrift",
+              message: `Fjerner bedriften fra arrangørlisten til dette arrangementet.`,
+            })
+          }
+          return (
+            <Button variant="outline" leftIcon={<Icon icon="tabler:trash" />} onClick={onClick}>
+              Fjern
+            </Button>
+          )
+        },
+      }),
+    ],
+    [companies, columnHelper, deleteCompanyMutate, deleteNotification, event.id]
+  )
   const table = useReactTable<Company>({
     data: eventCompanies,
     columns,
@@ -83,14 +103,20 @@ export const EventCompaniesPage: FC = () => {
       }),
     },
     label: "Legg til ny bedrift",
-    onSubmit: (data) => addCompanyMutate(data),
+    onSubmit: (data) => {
+      createNotification.loading({
+        title: "Legger til bedrift...",
+        message: `Legger til bedriften som arrangør av dette arrangementet.`,
+      })
+      createCompanyMutate(data)
+    },
   })
 
   return (
     <Box>
       <Title order={3}>Bedrifter</Title>
       <Text>Dette er en oversikt over hvilke bedrifter som arrangerer dette arrangementet.</Text>
-      {FormComponent}
+      <FormComponent />
       <GenericTable table={table} />
     </Box>
   )

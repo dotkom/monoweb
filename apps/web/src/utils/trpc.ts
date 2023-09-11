@@ -1,22 +1,21 @@
 import { createTRPCNext } from "@trpc/next"
 import { CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
-import type { AppRouter } from "@dotkomonline/api"
+import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
+import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
-  if (typeof window !== "undefined") return "" // browser should use relative url
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}` // SSR should use vercel url
-
-  return `http://localhost:${process.env.PORT ?? 3000}` // dev SSR should use localhost
+  if (typeof window !== "undefined") return ""
+  if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
+  return `http://localhost:3000`
 }
 
 const config: CreateTRPCClientOptions<AppRouter> = {
   transformer: superjson,
   links: [
     loggerLink({
-      enabled: (opts) =>
-        process.env.NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
+      enabled: (opts) => env.NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
       url: `${getBaseUrl()}/api/trpc`,

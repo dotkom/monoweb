@@ -16,7 +16,7 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["lint"],
+      "dependsOn": ["lint", "type-check"],
       "outputs": []
     },
     "lint": {
@@ -43,21 +43,21 @@
   },
   "globalEnv": [
     "NODE_ENV",
-    "API_PORT",
-    "DASHBOARD_PORT",
-    "NEXTAUTH_CLIENT_ID",
-    "NEXTAUTH_CLIENT_SECRET",
-    "NEXTAUTH_URL",
+    "WEB_COGNITO_CLIENT_ID",
+    "WEB_COGNITO_CLIENT_SECRET",
+    "WEB_COGNITO_ISSUER",
+    "DASHBOARD_COGNITO_CLIENT_ID",
+    "DASHBOARD_COGNITO_CLIENT_SECRET",
+    "DASHBOARD_COGNITO_ISSUER",
     "NEXTAUTH_SECRET",
-    "NEXTAUTH_DASHBOARD_CLIENT_ID",
-    "NEXTAUTH_DASHBOARD_CLIENT_SECRET",
-    "HYDRA_ADMIN_URL",
-    "HYDRA_PUBLIC_URL",
-    "NEXT_PUBLIC_DEBUG",
     "DATABASE_URL",
-    "UPSTASH_REDIS_REST_URL",
-    "UPSTASH_REDIS_REST_TOKEN",
     "VERCEL_URL",
-    "PORT"
+    "PORT",
+    "FAGKOM_STRIPE_PUBLIC_KEY",
+    "FAGKOM_STRIPE_SECRET_KEY",
+    "FAGKOM_STRIPE_WEBHOOK_SECRET",
+    "TRIKOM_STRIPE_PUBLIC_KEY",
+    "TRIKOM_STRIPE_SECRET_KEY",
+    "TRIKOM_STRIPE_WEBHOOK_SECRET"
   ]
 }

@@ -62,12 +62,6 @@ const SIDEBAR_LINKS = [
     label: "Komiteer",
     targetSegment: "committee",
   },
-  {
-    icon: "tabler:user-circle",
-    href: "/user",
-    label: "Brukere",
-    targetSegment: "user",
-  },
 ]
 
 const ApplicationSidebar: FC = () => {
