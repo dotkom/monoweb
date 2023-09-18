@@ -25,14 +25,14 @@ const ProfileMembership = () => {
         <AccordionItem value="item-1">
           <AccordionTrigger>Aktive søknader</AccordionTrigger>
           <AccordionContent>
-          <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
+            <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
             Du har ingen aktive søknader.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger>Avslåtte søknader</AccordionTrigger>
           <AccordionContent>
-          <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
+            <h3>Medlemskap- og studieretningssøknad for Ola Nordmann</h3>
             Du har ingen aktive søknader.
           </AccordionContent>
         </AccordionItem>

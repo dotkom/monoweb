@@ -17,9 +17,9 @@ const PermissionRow: FC<PermissionProps> = ({ children }) => {
 
   return (
     <div className="w-full">
-        <div className="col-span-4 mt-1">{children}</div>
-        <PermissionOption />
-        <PermissionOption />
+      <div className="col-span-4 mt-1">{children}</div>
+      <PermissionOption />
+      <PermissionOption />
     </div>
   )
 }

@@ -17,15 +17,15 @@ const ProfileNotifications = () => {
     <div className="flex w-full flex-col">
       <h2 className="mb-2 w-full flex-auto p-1">Varsler</h2>
       <p className="m-0 w-full flex-auto p-1 text-lg font-normal italic">
-        Varsler er alle henvendelser du kan motta på via både e-post og pushvarsler fra Onlines nettsider. 
+        Varsler er alle henvendelser du kan motta på via både e-post og pushvarsler fra Onlines nettsider.
       </p>
-      <p className="m-0 w-full flex-auto p-1 text-lg font-normal non-italic">
+      <p className="non-italic m-0 w-full flex-auto p-1 text-lg font-normal">
         Du kan selv velge hvilke varsler du ønsker å motta, enten som e-post eller via push.
       </p>
       <h3>Nettleserstøtte</h3>
       <p className="mt-2 w-full">
-        Pushvarsler støttes foreløpig ikke på iPhone og iPad fra Apple. Hvis ikke følgende funksjonalitet 
-        er tilgjengelig kan det hjelpe å oppdatere nettleseren din.
+        Pushvarsler støttes foreløpig ikke på iPhone og iPad fra Apple. Hvis ikke følgende funksjonalitet er
+        tilgjengelig kan det hjelpe å oppdatere nettleseren din.
       </p>
       <div className="divide-slate-7 my-5 flex w-full flex-col divide-y">
         {browserList.map((title) => {
@@ -43,13 +43,13 @@ const ProfileNotifications = () => {
       </div>
       <h3>Tillatelser</h3>
       <p>
-        Du kan velge å motta varsler av hver type på enten e-post eller som pushvarsel. Enkelte 
-        verdier er ikke mulig å velge, og enkelte kan ikke velges bort.
+        Du kan velge å motta varsler av hver type på enten e-post eller som pushvarsel. Enkelte verdier er ikke mulig å
+        velge, og enkelte kan ikke velges bort.
       </p>
-      <div className="grid grid-cols-6 mt-2 mb-10">
-        <div className="font-semibold mt-2 col-span-4">Beskrivelse</div>
-        <div className="font-semibold mt-2 col-span-1 ml-auto mr-auto">Tillat epost</div>
-        <div className="font-semibold mt-2 col-span-1 ml-auto mr-auto">Tillat push</div>
+      <div className="mb-10 mt-2 grid grid-cols-6">
+        <div className="col-span-4 mt-2 font-semibold">Beskrivelse</div>
+        <div className="col-span-1 ml-auto mr-auto mt-2 font-semibold">Tillat epost</div>
+        <div className="col-span-1 ml-auto mr-auto mt-2 font-semibold">Tillat push</div>
 
         <div className="col-span-4 mt-1">Søknader (medlemskap- og komitésøknader)</div>
         <PermissionOption />
@@ -94,6 +94,5 @@ const ProfileNotifications = () => {
     </div>
   )
 }
-    
+
 export default ProfileNotifications
-      

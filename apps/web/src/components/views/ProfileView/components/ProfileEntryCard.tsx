@@ -18,12 +18,12 @@ const ProfileEntryCard = () => {
         <b>EM kode:</b> 1234567890
       </p>
       <p>
-        <b>RFID:</b> 5678901234 
+        <b>RFID:</b> 5678901234
       </p>
       <h3>Nytt kort</h3>
       <label>EM nummer (se studentkort)</label>
-      <TextInput className="mt-3"/>
-      <Button color="blue" variant="solid" className="mt-3 mb-10">
+      <TextInput className="mt-3" />
+      <Button color="blue" variant="solid" className="mb-10 mt-3">
         Lagre
       </Button>
     </div>
