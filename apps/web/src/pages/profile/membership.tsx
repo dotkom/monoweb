@@ -1,9 +1,10 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
+import { ProfileMembership } from "@/components/views/ProfileView/components"
 
 const MembershipPage: NextPageWithLayout = () => {
-  return <div>Membership</div>
+  return <ProfileMembership />
 }
 
 MembershipPage.getLayout = (page) => {
