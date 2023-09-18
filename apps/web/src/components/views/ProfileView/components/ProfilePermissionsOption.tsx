@@ -1,5 +1,4 @@
 import { Toggle } from "@dotkomonline/ui"
-import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
 
 const PermissionOption = () => {
   return (

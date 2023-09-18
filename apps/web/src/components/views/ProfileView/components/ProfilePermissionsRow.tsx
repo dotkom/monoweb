@@ -1,7 +1,4 @@
-import { Toggle } from "@dotkomonline/ui"
-import { blackA } from "@radix-ui/colors"
-import { GridIcon } from "@radix-ui/react-icons"
-import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
+import { FC, ReactNode, useState, useEffect } from "react"
 import PermissionOption from "./ProfilePermissionsOption"
 
 interface PermissionProps {
@@ -9,7 +6,7 @@ interface PermissionProps {
 }
 
 const PermissionRow: FC<PermissionProps> = ({ children }) => {
-  const [isChecked, setIsChecked] = useState<boolean>(false)
+  const [isChecked] = useState<boolean>(false)
 
   useEffect(() => {
     console.log(isChecked)

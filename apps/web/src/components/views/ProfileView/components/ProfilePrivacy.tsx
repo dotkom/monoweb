@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
-import ProfileMyData from "./ProfileMyData"
 import PrivacyModule from "./ProfilePrivacyModule"
 
 const ProfilePrivacy = () => {
-  const [checked, setIsChecked] = useState(false)
+  const [checked] = useState(false)
 
   useEffect(() => {
     console.log(checked)
@@ -16,7 +15,6 @@ const ProfilePrivacy = () => {
         Her kan du endre personverninnstillingene koblet til profilen din.
       </p>
       <PrivacyModule />
-      {/* <ProfileMyData /> */}
     </div>
   )
 }

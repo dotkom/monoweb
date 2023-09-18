@@ -1,6 +1,4 @@
-import { blackA } from "@radix-ui/colors"
-import { GridIcon } from "@radix-ui/react-icons"
-import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
+import { FC, useState, useEffect } from "react"
 
 import PersonvernOption from "./ProfileToggleOption"
 
@@ -15,7 +13,7 @@ export const personList = [
 ]
 
 const PrivacyModule: FC = () => {
-  const [isChecked, setIsChecked] = useState<boolean>(false)
+  const [isChecked] = useState<boolean>(false)
 
   useEffect(() => {
     console.log(isChecked)

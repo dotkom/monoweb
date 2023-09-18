@@ -1,14 +1,12 @@
 import { Toggle } from "@dotkomonline/ui"
-import { blackA } from "@radix-ui/colors"
-import { GridIcon } from "@radix-ui/react-icons"
-import { SetStateAction, FC, ReactNode, useState, useEffect } from "react"
+import { FC, ReactNode, useState, useEffect } from "react"
 
 interface PrivacyProps {
   children: ReactNode
 }
 
 const PrivacyOption: FC<PrivacyProps> = ({ children }) => {
-  const [isChecked, setIsChecked] = useState<boolean>(false)
+  const [isChecked] = useState<boolean>(false)
 
   useEffect(() => {
     console.log(isChecked)

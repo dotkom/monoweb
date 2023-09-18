@@ -12,7 +12,7 @@ module.exports = {
   overrides: [
     {
       files: ["*.ts", "*.tsx"],
-      extends: ["plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/eslint-recommended"],
+      extends: ["plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/eslint-recommended",],
       plugins: ["@typescript-eslint"],
       parser: "@typescript-eslint/parser",
       rules: {
