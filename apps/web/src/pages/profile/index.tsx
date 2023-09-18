@@ -5,6 +5,7 @@ import { NextPageWithLayout } from "../_app"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { getServerSession, User } from "next-auth"
 import { web } from "@dotkomonline/auth"
+import { authOptions } from "@dotkomonline/auth/src/web.app"
 
 const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => {
   return <ProfileLanding user={user} />
@@ -18,8 +19,8 @@ LandingPage.getLayout = (page) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{ user: User }> = async () => {
-  const session = await getServerSession(web)
+export const getServerSideProps: GetServerSideProps<{ user: User }> = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions)
   if (session === null) {
     return {
       redirect: {
