@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "@faker-js/faker": "^7.6.0",
+    "@faker-js/faker": "^8.1.0",
     "@types/eslint": "^8.44.1",
     "@types/pg": "^8.10.2",
     "date-fns": "^2.30.0",
