@@ -19,7 +19,7 @@
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.46.0",
-    "tsx": "^3.12.7",
+    "tsx": "^3.12.10",
     "typescript": "^5.0.0"
   },
   "scripts": {
