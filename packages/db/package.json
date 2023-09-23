@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
-    "kysely": "^0.26.0",
+    "kysely": "^0.26.3",
     "pg": "^8.11.1"
   },
   "devDependencies": {
