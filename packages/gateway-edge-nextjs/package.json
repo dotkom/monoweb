@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@vitest/ui": "^0.34.5",
-    "eslint": "^8.46.0",
+    "eslint": "^8.50.0",
     "typescript": "^5.0.0",
     "vitest": "^0.34.5"
   }
