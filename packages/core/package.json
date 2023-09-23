@@ -17,7 +17,7 @@
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "date-fns": "^2.30.0",
-    "kysely": "^0.26.0",
+    "kysely": "^0.26.3",
     "stripe": "^12.16.0",
     "zod": "^3.21.4"
   },
