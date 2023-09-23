@@ -5,7 +5,7 @@ terraform {
     region = "eu-north-1"
   }
 
-  required_version = "~> 1.5.4"
+  required_version = "~> 1.5.7"
 
   required_providers {
     neon = {
