@@ -15,7 +15,6 @@
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
-    "@emotion/react": "^11.11.1",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.1",
     "@iconify/react": "^4.1.1",
