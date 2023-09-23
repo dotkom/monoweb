@@ -187,8 +187,8 @@ importers:
         specifier: ^9.5.0
         version: 9.5.0
       kysely:
-        specifier: ^0.26.0
-        version: 0.26.0
+        specifier: ^0.26.3
+        version: 0.26.3
       pg:
         specifier: ^8.11.1
         version: 8.11.1
@@ -611,8 +611,8 @@ importers:
         specifier: ^2.30.0
         version: 2.30.0
       kysely:
-        specifier: ^0.26.0
-        version: 0.26.0
+        specifier: ^0.26.3
+        version: 0.26.3
       next:
         specifier: ^13.3.1
         version: 13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
@@ -648,8 +648,8 @@ importers:
         specifier: workspace:*
         version: link:../env
       kysely:
-        specifier: ^0.26.0
-        version: 0.26.0
+        specifier: ^0.26.3
+        version: 0.26.3
       pg:
         specifier: ^8.11.1
         version: 8.11.1
@@ -12725,8 +12725,8 @@ packages:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
     dev: false
 
-  /kysely@0.26.0:
-    resolution: {integrity: sha512-uj4wsWeWyGYoJlT4vNjO5wMjZxYp55I+igJJsJGe12R2WDZ4AWHNyRRMQz8Mdnv35DnHXck0S7/I2FIPEIZwjw==}
+  /kysely@0.26.3:
+    resolution: {integrity: sha512-yWSgGi9bY13b/W06DD2OCDDHQmq1kwTGYlQ4wpZkMOJqMGCstVCFIvxCCVG4KfY1/3G0MhDAcZsip/Lw8/vJWw==}
     engines: {node: '>=14.0.0'}
     dev: false
 
