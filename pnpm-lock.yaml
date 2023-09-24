@@ -87,8 +87,8 @@ importers:
         specifier: ^4.35.3
         version: 4.35.3(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-table':
-        specifier: ^8.9.3
-        version: 8.9.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^8.10.1
+        version: 8.10.1(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client':
         specifier: ^10.36.0
         version: 10.36.0(@trpc/server@10.36.0)
@@ -7447,14 +7447,14 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/react-table@8.9.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Ng9rdm3JPoSCi6cVZvANsYnF+UoGVRxflMb270tVj0+LjeT/ZtZ9ckxF6oLPLcKesza6VKBqtdF9mQ+vaz24Aw==}
+  /@tanstack/react-table@8.10.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-pD58vH5ahZv1qzAK9Xl87A5dydBnKiDGdyEsd5VK2bG2wGRbfbpBfH915KdUv+8XqabDQgUo8nU8qHBEQv1qvg==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/table-core': 8.9.3
+      '@tanstack/table-core': 8.10.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -7468,8 +7468,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@tanstack/table-core@8.9.3:
-    resolution: {integrity: sha512-NpHZBoHTfqyJk0m/s/+CSuAiwtebhYK90mDuf5eylTvgViNOujiaOaxNDxJkQQAsVvHWZftUGAx1EfO1rkKtLg==}
+  /@tanstack/table-core@8.10.1:
+    resolution: {integrity: sha512-dvO7wz+WjnT+7KI6ZZ+GAe9tljIFResDaV/TfOhfpeTB0ud9pILsavuM22HAXG2NsVaIG2Zax2OaVIsNt0z7Og==}
     engines: {node: '>=12'}
     dev: false
 
