@@ -29,7 +29,7 @@
     "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
-    "@storybook/react": "^7.1.1",
+    "@storybook/react": "^7.4.4",
     "@types/react": "^18.2.22",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.50.0",
