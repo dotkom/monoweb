@@ -27,7 +27,7 @@
     "apps/*"
   ],
   "engines": {
-    "node": ">=18.13",
+    "node": ">=18.18.0",
     "pnpm": ">=8"
   },
   "devDependencies": {
@@ -42,6 +42,6 @@
     "vitest": "^0.34.5"
   },
   "volta": {
-    "node": "18.17.1"
+    "node": "18.18.0"
   }
 }
