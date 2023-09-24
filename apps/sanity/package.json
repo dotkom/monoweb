@@ -26,6 +26,6 @@
     "@sanity/eslint-config-studio": "^3.0.1",
     "eslint": "^8.50.0",
     "prettier": "^2.8.8",
-    "typescript": "^5.0.0"
+    "typescript": "^5.2.2"
   }
 }
