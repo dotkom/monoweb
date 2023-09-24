@@ -38,7 +38,7 @@
     "tsc-watch": "^6.0.4",
     "tsup": "^6.7.0",
     "turbo": "^1.10.12",
-    "typescript": "^5.0.0",
+    "typescript": "^5.2.2",
     "vitest": "^0.34.5"
   },
   "volta": {
