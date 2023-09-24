@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.379.1",
+    "@aws-sdk/client-ses": "^3.418.0",
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/env": "workspace:*",
