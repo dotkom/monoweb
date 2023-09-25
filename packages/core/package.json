@@ -18,7 +18,7 @@
     "@dotkomonline/db": "workspace:*",
     "date-fns": "^2.30.0",
     "kysely": "^0.26.3",
-    "stripe": "^12.16.0",
+    "stripe": "^12.18.0",
     "zod": "^3.21.4"
   },
   "peerDependencies": {
