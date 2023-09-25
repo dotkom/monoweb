@@ -36,7 +36,7 @@
     "prettier": "^2.8.8",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
-    "tsup": "^6.7.0",
+    "tsup": "^7.2.0",
     "turbo": "^1.10.14",
     "typescript": "^5.2.2",
     "vitest": "^0.34.5"
