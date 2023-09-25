@@ -33,7 +33,7 @@
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.50.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "tsup": "^6.7.0",
