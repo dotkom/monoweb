@@ -7,9 +7,6 @@ const config = {
   images: {
     domains: ["cdn.sanity.io"],
   },
-  experimental: {
-    appDir: true,
-  },
   transpilePackages: [
       "@dotkomonline/auth",
     "@dotkomonline/env",
