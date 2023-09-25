@@ -55,7 +55,7 @@
     "react-hook-form": "^7.46.2",
     "react-icons": "^4.11.0",
     "superjson": "^1.13.1",
-    "zod": "^3.21.4"
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@dotkomonline/config": "workspace:*",
