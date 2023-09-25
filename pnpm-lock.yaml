@@ -270,8 +270,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       '@mdx-js/react':
-        specifier: ^1.6.22
-        version: 1.6.22(react@18.2.0)
+        specifier: ^2.3.0
+        version: 2.3.0(react@18.2.0)
       '@storybook/addon-actions':
         specifier: ^7.4.5
         version: 7.4.5(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0)
@@ -4040,14 +4040,6 @@ packages:
     dependencies:
       react: 18.2.0
     dev: false
-
-  /@mdx-js/react@1.6.22(react@18.2.0):
-    resolution: {integrity: sha512-TDoPum4SHdfPiGSAaRBw7ECyI8VaHpK8GJugbJIJuqyh6kzw9ZLJZW3HGL3NNrJGxcAixUvqROm+YuQOo5eXtg==}
-    peerDependencies:
-      react: ^16.13.1 || ^17.0.0
-    dependencies:
-      react: 18.2.0
-    dev: true
 
   /@mdx-js/react@2.3.0(react@18.2.0):
     resolution: {integrity: sha512-zQH//gdOmuu7nt2oJR29vFhDv88oGPmVw6BggmrHeMI+xgEkp1B2dX9/bMBSYtK0dyLX/aOmesKS09g222K1/g==}
