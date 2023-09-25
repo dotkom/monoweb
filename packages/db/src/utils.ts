@@ -12,7 +12,7 @@ type DefaultOptions = {
 export const createTableWithDefaults = (tableName: string, options: DefaultOptions, schema: SchemaModule) => {
   let table = schema.createTable(tableName)
   if (options.id) {
-    table = table.addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(sql`gen_ulid()`))
+    table = table.addColumn("id", sql`ulid`, (col) => col.primaryKey().defaultTo(sql`gen_ulid()`))
   }
   if (options.createdAt) {
     table = table.addColumn("created_at", "timestamptz", (col) => col.defaultTo(sql`now()`).notNull())

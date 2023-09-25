@@ -18,7 +18,7 @@ export async function up(db: Kysely<any>) {
   await db.schema.alterTable("payment").addColumn("payment_provider_order_id", "text").execute()
 
   await createTableWithDefaults("refund_request", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("payment_id", "uuid", (col) => col.unique().references("payment.id").onDelete("cascade"))
+    .addColumn("payment_id", sql`ulid`, (col) => col.unique().references("payment.id").onDelete("cascade"))
     .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("reason", "text", (col) => col.notNull())
     .addColumn("status", sql`refund_request_status`, (col) => col.notNull().defaultTo("PENDING"))

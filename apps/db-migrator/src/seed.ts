@@ -1,75 +1,27 @@
-import { Database } from "@dotkomonline/db"
 import { faker } from "@faker-js/faker"
-import { addHours } from "date-fns"
-import { Insertable } from "kysely"
 
 import { db } from "./db"
+import {users} from "./fixtures/user";
+import {events} from "./fixtures/event";
+import {attendances} from "./fixtures/attendance";
 
 faker.seed(69)
 
-const createRandomUser = (): Insertable<Database["owUser"]> => {
-  return {
-    id: faker.datatype.uuid(),
-    name: faker.name.firstName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    image: faker.image.avatar(),
-  }
-}
-
-const createRandomEvent = (): Insertable<Database["event"]> => {
-  const start = faker.date.future()
-  return {
-    id: faker.datatype.uuid(),
-    title: faker.lorem.sentence(),
-    subtitle: faker.helpers.arrayElement([faker.lorem.sentence(), undefined]),
-    description: faker.lorem.paragraph(),
-    start: start,
-    end: addHours(start, 8),
-    location: faker.address.streetAddress(),
-    public: faker.datatype.boolean(),
-    status: faker.helpers.arrayElement(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
-    type: faker.helpers.arrayElement(["BEDPRES", "ACADEMIC"]),
-    waitlist: null,
-  }
-}
-
-const createRandomAttendance = (eventIds: string[]): Insertable<Database["attendance"]> => {
-  return {
-    id: faker.datatype.uuid(),
-    eventId: faker.helpers.arrayElement(eventIds),
-    start: faker.date.future(),
-    end: faker.date.future(),
-    deregisterDeadline: faker.date.future(),
-    limit: faker.datatype.number({ min: 5, max: 100 }),
-    min: 0,
-    max: 0,
-  }
-}
-
 export const seed = async () => {
-  const users = Array.from({ length: 15 }).map(() => createRandomUser())
-  const event = Array.from({ length: 15 }).map(() => createRandomEvent())
-  const attendance = Array.from({ length: 15 }).map(() =>
-    createRandomAttendance(event.map((e) => e && e.id).filter((e): e is string => !!e))
-  )
-
-  await db
+    await db
     .insertInto("owUser")
     .values(users)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
-        name: (eb) => eb.ref("excluded.name"),
-        password: (eb) => eb.ref("excluded.password"),
-        image: (eb) => eb.ref("excluded.image"),
+        cognitoSub: (eb) => eb.ref("excluded.cognitoSub"),
       })
     )
     .execute()
 
   await db
     .insertInto("event")
-    .values(event)
+    .values(events)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
@@ -87,7 +39,7 @@ export const seed = async () => {
 
   await db
     .insertInto("attendance")
-    .values(attendance)
+    .values(attendances)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
