@@ -77,10 +77,6 @@ resource "aws_cognito_user_pool" "cognito" {
     }
   }
 
-  lambda_config {
-    post_confirmation = aws_lambda_function.cognito_trigger_signup.arn
-  }
-
   lifecycle {
     prevent_destroy = true
     ignore_changes = [schema]
