@@ -1,5 +1,5 @@
 import { flexRender, type Table as ReactTable } from "@tanstack/react-table"
-import { Card, Table } from "@mantine/core"
+import { Card, Table, TableThead, TableTr, TableTh, TableTd, TableTbody } from "@mantine/core"
 
 export type GenericTableProps<T> = {
   table: ReactTable<T>
@@ -7,26 +7,26 @@ export type GenericTableProps<T> = {
 
 export function GenericTable<T>({ table }: GenericTableProps<T>) {
   return (
-    <Card withBorder shadow="sm">
+    <Card withBorder>
       <Table>
-        <thead>
+        <TableThead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <TableTr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+                <TableTh key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableTh>
               ))}
-            </tr>
+            </TableTr>
           ))}
-        </thead>
-        <tbody>
+        </TableThead>
+        <TableTbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <TableTr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                <TableTd key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableTd>
               ))}
-            </tr>
+            </TableTr>
           ))}
-        </tbody>
+        </TableTbody>
       </Table>
     </Card>
   )

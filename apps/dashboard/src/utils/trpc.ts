@@ -10,7 +10,7 @@ import { env } from "@dotkomonline/env"
 const getBaseUrl = () => {
   if (env.NEXT_PUBLIC_NODE_ENV === "production") return "https://new.online.ntnu.no/"
   if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.NEXT_PUBLIC_VERCEL_URL}`
-  return `http://localhost:3002`
+  return `http://localhost:3000`
 }
 
 export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
