@@ -15,11 +15,11 @@ export const createEnvironment = () =>
       WEB_COGNITO_CLIENT_SECRET: environmentVariableSchema,
       WEB_COGNITO_ISSUER: environmentVariableSchema,
 
-      NODE_ENV: z.enum(["development", "test", "production"]),
+      NODE_ENV: z.enum(["development", "test", "production"]).optional(),
+      VERCEL_URL: environmentVariableSchema.optional(),
+
       DATABASE_URL: environmentVariableSchema,
       NEXTAUTH_SECRET: environmentVariableSchema,
-
-      VERCEL_URL: environmentVariableSchema.optional(),
 
       TRIKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       TRIKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
@@ -61,5 +61,3 @@ export const createEnvironment = () =>
   })
 
 export const env = createEnvironment()
-
-export type Environment = typeof env
