@@ -25,7 +25,7 @@
     "@dotkomonline/ui": "workspace:*",
     "@next/env": "^13.5.2",
     "@next/font": "^13.5.2",
-    "@portabletext/react": "^2.0.3",
+    "@portabletext/react": "^3.0.7",
     "@radix-ui/colors": "^0.1.9",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-checkbox": "^1.0.4",
