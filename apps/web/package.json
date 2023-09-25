@@ -24,7 +24,6 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@next/env": "^13.5.2",
-    "@next/font": "^13.5.2",
     "@portabletext/react": "^3.0.7",
     "@radix-ui/colors": "^2.1.0",
     "@radix-ui/react-avatar": "^1.0.4",
