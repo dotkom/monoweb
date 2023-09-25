@@ -1,3 +1,5 @@
+"use client"
+
 import { createTRPCReact } from "@trpc/react-query"
 import { CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"

@@ -1,3 +1,4 @@
 export default function EventPage() {
-  return <h1>Hello events</h1>
+  const events = [] satisfies string[]
+  return <pre>{JSON.stringify(events, null, 2)}</pre>
 }
