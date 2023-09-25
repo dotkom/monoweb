@@ -18,10 +18,10 @@ import {
 } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Event } from "@dotkomonline/types"
-import {useMemo, useState} from "react"
+import { useMemo, useState } from "react"
 import { formatDate } from "../../../utils/format"
 import { Icon } from "@iconify/react"
-import {EventCreationModal} from "./create-modal";
+import { EventCreationModal } from "./create-modal"
 
 export default function EventPage() {
   const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ take: 50 })
