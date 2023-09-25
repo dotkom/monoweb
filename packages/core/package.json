@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
-    "@types/node": "^18.17.19",
+    "@types/node": "^18.18.0",
     "@vitest/ui": "^0.34.5",
     "eslint": "^8.50.0",
     "typescript": "^5.2.2",
