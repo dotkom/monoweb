@@ -6,8 +6,8 @@ import superjson from "superjson"
 import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
-  if (env.NODE_ENV === "production") return "https://new.online.ntnu.no/"
-  if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
+  if (env.NEXT_PUBLIC_NODE_ENV === "production") return "https://new.online.ntnu.no/"
+  if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.NEXT_PUBLIC_VERCEL_URL}`
   return `http://localhost:3002`
 }
 
@@ -15,7 +15,8 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
   transformer: superjson,
   links: [
     loggerLink({
-      enabled: (opts) => env.NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
+      enabled: (opts) =>
+        env.NEXT_PUBLIC_NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
       url: `${getBaseUrl()}/api/trpc`,
