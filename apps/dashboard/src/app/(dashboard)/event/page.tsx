@@ -18,22 +18,15 @@ import {
 } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Event } from "@dotkomonline/types"
-import { useMemo, useState } from "react"
+import {useMemo, useState} from "react"
 import { formatDate } from "../../../utils/format"
 import { Icon } from "@iconify/react"
-import { useSearchParams } from "next/navigation"
+import {EventCreationModal} from "./create-modal";
 
 export default function EventPage() {
-  const params = useSearchParams()
-  const [cursor, _setCursor] = useState(() => {
-    if (params === null) {
-      return null
-    }
-    return params.has("cursor") ? params.get("cursor") : null
-  })
-
-  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ take: 2, cursor })
+  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ take: 50 })
   const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery({ take: 999 })
+  const [isCreationOpen, setCreationOpen] = useState(false)
 
   const columnHelper = createColumnHelper<Event>()
   const columns = useMemo(
@@ -107,7 +100,7 @@ export default function EventPage() {
           </Table>
         </Card>
         <Group justify="space-between">
-          <Button>Opprett arrangement</Button>
+          <Button onClick={() => setCreationOpen(true)}>Opprett arrangement</Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />
@@ -117,6 +110,8 @@ export default function EventPage() {
             </Button>
           </ButtonGroup>
         </Group>
+
+        {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
       </Stack>
     </Skeleton>
   )
