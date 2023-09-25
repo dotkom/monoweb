@@ -9,7 +9,7 @@
     "commander": "^9.5.0",
     "kysely": "^0.26.3",
     "pg": "^8.11.3",
-    "zod": "^3.21.4"
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@dotkomonline/logger": "workspace:*",

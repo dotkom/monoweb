@@ -123,8 +123,8 @@ importers:
         specifier: ^1.13.1
         version: 1.13.1
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@dotkomonline/config':
         specifier: workspace:^
@@ -193,8 +193,8 @@ importers:
         specifier: ^8.11.3
         version: 8.11.3
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@dotkomonline/logger':
         specifier: workspace:*
@@ -456,8 +456,8 @@ importers:
         specifier: ^1.13.1
         version: 1.13.1
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@dotkomonline/config':
         specifier: workspace:*
@@ -509,7 +509,7 @@ importers:
         version: 3.3.3(ts-node@10.9.1)
       trpc-playground:
         specifier: ^1.0.4
-        version: 1.0.4(@trpc/server@10.36.0)(@types/node@18.17.19)(typescript@5.2.2)(zod@3.21.4)
+        version: 1.0.4(@trpc/server@10.36.0)(@types/node@18.17.19)(typescript@5.2.2)(zod@3.22.2)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -620,8 +620,8 @@ importers:
         specifier: ^12.18.0
         version: 12.18.0
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@dotkomonline/types':
         specifier: workspace:*
@@ -715,8 +715,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@types/react':
         specifier: ^18.2.22
@@ -732,10 +732,10 @@ importers:
     dependencies:
       '@t3-oss/env-core':
         specifier: ^0.6.1
-        version: 0.6.1(typescript@5.2.2)(zod@3.21.4)
+        version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       eslint:
         specifier: ^8.50.0
@@ -796,8 +796,8 @@ importers:
         specifier: ^1.13.1
         version: 1.13.1
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@dotkomonline/types':
         specifier: workspace:*
@@ -831,8 +831,8 @@ importers:
   packages/types:
     dependencies:
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       eslint:
         specifier: ^8.50.0
@@ -7404,14 +7404,14 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.21.4):
+  /@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.2):
     resolution: {integrity: sha512-KQD7qEDJtkWIWWmTVjNvk0wnHpkvAQ6CRbUxbWMFNG/fiosBQDQvtRpBNu6USxBscJCoC4z6y7P9MN52/mLOzw==}
     peerDependencies:
       typescript: '>=4.7.2'
       zod: ^3.0.0
     dependencies:
       typescript: 5.2.2
-      zod: 3.21.4
+      zod: 3.22.2
     dev: false
 
   /@tailwindcss/typography@0.5.10(tailwindcss@3.3.3):
@@ -16474,7 +16474,7 @@ packages:
     engines: {node: '>= 14.0.0'}
     dev: false
 
-  /trpc-playground@1.0.4(@trpc/server@10.36.0)(@types/node@18.17.19)(typescript@5.2.2)(zod@3.21.4):
+  /trpc-playground@1.0.4(@trpc/server@10.36.0)(@types/node@18.17.19)(typescript@5.2.2)(zod@3.22.2):
     resolution: {integrity: sha512-6nVf1o2LNoo1g6oTS24yajoH7xV4CFjxGAbAH7qLXqa3yo9qB5QHsWLbrm1hNt51SyCG++P0zHJaCdVfgvEVDg==}
     peerDependencies:
       '@trpc/server': ^10
@@ -16485,8 +16485,8 @@ packages:
       '@trpc/server': 10.36.0
       lodash: 4.17.21
       uttp: 0.1.3
-      zod: 3.21.4
-      zod-to-ts: 1.1.4(typescript@5.2.2)(zod@3.21.4)
+      zod: 3.22.2
+      zod-to-ts: 1.1.4(typescript@5.2.2)(zod@3.22.2)
     transitivePeerDependencies:
       - '@types/node'
       - express
@@ -17725,15 +17725,18 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /zod-to-ts@1.1.4(typescript@5.2.2)(zod@3.21.4):
+  /zod-to-ts@1.1.4(typescript@5.2.2)(zod@3.22.2):
     resolution: {integrity: sha512-jsCg+pTNxLAdJOfW4ul+SpechdGYEJPPnssSbqWdR2LSIkotT22k+UvqPb1nEHwe/YbEcbUOlZUfGM0npgR+Jg==}
     peerDependencies:
       typescript: ^4.9.4 || ^5.0.2
       zod: ^3
     dependencies:
       typescript: 5.2.2
-      zod: 3.21.4
+      zod: 3.22.2
     dev: true
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+
+  /zod@3.22.2:
+    resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}

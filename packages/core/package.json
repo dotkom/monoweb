@@ -19,7 +19,7 @@
     "date-fns": "^2.30.0",
     "kysely": "^0.26.3",
     "stripe": "^12.18.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.2"
   },
   "peerDependencies": {
     "next": "^13.3.1"
