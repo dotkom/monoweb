@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
+  "major": {
+    "automerge": false
+  },
+
   "packageRules": [
     {
       "matchPackagePatterns": ["^@dotkomonline/", "web", "monorepo", "onlineweb-cms", "db-migrator"],
@@ -9,5 +13,6 @@
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": true
+  "automerge": true,
+  "automergeType": "branch"
 }
