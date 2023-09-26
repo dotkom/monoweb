@@ -9,6 +9,13 @@
     {
       "matchPackagePatterns": ["^@dotkomonline/", "web", "monorepo", "onlineweb-cms", "db-migrator"],
       "enabled": false
+    },
+    {
+      "description": "Ignore nodejs and pnpm",
+      "matchPackageNames": ["node", "pnpm"],
+      "matchManagers": ["npm", "pnpm"],
+      "matchDepTypes": ["engines"],
+      "dependencyDashboardApproval": true
     }
   ],
   "updateInternalDeps": true,
