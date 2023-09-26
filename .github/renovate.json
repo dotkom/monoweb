@@ -13,7 +13,7 @@
     {
       "description": "Ignore nodejs and pnpm",
       "matchPackageNames": ["node", "pnpm"],
-      "matchManagers": ["npm", "pnpm"],
+      "matchManagers": ["npm"],
       "matchDepTypes": ["engines"],
       "dependencyDashboardApproval": true
     }
