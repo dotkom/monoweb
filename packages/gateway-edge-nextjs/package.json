@@ -16,7 +16,7 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "stripe": "^12.18.0"
+    "stripe": "^13.7.0"
   },
   "peerDependencies": {
     "next": "^13.5.3"
