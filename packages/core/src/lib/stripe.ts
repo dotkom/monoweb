@@ -40,7 +40,7 @@ export function getStripeObject(publicKey: string): Stripe | undefined {
   }
 
   return new Stripe(accountDetails.secretKey, {
-    apiVersion: "2022-11-15",
+    apiVersion: "2023-08-16",
   })
 }
 
