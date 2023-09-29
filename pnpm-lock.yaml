@@ -117,8 +117,8 @@ importers:
         specifier: ^7.46.2
         version: 7.46.2(react@18.2.0)
       superjson:
-        specifier: ^1.13.1
-        version: 1.13.1
+        specifier: ^1.13.3
+        version: 1.13.3
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -430,7 +430,7 @@ importers:
         version: 4.23.1(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
       next-superjson-plugin:
         specifier: ^0.5.9
-        version: 0.5.9(next@13.5.3)(superjson@1.13.1)
+        version: 0.5.9(next@13.5.3)(superjson@1.13.3)
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
@@ -453,8 +453,8 @@ importers:
         specifier: ^4.11.0
         version: 4.11.0(react@18.2.0)
       superjson:
-        specifier: ^1.13.1
-        version: 1.13.1
+        specifier: ^1.13.3
+        version: 1.13.3
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -787,8 +787,8 @@ importers:
         specifier: ^4.23.1
         version: 4.23.1(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
       superjson:
-        specifier: ^1.13.1
-        version: 1.13.1
+        specifier: ^1.13.3
+        version: 1.13.3
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -13972,7 +13972,7 @@ packages:
       uuid: 8.3.2
     dev: false
 
-  /next-superjson-plugin@0.5.9(next@13.5.3)(superjson@1.13.1):
+  /next-superjson-plugin@0.5.9(next@13.5.3)(superjson@1.13.3):
     resolution: {integrity: sha512-xEU+SvrSDk8PGAQ2TrJM/OhkZBcWjWWqSjpUtlxTAI9ovTjKBxxQumcFt7oXzoBLJsRtq0BWTHrcnzL/9izXPQ==}
     peerDependencies:
       next: ^13
@@ -13980,7 +13980,7 @@ packages:
     dependencies:
       hoist-non-react-statics: 3.3.2
       next: 13.5.3(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)
-      superjson: 1.13.1
+      superjson: 1.13.3
     dev: false
 
   /next-themes@0.2.1(next@13.5.3)(react-dom@18.2.0)(react@18.2.0):
@@ -16673,8 +16673,8 @@ packages:
       postcss: 8.4.30
     dev: true
 
-  /superjson@1.13.1:
-    resolution: {integrity: sha512-AVH2eknm9DEd3qvxM4Sq+LTCkSXE2ssfh1t11MHMXyYXFQyQ1HLgVvV+guLTsaQnJU3gnaVo34TohHPulY/wLg==}
+  /superjson@1.13.3:
+    resolution: {integrity: sha512-mJiVjfd2vokfDxsQPOwJ/PtanO87LhpYY88ubI5dUB1Ab58Txbyje3+jpm+/83R/fevaq/107NNhtYBLuoTrFg==}
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.5
