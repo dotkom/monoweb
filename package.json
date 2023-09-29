@@ -9,6 +9,7 @@
     "build": "turbo run build --filter=@dotkomonline/*",
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
+    "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
