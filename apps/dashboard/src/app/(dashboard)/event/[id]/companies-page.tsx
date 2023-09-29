@@ -8,8 +8,8 @@ import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
 import { createSelectInput, useFormBuilder } from "../../../form"
 import { z } from "zod"
-import { useAddCompanyToEventMutation } from "../../../../modules/event/use-add-company-to-event-mutation"
-import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/use-remove-company-from-event-mutation"
+import { useAddCompanyToEventMutation } from "../../../../modules/event/mutations/use-add-company-to-event-mutation"
+import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/mutations/use-remove-company-from-event-mutation"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()

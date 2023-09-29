@@ -2,7 +2,7 @@ import { FC } from "react"
 import { useEventWriteForm } from "../write-form"
 import { EventWriteSchema } from "@dotkomonline/types"
 import { useEventDetailsContext } from "./provider"
-import { useEditEventMutation } from "../../../../modules/event/use-edit-event-mutation"
+import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 
 export const EventEditCard: FC = () => {
   const { event } = useEventDetailsContext()

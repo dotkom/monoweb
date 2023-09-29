@@ -1,7 +1,7 @@
 import { Modal } from "@mantine/core"
 import { FC } from "react"
 import { useEventWriteForm } from "./write-form"
-import { useCreateEventMutation } from "../../../modules/event/use-create-event-mutation"
+import { useCreateEventMutation } from "../../../modules/event/mutations/use-create-event-mutation"
 
 export type EventCreationModalProps = {
   close: () => void

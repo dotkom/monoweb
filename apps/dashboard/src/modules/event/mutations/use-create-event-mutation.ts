@@ -1,5 +1,5 @@
-import { useQueryNotification } from "../../app/notifications"
-import { trpc } from "../../utils/trpc"
+import { useQueryNotification } from "../../../app/notifications"
+import { trpc } from "../../../utils/trpc"
 import { useRouter } from "next/navigation"
 
 export const useCreateEventMutation = () => {

@@ -1,5 +1,5 @@
-import { trpc } from "../../utils/trpc"
-import { useQueryNotification } from "../../app/notifications"
+import { trpc } from "../../../utils/trpc"
+import { useQueryNotification } from "../../../app/notifications"
 
 export const useRemoveCompanyFromEventMutation = () => {
   const utils = trpc.useContext()
