@@ -20,5 +20,6 @@ export const useCreateEventModal = () => {
     modals.openContextModal({
       modal: "event/create",
       title: "Opprett nytt arrangement",
+      innerProps: {},
     })
 }

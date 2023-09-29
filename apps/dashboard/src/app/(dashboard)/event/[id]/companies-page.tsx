@@ -1,6 +1,5 @@
 import { FC, useMemo } from "react"
 import { useEventDetailsContext } from "./provider"
-import { trpc } from "../../../../utils/trpc"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Company, CompanySchema, EventSchema } from "@dotkomonline/types"
 import { GenericTable } from "../../../../components/GenericTable"
@@ -10,13 +9,13 @@ import { createSelectInput, useFormBuilder } from "../../../form"
 import { z } from "zod"
 import { useAddCompanyToEventMutation } from "../../../../modules/event/mutations/use-add-company-to-event-mutation"
 import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/mutations/use-remove-company-from-event-mutation"
+import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query"
+import { useEventCompanyGetQuery } from "../../../../modules/event/queries/use-event-company-get-query"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()
-  const { data: eventCompanies = [] } = trpc.event.company.get.useQuery({
-    id: event.id,
-  })
-  const { data: companies = [] } = trpc.company.all.useQuery({ take: 999 })
+  const { eventCompanies } = useEventCompanyGetQuery(event.id)
+  const { companies } = useCompanyAllQuery()
   const add = useAddCompanyToEventMutation()
   const remove = useRemoveCompanyFromEventMutation()
 
