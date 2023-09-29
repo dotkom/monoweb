@@ -3,7 +3,7 @@ import { AuthProvider } from "./AuthProvider"
 import { QueryProvider } from "./QueryProvider"
 import { ColorSchemeScript, MantineProvider } from "@mantine/core"
 import { Notifications } from "@mantine/notifications"
-import { ModalsProvider } from "@mantine/modals"
+import { ModalProvider } from "./ModalProvider"
 import "@mantine/core/styles.css"
 import "@mantine/notifications/styles.css"
 import "@mantine/dates/styles.css"
@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <QueryProvider>
             <MantineProvider>
               <Notifications />
-              <ModalsProvider>{children}</ModalsProvider>
+              <ModalProvider>{children}</ModalProvider>
             </MantineProvider>
           </QueryProvider>
         </AuthProvider>
