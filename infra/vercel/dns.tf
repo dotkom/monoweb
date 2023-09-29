@@ -9,3 +9,11 @@ resource "aws_route53_record" "domain" {
   ttl     = "300"
   records = ["cname.vercel-dns.com"]
 }
+
+resource "aws_route53_record" "dashboard_domain" {
+  name    = "${terraform.workspace}.dashboard.online.ntnu.no"
+  zone_id = data.aws_route53_zone.online.zone_id
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["cname.vercel-dns.com"]
+}

@@ -63,6 +63,10 @@ resource "aws_cognito_user_pool" "cognito" {
     required            = true
   }
 
+  lifecycle {
+    ignore_changes = [schema]
+  }
+
   account_recovery_setting {
     recovery_mechanism {
       name     = "verified_email"
@@ -107,7 +111,7 @@ resource "aws_cognito_user_pool_client" "dashboard" {
 
   generate_secret = true
   callback_urls = concat(
-    ["https://dashboard.${terraform.workspace}.online.ntnu.no/api/auth/callback/google"],
+    ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/google"],
     terraform.workspace == "dev"
     ? ["http://localhost:3002/api/auth/callback/cognito"]
     : [],
