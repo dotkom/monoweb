@@ -3,8 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "Monoweb"
-      Module      = "cognito"
+      Project     = "monoweb"
       Environment = terraform.workspace
     }
   }
@@ -16,8 +15,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "Monoweb"
-      Module      = "cognito"
+      Project     = "monoweb"
       Environment = terraform.workspace
     }
   }
