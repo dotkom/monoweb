@@ -1,5 +1,6 @@
 import { notifications } from "@mantine/notifications"
 import { Icon } from "@iconify/react"
+import { useState } from "react"
 
 export type NotificationProps = {
   title: string
@@ -7,7 +8,7 @@ export type NotificationProps = {
 }
 
 export const useQueryNotification = () => {
-  const id = crypto.randomUUID()
+  const [id] = useState(() => crypto.randomUUID())
   const loading = ({ title, message }: NotificationProps) =>
     notifications.show({
       id,
@@ -24,6 +25,7 @@ export const useQueryNotification = () => {
       message,
       color: "green",
       icon: <Icon icon="tabler:check" />,
+      loading: false,
     })
   const fail = ({ title, message }: NotificationProps) =>
     notifications.update({
