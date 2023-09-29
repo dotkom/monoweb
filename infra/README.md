@@ -13,6 +13,12 @@ Monoweb deploys to three environments:
 
 Each environment maps to the environment with the same name in the Doppler workspace.
 
+## Modules
+
+The terraform config in the /infra directory is a single terraform project, consuming a number of modules defined in /infra/modules.
+
+The root project is where you will be running terraform apply etc.
+
 ## Tags
 
 To keep track of the origin of any AWS resource, ensure you are properly tagging the resources created. Each resource
