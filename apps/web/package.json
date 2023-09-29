@@ -71,7 +71,7 @@
     "eslint": "^8.50.0",
     "eslint-config-next": "^13.5.3",
     "jsdom": "^22.1.0",
-    "postcss": "^8.4.30",
+    "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
     "trpc-playground": "^1.0.4",
     "tslib": "^2.6.2",
