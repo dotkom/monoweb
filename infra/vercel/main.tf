@@ -34,10 +34,10 @@ resource "vercel_project" "dashboard" {
     production_branch = "main"
     type              = "github"
     repo              = "dotkom/monoweb"
-
-    build_command  = "cd ../.. &&  pnpm build:dashboard"
-    root_directory = "apps/dashboard"
   }
+
+  build_command  = "cd ../.. && pnpm build:dashboard"
+  root_directory = "apps/dashboard"
 
   lifecycle {
     prevent_destroy = true
