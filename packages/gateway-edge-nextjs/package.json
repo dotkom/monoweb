@@ -22,9 +22,9 @@
     "next": "^13.5.3"
   },
   "devDependencies": {
-    "@vitest/ui": "^0.34.5",
+    "@vitest/ui": "^0.34.6",
     "eslint": "^8.50.0",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.5"
+    "vitest": "^0.34.6"
   }
 }
