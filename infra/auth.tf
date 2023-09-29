@@ -8,7 +8,7 @@ resource "aws_route53_record" "null_record" {
   name    = "auth.online.ntnu.no"
   type    = "A"
   zone_id = local.zone_id
-  ttl = 3600
+  ttl     = 3600
   records = ["127.0.0.1"]
 }
 
