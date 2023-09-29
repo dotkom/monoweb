@@ -17,6 +17,10 @@ export declare type EnvironmentKeys =
   | "FAGKOM_STRIPE_PUBLIC_KEY"
   | "FAGKOM_STRIPE_SECRET_KEY"
   | "FAGKOM_STRIPE_WEBHOOK_SECRET"
+  | "AWS_SECRET_ACCESS_KEY"
+  | "AWS_ACCESS_KEY_ID"
+  | "AWS_REGION"
+  | "AWS_STATIC_BUCKET"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 

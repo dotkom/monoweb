@@ -28,6 +28,11 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       FAGKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
       FAGKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
+
+      AWS_SECRET_ACCESS_KEY: environmentVariableSchema,
+      AWS_ACCESS_KEY_ID: environmentVariableSchema,
+      AWS_REGION: environmentVariableSchema,
+      AWS_STATIC_BUCKET: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -57,6 +62,11 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_PUBLIC_KEY: process.env.FAGKOM_STRIPE_PUBLIC_KEY,
       FAGKOM_STRIPE_SECRET_KEY: process.env.FAGKOM_STRIPE_SECRET_KEY,
       FAGKOM_STRIPE_WEBHOOK_SECRET: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET,
+
+      AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+      AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+      AWS_REGION: process.env.AWS_REGION,
+      AWS_STATIC_BUCKET: process.env.AWS_STATIC_BUCKET,
     },
   })
 
