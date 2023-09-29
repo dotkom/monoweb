@@ -5,9 +5,9 @@ import {
   createTextareaInput,
   createTextInput,
   useFormBuilder,
-} from "../form"
+} from "../../form"
 import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
-import { trpc } from "../../trpc"
+import { trpc } from "../../../utils/trpc"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   start: new Date(),

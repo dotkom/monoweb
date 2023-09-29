@@ -1,7 +1,7 @@
 import { Modal } from "@mantine/core"
 import { FC } from "react"
-import { trpc } from "../../trpc"
-import { useEventWriteForm } from "./Form"
+import { trpc } from "../../../utils/trpc"
+import { useEventWriteForm } from "./write-form"
 import { useQueryNotification } from "../../notifications"
 import { useRouter } from "next/navigation"
 
