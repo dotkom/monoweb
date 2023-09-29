@@ -16,15 +16,16 @@ Each environment maps to the environment with the same name in the Doppler works
 ## Tags
 
 To keep track of the origin of any AWS resource, ensure you are properly tagging the resources created. Each resource
-should have the `Project` tag set to `Monoweb`. Each resource should also have a `Module` tag set to the terraform module/
-project it originates from. There should also be an `Environment` tag that matches the deployment environment name.
+should have the `Project` tag set to `monoweb`.　There should also be an `Environment` tag that matches the deployment environment name.
 
 The easiest way to ensure this happens, is by adding the following `default_tags` to your AWS provider block:
 
 ```terraform
 tags = {
-  Project     = "Monoweb"
-  Module      = "vercel"
+  Project     = "monoweb"
   Environment = terraform.workspace
 }
 ```
+
+Remember that the tags don't automatically flow down into modules used, so modules should have a tags variable that will
+be manually applied to all taggable resources declared in the module.
