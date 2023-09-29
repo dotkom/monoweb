@@ -1,7 +1,7 @@
 import { useQueryNotification } from "../../app/notifications"
 import { trpc } from "../../utils/trpc"
 
-export const useEditEvent = () => {
+export const useEditEventMutation = () => {
   const notification = useQueryNotification()
   const utils = trpc.useContext()
   return trpc.event.edit.useMutation({
