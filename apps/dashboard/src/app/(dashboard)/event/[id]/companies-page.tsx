@@ -1,12 +1,12 @@
 import { FC, useMemo } from "react"
 import { useEventDetailsContext } from "./provider"
-import { trpc } from "../../../trpc"
+import { trpc } from "../../../../utils/trpc"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Company, CompanySchema, EventSchema } from "@dotkomonline/types"
-import { GenericTable } from "../../../components/GenericTable"
+import { GenericTable } from "../../../../components/GenericTable"
 import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
-import { createSelectInput, useFormBuilder } from "../../form"
+import { createSelectInput, useFormBuilder } from "../../../form"
 import { z } from "zod"
 import { useQueryNotification } from "../../../notifications"
 
@@ -72,7 +72,7 @@ export const EventCompaniesPage: FC = () => {
             })
           }
           return (
-            <Button variant="outline" leftIcon={<Icon icon="tabler:trash" />} onClick={onClick}>
+            <Button variant="outline" leftSection={<Icon icon="tabler:trash" />} onClick={onClick}>
               Fjern
             </Button>
           )

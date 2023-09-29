@@ -1,9 +1,8 @@
 import { FC } from "react"
-import { trpc } from "../../../trpc"
-import { useEventWriteForm } from "../Form"
+import { trpc } from "../../../../utils/trpc"
+import { useEventWriteForm } from "../write-form"
 import { EventWriteSchema } from "@dotkomonline/types"
 import { useEventDetailsContext } from "./provider"
-import { Card, Text } from "@mantine/core"
 import { useQueryNotification } from "../../../notifications"
 
 export const EventEditCard: FC = () => {
@@ -37,10 +36,5 @@ export const EventEditCard: FC = () => {
     },
     defaultValues: { ...event },
   })
-  return (
-    <Card withBorder shadow="sm">
-      <Text>Endre arrangement</Text>
-      <FormComponent />
-    </Card>
-  )
+  return <FormComponent />
 }
