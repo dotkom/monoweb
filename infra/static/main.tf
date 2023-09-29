@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "static_bucket" {
-  bucket = "monoweb-static-${terraform.workspace}"
+  bucket = "${terraform.workspace}.static.online.ntnu.no"
 }
 
 resource "aws_s3_bucket_cors_configuration" "static_bucket" {

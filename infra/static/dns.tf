@@ -22,7 +22,7 @@ resource "aws_route53_record" "certificate_validation" {
 
 resource "aws_route53_record" "static_online_ntnu_no" {
   zone_id = data.aws_route53_zone.online.zone_id
-  name    = "m.jun.codes"
+  name    = "${terraform.workspace}.static.online.ntnu.no"
   type    = "A"
 
   alias {

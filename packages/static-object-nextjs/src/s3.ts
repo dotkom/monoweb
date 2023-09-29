@@ -1,4 +1,5 @@
 import "server-only"
+import "@aws-sdk/signature-v4-crt"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { env } from "@dotkomonline/env"
 
