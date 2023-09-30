@@ -1,3 +1,5 @@
+
+import { IconProps } from "@dotkomonline/ui"
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 
@@ -5,6 +7,7 @@ interface ProfileMenuItemProps {
   menuItem: {
     title: string
     slug: string
+    icon(): JSX.Element
   }
 }
 
@@ -24,7 +27,10 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
   }, [router.pathname, slug])
 
   return (
-    <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer">
+    <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer flex flex-row mb-2 items-center">
+      <div className="mr-4">
+      <menuItem.icon />
+      </div>
       <p className={isCurrent}>{title}</p>
     </div>
   )
