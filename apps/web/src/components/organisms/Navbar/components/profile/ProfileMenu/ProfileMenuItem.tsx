@@ -16,19 +16,19 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
   const { title, slug } = menuItem
 
-  const [isCurrent, setCurrent] = useState(router.pathname == slug ? "text-white" : "text-slate-7")
+  const [isCurrent, setCurrent] = useState(router.pathname == slug ? "opacity-1" : "opacity-50")
 
   const handleChange = () => {
     router.push(slug)
   }
 
   useEffect(() => {
-    setCurrent(router.pathname == slug ? "text-white" : "text-slate-7")
+    setCurrent(router.pathname == slug ? "opacity-1" : "opacity-50")
   }, [router.pathname, slug])
 
   return (
-    <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer flex flex-row mb-2 items-center">
-      <div className="mr-4">
+    <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer flex flex-row mb-4 items-center text-slate-12">
+      <div className={`mr-4 ${isCurrent}`}>
       <menuItem.icon />
       </div>
       <p className={isCurrent}>{title}</p>
