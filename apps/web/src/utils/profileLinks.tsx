@@ -10,7 +10,7 @@ import PrivacyIcon from "@/components/icons/ProfileIcons/PrivacyIcon";
 
 export const profileItems = [
   {
-    title: "Min profil",
+    title: "Min Profil",
     slug: "/profile",
     icon: AccountIcon
   },
