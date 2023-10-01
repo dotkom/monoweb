@@ -11,7 +11,7 @@ const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
         <div className="flex w-full flex-row">
           <ProfileMenuContainer />
           <ProfileContext.Provider value={{ editMode, setEditMode }}>
-            <div className="mx-5 min-w-[600px]">{children}</div>
+            <div className="mx-5 mt-[42.5px] md:min-w-[600px]">{children}</div>
           </ProfileContext.Provider>
         </div>
       </div>
