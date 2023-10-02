@@ -1,7 +1,7 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
-import PasswordIcon from "@/components/icons/ProfileIcons/PasswordIcon"
+import { Icon } from "@dotkomonline/ui"
 
 const PasswordPage: NextPageWithLayout = () => {
   return <div>Password</div>
@@ -9,11 +9,12 @@ const PasswordPage: NextPageWithLayout = () => {
 
 const PasswordHeader = () => {
   return (
-  <div className="flex items-center">
-    <PasswordIcon/>
-    <p className="ml-2">Passord</p>
-  </div>
-)}
+    <div className="flex items-center">
+      <Icon icon={"tabler:lock"} width={24} />
+      <p className="ml-2">Passord</p>
+    </div>
+  )
+}
 
 PasswordPage.getLayout = (page) => {
   return (

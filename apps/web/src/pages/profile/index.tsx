@@ -5,7 +5,7 @@ import { NextPageWithLayout } from "../_app"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { getServerSession, User } from "next-auth"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
-import AccountIcon from "@/components/icons/ProfileIcons/AccountIcon"
+import { Icon } from "@dotkomonline/ui"
 
 const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => {
   return <ProfileLanding user={user} />
@@ -13,11 +13,12 @@ const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
 
 const LandingPageHeader = () => {
   return (
-  <div className="flex items-center">
-    <AccountIcon/>
-    <p className="ml-2">Min Profil</p>
-  </div>
-)}
+    <div className="flex items-center">
+      <Icon icon={"tabler:user-circle"} width={24} />
+      <p className="ml-2">Min Profil</p>
+    </div>
+  )
+}
 
 LandingPage.getLayout = (page) => {
   return (
