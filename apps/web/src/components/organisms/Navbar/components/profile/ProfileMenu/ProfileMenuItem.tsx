@@ -1,4 +1,3 @@
-
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 
@@ -6,14 +5,14 @@ interface ProfileMenuItemProps {
   menuItem: {
     title: string
     slug: string
-    icon(): JSX.Element
+    icon: JSX.Element
   }
 }
 
 const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
   const router = useRouter()
 
-  const { title, slug } = menuItem
+  const { title, slug, icon } = menuItem
 
   const [isCurrent, setCurrent] = useState(router.pathname == slug ? "opacity-1" : "opacity-50")
 
@@ -26,10 +25,11 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
   }, [router.pathname, slug])
 
   return (
-    <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer flex flex-row mb-4 items-center text-slate-12">
-      <div className={`mr-4 ${isCurrent}`}>
-      <menuItem.icon />
-      </div>
+    <div
+      onClick={handleChange}
+      className="!hover:text-blue text-slate-12 mb-4 flex flex-row items-center hover:cursor-pointer"
+    >
+      <div className={`mr-4 ${isCurrent}`}>{icon}</div>
       <p className={isCurrent}>{title}</p>
     </div>
   )
