@@ -19,6 +19,7 @@ export const EventSchema = z.object({
 })
 
 export type Event = z.infer<typeof EventSchema>
+export type EventId = Event["id"]
 
 export const EventWriteSchema = EventSchema.partial({
   id: true,
