@@ -15,6 +15,13 @@ https://owdocs.vercel.app
 5. `pnpm dev` to run the project
    - You can run `pnpm dev --filter=<project>` to run a certain project from root, such as `pnpm dev --filter=web`
 
+## Environment
+You need to set up environment variables for the project to work. You can get them on [doppler.com](https://doppler.com), or using the cli:
+
+```sh
+doppler run -- pnpm dev
+```
+
 ### [Payment] How to configure stripe (locally)
 
 If you want the payment system to work while running monoweb locally, you will have to follow these steps:
