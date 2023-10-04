@@ -38,7 +38,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.47.0",
     "superjson": "^1.13.3",
-    "zod": "^3.22.2"
+    "zod": "^3.22.3"
   },
   "devDependencies": {
     "@dotkomonline/config": "workspace:^",
