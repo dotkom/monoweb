@@ -1,4 +1,4 @@
-import StudentProgress from "@/components/molecules/StudentProgress"
+import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
 import { User } from "next-auth"
