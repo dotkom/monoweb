@@ -481,8 +481,8 @@ importers:
         specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.31)
       chromatic:
-        specifier: ^7.2.0
-        version: 7.2.0
+        specifier: ^7.2.2
+        version: 7.2.2
       cva:
         specifier: npm:class-variance-authority@^0.7.0
         version: /class-variance-authority@0.7.0
@@ -9509,8 +9509,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /chromatic@7.2.0:
-    resolution: {integrity: sha512-EbuvmsM6XAVFC4EQpqR2AT2PaXY4IS8qWxxg6N10AhpRulfX2b2AtW1hUc88cCosRyztd6esxkBdj3FSKR7zVw==}
+  /chromatic@7.2.2:
+    resolution: {integrity: sha512-o9EIMV/EAe6bI7osYi4DfD1zuVovYR/vrY8CXNB5OdcT+alpHZmEZ4+ysTrvL9Bgk6zP/z/2YMVz5ZYdV/gagA==}
     hasBin: true
     dev: true
 
@@ -17336,7 +17336,7 @@ packages:
         optional: true
     dependencies:
       '@types/node': 18.18.0
-      esbuild: 0.18.20
+      esbuild: 0.18.17
       postcss: 8.4.31
       rollup: 3.29.2
     optionalDependencies:
