@@ -49,12 +49,12 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
             <div>{user.email ?? "No registred email"}</div>
           </FormInput>
           <FormInput name="Telefon" addMore="Add Phone Number">
-            <div>482 49 100</div>
+            <div> (+47) 482 49 100</div>
           </FormInput>
           <FormInput name="Studie" clickable={false}>
-            <div>
+            <div className="space-y-8">
               <div>
-                <p>Klassetrinn:</p>
+                <p>Klassetrinn: </p>
               </div>
               <div>
                 <p>Startår:</p>
