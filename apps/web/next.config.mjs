@@ -14,7 +14,6 @@ const config = {
     "@dotkomonline/auth",
     "@dotkomonline/db",
     "@dotkomonline/env",
-    "@dotkomonline/emails",
     "@dotkomonline/gateway-edge-nextjs",
     "@dotkomonline/gateway-trpc",
     "@dotkomonline/types",
