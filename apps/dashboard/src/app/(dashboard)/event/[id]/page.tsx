@@ -1,12 +1,13 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
+import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { useRouter } from "next/navigation"
 import { FC } from "react"
-import { useEventDetailsContext } from "./provider"
+import { EventCommiteesPage } from "./committees-page.jsx"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
-import { useRouter } from "next/navigation"
+import { useEventDetailsContext } from "./provider"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Bedrifter</h1>
@@ -37,7 +38,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:tent",
     label: "Komiteer",
     slug: "committee",
-    component: EventDetailsCompanies,
+    component: EventCommiteesPage,
   },
   {
     icon: "tabler:forms",
