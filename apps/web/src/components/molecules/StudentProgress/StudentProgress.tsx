@@ -11,11 +11,13 @@ const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => {
     return (
       <div
         className={`${
-          year <= id - 1 ? "border-[#153e75]" : "border-[#36b37e]"
-        } flex h-[45px] w-[45px] items-center  justify-around rounded-[50%] border-[5px] border-solid`}
+          year <= id ? "border-[#153e75]" : "border-[#36b37e]"
+        } flex h-[45px] w-[45px] items-center  justify-around rounded-[50%] border-[4px] border-solid`}
       >
         <div
-          className={`${year <= id - 1 ? "bg-[#153e75]" : "bg-[#36b37e]"} h-[20px] w-[20px] rounded-[50%] text-center`}
+          className={`${year < id ? "text-[#153e75]" : 
+          year == id ? "bg-[#153e75]" :
+          "bg-[#36b37e]"} h-[20px] w-[20px] rounded-[50%] text-center text-white`}
         >
           {id}
         </div>
@@ -25,13 +27,13 @@ const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => {
 
   const HorizontalLine: React.FC<IStudentProgressComponent> = ({year, id}) => {
     return (
-      <div className={`${year <= id - 1 ? "bg-[#153e75]" : "bg-[#36b37e]"} m-[-1px] h-[5px] w-[30px] self-center`} />
+      <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} m-[-1px] h-[4px] w-[30px] self-center`} />
     )
   }
 
   const VerticalLine: React.FC<IStudentProgressComponent> = ({year, id}) => {
     return (
-        <div className={`${year <= id-1 ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[5px] h-[50px] self-center z-10`} />
+        <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} w-[4px] h-[50px] self-center z-10`} />
 
     )
   }
