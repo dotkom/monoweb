@@ -22,7 +22,7 @@ const EventDetailsAttendance: FC = () => {
 
 const SIDEBAR_LINKS = [
   {
-    icon: "tabler:building-warehouse",
+    icon: "tabler:list-details",
     label: "Info",
     slug: "info",
     component: EventEditCard,
