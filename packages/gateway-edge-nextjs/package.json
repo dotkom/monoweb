@@ -16,7 +16,9 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/gateway-trpc": "workspace:^",
     "ical-generator": "^5.0.1",
+    "server": "link:@trpc/react-query/server",
     "stripe": "^13.8.0"
   },
   "peerDependencies": {
