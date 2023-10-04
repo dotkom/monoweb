@@ -29,6 +29,7 @@ export async function up(db: Kysely<any>) {
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("attendance_id", "uuid", (col) => col.references("attendance.id").onDelete("cascade"))
+    .addColumn("attended", "boolean", (col) => col.notNull())
     .execute()
 
   await db.schema

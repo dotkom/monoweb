@@ -17,6 +17,17 @@ export const attendanceRouter = t.router({
       const attendance = await ctx.eventService.listAttendance(input.eventId)
       return attendance
     }),
+  registerAttendance: protectedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+        attended: z.boolean(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.attendanceService.registerAttendance(input.eventId, ctx.auth.userId, input.attended)
+      return res
+    }),
   attend: protectedProcedure
     .input(
       z.object({

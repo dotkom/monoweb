@@ -31,9 +31,10 @@ export type EventWrite = z.infer<typeof EventWriteSchema>
 export const AttendeeSchema = z.object({
   id: z.string(),
   attendanceId: z.string().uuid(),
-  userId: z.string().uuid(),
+  userId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  attended: z.boolean(),
 })
 
 export const AttendanceSchema = z.object({

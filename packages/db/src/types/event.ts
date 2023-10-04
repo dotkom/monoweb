@@ -40,4 +40,5 @@ export interface AttendeeTable {
   updatedAt: Generated<Date>
   userId: string
   attendanceId: string
+  attended: boolean
 }
