@@ -1,25 +1,21 @@
 import type { PropsWithChildren } from "react"
 import { AuthProvider } from "./AuthProvider"
 import { QueryProvider } from "./QueryProvider"
-import { MantineColorSchemeProvider, MantineNotificationsProvider, MantineProvider } from "./MantineProvider"
-import { ApplicationShell } from "./ApplicationShell"
-import "./root.css"
+import { ColorSchemeScript, MantineProvider } from "@mantine/core"
+import "@mantine/core/styles.css"
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <head />
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body>
-        <MantineColorSchemeProvider>
-          <MantineProvider>
-            <MantineNotificationsProvider />
-            <AuthProvider>
-              <QueryProvider>
-                <ApplicationShell>{children}</ApplicationShell>
-              </QueryProvider>
-            </AuthProvider>
-          </MantineProvider>
-        </MantineColorSchemeProvider>
+        <AuthProvider>
+          <QueryProvider>
+            <MantineProvider>{children}</MantineProvider>
+          </QueryProvider>
+        </AuthProvider>
       </body>
     </html>
   )

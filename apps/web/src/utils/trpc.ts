@@ -7,7 +7,7 @@ import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""
-  if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
+  if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.VERCEL_URL}`
   return `http://localhost:3000`
 }
 
@@ -15,7 +15,8 @@ const config: CreateTRPCClientOptions<AppRouter> = {
   transformer: superjson,
   links: [
     loggerLink({
-      enabled: (opts) => env.NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
+      enabled: (opts) =>
+        env.NEXT_PUBLIC_NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
       url: `${getBaseUrl()}/api/trpc`,

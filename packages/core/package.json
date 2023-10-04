@@ -17,19 +17,19 @@
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "date-fns": "^2.30.0",
-    "kysely": "^0.26.0",
-    "stripe": "^12.16.0",
-    "zod": "^3.21.4"
+    "kysely": "^0.26.3",
+    "stripe": "^13.8.0",
+    "zod": "^3.22.2"
   },
   "peerDependencies": {
-    "next": "^13.3.1"
+    "next": "^13.5.3"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
-    "@types/node": "^18.17.1",
-    "@vitest/ui": "^0.34.0",
-    "eslint": "^8.46.0",
-    "typescript": "^5.0.0",
-    "vitest": "^0.34.0"
+    "@types/node": "^18.18.3",
+    "@vitest/ui": "^0.34.6",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }
