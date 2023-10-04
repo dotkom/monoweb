@@ -16,6 +16,7 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
+    "ical-generator": "^5.0.1",
     "stripe": "^13.8.0"
   },
   "peerDependencies": {
