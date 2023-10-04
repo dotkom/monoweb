@@ -1,6 +1,5 @@
 "use client"
 
-import { trpc } from "../../../utils/trpc"
 import {
   Anchor,
   Button,
@@ -18,15 +17,17 @@ import {
 } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Event } from "@dotkomonline/types"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { formatDate } from "../../../utils/format"
 import { Icon } from "@iconify/react"
-import { EventCreationModal } from "./create-modal"
+import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 
 export default function EventPage() {
-  const { data: events = [], isLoading: isEventsLoading } = trpc.event.all.useQuery({ take: 50 })
-  const { data: committees = [], isLoading: isCommitteesLoading } = trpc.committee.all.useQuery({ take: 999 })
-  const [isCreationOpen, setCreationOpen] = useState(false)
+  const { events, isLoading: isEventsLoading } = useEventAllQuery()
+  const { committees, isLoading: isCommitteesLoading } = useCommitteeAllQuery()
+  const open = useCreateEventModal()
 
   const columnHelper = createColumnHelper<Event>()
   const columns = useMemo(
@@ -100,7 +101,7 @@ export default function EventPage() {
           </Table>
         </Card>
         <Group justify="space-between">
-          <Button onClick={() => setCreationOpen(true)}>Opprett arrangement</Button>
+          <Button onClick={open}>Opprett arrangement</Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />
@@ -110,8 +111,6 @@ export default function EventPage() {
             </Button>
           </ButtonGroup>
         </Group>
-
-        {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
       </Stack>
     </Skeleton>
   )

@@ -7,7 +7,7 @@ import {
   useFormBuilder,
 } from "../../form"
 import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
-import { trpc } from "../../../utils/trpc"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   start: new Date(),
@@ -31,7 +31,7 @@ export const useEventWriteForm = ({
   label = "Opprett arrangement",
   defaultValues = EVENT_FORM_DEFAULT_VALUES,
 }: UseEventWriteFormProps) => {
-  const { data: committees = [] } = trpc.committee.all.useQuery({ take: 999 })
+  const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
     schema: EventWriteSchema,
     defaultValues,
