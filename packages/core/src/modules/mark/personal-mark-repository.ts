@@ -1,6 +1,6 @@
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
+import { PersonalMarkSchema, type Mark, type PersonalMark, type User } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-import { type Mark, type PersonalMark, PersonalMarkSchema, type User } from "@dotkomonline/types";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 
 import { type Database } from "@dotkomonline/db";
 import { mapToMark } from "./mark-repository";
@@ -17,9 +17,9 @@ export interface PersonalMarkRepository {
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>> {
+    public async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>> {
         let query = this.db
             .selectFrom("personalMark")
             .leftJoin("mark", "personalMark.markId", "mark.id")
@@ -38,7 +38,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
         return marks.map(mapToPersonalMark);
     }
 
-    async getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
+    public async getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
         let query = this.db
             .selectFrom("mark")
             .leftJoin("personalMark", "mark.id", "personalMark.markId")
@@ -57,7 +57,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
         return marks.map(mapToMark);
     }
 
-    async addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
+    public async addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
         const personalMark = await this.db
             .insertInto("personalMark")
             .values({ userId, markId })
@@ -67,7 +67,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
         return personalMark ? mapToPersonalMark(personalMark) : undefined;
     }
 
-    async removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
+    public async removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
         const personalMark = await this.db
             .deleteFrom("personalMark")
             .where("userId", "=", userId)
@@ -78,7 +78,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
         return personalMark ? mapToPersonalMark(personalMark) : undefined;
     }
 
-    async getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
+    public async getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
         const personalMark = await this.db
             .selectFrom("personalMark")
             .selectAll()

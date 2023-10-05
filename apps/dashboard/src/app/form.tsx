@@ -1,30 +1,30 @@
-import { type z } from "zod";
-import { type FC } from "react";
+import { ErrorMessage } from "@hookform/error-message";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Button,
     Checkbox,
-    type CheckboxProps,
     Flex,
     Select,
-    type SelectProps,
-    Textarea,
-    type TextareaProps,
     TextInput,
+    Textarea,
+    type CheckboxProps,
+    type SelectProps,
     type TextInputProps,
+    type TextareaProps,
 } from "@mantine/core";
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates";
+import { type FC } from "react";
 import {
-    type Control,
     Controller,
+    useForm,
+    type Control,
     type DefaultValues,
     type FieldValue,
     type FieldValues,
     type FormState,
-    useForm,
     type UseFormRegister,
 } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ErrorMessage } from "@hookform/error-message";
-import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates";
+import { type z } from "zod";
 
 interface InputFieldContext<T extends FieldValues> {
     name: FieldValue<T>;

@@ -1,6 +1,6 @@
 import { type Database } from "@dotkomonline/db";
+import { UserSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types";
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload);
 
@@ -11,18 +11,21 @@ export interface UserRepository {
 }
 
 export class UserRepositoryImpl implements UserRepository {
-    constructor(private readonly db: Kysely<Database>) {}
-    async getById(id: UserId) {
+    public constructor(private readonly db: Kysely<Database>) {}
+
+    public async getById(id: UserId) {
         const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst();
 
         return user ? mapToUser(user) : undefined;
     }
-    async getAll(limit: number) {
+
+    public async getAll(limit: number) {
         const users = await this.db.selectFrom("owUser").selectAll().limit(limit).execute();
 
         return users.map(mapToUser);
     }
-    async create(userWrite: UserWrite) {
+
+    public async create(userWrite: UserWrite) {
         const user = await this.db.insertInto("owUser").values(userWrite).returningAll().executeTakeFirstOrThrow();
 
         return mapToUser(user);

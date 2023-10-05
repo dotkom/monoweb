@@ -1,9 +1,9 @@
 import { type Mark, type PersonalMark, type User } from "@dotkomonline/types";
 import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns";
 
+import { NotFoundError } from "../../errors/errors";
 import { type Cursor } from "../../utils/db-utils";
 import { type MarkService } from "./mark-service";
-import { NotFoundError } from "../../errors/errors";
 import { type PersonalMarkRepository } from "./personal-mark-repository";
 
 export interface PersonalMarkService {
@@ -16,29 +16,31 @@ export interface PersonalMarkService {
 }
 
 export class PersonalMarkServiceImpl implements PersonalMarkService {
-    constructor(
+    public constructor(
         private readonly personalMarkRepository: PersonalMarkRepository,
         private readonly markService: MarkService
     ) {}
 
-    async getPersonalMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>> {
+    public async getPersonalMarksForUserId(
+        userId: User["id"],
+        take: number,
+        cursor?: Cursor
+    ): Promise<Array<PersonalMark>> {
         const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, take, cursor);
 
         return personalMarks;
     }
 
-    async getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
+    public async getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
         const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor);
 
         return personalMarks;
     }
 
-    async addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
-        const mark = await this.markService.getMark(markId);
+    public async addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
+        // Verify the mark exists
+        await this.markService.getMark(markId);
 
-        if (!mark) {
-            throw new NotFoundError(`Mark with ID:${markId} not found`);
-        }
         const personalMark = await this.personalMarkRepository.addToUserId(userId, markId);
 
         if (!personalMark) {
@@ -48,7 +50,10 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         return personalMark;
     }
 
-    async removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
+    public async removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
+        // Verify the mark exists
+        await this.markService.getMark(markId);
+
         const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId);
 
         if (!personalMark) {
@@ -58,7 +63,7 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         return personalMark;
     }
 
-    async getExpiryDateForUserId(userId: User["id"]): Promise<Date | null> {
+    public async getExpiryDateForUserId(userId: User["id"]): Promise<Date | null> {
         const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, 1000);
         const marks = await Promise.all(personalMarks.map(async (mark) => this.markService.getMark(mark.markId)));
         const expiryDate = this.calculateExpiryDate(marks);
@@ -66,41 +71,44 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         return expiryDate;
     }
 
-    async isUserMarked(userId: User["id"]): Promise<boolean> {
+    public async isUserMarked(userId: User["id"]): Promise<boolean> {
         return (await this.getExpiryDateForUserId(userId)) !== null;
     }
 
-    adjustDateIfStartingInHoliday(date: Date): Date {
+    // Holy grail of magic numbers -BraAge
+    public adjustDateIfStartingInHoliday(date: Date): Date {
+        let mutableDate = date;
+
         if (
             isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
         ) {
-            date = set(date, { month: 7, date: 15 });
-        } else if (date.getMonth() == 11) {
-            date = set(date, { year: date.getFullYear() + 1, month: 0, date: 15 });
-        } else if (date.getMonth() == 0 && date.getDate() < 15) {
-            date = set(date, { month: 0, date: 15 });
+            mutableDate = set(date, { month: 7, date: 15 });
+        } else if (date.getMonth() === 11) {
+            mutableDate = set(date, { year: date.getFullYear() + 1, month: 0, date: 15 });
+        } else if (date.getMonth() === 0 && date.getDate() < 15) {
+            mutableDate = set(date, { month: 0, date: 15 });
         }
 
-        return date;
+        return mutableDate;
     }
 
-    adjustDateIfEndingInHoliday(date: Date): Date {
+    public adjustDateIfEndingInHoliday(date: Date): Date {
         let additionalDays = 0;
 
         if (
             isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
         ) {
             additionalDays = 75;
-        } else if (date.getMonth() == 11) {
+        } else if (date.getMonth() === 11) {
             additionalDays = 45;
-        } else if (date.getMonth() == 0 && date.getDate() < 15) {
+        } else if (date.getMonth() === 0 && date.getDate() < 15) {
             additionalDays = 45;
         }
 
         return add(date, { days: additionalDays });
     }
 
-    calculateExpiryDate(marks: Array<{ createdAt: Date; duration: number }>): Date | null {
+    public calculateExpiryDate(marks: Array<{ createdAt: Date; duration: number }>): Date | null {
         const currentTime = new Date();
         let endDate: Date | null = null;
         const orderedMarks = marks.sort((a, b) => compareAsc(a.createdAt, b.createdAt));

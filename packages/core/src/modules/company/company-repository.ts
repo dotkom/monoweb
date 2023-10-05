@@ -1,7 +1,7 @@
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
 import { type Database } from "@dotkomonline/db";
-import { type Company, CompanySchema, type CompanyWrite } from "@dotkomonline/types";
+import { CompanySchema, type Company, type CompanyWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 
 export const mapToCompany = (payload: Selectable<Database["company"]>): Company => CompanySchema.parse(payload);
 
@@ -12,15 +12,15 @@ export interface CompanyRepository {
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async getById(id: string): Promise<Company | undefined> {
+    public async getById(id: string): Promise<Company | undefined> {
         const company = await this.db.selectFrom("company").selectAll().where("id", "=", id).executeTakeFirst();
 
         return company ? mapToCompany(company) : undefined;
     }
 
-    async getAll(take: number, cursor?: Cursor): Promise<Array<Company>> {
+    public async getAll(take: number, cursor?: Cursor): Promise<Array<Company>> {
         let query = this.db.selectFrom("company").selectAll().limit(take);
 
         if (cursor) {
@@ -32,7 +32,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
         return companies.map(mapToCompany);
     }
 
-    async create(values: CompanyWrite): Promise<Company | undefined> {
+    public async create(values: CompanyWrite): Promise<Company | undefined> {
         const company = await this.db
             .insertInto("company")
             .values({

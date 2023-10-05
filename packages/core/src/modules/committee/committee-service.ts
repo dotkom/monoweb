@@ -1,7 +1,7 @@
 import { type Committee, type CommitteeWrite } from "@dotkomonline/types";
-import { type CommitteeRepository } from "./committee-repository";
 import { NotFoundError } from "../../errors/errors";
 import { type Cursor } from "../../utils/db-utils";
+import { type CommitteeRepository } from "./committee-repository";
 
 export interface CommitteeService {
     getCommittee(id: Committee["id"]): Promise<Committee>;
@@ -10,9 +10,9 @@ export interface CommitteeService {
 }
 
 export class CommitteeServiceImpl implements CommitteeService {
-    constructor(private readonly committeeRepository: CommitteeRepository) {}
+    public constructor(private readonly committeeRepository: CommitteeRepository) {}
 
-    async getCommittee(id: Committee["id"]) {
+    public async getCommittee(id: Committee["id"]) {
         const committee = await this.committeeRepository.getById(id);
 
         if (!committee) {
@@ -22,11 +22,11 @@ export class CommitteeServiceImpl implements CommitteeService {
         return committee;
     }
 
-    async createCommittee(payload: CommitteeWrite) {
+    public async createCommittee(payload: CommitteeWrite) {
         return await this.committeeRepository.create(payload);
     }
 
-    async getCommittees(take: number, cursor?: Cursor) {
+    public async getCommittees(take: number, cursor?: Cursor) {
         return this.committeeRepository.getAll(take, cursor);
     }
 }

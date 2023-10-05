@@ -1,6 +1,6 @@
-import { type Cursor, paginateQuery } from "./../../utils/db-utils";
+import { MarkSchema, type Mark, type MarkWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-import { type Mark, MarkSchema, type MarkWrite } from "@dotkomonline/types";
+import { paginateQuery, type Cursor } from "./../../utils/db-utils";
 
 import { type Database } from "@dotkomonline/db";
 
@@ -15,15 +15,15 @@ export interface MarkRepository {
 }
 
 export class MarkRepositoryImpl implements MarkRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async getById(id: Mark["id"]): Promise<Mark | undefined> {
+    public async getById(id: Mark["id"]): Promise<Mark | undefined> {
         const mark = await this.db.selectFrom("mark").selectAll().where("id", "=", id).executeTakeFirst();
 
         return mark ? mapToMark(mark) : undefined;
     }
 
-    async getAll(take: number, cursor?: Cursor): Promise<Array<Mark>> {
+    public async getAll(take: number, cursor?: Cursor): Promise<Array<Mark>> {
         let query = this.db.selectFrom("mark").selectAll().limit(take);
 
         if (cursor) {
@@ -37,7 +37,7 @@ export class MarkRepositoryImpl implements MarkRepository {
         return marks.map(mapToMark);
     }
 
-    async create(markInsert: MarkWrite): Promise<Mark | undefined> {
+    public async create(markInsert: MarkWrite): Promise<Mark | undefined> {
         const mark = await this.db
             .insertInto("mark")
             .values({ ...markInsert })
@@ -47,7 +47,7 @@ export class MarkRepositoryImpl implements MarkRepository {
         return mark ? mapToMark(mark) : undefined;
     }
 
-    async update(id: Mark["id"], markUpdate: MarkWrite): Promise<Mark | undefined> {
+    public async update(id: Mark["id"], markUpdate: MarkWrite): Promise<Mark | undefined> {
         const mark = await this.db
             .updateTable("mark")
             .set({ ...markUpdate, updatedAt: new Date() })
@@ -58,7 +58,7 @@ export class MarkRepositoryImpl implements MarkRepository {
         return mark ? mapToMark(mark) : undefined;
     }
 
-    async delete(id: Mark["id"]): Promise<Mark | undefined> {
+    public async delete(id: Mark["id"]): Promise<Mark | undefined> {
         const mark = await this.db.deleteFrom("mark").where("id", "=", id).returningAll().executeTakeFirst();
 
         return mark ? mapToMark(mark) : undefined;

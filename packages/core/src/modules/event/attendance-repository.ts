@@ -1,15 +1,15 @@
 import { type Database } from "@dotkomonline/db";
+import { type AttendeeTable } from "@dotkomonline/db/src/types/event";
 import {
-    type Attendance,
     AttendanceSchema,
+    AttendeeSchema,
+    type Attendance,
     type AttendanceWrite,
     type Attendee,
-    AttendeeSchema,
     type AttendeeWrite,
     type Event,
 } from "@dotkomonline/types";
-import { type Kysely, sql } from "kysely";
-import { type AttendeeTable } from "@dotkomonline/db/src/types/event";
+import { sql, type Kysely } from "kysely";
 
 export interface AttendanceRepository {
     create(attendanceWrite: AttendanceWrite): Promise<Attendance>;
@@ -19,9 +19,9 @@ export interface AttendanceRepository {
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async create(attendanceWrite: AttendanceWrite) {
+    public async create(attendanceWrite: AttendanceWrite) {
         const res = await this.db
             .insertInto("attendance")
             .values({
@@ -32,7 +32,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
         return AttendanceSchema.parse(res);
     }
-    async createAttendee(attendeeWrite: AttendeeWrite) {
+
+    public async createAttendee(attendeeWrite: AttendeeWrite) {
         const res = await this.db
             .insertInto("attendee")
             .values({
@@ -47,7 +48,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
         return AttendeeSchema.parse(res);
     }
-    async getByEventId(eventId: string) {
+
+    public async getByEventId(eventId: string) {
         const res = await this.db
             .selectFrom("attendance")
             .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
@@ -61,9 +63,10 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
             .where("eventId", "=", eventId)
             .execute();
 
-        return res ? res.map((r) => AttendanceSchema.parse(r)) : [];
+        return res.map((r) => AttendanceSchema.parse(r));
     }
-    async getByAttendanceId(id: Attendance["id"]) {
+
+    public async getByAttendanceId(id: Attendance["id"]) {
         const res = await this.db
             .selectFrom("attendance")
             .leftJoin("attendee", "attendee.attendanceId", "attendance.id")

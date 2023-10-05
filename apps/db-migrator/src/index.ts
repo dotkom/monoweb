@@ -1,9 +1,9 @@
 import { Argument, program } from "commander";
 
-import { type MigrationResultSet } from "kysely";
 import { createMigrator } from "@dotkomonline/db/src/migrator";
-import { db } from "./db";
 import { getLogger } from "@dotkomonline/logger";
+import { type MigrationResultSet } from "kysely";
+import { db } from "./db";
 
 export const logger = getLogger("migrator");
 
@@ -46,6 +46,7 @@ program
                     } else {
                         break;
                     }
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 } while (res.results && res.results.length > 0 && !res.results[0].migrationName.startsWith("0001"));
 
                 if (res.error) {

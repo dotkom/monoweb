@@ -1,6 +1,6 @@
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
-import { type Kysely, type Selectable, sql } from "kysely";
-import { type Product, ProductSchema, type ProductWrite } from "@dotkomonline/types";
+import { ProductSchema, type Product, type ProductWrite } from "@dotkomonline/types";
+import { sql, type Kysely, type Selectable } from "kysely";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 
 import { type Database } from "@dotkomonline/db";
 import { type ProductPaymentProviderTable } from "@dotkomonline/db/src/types/payment";
@@ -17,15 +17,15 @@ export interface ProductRepository {
 }
 
 export class ProductRepositoryImpl implements ProductRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async create(data: ProductWrite): Promise<Product | undefined> {
+    public async create(data: ProductWrite): Promise<Product | undefined> {
         const product = await this.db.insertInto("product").values(data).returningAll().executeTakeFirstOrThrow();
 
         return mapToProduct(product);
     }
 
-    async update(id: Product["id"], data: Omit<ProductWrite, "id">): Promise<Product> {
+    public async update(id: Product["id"], data: Omit<ProductWrite, "id">): Promise<Product> {
         const product = await this.db
             .updateTable("product")
             .set({
@@ -39,7 +39,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         return mapToProduct(product);
     }
 
-    async getById(id: string): Promise<Product | undefined> {
+    public async getById(id: string): Promise<Product | undefined> {
         const product = await this.db
             .selectFrom("product")
             .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
@@ -58,7 +58,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         return product ? mapToProduct(product) : undefined;
     }
 
-    async getAll(take: number, cursor?: Cursor): Promise<Array<Product>> {
+    public async getAll(take: number, cursor?: Cursor): Promise<Array<Product>> {
         let query = this.db
             .selectFrom("product")
             .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
@@ -84,12 +84,12 @@ export class ProductRepositoryImpl implements ProductRepository {
         return products.map(mapToProduct);
     }
 
-    async delete(id: Product["id"]): Promise<void> {
+    public async delete(id: Product["id"]): Promise<void> {
         // Soft delete since we don't want payments to ever be deleted or miss context
         await this.db.updateTable("product").set({ deletedAt: new Date() }).where("id", "=", id).execute();
     }
 
-    async undelete(id: Product["id"]): Promise<void> {
+    public async undelete(id: Product["id"]): Promise<void> {
         await this.db.updateTable("product").set({ deletedAt: null }).where("id", "=", id).execute();
     }
 }

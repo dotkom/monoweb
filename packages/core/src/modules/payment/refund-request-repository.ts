@@ -1,6 +1,6 @@
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
+import { RefundRequestSchema, type Payment, type RefundRequest, type RefundRequestWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-import { type Payment, type RefundRequest, RefundRequestSchema, type RefundRequestWrite } from "@dotkomonline/types";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 
 import { type Database } from "@dotkomonline/db";
 
@@ -16,9 +16,9 @@ export interface RefundRequestRepository {
 }
 
 export class RefundRequestRepositoryImpl implements RefundRequestRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async create(data: RefundRequestWrite): Promise<RefundRequest> {
+    public async create(data: RefundRequestWrite): Promise<RefundRequest> {
         const refundRequest = await this.db
             .insertInto("refundRequest")
             .values(data)
@@ -28,7 +28,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
         return mapToRefundRequest(refundRequest);
     }
 
-    async update(id: RefundRequest["id"], data: RefundRequestWrite): Promise<RefundRequest> {
+    public async update(id: RefundRequest["id"], data: RefundRequestWrite): Promise<RefundRequest> {
         const refundRequest = await this.db
             .updateTable("refundRequest")
             .set({
@@ -42,11 +42,11 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
         return mapToRefundRequest(refundRequest);
     }
 
-    async delete(id: RefundRequest["id"]): Promise<void> {
+    public async delete(id: RefundRequest["id"]): Promise<void> {
         await this.db.deleteFrom("refundRequest").where("id", "=", id).execute();
     }
 
-    async getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
+    public async getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
         const refundRequest = await this.db
             .selectFrom("refundRequest")
             .selectAll()
@@ -56,7 +56,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
         return refundRequest ? mapToRefundRequest(refundRequest) : undefined;
     }
 
-    async getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined> {
+    public async getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined> {
         const refundRequest = await this.db
             .selectFrom("refundRequest")
             .selectAll()
@@ -66,7 +66,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
         return refundRequest ? mapToRefundRequest(refundRequest) : undefined;
     }
 
-    async getAll(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
+    public async getAll(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
         let query = this.db.selectFrom("refundRequest").selectAll().limit(take);
 
         if (cursor) {

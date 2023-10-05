@@ -1,9 +1,9 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import type Stripe from "stripe";
-import { bufferRequest } from "../request-utils";
 import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core";
 import { kysely } from "@dotkomonline/db";
+import type Stripe from "stripe";
+import { bufferRequest } from "../request-utils";
 
 export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") {
@@ -40,10 +40,10 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
         const ctx = await createServiceLayer({ db: kysely });
         const data = event.data.object as Stripe.Checkout.Session;
         const sessionId = data.id;
+        const intentId = data.payment_intent as string;
 
         switch (event.type.split(".").at(-1)) {
             case "completed":
-                const intentId = data.payment_intent as string;
                 await ctx.paymentService.fullfillStripeCheckoutSession(sessionId, intentId);
                 break;
             case "expired":

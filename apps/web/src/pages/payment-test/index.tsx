@@ -1,9 +1,9 @@
 // THIS FILE IS TEMPORARY. NO NEED TO REVIEW IT.
 
-import React, { type FC, type FormEvent, useState } from "react";
+import { useState, type FC, type FormEvent } from "react";
 
-import { type ProductWrite } from "@dotkomonline/types";
 import { trpc } from "@/utils/trpc";
+import { type ProductWrite } from "@dotkomonline/types";
 import { useRouter } from "next/router";
 
 const PaymentTestPage: FC = () => {
@@ -128,7 +128,7 @@ const PaymentTestPage: FC = () => {
                 seedCreateProductMutation.mutate({
                     type: "EVENT",
                     objectId: data[i].id,
-                    amount: i == 0 ? 250 : 2300,
+                    amount: i === 0 ? 250 : 2300,
                     isRefundable: true,
                     refundRequiresApproval: true,
                 });

@@ -9,12 +9,13 @@ export interface AttendanceService {
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
-    constructor(private readonly attendanceRepository: AttendanceRepository) {}
+    public constructor(private readonly attendanceRepository: AttendanceRepository) {}
 
-    async canAttend(_eventId: string) {
+    public async canAttend(_eventId: string) {
         return new Date();
     }
-    async registerForEvent(userId: string, eventId: string) {
+
+    public async registerForEvent(userId: string, eventId: string) {
         const pools = await this.attendanceRepository.getByEventId(eventId);
         const pool = pools[Math.floor(Math.random() * pools.length)];
         const attendee = await this.attendanceRepository.createAttendee({ attendanceId: pool.id, userId });
@@ -22,8 +23,9 @@ export class AttendanceServiceImpl implements AttendanceService {
         return attendee;
     }
 
-    async deregisterForEvent(_eventId: string, _userId: string) {
+    public async deregisterForEvent(_eventId: string, _userId: string) {
         return undefined;
     }
-    async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {}
+
+    public async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {}
 }

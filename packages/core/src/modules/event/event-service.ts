@@ -18,12 +18,12 @@ export interface EventService {
 }
 
 export class EventServiceImpl implements EventService {
-    constructor(
+    public constructor(
         private readonly eventRepository: EventRepository,
         private readonly attendanceRepository: AttendanceRepository
     ) {}
 
-    async createEvent(eventCreate: EventWrite): Promise<Event> {
+    public async createEvent(eventCreate: EventWrite): Promise<Event> {
         const event = await this.eventRepository.create(eventCreate);
 
         if (!event) {
@@ -33,13 +33,13 @@ export class EventServiceImpl implements EventService {
         return event;
     }
 
-    async getEvents(take: number, cursor?: Cursor): Promise<Array<Event>> {
+    public async getEvents(take: number, cursor?: Cursor): Promise<Array<Event>> {
         const events = await this.eventRepository.getAll(take, cursor);
 
         return events;
     }
 
-    async getEventsByCommitteeId(
+    public async getEventsByCommitteeId(
         committeeId: string,
         take: number,
         cursor?: { id: string; createdAt: Date } | undefined
@@ -49,7 +49,7 @@ export class EventServiceImpl implements EventService {
         return events;
     }
 
-    async getEventById(id: Event["id"]): Promise<Event> {
+    public async getEventById(id: Event["id"]): Promise<Event> {
         const event = await this.eventRepository.getById(id);
 
         if (!event) {
@@ -59,17 +59,13 @@ export class EventServiceImpl implements EventService {
         return event;
     }
 
-    async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
+    public async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
         const event = await this.eventRepository.update(id, eventUpdate);
-
-        if (!event) {
-            throw new NotFoundError(`Could not update Event(${id})`);
-        }
 
         return event;
     }
 
-    async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
+    public async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
         const attendance = await this.attendanceRepository.create({
             ...attendanceCreate,
             eventId,
@@ -78,13 +74,13 @@ export class EventServiceImpl implements EventService {
         return attendance;
     }
 
-    async listAttendance(eventId: Event["id"]): Promise<Array<Attendance>> {
+    public async listAttendance(eventId: Event["id"]): Promise<Array<Attendance>> {
         const attendance = await this.attendanceRepository.getByEventId(eventId);
 
         return attendance;
     }
 
-    async createWaitlist(eventId: Event["id"]): Promise<Attendance> {
+    public async createWaitlist(eventId: Event["id"]): Promise<Attendance> {
         const event = await this.getEventById(eventId);
 
         if (event.waitlist !== null) {

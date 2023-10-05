@@ -1,9 +1,9 @@
+import { type Database } from "@dotkomonline/db";
 import { type Company, type Event } from "@dotkomonline/types";
 import { type Kysely } from "kysely";
-import { type Database } from "@dotkomonline/db";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 import { mapToCompany } from "../company/company-repository";
 import { mapToEvent } from "./event-repository";
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
 
 export interface EventCompanyRepository {
     createCompany(id: Event["id"], company: Company["id"]): Promise<void>;
@@ -13,9 +13,9 @@ export interface EventCompanyRepository {
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async createCompany(id: Event["id"], company: Company["id"]) {
+    public async createCompany(id: Event["id"], company: Company["id"]) {
         await this.db
             .insertInto("eventCompany")
             .values({
@@ -26,7 +26,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
             .executeTakeFirst();
     }
 
-    async deleteCompany(id: Event["id"], company: Company["id"]) {
+    public async deleteCompany(id: Event["id"], company: Company["id"]) {
         await this.db
             .deleteFrom("eventCompany")
             .where("companyId", "=", company)
@@ -35,7 +35,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
             .executeTakeFirst();
     }
 
-    async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
+    public async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
         let query = this.db
             .selectFrom("eventCompany")
             .where("eventId", "=", id)
@@ -54,7 +54,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
         return companies.map(mapToCompany);
     }
 
-    async getEventsByCompanyId(companyId: string, take: number, cursor?: Cursor): Promise<Array<Event>> {
+    public async getEventsByCompanyId(companyId: string, take: number, cursor?: Cursor): Promise<Array<Event>> {
         let query = this.db
             .selectFrom("event")
             .leftJoin("eventCompany", "eventCompany.eventId", "event.id")

@@ -1,6 +1,6 @@
-import { type Committee, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types";
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
+import { CommitteeSchema, type Committee, type CommitteeWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 
 import { type Database } from "@dotkomonline/db";
 
@@ -13,15 +13,15 @@ export interface CommitteeRepository {
 }
 
 export class CommitteeRepositoryImpl implements CommitteeRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async getById(id: string) {
+    public async getById(id: string) {
         const committee = await this.db.selectFrom("committee").selectAll().where("id", "=", id).executeTakeFirst();
 
         return committee ? mapToCommittee(committee) : undefined;
     }
 
-    async getAll(take: number, cursor?: Cursor) {
+    public async getAll(take: number, cursor?: Cursor) {
         let query = this.db.selectFrom("committee").selectAll().limit(take);
 
         if (cursor) {
@@ -33,7 +33,7 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
         return committees.map(mapToCommittee);
     }
 
-    async create(values: CommitteeWrite) {
+    public async create(values: CommitteeWrite) {
         const committee = await this.db
             .insertInto("committee")
             .values(values)

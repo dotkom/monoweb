@@ -13,14 +13,14 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
     const { title, slug } = menuItem;
 
-    const [isCurrent, setCurrent] = useState(router.pathname == slug ? "text-white" : "text-slate-7");
+    const [isCurrent, setCurrent] = useState(router.pathname === slug ? "text-white" : "text-slate-7");
 
     const handleChange = () => {
         router.push(slug);
     };
 
     useEffect(() => {
-        setCurrent(router.pathname == slug ? "text-white" : "text-slate-7");
+        setCurrent(router.pathname === slug ? "text-white" : "text-slate-7");
     }, [router.pathname, slug]);
 
     return (
