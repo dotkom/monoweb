@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { t } from "../../trpc"
+import { protectedProcedure, t } from "../../trpc"
 import { CompanyWriteSchema } from "@dotkomonline/types"
 import { PaginateInputSchema } from "@dotkomonline/core"
 
@@ -7,6 +7,15 @@ export const companyRouter = t.router({
   create: t.procedure.input(CompanyWriteSchema).mutation(({ input, ctx }) => {
     return ctx.companyService.createCompany(input)
   }),
+  edit: protectedProcedure
+    .input(
+      CompanyWriteSchema.required({
+        id: true,
+      })
+    )
+    .mutation(({ input: changes, ctx }) => {
+      return ctx.eventService.updateEvent(changes.id, changes)
+    }),
   all: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
     return ctx.companyService.getCompanies(input.take, input.cursor)
   }),
