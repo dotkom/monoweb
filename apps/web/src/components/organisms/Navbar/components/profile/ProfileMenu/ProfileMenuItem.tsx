@@ -31,7 +31,7 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
       className="!hover:text-blue text-slate-12 mb-4 flex flex-row items-center hover:cursor-pointer"
     >
       <div className={`mr-4 ${isCurrent} h-6 w-6`}>
-        <Icon icon={icon} />
+        <Icon icon={icon} width="w-6" />
       </div>
       <p className={isCurrent}>{title}</p>
     </div>
