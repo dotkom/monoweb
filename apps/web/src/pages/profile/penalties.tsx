@@ -1,44 +1,7 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
-import { DotFilledIcon } from "@radix-ui/react-icons"
-import PenaltyRules from "./penaltyRules"
-
-/* TODO - Set up connection to Users marks router
- *  Remove all dummy marks
- */
-
-const dummyMark = {
-  id: "",
-  title: "Første Mark",
-  givenAt: new Date(),
-  updatedAt: new Date(),
-  category: "",
-  details: "manglende møte på Dåp",
-  duration: 2000000,
-}
-const dummyMark1 = {
-  id: "",
-  title: "Andre Mark",
-  givenAt: new Date(),
-  updatedAt: new Date(),
-  category: "",
-  details: "flexing av hook med 05",
-  duration: 9000000000009,
-}
-const dummyMark2 = {
-  id: "",
-  title: "Tredje Mark",
-  givenAt: new Date(),
-  updatedAt: new Date(),
-  category: "Sosialt",
-  details: "manglende prikker",
-  duration: 100000,
-}
-
-const listOfDummyMarks = [dummyMark, dummyMark1, dummyMark2]
-const emptylist = []
+import { Icon } from "@dotkomonline/ui"
 
 const PenaltiesPage: NextPageWithLayout = () => {
   return (
@@ -72,10 +35,24 @@ const PenaltiesPage: NextPageWithLayout = () => {
   )
 }
 
+
+
+const PenaltyHeader = () => {
+  return (
+    <div className="flex items-center">
+      <Icon icon="pajamas:cancel" className="w-4" />
+      <p className="ml-2">Prikker og Suspensjoner</p>
+    </div>
+  )
+}
+
 PenaltiesPage.getLayout = (page) => {
   return (
     <MainLayout>
-      <ProfileLayout>{page}</ProfileLayout>
+      <ProfileLayout>
+        <PenaltyHeader />
+        {page}
+      </ProfileLayout>
     </MainLayout>
   )
 }
@@ -114,7 +91,7 @@ const PenaltyAccordion = (props: AccordionSetup) => {
         <AccordionContent className="ml-4">
           <div className="flex flex-col space-y-4">
             <p>
-              {" "}
+            
               Du har fått en prikk på grunn av {props.details} den {givenAtDate}
             </p>
             <p className="text-lg">
