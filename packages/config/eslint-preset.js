@@ -5,6 +5,7 @@ const path = require("node:path");
  * */
 module.exports = {
     env: {
+        browser: true,
         es6: true,
         node: true,
     },
@@ -12,8 +13,8 @@ module.exports = {
     extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/stylistic",
+        "plugin:perfectionist/recommended-natural",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:jsx-a11y/recommended",
@@ -21,7 +22,12 @@ module.exports = {
         "prettier",
     ],
 
+    globals: {
+        React: "writable",
+    },
+
     ignorePatterns: ["*.stories.tsx", "dist/", "node_modules/", "apps/docs/"],
+
     overrides: [
         {
             files: ["packages/db/src/migrations/*"],
@@ -133,5 +139,11 @@ module.exports = {
         "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "yoda": ["error", "never"],
+    },
+
+    settings: {
+        react: {
+            version: "detect",
+        },
     },
 };
