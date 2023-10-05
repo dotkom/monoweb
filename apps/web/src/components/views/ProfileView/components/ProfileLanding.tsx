@@ -20,7 +20,10 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
       <hr className="border-slate-12 w-full opacity-50" />
       <div className="ml-10 w-2/3 space-y-3 ">
         <div
-          className={cn('mt-3 flex items-center justify-between rounded-lg pl-2', clickable && 'hover:bg-slate-3 hover:cursor-pointer')}
+          className={cn(
+            "mt-3 flex items-center justify-between rounded-lg pl-2",
+            clickable && "hover:bg-slate-3 hover:cursor-pointer"
+          )}
         >
           {children}
           {clickable ? <Icon icon="simple-line-icons:arrow-right" width={10} /> : ""}
