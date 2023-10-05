@@ -63,6 +63,7 @@ module.exports = {
                 caughtErrorsIgnorePattern: "^_",
             },
         ],
+        "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/prefer-readonly": "error",
         "@typescript-eslint/promise-function-async": "error",
