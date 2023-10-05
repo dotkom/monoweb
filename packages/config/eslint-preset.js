@@ -130,6 +130,8 @@ module.exports = {
         "prefer-template": "error",
         "quote-props": ["error", "consistent-as-needed"],
         "quotes": ["error", "double", { avoidEscape: true }],
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
         "yoda": ["error", "never"],
     },
 };
