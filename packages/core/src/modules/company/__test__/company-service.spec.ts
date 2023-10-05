@@ -13,15 +13,15 @@ describe("CompanyService", () => {
 
     it("creates a new company", async () => {
         const company: Omit<Company, "id"> = {
-            name: "Duckmouse",
+            createdAt: new Date(),
             description: "We sell computer-mouses with ducks inside of them",
             email: "coolguys@company.com",
-            phone: "+47 123 45 678",
-            website: "www.duckmouse.no",
-            location: "Mars",
-            type: "Other",
-            createdAt: new Date(),
             image: null,
+            location: "Mars",
+            name: "Duckmouse",
+            phone: "+47 123 45 678",
+            type: "Other",
+            website: "www.duckmouse.no",
         };
 
         const id = randomUUID();

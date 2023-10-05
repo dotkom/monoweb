@@ -1,10 +1,12 @@
-import { cva } from "cva";
 import type { VariantProps } from "cva";
+
+import { cva } from "cva";
 import React, { forwardRef } from "react";
+
 import { cn } from "../../utils";
 import { Icon } from "../Icon";
 
-type Color = "blue" | "red" | "amber" | "slate" | "green";
+type Color = "amber" | "blue" | "green" | "red" | "slate";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonStyles> {
     color?: Color;
@@ -15,21 +17,21 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
     <button
         {...props}
-        disabled={props.disabled || props.loading}
         className={cn(
-            buttonStyles({ variant: props.variant, size: props.size }),
+            buttonStyles({ size: props.size, variant: props.variant }),
             props.color && getColorStyles(props.variant, props.color),
             props.color === "amber" && props.variant === "solid" && "text-slate-1",
             "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40",
             props.className
         )}
-        type={props.type}
+        disabled={props.disabled || props.loading}
         ref={ref}
+        type={props.type}
     >
         <div className="flex items-center justify-center">
             {(props.loading || props.icon) && (
                 <i className="mr-1 flex">
-                    {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+                    {props.loading ? <Icon className="animate-spin" icon="tabler:loader-2" width={16} /> : props.icon}
                 </i>
             )}
             <span className="text-inherit">{props.children}</span>
@@ -45,25 +47,25 @@ export const buttonStyles = cva(
         "hover:-translate-y-[1px] active:translate-y-[2px]",
     ],
     {
+        defaultVariants: {
+            size: "md",
+            variant: "brand",
+        },
         variants: {
             size: {
-                sm: "text-sm px-3 h-9 font-medium",
-                md: "text-md px-4 h-11 font-semibold",
                 lg: "text-lg px-5 h-13 font-bold",
+                md: "text-md px-4 h-11 font-semibold",
+                sm: "text-sm px-3 h-9 font-medium",
             },
             variant: {
-                gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-white ",
                 brand: "bg-brand text-white hover:bg-brand-dark active:bg-brand-darker",
+                gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-white ",
+                light: "text-current",
+                link: "bg-transparent underline-offset-4 hover:underline text-slate-11 hover:translate-y-0 active:translate-y-0",
                 outline: "bg-transparent border-2 border-slate-11 hover:bg-slate-4 focus:ring-blue-10 text-slate-11",
                 solid: "text-slate-12",
-                light: "text-current",
                 subtle: "bg-transparent",
-                link: "bg-transparent underline-offset-4 hover:underline text-slate-11 hover:translate-y-0 active:translate-y-0",
             },
-        },
-        defaultVariants: {
-            variant: "brand",
-            size: "md",
         },
     }
 );

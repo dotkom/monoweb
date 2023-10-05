@@ -3,7 +3,6 @@ import {
     AvatarFallback,
     AvatarImage,
     Button,
-    cn,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
@@ -19,33 +18,35 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
     Icon,
+    cn,
 } from "@dotkomonline/ui";
-import { type FC, type PropsWithChildren } from "react";
-import { useTheme } from "next-themes";
-import { navigationMenuTriggerStyle } from "./NavigationMenu";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { type FC, type PropsWithChildren } from "react";
+
+import { navigationMenuTriggerStyle } from "./NavigationMenu";
 
 export const ProfileMenu = () => {
     const { status } = useSession();
 
     if (status === "loading") {
-        return <Icon icon="tabler:loader-2" className="animate-spin" />;
+        return <Icon className="animate-spin" icon="tabler:loader-2" />;
     }
 
     if (status === "unauthenticated") {
         return (
             <>
                 <Button
-                    variant="subtle"
                     className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
                     onClick={async () => signIn("cognito")}
+                    variant="subtle"
                 >
                     Log in
                 </Button>
                 <Button
-                    variant="gradient"
                     className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
                     onClick={async () => signIn("cognito")}
+                    variant="gradient"
                 >
                     Sign up
                 </Button>
@@ -58,8 +59,8 @@ export const ProfileMenu = () => {
             <AvatarDropdown>
                 <Avatar>
                     <AvatarImage
-                        src="https://www.nicepng.com/png/detail/9-92047_pickle-rick-transparent-rick-and-morty-pickle-rick.png"
                         alt="@rick"
+                        src="https://www.nicepng.com/png/detail/9-92047_pickle-rick-transparent-rick-and-morty-pickle-rick.png"
                     />
                     <AvatarFallback>PR</AvatarFallback>
                 </Avatar>
@@ -69,8 +70,8 @@ export const ProfileMenu = () => {
 };
 
 interface Link {
-    label: string;
     icon: string;
+    label: string;
     shortcut?: string;
 }
 const linkGroups: Array<Array<Link>> = [
@@ -129,7 +130,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
                     <DropdownMenuGroup>
                         {group.map((link) => (
                             <DropdownMenuItem key={link.label}>
-                                <Icon icon={link.icon} className="mr-2 h-4 w-4" />
+                                <Icon className="mr-2 h-4 w-4" icon={link.icon} />
                                 <span>{link.label}</span>
                                 {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
                             </DropdownMenuItem>
@@ -141,7 +142,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
             <ThemeMenuSub />
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={async () => signOut()}>
-                <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
+                <Icon className="mr-2 h-4 w-4" icon="tabler:logout" />
                 <span>Log out</span>
                 <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -152,33 +153,33 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
 const ThemeMenuSub = () => {
     const { setTheme, theme } = useTheme();
 
-    const items: Array<{ theme: string; icon: string }> = [
+    const items: Array<{ icon: string; theme: string }> = [
         {
-            theme: "light",
             icon: "tabler:sun",
+            theme: "light",
         },
         {
-            theme: "dark",
             icon: "tabler:moon",
+            theme: "dark",
         },
         {
-            theme: "system",
             icon: "tabler:device-desktop",
+            theme: "system",
         },
     ];
 
     return (
         <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-                <Icon icon="tabler:sun" className="mr-2 h-4 w-4" />
+                <Icon className="mr-2 h-4 w-4" icon="tabler:sun" />
                 <span>Theme</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
                 <DropdownMenuSubContent>
-                    <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
+                    <DropdownMenuRadioGroup onValueChange={(val) => setTheme(val)} value={theme}>
                         {items.map((item) => (
-                            <DropdownMenuRadioItem value={item.theme} key={item.theme}>
-                                <Icon icon={item.icon} className="mr-2 h-4 w-4" />
+                            <DropdownMenuRadioItem key={item.theme} value={item.theme}>
+                                <Icon className="mr-2 h-4 w-4" icon={item.icon} />
                                 <span className="capitalize">{item.theme}</span>
                             </DropdownMenuRadioItem>
                         ))}

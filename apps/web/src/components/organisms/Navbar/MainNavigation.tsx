@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { type FC } from "react";
+
 import {
     NavigationMenu,
-    NavigationMenuList,
-    NavigationMenuItem,
     NavigationMenuContent,
+    NavigationMenuItem,
     NavigationMenuLink,
+    NavigationMenuList,
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "./NavigationMenu";
@@ -35,8 +36,8 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
                         {link.items.map((item) => (
                             <NavigationMenuLink asChild key={`${link.title}-${item.title}`}>
                                 <Link
-                                    href={item.href}
                                     className="hover:bg-slate-3 focus:bg-slate-3 block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors "
+                                    href={item.href}
                                 >
                                     <div className="text-slate-12 text-sm font-bold leading-none">{item.title}</div>
                                     <p className="text-slate-11 line-clamp-2 text-sm font-medium leading-snug">

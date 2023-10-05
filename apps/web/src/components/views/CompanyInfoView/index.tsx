@@ -1,11 +1,10 @@
-import { Button } from "@dotkomonline/ui";
-import { type FC } from "react";
-
 import PortableText, { type PortableTextProps } from "@/components/molecules/PortableText";
+import { Button } from "@dotkomonline/ui";
+import { Title } from "@dotkomonline/ui";
+import { type FC } from "react";
 
 import CompanyInterestProcess from "./CompanyInterestProcess";
 import OurProducts from "./OurProducts";
-import { Title } from "@dotkomonline/ui";
 
 export interface Content {
     content: PortableTextProps["blocks"];
@@ -24,29 +23,29 @@ export const CompanyInfoView: FC<CompanyInfoViewProps> = (props: CompanyInfoView
                     <Title className="text-slate-1 mb-4 mt-5 text-4xl leading-[1.4]">
                         Er din bedrift på jakt etter skarpe IT-
                         <span
-                            style={{ backgroundPosition: "50% 88%" }}
                             className="bg-[url(/for-company-text-decor.svg)]"
+                            style={{ backgroundPosition: "50% 88%" }}
                         >
                             studenter?
                         </span>
                     </Title>
-                    <PortableText className="prose text-center" blocks={header.content} />
+                    <PortableText blocks={header.content} className="prose text-center" />
                 </div>
             </div>
             <div className="mt-5 flex flex-col items-center px-3 text-center ">
-                <PortableText className="prose" blocks={interest.content} />
-                <a href="https://interesse.online.ntnu.no" className="mt-4">
+                <PortableText blocks={interest.content} className="prose" />
+                <a className="mt-4" href="https://interesse.online.ntnu.no">
                     <Button>Send Interesse</Button>
                 </a>
             </div>
-            <PortableText className="prose mx-auto my-5 max-w-[768px] px-2 text-center" blocks={product.content} />
+            <PortableText blocks={product.content} className="prose mx-auto my-5 max-w-[768px] px-2 text-center" />
             <OurProducts />
             <div className="bg-blue-5 w-full rounded-lg">
                 <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
             </div>
-            <PortableText className="prose self-center p-4" blocks={info.content} />
+            <PortableText blocks={info.content} className="prose self-center p-4" />
             <div className="mx-auto flex flex-col items-center p-4">
-                <PortableText className="prose my-6 p-3 text-center" blocks={contact.content} />
+                <PortableText blocks={contact.content} className="prose my-6 p-3 text-center" />
             </div>
         </div>
     );

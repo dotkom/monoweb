@@ -7,13 +7,13 @@ import { type ProductRepository } from "./product-repository";
 import { type RefundRequestRepository } from "./refund-request-repository";
 
 export interface RefundRequestService {
+    approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void>;
     createRefundRequest(paymentId: Payment["id"], userId: User["id"], reason: string): Promise<RefundRequest>;
-    updateRefundRequest(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>;
     deleteRefundRequest(id: RefundRequest["id"]): Promise<void>;
     getRefundRequestById(id: RefundRequest["id"]): Promise<RefundRequest | undefined>;
     getRefundRequests(take: number, cursor?: Cursor): Promise<Array<RefundRequest>>;
-    approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void>;
     rejectRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void>;
+    updateRefundRequest(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>;
 }
 
 export class RefundRequestServiceImpl implements RefundRequestService {
@@ -23,6 +23,26 @@ export class RefundRequestServiceImpl implements RefundRequestService {
         private readonly productRepository: ProductRepository,
         private readonly paymentService: PaymentService
     ) {}
+
+    public async approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
+        const refundRequest = await this.refundRequestRepository.getById(id);
+
+        if (!refundRequest) {
+            throw new Error("Refund request not found");
+        }
+
+        if (refundRequest.status === "APPROVED") {
+            throw new Error("Refund request already approved");
+        }
+
+        const updatedRefundRequest = await this.refundRequestRepository.update(id, {
+            handledBy,
+            status: "APPROVED",
+        });
+
+        // Automatically refund the payment. We already know the request was approved, so no need to check.
+        await this.paymentService.refundPaymentById(updatedRefundRequest.paymentId, false);
+    }
 
     public async createRefundRequest(
         paymentId: Payment["id"],
@@ -50,19 +70,12 @@ export class RefundRequestServiceImpl implements RefundRequestService {
         }
 
         return this.refundRequestRepository.create({
+            handledBy: null,
             paymentId,
-            userId,
             reason,
             status: "PENDING",
-            handledBy: null,
+            userId,
         });
-    }
-
-    public async updateRefundRequest(
-        id: RefundRequest["id"],
-        data: Partial<RefundRequestWrite>
-    ): Promise<RefundRequest> {
-        return this.refundRequestRepository.update(id, data);
     }
 
     public async deleteRefundRequest(id: RefundRequest["id"]): Promise<void> {
@@ -75,26 +88,6 @@ export class RefundRequestServiceImpl implements RefundRequestService {
 
     public async getRefundRequests(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
         return this.refundRequestRepository.getAll(take, cursor);
-    }
-
-    public async approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
-        const refundRequest = await this.refundRequestRepository.getById(id);
-
-        if (!refundRequest) {
-            throw new Error("Refund request not found");
-        }
-
-        if (refundRequest.status === "APPROVED") {
-            throw new Error("Refund request already approved");
-        }
-
-        const updatedRefundRequest = await this.refundRequestRepository.update(id, {
-            status: "APPROVED",
-            handledBy,
-        });
-
-        // Automatically refund the payment. We already know the request was approved, so no need to check.
-        await this.paymentService.refundPaymentById(updatedRefundRequest.paymentId, false);
     }
 
     public async rejectRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
@@ -111,8 +104,15 @@ export class RefundRequestServiceImpl implements RefundRequestService {
         }
 
         await this.refundRequestRepository.update(id, {
-            status: "REJECTED",
             handledBy,
+            status: "REJECTED",
         });
+    }
+
+    public async updateRefundRequest(
+        id: RefundRequest["id"],
+        data: Partial<RefundRequestWrite>
+    ): Promise<RefundRequest> {
+        return this.refundRequestRepository.update(id, data);
     }
 }

@@ -1,5 +1,5 @@
-import { type Event } from "@dotkomonline/types";
 import { EventListItem } from "@/components/molecules/EventListItem";
+import { type Event } from "@dotkomonline/types";
 import { type FC } from "react";
 
 interface EventListProps {

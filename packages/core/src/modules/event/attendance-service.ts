@@ -1,11 +1,12 @@
 import { type Attendee, type Event, type User } from "@dotkomonline/types";
+
 import { type AttendanceRepository } from "./attendance-repository";
 
 export interface AttendanceService {
     canAttend(eventId: Event["id"]): Promise<Date | undefined>;
-    registerForEvent(userId: User["id"], eventId: Event["id"]): Promise<Attendee | undefined>;
     deregisterForEvent(userId: User["id"], eventId: Event["id"]): Promise<Attendee | undefined>;
     registerForAttendance(eventId: Event["id"], userId: User["id"], attended: boolean): Promise<void>;
+    registerForEvent(userId: User["id"], eventId: Event["id"]): Promise<Attendee | undefined>;
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -15,6 +16,12 @@ export class AttendanceServiceImpl implements AttendanceService {
         return new Date();
     }
 
+    public async deregisterForEvent(_eventId: string, _userId: string) {
+        return undefined;
+    }
+
+    public async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {}
+
     public async registerForEvent(userId: string, eventId: string) {
         const pools = await this.attendanceRepository.getByEventId(eventId);
         const pool = pools[Math.floor(Math.random() * pools.length)];
@@ -22,10 +29,4 @@ export class AttendanceServiceImpl implements AttendanceService {
 
         return attendee;
     }
-
-    public async deregisterForEvent(_eventId: string, _userId: string) {
-        return undefined;
-    }
-
-    public async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {}
 }

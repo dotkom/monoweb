@@ -1,5 +1,6 @@
-import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import * as React from "react";
+
 import { cn } from "../../utils";
 import { buttonStyles, getColorStyles } from "../Button/Button";
 
@@ -38,11 +39,11 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogPrimitive.Content
-            ref={ref}
             className={cn(
                 "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0 bg-slate-3 fixed z-50 grid w-full max-w-lg scale-100 gap-4 p-6 opacity-100 sm:rounded-lg md:w-full",
                 className
             )}
+            ref={ref}
             {...props}
         />
     </AlertDialogPortal>
@@ -66,7 +67,7 @@ const AlertDialogTitle = React.forwardRef<
     React.ElementRef<typeof AlertDialogPrimitive.Title>,
     React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
-    <AlertDialogPrimitive.Title ref={ref} className={cn("text-slate-12 text-lg font-semibold", className)} {...props} />
+    <AlertDialogPrimitive.Title className={cn("text-slate-12 text-lg font-semibold", className)} ref={ref} {...props} />
 ));
 
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
@@ -75,7 +76,7 @@ const AlertDialogDescription = React.forwardRef<
     React.ElementRef<typeof AlertDialogPrimitive.Description>,
     React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-    <AlertDialogPrimitive.Description ref={ref} className={cn("text-slate-10 text-md", className)} {...props} />
+    <AlertDialogPrimitive.Description className={cn("text-slate-10 text-md", className)} ref={ref} {...props} />
 ));
 
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;
@@ -102,8 +103,8 @@ const AlertDialogCancel = React.forwardRef<
     React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, ...props }, ref) => (
     <AlertDialogPrimitive.Cancel
+        className={cn(buttonStyles({ size: "md", variant: "subtle" }), getColorStyles("subtle", "slate"), className)}
         ref={ref}
-        className={cn(buttonStyles({ variant: "subtle", size: "md" }), getColorStyles("subtle", "slate"), className)}
         {...props}
     />
 ));
@@ -112,12 +113,12 @@ AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
 export {
     AlertDialog,
-    AlertDialogTrigger,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogFooter,
-    AlertDialogTitle,
-    AlertDialogDescription,
     AlertDialogAction,
     AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 };

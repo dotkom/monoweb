@@ -1,28 +1,28 @@
+import { type Event } from "@dotkomonline/types";
+import { randomUUID } from "crypto";
+import { Kysely } from "kysely";
 import { describe, vi } from "vitest";
 
-import { type Event } from "@dotkomonline/types";
 import { NotFoundError } from "../../../errors/errors";
 import { AttendanceRepositoryImpl } from "../attendance-repository";
 import { EventRepositoryImpl } from "../event-repository";
 import { EventServiceImpl } from "../event-service";
-import { Kysely } from "kysely";
-import { randomUUID } from "crypto";
 
 export const eventPayload: Omit<Event, "id"> = {
-    title: "Kotlin og spillutvikling med Bekk",
-    subtitle: "Bekk kommer for å holde kurs i kotlin og spillutvikling!",
+    committeeId: null,
+    createdAt: new Date(2022, 1, 1),
+    description: "Kotlin er et relativt nytt programmeringsspråk som de siste årene har blitt veldig populært",
+    end: new Date(),
     imageUrl:
         "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fhttps://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/lg/59dec779-da56-40f1-be27-4045630c708a.png",
-    description: "Kotlin er et relativt nytt programmeringsspråk som de siste årene har blitt veldig populært",
     location: "Verkstedteknisk: VE22",
     public: false,
     start: new Date(),
-    end: new Date(),
-    createdAt: new Date(2022, 1, 1),
-    updatedAt: new Date(2022, 1, 1),
     status: "PUBLIC",
+    subtitle: "Bekk kommer for å holde kurs i kotlin og spillutvikling!",
+    title: "Kotlin og spillutvikling med Bekk",
     type: "COMPANY",
-    committeeId: null,
+    updatedAt: new Date(2022, 1, 1),
     waitlist: null,
 };
 

@@ -1,16 +1,17 @@
-import { Icon } from "../Icon";
-import { cva, type VariantProps } from "cva";
+import { type VariantProps, cva } from "cva";
 import { type FC } from "react";
+
 import { cn } from "../../utils";
+import { Icon } from "../Icon";
 
 interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
     className?: string;
     size?: number;
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => (
+export const AlertIcon: FC<AlertIconProps> = ({ className, size = 24, status }) => (
     <>
-        <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
+        <Icon className={cn(iconVariant({ status }), className)} icon={iconKey(status)} width={size} />
     </>
 );
 
@@ -32,9 +33,9 @@ const iconKey = (status: AlertIconProps["status"]) => {
 const iconVariant = cva("", {
     variants: {
         status: {
+            danger: "text-red-11",
             info: "text-blue-11",
             success: "text-green-11",
-            danger: "text-red-11",
             warning: "text-amber-11",
         },
     },

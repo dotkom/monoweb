@@ -1,17 +1,16 @@
+import PortableText from "@/components/molecules/PortableText";
 import { Badge } from "@dotkomonline/ui";
 import { format } from "date-fns";
 import Image from "next/image";
 import { type FC } from "react";
 import { type Article } from "src/api/get-article";
 
-import PortableText from "@/components/molecules/PortableText";
-
 interface ArticleViewProps {
     article: Article;
 }
 
 export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
-    const { title, author, photographer, _createdAt, tags, excerpt, cover_image, content, estimatedReadingTime } =
+    const { _createdAt, author, content, cover_image, estimatedReadingTime, excerpt, photographer, tags, title } =
         props.article;
 
     const date = new Date(_createdAt);
@@ -41,7 +40,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
                 </div>
                 <div className="grid max-w-fit grid-flow-col-dense gap-3">
                     {tags.map((tag: string, key: number) => (
-                        <Badge key={key} variant="light" color="slate" className="font-bold">
+                        <Badge className="font-bold" color="slate" key={key} variant="light">
                             {tag}
                         </Badge>
                     ))}
@@ -50,7 +49,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
             </div>
             {cover_image && (
                 <div className="mx-auto mb-10 max-h-[440]">
-                    <Image width={800} height={440} src={cover_image.asset.url} alt="cover image" />
+                    <Image alt="cover image" height={440} src={cover_image.asset.url} width={800} />
                 </div>
             )}
             <div className="prose md:prose-lg dark:prose-invert mx-auto max-w-[75ch]">

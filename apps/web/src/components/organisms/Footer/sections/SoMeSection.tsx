@@ -11,7 +11,7 @@ export const SoMeSection = () => {
     return (
         <ul className="mx-8 mb-4 flex sm:justify-center">
             {icons.map((icon) => (
-                <li key={icon.key} className="mx-4 w-16 cursor-pointer">
+                <li className="mx-4 w-16 cursor-pointer" key={icon.key}>
                     {icon}
                 </li>
             ))}

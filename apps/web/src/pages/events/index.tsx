@@ -8,7 +8,7 @@ const EventPage = () => {
         return <div>Loading...</div>;
     }
 
-    return <EventList title="Arrangementer" isLoading={isLoading} events={events} />;
+    return <EventList events={events} isLoading={isLoading} title="Arrangementer" />;
 };
 
 export default EventPage;

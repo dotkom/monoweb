@@ -1,10 +1,9 @@
 // THIS FILE IS TEMPORARY. NO NEED TO REVIEW IT.
 
-import { useState, type FC, type FormEvent } from "react";
-
 import { trpc } from "@/utils/trpc";
 import { type ProductWrite } from "@dotkomonline/types";
 import { useRouter } from "next/router";
+import { type FC, type FormEvent, useState } from "react";
 
 const PaymentTestPage: FC = () => {
     const paymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
@@ -29,11 +28,11 @@ const PaymentTestPage: FC = () => {
 
     const [isShowingCreateProductForm, setIsShowingCreateProductForm] = useState(false);
     const [createProductFormState, setCreateProductFormState] = useState<ProductWrite>({
-        type: "EVENT",
-        objectId: "6b0e48c1-bc27-4901-9cc9-31c8076ef5ac",
         amount: 6969,
         isRefundable: true,
+        objectId: "6b0e48c1-bc27-4901-9cc9-31c8076ef5ac",
         refundRequiresApproval: true,
+        type: "EVENT",
     });
 
     const router = useRouter();
@@ -70,10 +69,10 @@ const PaymentTestPage: FC = () => {
 
     const onCheckoutClick = () => {
         createCheckout.mutate({
+            cancelRedirectUrl: `${window.location.href}/cancel`,
             productId,
             stripePublicKey: providerId,
             successRedirectUrl: `${window.location.href}/success`,
-            cancelRedirectUrl: `${window.location.href}/cancel`,
         });
     };
 
@@ -111,9 +110,9 @@ const PaymentTestPage: FC = () => {
 
             if (stripeProvider) {
                 seedAddProductPaymentProviderMutation.mutate({
-                    productId: data.id,
                     paymentProvider: "STRIPE",
                     paymentProviderId: stripeProvider.paymentProviderId,
+                    productId: data.id,
                 });
             }
         },
@@ -126,11 +125,11 @@ const PaymentTestPage: FC = () => {
 
             for (let i = 0; i < Math.min(2, goodEvents.length); i++) {
                 seedCreateProductMutation.mutate({
-                    type: "EVENT",
-                    objectId: data[i].id,
                     amount: i === 0 ? 250 : 2300,
                     isRefundable: true,
+                    objectId: data[i].id,
                     refundRequiresApproval: true,
+                    type: "EVENT",
                 });
             }
         },
@@ -146,7 +145,7 @@ const PaymentTestPage: FC = () => {
             <h1>Payment Test</h1>
 
             {/* Use migration fixtures instead */}
-            <button onClick={onSeedClick} className="hidden">
+            <button className="hidden" onClick={onSeedClick}>
                 Create and insert seed data
             </button>
             {isSeeding && <p>Seeding...</p>}
@@ -157,42 +156,42 @@ const PaymentTestPage: FC = () => {
                 <button onClick={() => setIsShowingCreateProductForm(true)}>Create product</button>
                 {isShowingCreateProductForm && (
                     <form
+                        className="p-8"
                         onSubmit={(e) => {
                             createProductMutation.mutate(createProductFormState);
                             e.preventDefault();
                         }}
-                        className="p-8"
                     >
                         <fieldset>
                             <label htmlFor="type">Type</label>
                             <input
-                                type="text"
                                 id="type"
                                 name="type"
-                                value={createProductFormState.type}
                                 onChange={changeEvent}
+                                type="text"
+                                value={createProductFormState.type}
                             />
                         </fieldset>
 
                         <fieldset>
                             <label htmlFor="objectId">ObjectId</label>
                             <input
-                                type="text"
                                 id="objectId"
                                 name="objectId"
-                                value={createProductFormState.objectId ?? ""}
                                 onChange={changeEvent}
+                                type="text"
+                                value={createProductFormState.objectId ?? ""}
                             />
                         </fieldset>
 
                         <fieldset>
                             <label htmlFor="amount">Amount</label>
                             <input
-                                type="number"
                                 id="amount"
                                 name="amount"
-                                value={createProductFormState.amount}
                                 onChange={changeEvent}
+                                type="number"
+                                value={createProductFormState.amount}
                             />
                         </fieldset>
 
@@ -213,31 +212,31 @@ const PaymentTestPage: FC = () => {
 
             <fieldset className="flex flex-col gap-y-1">
                 <label htmlFor="productId">ProductId</label>
-                <input id="productId" type="text" value={productId} onChange={(e) => setProductId(e.target.value)} />
+                <input id="productId" onChange={(e) => setProductId(e.target.value)} type="text" value={productId} />
             </fieldset>
 
             <fieldset className="flex flex-col gap-y-1">
                 <label htmlFor="providerId">ProviderId (Stripe Public Key)</label>
-                <input id="providerId" type="text" value={providerId} onChange={(e) => setProviderId(e.target.value)} />
+                <input id="providerId" onChange={(e) => setProviderId(e.target.value)} type="text" value={providerId} />
             </fieldset>
 
             <fieldset className="flex flex-col gap-y-1">
                 <label htmlFor="stripeWebhookCommand">Stripe Local Webhook Command (copy only)</label>
                 <input
                     id="stripeWebhookCommand"
-                    type="text"
                     readOnly
+                    type="text"
                     value={
                         providerId ? `stripe listen --forward-to localhost:3000/api/webhooks/stripe/${providerId}` : ""
                     }
                 />
             </fieldset>
 
-            <button onClick={onCheckoutClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+            <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onCheckoutClick}>
                 Proceed to stripe checkout
             </button>
 
-            <button onClick={onFetchClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+            <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onFetchClick}>
                 Fetch product data
             </button>
 
@@ -247,10 +246,10 @@ const PaymentTestPage: FC = () => {
 
             <fieldset className="flex flex-col gap-y-1">
                 <label htmlFor="paymentId">PaymentId</label>
-                <input id="paymentId" type="text" value={paymentId} onChange={(e) => setPaymentId(e.target.value)} />
+                <input id="paymentId" onChange={(e) => setPaymentId(e.target.value)} type="text" value={paymentId} />
             </fieldset>
 
-            <button onClick={onRefundClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+            <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onRefundClick}>
                 Refund PaymentId
             </button>
         </div>

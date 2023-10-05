@@ -1,4 +1,5 @@
 import { profileItems } from "@/utils/profileLinks";
+
 import ProfileMenuItem from "./ProfileMenuItem";
 
 const ProfileMenuContainer = () => (

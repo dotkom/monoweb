@@ -1,12 +1,11 @@
-import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next";
-import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc";
-
-import { type Committee } from "@dotkomonline/types";
 import { CommitteeView } from "@/components/views/CommitteeView";
-import { type FC } from "react";
-import { createServerSideHelpers } from "@trpc/react-query/server";
 import { trpc } from "@/utils/trpc";
+import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc";
+import { type Committee } from "@dotkomonline/types";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next";
 import { useRouter } from "next/router";
+import { type FC } from "react";
 
 const CommitteePage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
     const router = useRouter();
@@ -19,27 +18,27 @@ const CommitteePage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const ssg = createServerSideHelpers({
-        router: appRouter,
         ctx: await createContextInner({
             auth: null,
         }),
+        router: appRouter,
         transformer,
     });
 
     const companies = await ssg.committee.all.fetch();
 
     return {
-        paths: companies.map(({ id }) => ({ params: { id } })),
         fallback: "blocking",
+        paths: companies.map(({ id }) => ({ params: { id } })),
     };
 };
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
     const ssg = createServerSideHelpers({
-        router: appRouter,
         ctx: await createContextInner({
             auth: null,
         }),
+        router: appRouter,
         transformer,
     });
 

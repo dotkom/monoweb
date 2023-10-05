@@ -1,44 +1,41 @@
-import * as LocalStripeLib from "../../../lib/stripe";
-
 import { type Event, type Payment, type Product } from "@dotkomonline/types";
+import { randomUUID } from "crypto";
+import { Kysely } from "kysely";
+import Stripe from "stripe";
 import { describe, vi } from "vitest";
 
+import * as LocalStripeLib from "../../../lib/stripe";
+import { eventPayload } from "../../event/__test__/event-service.spec";
 import { EventRepositoryImpl } from "../../event/event-repository";
-import { Kysely } from "kysely";
 import { PaymentRepositoryImpl } from "../payment-repository";
 import { PaymentServiceImpl } from "../payment-service";
 import { ProductRepositoryImpl } from "../product-repository";
-import Stripe from "stripe";
-import { eventPayload } from "../../event/__test__/event-service.spec";
+import { RefundRequestRepositoryImpl } from "../refund-request-repository";
 import { paymentProvidersPayload } from "./product-payment-provider.spec";
 import { productPayload } from "./product-service.spec";
-import { randomUUID } from "crypto";
-import { RefundRequestRepositoryImpl } from "../refund-request-repository";
 
 export const paymentPayload: Omit<Payment, "id"> = {
     createdAt: new Date(2022, 1, 1),
-    updatedAt: new Date(2022, 1, 1),
-    productId: randomUUID(),
-    userId: randomUUID(),
     paymentProviderId: randomUUID(),
-    paymentProviderSessionId: randomUUID(),
     paymentProviderOrderId: randomUUID(),
+    paymentProviderSessionId: randomUUID(),
+    productId: randomUUID(),
     status: "UNPAID",
+    updatedAt: new Date(2022, 1, 1),
+    userId: randomUUID(),
 };
 
 // from https://stripe.com/docs/api
 const stripeCommonResponse = {
     lastResponse: {
+        apiVersion: "",
         headers: {},
         requestId: "",
         statusCode: 200,
-        apiVersion: "",
     },
 };
 
 const stripeCheckoutSessionPayload: Stripe.Checkout.Session = {
-    id: "cs_test_a1bDGGheY2eWr2pmrhWtgbhi1rNQZZKvpvmfB22ZUGH0054KlYnxY7vdKJ",
-    object: "checkout.session",
     after_expiration: null,
     allow_promotion_codes: null,
     amount_subtotal: null,
@@ -72,12 +69,14 @@ const stripeCheckoutSessionPayload: Stripe.Checkout.Session = {
     },
     customer_email: null,
     expires_at: 1682785193,
+    id: "cs_test_a1bDGGheY2eWr2pmrhWtgbhi1rNQZZKvpvmfB22ZUGH0054KlYnxY7vdKJ",
     invoice: null,
     invoice_creation: null,
     livemode: false,
     locale: null,
     metadata: {},
     mode: "payment",
+    object: "checkout.session",
     payment_intent: "pi_1GszXm2eZvKYlo2CBwob5C9x",
     payment_link: null,
     payment_method_collection: null,
@@ -107,8 +106,6 @@ const stripeResponseCheckoutSessionPayload: Stripe.Response<Stripe.Checkout.Sess
 };
 
 const stripePaymentIntentPayload: Stripe.PaymentIntent = {
-    id: "pi_1EUpj3402SsOrryzsjcGJynl",
-    object: "payment_intent",
     amount: 1099,
     amount_capturable: 0,
     amount_details: {
@@ -127,12 +124,14 @@ const stripePaymentIntentPayload: Stripe.PaymentIntent = {
     currency: "nok",
     customer: null,
     description: null,
+    id: "pi_1EUpj3402SsOrryzsjcGJynl",
     invoice: null,
     last_payment_error: null,
     latest_charge: "ch_3N2LNSBUPu88CNb00Gnv2UsM",
     livemode: false,
     metadata: {},
     next_action: null,
+    object: "payment_intent",
     on_behalf_of: null,
     payment_method: null,
     payment_method_options: {},
@@ -142,12 +141,12 @@ const stripePaymentIntentPayload: Stripe.PaymentIntent = {
     review: null,
     setup_future_usage: null,
     shipping: null,
+    source: "",
     statement_descriptor: null,
     statement_descriptor_suffix: null,
     status: "requires_payment_method",
     transfer_data: null,
     transfer_group: null,
-    source: "",
 };
 
 const stripeResponsePaymentIntentPayload: Stripe.Response<Stripe.PaymentIntent> = {
@@ -156,14 +155,14 @@ const stripeResponsePaymentIntentPayload: Stripe.Response<Stripe.PaymentIntent> 
 };
 
 const stripeRefundPayload: Stripe.Refund = {
-    id: "re_3N4UKBBUPu88CNb01SnDBZ0m",
-    object: "refund",
     amount: 25000,
     balance_transaction: "txn_3N4UKBBUPu88CNb01IGCoFDI",
     charge: "ch_3N2LNSBUPu88CNb00Gnv2UsM",
     created: 1683315101,
     currency: "nok",
+    id: "re_3N4UKBBUPu88CNb01SnDBZ0m",
     metadata: {},
+    object: "refund",
     payment_intent: "pi_3N4UKBBUPu88CNb01vub5H95",
     reason: null,
     receipt_number: null,
@@ -200,14 +199,14 @@ describe("PaymentService", () => {
 
     const productPayloadExtended: Product = {
         ...productPayload,
-        paymentProviders: paymentProvidersPayload,
         id: randomUUID(),
+        paymentProviders: paymentProvidersPayload,
     };
 
     const eventPayloadExtended: Event = {
         ...eventPayload,
-        title: "TestEventTitle",
         id: randomUUID(),
+        title: "TestEventTitle",
     };
 
     const stripeResponseCheckoutSessionPayloadExtended = {
@@ -262,8 +261,8 @@ describe("PaymentService", () => {
         ).resolves.toEqual(undefined);
 
         expect(paymentRepository.updateByPaymentProviderSessionId).toHaveBeenCalledWith(sessionId, {
-            status: "PAID",
             paymentProviderOrderId,
+            status: "PAID",
         });
     });
 
@@ -311,15 +310,15 @@ describe("PaymentService", () => {
     it("successfully directly refunds a payment", async () => {
         vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({
             ...paymentPayloadExtended,
-            status: "PAID",
             paymentProviderId: paymentProvidersPayload.at(0)?.paymentProviderId ?? "",
+            status: "PAID",
         });
 
         vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
             ...productPayloadExtended,
             isRefundable: true,
-            refundRequiresApproval: false,
             paymentProviders: paymentProvidersPayload,
+            refundRequiresApproval: false,
         });
 
         vi.spyOn(stripe.paymentIntents, "retrieve").mockResolvedValueOnce(stripeResponsePaymentIntentPayload);

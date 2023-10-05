@@ -1,11 +1,12 @@
 "use client";
 
-import { createTRPCReact } from "@trpc/react-query";
-import { type CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client";
-import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@dotkomonline/gateway-trpc";
-import superjson from "superjson";
+
 import { env } from "@dotkomonline/env";
+import { type CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
+import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
+import superjson from "superjson";
 
 const getBaseUrl = () => {
     if (env.NEXT_PUBLIC_NODE_ENV === "production") {
@@ -20,7 +21,6 @@ const getBaseUrl = () => {
 };
 
 export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
-    transformer: superjson,
     links: [
         loggerLink({
             enabled: (opts) =>
@@ -28,15 +28,16 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
                 (opts.direction === "down" && opts.result instanceof Error),
         }),
         httpBatchLink({
-            url: `${getBaseUrl()}/api/trpc`,
             async fetch(url, options) {
                 return fetch(url, {
                     ...options,
                     credentials: "include",
                 });
             },
+            url: `${getBaseUrl()}/api/trpc`,
         }),
     ],
+    transformer: superjson,
 };
 
 // React query trpc

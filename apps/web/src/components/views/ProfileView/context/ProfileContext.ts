@@ -1,9 +1,9 @@
-import { createContext, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, createContext } from "react";
 
 interface IProfileContext {
     editMode: boolean;
-    setEditMode: Dispatch<SetStateAction<boolean>>;
     profileDetails?: string;
+    setEditMode: Dispatch<SetStateAction<boolean>>;
     setProfileDetails?: Dispatch<SetStateAction<boolean>>;
 }
 

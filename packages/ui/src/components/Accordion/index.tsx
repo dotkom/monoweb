@@ -1,3 +1,3 @@
 export {
- Accordion, AccordionItem, AccordionTrigger, AccordionContent 
+ Accordion, AccordionContent, AccordionItem, AccordionTrigger 
 } from "./Accordion";

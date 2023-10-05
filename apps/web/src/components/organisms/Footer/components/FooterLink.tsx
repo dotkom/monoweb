@@ -10,8 +10,8 @@ export const FooterLink = ({ label, large = false }: FooterLinkProps) => <li cla
 const link = cva("text-slate-12 cursor-pointer", {
     variants: {
         large: {
-            true: "text-xl font-bold",
             false: "text-lg font-medium",
+            true: "text-xl font-bold",
         },
     },
 });

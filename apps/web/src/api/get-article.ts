@@ -1,17 +1,18 @@
 import { type PortableTextProps } from "@/components/molecules/PortableText";
+
 import client from "./sanity";
 
 export interface Article {
-    title: string;
-    author: string;
-    photographer: string;
     _createdAt: string;
     _updatedAt: string;
-    tags: Array<string>;
-    excerpt: string;
-    cover_image: { asset: { url: string } };
+    author: string;
     content: PortableTextProps["blocks"];
+    cover_image: { asset: { url: string } };
     estimatedReadingTime: number;
+    excerpt: string;
+    photographer: string;
+    tags: Array<string>;
+    title: string;
 }
 
 const query = `

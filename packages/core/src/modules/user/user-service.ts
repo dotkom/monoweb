@@ -13,10 +13,10 @@ import { type PrivacyPermissionsRepository } from "./privacy-permissions-reposit
 import { type UserRepository } from "./user-repository";
 
 export interface UserService {
-    getUser(id: User["id"]): Promise<User | undefined>;
-    getAllUsers(limit: number): Promise<Array<User>>;
     createUser(input: UserWrite): Promise<User>;
+    getAllUsers(limit: number): Promise<Array<User>>;
     getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>;
+    getUser(id: User["id"]): Promise<User | undefined>;
     updatePrivacyPermissionsForUserId(
         id: string,
         data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
@@ -30,26 +30,26 @@ export class UserServiceImpl implements UserService {
         private readonly notificationPermissionsRepository: NotificationPermissionsRepository
     ) {}
 
+    public async createUser(input: UserWrite) {
+        const res = await this.userRepository.create(input);
+
+        return res;
+    }
+
     public async getAllUsers(limit: number) {
         const users = await this.userRepository.getAll(limit);
 
         return users;
     }
 
-    public async getUser(id: User["id"]) {
-        const user = await this.userRepository.getById(id);
+    public async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
+        let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id);
 
-        if (!user) {
-            throw new NotFoundError(`User with ID:${id} not found`);
+        if (!notificationPermissions) {
+            notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id });
         }
 
-        return user;
-    }
-
-    public async createUser(input: UserWrite) {
-        const res = await this.userRepository.create(input);
-
-        return res;
+        return notificationPermissions;
     }
 
     public async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
@@ -62,27 +62,14 @@ export class UserServiceImpl implements UserService {
         return privacyPermissions;
     }
 
-    public async updatePrivacyPermissionsForUserId(
-        id: string,
-        data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-    ): Promise<PrivacyPermissions> {
-        let privacyPermissions = await this.privacyPermissionsRepository.update(id, data);
+    public async getUser(id: User["id"]) {
+        const user = await this.userRepository.getById(id);
 
-        if (!privacyPermissions) {
-            privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id, ...data });
+        if (!user) {
+            throw new NotFoundError(`User with ID:${id} not found`);
         }
 
-        return privacyPermissions;
-    }
-
-    public async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
-        let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id);
-
-        if (!notificationPermissions) {
-            notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id });
-        }
-
-        return notificationPermissions;
+        return user;
     }
 
     public async updateNotificationPermissionsForUserId(
@@ -96,5 +83,18 @@ export class UserServiceImpl implements UserService {
         }
 
         return notificationPermissions;
+    }
+
+    public async updatePrivacyPermissionsForUserId(
+        id: string,
+        data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
+    ): Promise<PrivacyPermissions> {
+        let privacyPermissions = await this.privacyPermissionsRepository.update(id, data);
+
+        if (!privacyPermissions) {
+            privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id, ...data });
+        }
+
+        return privacyPermissions;
     }
 }

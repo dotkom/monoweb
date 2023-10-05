@@ -3,12 +3,12 @@ import { type NextApiHandler } from "next";
 import { nextHandler } from "trpc-playground/handlers/next";
 
 const setupHandler = nextHandler({
-    router: appRouter,
-    trpcApiEndpoint: "/api/trpc",
     playgroundEndpoint: "/api/trpc-playground",
     request: {
         superjson: true,
     },
+    router: appRouter,
+    trpcApiEndpoint: "/api/trpc",
 });
 
 const handler: NextApiHandler = async (req, res) => {

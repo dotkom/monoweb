@@ -1,9 +1,8 @@
+import sanityClient from "@/api/sanity";
+import { ArticleView } from "@/components/views/ArticleView";
 import { type GetStaticPaths, type GetStaticProps, type InferGetStaticPropsType } from "next";
 import { type FC } from "react";
 import { type Article } from "src/api/get-article";
-
-import sanityClient from "@/api/sanity";
-import { ArticleView } from "@/components/views/ArticleView";
 
 type ArticleProps = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -17,8 +16,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
   `);
 
     return {
-        paths: slugs.map((slug) => ({ params: { slug } })),
         fallback: "blocking",
+        paths: slugs.map((slug) => ({ params: { slug } })),
     };
 };
 

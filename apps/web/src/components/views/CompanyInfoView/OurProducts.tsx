@@ -7,24 +7,24 @@ import { Text } from "@dotkomonline/ui";
 
 const PRODUCTS = [
     {
-        name: "ITEX",
         icon: ItexIcon,
+        name: "ITEX",
     },
     {
-        name: "Bedriftsarrangement",
         icon: BedpressIcon,
+        name: "Bedriftsarrangement",
     },
     {
-        name: "Tech Talks",
         icon: TechtalksIcon,
+        name: "Tech Talks",
     },
     {
-        name: "Stillingsutlysning",
         icon: UtlysningIcon,
+        name: "Stillingsutlysning",
     },
     {
-        name: "Annonse i Offline",
         icon: OfflineIcon,
+        name: "Annonse i Offline",
     },
 ] as const;
 
@@ -32,7 +32,7 @@ const OurProducts = () => (
     <div className="flex flex-col justify-center">
         <div className="flex justify-evenly">
             {PRODUCTS.map((product) => (
-                <div key={product.name} className="flex flex-col text-center">
+                <div className="flex flex-col text-center" key={product.name}>
                     <div className="flex justify-center">
                         <product.icon className="h-[50px] w-[50px] md:h-12 md:w-[75px] lg:h-[100px] lg:w-[100px]" />
                     </div>

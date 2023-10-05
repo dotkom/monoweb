@@ -7,13 +7,13 @@ interface IconProps {
 const OnlineIcon: FC<IconProps> = ({ className }) => (
     <svg
         className={className}
-        width="100%"
         height="100%"
-        viewBox="0 0 643 167"
         version="1.1"
+        viewBox="0 0 643 167"
+        width="100%"
+        xmlSpace="preserve"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-        xmlSpace="preserve"
     >
         <g transform="matrix(1,0,0,1,-2947.13,-68.8934)">
             <g transform="matrix(1,0,0,1,1956.71,0)">
@@ -34,7 +34,7 @@ const OnlineIcon: FC<IconProps> = ({ className }) => (
                     </g>
                     <g transform="matrix(1,0,0,1,20.5964,0)">
                         <g transform="matrix(0.75,0,0,0.75,0,8.52651e-14)">
-                            <rect x="431.307" y="394.604" width="29.6" height="118.751" />
+                            <rect height="118.751" width="29.6" x="431.307" y="394.604" />
                         </g>
                         <g transform="matrix(0.75,0,0,0.75,-11.7993,1.7053e-13)">
                             <circle cx="461.84" cy="362.79" r="15.732" />

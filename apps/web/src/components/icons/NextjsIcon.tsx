@@ -2,11 +2,11 @@ import { type SVGProps } from "react";
 
 const SvgNextjsIcon = (props: SVGProps<SVGSVGElement>) => (
     <svg
-        width="1em"
         height="1em"
-        viewBox="0 0 512 309"
-        xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid"
+        viewBox="0 0 512 309"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
         {...props}
     >
         <path

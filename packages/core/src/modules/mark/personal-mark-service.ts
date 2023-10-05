@@ -7,12 +7,12 @@ import { type MarkService } from "./mark-service";
 import { type PersonalMarkRepository } from "./personal-mark-repository";
 
 export interface PersonalMarkService {
-    getPersonalMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>>;
-    getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>>;
     addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>;
-    removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>;
-    getExpiryDateForUserId(userId: User["id"]): Promise<Date | null>;
     calculateExpiryDate(marks: Array<{ createdAt: Date; duration: number }>): Date | null;
+    getExpiryDateForUserId(userId: User["id"]): Promise<Date | null>;
+    getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>>;
+    getPersonalMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>>;
+    removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>;
 }
 
 export class PersonalMarkServiceImpl implements PersonalMarkService {
@@ -20,22 +20,6 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         private readonly personalMarkRepository: PersonalMarkRepository,
         private readonly markService: MarkService
     ) {}
-
-    public async getPersonalMarksForUserId(
-        userId: User["id"],
-        take: number,
-        cursor?: Cursor
-    ): Promise<Array<PersonalMark>> {
-        const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, take, cursor);
-
-        return personalMarks;
-    }
-
-    public async getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
-        const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor);
-
-        return personalMarks;
-    }
 
     public async addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
         // Verify the mark exists
@@ -50,53 +34,11 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         return personalMark;
     }
 
-    public async removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
-        // Verify the mark exists
-        await this.markService.getMark(markId);
-
-        const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId);
-
-        if (!personalMark) {
-            throw new NotFoundError("PersonalMark could not be removed");
-        }
-
-        return personalMark;
-    }
-
-    public async getExpiryDateForUserId(userId: User["id"]): Promise<Date | null> {
-        const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, 1000);
-        const marks = await Promise.all(personalMarks.map(async (mark) => this.markService.getMark(mark.markId)));
-        const expiryDate = this.calculateExpiryDate(marks);
-
-        return expiryDate;
-    }
-
-    public async isUserMarked(userId: User["id"]): Promise<boolean> {
-        return (await this.getExpiryDateForUserId(userId)) !== null;
-    }
-
-    // Holy grail of magic numbers -BraAge
-    public adjustDateIfStartingInHoliday(date: Date): Date {
-        let mutableDate = date;
-
-        if (
-            isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
-        ) {
-            mutableDate = set(date, { month: 7, date: 15 });
-        } else if (date.getMonth() === 11) {
-            mutableDate = set(date, { year: date.getFullYear() + 1, month: 0, date: 15 });
-        } else if (date.getMonth() === 0 && date.getDate() < 15) {
-            mutableDate = set(date, { month: 0, date: 15 });
-        }
-
-        return mutableDate;
-    }
-
     public adjustDateIfEndingInHoliday(date: Date): Date {
         let additionalDays = 0;
 
         if (
-            isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })
+            isWithinInterval(date, { end: new Date(date.getFullYear(), 7, 15), start: new Date(date.getFullYear(), 5) })
         ) {
             additionalDays = 75;
         } else if (date.getMonth() === 11) {
@@ -106,6 +48,23 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         }
 
         return add(date, { days: additionalDays });
+    }
+
+    // Holy grail of magic numbers -BraAge
+    public adjustDateIfStartingInHoliday(date: Date): Date {
+        let mutableDate = date;
+
+        if (
+            isWithinInterval(date, { end: new Date(date.getFullYear(), 7, 15), start: new Date(date.getFullYear(), 5) })
+        ) {
+            mutableDate = set(date, { date: 15, month: 7 });
+        } else if (date.getMonth() === 11) {
+            mutableDate = set(date, { date: 15, month: 0, year: date.getFullYear() + 1 });
+        } else if (date.getMonth() === 0 && date.getDate() < 15) {
+            mutableDate = set(date, { date: 15, month: 0 });
+        }
+
+        return mutableDate;
     }
 
     public calculateExpiryDate(marks: Array<{ createdAt: Date; duration: number }>): Date | null {
@@ -129,5 +88,46 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
         }
 
         return endDate;
+    }
+
+    public async getExpiryDateForUserId(userId: User["id"]): Promise<Date | null> {
+        const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, 1000);
+        const marks = await Promise.all(personalMarks.map(async (mark) => this.markService.getMark(mark.markId)));
+        const expiryDate = this.calculateExpiryDate(marks);
+
+        return expiryDate;
+    }
+
+    public async getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
+        const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor);
+
+        return personalMarks;
+    }
+
+    public async getPersonalMarksForUserId(
+        userId: User["id"],
+        take: number,
+        cursor?: Cursor
+    ): Promise<Array<PersonalMark>> {
+        const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, take, cursor);
+
+        return personalMarks;
+    }
+
+    public async isUserMarked(userId: User["id"]): Promise<boolean> {
+        return (await this.getExpiryDateForUserId(userId)) !== null;
+    }
+
+    public async removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
+        // Verify the mark exists
+        await this.markService.getMark(markId);
+
+        const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId);
+
+        if (!personalMark) {
+            throw new NotFoundError("PersonalMark could not be removed");
+        }
+
+        return personalMark;
     }
 }

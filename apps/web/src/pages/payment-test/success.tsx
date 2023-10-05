@@ -1,11 +1,11 @@
 // THIS FILE IS TEMPORARY. NO NEED TO REVIEW IT.
 
-import { type FC } from "react";
 import Link from "next/link";
+import { type FC } from "react";
 
 const SuccessPage: FC = () => (
     <div>
-        <Link href="/payment-test" className="bg-blue-5 hover:bg-blue-6 p-4">
+        <Link className="bg-blue-5 hover:bg-blue-6 p-4" href="/payment-test">
             Go back
         </Link>
         <h1 className="text-green-11 mt-10">The payment was successful!</h1>

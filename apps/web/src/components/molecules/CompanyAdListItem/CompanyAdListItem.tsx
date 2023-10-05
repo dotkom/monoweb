@@ -9,14 +9,14 @@ interface CompanyAdListItemProps {
 }
 
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemProps) => {
-    const { company_name, image, career_type, location, deadline, slug } = props.career;
+    const { career_type, company_name, deadline, image, location, slug } = props.career;
 
     const color = career_type === "Sommerjobb" ? "amber" : career_type === "Fulltid" ? "red" : "blue";
 
     return (
         <div className="border-slate-11 flex h-16 items-center justify-between border-b">
             <div className="flex h-10 w-1/4 items-center gap-2 overflow-hidden">
-                <Image src={image.asset.url} width={70} height={40} alt={`${company_name}'s job posting`} />
+                <Image alt={`${company_name}'s job posting`} height={40} src={image.asset.url} width={70} />
                 <p>{company_name}</p>
             </div>
 

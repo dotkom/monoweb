@@ -1,9 +1,10 @@
+import { type Company } from "@dotkomonline/types";
 import { randomUUID } from "crypto";
 import { Kysely } from "kysely";
 import { describe, vi } from "vitest";
+
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository";
 import { type EventCompanyService, EventCompanyServiceImpl } from "../event-company-service";
-import { type Company } from "@dotkomonline/types";
 
 describe("EventCompanyService", () => {
     const db = vi.mocked(Kysely.prototype);
@@ -15,12 +16,12 @@ describe("EventCompanyService", () => {
         description: "Bekk er et konsulentselskap",
         email: "bekk@bekk.no",
         id: randomUUID(),
+        image: null,
+        location: "Oslo & Trondheim",
         name: "Bekk",
         phone: "+47 123 45 678",
         type: "Consulting",
         website: "https://bekk.no",
-        location: "Oslo & Trondheim",
-        image: null,
     };
 
     it("creates links a company to an event", async () => {

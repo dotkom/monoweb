@@ -1,24 +1,25 @@
 import { type RefundRequest } from "@dotkomonline/types";
+import { randomUUID } from "crypto";
 import { Kysely } from "kysely";
 import { describe, vi } from "vitest";
-import { RefundRequestRepositoryImpl } from "../refund-request-repository";
-import { randomUUID } from "crypto";
-import { ProductRepositoryImpl } from "../product-repository";
-import { RefundRequestServiceImpl } from "../refund-request-service";
+
+import { EventRepositoryImpl } from "../../event/event-repository";
 import { PaymentRepositoryImpl } from "../payment-repository";
 import { PaymentServiceImpl } from "../payment-service";
-import { EventRepositoryImpl } from "../../event/event-repository";
+import { ProductRepositoryImpl } from "../product-repository";
+import { RefundRequestRepositoryImpl } from "../refund-request-repository";
+import { RefundRequestServiceImpl } from "../refund-request-service";
 import { paymentPayload } from "./payment-service.spec";
 import { productPayload } from "./product-service.spec";
 
 export const refundRequestPayload: Omit<RefundRequest, "id"> = {
     createdAt: new Date(2022, 1, 1),
-    updatedAt: new Date(2022, 1, 1),
+    handledBy: null,
     paymentId: randomUUID(),
-    userId: randomUUID(),
     reason: "I want my money back",
     status: "PENDING",
-    handledBy: null,
+    updatedAt: new Date(2022, 1, 1),
+    userId: randomUUID(),
 };
 
 describe("RefundRequestService", () => {
@@ -97,11 +98,11 @@ describe("RefundRequestService", () => {
         const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
         await expect(call).resolves.toEqual(refundRequestPayloadExtended);
         expect(refundRequestRepository.create).toHaveBeenCalledWith({
+            handledBy: null,
             paymentId: paymentPayloadExtended.id,
-            userId,
             reason: "Test reason",
             status: "PENDING",
-            handledBy: null,
+            userId,
         });
     });
 
@@ -123,8 +124,8 @@ describe("RefundRequestService", () => {
 
         vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
             ...refundRequestPayloadExtended,
-            status: "APPROVED",
             handledBy: userId,
+            status: "APPROVED",
         });
 
         vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined);
@@ -132,8 +133,8 @@ describe("RefundRequestService", () => {
         const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
         await expect(call).resolves.toEqual(undefined);
         expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
-            status: "APPROVED",
             handledBy: userId,
+            status: "APPROVED",
         });
     });
 
@@ -145,8 +146,8 @@ describe("RefundRequestService", () => {
 
         vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
             ...refundRequestPayloadExtended,
-            status: "APPROVED",
             handledBy: userId,
+            status: "APPROVED",
         });
 
         vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined);
@@ -154,8 +155,8 @@ describe("RefundRequestService", () => {
         const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
         await expect(call).resolves.toEqual(undefined);
         expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
-            status: "APPROVED",
             handledBy: userId,
+            status: "APPROVED",
         });
     });
 

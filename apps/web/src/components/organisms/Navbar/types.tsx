@@ -1,11 +1,11 @@
 export interface MenuItem {
-    title: string;
-    href: string;
     description?: string;
+    href: string;
+    title: string;
 }
 export type MenuLink =
-    | MenuItem
     | {
-          title: string;
           items: Array<MenuItem>;
-      };
+          title: string;
+      }
+    | MenuItem;

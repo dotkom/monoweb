@@ -1,8 +1,9 @@
-import { getServerSession } from "next-auth";
 import { authOptions } from "@dotkomonline/auth/src/dashboard.app";
+import { Card, Container, Flex, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+
 import { SignInButton } from "./SignInButton";
-import { Card, Container, Flex, Title, Text } from "@mantine/core";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -12,7 +13,7 @@ export default async function DashboardPage() {
     }
 
     return (
-        <Flex justify="center" align="center">
+        <Flex align="center" justify="center">
             <Container mt="xl">
                 <Card>
                     <Flex direction="column" gap="2">

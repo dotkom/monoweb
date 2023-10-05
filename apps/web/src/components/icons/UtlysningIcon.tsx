@@ -2,18 +2,18 @@ import { type SVGProps } from "react";
 
 const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
     <svg
-        viewBox="0 0 256 256"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlSpace="preserve"
+        height="1em"
         style={{
-            fillRule: "evenodd",
             clipRule: "evenodd",
+            fillRule: "evenodd",
             strokeLinecap: "round",
             strokeLinejoin: "round",
             strokeMiterlimit: 1.5,
         }}
+        viewBox="0 0 256 256"
         width="1em"
-        height="1em"
+        xmlSpace="preserve"
+        xmlns="http://www.w3.org/2000/svg"
         {...props}
     >
         <path

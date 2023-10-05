@@ -1,16 +1,17 @@
-import { type FC, useMemo } from "react";
-import { useEventDetailsContext } from "./provider";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { type Company, CompanySchema, EventSchema } from "@dotkomonline/types";
-import { GenericTable } from "../../../../components/GenericTable";
-import { Box, Button, Group, Image, Text, Title } from "@mantine/core";
 import { Icon } from "@iconify/react";
-import { createSelectInput, useFormBuilder } from "../../../form";
+import { Box, Button, Group, Image, Text, Title } from "@mantine/core";
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { type FC, useMemo } from "react";
 import { z } from "zod";
+
+import { GenericTable } from "../../../../components/GenericTable";
+import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query";
 import { useAddCompanyToEventMutation } from "../../../../modules/event/mutations/use-add-company-to-event-mutation";
 import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/mutations/use-remove-company-from-event-mutation";
-import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query";
 import { useEventCompanyGetQuery } from "../../../../modules/event/queries/use-event-company-get-query";
+import { createSelectInput, useFormBuilder } from "../../../form";
+import { useEventDetailsContext } from "./provider";
 
 export const EventCompaniesPage: FC = () => {
     const { event } = useEventDetailsContext();
@@ -23,68 +24,68 @@ export const EventCompaniesPage: FC = () => {
     const columns = useMemo(
         () => [
             columnHelper.accessor((eventCompany) => eventCompany, {
-                id: "eventCompany",
-                header: () => "Navn",
                 cell: (info) => {
                     const name = companies.find((x) => x.id === info.getValue().id)?.name ?? "Ingen navn";
                     const image = info.getValue().image;
 
                     return image !== null ? (
                         <Group>
-                            <Image width={40} height={40} fit="contain" src={image} alt="company logo" />
+                            <Image alt="company logo" fit="contain" height={40} src={image} width={40} />
                             {name}
                         </Group>
                     ) : (
                         <Group>
-                            <Icon width={40} height={40} icon="tabler:user-circle" />
+                            <Icon height={40} icon="tabler:user-circle" width={40} />
                             {name}
                         </Group>
                     );
                 },
+                header: () => "Navn",
+                id: "eventCompany",
             }),
             columnHelper.accessor((eventCompany) => eventCompany, {
-                id: "actions",
-                header: () => "Verktøy",
                 cell: (info) => (
                     <Button
-                        variant="outline"
                         leftSection={<Icon icon="tabler:trash" />}
-                        onClick={() => remove.mutate({ id: event.id, company: info.getValue().id })}
+                        onClick={() => remove.mutate({ company: info.getValue().id, id: event.id })}
+                        variant="outline"
                     >
                         Fjern
                     </Button>
                 ),
+                header: () => "Verktøy",
+                id: "actions",
             }),
         ],
         [companies, columnHelper, remove, event.id]
     );
 
     const table = useReactTable<Company>({
-        data: eventCompanies,
         columns,
+        data: eventCompanies,
         getCoreRowModel: getCoreRowModel(),
     });
 
     const FormComponent = useFormBuilder({
-        schema: z.object({
-            id: EventSchema.shape.id,
-            company: CompanySchema.shape.id,
-        }),
         defaultValues: {
             id: event.id,
         },
         fields: {
             company: createSelectInput({
-                label: "Bedriftsnavn",
                 data: companies
                     .filter((company) => !eventCompanies.map((x) => x.id).includes(company.id))
                     .map((company) => ({ label: company.name, value: company.id })),
+                label: "Bedriftsnavn",
             }),
         },
         label: "Legg til ny bedrift",
         onSubmit: (data) => {
             add.mutate(data);
         },
+        schema: z.object({
+            company: CompanySchema.shape.id,
+            id: EventSchema.shape.id,
+        }),
     });
 
     return (

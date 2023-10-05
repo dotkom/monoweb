@@ -1,35 +1,35 @@
+import { type NotificationPermissions, type PrivacyPermissions } from "@dotkomonline/types";
+import { randomUUID } from "crypto";
+import { Kysely } from "kysely";
 import { describe, vi } from "vitest";
 
-import { Kysely } from "kysely";
-import { type NotificationPermissions, type PrivacyPermissions } from "@dotkomonline/types";
+import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository";
 import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository";
 import { UserRepositoryImpl } from "../user-repository";
 import { UserServiceImpl } from "../user-service";
-import { randomUUID } from "crypto";
-import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository";
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {
-    createdAt: new Date(2022, 1, 1),
-    updatedAt: new Date(2022, 1, 1),
-    profileVisible: true,
-    usernameVisible: true,
-    emailVisible: false,
-    phoneVisible: false,
     addressVisible: false,
     attendanceVisible: false,
+    createdAt: new Date(2022, 1, 1),
+    emailVisible: false,
+    phoneVisible: false,
+    profileVisible: true,
+    updatedAt: new Date(2022, 1, 1),
+    usernameVisible: true,
 };
 
 const notificationPermissionsPayload: Omit<NotificationPermissions, "userId"> = {
-    createdAt: new Date(2022, 1, 1),
-    updatedAt: new Date(2022, 1, 1),
     applications: true,
-    newArticles: true,
-    standardNotifications: true,
+    createdAt: new Date(2022, 1, 1),
     groupMessages: true,
     markRulesUpdates: true, // should not be able to disable
+    newArticles: true,
     receipts: true,
     registrationByAdministrator: true,
     registrationStart: true,
+    standardNotifications: true,
+    updatedAt: new Date(2022, 1, 1),
 };
 
 describe("UserService", () => {
@@ -106,7 +106,7 @@ describe("UserService", () => {
         });
 
         expect(privacyPermissionsRepository.update).toHaveBeenCalledWith(userId, { emailVisible: true });
-        expect(privacyPermissionsRepository.create).toHaveBeenCalledWith({ userId, emailVisible: true });
+        expect(privacyPermissionsRepository.create).toHaveBeenCalledWith({ emailVisible: true, userId });
     });
 
     // Notification permissions
@@ -172,6 +172,6 @@ describe("UserService", () => {
         });
 
         expect(notificationPermissionsRepository.update).toHaveBeenCalledWith(userId, { applications: true });
-        expect(notificationPermissionsRepository.create).toHaveBeenCalledWith({ userId, applications: true });
+        expect(notificationPermissionsRepository.create).toHaveBeenCalledWith({ applications: true, userId });
     });
 });

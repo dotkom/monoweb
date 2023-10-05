@@ -3,15 +3,15 @@ import React, { useEffect, useState } from "react";
 
 interface ProfileMenuItemProps {
     menuItem: {
-        title: string;
         slug: string;
+        title: string;
     };
 }
 
 const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
     const router = useRouter();
 
-    const { title, slug } = menuItem;
+    const { slug, title } = menuItem;
 
     const [isCurrent, setCurrent] = useState(router.pathname === slug ? "text-white" : "text-slate-7");
 
@@ -24,7 +24,7 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
     }, [router.pathname, slug]);
 
     return (
-        <div onClick={handleChange} className="!hover:text-blue hover:cursor-pointer">
+        <div className="!hover:text-blue hover:cursor-pointer" onClick={handleChange}>
             <p className={isCurrent}>{title}</p>
         </div>
     );

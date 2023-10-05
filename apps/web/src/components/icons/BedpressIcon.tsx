@@ -2,18 +2,18 @@ import { type SVGProps } from "react";
 
 const SvgBedpressIcon = (props: SVGProps<SVGSVGElement>) => (
     <svg
-        viewBox="0 0 256 256"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlSpace="preserve"
+        height="1em"
         style={{
-            fillRule: "evenodd",
             clipRule: "evenodd",
+            fillRule: "evenodd",
             strokeLinecap: "round",
             strokeLinejoin: "round",
             strokeMiterlimit: 1.5,
         }}
+        viewBox="0 0 256 256"
         width="1em"
-        height="1em"
+        xmlSpace="preserve"
+        xmlns="http://www.w3.org/2000/svg"
         {...props}
     >
         <path
@@ -108,10 +108,10 @@ const SvgBedpressIcon = (props: SVGProps<SVGSVGElement>) => (
         </clipPath>
         <g clipPath="url(#bedpress-icon_svg__d)">
             <path
+                d="M183.897 44.389h112.255v112.255H183.897z"
                 style={{
                     fillOpacity: 0.13,
                 }}
-                d="M183.897 44.389h112.255v112.255H183.897z"
             />
         </g>
         <path
