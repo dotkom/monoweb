@@ -60,7 +60,8 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
               <div>
                 <p>Startår:</p>
               </div>
-              <div>
+              <div className="flex items-center space-x-10 ">
+                <p>Studieløp:</p>
                 <StudentProgress year={0} />
               </div>
             </div>
