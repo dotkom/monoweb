@@ -6,87 +6,99 @@ import { trpc } from "@/utils/trpc"
 import { Button } from "@dotkomonline/ui"
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-  const { id } = props
-  const { data } = trpc.event.get.useQuery(id)
-  const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
-  const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
-  const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
-  const utils = trpc.useContext()
+    const { id } = props
+    const { data } = trpc.event.get.useQuery(id)
+    const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
+    const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
+    const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
+    const { mutate: registerAttendance } = trpc.event.attendance.registerAttendance.useMutation()
+    const utils = trpc.useContext()
 
-  return (
-    <div>
-      <h1>Event</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-      <Button
-        onClick={async () => {
-          await addAttendance({
-            start: new Date(),
-            end: new Date(),
-            deregisterDeadline: new Date(),
-            eventId: id,
-            limit: 20,
-            min: 1,
-            max: 5,
-          })
-          utils.event.attendance.get.invalidate()
-        }}
-      >
-        Add attendance group
-      </Button>
-      <Button
-        onClick={async () => {
-          await attendEvent({
-            eventId: id,
-          })
-          utils.event.attendance.get.invalidate()
-        }}
-      >
-        Join random group
-      </Button>
-      <h2>Attendance</h2>
-      <pre>{JSON.stringify(attendance, null, 2)}</pre>
-    </div>
-  )
+    return (
+        <div>
+            <h1>Event</h1>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+            <Button
+                onClick={async () => {
+                    await registerAttendance({
+                        eventId: id,
+                        attended: true,
+                    })
+                    utils.event.attendance.get.invalidate()
+                }}
+            >
+                Register attendance
+            </Button>
+            <Button
+                onClick={async () => {
+                    await addAttendance({
+                        start: new Date(),
+                        end: new Date(),
+                        deregisterDeadline: new Date(),
+                        eventId: id,
+                        limit: 20,
+                        min: 1,
+                        max: 5,
+                    })
+                    utils.event.attendance.get.invalidate()
+                }}
+            >
+                Add attendance group
+            </Button>
+            <Button
+                onClick={async () => {
+                    await attendEvent({
+                        eventId: id,
+                    })
+                    utils.event.attendance.get.invalidate()
+                }}
+            >
+                Join random group
+            </Button>
+            <h2>Attendance</h2>
+            <pre>{JSON.stringify(attendance, null, 2)}</pre>
+        </div>
+    )
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: await createContextInner({
-      auth: null,
-    }),
-    transformer, // optional - adds superjson serialization
-  })
+    const helpers = createServerSideHelpers({
+        router: appRouter,
+        ctx: await createContextInner({
+            auth: null,
+        }),
+        transformer, // optional - adds superjson serialization
+    })
 
-  const events = await helpers.event.all.fetch()
-  return {
-    paths: events.map(({ id }) => ({ params: { id } })),
-    fallback: "blocking",
-  }
+    const events = await helpers.event.all.fetch()
+    return {
+        paths: events.map(({ id }) => ({ params: { id } })),
+        fallback: "blocking",
+    }
 }
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: await createContextInner({
-      auth: null,
-    }),
-    transformer, // optional - adds superjson serialization
-  })
+    const helpers = createServerSideHelpers({
+        router: appRouter,
+        ctx: await createContextInner({
+            auth: null,
+        }),
+        transformer, // optional - adds superjson serialization
+    })
 
-  const id = ctx.params?.id
-  if (!id) {
-    return { notFound: true }
-  }
-  await helpers.event.get.prefetch(id)
+    const id = ctx.params?.id
+    if (!id) {
+        return { notFound: true }
+    }
+    await helpers.event.get.prefetch(id)
 
-  return {
-    props: {
-      trpcState: helpers.dehydrate(),
-      id,
-    },
-    revalidate: 86400,
-  }
+    return {
+        props: {
+            trpcState: helpers.dehydrate(),
+            id,
+        },
+        revalidate: 86400,
+    }
 }
 
 export default EventDetailPage

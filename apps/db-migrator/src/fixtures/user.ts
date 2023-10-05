@@ -9,7 +9,7 @@ export const users: Insertable<Database["owUser"]>[] = [
   },
   {
     id: "user_2PAKWhPTgypXLhisUS5RVHGec1o",
-    cognitoSub: "2d92881d-f0c7-4e1f-853c-e0ee9a0993c8", // mats@jun.codes
+    cognitoSub: "ec39a6c9-a36c-47ac-aec2-5a18aab27f78", // billy
     createdAt: new Date("2023-04-30 21:22:17.627253+00"),
   },
 ]
