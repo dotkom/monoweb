@@ -1,52 +1,47 @@
-import PenaltyIcon from "@/components/icons/ProfileIcons/PenaltyIcon"
-import { Icon } from "@dotkomonline/ui"
-
-const width = 24
-
 export const profileItems = [
   {
     title: "Min Profil",
     slug: "/profile",
-    icon: <Icon icon={"tabler:user-circle"} width={width} />,
+    icon: "tabler:user-circle",
   },
   {
     title: "Personvern",
     slug: "/profile/privacy",
-    icon: <Icon icon={"tabler:shield-half-filled"} width={width} />,
+    icon: "tabler:shield-half-filled",
   },
   {
     title: "Prikker & Suspensjoner",
     slug: "/profile/penalties",
-    icon: <PenaltyIcon />,
+    icon: "pajamas:cancel",
   },
   {
     title: "Passord",
     slug: "/profile/password",
-    icon: <Icon icon={"tabler:lock"} width={width} />,
+    icon: "tabler:lock",
   },
   {
     title: "Epost",
     slug: "/profile/email",
-    icon: <Icon icon={"tabler:mail-filled"} width={width} />,
+    icon: "tabler:mail-filled",
   },
   {
     title: "Medlemskap",
     slug: "/profile/membership",
-    icon: <Icon icon={"tabler:award"} width={width} />,
+    icon: "tabler:award",
   },
   {
     title: "Betalinger",
     slug: "/profile/payments",
-    icon: <Icon icon={"tabler:credit-card"} width={width} />,
+    icon: "tabler:credit-card",
   },
   {
     title: "Varsler",
     slug: "/profile/notifications",
-    icon: <Icon icon={"tabler:bell-ringing-filled"} width={width} />,
+    icon: "tabler:bell-ringing-filled",
   },
   {
     title: "Adgangskort (NTNU)",
     slug: "/profile/access-card",
-    icon: <Icon icon={"tabler:school"} width={width} />,
+    icon: "tabler:school",
   },
 ]
