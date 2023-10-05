@@ -6,8 +6,8 @@ const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
   const [editMode, setEditMode] = useState(false)
 
   return (
-    <div className="m-x-auto max-w-[1000px] mb-5">
-      <div className="rounded-3xl px-6 shadow-lg shadow-slate-6">
+    <div className="m-x-auto mb-5 max-w-[1000px]">
+      <div className="shadow-slate-6 rounded-3xl px-6 shadow-lg">
         <div className="flex w-full flex-row">
           <ProfileMenuContainer />
           <ProfileContext.Provider value={{ editMode, setEditMode }}>
