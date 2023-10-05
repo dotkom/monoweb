@@ -1,4 +1,4 @@
-import { AvatarImage, Icon } from "@dotkomonline/ui"
+import { Icon } from "@dotkomonline/ui"
 import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
