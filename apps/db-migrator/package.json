@@ -1,5 +1,5 @@
 {
-  "name": "db-migrator",
+  "name": "@dotkomonline/db-migrator",
   "type": "module",
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
@@ -9,7 +9,7 @@
     "commander": "^11.0.0",
     "kysely": "^0.26.3",
     "pg": "^8.11.3",
-    "zod": "^3.22.2"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@dotkomonline/logger": "workspace:*",

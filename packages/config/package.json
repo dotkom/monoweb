@@ -16,12 +16,12 @@
     "access": "public"
   },
   "devDependencies": {
-    "@radix-ui/colors": "^2.1.0",
+    "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
     "eslint": "^8.50.0",
-    "eslint-config-next": "^13.5.3",
+    "eslint-config-next": "^13.5.4",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-turbo": "^1.10.14",
     "eslint-plugin-prettier": "^5.0.0",

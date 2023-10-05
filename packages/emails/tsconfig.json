@@ -9,7 +9,7 @@
   "exclude": [],
   "compilerOptions": {
     "baseUrl": ".",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "incremental": true,
   }
 }
