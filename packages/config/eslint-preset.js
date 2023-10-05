@@ -66,7 +66,7 @@ module.exports = {
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/prefer-readonly": "error",
         "@typescript-eslint/promise-function-async": "error",
-        "@typescript-eslint/require-await": "error",
+        "@typescript-eslint/require-await": "off",
         "@typescript-eslint/switch-exhaustiveness-check": "error",
         "arrow-body-style": ["error", "as-needed"],
         "consistent-return": "error",
