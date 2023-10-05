@@ -1,22 +1,24 @@
-import { trpc } from "../../../utils/trpc"
-import { useQueryNotification } from "../../../app/notifications"
+import { trpc } from "../../../utils/trpc";
+import { useQueryNotification } from "../../../app/notifications";
 
 export const useRemoveCompanyFromEventMutation = () => {
-  const utils = trpc.useContext()
-  const notification = useQueryNotification()
-  return trpc.event.company.delete.useMutation({
-    onMutate: () => {
-      notification.loading({
-        title: "Fjerner bedrift",
-        message: `Fjerner bedriften fra arrangørlisten til dette arrangementet.`,
-      })
-    },
-    onSuccess: () => {
-      notification.complete({
-        title: "Bedrift fjernet",
-        message: "Bedriften har blitt fjernet fra arrangørlisten.",
-      })
-      utils.event.company.get.invalidate()
-    },
-  })
-}
+    const utils = trpc.useContext();
+    const notification = useQueryNotification();
+
+    return trpc.event.company.delete.useMutation({
+        onMutate: () => {
+            notification.loading({
+                title: "Fjerner bedrift",
+                message: "Fjerner bedriften fra arrangørlisten til dette arrangementet.",
+            });
+        },
+        onSuccess: () => {
+            notification.complete({
+                title: "Bedrift fjernet",
+                message: "Bedriften har blitt fjernet fra arrangørlisten.",
+            });
+
+            utils.event.company.get.invalidate();
+        },
+    });
+};

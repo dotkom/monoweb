@@ -1,17 +1,13 @@
-import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
+import MainLayout from "@/components/layout/MainLayout";
+import ProfileLayout from "@/components/layout/ProfileLayout";
+import { type NextPageWithLayout } from "../_app";
 
-const PrivacyPage: NextPageWithLayout = () => {
-  return <div>Privacy</div>
-}
+const PrivacyPage: NextPageWithLayout = () => <div>Privacy</div>;
 
-PrivacyPage.getLayout = (page) => {
-  return (
+PrivacyPage.getLayout = (page) => (
     <MainLayout>
-      <ProfileLayout>{page}</ProfileLayout>
+        <ProfileLayout>{page}</ProfileLayout>
     </MainLayout>
-  )
-}
+);
 
-export default PrivacyPage
+export default PrivacyPage;

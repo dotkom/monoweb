@@ -1,3 +1,3 @@
 module.exports = {
-  eslint: require("./eslint-preset"),
-}
+    eslint: require("./eslint-preset"),
+};

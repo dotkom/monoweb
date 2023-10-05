@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
-declare const __config: Config
-export = __config
+declare const __config: Config;
+export = __config;

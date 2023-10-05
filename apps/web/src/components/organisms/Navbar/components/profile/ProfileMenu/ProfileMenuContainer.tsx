@@ -1,14 +1,12 @@
-import { profileItems } from "@/utils/profileLinks"
-import ProfileMenuItem from "./ProfileMenuItem"
+import { profileItems } from "@/utils/profileLinks";
+import ProfileMenuItem from "./ProfileMenuItem";
 
-const ProfileMenuContainer = () => {
-  return (
+const ProfileMenuContainer = () => (
     <div>
-      {profileItems.map((item) => (
-        <ProfileMenuItem key={item.title} menuItem={item} />
-      ))}
+        {profileItems.map((item) => (
+            <ProfileMenuItem key={item.title} menuItem={item} />
+        ))}
     </div>
-  )
-}
+);
 
-export default ProfileMenuContainer
+export default ProfileMenuContainer;

@@ -1,17 +1,13 @@
-import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
+import MainLayout from "@/components/layout/MainLayout";
+import ProfileLayout from "@/components/layout/ProfileLayout";
+import { type NextPageWithLayout } from "../_app";
 
-const NotifcationPage: NextPageWithLayout = () => {
-  return <div>Notification</div>
-}
+const NotifcationPage: NextPageWithLayout = () => <div>Notification</div>;
 
-NotifcationPage.getLayout = (page) => {
-  return (
+NotifcationPage.getLayout = (page) => (
     <MainLayout>
-      <ProfileLayout>{page}</ProfileLayout>
+        <ProfileLayout>{page}</ProfileLayout>
     </MainLayout>
-  )
-}
+);
 
-export default NotifcationPage
+export default NotifcationPage;

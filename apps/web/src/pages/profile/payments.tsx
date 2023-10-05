@@ -1,17 +1,13 @@
-import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
+import MainLayout from "@/components/layout/MainLayout";
+import ProfileLayout from "@/components/layout/ProfileLayout";
+import { type NextPageWithLayout } from "../_app";
 
-const PaymentPage: NextPageWithLayout = () => {
-  return <div>Payment</div>
-}
+const PaymentPage: NextPageWithLayout = () => <div>Payment</div>;
 
-PaymentPage.getLayout = (page) => {
-  return (
+PaymentPage.getLayout = (page) => (
     <MainLayout>
-      <ProfileLayout>{page}</ProfileLayout>
+        <ProfileLayout>{page}</ProfileLayout>
     </MainLayout>
-  )
-}
+);
 
-export default PaymentPage
+export default PaymentPage;

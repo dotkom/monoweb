@@ -1,27 +1,28 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@dotkomonline/auth/src/dashboard.app"
-import { redirect } from "next/navigation"
-import { SignInButton } from "./SignInButton"
-import { Card, Container, Flex, Title, Text } from "@mantine/core"
+import { getServerSession } from "next-auth";
+import { authOptions } from "@dotkomonline/auth/src/dashboard.app";
+import { redirect } from "next/navigation";
+import { SignInButton } from "./SignInButton";
+import { Card, Container, Flex, Title, Text } from "@mantine/core";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
-  if (session !== null) {
-    redirect("/event")
-  }
+    const session = await getServerSession(authOptions);
 
-  return (
-    <Flex justify="center" align="center">
-      <Container mt="xl">
-        <Card>
-          <Flex direction="column" gap="2">
-            <Title>Logg inn</Title>
-            <Text>Vennligst logg inn for å bruke Monoweb Admin</Text>
+    if (session !== null) {
+        redirect("/event");
+    }
 
-            <SignInButton />
-          </Flex>
-        </Card>
-      </Container>
-    </Flex>
-  )
+    return (
+        <Flex justify="center" align="center">
+            <Container mt="xl">
+                <Card>
+                    <Flex direction="column" gap="2">
+                        <Title>Logg inn</Title>
+                        <Text>Vennligst logg inn for å bruke Monoweb Admin</Text>
+
+                        <SignInButton />
+                    </Flex>
+                </Card>
+            </Container>
+        </Flex>
+    );
 }

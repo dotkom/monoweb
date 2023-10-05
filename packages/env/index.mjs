@@ -1,1 +1,1 @@
-export { createEnvironment, env } from "./src/env.mjs"
+export { createEnvironment, env } from "./src/env.mjs";

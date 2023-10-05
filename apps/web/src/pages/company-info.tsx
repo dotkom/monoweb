@@ -1,19 +1,19 @@
-import { GetServerSideProps } from "next"
-import { FC } from "react"
-import { fetchCompanySectionData } from "src/api/get-company-page"
+import { type GetServerSideProps } from "next";
+import { type FC } from "react";
+import { fetchCompanySectionData } from "src/api/get-company-page";
 
-import { CompanyInfoView, Content } from "@/components/views/CompanyInfoView"
+import { CompanyInfoView, type Content } from "@/components/views/CompanyInfoView";
 
 interface CompanyProps {
-  sections: Content[]
+    sections: Array<Content>;
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const data = await fetchCompanySectionData()
-  return { props: { sections: data } }
-}
-const Company: FC<CompanyProps> = (props: CompanyProps) => {
-  return <CompanyInfoView companyInfoContent={props.sections} />
-}
+    const data = await fetchCompanySectionData();
 
-export default Company
+    return { props: { sections: data } };
+};
+
+const Company: FC<CompanyProps> = (props: CompanyProps) => <CompanyInfoView companyInfoContent={props.sections} />;
+
+export default Company;
