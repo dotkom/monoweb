@@ -1,4 +1,3 @@
-
 import { AvatarImage, Icon } from "@dotkomonline/ui"
 import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
@@ -62,40 +61,11 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
                 <p>Startår:</p>
               </div>
               <div>
-                <p>StudieLøp:</p>
+                <StudentProgress year={0} />
               </div>
             </div>
           </FormInput>
         </div>
-        {/* <Avatar></Avatar>
-        <div className="ml-8 flex w-full justify-between">
-          <div>
-            <p className="text-slate-12 text-[32px] font-medium tracking-[-0.06em]">{user.name}</p>
-            <p className="text-slate-12 text-[14px]">Update your photo and personal details</p>
-          </div>
-          <div className="flex items-center gap-2"></div>
-        </div>
-      </div>
-      <div className="mt-12">
-        <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Kontakt</p>
-        <FormInput name="Telefon" />
-        <FormInput name="Epost" value={user.email} />
-      </div>
-      <div className="mt-12">
-        <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Studie</p>
-        <FormInput name="Klassetrinn" />
-        <FormInput name="Startår" />
-        {/* TODO: Hent klassetrinninformasjon (year er satt manuelt her) */}
-        <div className="mt-12">
-          <StudentProgress year={0} />
-        </div>
-        {/* !!!-------------!!! */}
-      </div>
-      <div className="mt-12">
-        <p className="text-slate-12 text-[28px] font-medium tracking-[-0.06em]">Eksterne sider</p>
-        <FormInput name="GitHub" />
-        <FormInput name="LinkedIn" />
-        <FormInput name="Hjemmeside" /> */}
       </div>
     </div>
   )
