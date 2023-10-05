@@ -1,9 +1,10 @@
-import { cn, Icon } from "@dotkomonline/ui";
-import { type FC, useEffect, useState } from "react";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./NavigationMenu";
-import { type MenuLink } from "./types";
+import { Icon, cn } from "@dotkomonline/ui";
 import * as Popover from "@radix-ui/react-popover";
 import Link from "next/link";
+import { type FC, useEffect, useState } from "react";
+
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./NavigationMenu";
+import { type MenuLink } from "./types";
 
 export const MobileNavigation: FC<{ links: Array<MenuLink> }> = ({ links }) => {
     const [open, setOpen] = useState(false);
@@ -28,12 +29,12 @@ export const MobileNavigation: FC<{ links: Array<MenuLink> }> = ({ links }) => {
                     <NavigationMenu className="[&>div]:w-full">
                         <NavigationMenuList className="flex-col">
                             {links.map((link) => (
-                                <NavigationMenuItem key={link.title} className="w-full">
+                                <NavigationMenuItem className="w-full" key={link.title}>
                                     {/* Flatten the list of navigation links */}
                                     {"items" in link ? (
                                         <>
                                             {link.items.map((item) => (
-                                                <MobileMenuItem link={item} key={`menu-item-${item.title}`} />
+                                                <MobileMenuItem key={`menu-item-${item.title}`} link={item} />
                                             ))}
                                         </>
                                     ) : (
@@ -53,8 +54,8 @@ export const MobileNavigation: FC<{ links: Array<MenuLink> }> = ({ links }) => {
 const MobileMenuItem = ({ link }: { link: MenuLink }) => (
     <NavigationMenuLink asChild>
         <Link
-            href={"href" in link ? link.href : "#"}
             className="border-blue-12/10 mx-8 flex h-14 w-[calc(100%-theme(space.16))] items-center border-b text-lg font-semibold"
+            href={"href" in link ? link.href : "#"}
         >
             {link.title}
         </Link>

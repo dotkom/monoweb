@@ -1,19 +1,18 @@
+import { type Database } from "@dotkomonline/db";
 import {
-    NotificationPermissionsSchema,
     type NotificationPermissions,
+    NotificationPermissionsSchema,
     type NotificationPermissionsWrite,
 } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-
-import { type Database } from "@dotkomonline/db";
 
 export const mapToNotificationPermissions = (
     payload: Selectable<Database["notificationPermissions"]>
 ): NotificationPermissions => NotificationPermissionsSchema.parse(payload);
 
 export interface NotificationPermissionsRepository {
-    getByUserId(id: string): Promise<NotificationPermissions | undefined>;
     create(data: Partial<NotificationPermissionsWrite>): Promise<NotificationPermissions>;
+    getByUserId(id: string): Promise<NotificationPermissions | undefined>;
     update(
         userId: string,
         data: Partial<Omit<NotificationPermissionsWrite, "userId">>
@@ -23,16 +22,6 @@ export interface NotificationPermissionsRepository {
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {
     public constructor(private readonly db: Kysely<Database>) {}
 
-    public async getByUserId(id: string): Promise<NotificationPermissions | undefined> {
-        const notificationPermissions = await this.db
-            .selectFrom("notificationPermissions")
-            .selectAll()
-            .where("userId", "=", id)
-            .executeTakeFirst();
-
-        return notificationPermissions ? mapToNotificationPermissions(notificationPermissions) : undefined;
-    }
-
     public async create(data: NotificationPermissionsWrite): Promise<NotificationPermissions> {
         const notificationPermissions = await this.db
             .insertInto("notificationPermissions")
@@ -41,6 +30,16 @@ export class NotificationPermissionsRepositoryImpl implements NotificationPermis
             .executeTakeFirstOrThrow();
 
         return mapToNotificationPermissions(notificationPermissions);
+    }
+
+    public async getByUserId(id: string): Promise<NotificationPermissions | undefined> {
+        const notificationPermissions = await this.db
+            .selectFrom("notificationPermissions")
+            .selectAll()
+            .where("userId", "=", id)
+            .executeTakeFirst();
+
+        return notificationPermissions ? mapToNotificationPermissions(notificationPermissions) : undefined;
     }
 
     public async update(

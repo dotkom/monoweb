@@ -1,8 +1,9 @@
-import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import * as React from "react";
+
 import { cn } from "../../utils";
-import { Label } from "../Label";
 import { Icon } from "../Icon";
+import { Label } from "../Label";
 
 export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {
     label?: string;
@@ -12,13 +13,13 @@ export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimiti
     ({ className, label, ...props }, ref) => (
         <div className="flex items-center">
             <CheckboxPrimitive.Root
-                ref={ref}
                 className={cn(
                     "border-slate-7 focus:ring-blue-7  peer h-6 w-6 shrink-0 rounded-sm border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ",
                     "hover:border-slate-8 transition-colors",
                     "rdx-state-checked:bg-blue- rdx-state-checked:hover:bg-blue-6",
                     className
                 )}
+                ref={ref}
                 {...props}
             >
                 <CheckboxPrimitive.Indicator className={cn("grid w-full place-content-center")}>

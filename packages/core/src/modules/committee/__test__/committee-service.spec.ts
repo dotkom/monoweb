@@ -1,6 +1,7 @@
-import { Kysely } from "kysely";
 import { type Committee } from "@dotkomonline/types";
 import { randomUUID } from "crypto";
+import { Kysely } from "kysely";
+
 import { NotFoundError } from "../../../errors/errors";
 import { CommitteeRepositoryImpl } from "../committee-repository";
 import { CommitteeServiceImpl } from "../committee-service";
@@ -12,11 +13,11 @@ describe("CommitteeService", () => {
 
     it("creates a new committee", async () => {
         const committee: Omit<Committee, "id"> = {
-            name: "Dotkom",
             createdAt: new Date(),
             description: "Dotkom gjør ting",
             email: "dotkom@online.ntnu.no",
             image: null,
+            name: "Dotkom",
         };
 
         const id = randomUUID();

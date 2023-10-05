@@ -1,5 +1,7 @@
 "use client";
 
+import { type Event } from "@dotkomonline/types";
+import { Icon } from "@iconify/react";
 import {
     Anchor,
     Button,
@@ -16,13 +18,12 @@ import {
     TableTr,
 } from "@mantine/core";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { type Event } from "@dotkomonline/types";
 import { useMemo } from "react";
-import { formatDate } from "../../../utils/format";
-import { Icon } from "@iconify/react";
-import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal";
+
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query";
+import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal";
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query";
+import { formatDate } from "../../../utils/format";
 
 export default function EventPage() {
     const { events, isLoading: isEventsLoading } = useEventAllQuery();
@@ -36,17 +37,16 @@ export default function EventPage() {
                 header: () => "Arrangementnavn",
             }),
             columnHelper.accessor("start", {
-                header: () => "Startdato",
                 cell: (info) => formatDate(info.getValue()),
+                header: () => "Startdato",
             }),
             columnHelper.accessor("committeeId", {
-                header: () => "Arrangør",
                 cell: (info) => {
                     const match = committees.find((committee) => committee.id === info.getValue()) ?? null;
 
                     if (match !== null) {
                         return (
-                            <Anchor size="sm" href={`/committee/${match.id}`}>
+                            <Anchor href={`/committee/${match.id}`} size="sm">
                                 {match.name}
                             </Anchor>
                         );
@@ -54,27 +54,28 @@ export default function EventPage() {
 
                     return "Ukjent arrangør";
                 },
+                header: () => "Arrangør",
             }),
             columnHelper.accessor("type", {
                 header: () => "Type",
             }),
             columnHelper.accessor((evt) => evt, {
-                id: "actions",
-                header: () => "Detaljer",
                 cell: (info) => (
-                    <Anchor size="sm" href={`/event/${info.getValue().id}`}>
+                    <Anchor href={`/event/${info.getValue().id}`} size="sm">
                         Se mer
                     </Anchor>
                 ),
+                header: () => "Detaljer",
+                id: "actions",
             }),
         ],
         [committees, columnHelper]
     );
 
     const table = useReactTable({
+        columns,
         data: events,
         getCoreRowModel: getCoreRowModel(),
-        columns,
     });
 
     return (

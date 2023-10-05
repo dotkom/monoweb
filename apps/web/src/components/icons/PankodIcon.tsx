@@ -2,16 +2,16 @@ import { type SVGProps } from "react";
 
 const SvgPankodIcon = (props: SVGProps<SVGSVGElement>) => (
     <svg
-        width="1em"
         height="1em"
         viewBox="0 0 800 160"
+        width="1em"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         {...props}
     >
         <defs>
-            <path id="pankod-icon_svg__a" d="M.322.275h90.963v120.483H.322z" />
-            <path id="pankod-icon_svg__c" d="M0 .245h217.002V160H0z" />
+            <path d="M.322.275h90.963v120.483H.322z" id="pankod-icon_svg__a" />
+            <path d="M0 .245h217.002V160H0z" id="pankod-icon_svg__c" />
         </defs>
         <g fill="none" fillRule="evenodd">
             <path
@@ -23,7 +23,7 @@ const SvgPankodIcon = (props: SVGProps<SVGSVGElement>) => (
                 fill="#FFF"
             />
             <g transform="translate(708.537 37.863)">
-                <mask id="pankod-icon_svg__b" fill="#fff">
+                <mask fill="#fff" id="pankod-icon_svg__b">
                     <use xlinkHref="#pankod-icon_svg__a" />
                 </mask>
                 <path
@@ -32,7 +32,7 @@ const SvgPankodIcon = (props: SVGProps<SVGSVGElement>) => (
                     mask="url(#pankod-icon_svg__b)"
                 />
             </g>
-            <mask id="pankod-icon_svg__d" fill="#fff">
+            <mask fill="#fff" id="pankod-icon_svg__d">
                 <use xlinkHref="#pankod-icon_svg__c" />
             </mask>
             <path

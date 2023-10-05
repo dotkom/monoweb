@@ -1,46 +1,46 @@
-import { notifications } from "@mantine/notifications";
 import { Icon } from "@iconify/react";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 
 export interface NotificationProps {
-    title: string;
     message: string;
+    title: string;
 }
 
 export const useQueryNotification = () => {
     const [id] = useState(() => crypto.randomUUID());
-    const loading = ({ title, message }: NotificationProps) =>
+    const loading = ({ message, title }: NotificationProps) =>
         notifications.show({
-            id,
-            title,
-            message,
             color: "blue",
             icon: <Icon icon="tabler:loader-2" />,
+            id,
             loading: true,
+            message,
+            title,
         });
 
-    const complete = ({ title, message }: NotificationProps) =>
+    const complete = ({ message, title }: NotificationProps) =>
         notifications.update({
-            id,
-            title,
-            message,
             color: "green",
             icon: <Icon icon="tabler:check" />,
+            id,
             loading: false,
+            message,
+            title,
         });
 
-    const fail = ({ title, message }: NotificationProps) =>
+    const fail = ({ message, title }: NotificationProps) =>
         notifications.update({
-            id,
-            title,
-            message,
             color: "red",
             icon: <Icon icon="tabler:mood-sad-dizzy" />,
+            id,
+            message,
+            title,
         });
 
     return {
-        loading,
         complete,
         fail,
+        loading,
     };
 };

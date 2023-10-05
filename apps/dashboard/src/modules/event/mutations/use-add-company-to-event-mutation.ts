@@ -8,14 +8,14 @@ export const useAddCompanyToEventMutation = () => {
     return trpc.event.company.create.useMutation({
         onMutate: () => {
             notification.loading({
-                title: "Legger til bedrift...",
                 message: "Legger til bedriften som arrangør av dette arrangementet.",
+                title: "Legger til bedrift...",
             });
         },
         onSuccess: () => {
             notification.complete({
-                title: "Bedrift lagt til",
                 message: "Bedriften har blitt lagt til arrangørlisten.",
+                title: "Bedrift lagt til",
             });
 
             utils.event.company.get.invalidate();

@@ -1,28 +1,28 @@
-import { type FC, type PropsWithChildren } from "react";
 import { cn } from "@dotkomonline/ui";
+import { type FC, type PropsWithChildren } from "react";
 
 export interface EntryDetailLayoutProps {
+    color?: "AMBER" | "BLUE" | "GREEN";
     title: string;
     type?: string;
-    color?: "BLUE" | "GREEN" | "AMBER";
 }
 
 export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({
     children,
+    color = "BLUE",
     title,
     type,
-    color = "BLUE",
 }) => {
     const borderColorClass = cn({
+        "border-amber-8": color === "AMBER",
         "border-blue-8": color === "BLUE",
         "border-green-8": color === "GREEN",
-        "border-amber-8": color === "AMBER",
     });
 
     const textColorClass = cn({
+        "text-amber-11": color === "AMBER",
         "text-blue-11": color === "BLUE",
         "text-green-11": color === "GREEN",
-        "text-amber-11": color === "AMBER",
     });
 
     return (

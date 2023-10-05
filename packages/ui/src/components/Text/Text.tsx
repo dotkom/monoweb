@@ -1,5 +1,6 @@
-import { cva, type VariantProps } from "cva";
+import { type VariantProps, cva } from "cva";
 import { type FC, type ReactNode } from "react";
+
 import { cn } from "../../utils";
 
 export interface TextProps extends VariantProps<typeof text> {
@@ -12,21 +13,21 @@ export const Text: FC<TextProps> = (props) => (
 );
 
 const text = cva("text-slate-12", {
+    defaultVariants: {
+        size: "md",
+        truncate: false,
+    },
     variants: {
         size: {
-            "xs": "text-xs",
-            "sm": "text-sm",
-            "md": "text-md",
-            "lg": "text-lg",
-            "xl": "text-xl",
             "2xl": "text-2xl",
+            "lg": "text-lg",
+            "md": "text-md",
+            "sm": "text-sm",
+            "xl": "text-xl",
+            "xs": "text-xs",
         },
         truncate: {
             true: "truncate",
         },
-    },
-    defaultVariants: {
-        size: "md",
-        truncate: false,
     },
 });

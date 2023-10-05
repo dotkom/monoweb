@@ -1,3 +1,4 @@
+import { Button } from "../Button";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,11 +10,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "./Dialog";
-import { Button } from "../Button";
 
 export default {
-    title: "atoms/ModalDialog",
     component: AlertDialog,
+    title: "atoms/ModalDialog",
 };
 
 export function AlertDialogDemo() {

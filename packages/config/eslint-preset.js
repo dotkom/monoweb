@@ -4,27 +4,16 @@ const path = require("node:path");
  * @type {import("eslint").Linter.Config}
  * */
 module.exports = {
-    root: true,
-
     env: {
         es6: true,
         node: true,
     },
 
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-        sourceType: "module",
-        project: [path.resolve(__dirname, "tsconfig.json"), "./packages/*/tsconfig.json"],
-        tsconfigRootDir: __dirname,
-    },
-
-    plugins: ["@typescript-eslint"],
     extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/stylistic",
-        "plugin:perfectionist/recommended-natural",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:jsx-a11y/recommended",
@@ -33,7 +22,6 @@ module.exports = {
     ],
 
     ignorePatterns: ["*.stories.tsx", "dist/", "node_modules/", "apps/docs/"],
-
     overrides: [
         {
             files: ["packages/db/src/migrations/*"],
@@ -42,6 +30,17 @@ module.exports = {
             },
         },
     ],
+
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        project: [path.resolve(__dirname, "tsconfig.json"), "./packages/*/tsconfig.json"],
+        sourceType: "module",
+        tsconfigRootDir: __dirname,
+    },
+
+    plugins: ["@typescript-eslint"],
+
+    root: true,
 
     rules: {
         "@typescript-eslint/array-type": ["error", { default: "generic" }],
@@ -64,8 +63,8 @@ module.exports = {
             "warn",
             {
                 argsIgnorePattern: "^_",
-                varsIgnorePattern: "^_",
                 caughtErrorsIgnorePattern: "^_",
+                varsIgnorePattern: "^_",
             },
         ],
         "@typescript-eslint/no-var-requires": "off",

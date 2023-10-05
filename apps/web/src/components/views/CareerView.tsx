@@ -1,5 +1,6 @@
 import { type CareerProps } from "@/pages/career";
 import { type FC } from "react";
+
 import CompanyAdListItem from "../molecules/CompanyAdListItem";
 
 const CareerView: FC<CareerProps> = (props: CareerProps) => (

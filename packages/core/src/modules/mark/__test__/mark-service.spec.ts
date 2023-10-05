@@ -1,8 +1,9 @@
+import { randomUUID } from "crypto";
 import { Kysely } from "kysely";
+
+import { NotFoundError } from "../../../errors/errors";
 import { MarkRepositoryImpl } from "../mark-repository";
 import { MarkServiceImpl } from "./../mark-service";
-import { NotFoundError } from "../../../errors/errors";
-import { randomUUID } from "crypto";
 
 describe("MarkService", () => {
     const db = vi.mocked(Kysely.prototype, true);
@@ -11,11 +12,11 @@ describe("MarkService", () => {
 
     it("creates a new mark", async () => {
         const mark = {
-            title: "",
             category: "",
-            details: "",
             createdAt: new Date(),
+            details: "",
             duration: 20,
+            title: "",
             updatedAt: new Date(),
         };
 

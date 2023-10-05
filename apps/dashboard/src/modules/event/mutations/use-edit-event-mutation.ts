@@ -6,26 +6,26 @@ export const useEditEventMutation = () => {
     const utils = trpc.useContext();
 
     return trpc.event.edit.useMutation({
+        onError: (err) => {
+            notification.fail({
+                message: `En feil oppsto under oppdatering av arrangementet: ${err.toString()}.`,
+                title: "Feil oppsto",
+            });
+        },
         onMutate: () => {
             notification.loading({
-                title: "Oppdaterer arrangement...",
                 message: "Arrangementet blir oppdatert.",
+                title: "Oppdaterer arrangement...",
             });
         },
         onSuccess: (data) => {
             notification.complete({
-                title: "Arrangement oppdatert",
                 message: `Arrangementet "${data.title}" har blitt oppdatert.`,
+                title: "Arrangement oppdatert",
             });
 
             utils.event.all.invalidate();
             utils.event.get.invalidate();
-        },
-        onError: (err) => {
-            notification.fail({
-                title: "Feil oppsto",
-                message: `En feil oppsto under oppdatering av arrangementet: ${err.toString()}.`,
-            });
         },
     });
 };

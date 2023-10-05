@@ -1,18 +1,18 @@
-import { RefundRequestSchema, type Payment, type RefundRequest, type RefundRequestWrite } from "@dotkomonline/types";
-import { type Kysely, type Selectable } from "kysely";
-import { paginateQuery, type Cursor } from "../../utils/db-utils";
-
 import { type Database } from "@dotkomonline/db";
+import { type Payment, type RefundRequest, RefundRequestSchema, type RefundRequestWrite } from "@dotkomonline/types";
+import { type Kysely, type Selectable } from "kysely";
+
+import { type Cursor, paginateQuery } from "../../utils/db-utils";
 
 const mapToRefundRequest = (data: Selectable<Database["refundRequest"]>) => RefundRequestSchema.parse(data);
 
 export interface RefundRequestRepository {
     create(data: RefundRequestWrite): Promise<RefundRequest>;
-    update(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>;
     delete(id: RefundRequest["id"]): Promise<void>;
+    getAll(take: number, cursor?: Cursor): Promise<Array<RefundRequest>>;
     getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined>;
     getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined>;
-    getAll(take: number, cursor?: Cursor): Promise<Array<RefundRequest>>;
+    update(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>;
 }
 
 export class RefundRequestRepositoryImpl implements RefundRequestRepository {
@@ -28,22 +28,22 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
         return mapToRefundRequest(refundRequest);
     }
 
-    public async update(id: RefundRequest["id"], data: RefundRequestWrite): Promise<RefundRequest> {
-        const refundRequest = await this.db
-            .updateTable("refundRequest")
-            .set({
-                ...data,
-                updatedAt: new Date(),
-            })
-            .where("id", "=", id)
-            .returningAll()
-            .executeTakeFirstOrThrow();
-
-        return mapToRefundRequest(refundRequest);
-    }
-
     public async delete(id: RefundRequest["id"]): Promise<void> {
         await this.db.deleteFrom("refundRequest").where("id", "=", id).execute();
+    }
+
+    public async getAll(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
+        let query = this.db.selectFrom("refundRequest").selectAll().limit(take);
+
+        if (cursor) {
+            query = paginateQuery(query, cursor);
+        } else {
+            query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
+        }
+
+        const refundRequests = await query.execute();
+
+        return refundRequests.map(mapToRefundRequest);
     }
 
     public async getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
@@ -66,17 +66,17 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
         return refundRequest ? mapToRefundRequest(refundRequest) : undefined;
     }
 
-    public async getAll(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
-        let query = this.db.selectFrom("refundRequest").selectAll().limit(take);
+    public async update(id: RefundRequest["id"], data: RefundRequestWrite): Promise<RefundRequest> {
+        const refundRequest = await this.db
+            .updateTable("refundRequest")
+            .set({
+                ...data,
+                updatedAt: new Date(),
+            })
+            .where("id", "=", id)
+            .returningAll()
+            .executeTakeFirstOrThrow();
 
-        if (cursor) {
-            query = paginateQuery(query, cursor);
-        } else {
-            query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
-        }
-
-        const refundRequests = await query.execute();
-
-        return refundRequests.map(mapToRefundRequest);
+        return mapToRefundRequest(refundRequest);
     }
 }

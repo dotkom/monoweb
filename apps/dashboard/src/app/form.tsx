@@ -3,33 +3,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Button,
     Checkbox,
+    type CheckboxProps,
     Flex,
     Select,
-    TextInput,
-    Textarea,
-    type CheckboxProps,
     type SelectProps,
+    TextInput,
     type TextInputProps,
+    Textarea,
     type TextareaProps,
 } from "@mantine/core";
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates";
 import { type FC } from "react";
 import {
-    Controller,
-    useForm,
     type Control,
+    Controller,
     type DefaultValues,
     type FieldValue,
     type FieldValues,
     type FormState,
     type UseFormRegister,
+    useForm,
 } from "react-hook-form";
 import { type z } from "zod";
 
 interface InputFieldContext<T extends FieldValues> {
+    control: Control<T>;
     name: FieldValue<T>;
     register: UseFormRegister<T>;
-    control: Control<T>;
     state: FormState<T>;
 }
 type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>;
@@ -37,7 +37,7 @@ type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>;
 export function createSelectInput<F extends FieldValues>({
     ...props
 }: Omit<SelectProps, "error">): InputProducerResult<F> {
-    return function FormSelectInput({ name, state, control }) {
+    return function FormSelectInput({ control, name, state }) {
         return (
             <Controller
                 control={control}
@@ -45,9 +45,9 @@ export function createSelectInput<F extends FieldValues>({
                 render={({ field }) => (
                     <Select
                         {...props}
-                        value={field.value}
-                        onChange={field.onChange}
                         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+                        onChange={field.onChange}
+                        value={field.value}
                     />
                 )}
             />
@@ -58,7 +58,7 @@ export function createSelectInput<F extends FieldValues>({
 export function createDateTimeInput<F extends FieldValues>({
     ...props
 }: Omit<DateTimePickerProps, "error">): InputProducerResult<F> {
-    return function FormDateTimeInput({ name, state, control }) {
+    return function FormDateTimeInput({ control, name, state }) {
         return (
             <Controller
                 control={control}
@@ -67,9 +67,9 @@ export function createDateTimeInput<F extends FieldValues>({
                     <DateTimePicker
                         {...props}
                         defaultValue={new Date()}
-                        value={field.value}
-                        onChange={field.onChange}
                         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+                        onChange={field.onChange}
+                        value={field.value}
                     />
                 )}
             />
@@ -80,7 +80,7 @@ export function createDateTimeInput<F extends FieldValues>({
 export function createCheckboxInput<F extends FieldValues>({
     ...props
 }: Omit<CheckboxProps, "error">): InputProducerResult<F> {
-    return function FormCheckboxInput({ name, state, register }) {
+    return function FormCheckboxInput({ name, register, state }) {
         return (
             <Checkbox
                 {...register(name)}
@@ -94,7 +94,7 @@ export function createCheckboxInput<F extends FieldValues>({
 export function createTextareaInput<F extends FieldValues>({
     ...props
 }: Omit<TextareaProps, "error">): InputProducerResult<F> {
-    return function TextareaInput({ name, state, register }) {
+    return function TextareaInput({ name, register, state }) {
         return (
             <Textarea
                 {...register(name)}
@@ -108,7 +108,7 @@ export function createTextareaInput<F extends FieldValues>({
 export function createTextInput<F extends FieldValues>({
     ...props
 }: Omit<TextInputProps, "error">): InputProducerResult<F> {
-    return function FormTextInput({ name, state, register }) {
+    return function FormTextInput({ name, register, state }) {
         return (
             <TextInput
                 {...register(name)}
@@ -124,25 +124,25 @@ function entriesOf<T extends Record<string, unknown>, K extends keyof T & string
 }
 
 interface FormBuilderOptions<T extends z.ZodRawShape> {
-    schema: z.ZodObject<T>;
+    defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>;
     fields: Partial<{
         [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>;
     }>;
-    defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>;
     label: string;
     onSubmit(data: z.infer<z.ZodObject<T>>): void;
+    schema: z.ZodObject<T>;
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
-    schema,
-    fields,
     defaultValues,
+    fields,
     label,
     onSubmit,
+    schema,
 }: FormBuilderOptions<T>): FC {
     const form = useForm<z.infer<z.ZodObject<T>>>({
-        resolver: zodResolver(schema),
         defaultValues,
+        resolver: zodResolver(schema),
     });
 
     const components = entriesOf(fields).map(([name, fc]) => {
@@ -153,7 +153,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc;
 
         return (
-            <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
+            <Component control={form.control} key={name} name={name} register={form.register} state={form.formState} />
         );
     });
 

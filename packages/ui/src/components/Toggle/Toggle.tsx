@@ -1,8 +1,9 @@
-import * as React from "react";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
+import * as React from "react";
+
 import { cn } from "../../utils";
 
-export interface ToggleProps extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {}
+export type ToggleProps = React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
 
 export const Toggle = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, ToggleProps>(
     ({ className, ...props }, ref) => (

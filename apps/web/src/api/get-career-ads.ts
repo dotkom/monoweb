@@ -1,22 +1,23 @@
 import { type PortableTextProps } from "@/components/molecules/PortableText";
+
 import client from "./sanity";
 
 export interface CareerAd {
-    title: string;
-    company_name: string;
-    image: { asset: { url: string } };
-    career_type: string;
-    location: string;
-    deadline: string;
-    company_info: string;
-    content: PortableTextProps["blocks"];
-    link: string;
-    facebook: string;
-    instagram: string;
-    twitter: string;
-    linkdin: string;
     career_role: string;
+    career_type: string;
+    company_info: string;
+    company_name: string;
+    content: PortableTextProps["blocks"];
+    deadline: string;
+    facebook: string;
+    image: { asset: { url: string } };
+    instagram: string;
+    link: string;
+    linkdin: string;
+    location: string;
     slug: { current: string };
+    title: string;
+    twitter: string;
 }
 
 const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("drafts.**"))][0]{

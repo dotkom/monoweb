@@ -1,31 +1,32 @@
-import { type Kysely } from "kysely";
 import { type Database } from "@dotkomonline/db";
-import { EventRepositoryImpl } from "./event/event-repository";
+import { type Kysely } from "kysely";
+
 import { CommitteeRepositoryImpl } from "./committee/committee-repository";
-import { CompanyRepositoryImpl } from "./company/company-repository";
-import { EventCompanyRepositoryImpl } from "./event/event-company-repository";
-import { AttendanceRepositoryImpl } from "./event/attendance-repository";
-import { UserRepositoryImpl } from "./user/user-repository";
-import { ProductRepositoryImpl } from "./payment/product-repository";
-import { PaymentRepositoryImpl } from "./payment/payment-repository";
-import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-provider-repository";
-import { RefundRequestRepositoryImpl } from "./payment/refund-request-repository";
-import { MarkRepositoryImpl } from "./mark/mark-repository";
-import { PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository";
-import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository";
-import { NotificationPermissionsRepositoryImpl } from "./user/notification-permissions-repository";
-import { UserServiceImpl } from "./user/user-service";
-import { EventServiceImpl } from "./event/event-service";
-import { AttendanceServiceImpl } from "./event/attendance-service";
 import { CommitteeServiceImpl } from "./committee/committee-service";
+import { CompanyRepositoryImpl } from "./company/company-repository";
 import { CompanyServiceImpl } from "./company/company-service";
+import { AttendanceRepositoryImpl } from "./event/attendance-repository";
+import { AttendanceServiceImpl } from "./event/attendance-service";
+import { EventCompanyRepositoryImpl } from "./event/event-company-repository";
 import { EventCompanyServiceImpl } from "./event/event-company-service";
-import { ProductServiceImpl } from "./payment/product-service";
-import { PaymentServiceImpl } from "./payment/payment-service";
-import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service";
-import { RefundRequestServiceImpl } from "./payment/refund-request-service";
+import { EventRepositoryImpl } from "./event/event-repository";
+import { EventServiceImpl } from "./event/event-service";
+import { MarkRepositoryImpl } from "./mark/mark-repository";
 import { MarkServiceImpl } from "./mark/mark-service";
+import { PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository";
 import { PersonalMarkServiceImpl } from "./mark/personal-mark-service";
+import { PaymentRepositoryImpl } from "./payment/payment-repository";
+import { PaymentServiceImpl } from "./payment/payment-service";
+import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-provider-repository";
+import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service";
+import { ProductRepositoryImpl } from "./payment/product-repository";
+import { ProductServiceImpl } from "./payment/product-service";
+import { RefundRequestRepositoryImpl } from "./payment/refund-request-repository";
+import { RefundRequestServiceImpl } from "./payment/refund-request-service";
+import { NotificationPermissionsRepositoryImpl } from "./user/notification-permissions-repository";
+import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository";
+import { UserRepositoryImpl } from "./user/user-repository";
+import { UserServiceImpl } from "./user/user-service";
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>;
 
@@ -80,17 +81,17 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService);
 
     return {
-        userService,
-        eventService,
+        attendanceService,
         committeeService,
         companyService,
-        attendanceService,
         eventCompanyService,
-        productService,
-        paymentService,
-        productPaymentProviderService,
-        refundRequestService,
+        eventService,
         markService,
+        paymentService,
         personalMarkService,
+        productPaymentProviderService,
+        productService,
+        refundRequestService,
+        userService,
     };
 };

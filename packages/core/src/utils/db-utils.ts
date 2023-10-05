@@ -2,17 +2,17 @@ import { type SelectQueryBuilder, sql } from "kysely";
 import { z } from "zod";
 
 export const CursorSchema = z.object({
-    id: z.string(),
     createdAt: z.date(),
+    id: z.string(),
 });
 
 export const PaginateInputSchema = z
     .object({
-        take: z.number(),
         cursor: CursorSchema.optional(),
+        take: z.number(),
     })
     .optional()
-    .default({ take: 20, cursor: undefined });
+    .default({ cursor: undefined, take: 20 });
 
 export type Cursor = z.infer<typeof CursorSchema>;
 

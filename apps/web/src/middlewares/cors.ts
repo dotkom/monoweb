@@ -3,10 +3,10 @@ import { type NextApiHandler, type NextApiRequest, type NextApiResponse } from "
 import * as util from "util";
 
 const cors = Cors({
-    origin: ["http://localhost:3002"],
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+    origin: ["http://localhost:3002"],
 });
 
 const corsHandler = util.promisify(cors);

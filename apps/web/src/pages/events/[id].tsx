@@ -1,9 +1,9 @@
-import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc";
-import { type FC } from "react";
 import { trpc } from "@/utils/trpc";
+import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc";
 import { Button } from "@dotkomonline/ui";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next";
+import { type FC } from "react";
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
     const { id } = props;
@@ -20,13 +20,13 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
             <Button
                 onClick={async () => {
                     await addAttendance({
-                        start: new Date(),
-                        end: new Date(),
                         deregisterDeadline: new Date(),
+                        end: new Date(),
                         eventId: id,
                         limit: 20,
-                        min: 1,
                         max: 5,
+                        min: 1,
+                        start: new Date(),
                     });
 
                     utils.event.attendance.get.invalidate();
@@ -53,27 +53,27 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const helpers = createServerSideHelpers({
-        router: appRouter,
         ctx: await createContextInner({
             auth: null,
         }),
+        router: appRouter,
         transformer, // optional - adds superjson serialization
     });
 
     const events = await helpers.event.all.fetch();
 
     return {
-        paths: events.map(({ id }) => ({ params: { id } })),
         fallback: "blocking",
+        paths: events.map(({ id }) => ({ params: { id } })),
     };
 };
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
     const helpers = createServerSideHelpers({
-        router: appRouter,
         ctx: await createContextInner({
             auth: null,
         }),
+        router: appRouter,
         transformer, // optional - adds superjson serialization
     });
 
@@ -87,8 +87,8 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
 
     return {
         props: {
-            trpcState: helpers.dehydrate(),
             id,
+            trpcState: helpers.dehydrate(),
         },
         revalidate: 86400,
     };

@@ -1,7 +1,7 @@
 import { type CareerAd, fetchCareerAd } from "@/api/get-career-ads";
+import { CareerAdView } from "@/components/views/CareerAdView";
 import { type GetServerSideProps } from "next";
 import React, { type FC } from "react";
-import { CareerAdView } from "@/components/views/CareerAdView";
 
 interface CareerProps {
     career: CareerAd;

@@ -1,7 +1,8 @@
 import { type Database } from "@dotkomonline/db";
 import { type Company, type Event } from "@dotkomonline/types";
 import { type Kysely } from "kysely";
-import { paginateQuery, type Cursor } from "../../utils/db-utils";
+
+import { type Cursor, paginateQuery } from "../../utils/db-utils";
 import { mapToCompany } from "../company/company-repository";
 import { mapToEvent } from "./event-repository";
 
@@ -19,8 +20,8 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
         await this.db
             .insertInto("eventCompany")
             .values({
-                eventId: id,
                 companyId: company,
+                eventId: id,
             })
             .returningAll()
             .executeTakeFirst();

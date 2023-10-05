@@ -1,10 +1,11 @@
-import { Kysely } from "kysely";
 import { type Mark } from "@dotkomonline/types";
+import { randomUUID } from "crypto";
+import { Kysely } from "kysely";
+
 import { MarkRepositoryImpl } from "../mark-repository";
 import { MarkServiceImpl } from "../mark-service";
 import { PersonalMarkRepositoryImpl } from "../personal-mark-repository";
 import { PersonalMarkServiceImpl } from "../personal-mark-service";
-import { randomUUID } from "crypto";
 
 describe("PersonalMarkDateCalculation", () => {
     const db = vi.mocked(Kysely.prototype, true);
@@ -20,9 +21,9 @@ describe("PersonalMarkDateCalculation", () => {
         const startDate = new Date("3022-10-01");
         const marks = [
             {
-                id: randomUUID(),
                 createdAt: startDate,
                 duration: 24,
+                id: randomUUID(),
             },
         ];
 
@@ -34,14 +35,14 @@ describe("PersonalMarkDateCalculation", () => {
             const startDate = new Date("3022-10-01");
             const marks = [
                 {
-                    id: randomUUID(),
                     createdAt: startDate,
                     duration: 22,
+                    id: randomUUID(),
                 },
                 {
-                    id: randomUUID(),
                     createdAt: startDate,
                     duration: 23,
+                    id: randomUUID(),
                 },
             ];
 
@@ -53,18 +54,18 @@ describe("PersonalMarkDateCalculation", () => {
             const startDateWinter = new Date("3022-11-01");
             const winterMarks = [
                 {
-                    id: randomUUID(),
                     createdAt: startDateWinter,
                     duration: 30,
+                    id: randomUUID(),
                 },
             ];
 
             const startDateSummer = new Date("3022-05-01");
             const summerMarks = [
                 {
-                    id: randomUUID(),
                     createdAt: startDateSummer,
                     duration: 31,
+                    id: randomUUID(),
                 },
             ];
 
@@ -81,19 +82,19 @@ describe("PersonalMarkDateCalculation", () => {
             const oldDate = new Date("1970-01-01");
             const marks = [
                 {
-                    id: randomUUID(),
                     createdAt: oldDate,
                     duration: 20,
+                    id: randomUUID(),
                 },
                 {
-                    id: randomUUID(),
                     createdAt: oldDate,
                     duration: 24,
+                    id: randomUUID(),
                 },
                 {
-                    id: randomUUID(),
                     createdAt: startDate,
                     duration: 21,
+                    id: randomUUID(),
                 },
             ];
 
@@ -105,9 +106,9 @@ describe("PersonalMarkDateCalculation", () => {
             const oldDate = new Date("1970-01-01");
             const marks = [
                 {
-                    id: randomUUID(),
                     createdAt: oldDate,
                     duration: 1000,
+                    id: randomUUID(),
                 },
             ];
 
@@ -117,19 +118,19 @@ describe("PersonalMarkDateCalculation", () => {
             const startDate = new Date("3022-10-01");
             const marks = [
                 {
-                    id: randomUUID(),
                     createdAt: startDate,
                     duration: 10,
+                    id: randomUUID(),
                 },
                 {
-                    id: randomUUID(),
                     createdAt: new Date("3022-10-12"),
                     duration: 10,
+                    id: randomUUID(),
                 },
                 {
-                    id: randomUUID(),
                     createdAt: new Date("3022-10-05"),
                     duration: 10,
+                    id: randomUUID(),
                 },
             ];
 

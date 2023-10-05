@@ -1,19 +1,19 @@
 import { cva } from "cva";
-
 import * as React from "react";
+
 import { cn } from "../../utils";
 import { AlertIcon } from "../Alert/AlertIcon";
 import { Label } from "../Label";
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-    label?: string;
-    status?: "success" | "warning" | "danger";
     error?: string;
+    label?: string;
     message?: string;
+    status?: "danger" | "success" | "warning";
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({ className, error, status, message, label, ...props }, ref) => (
+    ({ className, error, label, message, status, ...props }, ref) => (
         <div className="grid w-full gap-2">
             {label && <Label htmlFor={props.id}>{label}</Label>}
             <textarea
@@ -28,7 +28,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             {message && <p className={displayMessage({ status })}>{message}</p>}
             {error && (
                 <div className={displayMessage({ status: "danger" })}>
-                    <AlertIcon size={20} status="danger" className="mr-1" />
+                    <AlertIcon className="mr-1" size={20} status="danger" />
                     <p>
                         <span className="font-bold">Error:&nbsp;</span>
                         {error}
@@ -48,8 +48,8 @@ const statusVariants = cva("", {
         status: {
             danger: "border-red-7",
             error: "border-red-7",
-            warning: "border-amber-7",
             success: "border-green-7",
+            warning: "border-amber-7",
         },
     },
 });
@@ -57,8 +57,8 @@ const statusVariants = cva("", {
 const displayMessage = cva("text-sm inline-flex", {
     variants: {
         status: {
-            error: "text-red-11",
             danger: "text-red-11",
+            error: "text-red-11",
             success: "text-green-11",
             warning: "text-amber-11",
         },

@@ -6,9 +6,9 @@ import { type FC, useEffect, useState } from "react";
 const RefundPage: FC = () => {
     const [payments, setPayments] = useState<Array<Payment>>([]);
     const [productId, setProductId] = useState("");
-    const [refundFormState, setRefundFormState] = useState<{ refundablePaymentId: string; reason: string }>({
-        refundablePaymentId: "",
+    const [refundFormState, setRefundFormState] = useState<{ reason: string; refundablePaymentId: string }>({
         reason: "I need me money back :(",
+        refundablePaymentId: "",
     });
 
     const fetchPaymentsQuery = trpc.payment.all.useQuery(undefined, {
@@ -115,8 +115,8 @@ const RefundPage: FC = () => {
                         <TextInput
                             id="refundablePaymentId"
                             name="refundablePaymentId"
-                            value={refundFormState.refundablePaymentId}
                             onChange={(e) => handleFormChange(e, setRefundFormState)}
+                            value={refundFormState.refundablePaymentId}
                         />
                     </fieldset>
 
@@ -125,8 +125,8 @@ const RefundPage: FC = () => {
                         <TextInput
                             id="reason"
                             name="reason"
-                            value={refundFormState.reason}
                             onChange={(e) => handleFormChange(e, setRefundFormState)}
+                            value={refundFormState.reason}
                         />
                     </fieldset>
 

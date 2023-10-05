@@ -1,20 +1,20 @@
-import { type FC } from "react";
 import Link from "next/link";
+import { type FC } from "react";
 
 export interface EventListItemProps {
-    id: string;
-    title: string;
-    type: string;
     attending: number;
+    id: string;
     max_attending: number;
     start: Date;
+    title: string;
+    type: string;
 }
 
 // Temporary eventlistitem design
 export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps) => (
     <Link
-        href={`/events/${props.id}`}
         className="bg-blue-3 text-blue-12 hover:bg-blue-4 flex w-full cursor-pointer flex-row gap-x-2 rounded-md px-3 py-2"
+        href={`/events/${props.id}`}
     >
         <div className="flex flex-row gap-x-4">
             <span className="flex-row-gap-x-4 flex">{props.type}</span>

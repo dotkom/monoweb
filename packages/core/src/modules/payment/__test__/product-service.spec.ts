@@ -1,22 +1,22 @@
+import { type Product } from "@dotkomonline/types";
+import { randomUUID } from "crypto";
+import { Kysely } from "kysely";
 import { describe, vi } from "vitest";
 
-import { Kysely } from "kysely";
 import { NotFoundError } from "../../../errors/errors";
-import { type Product } from "@dotkomonline/types";
 import { ProductRepositoryImpl } from "./../product-repository";
 import { ProductServiceImpl } from "./../product-service";
-import { randomUUID } from "crypto";
 
 export const productPayload: Omit<Product, "id"> = {
-    createdAt: new Date(2022, 1, 1),
-    updatedAt: new Date(2022, 1, 1),
-    type: "EVENT",
-    objectId: randomUUID(),
     amount: 999,
-    paymentProviders: [],
-    isRefundable: true,
-    refundRequiresApproval: true,
+    createdAt: new Date(2022, 1, 1),
     deletedAt: null,
+    isRefundable: true,
+    objectId: randomUUID(),
+    paymentProviders: [],
+    refundRequiresApproval: true,
+    type: "EVENT",
+    updatedAt: new Date(2022, 1, 1),
 };
 
 describe("ProductService", () => {

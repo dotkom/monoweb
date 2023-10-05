@@ -1,13 +1,13 @@
 export { default as BedpressIcon } from "./BedpressIcon";
-export { default as GitHubIcon } from "./GitHubIcon";
-export { default as SlackIcon } from "./SlackIcon";
-export { default as InstagramIcon } from "./InstagramIcon";
 export { default as FacebookIcon } from "./FacebookIcon";
+export { default as GitHubIcon } from "./GitHubIcon";
+export { default as InstagramIcon } from "./InstagramIcon";
 export { default as ItexIcon } from "./ItexIcon";
 export { default as LinkedinIcon } from "./LinkedinIcon";
 export { default as NextjsIcon } from "./NextjsIcon";
 export { default as OfflineIcon } from "./OfflineIcon";
 export { default as PankodIcon } from "./PankodIcon";
+export { default as SlackIcon } from "./SlackIcon";
 export { default as TechtalksIcon } from "./TechtalksIcon";
 export { default as TwitterIcon } from "./TwitterIcon";
 export { default as UtlysningIcon } from "./UtlysningIcon";

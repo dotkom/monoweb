@@ -1,4 +1,5 @@
 import { type Company, type Event } from "@dotkomonline/types";
+
 import { type Cursor } from "../../utils/db-utils";
 import { type EventCompanyRepository } from "./event-company-repository";
 

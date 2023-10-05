@@ -1,9 +1,11 @@
+import type { PropsWithChildren } from "react";
+
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import type { PropsWithChildren } from "react";
+
 import { AuthProvider } from "./AuthProvider";
 import { ModalProvider } from "./ModalProvider";
 import { QueryProvider } from "./QueryProvider";

@@ -1,38 +1,38 @@
 export const profileItems = [
     {
-        title: "Min profil",
         slug: "/profile",
+        title: "Min profil",
     },
     {
-        title: "Personvern",
         slug: "/profile/privacy",
+        title: "Personvern",
     },
     {
-        title: "Prikker & Suspensjoner",
         slug: "/profile/penalties",
+        title: "Prikker & Suspensjoner",
     },
     {
-        title: "Passord",
         slug: "/profile/password",
+        title: "Passord",
     },
     {
-        title: "Epost",
         slug: "/profile/email",
+        title: "Epost",
     },
     {
-        title: "Medlemskap",
         slug: "/profile/membership",
+        title: "Medlemskap",
     },
     {
-        title: "Betalinger",
         slug: "/profile/payments",
+        title: "Betalinger",
     },
     {
-        title: "Varsler",
         slug: "/profile/notifications",
+        title: "Varsler",
     },
     {
-        title: "Adgangskort (NTNU)",
         slug: "/profile/access-card",
+        title: "Adgangskort (NTNU)",
     },
 ];

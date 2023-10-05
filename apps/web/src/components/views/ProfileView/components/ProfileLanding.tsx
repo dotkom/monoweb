@@ -5,7 +5,7 @@ import { type User } from "next-auth";
 
 interface IFormInput {
     name: string;
-    value?: string | null | undefined;
+    value?: null | string | undefined;
 }
 
 const FormInput: React.FC<IFormInput> = ({ name, value }) => (
