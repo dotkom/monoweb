@@ -1,17 +1,13 @@
-import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
+import MainLayout from "@/components/layout/MainLayout";
+import ProfileLayout from "@/components/layout/ProfileLayout";
+import { type NextPageWithLayout } from "../_app";
 
-const PenaltiesPage: NextPageWithLayout = () => {
-  return <div>Penalties</div>
-}
+const PenaltiesPage: NextPageWithLayout = () => <div>Penalties</div>;
 
-PenaltiesPage.getLayout = (page) => {
-  return (
+PenaltiesPage.getLayout = (page) => (
     <MainLayout>
-      <ProfileLayout>{page}</ProfileLayout>
+        <ProfileLayout>{page}</ProfileLayout>
     </MainLayout>
-  )
-}
+);
 
-export default PenaltiesPage
+export default PenaltiesPage;

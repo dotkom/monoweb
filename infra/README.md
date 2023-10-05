@@ -7,9 +7,9 @@ terraform, see https://developer.hashicorp.com/terraform/language/state/workspac
 
 Monoweb deploys to three environments:
 
-- dev
-- stg
-- prd
+-   dev
+-   stg
+-   prd
 
 Each environment maps to the environment with the same name in the Doppler workspace.
 

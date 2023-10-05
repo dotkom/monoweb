@@ -1,83 +1,91 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
-import { Mark, PersonalMark, PersonalMarkSchema, User } from "@dotkomonline/types"
+import { type Cursor, paginateQuery } from "../../utils/db-utils";
+import { type Kysely, type Selectable } from "kysely";
+import { type Mark, type PersonalMark, PersonalMarkSchema, type User } from "@dotkomonline/types";
 
-import { Database } from "@dotkomonline/db"
-import { mapToMark } from "./mark-repository"
+import { type Database } from "@dotkomonline/db";
+import { mapToMark } from "./mark-repository";
 
-export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark => {
-  return PersonalMarkSchema.parse(payload)
-}
+export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark =>
+    PersonalMarkSchema.parse(payload);
 
 export interface PersonalMarkRepository {
-  getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
-  addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
-  removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
-  getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
+    getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>>;
+    getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>>;
+    addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>;
+    removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>;
+    getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>;
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+    constructor(private readonly db: Kysely<Database>) {}
 
-  async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    let query = this.db
-      .selectFrom("personalMark")
-      .leftJoin("mark", "personalMark.markId", "mark.id")
-      .selectAll("personalMark")
-      .where("userId", "=", userId)
-      .limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+    async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<PersonalMark>> {
+        let query = this.db
+            .selectFrom("personalMark")
+            .leftJoin("mark", "personalMark.markId", "mark.id")
+            .selectAll("personalMark")
+            .where("userId", "=", userId)
+            .limit(take);
+
+        if (cursor) {
+            query = paginateQuery(query, cursor);
+        } else {
+            query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
+        }
+
+        const marks = await query.execute();
+
+        return marks.map(mapToPersonalMark);
     }
-    const marks = await query.execute()
-    return marks.map(mapToPersonalMark)
-  }
 
-  async getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]> {
-    let query = this.db
-      .selectFrom("mark")
-      .leftJoin("personalMark", "mark.id", "personalMark.markId")
-      .selectAll("mark")
-      .where("personalMark.userId", "=", userId)
-      .limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+    async getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Array<Mark>> {
+        let query = this.db
+            .selectFrom("mark")
+            .leftJoin("personalMark", "mark.id", "personalMark.markId")
+            .selectAll("mark")
+            .where("personalMark.userId", "=", userId)
+            .limit(take);
+
+        if (cursor) {
+            query = paginateQuery(query, cursor);
+        } else {
+            query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
+        }
+
+        const marks = await query.execute();
+
+        return marks.map(mapToMark);
     }
-    const marks = await query.execute()
-    return marks.map(mapToMark)
-  }
 
-  async addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
-    const personalMark = await this.db
-      .insertInto("personalMark")
-      .values({ userId, markId })
-      .returningAll()
-      .executeTakeFirst()
-    return personalMark ? mapToPersonalMark(personalMark) : undefined
-  }
+    async addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
+        const personalMark = await this.db
+            .insertInto("personalMark")
+            .values({ userId, markId })
+            .returningAll()
+            .executeTakeFirst();
 
-  async removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
-    const personalMark = await this.db
-      .deleteFrom("personalMark")
-      .where("userId", "=", userId)
-      .where("markId", "=", markId)
-      .returningAll()
-      .executeTakeFirst()
-    return personalMark ? mapToPersonalMark(personalMark) : undefined
-  }
+        return personalMark ? mapToPersonalMark(personalMark) : undefined;
+    }
 
-  async getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
-    const personalMark = await this.db
-      .selectFrom("personalMark")
-      .selectAll()
-      .where("userId", "=", userId)
-      .where("markId", "=", markId)
-      .executeTakeFirst()
-    return personalMark ? mapToPersonalMark(personalMark) : undefined
-  }
+    async removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
+        const personalMark = await this.db
+            .deleteFrom("personalMark")
+            .where("userId", "=", userId)
+            .where("markId", "=", markId)
+            .returningAll()
+            .executeTakeFirst();
+
+        return personalMark ? mapToPersonalMark(personalMark) : undefined;
+    }
+
+    async getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
+        const personalMark = await this.db
+            .selectFrom("personalMark")
+            .selectAll()
+            .where("userId", "=", userId)
+            .where("markId", "=", markId)
+            .executeTakeFirst();
+
+        return personalMark ? mapToPersonalMark(personalMark) : undefined;
+    }
 }

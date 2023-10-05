@@ -1,13 +1,13 @@
 version: "3.2"
 
 services:
-  db:
-    container_name: ow_db
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: owpassword123
-      POSTGRES_USER: ow
-      POSTGRES_DB: ow
-    ports:
-      - 6543:5432
+    db:
+        container_name: ow_db
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: owpassword123
+            POSTGRES_USER: ow
+            POSTGRES_DB: ow
+        ports:
+            - 6543:5432

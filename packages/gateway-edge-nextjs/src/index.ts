@@ -1,1 +1,1 @@
-export * from "./stripe/stripe-webhook"
+export * from "./stripe/stripe-webhook";

@@ -1,19 +1,19 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const CommitteeSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  name: z.string(),
-  description: z.string(),
-  email: z.string(),
-  image: z.string().nullable(),
-})
+    id: z.string().uuid(),
+    createdAt: z.date(),
+    name: z.string(),
+    description: z.string(),
+    email: z.string(),
+    image: z.string().nullable(),
+});
 
-export type Committee = z.infer<typeof CommitteeSchema>
+export type Committee = z.infer<typeof CommitteeSchema>;
 
 export const CommitteeWriteSchema = CommitteeSchema.partial({
-  id: true,
-  createdAt: true,
-})
+    id: true,
+    createdAt: true,
+});
 
-export type CommitteeWrite = z.infer<typeof CommitteeWriteSchema>
+export type CommitteeWrite = z.infer<typeof CommitteeWriteSchema>;

@@ -1,1 +1,1 @@
-export { PasswordInput } from "./Password"
+export { PasswordInput } from "./Password";

@@ -1,10 +1,10 @@
-import { stripeHandler } from "@dotkomonline/gateway-edge-nextjs"
+import { stripeHandler } from "@dotkomonline/gateway-edge-nextjs";
 
-export default stripeHandler
+export default stripeHandler;
 
 // Required by stripe
 export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+    api: {
+        bodyParser: false,
+    },
+};

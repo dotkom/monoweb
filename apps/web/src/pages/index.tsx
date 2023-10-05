@@ -1,14 +1,15 @@
-import React from "react"
-import { useSession } from "next-auth/react"
+import React from "react";
+import { useSession } from "next-auth/react";
 
 const Home: React.FC = () => {
-  const auth = useSession()
-  return (
-    <div>
-      <p>Homepage</p>
-      <pre>{JSON.stringify(auth, null, 2)}</pre>
-    </div>
-  )
-}
+    const auth = useSession();
 
-export default Home
+    return (
+        <div>
+            <p>Homepage</p>
+            <pre>{JSON.stringify(auth, null, 2)}</pre>
+        </div>
+    );
+};
+
+export default Home;

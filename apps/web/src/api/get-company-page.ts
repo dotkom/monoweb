@@ -1,8 +1,8 @@
-import { PortableTextProps } from "@/components/molecules/PortableText"
-import client from "./sanity"
+import { type PortableTextProps } from "@/components/molecules/PortableText";
+import client from "./sanity";
 
 interface CompanySectionData {
-  sections: PortableTextProps["blocks"]
+    sections: PortableTextProps["blocks"];
 }
 
 const query = `
@@ -11,9 +11,10 @@ const query = `
       content
     }
   }[0].sections
-`
+`;
 
 export const fetchCompanySectionData = async (): Promise<CompanySectionData> => {
-  const res = await client.fetch(query)
-  return res
-}
+    const res = await client.fetch(query);
+
+    return res;
+};

@@ -1,16 +1,16 @@
-import { Generated } from "kysely"
+import { type Generated } from "kysely";
 
 export interface MarkTable {
-  id: Generated<string>
-  createdAt: Generated<Date>
-  updatedAt: Generated<Date>
-  title: string
-  category: string
-  details: string
-  duration: number
+    id: Generated<string>;
+    createdAt: Generated<Date>;
+    updatedAt: Generated<Date>;
+    title: string;
+    category: string;
+    details: string;
+    duration: number;
 }
 
 export interface PersonalMarkTable {
-  markId: string
-  userId: string
+    markId: string;
+    userId: string;
 }

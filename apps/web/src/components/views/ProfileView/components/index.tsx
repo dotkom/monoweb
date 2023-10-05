@@ -1,1 +1,1 @@
-export { default as ProfileLanding } from "./ProfileLanding"
+export { default as ProfileLanding } from "./ProfileLanding";

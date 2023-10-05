@@ -1,63 +1,63 @@
 {
-  "$schema": "https://turborepo.org/schema.json",
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["**/dist"]
+    "$schema": "https://turborepo.org/schema.json",
+    "pipeline": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["**/dist"]
+        },
+        "build:prod": {
+            "dependsOn": ["^build"],
+            "outputs": [".next/**"]
+        },
+        "build:storybook": {
+            "outputs": ["storybook-static/**"]
+        },
+        "type-check": {
+            "outputs": []
+        },
+        "test": {
+            "dependsOn": ["lint", "type-check"],
+            "outputs": []
+        },
+        "lint": {
+            "outputs": []
+        },
+        "lint:fix": {
+            "outputs": []
+        },
+        "dev": {
+            "cache": false
+        },
+        "migrate": {
+            "env": ["DATABASE_URL"],
+            "cache": false,
+            "dependsOn": []
+        },
+        "clean": {
+            "cache": false
+        },
+        "storybook": {
+            "outputs": [],
+            "cache": false
+        }
     },
-    "build:prod": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**"]
-    },
-    "build:storybook": {
-      "outputs": ["storybook-static/**"]
-    },
-    "type-check": {
-      "outputs": []
-    },
-    "test": {
-      "dependsOn": ["lint", "type-check"],
-      "outputs": []
-    },
-    "lint": {
-      "outputs": []
-    },
-    "lint:fix": {
-      "outputs": []
-    },
-    "dev": {
-      "cache": false
-    },
-    "migrate": {
-      "env": ["DATABASE_URL"],
-      "cache": false,
-      "dependsOn": []
-    },
-    "clean": {
-      "cache": false
-    },
-    "storybook": {
-      "outputs": [],
-      "cache": false
-    }
-  },
-  "globalEnv": [
-    "NODE_ENV",
-    "WEB_COGNITO_CLIENT_ID",
-    "WEB_COGNITO_CLIENT_SECRET",
-    "WEB_COGNITO_ISSUER",
-    "DASHBOARD_COGNITO_CLIENT_ID",
-    "DASHBOARD_COGNITO_CLIENT_SECRET",
-    "DASHBOARD_COGNITO_ISSUER",
-    "NEXTAUTH_SECRET",
-    "DATABASE_URL",
-    "VERCEL_URL",
-    "PORT",
-    "FAGKOM_STRIPE_PUBLIC_KEY",
-    "FAGKOM_STRIPE_SECRET_KEY",
-    "FAGKOM_STRIPE_WEBHOOK_SECRET",
-    "TRIKOM_STRIPE_PUBLIC_KEY",
-    "TRIKOM_STRIPE_SECRET_KEY",
-    "TRIKOM_STRIPE_WEBHOOK_SECRET"
-  ]
+    "globalEnv": [
+        "NODE_ENV",
+        "WEB_COGNITO_CLIENT_ID",
+        "WEB_COGNITO_CLIENT_SECRET",
+        "WEB_COGNITO_ISSUER",
+        "DASHBOARD_COGNITO_CLIENT_ID",
+        "DASHBOARD_COGNITO_CLIENT_SECRET",
+        "DASHBOARD_COGNITO_ISSUER",
+        "NEXTAUTH_SECRET",
+        "DATABASE_URL",
+        "VERCEL_URL",
+        "PORT",
+        "FAGKOM_STRIPE_PUBLIC_KEY",
+        "FAGKOM_STRIPE_SECRET_KEY",
+        "FAGKOM_STRIPE_WEBHOOK_SECRET",
+        "TRIKOM_STRIPE_PUBLIC_KEY",
+        "TRIKOM_STRIPE_SECRET_KEY",
+        "TRIKOM_STRIPE_WEBHOOK_SECRET"
+    ]
 }

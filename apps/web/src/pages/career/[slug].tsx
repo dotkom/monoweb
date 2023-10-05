@@ -1,20 +1,20 @@
-import { CareerAd, fetchCareerAd } from "@/api/get-career-ads"
-import { GetServerSideProps } from "next"
-import React, { FC } from "react"
-import { CareerAdView } from "@/components/views/CareerAdView"
+import { type CareerAd, fetchCareerAd } from "@/api/get-career-ads";
+import { type GetServerSideProps } from "next";
+import React, { type FC } from "react";
+import { CareerAdView } from "@/components/views/CareerAdView";
 
 interface CareerProps {
-  career: CareerAd
+    career: CareerAd;
 }
 
 export const getServerSideProps: GetServerSideProps<CareerProps> = async (ctx) => {
-  const slug = ctx.query.slug as string
-  const data = await fetchCareerAd(slug)
-  return { props: { career: data } }
-}
+    const slug = ctx.query.slug as string;
+    const data = await fetchCareerAd(slug);
 
-const CareerAdPage: FC<CareerProps> = (props: CareerProps) => {
-  return props.career ? <CareerAdView career={props.career} /> : <div>404 - Sanity not found</div>
-}
+    return { props: { career: data } };
+};
 
-export default CareerAdPage
+const CareerAdPage: FC<CareerProps> = (props: CareerProps) =>
+    props.career ? <CareerAdView career={props.career} /> : <div>404 - Sanity not found</div>;
+
+export default CareerAdPage;

@@ -1,1 +1,1 @@
-module.exports = require("@dotkomonline/config/postcss-preset")
+module.exports = require("@dotkomonline/config/postcss-preset");

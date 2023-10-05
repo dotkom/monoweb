@@ -1,17 +1,17 @@
-import { PortableTextProps } from "@/components/molecules/PortableText"
-import client from "./sanity"
+import { type PortableTextProps } from "@/components/molecules/PortableText";
+import client from "./sanity";
 
 export interface Article {
-  title: string
-  author: string
-  photographer: string
-  _createdAt: string
-  _updatedAt: string
-  tags: string[]
-  excerpt: string
-  cover_image: { asset: { url: string } }
-  content: PortableTextProps["blocks"]
-  estimatedReadingTime: number
+    title: string;
+    author: string;
+    photographer: string;
+    _createdAt: string;
+    _updatedAt: string;
+    tags: Array<string>;
+    excerpt: string;
+    cover_image: { asset: { url: string } };
+    content: PortableTextProps["blocks"];
+    estimatedReadingTime: number;
 }
 
 const query = `
@@ -33,9 +33,10 @@ const query = `
     // Words per minute: 180
     "estimatedReadingTime": round(length(pt::text(content)) / 5 / 180 )
   }
-`
+`;
 
 export const fetchArticleData = async (slug: string): Promise<Article> => {
-  const res = await client.fetch(query, { slug })
-  return res
-}
+    const res = await client.fetch(query, { slug });
+
+    return res;
+};
