@@ -1,5 +1,7 @@
-import { CompanySchema, EventSchema, Event } from "@dotkomonline/types"
-import { Box, Text, Title } from "@mantine/core"
+import { CompanySchema, Event, EventSchema } from "@dotkomonline/types"
+import { Icon } from "@iconify/react"
+import { Box, Button, Text, Title } from "@mantine/core"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { FC, useMemo } from "react"
 import { z } from "zod"
 import { GenericTable } from "../../../../components/GenericTable"
@@ -7,12 +9,12 @@ import { trpc } from "../../../../utils/trpc"
 import { createSelectInput, useFormBuilder } from "../../../form"
 import { useQueryNotification } from "../../../notifications"
 import { useCompanyDetailsContext } from "./provider"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 
 export const CompanyEventsPage: FC = () => {
   const { company } = useCompanyDetailsContext()
   const createNotification = useQueryNotification()
   const deleteNotification = useQueryNotification()
+
   const { data: companyEvents = [] } = trpc.company.event.get.useQuery({
     // Adjusted trpc method
     id: company.id,
@@ -52,7 +54,19 @@ export const CompanyEventsPage: FC = () => {
         id: "actions",
         header: () => "Verktøy",
         cell: (info) => {
-          console.log("slette")
+          const id = info.getValue().id
+          const onClick = () => {
+            deleteEventMutate({ id: company.id, event: id })
+            deleteNotification.loading({
+              title: `Fjerner arrangement`,
+              message: `Fjerner ${company.name} som arrangør for ${info.getValue().title}`,
+            })
+          }
+          return (
+            <Button variant="outline" leftSection={<Icon icon="tabler:trash" />} onClick={onClick}>
+              Fjern
+            </Button>
+          )
         },
       }),
     ],
