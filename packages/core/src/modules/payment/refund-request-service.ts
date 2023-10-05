@@ -17,14 +17,18 @@ export interface RefundRequestService {
 }
 
 export class RefundRequestServiceImpl implements RefundRequestService {
-    constructor(
+    public constructor(
         private readonly refundRequestRepository: RefundRequestRepository,
         private readonly paymentRepository: PaymentRepository,
         private readonly productRepository: ProductRepository,
         private readonly paymentService: PaymentService
     ) {}
 
-    async createRefundRequest(paymentId: Payment["id"], userId: User["id"], reason: string): Promise<RefundRequest> {
+    public async createRefundRequest(
+        paymentId: Payment["id"],
+        userId: User["id"],
+        reason: string
+    ): Promise<RefundRequest> {
         const payment = await this.paymentRepository.getById(paymentId);
 
         if (!payment) {
@@ -54,23 +58,26 @@ export class RefundRequestServiceImpl implements RefundRequestService {
         });
     }
 
-    async updateRefundRequest(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest> {
+    public async updateRefundRequest(
+        id: RefundRequest["id"],
+        data: Partial<RefundRequestWrite>
+    ): Promise<RefundRequest> {
         return this.refundRequestRepository.update(id, data);
     }
 
-    async deleteRefundRequest(id: RefundRequest["id"]): Promise<void> {
+    public async deleteRefundRequest(id: RefundRequest["id"]): Promise<void> {
         return this.refundRequestRepository.delete(id);
     }
 
-    async getRefundRequestById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
+    public async getRefundRequestById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
         return this.refundRequestRepository.getById(id);
     }
 
-    async getRefundRequests(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
+    public async getRefundRequests(take: number, cursor?: Cursor): Promise<Array<RefundRequest>> {
         return this.refundRequestRepository.getAll(take, cursor);
     }
 
-    async approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
+    public async approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
         const refundRequest = await this.refundRequestRepository.getById(id);
 
         if (!refundRequest) {
@@ -90,7 +97,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
         await this.paymentService.refundPaymentById(updatedRefundRequest.paymentId, false);
     }
 
-    async rejectRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
+    public async rejectRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
         const refundRequest = await this.refundRequestRepository.getById(id);
 
         if (!refundRequest) {

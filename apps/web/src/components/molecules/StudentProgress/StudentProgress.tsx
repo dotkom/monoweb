@@ -14,7 +14,7 @@ const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => (
     >
         <div
             className={`${
-                year < id ? "text-[#153e75]" : year == id ? "bg-[#153e75] text-white" : "bg-[#36b37e] text-white"
+                year < id ? "text-[#153e75]" : year === id ? "bg-[#153e75] text-white" : "bg-[#36b37e] text-white"
             } 
           h-[20px] w-[20px] rounded-[50%] text-center`}
         >

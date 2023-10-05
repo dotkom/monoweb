@@ -1,7 +1,7 @@
 import { type Product, type ProductWrite } from "@dotkomonline/types";
 
-import { type Cursor } from "../../utils/db-utils";
 import { NotFoundError } from "../../errors/errors";
+import { type Cursor } from "../../utils/db-utils";
 import { type ProductRepository } from "./product-repository";
 
 export interface ProductService {
@@ -11,9 +11,9 @@ export interface ProductService {
 }
 
 export class ProductServiceImpl implements ProductService {
-    constructor(private readonly productRepository: ProductRepository) {}
+    public constructor(private readonly productRepository: ProductRepository) {}
 
-    async createProduct(productCreate: ProductWrite): Promise<Product> {
+    public async createProduct(productCreate: ProductWrite): Promise<Product> {
         const product = await this.productRepository.create(productCreate);
 
         if (!product) {
@@ -23,7 +23,7 @@ export class ProductServiceImpl implements ProductService {
         return product;
     }
 
-    async getProductById(id: Product["id"]): Promise<Product> {
+    public async getProductById(id: Product["id"]): Promise<Product> {
         const product = await this.productRepository.getById(id);
 
         if (!product) {
@@ -33,7 +33,7 @@ export class ProductServiceImpl implements ProductService {
         return product;
     }
 
-    async getProducts(take: number, cursor?: Cursor): Promise<Array<Product>> {
+    public async getProducts(take: number, cursor?: Cursor): Promise<Array<Product>> {
         const products = await this.productRepository.getAll(take, cursor);
 
         return products;

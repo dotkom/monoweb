@@ -1,9 +1,9 @@
-import { type Kysely, type Selectable } from "kysely";
 import {
-    type NotificationPermissions,
     NotificationPermissionsSchema,
+    type NotificationPermissions,
     type NotificationPermissionsWrite,
 } from "@dotkomonline/types";
+import { type Kysely, type Selectable } from "kysely";
 
 import { type Database } from "@dotkomonline/db";
 
@@ -21,9 +21,9 @@ export interface NotificationPermissionsRepository {
 }
 
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async getByUserId(id: string): Promise<NotificationPermissions | undefined> {
+    public async getByUserId(id: string): Promise<NotificationPermissions | undefined> {
         const notificationPermissions = await this.db
             .selectFrom("notificationPermissions")
             .selectAll()
@@ -33,7 +33,7 @@ export class NotificationPermissionsRepositoryImpl implements NotificationPermis
         return notificationPermissions ? mapToNotificationPermissions(notificationPermissions) : undefined;
     }
 
-    async create(data: NotificationPermissionsWrite): Promise<NotificationPermissions> {
+    public async create(data: NotificationPermissionsWrite): Promise<NotificationPermissions> {
         const notificationPermissions = await this.db
             .insertInto("notificationPermissions")
             .values(data)
@@ -43,7 +43,7 @@ export class NotificationPermissionsRepositoryImpl implements NotificationPermis
         return mapToNotificationPermissions(notificationPermissions);
     }
 
-    async update(
+    public async update(
         userId: string,
         data: Partial<Omit<NotificationPermissionsWrite, "userId">>
     ): Promise<NotificationPermissions | undefined> {

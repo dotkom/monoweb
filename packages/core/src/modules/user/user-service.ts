@@ -7,10 +7,10 @@ import {
     type UserWrite,
 } from "@dotkomonline/types";
 
+import { NotFoundError } from "../../errors/errors";
+import { type NotificationPermissionsRepository } from "./notification-permissions-repository";
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository";
 import { type UserRepository } from "./user-repository";
-import { type NotificationPermissionsRepository } from "./notification-permissions-repository";
-import { NotFoundError } from "../../errors/errors";
 
 export interface UserService {
     getUser(id: User["id"]): Promise<User | undefined>;
@@ -24,18 +24,19 @@ export interface UserService {
 }
 
 export class UserServiceImpl implements UserService {
-    constructor(
+    public constructor(
         private readonly userRepository: UserRepository,
         private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
         private readonly notificationPermissionsRepository: NotificationPermissionsRepository
     ) {}
-    async getAllUsers(limit: number) {
+
+    public async getAllUsers(limit: number) {
         const users = await this.userRepository.getAll(limit);
 
         return users;
     }
 
-    async getUser(id: User["id"]) {
+    public async getUser(id: User["id"]) {
         const user = await this.userRepository.getById(id);
 
         if (!user) {
@@ -45,13 +46,13 @@ export class UserServiceImpl implements UserService {
         return user;
     }
 
-    async createUser(input: UserWrite) {
+    public async createUser(input: UserWrite) {
         const res = await this.userRepository.create(input);
 
         return res;
     }
 
-    async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
+    public async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
         let privacyPermissions = await this.privacyPermissionsRepository.getByUserId(id);
 
         if (!privacyPermissions) {
@@ -61,7 +62,7 @@ export class UserServiceImpl implements UserService {
         return privacyPermissions;
     }
 
-    async updatePrivacyPermissionsForUserId(
+    public async updatePrivacyPermissionsForUserId(
         id: string,
         data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
     ): Promise<PrivacyPermissions> {
@@ -74,7 +75,7 @@ export class UserServiceImpl implements UserService {
         return privacyPermissions;
     }
 
-    async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
+    public async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
         let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id);
 
         if (!notificationPermissions) {
@@ -84,7 +85,7 @@ export class UserServiceImpl implements UserService {
         return notificationPermissions;
     }
 
-    async updateNotificationPermissionsForUserId(
+    public async updateNotificationPermissionsForUserId(
         id: string,
         data: Partial<Omit<NotificationPermissionsWrite, "userId">>
     ): Promise<NotificationPermissions> {

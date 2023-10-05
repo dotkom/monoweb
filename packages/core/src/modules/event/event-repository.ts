@@ -1,7 +1,7 @@
 import { type Database } from "@dotkomonline/db";
-import { type Event, EventSchema, type EventWrite } from "@dotkomonline/types";
+import { EventSchema, type Event, type EventWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-import { type Cursor, paginateQuery } from "../../utils/db-utils";
+import { paginateQuery, type Cursor } from "../../utils/db-utils";
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data);
 
@@ -14,14 +14,15 @@ export interface EventRepository {
 }
 
 export class EventRepositoryImpl implements EventRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async create(data: EventWrite): Promise<Event | undefined> {
+    public async create(data: EventWrite): Promise<Event | undefined> {
         const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow();
 
         return mapToEvent(event);
     }
-    async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
+
+    public async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
         const event = await this.db
             .updateTable("event")
             .set(data)
@@ -31,7 +32,8 @@ export class EventRepositoryImpl implements EventRepository {
 
         return mapToEvent(event);
     }
-    async getAll(take: number, cursor?: Cursor): Promise<Array<Event>> {
+
+    public async getAll(take: number, cursor?: Cursor): Promise<Array<Event>> {
         let query = this.db.selectFrom("event").selectAll().limit(take);
 
         if (cursor) {
@@ -44,7 +46,8 @@ export class EventRepositoryImpl implements EventRepository {
 
         return events.map(mapToEvent);
     }
-    async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>> {
+
+    public async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>> {
         let query = this.db.selectFrom("event").selectAll().where("committeeId", "=", committeeId).limit(take);
 
         if (cursor) {
@@ -57,7 +60,8 @@ export class EventRepositoryImpl implements EventRepository {
 
         return events.map(mapToEvent);
     }
-    async getById(id: string): Promise<Event | undefined> {
+
+    public async getById(id: string): Promise<Event | undefined> {
         const event = await this.db.selectFrom("event").selectAll().where("id", "=", id).executeTakeFirst();
 
         return event ? mapToEvent(event) : undefined;

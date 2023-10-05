@@ -1,8 +1,8 @@
 import { type Mark, type MarkWrite } from "@dotkomonline/types";
 
+import { NotFoundError } from "../../errors/errors";
 import { type Cursor } from "../../utils/db-utils";
 import { type MarkRepository } from "./mark-repository";
-import { NotFoundError } from "../../errors/errors";
 
 export interface MarkService {
     getMark(id: string): Promise<Mark>;
@@ -13,9 +13,9 @@ export interface MarkService {
 }
 
 export class MarkServiceImpl implements MarkService {
-    constructor(private readonly markRepository: MarkRepository) {}
+    public constructor(private readonly markRepository: MarkRepository) {}
 
-    async getMark(id: string): Promise<Mark> {
+    public async getMark(id: string): Promise<Mark> {
         const mark = await this.markRepository.getById(id);
 
         if (!mark) {
@@ -25,13 +25,13 @@ export class MarkServiceImpl implements MarkService {
         return mark;
     }
 
-    async getMarks(limit: number, cursor?: Cursor): Promise<Array<Mark>> {
+    public async getMarks(limit: number, cursor?: Cursor): Promise<Array<Mark>> {
         const marks = await this.markRepository.getAll(limit, cursor);
 
         return marks;
     }
 
-    async createMark(payload: MarkWrite): Promise<Mark> {
+    public async createMark(payload: MarkWrite): Promise<Mark> {
         const mark = await this.markRepository.create(payload);
 
         if (!mark) {
@@ -41,7 +41,7 @@ export class MarkServiceImpl implements MarkService {
         return mark;
     }
 
-    async updateMark(id: string, payload: MarkWrite): Promise<Mark> {
+    public async updateMark(id: string, payload: MarkWrite): Promise<Mark> {
         const mark = await this.markRepository.update(id, payload);
 
         if (!mark) {
@@ -51,7 +51,7 @@ export class MarkServiceImpl implements MarkService {
         return mark;
     }
 
-    async deleteMark(id: string): Promise<Mark> {
+    public async deleteMark(id: string): Promise<Mark> {
         const mark = await this.markRepository.delete(id);
 
         if (!mark) {

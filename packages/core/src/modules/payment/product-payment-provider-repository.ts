@@ -1,12 +1,12 @@
-import { type Kysely, type Selectable } from "kysely";
 import {
-    type PaymentProvider,
     PaymentProviderSchema,
+    ProductPaymentProviderSchema,
+    type PaymentProvider,
     type Product,
     type ProductPaymentProvider,
-    ProductPaymentProviderSchema,
     type ProductPaymentProviderWrite,
 } from "@dotkomonline/types";
+import { type Kysely, type Selectable } from "kysely";
 
 import { type Database } from "@dotkomonline/db";
 
@@ -24,9 +24,9 @@ export interface ProductPaymentProviderRepository {
 }
 
 export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined> {
+    public async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined> {
         const productPaymentProvider = await this.db
             .insertInto("productPaymentProvider")
             .values(data)
@@ -36,7 +36,7 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
         return mapToProductPaymentProvider(productPaymentProvider);
     }
 
-    async deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void> {
+    public async deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void> {
         await this.db
             .deleteFrom("productPaymentProvider")
             .where("productId", "=", productId)
@@ -44,7 +44,7 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
             .execute();
     }
 
-    async getAllByProductId(productId: Product["id"]): Promise<Array<PaymentProvider>> {
+    public async getAllByProductId(productId: Product["id"]): Promise<Array<PaymentProvider>> {
         const productPaymentProviders = await this.db
             .selectFrom("productPaymentProvider")
             .selectAll()
@@ -54,7 +54,7 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
         return productPaymentProviders.map(mapToPaymentProvider);
     }
 
-    async productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean> {
+    public async productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean> {
         const productPaymentProvider = await this.db
             .selectFrom("productPaymentProvider")
             .selectAll()

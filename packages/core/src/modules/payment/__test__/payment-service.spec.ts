@@ -234,6 +234,7 @@ describe("PaymentService", () => {
         vi.spyOn(stripe.checkout.sessions, "create").mockResolvedValueOnce(
             stripeResponseCheckoutSessionPayloadExtended
         );
+
         vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(undefined);
         expect(
             await paymentService.createStripeCheckoutSessionForProductId(

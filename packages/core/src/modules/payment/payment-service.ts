@@ -26,14 +26,14 @@ export interface PaymentService {
 }
 
 export class PaymentServiceImpl implements PaymentService {
-    constructor(
+    public constructor(
         private readonly paymentRepository: PaymentRepository,
         private readonly productRepository: ProductRepository,
         private readonly eventRepository: EventRepository,
         private readonly refundRequestRepository: RefundRequestRepository
     ) {}
 
-    getPaymentProviders(): Array<PaymentProvider & { paymentAlias: string }> {
+    public getPaymentProviders(): Array<PaymentProvider & { paymentAlias: string }> {
         return readableStripeAccounts.map(({ alias, publicKey }) => ({
             paymentAlias: alias,
             paymentProvider: "STRIPE",
@@ -41,11 +41,11 @@ export class PaymentServiceImpl implements PaymentService {
         }));
     }
 
-    async getPayments(take: number, cursor?: Cursor): Promise<Array<Payment>> {
+    public async getPayments(take: number, cursor?: Cursor): Promise<Array<Payment>> {
         return this.paymentRepository.getAll(take, cursor);
     }
 
-    async createStripeCheckoutSessionForProductId(
+    public async createStripeCheckoutSessionForProductId(
         productId: Product["id"],
         stripePublicKey: string,
         successRedirectUrl: string,
@@ -66,7 +66,7 @@ export class PaymentServiceImpl implements PaymentService {
 
         if (product.objectId !== null) {
             switch (product.type) {
-                case "EVENT":
+                case "EVENT": {
                     const event = await this.eventRepository.getById(product.objectId);
 
                     if (event) {
@@ -74,8 +74,11 @@ export class PaymentServiceImpl implements PaymentService {
                     }
 
                     break;
-                default:
+                }
+
+                default: {
                     break;
+                }
             }
         }
 
@@ -87,9 +90,7 @@ export class PaymentServiceImpl implements PaymentService {
 
         // Tests requires stripe to be awaited first but otherwise it works fine without.
         // Doesn't seem to make a difference having it like this. Idk, stripe sdk is weird.
-        const session = await (
-            await stripe
-        ).checkout.sessions.create({
+        const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
                     price_data: {
@@ -124,21 +125,21 @@ export class PaymentServiceImpl implements PaymentService {
         };
     }
 
-    async fullfillStripeCheckoutSession(stripeSessionId: string, intentId: string): Promise<void> {
+    public async fullfillStripeCheckoutSession(stripeSessionId: string, intentId: string): Promise<void> {
         await this.paymentRepository.updateByPaymentProviderSessionId(stripeSessionId, {
             status: "PAID",
             paymentProviderOrderId: intentId,
         });
     }
 
-    async expireStripeCheckoutSession(stripeSessionId: string): Promise<void> {
+    public async expireStripeCheckoutSession(stripeSessionId: string): Promise<void> {
         // No need to keep expired sessions. Just delete them.
         // NB: This does not mean that all expired sessions are deleted. Only the
         // ones that was actually received by the webhook.
         await this.paymentRepository.deleteByPaymentProviderSessionId(stripeSessionId);
     }
 
-    async commonRefundSetup(
+    public async commonRefundSetup(
         paymentId?: string,
         paymentProviderOrderId?: string,
         checkRefundRequest = true
@@ -191,13 +192,13 @@ export class PaymentServiceImpl implements PaymentService {
         };
     }
 
-    async refundPaymentById(paymentId: string, checkRefundRequest = true): Promise<void> {
+    public async refundPaymentById(paymentId: string, checkRefundRequest = true): Promise<void> {
         const { payment, product } = await this.commonRefundSetup(paymentId, undefined, checkRefundRequest);
 
         await this.refundPayment(payment, product);
     }
 
-    async refundPaymentByPaymentProviderOrderId(
+    public async refundPaymentByPaymentProviderOrderId(
         paymentProviderOrderId: string,
         checkRefundRequest = true
     ): Promise<void> {
@@ -210,7 +211,7 @@ export class PaymentServiceImpl implements PaymentService {
         await this.refundPayment(payment, product);
     }
 
-    async refundPayment(payment: Payment, product: Product): Promise<void> {
+    public async refundPayment(payment: Payment, product: Product): Promise<void> {
         const paymentProvider = product.paymentProviders.find((p) => p.paymentProviderId === payment.paymentProviderId)
             ?.paymentProvider;
 
@@ -223,35 +224,33 @@ export class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    async refundStripePaymentById(paymentId: string, checkRefundRequest = true): Promise<void> {
+    public async refundStripePaymentById(paymentId: string, checkRefundRequest = true): Promise<void> {
         const { payment } = await this.commonRefundSetup(paymentId, undefined, checkRefundRequest);
 
         await this.refundStripePayment(payment);
     }
 
-    async refundStripePaymentByStripeOrderId(stripeOrderId: string, checkRefundRequest = true): Promise<void> {
+    public async refundStripePaymentByStripeOrderId(stripeOrderId: string, checkRefundRequest = true): Promise<void> {
         const { payment } = await this.commonRefundSetup(undefined, stripeOrderId, checkRefundRequest);
 
         await this.refundStripePayment(payment);
     }
 
-    async refundStripePayment(payment: Payment) {
+    public async refundStripePayment(payment: Payment) {
         const stripe = getStripeObject(payment.paymentProviderId);
 
         if (!stripe) {
             throw new Error("No stripe account found for the given public key");
         }
 
-        const paymentIntent = await (await stripe).paymentIntents.retrieve(payment.paymentProviderOrderId as string);
+        const paymentIntent = await stripe.paymentIntents.retrieve(payment.paymentProviderOrderId as string);
         const chargeId = paymentIntent.latest_charge as string | null | undefined;
 
         if (!chargeId) {
             throw new Error("No charge found for the given payment intent");
         }
 
-        const refund = await (
-            await stripe
-        ).refunds.create({
+        const refund = await stripe.refunds.create({
             charge: chargeId,
         });
 

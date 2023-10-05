@@ -10,9 +10,9 @@ export interface CompanyService {
 }
 
 export class CompanyServiceImpl implements CompanyService {
-    constructor(private readonly companyRepository: CompanyRepository) {}
+    public constructor(private readonly companyRepository: CompanyRepository) {}
 
-    async getCompany(id: Company["id"]): Promise<Company> {
+    public async getCompany(id: Company["id"]): Promise<Company> {
         const company = await this.companyRepository.getById(id);
 
         if (!company) {
@@ -22,13 +22,13 @@ export class CompanyServiceImpl implements CompanyService {
         return company;
     }
 
-    async getCompanies(take: number, cursor?: Cursor): Promise<Array<Company>> {
+    public async getCompanies(take: number, cursor?: Cursor): Promise<Array<Company>> {
         const companies = await this.companyRepository.getAll(take, cursor);
 
         return companies;
     }
 
-    async createCompany(payload: CompanyWrite): Promise<Company> {
+    public async createCompany(payload: CompanyWrite): Promise<Company> {
         const company = await this.companyRepository.create(payload);
 
         if (!company) {

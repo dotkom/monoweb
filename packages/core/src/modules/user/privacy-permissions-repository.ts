@@ -1,5 +1,5 @@
+import { PrivacyPermissionsSchema, type PrivacyPermissions, type PrivacyPermissionsWrite } from "@dotkomonline/types";
 import { type Kysely, type Selectable } from "kysely";
-import { type PrivacyPermissions, PrivacyPermissionsSchema, type PrivacyPermissionsWrite } from "@dotkomonline/types";
 
 import { type Database } from "@dotkomonline/db";
 
@@ -16,9 +16,9 @@ export interface PrivacyPermissionsRepository {
 }
 
 export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {
-    constructor(private readonly db: Kysely<Database>) {}
+    public constructor(private readonly db: Kysely<Database>) {}
 
-    async getByUserId(id: string): Promise<PrivacyPermissions | undefined> {
+    public async getByUserId(id: string): Promise<PrivacyPermissions | undefined> {
         const privacyPermissions = await this.db
             .selectFrom("privacyPermissions")
             .selectAll()
@@ -28,7 +28,7 @@ export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepos
         return privacyPermissions ? mapToPrivacyPermissions(privacyPermissions) : undefined;
     }
 
-    async create(data: PrivacyPermissionsWrite): Promise<PrivacyPermissions> {
+    public async create(data: PrivacyPermissionsWrite): Promise<PrivacyPermissions> {
         const privacyPermissions = await this.db
             .insertInto("privacyPermissions")
             .values(data)
@@ -38,7 +38,7 @@ export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepos
         return mapToPrivacyPermissions(privacyPermissions);
     }
 
-    async update(
+    public async update(
         userId: string,
         data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
     ): Promise<PrivacyPermissions | undefined> {

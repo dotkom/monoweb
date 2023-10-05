@@ -15,21 +15,21 @@ export interface ProductPaymentProviderService {
 }
 
 export class ProductPaymentProviderServiceImpl implements ProductPaymentProviderService {
-    constructor(private readonly productPaymentProviderRepository: ProductPaymentProviderRepository) {}
+    public constructor(private readonly productPaymentProviderRepository: ProductPaymentProviderRepository) {}
 
-    async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined> {
+    public async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined> {
         return this.productPaymentProviderRepository.addPaymentProvider(data);
     }
 
-    async deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void> {
+    public async deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void> {
         return this.productPaymentProviderRepository.deletePaymentProvider(productId, paymentProviderId);
     }
 
-    async getAllByProductId(productId: Product["id"]): Promise<Array<PaymentProvider>> {
+    public async getAllByProductId(productId: Product["id"]): Promise<Array<PaymentProvider>> {
         return this.productPaymentProviderRepository.getAllByProductId(productId);
     }
 
-    async productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean> {
+    public async productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean> {
         return this.productPaymentProviderRepository.productHasPaymentProviderId(productId, paymentProviderId);
     }
 }

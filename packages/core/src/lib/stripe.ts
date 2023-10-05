@@ -1,5 +1,5 @@
-import Stripe from "stripe";
 import { env } from "@dotkomonline/env";
+import Stripe from "stripe";
 
 interface StripeAccountDetails {
     publicKey: string;
@@ -37,7 +37,7 @@ export function getStripeObject(publicKey: string): Stripe | undefined {
     const accountDetails = lookupMap.get(publicKey);
 
     if (!accountDetails) {
-        return;
+        return undefined;
     }
 
     return new Stripe(accountDetails.secretKey, {

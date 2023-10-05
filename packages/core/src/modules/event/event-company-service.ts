@@ -1,6 +1,6 @@
 import { type Company, type Event } from "@dotkomonline/types";
-import { type EventCompanyRepository } from "./event-company-repository";
 import { type Cursor } from "../../utils/db-utils";
+import { type EventCompanyRepository } from "./event-company-repository";
 
 export interface EventCompanyService {
     createCompany(id: Event["id"], company: Company["id"]): Promise<void>;
@@ -10,9 +10,9 @@ export interface EventCompanyService {
 }
 
 export class EventCompanyServiceImpl implements EventCompanyService {
-    constructor(private readonly eventCompanyRepository: EventCompanyRepository) {}
+    public constructor(private readonly eventCompanyRepository: EventCompanyRepository) {}
 
-    async createCompany(id: Event["id"], company: Company["id"]) {
+    public async createCompany(id: Event["id"], company: Company["id"]) {
         try {
             const companies = await this.eventCompanyRepository.createCompany(id, company);
 
@@ -22,15 +22,15 @@ export class EventCompanyServiceImpl implements EventCompanyService {
         }
     }
 
-    async deleteCompany(id: Event["id"], company: Company["id"]) {
+    public async deleteCompany(id: Event["id"], company: Company["id"]) {
         await this.eventCompanyRepository.deleteCompany(id, company);
     }
 
-    async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
+    public async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
         return await this.eventCompanyRepository.getCompaniesByEventId(id, take, cursor);
     }
 
-    async getEventsByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Array<Event>> {
+    public async getEventsByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Array<Event>> {
         const events = await this.eventCompanyRepository.getEventsByCompanyId(companyId, take, cursor);
 
         return events;

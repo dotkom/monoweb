@@ -48,7 +48,7 @@ export const seed = async () => {
     const users = Array.from({ length: 15 }).map(() => createRandomUser());
     const event = Array.from({ length: 15 }).map(() => createRandomEvent());
     const attendance = Array.from({ length: 15 }).map(() =>
-        createRandomAttendance(event.map((e) => e && e.id).filter((e): e is string => Boolean(e)))
+        createRandomAttendance(event.map((e) => e.id).filter((e): e is string => Boolean(e)))
     );
 
     await db
