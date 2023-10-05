@@ -199,7 +199,9 @@ export class PaymentServiceImpl implements PaymentService {
         switch (paymentProvider) {
             case "STRIPE":
                 await this.refundStripePayment(payment);
+
                 break;
+
             default:
                 throw new Error("Could not find the payment provider for the given payment");
         }
@@ -231,7 +233,8 @@ export class PaymentServiceImpl implements PaymentService {
             throw new Error("No stripe account found for the given public key");
         }
 
-        const paymentIntent = await stripe.paymentIntents.retrieve(payment.paymentProviderOrderId as string);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const paymentIntent = await stripe.paymentIntents.retrieve(payment.paymentProviderOrderId!);
         const chargeId = paymentIntent.latest_charge as null | string | undefined;
 
         if (!chargeId) {
