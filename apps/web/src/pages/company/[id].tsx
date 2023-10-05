@@ -49,6 +49,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
     }
 
     let company: Company;
+
     try {
         company = await ssg.company.get.fetch(id);
     } catch (e) {

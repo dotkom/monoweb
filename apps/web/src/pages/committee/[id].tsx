@@ -49,6 +49,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
     }
 
     let committee: Committee;
+
     try {
         committee = await ssg.committee.get.fetch(id);
     } catch (e) {

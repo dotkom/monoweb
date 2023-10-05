@@ -19,12 +19,16 @@ const iconKey = (status: AlertIconProps["status"]) => {
     switch (status) {
         case "info":
             return "tabler:info-circle";
+
         case "success":
             return "tabler:circle-check";
+
         case "danger":
             return "tabler:alert-circle";
+
         case "warning":
             return "tabler:alert-triangle";
+
         default:
             return "tabler:error-404";
     }

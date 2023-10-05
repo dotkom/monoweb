@@ -20,6 +20,7 @@ export class AttendanceServiceImpl implements AttendanceService {
         return undefined;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     public async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {}
 
     public async registerForEvent(userId: string, eventId: string) {
