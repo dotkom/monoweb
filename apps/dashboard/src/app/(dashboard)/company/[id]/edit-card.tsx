@@ -3,6 +3,7 @@ import { trpc } from "../../../../utils/trpc"
 import { CompanyWriteSchema } from "@dotkomonline/types"
 import { useCompanyDetailsContext } from "./provider"
 import { useQueryNotification } from "../../../notifications"
+import { useCompanyWriteForm } from "../write-form"
 
 export const EventEditCard: FC = () => {
   const { company } = useCompanyDetailsContext()
@@ -14,7 +15,7 @@ export const EventEditCard: FC = () => {
         title: "Bedrift oppdatert",
         message: `Bedriften "${data.name}" har blitt oppdatert.`,
       })
-      utils.event.all.invalidate()
+      utils.company.all.invalidate()
     },
     onError: (err) => {
       notification.fail({
@@ -23,7 +24,7 @@ export const EventEditCard: FC = () => {
       })
     },
   })
-  const FormComponent = useEventWriteForm({
+  const FormComponent = useCompanyWriteForm({
     label: "Oppdater arrangement",
     onSubmit: (data) => {
       notification.loading({
@@ -33,7 +34,7 @@ export const EventEditCard: FC = () => {
       const result = CompanyWriteSchema.required({ id: true }).parse(data)
       edit.mutate(result)
     },
-    defaultValues: { ...event },
+    defaultValues: { ...company },
   })
   return <FormComponent />
 }

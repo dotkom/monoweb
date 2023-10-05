@@ -1,7 +1,7 @@
 import { CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 import { createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
+const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   name: "",
   description: "",
   phone: undefined,
@@ -18,10 +18,10 @@ type UseCompanyWriteFormProps = {
   label?: string
 }
 
-export const useEventWriteForm = ({
+export const useCompanyWriteForm = ({
   onSubmit,
   label = "Opprett arrangement",
-  defaultValues = EVENT_FORM_DEFAULT_VALUES,
+  defaultValues = COMPANY_FORM_DEFAULT_VALUES,
 }: UseCompanyWriteFormProps) => {
   return useFormBuilder({
     schema: CompanyWriteSchema,

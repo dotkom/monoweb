@@ -1,26 +1,26 @@
 import { Modal } from "@mantine/core"
 import { FC } from "react"
 import { trpc } from "../../../utils/trpc"
-import { useEventWriteForm } from "./write-form"
 import { useQueryNotification } from "../../notifications"
 import { useRouter } from "next/navigation"
+import { useCompanyWriteForm } from "./write-form"
 
-export type EventCreationModalProps = {
+export type CompanyCreationModalProps = {
   close: () => void
 }
 
-export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
+export const CompanyCreationModal: FC<CompanyCreationModalProps> = ({ close }) => {
   const utils = trpc.useContext()
   const router = useRouter()
   const notification = useQueryNotification()
-  const create = trpc.event.create.useMutation({
+  const create = trpc.company.create.useMutation({
     onSuccess: (data) => {
       notification.complete({
         title: "Arrangement opprettet",
-        message: `Arrangementet "${data.title}" har blitt opprettet.`,
+        message: `Arrangementet "${data.name}" har blitt opprettet.`,
       })
-      utils.event.all.invalidate()
-      router.push(`/event/${data.id}`)
+      utils.company.all.invalidate()
+      router.push(`/Company/${data.id}`)
     },
     onError: (err) => {
       notification.fail({
@@ -29,7 +29,7 @@ export const EventCreationModal: FC<EventCreationModalProps> = ({ close }) => {
       })
     },
   })
-  const FormComponent = useEventWriteForm({
+  const FormComponent = useCompanyWriteForm({
     onSubmit: (data) => {
       notification.loading({
         title: "Oppretter arrangement...",

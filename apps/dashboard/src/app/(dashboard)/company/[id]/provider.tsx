@@ -11,7 +11,7 @@ export const CompanyDetailsContext = createContext<{
 export const useCompanyDetailsContext = () => {
   const ctx = useContext(CompanyDetailsContext)
   if (ctx === null) {
-    throw new Error("useEventDetailsContext called without Provider in tree")
+    throw new Error("useCompanyDetailsContext called without Provider in tree")
   }
   return ctx
 }

@@ -21,7 +21,7 @@ import { Company } from "@dotkomonline/types"
 import { useMemo, useState } from "react"
 import { formatDate } from "../../../utils/format"
 import { Icon } from "@iconify/react"
-import { EventCreationModal } from "./create-modal"
+import { CompanyCreationModal } from "./create-modal"
 
 export default function CompanyPage() {
   const { data: companies = [], isLoading: isCompaniesLoading } = trpc.company.all.useQuery({ take: 50 })
@@ -44,7 +44,7 @@ export default function CompanyPage() {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" href={`/event/${info.getValue().id}`}>
+          <Anchor size="sm" href={`/company/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),
@@ -96,7 +96,7 @@ export default function CompanyPage() {
           </ButtonGroup>
         </Group>
 
-        {isCreationOpen && <EventCreationModal close={() => setCreationOpen(false)} />}
+        {isCreationOpen && <CompanyCreationModal close={() => setCreationOpen(false)} />}
       </Stack>
     </Skeleton>
   )

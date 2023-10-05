@@ -7,6 +7,7 @@ export interface CompanyService {
   getCompany(id: Company["id"]): Promise<Company>
   getCompanies(take: number, cursor?: Cursor): Promise<Company[]>
   createCompany(payload: CompanyWrite): Promise<Company>
+  updateCompany(id: Company["id"], payload: Omit<CompanyWrite, "id">): Promise<Company>
 }
 
 export class CompanyServiceImpl implements CompanyService {
@@ -26,6 +27,14 @@ export class CompanyServiceImpl implements CompanyService {
   async createCompany(payload: CompanyWrite): Promise<Company> {
     const company = await this.companyRepository.create(payload)
     if (!company) throw new Error("Failed to create company")
+    return company
+  }
+
+  async updateCompany(id: Company["id"], companyUpdate: Omit<CompanyWrite, "id">): Promise<Company> {
+    const company = await this.companyRepository.update(id, companyUpdate)
+    if (!company) {
+      throw new NotFoundError(`Could not update Company(${id})`)
+    }
     return company
   }
 }

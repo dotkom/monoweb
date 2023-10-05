@@ -11,6 +11,7 @@ export interface CompanyRepository {
   getById(id: Company["id"]): Promise<Company | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Company[]>
   create(values: CompanyWrite): Promise<Company | undefined>
+  update(id: Company["id"], data: Omit<CompanyWrite, "id">): Promise<Company>
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {
@@ -42,5 +43,15 @@ export class CompanyRepositoryImpl implements CompanyRepository {
       .returningAll()
       .executeTakeFirst()
     return company ? mapToCompany(company) : company
+  }
+
+  async update(id: Company["id"], data: Omit<CompanyWrite, "id">): Promise<Company> {
+    const company = await this.db
+      .updateTable("company")
+      .set(data)
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    return mapToCompany(company)
   }
 }
