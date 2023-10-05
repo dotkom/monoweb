@@ -3,7 +3,7 @@ import ProfileMenuItem from "./ProfileMenuItem"
 
 const ProfileMenuContainer = () => {
   return (
-    <div className=" pt-[42.5px] border-r-[1px] border-slate-5 pr-5">
+    <div className=" border-r-1 border-slate-5 pr-5 pt-[42.5px]">
       {profileItems.map((item) => (
         <ProfileMenuItem key={item.title} menuItem={item} />
       ))}
