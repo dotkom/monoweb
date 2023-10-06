@@ -6,7 +6,7 @@ import { trpc } from "../../../../utils/trpc"
 import { CompanyDetailsContext } from "./provider"
 
 export default function CompanyDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = useCallback(() => trpc.company.get.useQuery(params.id), [params.id])()
+  const { data, isLoading } = trpc.company.get.useQuery(params.id)
   return (
     <>
       {isLoading || !data ? (
