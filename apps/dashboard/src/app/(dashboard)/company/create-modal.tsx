@@ -20,13 +20,14 @@ export const CompanyCreationModal: FC<CompanyCreationModalProps> = ({ close }) =
         message: `Arrangementet "${data.name}" har blitt opprettet.`,
       })
       utils.company.all.invalidate()
-      router.push(`/Company/${data.id}`)
+      router.push(`/company/${data.id}`)
     },
     onError: (err) => {
       notification.fail({
         title: "Feil oppsto",
         message: `En feil oppsto under opprettelse av arrangementet: ${err.toString()}.`,
       })
+      console.log(err)
     },
   })
   const FormComponent = useCompanyWriteForm({
@@ -35,6 +36,7 @@ export const CompanyCreationModal: FC<CompanyCreationModalProps> = ({ close }) =
         title: "Oppretter arrangement...",
         message: "Arrangementet blir opprettet, og du vil bli videresendt til arrangementsiden.",
       })
+      console.log(data)
       create.mutate(data)
       close()
     },

@@ -4,6 +4,7 @@ import { Company, CompanySchema, CompanyWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
 
 export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
+  console.log(payload)
   return CompanySchema.parse(payload)
 }
 
@@ -31,17 +32,8 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     return companies.map(mapToCompany)
   }
 
-  async create(values: CompanyWrite): Promise<Company | undefined> {
-    const company = await this.db
-      .insertInto("company")
-      .values({
-        name: values.name,
-        description: values.description,
-        email: values.email,
-        website: values.website,
-      })
-      .returningAll()
-      .executeTakeFirst()
+  async create(data: CompanyWrite): Promise<Company | undefined> {
+    const company = await this.db.insertInto("company").values(data).returningAll().executeTakeFirst()
     return company ? mapToCompany(company) : company
   }
 

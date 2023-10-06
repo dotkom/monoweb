@@ -4,12 +4,12 @@ import { createSelectInput, createTextInput, createTextareaInput, useFormBuilder
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   name: "",
   description: "",
-  phone: undefined,
+  phone: "",
   email: "",
   website: "",
-  location: undefined,
-  type: undefined,
-  image: undefined,
+  location: "",
+  type: "Consulting",
+  image: "",
 }
 
 type UseCompanyWriteFormProps = {
