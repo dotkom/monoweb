@@ -27,7 +27,7 @@ importers:
         specifier: ^6.0.4
         version: 6.0.4(typescript@5.2.2)
       turbo:
-        specifier: ^1.10.14
+        specifier: ^1.10.15
         version: 1.10.15
       typescript:
         specifier: ^5.2.2
@@ -563,7 +563,7 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0(eslint@8.50.0)
       eslint-config-turbo:
-        specifier: ^1.10.14
+        specifier: ^1.10.15
         version: 1.10.15(eslint@8.50.0)
       eslint-plugin-prettier:
         specifier: ^5.0.0
