@@ -7,7 +7,7 @@ import "@mantine/core/styles.css"
 import "@mantine/notifications/styles.css"
 import "@mantine/dates/styles.css"
 
-export default async function RootLayout({ children }: PropsWithChildren) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
