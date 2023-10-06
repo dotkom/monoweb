@@ -5,9 +5,9 @@ import {
   createTextareaInput,
   createTextInput,
   useFormBuilder,
-} from "../../form"
+} from "../../app/form"
 import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { useCommitteeAllQuery } from "../committee/queries/use-committee-all-query"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   start: new Date(),

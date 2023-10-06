@@ -15,6 +15,7 @@ import {
 } from "@mantine/core"
 import { SignOutButton } from "./SignOutButton"
 import { Icon } from "@iconify/react"
+import Link from "next/link"
 
 const navigations = [
   {
@@ -97,7 +98,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             childrenOffset={28}
           >
             {navigation.children.map((child) => (
-              <NavLink key={child.label} label={child.label} href={child.href} />
+              <NavLink component={Link} key={child.label} label={child.label} href={child.href} />
             ))}
           </NavLink>
         ))}

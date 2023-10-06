@@ -23,6 +23,7 @@ import { Icon } from "@iconify/react"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
+import Link from "next/link"
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
@@ -45,7 +46,7 @@ export default function EventPage() {
           const match = committees.find((committee) => committee.id === info.getValue()) ?? null
           if (match !== null) {
             return (
-              <Anchor size="sm" href={`/committee/${match.id}`}>
+              <Anchor size="sm" component={Link} href={`/committee/${match.id}`}>
                 {match.name}
               </Anchor>
             )
@@ -60,7 +61,7 @@ export default function EventPage() {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" href={`/event/${info.getValue().id}`}>
+          <Anchor size="sm" component={Link} href={`/event/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),

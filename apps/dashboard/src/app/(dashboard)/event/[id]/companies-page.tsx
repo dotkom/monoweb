@@ -3,7 +3,7 @@ import { useEventDetailsContext } from "./provider"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Company, CompanySchema, EventSchema } from "@dotkomonline/types"
 import { GenericTable } from "../../../../components/GenericTable"
-import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
+import { Box, Button, Text, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
 import { createSelectInput, useFormBuilder } from "../../../form"
 import { z } from "zod"
@@ -11,6 +11,7 @@ import { useAddCompanyToEventMutation } from "../../../../modules/event/mutation
 import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/mutations/use-remove-company-from-event-mutation"
 import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query"
 import { useEventCompanyGetQuery } from "../../../../modules/event/queries/use-event-company-get-query"
+import { CompanyName } from "../../../../components/molecules/company-name/company-name"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()
@@ -24,22 +25,8 @@ export const EventCompaniesPage: FC = () => {
     () => [
       columnHelper.accessor((eventCompany) => eventCompany, {
         id: "eventCompany",
-        header: () => "Navn",
-        cell: (info) => {
-          const name = companies.find((x) => x.id === info.getValue().id)?.name ?? "Ingen navn"
-          const image = info.getValue().image
-          return image !== null ? (
-            <Group>
-              <Image width={40} height={40} fit="contain" src={image} alt="company logo" />
-              {name}
-            </Group>
-          ) : (
-            <Group>
-              <Icon width={40} height={40} icon="tabler:user-circle" />
-              {name}
-            </Group>
-          )
-        },
+        header: () => "Bedrift",
+        cell: (info) => <CompanyName company={info.getValue()} />,
       }),
       columnHelper.accessor((eventCompany) => eventCompany, {
         id: "actions",
@@ -55,7 +42,7 @@ export const EventCompaniesPage: FC = () => {
         ),
       }),
     ],
-    [companies, columnHelper, remove, event.id]
+    [columnHelper, remove, event.id]
   )
   const table = useReactTable<Company>({
     data: eventCompanies,

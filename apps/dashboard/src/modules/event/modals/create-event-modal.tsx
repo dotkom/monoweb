@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { useCreateEventMutation } from "../mutations/use-create-event-mutation"
-import { useEventWriteForm } from "../../../app/(dashboard)/event/write-form"
+import { useEventWriteForm } from "../write-form"
 import { ContextModalProps, modals } from "@mantine/modals"
 
 export const CreateEventModal: FC<ContextModalProps> = ({ context, id }) => {
