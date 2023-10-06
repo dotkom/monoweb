@@ -5,8 +5,6 @@ const path = require("node:path");
  * */
 module.exports = {
     env: {
-        browser: true,
-        es6: true,
         node: true,
     },
 
@@ -21,10 +19,6 @@ module.exports = {
         "turbo",
         "prettier",
     ],
-
-    globals: {
-        React: "writable",
-    },
 
     ignorePatterns: ["*.stories.tsx", "dist/", "node_modules/", "apps/docs/"],
 
@@ -68,7 +62,6 @@ module.exports = {
                 varsIgnorePattern: "^_",
             },
         ],
-        "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/prefer-readonly": "error",
         "@typescript-eslint/promise-function-async": "error",
