@@ -9,7 +9,7 @@ import {
   Event,
 } from "@dotkomonline/types"
 import { Kysely, sql } from "kysely"
-import { AttendeeTable } from "@dotkomonline/db/src/types/event"
+import { DB } from "@dotkomonline/db/src/db.generated"
 
 export interface AttendanceRepository {
   create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
@@ -50,7 +50,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
       .selectAll("attendance")
       .select(
-        sql<AttendeeTable[]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
+        sql<DB['attendee'][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
       )
       .groupBy("attendance.id")
       .where("eventId", "=", eventId)
@@ -63,7 +63,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
       .selectAll("attendance")
       .select(
-        sql<AttendeeTable[]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
+        sql<DB['attendee'][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
       )
       .groupBy("attendance.id")
       .where("id", "=", id)

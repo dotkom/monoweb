@@ -3,7 +3,7 @@ import { Kysely, Selectable, sql } from "kysely"
 import { Product, ProductSchema, ProductWrite } from "@dotkomonline/types"
 
 import { Database } from "@dotkomonline/db"
-import { ProductPaymentProviderTable } from "@dotkomonline/db/src/types/payment"
+import { DB } from "@dotkomonline/db/src/db.generated"
 
 const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
 
@@ -46,7 +46,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .selectAll("product")
       .select(
         sql<
-          ProductPaymentProviderTable[]
+          DB['productPaymentProvider'][]
         >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
           "paymentProviders"
         )
@@ -65,7 +65,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .selectAll("product")
       .select(
         sql<
-          ProductPaymentProviderTable[]
+          DB['productPaymentProvider'][]
         >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
           "paymentProviders"
         )

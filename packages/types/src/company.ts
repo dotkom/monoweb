@@ -5,11 +5,11 @@ export const CompanySchema = z.object({
   createdAt: z.date(),
   name: z.string().max(50),
   description: z.string(),
-  phone: z.string().optional(),
+  phone: z.string().nullable(),
   email: z.string(),
   website: z.string(),
-  location: z.string().optional(),
-  type: z.enum(["Consulting", "Research", "Development", "Other"]).optional(),
+  location: z.string().nullable(),
+  type: z.enum(["Consulting", "Research", "Development", "Other"]).nullable(),
   image: z.string().nullable(),
 })
 

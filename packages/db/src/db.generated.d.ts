@@ -123,7 +123,7 @@ export interface NotificationPermissions {
 
 export interface OwUser {
   createdAt: Generated<Timestamp>;
-  id: string;
+  id: Generated<string>;
   cognitoSub: string;
 }
 

@@ -3,7 +3,7 @@ import { cn } from "@dotkomonline/ui"
 
 export interface EntryDetailLayoutProps {
   title: string
-  type?: string
+  type: string | null
   color?: "BLUE" | "GREEN" | "AMBER"
 }
 
