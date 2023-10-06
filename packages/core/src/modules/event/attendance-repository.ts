@@ -50,7 +50,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
       .selectAll("attendance")
       .select(
-        sql<DB['attendee'][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
+        sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
       )
       .groupBy("attendance.id")
       .where("eventId", "=", eventId)
@@ -63,7 +63,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
       .selectAll("attendance")
       .select(
-        sql<DB['attendee'][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
+        sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
       )
       .groupBy("attendance.id")
       .where("id", "=", id)

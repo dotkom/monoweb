@@ -46,7 +46,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .selectAll("product")
       .select(
         sql<
-          DB['productPaymentProvider'][]
+          DB["productPaymentProvider"][]
         >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
           "paymentProviders"
         )
@@ -65,7 +65,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .selectAll("product")
       .select(
         sql<
-          DB['productPaymentProvider'][]
+          DB["productPaymentProvider"][]
         >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
           "paymentProviders"
         )

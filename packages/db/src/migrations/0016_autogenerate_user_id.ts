@@ -8,7 +8,5 @@ export async function up(db: Kysely<any>) {
 }
 
 export async function down(db: Kysely<any>) {
-  await db.schema
-    .alterTable("ow_user")
-    .alterColumn("id", (col) => col.setDefault(sql`""`))
+  await db.schema.alterTable("ow_user").alterColumn("id", (col) => col.setDefault(sql`""`))
 }
