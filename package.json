@@ -1,45 +1,45 @@
 {
-    "name": "monorepo",
-    "version": "1.0.0",
-    "description": "A monorepo for Node apps",
-    "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "build": "turbo run build --filter=@dotkomonline/*",
-        "build:api": "turbo run build --filter=ow-api",
-        "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
-        "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
-        "lint": "turbo run lint",
-        "lint:fix": "turbo run lint:fix",
-        "test": "turbo run test",
-        "dev": "dotenv -e .env -- turbo run dev",
-        "migrate": "dotenv -e .env -- turbo run migrate",
-        "migrate-down": "dotenv -e .env -- turbo run migrate -- down",
-        "migrate-down-all": "dotenv -e .env -- turbo run migrate -- down-all",
-        "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed",
-        "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures",
-        "storybook": "turbo run storybook --filter=storybook",
-        "type-check": "turbo run type-check",
-        "clean": "turbo run clean"
-    },
-    "workspaces": [
-        "packages/*",
-        "apps/*"
-    ],
-    "engines": {
-        "node": ">=18.18.0",
-        "pnpm": ">=8.7.6"
-    },
-    "devDependencies": {
-        "dotenv-cli": "^7.3.0",
-        "eslint": "^8.50.0",
-        "prettier": "^3.0.3",
-        "prettier-plugin-tailwindcss": "^0.5.5",
-        "ts-node": "^10.9.1",
-        "tsc-watch": "^6.0.4",
-        "turbo": "^1.10.14",
-        "typescript": "^5.2.2",
-        "vitest": "^0.34.6"
-    }
+  "name": "monorepo",
+  "version": "1.0.0",
+  "description": "A monorepo for Node apps",
+  "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build --filter=@dotkomonline/*",
+    "build:api": "turbo run build --filter=ow-api",
+    "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
+    "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "test": "turbo run test",
+    "dev": "dotenv -e .env -- turbo run dev",
+    "migrate": "dotenv -e .env -- turbo run migrate",
+    "migrate-down": "dotenv -e .env -- turbo run migrate -- down",
+    "migrate-down-all": "dotenv -e .env -- turbo run migrate -- down-all",
+    "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed",
+    "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures",
+    "storybook": "turbo run storybook --filter=storybook",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=18.18.0",
+    "pnpm": ">=8.7.6"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.3.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3",
+    "prettier-plugin-tailwindcss": "^0.5.5",
+    "ts-node": "^10.9.1",
+    "tsc-watch": "^6.0.4",
+    "turbo": "^1.10.14",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
+  }
 }

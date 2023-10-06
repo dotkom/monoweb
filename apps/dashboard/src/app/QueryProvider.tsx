@@ -6,12 +6,12 @@ import { type PropsWithChildren, useState } from "react";
 import { trpc, trpcConfig } from "../utils/trpc";
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
-    const [queryClient] = useState(() => new QueryClient());
-    const [trpcClient] = useState(() => trpc.createClient(trpcConfig));
+  const [queryClient] = useState(() => new QueryClient());
+  const [trpcClient] = useState(() => trpc.createClient(trpcConfig));
 
-    return (
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        </trpc.Provider>
-    );
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </trpc.Provider>
+  );
 };

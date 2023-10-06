@@ -3,21 +3,21 @@ import { type PortableTextProps } from "@/components/molecules/PortableText";
 import client from "./sanity";
 
 export interface CareerAd {
-    career_role: string;
-    career_type: string;
-    company_info: string;
-    company_name: string;
-    content: PortableTextProps["blocks"];
-    deadline: string;
-    facebook: string;
-    image: { asset: { url: string } };
-    instagram: string;
-    link: string;
-    linkdin: string;
-    location: string;
-    slug: { current: string };
-    title: string;
-    twitter: string;
+  career_role: string;
+  career_type: string;
+  company_info: string;
+  company_name: string;
+  content: PortableTextProps["blocks"];
+  deadline: string;
+  facebook: string;
+  image: { asset: { url: string } };
+  instagram: string;
+  link: string;
+  linkdin: string;
+  location: string;
+  slug: { current: string };
+  title: string;
+  twitter: string;
 }
 
 const adQuery = `*[_type == "career" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
@@ -55,13 +55,13 @@ const adsQuery = `*[_type == "career" && !(_id in path("drafts.**"))]{
 }`;
 
 export const fetchCareerAd = async (slug: string): Promise<CareerAd> => {
-    const res = await client.fetch(adQuery, { slug });
+  const res = await client.fetch(adQuery, { slug });
 
-    return res;
+  return res;
 };
 
 export const fetchCareerAds = async (): Promise<Array<CareerAd>> => {
-    const res = await client.fetch(adsQuery);
+  const res = await client.fetch(adsQuery);
 
-    return res;
+  return res;
 };

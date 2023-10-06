@@ -6,9 +6,9 @@ import { type NextPageWithLayout } from "../_app";
 const PaymentPage: NextPageWithLayout = () => <div>Payment</div>;
 
 PaymentPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export default PaymentPage;

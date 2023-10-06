@@ -5,11 +5,11 @@ import * as path from "path";
 import { type Database } from "./types";
 
 export const createMigrator = (db: Kysely<Database>) =>
-    new Migrator({
-        db,
-        provider: new FileMigrationProvider({
-            fs,
-            migrationFolder: new URL("migrations", import.meta.url).pathname,
-            path,
-        }),
-    });
+  new Migrator({
+    db,
+    provider: new FileMigrationProvider({
+      fs,
+      migrationFolder: new URL("migrations", import.meta.url).pathname,
+      path,
+    }),
+  });

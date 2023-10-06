@@ -11,21 +11,21 @@ import { ModalProvider } from "./ModalProvider";
 import { QueryProvider } from "./QueryProvider";
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-    return (
-        <html lang="en">
-            <head>
-                <ColorSchemeScript />
-            </head>
-            <body>
-                <AuthProvider>
-                    <QueryProvider>
-                        <MantineProvider>
-                            <Notifications />
-                            <ModalProvider>{children}</ModalProvider>
-                        </MantineProvider>
-                    </QueryProvider>
-                </AuthProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <head>
+        <ColorSchemeScript />
+      </head>
+      <body>
+        <AuthProvider>
+          <QueryProvider>
+            <MantineProvider>
+              <Notifications />
+              <ModalProvider>{children}</ModalProvider>
+            </MantineProvider>
+          </QueryProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }

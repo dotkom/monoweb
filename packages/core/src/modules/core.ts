@@ -31,67 +31,67 @@ import { UserServiceImpl } from "./user/user-service";
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>;
 
 export interface ServerLayerOptions {
-    db: Kysely<Database>;
+  db: Kysely<Database>;
 }
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
-    const eventRepository = new EventRepositoryImpl(db);
-    const committeeRepository = new CommitteeRepositoryImpl(db);
-    const companyRepository = new CompanyRepositoryImpl(db);
-    const eventCompanyRepository = new EventCompanyRepositoryImpl(db);
-    const attendanceRepository = new AttendanceRepositoryImpl(db);
-    const userRepository = new UserRepositoryImpl(db);
-    const productRepository = new ProductRepositoryImpl(db);
-    const paymentRepository = new PaymentRepositoryImpl(db);
-    const productPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(db);
-    const refundRequestRepository = new RefundRequestRepositoryImpl(db);
-    const markRepository = new MarkRepositoryImpl(db);
-    const personalMarkRepository = new PersonalMarkRepositoryImpl(db);
-    const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db);
-    const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db);
+  const eventRepository = new EventRepositoryImpl(db);
+  const committeeRepository = new CommitteeRepositoryImpl(db);
+  const companyRepository = new CompanyRepositoryImpl(db);
+  const eventCompanyRepository = new EventCompanyRepositoryImpl(db);
+  const attendanceRepository = new AttendanceRepositoryImpl(db);
+  const userRepository = new UserRepositoryImpl(db);
+  const productRepository = new ProductRepositoryImpl(db);
+  const paymentRepository = new PaymentRepositoryImpl(db);
+  const productPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(db);
+  const refundRequestRepository = new RefundRequestRepositoryImpl(db);
+  const markRepository = new MarkRepositoryImpl(db);
+  const personalMarkRepository = new PersonalMarkRepositoryImpl(db);
+  const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db);
+  const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db);
 
-    const userService = new UserServiceImpl(
-        userRepository,
-        privacyPermissionsRepository,
-        notificationPermissionsRepository
-    );
+  const userService = new UserServiceImpl(
+    userRepository,
+    privacyPermissionsRepository,
+    notificationPermissionsRepository
+  );
 
-    const eventService = new EventServiceImpl(eventRepository, attendanceRepository);
-    const attendanceService = new AttendanceServiceImpl(attendanceRepository);
-    const committeeService = new CommitteeServiceImpl(committeeRepository);
-    const companyService = new CompanyServiceImpl(companyRepository);
-    const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository);
-    const productService = new ProductServiceImpl(productRepository);
-    const paymentService = new PaymentServiceImpl(
-        paymentRepository,
-        productRepository,
-        eventRepository,
-        refundRequestRepository
-    );
+  const eventService = new EventServiceImpl(eventRepository, attendanceRepository);
+  const attendanceService = new AttendanceServiceImpl(attendanceRepository);
+  const committeeService = new CommitteeServiceImpl(committeeRepository);
+  const companyService = new CompanyServiceImpl(companyRepository);
+  const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository);
+  const productService = new ProductServiceImpl(productRepository);
+  const paymentService = new PaymentServiceImpl(
+    paymentRepository,
+    productRepository,
+    eventRepository,
+    refundRequestRepository
+  );
 
-    const productPaymentProviderService = new ProductPaymentProviderServiceImpl(productPaymentProviderRepository);
-    const refundRequestService = new RefundRequestServiceImpl(
-        refundRequestRepository,
-        paymentRepository,
-        productRepository,
-        paymentService
-    );
+  const productPaymentProviderService = new ProductPaymentProviderServiceImpl(productPaymentProviderRepository);
+  const refundRequestService = new RefundRequestServiceImpl(
+    refundRequestRepository,
+    paymentRepository,
+    productRepository,
+    paymentService
+  );
 
-    const markService = new MarkServiceImpl(markRepository);
-    const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService);
+  const markService = new MarkServiceImpl(markRepository);
+  const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService);
 
-    return {
-        attendanceService,
-        committeeService,
-        companyService,
-        eventCompanyService,
-        eventService,
-        markService,
-        paymentService,
-        personalMarkService,
-        productPaymentProviderService,
-        productService,
-        refundRequestService,
-        userService,
-    };
+  return {
+    attendanceService,
+    committeeService,
+    companyService,
+    eventCompanyService,
+    eventService,
+    markService,
+    paymentService,
+    personalMarkService,
+    productPaymentProviderService,
+    productService,
+    refundRequestService,
+    userService,
+  };
 };

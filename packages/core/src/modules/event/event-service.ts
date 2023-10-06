@@ -6,102 +6,102 @@ import { type AttendanceRepository } from "./attendance-repository";
 import { type EventRepository } from "./event-repository";
 
 export interface EventService {
-    createAttendance(eventId: Event["id"], attendanceWrite: AttendanceWrite): Promise<Attendance>;
-    createEvent(eventCreate: EventWrite): Promise<Event>;
-    createWaitlist(eventId: Event["id"]): Promise<Attendance>;
-    getEventById(id: Event["id"]): Promise<Event>;
-    getEvents(take: number, cursor?: Cursor): Promise<Array<Event>>;
+  createAttendance(eventId: Event["id"], attendanceWrite: AttendanceWrite): Promise<Attendance>;
+  createEvent(eventCreate: EventWrite): Promise<Event>;
+  createWaitlist(eventId: Event["id"]): Promise<Attendance>;
+  getEventById(id: Event["id"]): Promise<Event>;
+  getEvents(take: number, cursor?: Cursor): Promise<Array<Event>>;
 
-    getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>>;
-    listAttendance(eventId: Event["id"]): Promise<Array<Attendance>>;
-    updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>;
+  getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>>;
+  listAttendance(eventId: Event["id"]): Promise<Array<Attendance>>;
+  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>;
 }
 
 export class EventServiceImpl implements EventService {
-    public constructor(
-        private readonly eventRepository: EventRepository,
-        private readonly attendanceRepository: AttendanceRepository
-    ) {}
+  public constructor(
+    private readonly eventRepository: EventRepository,
+    private readonly attendanceRepository: AttendanceRepository
+  ) {}
 
-    public async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
-        const attendance = await this.attendanceRepository.create({
-            ...attendanceCreate,
-            eventId,
-        });
+  public async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
+    const attendance = await this.attendanceRepository.create({
+      ...attendanceCreate,
+      eventId,
+    });
 
-        return attendance;
+    return attendance;
+  }
+
+  public async createEvent(eventCreate: EventWrite): Promise<Event> {
+    const event = await this.eventRepository.create(eventCreate);
+
+    if (!event) {
+      throw new Error("Failed to create event");
     }
 
-    public async createEvent(eventCreate: EventWrite): Promise<Event> {
-        const event = await this.eventRepository.create(eventCreate);
+    return event;
+  }
 
-        if (!event) {
-            throw new Error("Failed to create event");
-        }
+  public async createWaitlist(eventId: Event["id"]): Promise<Attendance> {
+    const event = await this.getEventById(eventId);
 
-        return event;
+    if (event.waitlist !== null) {
+      throw new Error(`Attempted to create waitlist for event ${eventId}`);
     }
 
-    public async createWaitlist(eventId: Event["id"]): Promise<Attendance> {
-        const event = await this.getEventById(eventId);
+    const waitlist = await this.attendanceRepository.create({
+      deregisterDeadline: new Date(),
+      end: new Date(),
+      eventId,
+      limit: 999999,
+      max: 0,
+      min: 0,
+      start: new Date(),
+    });
 
-        if (event.waitlist !== null) {
-            throw new Error(`Attempted to create waitlist for event ${eventId}`);
-        }
+    await this.eventRepository.update(eventId, {
+      ...event,
+      waitlist: waitlist.id,
+    });
 
-        const waitlist = await this.attendanceRepository.create({
-            deregisterDeadline: new Date(),
-            end: new Date(),
-            eventId,
-            limit: 999999,
-            max: 0,
-            min: 0,
-            start: new Date(),
-        });
+    return waitlist;
+  }
 
-        await this.eventRepository.update(eventId, {
-            ...event,
-            waitlist: waitlist.id,
-        });
+  public async getEventById(id: Event["id"]): Promise<Event> {
+    const event = await this.eventRepository.getById(id);
 
-        return waitlist;
+    if (!event) {
+      throw new NotFoundError(`Event with ID:${id} not found`);
     }
 
-    public async getEventById(id: Event["id"]): Promise<Event> {
-        const event = await this.eventRepository.getById(id);
+    return event;
+  }
 
-        if (!event) {
-            throw new NotFoundError(`Event with ID:${id} not found`);
-        }
+  public async getEvents(take: number, cursor?: Cursor): Promise<Array<Event>> {
+    const events = await this.eventRepository.getAll(take, cursor);
 
-        return event;
-    }
+    return events;
+  }
 
-    public async getEvents(take: number, cursor?: Cursor): Promise<Array<Event>> {
-        const events = await this.eventRepository.getAll(take, cursor);
+  public async getEventsByCommitteeId(
+    committeeId: string,
+    take: number,
+    cursor?: { createdAt: Date; id: string } | undefined
+  ): Promise<Array<Event>> {
+    const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor);
 
-        return events;
-    }
+    return events;
+  }
 
-    public async getEventsByCommitteeId(
-        committeeId: string,
-        take: number,
-        cursor?: { createdAt: Date; id: string } | undefined
-    ): Promise<Array<Event>> {
-        const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor);
+  public async listAttendance(eventId: Event["id"]): Promise<Array<Attendance>> {
+    const attendance = await this.attendanceRepository.getByEventId(eventId);
 
-        return events;
-    }
+    return attendance;
+  }
 
-    public async listAttendance(eventId: Event["id"]): Promise<Array<Attendance>> {
-        const attendance = await this.attendanceRepository.getByEventId(eventId);
+  public async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
+    const event = await this.eventRepository.update(id, eventUpdate);
 
-        return attendance;
-    }
-
-    public async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-        const event = await this.eventRepository.update(id, eventUpdate);
-
-        return event;
-    }
+    return event;
+  }
 }

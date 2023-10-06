@@ -3,16 +3,16 @@ import { type PortableTextProps } from "@/components/molecules/PortableText";
 import client from "./sanity";
 
 export interface Article {
-    _createdAt: string;
-    _updatedAt: string;
-    author: string;
-    content: PortableTextProps["blocks"];
-    cover_image: { asset: { url: string } };
-    estimatedReadingTime: number;
-    excerpt: string;
-    photographer: string;
-    tags: Array<string>;
-    title: string;
+  _createdAt: string;
+  _updatedAt: string;
+  author: string;
+  content: PortableTextProps["blocks"];
+  cover_image: { asset: { url: string } };
+  estimatedReadingTime: number;
+  excerpt: string;
+  photographer: string;
+  tags: Array<string>;
+  title: string;
 }
 
 const query = `
@@ -37,7 +37,7 @@ const query = `
 `;
 
 export const fetchArticleData = async (slug: string): Promise<Article> => {
-    const res = await client.fetch(query, { slug });
+  const res = await client.fetch(query, { slug });
 
-    return res;
+  return res;
 };

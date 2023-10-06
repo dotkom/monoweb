@@ -7,33 +7,33 @@ import { CompanyRepositoryImpl } from "../company-repository";
 import { CompanyServiceImpl } from "../company-service";
 
 describe("CompanyService", () => {
-    const db = vi.mocked(Kysely.prototype, true);
-    const companyRepository = new CompanyRepositoryImpl(db);
-    const companyService = new CompanyServiceImpl(companyRepository);
+  const db = vi.mocked(Kysely.prototype, true);
+  const companyRepository = new CompanyRepositoryImpl(db);
+  const companyService = new CompanyServiceImpl(companyRepository);
 
-    it("creates a new company", async () => {
-        const company: Omit<Company, "id"> = {
-            createdAt: new Date(),
-            description: "We sell computer-mouses with ducks inside of them",
-            email: "coolguys@company.com",
-            image: null,
-            location: "Mars",
-            name: "Duckmouse",
-            phone: "+47 123 45 678",
-            type: "Other",
-            website: "www.duckmouse.no",
-        };
+  it("creates a new company", async () => {
+    const company: Omit<Company, "id"> = {
+      createdAt: new Date(),
+      description: "We sell computer-mouses with ducks inside of them",
+      email: "coolguys@company.com",
+      image: null,
+      location: "Mars",
+      name: "Duckmouse",
+      phone: "+47 123 45 678",
+      type: "Other",
+      website: "www.duckmouse.no",
+    };
 
-        const id = randomUUID();
-        vi.spyOn(companyRepository, "create").mockResolvedValueOnce({ id, ...company });
-        await expect(companyService.createCompany(company)).resolves.toEqual({ id, ...company });
-        expect(companyRepository.create).toHaveBeenCalledWith(company);
-    });
+    const id = randomUUID();
+    vi.spyOn(companyRepository, "create").mockResolvedValueOnce({ id, ...company });
+    await expect(companyService.createCompany(company)).resolves.toEqual({ id, ...company });
+    expect(companyRepository.create).toHaveBeenCalledWith(company);
+  });
 
-    it("fails on unknown id", async () => {
-        const unknownID = randomUUID();
-        vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(undefined);
-        await expect(companyService.getCompany(unknownID)).rejects.toThrow(NotFoundError);
-        expect(companyRepository.getById).toHaveBeenCalledWith(unknownID);
-    });
+  it("fails on unknown id", async () => {
+    const unknownID = randomUUID();
+    vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(undefined);
+    await expect(companyService.getCompany(unknownID)).rejects.toThrow(NotFoundError);
+    expect(companyRepository.getById).toHaveBeenCalledWith(unknownID);
+  });
 });

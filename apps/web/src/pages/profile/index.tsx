@@ -8,32 +8,32 @@ import { type User, getServerSession } from "next-auth";
 import { type NextPageWithLayout } from "../_app";
 
 const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => (
-    <ProfileLanding user={user} />
+  <ProfileLanding user={user} />
 );
 
 LandingPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export const getServerSideProps: GetServerSideProps<{ user: User }> = async ({ req, res }) => {
-    const session = await getServerSession(req, res, authOptions);
+  const session = await getServerSession(req, res, authOptions);
 
-    if (session === null) {
-        return {
-            redirect: {
-                destination: "/",
-                permanent: false,
-            },
-        };
-    }
-
+  if (session === null) {
     return {
-        props: {
-            user: session.user,
-        },
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
     };
+  }
+
+  return {
+    props: {
+      user: session.user,
+    },
+  };
 };
 
 export default LandingPage;

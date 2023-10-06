@@ -6,9 +6,9 @@ import { type NextPageWithLayout } from "../_app";
 const MembershipPage: NextPageWithLayout = () => <div>Membership</div>;
 
 MembershipPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export default MembershipPage;

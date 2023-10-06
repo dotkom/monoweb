@@ -1,39 +1,39 @@
 {
-    "name": "@dotkomonline/config",
-    "sideEffects": false,
-    "version": "1.0.0",
-    "main": "index.js",
-    "private": true,
-    "files": [
-        "eslint-preset.js",
-        "tailwind-preset.d.ts",
-        "tailwind-preset.js",
-        "postcss-preset.js",
-        "tailwind.css",
-        "typography.css"
-    ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "devDependencies": {
-        "@radix-ui/colors": "^3.0.0",
-        "@tailwindcss/typography": "^0.5.10",
-        "@typescript-eslint/eslint-plugin": "^6.7.4",
-        "@typescript-eslint/parser": "^6.7.4",
-        "eslint-config-next": "^13.5.4",
-        "eslint-config-prettier": "^9.0.0",
-        "eslint-config-turbo": "^1.10.14",
-        "eslint-plugin-jsx-a11y": "^6.7.1",
-        "eslint-plugin-perfectionist": "^2.1.0",
-        "eslint-plugin-prettier": "^5.0.0",
-        "eslint-plugin-react-hooks": "^4.6.0",
-        "eslint-plugin-react": "^7.33.2",
-        "eslint": "^8.50.0",
-        "postcss-import": "^15.1.0",
-        "postcss": "^8.4.31",
-        "tailwindcss-animate": "^1.0.7",
-        "tailwindcss-radix": "^2.8.0",
-        "tailwindcss": "^3.3.3",
-        "typescript": "^5.2.2"
-    }
+  "name": "@dotkomonline/config",
+  "sideEffects": false,
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "files": [
+    "eslint-preset.js",
+    "tailwind-preset.d.ts",
+    "tailwind-preset.js",
+    "postcss-preset.js",
+    "tailwind.css",
+    "typography.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@radix-ui/colors": "^3.0.0",
+    "@tailwindcss/typography": "^0.5.10",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "eslint-config-next": "^13.5.4",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-turbo": "^1.10.14",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-perfectionist": "^2.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint": "^8.50.0",
+    "postcss-import": "^15.1.0",
+    "postcss": "^8.4.31",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-radix": "^2.8.0",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2"
+  }
 }

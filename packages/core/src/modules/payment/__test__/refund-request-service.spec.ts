@@ -13,170 +13,170 @@ import { paymentPayload } from "./payment-service.spec";
 import { productPayload } from "./product-service.spec";
 
 export const refundRequestPayload: Omit<RefundRequest, "id"> = {
-    createdAt: new Date(2022, 1, 1),
-    handledBy: null,
-    paymentId: randomUUID(),
-    reason: "I want my money back",
-    status: "PENDING",
-    updatedAt: new Date(2022, 1, 1),
-    userId: randomUUID(),
+  createdAt: new Date(2022, 1, 1),
+  handledBy: null,
+  paymentId: randomUUID(),
+  reason: "I want my money back",
+  status: "PENDING",
+  updatedAt: new Date(2022, 1, 1),
+  userId: randomUUID(),
 };
 
 describe("RefundRequestService", () => {
-    const db = vi.mocked(Kysely.prototype);
-    const refundRequestRepository = new RefundRequestRepositoryImpl(db);
-    const paymentRepository = new PaymentRepositoryImpl(db);
-    const productRepository = new ProductRepositoryImpl(db);
-    const eventRepository = new EventRepositoryImpl(db);
-    const paymentService = new PaymentServiceImpl(
-        paymentRepository,
-        productRepository,
-        eventRepository,
-        refundRequestRepository
-    );
+  const db = vi.mocked(Kysely.prototype);
+  const refundRequestRepository = new RefundRequestRepositoryImpl(db);
+  const paymentRepository = new PaymentRepositoryImpl(db);
+  const productRepository = new ProductRepositoryImpl(db);
+  const eventRepository = new EventRepositoryImpl(db);
+  const paymentService = new PaymentServiceImpl(
+    paymentRepository,
+    productRepository,
+    eventRepository,
+    refundRequestRepository
+  );
 
-    const refundRequestService = new RefundRequestServiceImpl(
-        refundRequestRepository,
-        paymentRepository,
-        productRepository,
-        paymentService
-    );
+  const refundRequestService = new RefundRequestServiceImpl(
+    refundRequestRepository,
+    paymentRepository,
+    productRepository,
+    paymentService
+  );
 
-    const paymentPayloadExtended = {
-        ...paymentPayload,
-        id: randomUUID(),
-    };
+  const paymentPayloadExtended = {
+    ...paymentPayload,
+    id: randomUUID(),
+  };
 
-    const productPayloadExtended = {
-        ...productPayload,
-        id: randomUUID(),
-    };
+  const productPayloadExtended = {
+    ...productPayload,
+    id: randomUUID(),
+  };
 
-    const refundRequestPayloadExtended = {
-        ...refundRequestPayload,
-        id: randomUUID(),
-    };
+  const refundRequestPayloadExtended = {
+    ...refundRequestPayload,
+    id: randomUUID(),
+  };
 
-    const userId = randomUUID();
+  const userId = randomUUID();
 
-    it("fails to create refund request for non-refundable payment", async () => {
-        vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended);
-        vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
-            ...productPayloadExtended,
-            isRefundable: false,
-        });
-
-        const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
-        await expect(call).rejects.toThrowError("Payment is not refundable");
+  it("fails to create refund request for non-refundable payment", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended);
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
+      ...productPayloadExtended,
+      isRefundable: false,
     });
 
-    it("fails to create refund request for payment that does not require it", async () => {
-        vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended);
-        vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
-            ...productPayloadExtended,
-            isRefundable: true,
-            refundRequiresApproval: false,
-        });
+    const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
+    await expect(call).rejects.toThrowError("Payment is not refundable");
+  });
 
-        const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
-        await expect(call).rejects.toThrowError("Product does not require approval");
+  it("fails to create refund request for payment that does not require it", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended);
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
+      ...productPayloadExtended,
+      isRefundable: true,
+      refundRequiresApproval: false,
     });
 
-    it("fails to create refund request for payment that does not require it", async () => {
-        vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended);
-        vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
-            ...productPayloadExtended,
-            isRefundable: true,
-            refundRequiresApproval: true,
-        });
+    const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
+    await expect(call).rejects.toThrowError("Product does not require approval");
+  });
 
-        vi.spyOn(refundRequestRepository, "create").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            status: "PENDING",
-        });
-
-        const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
-        await expect(call).resolves.toEqual(refundRequestPayloadExtended);
-        expect(refundRequestRepository.create).toHaveBeenCalledWith({
-            handledBy: null,
-            paymentId: paymentPayloadExtended.id,
-            reason: "Test reason",
-            status: "PENDING",
-            userId,
-        });
+  it("fails to create refund request for payment that does not require it", async () => {
+    vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce(paymentPayloadExtended);
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce({
+      ...productPayloadExtended,
+      isRefundable: true,
+      refundRequiresApproval: true,
     });
 
-    it("fails to approve refund request for already approved refund request", async () => {
-        vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            status: "APPROVED",
-        });
-
-        const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
-        await expect(call).rejects.toThrowError("Refund request already approved");
+    vi.spyOn(refundRequestRepository, "create").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      status: "PENDING",
     });
 
-    it("successfully approves pending refund request", async () => {
-        vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            status: "PENDING",
-        });
+    const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason");
+    await expect(call).resolves.toEqual(refundRequestPayloadExtended);
+    expect(refundRequestRepository.create).toHaveBeenCalledWith({
+      handledBy: null,
+      paymentId: paymentPayloadExtended.id,
+      reason: "Test reason",
+      status: "PENDING",
+      userId,
+    });
+  });
 
-        vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            handledBy: userId,
-            status: "APPROVED",
-        });
-
-        vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined);
-
-        const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
-        await expect(call).resolves.toEqual(undefined);
-        expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
-            handledBy: userId,
-            status: "APPROVED",
-        });
+  it("fails to approve refund request for already approved refund request", async () => {
+    vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      status: "APPROVED",
     });
 
-    it("successfully approves rejected refund request", async () => {
-        vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            status: "REJECTED",
-        });
+    const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
+    await expect(call).rejects.toThrowError("Refund request already approved");
+  });
 
-        vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            handledBy: userId,
-            status: "APPROVED",
-        });
-
-        vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined);
-
-        const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
-        await expect(call).resolves.toEqual(undefined);
-        expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
-            handledBy: userId,
-            status: "APPROVED",
-        });
+  it("successfully approves pending refund request", async () => {
+    vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      status: "PENDING",
     });
 
-    it("fails to reject refund request for already rejected refund request", async () => {
-        vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            status: "REJECTED",
-        });
-
-        const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId);
-        await expect(call).rejects.toThrowError("Refund request already rejected");
+    vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      handledBy: userId,
+      status: "APPROVED",
     });
 
-    it("fails to reject refund request for already approved refund request", async () => {
-        vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
-            ...refundRequestPayloadExtended,
-            status: "APPROVED",
-        });
+    vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined);
 
-        const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId);
-        await expect(call).rejects.toThrowError("Refund request already approved");
+    const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
+    await expect(call).resolves.toEqual(undefined);
+    expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
+      handledBy: userId,
+      status: "APPROVED",
     });
+  });
+
+  it("successfully approves rejected refund request", async () => {
+    vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      status: "REJECTED",
+    });
+
+    vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      handledBy: userId,
+      status: "APPROVED",
+    });
+
+    vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined);
+
+    const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId);
+    await expect(call).resolves.toEqual(undefined);
+    expect(refundRequestRepository.update).toHaveBeenCalledWith(refundRequestPayloadExtended.id, {
+      handledBy: userId,
+      status: "APPROVED",
+    });
+  });
+
+  it("fails to reject refund request for already rejected refund request", async () => {
+    vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      status: "REJECTED",
+    });
+
+    const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId);
+    await expect(call).rejects.toThrowError("Refund request already rejected");
+  });
+
+  it("fails to reject refund request for already approved refund request", async () => {
+    vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
+      ...refundRequestPayloadExtended,
+      status: "APPROVED",
+    });
+
+    const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId);
+    await expect(call).rejects.toThrowError("Refund request already approved");
+  });
 });

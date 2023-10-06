@@ -3,7 +3,7 @@ import { type PortableTextProps } from "@/components/molecules/PortableText";
 import client from "./sanity";
 
 interface CompanySectionData {
-    sections: PortableTextProps["blocks"];
+  sections: PortableTextProps["blocks"];
 }
 
 const query = `
@@ -15,7 +15,7 @@ const query = `
 `;
 
 export const fetchCompanySectionData = async (): Promise<CompanySectionData> => {
-    const res = await client.fetch(query);
+  const res = await client.fetch(query);
 
-    return res;
+  return res;
 };

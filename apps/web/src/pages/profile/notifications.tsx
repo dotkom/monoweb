@@ -6,9 +6,9 @@ import { type NextPageWithLayout } from "../_app";
 const NotifcationPage: NextPageWithLayout = () => <div>Notification</div>;
 
 NotifcationPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export default NotifcationPage;

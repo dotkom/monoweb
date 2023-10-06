@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const PersonalMarkSchema = z.object({
-    markId: z.string(),
-    userId: z.string(),
+  markId: z.string(),
+  userId: z.string(),
 });
 
 export type PersonalMark = z.infer<typeof PersonalMarkSchema>;

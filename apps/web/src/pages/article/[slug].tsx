@@ -7,7 +7,7 @@ import { type Article } from "src/api/get-article";
 type ArticleProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const slugs = await sanityClient.fetch<Array<string>>(`
+  const slugs = await sanityClient.fetch<Array<string>>(`
     *[_type == "article" && !(_id in path("drafts.**"))]{
       slug {
       current
@@ -15,10 +15,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }.slug.current
   `);
 
-    return {
-        fallback: "blocking",
-        paths: slugs.map((slug) => ({ params: { slug } })),
-    };
+  return {
+    fallback: "blocking",
+    paths: slugs.map((slug) => ({ params: { slug } })),
+  };
 };
 
 const ARTICLE_QUERY = `
@@ -43,32 +43,32 @@ const ARTICLE_QUERY = `
 `;
 
 export const getStaticProps: GetStaticProps<{ article: Article }, { slug: string }> = async (ctx) => {
-    const slug = ctx.params?.slug;
+  const slug = ctx.params?.slug;
 
-    if (!slug) {
-        return {
-            notFound: true,
-        };
-    }
+  if (!slug) {
+    return {
+      notFound: true,
+    };
+  }
 
-    const article = await sanityClient.fetch<Article>(ARTICLE_QUERY, { slug });
+  const article = await sanityClient.fetch<Article>(ARTICLE_QUERY, { slug });
 
-    if (!article) {
-        return {
-            notFound: true,
-            revalidate: 3600,
-        };
-    }
+  if (!article) {
+    return {
+      notFound: true,
+      revalidate: 3600,
+    };
+  }
 
-    return { props: { article }, revalidate: 3600 };
+  return { props: { article }, revalidate: 3600 };
 };
 
 const ArticlePage: FC<ArticleProps> = (props: ArticleProps) => {
-    if (!props.article) {
-        return <div>404</div>;
-    }
+  if (!props.article) {
+    return <div>404</div>;
+  }
 
-    return <ArticleView article={props.article} />;
+  return <ArticleView article={props.article} />;
 };
 
 export default ArticlePage;

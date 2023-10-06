@@ -3,16 +3,16 @@ import { ComponentStory } from "@storybook/react";
 import { TextInput } from "./TextInput";
 
 export default {
-    title: "atoms/TextInput",
-    component: TextInput,
+  title: "atoms/TextInput",
+  component: TextInput,
 };
 
 const Template: ComponentStory<typeof TextInput> = (args) => {
-    return (
-        <div style={{ padding: "40px", maxWidth: "300px" }}>
-            <TextInput id="name" label="Full name" {...args} />
-        </div>
-    );
+  return (
+    <div style={{ padding: "40px", maxWidth: "300px" }}>
+      <TextInput id="name" label="Full name" {...args} />
+    </div>
+  );
 };
 
 export const Default = Template.bind({});

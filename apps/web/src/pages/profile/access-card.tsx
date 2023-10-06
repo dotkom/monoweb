@@ -6,9 +6,9 @@ import { type NextPageWithLayout } from "../_app";
 const AccessCardPage: NextPageWithLayout = () => <div>Access card</div>;
 
 AccessCardPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export default AccessCardPage;

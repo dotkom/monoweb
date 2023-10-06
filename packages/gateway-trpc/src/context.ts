@@ -6,32 +6,32 @@ import { authOptions } from "@dotkomonline/auth/src/web.app";
 import { getServerSession } from "next-auth";
 
 interface AuthContextProps {
-    auth: {
-        userId: string;
-    } | null;
+  auth: {
+    userId: string;
+  } | null;
 }
 
 export const createContextInner = async (opts: AuthContextProps) => {
-    const services = await createServiceLayer({ db: kysely });
+  const services = await createServiceLayer({ db: kysely });
 
-    return {
-        ...services,
-        auth: opts.auth,
-    };
+  return {
+    ...services,
+    auth: opts.auth,
+  };
 };
 
 export const createContext = async (opts: CreateNextContextOptions) => {
-    const session = await getServerSession(opts.req, opts.res, authOptions);
+  const session = await getServerSession(opts.req, opts.res, authOptions);
 
-    if (session !== null) {
-        return createContextInner({
-            auth: {
-                userId: session.user.id,
-            },
-        });
-    }
+  if (session !== null) {
+    return createContextInner({
+      auth: {
+        userId: session.user.id,
+      },
+    });
+  }
 
-    return createContextInner({ auth: null });
+  return createContextInner({ auth: null });
 };
 
 export type Context = inferAsyncReturnType<typeof createContext>;

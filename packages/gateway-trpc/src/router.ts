@@ -7,12 +7,12 @@ import { t } from "./trpc";
 import { userRouter } from "./modules/user/user-router";
 
 export const appRouter = t.router({
-    committee: committeeRouter,
-    event: eventRouter,
-    user: userRouter,
-    company: companyRouter,
-    payment: paymentRouter,
-    mark: markRouter,
+  committee: committeeRouter,
+  event: eventRouter,
+  user: userRouter,
+  company: companyRouter,
+  payment: paymentRouter,
+  mark: markRouter,
 });
 
 export type AppRouter = typeof appRouter;

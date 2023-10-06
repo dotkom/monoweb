@@ -6,254 +6,246 @@ import { useRouter } from "next/router";
 import { type FC, type FormEvent, useState } from "react";
 
 const PaymentTestPage: FC = () => {
-    const paymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
-        enabled: false,
+  const paymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
+    enabled: false,
+  });
+
+  const productsQuery = trpc.payment.product.all.useQuery(undefined, {
+    enabled: false,
+    onSuccess: (data) => {
+      setProductId(data[0]?.id ?? "");
+      setProviderId(data[0]?.paymentProviders[0]?.paymentProviderId ?? "");
+    },
+  });
+
+  const [isSeeding, setIsSeeding] = useState(false);
+
+  const createProductMutation = trpc.payment.product.create.useMutation({
+    onSuccess: () => {
+      productsQuery.refetch();
+    },
+  });
+
+  const [isShowingCreateProductForm, setIsShowingCreateProductForm] = useState(false);
+  const [createProductFormState, setCreateProductFormState] = useState<ProductWrite>({
+    amount: 6969,
+    isRefundable: true,
+    objectId: "6b0e48c1-bc27-4901-9cc9-31c8076ef5ac",
+    refundRequiresApproval: true,
+    type: "EVENT",
+  });
+
+  const router = useRouter();
+  const [productId, setProductId] = useState("");
+  const [providerId, setProviderId] = useState("");
+  const [paymentId, setPaymentId] = useState("");
+  const [isActuallyLoading, setIsActuallyLoading] = useState(false);
+
+  const createCheckout = trpc.payment.createStripeCheckoutSession.useMutation({
+    onSuccess: (data) => {
+      router.push(data.redirectUrl);
+    },
+  });
+
+  const fetchProduct = trpc.payment.product.get.useQuery(productId, {
+    enabled: false,
+  });
+
+  const refundPayment = trpc.payment.refundPayment.useMutation({
+    onSuccess: () => {
+      alert("Successfully Refunded!");
+    },
+  });
+
+  const changeEvent = (event: FormEvent<HTMLInputElement>) => {
+    const target = event.currentTarget;
+    const name = target.name;
+    const type = target.type;
+
+    const value = type === "number" ? Number(target.value) : target.value;
+
+    setCreateProductFormState((pre) => ({ ...pre, [name]: value }));
+  };
+
+  const onCheckoutClick = () => {
+    createCheckout.mutate({
+      cancelRedirectUrl: `${window.location.href}/cancel`,
+      productId,
+      stripePublicKey: providerId,
+      successRedirectUrl: `${window.location.href}/success`,
     });
+  };
 
-    const productsQuery = trpc.payment.product.all.useQuery(undefined, {
-        enabled: false,
-        onSuccess: (data) => {
-            setProductId(data[0]?.id ?? "");
-            setProviderId(data[0]?.paymentProviders[0]?.paymentProviderId ?? "");
-        },
+  const onFetchClick = () => {
+    setIsActuallyLoading(true);
+    fetchProduct.refetch();
+  };
+
+  const onRefundClick = () => {
+    refundPayment.mutate({
+      paymentId,
     });
+  };
 
-    const [isSeeding, setIsSeeding] = useState(false);
+  const seedPaymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
+    enabled: false,
+    onSuccess: () => {
+      seedEventsQuery.refetch();
+    },
+  });
 
-    const createProductMutation = trpc.payment.product.create.useMutation({
-        onSuccess: () => {
-            productsQuery.refetch();
-        },
-    });
+  // Seeding stuff
 
-    const [isShowingCreateProductForm, setIsShowingCreateProductForm] = useState(false);
-    const [createProductFormState, setCreateProductFormState] = useState<ProductWrite>({
-        amount: 6969,
-        isRefundable: true,
-        objectId: "6b0e48c1-bc27-4901-9cc9-31c8076ef5ac",
-        refundRequiresApproval: true,
-        type: "EVENT",
-    });
+  const seedAddProductPaymentProviderMutation = trpc.payment.product.addPaymentProvider.useMutation({
+    onSuccess: (data) => {
+      setProductId(data?.productId ?? "");
+      setProviderId(data?.paymentProviderId ?? "");
+      setIsSeeding(false);
+    },
+  });
 
-    const router = useRouter();
-    const [productId, setProductId] = useState("");
-    const [providerId, setProviderId] = useState("");
-    const [paymentId, setPaymentId] = useState("");
-    const [isActuallyLoading, setIsActuallyLoading] = useState(false);
+  const seedCreateProductMutation = trpc.payment.product.create.useMutation({
+    onSuccess: (data) => {
+      const stripeProvider = seedPaymentProvidersQuery.data?.find((p) => p.paymentProvider === "STRIPE");
 
-    const createCheckout = trpc.payment.createStripeCheckoutSession.useMutation({
-        onSuccess: (data) => {
-            router.push(data.redirectUrl);
-        },
-    });
-
-    const fetchProduct = trpc.payment.product.get.useQuery(productId, {
-        enabled: false,
-    });
-
-    const refundPayment = trpc.payment.refundPayment.useMutation({
-        onSuccess: () => {
-            alert("Successfully Refunded!");
-        },
-    });
-
-    const changeEvent = (event: FormEvent<HTMLInputElement>) => {
-        const target = event.currentTarget;
-        const name = target.name;
-        const type = target.type;
-
-        const value = type === "number" ? Number(target.value) : target.value;
-
-        setCreateProductFormState((pre) => ({ ...pre, [name]: value }));
-    };
-
-    const onCheckoutClick = () => {
-        createCheckout.mutate({
-            cancelRedirectUrl: `${window.location.href}/cancel`,
-            productId,
-            stripePublicKey: providerId,
-            successRedirectUrl: `${window.location.href}/success`,
+      if (stripeProvider) {
+        seedAddProductPaymentProviderMutation.mutate({
+          paymentProvider: "STRIPE",
+          paymentProviderId: stripeProvider.paymentProviderId,
+          productId: data.id,
         });
-    };
+      }
+    },
+  });
 
-    const onFetchClick = () => {
-        setIsActuallyLoading(true);
-        fetchProduct.refetch();
-    };
+  const seedEventsQuery = trpc.event.all.useQuery(undefined, {
+    enabled: false,
+    onSuccess: (data) => {
+      const goodEvents = data.filter((e) => Boolean(e.id));
 
-    const onRefundClick = () => {
-        refundPayment.mutate({
-            paymentId,
+      for (let i = 0; i < Math.min(2, goodEvents.length); i++) {
+        seedCreateProductMutation.mutate({
+          amount: i === 0 ? 250 : 2300,
+          isRefundable: true,
+          objectId: data[i].id,
+          refundRequiresApproval: true,
+          type: "EVENT",
         });
-    };
+      }
+    },
+  });
 
-    const seedPaymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
-        enabled: false,
-        onSuccess: () => {
-            seedEventsQuery.refetch();
-        },
-    });
+  const onSeedClick = () => {
+    setIsSeeding(true);
+    seedPaymentProvidersQuery.refetch();
+  };
 
-    // Seeding stuff
+  return (
+    <div className="[&_button]:bg-blue-5 [&_input]:border-blue [&_input]:bg-blue-3 mb-32 flex w-screen max-w-screen-md flex-col gap-y-4 [&_button]:mx-1 [&_button]:p-4 [&_input]:my-1 [&_input]:rounded-md [&_input]:p-2 [&_label]:mr-2">
+      <h1>Payment Test</h1>
 
-    const seedAddProductPaymentProviderMutation = trpc.payment.product.addPaymentProvider.useMutation({
-        onSuccess: (data) => {
-            setProductId(data?.productId ?? "");
-            setProviderId(data?.paymentProviderId ?? "");
-            setIsSeeding(false);
-        },
-    });
+      {/* Use migration fixtures instead */}
+      <button className="hidden" onClick={onSeedClick}>
+        Create and insert seed data
+      </button>
+      {isSeeding && <p>Seeding...</p>}
 
-    const seedCreateProductMutation = trpc.payment.product.create.useMutation({
-        onSuccess: (data) => {
-            const stripeProvider = seedPaymentProvidersQuery.data?.find((p) => p.paymentProvider === "STRIPE");
-
-            if (stripeProvider) {
-                seedAddProductPaymentProviderMutation.mutate({
-                    paymentProvider: "STRIPE",
-                    paymentProviderId: stripeProvider.paymentProviderId,
-                    productId: data.id,
-                });
-            }
-        },
-    });
-
-    const seedEventsQuery = trpc.event.all.useQuery(undefined, {
-        enabled: false,
-        onSuccess: (data) => {
-            const goodEvents = data.filter((e) => Boolean(e.id));
-
-            for (let i = 0; i < Math.min(2, goodEvents.length); i++) {
-                seedCreateProductMutation.mutate({
-                    amount: i === 0 ? 250 : 2300,
-                    isRefundable: true,
-                    objectId: data[i].id,
-                    refundRequiresApproval: true,
-                    type: "EVENT",
-                });
-            }
-        },
-    });
-
-    const onSeedClick = () => {
-        setIsSeeding(true);
-        seedPaymentProvidersQuery.refetch();
-    };
-
-    return (
-        <div className="[&_button]:bg-blue-5 [&_input]:border-blue [&_input]:bg-blue-3 mb-32 flex w-screen max-w-screen-md flex-col gap-y-4 [&_button]:mx-1 [&_button]:p-4 [&_input]:my-1 [&_input]:rounded-md [&_input]:p-2 [&_label]:mr-2">
-            <h1>Payment Test</h1>
-
-            {/* Use migration fixtures instead */}
-            <button className="hidden" onClick={onSeedClick}>
-                Create and insert seed data
-            </button>
-            {isSeeding && <p>Seeding...</p>}
-
-            <div>
-                <h3>Products</h3>
-                <button onClick={() => productsQuery.refetch()}>Fetch data</button>
-                <button onClick={() => setIsShowingCreateProductForm(true)}>Create product</button>
-                {isShowingCreateProductForm && (
-                    <form
-                        className="p-8"
-                        onSubmit={(e) => {
-                            createProductMutation.mutate(createProductFormState);
-                            e.preventDefault();
-                        }}
-                    >
-                        <fieldset>
-                            <label htmlFor="type">Type</label>
-                            <input
-                                id="type"
-                                name="type"
-                                onChange={changeEvent}
-                                type="text"
-                                value={createProductFormState.type}
-                            />
-                        </fieldset>
-
-                        <fieldset>
-                            <label htmlFor="objectId">ObjectId</label>
-                            <input
-                                id="objectId"
-                                name="objectId"
-                                onChange={changeEvent}
-                                type="text"
-                                value={createProductFormState.objectId ?? ""}
-                            />
-                        </fieldset>
-
-                        <fieldset>
-                            <label htmlFor="amount">Amount</label>
-                            <input
-                                id="amount"
-                                name="amount"
-                                onChange={changeEvent}
-                                type="number"
-                                value={createProductFormState.amount}
-                            />
-                        </fieldset>
-
-                        <br />
-                        <button type="submit">Create</button>
-                    </form>
-                )}
-                <pre>{JSON.stringify(productsQuery.data, null, 4)}</pre>
-            </div>
-
-            <div>
-                <h3>Payment providers</h3>
-                <button onClick={() => paymentProvidersQuery.refetch()}>Fetch data</button>
-                <pre>{JSON.stringify(paymentProvidersQuery.data, null, 4)}</pre>
-            </div>
-
-            <h3>Testing</h3>
-
-            <fieldset className="flex flex-col gap-y-1">
-                <label htmlFor="productId">ProductId</label>
-                <input id="productId" onChange={(e) => setProductId(e.target.value)} type="text" value={productId} />
+      <div>
+        <h3>Products</h3>
+        <button onClick={() => productsQuery.refetch()}>Fetch data</button>
+        <button onClick={() => setIsShowingCreateProductForm(true)}>Create product</button>
+        {isShowingCreateProductForm && (
+          <form
+            className="p-8"
+            onSubmit={(e) => {
+              createProductMutation.mutate(createProductFormState);
+              e.preventDefault();
+            }}
+          >
+            <fieldset>
+              <label htmlFor="type">Type</label>
+              <input id="type" name="type" onChange={changeEvent} type="text" value={createProductFormState.type} />
             </fieldset>
 
-            <fieldset className="flex flex-col gap-y-1">
-                <label htmlFor="providerId">ProviderId (Stripe Public Key)</label>
-                <input id="providerId" onChange={(e) => setProviderId(e.target.value)} type="text" value={providerId} />
+            <fieldset>
+              <label htmlFor="objectId">ObjectId</label>
+              <input
+                id="objectId"
+                name="objectId"
+                onChange={changeEvent}
+                type="text"
+                value={createProductFormState.objectId ?? ""}
+              />
             </fieldset>
 
-            <fieldset className="flex flex-col gap-y-1">
-                <label htmlFor="stripeWebhookCommand">Stripe Local Webhook Command (copy only)</label>
-                <input
-                    id="stripeWebhookCommand"
-                    readOnly
-                    type="text"
-                    value={
-                        providerId ? `stripe listen --forward-to localhost:3000/api/webhooks/stripe/${providerId}` : ""
-                    }
-                />
+            <fieldset>
+              <label htmlFor="amount">Amount</label>
+              <input
+                id="amount"
+                name="amount"
+                onChange={changeEvent}
+                type="number"
+                value={createProductFormState.amount}
+              />
             </fieldset>
 
-            <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onCheckoutClick}>
-                Proceed to stripe checkout
-            </button>
+            <br />
+            <button type="submit">Create</button>
+          </form>
+        )}
+        <pre>{JSON.stringify(productsQuery.data, null, 4)}</pre>
+      </div>
 
-            <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onFetchClick}>
-                Fetch product data
-            </button>
+      <div>
+        <h3>Payment providers</h3>
+        <button onClick={() => paymentProvidersQuery.refetch()}>Fetch data</button>
+        <pre>{JSON.stringify(paymentProvidersQuery.data, null, 4)}</pre>
+      </div>
 
-            {((isActuallyLoading && fetchProduct.isLoading) || createCheckout.isLoading) && <div>Loading...</div>}
+      <h3>Testing</h3>
 
-            {fetchProduct.data && <pre>{JSON.stringify(fetchProduct.data, null, 4)}</pre>}
+      <fieldset className="flex flex-col gap-y-1">
+        <label htmlFor="productId">ProductId</label>
+        <input id="productId" onChange={(e) => setProductId(e.target.value)} type="text" value={productId} />
+      </fieldset>
 
-            <fieldset className="flex flex-col gap-y-1">
-                <label htmlFor="paymentId">PaymentId</label>
-                <input id="paymentId" onChange={(e) => setPaymentId(e.target.value)} type="text" value={paymentId} />
-            </fieldset>
+      <fieldset className="flex flex-col gap-y-1">
+        <label htmlFor="providerId">ProviderId (Stripe Public Key)</label>
+        <input id="providerId" onChange={(e) => setProviderId(e.target.value)} type="text" value={providerId} />
+      </fieldset>
 
-            <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onRefundClick}>
-                Refund PaymentId
-            </button>
-        </div>
-    );
+      <fieldset className="flex flex-col gap-y-1">
+        <label htmlFor="stripeWebhookCommand">Stripe Local Webhook Command (copy only)</label>
+        <input
+          id="stripeWebhookCommand"
+          readOnly
+          type="text"
+          value={providerId ? `stripe listen --forward-to localhost:3000/api/webhooks/stripe/${providerId}` : ""}
+        />
+      </fieldset>
+
+      <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onCheckoutClick}>
+        Proceed to stripe checkout
+      </button>
+
+      <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onFetchClick}>
+        Fetch product data
+      </button>
+
+      {((isActuallyLoading && fetchProduct.isLoading) || createCheckout.isLoading) && <div>Loading...</div>}
+
+      {fetchProduct.data && <pre>{JSON.stringify(fetchProduct.data, null, 4)}</pre>}
+
+      <fieldset className="flex flex-col gap-y-1">
+        <label htmlFor="paymentId">PaymentId</label>
+        <input id="paymentId" onChange={(e) => setPaymentId(e.target.value)} type="text" value={paymentId} />
+      </fieldset>
+
+      <button className="border-blue-7 hover:border-blue-8 rounded-md border p-2" onClick={onRefundClick}>
+        Refund PaymentId
+      </button>
+    </div>
+  );
 };
 
 export default PaymentTestPage;

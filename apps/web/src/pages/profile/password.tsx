@@ -6,9 +6,9 @@ import { type NextPageWithLayout } from "../_app";
 const PasswordPage: NextPageWithLayout = () => <div>Password</div>;
 
 PasswordPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export default PasswordPage;

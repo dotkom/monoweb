@@ -4,13 +4,13 @@ import { type GetServerSideProps } from "next";
 import { type FC } from "react";
 
 export interface CareerProps {
-    careers: Array<CareerAd>;
+  careers: Array<CareerAd>;
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const data = await fetchCareerAds();
+  const data = await fetchCareerAds();
 
-    return { props: { careers: data } };
+  return { props: { careers: data } };
 };
 
 const Career: FC<CareerProps> = (props: CareerProps) => <CareerView careers={props.careers} />;

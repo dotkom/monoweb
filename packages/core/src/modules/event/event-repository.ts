@@ -7,64 +7,64 @@ import { type Cursor, paginateQuery } from "../../utils/db-utils";
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data);
 
 export interface EventRepository {
-    create(data: EventWrite): Promise<Event | undefined>;
-    getAll(take: number, cursor?: Cursor): Promise<Array<Event>>;
-    getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>>;
-    getById(id: string): Promise<Event | undefined>;
-    update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>;
+  create(data: EventWrite): Promise<Event | undefined>;
+  getAll(take: number, cursor?: Cursor): Promise<Array<Event>>;
+  getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>>;
+  getById(id: string): Promise<Event | undefined>;
+  update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>;
 }
 
 export class EventRepositoryImpl implements EventRepository {
-    public constructor(private readonly db: Kysely<Database>) {}
+  public constructor(private readonly db: Kysely<Database>) {}
 
-    public async create(data: EventWrite): Promise<Event | undefined> {
-        const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow();
+  public async create(data: EventWrite): Promise<Event | undefined> {
+    const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow();
 
-        return mapToEvent(event);
+    return mapToEvent(event);
+  }
+
+  public async getAll(take: number, cursor?: Cursor): Promise<Array<Event>> {
+    let query = this.db.selectFrom("event").selectAll().limit(take);
+
+    if (cursor) {
+      query = paginateQuery(query, cursor);
+    } else {
+      query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
     }
 
-    public async getAll(take: number, cursor?: Cursor): Promise<Array<Event>> {
-        let query = this.db.selectFrom("event").selectAll().limit(take);
+    const events = await query.execute();
 
-        if (cursor) {
-            query = paginateQuery(query, cursor);
-        } else {
-            query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
-        }
+    return events.map(mapToEvent);
+  }
 
-        const events = await query.execute();
+  public async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>> {
+    let query = this.db.selectFrom("event").selectAll().where("committeeId", "=", committeeId).limit(take);
 
-        return events.map(mapToEvent);
+    if (cursor) {
+      query = paginateQuery(query, cursor);
+    } else {
+      query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
     }
 
-    public async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Array<Event>> {
-        let query = this.db.selectFrom("event").selectAll().where("committeeId", "=", committeeId).limit(take);
+    const events = await query.execute();
 
-        if (cursor) {
-            query = paginateQuery(query, cursor);
-        } else {
-            query = query.orderBy("createdAt", "desc").orderBy("id", "desc");
-        }
+    return events.map(mapToEvent);
+  }
 
-        const events = await query.execute();
+  public async getById(id: string): Promise<Event | undefined> {
+    const event = await this.db.selectFrom("event").selectAll().where("id", "=", id).executeTakeFirst();
 
-        return events.map(mapToEvent);
-    }
+    return event ? mapToEvent(event) : undefined;
+  }
 
-    public async getById(id: string): Promise<Event | undefined> {
-        const event = await this.db.selectFrom("event").selectAll().where("id", "=", id).executeTakeFirst();
+  public async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
+    const event = await this.db
+      .updateTable("event")
+      .set(data)
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirstOrThrow();
 
-        return event ? mapToEvent(event) : undefined;
-    }
-
-    public async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
-        const event = await this.db
-            .updateTable("event")
-            .set(data)
-            .where("id", "=", id)
-            .returningAll()
-            .executeTakeFirstOrThrow();
-
-        return mapToEvent(event);
-    }
+    return mapToEvent(event);
+  }
 }

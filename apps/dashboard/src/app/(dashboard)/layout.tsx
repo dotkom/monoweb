@@ -6,11 +6,11 @@ import { type PropsWithChildren } from "react";
 import { ApplicationShell } from "../ApplicationShell";
 
 export default async function DashboardLayout({ children }: PropsWithChildren) {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    if (session === null) {
-        redirect("/");
-    }
+  if (session === null) {
+    redirect("/");
+  }
 
-    return <ApplicationShell>{children}</ApplicationShell>;
+  return <ApplicationShell>{children}</ApplicationShell>;
 }

@@ -4,7 +4,7 @@ export default stripeHandler;
 
 // Required by stripe
 export const config = {
-    api: {
-        bodyParser: false,
-    },
+  api: {
+    bodyParser: false,
+  },
 };

@@ -6,9 +6,9 @@ import { type NextPageWithLayout } from "../_app";
 const PenaltiesPage: NextPageWithLayout = () => <div>Penalties</div>;
 
 PenaltiesPage.getLayout = (page) => (
-    <MainLayout>
-        <ProfileLayout>{page}</ProfileLayout>
-    </MainLayout>
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
 );
 
 export default PenaltiesPage;

@@ -1,25 +1,25 @@
 @keyframes wave {
-    from {
-        transform: translateX(0px);
-    }
+  from {
+    transform: translateX(0px);
+  }
 
-    to {
-        transform: translateX(-176px);
-    }
+  to {
+    transform: translateX(-176px);
+  }
 }
 
 .parallax :nth-child(0) {
-    animation: wave 24s linear infinite;
+  animation: wave 24s linear infinite;
 }
 .parallax :nth-child(1) {
-    animation: wave 22s linear infinite;
+  animation: wave 22s linear infinite;
 }
 .parallax :nth-child(2) {
-    animation: wave 20s linear infinite;
+  animation: wave 20s linear infinite;
 }
 .parallax :nth-child(3) {
-    animation: wave 18s linear infinite;
+  animation: wave 18s linear infinite;
 }
 .parallax :nth-child(4) {
-    animation: wave 16s linear infinite;
+  animation: wave 16s linear infinite;
 }

@@ -4,8 +4,8 @@ import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 // export API handler
 export default applyCorsMiddleware(
-    createNextApiHandler({
-        createContext,
-        router: appRouter,
-    })
+  createNextApiHandler({
+    createContext,
+    router: appRouter,
+  })
 );

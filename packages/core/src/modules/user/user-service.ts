@@ -1,10 +1,10 @@
 import {
-    type NotificationPermissions,
-    type NotificationPermissionsWrite,
-    type PrivacyPermissions,
-    type PrivacyPermissionsWrite,
-    type User,
-    type UserWrite,
+  type NotificationPermissions,
+  type NotificationPermissionsWrite,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserWrite,
 } from "@dotkomonline/types";
 
 import { NotFoundError } from "../../errors/errors";
@@ -13,88 +13,88 @@ import { type PrivacyPermissionsRepository } from "./privacy-permissions-reposit
 import { type UserRepository } from "./user-repository";
 
 export interface UserService {
-    createUser(input: UserWrite): Promise<User>;
-    getAllUsers(limit: number): Promise<Array<User>>;
-    getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>;
-    getUser(id: User["id"]): Promise<User | undefined>;
-    updatePrivacyPermissionsForUserId(
-        id: string,
-        data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-    ): Promise<PrivacyPermissions>;
+  createUser(input: UserWrite): Promise<User>;
+  getAllUsers(limit: number): Promise<Array<User>>;
+  getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>;
+  getUser(id: User["id"]): Promise<User | undefined>;
+  updatePrivacyPermissionsForUserId(
+    id: string,
+    data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
+  ): Promise<PrivacyPermissions>;
 }
 
 export class UserServiceImpl implements UserService {
-    public constructor(
-        private readonly userRepository: UserRepository,
-        private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-        private readonly notificationPermissionsRepository: NotificationPermissionsRepository
-    ) {}
+  public constructor(
+    private readonly userRepository: UserRepository,
+    private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
+  ) {}
 
-    public async createUser(input: UserWrite) {
-        const res = await this.userRepository.create(input);
+  public async createUser(input: UserWrite) {
+    const res = await this.userRepository.create(input);
 
-        return res;
+    return res;
+  }
+
+  public async getAllUsers(limit: number) {
+    const users = await this.userRepository.getAll(limit);
+
+    return users;
+  }
+
+  public async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
+    let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id);
+
+    if (!notificationPermissions) {
+      notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id });
     }
 
-    public async getAllUsers(limit: number) {
-        const users = await this.userRepository.getAll(limit);
+    return notificationPermissions;
+  }
 
-        return users;
+  public async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
+    let privacyPermissions = await this.privacyPermissionsRepository.getByUserId(id);
+
+    if (!privacyPermissions) {
+      privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id });
     }
 
-    public async getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions> {
-        let notificationPermissions = await this.notificationPermissionsRepository.getByUserId(id);
+    return privacyPermissions;
+  }
 
-        if (!notificationPermissions) {
-            notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id });
-        }
+  public async getUser(id: User["id"]) {
+    const user = await this.userRepository.getById(id);
 
-        return notificationPermissions;
+    if (!user) {
+      throw new NotFoundError(`User with ID:${id} not found`);
     }
 
-    public async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
-        let privacyPermissions = await this.privacyPermissionsRepository.getByUserId(id);
+    return user;
+  }
 
-        if (!privacyPermissions) {
-            privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id });
-        }
+  public async updateNotificationPermissionsForUserId(
+    id: string,
+    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
+  ): Promise<NotificationPermissions> {
+    let notificationPermissions = await this.notificationPermissionsRepository.update(id, data);
 
-        return privacyPermissions;
+    if (!notificationPermissions) {
+      notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id, ...data });
     }
 
-    public async getUser(id: User["id"]) {
-        const user = await this.userRepository.getById(id);
+    return notificationPermissions;
+  }
 
-        if (!user) {
-            throw new NotFoundError(`User with ID:${id} not found`);
-        }
+  public async updatePrivacyPermissionsForUserId(
+    id: string,
+    data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
+  ): Promise<PrivacyPermissions> {
+    let privacyPermissions = await this.privacyPermissionsRepository.update(id, data);
 
-        return user;
+    if (!privacyPermissions) {
+      privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id, ...data });
     }
 
-    public async updateNotificationPermissionsForUserId(
-        id: string,
-        data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-    ): Promise<NotificationPermissions> {
-        let notificationPermissions = await this.notificationPermissionsRepository.update(id, data);
-
-        if (!notificationPermissions) {
-            notificationPermissions = await this.notificationPermissionsRepository.create({ userId: id, ...data });
-        }
-
-        return notificationPermissions;
-    }
-
-    public async updatePrivacyPermissionsForUserId(
-        id: string,
-        data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-    ): Promise<PrivacyPermissions> {
-        let privacyPermissions = await this.privacyPermissionsRepository.update(id, data);
-
-        if (!privacyPermissions) {
-            privacyPermissions = await this.privacyPermissionsRepository.create({ userId: id, ...data });
-        }
-
-        return privacyPermissions;
-    }
+    return privacyPermissions;
+  }
 }

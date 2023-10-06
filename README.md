@@ -13,7 +13,7 @@ https://owdocs.vercel.app
 3. `docker-compose up` to start databases
 4. The command will output a client id, set this in apps/web/.env. Copy the example from .env.example
 5. `pnpm dev` to run the project
-    - You can run `pnpm dev --filter=<project>` to run a certain project from root, such as `pnpm dev --filter=web`
+   - You can run `pnpm dev --filter=<project>` to run a certain project from root, such as `pnpm dev --filter=web`
 
 ## Environment
 

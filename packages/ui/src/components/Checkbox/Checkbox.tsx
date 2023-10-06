@@ -6,34 +6,34 @@ import { Icon } from "../Icon";
 import { Label } from "../Label";
 
 export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {
-    label?: string;
+  label?: string;
 }
 
 export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(
-    ({ className, label, ...props }, ref) => (
-        <div className="flex items-center">
-            <CheckboxPrimitive.Root
-                className={cn(
-                    "border-slate-7 focus:ring-blue-7  peer h-6 w-6 shrink-0 rounded-sm border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ",
-                    "hover:border-slate-8 transition-colors",
-                    "rdx-state-checked:bg-blue- rdx-state-checked:hover:bg-blue-6",
-                    className
-                )}
-                ref={ref}
-                {...props}
-            >
-                <CheckboxPrimitive.Indicator className={cn("grid w-full place-content-center")}>
-                    {props.checked === true && <Icon icon="tabler:check" width={21} />}
-                    {props.checked === "indeterminate" && <Icon icon="tabler:minus" width={21} />}
-                </CheckboxPrimitive.Indicator>
-            </CheckboxPrimitive.Root>
-            {label && (
-                <Label className="pl-3" htmlFor={props.id}>
-                    {label}
-                </Label>
-            )}
-        </div>
-    )
+  ({ className, label, ...props }, ref) => (
+    <div className="flex items-center">
+      <CheckboxPrimitive.Root
+        className={cn(
+          "border-slate-7 focus:ring-blue-7  peer h-6 w-6 shrink-0 rounded-sm border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ",
+          "hover:border-slate-8 transition-colors",
+          "rdx-state-checked:bg-blue- rdx-state-checked:hover:bg-blue-6",
+          className
+        )}
+        ref={ref}
+        {...props}
+      >
+        <CheckboxPrimitive.Indicator className={cn("grid w-full place-content-center")}>
+          {props.checked === true && <Icon icon="tabler:check" width={21} />}
+          {props.checked === "indeterminate" && <Icon icon="tabler:minus" width={21} />}
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
+      {label && (
+        <Label className="pl-3" htmlFor={props.id}>
+          {label}
+        </Label>
+      )}
+    </div>
+  )
 );
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 

@@ -8,60 +8,60 @@ import { useRouter } from "next/router";
 import { type FC } from "react";
 
 const CommitteePage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-    const router = useRouter();
-    const { id } = router.query as { id: string };
+  const router = useRouter();
+  const { id } = router.query as { id: string };
 
-    const { data: eventsData, isLoading: isLoadingEvents } = trpc.event.allByCommittee.useQuery({ id });
+  const { data: eventsData, isLoading: isLoadingEvents } = trpc.event.allByCommittee.useQuery({ id });
 
-    return <CommitteeView committee={props.committee} events={eventsData} isLoadingEvents={isLoadingEvents} />;
+  return <CommitteeView committee={props.committee} events={eventsData} isLoadingEvents={isLoadingEvents} />;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const ssg = createServerSideHelpers({
-        ctx: await createContextInner({
-            auth: null,
-        }),
-        router: appRouter,
-        transformer,
-    });
+  const ssg = createServerSideHelpers({
+    ctx: await createContextInner({
+      auth: null,
+    }),
+    router: appRouter,
+    transformer,
+  });
 
-    const companies = await ssg.committee.all.fetch();
+  const companies = await ssg.committee.all.fetch();
 
-    return {
-        fallback: "blocking",
-        paths: companies.map(({ id }) => ({ params: { id } })),
-    };
+  return {
+    fallback: "blocking",
+    paths: companies.map(({ id }) => ({ params: { id } })),
+  };
 };
 
 export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
-    const ssg = createServerSideHelpers({
-        ctx: await createContextInner({
-            auth: null,
-        }),
-        router: appRouter,
-        transformer,
-    });
+  const ssg = createServerSideHelpers({
+    ctx: await createContextInner({
+      auth: null,
+    }),
+    router: appRouter,
+    transformer,
+  });
 
-    const id = ctx.params?.id;
+  const id = ctx.params?.id;
 
-    if (!id) {
-        return { notFound: true };
-    }
+  if (!id) {
+    return { notFound: true };
+  }
 
-    let committee: Committee;
+  let committee: Committee;
 
-    try {
-        committee = await ssg.committee.get.fetch(id);
-    } catch (e) {
-        return { notFound: true };
-    }
+  try {
+    committee = await ssg.committee.get.fetch(id);
+  } catch (e) {
+    return { notFound: true };
+  }
 
-    return {
-        props: {
-            committee,
-        },
-        revalidate: 86400,
-    };
+  return {
+    props: {
+      committee,
+    },
+    revalidate: 86400,
+  };
 };
 
 export default CommitteePage;
