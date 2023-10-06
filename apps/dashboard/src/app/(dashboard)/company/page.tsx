@@ -25,7 +25,7 @@ import { CompanyCreationModal } from "./create-modal"
 
 export default function CompanyPage() {
   const { data: companies = [], isLoading: isCompaniesLoading } = trpc.company.all.useQuery({ take: 50 })
-  const [isCreationOpen, setCreationOpen] = useState(false)
+  const [isCreationOpen, setIsCreationOpen] = useState(false)
 
   const columnHelper = createColumnHelper<Company>()
   const columns = useMemo(
@@ -85,7 +85,7 @@ export default function CompanyPage() {
           </Table>
         </Card>
         <Group justify="space-between">
-          <Button onClick={() => setCreationOpen(true)}>Opprett bedrift</Button>
+          <Button onClick={() => setIsCreationOpen(true)}>Opprett bedrift</Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />
@@ -96,7 +96,7 @@ export default function CompanyPage() {
           </ButtonGroup>
         </Group>
 
-        {isCreationOpen && <CompanyCreationModal close={() => setCreationOpen(false)} />}
+        {isCreationOpen && <CompanyCreationModal close={() => setIsCreationOpen(false)} />}
       </Stack>
     </Skeleton>
   )

@@ -1,10 +1,9 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
 import { Database } from "@dotkomonline/db"
 import { Company, CompanySchema, CompanyWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
+import { Cursor, paginateQuery } from "../../utils/db-utils"
 
 export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
-  console.log(payload)
   return CompanySchema.parse(payload)
 }
 

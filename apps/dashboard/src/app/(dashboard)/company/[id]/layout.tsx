@@ -1,12 +1,12 @@
 "use client"
 
-import { PropsWithChildren } from "react"
-import { CompanyDetailsContext } from "./provider"
-import { trpc } from "../../../../utils/trpc"
 import { Loader } from "@mantine/core"
+import { PropsWithChildren, useCallback } from "react"
+import { trpc } from "../../../../utils/trpc"
+import { CompanyDetailsContext } from "./provider"
 
 export default function CompanyDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = trpc.company.get.useQuery(params.id)
+  const { data, isLoading } = useCallback(() => trpc.company.get.useQuery(params.id), [params.id])()
   return (
     <>
       {isLoading || !data ? (

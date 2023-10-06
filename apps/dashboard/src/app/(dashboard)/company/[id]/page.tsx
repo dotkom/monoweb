@@ -1,12 +1,11 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
-import { FC } from "react"
-import { EventEditCard } from "./edit-card"
+import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { useCompanyDetailsContext } from "./provider"
+import { EventEditCard } from "./edit-card"
 import { CompanyEventsPage } from "./events-page"
+import { useCompanyDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
