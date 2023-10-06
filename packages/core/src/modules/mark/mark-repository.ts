@@ -38,7 +38,7 @@ export class MarkRepositoryImpl implements MarkRepository {
   async create(markInsert: MarkWrite): Promise<Mark | undefined> {
     const mark = await this.db
       .insertInto("mark")
-      .values({ ...markInsert })
+      .values({ ...markInsert, createdAt: new Date() })
       .returningAll()
       .executeTakeFirst()
     return mark ? mapToMark(mark) : undefined
