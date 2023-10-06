@@ -18,7 +18,7 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
   const icons = [{ icon: "material-symbols:mail", text: email, href: `mailto:${email}` }]
 
   return (
-    <EntryDetailLayout title={name} color={"BLUE"}>
+    <EntryDetailLayout type={null} title={name} color={"BLUE"}>
       <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
         <div className="border-blue-7 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
           {image && (
