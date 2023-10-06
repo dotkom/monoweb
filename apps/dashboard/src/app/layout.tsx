@@ -1,9 +1,8 @@
 import type { PropsWithChildren } from "react"
 import { AuthProvider } from "./AuthProvider"
 import { QueryProvider } from "./QueryProvider"
-import { ColorSchemeScript, MantineProvider } from "@mantine/core"
-import { Notifications } from "@mantine/notifications"
-import { ModalProvider } from "./ModalProvider"
+import { ColorSchemeScript } from "@mantine/core"
+import { MantineProvider } from "./MantineProvider"
 import "@mantine/core/styles.css"
 import "@mantine/notifications/styles.css"
 import "@mantine/dates/styles.css"
@@ -17,10 +16,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body>
         <AuthProvider>
           <QueryProvider>
-            <MantineProvider>
-              <Notifications />
-              <ModalProvider>{children}</ModalProvider>
-            </MantineProvider>
+            <MantineProvider>{children}</MantineProvider>
           </QueryProvider>
         </AuthProvider>
       </body>
