@@ -1,40 +1,40 @@
 import { type Generated } from "kysely";
 
 export interface UserTable {
-    id: Generated<string>;
-    createdAt: Generated<Date>;
     cognitoSub: string;
+    createdAt: Generated<Date>;
+    id: Generated<string>;
 }
 
 export interface SessionTable {
-    id: Generated<string>;
     createdAt: Generated<Date>;
-    sessionToken: string;
     expires: Date;
+    id: Generated<string>;
+    sessionToken: string;
     userId: string;
 }
 
 export interface VerificationTokenTable {
+    expires: Date;
     identifier: string;
     token: string;
-    expires: Date;
 }
 
 export interface AccountTable {
-    id: Generated<string>;
+    accessToken: null | string;
     createdAt: Generated<Date>;
-    type: string;
+    expiresAt: null | number;
+    id: Generated<string>;
+    idToken: null | string;
+    oauthToken: null | string;
+    oauthTokenSecret: null | string;
     provider: string;
     providerAccountId: string;
-    refreshToken: string | null;
-    accessToken: string | null;
-    expiresAt: number | null;
-    tokenType: string | null;
-    scope: string | null;
-    idToken: string | null;
-    sessionState: string | null;
-    oauthTokenSecret: string | null;
-    oauthToken: string | null;
+    refreshToken: null | string;
+    scope: null | string;
+    sessionState: null | string;
+    tokenType: null | string;
+    type: string;
 
     userId: string;
 }

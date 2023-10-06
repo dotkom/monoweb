@@ -1,8 +1,8 @@
 import { type SchemaModule, sql } from "kysely";
 
 interface DefaultOptions {
-    id?: boolean;
     createdAt?: boolean;
+    id?: boolean;
     updatedAt?: boolean;
 }
 

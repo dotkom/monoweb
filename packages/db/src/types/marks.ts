@@ -1,13 +1,13 @@
 import { type Generated } from "kysely";
 
 export interface MarkTable {
-    id: Generated<string>;
-    createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    title: string;
     category: string;
+    createdAt: Generated<Date>;
     details: string;
     duration: number;
+    id: Generated<string>;
+    title: string;
+    updatedAt: Generated<Date>;
 }
 
 export interface PersonalMarkTable {

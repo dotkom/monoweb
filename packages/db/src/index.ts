@@ -1,7 +1,8 @@
-import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
 import { env } from "@dotkomonline/env";
-import { type Database } from "./types";
+import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
 import pg from "pg";
+
+import { type Database } from "./types";
 
 export * from "./types";
 export { CockroachDialect } from "./cockroach";

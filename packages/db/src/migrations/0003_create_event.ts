@@ -5,7 +5,7 @@ import { createTableWithDefaults } from "../utils";
 export async function up(db: Kysely<any>) {
     await db.schema.createType("event_status").asEnum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]).execute();
 
-    await createTableWithDefaults("event", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    await createTableWithDefaults("event", { createdAt: true, id: true, updatedAt: true }, db.schema)
         .addColumn("title", "varchar(255)", (col) => col.notNull())
         .addColumn("start", "timestamptz", (col) => col.notNull())
         .addColumn("end", "timestamptz", (col) => col.notNull())
@@ -18,7 +18,7 @@ export async function up(db: Kysely<any>) {
         .addColumn("committee_id", "uuid", (col) => col.references("committee.id").onDelete("set null"))
         .execute();
 
-    await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    await createTableWithDefaults("attendance", { createdAt: true, id: true, updatedAt: true }, db.schema)
         .addColumn("start", "timestamptz", (col) => col.notNull())
         .addColumn("end", "timestamptz", (col) => col.notNull())
         .addColumn("deregister_deadline", "timestamptz", (col) => col.notNull())
@@ -26,7 +26,7 @@ export async function up(db: Kysely<any>) {
         .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade"))
         .execute();
 
-    await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    await createTableWithDefaults("attendee", { createdAt: true, id: true, updatedAt: true }, db.schema)
         .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade"))
         .addColumn("attendance_id", "uuid", (col) => col.references("attendance.id").onDelete("cascade"))
         .execute();

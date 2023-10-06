@@ -1,15 +1,15 @@
 import { type Generated } from "kysely";
 
 export interface NotificationPermissionsTable {
-    createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    userId: string;
     applications: boolean;
-    newArticles: boolean;
-    standardNotifications: boolean;
+    createdAt: Generated<Date>;
     groupMessages: boolean;
     markRulesUpdates: boolean;
+    newArticles: boolean;
     receipts: boolean;
     registrationByAdministrator: boolean;
     registrationStart: boolean;
+    standardNotifications: boolean;
+    updatedAt: Generated<Date>;
+    userId: string;
 }

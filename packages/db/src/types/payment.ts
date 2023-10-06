@@ -2,45 +2,45 @@ import { type Generated } from "kysely";
 
 type PaymentProvider = "STRIPE"; // include VIPPS later
 type ProductType = "EVENT"; // inlude WEBSHOP later
-type PaymentStatus = "UNPAID" | "PAID" | "REFUNDED";
+type PaymentStatus = "PAID" | "REFUNDED" | "UNPAID";
 
 export interface ProductTable {
-    id: Generated<string>;
-    createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    type: ProductType;
-    objectId: string | null;
     amount: number;
-    isRefundable: boolean;
-    refundRequiresApproval: boolean;
+    createdAt: Generated<Date>;
     deletedAt: Date | null;
+    id: Generated<string>;
+    isRefundable: boolean;
+    objectId: null | string;
+    refundRequiresApproval: boolean;
+    type: ProductType;
+    updatedAt: Generated<Date>;
 }
 
 export interface PaymentTable {
-    id: Generated<string>;
     createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    productId: string;
-    userId: string;
+    id: Generated<string>;
     paymentProviderId: string;
+    paymentProviderOrderId: null | string;
     paymentProviderSessionId: string;
-    paymentProviderOrderId: string | null;
+    productId: string;
     status: PaymentStatus;
+    updatedAt: Generated<Date>;
+    userId: string;
 }
 
 export interface ProductPaymentProviderTable {
-    productId: string;
     paymentProvider: PaymentProvider;
     paymentProviderId: string; // client_id or public_key
+    productId: string;
 }
 
 export interface RefundRequestTable {
-    id: Generated<string>;
     createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
+    handledBy: null | string;
+    id: Generated<string>;
     paymentId: string;
-    userId: string;
     reason: string;
-    status: "PENDING" | "APPROVED" | "REJECTED";
-    handledBy: string | null;
+    status: "APPROVED" | "PENDING" | "REJECTED";
+    updatedAt: Generated<Date>;
+    userId: string;
 }

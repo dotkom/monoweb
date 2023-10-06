@@ -1,43 +1,43 @@
 import { type Generated } from "kysely";
 
-type EventStatus = "TBA" | "PUBLIC" | "NO_LIMIT" | "ATTENDANCE";
-type EventType = "SOCIAL" | "COMPANY" | "ACADEMIC" | "BEDPRES";
+type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA";
+type EventType = "ACADEMIC" | "BEDPRES" | "COMPANY" | "SOCIAL";
 
 export interface EventTable {
-    id: Generated<string>;
+    committeeId: null | string;
     createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    title: string;
-    start: Date;
+    description: null | string;
     end: Date;
-    status: EventStatus;
-    type: EventType;
+    id: Generated<string>;
+    imageUrl: null | string;
+    location: null | string;
     public: boolean;
-    description: string | null;
-    subtitle: string | null;
-    imageUrl: string | null;
-    location: string | null;
-    committeeId: string | null;
-    waitlist: string | null;
+    start: Date;
+    status: EventStatus;
+    subtitle: null | string;
+    title: string;
+    type: EventType;
+    updatedAt: Generated<Date>;
+    waitlist: null | string;
 }
 
 export interface AttendanceTable {
-    id: Generated<string>;
     createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    start: Date;
-    end: Date;
     deregisterDeadline: Date;
-    limit: number;
+    end: Date;
     eventId: string;
-    min: number;
+    id: Generated<string>;
+    limit: number;
     max: number;
+    min: number;
+    start: Date;
+    updatedAt: Generated<Date>;
 }
 
 export interface AttendeeTable {
-    id: Generated<string>;
+    attendanceId: string;
     createdAt: Generated<Date>;
+    id: Generated<string>;
     updatedAt: Generated<Date>;
     userId: string;
-    attendanceId: string;
 }

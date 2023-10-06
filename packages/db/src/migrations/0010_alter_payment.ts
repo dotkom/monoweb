@@ -1,4 +1,5 @@
 import { type Kysely, sql } from "kysely";
+
 import { createTableWithDefaults } from "../utils";
 
 export async function up(db: Kysely<any>) {
@@ -17,7 +18,7 @@ export async function up(db: Kysely<any>) {
 
     await db.schema.alterTable("payment").addColumn("payment_provider_order_id", "text").execute();
 
-    await createTableWithDefaults("refund_request", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    await createTableWithDefaults("refund_request", { createdAt: true, id: true, updatedAt: true }, db.schema)
         .addColumn("payment_id", "uuid", (col) => col.unique().references("payment.id").onDelete("cascade"))
         .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade"))
         .addColumn("reason", "text", (col) => col.notNull())

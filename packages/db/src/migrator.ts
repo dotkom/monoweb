@@ -9,7 +9,7 @@ export const createMigrator = (db: Kysely<Database>) =>
         db,
         provider: new FileMigrationProvider({
             fs,
-            path,
             migrationFolder: new URL("migrations", import.meta.url).pathname,
+            path,
         }),
     });

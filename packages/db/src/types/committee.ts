@@ -1,16 +1,16 @@
 import { type Generated } from "kysely";
 
 export interface CommitteeTable {
-    id: Generated<string>;
     createdAt: Generated<Date>;
-    updatedAt: Generated<Date>;
-    name: string;
     description: string;
-    email: string | null;
-    image: string | null;
+    email: null | string;
+    id: Generated<string>;
+    image: null | string;
+    name: string;
+    updatedAt: Generated<Date>;
 }
 
 export interface EventCommitteeTable {
-    eventId: string;
     committeeId: string;
+    eventId: string;
 }
