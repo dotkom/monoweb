@@ -31,7 +31,7 @@ Status.args = {
 }
 
 export const WithError: Story<TextareaProps> = Template.bind({})
-Error.args = {
+WithError.args = {
   ...Default.args,
   error:
     "A valid email address is required so that we can verify your GitHub installation. In the event that you cannot provide a valid email address, please contact support.",
