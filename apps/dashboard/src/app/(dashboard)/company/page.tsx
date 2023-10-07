@@ -81,7 +81,6 @@ export default function CompanyPage() {
         <Card withBorder>
           <Table>
             <TableThead>
-              <div>test test</div>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableTr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
