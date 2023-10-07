@@ -30,7 +30,7 @@ Status.args = {
   message: "This is a message",
 }
 
-export const Error: Story<TextareaProps> = Template.bind({})
+export const WithError: Story<TextareaProps> = Template.bind({})
 Error.args = {
   ...Default.args,
   error:
