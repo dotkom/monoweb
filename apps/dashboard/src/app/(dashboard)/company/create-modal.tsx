@@ -27,7 +27,6 @@ export const CompanyCreationModal: FC<CompanyCreationModalProps> = ({ close }) =
         title: "Feil oppsto",
         message: `En feil oppsto under opprettelse av arrangementet: ${err.toString()}.`,
       })
-      console.log(err)
     },
   })
   const FormComponent = useCompanyWriteForm({
@@ -36,7 +35,6 @@ export const CompanyCreationModal: FC<CompanyCreationModalProps> = ({ close }) =
         title: "Oppretter arrangement...",
         message: "Arrangementet blir opprettet, og du vil bli videresendt til arrangementsiden.",
       })
-      console.log(data)
       create.mutate(data)
       close()
     },

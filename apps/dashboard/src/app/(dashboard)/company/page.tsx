@@ -36,7 +36,7 @@ export default function CompanyPage() {
     }),
     columnHelper.accessor("email", {
       id: "email",
-      header: () => "Kontakte-post",
+      header: () => "Kontakt-e-post",
       cell: (info) => (
         <Anchor size="sm" href={`mailto:${info.getValue()}`}>
           {info.getValue()}
@@ -81,6 +81,7 @@ export default function CompanyPage() {
         <Card withBorder>
           <Table>
             <TableThead>
+              <div>test test</div>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableTr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
