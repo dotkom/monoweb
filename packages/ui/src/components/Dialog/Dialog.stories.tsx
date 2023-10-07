@@ -12,8 +12,7 @@ import {
 import { Button } from "../Button"
 
 export default {
-  title: "atoms/ModalDialog",
-  component: AlertDialog,
+  title: "ModalDialog",
 }
 
 export function AlertDialogDemo() {

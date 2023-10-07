@@ -1,48 +1,37 @@
-import { Alert } from "./Alert"
-import { StoryObj } from "@storybook/react"
+import { PropsWithChildren } from "react"
+import { Alert, AlertProps } from "./Alert"
+import type { Story, StoryDefault } from "@ladle/react"
 
 export default {
   title: "Alert",
-  component: Alert,
+} satisfies StoryDefault<PropsWithChildren<AlertProps>>
+
+const Template: Story<PropsWithChildren<AlertProps>> = (args) => <Alert {...args} />
+
+export const Info = Template.bind({})
+Info.args = {
+  status: "info",
+  title: "This is an informative alert",
+  children: "Hi! I'm some text. This might either be very good or very bad.",
 }
 
-type Story = StoryObj<typeof Alert>
-
-export const Info: Story = {
-  render: (args) => (
-    <div className="max-w-[400px]">
-      <Alert
-        {...args}
-        children="Something happened! You made a mistake and there is no going back, your data was lost forever!"
-      />
-    </div>
-  ),
-  args: {
-    status: "info",
-    title: "This is a very informative alert",
-  },
+export const Success = Template.bind({})
+Success.args = {
+  status: "success",
+  title: "This is an successful alert",
+  children: "Hi! I'm some text. This might either be very good or very bad.",
 }
 
-export const Success: Story = {
-  ...Info,
-  args: {
-    status: "success",
-    title: "This is a success message",
-  },
+export const Warning = Template.bind({})
+Warning.args = {
+  status: "info",
+  title: "This is an warning alert",
+  children: "Hi! I'm some text. This might either be very good or very bad.",
 }
 
-export const Warning: Story = {
-  ...Info,
-  args: {
-    status: "warning",
-    title: "This is a warning message",
-  },
-}
-
-export const Danger: Story = {
-  ...Info,
-  args: {
-    status: "danger",
-    title: "This is a danger message",
-  },
+export const Danger = Template.bind({})
+Danger.args = {
+  status: "danger",
+  title: "This is an danger alert",
+  children: "Hi! I'm some text. This might either be very good or very bad.",
 }

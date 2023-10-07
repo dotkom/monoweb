@@ -1,26 +1,27 @@
-import { ComponentStory } from "@storybook/react"
-import { PasswordInput } from "./Password"
+import type { Story } from "@ladle/react"
+import { PasswordInput, PasswordInputProps } from "./Password"
 
 export default {
-    title: "atoms/PasswordInput",
-    component: PasswordInput,
-  }
+  title: "PasswordInput",
+}
 
+const Template: Story<PasswordInputProps> = (args) => <PasswordInput {...args} />
 
-const TemplatePassword: ComponentStory<typeof PasswordInput> = (args) => {
-    return (
-      <div style={{ padding: "40px", maxWidth: "400px" }}>
-        <PasswordInput id="password" label="Password" withAsterisk {...args} />
-      </div>
-    )
-  }
+export const Default = Template.bind({})
 
+Default.args = {
+  label: "Password",
+  withAsterisk: true,
+  eyeColor: "default",
+}
 
+export const Password = Template.bind({})
+Password.args = { placeholder: "Pass your word", inputInfo: "At least one password in password", eyeColor: "gray" }
 
-
-
-export const Password = TemplatePassword.bind({})
-Password.args = { placeholder: "Pass your word", inputInfo: "At least one password in password", eyeColor: "gray"}
-
-export const PasswordWithErrormessage = TemplatePassword.bind({})
-PasswordWithErrormessage.args = {placeholder: "Type a password", inputInfo: "Must have at least one animecharacter in password", eyeColor: "gray", error: "Password too short"}
+export const PasswordWithErrormessage = Template.bind({})
+PasswordWithErrormessage.args = {
+  placeholder: "Type a password",
+  inputInfo: "Must have at least one animecharacter in password",
+  eyeColor: "gray",
+  error: "Password too short",
+}
