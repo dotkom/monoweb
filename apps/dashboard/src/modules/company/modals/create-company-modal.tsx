@@ -19,7 +19,7 @@ export const useCreateCompanyModal = () => {
   return () =>
     modals.openContextModal({
       modal: "company/create",
-      title: "Opprett ny bedrift",
+      title: "Registrer ny bedrift",
       innerProps: {},
     })
 }

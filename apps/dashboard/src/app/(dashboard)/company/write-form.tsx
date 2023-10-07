@@ -2,14 +2,8 @@ import { CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
 import { createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
-  name: "",
-  description: "",
-  phone: "",
-  email: "",
-  website: "",
-  location: "",
   type: "Consulting",
-  image: "",
+  image: null,
 }
 
 type UseCompanyWriteFormProps = {
@@ -20,7 +14,7 @@ type UseCompanyWriteFormProps = {
 
 export const useCompanyWriteForm = ({
   onSubmit,
-  label = "Opprett arrangement",
+  label = "Registrer ny bedrift",
   defaultValues = COMPANY_FORM_DEFAULT_VALUES,
 }: UseCompanyWriteFormProps) => {
   return useFormBuilder({
@@ -30,43 +24,48 @@ export const useCompanyWriteForm = ({
     label,
     fields: {
       name: createTextInput({
-        label: "Navn",
-        placeholder: "",
+        label: "Bedriftsnavn",
+        placeholder: "Bekk",
         withAsterisk: true,
       }),
       description: createTextareaInput({
         label: "Beskrivelse",
-        placeholder: "",
+        placeholder: "Bekk er et konsulentselskap fylt med action og moro!",
       }),
       phone: createTextInput({
-        label: "Telefon",
-        placeholder: "",
+        label: "Kontakttelefon",
+        placeholder: "+47 123 45 678",
+        type: "tel",
       }),
       email: createTextInput({
-        label: "Epost",
-        placeholder: "",
+        label: "Kontakt-e-post",
+        placeholder: "bekk@bekk.no",
+        type: "email",
+        withAsterisk: true,
       }),
       website: createTextInput({
         label: "Nettside",
-        placeholder: "",
+        placeholder: "https://bekk.no",
+        type: "url",
+        withAsterisk: true,
       }),
       location: createTextInput({
-        label: "Sted",
-        placeholder: "",
+        label: "Lokasjon",
+        placeholder: "Oslo",
       }),
       type: createSelectInput({
-        label: "Type",
-        placeholder: "",
+        label: "Bedriftstype",
+        placeholder: "Velg en",
+        withAsterisk: true,
         data: [
-          { label: "Konsulent", value: "Consulting" },
-          { label: "Forskning", value: "Research" },
-          { label: "Utvikling", value: "Development" },
-          { label: "Annet", value: "Other" },
+          { value: "Consulting", label: "Konsulentfirma" },
+          { value: "Research", label: "Forskning" },
+          { value: "Development", label: "In-house" },
+          { value: "Other", label: "Annet" },
         ],
       }),
       image: createTextInput({
-        label: "Bilde",
-        placeholder: "",
+        label: "Bildelenke til logo",
       }),
     },
   })
