@@ -1,20 +1,20 @@
 import { z } from "zod";
 
 export const MarkSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  title: z.string(),
   category: z.string(),
+  createdAt: z.date(),
   details: z.string(),
   duration: z.number(),
+  id: z.string().uuid(),
+  title: z.string(),
+  updatedAt: z.date(),
 });
 
 export type Mark = z.infer<typeof MarkSchema>;
 
 export const MarkWriteSchema = MarkSchema.partial({
-  id: true,
   createdAt: true,
+  id: true,
   updatedAt: true,
 });
 

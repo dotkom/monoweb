@@ -1,13 +1,13 @@
+import { db } from "./db";
 import { attendances } from "./fixtures/attendance";
 import { attendees } from "./fixtures/attendee";
 import { committees } from "./fixtures/committee";
 import { companies } from "./fixtures/company";
-import { db } from "./db";
-import { eventCompany } from "./fixtures/event-company";
 import { events } from "./fixtures/event";
+import { eventCompany } from "./fixtures/event-company";
 import { marks } from "./fixtures/mark";
-import { productPaymentProviders } from "./fixtures/product-payment-provider";
 import { products } from "./fixtures/product";
+import { productPaymentProviders } from "./fixtures/product-payment-provider";
 import { users } from "./fixtures/user";
 
 export const runFixtures = async () => {
@@ -29,14 +29,14 @@ export const runFixtures = async () => {
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
         createdAt: (eb) => eb.ref("excluded.createdAt"),
-        name: (eb) => eb.ref("excluded.name"),
         description: (eb) => eb.ref("excluded.description"),
-        phone: (eb) => eb.ref("excluded.phone"),
         email: (eb) => eb.ref("excluded.email"),
-        website: (eb) => eb.ref("excluded.website"),
-        location: (eb) => eb.ref("excluded.location"),
-        type: (eb) => eb.ref("excluded.type"),
         image: (eb) => eb.ref("excluded.image"),
+        location: (eb) => eb.ref("excluded.location"),
+        name: (eb) => eb.ref("excluded.name"),
+        phone: (eb) => eb.ref("excluded.phone"),
+        type: (eb) => eb.ref("excluded.type"),
+        website: (eb) => eb.ref("excluded.website"),
       })
     )
     .execute();
@@ -48,10 +48,10 @@ export const runFixtures = async () => {
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
         createdAt: (eb) => eb.ref("excluded.createdAt"),
-        name: (eb) => eb.ref("excluded.name"),
         description: (eb) => eb.ref("excluded.description"),
         email: (eb) => eb.ref("excluded.email"),
         image: (eb) => eb.ref("excluded.image"),
+        name: (eb) => eb.ref("excluded.name"),
       })
     )
     .execute();
@@ -62,19 +62,19 @@ export const runFixtures = async () => {
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
+        committeeId: (eb) => eb.ref("excluded.committeeId"),
         createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        title: (eb) => eb.ref("excluded.title"),
-        start: (eb) => eb.ref("excluded.start"),
-        end: (eb) => eb.ref("excluded.end"),
-        status: (eb) => eb.ref("excluded.status"),
-        type: (eb) => eb.ref("excluded.type"),
-        public: (eb) => eb.ref("excluded.public"),
         description: (eb) => eb.ref("excluded.description"),
-        subtitle: (eb) => eb.ref("excluded.subtitle"),
+        end: (eb) => eb.ref("excluded.end"),
         imageUrl: (eb) => eb.ref("excluded.imageUrl"),
         location: (eb) => eb.ref("excluded.location"),
-        committeeId: (eb) => eb.ref("excluded.committeeId"),
+        public: (eb) => eb.ref("excluded.public"),
+        start: (eb) => eb.ref("excluded.start"),
+        status: (eb) => eb.ref("excluded.status"),
+        subtitle: (eb) => eb.ref("excluded.subtitle"),
+        title: (eb) => eb.ref("excluded.title"),
+        type: (eb) => eb.ref("excluded.type"),
+        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
         waitlist: (eb) => eb.ref("excluded.waitlist"),
       })
     )
@@ -93,14 +93,14 @@ export const runFixtures = async () => {
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
         createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        start: (eb) => eb.ref("excluded.start"),
-        end: (eb) => eb.ref("excluded.end"),
         deregisterDeadline: (eb) => eb.ref("excluded.deregisterDeadline"),
-        limit: (eb) => eb.ref("excluded.limit"),
+        end: (eb) => eb.ref("excluded.end"),
         eventId: (eb) => eb.ref("excluded.eventId"),
-        min: (eb) => eb.ref("excluded.min"),
+        limit: (eb) => eb.ref("excluded.limit"),
         max: (eb) => eb.ref("excluded.max"),
+        min: (eb) => eb.ref("excluded.min"),
+        start: (eb) => eb.ref("excluded.start"),
+        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
       })
     )
     .execute();
@@ -111,10 +111,10 @@ export const runFixtures = async () => {
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
+        attendanceId: (eb) => eb.ref("excluded.attendanceId"),
         createdAt: (eb) => eb.ref("excluded.createdAt"),
         updatedAt: (eb) => eb.ref("excluded.updatedAt"),
         userId: (eb) => eb.ref("excluded.userId"),
-        attendanceId: (eb) => eb.ref("excluded.attendanceId"),
       })
     )
     .execute();
@@ -125,12 +125,12 @@ export const runFixtures = async () => {
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        title: (eb) => eb.ref("excluded.title"),
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
         category: (eb) => eb.ref("excluded.category"),
+        createdAt: (eb) => eb.ref("excluded.createdAt"),
         details: (eb) => eb.ref("excluded.details"),
         duration: (eb) => eb.ref("excluded.duration"),
+        title: (eb) => eb.ref("excluded.title"),
+        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
       })
     )
     .execute();
@@ -141,14 +141,14 @@ export const runFixtures = async () => {
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        type: (eb) => eb.ref("excluded.type"),
-        objectId: (eb) => eb.ref("excluded.objectId"),
         amount: (eb) => eb.ref("excluded.amount"),
+        createdAt: (eb) => eb.ref("excluded.createdAt"),
         deletedAt: (eb) => eb.ref("excluded.deletedAt"),
         isRefundable: (eb) => eb.ref("excluded.isRefundable"),
+        objectId: (eb) => eb.ref("excluded.objectId"),
         refundRequiresApproval: (eb) => eb.ref("excluded.refundRequiresApproval"),
+        type: (eb) => eb.ref("excluded.type"),
+        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
       })
     )
     .execute();

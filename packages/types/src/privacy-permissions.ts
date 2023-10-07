@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const PrivacyPermissionsSchema = z.object({
-  userId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  profileVisible: z.boolean(),
-  usernameVisible: z.boolean(),
-  emailVisible: z.boolean(),
-  phoneVisible: z.boolean(),
   addressVisible: z.boolean(),
   attendanceVisible: z.boolean(),
+  createdAt: z.date(),
+  emailVisible: z.boolean(),
+  phoneVisible: z.boolean(),
+  profileVisible: z.boolean(),
+  updatedAt: z.date(),
+  userId: z.string(),
+  usernameVisible: z.boolean(),
 });
 
 export type PrivacyPermissions = z.infer<typeof PrivacyPermissionsSchema>;

@@ -4,15 +4,15 @@ import CognitoProvider from "next-auth/providers/cognito";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: User;
     id: string;
+    user: User;
   }
 
   interface User extends DefaultUser {
-    id: string;
-    name: string;
     email: string;
+    id: string;
     image?: string;
+    name: string;
   }
 }
 
@@ -27,6 +27,15 @@ export const getAuthOptions = ({
   cognitoClientSecret,
   cognitoIssuer,
 }: AuthOptions): NextAuthOptions => ({
+  callbacks: {
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
+
+      return session;
+    },
+  },
   providers: [
     CognitoProvider({
       clientId: cognitoClientId,
@@ -37,24 +46,15 @@ export const getAuthOptions = ({
         const name = `${profile.given_name} ${middleName} ${profile.family_name}`;
 
         return {
-          id: profile.sub,
-          name,
           email: profile.email,
+          id: profile.sub,
           image: profile.picture ?? undefined,
+          name,
         };
       },
     }),
   ],
   session: {
     strategy: "jwt",
-  },
-  callbacks: {
-    async session({ session, token }) {
-      if (token.sub) {
-        session.user.id = token.sub;
-      }
-
-      return session;
-    },
   },
 });

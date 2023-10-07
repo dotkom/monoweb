@@ -1,8 +1,9 @@
-import { type NextApiRequest, type NextApiResponse } from "next";
+import type Stripe from "stripe";
 
 import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core";
 import { kysely } from "@dotkomonline/db";
-import type Stripe from "stripe";
+import { type NextApiRequest, type NextApiResponse } from "next";
+
 import { bufferRequest } from "../request-utils";
 
 export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -26,6 +27,7 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   let event: Stripe.Event;
+
   try {
     const body = await bufferRequest(req);
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
@@ -45,10 +47,14 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
     switch (event.type.split(".").at(-1)) {
       case "completed":
         await ctx.paymentService.fullfillStripeCheckoutSession(sessionId, intentId);
+
         break;
+
       case "expired":
         await ctx.paymentService.expireStripeCheckoutSession(sessionId);
+
         break;
+
       default:
         // console.log(`Unhandled event type: ${event.type}`)
         break;

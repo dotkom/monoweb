@@ -1,8 +1,8 @@
-import { Argument, program } from "commander";
-
 import { createMigrator } from "@dotkomonline/db/src/migrator";
 import { getLogger } from "@dotkomonline/logger";
+import { Argument, program } from "commander";
 import { type MigrationResultSet } from "kysely";
+
 import { db } from "./db";
 
 export const logger = getLogger("migrator");
@@ -18,7 +18,7 @@ program
   )
   .option("-s, --with-seed", "Seed the database with fake data", false)
   .option("-f, --with-fixtures", "Add predictable data to the database", false)
-  .action(async (name: "up" | "down" | "down-all" | "latest", option) => {
+  .action(async (name: "down" | "down-all" | "latest" | "up", option) => {
     const migrator = createMigrator(db);
     let res: MigrationResultSet;
 
@@ -27,11 +27,13 @@ program
     switch (name) {
       case "up": {
         res = await migrator.migrateUp();
+
         break;
       }
 
       case "down": {
         res = await migrator.migrateDown();
+
         break;
       }
 
@@ -58,6 +60,7 @@ program
 
       case "latest": {
         res = await migrator.migrateToLatest();
+
         break;
       }
     }

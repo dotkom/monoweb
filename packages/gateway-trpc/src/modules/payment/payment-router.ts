@@ -1,27 +1,25 @@
-import { productRouter } from "./product-router";
-import { protectedProcedure } from "../../trpc";
-import { refundRequestRouter } from "./refund-request-router";
-import { t } from "../../trpc";
-import { z } from "zod";
 import { PaginateInputSchema } from "@dotkomonline/core";
+import { z } from "zod";
+
+import { protectedProcedure } from "../../trpc";
+import { t } from "../../trpc";
+import { productRouter } from "./product-router";
+import { refundRequestRouter } from "./refund-request-router";
 
 export const paymentRouter = t.router({
-  product: productRouter,
-  refundRequest: refundRequestRouter,
-  getPaymentProviders: protectedProcedure.query(({ ctx }) => ctx.paymentService.getPaymentProviders()),
   all: protectedProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.paymentService.getPayments(input.take, input.cursor)),
+    .query(async ({ ctx, input }) => ctx.paymentService.getPayments(input.take, input.cursor)),
   createStripeCheckoutSession: protectedProcedure
     .input(
       z.object({
+        cancelRedirectUrl: z.string().url(),
         productId: z.string().uuid(),
         stripePublicKey: z.string(),
         successRedirectUrl: z.string().url(),
-        cancelRedirectUrl: z.string().url(),
       })
     )
-    .mutation(async ({ input, ctx }) =>
+    .mutation(async ({ ctx, input }) =>
       ctx.paymentService.createStripeCheckoutSessionForProductId(
         input.productId,
         input.stripePublicKey,
@@ -30,11 +28,14 @@ export const paymentRouter = t.router({
         ctx.auth.userId
       )
     ),
+  getPaymentProviders: protectedProcedure.query(({ ctx }) => ctx.paymentService.getPaymentProviders()),
+  product: productRouter,
   refundPayment: protectedProcedure
     .input(
       z.object({
         paymentId: z.string().uuid(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.paymentService.refundPaymentById(input.paymentId)),
+    .mutation(async ({ ctx, input }) => ctx.paymentService.refundPaymentById(input.paymentId)),
+  refundRequest: refundRequestRouter,
 });

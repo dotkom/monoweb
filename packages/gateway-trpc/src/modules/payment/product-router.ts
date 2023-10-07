@@ -1,43 +1,43 @@
-import { ProductPaymentProviderWriteSchema, ProductWriteSchema } from "@dotkomonline/types";
-import { protectedProcedure, t } from "../../trpc";
-
 import { PaginateInputSchema } from "@dotkomonline/core";
+import { ProductPaymentProviderWriteSchema, ProductWriteSchema } from "@dotkomonline/types";
 import { z } from "zod";
 
+import { protectedProcedure, t } from "../../trpc";
+
 export const productRouter = t.router({
-  create: protectedProcedure
-    .input(ProductWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.productService.createProduct(input)),
-  get: protectedProcedure
-    .input(z.string().uuid())
-    .query(async ({ input, ctx }) => ctx.productService.getProductById(input)),
-  all: protectedProcedure
-    .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.productService.getProducts(input.take, input.cursor)),
   addPaymentProvider: protectedProcedure
     .input(ProductPaymentProviderWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.productPaymentProviderService.addPaymentProvider(input)),
+    .mutation(async ({ ctx, input }) => ctx.productPaymentProviderService.addPaymentProvider(input)),
+  all: protectedProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ ctx, input }) => ctx.productService.getProducts(input.take, input.cursor)),
+  create: protectedProcedure
+    .input(ProductWriteSchema)
+    .mutation(async ({ ctx, input }) => ctx.productService.createProduct(input)),
   deletePaymentProvider: protectedProcedure
     .input(
       z.object({
-        productId: z.string().uuid(),
         paymentProviderId: z.string(),
+        productId: z.string().uuid(),
       })
     )
-    .mutation(async ({ input, ctx }) =>
+    .mutation(async ({ ctx, input }) =>
       ctx.productPaymentProviderService.deletePaymentProvider(input.productId, input.paymentProviderId)
     ),
+  get: protectedProcedure
+    .input(z.string().uuid())
+    .query(async ({ ctx, input }) => ctx.productService.getProductById(input)),
   getPaymentProvidersByProductId: protectedProcedure
     .input(z.string().uuid())
-    .query(async ({ input, ctx }) => ctx.productPaymentProviderService.getAllByProductId(input)),
+    .query(async ({ ctx, input }) => ctx.productPaymentProviderService.getAllByProductId(input)),
   hasPaymentProviderId: protectedProcedure
     .input(
       z.object({
-        productId: z.string().uuid(),
         paymentProviderId: z.string(),
+        productId: z.string().uuid(),
       })
     )
-    .query(async ({ input, ctx }) =>
+    .query(async ({ ctx, input }) =>
       ctx.productPaymentProviderService.productHasPaymentProviderId(input.productId, input.paymentProviderId)
     ),
 });
