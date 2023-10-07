@@ -20,7 +20,7 @@ const SIDEBAR_LINKS = [
     slug: "event",
     component: CompanyEventsPage,
   },
-]
+] as const
 
 export default function CompanyDetailsPage() {
   const { company } = useCompanyDetailsContext()
