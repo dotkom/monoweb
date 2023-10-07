@@ -1,7 +1,7 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { PropsWithChildren, useCallback } from "react"
+import { PropsWithChildren } from "react"
 import { trpc } from "../../../../utils/trpc"
 import { CompanyDetailsContext } from "./provider"
 

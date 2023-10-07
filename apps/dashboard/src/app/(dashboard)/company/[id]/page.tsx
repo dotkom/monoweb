@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { EventEditCard } from "./edit-card"
+import { CompanyEditCard } from "./edit-card"
 import { CompanyEventsPage } from "./events-page"
 import { useCompanyDetailsContext } from "./provider"
 
@@ -12,7 +12,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:building-warehouse",
     label: "Info",
     slug: "info",
-    component: EventEditCard,
+    component: CompanyEditCard,
   },
   {
     icon: "tabler:building-warehouse",

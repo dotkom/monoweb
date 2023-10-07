@@ -1,6 +1,7 @@
 "use client"
 
-import { trpc } from "../../../utils/trpc"
+import { Company } from "@dotkomonline/types"
+import { Icon } from "@iconify/react"
 import {
   Anchor,
   Button,
@@ -17,41 +18,58 @@ import {
   TableTr,
 } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { Company } from "@dotkomonline/types"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
+import { useCreateCompanyModal } from "src/modules/company/modals/create-company-modal"
+import { useCompanyAllQuery } from "src/modules/company/queries/use-company-all-query"
 import { formatDate } from "../../../utils/format"
-import { Icon } from "@iconify/react"
-import { CompanyCreationModal } from "./create-modal"
+
+import { CompanyName } from "../../../components/molecules/company-name/company-name"
 
 export default function CompanyPage() {
-  const { data: companies = [], isLoading: isCompaniesLoading } = trpc.company.all.useQuery({ take: 50 })
-  const [isCreationOpen, setIsCreationOpen] = useState(false)
+  const { companies, isLoading: isCompaniesLoading } = useCompanyAllQuery()
+  const open = useCreateCompanyModal()
 
   const columnHelper = createColumnHelper<Company>()
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor("name", {
-        header: () => "Navn",
-      }),
-      columnHelper.accessor("createdAt", {
-        header: () => "Opprettet",
-        cell: (info) => formatDate(info.getValue()),
-      }),
-      columnHelper.accessor("type", {
-        header: () => "Type",
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor size="sm" href={`/company/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
-      }),
-    ],
-    [columnHelper]
-  )
+  const columns = [
+    columnHelper.accessor((evt) => evt, {
+      id: "name",
+      header: () => "Bedrift",
+      cell: (info) => <CompanyName company={info.getValue()} />,
+    }),
+    columnHelper.accessor("email", {
+      id: "email",
+      header: () => "Kontakt e-post",
+      cell: (info) => (
+        <Anchor size="sm" href={`mailto:${info.getValue()}`}>
+          {info.getValue()}
+        </Anchor>
+      ),
+    }),
+    columnHelper.accessor("phone", {
+      id: "phone",
+      header: () => "Kontakt telefon",
+      cell: (info) => {
+        const phoneNumber = info.getValue()
+        if (phoneNumber) {
+          return (
+            <Anchor size="sm" href={`tel:${phoneNumber}`}>
+              {phoneNumber}
+            </Anchor>
+          )
+        }
+        return null
+      },
+    }),
+    columnHelper.accessor((evt) => evt, {
+      id: "actions",
+      header: () => "Detaljer",
+      cell: (info) => (
+        <Anchor size="sm" component={Link} href={`/company/${info.getValue().id}`}>
+          Se mer
+        </Anchor>
+      ),
+    }),
+  ]
 
   const table = useReactTable({
     data: companies,
@@ -85,7 +103,7 @@ export default function CompanyPage() {
           </Table>
         </Card>
         <Group justify="space-between">
-          <Button onClick={() => setIsCreationOpen(true)}>Opprett bedrift</Button>
+          <Button onClick={open}>Opprett bedrift</Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />
@@ -95,8 +113,6 @@ export default function CompanyPage() {
             </Button>
           </ButtonGroup>
         </Group>
-
-        {isCreationOpen && <CompanyCreationModal close={() => setIsCreationOpen(false)} />}
       </Stack>
     </Skeleton>
   )

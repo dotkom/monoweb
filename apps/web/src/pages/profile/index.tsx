@@ -32,25 +32,18 @@ LandingPage.getLayout = (page) => {
 }
 
 export const getServerSideProps: GetServerSideProps<{ user: User }> = async ({ req, res }) => {
-  // const session = await getServerSession(req, res, authOptions)
-  // if (session === null) {
-  //   return {
-  //     redirect: {
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //   }
-  // }
-
-  const mockUser: User = {
-    id: "1",
-    name: "Test Testesen",
-    email: "mock",
-    image: "https://picsum.photos/200",
+  const session = await getServerSession(req, res, authOptions)
+  if (session === null) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    }
   }
   return {
     props: {
-      user: mockUser,
+      user: session.user,
     },
   }
 }

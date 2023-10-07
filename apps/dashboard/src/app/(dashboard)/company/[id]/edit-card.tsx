@@ -1,36 +1,16 @@
-import { FC } from "react"
-import { trpc } from "../../../../utils/trpc"
 import { CompanyWriteSchema } from "@dotkomonline/types"
-import { useCompanyDetailsContext } from "./provider"
-import { useQueryNotification } from "../../../notifications"
+import { FC } from "react"
+import { useEditCompanyMutation } from "src/modules/company/mutations/use-edit-company-mutation"
 import { useCompanyWriteForm } from "../write-form"
+import { useCompanyDetailsContext } from "./provider"
 
-export const EventEditCard: FC = () => {
+export const CompanyEditCard: FC = () => {
   const { company } = useCompanyDetailsContext()
-  const notification = useQueryNotification()
-  const utils = trpc.useContext()
-  const edit = trpc.company.edit.useMutation({
-    onSuccess: (data) => {
-      notification.complete({
-        title: "Bedrift oppdatert",
-        message: `Bedriften "${data.name}" har blitt oppdatert.`,
-      })
-      utils.company.all.invalidate()
-    },
-    onError: (err) => {
-      notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under oppdatering av arrangementet: ${err.toString()}.`,
-      })
-    },
-  })
+  const edit = useEditCompanyMutation()
+
   const FormComponent = useCompanyWriteForm({
-    label: "Oppdater arrangement",
+    label: "Oppdater bedrift",
     onSubmit: (data) => {
-      notification.loading({
-        title: "Oppdaterer arrangement...",
-        message: "Arrangementet blir oppdatert.",
-      })
       const result = CompanyWriteSchema.required({ id: true }).parse(data)
       edit.mutate(result)
     },
