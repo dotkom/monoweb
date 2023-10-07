@@ -18,12 +18,10 @@ import {
   TableTr,
 } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useMemo } from "react"
+import { CompanyName } from "src/components/molecules/company-name/company-name"
 import { useCreateCompanyModal } from "src/modules/company/modals/create-company-modal"
 import { useCompanyAllQuery } from "src/modules/company/queries/use-company-all-query"
-import { formatDate } from "../../../utils/format"
-
-import { CompanyName } from "../../../components/molecules/company-name/company-name"
+import Link from "next/link"
 
 export default function CompanyPage() {
   const { companies, isLoading: isCompaniesLoading } = useCompanyAllQuery()
@@ -38,7 +36,7 @@ export default function CompanyPage() {
     }),
     columnHelper.accessor("email", {
       id: "email",
-      header: () => "Kontakt e-post",
+      header: () => "Kontakte-post",
       cell: (info) => (
         <Anchor size="sm" href={`mailto:${info.getValue()}`}>
           {info.getValue()}
@@ -47,7 +45,7 @@ export default function CompanyPage() {
     }),
     columnHelper.accessor("phone", {
       id: "phone",
-      header: () => "Kontakt telefon",
+      header: () => "Kontakttelefon",
       cell: (info) => {
         const phoneNumber = info.getValue()
         if (phoneNumber) {
