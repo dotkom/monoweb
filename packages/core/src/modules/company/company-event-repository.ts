@@ -5,34 +5,11 @@ import { Cursor, paginateQuery } from "../../utils/db-utils"
 import { mapToEvent } from "../event/event-repository"
 
 export interface CompanyEventRepository {
-  createEvent: (company: Company["id"], event: Event["id"]) => Promise<void>
-  deleteEvent: (company: Company["id"], event: Event["id"]) => Promise<void>
   getEventsByCompanyId: (company: Company["id"], take: number, cursor?: Cursor) => Promise<Event[]>
 }
 
 export class CompanyEventRepositoryImpl implements CompanyEventRepository {
   constructor(private readonly db: Kysely<Database>) {}
-
-  async createEvent(company: Company["id"], event: Event["id"]) {
-    await this.db
-      .insertInto("eventCompany")
-      .values({
-        companyId: company,
-        eventId: event,
-      })
-      .returningAll()
-      .executeTakeFirst()
-  }
-
-  async deleteEvent(company: Company["id"], event: Event["id"]) {
-    await this.db
-      .deleteFrom("eventCompany")
-      .where("companyId", "=", company)
-      .where("eventId", "=", event)
-      .returningAll()
-      .executeTakeFirst()
-  }
-
   async getEventsByCompanyId(company: Company["id"], take: number, cursor?: Cursor) {
     let query = this.db
       .selectFrom("eventCompany")

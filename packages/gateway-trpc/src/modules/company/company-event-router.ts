@@ -1,29 +1,9 @@
-import { CompanySchema, EventSchema } from "@dotkomonline/types"
-import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { PaginateInputSchema } from "@dotkomonline/core"
+import { CompanySchema } from "@dotkomonline/types"
+import { z } from "zod"
+import { publicProcedure, t } from "../../trpc"
 
 export const companyEventRouter = t.router({
-  create: protectedProcedure
-    .input(
-      z.object({
-        id: CompanySchema.shape.id,
-        event: EventSchema.shape.id,
-      })
-    )
-    .mutation(({ input, ctx }) => {
-      return ctx.companyEventService.createEvent(input.id, input.event)
-    }),
-  delete: protectedProcedure
-    .input(
-      z.object({
-        id: CompanySchema.shape.id,
-        event: EventSchema.shape.id,
-      })
-    )
-    .mutation(({ input, ctx }) => {
-      return ctx.companyEventService.deleteEvent(input.id, input.event)
-    }),
   get: publicProcedure
     .input(
       z.object({
