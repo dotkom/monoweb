@@ -1,9 +1,7 @@
 "use client"
 
-import { Company } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import {
-  Anchor,
   Button,
   ButtonGroup,
   Card,
@@ -17,63 +15,15 @@ import {
   TableThead,
   TableTr,
 } from "@mantine/core"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { CompanyName } from "src/components/molecules/company-name/company-name"
+import { flexRender } from "@tanstack/react-table"
 import { useCreateCompanyModal } from "src/modules/company/modals/create-company-modal"
 import { useCompanyAllQuery } from "src/modules/company/queries/use-company-all-query"
-import Link from "next/link"
+import { useCompanyTable } from "src/modules/company/use-company-table"
 
 export default function CompanyPage() {
   const { companies, isLoading: isCompaniesLoading } = useCompanyAllQuery()
   const open = useCreateCompanyModal()
-
-  const columnHelper = createColumnHelper<Company>()
-  const columns = [
-    columnHelper.accessor((evt) => evt, {
-      id: "name",
-      header: () => "Bedrift",
-      cell: (info) => <CompanyName company={info.getValue()} />,
-    }),
-    columnHelper.accessor("email", {
-      id: "email",
-      header: () => "Kontakt-e-post",
-      cell: (info) => (
-        <Anchor size="sm" href={`mailto:${info.getValue()}`}>
-          {info.getValue()}
-        </Anchor>
-      ),
-    }),
-    columnHelper.accessor("phone", {
-      id: "phone",
-      header: () => "Kontakttelefon",
-      cell: (info) => {
-        const phoneNumber = info.getValue()
-        if (phoneNumber) {
-          return (
-            <Anchor size="sm" href={`tel:${phoneNumber}`}>
-              {phoneNumber}
-            </Anchor>
-          )
-        }
-        return null
-      },
-    }),
-    columnHelper.accessor((evt) => evt, {
-      id: "actions",
-      header: () => "Detaljer",
-      cell: (info) => (
-        <Anchor size="sm" component={Link} href={`/company/${info.getValue().id}`}>
-          Se mer
-        </Anchor>
-      ),
-    }),
-  ]
-
-  const table = useReactTable({
-    data: companies,
-    getCoreRowModel: getCoreRowModel(),
-    columns,
-  })
+  const table = useCompanyTable({ data: companies })
 
   return (
     <Skeleton visible={isCompaniesLoading}>

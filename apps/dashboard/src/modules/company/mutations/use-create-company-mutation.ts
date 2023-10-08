@@ -26,6 +26,8 @@ export const useCreateCompanyMutation = () => {
         title: "Feil oppsto",
         message: `En feil oppsto under opprettelse av bedriften: ${err.toString()}.`,
       })
+
+      // TODO: send error to sentry/other service so we can catch it
     },
   })
 }
