@@ -12,7 +12,7 @@ export const CompanyEditCard: FC = () => {
     label: "Oppdater bedrift",
     onSubmit: (data) => {
       const result = CompanyWriteSchema.required({ id: true }).parse(data)
-      edit.mutate(result)
+      edit.mutate({ id: company.id, input: result })
     },
     defaultValues: { ...company },
   })
