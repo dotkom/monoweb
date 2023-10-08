@@ -11,7 +11,7 @@ export interface CompanyRepository {
   getById(id: Company["id"]): Promise<Company | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Company[]>
   create(values: CompanyWrite): Promise<Company | undefined>
-  update(id: Company["id"], data: Omit<CompanyWrite, "id">): Promise<Company>
+  update(id: Company["id"], data: CompanyWrite): Promise<Company>
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {
