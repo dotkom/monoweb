@@ -31,11 +31,7 @@ export const useCompanyWriteForm = ({
       description: createTextareaInput({
         label: "Beskrivelse",
         placeholder: "Bekk er et konsulentselskap fylt med action og moro!",
-      }),
-      phone: createTextInput({
-        label: "Kontakttelefon",
-        placeholder: "+47 123 45 678",
-        type: "tel",
+        withAsterisk: true,
       }),
       email: createTextInput({
         label: "Kontakt-e-post",
@@ -49,10 +45,6 @@ export const useCompanyWriteForm = ({
         type: "url",
         withAsterisk: true,
       }),
-      location: createTextInput({
-        label: "Lokasjon",
-        placeholder: "Oslo",
-      }),
       type: createSelectInput({
         label: "Bedriftstype",
         placeholder: "Velg en",
@@ -63,6 +55,15 @@ export const useCompanyWriteForm = ({
           { value: "Development", label: "In-house" },
           { value: "Other", label: "Annet" },
         ],
+      }),
+      phone: createTextInput({
+        label: "Kontakttelefon",
+        placeholder: "+47 123 45 678",
+        type: "tel",
+      }),
+      location: createTextInput({
+        label: "Lokasjon",
+        placeholder: "Oslo",
       }),
       image: createTextInput({
         label: "Bildelenke til logo",
