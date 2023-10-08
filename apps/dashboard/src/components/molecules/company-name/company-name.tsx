@@ -10,32 +10,31 @@ export type CompanyNameProps = {
 export const CompanyName: FC<CompanyNameProps> = ({ company }) => {
   const [imageError, setImageError] = useState(false)
 
+  const renderIcon = (iconName: string) => <Icon width={40} height={40} icon={iconName} />
+
+  const renderImage = () => (
+    <Image
+      w={40}
+      h={40}
+      fit="contain"
+      src={company.image}
+      alt={`${company.name} logo icon`}
+      onError={(_) => {
+        setImageError(true)
+      }}
+    />
+  )
+
+  const hasNoImage = () => company.image === null
+  const hasImageError = () => company.image !== null && imageError
+  const hasWorkingImage = () => company.image !== null && !imageError
+
   return (
     <Group>
-      {company.image === null ? (
-        <>
-          <Icon width={40} height={40} icon="tabler:user-circle" />
-          {company.name}
-        </>
-      ) : (
-        <>
-          {imageError ? (
-            <Icon width={40} height={40} icon="tabler:photo-x" />
-          ) : (
-            <Image
-              w={40}
-              h={40}
-              fit="contain"
-              src={company.image}
-              alt={`${company.name} logo icon`}
-              onError={(_) => {
-                setImageError(true)
-              }}
-            />
-          )}
-          {company.name}
-        </>
-      )}
+      {hasNoImage() && renderIcon("tabler:user-circle")}
+      {hasImageError() && renderIcon("tabler:photo-x")}
+      {hasWorkingImage() && renderImage()}
+      {company.name}
     </Group>
   )
 }
