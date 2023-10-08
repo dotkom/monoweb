@@ -7,5 +7,8 @@ export default applyCorsMiddleware(
   createNextApiHandler({
     router: appRouter,
     createContext,
+    onError({ error }) {
+      console.error(error)
+    },
   })
 )
