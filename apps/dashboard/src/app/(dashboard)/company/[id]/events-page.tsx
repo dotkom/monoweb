@@ -5,6 +5,7 @@ import { FC, useMemo } from "react"
 import { useCompanyEventsAllQuery } from "src/modules/company/queries/use-company-events-all-query"
 import { GenericTable } from "../../../../components/GenericTable"
 import { useCompanyDetailsContext } from "./provider"
+import Link from "next/link"
 
 export const CompanyEventsPage: FC = () => {
   const { company } = useCompanyDetailsContext()
@@ -17,7 +18,11 @@ export const CompanyEventsPage: FC = () => {
         id: "companyEvent",
         header: () => "Navn",
         cell: (info) => {
-          return <Anchor href={`/event/${info.getValue().id}`}>{info.getValue().title}</Anchor>
+          return (
+            <Anchor component={Link} href={`/event/${info.getValue().id}`}>
+              {info.getValue().title}
+            </Anchor>
+          )
         },
       }),
     ],

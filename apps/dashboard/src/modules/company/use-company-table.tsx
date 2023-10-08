@@ -24,7 +24,7 @@ export const useCompanyTable = ({ data }: Props) => {
         id: "email",
         header: () => "Kontakt-e-post",
         cell: (info) => (
-          <Anchor size="sm" href={`mailto:${info.getValue()}`}>
+          <Anchor component={Link} size="sm" href={`mailto:${info.getValue()}`}>
             {info.getValue()}
           </Anchor>
         ),
@@ -36,7 +36,7 @@ export const useCompanyTable = ({ data }: Props) => {
           const phoneNumber = info.getValue()
           if (phoneNumber) {
             return (
-              <Anchor size="sm" href={`tel:${phoneNumber}`}>
+              <Anchor component={Link} size="sm" href={`tel:${phoneNumber}`}>
                 {phoneNumber}
               </Anchor>
             )
