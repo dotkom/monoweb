@@ -22,7 +22,7 @@ export const EventCommiteesPage: FC = () => {
   const columnHelper = createColumnHelper<Committee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((eventCompany) => eventCompany, {
+      columnHelper.accessor((eventCommittee) => eventCommittee, {
         id: "eventCommittee",
         header: () => "Navn",
         cell: (info) => {
@@ -41,7 +41,7 @@ export const EventCommiteesPage: FC = () => {
           )
         },
       }),
-      columnHelper.accessor((eventCompany) => eventCompany, {
+      columnHelper.accessor((eventCommittee) => eventCommittee, {
         id: "actions",
         header: () => "Verktøy",
         cell: (info) => (
