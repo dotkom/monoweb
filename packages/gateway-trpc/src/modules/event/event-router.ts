@@ -4,6 +4,7 @@ import { z } from "zod"
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
+import { eventCommitteeRouter } from "./event-committee-router"
 
 export const eventRouter = t.router({
   create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
@@ -35,5 +36,6 @@ export const eventRouter = t.router({
     return ctx.eventService.getEventById(input)
   }),
   attendance: attendanceRouter,
+  committee: eventCommitteeRouter,
   company: eventCompanyRouter,
 })
