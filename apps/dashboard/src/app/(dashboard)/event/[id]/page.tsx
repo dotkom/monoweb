@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { FC } from "react"
-import { EventCommiteesPage } from "./committees-page"
+import { EventCommitteesPage } from "./committees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { useEventDetailsContext } from "./provider"
@@ -34,7 +34,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:tent",
     label: "Komiteer",
     slug: "committee",
-    component: EventCommiteesPage,
+    component: EventCommitteesPage,
   },
   {
     icon: "tabler:forms",

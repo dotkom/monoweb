@@ -12,13 +12,12 @@ import { useEventCommitteeGetQuery } from "../../../../modules/event/queries/use
 import { createSelectInput, useFormBuilder } from "../../../form"
 import { useEventDetailsContext } from "./provider"
 
-export const EventCommiteesPage: FC = () => {
+export const EventCommitteesPage: FC = () => {
   const { event } = useEventDetailsContext()
   const { eventCommittiees } = useEventCommitteeGetQuery(event.id)
   const { committees } = useCommitteeAllQuery()
   const add = useAddCommitteeToEventMutation()
   const remove = useRemoveCommitteeFromEventMutation()
-
   const columnHelper = createColumnHelper<Committee>()
   const columns = useMemo(
     () => [
