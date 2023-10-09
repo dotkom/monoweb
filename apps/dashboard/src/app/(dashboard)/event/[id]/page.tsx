@@ -4,14 +4,10 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { FC } from "react"
-import { EventCommiteesPage } from "./committees-page.jsx"
+import { EventCommiteesPage } from "./committees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { useEventDetailsContext } from "./provider"
-
-const EventDetailsCompanies: FC = () => {
-  return <h1>Bedrifter</h1>
-}
 
 const EventDetailsFeedbackForms: FC = () => {
   return <h1>Tilbakemelding</h1>
