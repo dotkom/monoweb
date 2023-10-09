@@ -1,8 +1,8 @@
+import { EventEditSchema } from "@dotkomonline/types"
 import { FC } from "react"
-import { useEventWriteForm } from "../write-form"
-import { EventWriteSchema } from "@dotkomonline/types"
-import { useEventDetailsContext } from "./provider"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { useEventWriteForm } from "../write-form"
+import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {
   const { event } = useEventDetailsContext()
@@ -10,8 +10,11 @@ export const EventEditCard: FC = () => {
   const FormComponent = useEventWriteForm({
     label: "Oppdater arrangement",
     onSubmit: (data) => {
-      const result = EventWriteSchema.required({ id: true }).parse(data)
-      edit.mutate(result)
+      const result = EventEditSchema.parse(data)
+      edit.mutate({
+        id: result.id,
+        changes: result,
+      })
     },
     defaultValues: { ...event },
   })
