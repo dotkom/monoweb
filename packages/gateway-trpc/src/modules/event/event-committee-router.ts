@@ -8,21 +8,21 @@ export const eventCommitteeRouter = t.router({
     .input(
       z.object({
         id: EventSchema.shape.id,
-        company: CommitteeSchema.shape.id,
+        committee: CommitteeSchema.shape.id,
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.eventCompanyService.createCompany(input.id, input.company)
+      return ctx.eventCommitteeService.createCommittee(input.id, input.committee)
     }),
   delete: protectedProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
-        company: CommitteeSchema.shape.id,
+        committee: CommitteeSchema.shape.id,
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.eventCompanyService.deleteCompany(input.id, input.company)
+      return ctx.eventCommitteeService.deleteCommittee(input.id, input.committee)
     }),
   get: publicProcedure
     .input(
