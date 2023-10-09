@@ -26,6 +26,8 @@ import { NotificationPermissionsRepositoryImpl } from "./user/notification-permi
 import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository"
 import { UserRepositoryImpl } from "./user/user-repository"
 import { UserServiceImpl } from "./user/user-service"
+import { EventCommitteeServiceImpl } from "./event/event-committee-service"
+import { EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -37,6 +39,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const companyRepository = new CompanyRepositoryImpl(db)
+  const eventCommitteeRepository = new EventCommitteeRepositoryImpl(db)
   const eventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
   const userRepository = new UserRepositoryImpl(db)
@@ -59,7 +62,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const committeeService = new CommitteeServiceImpl(committeeRepository)
   const companyService = new CompanyServiceImpl(companyRepository)
   const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
-  const eventCommitteeService = new EventCommitteeServiceImpl(eventCompanyRepository)
+  const eventCommitteeService = new EventCommitteeServiceImpl(eventCommitteeRepository)
   const productService = new ProductServiceImpl(productRepository)
   const paymentService = new PaymentServiceImpl(
     paymentRepository,
@@ -84,7 +87,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     companyService,
     attendanceService,
     eventCompanyService,
-	eventCommitteeService,
+    eventCommitteeService,
     productService,
     paymentService,
     productPaymentProviderService,
