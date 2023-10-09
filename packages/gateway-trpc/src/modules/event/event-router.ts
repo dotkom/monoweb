@@ -1,7 +1,7 @@
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
-import { EventWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
 import { PaginateInputSchema } from "@dotkomonline/core"
+import { EventWriteSchema, EventWrite, EventSchema } from "@dotkomonline/types"
+import { z } from "zod"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 
@@ -11,12 +11,13 @@ export const eventRouter = t.router({
   }),
   edit: protectedProcedure
     .input(
-      EventWriteSchema.required({
-        id: true,
+      z.object({
+        id: EventSchema.shape.id,
+        changes: EventWriteSchema,
       })
     )
-    .mutation(({ input: changes, ctx }) => {
-      return ctx.eventService.updateEvent(changes.id, changes)
+    .mutation(({ input, ctx }) => {
+      return ctx.eventService.updateEvent(input.id, input.changes)
     }),
   all: publicProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
     return ctx.eventService.getEvents(input.take, input.cursor)
