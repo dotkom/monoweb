@@ -14,7 +14,7 @@ import { useEventDetailsContext } from "./provider"
 
 export const EventCommitteesPage: FC = () => {
   const { event } = useEventDetailsContext()
-  const { eventCommittiees } = useEventCommitteeGetQuery(event.id)
+  const { eventCommittees } = useEventCommitteeGetQuery(event.id)
   const { committees } = useCommitteeAllQuery()
   const add = useAddCommitteeToEventMutation()
   const remove = useRemoveCommitteeFromEventMutation()
@@ -57,7 +57,7 @@ export const EventCommitteesPage: FC = () => {
     [committees, columnHelper, remove, event.id]
   )
   const table = useReactTable<Committee>({
-    data: eventCommittiees,
+    data: eventCommittees,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
@@ -73,7 +73,7 @@ export const EventCommitteesPage: FC = () => {
       committee: createSelectInput({
         label: "Komiténavn",
         data: committees
-          .filter((committee) => !eventCommittiees.map((x: { id: unknown }) => x.id).includes(committee.id))
+          .filter((committee) => !eventCommittees.map((x: { id: unknown }) => x.id).includes(committee.id))
           .map((committee) => ({ label: committee.name, value: committee.id })),
       }),
     },

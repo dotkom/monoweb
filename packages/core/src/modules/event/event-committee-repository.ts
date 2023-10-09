@@ -8,7 +8,7 @@ import { Cursor, paginateQuery } from "../../utils/db-utils"
 export interface EventCommitteeRepository {
   createCommittee: (id: Event["id"], committee: Committee["id"]) => Promise<void>
   deleteCommittee: (id: Event["id"], committee: Committee["id"]) => Promise<void>
-  getCommittiesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Committee[]>
+  getCommittesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Committee[]>
   getEventsByCommitteeId: (id: Committee["id"], take: number, cursor?: Cursor) => Promise<Event[]>
 }
 
@@ -35,7 +35,7 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
       .executeTakeFirst()
   }
 
-  async getCommittiesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
+  async getCommittesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
     let query = this.db
       .selectFrom("eventCommittee")
       .where("eventId", "=", id)

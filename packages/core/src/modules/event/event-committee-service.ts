@@ -25,7 +25,7 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
   }
 
   async getCommitteeByEventId(id: Event["id"], take: number, cursor?: Cursor) {
-    return await this.eventCommitteeRepository.getCommittiesByEventId(id, take, cursor)
+    return await this.eventCommitteeRepository.getCommittesByEventId(id, take, cursor)
   }
 
   async getEventsByCommitteeId(committeeId: Committee["id"], take: number, cursor?: Cursor): Promise<Event[]> {
