@@ -1,5 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { EventWriteSchema, EventWrite, EventSchema, EventEditSchema } from "@dotkomonline/types"
+import { EventEditSchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"

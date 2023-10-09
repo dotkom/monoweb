@@ -1,4 +1,3 @@
-import { EventWriteSchema } from "@dotkomonline/types"
 import { ContextModalProps, modals } from "@mantine/modals"
 import { FC } from "react"
 import { useEventWriteForm } from "../../../app/(dashboard)/event/write-form"

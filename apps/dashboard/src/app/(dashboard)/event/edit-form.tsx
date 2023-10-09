@@ -1,3 +1,5 @@
+import { EventEdit, EventEditSchema } from "@dotkomonline/types"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -6,10 +8,8 @@ import {
   createTextInput,
   useFormBuilder,
 } from "../../form"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
-import { EventEdit, EventEditSchema } from "@dotkomonline/types"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<EventEdit | EventEdit> = {
+const EVENT_FORM_DEFAULT_VALUES: Partial<EventEdit> = {
   start: new Date(),
   end: new Date(),
   description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",

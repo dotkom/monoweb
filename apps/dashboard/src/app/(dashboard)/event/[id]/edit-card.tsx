@@ -1,9 +1,8 @@
 import { EventEditSchema } from "@dotkomonline/types"
 import { FC } from "react"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
-import { useEventWriteForm } from "../write-form"
-import { useEventDetailsContext } from "./provider"
 import { useEventEditForm } from "../edit-form"
+import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {
   const { event } = useEventDetailsContext()
