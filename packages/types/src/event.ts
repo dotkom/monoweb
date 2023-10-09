@@ -36,7 +36,7 @@ export const EventWriteSchema = EventSchema.extend({
       return data.start < data.end
     },
     {
-      message: "Starttidspunkt må være før sluttidspunkt",
+      message: "Sluttidspunkt må være etter starttidspunkt",
       path: ["end"],
     }
   )
@@ -50,14 +50,10 @@ export const EventEditSchema = EventSchema.partial({
     return data.start < data.end
   },
   {
-    message: "Starttidspunkt må være før sluttidspunkt",
+    message: "Sluttidspunkt må være etter starttidspunkt",
     path: ["end"],
   }
 )
-
-// EventWriteSchema.refine((data) => data.end > data.start, {
-//   message: "End date must be after the start date",
-// })
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 export type EventEdit = z.infer<typeof EventEditSchema>

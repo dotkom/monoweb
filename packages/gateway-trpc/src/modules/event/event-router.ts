@@ -1,5 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { CompanySchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, EventEditSchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
@@ -13,7 +13,7 @@ export const eventRouter = t.router({
     .input(
       z.object({
         id: EventSchema.shape.id,
-        changes: EventWriteSchema,
+        changes: EventEditSchema,
       })
     )
     .mutation(({ input, ctx }) => {

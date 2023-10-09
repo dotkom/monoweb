@@ -9,8 +9,7 @@ export const CreateEventModal: FC<ContextModalProps> = ({ context, id }) => {
   const create = useCreateEventMutation()
   const FormComponent = useEventWriteForm({
     onSubmit: (data) => {
-      const result = EventWriteSchema.parse(data)
-      create.mutate(result)
+      create.mutate(data)
       close()
     },
   })
