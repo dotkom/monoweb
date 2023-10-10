@@ -4,6 +4,7 @@ import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
+import { committeeOrganizerRouter } from "./organizer-router"
 
 export const eventRouter = t.router({
   create: protectedProcedure.input(EventWriteSchema).mutation(({ input, ctx }) => {
@@ -37,4 +38,5 @@ export const eventRouter = t.router({
   }),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
+  commitee: committeeOrganizerRouter,
 })

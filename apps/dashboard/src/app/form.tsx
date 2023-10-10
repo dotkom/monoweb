@@ -5,6 +5,8 @@ import {
   Checkbox,
   CheckboxProps,
   Flex,
+  MultiSelect,
+  MultiSelectProps,
   Select,
   SelectProps,
   Textarea,
@@ -34,6 +36,27 @@ type InputFieldContext<T extends FieldValues> = {
   defaultValue: FieldValue<T>
 }
 type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
+
+export function createMultipleSelectInput<F extends FieldValues>({
+  ...props
+}: Omit<MultiSelectProps, "error">): InputProducerResult<F> {
+  return function FormSelectInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <MultiSelect
+            {...props}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
+      />
+    )
+  }
+}
 
 export function createSelectInput<F extends FieldValues>({
   ...props

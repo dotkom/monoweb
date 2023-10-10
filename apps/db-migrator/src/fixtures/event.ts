@@ -17,7 +17,6 @@ export const events: Insertable<Database["event"]>[] = [
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Hovedbygget",
-    committeeId: null,
     waitlist: null,
   },
   {
@@ -35,7 +34,6 @@ export const events: Insertable<Database["event"]>[] = [
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Åre, Sverige",
-    committeeId: "d19021fb-2f10-4b5c-92dd-098fe5cee4d7",
     waitlist: null,
   },
 ]

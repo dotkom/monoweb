@@ -9,7 +9,6 @@ export interface EventCompanyRepository {
   createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
   deleteCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
   getCompaniesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Company[]>
-  getEventsByCompanyId: (id: Company["id"], take: number, cursor?: Cursor) => Promise<Event[]>
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {
@@ -49,21 +48,5 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
     }
     const companies = await query.execute()
     return companies.map(mapToCompany)
-  }
-
-  async getEventsByCompanyId(companyId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    let query = this.db
-      .selectFrom("event")
-      .leftJoin("eventCompany", "eventCompany.eventId", "event.id")
-      .selectAll("event")
-      .where("eventCompany.companyId", "=", companyId)
-      .limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
-    }
-    const events = await query.execute()
-    return events.map(mapToEvent)
   }
 }

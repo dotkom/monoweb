@@ -14,7 +14,7 @@ export const EventSchema = z.object({
   subtitle: z.string().nullable(),
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
-  committeeId: z.string().nullable(),
+  committeeOrganizers: z.array(z.string()).nullable().optional(),
   waitlist: z.string().uuid().nullable(),
 })
 

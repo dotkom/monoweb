@@ -39,16 +39,21 @@ export default function EventPage() {
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue()),
       }),
-      columnHelper.accessor("committeeId", {
+      columnHelper.accessor("committeeOrganizers", {
         header: () => "Arrangør",
         cell: (info) => {
-          const match = committees.find((committee) => committee.id === info.getValue()) ?? null
-          if (match !== null) {
-            return (
-              <Anchor size="sm" href={`/committee/${match.id}`}>
-                {match.name}
+          console.log(info.getValue())
+          const matches = info.getValue()?.map((id) => committees.find((c) => c.id === id))
+          if (matches) {
+            return matches.map((match, i) => (
+              <Anchor size="sm" href={`/committee/${match?.id}`}>
+                {match?.name}
+                {i < matches.length - 1 ? ", " : ""}
               </Anchor>
-            )
+            ))
+            // <Anchor size="sm" href={`/committee/${match.id}`}>
+            //   {match.name}
+            // </Anchor>
           }
           return "Ukjent arrangør"
         },

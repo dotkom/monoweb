@@ -28,6 +28,8 @@ import { MarkServiceImpl } from "./mark/mark-service"
 import { PersonalMarkServiceImpl } from "./mark/personal-mark-service"
 import { CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { CompanyEventServiceImpl } from "./company/company-event-service"
+import { CommitteeOrganizerServiceImpl } from "./event/committee-organizer-service"
+import { CommitteeOrganizerRepositoryImpl } from "./event/committee-organizer-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -41,6 +43,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const companyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository = new EventCompanyRepositoryImpl(db)
+  const committeeOrganizerRepository = new CommitteeOrganizerRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
   const userRepository = new UserRepositoryImpl(db)
   const productRepository = new ProductRepositoryImpl(db)
@@ -58,6 +61,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     notificationPermissionsRepository
   )
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
+  const committeeOrganizerService = new CommitteeOrganizerServiceImpl(committeeOrganizerRepository)
   const attendanceService = new AttendanceServiceImpl(attendanceRepository)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
   const companyService = new CompanyServiceImpl(companyRepository)
@@ -94,5 +98,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     refundRequestService,
     markService,
     personalMarkService,
+    committeeOrganizerService,
   }
 }

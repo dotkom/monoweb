@@ -3,6 +3,7 @@ import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-com
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createMultipleSelectInput,
   createSelectInput,
   createTextareaInput,
   createTextInput,
@@ -17,7 +18,6 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<EventEdit> = {
   location: null,
   subtitle: null,
   waitlist: null,
-  committeeId: null,
 }
 
 type UseEventEditFormProps = {
@@ -67,7 +67,7 @@ export const useEventEditForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeId: createSelectInput({
+      committeeOrganizers: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),

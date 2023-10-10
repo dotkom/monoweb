@@ -1,6 +1,7 @@
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createMultipleSelectInput,
   createSelectInput,
   createTextareaInput,
   createTextInput,
@@ -17,7 +18,7 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   location: null,
   subtitle: null,
   waitlist: null,
-  committeeId: null,
+  committeeOrganizers: [],
 }
 
 type UseEventWriteFormProps = {
@@ -67,7 +68,7 @@ export const useEventWriteForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeId: createSelectInput({
+      committeeOrganizers: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
