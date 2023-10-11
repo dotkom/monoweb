@@ -31,7 +31,7 @@ export const FormValidationSchema = EventWriteSchema.extend({
   start: z.date().min(new Date(), { message: "Starttidspunkt må være i fremtiden" }),
   end: z.date().min(new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
 })
-  .required({
+  .partial({
     id: true,
   })
   .refine((data) => data.start < data.end, {
