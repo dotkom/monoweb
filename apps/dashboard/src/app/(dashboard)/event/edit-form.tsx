@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { EventWrite, EventWriteSchema } from "../../../../../../packages/types/src/event"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
@@ -10,7 +11,7 @@ import {
 } from "../../form"
 
 type UseEventEditFormProps = {
-  onSubmit: (data: EventWrite) => void
+  onSubmit: (data: z.infer<typeof FormValidationSchema>) => void
   defaultValues?: Partial<EventWrite>
   label?: string
 }
