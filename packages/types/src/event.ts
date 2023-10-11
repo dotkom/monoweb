@@ -35,6 +35,7 @@ export const AttendeeSchema = z.object({
   userId: z.string().ulid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  attended: z.boolean(),
 })
 
 export const AttendanceSchema = z.object({

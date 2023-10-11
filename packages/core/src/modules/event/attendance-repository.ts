@@ -14,6 +14,8 @@ import { DB } from "@dotkomonline/db/src/db.generated"
 export interface AttendanceRepository {
   create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
+  getAttendeeById: (userId: string) => Promise<Attendee>
+  updateAttendee: (attendeeWrite: AttendeeWrite, userId: string) => Promise<Attendee>
   getByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
   getByAttendanceId(id: Attendance["id"]): Promise<Attendance | undefined>
 }
@@ -31,12 +33,14 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .executeTakeFirstOrThrow()
     return AttendanceSchema.parse(res)
   }
+
   async createAttendee(attendeeWrite: AttendeeWrite) {
     const res = await this.db
       .insertInto("attendee")
       .values({
         userId: attendeeWrite.userId,
         attendanceId: attendeeWrite.attendanceId,
+        attended: attendeeWrite.attended,
       })
       .returningAll()
       .executeTakeFirstOrThrow()
@@ -44,6 +48,12 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     console.log({ res })
     return AttendeeSchema.parse(res)
   }
+
+  async getAttendeeById(userId: string) {
+    const res = await this.db.selectFrom("attendee").where("userId", "=", userId).executeTakeFirst()
+    return AttendeeSchema.parse(res)
+  }
+
   async getByEventId(eventId: string) {
     const res = await this.db
       .selectFrom("attendance")
@@ -57,6 +67,17 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .execute()
     return res ? res.map((r) => AttendanceSchema.parse(r)) : []
   }
+
+  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string) {
+    const res = await this.db
+      .updateTable("attendee")
+      .set({ ...attendeeWrite, updatedAt: new Date() })
+      .where("id", "=", userId)
+      .returningAll()
+      .executeTakeFirst()
+    return AttendeeSchema.parse(res)
+  }
+
   async getByAttendanceId(id: Attendance["id"]) {
     const res = await this.db
       .selectFrom("attendance")
