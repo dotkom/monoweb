@@ -15,7 +15,7 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
   const { title, slug, icon } = menuItem
 
-  const [isCurrent, setCurrent] = useState(router.pathname == slug ? "opacity-1" : "opacity-50")
+  const [isCurrent, setCurrent] = useState(router.pathname === slug ? "opacity-1" : "opacity-50")
 
   const handleChange = () => {
     router.push(slug)

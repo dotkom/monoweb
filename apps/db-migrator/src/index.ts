@@ -1,4 +1,5 @@
-import { Argument, program } from "commander"import { type MigrationResultSet } from "kysely"
+import { Argument, program } from "commander"
+import { type MigrationResultSet } from "kysely"
 import { createMigrator } from "@dotkomonline/db/src/migrator"
 import { getLogger } from "@dotkomonline/logger"
 import { db } from "./db"
@@ -40,7 +41,7 @@ program
           } else {
             break
           }
-        } while (res.results && res.results.length > 0 && !res.results[0].migrationName.startsWith("0001"))
+        } while (res.results.length > 0 && !res.results[0].migrationName.startsWith("0001"))
 
         if (res.error) {
           logger.error(`Failed to down all in migration "${res.results?.[0].migrationName}": ${res.error}`)
@@ -56,8 +57,9 @@ program
       if (res.results) {
         const errorFmt = res.error ? `: '${res.error}'` : ""
         logger.info(
-          `Migrating...\n${ 
-            res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}${errorFmt}`).join("\n")}`
+          `Migrating...\n${res.results
+            .map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}${errorFmt}`)
+            .join("\n")}`
         )
       } else {
         logger.warn(res)

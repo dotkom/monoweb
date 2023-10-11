@@ -24,5 +24,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   async deregisterForEvent(_eventId: string, _userId: string) {
     return undefined
   }
-  async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {}
+  async registerForAttendance(_eventId: string, _userId: string, _attended: boolean) {
+    //
+  }
 }

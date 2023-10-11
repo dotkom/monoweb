@@ -1,4 +1,5 @@
-import { type Committee, type Event } from "@dotkomonline/types"import { type FC } from "react"
+import { type Committee, type Event } from "@dotkomonline/types"
+import { type FC } from "react"
 import { Icon } from "@dotkomonline/ui"
 import Image from "next/image"
 import { EventList } from "@/components/organisms/EventList"
@@ -29,13 +30,17 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
             {icons.map(({ icon, text, href }, index) => (
               <div key={index} className="flex items-center gap-x-2">
                 <Icon icon={icon} width="28"></Icon>
-                {href === null ? (
-                  <span>{text}</span>
-                ) : (
-                  <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
-                    {text ? text : "N/A"}
-                  </a>
-                )}
+                {
+                  // Unsure if it is future-proofing
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                  href === null ? (
+                    <span>{text}</span>
+                  ) : (
+                    <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
+                      {text ? text : "N/A"}
+                    </a>
+                  )
+                }
               </div>
             ))}
           </div>

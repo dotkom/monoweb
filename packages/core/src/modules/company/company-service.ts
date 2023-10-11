@@ -36,9 +36,6 @@ export class CompanyServiceImpl implements CompanyService {
 
   async updateCompany(id: Company["id"], companyUpdate: Omit<CompanyWrite, "id">): Promise<Company> {
     const company = await this.companyRepository.update(id, companyUpdate)
-    if (!company) {
-      throw new NotFoundError(`Could not update Company(${id})`)
-    }
     return company
   }
 }

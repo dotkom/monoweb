@@ -31,10 +31,9 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   async addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
-    const mark = await this.markService.getMark(markId)
-    if (!mark) {
-      throw new NotFoundError(`Mark with ID:${markId} not found`)
-    }
+    // making sure mark is here
+    await this.markService.getMark(markId)
+
     const personalMark = await this.personalMarkRepository.addToUserId(userId, markId)
     if (!personalMark) {
       throw new NotFoundError(`PersonalMark could not be created`)
@@ -63,11 +62,13 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   adjustDateIfStartingInHoliday(date: Date): Date {
     if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
-      date = set(date, { month: 7, date: 15 })
-    } else if (date.getMonth() == 11) {
-      date = set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
-    } else if (date.getMonth() == 0 && date.getDate() < 15) {
-      date = set(date, { month: 0, date: 15 })
+      return set(date, { month: 7, date: 15 })
+    }
+    if (date.getMonth() === 11) {
+      return set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
+    }
+    if (date.getMonth() === 0 && date.getDate() < 15) {
+      return set(date, { month: 0, date: 15 })
     }
     return date
   }
@@ -76,9 +77,9 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     let additionalDays = 0
     if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
       additionalDays = 75
-    } else if (date.getMonth() == 11) {
+    } else if (date.getMonth() === 11) {
       additionalDays = 45
-    } else if (date.getMonth() == 0 && date.getDate() < 15) {
+    } else if (date.getMonth() === 0 && date.getDate() < 15) {
       additionalDays = 45
     }
     return add(date, { days: additionalDays })

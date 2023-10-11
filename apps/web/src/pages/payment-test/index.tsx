@@ -1,6 +1,7 @@
 // THIS FILE IS TEMPORARY. NO NEED TO REVIEW IT.
 
-import React, { type FC, type FormEvent, useState } from "react"import { type ProductWrite } from "@dotkomonline/types"
+import React, { type FC, type FormEvent, useState } from "react"
+import { type ProductWrite } from "@dotkomonline/types"
 import { useRouter } from "next/router"
 import { trpc } from "@/utils/trpc"
 
@@ -69,8 +70,8 @@ const PaymentTestPage: FC = () => {
     createCheckout.mutate({
       productId,
       stripePublicKey: providerId,
-      successRedirectUrl: `${window.location.href }/success`,
-      cancelRedirectUrl: `${window.location.href }/cancel`,
+      successRedirectUrl: `${window.location.href}/success`,
+      cancelRedirectUrl: `${window.location.href}/cancel`,
     })
   }
 
@@ -125,7 +126,7 @@ const PaymentTestPage: FC = () => {
         seedCreateProductMutation.mutate({
           type: "EVENT",
           objectId: data[i].id,
-          amount: i == 0 ? 250 : 2300,
+          amount: i === 0 ? 250 : 2300,
           isRefundable: true,
           refundRequiresApproval: true,
         })

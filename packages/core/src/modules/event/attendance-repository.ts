@@ -55,7 +55,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .groupBy("attendance.id")
       .where("eventId", "=", eventId)
       .execute()
-    return res ? res.map((r) => AttendanceSchema.parse(r)) : []
+    return res.map((r) => AttendanceSchema.parse(r))
   }
   async getByAttendanceId(id: Attendance["id"]) {
     const res = await this.db
