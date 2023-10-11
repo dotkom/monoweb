@@ -34,7 +34,7 @@ export class EventRepositoryImpl implements EventRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const events = await query.execute()
     return events.map(mapToEvent)
@@ -44,7 +44,7 @@ export class EventRepositoryImpl implements EventRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const events = await query.execute()
     return events.map(mapToEvent)

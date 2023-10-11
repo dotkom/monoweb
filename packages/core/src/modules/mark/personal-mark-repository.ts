@@ -30,7 +30,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const marks = await query.execute()
     return marks.map(mapToPersonalMark)
@@ -46,7 +46,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const marks = await query.execute()
     return marks.map(mapToMark)

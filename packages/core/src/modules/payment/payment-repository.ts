@@ -84,7 +84,7 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
 
     const payments = await query.execute()
@@ -97,7 +97,7 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
 
     const payments = await query.execute()
@@ -110,7 +110,7 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
 
     const payments = await query.execute()

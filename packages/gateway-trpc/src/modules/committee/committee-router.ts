@@ -1,6 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { CommitteeWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
+import { CommitteeSchema, CommitteeWriteSchema } from "@dotkomonline/types"
 import { t } from "../../trpc"
 
 export const committeeRouter = t.router({
@@ -10,7 +9,7 @@ export const committeeRouter = t.router({
   all: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
     return ctx.committeeService.getCommittees(input.take, input.cursor)
   }),
-  get: t.procedure.input(z.string().uuid()).query(({ input, ctx }) => {
+  get: t.procedure.input(CommitteeSchema.shape.id).query(({ input, ctx }) => {
     return ctx.committeeService.getCommittee(input)
   }),
 })
