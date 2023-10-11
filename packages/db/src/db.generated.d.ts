@@ -39,7 +39,6 @@ export interface Attendee {
   updatedAt: Generated<Timestamp>;
   userId: string | null;
   attendanceId: string | null;
-  attended: boolean;
 }
 
 export interface Committee {
@@ -88,11 +87,6 @@ export interface Event {
   waitlist: string | null;
 }
 
-export interface EventCommittee {
-  eventId: string;
-  committeeId: string;
-}
-
 export interface EventCompany {
   eventId: string;
   companyId: string;
@@ -123,8 +117,8 @@ export interface NotificationPermissions {
 }
 
 export interface OwUser {
-  createdAt: Generated<Timestamp>;
   id: Generated<string>;
+  createdAt: Generated<Timestamp>;
   cognitoSub: string;
 }
 
@@ -193,7 +187,6 @@ export interface DB {
   company: Company;
   "drizzle.DrizzleMigrations": DrizzleDrizzleMigrations;
   event: Event;
-  eventCommittee: EventCommittee;
   eventCompany: EventCompany;
   mark: Mark;
   notificationPermissions: NotificationPermissions;
