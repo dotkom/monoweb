@@ -1,14 +1,14 @@
 import { faker } from "@faker-js/faker"
 
 import { db } from "./db"
-import {users} from "./fixtures/user";
-import {events} from "./fixtures/event";
-import {attendances} from "./fixtures/attendance";
+import { users } from "./fixtures/user"
+import { events } from "./fixtures/event"
+import { attendances } from "./fixtures/attendance"
 
 faker.seed(69)
 
 export const seed = async () => {
-    await db
+  await db
     .insertInto("owUser")
     .values(users)
     .returning("id")

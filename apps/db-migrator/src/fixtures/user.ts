@@ -10,6 +10,6 @@ export const users: Insertable<Database["owUser"]>[] = [
   {
     id: "user_2PAKWhPTgypXLhisUS5RVHGec1o",
     createdAt: new Date("2023-04-30 21:22:17.627253+00"),
-    cognitoSub: '4dd4698d-c376-4e5e-b5fb-4db9bf6cd417'
+    cognitoSub: "4dd4698d-c376-4e5e-b5fb-4db9bf6cd417",
   },
 ]
