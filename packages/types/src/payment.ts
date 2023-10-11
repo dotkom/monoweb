@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const ProductPaymentProviderSchema = z.object({
-  productId: z.string().uuid(),
+  productId: z.string().ulid(),
   paymentProvider: z.enum(["STRIPE"]), // include VIPPS later
   paymentProviderId: z.string(), // Stripe = public_key | Vipps = client_id
 })
@@ -19,11 +19,11 @@ export const ProductPaymentProviderWriteSchema = ProductPaymentProviderSchema
 export type ProductPaymentProviderWrite = z.infer<typeof ProductPaymentProviderWriteSchema>
 
 export const ProductSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   type: z.enum(["EVENT"]), // inlude WEBSHOP later
-  objectId: z.string().uuid().nullable(), // The OW object this product is linked to e.g. eventId, webshopItemId. null if not linked
+  objectId: z.string().ulid().nullable(), // The OW object this product is linked to e.g. eventId, webshopItemId. null if not linked
   amount: z.number(), // price
   paymentProviders: z.array(PaymentProviderSchema),
   isRefundable: z.boolean(),
@@ -44,10 +44,10 @@ export const ProductWriteSchema = ProductSchema.omit({
 export type ProductWrite = z.infer<typeof ProductWriteSchema>
 
 export const PaymentSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  productId: z.string().uuid(),
+  productId: z.string().ulid(),
   userId: z.string(),
   paymentProviderId: z.string(), // Stripe = payment_intent_id | Vipps = order_id
   paymentProviderSessionId: z.string(), // Stripe = checkout session id
@@ -68,10 +68,10 @@ export const PaymentWriteSchema = PaymentSchema.partial({
 export type PaymentWrite = z.infer<typeof PaymentWriteSchema>
 
 export const RefundRequestSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  paymentId: z.string().uuid(),
+  paymentId: z.string().ulid(),
   userId: z.string(),
   reason: z.string().min(1).max(255),
   status: z.enum(["PENDING", "APPROVED", "REJECTED"]),

@@ -9,14 +9,14 @@ export async function up(db: Kysely<any>) {
 
   await createTableWithDefaults("product", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("type", sql`product_type`, (col) => col.notNull())
-    .addColumn("object_id", "uuid", (col) => col.unique())
+    .addColumn("object_id", sql`ulid`, (col) => col.unique())
     .addColumn("amount", "integer", (col) => col.notNull())
     .addColumn("deleted_at", "timestamptz")
     .execute()
 
   await createTableWithDefaults("payment", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("product_id", "uuid", (col) => col.references("product.id").onDelete("cascade"))
-    .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade")) // change to varchar(255) when anhkha fixes user:))))
+    .addColumn("product_id", sql`ulid`, (col) => col.references("product.id").onDelete("cascade"))
+    .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade")) // change to varchar(255) when anhkha fixes user:))))
     .addColumn("payment_provider_id", "varchar(255)", (col) => col.notNull())
     .addColumn("payment_provider_order_id", "varchar(255)", (col) => col.notNull())
     .addColumn("status", sql`payment_status`, (col) => col.notNull())
@@ -24,7 +24,7 @@ export async function up(db: Kysely<any>) {
 
   await db.schema
     .createTable("product_payment_provider")
-    .addColumn("product_id", "uuid", (col) => col.references("product.id").onDelete("cascade"))
+    .addColumn("product_id", sql`ulid`, (col) => col.references("product.id").onDelete("cascade"))
     .addColumn("payment_provider", sql`payment_provider`, (col) => col.notNull())
     .addColumn("payment_provider_id", "varchar(255)", (col) => col.notNull())
     .addPrimaryKeyConstraint("product_payment_provider_pk", ["product_id", "payment_provider_id"])

@@ -45,7 +45,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const companies = await query.execute()
     return companies.map(mapToCompany)
@@ -61,7 +61,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const events = await query.execute()
     return events.map(mapToEvent)

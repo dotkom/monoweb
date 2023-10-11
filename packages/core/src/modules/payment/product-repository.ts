@@ -76,7 +76,7 @@ export class ProductRepositoryImpl implements ProductRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
 
     const products = await query.execute()
