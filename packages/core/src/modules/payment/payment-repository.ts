@@ -1,25 +1,24 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
-import { Payment, PaymentSchema, PaymentWrite } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Kysely, type Selectable } from "kysely"
+import { type Payment, PaymentSchema, type PaymentWrite } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
+import { type Cursor, paginateQuery } from "../../utils/db-utils"
 
 const mapToPayment = (data: Selectable<Database["payment"]>) => PaymentSchema.parse(data)
 
 export interface PaymentRepository {
-  create(data: PaymentWrite): Promise<Payment | undefined>
-  update(id: Payment["id"], data: Partial<Omit<PaymentWrite, "id">>): Promise<Payment>
-  updateByPaymentProviderSessionId(
+  create: (data: PaymentWrite) => Promise<Payment | undefined>
+  update: (id: Payment["id"], data: Partial<Omit<PaymentWrite, "id">>) => Promise<Payment>
+  updateByPaymentProviderSessionId: (
     paymentProviderSessionId: string,
     data: Partial<Omit<PaymentWrite, "id">>
-  ): Promise<Payment>
-  getById(id: string): Promise<Payment | undefined>
-  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Payment[]>
-  getAllByUserId(id: string, take: number, cursor?: Cursor): Promise<Payment[]>
-  getAllByProductId(id: string, take: number, cursor?: Cursor): Promise<Payment[]>
-  delete(id: Payment["id"]): Promise<void>
-  deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void>
+  ) => Promise<Payment>
+  getById: (id: string) => Promise<Payment | undefined>
+  getByPaymentProviderOrderId: (paymentProviderOrderId: string) => Promise<Payment | undefined>
+  getAll: (take: number, cursor?: Cursor) => Promise<Payment[]>
+  getAllByUserId: (id: string, take: number, cursor?: Cursor) => Promise<Payment[]>
+  getAllByProductId: (id: string, take: number, cursor?: Cursor) => Promise<Payment[]>
+  delete: (id: Payment["id"]) => Promise<void>
+  deleteByPaymentProviderSessionId: (paymentProviderSessionId: string) => Promise<void>
 }
 
 export class PaymentRepositoryImpl implements PaymentRepository {

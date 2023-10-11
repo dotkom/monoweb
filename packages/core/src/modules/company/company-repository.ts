@@ -1,17 +1,15 @@
-import { Database } from "@dotkomonline/db"
-import { Company, CompanySchema, CompanyWrite } from "@dotkomonline/types"
-import { Kysely, Selectable } from "kysely"
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { type Database } from "@dotkomonline/db"
+import { type Company, CompanySchema, type CompanyWrite } from "@dotkomonline/types"
+import { type Kysely, type Selectable } from "kysely"
+import { type Cursor, paginateQuery } from "../../utils/db-utils"
 
-export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
-  return CompanySchema.parse(payload)
-}
+export const mapToCompany = (payload: Selectable<Database["company"]>): Company => CompanySchema.parse(payload)
 
 export interface CompanyRepository {
-  getById(id: Company["id"]): Promise<Company | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Company[]>
-  create(values: CompanyWrite): Promise<Company | undefined>
-  update(id: Company["id"], data: CompanyWrite): Promise<Company>
+  getById: (id: Company["id"]) => Promise<Company | undefined>
+  getAll: (take: number, cursor?: Cursor) => Promise<Company[]>
+  create: (values: CompanyWrite) => Promise<Company | undefined>
+  update: (id: Company["id"], data: CompanyWrite) => Promise<Company>
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {

@@ -1,10 +1,10 @@
-import OnlineIcon from "@/components/atoms/OnlineIcon"
 import Link from "next/link"
 import React from "react"
+import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { MenuLink } from "./types"
+import { type MenuLink } from "./types"
 
 const links: MenuLink[] = [
   {
@@ -41,8 +41,7 @@ const links: MenuLink[] = [
   },
 ]
 
-export const Navbar = () => {
-  return (
+export const Navbar = () => (
     <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
       <div className="border-blue-12/20 flex h-16 border-b">
         <MobileNavigation links={links} />
@@ -56,4 +55,3 @@ export const Navbar = () => {
       </div>
     </header>
   )
-}

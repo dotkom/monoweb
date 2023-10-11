@@ -1,23 +1,18 @@
+import { Icon } from "@dotkomonline/ui"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
-import { Icon } from "@dotkomonline/ui"
+import { type NextPageWithLayout } from "../_app"
 
-const PaymentPage: NextPageWithLayout = () => {
-  return <div>Payment</div>
-}
+const PaymentPage: NextPageWithLayout = () => <div>Payment</div>
 
-const PaymentHeader = () => {
-  return (
+const PaymentHeader = () => (
     <div className="flex items-center">
       <Icon icon={"tabler:credit-card"} width={24} />
       <p className="ml-2">Betalinger</p>
     </div>
   )
-}
 
-PaymentPage.getLayout = (page) => {
-  return (
+PaymentPage.getLayout = (page) => (
     <MainLayout>
       <ProfileLayout>
         <PaymentHeader />
@@ -25,6 +20,5 @@ PaymentPage.getLayout = (page) => {
       </ProfileLayout>
     </MainLayout>
   )
-}
 
 export default PaymentPage

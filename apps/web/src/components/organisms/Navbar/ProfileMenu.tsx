@@ -20,10 +20,10 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from "@dotkomonline/ui"
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
 import { signIn, signOut, useSession } from "next-auth/react"
+import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = () => {
   const { status } = useSession()
@@ -38,14 +38,14 @@ export const ProfileMenu = () => {
         <Button
           variant="subtle"
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-          onClick={() => signIn("cognito")}
+          onClick={async () => signIn("cognito")}
         >
           Log in
         </Button>
         <Button
           variant="gradient"
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          onClick={() => signIn("cognito")}
+          onClick={async () => signIn("cognito")}
         >
           Sign up
         </Button>
@@ -68,7 +68,7 @@ export const ProfileMenu = () => {
   )
 }
 
-type Link = {
+interface Link {
   label: string
   icon: string
   shortcut?: string
@@ -118,8 +118,7 @@ const linkGroups: Link[][] = [
   ],
 ]
 
-const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
-  return (
+const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="w-60">
@@ -141,7 +140,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
         <DropdownMenuSeparator />
         <ThemeMenuSub />
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem onClick={async () => signOut()}>
           <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
@@ -149,7 +148,6 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
 
 const ThemeMenuSub = () => {
   const { setTheme, theme } = useTheme()

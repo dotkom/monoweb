@@ -1,21 +1,21 @@
-import { Database } from "@dotkomonline/db"
+import { type Database } from "@dotkomonline/db"
 import {
-  Attendance,
+  type Attendance,
   AttendanceSchema,
-  AttendanceWrite,
-  Attendee,
+  type AttendanceWrite,
+  type Attendee,
   AttendeeSchema,
-  AttendeeWrite,
-  Event,
+  type AttendeeWrite,
+  type Event,
 } from "@dotkomonline/types"
-import { Kysely, sql } from "kysely"
-import { DB } from "@dotkomonline/db/src/db.generated"
+import { type Kysely, sql } from "kysely"
+import { type DB } from "@dotkomonline/db/src/db.generated"
 
 export interface AttendanceRepository {
   create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
   getByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
-  getByAttendanceId(id: Attendance["id"]): Promise<Attendance | undefined>
+  getByAttendanceId: (id: Attendance["id"]) => Promise<Attendance | undefined>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {

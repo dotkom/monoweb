@@ -1,23 +1,18 @@
+import { Icon } from "@dotkomonline/ui"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
-import { Icon } from "@dotkomonline/ui"
+import { type NextPageWithLayout } from "../_app"
 
-const NotifcationPage: NextPageWithLayout = () => {
-  return <div>Notification</div>
-}
+const NotifcationPage: NextPageWithLayout = () => <div>Notification</div>
 
-const NotificationHeader = () => {
-  return (
+const NotificationHeader = () => (
     <div className="flex items-center">
       <Icon icon={"tabler:bell-ringing-filled"} width={24} />
       <p className="ml-2">Varslinger</p>
     </div>
   )
-}
 
-NotifcationPage.getLayout = (page) => {
-  return (
+NotifcationPage.getLayout = (page) => (
     <MainLayout>
       <ProfileLayout>
         <NotificationHeader />
@@ -25,6 +20,5 @@ NotifcationPage.getLayout = (page) => {
       </ProfileLayout>
     </MainLayout>
   )
-}
 
 export default NotifcationPage

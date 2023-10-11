@@ -33,7 +33,5 @@ export const attendanceRouter = t.router({
         eventId: EventSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      return await ctx.eventService.createWaitlist(input.eventId)
-    }),
+    .mutation(async ({ input, ctx }) => await ctx.eventService.createWaitlist(input.eventId)),
 })

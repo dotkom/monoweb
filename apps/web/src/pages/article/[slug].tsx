@@ -1,8 +1,6 @@
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next"
-import { FC } from "react"
-import { Article } from "src/api/get-article"
-
-import sanityClient from "@/api/sanity"
+import { type GetStaticPaths, type GetStaticProps, type InferGetStaticPropsType } from "next"
+import { type FC } from "react"
+import { type Article } from "src/api/get-article"import sanityClient from "@/api/sanity"
 import { ArticleView } from "@/components/views/ArticleView"
 
 type ArticleProps = InferGetStaticPropsType<typeof getStaticProps>
@@ -60,7 +58,7 @@ export const getStaticProps: GetStaticProps<{ article: Article }, { slug: string
 }
 
 const ArticlePage: FC<ArticleProps> = (props: ArticleProps) => {
-  if (!props.article) return <div>404</div>
+  if (!props.article) {return <div>404</div>}
   return <ArticleView article={props.article} />
 }
 

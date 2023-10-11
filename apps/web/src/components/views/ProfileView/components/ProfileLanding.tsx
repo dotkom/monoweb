@@ -1,8 +1,8 @@
 import { Icon, cn } from "@dotkomonline/ui"
-import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
-import { NextPage } from "next"
-import { User } from "next-auth"
+import { type NextPage } from "next"
+import { type User } from "next-auth"
+import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 
 interface IFormInput {
   name: string
@@ -11,8 +11,7 @@ interface IFormInput {
   clickable?: boolean
 }
 
-const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = true }) => {
-  return (
+const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = true }) => (
     <div className="my-10 ">
       <div className="ml-4">
         <label>{name}</label>
@@ -28,14 +27,12 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
           {children}
           {clickable ? <Icon icon="simple-line-icons:arrow-right" width={10} /> : ""}
         </div>
-        <p className="text-blue-10 text-sm hover:cursor-pointer ">{addMore ? "+ " + addMore : ""}</p>
+        <p className="text-blue-10 text-sm hover:cursor-pointer ">{addMore ? `+ ${ addMore}` : ""}</p>
       </div>
     </div>
   )
-}
 
-const Landing: NextPage<{ user: User }> = ({ user }) => {
-  return (
+const Landing: NextPage<{ user: User }> = ({ user }) => (
     <div className="my-8 w-full">
       <div className="flex w-full flex-col">
         <div className="ml-7 mt-4">
@@ -71,6 +68,5 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
     </div>
   )
-}
 
 export default Landing

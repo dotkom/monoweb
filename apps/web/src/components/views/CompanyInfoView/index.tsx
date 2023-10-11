@@ -1,13 +1,9 @@
-import { Button } from "@dotkomonline/ui"
-import { FC } from "react"
-
-import PortableText, { PortableTextProps } from "@/components/molecules/PortableText"
-
-import CompanyInterestProcess from "./CompanyInterestProcess"
+import { Button , Title } from "@dotkomonline/ui"
+import { type FC } from "react"import PortableText, { type PortableTextProps } from "@/components/molecules/PortableText"import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
-import { Title } from "@dotkomonline/ui"
 
-export type Content = { content: PortableTextProps["blocks"] }
+
+export interface Content { content: PortableTextProps["blocks"] }
 
 interface CompanyInfoViewProps {
   companyInfoContent: Content[]

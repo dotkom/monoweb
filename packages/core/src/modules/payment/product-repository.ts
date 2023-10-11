@@ -1,19 +1,18 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { Kysely, Selectable, sql } from "kysely"
-import { Product, ProductSchema, ProductWrite } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
-import { DB } from "@dotkomonline/db/src/db.generated"
+import { type Kysely, type Selectable, sql } from "kysely"
+import { type Product, ProductSchema, type ProductWrite } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
+import { type DB } from "@dotkomonline/db/src/db.generated"
+import { type Cursor, paginateQuery } from "../../utils/db-utils"
 
 const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
 
 export interface ProductRepository {
-  create(data: ProductWrite): Promise<Product | undefined>
-  update(id: Product["id"], data: Omit<ProductWrite, "id">): Promise<Product>
-  getById(id: string): Promise<Product | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Product[]>
-  delete(id: Product["id"]): Promise<void>
-  undelete(id: Product["id"]): Promise<void>
+  create: (data: ProductWrite) => Promise<Product | undefined>
+  update: (id: Product["id"], data: Omit<ProductWrite, "id">) => Promise<Product>
+  getById: (id: string) => Promise<Product | undefined>
+  getAll: (take: number, cursor?: Cursor) => Promise<Product[]>
+  delete: (id: Product["id"]) => Promise<void>
+  undelete: (id: Product["id"]) => Promise<void>
 }
 
 export class ProductRepositoryImpl implements ProductRepository {

@@ -1,11 +1,10 @@
+import { randomUUID } from "crypto"
 import { describe, vi } from "vitest"
-
 import { Kysely } from "kysely"
-import { NotificationPermissions, PrivacyPermissions } from "@dotkomonline/types"
+import { type NotificationPermissions, type PrivacyPermissions } from "@dotkomonline/types"
 import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
 import { UserRepositoryImpl } from "../user-repository"
 import { UserServiceImpl } from "../user-service"
-import { randomUUID } from "crypto"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {

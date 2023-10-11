@@ -5,7 +5,7 @@ import { kysely } from "@dotkomonline/db"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { getServerSession } from "next-auth"
 
-type AuthContextProps = {
+interface AuthContextProps {
   auth: {
     userId: string
   } | null

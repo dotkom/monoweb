@@ -9,7 +9,7 @@ export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   withAsterisk?: boolean
   error?: boolean | string
   inputInfo?: string
-  eyeColor: "default" | "slate" | "gray"
+  eyeColor: "default" | "gray" | "slate"
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
@@ -26,7 +26,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
         )}
         <p>{inputInfo}</p>
         <div className="relative">
-          <input type={InputType} {...props} ref={ref} className={input({ error: !!error })} />
+          <input type={InputType} {...props} ref={ref} className={input({ error: Boolean(error) })} />
           <div>
             <span className={eye({ color: eyeColor })}>
               <Icon

@@ -1,18 +1,17 @@
-import { Mark, PersonalMark, User } from "@dotkomonline/types"
+import { type Mark, type PersonalMark, type User } from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
-
-import { Cursor } from "../../utils/db-utils"
-import { MarkService } from "./mark-service"
+import { type MarkService } from "./mark-service"
+import { type PersonalMarkRepository } from "./personal-mark-repository"
+import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
-import { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
-  getPersonalMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
-  addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>
-  removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>
-  getExpiryDateForUserId(userId: User["id"]): Promise<Date | null>
-  calculateExpiryDate(marks: { createdAt: Date; duration: number }[]): Date | null
+  getPersonalMarksForUserId: (userId: User["id"], take: number, cursor?: Cursor) => Promise<PersonalMark[]>
+  getMarksForUserId: (userId: User["id"], take: number, cursor?: Cursor) => Promise<Mark[]>
+  addPersonalMarkToUserId: (userId: User["id"], markId: Mark["id"]) => Promise<PersonalMark>
+  removePersonalMarkFromUserId: (userId: User["id"], markId: Mark["id"]) => Promise<PersonalMark>
+  getExpiryDateForUserId: (userId: User["id"]) => Promise<Date | null>
+  calculateExpiryDate: (marks: { createdAt: Date; duration: number }[]) => Date | null
 }
 
 export class PersonalMarkServiceImpl implements PersonalMarkService {
@@ -33,21 +32,27 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   async addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
     const mark = await this.markService.getMark(markId)
-    if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
+    if (!mark) {
+      throw new NotFoundError(`Mark with ID:${markId} not found`)
+    }
     const personalMark = await this.personalMarkRepository.addToUserId(userId, markId)
-    if (!personalMark) throw new NotFoundError(`PersonalMark could not be created`)
+    if (!personalMark) {
+      throw new NotFoundError(`PersonalMark could not be created`)
+    }
     return personalMark
   }
 
   async removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark> {
     const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId)
-    if (!personalMark) throw new NotFoundError(`PersonalMark could not be removed`)
+    if (!personalMark) {
+      throw new NotFoundError(`PersonalMark could not be removed`)
+    }
     return personalMark
   }
 
   async getExpiryDateForUserId(userId: User["id"]): Promise<Date | null> {
     const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, 1000)
-    const marks = await Promise.all(personalMarks.map((mark) => this.markService.getMark(mark.markId)))
+    const marks = await Promise.all(personalMarks.map(async (mark) => this.markService.getMark(mark.markId)))
     const expiryDate = this.calculateExpiryDate(marks)
     return expiryDate
   }
@@ -94,7 +99,9 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
       endDate = this.adjustDateIfEndingInHoliday(date)
     }
 
-    if (!endDate || endDate < currentTime) return null
+    if (!endDate || endDate < currentTime) {
+      return null
+    }
     return endDate
   }
 }

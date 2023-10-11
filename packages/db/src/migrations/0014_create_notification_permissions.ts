@@ -1,4 +1,4 @@
-import { Kysely } from "kysely"
+import { type Kysely } from "kysely"
 import { createTableWithDefaults } from "../utils"
 
 export async function up(db: Kysely<any>) {

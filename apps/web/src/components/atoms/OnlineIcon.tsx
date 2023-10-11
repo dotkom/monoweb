@@ -1,11 +1,10 @@
-import { FC } from "react"
+import { type FC } from "react"
 
 interface IconProps {
   className?: string
 }
 
-const OnlineIcon: FC<IconProps> = ({ className }) => {
-  return (
+const OnlineIcon: FC<IconProps> = ({ className }) => (
     <svg
       className={className}
       width="100%"
@@ -55,6 +54,5 @@ const OnlineIcon: FC<IconProps> = ({ className }) => {
       </g>
     </svg>
   )
-}
 
 export default OnlineIcon

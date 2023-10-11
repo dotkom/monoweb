@@ -1,5 +1,5 @@
-import { getAuthOptions } from "./auth-options"
 import { env } from "@dotkomonline/env"
+import { getAuthOptions } from "./auth-options"
 
 export const authOptions = getAuthOptions({
   cognitoClientId: env.WEB_COGNITO_CLIENT_ID,

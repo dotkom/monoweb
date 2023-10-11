@@ -1,3 +1,4 @@
+import { type EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -6,7 +7,6 @@ import {
   createTextInput,
   useFormBuilder,
 } from "../../form"
-import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
@@ -20,7 +20,7 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   committeeId: null,
 }
 
-type UseEventWriteFormProps = {
+interface UseEventWriteFormProps {
   onSubmit: (data: EventWrite) => void
   defaultValues?: Partial<EventWrite>
   label?: string

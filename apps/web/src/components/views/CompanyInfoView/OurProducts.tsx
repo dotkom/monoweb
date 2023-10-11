@@ -1,9 +1,9 @@
+import { Text } from "@dotkomonline/ui"
 import BedpressIcon from "@/components/icons/BedpressIcon"
 import ItexIcon from "@/components/icons/ItexIcon"
 import OfflineIcon from "@/components/icons/OfflineIcon"
 import TechtalksIcon from "@/components/icons/TechtalksIcon"
 import UtlysningIcon from "@/components/icons/UtlysningIcon"
-import { Text } from "@dotkomonline/ui"
 
 const PRODUCTS = [
   {
@@ -28,8 +28,7 @@ const PRODUCTS = [
   },
 ] as const
 
-const OurProducts = () => {
-  return (
+const OurProducts = () => (
     <div className="flex flex-col justify-center">
       <div className="flex justify-evenly">
         {PRODUCTS.map((product) => (
@@ -43,6 +42,5 @@ const OurProducts = () => {
       </div>
     </div>
   )
-}
 
 export default OurProducts

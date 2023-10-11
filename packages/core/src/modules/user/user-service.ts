@@ -1,33 +1,32 @@
 import {
-  NotificationPermissions,
-  NotificationPermissionsWrite,
-  PrivacyPermissions,
-  PrivacyPermissionsWrite,
-  User,
-  UserWrite,
+  type NotificationPermissions,
+  type NotificationPermissionsWrite,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserWrite,
 } from "@dotkomonline/types"
-
-import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { UserRepository } from "./user-repository"
-import { NotificationPermissionsRepository } from "./notification-permissions-repository"
+import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import { type UserRepository } from "./user-repository"
+import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { NotFoundError } from "../../errors/errors"
 
 export interface UserService {
-  getUser(id: User["id"]): Promise<User | undefined>
-  getAllUsers(limit: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
-  updatePrivacyPermissionsForUserId(
+  getUser: (id: User["id"]) => Promise<User | undefined>
+  getAllUsers: (limit: number) => Promise<User[]>
+  createUser: (input: UserWrite) => Promise<User>
+  getPrivacyPermissionsByUserId: (id: string) => Promise<PrivacyPermissions>
+  updatePrivacyPermissionsForUserId: (
     id: string,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-  ): Promise<PrivacyPermissions>
+  ) => Promise<PrivacyPermissions>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(
-    private userRepository: UserRepository,
-    private privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly userRepository: UserRepository,
+    private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
   async getAllUsers(limit: number) {
     const users = await this.userRepository.getAll(limit)
@@ -36,7 +35,9 @@ export class UserServiceImpl implements UserService {
 
   async getUser(id: User["id"]) {
     const user = await this.userRepository.getById(id)
-    if (!user) throw new NotFoundError(`User with ID:${id} not found`)
+    if (!user) {
+      throw new NotFoundError(`User with ID:${id} not found`)
+    }
     return user
   }
 

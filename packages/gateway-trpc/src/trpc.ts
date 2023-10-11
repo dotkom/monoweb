@@ -1,5 +1,5 @@
 import { initTRPC, TRPCError } from "@trpc/server"
-import { Context } from "./context"
+import { type Context } from "./context"
 import { transformer } from "./transformer"
 
 export const t = initTRPC.context<Context>().create({
@@ -9,7 +9,7 @@ export const t = initTRPC.context<Context>().create({
   },
 })
 
-const isAuthed = t.middleware(({ ctx, next }) => {
+const isAuthed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.auth) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" })
   }

@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import { Event } from "@dotkomonline/types"
+import { type Event } from "@dotkomonline/types"
 
 /** Context consisting of everything required to use and render the form */
 export const EventDetailsContext = createContext<{

@@ -42,10 +42,9 @@ export const Solid = () => (
     <Badge color="slate" variant="solid">
       Slate
     </Badge>
-    
   </div>
 )
-export const Outline= () => (
+export const Outline = () => (
   <div className="grid gap-2">
     <Badge color="green" variant="outline">
       Green

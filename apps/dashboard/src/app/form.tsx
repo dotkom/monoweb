@@ -1,32 +1,32 @@
-import { z } from "zod"
-import { FC } from "react"
+import { type z } from "zod"
+import { type FC } from "react"
 import {
   Button,
   Checkbox,
-  CheckboxProps,
+  type CheckboxProps,
   Flex,
   Select,
-  SelectProps,
+  type SelectProps,
   Textarea,
-  TextareaProps,
+  type TextareaProps,
   TextInput,
-  TextInputProps,
+  type TextInputProps,
 } from "@mantine/core"
 import {
-  Control,
+  type Control,
   Controller,
-  DefaultValues,
-  FieldValue,
-  FieldValues,
-  FormState,
+  type DefaultValues,
+  type FieldValue,
+  type FieldValues,
+  type FormState,
   useForm,
-  UseFormRegister,
+  type UseFormRegister,
 } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ErrorMessage } from "@hookform/error-message"
-import { DateTimePicker, DateTimePickerProps } from "@mantine/dates"
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 
-type InputFieldContext<T extends FieldValues> = {
+interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
   control: Control<T>
@@ -120,11 +120,11 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
-function entriesOf<T extends Record<string, unknown>, K extends keyof T & string>(obj: T): [K, T[K]][] {
+function entriesOf<T extends Record<string, unknown>, K extends string & keyof T>(obj: T): [K, T[K]][] {
   return Object.entries(obj) as [K, T[K]][]
 }
 
-type FormBuilderOptions<T extends z.ZodRawShape> = {
+interface FormBuilderOptions<T extends z.ZodRawShape> {
   schema: z.ZodObject<T>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>

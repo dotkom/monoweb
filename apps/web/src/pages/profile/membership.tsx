@@ -1,23 +1,18 @@
+import { Icon } from "@dotkomonline/ui"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
-import { Icon } from "@dotkomonline/ui"
+import { type NextPageWithLayout } from "../_app"
 
-const MembershipPage: NextPageWithLayout = () => {
-  return <div>Membership</div>
-}
+const MembershipPage: NextPageWithLayout = () => <div>Membership</div>
 
-const MembershipHeader = () => {
-  return (
+const MembershipHeader = () => (
     <div className="flex items-center">
       <Icon icon={"tabler:award"} width={24} />
       <p className="ml-2">Medlemskap</p>
     </div>
   )
-}
 
-MembershipPage.getLayout = (page) => {
-  return (
+MembershipPage.getLayout = (page) => (
     <MainLayout>
       <ProfileLayout>
         <MembershipHeader />
@@ -25,6 +20,5 @@ MembershipPage.getLayout = (page) => {
       </ProfileLayout>
     </MainLayout>
   )
-}
 
 export default MembershipPage

@@ -8,6 +8,4 @@ const dateFormatter = new Intl.DateTimeFormat("no-NB", {
   hour12: false,
 })
 
-export const formatDate = (date: Date) => {
-  return dateFormatter.format(date)
-}
+export const formatDate = (date: Date) => dateFormatter.format(date)

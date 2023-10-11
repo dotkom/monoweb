@@ -1,10 +1,8 @@
 // THIS FILE IS TEMPORARY. NO NEED TO REVIEW IT.
 
-import React, { FC, FormEvent, useState } from "react"
-
-import { ProductWrite } from "@dotkomonline/types"
-import { trpc } from "@/utils/trpc"
+import React, { type FC, type FormEvent, useState } from "react"import { type ProductWrite } from "@dotkomonline/types"
 import { useRouter } from "next/router"
+import { trpc } from "@/utils/trpc"
 
 const PaymentTestPage: FC = () => {
   const paymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {
@@ -71,8 +69,8 @@ const PaymentTestPage: FC = () => {
     createCheckout.mutate({
       productId,
       stripePublicKey: providerId,
-      successRedirectUrl: window.location.href + "/success",
-      cancelRedirectUrl: window.location.href + "/cancel",
+      successRedirectUrl: `${window.location.href }/success`,
+      cancelRedirectUrl: `${window.location.href }/cancel`,
     })
   }
 
@@ -83,7 +81,7 @@ const PaymentTestPage: FC = () => {
 
   const onRefundClick = () => {
     refundPayment.mutate({
-      paymentId: paymentId,
+      paymentId,
     })
   }
 
@@ -121,7 +119,7 @@ const PaymentTestPage: FC = () => {
   const seedEventsQuery = trpc.event.all.useQuery(undefined, {
     enabled: false,
     onSuccess: (data) => {
-      const goodEvents = data.filter((e) => !!e.id)
+      const goodEvents = data.filter((e) => Boolean(e.id))
 
       for (let i = 0; i < Math.min(2, goodEvents.length); i++) {
         seedCreateProductMutation.mutate({

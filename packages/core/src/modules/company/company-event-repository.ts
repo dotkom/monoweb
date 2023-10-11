@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
-import { Company, Event } from "@dotkomonline/types"
-import { Kysely } from "kysely"
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { type Database } from "@dotkomonline/db"
+import { type Company, type Event } from "@dotkomonline/types"
+import { type Kysely } from "kysely"
+import { type Cursor, paginateQuery } from "../../utils/db-utils"
 import { mapToEvent } from "../event/event-repository"
 
 export interface CompanyEventRepository {

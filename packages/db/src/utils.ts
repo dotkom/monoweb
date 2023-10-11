@@ -1,6 +1,6 @@
-import { SchemaModule, sql } from "kysely"
+import { type SchemaModule, sql } from "kysely"
 
-type DefaultOptions = {
+interface DefaultOptions {
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { FC } from "react"
+import { type FC } from "react"
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -9,10 +9,9 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./NavigationMenu"
-import { MenuLink } from "./types"
+import { type MenuLink } from "./types"
 
-export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
-  return (
+export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => (
     <NavigationMenu className="ml-6 hidden w-min flex-1 justify-start md:flex">
       <NavigationMenuList>
         {links.map((link) => (
@@ -23,7 +22,6 @@ export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
       </NavigationMenuList>
     </NavigationMenu>
   )
-}
 
 const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
   const isGroupLink = "items" in link
@@ -48,11 +46,11 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
         </NavigationMenuContent>
       </>
     )
-  } else {
+  } 
     return (
       <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
         <Link href={link.href}>{link.title}</Link>
       </NavigationMenuLink>
     )
-  }
+  
 }

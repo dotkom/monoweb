@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { useDisclosure } from "@mantine/hooks"
 import {
   AppShellHeader,
@@ -13,8 +13,8 @@ import {
   Group,
   Title,
 } from "@mantine/core"
-import { SignOutButton } from "./SignOutButton"
 import { Icon } from "@iconify/react"
+import { SignOutButton } from "./SignOutButton"
 
 const navigations = [
   {

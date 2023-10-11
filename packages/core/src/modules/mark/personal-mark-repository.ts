@@ -1,20 +1,18 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
-import { Mark, PersonalMark, PersonalMarkSchema, User } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Kysely, type Selectable } from "kysely"
+import { type Mark, type PersonalMark, PersonalMarkSchema, type User } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
 import { mapToMark } from "./mark-repository"
+import { type Cursor, paginateQuery } from "../../utils/db-utils"
 
-export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark => {
-  return PersonalMarkSchema.parse(payload)
-}
+export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark =>
+  PersonalMarkSchema.parse(payload)
 
 export interface PersonalMarkRepository {
-  getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
-  addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
-  removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
-  getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
+  getAllByUserId: (userId: User["id"], take: number, cursor?: Cursor) => Promise<PersonalMark[]>
+  getAllMarksByUserId: (userId: User["id"], take: number, cursor?: Cursor) => Promise<Mark[]>
+  addToUserId: (userId: User["id"], markId: Mark["id"]) => Promise<PersonalMark | undefined>
+  removeFromUserId: (userId: User["id"], markId: Mark["id"]) => Promise<PersonalMark | undefined>
+  getByUserId: (userId: User["id"], markId: Mark["id"]) => Promise<PersonalMark | undefined>
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {

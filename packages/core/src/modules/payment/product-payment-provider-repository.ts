@@ -1,14 +1,13 @@
-import { Kysely, Selectable } from "kysely"
+import { type Kysely, type Selectable } from "kysely"
 import {
-  PaymentProvider,
+  type PaymentProvider,
   PaymentProviderSchema,
-  Product,
-  ProductPaymentProvider,
+  type Product,
+  type ProductPaymentProvider,
   ProductPaymentProviderSchema,
-  ProductPaymentProviderWrite,
+  type ProductPaymentProviderWrite,
 } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Database } from "@dotkomonline/db"
 
 const mapToProductPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) =>
   ProductPaymentProviderSchema.parse(data)
@@ -16,10 +15,10 @@ const mapToProductPaymentProvider = (data: Selectable<Database["productPaymentPr
 const mapToPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) => PaymentProviderSchema.parse(data)
 
 export interface ProductPaymentProviderRepository {
-  addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>
-  deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void>
-  getAllByProductId(productId: Product["id"]): Promise<PaymentProvider[]>
-  productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean>
+  addPaymentProvider: (data: ProductPaymentProviderWrite) => Promise<ProductPaymentProvider | undefined>
+  deletePaymentProvider: (productId: Product["id"], paymentProviderId: string) => Promise<void>
+  getAllByProductId: (productId: Product["id"]) => Promise<PaymentProvider[]>
+  productHasPaymentProviderId: (productId: Product["id"], paymentProviderId: string) => Promise<boolean>
 }
 
 export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {
@@ -61,6 +60,6 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
       .where("paymentProviderId", "=", paymentProviderId)
       .executeTakeFirst()
 
-    return !!productPaymentProvider
+    return Boolean(productPaymentProvider)
   }
 }

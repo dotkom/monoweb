@@ -1,4 +1,4 @@
-import { SelectQueryBuilder, sql } from "kysely"
+import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
 export const CursorSchema = z.object({

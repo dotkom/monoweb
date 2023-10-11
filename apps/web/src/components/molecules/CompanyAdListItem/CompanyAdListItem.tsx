@@ -1,8 +1,8 @@
-import { CareerAd } from "@/api/get-career-ads"
 import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
-import { FC } from "react"
+import { type FC } from "react"
+import { type CareerAd } from "@/api/get-career-ads"
 
 interface CompanyAdListItemProps {
   career: CareerAd

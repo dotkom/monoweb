@@ -1,9 +1,9 @@
-import { Company, Event } from "@dotkomonline/types"
-import { Cursor } from "../../utils/db-utils"
-import { CompanyEventRepository } from "./company-event-repository" // Note: you might need to create or rename this file based on previous changes.
+import { type Company, type Event } from "@dotkomonline/types"
+import { type CompanyEventRepository } from "./company-event-repository" // Note: you might need to create or rename this file based on previous changes.
+import { type Cursor } from "../../utils/db-utils"
 
 export interface CompanyEventService {
-  getEventsByCompanyId(companyId: Company["id"], take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByCompanyId: (companyId: Company["id"], take: number, cursor?: Cursor) => Promise<Event[]>
 }
 
 export class CompanyEventServiceImpl implements CompanyEventService {

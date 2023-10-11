@@ -1,9 +1,7 @@
-import { Company, Event } from "@dotkomonline/types"
-
-import { EventList } from "@/components/organisms/EventList"
-import { FC } from "react"
+import { type Company, type Event } from "@dotkomonline/types"import { type FC } from "react"
 import { Icon } from "@dotkomonline/ui"
 import Image from "next/image"
+import { EventList } from "@/components/organisms/EventList"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 
 interface CompanyViewProps {

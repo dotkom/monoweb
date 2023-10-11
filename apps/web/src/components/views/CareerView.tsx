@@ -1,11 +1,11 @@
-import { CareerProps } from "@/pages/career"
-import { FC } from "react"
+import { type FC } from "react"
+import { type CareerProps } from "@/pages/career"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
 
-const CareerView: FC<CareerProps> = (props: CareerProps) => {
+const CareerView: FC<CareerProps> = (props: CareerProps) => 
   // return <div> 404 Siden finnes ikke </div>
 
-  return (
+   (
     <div>
       <div className="bg-amber-9 absolute left-0 top-[56px] z-0 h-[250px] w-full opacity-30" />
       <div className="absolute left-0 top-[56px] z-10 flex h-[250px] w-full flex-col justify-center">
@@ -37,6 +37,6 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
       </div>
     </div>
   )
-}
+
 
 export default CareerView

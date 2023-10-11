@@ -1,13 +1,13 @@
 import { createTRPCNext } from "@trpc/next"
-import { CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
-import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
+import { type CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
+import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
 import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
-  if (typeof window !== "undefined") return ""
-  if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.VERCEL_URL}`
+  if (typeof window !== "undefined") {return ""}
+  if (env.NEXT_PUBLIC_VERCEL_URL) {return `https://${env.VERCEL_URL}`}
   return `http://localhost:3000`
 }
 

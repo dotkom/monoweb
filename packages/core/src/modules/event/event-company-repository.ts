@@ -1,9 +1,9 @@
-import { Company, Event } from "@dotkomonline/types"
-import { Kysely } from "kysely"
-import { Database } from "@dotkomonline/db"
-import { mapToCompany } from "../company/company-repository"
+import { type Company, type Event } from "@dotkomonline/types"
+import { type Kysely } from "kysely"
+import { type Database } from "@dotkomonline/db"
 import { mapToEvent } from "./event-repository"
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { mapToCompany } from "../company/company-repository"
+import { type Cursor, paginateQuery } from "../../utils/db-utils"
 
 export interface EventCompanyRepository {
   createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>

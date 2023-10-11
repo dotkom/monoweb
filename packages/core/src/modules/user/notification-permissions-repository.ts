@@ -1,25 +1,22 @@
-import { Kysely, Selectable } from "kysely"
+import { type Kysely, type Selectable } from "kysely"
 import {
-  NotificationPermissions,
+  type NotificationPermissions,
   NotificationPermissionsSchema,
-  NotificationPermissionsWrite,
+  type NotificationPermissionsWrite,
 } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Database } from "@dotkomonline/db"
 
 export const mapToNotificationPermissions = (
   payload: Selectable<Database["notificationPermissions"]>
-): NotificationPermissions => {
-  return NotificationPermissionsSchema.parse(payload)
-}
+): NotificationPermissions => NotificationPermissionsSchema.parse(payload)
 
 export interface NotificationPermissionsRepository {
-  getByUserId(id: string): Promise<NotificationPermissions | undefined>
-  create(data: Partial<NotificationPermissionsWrite>): Promise<NotificationPermissions>
-  update(
+  getByUserId: (id: string) => Promise<NotificationPermissions | undefined>
+  create: (data: Partial<NotificationPermissionsWrite>) => Promise<NotificationPermissions>
+  update: (
     userId: string,
     data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ): Promise<NotificationPermissions | undefined>
+  ) => Promise<NotificationPermissions | undefined>
 }
 
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {

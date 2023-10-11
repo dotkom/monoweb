@@ -1,23 +1,18 @@
+import { Icon } from "@dotkomonline/ui"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
-import { Icon } from "@dotkomonline/ui"
+import { type NextPageWithLayout } from "../_app"
 
-const PenaltiesPage: NextPageWithLayout = () => {
-  return <div>Penalties</div>
-}
+const PenaltiesPage: NextPageWithLayout = () => <div>Penalties</div>
 
-const PenaltyHeader = () => {
-  return (
+const PenaltyHeader = () => (
     <div className="flex items-center">
       <Icon icon="pajamas:cancel" className="w-4" />
       <p className="ml-2">Prikker og Suspensjoner</p>
     </div>
   )
-}
 
-PenaltiesPage.getLayout = (page) => {
-  return (
+PenaltiesPage.getLayout = (page) => (
     <MainLayout>
       <ProfileLayout>
         <PenaltyHeader />
@@ -25,6 +20,5 @@ PenaltiesPage.getLayout = (page) => {
       </ProfileLayout>
     </MainLayout>
   )
-}
 
 export default PenaltiesPage

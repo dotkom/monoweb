@@ -7,8 +7,7 @@ interface IStudentProgress {
   year: number
 }
 
-const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => {
-  return (
+const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => (
     <div
       className={`${year <= id ? "border-[#153e75]" : "border-[#36b37e]"}
       flex h-[45px] w-[45px] items-center  justify-around rounded-[50%] border-[4px] border-solid`}
@@ -21,18 +20,12 @@ const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => {
       </div>
     </div>
   )
-}
 
-const HorizontalLine: React.FC<IStudentProgressComponent> = ({ year, id }) => {
-  return <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} m-[-1px] h-[4px] w-[30px] self-center`} />
-}
+const HorizontalLine: React.FC<IStudentProgressComponent> = ({ year, id }) => <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} m-[-1px] h-[4px] w-[30px] self-center`} />
 
-const VerticalLine: React.FC<IStudentProgressComponent> = ({ year, id }) => {
-  return <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} z-10 h-[50px] w-[4px] self-center`} />
-}
+const VerticalLine: React.FC<IStudentProgressComponent> = ({ year, id }) => <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} z-10 h-[50px] w-[4px] self-center`} />
 
-const StudentProgress: React.FC<IStudentProgress> = ({ year }) => {
-  return (
+const StudentProgress: React.FC<IStudentProgress> = ({ year }) => (
     <>
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-row">
@@ -51,6 +44,5 @@ const StudentProgress: React.FC<IStudentProgress> = ({ year }) => {
       </div>
     </>
   )
-}
 
 export default StudentProgress

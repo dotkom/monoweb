@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { type FC } from "react"
 import Link from "next/link"
 
 export interface EventListItemProps {
@@ -11,8 +11,7 @@ export interface EventListItemProps {
 }
 
 // Temporary eventlistitem design
-export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps) => {
-  return (
+export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps) => (
     <Link
       href={`/events/${props.id}`}
       className="bg-blue-3 text-blue-12 hover:bg-blue-4 flex w-full cursor-pointer flex-row gap-x-2 rounded-md px-3 py-2"
@@ -28,4 +27,3 @@ export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps)
       </div>
     </Link>
   )
-}

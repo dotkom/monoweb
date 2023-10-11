@@ -1,6 +1,6 @@
-import { Company, Event } from "@dotkomonline/types"
-import { EventCompanyRepository } from "./event-company-repository"
-import { Cursor } from "../../utils/db-utils"
+import { type Company, type Event } from "@dotkomonline/types"
+import { type EventCompanyRepository } from "./event-company-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface EventCompanyService {
   createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>

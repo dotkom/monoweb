@@ -2,23 +2,17 @@
 
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
-import { FC } from "react"
+import { type FC } from "react"
+import { useRouter } from "next/navigation"
 import { useEventDetailsContext } from "./provider"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
-import { useRouter } from "next/navigation"
 
-const EventDetailsCompanies: FC = () => {
-  return <h1>Bedrifter</h1>
-}
+const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
-const EventDetailsFeedbackForms: FC = () => {
-  return <h1>Tilbakemelding</h1>
-}
+const EventDetailsFeedbackForms: FC = () => <h1>Tilbakemelding</h1>
 
-const EventDetailsAttendance: FC = () => {
-  return <h1>Påmelding</h1>
-}
+const EventDetailsAttendance: FC = () => <h1>Påmelding</h1>
 
 const SIDEBAR_LINKS = [
   {

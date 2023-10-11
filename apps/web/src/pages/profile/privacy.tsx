@@ -1,23 +1,18 @@
+import { Icon } from "@dotkomonline/ui"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
-import { Icon } from "@dotkomonline/ui"
+import { type NextPageWithLayout } from "../_app"
 
-const PrivacyPage: NextPageWithLayout = () => {
-  return <div>Privacy</div>
-}
+const PrivacyPage: NextPageWithLayout = () => <div>Privacy</div>
 
-const PrivacyHeader = () => {
-  return (
+const PrivacyHeader = () => (
     <div className="flex items-center">
       <Icon icon={"tabler:shield-half-filled"} width={24} />
       <p className="ml-2">Personvern</p>
     </div>
   )
-}
 
-PrivacyPage.getLayout = (page) => {
-  return (
+PrivacyPage.getLayout = (page) => (
     <MainLayout>
       <ProfileLayout>
         <PrivacyHeader />
@@ -25,6 +20,5 @@ PrivacyPage.getLayout = (page) => {
       </ProfileLayout>
     </MainLayout>
   )
-}
 
 export default PrivacyPage

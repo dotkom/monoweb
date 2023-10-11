@@ -1,9 +1,9 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { PropsWithChildren } from "react"
-import { trpc } from "../../../../utils/trpc"
+import { type PropsWithChildren } from "react"
 import { CompanyDetailsContext } from "./provider"
+import { trpc } from "../../../../utils/trpc"
 
 export default function CompanyDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
   const { data, isLoading } = trpc.company.get.useQuery(params.id)

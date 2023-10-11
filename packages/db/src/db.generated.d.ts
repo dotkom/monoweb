@@ -8,7 +8,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
 
-export type Int8 = ColumnType<string, string | number | bigint, string | number | bigint>
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>
 
 export type PaymentProvider = "STRIPE"
 
@@ -186,21 +186,21 @@ export interface RefundRequest {
 }
 
 export interface DB {
-  attendance: Attendance
-  attendee: Attendee
-  committee: Committee
-  company: Company
+  "attendance": Attendance
+  "attendee": Attendee
+  "committee": Committee
+  "company": Company
   "drizzle.DrizzleMigrations": DrizzleDrizzleMigrations
-  event: Event
-  eventCommittee: EventCommittee
-  eventCompany: EventCompany
-  mark: Mark
-  notificationPermissions: NotificationPermissions
-  owUser: OwUser
-  payment: Payment
-  personalMark: PersonalMark
-  privacyPermissions: PrivacyPermissions
-  product: Product
-  productPaymentProvider: ProductPaymentProvider
-  refundRequest: RefundRequest
+  "event": Event
+  "eventCommittee": EventCommittee
+  "eventCompany": EventCompany
+  "mark": Mark
+  "notificationPermissions": NotificationPermissions
+  "owUser": OwUser
+  "payment": Payment
+  "personalMark": PersonalMark
+  "privacyPermissions": PrivacyPermissions
+  "product": Product
+  "productPaymentProvider": ProductPaymentProvider
+  "refundRequest": RefundRequest
 }

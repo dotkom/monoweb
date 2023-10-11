@@ -16,10 +16,10 @@ import {
   TableTr,
 } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { Event } from "@dotkomonline/types"
+import { type Event } from "@dotkomonline/types"
 import { useMemo } from "react"
-import { formatDate } from "../../../utils/format"
 import { Icon } from "@iconify/react"
+import { formatDate } from "../../../utils/format"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"

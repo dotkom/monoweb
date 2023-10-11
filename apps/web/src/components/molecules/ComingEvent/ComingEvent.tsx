@@ -2,7 +2,7 @@ import { Badge } from "@dotkomonline/ui"
 import Image from "next/image"
 import React from "react"
 
-type ComingEventProps = {
+interface ComingEventProps {
   img: string
   title: string
   tag: string
@@ -13,8 +13,7 @@ type ComingEventProps = {
 }
 
 // TODO: mye relative og absolute her.... too bad!
-export const ComingEvent: React.FC<ComingEventProps> = (props) => {
-  return (
+export const ComingEvent: React.FC<ComingEventProps> = (props) => (
     <div className="relative h-[100px] max-w-[400px] overflow-hidden rounded-xl shadow-md">
       <div className="m-0 inline-block align-top">
         <Image src={props.img} alt={props.title} width={100} height={100} className="object-cover" />
@@ -40,4 +39,3 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => {
       </a>
     </div>
   )
-}

@@ -1,11 +1,11 @@
-import { Event } from "@dotkomonline/types"
+import { type Event } from "@dotkomonline/types"
 import { Anchor, Box, Text, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { FC, useMemo } from "react"
-import { useCompanyEventsAllQuery } from "src/modules/company/queries/use-company-events-all-query"
-import { GenericTable } from "../../../../components/GenericTable"
-import { useCompanyDetailsContext } from "./provider"
+import { type FC, useMemo } from "react"
 import Link from "next/link"
+import { useCompanyEventsAllQuery } from "src/modules/company/queries/use-company-events-all-query"
+import { useCompanyDetailsContext } from "./provider"
+import { GenericTable } from "../../../../components/GenericTable"
 
 export const CompanyEventsPage: FC = () => {
   const { company } = useCompanyDetailsContext()
@@ -17,13 +17,11 @@ export const CompanyEventsPage: FC = () => {
       columnHelper.accessor((eventCompany) => eventCompany, {
         id: "companyEvent",
         header: () => "Navn",
-        cell: (info) => {
-          return (
+        cell: (info) => (
             <Anchor component={Link} href={`/event/${info.getValue().id}`}>
               {info.getValue().title}
             </Anchor>
-          )
-        },
+          ),
       }),
     ],
     [columnHelper]

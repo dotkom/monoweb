@@ -1,9 +1,9 @@
 import { cn, Icon } from "@dotkomonline/ui"
-import { FC, useEffect, useState } from "react"
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./NavigationMenu"
-import { MenuLink } from "./types"
+import { type FC, useEffect, useState } from "react"
 import * as Popover from "@radix-ui/react-popover"
 import Link from "next/link"
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./NavigationMenu"
+import { type MenuLink } from "./types"
 
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false)
@@ -50,8 +50,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   )
 }
 
-const MobileMenuItem = ({ link }: { link: MenuLink }) => {
-  return (
+const MobileMenuItem = ({ link }: { link: MenuLink }) => (
     <NavigationMenuLink asChild>
       <Link
         href={"href" in link ? link.href : "#"}
@@ -61,4 +60,3 @@ const MobileMenuItem = ({ link }: { link: MenuLink }) => {
       </Link>
     </NavigationMenuLink>
   )
-}
