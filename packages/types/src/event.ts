@@ -21,42 +21,13 @@ export const EventSchema = z.object({
 export type Event = z.infer<typeof EventSchema>
 export type EventId = Event["id"]
 
-export const EventWriteSchema = EventSchema.extend({
-  start: z.date().refine((data) => data > new Date(), { message: "Starttidspunkt må være i fremtiden" }),
-  end: z.date().refine((data) => data > new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
-})
-  .partial({
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-  })
-  .refine(
-    (data) => {
-      // data.start < data.end
-      return data.start < data.end
-    },
-    {
-      message: "Sluttidspunkt må være etter starttidspunkt",
-      path: ["end"],
-    }
-  )
-
-export const EventEditSchema = EventSchema.partial({
+export const EventWriteSchema = EventSchema.partial({
+  id: true,
   createdAt: true,
   updatedAt: true,
-}).refine(
-  (data) => {
-    // data.start < data.end
-    return data.start < data.end
-  },
-  {
-    message: "Sluttidspunkt må være etter starttidspunkt",
-    path: ["end"],
-  }
-)
+})
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
-export type EventEdit = z.infer<typeof EventEditSchema>
 
 export const AttendeeSchema = z.object({
   id: z.string(),

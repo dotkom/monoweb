@@ -1,4 +1,3 @@
-import { EventEditSchema } from "@dotkomonline/types"
 import { FC } from "react"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 import { useEventEditForm } from "../edit-form"
@@ -10,10 +9,9 @@ export const EventEditCard: FC = () => {
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
     onSubmit: (data) => {
-      const result = EventEditSchema.parse(data)
       edit.mutate({
-        id: result.id,
-        changes: result,
+        id: data.id,
+        changes: data,
       })
     },
     defaultValues: { ...event },

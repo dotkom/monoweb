@@ -6,8 +6,9 @@ import {
   createTextInput,
   useFormBuilder,
 } from "../../form"
-import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
+import { EventSchema, EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { z } from "zod"
 
 const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   start: new Date(),
@@ -26,6 +27,25 @@ type UseEventWriteFormProps = {
   label?: string
 }
 
+export const ValidationSchema = EventSchema.extend({
+  start: z.date().refine((data) => data > new Date(), { message: "Starttidspunkt må være i fremtiden" }),
+  end: z.date().refine((data) => data > new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
+})
+  .partial({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .refine(
+    (data) => {
+      return data.start < data.end
+    },
+    {
+      message: "Sluttidspunkt må være etter starttidspunkt",
+      path: ["end"],
+    }
+  )
+
 export const useEventWriteForm = ({
   onSubmit,
   label = "Opprett arrangement",
@@ -33,7 +53,7 @@ export const useEventWriteForm = ({
 }: UseEventWriteFormProps) => {
   const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
-    schema: EventWriteSchema,
+    schema: ValidationSchema,
     defaultValues,
     onSubmit,
     label,

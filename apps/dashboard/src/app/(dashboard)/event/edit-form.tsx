@@ -1,4 +1,4 @@
-import { EventEdit, EventEditSchema } from "@dotkomonline/types"
+import { Event, EventSchema } from "@dotkomonline/types"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
   createCheckboxInput,
@@ -9,31 +9,26 @@ import {
   useFormBuilder,
 } from "../../form"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<EventEdit> = {
-  start: new Date(),
-  end: new Date(),
-  description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-  imageUrl: null,
-  location: null,
-  subtitle: null,
-  waitlist: null,
-  committeeId: null,
-}
-
 type UseEventEditFormProps = {
-  onSubmit: (data: EventEdit) => void
-  defaultValues?: Partial<EventEdit>
+  onSubmit: (data: Event) => void
+  defaultValues?: Partial<Event>
   label?: string
 }
 
-export const useEventEditForm = ({
-  onSubmit,
-  label = "Opprett arrangement",
-  defaultValues = EVENT_FORM_DEFAULT_VALUES,
-}: UseEventEditFormProps) => {
+const ValidationSchema = EventSchema.refine(
+  (data) => {
+    return data.start < data.end
+  },
+  {
+    message: "Sluttidspunkt må være etter starttidspunkt",
+    path: ["end"],
+  }
+)
+
+export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) => {
   const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
-    schema: EventEditSchema,
+    schema: ValidationSchema,
     defaultValues,
     onSubmit,
     label,
