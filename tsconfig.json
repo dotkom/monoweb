@@ -17,5 +17,6 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "types": ["vitest/globals"]
-  }
+  },
+  "include": ["apps/", "packages/"]
 }
