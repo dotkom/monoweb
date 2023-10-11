@@ -1,9 +1,8 @@
 import { Kysely, sql } from "kysely"
 
-import { Database } from "../types"
 import { createTableWithDefaults } from "../utils"
 
-export async function up(db: Kysely<Database>) {
+export async function up(db: Kysely<any>) {
   await db.schema.createType("payment_provider").asEnum(["STRIPE"]).execute()
   await db.schema.createType("product_type").asEnum(["EVENT"]).execute()
   await db.schema.createType("payment_status").asEnum(["UNPAID", "PAID", "REFUNDED"]).execute()
@@ -32,7 +31,7 @@ export async function up(db: Kysely<Database>) {
     .execute()
 }
 
-export async function down(db: Kysely<Database>): Promise<void> {
+export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable("product_payment_provider").execute()
   await db.schema.dropTable("payment").execute()
   await db.schema.dropTable("product").execute()

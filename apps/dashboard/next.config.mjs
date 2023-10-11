@@ -7,13 +7,13 @@ const config = {
   images: {
     domains: ["cdn.sanity.io"],
   },
-  experimental: {
-    appDir: true,
-  },
-  transpilePackages: ["@dotkomonline/ui", "@dotkomonline/types","@dotkomonline/auth", "@dotkomonline/api"],
-  eslint: {
-    ignoreDuringBuilds: !!process.env.CI,
-  },
+  transpilePackages: [
+      "@dotkomonline/auth",
+    "@dotkomonline/env",
+    "@dotkomonline/gateway-trpc",
+    "@dotkomonline/types",
+    "@dotkomonline/ui"
+  ],
 }
 
 export default config

@@ -9,6 +9,7 @@
     "build": "turbo run build --filter=@dotkomonline/*",
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
+    "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
@@ -27,21 +28,18 @@
     "apps/*"
   ],
   "engines": {
-    "node": ">=18.13",
-    "pnpm": ">=8"
+    "node": ">=18.18.0",
+    "pnpm": ">=8.7.6"
   },
   "devDependencies": {
-    "dotenv-cli": "^7.2.1",
-    "eslint": "^8.46.0",
-    "prettier": "^2.8.8",
+    "dotenv-cli": "^7.3.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3",
+    "prettier-plugin-tailwindcss": "^0.5.5",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
-    "tsup": "^6.7.0",
-    "turbo": "^1.10.12",
-    "typescript": "^5.0.0",
-    "vitest": "^0.34.0"
-  },
-  "volta": {
-    "node": "18.17.1"
+    "turbo": "^1.10.15",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }

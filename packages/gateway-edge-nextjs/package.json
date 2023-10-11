@@ -14,18 +14,17 @@
     "coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@clerk/clerk-sdk-node": "^4.12.1",
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "stripe": "^12.16.0"
+    "stripe": "^13.9.0"
   },
   "peerDependencies": {
-    "next": "^13.3.1"
+    "next": "^13.5.4"
   },
   "devDependencies": {
-    "@vitest/ui": "^0.34.0",
-    "eslint": "^8.46.0",
-    "typescript": "^5.0.0",
-    "vitest": "^0.34.0"
+    "@vitest/ui": "^0.34.6",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }

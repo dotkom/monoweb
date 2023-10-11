@@ -1,9 +1,9 @@
 import type { inferAsyncReturnType } from "@trpc/server"
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
-import { getAuth } from "@clerk/nextjs/server"
-import { getServerSession } from "@dotkomonline/auth"
-import { createServiceLayer, defaultClerkClient } from "@dotkomonline/core"
+import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
+import { authOptions } from "@dotkomonline/auth/src/web.app"
+import { getServerSession } from "next-auth"
 
 type AuthContextProps = {
   auth: {
@@ -12,7 +12,7 @@ type AuthContextProps = {
 }
 
 export const createContextInner = async (opts: AuthContextProps) => {
-  const services = await createServiceLayer({ db: kysely, clerkClient: defaultClerkClient })
+  const services = await createServiceLayer({ db: kysely })
   return {
     ...services,
     auth: opts.auth,
@@ -20,26 +20,14 @@ export const createContextInner = async (opts: AuthContextProps) => {
 }
 
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const clerkAuth = getAuth(opts.req)
-  // samesite through clerk
-  if (clerkAuth.userId) {
+  const session = await getServerSession(opts.req, opts.res, authOptions)
+  if (session !== null) {
     return createContextInner({
       auth: {
-        userId: clerkAuth.userId,
+        userId: session.user.id,
       },
     })
   }
-  // corss site through ory hydra
-  const auth = await getServerSession(opts)
-  if (auth?.user) {
-    return createContextInner({
-      auth: {
-        userId: auth.user.id,
-      },
-    })
-  }
-
-  // Not authed
   return createContextInner({ auth: null })
 }
 

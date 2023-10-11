@@ -4,9 +4,6 @@ import { t } from "../../trpc"
 import { z } from "zod"
 
 export const userRouter = t.router({
-  getUsers: t.procedure.input(z.object({ limit: z.number().optional() })).query(async ({ input, ctx }) => {
-    return await ctx.userService.getClerkUsers(input.limit ?? 50)
-  }),
   getPrivacyPermissionssByUserId: protectedProcedure.input(z.string()).query(({ input, ctx }) => {
     return ctx.userService.getPrivacyPermissionsByUserId(input)
   }),

@@ -5,31 +5,22 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "email:dev": "email dev --port 7777 --dir src/emails",
+    "email:export": "email export --dir src/emails"
   },
   "main": "src/index.ts",
   "dependencies": {
-    "@dotkomonline/config": "^1.0.0",
-    "@react-email/button": "^0.0.10",
-    "@react-email/column": "^0.0.7",
-    "@react-email/container": "^0.0.8",
-    "@react-email/font": "^0.0.3",
-    "@react-email/head": "^0.0.5",
-    "@react-email/heading": "^0.0.8",
-    "@react-email/hr": "^0.0.5",
-    "@react-email/html": "^0.0.4",
-    "@react-email/img": "^0.0.5",
-    "@react-email/link": "^0.0.5",
+    "@react-email/components": "^0.0.7",
     "@react-email/render": "^0.0.7",
-    "@react-email/section": "^0.0.9",
-    "@react-email/tailwind": "^0.0.8",
-    "@react-email/text": "^0.0.5",
+    "@react-email/tailwind": "^0.0.9",
     "react": "^18.2.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^18.2.17",
-    "eslint": "^8.46.0",
-    "typescript": "^5.0.0"
+    "@types/react": "^18.2.24",
+    "eslint": "^8.50.0",
+    "react-email": "^1.9.5",
+    "typescript": "^5.2.2"
   }
 }

@@ -1,8 +1,8 @@
 import React from "react"
-import { useAuth } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 
 const Home: React.FC = () => {
-  const auth = useAuth()
+  const auth = useSession()
   return (
     <div>
       <p>Homepage</p>

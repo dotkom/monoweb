@@ -1,10 +1,11 @@
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
-
-import { Database } from "./types"
+import { env } from "@dotkomonline/env"
 import pg from "pg"
+import { DB } from "./db.generated"
 
-export * from "./types"
 export { CockroachDialect } from "./cockroach"
+
+export type Database = DB
 
 declare global {
   // allow global `var` declarations
@@ -17,12 +18,12 @@ export const kysely =
   new Kysely<Database>({
     dialect: new PostgresDialect({
       pool: new pg.Pool({
-        connectionString: process.env.DATABASE_URL as string,
+        connectionString: env.DATABASE_URL,
       }),
     }),
     plugins: [new CamelCasePlugin()],
   })
 
-if (process.env.NODE_ENV !== "production") {
+if (env.NODE_ENV !== "production") {
   global.kysely = kysely
 }

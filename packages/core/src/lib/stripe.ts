@@ -1,4 +1,5 @@
 import Stripe from "stripe"
+import { env } from "@dotkomonline/env"
 
 interface StripeAccountDetails {
   publicKey: string
@@ -8,14 +9,14 @@ interface StripeAccountDetails {
 
 const stripeAccounts = {
   fagkomStripe: {
-    publicKey: process.env.FAGKOM_STRIPE_PUBLIC_KEY as string,
-    secretKey: process.env.FAGKOM_STRIPE_SECRET_KEY as string,
-    webhookSecret: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET as string,
+    publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
+    secretKey: env.FAGKOM_STRIPE_SECRET_KEY,
+    webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
   trikomStripe: {
-    publicKey: process.env.TRIKOM_STRIPE_PUBLIC_KEY as string,
-    secretKey: process.env.TRIKOM_STRIPE_SECRET_KEY as string,
-    webhookSecret: process.env.TRIKOM_STRIPE_WEBHOOK_SECRET as string,
+    publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
+    secretKey: env.TRIKOM_STRIPE_SECRET_KEY,
+    webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
   },
 } as const
 
@@ -39,7 +40,7 @@ export function getStripeObject(publicKey: string): Stripe | undefined {
   }
 
   return new Stripe(accountDetails.secretKey, {
-    apiVersion: "2022-11-15",
+    apiVersion: "2023-08-16",
   })
 }
 

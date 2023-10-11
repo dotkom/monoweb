@@ -14,22 +14,22 @@
     "coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.23.1",
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
-    "@trpc/server": "^10.36.0",
-    "superjson": "^1.13.1",
-    "zod": "^3.21.4"
+    "@trpc/server": "^10.38.5",
+    "superjson": "^1.13.3",
+    "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "next": "^13.3.1"
+    "next": "^13.5.4",
+    "next-auth": "^4.23.2"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
-    "@vitest/ui": "^0.34.0",
-    "eslint": "^8.46.0",
-    "typescript": "^5.0.0",
-    "vitest": "^0.34.0"
+    "@vitest/ui": "^0.34.6",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }

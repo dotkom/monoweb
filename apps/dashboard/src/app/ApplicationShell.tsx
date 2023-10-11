@@ -1,144 +1,108 @@
 "use client"
 
 import { FC, PropsWithChildren } from "react"
+import { useDisclosure } from "@mantine/hooks"
 import {
+  AppShellHeader,
   AppShell,
-  Flex,
-  Box,
-  Title,
-  Group,
-  Header,
-  Navbar,
-  Button,
   NavLink,
-  Text,
-  Image,
-  useMantineColorScheme,
+  AppShellMain,
+  AppShellNavbar,
+  Burger,
+  Flex,
+  Group,
+  Title,
 } from "@mantine/core"
-import Link from "next/link"
+import { SignOutButton } from "./SignOutButton"
 import { Icon } from "@iconify/react"
-import { useSelectedLayoutSegment } from "next/navigation"
-import { signIn, signOut, useSession } from "next-auth/react"
 
-const ApplicationHeader: FC = () => {
-  const colorScheme = useMantineColorScheme()
-
-  return (
-    <Header height={60}>
-      <Group className="h-full" px="sm" position="apart">
-        <Flex align="center" columnGap="sm">
-          <Link href="/">
-            <Image src="/Online_bla_o.png" alt="Online Logo" width={32} height={32} />
-          </Link>
-          <Title m={0} order={3}>
-            OnlineWeb Dashboard
-          </Title>
-        </Flex>
-        <Group>
-          <Button variant="subtle" onClick={() => colorScheme.toggleColorScheme()}>
-            <Icon icon="tabler:sun-moon" width={28} height={28} />
-          </Button>
-          <a href="https://new.online.ntnu.no">
-            <Button variant="outline" leftIcon={<Icon icon="tabler:arrow-left" />}>
-              Tilbake til OW
-            </Button>
-          </a>
-        </Group>
-      </Group>
-    </Header>
-  )
-}
-
-const SIDEBAR_LINKS = [
+const navigations = [
   {
-    icon: "tabler:wheelchair",
-    href: "/event",
     label: "Arrangementer",
-    targetSegment: "event",
+    icon: "tabler:wheelchair",
+    children: [
+      { label: "Arrangementer", href: "/event" },
+      { label: "Tilbakemeldingsskjema", href: "/feedback" },
+      { label: "Prikker & Suspensjoner", href: "/punishment" },
+      { label: "Betaling", href: "/payment" },
+    ],
   },
   {
-    icon: "tabler:tent",
-    href: "/committee",
+    label: "Bedrifter",
+    icon: "tabler:moneybag",
+    children: [
+      { label: "Bedrifter", href: "/company" },
+      { label: "Utlysninger", href: "/listing" },
+    ],
+  },
+  {
     label: "Komiteer",
-    targetSegment: "committee",
+    icon: "tabler:campfire",
+    children: [
+      { label: "Komiteer", href: "/committee" },
+      { label: "Nodekomiteer", href: "/node-committee" },
+      { label: "Interessegrupper", href: "/interest-group" },
+      { label: "Komitesøknader", href: "/committee-application" },
+    ],
   },
   {
-    icon: "tabler:user-circle",
-    href: "/user",
-    label: "Brukere",
-    targetSegment: "user",
+    label: "Media",
+    icon: "tabler:photo",
+    children: [
+      { label: "Artikler", href: "/article" },
+      { label: "Offline", href: "/offline" },
+    ],
   },
-]
-
-const ApplicationSidebar: FC = () => {
-  const segment = useSelectedLayoutSegment()
-  const { data, status } = useSession()
-  return (
-    <Navbar width={{ base: 360 }}>
-      <Navbar.Section grow>
-        {SIDEBAR_LINKS.map(({ href, label, targetSegment, icon }) => (
-          <Link key={href} href={href} className="no-underline active:no-underline">
-            <NavLink
-              active={segment === targetSegment}
-              childrenOffset="xl"
-              icon={<Icon icon={icon} />}
-              label={<Text size="xl">{label}</Text>}
-            />
-          </Link>
-        ))}
-      </Navbar.Section>
-      <Navbar.Section>
-        <Box className="border-gray-2 border-t p-3">
-          <Group position="apart">
-            {status === "authenticated" && data !== null ? (
-              <>
-                <Flex columnGap="xs">
-                  {data.user.image !== null ? (
-                    <Image width={40} height={40} radius={9999} src={data.user.image ?? "/"} alt="Profile picture" />
-                  ) : (
-                    <Icon width={40} height={40} icon="tabler:user-circle" />
-                  )}
-                  <Box>
-                    <Text size="sm" weight={500}>
-                      {data.user.name}
-                    </Text>
-                    <Text color="dimmed" size="xs">
-                      {data.user.email}
-                    </Text>
-                  </Box>
-                </Flex>
-                <Button variant="outline" onClick={() => signOut()}>
-                  Logg ut
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button fullWidth onClick={() => signIn("onlineweb")}>
-                  Logg inn
-                </Button>
-                <Button variant="outline" fullWidth onClick={() => signIn("onlineweb")}>
-                  Registrer bruker
-                </Button>
-              </>
-            )}
-          </Group>
-        </Box>
-      </Navbar.Section>
-    </Navbar>
-  )
-}
+  {
+    label: "Brukere",
+    icon: "tabler:users-group",
+    children: [
+      { label: "Brukere", href: "/user" },
+      { label: "Medlemskap", href: "/membership" },
+    ],
+  },
+] as const
 
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
+
   return (
     <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+      }}
       padding="md"
-      navbar={<ApplicationSidebar />}
-      header={<ApplicationHeader />}
-      styles={(theme) => ({
-        main: { backgroundColor: theme.colorScheme === "light" ? theme.colors.gray[0] : theme.colors.gray[9] },
-      })}
     >
-      {children}
+      <AppShellHeader>
+        <Group h="100%" px="md" justify="space-between">
+          <Flex align="center" gap="sm">
+            <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+            <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
+            <Title order={2}>Monoweb Admin</Title>
+          </Flex>
+
+          <SignOutButton />
+        </Group>
+      </AppShellHeader>
+      <AppShellNavbar p="md">
+        {navigations.map((navigation) => (
+          <NavLink
+            key={navigation.label}
+            label={navigation.label}
+            leftSection={<Icon icon={navigation.icon} />}
+            childrenOffset={28}
+          >
+            {navigation.children.map((child) => (
+              <NavLink key={child.label} label={child.label} href={child.href} />
+            ))}
+          </NavLink>
+        ))}
+      </AppShellNavbar>
+      <AppShellMain>{children}</AppShellMain>
     </AppShell>
   )
 }

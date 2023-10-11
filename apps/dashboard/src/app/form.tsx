@@ -31,6 +31,7 @@ type InputFieldContext<T extends FieldValues> = {
   register: UseFormRegister<T>
   control: Control<T>
   state: FormState<T>
+  defaultValue: FieldValue<T>
 }
 type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 
@@ -150,7 +151,16 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       throw new Error()
     }
     const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
-    return <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
+    return (
+      <Component
+        defaultValue={form.formState.defaultValues?.[name]}
+        key={name}
+        name={name}
+        register={form.register}
+        control={form.control}
+        state={form.formState}
+      />
+    )
   })
 
   return function Form() {

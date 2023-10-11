@@ -1,4 +1,4 @@
-import { AnySelectQueryBuilder, sql } from "kysely"
+import { SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
 export const CursorSchema = z.object({
@@ -16,7 +16,8 @@ export const PaginateInputSchema = z
 
 export type Cursor = z.infer<typeof CursorSchema>
 
-export function paginateQuery(qb: AnySelectQueryBuilder, cursor: Cursor) {
+/* eslint-disable */
+export function paginateQuery(qb: SelectQueryBuilder<any, any, any>, cursor: Cursor) {
   // This is not camelcased due to the query not going through the camelcase plugin.
   // This is an exception.
   return qb

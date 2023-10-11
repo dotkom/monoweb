@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 import Stripe from "stripe"
 import { bufferRequest } from "../request-utils"
-import { createServiceLayer, defaultClerkClient, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core"
+import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 
 export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -34,7 +34,7 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (event.type.startsWith("checkout.session")) {
-    const ctx = await createServiceLayer({ db: kysely, clerkClient: defaultClerkClient })
+    const ctx = await createServiceLayer({ db: kysely })
     const data = event.data.object as Stripe.Checkout.Session
     const sessionId = data.id
 
