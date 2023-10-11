@@ -21,7 +21,7 @@ export const companyRouter = t.router({
   all: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
     return ctx.companyService.getCompanies(input.take, input.cursor)
   }),
-  get: t.procedure.input(z.string().uuid()).query(({ input, ctx }) => {
+  get: t.procedure.input(CompanySchema.shape.id).query(({ input, ctx }) => {
     return ctx.companyService.getCompany(input)
   }),
   event: companyEventRouter,

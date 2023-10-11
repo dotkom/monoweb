@@ -21,7 +21,6 @@ export function paginateQuery(qb: SelectQueryBuilder<any, any, any>, cursor: Cur
   // This is not camelcased due to the query not going through the camelcase plugin.
   // This is an exception.
   return qb
-    .where(sql`(created_at, id)`, "<", sql`(${cursor.createdAt}, ${cursor.id})`)
-    .orderBy("created_at", "desc")
+    .where(sql`id`, "<", sql`${cursor.id}`)
     .orderBy("id", "desc")
 }

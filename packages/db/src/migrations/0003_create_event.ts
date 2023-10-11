@@ -15,7 +15,7 @@ export async function up(db: Kysely<any>) {
     .addColumn("subtitle", "varchar(255)")
     .addColumn("image_url", "varchar(255)")
     .addColumn("location", "varchar(255)")
-    .addColumn("committee_id", "uuid", (col) => col.references("committee.id").onDelete("set null"))
+    .addColumn("committee_id", sql`ulid`, (col) => col.references("committee.id").onDelete("set null"))
     .execute()
 
   await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
@@ -23,12 +23,12 @@ export async function up(db: Kysely<any>) {
     .addColumn("end", "timestamptz", (col) => col.notNull())
     .addColumn("deregister_deadline", "timestamptz", (col) => col.notNull())
     .addColumn("limit", "integer", (col) => col.notNull())
-    .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade"))
+    .addColumn("event_id", sql`ulid`, (col) => col.references("event.id").onDelete("cascade"))
     .execute()
 
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade"))
-    .addColumn("attendance_id", "uuid", (col) => col.references("attendance.id").onDelete("cascade"))
+    .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
+    .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
     .execute()
 
   await db.schema
@@ -40,8 +40,8 @@ export async function up(db: Kysely<any>) {
 
   await db.schema
     .createTable("event_company")
-    .addColumn("event_id", "uuid", (col) => col.references("event.id").onDelete("cascade"))
-    .addColumn("company_id", "uuid", (col) => col.references("company.id").onDelete("cascade"))
+    .addColumn("event_id", sql`ulid`, (col) => col.references("event.id").onDelete("cascade"))
+    .addColumn("company_id", sql`ulid`, (col) => col.references("company.id").onDelete("cascade"))
     .addPrimaryKeyConstraint("event_company_pk", ["event_id", "company_id"])
     .execute()
 }

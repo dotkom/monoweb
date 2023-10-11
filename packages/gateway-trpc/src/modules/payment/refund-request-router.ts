@@ -2,12 +2,13 @@ import { PaginateInputSchema } from "@dotkomonline/core"
 import { protectedProcedure } from "../../trpc"
 import { t } from "../../trpc"
 import { z } from "zod"
+import { PaymentSchema, RefundRequestSchema } from "@dotkomonline/types"
 
 export const refundRequestRouter = t.router({
   create: protectedProcedure
     .input(
       z.object({
-        paymentId: z.string().uuid(),
+        paymentId: PaymentSchema.shape.id,
         reason: z.string().min(0).max(255),
       })
     )
@@ -15,20 +16,20 @@ export const refundRequestRouter = t.router({
       return ctx.refundRequestService.createRefundRequest(input.paymentId, ctx.auth.userId, input.reason)
     }),
   edit: protectedProcedure
-    .input(z.object({ id: z.string().uuid(), reason: z.string().min(0).max(255) }))
+    .input(z.object({ id: RefundRequestSchema.shape.id, reason: z.string().min(0).max(255) }))
     .mutation(({ input, ctx }) => {
       return ctx.refundRequestService.updateRefundRequest(input.id, input)
     }),
-  approve: protectedProcedure.input(z.string().uuid()).mutation(({ input, ctx }) => {
+  approve: protectedProcedure.input(RefundRequestSchema.shape.id).mutation(({ input, ctx }) => {
     return ctx.refundRequestService.approveRefundRequest(input, ctx.auth.userId)
   }),
-  reject: protectedProcedure.input(z.string().uuid()).mutation(({ input, ctx }) => {
+  reject: protectedProcedure.input(RefundRequestSchema.shape.id).mutation(({ input, ctx }) => {
     return ctx.refundRequestService.rejectRefundRequest(input, ctx.auth.userId)
   }),
-  delete: protectedProcedure.input(z.string().uuid()).mutation(({ input, ctx }) => {
+  delete: protectedProcedure.input(RefundRequestSchema.shape.id).mutation(({ input, ctx }) => {
     return ctx.refundRequestService.deleteRefundRequest(input)
   }),
-  get: protectedProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
+  get: protectedProcedure.input(RefundRequestSchema.shape.id).query(({ input, ctx }) => {
     return ctx.refundRequestService.getRefundRequestById(input)
   }),
   all: protectedProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {

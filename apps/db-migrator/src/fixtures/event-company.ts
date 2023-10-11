@@ -3,15 +3,15 @@ import { Insertable } from "kysely"
 
 export const eventCompany: Insertable<Database["eventCompany"]>[] = [
   {
-    eventId: "abdcc9c3-6d6a-4767-8d8a-608d8c091eb1",
-    companyId: "7c45f557-0ae2-4153-9934-375dc8c94f7b",
+    eventId: "01HB64TWZK1C5YK5J7VGNZPDGW",
+    companyId: "01HB64JAPXRPX1XSD2SMWYNGQ9",
   },
   {
-    eventId: "395fa3ec-2e2b-4cd6-829b-0388761b6917",
-    companyId: "7c45f557-0ae2-4153-9934-375dc8c94f7b",
+    eventId: "01HB64TWZK1N8ABMH8JAE12101",
+    companyId: "01HB64JAPXRPX1XSD2SMWYNGQ9",
   },
   {
-    eventId: "395fa3ec-2e2b-4cd6-829b-0388761b6917",
-    companyId: "200fa69b-1037-471e-ad6e-7047444c7e35",
+    eventId: "01HB64TWZK1N8ABMH8JAE12101",
+    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
   },
 ]

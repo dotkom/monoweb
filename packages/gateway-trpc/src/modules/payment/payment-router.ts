@@ -4,6 +4,7 @@ import { refundRequestRouter } from "./refund-request-router"
 import { t } from "../../trpc"
 import { z } from "zod"
 import { PaginateInputSchema } from "@dotkomonline/core"
+import { PaymentSchema, ProductSchema } from "@dotkomonline/types"
 
 export const paymentRouter = t.router({
   product: productRouter,
@@ -17,7 +18,7 @@ export const paymentRouter = t.router({
   createStripeCheckoutSession: protectedProcedure
     .input(
       z.object({
-        productId: z.string().uuid(),
+        productId: ProductSchema.shape.id,
         stripePublicKey: z.string(),
         successRedirectUrl: z.string().url(),
         cancelRedirectUrl: z.string().url(),
@@ -35,7 +36,7 @@ export const paymentRouter = t.router({
   refundPayment: protectedProcedure
     .input(
       z.object({
-        paymentId: z.string().uuid(),
+        paymentId: PaymentSchema.shape.id,
       })
     )
     .mutation(({ input, ctx }) => {
