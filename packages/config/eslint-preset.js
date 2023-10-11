@@ -71,7 +71,6 @@ module.exports = {
     "consistent-return": "error",
     "curly": "error",
     "eqeqeq": ["error", "smart"],
-    "import/extensions": ["error", { js: "never", jsx: "never" }],
     "import/no-duplicates": "error",
     "import/order": [
       "error",
