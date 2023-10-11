@@ -14,7 +14,7 @@ export async function up(db: Kysely<any>) {
   await db.schema
     .createTable("personal_mark")
     .addColumn("mark_id", sql`ulid`, (col) => col.references("mark.id").onDelete("cascade"))
-    .addColumn("user_id", "text", (col) => col.references("owUser.id").onDelete("cascade"))
+    .addColumn("user_id", sql`ulid`, (col) => col.references("owUser.id").onDelete("cascade"))
     .addPrimaryKeyConstraint("personal_mark_pk", ["mark_id", "user_id"])
     .execute()
 }

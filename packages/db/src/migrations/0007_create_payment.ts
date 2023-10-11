@@ -16,7 +16,7 @@ export async function up(db: Kysely<any>) {
 
   await createTableWithDefaults("payment", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("product_id", sql`ulid`, (col) => col.references("product.id").onDelete("cascade"))
-    .addColumn("user_id", "text", (col) => col.references("ow_user.id").onDelete("cascade")) // change to varchar(255) when anhkha fixes user:))))
+    .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade")) // change to varchar(255) when anhkha fixes user:))))
     .addColumn("payment_provider_id", "varchar(255)", (col) => col.notNull())
     .addColumn("payment_provider_order_id", "varchar(255)", (col) => col.notNull())
     .addColumn("status", sql`payment_status`, (col) => col.notNull())

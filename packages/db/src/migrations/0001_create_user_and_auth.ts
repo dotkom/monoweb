@@ -7,8 +7,7 @@ import { createTableWithDefaults } from "../utils"
 export async function up(db: Kysely<any>): Promise<void> {
   const query = sql`CREATE EXTENSION IF NOT EXISTS ulid;`.compile(db)
   await db.executeQuery(query)
-  await createTableWithDefaults("ow_user", { createdAt: true }, db.schema)
-    .addColumn("id", "text", (col) => col.primaryKey())
+  await createTableWithDefaults("ow_user", { id: true, createdAt: true }, db.schema)
     .execute()
 }
 
