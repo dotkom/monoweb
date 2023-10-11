@@ -7,6 +7,7 @@ import { useEventDetailsContext } from "./provider"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { useRouter } from "next/navigation"
+import { EventDetailsAttendance } from "./details-attendance"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Bedrifter</h1>
@@ -14,10 +15,6 @@ const EventDetailsCompanies: FC = () => {
 
 const EventDetailsFeedbackForms: FC = () => {
   return <h1>Tilbakemelding</h1>
-}
-
-const EventDetailsAttendance: FC = () => {
-  return <h1>Påmelding</h1>
 }
 
 const SIDEBAR_LINKS = [
