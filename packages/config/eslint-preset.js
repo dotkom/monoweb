@@ -38,7 +38,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
 
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "import"],
 
   root: true,
 
@@ -106,6 +106,14 @@ module.exports = {
       },
     ],
     "object-shorthand": "error",
+    "padding-line-between-statements": [
+      "error",
+      {
+        blankLine: "never",
+        next: "import",
+        prev: "import",
+      },
+    ],
     "prefer-arrow-callback": "error",
     "prefer-const": "error",
     "prefer-template": "error",
