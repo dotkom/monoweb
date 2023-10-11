@@ -39,6 +39,7 @@ export interface Attendee {
   updatedAt: Generated<Timestamp>
   userId: string | null
   attendanceId: string | null
+  attended: Generated<boolean>
 }
 
 export interface Committee {
@@ -54,10 +55,10 @@ export interface Company {
   id: Generated<string>
   createdAt: Generated<Timestamp>
   name: string
-  description: string | null
+  description: string
   phone: string | null
-  email: string | null
-  website: string | null
+  email: string
+  website: string
   location: string | null
   type: string | null
   image: string | null
@@ -85,11 +86,6 @@ export interface Event {
   committeeId: string | null
   type: EventType | null
   waitlist: string | null
-}
-
-export interface EventCommittee {
-  eventId: string
-  committeeId: string
 }
 
 export interface EventCompany {
@@ -122,8 +118,8 @@ export interface NotificationPermissions {
 }
 
 export interface OwUser {
-  createdAt: Generated<Timestamp>
   id: Generated<string>
+  createdAt: Generated<Timestamp>
   cognitoSub: string
 }
 
@@ -192,7 +188,6 @@ export interface DB {
   "company": Company
   "drizzle.DrizzleMigrations": DrizzleDrizzleMigrations
   "event": Event
-  "eventCommittee": EventCommittee
   "eventCompany": EventCompany
   "mark": Mark
   "notificationPermissions": NotificationPermissions

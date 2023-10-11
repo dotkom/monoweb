@@ -1,9 +1,9 @@
-import { type Kysely } from "kysely"
+import { type Kysely, sql } from "kysely"
 import { createTableWithDefaults } from "../utils"
 
 export async function up(db: Kysely<any>) {
   await createTableWithDefaults("privacy_permissions", { createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("user_id", "text", (col) => col.notNull().unique().references("ow_user.id").onDelete("cascade"))
+    .addColumn("user_id", sql`ulid`, (col) => col.notNull().unique().references("ow_user.id").onDelete("cascade"))
     .addColumn("profile_visible", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("username_visible", "boolean", (col) => col.notNull().defaultTo(true))
     .addColumn("email_visible", "boolean", (col) => col.notNull().defaultTo(false))

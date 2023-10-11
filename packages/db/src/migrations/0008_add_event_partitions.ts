@@ -1,9 +1,9 @@
-import { type Kysely } from "kysely"
+import { type Kysely, sql } from "kysely"
 
 export async function up(db: Kysely<any>) {
   await db.schema
     .alterTable("event")
-    .addColumn("waitlist", "uuid", (col) => col.references("attendance.id").defaultTo(null))
+    .addColumn("waitlist", sql`ulid`, (col) => col.references("attendance.id").defaultTo(null))
     .execute()
   await db.schema
     .alterTable("attendance")

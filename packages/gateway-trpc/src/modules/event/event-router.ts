@@ -1,4 +1,4 @@
-import { EventWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { attendanceRouter } from "./attendance-router"
@@ -20,16 +20,18 @@ export const eventRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.eventService.getEvents(input.take, input.cursor)),
   allByCompany: publicProcedure
-    .input(z.object({ id: z.string().uuid(), paginate: PaginateInputSchema }))
+    .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.companyEventService.getEventsByCompanyId(input.id, input.paginate.take, input.paginate.cursor)
     ),
   allByCommittee: publicProcedure
-    .input(z.object({ id: z.string().uuid(), paginate: PaginateInputSchema }))
+    .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
     ),
-  get: publicProcedure.input(z.string().uuid()).query(async ({ input, ctx }) => ctx.eventService.getEventById(input)),
+  get: publicProcedure
+    .input(CompanySchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.eventService.getEventById(input)),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
 })

@@ -67,7 +67,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
 
     const refundRequests = await query.execute()

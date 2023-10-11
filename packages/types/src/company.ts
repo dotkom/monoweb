@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const CompanySchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   name: z.string().max(50).min(1),
   description: z.string().min(1),

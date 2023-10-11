@@ -26,7 +26,7 @@ export class MarkRepositoryImpl implements MarkRepository {
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
+      query = query.orderBy("id", "desc")
     }
     const marks = await query.execute()
     return marks.map(mapToMark)

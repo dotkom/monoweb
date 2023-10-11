@@ -1,4 +1,4 @@
-import { MarkWriteSchema } from "@dotkomonline/types"
+import { MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { z } from "zod"
 import { personalMarkRouter } from "./personal-mark-router"
@@ -17,12 +17,12 @@ export const markRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.markService.getMarks(input.take, input.cursor)),
   getByUser: protectedProcedure
-    .input(z.object({ id: z.string().uuid(), paginate: PaginateInputSchema }))
+    .input(z.object({ id: MarkSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.personalMarkService.getMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
     ),
-  get: protectedProcedure.input(z.string().uuid()).query(async ({ input, ctx }) => ctx.markService.getMark(input)),
+  get: protectedProcedure.input(MarkSchema.shape.id).query(async ({ input, ctx }) => ctx.markService.getMark(input)),
   delete: protectedProcedure
-    .input(z.string().uuid())
+    .input(MarkSchema.shape.id)
     .mutation(async ({ input, ctx }) => ctx.markService.deleteMark(input)),
 })
