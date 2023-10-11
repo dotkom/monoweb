@@ -1,21 +1,21 @@
-import { Event, EventSchema } from "@dotkomonline/types"
+import { EventWrite, EventWriteSchema } from "../../../../../../packages/types/src/event"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
   createCheckboxInput,
   createDateTimeInput,
   createSelectInput,
-  createTextareaInput,
   createTextInput,
+  createTextareaInput,
   useFormBuilder,
 } from "../../form"
 
 type UseEventEditFormProps = {
-  onSubmit: (data: Event) => void
-  defaultValues?: Partial<Event>
+  onSubmit: (data: EventWrite) => void
+  defaultValues?: Partial<EventWrite>
   label?: string
 }
 
-const ValidationSchema = EventSchema.refine(
+const FormValidationSchema = EventWriteSchema.partial({ id: true }).refine(
   (data) => {
     return data.start < data.end
   },
@@ -28,7 +28,7 @@ const ValidationSchema = EventSchema.refine(
 export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) => {
   const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
-    schema: ValidationSchema,
+    schema: FormValidationSchema,
     defaultValues,
     onSubmit,
     label,
