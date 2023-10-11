@@ -15,7 +15,7 @@ type UseEventEditFormProps = {
   label?: string
 }
 
-const FormValidationSchema = EventWriteSchema.partial({ id: true }).refine(
+const FormValidationSchema = EventWriteSchema.required({ id: true }).refine(
   (data) => {
     return data.start < data.end
   },
