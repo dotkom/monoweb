@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from "@mantine/core"
+import { Card, Skeleton, Stack, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Anchor } from "@mantine/core"
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { User } from "@dotkomonline/types"
 import { useMemo } from "react"
@@ -22,6 +22,15 @@ export default function UserPage() {
       }),
       columnHelper.accessor("cognitoSub", {
         header: () => "Cognito Sub",
+      }),
+      columnHelper.accessor((user) => user, {
+        id: "details",
+        header: () => "Detaljer",
+        cell: (info) => (
+          <Anchor size="sm" href={`/user/${info.getValue().id}`}>
+            Se mer
+          </Anchor>
+        ),
       }),
     ],
     [columnHelper]

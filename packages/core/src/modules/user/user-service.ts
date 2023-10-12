@@ -4,6 +4,7 @@ import {
   PrivacyPermissions,
   PrivacyPermissionsWrite,
   User,
+  UserId,
   UserWrite,
 } from "@dotkomonline/types"
 
@@ -16,6 +17,7 @@ export interface UserService {
   getUser(id: User["id"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
+  updateUser(id: User["id"], payload: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: string,
@@ -42,6 +44,12 @@ export class UserServiceImpl implements UserService {
 
   async createUser(input: UserWrite) {
     const res = await this.userRepository.create(input)
+    return res
+  }
+
+  async updateUser(id: UserId, data: UserWrite) {
+    const res = await this.userRepository.update(id, data)
+    if (!res) throw new NotFoundError(`User with ID:${id} not found`)
     return res
   }
 
