@@ -14,8 +14,8 @@ import { DB } from "@dotkomonline/db/src/db.generated"
 export interface AttendanceRepository {
   create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
-  getAttendeeById: (userId: string) => Promise<Attendee>
-  updateAttendee: (attendeeWrite: AttendeeWrite, userId: string) => Promise<Attendee>
+  getAttendeeByIds: (userId: string, eventId: string) => Promise<Attendee | undefined>
+  updateAttendee: (attendeeWrite: AttendeeWrite, userId: string, attendanceId: string) => Promise<Attendee>
   getByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
   getByAttendanceId(id: Attendance["id"]): Promise<Attendance | undefined>
 }
@@ -49,9 +49,15 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return AttendeeSchema.parse(res)
   }
 
-  async getAttendeeById(userId: string) {
-    const res = await this.db.selectFrom("attendee").where("userId", "=", userId).executeTakeFirst()
-    return AttendeeSchema.parse(res)
+  async getAttendeeByIds(userId: string, attendanceId: string) {
+    const res = await this.db
+      .selectFrom("attendee")
+      .selectAll("attendee")
+      .where("userId", "=", userId)
+      .where("attendanceId", "=", attendanceId)
+      .executeTakeFirst()
+    return res ? AttendeeSchema.parse(res) : undefined
+
   }
 
   async getByEventId(eventId: string) {
@@ -68,13 +74,14 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return res ? res.map((r) => AttendanceSchema.parse(r)) : []
   }
 
-  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string) {
+  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string) {
     const res = await this.db
       .updateTable("attendee")
       .set({ ...attendeeWrite, updatedAt: new Date() })
-      .where("id", "=", userId)
+      .where("userId", "=", userId)
+      .where("attendanceId", "=", attendanceId)
       .returningAll()
-      .executeTakeFirst()
+      .executeTakeFirstOrThrow()
     return AttendeeSchema.parse(res)
   }
 
