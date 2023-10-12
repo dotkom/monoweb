@@ -57,7 +57,6 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .where("attendanceId", "=", attendanceId)
       .executeTakeFirst()
     return res ? AttendeeSchema.parse(res) : undefined
-
   }
 
   async getByEventId(eventId: string) {
