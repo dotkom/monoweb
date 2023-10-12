@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import { useEventDetailsContext } from "./provider"
 import { Table, Checkbox, Box, Text, Title } from "@mantine/core"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
@@ -9,8 +9,17 @@ export const EventDetailsAttendance: FC = () => {
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
   const updateAttendance = useUpdateEventAttendanceMutation()
 
+  const [localAttended, setLocalAttended] = useState<{ [key: string]: boolean }>({})
+
   const toggleAttendance = (userId: string, attendanceId: string, attended: boolean) => {
-    updateAttendance.mutate({ userId, attendanceId, attended: !attended })
+    updateAttendance.mutate(
+      { userId, attendanceId, attended: !attended },
+      {
+        onSuccess: (data) => {
+          setLocalAttended((prev) => ({ ...prev, [userId]: data.attended }))
+        },
+      }
+    )
   }
 
   return (
@@ -24,8 +33,8 @@ export const EventDetailsAttendance: FC = () => {
           <Table>
             <thead>
               <tr>
-                <th>User</th>
-                <th>Attended</th>
+                <th>Bruker</th>
+                <th>Møtt</th>
               </tr>
             </thead>
             <tbody>
@@ -36,8 +45,14 @@ export const EventDetailsAttendance: FC = () => {
                   </td>
                   <td>
                     <Checkbox
-                      checked={attendee.attended}
-                      onClick={() => toggleAttendance(attendee.userId, attendance.id, attendee.attended)}
+                      checked={localAttended[attendee.userId] ?? attendee.attended}
+                      onChange={() =>
+                        toggleAttendance(
+                          attendee.userId,
+                          attendance.id,
+                          localAttended[attendee.userId] ?? attendee.attended
+                        )
+                      }
                     />
                   </td>
                 </tr>
