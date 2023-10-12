@@ -1,9 +1,13 @@
 import { NotificationPermissionsWriteSchema, PrivacyPermissionsWriteSchema } from "@dotkomonline/types"
-import { protectedProcedure } from "../../trpc"
+import { protectedProcedure, publicProcedure } from "../../trpc"
 import { t } from "../../trpc"
 import { z } from "zod"
+import { PaginateInputSchema } from "@dotkomonline/core"
 
 export const userRouter = t.router({
+  all: publicProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
+    return ctx.userService.getAllUsers(input.take)
+  }),
   getPrivacyPermissionssByUserId: protectedProcedure.input(z.string()).query(({ input, ctx }) => {
     return ctx.userService.getPrivacyPermissionsByUserId(input)
   }),
