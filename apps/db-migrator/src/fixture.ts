@@ -9,6 +9,7 @@ import { marks } from "./fixtures/mark"
 import { productPaymentProviders } from "./fixtures/product-payment-provider"
 import { products } from "./fixtures/product"
 import { users } from "./fixtures/user"
+import { eventCommittees } from "./fixtures/committee-organizer"
 
 export const runFixtures = async () => {
   await db
@@ -74,7 +75,6 @@ export const runFixtures = async () => {
         subtitle: (eb) => eb.ref("excluded.subtitle"),
         imageUrl: (eb) => eb.ref("excluded.imageUrl"),
         location: (eb) => eb.ref("excluded.location"),
-        committeeId: (eb) => eb.ref("excluded.committeeId"),
         waitlist: (eb) => eb.ref("excluded.waitlist"),
       })
     )
@@ -157,5 +157,12 @@ export const runFixtures = async () => {
     .insertInto("productPaymentProvider")
     .values(productPaymentProviders)
     .onConflict((oc) => oc.columns(["productId", "paymentProviderId"]).doNothing())
+    .execute()
+
+  await db
+    .insertInto("eventCommittee")
+    .values(eventCommittees)
+    .returning("committeeId")
+    .onConflict((oc) => oc.columns(["committeeId", "eventId"]).doNothing())
     .execute()
 }
