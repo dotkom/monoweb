@@ -7,7 +7,7 @@ import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
 import { Kysely } from "kysely"
 import { randomUUID } from "crypto"
-import { EventCommitteeRepository, EventCommitteeRepositoryImpl } from "../event-committee-repository"
+import { EventCommitteeRepositoryImpl } from "../event-committee-repository"
 
 export const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",
