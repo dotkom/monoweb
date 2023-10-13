@@ -21,7 +21,7 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   committeeId: null,
 }
 
-type UseEventWriteFormProps = {
+interface UseEventWriteFormProps {
   onSubmit: (data: z.infer<typeof FormValidationSchema>) => void
   defaultValues?: Partial<EventWrite>
   label?: string

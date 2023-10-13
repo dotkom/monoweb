@@ -1,5 +1,4 @@
 import { faker } from "@faker-js/faker"
-
 import { db } from "./db"
 import { users } from "./fixtures/user"
 import { events } from "./fixtures/event"

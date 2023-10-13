@@ -1,7 +1,7 @@
 import { type FC } from "react"
+import { useEventDetailsContext } from "./provider"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 import { useEventEditForm } from "../edit-form"
-import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {
   const { event } = useEventDetailsContext()

@@ -1,5 +1,5 @@
-import { z } from "zod"
-import { EventWrite, EventWriteSchema } from "../../../../../../packages/types/src/event"
+import { type z } from "zod"
+import { type EventWrite, EventWriteSchema } from "../../../../../../packages/types/src/event"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
   createCheckboxInput,
@@ -10,16 +10,14 @@ import {
   useFormBuilder,
 } from "../../form"
 
-type UseEventEditFormProps = {
+interface UseEventEditFormProps {
   onSubmit: (data: z.infer<typeof FormValidationSchema>) => void
   defaultValues?: Partial<EventWrite>
   label?: string
 }
 
 const FormValidationSchema = EventWriteSchema.required({ id: true }).refine(
-  (data) => {
-    return data.start < data.end
-  },
+  (data) => data.start < data.end,
   {
     message: "Sluttidspunkt må være etter starttidspunkt",
     path: ["end"],

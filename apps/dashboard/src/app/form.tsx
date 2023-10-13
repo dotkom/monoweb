@@ -124,8 +124,8 @@ function entriesOf<T extends Record<string, unknown>, K extends string & keyof T
   return Object.entries(obj) as [K, T[K]][]
 }
 
-type FormBuilderOptions<T extends z.ZodRawShape> = {
-  schema: z.ZodObject<T> | z.ZodEffects<z.ZodObject<T>>
+interface FormBuilderOptions<T extends z.ZodRawShape> {
+  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
