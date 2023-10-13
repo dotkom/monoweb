@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from "react"
+import { FC, useState, useMemo, useCallback } from "react"
 import { useEventDetailsContext } from "./provider"
 import { Box, Title, Checkbox } from "@mantine/core"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
@@ -38,7 +38,7 @@ export const EventDetailsAttendance: FC = () => {
           const attendee = info.getValue()
           return (
             <Checkbox
-              checked={localAttended[attendee.userId] ?? attendee.attended}
+              defaultChecked={localAttended[attendee.userId] ?? attendee.attended}
               onChange={() =>
                 toggleAttendance(
                   attendee.userId,
