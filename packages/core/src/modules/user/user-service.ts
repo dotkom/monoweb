@@ -1,24 +1,24 @@
 import {
-  UserId,
+  type UserId,
   type NotificationPermissions,
   type NotificationPermissionsWrite,
   type PrivacyPermissions,
   type PrivacyPermissionsWrite,
   type User,
-  type UserWrite
+  type UserWrite,
 } from "@dotkomonline/types"
-import { NotFoundError } from "../../errors/errors"
 import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { type UserRepository } from "./user-repository"
+import { NotFoundError } from "../../errors/errors"
 
 export interface UserService {
-  getUser(id: User["id"]): Promise<User | undefined>
-  getAllUsers(limit: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  updateUser(id: User["id"], payload: UserWrite): Promise<User>
-  getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
-  updatePrivacyPermissionsForUserId(
+  getUser: (id: User["id"]) => Promise<User | undefined>
+  getAllUsers: (limit: number) => Promise<User[]>
+  createUser: (input: UserWrite) => Promise<User>
+  updateUser: (id: User["id"], payload: UserWrite) => Promise<User>
+  getPrivacyPermissionsByUserId: (id: string) => Promise<PrivacyPermissions>
+  updatePrivacyPermissionsForUserId: (
     id: string,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ) => Promise<PrivacyPermissions>
@@ -50,7 +50,7 @@ export class UserServiceImpl implements UserService {
 
   async updateUser(id: UserId, data: UserWrite) {
     const res = await this.userRepository.update(id, data)
-    if (!res) throw new NotFoundError(`User with ID:${id} not found`)
+    if (!res) {throw new NotFoundError(`User with ID:${id} not found`)}
     return res
   }
 

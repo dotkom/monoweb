@@ -1,32 +1,15 @@
 "use client"
 
-import {
-  Anchor,
-  Button,
-  ButtonGroup,
-  Card,
-  Group,
-  Skeleton,
-  Stack,
-  Table,
-  TableTbody,
-  TableTd,
-  TableTh,
-  TableThead,
-  TableTr,
-} from "@mantine/core"
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type Event } from "@dotkomonline/types"
+import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { Event } from "@dotkomonline/types"
 import { useMemo } from "react"
-import { Icon } from "@iconify/react"
-import { formatDate } from "../../../utils/format"
-import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
-import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { GenericTable } from "src/components/GenericTable"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
+import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
+import { formatDate } from "../../../utils/format"
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()

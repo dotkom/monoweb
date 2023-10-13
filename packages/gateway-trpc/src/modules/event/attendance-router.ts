@@ -35,9 +35,7 @@ export const attendanceRouter = t.router({
         attended: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      return await ctx.attendanceService.registerForAttendance(input.userId, input.attendanceId, input.attended)
-    }),
+    .mutation(async ({ input, ctx }) => await ctx.attendanceService.registerForAttendance(input.userId, input.attendanceId, input.attended)),
   createWaitlist: protectedProcedure
     .input(
       z.object({

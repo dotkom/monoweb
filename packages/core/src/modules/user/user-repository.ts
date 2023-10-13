@@ -5,10 +5,10 @@ import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonlin
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 
 export interface UserRepository {
-  getById(id: UserId): Promise<User | undefined>
-  getAll(limit: number): Promise<User[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User | undefined>
+  getById: (id: UserId) => Promise<User | undefined>
+  getAll: (limit: number) => Promise<User[]>
+  create: (userWrite: UserWrite) => Promise<User>
+  update: (id: UserId, data: UserWrite) => Promise<User | undefined>
 }
 
 export class UserRepositoryImpl implements UserRepository {
