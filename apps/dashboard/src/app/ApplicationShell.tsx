@@ -63,21 +63,19 @@ const navigations = [
   },
 ] as const
 
+const getInitialExpandedNavs = () => {
+  const savedNavs = localStorage.getItem("expandedNavs")
+  return savedNavs ? JSON.parse(savedNavs) : []
+}
+
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
-  const [expandedNavs, setExpandedNavs] = useState<string[]>([])
-
-  useEffect(() => {
-    const savedNavs = localStorage.getItem("expandedNavs")
-    if (savedNavs) {
-      setExpandedNavs(JSON.parse(savedNavs))
-    }
-  }, [])
+  const [expandedNavs, setExpandedNavs] = useState(getInitialExpandedNavs)
 
   const handleNavToggle = (label: string) => () => {
     const isExpanded = expandedNavs.includes(label)
-    const updatedNavs = isExpanded ? expandedNavs.filter((nav) => nav !== label) : [...expandedNavs, label]
+    const updatedNavs = isExpanded ? expandedNavs.filter((nav: string) => nav !== label) : [...expandedNavs, label]
 
     setExpandedNavs(updatedNavs)
     localStorage.setItem("expandedNavs", JSON.stringify(updatedNavs))
