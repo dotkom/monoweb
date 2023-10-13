@@ -32,6 +32,7 @@ export class UserRepositoryImpl implements UserRepository {
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
-    return user ? mapToUser(user) : undefined
+
+    return mapToUser(user)
   }
 }
