@@ -1,4 +1,5 @@
 import { Icon } from "@dotkomonline/ui"
+import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 
@@ -17,24 +18,17 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
   const [isCurrent, setCurrent] = useState(router.pathname === slug ? "opacity-1" : "opacity-50")
 
-  const handleChange = () => {
-    router.push(slug)
-  }
-
   useEffect(() => {
-    setCurrent(router.pathname == slug ? "opacity-1" : "opacity-50")
+    setCurrent(router.pathname === slug ? "opacity-1" : "opacity-50")
   }, [router.pathname, slug])
 
   return (
-    <div
-      onClick={handleChange}
-      className="!hover:text-blue text-slate-12 mb-4 flex flex-row items-center hover:cursor-pointer"
-    >
+    <Link className="!hover:text-blue text-slate-12 mb-4 flex flex-row items-center hover:cursor-pointer" href={slug}>
       <div className={`mr-4 ${isCurrent} h-6 w-6`}>
         <Icon icon={icon} width="w-6" />
       </div>
       <p className={isCurrent}>{title}</p>
-    </div>
+    </Link>
   )
 }
 
