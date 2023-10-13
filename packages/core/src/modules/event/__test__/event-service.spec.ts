@@ -7,6 +7,7 @@ import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
 import { Kysely } from "kysely"
 import { randomUUID } from "crypto"
+import { EventCommitteeRepository, EventCommitteeRepositoryImpl } from "../event-committee-repository"
 
 export const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",
@@ -22,7 +23,6 @@ export const eventPayload: Omit<Event, "id"> = {
   updatedAt: new Date(2022, 1, 1),
   status: "PUBLIC",
   type: "COMPANY",
-  committeeId: null,
   waitlist: null,
 }
 
@@ -30,14 +30,15 @@ describe("EventService", () => {
   const db = vi.mocked(Kysely.prototype)
   const eventRepository = new EventRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
-  const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
+  const committeeOrganizerRepository = new EventCommitteeRepositoryImpl(db)
+  const eventService = new EventServiceImpl(eventRepository, attendanceRepository, committeeOrganizerRepository)
 
   it("creates a new event", async () => {
     const id = randomUUID()
     vi.spyOn(eventRepository, "create").mockResolvedValueOnce({ id, ...eventPayload })
-    const event = await eventService.createEvent(eventPayload)
+    const event = await eventService.createEvent(eventPayload, [])
     expect(event).toEqual({ id, ...eventPayload })
-    expect(eventRepository.create).toHaveBeenCalledWith(eventPayload)
+    expect(eventRepository.create).toHaveBeenCalledWith(eventPayload, [])
   })
 
   it("finds events by id", async () => {

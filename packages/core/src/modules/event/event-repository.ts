@@ -18,6 +18,7 @@ export class EventRepositoryImpl implements EventRepository {
 
   async create(data: EventWrite): Promise<Event | undefined> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
+
     return mapToEvent(event)
   }
   async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
@@ -39,8 +40,15 @@ export class EventRepositoryImpl implements EventRepository {
     const events = await query.execute()
     return events.map(mapToEvent)
   }
+
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    let query = this.db.selectFrom("event").selectAll().where("committeeId", "=", committeeId).limit(take)
+    let query = this.db
+      .selectFrom("eventCommittee")
+      .where("committeeId", "=", committeeId)
+      .innerJoin("event", "event.id", "eventCommittee.eventId")
+      .selectAll("event")
+      .limit(take)
+
     if (cursor) {
       query = paginateQuery(query, cursor)
     } else {

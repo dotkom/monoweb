@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { EventCommitteeSchema } from "./event-committee"
 
 export const EventSchema = z.object({
   id: z.string().ulid(),
@@ -14,7 +15,6 @@ export const EventSchema = z.object({
   subtitle: z.string().nullable(),
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
-  committeeId: z.string().nullable(),
   waitlist: z.string().ulid().nullable(),
 })
 
@@ -28,6 +28,12 @@ export const EventWriteSchema = EventSchema.partial({
 })
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
+
+export const EventFull = EventSchema.extend({
+  eventCommittees: z.array(EventCommitteeSchema),
+})
+
+export type EventFull = z.infer<typeof EventFull>
 
 export const AttendeeSchema = z.object({
   id: z.string(),

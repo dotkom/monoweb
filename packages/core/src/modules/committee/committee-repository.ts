@@ -4,7 +4,7 @@ import { Kysely, Selectable } from "kysely"
 
 import { Database } from "@dotkomonline/db"
 
-const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => {
+export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => {
   return CommitteeSchema.parse(payload)
 }
 
