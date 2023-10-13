@@ -9,12 +9,17 @@ export const EventEditCard: FC = () => {
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
     onSubmit: (data) => {
+      const { eventCommittees, ...event } = data
       edit.mutate({
         id: data.id,
-        changes: data,
+        event: event,
+        committees: eventCommittees,
       })
     },
-    defaultValues: { ...event },
+    defaultValues: {
+      ...event,
+      eventCommittees: event.eventCommittees.map((com) => com.committeeId),
+    },
   })
   return <FormComponent />
 }
