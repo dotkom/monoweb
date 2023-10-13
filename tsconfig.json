@@ -16,6 +16,7 @@
     "experimentalDecorators": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "noErrorTruncation": true
   }
 }
