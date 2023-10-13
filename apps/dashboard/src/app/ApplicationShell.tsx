@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, PropsWithChildren, useState, useEffect } from "react"
+import { FC, PropsWithChildren, useState } from "react"
 import { useDisclosure } from "@mantine/hooks"
 import {
   AppShellHeader,
