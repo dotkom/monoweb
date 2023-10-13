@@ -1,5 +1,3 @@
-"use client"
-
 import { Skeleton, Stack, Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { User } from "@dotkomonline/types"

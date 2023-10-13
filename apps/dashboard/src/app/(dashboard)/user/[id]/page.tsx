@@ -1,6 +1,5 @@
 "use client"
 
-import { FC } from "react"
 import { UserWriteSchema } from "@dotkomonline/types"
 import { useUserDetailsContext } from "./provider"
 import { useUserWriteForm } from "../write-form"
@@ -8,7 +7,7 @@ import { useEditUserMutation } from "src/modules/user/mutations/use-edit-user-mu
 import { Box, CloseButton, Group, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 
-export const UserEditCard: FC = () => {
+export default function UserEditCard() {
   const { user } = useUserDetailsContext()
   const edit = useEditUserMutation()
   const router = useRouter()
@@ -31,5 +30,3 @@ export const UserEditCard: FC = () => {
     </Box>
   )
 }
-
-export default UserEditCard
