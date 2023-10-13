@@ -18,13 +18,13 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
   async getAllCommittees(eventId: Event["id"]): Promise<EventCommittee[]> {
-    let query = this.db.selectFrom("eventCommittee").where("eventId", "=", eventId).selectAll()
+    const query = this.db.selectFrom("eventCommittee").where("eventId", "=", eventId).selectAll()
     const committees = await query.execute()
     return committees.map(mapToEventCommitee)
   }
 
   async getAllCommitteesByEventId(eventId: Event["id"]): Promise<Committee[]> {
-    let query = this.db
+    const query = this.db
       .selectFrom("committee")
       .leftJoin("eventCommittee", "eventCommittee.committeeId", "committee.id")
       .selectAll("committee")
