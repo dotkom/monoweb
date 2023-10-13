@@ -1,49 +1,32 @@
-import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
+import { EventWrite, EventWriteSchema } from "../../../../../../packages/types/src/event"
 import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
   createCheckboxInput,
   createDateTimeInput,
   createSelectInput,
-  createTextareaInput,
   createTextInput,
+  createTextareaInput,
   useFormBuilder,
 } from "../../form"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
-  start: new Date(),
-  end: new Date(),
-  description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-  imageUrl: null,
-  location: null,
-  subtitle: null,
-  waitlist: null,
-  committeeId: null,
-}
-
-type UseEventWriteFormProps = {
+type UseEventEditFormProps = {
   onSubmit: (data: z.infer<typeof FormValidationSchema>) => void
   defaultValues?: Partial<EventWrite>
   label?: string
 }
 
-export const FormValidationSchema = EventWriteSchema.extend({
-  start: z.date().min(new Date(), { message: "Starttidspunkt må være i fremtiden" }),
-  end: z.date().min(new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
-})
-  .partial({
-    id: true,
-  })
-  .refine((data) => data.start < data.end, {
+const FormValidationSchema = EventWriteSchema.required({ id: true }).refine(
+  (data) => {
+    return data.start < data.end
+  },
+  {
     message: "Sluttidspunkt må være etter starttidspunkt",
     path: ["end"],
-  })
+  }
+)
 
-export const useEventWriteForm = ({
-  onSubmit,
-  label = "Opprett arrangement",
-  defaultValues = EVENT_FORM_DEFAULT_VALUES,
-}: UseEventWriteFormProps) => {
+export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) => {
   const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
     schema: FormValidationSchema,
