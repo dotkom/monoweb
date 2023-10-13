@@ -119,6 +119,7 @@ module.exports = {
     "quote-props": ["error", "consistent-as-needed"],
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
+    "react/display-name": "off",
     "yoda": ["error", "never"],
   },
 
