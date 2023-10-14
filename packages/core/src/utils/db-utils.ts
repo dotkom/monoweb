@@ -19,5 +19,5 @@ export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<
   if (cursor) {
     qb = qb.where(sql`id`, "<", sql`${cursor.id}`)
   }
-  return qb.orderBy("id", "desc")
+  return qb.orderBy(sql`id`, "desc")
 }
