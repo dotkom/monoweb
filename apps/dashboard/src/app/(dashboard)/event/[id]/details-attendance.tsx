@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useCallback } from "react"
+import { FC, useMemo } from "react"
 import { useEventDetailsContext } from "./provider"
 import { Box, Title, Checkbox } from "@mantine/core"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
@@ -12,17 +12,8 @@ export const EventDetailsAttendance: FC = () => {
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
   const updateAttendance = useUpdateEventAttendanceMutation()
 
-  const [localAttended, setLocalAttended] = useState<{ [key: string]: boolean }>({})
-
-  const toggleAttendance = (userId: string, attendanceId: string, attended: boolean) => {
-    updateAttendance.mutate(
-      { userId, attendanceId, attended: !attended },
-      {
-        onSuccess: (data) => {
-          setLocalAttended((prev) => ({ ...prev, [userId]: data.attended }))
-        },
-      }
-    )
+  const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
+    updateAttendance.mutate({ userId, attendanceId, attended: currentCheckedState })
   }
 
   const columnHelper = createColumnHelper<Attendee>()
@@ -38,20 +29,14 @@ export const EventDetailsAttendance: FC = () => {
           const attendee = info.getValue()
           return (
             <Checkbox
-              defaultChecked={localAttended[attendee.userId] ?? attendee.attended}
-              onChange={() =>
-                toggleAttendance(
-                  attendee.userId,
-                  attendee.attendanceId,
-                  localAttended[attendee.userId] ?? attendee.attended
-                )
-              }
+              defaultChecked={attendee.attended}
+              onChange={(event) => toggleAttendance(attendee.userId, attendee.attendanceId, event.target.checked)}
             />
           )
         },
       }),
     ],
-    [localAttended]
+    []
   )
 
   const table = useReactTable({
