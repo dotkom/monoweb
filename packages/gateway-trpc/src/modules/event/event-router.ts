@@ -15,8 +15,11 @@ export const eventRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.eventService.createEvent(input.event)
-      const committees = ctx.eventCommitteeService.setEventCommittees(event.id, input.committees)
-      return event
+      const committees = await ctx.eventCommitteeService.setEventCommittees(event.id, input.committees)
+      return {
+        ...event,
+        committees,
+      }
     }),
   edit: protectedProcedure
     .input(
