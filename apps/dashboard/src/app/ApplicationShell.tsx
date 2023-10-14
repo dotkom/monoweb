@@ -64,6 +64,9 @@ const navigations = [
 ] as const
 
 const getInitialExpandedNavs = () => {
+  if (typeof localStorage === "undefined") {
+    return []
+  }
   const savedNavs = localStorage.getItem("expandedNavs")
   return savedNavs ? JSON.parse(savedNavs) : []
 }
