@@ -1,4 +1,4 @@
-import { Attendance, AttendanceWrite, Event, EventFull, EventWrite } from "@dotkomonline/types"
+import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
 
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
@@ -8,7 +8,7 @@ import { EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite, eventCommittees: string[]): Promise<Event>
-  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">, eventCommittees: string[]): Promise<Event>
+  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">, committees: string[]): Promise<Event>
   getEventById(id: Event["id"]): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
@@ -37,21 +37,10 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEvents(take: number, cursor?: Cursor): Promise<EventFull[]> {
+  async getEvents(take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAll(take, cursor)
 
-    const organizers = events.map((event) => this.committeeOrganizerRepository.getAllCommittees(event.id, 999))
-
-    const eventCommittees = await Promise.all(organizers)
-
-    const withOrganizers = events.map((event, index) => {
-      return {
-        ...event,
-        eventCommittees: eventCommittees[index],
-      }
-    })
-
-    return withOrganizers
+    return events
   }
 
   async getEventsByCommitteeId(
@@ -63,28 +52,28 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventById(id: Event["id"]): Promise<EventFull> {
+  async getEventById(id: Event["id"]): Promise<Event> {
     const event = await this.eventRepository.getById(id)
     if (!event) {
       throw new NotFoundError(`Event with ID:${id} not found`)
     }
 
-    const eventCommittees = await this.committeeOrganizerRepository.getAllCommittees(id, 999)
+    const committees = await this.committeeOrganizerRepository.getAllCommittees(event.id, 999)
 
     return {
       ...event,
-      eventCommittees: eventCommittees,
+      committees: committees,
     }
   }
 
-  async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">, eventCommittees: string[]): Promise<Event> {
-    const event = await this.eventRepository.update(id, eventUpdate)
+  async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
+    const updatedEvent = await this.eventRepository.update(id, eventUpdate)
 
-    if (!event) {
+    if (!updatedEvent) {
       throw new NotFoundError(`Could not update Event(${id})`)
     }
-    await this.committeeOrganizerRepository.setCommittees(event.id, eventCommittees)
-    return event
+
+    return updatedEvent
   }
 
   async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
@@ -114,6 +103,7 @@ export class EventServiceImpl implements EventService {
       min: 0,
       max: 0,
     })
+
     await this.eventRepository.update(eventId, {
       ...event,
       waitlist: waitlist.id,

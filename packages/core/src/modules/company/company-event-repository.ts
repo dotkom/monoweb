@@ -1,8 +1,7 @@
 import { Database } from "@dotkomonline/db"
-import { Company, Event } from "@dotkomonline/types"
+import { Company, Event, EventSchema } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { mapToEvent } from "../event/event-repository"
 
 export interface CompanyEventRepository {
   getEventsByCompanyId: (company: Company["id"], take: number, cursor?: Cursor) => Promise<Event[]>
@@ -23,6 +22,6 @@ export class CompanyEventRepositoryImpl implements CompanyEventRepository {
       query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
     }
     const events = await query.execute()
-    return events.map(mapToEvent)
+    return events.map((event) => EventSchema.parse(event))
   }
 }

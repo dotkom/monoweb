@@ -10,20 +10,21 @@ export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"
 }
 
 export interface EventCommitteeRepository {
-  getAllCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<EventCommittee[]>
+  getAllEventCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<EventCommittee[]>
+  getAllCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<Committee[]>
   setCommittees(eventId: Event["id"], committees: Committee["id"][]): Promise<void>
 }
 
 export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getAllCommittees(eventId: Event["id"]): Promise<EventCommittee[]> {
+  async getAllEventCommittees(eventId: Event["id"]): Promise<EventCommittee[]> {
     const query = this.db.selectFrom("eventCommittee").where("eventId", "=", eventId).selectAll()
     const committees = await query.execute()
     return committees.map(mapToEventCommitee)
   }
 
-  async getAllCommitteesByEventId(eventId: Event["id"]): Promise<Committee[]> {
+  async getAllCommittees(eventId: Event["id"]): Promise<Committee[]> {
     const query = this.db
       .selectFrom("committee")
       .leftJoin("eventCommittee", "eventCommittee.committeeId", "committee.id")

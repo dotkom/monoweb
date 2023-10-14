@@ -37,6 +37,7 @@ export interface Attendee {
   updatedAt: Generated<Timestamp>;
   userId: string | null;
   attendanceId: string | null;
+  attended: Generated<boolean>;
 }
 
 export interface Committee {

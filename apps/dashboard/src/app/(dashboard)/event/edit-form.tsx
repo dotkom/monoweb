@@ -1,6 +1,5 @@
 import { z } from "zod"
-import { EventFull } from "../../../../../../packages/types/src/event"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -10,15 +9,17 @@ import {
   createTextareaInput,
   useFormBuilder,
 } from "../../form"
+import { Committee } from "@dotkomonline/types"
 
 type UseEventEditFormProps = {
   onSubmit: (data: FormValidationResult) => void
   defaultValues?: Partial<FormValidationResult>
   label?: string
+  committees: Committee[]
 }
 
-const FormValidationSchema = EventFull.extend({
-  eventCommittees: z.array(z.string()),
+const FormValidationSchema = EventSchema.extend({
+  committees: z.array(z.string()),
 })
   .required({ id: true })
   .refine(
@@ -33,8 +34,12 @@ const FormValidationSchema = EventFull.extend({
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
-export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) => {
-  const { committees } = useCommitteeAllQuery()
+export const useEventEditForm = ({
+  committees,
+  onSubmit,
+  label = "Opprett arrangement",
+  defaultValues,
+}: UseEventEditFormProps) => {
   return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
@@ -70,10 +75,19 @@ export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defa
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      eventCommittees: createMultipleSelectInput({
+      committees: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
+        onChange: (data) => {
+          console.log("test", data)
+        },
+        onSubmit: (data) => {
+          console.log("test", data)
+        },
+        onClick: (data) => {
+          console.log("test", data)
+        },
       }),
       status: createSelectInput({
         label: "Event status",
