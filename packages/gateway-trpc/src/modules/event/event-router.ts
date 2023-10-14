@@ -1,5 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { EventCommitteeSchema, CompanySchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, EventCommitteeSchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
@@ -13,8 +13,10 @@ export const eventRouter = t.router({
         committees: z.array(EventCommitteeSchema.shape.committeeId),
       })
     )
-    .mutation(({ input, ctx }) => {
-      return ctx.eventService.createEvent(input.event, input.committees)
+    .mutation(async ({ input, ctx }) => {
+      const event = await ctx.eventService.createEvent(input.event)
+      const committees = ctx.eventCommitteeService.setEventCommittees(event.id, input.committees)
+      return event
     }),
   edit: protectedProcedure
     .input(
@@ -24,11 +26,24 @@ export const eventRouter = t.router({
         committees: z.array(EventCommitteeSchema.shape.committeeId),
       })
     )
-    .mutation(({ input, ctx }) => {
-      return ctx.eventService.updateEvent(input.id, input.event, input.committees)
+    .mutation(async ({ input, ctx }) => {
+      console.log(input)
+      const event = await ctx.eventService.updateEvent(input.id, input.event)
+      await ctx.eventCommitteeService.setEventCommittees(input.id, input.committees)
+      return event
     }),
-  all: publicProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
-    return ctx.eventService.getEvents(input.take, input.cursor)
+  all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+    const events = await ctx.eventService.getEvents(input.take, input.cursor)
+    const committees = events.map((e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
+
+    const results = await Promise.all(committees)
+
+    return events.map((event, i) => {
+      return {
+        ...event,
+        committees: results[i],
+      }
+    })
   }),
   allByCompany: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
@@ -40,8 +55,14 @@ export const eventRouter = t.router({
     .query(({ input, ctx }) => {
       return ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
     }),
-  get: publicProcedure.input(CompanySchema.shape.id).query(({ input, ctx }) => {
-    return ctx.eventService.getEventById(input)
+  get: publicProcedure.input(CompanySchema.shape.id).query(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getEventById(input)
+    const committees = await ctx.eventCommitteeService.getEventCommitteesForEvent(event.id)
+
+    return {
+      event: event,
+      eventCommittees: committees,
+    }
   }),
   attendance: attendanceRouter,
   company: eventCompanyRouter,

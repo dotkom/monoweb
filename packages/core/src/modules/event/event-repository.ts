@@ -1,9 +1,11 @@
 import { Database } from "@dotkomonline/db"
 import { DB } from "@dotkomonline/db/src/db.generated"
 import { Committee, Event, EventSchema, EventWrite } from "@dotkomonline/types"
-import { Kysely, sql } from "kysely"
+import { Kysely, Selectable, sql } from "kysely"
 import { Cursor, paginateQuery } from "../../utils/db-utils"
 import { mapToCommittee } from "../committee/committee-repository"
+
+export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
@@ -27,29 +29,11 @@ export class EventRepositoryImpl implements EventRepository {
     return committees.map(mapToCommittee)
   }
 
-  async setCommittees(eventId: Event["id"], committees: Committee["id"][]): Promise<void> {
-    // remove all committees for event
-    await this.db.deleteFrom("eventCommittee").where("eventId", "=", eventId).execute()
-
-    if (committees.length === 0) return
-    // add all committees for event
-    const committeesToAdd = committees.map((committeeId) => ({ eventId, committeeId }))
-
-    await this.db.insertInto("eventCommittee").values(committeesToAdd).execute()
-  }
-
   async create(data: EventWrite): Promise<Event | undefined> {
-    const { committees, ...eventData } = data
-
-    const event = await this.db.insertInto("event").values(eventData).returningAll().executeTakeFirstOrThrow()
-
-    const insertedCommittees = await this.setCommittees(event.id, committees)
-
-    return EventSchema.parse({
-      ...event,
-      committees: insertedCommittees,
-    })
+    const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
+    return mapToEvent(event)
   }
+
   async update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event> {
     const event = await this.db
       .updateTable("event")
@@ -57,22 +41,9 @@ export class EventRepositoryImpl implements EventRepository {
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
-    return EventSchema.parse(event)
+    return mapToEvent(event)
   }
 
-  // async getByEventId(eventId: string) {
-  //   const res = await this.db
-  //     .selectFrom("attendance")
-  //     .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-  //     .selectAll("attendance")
-  //     .select(
-  //       sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
-  //     )
-  //     .groupBy("attendance.id")
-  //     .where("eventId", "=", eventId)
-  //     .execute()
-  //   return res ? res.map((r) => AttendanceSchema.parse(r)) : []
-  // }
   async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
     let query = this.db
       .selectFrom("event")
@@ -95,7 +66,7 @@ export class EventRepositoryImpl implements EventRepository {
     }
     const events = await query.execute()
 
-    return events.map((e) => EventSchema.parse(e))
+    return events.map((e) => mapToEvent(e))
   }
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
@@ -112,7 +83,7 @@ export class EventRepositoryImpl implements EventRepository {
       query = query.orderBy("id", "desc")
     }
     const events = await query.execute()
-    return events.map((e) => EventSchema.parse(e))
+    return events.map((e) => mapToEvent(e))
   }
   async getById(id: string): Promise<Event | undefined> {
     const event = await this.db
@@ -129,6 +100,6 @@ export class EventRepositoryImpl implements EventRepository {
       .where("event.id", "=", id)
       .executeTakeFirst()
 
-    return event ? EventSchema.parse(event) : undefined
+    return event === undefined ? undefined : mapToEvent(event)
   }
 }

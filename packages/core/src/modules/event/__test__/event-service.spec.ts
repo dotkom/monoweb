@@ -1,13 +1,12 @@
 import { describe, vi } from "vitest"
 
 import { Event } from "@dotkomonline/types"
+import { randomUUID } from "crypto"
+import { Kysely } from "kysely"
 import { NotFoundError } from "../../../errors/errors"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
-import { Kysely } from "kysely"
-import { randomUUID } from "crypto"
-import { EventCommitteeRepositoryImpl } from "../event-committee-repository"
 
 export const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",
@@ -24,22 +23,20 @@ export const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   waitlist: null,
-  committees: [],
 }
 
 describe("EventService", () => {
   const db = vi.mocked(Kysely.prototype)
   const eventRepository = new EventRepositoryImpl(db)
   const attendanceRepository = new AttendanceRepositoryImpl(db)
-  const committeeOrganizerRepository = new EventCommitteeRepositoryImpl(db)
-  const eventService = new EventServiceImpl(eventRepository, attendanceRepository, committeeOrganizerRepository)
+  const eventService = new EventServiceImpl(eventRepository, attendanceRepository)
 
   it("creates a new event", async () => {
     const id = randomUUID()
     vi.spyOn(eventRepository, "create").mockResolvedValueOnce({ id, ...eventPayload })
-    const event = await eventService.createEvent(eventPayload, [])
+    const event = await eventService.createEvent(eventPayload)
     expect(event).toEqual({ id, ...eventPayload })
-    expect(eventRepository.create).toHaveBeenCalledWith(eventPayload, [])
+    expect(eventRepository.create).toHaveBeenCalledWith(eventPayload)
   })
 
   it("finds events by id", async () => {

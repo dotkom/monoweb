@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const CommitteeSchema = z.object({
   id: z.string().ulid(),
-  createdAt: z.coerce.date(),
+  createdAt: z.date(),
   name: z.string(),
   description: z.string(),
   email: z.string(),

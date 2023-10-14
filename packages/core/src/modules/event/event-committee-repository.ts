@@ -12,7 +12,8 @@ export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"
 export interface EventCommitteeRepository {
   getAllEventCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<EventCommittee[]>
   getAllCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<Committee[]>
-  setCommittees(eventId: Event["id"], committees: Committee["id"][]): Promise<void>
+  addCommitteeToEvent(eventId: Event["id"], committees: Committee["id"]): Promise<void>
+  removeCommitteesFromEvent(eventId: Event["id"]): Promise<void>
 }
 
 export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
@@ -35,14 +36,12 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
     return committees.map(mapToCommittee)
   }
 
-  async setCommittees(eventId: Event["id"], committees: Committee["id"][]): Promise<void> {
-    // remove all committees for event
+  async addCommitteeToEvent(eventId: Event["id"], committee: Committee["id"]): Promise<void> {
+    const row = { eventId, committeeId: committee }
+    await this.db.insertInto("eventCommittee").values(row).execute()
+  }
+
+  async removeCommitteesFromEvent(eventId: Event["id"]): Promise<void> {
     await this.db.deleteFrom("eventCommittee").where("eventId", "=", eventId).execute()
-
-    if (committees.length === 0) return
-    // add all committees for event
-    const committeesToAdd = committees.map((committeeId) => ({ eventId, committeeId }))
-
-    await this.db.insertInto("eventCommittee").values(committeesToAdd).execute()
   }
 }

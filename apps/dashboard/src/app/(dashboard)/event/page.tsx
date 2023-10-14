@@ -10,12 +10,15 @@ import { EventCommittees } from "src/components/molecules/company-name/event-com
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { formatDate } from "../../../utils/format"
+import { EventFormSchema } from "./EventFormSchema"
+import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
+  const { committees } = useCommitteeAllQuery()
   const open = useCreateEventModal()
 
-  const columnHelper = createColumnHelper<Event>()
+  const columnHelper = createColumnHelper<EventFormSchema>()
   const columns = useMemo(
     () => [
       columnHelper.accessor("title", {
@@ -27,7 +30,7 @@ export default function EventPage() {
       }),
       columnHelper.accessor("committees", {
         header: () => "Arrangør",
-        cell: (info) => <EventCommittees committees={info.getValue()} />,
+        cell: (info) => <EventCommittees allCommittees={committees} committeeIds={info.getValue()} />,
       }),
       columnHelper.accessor("type", {
         header: () => "Type",

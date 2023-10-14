@@ -1,14 +1,12 @@
 import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
-
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
 import { AttendanceRepository } from "./attendance-repository"
-import { EventCommitteeRepository } from "./event-committee-repository"
 import { EventRepository } from "./event-repository"
 
 export interface EventService {
-  createEvent(eventCreate: EventWrite, eventCommittees: string[]): Promise<Event>
-  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">, committees: string[]): Promise<Event>
+  createEvent(eventCreate: EventWrite): Promise<Event>
+  updateEvent(id: Event["id"], payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: Event["id"]): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
@@ -21,18 +19,15 @@ export interface EventService {
 export class EventServiceImpl implements EventService {
   constructor(
     private readonly eventRepository: EventRepository,
-    private readonly attendanceRepository: AttendanceRepository,
-    private readonly committeeOrganizerRepository: EventCommitteeRepository
+    private readonly attendanceRepository: AttendanceRepository
   ) {}
 
-  async createEvent(eventCreate: EventWrite, committees: string[]): Promise<Event> {
+  async createEvent(eventCreate: EventWrite): Promise<Event> {
     const event = await this.eventRepository.create(eventCreate)
 
     if (!event) {
       throw new Error("Failed to create event")
     }
-
-    await this.committeeOrganizerRepository.setCommittees(event.id, committees)
 
     return event
   }
@@ -58,12 +53,7 @@ export class EventServiceImpl implements EventService {
       throw new NotFoundError(`Event with ID:${id} not found`)
     }
 
-    const committees = await this.committeeOrganizerRepository.getAllCommittees(event.id, 999)
-
-    return {
-      ...event,
-      committees: committees,
-    }
+    return event
   }
 
   async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {

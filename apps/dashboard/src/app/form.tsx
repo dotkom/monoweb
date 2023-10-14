@@ -50,8 +50,6 @@ export function createMultipleSelectInput<F extends FieldValues>({
             {...props}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
             onChange={field.onChange}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             value={field.value}
           />
         )}

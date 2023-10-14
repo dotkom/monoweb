@@ -1,6 +1,4 @@
 import { z } from "zod"
-import { CommitteeSchema } from "./committee"
-import { committees } from "../../../apps/db-migrator/src/fixtures/committee"
 
 export const EventSchema = z.object({
   id: z.string().ulid(),
@@ -17,16 +15,12 @@ export const EventSchema = z.object({
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
   waitlist: z.string().ulid().nullable(),
-
-  committees: z.array(CommitteeSchema),
 })
 
 export type Event = z.infer<typeof EventSchema>
 export type EventId = Event["id"]
 
-export const EventWriteSchema = EventSchema.extend({
-  committees: z.array(z.string().ulid()),
-}).partial({
+export const EventWriteSchema = EventSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,

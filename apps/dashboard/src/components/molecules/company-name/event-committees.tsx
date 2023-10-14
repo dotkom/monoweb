@@ -1,23 +1,26 @@
 import { Committee, EventCommittee } from "@dotkomonline/types"
-import { Anchor } from "@mantine/core"
+import { Anchor, Text } from "@mantine/core"
 import { FC } from "react"
 
 interface Props {
-  committees: Committee[]
+  committeeIds: EventCommittee[]
+  allCommittees: Committee[]
 }
-export const EventCommittees: FC<Props> = ({ committees }) => {
-  if (!committees.length) {
-    return "Ingen arrangører"
+export const EventCommittees: FC<Props> = ({ committeeIds, allCommittees }) => {
+  const matches = committeeIds.map((id) => allCommittees.find((c) => c.id === id.committeeId))
+
+  if (!matches.length) {
+    return <Text>Ingen arrangører</Text>
   }
 
   return (
     <>
-      {committees.map((committee, i) => (
+      {matches.map((match, i) => (
         <>
-          <Anchor size="sm" href={`/committee/${committee.id}`}>
-            {committee.name}
+          <Anchor size="sm" href={`/committee/${match?.id}`}>
+            {match?.name}
           </Anchor>
-          {i < committees.length - 1 && ", "}
+          {i < matches.length - 1 && ", "}
         </>
       ))}
     </>

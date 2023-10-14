@@ -1,3 +1,4 @@
+import { Committee } from "@dotkomonline/types"
 import { z } from "zod"
 import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
@@ -9,7 +10,6 @@ import {
   createTextareaInput,
   useFormBuilder,
 } from "../../form"
-import { Committee } from "@dotkomonline/types"
 
 type UseEventEditFormProps = {
   onSubmit: (data: FormValidationResult) => void
@@ -79,15 +79,6 @@ export const useEventEditForm = ({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
-        onChange: (data) => {
-          console.log("test", data)
-        },
-        onSubmit: (data) => {
-          console.log("test", data)
-        },
-        onClick: (data) => {
-          console.log("test", data)
-        },
       }),
       status: createSelectInput({
         label: "Event status",
