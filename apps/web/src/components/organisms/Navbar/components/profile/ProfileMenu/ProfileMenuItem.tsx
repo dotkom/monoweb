@@ -16,10 +16,10 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
 
   const { title, slug, icon } = menuItem
 
-  const [isCurrent, setCurrent] = useState(router.pathname === slug ? "opacity-1" : "opacity-50")
+  const [isCurrent, setIsCurrent] = useState(router.pathname === slug ? "opacity-1" : "opacity-50")
 
   useEffect(() => {
-    setCurrent(router.pathname === slug ? "opacity-1" : "opacity-50")
+    setIsCurrent(router.pathname === slug ? "opacity-1" : "opacity-50")
   }, [router.pathname, slug])
 
   return (
