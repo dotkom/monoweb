@@ -1,9 +1,7 @@
 import { Database } from "@dotkomonline/db"
-import { DB } from "@dotkomonline/db/src/db.generated"
-import { Committee, Event, EventSchema, EventWrite } from "@dotkomonline/types"
-import { Kysely, Selectable, sql } from "kysely"
+import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
+import { Kysely, Selectable } from "kysely"
 import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { mapToCommittee } from "../committee/committee-repository"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
