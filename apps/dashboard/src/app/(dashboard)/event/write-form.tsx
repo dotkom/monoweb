@@ -19,7 +19,7 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
   location: null,
   subtitle: null,
   waitlist: null,
-  eventCommittees: [],
+  committeeIds: [],
 }
 
 type UseEventWriteFormProps = {
@@ -31,7 +31,7 @@ type UseEventWriteFormProps = {
 export const FormValidationSchema = EventWriteSchema.extend({
   start: z.date().min(new Date(), { message: "Starttidspunkt må være i fremtiden" }),
   end: z.date().min(new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
-  eventCommittees: z.array(z.string()),
+  committeeIds: z.array(z.string()),
 })
   .partial({
     id: true,
@@ -84,7 +84,7 @@ export const useEventWriteForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      eventCommittees: createMultipleSelectInput({
+      committeeIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),

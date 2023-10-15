@@ -12,16 +12,16 @@ export const EventEditCard: FC = () => {
     label: "Oppdater arrangement",
     committees: committees,
     onSubmit: (data) => {
-      const { committees, ...event } = data
+      const { committeeIds, ...event } = data
       edit.mutate({
         id: data.id,
         event: event,
-        committees: committees,
+        committeeIds: committeeIds,
       })
     },
     defaultValues: {
       ...event,
-      committees: eventCommittees.map((committee) => committee.committeeId),
+      committeeIds: eventCommittees.map((committee) => committee.committeeId),
     },
   })
   return <FormComponent />

@@ -19,7 +19,7 @@ type UseEventEditFormProps = {
 }
 
 const FormValidationSchema = EventSchema.extend({
-  committees: z.array(z.string()),
+  committeeIds: z.array(z.string()),
 })
   .required({ id: true })
   .refine(
@@ -75,7 +75,7 @@ export const useEventEditForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committees: createMultipleSelectInput({
+      committeeIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),

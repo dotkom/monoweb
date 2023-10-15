@@ -24,17 +24,14 @@ export class EventServiceImpl implements EventService {
 
   async createEvent(eventCreate: EventWrite): Promise<Event> {
     const event = await this.eventRepository.create(eventCreate)
-
     if (!event) {
       throw new Error("Failed to create event")
     }
-
     return event
   }
 
   async getEvents(take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAll(take, cursor)
-
     return events
   }
 
@@ -52,18 +49,15 @@ export class EventServiceImpl implements EventService {
     if (!event) {
       throw new NotFoundError(`Event with ID:${id} not found`)
     }
-
     return event
   }
 
   async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-    const updatedEvent = await this.eventRepository.update(id, eventUpdate)
-
-    if (!updatedEvent) {
+    const event = await this.eventRepository.update(id, eventUpdate)
+    if (!event) {
       throw new NotFoundError(`Could not update Event(${id})`)
     }
-
-    return updatedEvent
+    return event
   }
 
   async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
@@ -93,7 +87,6 @@ export class EventServiceImpl implements EventService {
       min: 0,
       max: 0,
     })
-
     await this.eventRepository.update(eventId, {
       ...event,
       waitlist: waitlist.id,
