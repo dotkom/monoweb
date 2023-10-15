@@ -88,8 +88,8 @@ export class EventRepositoryImpl implements EventRepository {
   async getById(id: string): Promise<Event | undefined> {
     const event = await this.db
       .selectFrom("event")
-      .innerJoin("eventCommittee", "eventCommittee.eventId", "event.id")
-      .innerJoin("committee", "committee.id", "eventCommittee.committeeId")
+      .leftJoin("eventCommittee", "eventCommittee.eventId", "event.id")
+      .leftJoin("committee", "committee.id", "eventCommittee.committeeId")
       .selectAll("event")
       .select(
         sql<DB["committee"][]>`COALESCE(json_agg(committee) FILTER (WHERE committee.id IS NOT NULL), '[]')`.as(
