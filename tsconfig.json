@@ -18,5 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "types": ["vitest/globals"]
   },
-  "include": ["apps/", "packages/"]
+  "include": ["apps/", "packages/"],
+    "types": ["vitest/globals"],
+    "noErrorTruncation": true
 }

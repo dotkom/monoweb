@@ -1,6 +1,6 @@
+import { type Event } from "@dotkomonline/types"
 import { randomUUID } from "crypto"
 import { describe, vi } from "vitest"
-import { type Event } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import { NotFoundError } from "../../../errors/errors"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
@@ -21,7 +21,6 @@ export const eventPayload: Omit<Event, "id"> = {
   updatedAt: new Date(2022, 1, 1),
   status: "PUBLIC",
   type: "COMPANY",
-  committeeId: null,
   waitlist: null,
 }
 

@@ -1,31 +1,45 @@
-import { type z } from "zod"
-import { type EventWrite, EventWriteSchema } from "../../../../../../packages/types/src/event"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { Committee } from "@dotkomonline/types"
+import { z } from "zod"
+import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createMultipleSelectInput,
   createSelectInput,
   createTextInput,
   createTextareaInput,
   useFormBuilder,
 } from "../../form"
 
-interface UseEventEditFormProps {
-  onSubmit: (data: z.infer<typeof FormValidationSchema>) => void
-  defaultValues?: Partial<EventWrite>
+type UseEventEditFormProps = {
+  onSubmit: (data: FormValidationResult) => void
+  defaultValues?: Partial<FormValidationResult>
   label?: string
+  committees: Committee[]
 }
 
-const FormValidationSchema = EventWriteSchema.required({ id: true }).refine(
-  (data) => data.start < data.end,
-  {
-    message: "Sluttidspunkt må være etter starttidspunkt",
-    path: ["end"],
-  }
-)
+const FormValidationSchema = EventSchema.extend({
+  committeeIds: z.array(z.string()),
+})
+  .required({ id: true })
+  .refine(
+    (data) => {
+      return data.start < data.end
+    },
+    {
+      message: "Sluttidspunkt må være etter starttidspunkt",
+      path: ["end"],
+    }
+  )
 
-export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) => {
-  const { committees } = useCommitteeAllQuery()
+type FormValidationResult = z.infer<typeof FormValidationSchema>
+
+export const useEventEditForm = ({
+  committees,
+  onSubmit,
+  label = "Opprett arrangement",
+  defaultValues,
+}: UseEventEditFormProps) => {
   return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
@@ -61,7 +75,7 @@ export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defa
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeId: createSelectInput({
+      committeeIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),

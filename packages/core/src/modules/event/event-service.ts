@@ -1,8 +1,8 @@
 import { type Attendance, type AttendanceWrite, type Event, type EventWrite } from "@dotkomonline/types"
-import { type AttendanceRepository } from "./attendance-repository"
-import { type EventRepository } from "./event-repository"
 import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
+import { type AttendanceRepository } from "./attendance-repository"
+import { type EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent: (eventCreate: EventWrite) => Promise<Event>

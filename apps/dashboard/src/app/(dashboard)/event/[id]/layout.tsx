@@ -1,18 +1,18 @@
 "use client"
 
-import { type PropsWithChildren } from "react"
 import { Loader } from "@mantine/core"
-import { EventDetailsContext } from "./provider"
+import { type PropsWithChildren } from "react"
 import { useEventGetQuery } from "../../../../modules/event/queries/use-event-get-query"
+import { EventDetailsContext } from "./provider"
 
 export default function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { event, isLoading } = useEventGetQuery(params.id)
+  const { event, eventCommittees, isLoading } = useEventGetQuery(params.id)
   return (
     <>
       {isLoading || !event ? (
         <Loader />
       ) : (
-        <EventDetailsContext.Provider value={{ event }}>{children}</EventDetailsContext.Provider>
+        <EventDetailsContext.Provider value={{ event, eventCommittees }}>{children}</EventDetailsContext.Provider>
       )}
     </>
   )
