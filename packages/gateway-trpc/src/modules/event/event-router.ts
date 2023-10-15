@@ -30,7 +30,6 @@ export const eventRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      console.log(input)
       const event = await ctx.eventService.updateEvent(input.id, input.event)
       await ctx.eventCommitteeService.setEventCommittees(input.id, input.committees)
       return event
