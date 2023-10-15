@@ -20,6 +20,8 @@ export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, erro
   </div>
 ))
 
+TextInput.displayName = "TextInput"
+
 const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2", {
   variants: {
     error: {

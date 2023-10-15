@@ -37,6 +37,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
   </button>
 ))
 
+Button.displayName = "Button"
+
 export const buttonStyles = cva(
   [
     "cursor-pointer appearance-none rounded-md px-4 py-2 font-semibold",
