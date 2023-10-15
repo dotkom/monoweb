@@ -15,7 +15,6 @@ export async function up(db: Kysely<any>) {
     .addColumn("subtitle", "varchar(255)")
     .addColumn("image_url", "varchar(255)")
     .addColumn("location", "varchar(255)")
-    .addColumn("committee_id", sql`ulid`, (col) => col.references("committee.id").onDelete("set null"))
     .execute()
 
   await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)

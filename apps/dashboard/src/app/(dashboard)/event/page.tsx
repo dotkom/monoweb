@@ -1,22 +1,34 @@
 "use client"
 
+import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { Event } from "@dotkomonline/types"
 import { useMemo } from "react"
-import { formatDate } from "../../../utils/format"
-import { Icon } from "@iconify/react"
-import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
-import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { GenericTable } from "src/components/GenericTable"
+import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
+import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
+import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
+import { formatDate } from "../../../utils/format"
+
+import { Committee, Event, EventCommittee } from "@dotkomonline/types"
+import EventCommittees from "src/components/molecules/company-name/event-committees"
+
+type TableColumns = Event & {
+  committees: EventCommittee[]
+}
+
+function fromReferenceToObj(committees: Committee[], references: EventCommittee[]): Committee[] {
+  return references
+    .map((reference) => committees.find((committee) => committee.id === reference.committeeId))
+    .filter(Boolean) as Committee[]
+}
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
   const { committees, isLoading: isCommitteesLoading } = useCommitteeAllQuery()
   const open = useCreateEventModal()
 
-  const columnHelper = createColumnHelper<Event>()
+  const columnHelper = createColumnHelper<TableColumns>()
   const columns = useMemo(
     () => [
       columnHelper.accessor("title", {
@@ -26,19 +38,9 @@ export default function EventPage() {
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue()),
       }),
-      columnHelper.accessor("committeeId", {
+      columnHelper.accessor("committees", {
         header: () => "Arrangør",
-        cell: (info) => {
-          const match = committees.find((committee) => committee.id === info.getValue()) ?? null
-          if (match !== null) {
-            return (
-              <Anchor size="sm" href={`/committee/${match.id}`}>
-                {match.name}
-              </Anchor>
-            )
-          }
-          return "Ukjent arrangør"
-        },
+        cell: (info) => <EventCommittees committees={fromReferenceToObj(committees, info.getValue())} />,
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
