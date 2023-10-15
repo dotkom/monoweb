@@ -59,6 +59,7 @@ const stripeCheckoutSessionPayload: Stripe.Checkout.Session = {
   custom_text: {
     shipping_address: null,
     submit: null,
+    terms_of_service_acceptance: null,
   },
   customer: null,
   customer_creation: null,
@@ -190,7 +191,7 @@ describe("PaymentService", () => {
     refundRequestRepository
   )
 
-  const stripe = new Stripe("doesntmatter", { apiVersion: "2022-11-15" })
+  const stripe = new Stripe("doesntmatter", { apiVersion: "2023-08-16" })
   vi.spyOn(LocalStripeLib, "getStripeObject").mockResolvedValue(stripe)
 
   const paymentPayloadExtended: Payment = {
