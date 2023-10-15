@@ -8,8 +8,6 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type Int8 = ColumnType<string, string | number | bigint, string | number | bigint>;
-
 export type PaymentProvider = "STRIPE";
 
 export type PaymentStatus = "PAID" | "REFUNDED" | "UNPAID";
@@ -64,12 +62,6 @@ export interface Company {
   image: string | null;
 }
 
-export interface DrizzleDrizzleMigrations {
-  id: Generated<number>;
-  hash: string;
-  createdAt: Int8 | null;
-}
-
 export interface Event {
   id: Generated<string>;
   createdAt: Generated<Timestamp>;
@@ -83,9 +75,13 @@ export interface Event {
   subtitle: string | null;
   imageUrl: string | null;
   location: string | null;
-  committeeId: string | null;
   type: EventType | null;
   waitlist: string | null;
+}
+
+export interface EventCommittee {
+  committeeId: string;
+  eventId: string;
 }
 
 export interface EventCompany {
@@ -186,8 +182,8 @@ export interface DB {
   attendee: Attendee;
   committee: Committee;
   company: Company;
-  "drizzle.DrizzleMigrations": DrizzleDrizzleMigrations;
   event: Event;
+  eventCommittee: EventCommittee;
   eventCompany: EventCompany;
   mark: Mark;
   notificationPermissions: NotificationPermissions;
