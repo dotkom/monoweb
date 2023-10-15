@@ -36,16 +36,14 @@ export const eventRouter = t.router({
     }),
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input.take, input.cursor)
-    const committees = events.map((e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
+    const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
 
     const results = await Promise.all(committees)
 
-    return events.map((event, i) => {
-      return {
+    return events.map((event, i) => ({
         ...event,
         committees: results[i],
-      }
-    })
+      }))
   }),
   allByCompany: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
@@ -54,15 +52,13 @@ export const eventRouter = t.router({
     ),
   allByCommittee: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
-    .query(({ input, ctx }) => {
-      return ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
-    }),
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)),
   get: publicProcedure.input(CompanySchema.shape.id).query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(input)
     const committees = await ctx.eventCommitteeService.getEventCommitteesForEvent(event.id)
 
     return {
-      event: event,
+      event,
       eventCommittees: committees,
     }
   }),

@@ -1,6 +1,6 @@
-import { Committee } from "@dotkomonline/types"
+import { type Committee } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
-import React, { FC } from "react"
+import React, { type FC } from "react"
 
 interface Props {
   committees: Committee[]

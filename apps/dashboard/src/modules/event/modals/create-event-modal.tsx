@@ -10,8 +10,8 @@ export const CreateEventModal: FC<ContextModalProps> = ({ context, id }) => {
     onSubmit: (data) => {
       const { committeeIds, ...event } = data
       create.mutate({
-        committeeIds: committeeIds,
-        event: event,
+        committeeIds,
+        event,
       })
       close()
     },
