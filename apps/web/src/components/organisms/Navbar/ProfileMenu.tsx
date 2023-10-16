@@ -24,6 +24,7 @@ import { FC, PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 import { signIn, signOut, useSession } from "next-auth/react"
+import Link from "next/link"
 
 export const ProfileMenu = () => {
   const { status } = useSession()
@@ -54,7 +55,7 @@ export const ProfileMenu = () => {
   }
 
   return (
-    <div>
+    <button>
       <AvatarDropdown>
         <Avatar>
           <AvatarImage
@@ -64,7 +65,7 @@ export const ProfileMenu = () => {
           <AvatarFallback>PR</AvatarFallback>
         </Avatar>
       </AvatarDropdown>
-    </div>
+    </button>
   )
 }
 
@@ -72,6 +73,7 @@ type Link = {
   label: string
   icon: string
   shortcut?: string
+  href?: string
 }
 const linkGroups: Link[][] = [
   [
@@ -79,16 +81,19 @@ const linkGroups: Link[][] = [
       icon: "tabler:user",
       label: "Profil",
       shortcut: "⇧⌘P",
+      href: "/profile",
     },
     {
       icon: "tabler:credit-card",
       label: "Saldo",
       shortcut: "⌘B",
+      href: "/profile",
     },
     {
       icon: "tabler:settings",
       label: "Instillinger",
       shortcut: "⌘S",
+      href: "/profile",
     },
   ],
   [
@@ -130,9 +135,11 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
             <DropdownMenuGroup>
               {group.map((link) => (
                 <DropdownMenuItem key={link.label}>
-                  <Icon icon={link.icon} className="mr-2 h-4 w-4" />
-                  <span>{link.label}</span>
-                  {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
+                  <Link href={link.href || ""}>
+                    <Icon icon={link.icon} className="mr-2 h-4 w-4" />
+                    <span>{link.label}</span>
+                    {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
+                  </Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>

@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react"
+import React, { FC, useMemo } from "react"
 import { useEventDetailsContext } from "./provider"
 import { Box, Title, Checkbox } from "@mantine/core"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
@@ -7,14 +7,31 @@ import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/re
 import { GenericTable } from "src/components/GenericTable"
 import { Attendee } from "@dotkomonline/types"
 
-export const EventDetailsAttendance: FC = () => {
-  const { event } = useEventDetailsContext()
-  const { eventAttendance } = useEventAttendanceGetQuery(event.id)
+interface CustomCheckboxProps {
+  userId: string
+  attendanceId: string
+  defaultChecked?: boolean
+}
+const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: CustomCheckboxProps) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
+  console.log("rendering")
 
   const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
     updateAttendance.mutate({ userId, attendanceId, attended: currentCheckedState })
   }
+  return (
+    <Checkbox
+      onChange={(event) => {
+        toggleAttendance(userId, attendanceId, event.currentTarget.checked)
+      }}
+      defaultChecked={defaultChecked}
+    />
+  )
+})
+
+export const EventDetailsAttendance: FC = () => {
+  const { event } = useEventDetailsContext()
+  const { eventAttendance } = useEventAttendanceGetQuery(event.id)
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
@@ -25,18 +42,16 @@ export const EventDetailsAttendance: FC = () => {
       columnHelper.accessor((attendee) => attendee, {
         id: "attended",
         header: () => "Møtt",
-        cell: (info) => {
-          const attendee = info.getValue()
-          return (
-            <Checkbox
-              defaultChecked={attendee.attended}
-              onChange={(event) => toggleAttendance(attendee.userId, attendee.attendanceId, event.target.checked)}
-            />
-          )
-        },
+        cell: (info) => (
+          <CustomCheckbox
+            userId={info.getValue().userId}
+            attendanceId={info.getValue().attendanceId}
+            defaultChecked={info.getValue().attended}
+          />
+        ),
       }),
     ],
-    []
+    [event, eventAttendance]
   )
 
   const table = useReactTable({

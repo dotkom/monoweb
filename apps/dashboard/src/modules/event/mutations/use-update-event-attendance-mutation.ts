@@ -16,8 +16,8 @@ export const useUpdateEventAttendanceMutation = () => {
         title: "Oppmøte oppdatert",
         message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"} for bruker ${data.userId}.`,
       })
-      utils.event.all.invalidate()
-      utils.event.get.invalidate()
+      // utils.event.all.invalidate()
+      // utils.event.get.invalidate()
     },
     onError: (err) => {
       notification.fail({
