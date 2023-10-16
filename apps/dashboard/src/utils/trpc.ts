@@ -8,8 +8,7 @@ import superjson from "superjson"
 import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
-  if (env.NEXT_PUBLIC_NODE_ENV === "production") return "https://new.online.ntnu.no/"
-  if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.NEXT_PUBLIC_VERCEL_URL}`
+  if (env.NEXT_PUBLIC_NODE_ENV === "production") return "https://dev.web.online.ntnu.no"
   return `http://localhost:3000`
 }
 
