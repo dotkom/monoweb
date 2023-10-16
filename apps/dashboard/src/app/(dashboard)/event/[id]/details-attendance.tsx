@@ -14,7 +14,6 @@ interface CustomCheckboxProps {
 }
 const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: CustomCheckboxProps) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
-  console.log("rendering")
 
   const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
     updateAttendance.mutate({ userId, attendanceId, attended: currentCheckedState })
@@ -28,6 +27,8 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
     />
   )
 })
+
+CustomCheckbox.displayName = "attendanceToggle"
 
 export const EventDetailsAttendance: FC = () => {
   const { event } = useEventDetailsContext()
@@ -51,7 +52,7 @@ export const EventDetailsAttendance: FC = () => {
         ),
       }),
     ],
-    [event, eventAttendance]
+    [columnHelper]
   )
 
   const table = useReactTable({
