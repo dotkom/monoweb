@@ -22,15 +22,16 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
     // get all committees for event
     const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId)
 
+    const eventCommitteeIds = eventCommittees.map((c) => c.committeeId)
+
     // compute diff
-    const committeesToRemove = eventCommittees.filter((committee) => !committees.includes(committee.committeeId))
-    const committeesToAdd = committees.filter(
-      (committee) => !eventCommittees.map((c) => c.committeeId).includes(committee)
-    )
+    const committeesToRemove = eventCommitteeIds.filter((committee) => !committees.map((c) => c).includes(committee))
+
+    const committeesToAdd = committees.filter((committee) => !eventCommitteeIds.map((c) => c).includes(committee))
 
     // remove committees for event
     const removedCommittees = committeesToRemove.map((c) =>
-      this.committeeOrganizerRepository.removeCommitteesFromEvent(c.eventId)
+      this.committeeOrganizerRepository.removeCommitteFromEvent(eventId, c)
     )
 
     // add committees for event
