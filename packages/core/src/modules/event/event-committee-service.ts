@@ -19,26 +19,23 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
   }
 
   async setEventCommittees(eventId: Event["id"], committees: Committee["id"][]): Promise<void> {
-    // get all committees for event
+    // Fetch all committees associated with the event
     const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId)
+    const currentCommitteeIds = eventCommittees.map((committee) => committee.committeeId)
 
-    const eventCommitteeIds = eventCommittees.map((c) => c.committeeId)
+    // Identify committees to add and remove
+    const committeesToRemove = currentCommitteeIds.filter((committeeId) => !committees.includes(committeeId))
+    const committeesToAdd = committees.filter((committeeId) => !currentCommitteeIds.includes(committeeId))
 
-    // compute diff
-    const committeesToRemove = eventCommitteeIds.filter((committee) => !committees.map((c) => c).includes(committee))
-
-    const committeesToAdd = committees.filter((committee) => !eventCommitteeIds.map((c) => c).includes(committee))
-
-    // remove committees for event
-    const removedCommittees = committeesToRemove.map((c) =>
-      this.committeeOrganizerRepository.removeCommitteFromEvent(eventId, c)
+    // Create promises for removal and addition operations
+    const removePromises = committeesToRemove.map((committeeId) =>
+      this.committeeOrganizerRepository.removeCommitteFromEvent(eventId, committeeId)
+    )
+    const addPromises = committeesToAdd.map((committeeId) =>
+      this.committeeOrganizerRepository.addCommitteeToEvent(eventId, committeeId)
     )
 
-    // add committees for event
-    const addedCommittees = committeesToAdd.map((c) =>
-      this.committeeOrganizerRepository.addCommitteeToEvent(eventId, c)
-    )
-
-    await Promise.all([...removedCommittees, ...addedCommittees])
+    // Execute all promises in parallel
+    await Promise.all([...removePromises, ...addPromises])
   }
 }
