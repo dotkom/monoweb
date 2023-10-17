@@ -12,8 +12,8 @@ export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"
 export interface EventCommitteeRepository {
   getAllEventCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<EventCommittee[]>
   getAllCommittees(eventId: Event["id"], take: number, cursor?: Cursor): Promise<Committee[]>
-  addCommitteeToEvent(eventId: Event["id"], committees: Committee["id"]): Promise<void>
-  removeCommitteesFromEvent(eventId: Event["id"]): Promise<void>
+  addCommitteeToEvent(eventId: Event["id"], committeeId: Committee["id"]): Promise<void>
+  removeCommitteFromEvent(eventId: Event["id"], committeeId: Committee["id"]): Promise<void>
 }
 
 export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
@@ -41,7 +41,11 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
     await this.db.insertInto("eventCommittee").values(row).execute()
   }
 
-  async removeCommitteesFromEvent(eventId: Event["id"]): Promise<void> {
-    await this.db.deleteFrom("eventCommittee").where("eventId", "=", eventId).execute()
+  async removeCommitteFromEvent(eventId: Event["id"], committeeId: Committee["id"]): Promise<void> {
+    await this.db
+      .deleteFrom("eventCommittee")
+      .where("eventId", "=", eventId)
+      .where("committeeId", "=", committeeId)
+      .execute()
   }
 }
