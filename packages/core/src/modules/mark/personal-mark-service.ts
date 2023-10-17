@@ -11,6 +11,7 @@ export interface PersonalMarkService {
   getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
   addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>
   removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>
+  countUsersByMarkId(markId: Mark["id"]): Promise<number>
   getExpiryDateForUserId(userId: User["id"]): Promise<Date | null>
   calculateExpiryDate(marks: { createdAt: Date; duration: number }[]): Date | null
 }
@@ -43,6 +44,11 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId)
     if (!personalMark) throw new NotFoundError(`PersonalMark could not be removed`)
     return personalMark
+  }
+
+  async countUsersByMarkId(markId: Mark["id"]): Promise<number> {
+    const count = await this.personalMarkRepository.countUsersByMarkId(markId)
+    return count
   }
 
   async getExpiryDateForUserId(userId: User["id"]): Promise<Date | null> {

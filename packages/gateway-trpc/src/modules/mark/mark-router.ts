@@ -3,7 +3,6 @@ import { PaginateInputSchema } from "@dotkomonline/core"
 import { personalMarkRouter } from "./personal-mark-router"
 import { protectedProcedure } from "./../../trpc"
 import { t } from "../../trpc"
-import { z } from "zod"
 
 export const markRouter = t.router({
   personal: personalMarkRouter,
@@ -16,11 +15,6 @@ export const markRouter = t.router({
   all: protectedProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
     return ctx.markService.getMarks(input.take, input.cursor)
   }),
-  getByUser: protectedProcedure
-    .input(z.object({ id: MarkSchema.shape.id, paginate: PaginateInputSchema }))
-    .query(({ input, ctx }) => {
-      return ctx.personalMarkService.getMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
-    }),
   get: protectedProcedure.input(MarkSchema.shape.id).query(({ input, ctx }) => {
     return ctx.markService.getMark(input)
   }),

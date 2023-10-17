@@ -13,6 +13,11 @@ export const personalMarkRouter = t.router({
   addToUser: protectedProcedure.input(PersonalMarkSchema).mutation(({ input, ctx }) => {
     return ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)
   }),
+  countUsersWithMark: protectedProcedure
+    .input(z.object({ id: PersonalMarkSchema.shape.markId }))
+    .query(({ input, ctx }) => {
+      return ctx.personalMarkService.countUsersByMarkId(input.id)
+    }),
   removeFromUser: protectedProcedure.input(PersonalMarkSchema).mutation(({ input, ctx }) => {
     return ctx.personalMarkService.removePersonalMarkFromUserId(input.userId, input.markId)
   }),

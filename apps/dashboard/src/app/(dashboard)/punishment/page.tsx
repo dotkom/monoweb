@@ -6,11 +6,17 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { useMemo } from "react"
 import { GenericTable } from "src/components/GenericTable"
 import { formatDate } from "../../../utils/format"
-import { Mark } from "@dotkomonline/types"
+import { Mark, MarkId } from "@dotkomonline/types"
 import { usePunishmentAllQuery } from "src/modules/punishment/queries/use-punishment-all-query"
+import { useMarkCountUsersQuery } from "src/modules/punishment/queries/use-count-users-with-mark-query"
 
 export default function MarkPage() {
   const { marks, isLoading: isMarksLoading } = usePunishmentAllQuery()
+
+  function MarkUserCount({ markId }: { markId: MarkId }) {
+    const { data } = useMarkCountUsersQuery(markId)
+    return <>{data ?? 0}</>
+  }
 
   const columnHelper = createColumnHelper<Mark>()
   const columns = useMemo(
@@ -21,6 +27,11 @@ export default function MarkPage() {
       columnHelper.accessor("createdAt", {
         header: () => "Opprettet",
         cell: (info) => formatDate(info.getValue()),
+      }),
+      columnHelper.accessor((mark) => mark, {
+        id: "count",
+        header: () => "Antall",
+        cell: (info) => <MarkUserCount markId={info.getValue().id} />,
       }),
       columnHelper.accessor((mark) => mark, {
         id: "actions",
