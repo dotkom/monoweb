@@ -40,21 +40,15 @@ export class EventRepositoryImpl implements EventRepository {
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
     const query = orderedQuery(
-      this.db.selectFrom("event").selectAll().where("committeeId", "=", committeeId).limit(take),
+      this.db
+        .selectFrom("eventCommittee")
+        .where("committeeId", "=", committeeId)
+        .innerJoin("event", "event.id", "eventCommittee.eventId")
+        .selectAll("event")
+        .limit(take),
       cursor
     )
-    let query = this.db
-      .selectFrom("eventCommittee")
-      .where("committeeId", "=", committeeId)
-      .innerJoin("event", "event.id", "eventCommittee.eventId")
-      .selectAll("event")
-      .limit(take)
 
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
     const events = await query.execute()
     return events.map((e) => mapToEvent(e))
   }
