@@ -1,4 +1,4 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
 import { Payment, RefundRequest, RefundRequestSchema, RefundRequestWrite } from "@dotkomonline/types"
 
@@ -63,14 +63,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<RefundRequest[]> {
-    let query = this.db.selectFrom("refundRequest").selectAll().limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
-
+    const query = orderedQuery(this.db.selectFrom("refundRequest").selectAll().limit(take), cursor)
     const refundRequests = await query.execute()
     return refundRequests.map(mapToRefundRequest)
   }

@@ -1,5 +1,5 @@
 import { Committee, CommitteeSchema, CommitteeWrite } from "@dotkomonline/types"
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
 
 import { Database } from "@dotkomonline/db"
@@ -23,10 +23,7 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   }
 
   async getAll(take: number, cursor?: Cursor) {
-    let query = this.db.selectFrom("committee").selectAll().limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    }
+    const query = orderedQuery(this.db.selectFrom("committee").selectAll().limit(take), cursor)
     const committees = await query.execute()
     return committees.map(mapToCommittee)
   }
