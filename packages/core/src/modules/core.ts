@@ -30,6 +30,10 @@ import { CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { CompanyEventServiceImpl } from "./company/company-event-service"
 import { EventCommitteeServiceImpl } from "./event/event-committee-service"
 import { EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
+import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider"
+import { CognitoRepositoryImpl } from "./user/cognito-repository"
+import { CognitoServiceImpl } from "./user/cognito-service"
+import { env } from "@dotkomonline/env"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -38,6 +42,15 @@ export type ServerLayerOptions = {
 }
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
+  // TODO: factor out
+  const cognitoClient = new CognitoIdentityProviderClient({
+    region: env.AWS_REGION,
+    credentials: {
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: env.AWS_ACCESS_KEY_ID
+    }
+  })
+
   const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const companyRepository = new CompanyRepositoryImpl(db)
@@ -54,6 +67,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
+  const cognitoRepository = new CognitoRepositoryImpl(cognitoClient)
 
   const userService = new UserServiceImpl(
     userRepository,
@@ -83,6 +97,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService = new MarkServiceImpl(markRepository)
   const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
+  const cognitoService = new CognitoServiceImpl(cognitoRepository, userRepository)
 
   return {
     userService,
@@ -99,5 +114,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     markService,
     personalMarkService,
     eventCommitteeService,
+    cognitoService,
   }
 }

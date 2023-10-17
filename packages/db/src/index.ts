@@ -22,6 +22,7 @@ export const kysely =
       }),
     }),
     plugins: [new CamelCasePlugin()],
+    log: ['query']
   })
 
 if (env.NODE_ENV !== "production") {

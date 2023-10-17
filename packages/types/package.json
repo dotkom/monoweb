@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.428.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import { Database } from "@dotkomonline/db"
 import { Kysely, Selectable } from "kysely"
-import { type User, UserId, UserSchema, UserWrite } from "@dotkomonline/types"
+import { CognitoSubject, type User, UserId, UserSchema, UserWrite } from "@dotkomonline/types"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => {
   return UserSchema.parse(payload)
@@ -11,6 +11,7 @@ export interface UserRepository {
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
   update(id: UserId, data: UserWrite): Promise<User | undefined>
+  getBySubjects(ids: CognitoSubject[]): Promise<User[]>
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -35,5 +36,12 @@ export class UserRepositoryImpl implements UserRepository {
       .returningAll()
       .executeTakeFirstOrThrow()
     return user ? mapToUser(user) : undefined
+  }
+  async getBySubjects(ids: CognitoSubject[]): Promise<User[]> {
+    const users = await this.db.selectFrom(
+      "owUser"
+    ).selectAll().where("cognitoSub", "in", ids)
+      .execute();
+    return users.map(mapToUser)
   }
 }
