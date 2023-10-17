@@ -1,7 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { Company, CompanySchema, CompanyWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToCompany = (payload: Selectable<Database["company"]>): Company => {
   return CompanySchema.parse(payload)
@@ -23,10 +23,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Company[]> {
-    let query = this.db.selectFrom("company").selectAll().limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    }
+    const query = orderedQuery(this.db.selectFrom("company").selectAll().limit(take), cursor)
     const companies = await query.execute()
     return companies.map(mapToCompany)
   }

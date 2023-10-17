@@ -1,4 +1,4 @@
-import { Cursor, paginateQuery } from "./../../utils/db-utils"
+import { Cursor, orderedQuery } from "./../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
 import { Mark, MarkSchema, MarkWrite } from "@dotkomonline/types"
 
@@ -25,12 +25,7 @@ export class MarkRepositoryImpl implements MarkRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Mark[]> {
-    let query = this.db.selectFrom("mark").selectAll().limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
+    const query = orderedQuery(this.db.selectFrom("mark").selectAll().limit(take), cursor)
     const marks = await query.execute()
     return marks.map(mapToMark)
   }
