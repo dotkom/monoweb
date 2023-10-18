@@ -9,6 +9,7 @@ import { PersonalMarkRepository } from "./personal-mark-repository"
 export interface PersonalMarkService {
   getPersonalMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
+  getPersonalMarksByMarkId(markId: Mark["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
   addPersonalMarkToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>
   removePersonalMarkFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark>
   countUsersByMarkId(markId: Mark["id"]): Promise<number>
@@ -29,6 +30,11 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   async getMarksForUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]> {
     const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor)
+    return personalMarks
+  }
+
+  async getPersonalMarksByMarkId(markId: Mark["id"]): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getByMarkId(markId)
     return personalMarks
   }
 

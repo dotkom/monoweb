@@ -12,6 +12,7 @@ export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>)
 export interface PersonalMarkRepository {
   getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]>
+  getByMarkId(markId: Mark["id"]): Promise<PersonalMark[]>
   addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
   removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
   getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
@@ -47,6 +48,12 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     )
     const marks = await query.execute()
     return marks.map(mapToMark)
+  }
+
+  // TODO: Pagination
+  async getByMarkId(markId: Mark["id"]): Promise<PersonalMark[]> {
+    const personalMarks = await this.db.selectFrom("personalMark").selectAll().where("markId", "=", markId).execute()
+    return personalMarks.map(mapToPersonalMark)
   }
 
   async addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined> {
