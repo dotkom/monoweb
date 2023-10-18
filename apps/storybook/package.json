@@ -1,7 +1,7 @@
 {
   "name": "@dotkomonline/storybook",
   "devDependencies": {
-    "@babel/core": "^7.23.0",
+    "@babel/core": "^7.23.2",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@mdx-js/react": "^2.3.0",
