@@ -2,7 +2,7 @@ import { Kysely, Selectable } from "kysely"
 import {
   PaymentProvider,
   PaymentProviderSchema,
-  Product,
+  ProductId,
   ProductPaymentProvider,
   ProductPaymentProviderSchema,
   ProductPaymentProviderWrite,
@@ -17,9 +17,9 @@ const mapToPaymentProvider = (data: Selectable<Database["productPaymentProvider"
 
 export interface ProductPaymentProviderRepository {
   addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>
-  deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void>
-  getAllByProductId(productId: Product["id"]): Promise<PaymentProvider[]>
-  productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean>
+  deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void>
+  getAllByProductId(productId: ProductId): Promise<PaymentProvider[]>
+  productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean>
 }
 
 export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {
@@ -35,7 +35,7 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
     return mapToProductPaymentProvider(productPaymentProvider)
   }
 
-  async deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void> {
+  async deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void> {
     await this.db
       .deleteFrom("productPaymentProvider")
       .where("productId", "=", productId)
@@ -43,7 +43,7 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
       .execute()
   }
 
-  async getAllByProductId(productId: Product["id"]): Promise<PaymentProvider[]> {
+  async getAllByProductId(productId: ProductId): Promise<PaymentProvider[]> {
     const productPaymentProviders = await this.db
       .selectFrom("productPaymentProvider")
       .selectAll()
@@ -53,7 +53,7 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
     return productPaymentProviders.map(mapToPaymentProvider)
   }
 
-  async productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean> {
+  async productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean> {
     const productPaymentProvider = await this.db
       .selectFrom("productPaymentProvider")
       .selectAll()

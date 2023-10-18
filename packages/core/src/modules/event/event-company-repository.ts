@@ -1,4 +1,4 @@
-import { Company, Event } from "@dotkomonline/types"
+import { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import { Database } from "@dotkomonline/db"
 import { mapToCompany } from "../company/company-repository"
@@ -6,16 +6,16 @@ import { mapToEvent } from "./event-repository"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 
 export interface EventCompanyRepository {
-  createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
-  deleteCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
-  getCompaniesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Company[]>
-  getEventsByCompanyId: (id: Company["id"], take: number, cursor?: Cursor) => Promise<Event[]>
+  createCompany: (id: EventId, company: CompanyId) => Promise<void>
+  deleteCompany: (id: EventId, company: CompanyId) => Promise<void>
+  getCompaniesByEventId: (id: EventId, take: number, cursor?: Cursor) => Promise<Company[]>
+  getEventsByCompanyId: (id: CompanyId, take: number, cursor?: Cursor) => Promise<Event[]>
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async createCompany(id: Event["id"], company: Company["id"]) {
+  async createCompany(id: EventId, company: CompanyId) {
     await this.db
       .insertInto("eventCompany")
       .values({
@@ -26,7 +26,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
       .executeTakeFirst()
   }
 
-  async deleteCompany(id: Event["id"], company: Company["id"]) {
+  async deleteCompany(id: EventId, company: CompanyId) {
     await this.db
       .deleteFrom("eventCompany")
       .where("companyId", "=", company)
@@ -35,7 +35,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
       .executeTakeFirst()
   }
 
-  async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
+  async getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor) {
     const query = orderedQuery(
       this.db
         .selectFrom("eventCompany")

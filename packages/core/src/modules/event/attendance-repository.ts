@@ -1,12 +1,13 @@
 import { Database } from "@dotkomonline/db"
 import {
   Attendance,
+  AttendanceId,
   AttendanceSchema,
   AttendanceWrite,
   Attendee,
   AttendeeSchema,
   AttendeeWrite,
-  Event,
+  EventId,
 } from "@dotkomonline/types"
 import { Kysely, sql } from "kysely"
 import { DB } from "@dotkomonline/db/src/db.generated"
@@ -16,8 +17,8 @@ export interface AttendanceRepository {
   createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
   getAttendeeByIds: (userId: string, eventId: string) => Promise<Attendee | undefined>
   updateAttendee: (attendeeWrite: AttendeeWrite, userId: string, attendanceId: string) => Promise<Attendee>
-  getByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
-  getByAttendanceId(id: Attendance["id"]): Promise<Attendance | undefined>
+  getByEventId: (eventId: EventId) => Promise<Attendance[]>
+  getByAttendanceId(id: AttendanceId): Promise<Attendance | undefined>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
@@ -84,7 +85,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return AttendeeSchema.parse(res)
   }
 
-  async getByAttendanceId(id: Attendance["id"]) {
+  async getByAttendanceId(id: AttendanceId) {
     const res = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
