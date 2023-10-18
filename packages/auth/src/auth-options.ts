@@ -33,11 +33,9 @@ export const getAuthOptions = ({
       clientSecret: cognitoClientSecret,
       issuer: cognitoIssuer,
       profile: (profile): User => {
-        const middleName = profile.middle_name !== undefined ? profile.middle_name + " " : ""
-        const name = `${profile.given_name} ${middleName} ${profile.family_name}`
         return {
           id: profile.sub,
-          name,
+          name: `${profile.given_name} ${profile.family_name}`,
           email: profile.email,
           image: profile.picture ?? undefined,
         }
