@@ -3,7 +3,7 @@ import ical from "ical-generator";
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 
-export async function CalHandler(req: NextApiRequest, res: NextApiResponse) {
+export async function CalUserHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.status(405).end()
     return
