@@ -718,7 +718,7 @@ importers:
         version: link:../gateway-trpc
       ical-generator:
         specifier: ^5.0.1
-        version: 5.0.1(@types/node@18.18.3)
+        version: 5.0.1(@types/node@18.18.4)
       next:
         specifier: ^13.5.4
         version: 13.5.4(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)
@@ -12178,7 +12178,7 @@ packages:
     resolution: {integrity: sha512-4+p3fCRF21oUqxhK0yZ6yaSP/H5/wZumc7q1fH99RkW7Q13aAxDeP78BKjoR+6y+kaHqKF/JWuQhsNuuI2NKtA==}
     dev: false
 
-  /ical-generator@5.0.1(@types/node@18.18.3):
+  /ical-generator@5.0.1(@types/node@18.18.4):
     resolution: {integrity: sha512-ln2cbzi+Z+f9WrWseU4B75Ccwb2hMpgjTYkriSPmqODmOCWNYknTSWiLSrCkl0cHiWcwaTWstMPLDyiFbELmoA==}
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
@@ -12211,7 +12211,7 @@ packages:
       rrule:
         optional: true
     dependencies:
-      '@types/node': 18.18.3
+      '@types/node': 18.18.4
       uuid-random: 1.3.2
     dev: false
 
