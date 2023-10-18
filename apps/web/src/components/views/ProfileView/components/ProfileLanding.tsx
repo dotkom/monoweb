@@ -36,11 +36,10 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
 
 const Landing: NextPage<{ user: User }> = ({ user }) => {
   return (
-    <div className="my-8 w-full">
+    <div className="w-full">
       <div className="flex w-full flex-col">
-        <div className="ml-7 mt-4">
-          <p className="text-4xl">Profil</p>
-          <p className="opacity-70">Administrer dine kontoinnstillinger</p>
+        <div>
+          <p className="text-slate-10">Administrer dine kontoinnstillinger</p>
           <FormInput name="Profil">
             <div>
               <Avatar></Avatar>
