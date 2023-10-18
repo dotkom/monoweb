@@ -11,7 +11,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@dotkomonline/core": "workspace:*",
     "@dotkomonline/env": "workspace:*",
+    "@dotkomonline/db": "workspace:*",
     "next": "^13.5.4",
     "next-auth": "^4.23.2",
     "react": "^18.2.0",
