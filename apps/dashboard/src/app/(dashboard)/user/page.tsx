@@ -7,6 +7,7 @@ import { useMemo } from "react"
 import { formatDate } from "../../../utils/format"
 import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
 import { GenericTable } from "src/components/GenericTable"
+import Link from "next/link"
 
 export default function UserPage() {
   const { users, isLoading: isUsersLoading } = useUserAllQuery()
@@ -28,7 +29,7 @@ export default function UserPage() {
         id: "details",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" href={`/user/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/user/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),
