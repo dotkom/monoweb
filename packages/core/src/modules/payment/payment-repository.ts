@@ -1,4 +1,4 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
 import { Payment, PaymentSchema, PaymentWrite } from "@dotkomonline/types"
 
@@ -79,40 +79,22 @@ export class PaymentRepositoryImpl implements PaymentRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Payment[]> {
-    let query = this.db.selectFrom("payment").selectAll().limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
-    }
-
+    const query = orderedQuery(this.db.selectFrom("payment").selectAll().limit(take), cursor)
     const payments = await query.execute()
     return payments.map(mapToPayment)
   }
 
   async getAllByUserId(id: string, take: number, cursor?: Cursor): Promise<Payment[]> {
-    let query = this.db.selectFrom("payment").selectAll().where("userId", "=", id).limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
-    }
-
+    const query = orderedQuery(this.db.selectFrom("payment").selectAll().where("userId", "=", id).limit(take), cursor)
     const payments = await query.execute()
     return payments.map(mapToPayment)
   }
 
   async getAllByProductId(id: string, take: number, cursor?: Cursor): Promise<Payment[]> {
-    let query = this.db.selectFrom("payment").selectAll().where("productId", "=", id).limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
-    }
-
+    const query = orderedQuery(
+      this.db.selectFrom("payment").selectAll().where("productId", "=", id).limit(take),
+      cursor
+    )
     const payments = await query.execute()
     return payments.map(mapToPayment)
   }

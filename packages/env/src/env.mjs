@@ -17,7 +17,6 @@ export const createEnvironment = () =>
 
       NODE_ENV: z.enum(["development", "test", "production"]).optional(),
       VERCEL_URL: environmentVariableSchema.optional(),
-
       DATABASE_URL: environmentVariableSchema,
       NEXTAUTH_SECRET: environmentVariableSchema,
 

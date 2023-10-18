@@ -5,6 +5,8 @@ import {
   Checkbox,
   CheckboxProps,
   Flex,
+  MultiSelect,
+  MultiSelectProps,
   Select,
   SelectProps,
   Textarea,
@@ -31,8 +33,30 @@ type InputFieldContext<T extends FieldValues> = {
   register: UseFormRegister<T>
   control: Control<T>
   state: FormState<T>
+  defaultValue: FieldValue<T>
 }
 type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
+
+export function createMultipleSelectInput<F extends FieldValues>({
+  ...props
+}: Omit<MultiSelectProps, "error">): InputProducerResult<F> {
+  return function FormSelectInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <MultiSelect
+            {...props}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
+      />
+    )
+  }
+}
 
 export function createSelectInput<F extends FieldValues>({
   ...props
@@ -124,7 +148,7 @@ function entriesOf<T extends Record<string, unknown>, K extends keyof T & string
 }
 
 type FormBuilderOptions<T extends z.ZodRawShape> = {
-  schema: z.ZodObject<T>
+  schema: z.ZodObject<T> | z.ZodEffects<z.ZodObject<T>>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
@@ -150,7 +174,16 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       throw new Error()
     }
     const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
-    return <Component key={name} name={name} register={form.register} control={form.control} state={form.formState} />
+    return (
+      <Component
+        defaultValue={form.formState.defaultValues?.[name]}
+        key={name}
+        name={name}
+        register={form.register}
+        control={form.control}
+        state={form.formState}
+      />
+    )
   })
 
   return function Form() {

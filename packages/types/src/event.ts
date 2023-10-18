@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const EventSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   title: z.string().min(1),
@@ -14,11 +14,11 @@ export const EventSchema = z.object({
   subtitle: z.string().nullable(),
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
-  committeeId: z.string().nullable(),
-  waitlist: z.string().uuid().nullable(),
+  waitlist: z.string().ulid().nullable(),
 })
 
 export type Event = z.infer<typeof EventSchema>
+export type EventId = Event["id"]
 
 export const EventWriteSchema = EventSchema.partial({
   id: true,
@@ -30,10 +30,11 @@ export type EventWrite = z.infer<typeof EventWriteSchema>
 
 export const AttendeeSchema = z.object({
   id: z.string(),
-  attendanceId: z.string().uuid(),
-  userId: z.string().uuid(),
+  attendanceId: z.string().ulid(),
+  userId: z.string().ulid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  attended: z.boolean(),
 })
 
 export const AttendanceSchema = z.object({

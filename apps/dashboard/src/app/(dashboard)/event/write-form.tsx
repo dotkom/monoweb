@@ -1,15 +1,17 @@
+import { EventWriteSchema } from "@dotkomonline/types"
+import { z } from "zod"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createMultipleSelectInput,
   createSelectInput,
-  createTextareaInput,
   createTextInput,
+  createTextareaInput,
   useFormBuilder,
 } from "../../form"
-import { EventWrite, EventWriteSchema } from "@dotkomonline/types"
-import { trpc } from "../../../utils/trpc"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
+const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
   start: new Date(),
   end: new Date(),
   description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
@@ -17,23 +19,38 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<EventWrite> = {
   location: null,
   subtitle: null,
   waitlist: null,
-  committeeId: null,
+  committeeIds: [],
 }
 
 type UseEventWriteFormProps = {
-  onSubmit: (data: EventWrite) => void
-  defaultValues?: Partial<EventWrite>
+  onSubmit: (data: z.infer<typeof FormValidationSchema>) => void
+  defaultValues?: Partial<FormValidationResult>
   label?: string
 }
+
+export const FormValidationSchema = EventWriteSchema.extend({
+  start: z.date().min(new Date(), { message: "Starttidspunkt må være i fremtiden" }),
+  end: z.date().min(new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
+  committeeIds: z.array(z.string()),
+})
+  .partial({
+    id: true,
+  })
+  .refine((data) => data.start < data.end, {
+    message: "Sluttidspunkt må være etter starttidspunkt",
+    path: ["end"],
+  })
+
+type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 export const useEventWriteForm = ({
   onSubmit,
   label = "Opprett arrangement",
   defaultValues = EVENT_FORM_DEFAULT_VALUES,
 }: UseEventWriteFormProps) => {
-  const { data: committees = [] } = trpc.committee.all.useQuery({ take: 999 })
+  const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
-    schema: EventWriteSchema,
+    schema: FormValidationSchema,
     defaultValues,
     onSubmit,
     label,
@@ -67,7 +84,7 @@ export const useEventWriteForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeId: createSelectInput({
+      committeeIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),

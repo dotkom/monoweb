@@ -10,6 +10,7 @@ export interface UserRepository {
   getById(id: UserId): Promise<User | undefined>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
+  update(id: UserId, data: UserWrite): Promise<User | undefined>
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -25,5 +26,14 @@ export class UserRepositoryImpl implements UserRepository {
   async create(userWrite: UserWrite) {
     const user = await this.db.insertInto("owUser").values(userWrite).returningAll().executeTakeFirstOrThrow()
     return mapToUser(user)
+  }
+  async update(id: UserId, data: UserWrite) {
+    const user = await this.db
+      .updateTable("owUser")
+      .set(data)
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    return user ? mapToUser(user) : undefined
   }
 }

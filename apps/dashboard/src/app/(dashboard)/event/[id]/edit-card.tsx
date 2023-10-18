@@ -1,40 +1,28 @@
 import { FC } from "react"
-import { trpc } from "../../../../utils/trpc"
-import { useEventWriteForm } from "../write-form"
-import { EventWriteSchema } from "@dotkomonline/types"
+import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { useEventEditForm } from "../edit-form"
 import { useEventDetailsContext } from "./provider"
-import { useQueryNotification } from "../../../notifications"
+import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
 
 export const EventEditCard: FC = () => {
-  const { event } = useEventDetailsContext()
-  const notification = useQueryNotification()
-  const utils = trpc.useContext()
-  const edit = trpc.event.edit.useMutation({
-    onSuccess: (data) => {
-      notification.complete({
-        title: "Arrangement oppdatert",
-        message: `Arrangementet "${data.title}" har blitt oppdatert.`,
-      })
-      utils.event.all.invalidate()
-    },
-    onError: (err) => {
-      notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under oppdatering av arrangementet: ${err.toString()}.`,
-      })
-    },
-  })
-  const FormComponent = useEventWriteForm({
+  const { event, eventCommittees } = useEventDetailsContext()
+  const edit = useEditEventMutation()
+  const { committees } = useCommitteeAllQuery()
+  const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
+    committees: committees,
     onSubmit: (data) => {
-      notification.loading({
-        title: "Oppdaterer arrangement...",
-        message: "Arrangementet blir oppdatert.",
+      const { committeeIds, ...event } = data
+      edit.mutate({
+        id: data.id,
+        event: event,
+        committeeIds: committeeIds,
       })
-      const result = EventWriteSchema.required({ id: true }).parse(data)
-      edit.mutate(result)
     },
-    defaultValues: { ...event },
+    defaultValues: {
+      ...event,
+      committeeIds: eventCommittees.map((committee) => committee.committeeId),
+    },
   })
   return <FormComponent />
 }

@@ -36,5 +36,5 @@ module.exports = {
       },
     ],
   },
-  ignorePatterns: ["**/*.stories.tsx", "**/dist", "node_modules", "apps/docs"],
+  ignorePatterns: ["**/*.stories.tsx", "**/dist", "node_modules", "apps/docs", "**/db.generated.d.ts"],
 }

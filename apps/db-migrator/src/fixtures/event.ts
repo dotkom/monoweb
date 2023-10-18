@@ -3,7 +3,7 @@ import { Insertable } from "kysely"
 
 export const events: Insertable<Database["event"]>[] = [
   {
-    id: "abdcc9c3-6d6a-4767-8d8a-608d8c091eb1",
+    id: "01HB64TWZK1C5YK5J7VGNZPDGW",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     title: "Kurs i å lage fixtures",
@@ -17,11 +17,10 @@ export const events: Insertable<Database["event"]>[] = [
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Hovedbygget",
-    committeeId: null,
     waitlist: null,
   },
   {
-    id: "395fa3ec-2e2b-4cd6-829b-0388761b6917",
+    id: "01HB64TWZK1N8ABMH8JAE12101",
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
     title: "Åre 2024",
@@ -35,7 +34,6 @@ export const events: Insertable<Database["event"]>[] = [
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Åre, Sverige",
-    committeeId: "d19021fb-2f10-4b5c-92dd-098fe5cee4d7",
     waitlist: null,
   },
 ]
