@@ -1,5 +1,5 @@
 import { Kysely, Selectable } from "kysely"
-import { PrivacyPermissions, PrivacyPermissionsSchema, PrivacyPermissionsWrite } from "@dotkomonline/types"
+import { PrivacyPermissions, PrivacyPermissionsSchema, PrivacyPermissionsWrite, UserId } from "@dotkomonline/types"
 
 import { Database } from "@dotkomonline/db"
 
@@ -8,7 +8,7 @@ export const mapToPrivacyPermissions = (payload: Selectable<Database["privacyPer
 }
 
 export interface PrivacyPermissionsRepository {
-  getByUserId(id: string): Promise<PrivacyPermissions | undefined>
+  getByUserId(id: UserId): Promise<PrivacyPermissions | undefined>
   create(data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions>
   update(
     userId: string,
@@ -19,7 +19,7 @@ export interface PrivacyPermissionsRepository {
 export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getByUserId(id: string): Promise<PrivacyPermissions | undefined> {
+  async getByUserId(id: UserId): Promise<PrivacyPermissions | undefined> {
     const privacyPermissions = await this.db
       .selectFrom("privacyPermissions")
       .selectAll()
@@ -40,7 +40,7 @@ export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepos
   }
 
   async update(
-    userId: string,
+    userId: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions | undefined> {
     const privacyPermissions = await this.db

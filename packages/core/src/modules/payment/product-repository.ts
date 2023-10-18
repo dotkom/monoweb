@@ -1,6 +1,6 @@
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable, sql } from "kysely"
-import { Product, ProductSchema, ProductWrite } from "@dotkomonline/types"
+import { Product, ProductId, ProductSchema, ProductWrite } from "@dotkomonline/types"
 
 import { Database } from "@dotkomonline/db"
 import { DB } from "@dotkomonline/db/src/db.generated"
@@ -9,11 +9,11 @@ const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.pa
 
 export interface ProductRepository {
   create(data: ProductWrite): Promise<Product | undefined>
-  update(id: Product["id"], data: Omit<ProductWrite, "id">): Promise<Product>
+  update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product>
   getById(id: string): Promise<Product | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Product[]>
-  delete(id: Product["id"]): Promise<void>
-  undelete(id: Product["id"]): Promise<void>
+  delete(id: ProductId): Promise<void>
+  undelete(id: ProductId): Promise<void>
 }
 
 export class ProductRepositoryImpl implements ProductRepository {
@@ -25,7 +25,7 @@ export class ProductRepositoryImpl implements ProductRepository {
     return mapToProduct(product)
   }
 
-  async update(id: Product["id"], data: Omit<ProductWrite, "id">): Promise<Product> {
+  async update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product> {
     const product = await this.db
       .updateTable("product")
       .set({
@@ -79,12 +79,12 @@ export class ProductRepositoryImpl implements ProductRepository {
     return products.map(mapToProduct)
   }
 
-  async delete(id: Product["id"]): Promise<void> {
+  async delete(id: ProductId): Promise<void> {
     // Soft delete since we don't want payments to ever be deleted or miss context
     await this.db.updateTable("product").set({ deletedAt: new Date() }).where("id", "=", id).execute()
   }
 
-  async undelete(id: Product["id"]): Promise<void> {
+  async undelete(id: ProductId): Promise<void> {
     await this.db.updateTable("product").set({ deletedAt: null }).where("id", "=", id).execute()
   }
 }

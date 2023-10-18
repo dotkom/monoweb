@@ -6,8 +6,8 @@ export const UserSchema = z.object({
   cognitoSub: z.string().uuid(),
 })
 
-export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
+export type User = z.infer<typeof UserSchema>
 
 export const UserWriteSchema = UserSchema.omit({
   id: true,
