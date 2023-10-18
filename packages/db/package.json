@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/pg": "^8.10.5",
-    "eslint": "^8.50.0",
+    "eslint": "^8.51.0",
     "kysely-codegen": "^0.10.1",
     "typescript": "^5.2.2"
   }
