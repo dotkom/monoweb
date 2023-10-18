@@ -1,3 +1,3 @@
-import { CalUserHandler } from "@dotkomonline/gateway-edge-nextjs"
+import { CalendarUser} from "@dotkomonline/gateway-edge-nextjs"
 
-export default CalUserHandler
+export default CalendarUser
