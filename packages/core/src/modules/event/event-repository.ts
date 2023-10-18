@@ -1,7 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
@@ -32,31 +32,23 @@ export class EventRepositoryImpl implements EventRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
-    let query = this.db.selectFrom("event").selectAll().limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
+    const query = orderedQuery(this.db.selectFrom("event").selectAll().limit(take), cursor)
     const events = await query.execute()
 
     return events.map((e) => mapToEvent(e))
   }
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    let query = this.db
-      .selectFrom("eventCommittee")
-      .where("committeeId", "=", committeeId)
-      .innerJoin("event", "event.id", "eventCommittee.eventId")
-      .selectAll("event")
-      .limit(take)
+    const query = orderedQuery(
+      this.db
+        .selectFrom("eventCommittee")
+        .where("committeeId", "=", committeeId)
+        .innerJoin("event", "event.id", "eventCommittee.eventId")
+        .selectAll("event")
+        .limit(take),
+      cursor
+    )
 
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
     const events = await query.execute()
     return events.map((e) => mapToEvent(e))
   }

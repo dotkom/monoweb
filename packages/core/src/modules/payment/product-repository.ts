@@ -1,4 +1,4 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable, sql } from "kysely"
 import { Product, ProductSchema, ProductWrite } from "@dotkomonline/types"
 
@@ -59,26 +59,22 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Product[]> {
-    let query = this.db
-      .selectFrom("product")
-      .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
-      .selectAll("product")
-      .select(
-        sql<
-          DB["productPaymentProvider"][]
-        >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
-          "paymentProviders"
+    const query = orderedQuery(
+      this.db
+        .selectFrom("product")
+        .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
+        .selectAll("product")
+        .select(
+          sql<
+            DB["productPaymentProvider"][]
+          >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
+            "paymentProviders"
+          )
         )
-      )
-      .groupBy("product.id")
-      .limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
-
+        .groupBy("product.id")
+        .limit(take),
+      cursor
+    )
     const products = await query.execute()
     return products.map(mapToProduct)
   }

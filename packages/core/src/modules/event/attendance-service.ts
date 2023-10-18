@@ -26,10 +26,12 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async registerForAttendance(_userId: string, _attendanceId: string, _attended: boolean) {
-    const attendee = await this.attendanceRepository.getAttendeeById(_userId)
+    const attendee = await this.attendanceRepository.getAttendeeByIds(_userId, _attendanceId)
+    if (!attendee) throw new Error("Attendee not found")
     const attendedAttendee = await this.attendanceRepository.updateAttendee(
       { ...attendee, attended: _attended },
-      _userId
+      _userId,
+      _attendanceId
     )
     return attendedAttendee
   }

@@ -1,4 +1,4 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
 import { Mark, PersonalMark, PersonalMarkSchema, User } from "@dotkomonline/types"
 
@@ -22,33 +22,29 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
   async getAllByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    let query = this.db
-      .selectFrom("personalMark")
-      .leftJoin("mark", "personalMark.markId", "mark.id")
-      .selectAll("personalMark")
-      .where("userId", "=", userId)
-      .limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
+    const query = orderedQuery(
+      this.db
+        .selectFrom("personalMark")
+        .leftJoin("mark", "personalMark.markId", "mark.id")
+        .selectAll("personalMark")
+        .where("userId", "=", userId)
+        .limit(take),
+      cursor
+    )
     const marks = await query.execute()
     return marks.map(mapToPersonalMark)
   }
 
   async getAllMarksByUserId(userId: User["id"], take: number, cursor?: Cursor): Promise<Mark[]> {
-    let query = this.db
-      .selectFrom("mark")
-      .leftJoin("personalMark", "mark.id", "personalMark.markId")
-      .selectAll("mark")
-      .where("personalMark.userId", "=", userId)
-      .limit(take)
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
+    const query = orderedQuery(
+      this.db
+        .selectFrom("mark")
+        .leftJoin("personalMark", "mark.id", "personalMark.markId")
+        .selectAll("mark")
+        .where("personalMark.userId", "=", userId)
+        .limit(take),
+      cursor
+    )
     const marks = await query.execute()
     return marks.map(mapToMark)
   }
