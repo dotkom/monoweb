@@ -1,16 +1,17 @@
 import { z } from "zod"
 
 export const CompanySchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
-  name: z.string().max(50),
-  description: z.string(),
-  phone: z.string().optional(),
-  email: z.string(),
-  website: z.string(),
-  location: z.string().optional(),
-  type: z.enum(["Consulting", "Research", "Development", "Other"]).optional(),
+  name: z.string().max(50).min(1),
+  description: z.string().min(1),
+  email: z.string().email().min(1),
+  website: z.string().min(1),
+  type: z.enum(["Consulting", "Research", "Development", "Other"]),
+
+  location: z.string().nullable(),
   image: z.string().nullable(),
+  phone: z.string().nullable(),
 })
 
 export type Company = z.infer<typeof CompanySchema>

@@ -16,10 +16,10 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "stripe": "^13.8.0"
+    "stripe": "^13.9.0"
   },
   "peerDependencies": {
-    "next": "^13.5.3"
+    "next": "^13.5.4"
   },
   "devDependencies": {
     "@vitest/ui": "^0.34.6",

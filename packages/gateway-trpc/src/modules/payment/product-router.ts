@@ -1,4 +1,4 @@
-import { ProductPaymentProviderWriteSchema, ProductWriteSchema } from "@dotkomonline/types"
+import { ProductPaymentProviderWriteSchema, ProductSchema, ProductWriteSchema } from "@dotkomonline/types"
 import { protectedProcedure, t } from "../../trpc"
 
 import { PaginateInputSchema } from "@dotkomonline/core"
@@ -8,7 +8,7 @@ export const productRouter = t.router({
   create: protectedProcedure.input(ProductWriteSchema).mutation(({ input, ctx }) => {
     return ctx.productService.createProduct(input)
   }),
-  get: protectedProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
+  get: protectedProcedure.input(ProductSchema.shape.id).query(({ input, ctx }) => {
     return ctx.productService.getProductById(input)
   }),
   all: protectedProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
@@ -20,20 +20,20 @@ export const productRouter = t.router({
   deletePaymentProvider: protectedProcedure
     .input(
       z.object({
-        productId: z.string().uuid(),
+        productId: ProductSchema.shape.id,
         paymentProviderId: z.string(),
       })
     )
     .mutation(({ input, ctx }) => {
       return ctx.productPaymentProviderService.deletePaymentProvider(input.productId, input.paymentProviderId)
     }),
-  getPaymentProvidersByProductId: protectedProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
+  getPaymentProvidersByProductId: protectedProcedure.input(ProductSchema.shape.id).query(({ input, ctx }) => {
     return ctx.productPaymentProviderService.getAllByProductId(input)
   }),
   hasPaymentProviderId: protectedProcedure
     .input(
       z.object({
-        productId: z.string().uuid(),
+        productId: ProductSchema.shape.id,
         paymentProviderId: z.string(),
       })
     )

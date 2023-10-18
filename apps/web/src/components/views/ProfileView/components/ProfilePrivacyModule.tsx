@@ -12,7 +12,7 @@ export const personList = [
   { key: 6, optionsText: "Tillate at bilder av deg på offentlige arrangementer kan legges ut", state: false },
 ]
 
-const PrivacyModule: FC = () => {
+function PrivacyModule() {
   const [isChecked] = useState<boolean>(false)
 
   useEffect(() => {

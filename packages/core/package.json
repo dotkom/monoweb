@@ -18,11 +18,11 @@
     "@dotkomonline/db": "workspace:*",
     "date-fns": "^2.30.0",
     "kysely": "^0.26.3",
-    "stripe": "^13.8.0",
-    "zod": "^3.22.2"
+    "stripe": "^13.9.0",
+    "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "next": "^13.5.3"
+    "next": "^13.5.4"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",

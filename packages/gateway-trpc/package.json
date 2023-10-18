@@ -19,11 +19,11 @@
     "@dotkomonline/core": "workspace:*",
     "@trpc/server": "^10.38.5",
     "superjson": "^1.13.3",
-    "zod": "^3.22.2"
+    "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "next": "^13.5.3",
-    "next-auth": "^4.23.1"
+    "next": "^13.5.4",
+    "next-auth": "^4.23.2"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",

@@ -1,5 +1,4 @@
 import { Attendance, AttendanceWrite, Event, EventWrite } from "@dotkomonline/types"
-
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
 import { AttendanceRepository } from "./attendance-repository"
@@ -36,11 +35,7 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCommitteeId(
-    committeeId: string,
-    take: number,
-    cursor?: { id: string; createdAt: Date } | undefined
-  ): Promise<Event[]> {
+  async getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor)
     return events
   }
