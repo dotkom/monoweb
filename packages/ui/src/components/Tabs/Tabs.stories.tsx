@@ -1,12 +1,8 @@
-import { Meta } from "@storybook/react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "."
 
-const meta: Meta<typeof Tabs> = {
+export default {
   title: "Tabs",
-  component: Tabs,
 }
-
-export default meta
 
 export const Default = () => (
   <Tabs defaultValue="account" className="w-[400px]">

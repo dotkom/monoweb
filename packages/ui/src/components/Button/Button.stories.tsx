@@ -1,87 +1,121 @@
 import { Icon } from "../Icon"
-import { Meta, StoryObj } from "@storybook/react"
+import { Story } from "@ladle/react"
 
-import { Button } from "./Button"
+import { Button, ButtonProps } from "./Button"
 
-const meta: Meta<typeof Button> = {
-  title: "Button",
-  component: Button,
-}
-export default meta
+const Template: Story<ButtonProps> = (props) => <Button {...props}>{props.children}</Button>
 
-type Story = StoryObj<typeof Button>
-
-export const Default: Story = { args: { children: "Button", variant: "brand" } }
-
-export const Gradient: Story = {
-  ...Default,
-  args: { ...Default.args, variant: "gradient" },
+Template.args = {
+  variant: "brand",
+  children: "Click me",
 }
 
-export const Link: Story = {
-  ...Default,
-  args: { ...Default.args, variant: "link" },
-}
-export const Outline: Story = {
-  ...Default,
-  args: { ...Default.args, variant: "outline" },
+export const Gradient = Template.bind({})
+Gradient.args = {
+  ...Template.args,
+  variant: "gradient",
 }
 
-const MultiStory = (args: Story["args"][]) => ({
-  render: () => (
-    <div className="flex max-w-[500px] flex-wrap justify-around">
-      {args.map((props) => (
-        <Button {...props} />
-      ))}
+export const Link = Template.bind({})
+Link.args = {
+  ...Template.args,
+  variant: "link",
+}
+
+export const Outline = Template.bind({})
+Outline.args = {
+  ...Template.args,
+  variant: "outline",
+}
+
+export const Sizes: Story = () => {
+  return (
+    <div>
+      <Button size="sm">Click me!</Button>
+      <Button size="md">Click me!</Button>
+      <Button size="lg">Click me!</Button>
     </div>
-  ),
-})
-
-export const Sizes = MultiStory([
-  { children: "Button", size: "sm" },
-  { children: "Button", size: "md" },
-  { children: "Button", size: "lg" },
-])
-
-export const Solid = MultiStory([
-  { children: "Blue", color: "blue", variant: "solid" },
-  { children: "Red", color: "red", variant: "solid" },
-  { children: "Amber", color: "amber", variant: "solid" },
-  { children: "Green", color: "green", variant: "solid" },
-  { children: "Slate", color: "slate", variant: "solid" },
-])
-
-export const Light = MultiStory([
-  { children: "Blue", color: "blue", variant: "light" },
-  { children: "Red", color: "red", variant: "light" },
-  { children: "Amber", color: "amber", variant: "light" },
-  { children: "Green", color: "green", variant: "light" },
-  { children: "Slate", color: "slate", variant: "light" },
-])
-
-export const Subtle = MultiStory([
-  { children: "Blue", color: "blue", variant: "subtle" },
-  { children: "Red", color: "red", variant: "subtle" },
-  { children: "Amber", color: "amber", variant: "subtle" },
-  { children: "Green", color: "green", variant: "subtle" },
-  { children: "Slate", color: "slate", variant: "subtle" },
-])
-
-export const Disabled: Story = {
-  args: {
-    children: "Button",
-    disabled: true,
-  },
+  )
 }
 
-export const WithIcon = MultiStory([
-  { children: "Settings", color: "blue", variant: "light", icon: <Icon icon="tabler:adjustments" width={16} /> },
-  { children: "Mail", color: "blue", variant: "solid", icon: <Icon icon="tabler:mail" width={16} /> },
-])
+export const Solid: Story = () => (
+  <div className="max-w-screen-lg space-y-4">
+    <Button variant="solid" color="blue">
+      Click me!
+    </Button>
+    <Button variant="solid" color="red">
+      Click me!
+    </Button>
+    <Button variant="solid" color="amber">
+      Click me!
+    </Button>
+    <Button variant="solid" color="green">
+      Click me!
+    </Button>
+    <Button variant="solid" color="slate">
+      Click me!
+    </Button>
+  </div>
+)
+export const Subtle: Story = () => (
+  <div className="max-w-screen-lg space-y-4">
+    <Button variant="subtle" color="blue">
+      Click me!
+    </Button>
+    <Button variant="subtle" color="red">
+      Click me!
+    </Button>
+    <Button variant="subtle" color="amber">
+      Click me!
+    </Button>
+    <Button variant="subtle" color="green">
+      Click me!
+    </Button>
+    <Button variant="subtle" color="slate">
+      Click me!
+    </Button>
+  </div>
+)
+export const Light: Story = () => (
+  <div className="max-w-screen-lg space-y-4">
+    <Button variant="light" color="blue">
+      Click me!
+    </Button>
+    <Button variant="light" color="red">
+      Click me!
+    </Button>
+    <Button variant="light" color="amber">
+      Click me!
+    </Button>
+    <Button variant="light" color="green">
+      Click me!
+    </Button>
+    <Button variant="light" color="slate">
+      Click me!
+    </Button>
+  </div>
+)
 
-export const Loading: Story = {
-  args: {
-    children: "Submitting form",
-    loading: true,
-  },
+export const Disabled: Story = Template.bind({})
+
+Disabled.args = {
+  children: "Button",
+  disabled: true,
+}
+
+export const WithIcon = () => (
+  <div>
+    <Button color="blue" variant="light" icon={<Icon icon="tabler:adjustments" width={16} />}>
+      Settings
+    </Button>
+    <Button color="blue" variant="solid" icon={<Icon icon="tabler:mail" width={16} />}>
+      Mail
+    </Button>
+  </div>
+)
+
+export const Loading: Story = Template.bind({})
+Loading.args = {
+  children: "Submitting form",
+  loading: true,
 }
