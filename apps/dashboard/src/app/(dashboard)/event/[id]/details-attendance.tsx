@@ -30,7 +30,7 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 
 CustomCheckbox.displayName = "attendanceToggle"
 
-export const EventDetailsAttendance: FC = () => {
+export const EventAttendancePage: FC = () => {
   const { event } = useEventDetailsContext()
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
 

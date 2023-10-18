@@ -7,7 +7,7 @@ import { useEventDetailsContext } from "./provider"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { useRouter } from "next/navigation"
-import { EventDetailsAttendance } from "./details-attendance"
+import { EventAttendancePage } from "./details-attendance"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Bedrifter</h1>
@@ -46,7 +46,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:calendar-event",
     label: "Påmelding",
     slug: "attendance",
-    component: EventDetailsAttendance,
+    component: EventAttendancePage,
   },
 ]
 
