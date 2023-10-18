@@ -15,6 +15,7 @@ export interface PersonalMarkRepository {
   addToUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
   removeFromUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
   getByUserId(userId: User["id"], markId: Mark["id"]): Promise<PersonalMark | undefined>
+  countUsersByMarkId(markId: Mark["id"]): Promise<number>
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
@@ -75,5 +76,15 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
       .where("markId", "=", markId)
       .executeTakeFirst()
     return personalMark ? mapToPersonalMark(personalMark) : undefined
+  }
+
+  async countUsersByMarkId(markId: Mark["id"]): Promise<number> {
+    const result = await this.db
+      .selectFrom("personalMark")
+      .select((mark) => mark.fn.count("userId").as("count"))
+      .where("markId", "=", markId)
+      .executeTakeFirst()
+
+    return Number(result?.count) || 0
   }
 }

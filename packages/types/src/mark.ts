@@ -11,6 +11,7 @@ export const MarkSchema = z.object({
 })
 
 export type Mark = z.infer<typeof MarkSchema>
+export type MarkId = Mark["id"]
 
 export const MarkWriteSchema = MarkSchema.partial({
   id: true,

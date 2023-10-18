@@ -10,6 +10,7 @@ import { productPaymentProviders } from "./fixtures/product-payment-provider"
 import { products } from "./fixtures/product"
 import { users } from "./fixtures/user"
 import { eventCommittees } from "./fixtures/committee-organizer"
+import { personalMarks } from "./fixtures/personal-mark"
 
 export const runFixtures = async () => {
   await db
@@ -133,6 +134,12 @@ export const runFixtures = async () => {
         duration: (eb) => eb.ref("excluded.duration"),
       })
     )
+    .execute()
+
+  await db
+    .insertInto("personalMark")
+    .values(personalMarks)
+    .onConflict((oc) => oc.columns(["userId", "markId"]).doNothing())
     .execute()
 
   await db
