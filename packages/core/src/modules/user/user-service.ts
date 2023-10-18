@@ -14,7 +14,8 @@ import { NotificationPermissionsRepository } from "./notification-permissions-re
 import { NotFoundError } from "../../errors/errors"
 
 export interface UserService {
-  getUser(id: User["id"]): Promise<User | undefined>
+  getUserById(id: User["id"]): Promise<User | undefined>
+  getUserBySubject(id: User["id"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: User["id"], payload: UserWrite): Promise<User>
@@ -36,9 +37,17 @@ export class UserServiceImpl implements UserService {
     return users
   }
 
-  async getUser(id: User["id"]) {
+  async getUserById(id: User["id"]) {
     const user = await this.userRepository.getById(id)
     if (!user) throw new NotFoundError(`User with ID:${id} not found`)
+    return user
+  }
+
+  async getUserBySubject(id: User["cognitoSub"]) {
+    const user = await this.userRepository.getBySubject(id)
+    if (!user) {
+      throw new NotFoundError(`User with subject:${id} not found`)
+    }
     return user
   }
 
