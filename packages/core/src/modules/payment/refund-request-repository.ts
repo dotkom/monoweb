@@ -1,6 +1,6 @@
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { Kysely, Selectable } from "kysely"
-import { Payment, RefundRequest, RefundRequestSchema, RefundRequestWrite } from "@dotkomonline/types"
+import { PaymentId, RefundRequest, RefundRequestId, RefundRequestSchema, RefundRequestWrite } from "@dotkomonline/types"
 
 import { Database } from "@dotkomonline/db"
 
@@ -8,10 +8,10 @@ const mapToRefundRequest = (data: Selectable<Database["refundRequest"]>) => Refu
 
 export interface RefundRequestRepository {
   create(data: RefundRequestWrite): Promise<RefundRequest>
-  update(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>
-  delete(id: RefundRequest["id"]): Promise<void>
-  getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined>
-  getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined>
+  update(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
+  delete(id: RefundRequestId): Promise<void>
+  getById(id: RefundRequestId): Promise<RefundRequest | undefined>
+  getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | undefined>
   getAll(take: number, cursor?: Cursor): Promise<RefundRequest[]>
 }
 
@@ -28,7 +28,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
     return mapToRefundRequest(refundRequest)
   }
 
-  async update(id: RefundRequest["id"], data: RefundRequestWrite): Promise<RefundRequest> {
+  async update(id: RefundRequestId, data: RefundRequestWrite): Promise<RefundRequest> {
     const refundRequest = await this.db
       .updateTable("refundRequest")
       .set({
@@ -42,17 +42,17 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
     return mapToRefundRequest(refundRequest)
   }
 
-  async delete(id: RefundRequest["id"]): Promise<void> {
+  async delete(id: RefundRequestId): Promise<void> {
     await this.db.deleteFrom("refundRequest").where("id", "=", id).execute()
   }
 
-  async getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
+  async getById(id: RefundRequestId): Promise<RefundRequest | undefined> {
     const refundRequest = await this.db.selectFrom("refundRequest").selectAll().where("id", "=", id).executeTakeFirst()
 
     return refundRequest ? mapToRefundRequest(refundRequest) : undefined
   }
 
-  async getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined> {
+  async getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | undefined> {
     const refundRequest = await this.db
       .selectFrom("refundRequest")
       .selectAll()

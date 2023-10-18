@@ -1,19 +1,19 @@
-import { Company, CompanyWrite } from "@dotkomonline/types"
+import { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
 import { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
-  getCompany(id: Company["id"]): Promise<Company>
+  getCompany(id: CompanyId): Promise<Company>
   getCompanies(take: number, cursor?: Cursor): Promise<Company[]>
   createCompany(payload: CompanyWrite): Promise<Company>
-  updateCompany(id: Company["id"], payload: Omit<CompanyWrite, "id">): Promise<Company>
+  updateCompany(id: CompanyId, payload: Omit<CompanyWrite, "id">): Promise<Company>
 }
 
 export class CompanyServiceImpl implements CompanyService {
   constructor(private readonly companyRepository: CompanyRepository) {}
 
-  async getCompany(id: Company["id"]): Promise<Company> {
+  async getCompany(id: CompanyId): Promise<Company> {
     const company = await this.companyRepository.getById(id)
     if (!company) throw new NotFoundError(`Company with ID:${id} not found`)
     return company
@@ -30,7 +30,7 @@ export class CompanyServiceImpl implements CompanyService {
     return company
   }
 
-  async updateCompany(id: Company["id"], companyUpdate: Omit<CompanyWrite, "id">): Promise<Company> {
+  async updateCompany(id: CompanyId, companyUpdate: Omit<CompanyWrite, "id">): Promise<Company> {
     const company = await this.companyRepository.update(id, companyUpdate)
     if (!company) {
       throw new NotFoundError(`Could not update Company(${id})`)
