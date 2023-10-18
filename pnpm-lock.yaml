@@ -788,7 +788,7 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@ladle/react':
-        specifier: ^3.2.1
+        specifier: ^3.2.2
         version: 3.2.2(@types/node@18.18.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       '@types/react':
         specifier: ^18.2.24
@@ -6587,7 +6587,7 @@ packages:
   /@types/hast@3.0.2:
     resolution: {integrity: sha512-B5hZHgHsXvfCoO3xgNJvBnX7N8p86TqQeGKXcokW4XXi+qY4vxxPSFYofytvVmpFxzPv7oxDQzjg5Un5m2/xiw==}
     dependencies:
-      '@types/unist': 2.0.7
+      '@types/unist': 3.0.1
     dev: true
 
   /@types/is-hotkey@0.1.7:
