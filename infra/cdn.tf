@@ -22,6 +22,7 @@ module "static_bucket" {
   source          = "./modules/aws-s3-public-bucket"
   certificate_arn = module.cdn_domain_certificate.certificate_arn
   domain_name     = local.cdn_domain_name
+  zone_id         = local.zone_id
 
   tags = {
     Project     = "monoweb"
