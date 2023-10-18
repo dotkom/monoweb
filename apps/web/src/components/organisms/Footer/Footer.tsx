@@ -4,13 +4,31 @@ import { LinksSection } from "./sections/LinksSection"
 import { SoMeSection } from "./sections/SoMeSection"
 
 export interface FooterLinkType {
-  main: string[]
-  second: string[]
+  main: {
+    label: string,
+    href: string
+  }[]
+  second: {
+    label: string,
+    href: string
+  }[]
 }
 
 const footerLinks: FooterLinkType = {
-  main: ["PROFIL", "HJEM", "KARRIERE", "WIKI", "BIDRA"],
-  second: ["Besøksadresse", "Kontaktinformasjon", "Post og faktura"],
+  main: [{
+    label: "PROFIL", href: "/profil"
+  }, {
+    label: "HJEM", href: "/"
+  }, {
+    label: "KARRIERE", href: "/career"
+  }, {
+    label: "WIKI", href: "/wiki"
+  }, { label: "BIDRA", href: "" }],
+  second: [{
+    label: "Besøksadresse", href: "/profil"
+  }, {
+    label: "Kontaktinformasjon", href: "/profil"
+  }, { label: "Post og faktura", href: "" }],
 }
 
 const Footer = () => (
