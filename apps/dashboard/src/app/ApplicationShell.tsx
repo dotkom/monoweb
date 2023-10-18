@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, PropsWithChildren, useState } from "react"
+import { FC, PropsWithChildren } from "react"
 import { useDisclosure } from "@mantine/hooks"
 import {
   AppShellHeader,
@@ -15,6 +15,7 @@ import {
 } from "@mantine/core"
 import { SignOutButton } from "./SignOutButton"
 import { Icon } from "@iconify/react"
+import Link from "next/link"
 
 const navigations = [
   {
@@ -63,26 +64,10 @@ const navigations = [
   },
 ] as const
 
-const getInitialExpandedNavs = () => {
-  if (typeof localStorage === "undefined") {
-    return []
-  }
-  const savedNavs = localStorage.getItem("expandedNavs")
-  return savedNavs ? JSON.parse(savedNavs) : []
-}
-
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
-  const [expandedNavs, setExpandedNavs] = useState(getInitialExpandedNavs)
 
-  const handleNavToggle = (label: string) => () => {
-    const isExpanded = expandedNavs.includes(label)
-    const updatedNavs = isExpanded ? expandedNavs.filter((nav: string) => nav !== label) : [...expandedNavs, label]
-
-    setExpandedNavs(updatedNavs)
-    localStorage.setItem("expandedNavs", JSON.stringify(updatedNavs))
-  }
   return (
     <AppShell
       header={{ height: 60 }}
@@ -111,11 +96,9 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             label={navigation.label}
             leftSection={<Icon icon={navigation.icon} />}
             childrenOffset={28}
-            opened={expandedNavs.includes(navigation.label)}
-            onChange={handleNavToggle(navigation.label)}
           >
             {navigation.children.map((child) => (
-              <NavLink key={child.label} label={child.label} href={child.href} />
+              <NavLink component={Link} key={child.label} label={child.label} href={child.href} />
             ))}
           </NavLink>
         ))}

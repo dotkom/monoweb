@@ -12,6 +12,7 @@ import { formatDate } from "../../../utils/format"
 
 import { Committee, Event, EventCommittee } from "@dotkomonline/types"
 import EventCommittees from "src/components/molecules/company-name/event-committees"
+import Link from "next/link"
 
 type TableColumns = Event & {
   committees: EventCommittee[]
@@ -49,7 +50,7 @@ export default function EventPage() {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" href={`/event/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),
