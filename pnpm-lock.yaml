@@ -469,8 +469,8 @@ importers:
         specifier: ^8.44.5
         version: 8.44.5
       '@types/jsdom':
-        specifier: ^21.1.3
-        version: 21.1.3
+        specifier: ^21.1.4
+        version: 21.1.4
       '@types/node':
         specifier: ^18.18.3
         version: 18.18.4
@@ -7901,8 +7901,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.0
     dev: true
 
-  /@types/jsdom@21.1.3:
-    resolution: {integrity: sha512-1zzqSP+iHJYV4lB3lZhNBa012pubABkj9yG/GuXuf6LZH1cSPIJBqFDrm5JX65HHt6VOnNYdTui/0ySerRbMgA==}
+  /@types/jsdom@21.1.4:
+    resolution: {integrity: sha512-NzAMLEV0KQ4cBaDx3Ls8VfJUElyDUm1xrtYRmcMK0gF8L5xYbujFVaQlJ50yinQ/d47j2rEP1XUzkiYrw4YRFA==}
     dependencies:
       '@types/node': 18.18.4
       '@types/tough-cookie': 4.0.2
