@@ -6,7 +6,6 @@ import { DotFilledIcon } from "@radix-ui/react-icons"
 
 import { FC } from "react"
 import PenaltyRules from "@/utils/penalty-rules"
-import { trpc } from "@/utils/trpc"
 import { addMinutes, format } from "date-fns"
 
 /* TODO - Set up connection to Users marks router */
