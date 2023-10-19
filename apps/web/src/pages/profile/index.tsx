@@ -5,7 +5,6 @@ import { NextPageWithLayout } from "../_app"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { getServerSession, User } from "next-auth"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
-import { Icon } from "@dotkomonline/ui"
 
 const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => {
   return <ProfileLanding user={user} />
