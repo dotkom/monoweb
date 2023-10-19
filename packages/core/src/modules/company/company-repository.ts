@@ -1,5 +1,5 @@
 import { Database } from "@dotkomonline/db"
-import { Company, CompanySchema, CompanyWrite } from "@dotkomonline/types"
+import { Company, CompanyId, CompanySchema, CompanyWrite } from "@dotkomonline/types"
 import { Kysely, Selectable } from "kysely"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 
@@ -8,10 +8,10 @@ export const mapToCompany = (payload: Selectable<Database["company"]>): Company 
 }
 
 export interface CompanyRepository {
-  getById(id: Company["id"]): Promise<Company | undefined>
+  getById(id: CompanyId): Promise<Company | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Company[]>
   create(values: CompanyWrite): Promise<Company | undefined>
-  update(id: Company["id"], data: CompanyWrite): Promise<Company>
+  update(id: CompanyId, data: CompanyWrite): Promise<Company>
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {
@@ -33,7 +33,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     return company ? mapToCompany(company) : company
   }
 
-  async update(id: Company["id"], data: Omit<CompanyWrite, "id">): Promise<Company> {
+  async update(id: CompanyId, data: Omit<CompanyWrite, "id">): Promise<Company> {
     const company = await this.db
       .updateTable("company")
       .set(data)

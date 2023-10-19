@@ -1,8 +1,7 @@
 import Toast from "./Toast"
 
 export default {
-  title: "atoms/Toast",
-  component: Toast,
+  title: "Toast",
 }
 
 export const Danger = () => <Toast status="danger">Uh oh!</Toast>

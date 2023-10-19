@@ -8,7 +8,8 @@
     "clean": "rm -rf node_modules",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "preview": "ladle serve"
   },
   "dependencies": {
     "@iconify-icon/react": "^1.0.8",
@@ -30,13 +31,15 @@
     "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
-    "@storybook/react": "^7.4.6",
+    "@dotkomonline/config": "workspace:*",
+    "@ladle/react": "^3.2.2",
     "@types/react": "^18.2.24",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.51.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.2.2",
+    "vite": "^4.4.11",
     "vitest": "^0.34.6"
   }
 }
