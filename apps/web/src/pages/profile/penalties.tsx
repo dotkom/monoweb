@@ -5,9 +5,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@d
 import { DotFilledIcon } from "@radix-ui/react-icons"
 
 import { FC } from "react"
-import { format } from "date-fns"
 import PenaltyRules from "@/utils/penalty-rules"
 import { trpc } from "@/utils/trpc"
+import { addMinutes, format } from "date-fns"
 
 /* TODO - Set up connection to Users marks router */
 
@@ -19,6 +19,7 @@ const PenaltiesPage: NextPageWithLayout = () => {
       <div className="flex flex-col">
         <p className="text-2xl font-medium">Aktive Prikker</p>
         {/* TODO - Get active marks */}
+        <PenaltyAccordion title="TestPrikk" category="Sosial" givenAt={new Date()} duration={2000} details="Testing" />
         <p>Ingen aktive prikker</p>
       </div>
       <div>
@@ -50,7 +51,7 @@ PenaltiesPage.getLayout = (page) => {
 interface PenaltyAccordionProps {
   title: string
   category: string
-  givenAt: dateFns
+  givenAt: Date
   duration: number
   details: string
 }
@@ -67,13 +68,16 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => {
         </AccordionTrigger>
         <AccordionContent className="ml-4">
           <div className="flex flex-col space-y-4">
-            <p>Du har fått en prikk på grunn av {props.details} den</p>
+            <p>
+              Du har fått en prikk på grunn av {props.details} den {format(props.givenAt, "dd/MM/yyyy")}
+            </p>
             <p className="text-lg">
               <span className="font-bold">Katergori: </span>
               {props.category}
             </p>
             <p className="text-lg">
               <span className="font-bold">Utløpsdato: </span>
+              {format(addMinutes(props.givenAt, props.duration), "dd/MM/yyyy")}
             </p>
           </div>
         </AccordionContent>
