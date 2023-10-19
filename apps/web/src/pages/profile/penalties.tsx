@@ -3,26 +3,32 @@ import ProfileLayout from "@/components/layout/ProfileLayout"
 import { NextPageWithLayout } from "../_app"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
 import { DotFilledIcon } from "@radix-ui/react-icons"
-import PenaltyRules from "./penaltyRules"
-import { Mark, User } from "@dotkomonline/types"
+
 import { FC } from "react"
 import { format } from "date-fns"
+import PenaltyRules from "@/utils/penalty-rules"
+import { trpc } from "@/utils/trpc"
 
 /* TODO - Set up connection to Users marks router */
+
 const PenaltiesPage: NextPageWithLayout = () => {
+  const personalMarks = trpc.personalMark.getByUser
   return (
     <div className="ml-3 flex flex-col space-y-12">
       <p className="text-slate-10">Oversikt over dine prikker</p>
       <div className="flex flex-col">
         <p className="text-2xl font-medium">Aktive Prikker</p>
+        {/* TODO - Get active marks */}
         <p>Ingen aktive prikker</p>
       </div>
       <div>
         <p className="text-2xl font-medium">Gamle Prikker</p>
+        {/* TODO - Get old marks */}
         <p>Ingen gamle prikker</p>
       </div>
       <div className="flex flex-col space-y-2">
         <p className="text-2xl font-medium">Suspensjoner</p>
+        {/* TODO - Get suspensions */}
         <p>Ingen suspensjoner</p>
       </div>
       <div>
