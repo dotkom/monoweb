@@ -1,4 +1,4 @@
-import { createTextInput, useFormBuilder } from "../../form"
+import { createNumberInput, createTextInput, useFormBuilder } from "../../form"
 import { MarkWrite, MarkWriteSchema } from "@dotkomonline/types"
 
 const MARK_FORM_DEFAULT_VALUES: Partial<MarkWrite> = {
@@ -34,7 +34,7 @@ export const useMarkWriteForm = ({
         placeholder: "Beskrivelse",
         withAsterisk: true,
       }),
-      duration: createTextInput({
+      duration: createNumberInput({
         label: "Varighet",
         placeholder: "Varighet",
         withAsterisk: true,
