@@ -7,22 +7,10 @@ const MembershipPage: NextPageWithLayout = () => {
   return <div>Membership</div>
 }
 
-const MembershipHeader = () => {
-  return (
-    <div className="flex items-center">
-      <Icon icon={"tabler:award"} width={24} />
-      <p className="ml-2">Medlemskap</p>
-    </div>
-  )
-}
-
 MembershipPage.getLayout = (page) => {
   return (
     <MainLayout>
-      <ProfileLayout>
-        <MembershipHeader />
-        {page}
-      </ProfileLayout>
+      <ProfileLayout>{page}</ProfileLayout>
     </MainLayout>
   )
 }

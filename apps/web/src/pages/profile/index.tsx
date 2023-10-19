@@ -11,22 +11,10 @@ const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
   return <ProfileLanding user={user} />
 }
 
-const LandingPageHeader = () => {
-  return (
-    <div className="flex items-center">
-      <Icon icon={"tabler:user-circle"} width={24} />
-      <p className="ml-2">Min Profil</p>
-    </div>
-  )
-}
-
 LandingPage.getLayout = (page) => {
   return (
     <MainLayout>
-      <ProfileLayout>
-        <LandingPageHeader />
-        {page}
-      </ProfileLayout>
+      <ProfileLayout>{page}</ProfileLayout>
     </MainLayout>
   )
 }
