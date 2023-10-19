@@ -12,7 +12,6 @@ import { addMinutes, format } from "date-fns"
 /* TODO - Set up connection to Users marks router */
 
 const PenaltiesPage: NextPageWithLayout = () => {
-  const personalMarks = trpc.personalMark.getByUser
   return (
     <div className="ml-3 flex flex-col space-y-12">
       <p className="text-slate-10">Oversikt over dine prikker</p>
