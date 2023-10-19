@@ -20,7 +20,8 @@ const PageTitle: FC<PageTitleProps> = ({ title, icon }) => {
 }
 
 const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
-  const currentLink = profileItems.find((item) => item.slug === usePathname())
+  const currentSlug = usePathname()
+  const currentLink = profileItems.find((item) => item.slug === currentSlug)
   const [editMode, setEditMode] = useState(false)
 
   return (
