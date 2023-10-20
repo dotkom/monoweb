@@ -212,8 +212,8 @@ importers:
         specifier: ^8.44.5
         version: 8.44.5
       '@types/pg':
-        specifier: ^8.10.5
-        version: 8.10.5
+        specifier: ^8.10.7
+        version: 8.10.7
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
@@ -574,8 +574,8 @@ importers:
         version: 8.11.3
     devDependencies:
       '@types/pg':
-        specifier: ^8.10.5
-        version: 8.10.5
+        specifier: ^8.10.7
+        version: 8.10.7
       eslint:
         specifier: ^8.51.0
         version: 8.51.0
@@ -6648,8 +6648,8 @@ packages:
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
 
-  /@types/pg@8.10.5:
-    resolution: {integrity: sha512-GS3ebGcSJQqKSnq4/WnSH1XQvx0vTDLEmqLENk7onKvTnry9BWPsZiZeUMJlEPw+5bCQDzfxZFhxlUztpNCKgQ==}
+  /@types/pg@8.10.7:
+    resolution: {integrity: sha512-ksJqHipwYaSEHz9e1fr6H6erjoEdNNaOxwyJgPx9bNeaqOW3iWBQgVHfpwiSAoqGzchfc+ZyRLwEfeCcyYD3uQ==}
     dependencies:
       '@types/node': 18.18.4
       pg-protocol: 1.6.0
