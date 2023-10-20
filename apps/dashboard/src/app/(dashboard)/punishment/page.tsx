@@ -33,7 +33,7 @@ const columns = [
     id: "actions",
     header: () => "Detaljer",
     cell: (info) => (
-      <Anchor component={Link} size="sm" href={`/mark/${info.getValue().id}`}>
+      <Anchor component={Link} size="sm" href={`/punishment/${info.getValue().id}`}>
         Se mer
       </Anchor>
     ),
