@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:18 as builder
+FROM public.ecr.aws/lambda/nodejs:18 AS builder
 
 WORKDIR /usr/app
 COPY apps ./apps
@@ -9,7 +9,7 @@ RUN npm i -g pnpm@8
 RUN pnpm install --frozen-lockfile
 RUN pnpm build:gateway-email
 
-FROM public.ecr.aws/lambda/nodejs:18
+FROM public.ecr.aws/lambda/nodejs:18 AS runner
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 

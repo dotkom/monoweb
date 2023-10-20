@@ -29,13 +29,6 @@ const requestSchema = z.object({
 })
 
 export const handler: Handler<APIGatewayProxyEventV2> = async (event) => {
-  const xEmailToken = event.headers["x-email-token"]
-  if (!xEmailToken) {
-    return { statusCode: 401 }
-  }
-  if (xEmailToken !== process.env.EMAIL_TOKEN) {
-    return { statusCode: 403 }
-  }
   try {
     const json = JSON.parse(event.body ?? "{}")
     const request = requestSchema.parse(json)
