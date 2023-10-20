@@ -15,7 +15,7 @@ export interface JobListingRepository {
   update(id: JobListingId, data: JobListingWrite, locations: string[]): Promise<JobListing>
 }
 
-const mapToJobListing1 = (jobListing: any): JobListing => {
+const mapToJobListing1 = (jobListing: unknown): JobListing => {
   return JobListingSchema.parse(jobListing)
 }
 

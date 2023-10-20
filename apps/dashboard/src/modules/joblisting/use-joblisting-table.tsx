@@ -79,7 +79,7 @@ export const useJobListingTable = ({ data }: Props) => {
         ),
       }),
     ],
-    [columnHelper]
+    [columnHelper, companies]
   )
 
   return useReactTable({

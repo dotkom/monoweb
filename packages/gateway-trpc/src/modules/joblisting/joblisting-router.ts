@@ -1,7 +1,7 @@
+import { PaginateInputSchema } from "@dotkomonline/core"
+import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
-import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
-import { PaginateInputSchema } from "@dotkomonline/core"
 
 export const jobListingRouter = t.router({
   create: t.procedure.input(JobListingWriteSchema).mutation(({ input, ctx }) => {
@@ -23,10 +23,10 @@ export const jobListingRouter = t.router({
   get: t.procedure.input(JobListingSchema.shape.id).query(({ input, ctx }) => {
     return ctx.jobListingService.get(input)
   }),
-  getLocations: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
+  getLocations: t.procedure.input(PaginateInputSchema).query(({ ctx }) => {
     return ctx.jobListingService.getLocations()
   }),
-  getEmploymentTypes: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
+  getEmploymentTypes: t.procedure.input(PaginateInputSchema).query(({ ctx }) => {
     return ctx.jobListingService.getEmploymentTypes()
   }),
 })

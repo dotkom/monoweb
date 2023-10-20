@@ -3,7 +3,7 @@ import { JobListingRepository, JobListingRepositoryImpl } from "./joblisting-rep
 import util from "util"
 import { JobListingServiceImpl } from "./joblisting-service"
 
-export function deepLog(obj: any) {
+export function deepLog(obj: unknown) {
   console.log(util.inspect(obj, { depth: null, colors: true }))
 }
 
