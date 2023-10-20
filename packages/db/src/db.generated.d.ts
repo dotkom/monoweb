@@ -89,6 +89,30 @@ export interface EventCompany {
   companyId: string;
 }
 
+export interface JobListing {
+  id: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  companyId: string | null;
+  title: string;
+  ingress: string;
+  description: string;
+  start: Timestamp;
+  end: Timestamp;
+  featured: boolean;
+  deadline: Timestamp | null;
+  employment: string;
+  applicationLink: string | null;
+  applicationEmail: string | null;
+  deadlineAsap: boolean;
+}
+
+export interface JobListingLocation {
+  id: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  jobListingId: string | null;
+  location: string;
+}
+
 export interface Mark {
   id: Generated<string>;
   updatedAt: Generated<Timestamp>;
@@ -185,6 +209,8 @@ export interface DB {
   event: Event;
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
+  jobListing: JobListing;
+  jobListingLocation: JobListingLocation;
   mark: Mark;
   notificationPermissions: NotificationPermissions;
   owUser: OwUser;
