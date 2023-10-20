@@ -1,6 +1,6 @@
 locals {
-  domain_name = "${terraform.workspace}.auth.online.ntnu.no"
-  zone_id     = data.aws_route53_zone.online.zone_id
+  cognito_domain_name = "${terraform.workspace}.auth.online.ntnu.no"
+  zone_id             = data.aws_route53_zone.online.zone_id
 }
 
 # Required because AWS Cognito requires an A record at the parent domain
@@ -15,7 +15,7 @@ resource "aws_route53_record" "null_record" {
 module "cognito_domain_certificate" {
   source = "./modules/aws-acm-certificate"
 
-  domain  = local.domain_name
+  domain  = local.cognito_domain_name
   zone_id = local.zone_id
 
   tags = {
@@ -32,7 +32,7 @@ module "cognito_user_pool" {
   source = "./modules/aws-cognito-pool"
 
   pool_name       = "monoweb-${terraform.workspace}"
-  custom_domain   = local.domain_name
+  custom_domain   = local.cognito_domain_name
   zone_id         = local.zone_id
   certificate_arn = module.cognito_domain_certificate.certificate_arn
   schema = [
