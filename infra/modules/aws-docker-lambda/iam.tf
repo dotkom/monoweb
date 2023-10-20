@@ -5,7 +5,7 @@ resource "aws_iam_role" "lambda_execution_role" {
   dynamic "inline_policy" {
     for_each = var.iam_inline_policies
     content {
-      name = inline_policy.value.name
+      name   = inline_policy.value.name
       policy = inline_policy.value.policy
     }
   }

@@ -27,8 +27,8 @@ variable "ecr_repository_name" {
 
 variable "iam_inline_policies" {
   description = "Additional inline policies to attach to the IAM role"
-  type = list(object({ name = string, policy = string}))
-  default = []
+  type        = list(object({ name = string, policy = string }))
+  default     = []
 }
 
 variable "ecr_lifecycle_policy" {

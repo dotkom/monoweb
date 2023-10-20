@@ -10,7 +10,7 @@ resource "aws_ecr_repository" "this" {
 }
 
 resource "aws_ecr_lifecycle_policy" "this" {
-  count = var.ecr_lifecycle_policy == {} ? 0 : 1
+  count      = var.ecr_lifecycle_policy == {} ? 0 : 1
   policy     = jsonencode(var.ecr_lifecycle_policy)
   repository = aws_ecr_repository.this.id
 }
