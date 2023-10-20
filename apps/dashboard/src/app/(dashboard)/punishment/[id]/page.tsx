@@ -1,5 +1,6 @@
 "use client"
 
+import type { FC } from "react"
 import { MarkWriteSchema, PersonalMark } from "@dotkomonline/types"
 import { useMarkDetailsContext } from "./provider"
 import { useMarkWriteForm } from "../write-form"
@@ -11,7 +12,7 @@ import { useUserGetQuery } from "src/modules/user/queries/use-user-get-query"
 import { GenericTable } from "src/components/GenericTable"
 import { usePersonalMarkGetByMarkId } from "src/modules/punishment/queries/use-personal-mark-get-by-mark-id"
 
-const UserNameCell: React.FC<{ userId: string }> = ({ userId }) => {
+const UserNameCell: FC<{ userId: string }> = ({ userId }) => {
   const { user } = useUserGetQuery(userId)
   return <span>{user?.id || "Loading..."}</span>
 }
