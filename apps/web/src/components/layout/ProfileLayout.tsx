@@ -31,7 +31,7 @@ const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
           <ProfileMenuContainer />
           <ProfileContext.Provider value={{ editMode, setEditMode }}>
             <div className="mx-5 mt-16 md:min-w-[600px]">
-              {currentLink ? <PageTitle title={currentLink?.title} icon={currentLink.icon} /> : ""}
+              {currentLink && <PageTitle title={currentLink?.title} icon={currentLink.icon} />}
               <div className="my-2 ml-5">{children}</div>
             </div>
           </ProfileContext.Provider>
