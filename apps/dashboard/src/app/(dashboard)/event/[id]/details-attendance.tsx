@@ -34,7 +34,7 @@ CustomCheckbox.displayName = "attendanceToggle"
 export const EventAttendancePage: FC = () => {
   console.log("rerendering")
   const { event } = useEventDetailsContext()
-  const { eventAttendance, isLoading, isError } = useEventAttendanceGetQuery(event.id)
+  const { eventAttendance, isLoading, refetch } = useEventAttendanceGetQuery(event.id)
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
@@ -54,7 +54,7 @@ export const EventAttendancePage: FC = () => {
         ),
       }),
     ],
-    []
+    [eventAttendance]
   )
 
   const data = useMemo(() => eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [], [isLoading])
@@ -68,7 +68,7 @@ export const EventAttendancePage: FC = () => {
   return (
     <Box>
       <Title order={3}>Påmeldte</Title>
-      <AttendanceQrReader />
+      <AttendanceQrReader refetch={refetch} />
       {eventAttendance?.map((attendance) => (
         <Skeleton key={attendance.id} mb="sm" visible={isLoading}>
           <Title order={4}>

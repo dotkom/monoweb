@@ -3,16 +3,20 @@ import { useState } from "react"
 import { useZxing } from "react-zxing"
 import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
 
-type AttendanceQrReaderProps = {}
+type AttendanceQrReaderProps = {
+  refetch: any
+}
 
 const ViewFinder = ({
   data,
   updateAttendance,
   resetResult,
+  refetch,
 }: {
   data: string
   updateAttendance: any
   resetResult: any
+  refetch: any
 }) => {
   if (data === "") {
     return null
@@ -39,6 +43,7 @@ const ViewFinder = ({
           console.log(userId, attendanceId)
           updateAttendance.mutate({ userId, attendanceId, attended: true })
           resetResult("")
+          refetch()
         }}
       >
         Møtt
@@ -47,7 +52,7 @@ const ViewFinder = ({
   )
 }
 
-const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = () => {
+const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = ({ refetch }) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
   const [result, setResult] = useState("")
   const [paused, setPaused] = useState(true)
@@ -74,7 +79,7 @@ const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = () => {
         {!paused && (
           <div style={{ position: "relative", width: "50%" }}>
             <video ref={ref} style={{ width: "100%" }} />
-            <ViewFinder data={result} updateAttendance={updateAttendance} resetResult={setResult} />
+            <ViewFinder refetch={refetch} data={result} updateAttendance={updateAttendance} resetResult={setResult} />
           </div>
         )}
       </div>
