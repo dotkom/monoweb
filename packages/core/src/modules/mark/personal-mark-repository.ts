@@ -51,7 +51,7 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     return marks.map(mapToMark)
   }
 
-  async getByMarkId(markId: Mark["id"]): Promise<PersonalMark[]> {
+  async getByMarkId(markId: MarkId): Promise<PersonalMark[]> {
     const personalMarks = await this.db.selectFrom("personalMark").selectAll().where("markId", "=", markId).execute()
     return personalMarks.map(mapToPersonalMark)
   }

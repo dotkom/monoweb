@@ -33,7 +33,7 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     return personalMarks
   }
 
-  async getPersonalMarksByMarkId(markId: Mark["id"]): Promise<PersonalMark[]> {
+  async getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]> {
     const personalMarks = await this.personalMarkRepository.getByMarkId(markId)
     return personalMarks
   }
