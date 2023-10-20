@@ -7,6 +7,7 @@ import { NotFoundError } from "../../errors/errors"
 import { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
+  getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getPersonalMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
   addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
@@ -29,6 +30,11 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   async getMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]> {
     const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor)
+    return personalMarks
+  }
+
+  async getPersonalMarksByMarkId(markId: Mark["id"]): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getByMarkId(markId)
     return personalMarks
   }
 

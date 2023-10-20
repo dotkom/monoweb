@@ -7,6 +7,8 @@ import {
   Flex,
   MultiSelect,
   MultiSelectProps,
+  NumberInput,
+  NumberInputProps,
   Select,
   SelectProps,
   Textarea,
@@ -138,6 +140,27 @@ export function createTextInput<F extends FieldValues>({
         {...register(name)}
         {...props}
         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+      />
+    )
+  }
+}
+
+export function createNumberInput<F extends FieldValues>({
+  ...props
+}: Omit<NumberInputProps, "error">): InputProducerResult<F> {
+  return function FormNumberInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <NumberInput
+            {...props}
+            value={field.value}
+            onChange={(value) => field.onChange({ target: { value } })}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+          />
+        )}
       />
     )
   }

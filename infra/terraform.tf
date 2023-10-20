@@ -5,12 +5,12 @@ terraform {
     region = "eu-north-1"
   }
 
-  required_version = "~> 1.6.1"
+  required_version = "~> 1.6.2"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.19"
+      version = "~> 5.22"
     }
     vercel = {
       source  = "vercel/vercel"
