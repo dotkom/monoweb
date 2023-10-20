@@ -1,10 +1,9 @@
 import { Button } from "@mantine/core"
 import { useState } from "react"
 import { useZxing } from "react-zxing"
+import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
 
-type AttendanceQrReaderProps = {
-  updateAttendance: any
-}
+type AttendanceQrReaderProps = {}
 
 const ViewFinder = ({
   data,
@@ -48,7 +47,8 @@ const ViewFinder = ({
   )
 }
 
-const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = ({ updateAttendance }) => {
+const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = () => {
+  const updateAttendance = useUpdateEventAttendanceMutation()
   const [result, setResult] = useState("")
   const [paused, setPaused] = useState(true)
 

@@ -1,13 +1,11 @@
 import React, { FC, useMemo, useState } from "react"
 import { useEventDetailsContext } from "./provider"
-import { Box, Title, Checkbox, Button } from "@mantine/core"
+import { Box, Title, Checkbox, Button, Skeleton } from "@mantine/core"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
 import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
 import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
 import { GenericTable } from "src/components/GenericTable"
 import { Attendee } from "@dotkomonline/types"
-import { QrReader } from "react-qr-reader"
-import { useZxing } from "react-zxing"
 import AttendanceQrReader from "src/components/qr-scanner/AttendanceQrReader"
 
 interface CustomCheckboxProps {
@@ -34,8 +32,9 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 CustomCheckbox.displayName = "attendanceToggle"
 
 export const EventAttendancePage: FC = () => {
+  console.log("rerendering")
   const { event } = useEventDetailsContext()
-  const { eventAttendance } = useEventAttendanceGetQuery(event.id)
+  const { eventAttendance, isLoading, isError } = useEventAttendanceGetQuery(event.id)
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
@@ -55,28 +54,28 @@ export const EventAttendancePage: FC = () => {
         ),
       }),
     ],
-    [columnHelper]
+    []
   )
 
+  const data = useMemo(() => eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [], [isLoading])
+
   const table = useReactTable({
-    data: eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [],
+    data: data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
 
-  const updateAttendance = useUpdateEventAttendanceMutation()
-
   return (
     <Box>
       <Title order={3}>Påmeldte</Title>
-      <AttendanceQrReader updateAttendance={updateAttendance} />
+      <AttendanceQrReader />
       {eventAttendance?.map((attendance) => (
-        <Box key={attendance.id} mb="sm">
+        <Skeleton key={attendance.id} mb="sm" visible={isLoading}>
           <Title order={4}>
             {attendance.id} {"(" + attendance.attendees.length + "/" + attendance.limit + ")"}
           </Title>
           <GenericTable table={table} />
-        </Box>
+        </Skeleton>
       ))}
     </Box>
   )
