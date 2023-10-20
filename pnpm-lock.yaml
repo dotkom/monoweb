@@ -291,8 +291,8 @@ importers:
         specifier: ^13.5.4
         version: 13.5.4
       '@portabletext/react':
-        specifier: ^3.0.9
-        version: 3.0.9(react@18.2.0)
+        specifier: ^3.0.11
+        version: 3.0.11(react@18.2.0)
       '@radix-ui/colors':
         specifier: ^3.0.0
         version: 3.0.0
@@ -4789,26 +4789,26 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
-  /@portabletext/react@3.0.9(react@18.2.0):
-    resolution: {integrity: sha512-BAIhClkMs5IwDkCd2F7xF5/fsvFm39kpdZmGnLfCpZudb5zDY8JNa6eeyRO50rL+VwozXb8qJEBkVBTp3CGcEw==}
+  /@portabletext/react@3.0.11(react@18.2.0):
+    resolution: {integrity: sha512-LATQQRxvP3TlAnFayjYt7kPJcnpAtWH6XHl4RFU31pKb1G6gZlTWTB+chXXAv0uQG6Be7OEdRzCmsz9XFEVNew==}
     engines: {node: ^14.13.1 || >=16.0.0}
     peerDependencies:
       react: ^17 || ^18
     dependencies:
-      '@portabletext/toolkit': 2.0.9
-      '@portabletext/types': 2.0.7
+      '@portabletext/toolkit': 2.0.10
+      '@portabletext/types': 2.0.8
       react: 18.2.0
     dev: false
 
-  /@portabletext/toolkit@2.0.9:
-    resolution: {integrity: sha512-6/P/fsCGLFhztVGJRwIMePmwGbOH1Uvoim04XPh38pcC+wWT3KJ97Hn1HPWmuxd9kGdxyySQpThfYZbSmroGpg==}
+  /@portabletext/toolkit@2.0.10:
+    resolution: {integrity: sha512-d+F9JvpnMEx7kd6saZ9OWA4U1Iwuokh6TOht7iqkfWU+0ivh9yM4v+b0Kpu+iiPcElicoabhtXol+yTvWJ1jDw==}
     engines: {node: ^14.13.1 || >=16.0.0}
     dependencies:
-      '@portabletext/types': 2.0.7
+      '@portabletext/types': 2.0.8
     dev: false
 
-  /@portabletext/types@2.0.7:
-    resolution: {integrity: sha512-kWjS2lguGKHYDsHeK83cXonuYQCIP4mfNwnTjCdDpIPf7CQ4eTuKjYKxJ2w2aksbsh1DwSk1h+xZ64ADiNdTGg==}
+  /@portabletext/types@2.0.8:
+    resolution: {integrity: sha512-eiq9/kMX2bYezS4/kLFk3xNnruCFjCDdw6aYEv5ECHVKkYROiuLd3/AsP5d7tWF3+kPPy6tB0Wq8aqDG/URHGA==}
     engines: {node: ^14.13.1 || >=16.0.0 || >=18.0.0}
     dev: false
 

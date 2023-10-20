@@ -22,7 +22,7 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@next/env": "^13.5.4",
-    "@portabletext/react": "^3.0.9",
+    "@portabletext/react": "^3.0.11",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
