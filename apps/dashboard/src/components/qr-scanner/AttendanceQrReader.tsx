@@ -79,13 +79,11 @@ const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = ({ updateAttendanc
         )}
       </div>
 
+      <Button onClick={() => setPaused(!paused)}>{paused ? "Resume" : "Pause"}</Button>
       <p>
         <span>Last result:</span>
         <span>{result}</span>
       </p>
-      <div>
-        <button onClick={() => setPaused(!paused)}>{paused ? "Resume" : "Pause"}</button>
-      </div>
     </>
   )
 }
