@@ -130,8 +130,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/config
       '@types/eslint':
-        specifier: ^8.44.5
-        version: 8.44.5
+        specifier: ^8.44.6
+        version: 8.44.6
       '@types/node':
         specifier: ^18.18.3
         version: 18.18.4
@@ -209,8 +209,8 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
       '@types/eslint':
-        specifier: ^8.44.5
-        version: 8.44.5
+        specifier: ^8.44.6
+        version: 8.44.6
       '@types/pg':
         specifier: ^8.10.7
         version: 8.10.7
@@ -394,8 +394,8 @@ importers:
         specifier: ^2.8.15
         version: 2.8.15
       '@types/eslint':
-        specifier: ^8.44.5
-        version: 8.44.5
+        specifier: ^8.44.6
+        version: 8.44.6
       '@types/jsdom':
         specifier: ^21.1.4
         version: 21.1.4
@@ -6547,8 +6547,8 @@ packages:
       '@types/ms': 0.7.33
     dev: true
 
-  /@types/eslint@8.44.5:
-    resolution: {integrity: sha512-Ol2eio8LtD/tGM4Ga7Jb83NuFwEv3NqvssSlifXL9xuFpSyQZw0ecmm2Kux6iU0KxQmp95hlPmGCzGJ0TCFeRA==}
+  /@types/eslint@8.44.6:
+    resolution: {integrity: sha512-P6bY56TVmX8y9J87jHNgQh43h6VVU+6H7oN7hgvivV81K2XY8qJZ5vqPy/HdUoVIelii2kChYVzQanlswPWVFw==}
     dependencies:
       '@types/estree': 1.0.1
       '@types/json-schema': 7.0.12
