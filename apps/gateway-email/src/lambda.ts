@@ -58,7 +58,7 @@ export const handler: Handler<APIGatewayProxyEventV2> = async (event) => {
         },
       },
     })
-    await ses.send(command)
+    // await ses.send(command)
   } catch (err) {
     if (err instanceof SyntaxError || err instanceof ZodError || err instanceof InvalidTemplateArguments) {
       return { statusCode: 400 }

@@ -1,5 +1,9 @@
-output "lambda_function" {
+output "lambda_function_id" {
   value = aws_lambda_function.this.id
+}
+
+output "lambda_invoke_arn" {
+  value = aws_lambda_function.this.invoke_arn
 }
 
 output "ecr_repository" {
