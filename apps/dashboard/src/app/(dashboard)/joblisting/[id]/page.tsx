@@ -4,7 +4,6 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { JobListingEditCard } from "./edit-card"
-import { JobListingEventsPage } from "./joblisting-page"
 import { useJobListingDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [

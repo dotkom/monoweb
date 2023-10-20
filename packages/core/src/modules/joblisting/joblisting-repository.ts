@@ -2,7 +2,6 @@ import { Database } from "@dotkomonline/db"
 import { JobListing, JobListingId, JobListingSchema } from "@dotkomonline/types"
 import { Insertable, Kysely, Selectable, sql } from "kysely"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
-import { deepLog } from "./joblisting.spec"
 
 type JobListingWrite = Insertable<Database["jobListing"]>
 

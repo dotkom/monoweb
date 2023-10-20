@@ -2,7 +2,6 @@ import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import {
   createCheckboxInput,
   createDateTimeInput,
-  createMultipleSelectInput,
   createSelectInput,
   createTagInput,
   createTextInput,

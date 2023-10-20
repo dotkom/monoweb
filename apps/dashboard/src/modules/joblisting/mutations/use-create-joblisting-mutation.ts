@@ -10,7 +10,7 @@ export const useCreateJobListingMutation = () => {
     onMutate: () => {
       notification.loading({
         title: "Oppretter stillingsannonse...",
-        message: "Bedriften blir opprettet, og du vil bli videresendt til stillingsannonsen.",
+        message: "Stillingsannonsen blir opprettet, og du vil bli videresendt til stillingsannonsen.",
       })
     },
     onSuccess: (data) => {
@@ -26,8 +26,6 @@ export const useCreateJobListingMutation = () => {
         title: "Feil oppsto",
         message: `En feil oppsto under opprettelse av stillingsannonsen: ${err.toString()}.`,
       })
-
-      // TODO: send error to sentry/other service so we can catch it
     },
   })
 }
