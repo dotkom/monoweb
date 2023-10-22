@@ -1,5 +1,5 @@
 import { Database } from "@dotkomonline/db"
-import { Kysely, Selectable } from "kysely"
+import { Kysely, Selectable, sql } from "kysely"
 import { type User, UserId, UserSchema, UserWrite } from "@dotkomonline/types"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 
@@ -43,7 +43,7 @@ export class UserRepositoryImpl implements UserRepository {
       this.db
         .selectFrom("owUser")
         .selectAll()
-        .where("id", "like", `%${searchQuery}%`)
+        .where(sql`id::text`, "like", `%${searchQuery}%`)
         .limit(take),
       cursor
     )
