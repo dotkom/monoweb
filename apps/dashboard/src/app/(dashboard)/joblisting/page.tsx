@@ -1,25 +1,11 @@
 "use client"
 
 import { Icon } from "@iconify/react"
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  Group,
-  Skeleton,
-  Stack,
-  Table,
-  TableTbody,
-  TableTd,
-  TableTh,
-  TableThead,
-  TableTr,
-} from "@mantine/core"
-import { flexRender } from "@tanstack/react-table"
-import { useJobListingAllQuery } from "../../../modules/joblisting/queries/use-joblisting-all-query"
-import { useCreateJobListingModal } from "../../../modules/joblisting/modals/create-joblisting-modal"
-import { useJobListingTable } from "../../../modules/joblisting/use-joblisting-table"
+import { Button, ButtonGroup, Card, Group, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "../../../components/GenericTable"
+import { useCreateJobListingModal } from "../../../modules/joblisting/modals/create-joblisting-modal"
+import { useJobListingAllQuery } from "../../../modules/joblisting/queries/use-joblisting-all-query"
+import { useJobListingTable } from "../../../modules/joblisting/use-joblisting-table"
 
 export default function JobListingPage() {
   const { jobListings, isLoading: isJobListingsLoading } = useJobListingAllQuery()

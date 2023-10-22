@@ -1,4 +1,3 @@
-import fs from "fs"
 import { db } from "./db"
 import { attendances } from "./fixtures/attendance"
 import { attendees } from "./fixtures/attendee"
@@ -182,7 +181,7 @@ export const runFixtures = async () => {
     .onConflict((oc) => oc.column("id").doNothing())
     .execute()
 
-  const insertedVals = await db
+  await db
     .insertInto("jobListingLocation")
     .values(jobListingLocations)
     .returning(["id", "name"])

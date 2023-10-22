@@ -1,6 +1,6 @@
 import { Database } from "@dotkomonline/db"
 import { JobListingId } from "@dotkomonline/types"
-import { Insertable, Kysely } from "kysely"
+import { Kysely } from "kysely"
 
 export interface JobListingLocationRepository {
   create(jobListingId: JobListingId, locations: string[]): Promise<void>
