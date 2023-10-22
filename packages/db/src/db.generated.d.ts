@@ -109,8 +109,14 @@ export interface JobListing {
 export interface JobListingLocation {
   id: Generated<string>;
   createdAt: Generated<Timestamp>;
+  name: string;
+}
+
+export interface JobListingLocationLink {
+  id: Generated<string>;
+  createdAt: Generated<Timestamp>;
   jobListingId: string | null;
-  location: string;
+  locationId: string | null;
 }
 
 export interface Mark {
@@ -211,6 +217,7 @@ export interface DB {
   eventCompany: EventCompany;
   jobListing: JobListing;
   jobListingLocation: JobListingLocation;
+  jobListingLocationLink: JobListingLocationLink;
   mark: Mark;
   notificationPermissions: NotificationPermissions;
   owUser: OwUser;

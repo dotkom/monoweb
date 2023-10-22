@@ -34,7 +34,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
     end: new Date("2023-12-31"), // Placeholder date
     featured: true, // Placeholder value
     deadline: null,
-    employment: employments.internship,
+    employment: employments.other,
     applicationLink: "https://www.jrc.no/jobs", // Placeholder link
     applicationEmail: "test@jrc.no",
     deadlineAsap: false, // Placeholder value
@@ -260,73 +260,29 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
 ]
 
-export const jobListingLocation: Insertable<Database["jobListingLocation"]>[] = [
+export const jobListingLocations: Insertable<Database["jobListingLocation"]>[] = [
+  { name: "Fredrikstad", id: "01HD99TC1RF2DBYKBTJZDN35GG" },
+  { name: "Tromsø", id: "01HD99TC1T89TQ76VSW1PWQ6BQ" },
+  { name: "Bodø", id: "01HD99TC1TSFA62739TJ21KDMV" },
+  { name: "Oslo", id: "01HD99TC1T9DFGM6APVQ6FV8HM" },
+  { name: "Trondheim", id: "01HD99TC1THMR30405QJ9ZVYE8" },
+]
+
+export const jobListingLocationLinks: Insertable<Database["jobListingLocationLink"]>[] = [
   {
     jobListingId: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    location: "Oslo",
+    locationId: "01HD99TC1T9DFGM6APVQ6FV8HM",
   },
   {
     jobListingId: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    location: "Trondheim",
+    locationId: "01HD99TC1THMR30405QJ9ZVYE8",
   },
   {
     jobListingId: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    location: "Tromsø",
+    locationId: "01HD99TC1T89TQ76VSW1PWQ6BQ",
   },
   {
     jobListingId: "01HD77R4Y764E5Q5DY9YTT9ZF6",
-    location: "Trondheim",
-  },
-  {
-    jobListingId: "01HD77R4Y7RHCCQ5SYN31CVFRG",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4Y7XW6S2VBTPBJWMTN0",
-    location: "Bodø",
-  },
-  {
-    jobListingId: "01HD77R4Y9HFYK1NJV8SKSPKN3",
-    location: "Fredrikstad",
-  },
-  {
-    jobListingId: "01HD77R4Y9D8FJ8WHBY6GF67AW",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4Y998QA09CMCAJKGSD7",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YAYQAR9V47DA5X1Q7C",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YAW54151ZE3ABZVGSX",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YAQXGEH10C4XTT8J5K",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YA5CA0QYF0PEBGZNGZ",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YAZN6ABDPB17K52NAH",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YAMPR4PG0GSYBM9Y32",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YA6AH85A2EZ0BJP4MN",
-    location: "Oslo",
-  },
-  {
-    jobListingId: "01HD77R4YCTMJ7XPRHCEDQ616B",
-    location: "Oslo",
+    locationId: "01HD99TC1THMR30405QJ9ZVYE8",
   },
 ]

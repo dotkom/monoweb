@@ -1,3 +1,4 @@
+import fs from "fs"
 import { db } from "./db"
 import { attendances } from "./fixtures/attendance"
 import { attendees } from "./fixtures/attendee"
@@ -6,7 +7,7 @@ import { eventCommittees } from "./fixtures/committee-organizer"
 import { companies } from "./fixtures/company"
 import { events } from "./fixtures/event"
 import { eventCompany } from "./fixtures/event-company"
-import { jobListingLocation, jobListings } from "./fixtures/joblisting"
+import { jobListingLocationLinks, jobListingLocations, jobListings } from "./fixtures/joblisting"
 import { marks } from "./fixtures/mark"
 import { personalMarks } from "./fixtures/personal-mark"
 import { products } from "./fixtures/product"
@@ -181,9 +182,16 @@ export const runFixtures = async () => {
     .onConflict((oc) => oc.column("id").doNothing())
     .execute()
 
-  await db
+  const insertedVals = await db
     .insertInto("jobListingLocation")
-    .values(jobListingLocation)
+    .values(jobListingLocations)
+    .returning(["id", "name"])
+    .onConflict((oc) => oc.column("id").doNothing())
+    .execute()
+
+  await db
+    .insertInto("jobListingLocationLink")
+    .values(jobListingLocationLinks)
     .returning("id")
     .onConflict((oc) => oc.column("id").doNothing())
     .execute()

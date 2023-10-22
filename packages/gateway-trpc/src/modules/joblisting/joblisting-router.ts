@@ -26,7 +26,4 @@ export const jobListingRouter = t.router({
   getLocations: t.procedure.input(PaginateInputSchema).query(({ ctx }) => {
     return ctx.jobListingService.getLocations()
   }),
-  getEmploymentTypes: t.procedure.input(PaginateInputSchema).query(({ ctx }) => {
-    return ctx.jobListingService.getEmploymentTypes()
-  }),
 })

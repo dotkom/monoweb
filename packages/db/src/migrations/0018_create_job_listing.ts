@@ -15,18 +15,20 @@ export async function up(db: Kysely<any>) {
     .addColumn("application_link", sql`character varying(200)`)
     .addColumn("application_email", sql`character varying(254)`)
     .addColumn("deadline_asap", sql`boolean`, (col) => col.notNull())
-    // .addColumn("location", sql`text[]`)
     .execute()
 
   await createTableWithDefaults("job_listing_location", { id: true, createdAt: true }, db.schema)
+    .addColumn("name", sql`text`, (col) => col.notNull().unique())
+    .execute()
+
+  await createTableWithDefaults("job_listing_location_link", { id: true, createdAt: true }, db.schema)
     .addColumn("job_listing_id", sql`ulid`, (col) => col.references("job_listing.id").onDelete("cascade"))
-    .addColumn("location", sql`text`, (col) => col.notNull())
+    .addColumn("location_id", sql`ulid`, (col) => col.references("job_listing_location.id").onDelete("cascade"))
     .execute()
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
+  await db.schema.dropTable("job_listing_location_link").execute()
   await db.schema.dropTable("job_listing_location").execute()
   await db.schema.dropTable("job_listing").execute()
-
-  // await db.schema.dropIndex("job_listing_location_idx").on("job_listing").execute()
 }

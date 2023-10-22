@@ -16,9 +16,10 @@ import {
   TableTr,
 } from "@mantine/core"
 import { flexRender } from "@tanstack/react-table"
-import { useCreateJobListingModal } from "src/modules/joblisting/modals/create-joblisting-modal"
-import { useJobListingAllQuery } from "src/modules/jobListing/queries/use-joblisting-all-query"
-import { useJobListingTable } from "src/modules/joblisting/use-joblisting-table"
+import { useJobListingAllQuery } from "../../../modules/joblisting/queries/use-joblisting-all-query"
+import { useCreateJobListingModal } from "../../../modules/joblisting/modals/create-joblisting-modal"
+import { useJobListingTable } from "../../../modules/joblisting/use-joblisting-table"
+import { GenericTable } from "../../../components/GenericTable"
 
 export default function JobListingPage() {
   const { jobListings, isLoading: isJobListingsLoading } = useJobListingAllQuery()
@@ -29,26 +30,7 @@ export default function JobListingPage() {
     <Skeleton visible={isJobListingsLoading}>
       <Stack>
         <Card withBorder>
-          <Table>
-            <TableThead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableTr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableTh key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableTh>
-                  ))}
-                </TableTr>
-              ))}
-            </TableThead>
-            <TableTbody>
-              {table.getRowModel().rows.map((row) => (
-                <TableTr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableTd key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableTd>
-                  ))}
-                </TableTr>
-              ))}
-            </TableTbody>
-          </Table>
+          <GenericTable table={table} />
         </Card>
         <Group justify="space-between">
           <Button onClick={open}>Opprett stillingsannonse</Button>

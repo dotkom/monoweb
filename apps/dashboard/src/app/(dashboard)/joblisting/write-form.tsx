@@ -39,7 +39,7 @@ export const useJobListingWriteForm = ({
     fields: {
       companyId: createSelectInput({
         label: "Selskap",
-        data: companies.map((committee) => ({ value: committee.id, label: committee.name })),
+        data: companies.map((company) => ({ value: company.id, label: company.name })),
       }),
       title: createTextInput({
         label: "Tittel",

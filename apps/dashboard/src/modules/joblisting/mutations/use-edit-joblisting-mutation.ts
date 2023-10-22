@@ -8,13 +8,13 @@ export const useEditJobListingMutation = () => {
     onMutate: () => {
       notification.loading({
         title: "Oppdaterer stillingsannonse...",
-        message: "Bedriften blir oppdatert.",
+        message: "Stillingsannonsen blir oppdatert.",
       })
     },
     onSuccess: (data) => {
       notification.complete({
-        title: "Bedrift oppdatert",
-        message: `Bedriften "${data.title}" har blitt oppdatert.`,
+        title: "Stillingsannonse oppdatert",
+        message: `Stillingsannonsen "${data.title}" har blitt oppdatert.`,
       })
       utils.jobListing.all.invalidate()
     },

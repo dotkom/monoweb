@@ -2,28 +2,21 @@ import { Database } from "@dotkomonline/db"
 import { JobListing, JobListingId, JobListingSchema } from "@dotkomonline/types"
 import { Insertable, Kysely, Selectable, sql } from "kysely"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { map } from "zod"
 
 type JobListingWrite = Insertable<Database["jobListing"]>
 
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | undefined>
   getAll(take: number, cursor?: Cursor): Promise<JobListing[]>
-  getAllLocations(): Promise<string[]>
   getAllEploymentTypes(): Promise<string[]>
 
   create(values: JobListingWrite, locations: string[]): Promise<JobListing | undefined>
-  update(id: JobListingId, data: JobListingWrite, locations: string[]): Promise<JobListing>
+  update(id: JobListingId, data: JobListingWrite): Promise<JobListing | undefined>
 }
 
-const mapToJobListing1 = (jobListing: unknown): JobListing => {
+const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing => {
   return JobListingSchema.parse(jobListing)
-}
-
-const mapToJobListing2 = (jobListing: Selectable<Database["jobListing"]>, locations: string[]): JobListing => {
-  return JobListingSchema.parse({
-    ...jobListing,
-    locations: locations,
-  })
 }
 
 export class JobListingRepositoryImpl implements JobListingRepository {
@@ -36,81 +29,60 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       return undefined
     }
 
-    // If the data contains locations, insert them
-    if (locations && locations.length > 0) {
-      await this.db
-        .insertInto("jobListingLocation")
-        .values(
-          locations.map((location) => ({
-            jobListingId: jobListing.id,
-            location: location,
-          }))
-        )
-        .executeTakeFirstOrThrow()
+    const inserted = await this.getById(jobListing.id)
 
-      return mapToJobListing2(jobListing, locations)
+    if (!inserted) {
+      return undefined
     }
 
-    return mapToJobListing2(jobListing, [])
+    return mapToJobListing(inserted)
   }
 
-  async update(id: JobListingId, data: JobListingWrite, locations: string[]): Promise<JobListing> {
-    // Start a transaction because you might be dealing with multiple operations (update and possibly insert or delete)
-    const jobListing = await this.db
-      .updateTable("jobListing")
-      .set(data)
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-
-    // If the data contains locations, update them. Here, I'm assuming you might want to overwrite existing ones.
-    if (locations && locations.length > 0) {
-      // Delete existing locations
-      await this.db.deleteFrom("jobListingLocation").where("jobListingId", "=", id).execute()
-
-      // Insert new ones
-      await this.db
-        .insertInto("jobListingLocation")
-        .values(
-          locations.map((location) => ({
-            jobListingId: id,
-            location,
-          }))
-        )
-        .executeTakeFirstOrThrow()
-    }
-
-    return mapToJobListing2(jobListing, locations)
+  async update(id: JobListingId, data: JobListingWrite): Promise<JobListing | undefined> {
+    await this.db.updateTable("jobListing").set(data).where("id", "=", id).execute()
+    const now = this.getById(id)
+    return now
   }
 
   async getById(id: string): Promise<JobListing | undefined> {
     const jobListing = await this.db
       .selectFrom("jobListing")
-      .leftJoin("jobListingLocation", "jobListingLocation.jobListingId", "jobListing.id")
+      .leftJoin("jobListingLocationLink", "jobListingLocationLink.jobListingId", "jobListing.id")
+      .leftJoin("jobListingLocation", "jobListingLocation.id", "jobListingLocationLink.locationId")
       .selectAll("jobListing")
-      .select(sql<string>`COALESCE(json_agg(job_listing_location.location), '[]')`.as("locations"))
+      .select(
+        sql<
+          string[]
+        >`COALESCE(json_agg(job_listing_location.name) FILTER (WHERE job_listing_location.name IS NOT NULL), '[]')`.as(
+          "locations"
+        )
+      )
       .where("jobListing.id", "=", id)
       .groupBy("jobListing.id")
       .executeTakeFirstOrThrow()
-    return mapToJobListing1(jobListing)
+    return mapToJobListing(jobListing)
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<JobListing[]> {
     const query = this.db
       .selectFrom("jobListing")
-      .leftJoin("jobListingLocation", "jobListingLocation.jobListingId", "jobListing.id")
+      .leftJoin("jobListingLocationLink", "jobListingLocationLink.jobListingId", "jobListing.id")
+      .leftJoin("jobListingLocation", "jobListingLocation.id", "jobListingLocationLink.locationId")
       .selectAll("jobListing")
-      .select(sql<string>`COALESCE(json_agg(job_listing_location.location), '[]')`.as("locations"))
+      .select(
+        sql<
+          string[]
+        >`COALESCE(json_agg(job_listing_location.name) FILTER (WHERE job_listing_location.name IS NOT NULL), '[]')`.as(
+          "locations"
+        )
+      )
       .groupBy("jobListing.id")
       .limit(take)
+
     const ordered = orderedQuery(query, cursor)
     const jobListings = await ordered.execute()
-    return jobListings.map(mapToJobListing1)
-  }
 
-  async getAllLocations(): Promise<string[]> {
-    const locations = await this.db.selectFrom("jobListingLocation").distinctOn("location").select("location").execute()
-    return locations.flatMap((location) => location.location)
+    return jobListings.map(mapToJobListing)
   }
 
   async getAllEploymentTypes(): Promise<string[]> {
