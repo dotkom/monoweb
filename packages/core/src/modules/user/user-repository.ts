@@ -1,6 +1,7 @@
 import { Database } from "@dotkomonline/db"
 import { Kysely, Selectable } from "kysely"
 import { type User, UserId, UserSchema, UserWrite } from "@dotkomonline/types"
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => {
   return UserSchema.parse(payload)
@@ -11,6 +12,7 @@ export interface UserRepository {
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
   update(id: UserId, data: UserWrite): Promise<User | undefined>
+  search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -36,4 +38,17 @@ export class UserRepositoryImpl implements UserRepository {
       .executeTakeFirstOrThrow()
     return user ? mapToUser(user) : undefined
   }
+  async search(searchQuery: string, take: number, cursor?: Cursor) {
+    const query = orderedQuery(
+      this.db
+        .selectFrom("owUser")
+        .selectAll()
+        .where("id", "like", `%${searchQuery}%`)
+        .limit(take),
+      cursor
+    )
+    const users = await query.execute()
+    return users.map(mapToUser)
+  }
+
 }
