@@ -31,9 +31,8 @@ export class JobListingServiceImpl implements JobListingService {
 
   async create(payload: JobListingWrite): Promise<JobListing> {
     const { locations, ...rest } = payload
-    const jobListing = await this.jobListingRepository.create(rest, locations)
+    const jobListing = await this.jobListingRepository.create(rest)
     if (!jobListing) throw new Error("Failed to create jobListing")
-
 
     await this.jobListingLocationRepository.add(jobListing.id, locations)
 
