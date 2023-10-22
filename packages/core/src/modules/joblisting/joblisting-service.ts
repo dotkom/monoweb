@@ -34,7 +34,6 @@ export class JobListingServiceImpl implements JobListingService {
     const jobListing = await this.jobListingRepository.create(rest, locations)
     if (!jobListing) throw new Error("Failed to create jobListing")
 
-    console.log(jobListing.id)
 
     await this.jobListingLocationRepository.add(jobListing.id, locations)
 

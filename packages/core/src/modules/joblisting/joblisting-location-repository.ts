@@ -50,7 +50,6 @@ export class JobListingLocationRepositoryImpl implements JobListingLocationRepos
   }
 
   async add(id: JobListingId, locations: string[]): Promise<void> {
-    console.log("incoming locations", locations)
     await this.db.transaction().execute(async (transaction) => {
       for (const location of locations) {
         // Check if the location exists in the jobListingLocation table
