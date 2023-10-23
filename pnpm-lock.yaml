@@ -241,12 +241,6 @@ importers:
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
-      kysely:
-        specifier: ^0.26.3
-        version: 0.26.3
-      pg:
-        specifier: ^8.11.3
-        version: 8.11.3
     devDependencies:
       '@types/aws-lambda':
         specifier: ^8.10.122
@@ -254,9 +248,6 @@ importers:
       '@types/node':
         specifier: 18.18.1
         version: 18.18.1
-      '@types/pg':
-        specifier: ^8.10.7
-        version: 8.10.7
       tsup:
         specifier: ^7.2.0
         version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)

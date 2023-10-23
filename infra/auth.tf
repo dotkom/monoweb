@@ -13,13 +13,11 @@ resource "aws_route53_record" "null_record" {
 }
 
 module "post_signup_trigger_lambda" {
-  source              = "./modules/aws-docker-lambda"
-  ecr_repository_name = "dispatcher-auth-${terraform.workspace}"
-  function_name       = "dispatcher-auth-${terraform.workspace}"
-  execution_role_name = "DispatcherAuthExecuteRole${title(terraform.workspace)}"
-  environment_variables = {
-    DATABASE_URL = data.doppler_secrets.monoweb.map.DATABASE_URL
-  }
+  source                = "./modules/aws-docker-lambda"
+  ecr_repository_name   = "dispatcher-auth-${terraform.workspace}"
+  function_name         = "dispatcher-auth-${terraform.workspace}"
+  execution_role_name   = "DispatcherAuthExecuteRole${title(terraform.workspace)}"
+  environment_variables = local.aws_safe_doppler_secrets
 
   tags = {
     Project     = "monoweb"

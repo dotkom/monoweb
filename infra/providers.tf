@@ -39,7 +39,7 @@ provider "vercel" {
 
 variable "doppler_token" {
   description = "TF Variable for the doppler token"
-  type = string
+  type        = string
 }
 
 provider "doppler" {
