@@ -49,3 +49,11 @@ resource "aws_apigatewayv2_route" "lambda" {
   route_key = "POST /integrations/email"
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
+
+resource "aws_lambda_permission" "email_gateway" {
+  statement_id  = "APIGatewayExecuteLambda"
+  action        = "lambda:InvokeFunction"
+  principal     = "apigateway.amazonaws.com"
+  function_name = module.email_lambda.lambda_name
+  source_arn    = "${module.api_gateway.api_gateway_execution_arn}/*/*"
+}

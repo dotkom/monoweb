@@ -11,7 +11,7 @@ variable "function_timeout" {
 
 variable "environment_variables" {
   description = "Environment variables to attach to the lambda"
-  type        = object({})
+  type        = map(string)
   default     = {}
 }
 
