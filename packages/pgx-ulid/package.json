@@ -1,0 +1,8 @@
+{
+  "name": "@dotkomonline/pgx-ulid",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "docker:build": "sh ./build.sh"
+  }
+}
