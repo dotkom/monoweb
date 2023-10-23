@@ -18,7 +18,7 @@ module "post_signup_trigger_lambda" {
   function_name       = "dispatcher-auth-${terraform.workspace}"
   execution_role_name = "DispatcherAuthExecuteRole${title(terraform.workspace)}"
   environment_variables = {
-    DATABASE_URL = "invalid"
+    DATABASE_URL = data.doppler_secrets.monoweb.map.DATABASE_URL
   }
 
   tags = {

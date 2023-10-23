@@ -2,7 +2,8 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/dopplerhq/doppler" {
-  version = "1.3.0"
+  version     = "1.3.0"
+  constraints = "~> 1.3.0"
   hashes = [
     "h1:k3z7HPiqKLPlaCnFTKNWB+XV/q3rHxTjYcrQ7BRriLc=",
     "zh:1ef1786e923127e11c57e1c3d49ca7fad69f5cd53c10556d463e5d1449a4d285",
