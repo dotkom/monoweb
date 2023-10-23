@@ -1,0 +1,30 @@
+{
+  "name": "@dotkomonline/dispatcher-auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "docker run -p 9000:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=eu-north-1 dispatcher-auth:latest",
+    "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json",
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --fix .",
+    "docker:build": "docker build --platform linux/amd64 -t dispatcher-auth:latest -f Dockerfile ../..",
+    "docker:push:dev": "docker tag dispatcher-auth:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest",
+    "lambda:update:dev": "aws lambda update-function-code --function-name dispatcher-auth-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.433.0",
+    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/core": "workspace:*",
+    "@dotkomonline/types": "workspace:*",
+    "kysely": "^0.26.3",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.122",
+    "@types/node": "18.18.1",
+    "@types/pg": "^8.10.7",
+    "tsup": "^7.2.0",
+    "typescript": "5.2.2"
+  }
+}
