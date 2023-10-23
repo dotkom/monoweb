@@ -1,0 +1,21 @@
+--- Dockerfile	2023-10-23 14:48:44.776368461 +0200
++++ a.Dockerfile	2023-10-23 14:48:22.192308261 +0200
+@@ -14,6 +14,12 @@
+   zlib1g-dev
+ 
+ RUN apt-get install -y --no-install-recommends $build_deps pkg-config cmake
++RUN apt-get install -y locales locales-all
++ENV LC_ALL en_US.UTF-8
++ENV LANG en_US.UTF-8
++ENV LANGUAGE en_US.UTF-8
++RUN locale-gen
++RUN localedef --list-archive
+ 
+ WORKDIR /home/postgres
+ 
+@@ -47,5 +51,4 @@
+ 
+ USER postgres
+ 
+-ENV POSTGRES_HOST_AUTH_METHOD=trust
+ ENV USER=postgres
