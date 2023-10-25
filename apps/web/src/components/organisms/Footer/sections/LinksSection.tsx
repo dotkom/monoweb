@@ -16,7 +16,7 @@ export const LinksSection = ({ links }: LinksSectionProps) => (
     <ul className={section({ main: false })}>
       {links.second.map((link) => (
         <FooterLink label={link.label} href={link.href} key={link.href} />
-        ))}
+      ))}
     </ul>
   </div>
 )

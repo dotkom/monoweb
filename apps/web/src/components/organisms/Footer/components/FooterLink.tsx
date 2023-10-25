@@ -7,15 +7,11 @@ interface FooterLinkProps {
   href: string
 }
 
-export const FooterLink = ({ label, href, large = false }: FooterLinkProps) => 
+export const FooterLink = ({ label, href, large = false }: FooterLinkProps) => (
   <li className={link({ large })}>
-    <Link
-      href={href}
-    >
-      {label}
-    </Link>
-
+    <Link href={href}>{label}</Link>
   </li>
+)
 
 const link = cva("text-slate-12 cursor-pointer", {
   variants: {
