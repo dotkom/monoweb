@@ -24,7 +24,7 @@ module "cognito_domain_certificate" {
   }
 
   providers = {
-    aws.us-east-1 = aws.us-east-1
+    aws.regional = aws.us-east-1
   }
 }
 
