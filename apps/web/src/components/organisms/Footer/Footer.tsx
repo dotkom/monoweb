@@ -16,18 +16,18 @@ export interface FooterLinkType {
 
 const footerLinks: FooterLinkType = {
   main: [{
-    label: "PROFIL", href: "/profil"
+    label: "PROFIL", href: "/profile"
   }, {
     label: "HJEM", href: "/"
   }, {
     label: "KARRIERE", href: "/career"
   }, {
     label: "WIKI", href: "/wiki"
-  }, { label: "BIDRA", href: "" }],
+  }, { label: "BIDRA", href: "/contribute" }],
   second: [{
-    label: "Besøksadresse", href: "/profil"
+    label: "Besøksadresse", href: ""
   }, {
-    label: "Kontaktinformasjon", href: "/profil"
+    label: "Kontaktinformasjon", href: ""
   }, { label: "Post og faktura", href: "" }],
 }
 
