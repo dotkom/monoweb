@@ -1,18 +1,19 @@
 import React, { FC, useMemo, useState } from "react"
-import { useEventDetailsContext } from "./provider"
-import { Box, Title, Checkbox, Button, Skeleton } from "@mantine/core"
+import { Box, Checkbox, Skeleton, Title } from "@mantine/core"
+import { useReactTable, createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
 import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
-import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
-import { GenericTable } from "src/components/GenericTable"
 import { Attendee } from "@dotkomonline/types"
 import AttendanceQrReader from "src/components/qr-scanner/AttendanceQrReader"
+import { GenericTable } from "src/components/GenericTable"
+import { useEventDetailsContext } from "./provider"
 
 interface CustomCheckboxProps {
   userId: string
   attendanceId: string
   attended?: boolean
 }
+
 const CustomCheckbox = React.memo(({ attendanceId, userId, attended }: CustomCheckboxProps) => {
   const [isChecked, setIsChecked] = useState(attended)
   const updateEventAttendance = useUpdateEventAttendanceMutation()
@@ -32,7 +33,7 @@ CustomCheckbox.displayName = "attendanceToggle"
 
 export const EventAttendancePage: FC = () => {
   const { event } = useEventDetailsContext()
-  const { eventAttendance, isLoading, isSuccess, refetch } = useEventAttendanceGetQuery(event.id)
+  const { eventAttendance, isLoading } = useEventAttendanceGetQuery(event.id)
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(() => {
@@ -53,10 +54,11 @@ export const EventAttendancePage: FC = () => {
         ),
       }),
     ]
-  }, [isSuccess, eventAttendance])
+  }, [eventAttendance])
 
   const data = useMemo(() => {
-    return eventAttendance?.flatMap((attendance) => attendance.attendees) ?? []
+    const attendees = eventAttendance?.flatMap((attendance) => attendance.attendees) ?? []
+    return attendees.sort((a, b) => a.userId.localeCompare(b.userId))
   }, [eventAttendance])
 
   const table = useReactTable({
@@ -68,7 +70,7 @@ export const EventAttendancePage: FC = () => {
   return (
     <Box>
       <Title order={3}>Påmeldte</Title>
-      <AttendanceQrReader refetch={refetch} />
+      <AttendanceQrReader />
       {eventAttendance?.map((attendance) => (
         <Skeleton key={attendance.id} mb="sm" visible={isLoading}>
           <Title order={4}>

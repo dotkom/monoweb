@@ -1,26 +1,18 @@
 import { Button } from "@mantine/core"
-import { useState } from "react"
+import { FC, useState } from "react"
 import { useZxing } from "react-zxing"
 import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
 
-type AttendanceQrReaderProps = {
-  refetch: any
+interface ViewFinderProps {
+  data: string
+  resetResult: (value: string) => void
 }
 
-const ViewFinder = ({
-  data,
-  updateAttendance,
-  resetResult,
-  refetch,
-}: {
-  data: string
-  updateAttendance: any
-  resetResult: any
-  refetch: any
-}) => {
+const ViewFinder = ({ data, resetResult }: ViewFinderProps) => {
   if (data === "") {
     return null
   }
+  const updateAttendance1 = useUpdateEventAttendanceMutation()
   return (
     <div
       style={{
@@ -40,10 +32,8 @@ const ViewFinder = ({
         onClick={() => {
           const userId = data.split("/")[0]
           const attendanceId = data.split("/")[1]
-          console.log(userId, attendanceId)
-          updateAttendance.mutate({ userId, attendanceId, attended: true })
+          updateAttendance1.mutate({ userId, attendanceId, attended: true })
           resetResult("")
-          refetch()
         }}
       >
         Møtt
@@ -52,13 +42,12 @@ const ViewFinder = ({
   )
 }
 
-const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = ({ refetch }) => {
-  const updateAttendance = useUpdateEventAttendanceMutation()
+const AttendanceQrReader: FC = () => {
   const [result, setResult] = useState("")
   const [paused, setPaused] = useState(true)
 
   const { ref } = useZxing({
-    timeBetweenDecodingAttempts: 1000,
+    timeBetweenDecodingAttempts: 500,
     paused,
     onDecodeResult(result) {
       setResult(result.getText())
@@ -79,7 +68,7 @@ const AttendanceQrReader: React.FC<AttendanceQrReaderProps> = ({ refetch }) => {
         {!paused && (
           <div style={{ position: "relative", width: "50%" }}>
             <video ref={ref} style={{ width: "100%" }} />
-            <ViewFinder refetch={refetch} data={result} updateAttendance={updateAttendance} resetResult={setResult} />
+            <ViewFinder data={result} resetResult={setResult} />
           </div>
         )}
       </div>
