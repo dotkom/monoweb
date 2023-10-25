@@ -19,10 +19,10 @@ const MobileMenuContainer = () => {
   }, [open])
 
   return (
-    <div className="mx-auto flex md:hidden">
+    <div className="mx-auto flex items-center md:hidden">
       <Popover.Root onOpenChange={(val) => setOpen(val)}>
         <Popover.Trigger>
-          <div className="mt-3 flex justify-center">
+          <div className="mt-3 flex">
             <span className="float-left">
               {open ? (
                 <Icon icon={"tabler:chevron-down"} width={28} />
