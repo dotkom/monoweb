@@ -1,6 +1,5 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
-import { useEventAttendanceGetQuery } from "../queries/use-event-attendance-get-query"
 
 export const useUpdateEventAttendanceMutation = () => {
   const notification = useQueryNotification()

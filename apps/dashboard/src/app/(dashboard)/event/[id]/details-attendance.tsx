@@ -54,7 +54,7 @@ export const EventAttendancePage: FC = () => {
         ),
       }),
     ]
-  }, [eventAttendance])
+  }, [columnHelper])
 
   const data = useMemo(() => {
     const attendees = eventAttendance?.flatMap((attendance) => attendance.attendees) ?? []

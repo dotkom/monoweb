@@ -6,13 +6,13 @@ import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/us
 interface ViewFinderProps {
   data: string
   resetResult: (value: string) => void
+  updateAttendance: ReturnType<typeof useUpdateEventAttendanceMutation>
 }
 
-const ViewFinder = ({ data, resetResult }: ViewFinderProps) => {
+const ViewFinder = ({ data, resetResult, updateAttendance }: ViewFinderProps) => {
   if (data === "") {
     return null
   }
-  const updateAttendance1 = useUpdateEventAttendanceMutation()
   return (
     <div
       style={{
@@ -32,7 +32,7 @@ const ViewFinder = ({ data, resetResult }: ViewFinderProps) => {
         onClick={() => {
           const userId = data.split("/")[0]
           const attendanceId = data.split("/")[1]
-          updateAttendance1.mutate({ userId, attendanceId, attended: true })
+          updateAttendance.mutate({ userId, attendanceId, attended: true })
           resetResult("")
         }}
       >
@@ -43,6 +43,7 @@ const ViewFinder = ({ data, resetResult }: ViewFinderProps) => {
 }
 
 const AttendanceQrReader: FC = () => {
+  const updateAttendance = useUpdateEventAttendanceMutation()
   const [result, setResult] = useState("")
   const [paused, setPaused] = useState(true)
 
@@ -68,7 +69,7 @@ const AttendanceQrReader: FC = () => {
         {!paused && (
           <div style={{ position: "relative", width: "50%" }}>
             <video ref={ref} style={{ width: "100%" }} />
-            <ViewFinder data={result} resetResult={setResult} />
+            <ViewFinder data={result} resetResult={setResult} updateAttendance={updateAttendance} />
           </div>
         )}
       </div>
