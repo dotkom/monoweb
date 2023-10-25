@@ -36,7 +36,7 @@ const ViewFinder = ({ data, resetResult }: ViewFinderProps) => {
           resetResult("")
         }}
       >
-        Møtt
+        Registrer {data.split("/")[0]} som møtt
       </Button>
     </div>
   )
