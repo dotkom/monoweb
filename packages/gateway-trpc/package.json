@@ -23,7 +23,7 @@
   },
   "peerDependencies": {
     "next": "^13.5.4",
-    "next-auth": "^4.23.2"
+    "next-auth": "^4.24.3"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
