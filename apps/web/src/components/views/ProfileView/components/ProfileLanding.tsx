@@ -36,38 +36,35 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
 
 const Landing: NextPage<{ user: User }> = ({ user }) => {
   return (
-    <div className="my-8 w-full">
+    <div className="w-full">
       <div className="flex w-full flex-col">
-        <div className="ml-7 mt-4">
-          <p className="text-4xl">Profil</p>
-          <p className="opacity-70">Administrer dine kontoinnstillinger</p>
-          <FormInput name="Profil">
+        <p className="text-slate-10">Administrer dine kontoinnstillinger</p>
+        <FormInput name="Profil">
+          <div>
+            <Avatar></Avatar>
+            {user.name ?? "No registred name"}
+          </div>
+        </FormInput>
+        <FormInput name="Epost" addMore="Add Email Address">
+          <div>{user.email ?? "No registred email"}</div>
+        </FormInput>
+        <FormInput name="Telefon" addMore="Add Phone Number">
+          <div> (+47) 482 49 100</div>
+        </FormInput>
+        <FormInput name="Studie" clickable={false}>
+          <div className="space-y-8">
             <div>
-              <Avatar></Avatar>
-              {user.name ?? "No registred name"}
+              <p>Klassetrinn: </p>
             </div>
-          </FormInput>
-          <FormInput name="Epost" addMore="Add Email Address">
-            <div>{user.email ?? "No registred email"}</div>
-          </FormInput>
-          <FormInput name="Telefon" addMore="Add Phone Number">
-            <div> (+47) 482 49 100</div>
-          </FormInput>
-          <FormInput name="Studie" clickable={false}>
-            <div className="space-y-8">
-              <div>
-                <p>Klassetrinn: </p>
-              </div>
-              <div>
-                <p>Startår:</p>
-              </div>
-              <div className="flex items-center space-x-10 ">
-                <p>Studieløp:</p>
-                <StudentProgress year={0} />
-              </div>
+            <div>
+              <p>Startår:</p>
             </div>
-          </FormInput>
-        </div>
+            <div className="flex items-center space-x-10 ">
+              <p>Studieløp:</p>
+              <StudentProgress year={0} />
+            </div>
+          </div>
+        </FormInput>
       </div>
     </div>
   )
