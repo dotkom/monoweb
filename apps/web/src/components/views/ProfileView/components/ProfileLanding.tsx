@@ -1,8 +1,9 @@
-import { Icon, cn } from "@dotkomonline/ui"
+import { Button, Icon, cn } from "@dotkomonline/ui"
 import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
 import { NextPage } from "next"
 import { User } from "next-auth"
+import { useState } from "react"
 
 interface IFormInput {
   name: string
@@ -12,6 +13,28 @@ interface IFormInput {
 }
 
 const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = true }) => {
+  const [extraFields, setExtraFields] = useState<JSX.Element | null>(null);
+
+  const addExtraField = (fieldType: 'email' | 'tel', placeholder: string) => {
+    if (!extraFields) {
+      const newField = (
+        <div>
+          <input type={fieldType} className="my-2 border p-1 rounded" placeholder={placeholder} />
+          <Button color="blue" variant="solid" size="sm" className="ml-2">Legg til</Button>
+        </div>
+      );
+      setExtraFields(newField);
+    }
+  };
+
+  const handleClick = () => {
+    if (addMore === 'Legg til epostadresse') {
+      addExtraField('email', 'Ny epost');
+    } else if (addMore === 'Legg til telefonnummer') {
+      addExtraField('tel', 'Nytt telefonnummer');
+    }
+  };
+
   return (
     <div className="my-10 ">
       <div className="ml-4">
@@ -28,7 +51,10 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
           {children}
           {clickable ? <Icon icon="simple-line-icons:arrow-right" width={10} /> : ""}
         </div>
-        <p className="text-blue-10 text-sm hover:cursor-pointer ">{addMore ? "+ " + addMore : ""}</p>
+        <p className="text-blue-10 text-sm hover:cursor-pointer" onClick={handleClick}>
+          {addMore ? "+ " + addMore : ""}
+        </p>
+        {extraFields}
       </div>
     </div>
   )
@@ -44,13 +70,13 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
           <FormInput name="Profil">
             <div>
               <Avatar></Avatar>
-              {user.name ?? "No registred name"}
+              {user.name ?? "Ingen registrerte navn"}
             </div>
           </FormInput>
-          <FormInput name="Epost" addMore="Add Email Address">
-            <div>{user.email ?? "No registred email"}</div>
+          <FormInput name="Epost" addMore="Legg til epostadresse">
+            <div>{user.email ?? "Ingen registrerte eposter"}</div>
           </FormInput>
-          <FormInput name="Telefon" addMore="Add Phone Number">
+          <FormInput name="Telefon" addMore="Legg til telefonnummer">
             <div> (+47) 482 49 100</div>
           </FormInput>
           <FormInput name="Studie" clickable={false}>

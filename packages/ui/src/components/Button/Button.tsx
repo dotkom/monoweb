@@ -4,7 +4,7 @@ import React, { forwardRef } from "react"
 import { cn } from "../../utils"
 import { Icon } from "../Icon"
 
-type Color = "blue" | "red" | "amber" | "slate" | "green"
+type Color = "blue" | "red" | "amber" | "slate" | "green" | "blueDark"
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonStyles> {
   color?: Color

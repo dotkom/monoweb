@@ -3,13 +3,8 @@ import { FC, useState, useEffect } from "react"
 import PersonvernOption from "./ProfileToggleOption"
 
 export const personList = [
-  { key: 0, optionsText: "Brukerprofil synlig for andre brukere", state: false },
-  { key: 1, optionsText: "Vis brukernavn i brukerprofil", state: false },
-  { key: 2, optionsText: "Vis epostadresse i brukerprofil", state: false },
-  { key: 3, optionsText: "Vis telefonnummer i brukerprofil", state: false },
-  { key: 4, optionsText: "Vis adresse i brukerprofil", state: false },
-  { key: 5, optionsText: "Synlig på offentlige påmeldingslister", state: false },
-  { key: 6, optionsText: "Tillate at bilder av deg på offentlige arrangementer kan legges ut", state: false },
+  { key: 0, optionsText: "Synlig på offentlige påmeldingslister", state: false },
+  { key: 1, optionsText: "Tillate at bilder av deg på offentlige arrangementer kan legges ut", state: false },
 ]
 
 function PrivacyModule() {
