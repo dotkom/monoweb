@@ -50,5 +50,4 @@ export class UserRepositoryImpl implements UserRepository {
     const users = await query.execute()
     return users.map(mapToUser)
   }
-
 }

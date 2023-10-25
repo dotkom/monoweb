@@ -11,10 +11,11 @@ export const userRouter = t.router({
   get: publicProcedure.input(z.string()).query(({ input, ctx }) => {
     return ctx.userService.getUser(input)
   }),
-  search: publicProcedure.input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
-  .query(({ input, ctx }) => {
-    return ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)
-  }),
+  search: publicProcedure
+    .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
+    .query(({ input, ctx }) => {
+      return ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)
+    }),
   edit: protectedProcedure
     .input(
       z.object({

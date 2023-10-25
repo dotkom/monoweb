@@ -1,14 +1,14 @@
-import React, { FC } from "react"
+import React from "react"
 import { Autocomplete } from "@mantine/core"
 
-interface GenericSearchProps {
+interface GenericSearchProps<T> {
   onSearch: (query: string) => void
-  onSubmit: (item: any) => void
-  items: any[]
-  dataMapper: (item: any) => string
+  onSubmit: (item: T) => void
+  items: T[]
+  dataMapper: (item: T) => string
 }
 
-const GenericSearch: FC<GenericSearchProps> = ({ onSearch, onSubmit, items, dataMapper }) => {
+const GenericSearch = <T,>({ onSearch, onSubmit, items, dataMapper }: GenericSearchProps<T>) => {
   const handleChange = (value: string) => {
     if (value !== "") {
       onSearch(value)
