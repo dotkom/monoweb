@@ -11,34 +11,32 @@ import AttendanceQrReader from "src/components/qr-scanner/AttendanceQrReader"
 interface CustomCheckboxProps {
   userId: string
   attendanceId: string
-  defaultChecked?: boolean
+  attended?: boolean
 }
-const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: CustomCheckboxProps) => {
-  const updateAttendance = useUpdateEventAttendanceMutation()
+const CustomCheckbox = React.memo(({ attendanceId, userId, attended }: CustomCheckboxProps) => {
+  const [isChecked, setIsChecked] = useState(attended)
+  const updateEventAttendance = useUpdateEventAttendanceMutation()
 
-  const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
-    updateAttendance.mutate({ userId, attendanceId, attended: currentCheckedState })
+  const handleCheckboxChange = async () => {
+    setIsChecked(!isChecked)
+    await updateEventAttendance.mutate({
+      attendanceId,
+      userId,
+      attended: !isChecked,
+    })
   }
-  return (
-    <Checkbox
-      onChange={(event) => {
-        toggleAttendance(userId, attendanceId, event.currentTarget.checked)
-      }}
-      defaultChecked={defaultChecked}
-    />
-  )
+  return <Checkbox onClick={handleCheckboxChange} checked={isChecked} />
 })
 
 CustomCheckbox.displayName = "attendanceToggle"
 
 export const EventAttendancePage: FC = () => {
-  console.log("rerendering")
   const { event } = useEventDetailsContext()
-  const { eventAttendance, isLoading, refetch } = useEventAttendanceGetQuery(event.id)
+  const { eventAttendance, isLoading, isSuccess, refetch } = useEventAttendanceGetQuery(event.id)
 
   const columnHelper = createColumnHelper<Attendee>()
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    return [
       columnHelper.accessor("userId", {
         header: () => "Bruker",
       }),
@@ -47,17 +45,19 @@ export const EventAttendancePage: FC = () => {
         header: () => "Møtt",
         cell: (info) => (
           <CustomCheckbox
+            key={info.getValue().userId}
             userId={info.getValue().userId}
             attendanceId={info.getValue().attendanceId}
-            defaultChecked={info.getValue().attended}
+            attended={info.getValue().attended}
           />
         ),
       }),
-    ],
-    [eventAttendance]
-  )
+    ]
+  }, [isSuccess, eventAttendance])
 
-  const data = useMemo(() => eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [], [isLoading])
+  const data = useMemo(() => {
+    return eventAttendance?.flatMap((attendance) => attendance.attendees) ?? []
+  }, [eventAttendance])
 
   const table = useReactTable({
     data: data,

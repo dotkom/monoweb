@@ -1,8 +1,10 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
+import { useEventAttendanceGetQuery } from "../queries/use-event-attendance-get-query"
 
 export const useUpdateEventAttendanceMutation = () => {
   const notification = useQueryNotification()
+  const utils = trpc.useContext()
   return trpc.event.attendance.registerAttendance.useMutation({
     onMutate: () => {
       notification.loading({
@@ -15,6 +17,7 @@ export const useUpdateEventAttendanceMutation = () => {
         title: "Oppmøte oppdatert",
         message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"} for bruker ${data.userId}.`,
       })
+      utils.event.attendance.get.invalidate()
     },
     onError: (err) => {
       notification.fail({
