@@ -43,7 +43,7 @@ export class UserRepositoryImpl implements UserRepository {
       this.db
         .selectFrom("owUser")
         .selectAll()
-        .where(sql`id::text`, "like", `%${searchQuery}%`)
+        .where(sql`id::text`, "ilike", `%${searchQuery}%`)
         .limit(take),
       cursor
     )

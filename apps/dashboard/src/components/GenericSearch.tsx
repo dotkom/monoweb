@@ -10,13 +10,11 @@ interface GenericSearchProps<T> {
 
 const GenericSearch = <T,>({ onSearch, onSubmit, items, dataMapper }: GenericSearchProps<T>) => {
   const handleChange = (value: string) => {
-    if (value !== "") {
-      onSearch(value)
+    onSearch(value)
 
-      const selectedItem = items.find((item) => dataMapper(item) === value)
-      if (selectedItem) {
-        onSubmit(selectedItem)
-      }
+    const selectedItem = items.find((item) => dataMapper(item) === value)
+    if (selectedItem) {
+      onSubmit(selectedItem)
     }
   }
 
