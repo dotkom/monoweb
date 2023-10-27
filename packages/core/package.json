@@ -28,7 +28,7 @@
     "@dotkomonline/types": "workspace:*",
     "@types/node": "^18.18.3",
     "@vitest/ui": "^0.34.6",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
