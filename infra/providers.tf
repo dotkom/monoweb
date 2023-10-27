@@ -37,3 +37,11 @@ provider "vercel" {
   team = "dotkom"
 }
 
+variable "doppler_token" {
+  description = "TF Variable for the doppler token"
+  type        = string
+}
+
+provider "doppler" {
+  doppler_token = var.doppler_token
+}
