@@ -1,6 +1,7 @@
 locals {
-  vengeful_project_name = "vengeful-vineyard-${terraform.workspace}"
-  vengeful_domain_name  = "${terraform.workspace}.redwine.online.ntnu.no"
+  vengeful_project_name    = "vengeful-vineyard-${terraform.workspace}"
+  vengeful_domain_name     = "${terraform.workspace}.redwine.online.ntnu.no"
+  vengeful_cdn_domain_name = "${terraform.workspace}.redwine-static.online.ntnu.no"
 }
 
 module "vengeful_database" {
@@ -79,4 +80,57 @@ resource "aws_lambda_permission" "vengeful_backend_gateway_lambda" {
   principal     = "apigateway.amazonaws.com"
   function_name = module.vengeful_lambda.lambda_name
   source_arn    = "${module.vengeful_gateway_proxy.api_gateway_execution_arn}/*/*"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Define static bucket for frontend Vite app
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "vengeful_cdn_domain_certificate" {
+  source = "./modules/aws-acm-certificate"
+
+  domain  = local.vengeful_cdn_domain_name
+  zone_id = local.zone_id
+
+  tags = {
+    Project     = "vengeful-vineyard"
+    Environment = terraform.workspace
+  }
+
+  providers = {
+    aws.regional = aws.us-east-1
+  }
+}
+
+module "vengeful_cdn_bucket" {
+  source = "./modules/aws-s3-public-bucket"
+
+  certificate_arn = module.vengeful_cdn_domain_certificate.certificate_arn
+  domain_name     = local.vengeful_cdn_domain_name
+  zone_id         = local.zone_id
+
+  tags = {
+    Project     = "vengeful-vineyard"
+    Environment = terraform.workspace
+  }
+
+  depends_on = [module.vengeful_cdn_domain_certificate]
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Connect static bucket CDN to API Gateway
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_apigatewayv2_integration" "vengeful_cdn" {
+  api_id               = module.vengeful_gateway_proxy.api_gateway_id
+  integration_type     = "HTTP_PROXY"
+  integration_method   = "GET"
+  integration_uri      = "https://${module.vengeful_cdn_bucket.domain_name}/index.html"
+  passthrough_behavior = "WHEN_NO_MATCH"
+}
+
+resource "aws_apigatewayv2_route" "vengeful_cdn" {
+  api_id    = module.vengeful_gateway_proxy.api_gateway_id
+  route_key = "$default"
+  target    = "integrations/${aws_apigatewayv2_integration.vengeful_cdn.id}"
 }
