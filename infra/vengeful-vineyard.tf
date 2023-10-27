@@ -17,7 +17,8 @@ module "vengeful_lambda" {
   function_name         = "vengeful-vineyard-${terraform.workspace}"
   execution_role_name   = "VengefulVineytardExecutionRole${title(terraform.workspace)}"
   iam_inline_policies   = []
-  environment_variables = {}
+  environment_variables = local.vengeful_aws_safe_doppler_secrets
+  memory                = 1024
 
   tags = {
     Project     = "vengeful-vineyard"
