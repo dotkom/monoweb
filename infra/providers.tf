@@ -45,3 +45,5 @@ variable "doppler_token" {
 provider "doppler" {
   doppler_token = var.doppler_token
 }
+
+provider "neon" {}
