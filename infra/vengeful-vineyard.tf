@@ -125,7 +125,7 @@ resource "aws_apigatewayv2_integration" "vengeful_cdn" {
   api_id               = module.vengeful_gateway_proxy.api_gateway_id
   integration_type     = "HTTP_PROXY"
   integration_method   = "GET"
-  integration_uri      = "https://${module.vengeful_cdn_bucket.domain_name}/index.html"
+  integration_uri      = "https://${module.vengeful_cdn_bucket.domain_name}"
   passthrough_behavior = "WHEN_NO_MATCH"
 }
 
