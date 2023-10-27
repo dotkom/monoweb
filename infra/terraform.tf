@@ -21,7 +21,7 @@ terraform {
       version = "~> 1.3.0"
     }
     neon = {
-      source = "dotkom/neon"
+      source  = "dotkom/neon"
       version = "~> 0.1.1"
     }
   }
