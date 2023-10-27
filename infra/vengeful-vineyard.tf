@@ -16,7 +16,7 @@ module "vengeful_lambda" {
 
   ecr_repository_name   = "vengeful-vineyard-${terraform.workspace}"
   function_name         = "vengeful-vineyard-${terraform.workspace}"
-  execution_role_name   = "VengefulVineytardExecutionRole${title(terraform.workspace)}"
+  execution_role_name   = "VengefulVineyardExecutionRole${title(terraform.workspace)}"
   iam_inline_policies   = []
   environment_variables = local.vengeful_aws_safe_doppler_secrets
   memory                = 1024
