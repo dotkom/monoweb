@@ -586,8 +586,8 @@ importers:
         specifier: ^13.5.4
         version: 13.5.4(react-dom@18.2.0)(react@18.2.0)
       stripe:
-        specifier: ^13.9.0
-        version: 13.9.0
+        specifier: ^13.11.0
+        version: 13.11.0
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -695,8 +695,8 @@ importers:
         specifier: ^13.5.4
         version: 13.5.4(react-dom@18.2.0)(react@18.2.0)
       stripe:
-        specifier: ^13.9.0
-        version: 13.9.0
+        specifier: ^13.11.0
+        version: 13.11.0
     devDependencies:
       '@vitest/ui':
         specifier: ^0.34.6
@@ -15692,8 +15692,8 @@ packages:
       acorn: 8.10.0
     dev: true
 
-  /stripe@13.9.0:
-    resolution: {integrity: sha512-sQAqodCvaw/iYWauHHdOWlFGj0oZj/3A51zs4rG5PN3SUJUFSSjtnbc9q5Djpls0iz3nXz2UwjzAdKHVP4dVqQ==}
+  /stripe@13.11.0:
+    resolution: {integrity: sha512-yPxVJxUzP1QHhHeFnYjJl48QwDS1+5befcL7ju7+t+i88D5r0rbsL+GkCCS6zgcU+TiV5bF9eMGcKyJfLf8BZQ==}
     engines: {node: '>=12.*'}
     dependencies:
       '@types/node': 18.18.4
