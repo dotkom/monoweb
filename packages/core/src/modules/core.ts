@@ -30,10 +30,10 @@ import { CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { CompanyEventServiceImpl } from "./company/company-event-service"
 import { EventCommitteeServiceImpl } from "./event/event-committee-service"
 import { EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
-import { JobListingRepositoryImpl } from "./joblisting/joblisting-repository"
-import { JobListingServiceImpl } from "./joblisting/joblisting-service"
-import { JobListingLocationRepositoryImpl } from "./joblisting/joblisting-location-repository"
-import { JobListingLocationLinkRepositoryImpl } from "./joblisting/joblisting-location-link-repository"
+import { JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
+import { JobListingServiceImpl } from "./job-listing/job-listing-service"
+import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-location-repository"
+import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 

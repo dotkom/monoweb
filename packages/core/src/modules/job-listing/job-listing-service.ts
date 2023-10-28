@@ -1,9 +1,9 @@
 import { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
-import { JobListingRepository } from "./joblisting-repository"
-import { JobListingLocationRepository, LocationSelect } from "./joblisting-location-repository"
-import { JobListingLocationLinkRepository } from "./joblisting-location-link-repository"
+import { JobListingRepository } from "./job-listing-repository"
+import { JobListingLocationRepository, LocationSelect } from "./job-listing-location-repository"
+import { JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 
 export interface JobListingService {
   get(id: JobListingId): Promise<JobListing>
@@ -91,11 +91,11 @@ export class JobListingServiceImpl implements JobListingService {
       .map((x) => x?.id) as string[]
   }
 
-  private getNewLocationNames(providedLocations: string[], jobListing: any): string[] {
+  private getNewLocationNames(providedLocations: string[], jobListing: JobListing): string[] {
     return providedLocations.filter((x) => !jobListing.locations.includes(x))
   }
 
-  private getNewLocationIds(newLocationNames: string[], allLocations: any[]): string[] {
+  private getNewLocationIds(newLocationNames: string[], allLocations: LocationSelect[]): string[] {
     return newLocationNames
       .map((name) => allLocations.find((x) => x.name === name)?.id || null)
       .filter((x) => x !== undefined) as string[]
@@ -103,7 +103,7 @@ export class JobListingServiceImpl implements JobListingService {
 
   private validateLocations(
     currentLocationIds: string[],
-    jobListing: any,
+    jobListing: JobListing,
     newLocationIds: string[],
     newLocationNames: string[]
   ) {
@@ -115,7 +115,11 @@ export class JobListingServiceImpl implements JobListingService {
     }
   }
 
-  private determineLocationChanges(currentLocationIds: string[], providedLocations: string[], allLocations: any[]) {
+  private determineLocationChanges(
+    currentLocationIds: string[],
+    providedLocations: string[],
+    allLocations: LocationSelect[]
+  ) {
     const providedLocationIds = providedLocations.map((name) => allLocations.find((x) => x.name === name)?.id || null)
     const toRemove = currentLocationIds.filter((id) => !providedLocationIds.includes(id))
     const toAdd = providedLocationIds.filter((id) => id === null || !currentLocationIds.includes(id))
@@ -124,8 +128,8 @@ export class JobListingServiceImpl implements JobListingService {
 
   private async handleLocationChanges(
     toRemove: string[],
-    toAdd: string[],
-    jobListing: any,
+    toAdd: (string | null)[],
+    jobListing: JobListing,
     newLocationNames: string[]
   ) {
     for (const locationId of toRemove) {

@@ -1,6 +1,6 @@
 import { FC } from "react"
-import { useJobListingWriteForm } from "src/app/(dashboard)/joblisting/write-form"
-import { useCreateJobListingMutation } from "../mutations/use-create-joblisting-mutation"
+import { useJobListingWriteForm } from "src/app/(dashboard)/job-listing/write-form"
+import { useCreateJobListingMutation } from "../mutations/use-create-job-listing-mutation"
 import { ContextModalProps, modals } from "@mantine/modals"
 
 export const CreateJobListingModal: FC<ContextModalProps> = ({ context, id }) => {

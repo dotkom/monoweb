@@ -3,9 +3,9 @@
 import { Icon } from "@iconify/react"
 import { Button, ButtonGroup, Card, Group, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "../../../components/GenericTable"
-import { useCreateJobListingModal } from "../../../modules/joblisting/modals/create-joblisting-modal"
-import { useJobListingAllQuery } from "../../../modules/joblisting/queries/use-joblisting-all-query"
-import { useJobListingTable } from "../../../modules/joblisting/use-joblisting-table"
+import { useCreateJobListingModal } from "../../../modules/job-listing/modals/create-job-listing-modal"
+import { useJobListingAllQuery } from "../../../modules/job-listing/queries/use-job-listing-all-query"
+import { useJobListingTable } from "../../../modules/job-listing/use-job-listing-table"
 
 export default function JobListingPage() {
   const { jobListings, isLoading: isJobListingsLoading } = useJobListingAllQuery()
