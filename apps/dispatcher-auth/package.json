@@ -19,7 +19,7 @@
     "@dotkomonline/types": "workspace:*"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.122",
+    "@types/aws-lambda": "^8.10.125",
     "@types/node": "18.18.1",
     "tsup": "^7.2.0",
     "typescript": "5.2.2"
