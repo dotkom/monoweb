@@ -21,13 +21,10 @@ export const useJobListingTable = ({ data }: Props) => {
         header: () => "Bedrift",
         cell: (info) => companies.find((company) => company.id === info.row.original.companyId)?.name ?? "Ukjent",
       }),
-      // title
       columnHelper.accessor("title", {
         header: () => "Tittel",
         cell: (info) => info.getValue(),
       }),
-      // active to
-      // example: 19. oktober 2023 23:54 (23 timer, 50 minutter)
       columnHelper.accessor("end", {
         header: () => "Aktiv til",
         cell: (info) => {

@@ -33,6 +33,7 @@ import { EventCommitteeRepositoryImpl } from "./event/event-committee-repository
 import { JobListingRepositoryImpl } from "./joblisting/joblisting-repository"
 import { JobListingServiceImpl } from "./joblisting/joblisting-service"
 import { JobListingLocationRepositoryImpl } from "./joblisting/joblisting-location-repository"
+import { JobListingLocationLinkRepositoryImpl } from "./joblisting/joblisting-location-link-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -45,6 +46,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository = new JobListingRepositoryImpl(db)
   const jobListingLocationRepository = new JobListingLocationRepositoryImpl(db)
+  const jobListingLocationLinkRepository = new JobListingLocationLinkRepositoryImpl(db)
   const companyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository = new EventCompanyRepositoryImpl(db)
@@ -69,7 +71,11 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const eventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const attendanceService = new AttendanceServiceImpl(attendanceRepository)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
-  const jobListingService = new JobListingServiceImpl(jobListingRepository, jobListingLocationRepository)
+  const jobListingService = new JobListingServiceImpl(
+    jobListingRepository,
+    jobListingLocationRepository,
+    jobListingLocationLinkRepository
+  )
   const companyService = new CompanyServiceImpl(companyRepository)
   const companyEventService = new CompanyEventServiceImpl(companyEventRepository)
   const eventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)

@@ -12,6 +12,8 @@ export const formatDate = (date: Date) => {
   return dateFormatter.format(date)
 }
 
+// example: 19. oktober 2023 23:54 (23 timer, 50 minutter)
+// writes two metrics, e.g. 1 year, 2 months or 3 weeks, 4 days
 export function formatRemainingTime(targetDate: Date) {
   const now = Date.now()
   const remaining = targetDate.getTime() - now

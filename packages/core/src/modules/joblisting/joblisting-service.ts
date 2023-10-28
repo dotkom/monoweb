@@ -2,7 +2,8 @@ import { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
 import { JobListingRepository } from "./joblisting-repository"
-import { JobListingLocationRepository } from "./joblisting-location-repository"
+import { JobListingLocationRepository, LocationSelect } from "./joblisting-location-repository"
+import { JobListingLocationLinkRepository } from "./joblisting-location-link-repository"
 
 export interface JobListingService {
   get(id: JobListingId): Promise<JobListing>
@@ -15,7 +16,8 @@ export interface JobListingService {
 export class JobListingServiceImpl implements JobListingService {
   constructor(
     private readonly jobListingRepository: JobListingRepository,
-    private readonly jobListingLocationRepository: JobListingLocationRepository
+    private readonly jobListingLocationRepository: JobListingLocationRepository,
+    private readonly jobListingLocationLinkRepository: JobListingLocationLinkRepository
   ) {}
 
   async get(id: JobListingId): Promise<JobListing> {
@@ -31,10 +33,28 @@ export class JobListingServiceImpl implements JobListingService {
 
   async create(payload: JobListingWrite): Promise<JobListing> {
     const { locations, ...rest } = payload
+
     const jobListing = await this.jobListingRepository.create(rest)
     if (!jobListing) throw new Error("Failed to create jobListing")
 
-    await this.jobListingLocationRepository.add(jobListing.id, locations)
+    const allLocations = await this.jobListingLocationRepository.getAll()
+
+    for (const location of locations) {
+      let locationId
+
+      const existingLocation = allLocations.find((x) => x.name === location)
+      if (existingLocation) {
+        locationId = existingLocation.id
+      } else {
+        const newLocation = await this.jobListingLocationRepository.add({ name: location })
+        locationId = newLocation.id
+      }
+
+      await this.jobListingLocationLinkRepository.add({
+        jobListingId: jobListing.id,
+        locationId: locationId,
+      })
+    }
 
     return {
       ...jobListing,
@@ -47,23 +67,86 @@ export class JobListingServiceImpl implements JobListingService {
 
     const jobListing = await this.jobListingRepository.update(id, rest)
 
-    if (!jobListing) {
-      throw new NotFoundError(`Could not update JobListing(${id})`)
-    }
+    const allLocations = await this.jobListingLocationRepository.getAll()
 
-    const toRemove = jobListing.locations.filter((x) => !locations.includes(x))
-    const toAdd = locations.filter((x) => !jobListing.locations.includes(x))
+    const currentLocationIds = this.getCurrentLocationIds(jobListing, allLocations)
+    const newLocationNames = this.getNewLocationNames(locations, jobListing)
+    const newLocationIds = this.getNewLocationIds(newLocationNames, allLocations)
 
-    await this.jobListingLocationRepository.remove(id, toRemove)
-    await this.jobListingLocationRepository.add(id, toAdd)
+    this.validateLocations(currentLocationIds, jobListing, newLocationIds, newLocationNames)
+
+    const { toRemove, toAdd } = this.determineLocationChanges(currentLocationIds, locations, allLocations)
+    await this.handleLocationChanges(toRemove, toAdd, jobListing, newLocationNames)
 
     return {
       ...jobListing,
       locations,
     }
   }
+
+  private getCurrentLocationIds(jobListing: JobListing, allLocations: LocationSelect[]): string[] {
+    return jobListing.locations
+      .map((loc) => allLocations.find((x) => x.name === loc))
+      .filter((x) => x !== undefined)
+      .map((x) => x?.id) as string[]
+  }
+
+  private getNewLocationNames(providedLocations: string[], jobListing: any): string[] {
+    return providedLocations.filter((x) => !jobListing.locations.includes(x))
+  }
+
+  private getNewLocationIds(newLocationNames: string[], allLocations: any[]): string[] {
+    return newLocationNames
+      .map((name) => allLocations.find((x) => x.name === name)?.id || null)
+      .filter((x) => x !== undefined) as string[]
+  }
+
+  private validateLocations(
+    currentLocationIds: string[],
+    jobListing: any,
+    newLocationIds: string[],
+    newLocationNames: string[]
+  ) {
+    if (
+      currentLocationIds.length !== jobListing.locations.length ||
+      newLocationIds.length !== newLocationNames.length
+    ) {
+      throw new NotFoundError(`Could not update JobListing(${jobListing.id})`)
+    }
+  }
+
+  private determineLocationChanges(currentLocationIds: string[], providedLocations: string[], allLocations: any[]) {
+    const providedLocationIds = providedLocations.map((name) => allLocations.find((x) => x.name === name)?.id || null)
+    const toRemove = currentLocationIds.filter((id) => !providedLocationIds.includes(id))
+    const toAdd = providedLocationIds.filter((id) => id === null || !currentLocationIds.includes(id))
+    return { toRemove, toAdd }
+  }
+
+  private async handleLocationChanges(
+    toRemove: string[],
+    toAdd: string[],
+    jobListing: any,
+    newLocationNames: string[]
+  ) {
+    for (const locationId of toRemove) {
+      await this.jobListingLocationLinkRepository.remove({ jobListingId: jobListing.id, locationId: locationId })
+    }
+
+    for (let i = 0; i < toAdd.length; i++) {
+      const locationId = toAdd[i]
+      if (!locationId) {
+        const newLocation = await this.jobListingLocationRepository.add({
+          name: newLocationNames[i],
+        })
+        await this.jobListingLocationLinkRepository.add({ jobListingId: jobListing.id, locationId: newLocation.id })
+      } else {
+        await this.jobListingLocationLinkRepository.add({ jobListingId: jobListing.id, locationId: locationId })
+      }
+    }
+  }
+
   async getLocations(): Promise<string[]> {
     const locations = await this.jobListingLocationRepository.getAll()
-    return locations
+    return locations.map((x) => x.name)
   }
 }
