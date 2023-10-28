@@ -243,7 +243,7 @@ importers:
         version: link:../../packages/types
     devDependencies:
       '@types/aws-lambda':
-        specifier: ^8.10.122
+        specifier: ^8.10.125
         version: 8.10.125
       '@types/node':
         specifier: 18.18.1
@@ -268,7 +268,7 @@ importers:
         version: 3.22.4
     devDependencies:
       '@types/aws-lambda':
-        specifier: ^8.10.122
+        specifier: ^8.10.125
         version: 8.10.125
       '@types/node':
         specifier: 18.18.1
