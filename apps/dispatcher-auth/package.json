@@ -13,7 +13,7 @@
     "lambda:update:dev": "aws lambda update-function-code --function-name dispatcher-auth-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.433.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.438.0",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/types": "workspace:*"

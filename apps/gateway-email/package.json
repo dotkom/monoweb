@@ -13,7 +13,7 @@
     "lambda:update:dev": "aws lambda update-function-code --function-name gateway-email-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.421.0",
+    "@aws-sdk/client-ses": "^3.438.0",
     "@dotkomonline/emails": "workspace:*",
     "zod": "^3.22.2"
   },
