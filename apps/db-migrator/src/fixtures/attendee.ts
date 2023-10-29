@@ -8,6 +8,16 @@ export const attendees: Insertable<Database["attendee"]>[] = [
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     userId: "01HB64XF7WZZZZZZZZZZZZZZZZ",
     attendanceId: "01HB64JAPWJBMZN3HN6RF5GPVF",
+    extrasChoice: JSON.stringify([
+      {
+        id: "1",
+        choice: "1",
+      },
+      {
+        id: "2",
+        choice: "3",
+      },
+    ]),
   },
   {
     id: "01HB64JAPXD30K1WYK53HYFXR2",
@@ -15,6 +25,16 @@ export const attendees: Insertable<Database["attendee"]>[] = [
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     userId: "01HB64XF7WXBPGVQKFKFGJBH4D",
     attendanceId: "01HB64JAPWJBMZN3HN6RF5GPVF",
+    extrasChoice: JSON.stringify([
+      {
+        id: "1",
+        choice: "2",
+      },
+      {
+        id: "2",
+        choice: "3",
+      },
+    ]),
   },
   {
     id: "01HB64JAPW4Q0XR46MK831NTB2",

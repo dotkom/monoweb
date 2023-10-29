@@ -18,6 +18,44 @@ export const events: Insertable<Database["event"]>[] = [
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Hovedbygget",
     waitlist: null,
+    extrasChoice: JSON.stringify([
+      {
+        id: "1",
+        name: "Hva vil du ha til mat?",
+        choices: [
+          {
+            id: "1",
+            name: "Pizza",
+          },
+          {
+            id: "2",
+            name: "Burger",
+          },
+          {
+            id: "3",
+            name: "Salad",
+          },
+        ],
+      },
+      {
+        id: "2",
+        name: "Når vil du ha mat?",
+        choices: [
+          {
+            id: "1",
+            name: "Når jeg kommer",
+          },
+          {
+            id: "2",
+            name: "Halvveis i arrangementet",
+          },
+          {
+            id: "3",
+            name: "Til slutt",
+          },
+        ],
+      },
+    ]),
   },
   {
     id: "01HB64TWZK1N8ABMH8JAE12101",

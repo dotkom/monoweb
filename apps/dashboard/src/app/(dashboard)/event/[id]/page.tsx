@@ -8,6 +8,7 @@ import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { useRouter } from "next/navigation"
 import { EventAttendancePage } from "./details-attendance"
+import { ExtrasPage } from "./extras-page"
 
 const EventDetailsCompanies: FC = () => {
   return <h1>Bedrifter</h1>
@@ -47,6 +48,12 @@ const SIDEBAR_LINKS = [
     label: "Påmelding",
     slug: "attendance",
     component: EventAttendancePage,
+  },
+  {
+    icon: "tabler:calendar-event",
+    label: "Valg",
+    slug: "extras",
+    component: ExtrasPage,
   },
 ]
 

@@ -3,6 +3,8 @@ import { EventCommitteeRepositoryImpl } from "./event-committee-repository"
 
 export interface EventCommitteeService {
   getCommitteesForEvent(eventId: EventId): Promise<Committee[]>
+  getEventCommitteesForEvent(eventId: EventId): Promise<EventCommittee[]>
+  setEventCommittees(eventId: EventId, committees: CommitteeId[]): Promise<EventCommittee[]>
 }
 
 export class EventCommitteeServiceImpl implements EventCommitteeService {
@@ -18,7 +20,7 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
     return eventCommittees
   }
 
-  async setEventCommittees(eventId: EventId, committees: CommitteeId[]): Promise<void> {
+  async setEventCommittees(eventId: EventId, committees: CommitteeId[]): Promise<EventCommittee[]> {
     // Fetch all committees associated with the event
     const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId)
     const currentCommitteeIds = eventCommittees.map((committee) => committee.committeeId)
@@ -37,5 +39,15 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
 
     // Execute all promises in parallel
     await Promise.all([...removePromises, ...addPromises])
+
+    // After removal and addition, we can identify the remaining committees
+    const remainingCommittees = currentCommitteeIds
+      .filter((committeeId) => !committeesToRemove.includes(committeeId)) // Remove the committees to remove
+      .concat(committeesToAdd) // Add the committees to add
+
+    return remainingCommittees.map((committeeId) => ({
+      eventId,
+      committeeId,
+    }))
   }
 }

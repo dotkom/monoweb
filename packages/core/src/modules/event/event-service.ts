@@ -49,7 +49,11 @@ export class EventServiceImpl implements EventService {
   }
 
   async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-    const event = await this.eventRepository.update(id, eventUpdate)
+    const toInsert: EventWrite = {
+      ...eventUpdate,
+      extrasChoice: JSON.stringify(eventUpdate.extrasChoice),
+    }
+    const event = await this.eventRepository.update(id, toInsert)
     if (!event) {
       throw new NotFoundError(`Could not update Event(${id})`)
     }
