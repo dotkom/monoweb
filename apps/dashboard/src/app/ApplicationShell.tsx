@@ -33,7 +33,7 @@ const navigations = [
     icon: "tabler:moneybag",
     children: [
       { label: "Bedrifter", href: "/company" },
-      { label: "Utlysninger", href: "/listing" },
+      { label: "Utlysninger", href: "/job-listing" },
     ],
   },
   {

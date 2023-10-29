@@ -6,6 +6,7 @@ import { paymentRouter } from "./modules/payment/payment-router"
 import { t } from "./trpc"
 import { userRouter } from "./modules/user/user-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
+import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 
 export const appRouter = t.router({
   committee: committeeRouter,
@@ -15,6 +16,7 @@ export const appRouter = t.router({
   payment: paymentRouter,
   mark: markRouter,
   personalMark: personalMarkRouter,
+  jobListing: jobListingRouter,
 })
 
 export type AppRouter = typeof appRouter
