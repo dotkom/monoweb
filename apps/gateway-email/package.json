@@ -15,7 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.438.0",
     "@dotkomonline/emails": "workspace:*",
-    "zod": "^3.22.2"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.125",
