@@ -1,4 +1,3 @@
-import React from "react"
 import { Body, Column, Container, Head, Heading, Html, Preview, Row, Text } from "@react-email/components"
 import { Tailwind } from "@react-email/tailwind"
 import { z } from "zod"

@@ -19,63 +19,63 @@ export type RefundRequestStatus = "APPROVED" | "PENDING" | "REJECTED";
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Attendance {
-  createdAt: Generated<Timestamp>;
-  deregisterDeadline: Timestamp;
-  end: Timestamp;
-  eventId: string | null;
   id: Generated<string>;
-  limit: number;
-  max: Generated<number>;
-  min: Generated<number>;
-  start: Timestamp;
+  createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
+  start: Timestamp;
+  end: Timestamp;
+  deregisterDeadline: Timestamp;
+  limit: number;
+  eventId: string | null;
+  min: Generated<number>;
+  max: Generated<number>;
 }
 
 export interface Attendee {
-  attendanceId: string | null;
-  attended: Generated<boolean>;
-  createdAt: Generated<Timestamp>;
   id: Generated<string>;
+  createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
   userId: string | null;
+  attendanceId: string | null;
+  attended: Generated<boolean>;
 }
 
 export interface Committee {
+  id: Generated<string>;
   createdAt: Generated<Timestamp>;
+  name: string;
   description: Generated<string>;
   email: Generated<string>;
-  id: Generated<string>;
   image: string | null;
-  name: string;
 }
 
 export interface Company {
-  createdAt: Generated<Timestamp>;
-  description: string;
-  email: string;
   id: Generated<string>;
-  image: string | null;
-  location: string | null;
+  createdAt: Generated<Timestamp>;
   name: string;
+  description: string;
   phone: string | null;
-  type: string | null;
+  email: string;
   website: string;
+  location: string | null;
+  type: string | null;
+  image: string | null;
 }
 
 export interface Event {
-  createdAt: Generated<Timestamp>;
-  description: string | null;
-  end: Timestamp;
   id: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
+  title: string;
+  start: Timestamp;
+  end: Timestamp;
+  status: EventStatus;
+  public: boolean;
+  description: string | null;
+  subtitle: string | null;
   imageUrl: string | null;
   location: string | null;
-  public: boolean;
-  start: Timestamp;
-  status: EventStatus;
-  subtitle: string | null;
-  title: string;
   type: EventType | null;
-  updatedAt: Generated<Timestamp>;
   waitlist: string | null;
 }
 
@@ -85,80 +85,50 @@ export interface EventCommittee {
 }
 
 export interface EventCompany {
-  companyId: string;
   eventId: string;
-}
-
-export interface JobListing {
-  applicationEmail: string | null;
-  applicationLink: string | null;
-  companyId: string | null;
-  createdAt: Generated<Timestamp>;
-  deadline: Timestamp | null;
-  deadlineAsap: boolean;
-  description: string;
-  employment: string;
-  end: Timestamp;
-  featured: boolean;
-  id: Generated<string>;
-  ingress: string;
-  start: Timestamp;
-  title: string;
-}
-
-export interface JobListingLocation {
-  createdAt: Generated<Timestamp>;
-  id: Generated<string>;
-  name: string;
-}
-
-export interface JobListingLocationLink {
-  createdAt: Generated<Timestamp>;
-  id: Generated<string>;
-  jobListingId: string | null;
-  locationId: string | null;
+  companyId: string;
 }
 
 export interface Mark {
-  category: string;
+  id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  title: string;
   createdAt: Timestamp;
+  category: string;
   details: string | null;
   duration: number;
-  id: Generated<string>;
-  title: string;
-  updatedAt: Generated<Timestamp>;
 }
 
 export interface NotificationPermissions {
-  applications: Generated<boolean>;
   createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
+  userId: string;
+  applications: Generated<boolean>;
+  newArticles: Generated<boolean>;
+  standardNotifications: Generated<boolean>;
   groupMessages: Generated<boolean>;
   markRulesUpdates: Generated<boolean>;
-  newArticles: Generated<boolean>;
   receipts: Generated<boolean>;
   registrationByAdministrator: Generated<boolean>;
   registrationStart: Generated<boolean>;
-  standardNotifications: Generated<boolean>;
-  updatedAt: Generated<Timestamp>;
-  userId: string;
 }
 
 export interface OwUser {
-  cognitoSub: string;
-  createdAt: Generated<Timestamp>;
   id: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  cognitoSub: string;
 }
 
 export interface Payment {
-  createdAt: Generated<Timestamp>;
   id: Generated<string>;
-  paymentProviderId: string;
-  paymentProviderOrderId: string | null;
-  paymentProviderSessionId: string;
-  productId: string | null;
-  status: PaymentStatus;
+  createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
+  productId: string | null;
   userId: string | null;
+  paymentProviderId: string;
+  paymentProviderSessionId: string;
+  status: PaymentStatus;
+  paymentProviderOrderId: string | null;
 }
 
 export interface PersonalMark {
@@ -167,44 +137,44 @@ export interface PersonalMark {
 }
 
 export interface PrivacyPermissions {
-  addressVisible: Generated<boolean>;
-  attendanceVisible: Generated<boolean>;
   createdAt: Generated<Timestamp>;
-  emailVisible: Generated<boolean>;
-  phoneVisible: Generated<boolean>;
-  profileVisible: Generated<boolean>;
   updatedAt: Generated<Timestamp>;
   userId: string;
+  profileVisible: Generated<boolean>;
   usernameVisible: Generated<boolean>;
+  emailVisible: Generated<boolean>;
+  phoneVisible: Generated<boolean>;
+  addressVisible: Generated<boolean>;
+  attendanceVisible: Generated<boolean>;
 }
 
 export interface Product {
-  amount: number;
-  createdAt: Generated<Timestamp>;
-  deletedAt: Timestamp | null;
   id: Generated<string>;
-  isRefundable: Generated<boolean>;
-  objectId: string | null;
-  refundRequiresApproval: Generated<boolean>;
-  type: ProductType;
+  createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
+  type: ProductType;
+  objectId: string | null;
+  amount: number;
+  deletedAt: Timestamp | null;
+  isRefundable: Generated<boolean>;
+  refundRequiresApproval: Generated<boolean>;
 }
 
 export interface ProductPaymentProvider {
+  productId: string;
   paymentProvider: PaymentProvider;
   paymentProviderId: string;
-  productId: string;
 }
 
 export interface RefundRequest {
-  createdAt: Generated<Timestamp>;
-  handledBy: string | null;
   id: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
   paymentId: string | null;
+  userId: string | null;
   reason: string;
   status: Generated<RefundRequestStatus>;
-  updatedAt: Generated<Timestamp>;
-  userId: string | null;
+  handledBy: string | null;
 }
 
 export interface DB {
@@ -215,9 +185,6 @@ export interface DB {
   event: Event;
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
-  jobListing: JobListing;
-  jobListingLocation: JobListingLocation;
-  jobListingLocationLink: JobListingLocationLink;
   mark: Mark;
   notificationPermissions: NotificationPermissions;
   owUser: OwUser;

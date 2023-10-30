@@ -17,7 +17,6 @@ export declare type EnvironmentKeys =
   | "FAGKOM_STRIPE_PUBLIC_KEY"
   | "FAGKOM_STRIPE_SECRET_KEY"
   | "FAGKOM_STRIPE_WEBHOOK_SECRET"
-  | "EMAIL_SECRET"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 

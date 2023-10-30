@@ -10,11 +10,6 @@ export const personalMarkRouter = t.router({
     .query(({ input, ctx }) => {
       return ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
     }),
-  getByMark: protectedProcedure
-    .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
-    .query(({ input, ctx }) => {
-      return ctx.personalMarkService.getPersonalMarksByMarkId(input.id)
-    }),
   addToUser: protectedProcedure.input(PersonalMarkSchema).mutation(({ input, ctx }) => {
     return ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)
   }),

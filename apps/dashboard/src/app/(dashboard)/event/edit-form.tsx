@@ -59,7 +59,6 @@ export const useEventEditForm = ({
       description: createTextareaInput({
         label: "Beskrivelse",
         placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-        rows: 20,
       }),
       location: createTextInput({
         label: "Sted",
