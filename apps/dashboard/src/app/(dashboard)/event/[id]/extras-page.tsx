@@ -1,11 +1,8 @@
-import { Attendance, Attendee } from "@dotkomonline/types"
 import { Box, Button, Title } from "@mantine/core"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { FC, useMemo, useState } from "react"
-import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
-import { useEventDetailsContext } from "./provider"
+import { FC } from "react"
 import { useCreateEventExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { useEventDetailsContext } from "./provider"
 
 export const ExtrasPage: FC = () => {
   const { event } = useEventDetailsContext()
@@ -18,10 +15,7 @@ export const ExtrasPage: FC = () => {
   const edit = useEditEventMutation()
 
   const deleteAlternative = (id: string) => {
-    console.log(id)
-    console.log(event.extrasChoice)
     const newChoices = event.extrasChoice?.filter((alt) => alt.id !== id)
-    console.log(newChoices)
     edit.mutate({
       id: event.id,
       event: {
@@ -31,13 +25,14 @@ export const ExtrasPage: FC = () => {
     })
   }
 
-  console.log(event)
-
   return (
     <Box>
       <Title order={3}>Valg</Title>
+      {event.extrasChoice === null && <p>Ingen ekstra valg er lagt til</p>}
 
-      <Button onClick={open}>Legg till nytt valg</Button>
+      <Button onClick={open}>Legg til nytt valg</Button>
+      {/* display message if no choices */}
+
       {event.extrasChoice?.map((extra) => (
         <div key={extra.id}>
           <hr></hr>

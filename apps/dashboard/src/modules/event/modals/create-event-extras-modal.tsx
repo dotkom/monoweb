@@ -26,8 +26,7 @@ const Total = ({ control }: { control: Control<FormValues> }) => {
 }
 
 export const CreateEventExtrasModal: FC<ContextModalProps> = ({ context, id, innerProps }) => {
-  console.log(innerProps)
-  const edit = useEditEventMutation()
+  onst edit = useEditEventMutation()
 
   const event = innerProps.event
 
@@ -47,7 +46,6 @@ export const CreateEventExtrasModal: FC<ContextModalProps> = ({ context, id, inn
     control,
   })
   const onSubmit = (data: FormValues) => {
-    console.log(data)
     const newExtras = [
       ...(event.extrasChoice ? event.extrasChoice : []),
       {
