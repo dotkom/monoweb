@@ -9,7 +9,7 @@ export const Label = React.forwardRef<
   <LabelPrimitive.Root
     ref={ref}
     className={cn(
-      "text-foreground text-sm font-medium leading-none peer-disabled:cursor-not-allowed inline-flex flex-col gap-1 peer-disabled:opacity-70",
+      "text-foreground inline-flex flex-col gap-1 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
       props.htmlFor && "cursor-pointer",
       className
     )}

@@ -1,12 +1,22 @@
 import type { Handler, APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda"
-import { HelloWorldTemplate, InvalidTemplateArguments, type Template } from "@dotkomonline/emails"
+import {
+  HelloWorldTemplate,
+  InterestFormForBedkomTemplate,
+  InterestFormForCompanyTemplate,
+  InvalidTemplateArguments,
+  type Template,
+} from "@dotkomonline/emails"
 import { z, ZodError } from "zod"
 import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses"
 
 const ses = new SESClient()
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const templates = [HelloWorldTemplate] satisfies Template<any>[]
+const templates = [
+  HelloWorldTemplate,
+  InterestFormForBedkomTemplate,
+  InterestFormForCompanyTemplate,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+] satisfies Template<any>[]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const templateMap = templates.reduce<Record<string, Template<any>>>((acc, curr) => {
