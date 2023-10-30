@@ -12,6 +12,7 @@ const modals = {
   "jobListing/create": CreateJobListingModal,
   "company/create": CreateCompanyModal,
   "extras/create": CreateEventExtrasModal,
+  "extras/update": CreateEventExtrasModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => {

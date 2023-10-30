@@ -11,6 +11,8 @@ const EventExtraSchema = z.object({
   ),
 })
 
+export type EventExtra = z.infer<typeof EventExtraSchema>
+
 export const EventSchema = z.object({
   id: z.string().ulid(),
   createdAt: z.date(),

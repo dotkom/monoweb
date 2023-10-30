@@ -3,7 +3,7 @@ import { ContextModalProps, modals } from "@mantine/modals"
 import { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
-import { Event } from "@dotkomonline/types"
+import { Event, EventExtra } from "@dotkomonline/types"
 import { Control, useWatch } from "react-hook-form"
 import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
 
@@ -23,9 +23,30 @@ const Total = ({ control }: { control: Control<FormValues> }) => {
   return <p>Antall alternativer: {total}</p>
 }
 
-export const CreateEventExtrasModal: FC<ContextModalProps> = ({ context, id, innerProps }) => {
-  const edit = useEditEventMutation()
-  const event = innerProps.event
+export const CreateEventExtrasModal: FC<ContextModalProps<{ existingExtra?: EventExtra; event: Event }>> = ({
+  context,
+  id,
+  innerProps,
+}) => {
+  const eventEdit = useEditEventMutation()
+
+  let defaultAlternatives: FormValues = {} as FormValues
+  const allExtras = innerProps.event.extrasChoice || []
+  const existingExtra = innerProps.existingExtra
+
+  if (existingExtra) {
+    defaultAlternatives = {
+      question: existingExtra.name,
+      alternatives: existingExtra.choices.map((choice) => ({
+        value: choice.name,
+      })),
+    }
+  } else {
+    defaultAlternatives = {
+      question: "",
+      alternatives: [{ value: "Alternativ 1" }],
+    }
+  }
 
   const {
     register,
@@ -33,32 +54,49 @@ export const CreateEventExtrasModal: FC<ContextModalProps> = ({ context, id, inn
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: {
-      alternatives: [{ value: "Alternativ 1" }],
-    },
+    defaultValues: defaultAlternatives,
     mode: "onBlur",
   })
   const { fields, append, remove } = useFieldArray({
     name: "alternatives",
     control,
   })
-  const onSubmit = (data: FormValues) => {
-    const newExtras = [
-      ...(event.extrasChoice ? event.extrasChoice : []),
-      {
-        id: Date.now().toString(36),
-        name: data.question,
-        choices: data.alternatives.map((alternative, i) => ({
-          id: Date.now().toString(36) + i,
-          name: alternative.value,
-        })),
-      },
-    ]
 
-    edit.mutate({
-      id: event.id,
+  const onSubmit = (data: FormValues) => {
+    let newExtras = []
+
+    if (existingExtra) {
+      newExtras = allExtras.map((extra) => {
+        if (extra.id === existingExtra.id) {
+          return {
+            id: extra.id,
+            name: data.question,
+            choices: data.alternatives.map((alternative, i) => ({
+              id: Date.now().toString(36) + i,
+              name: alternative.value,
+            })),
+          }
+        }
+        return extra
+      })
+    } else {
+      newExtras = [
+        ...allExtras,
+        {
+          id: Date.now().toString(36),
+          name: data.question,
+          choices: data.alternatives.map((alternative, i) => ({
+            id: Date.now().toString(36) + i,
+            name: alternative.value,
+          })),
+        },
+      ]
+    }
+
+    eventEdit.mutate({
+      id: innerProps.event.id,
       event: {
-        ...event,
+        ...innerProps.event,
         extrasChoice: newExtras,
       },
     })
@@ -147,6 +185,18 @@ export const useCreateEventExtrasModal = ({ event }: { event: Event }) => {
       title: "Opprett nytt svaralternativ",
       innerProps: {
         event,
+      },
+    })
+}
+
+export const useEditEventExtrasModal = ({ event }: { event: Event }) => {
+  return (existingExtra: EventExtra) =>
+    modals.openContextModal({
+      modal: "extras/create",
+      title: "Endre extra",
+      innerProps: {
+        event,
+        existingExtra,
       },
     })
 }

@@ -1,14 +1,20 @@
-import { Box, Button, Title } from "@mantine/core"
+import { Box, Button, Paper, Title } from "@mantine/core"
 import { FC } from "react"
-import { useCreateEventExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
+import {
+  useCreateEventExtrasModal,
+  useEditEventExtrasModal,
+} from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 import { useEventDetailsContext } from "./provider"
 
 export const ExtrasPage: FC = () => {
   const { event } = useEventDetailsContext()
 
-  const open = useCreateEventExtrasModal({
-    id: event.id,
+  const openCreate = useCreateEventExtrasModal({
+    event: event,
+  })
+
+  const openEdit = useEditEventExtrasModal({
     event: event,
   })
 
@@ -30,12 +36,13 @@ export const ExtrasPage: FC = () => {
       <Title order={3}>Valg</Title>
       {event.extrasChoice === null && <p>Ingen ekstra valg er lagt til</p>}
 
-      <Button onClick={open}>Legg til nytt valg</Button>
-      {/* display message if no choices */}
+      <Button onClick={openCreate}>Legg til nytt valg</Button>
 
       {event.extrasChoice?.map((extra) => (
-        <div key={extra.id}>
-          <hr></hr>
+        <Paper key={extra.id} withBorder p={"md"} mt={"md"}>
+          <Button mr={"sm"} color="yellow" onClick={() => openEdit(extra)}>
+            Endre
+          </Button>
           <Button color="red" onClick={() => deleteAlternative(extra.id)}>
             Slett
           </Button>
@@ -45,7 +52,7 @@ export const ExtrasPage: FC = () => {
               <p>{choice.name}</p>
             </div>
           ))}
-        </div>
+        </Paper>
       ))}
     </Box>
   )
