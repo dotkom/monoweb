@@ -93,8 +93,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     productRepository,
     paymentService
   )
-  const markService = new MarkServiceImpl(markRepository)
-  const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
+  const markService = new MarkServiceImpl(markRepository, personalMarkRepository)
 
   return {
     userService,
@@ -109,7 +108,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     productPaymentProviderService,
     refundRequestService,
     markService,
-    personalMarkService,
     eventCommitteeService,
     jobListingService,
   }
