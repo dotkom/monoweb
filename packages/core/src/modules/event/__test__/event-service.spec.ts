@@ -23,6 +23,7 @@ export const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   waitlist: null,
+  extrasChoice: null,
 }
 
 describe("EventService", () => {

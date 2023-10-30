@@ -2,7 +2,7 @@ import { Attendance, AttendanceWrite, Event, EventId, EventWrite } from "@dotkom
 import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
 import { AttendanceRepository } from "./attendance-repository"
-import { EventRepository } from "./event-repository"
+import { EventInsert, EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -23,10 +23,12 @@ export class EventServiceImpl implements EventService {
   ) {}
 
   async createEvent(eventCreate: EventWrite): Promise<Event> {
-    const event = await this.eventRepository.create(eventCreate)
-    if (!event) {
-      throw new Error("Failed to create event")
+    const toInsert: EventInsert = {
+      ...eventCreate,
+      extrasChoice: JSON.stringify(eventCreate.extrasChoice),
     }
+
+    const event = await this.eventRepository.create(toInsert)
     return event
   }
 
@@ -49,7 +51,7 @@ export class EventServiceImpl implements EventService {
   }
 
   async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-    const toInsert: EventWrite = {
+    const toInsert: EventInsert = {
       ...eventUpdate,
       extrasChoice: JSON.stringify(eventUpdate.extrasChoice),
     }
@@ -90,6 +92,7 @@ export class EventServiceImpl implements EventService {
     await this.eventRepository.update(eventId, {
       ...event,
       waitlist: waitlist.id,
+      extrasChoice: JSON.stringify(event.extrasChoice),
     })
     return waitlist
   }

@@ -1,4 +1,4 @@
-import { AttendanceWriteSchema, EventSchema, EventWrite, EventWriteSchema } from "@dotkomonline/types"
+import { AttendanceWriteSchema, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 

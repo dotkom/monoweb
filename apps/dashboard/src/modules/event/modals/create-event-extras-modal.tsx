@@ -3,11 +3,9 @@ import { ContextModalProps, modals } from "@mantine/modals"
 import { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
+import { Event } from "@dotkomonline/types"
 import { Control, useWatch } from "react-hook-form"
 import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
-import { useEventDetailsContext } from "../../../app/(dashboard)/event/[id]/provider"
-import { useEventGetQuery } from "../queries/use-event-get-query"
-import { Event } from "@dotkomonline/types"
 
 type FormValues = {
   question: string
@@ -26,8 +24,7 @@ const Total = ({ control }: { control: Control<FormValues> }) => {
 }
 
 export const CreateEventExtrasModal: FC<ContextModalProps> = ({ context, id, innerProps }) => {
-  onst edit = useEditEventMutation()
-
+  const edit = useEditEventMutation()
   const event = innerProps.event
 
   const {

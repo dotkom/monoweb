@@ -1,14 +1,14 @@
 import { Database } from "@dotkomonline/db"
-import { Event, EventId, EventSchema, EventWrite } from "@dotkomonline/types"
-import { Kysely, Selectable, Insertable } from "kysely"
+import { Event, EventId, EventSchema } from "@dotkomonline/types"
+import { Insertable, Kysely, Selectable } from "kysely"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
-type EventInsert = Insertable<Database["event"]>
+export type EventInsert = Insertable<Database["event"]>
 
 export interface EventRepository {
-  create(data: EventInsert): Promise<Event | undefined>
+  create(data: EventInsert): Promise<Event>
   update(id: EventId, data: EventInsert): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
