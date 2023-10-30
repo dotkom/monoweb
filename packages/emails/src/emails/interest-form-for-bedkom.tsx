@@ -11,7 +11,6 @@ const Props = z.object({
   contactTel: z.string(),
   requestsCompanyPresentation: z.boolean(),
   requestsCourseEvent: z.boolean(),
-  requestsOfflineAdvertisement: z.boolean(),
   requestsJobListing: z.boolean(),
   requestsInstagramTakeover: z.boolean(),
   requestsTechTalksParticipation: z.boolean(),
@@ -36,7 +35,6 @@ export default function InterestFormForBedkomEmail({
   contactTel = "+47 123 45 678",
   requestsCompanyPresentation = true,
   requestsCourseEvent = false,
-  requestsOfflineAdvertisement = true,
   requestsJobListing = false,
   requestsInstagramTakeover = false,
   requestsTechTalksParticipation = true,
@@ -68,7 +66,6 @@ export default function InterestFormForBedkomEmail({
               <Heading as="h2">Meldte interesser</Heading>
               <InterestRow name="Bedriftspresentasjon" requested={requestsCompanyPresentation} />
               <InterestRow name="Kurs" requested={requestsCourseEvent} />
-              <InterestRow name="Annonse i Offline" requested={requestsOfflineAdvertisement} />
               <InterestRow name="Stillingsutlysning" requested={requestsJobListing} />
               <InterestRow name="Instagram takeover" requested={requestsInstagramTakeover} />
               <InterestRow name="Tech Talks" requested={requestsTechTalksParticipation} />

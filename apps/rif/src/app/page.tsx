@@ -14,7 +14,6 @@ export default function Page() {
     defaultValues: {
       requestsCompanyPresentation: false,
       requestsCourseEvent: false,
-      requestsOfflineAdvertisement: false,
       requestsJobListing: false,
       requestsInstagramTakeover: false,
       requestsTechTalksParticipation: false,
