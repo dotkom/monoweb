@@ -34,6 +34,8 @@ import { JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-location-repository"
 import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
+import { OfflineRepositoryImpl } from "./offline/offline-repository"
+import { OfflineServiceImpl } from "./offline/offline-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -61,6 +63,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
+  const offlineRepository = new OfflineRepositoryImpl(db)
 
   const userService = new UserServiceImpl(
     userRepository,
@@ -95,6 +98,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService = new MarkServiceImpl(markRepository)
   const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
+  const offlineService = new OfflineServiceImpl(offlineRepository)
 
   return {
     userService,
@@ -112,5 +116,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     personalMarkService,
     eventCommitteeService,
     jobListingService,
+    offlineService,
   }
 }
