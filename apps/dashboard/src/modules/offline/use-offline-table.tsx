@@ -5,7 +5,6 @@ import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { useCompanyAllQuery } from "../company/queries/use-company-all-query"
 import { formatDate } from "../../utils/format"
 
 interface Props {
