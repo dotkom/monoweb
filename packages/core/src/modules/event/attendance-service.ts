@@ -6,6 +6,7 @@ export interface AttendanceService {
   registerForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
   deregisterForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
   registerForAttendance(userId: UserId, attendanceId: string, attended: boolean): Promise<Attendee | undefined>
+  addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string): Promise<Attendee | undefined>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -34,5 +35,12 @@ export class AttendanceServiceImpl implements AttendanceService {
       _attendanceId
     )
     return attendedAttendee
+  }
+
+  async addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string) {
+    const attendee = await this.attendanceRepository.getAttendeeByIds(eventId, attendanceId)
+    if (!attendee) throw new Error("Attendee not found")
+    const choice = await this.attendanceRepository.addChoice(eventId, attendanceId, questionId, choiceId)
+    return choice
   }
 }

@@ -47,4 +47,16 @@ export const attendanceRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       return await ctx.eventService.createWaitlist(input.eventId)
     }),
+  addChoice: protectedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+        attendanceId: z.string(),
+        questionId: z.string(),
+        choiceId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.attendanceService.addChoice(input.eventId, input.attendanceId, input.questionId, input.choiceId)
+    }),
 })
