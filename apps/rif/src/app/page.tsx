@@ -7,7 +7,7 @@ import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSubmitMutation } from "./mutation"
 import { FormSchema, formSchema } from "./form-schema"
-import Logo from "../../public/Online_bla.svg"
+import { Icon } from "@iconify/react"
 
 export default function Page() {
   const form = useForm<FormSchema>({
@@ -26,12 +26,12 @@ export default function Page() {
   const onSubmit = (data: FormSchema) => {
     dispatch.mutate(data)
     form.reset()
-    alert("Skjemaet er levert, du vil få en bekreftelse på e-post.")
   }
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/Online_bla.svg" alt="Online logo" />
         <Title element="h1">Interesseskjema for bedrifter</Title>
         <Text>Dette skjemaet skal brukes til å melde interesse for samarbeid med Online.</Text>
@@ -52,7 +52,13 @@ export default function Page() {
           <Form />
 
           <Button type="submit" disabled={dispatch.isLoading}>
-            Meld interesse
+            {dispatch.isLoading ? (
+              <>
+                <Icon className="animate-spin" icon="tabler:loader-2" />
+              </>
+            ) : (
+              "Meld interesse"
+            )}
           </Button>
         </Section>
       </FormProvider>
