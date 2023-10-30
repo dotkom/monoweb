@@ -5,14 +5,14 @@ import { FC, PropsWithChildren } from "react"
 import { CreateCompanyModal } from "src/modules/company/modals/create-company-modal"
 import { CreateEventModal } from "src/modules/event/modals/create-event-modal"
 import { CreateJobListingModal } from "src/modules/job-listing/modals/create-job-listing-modal"
-import { CreateEventExtrasModal } from "../modules/event/modals/create-event-extras-modal"
+import { CreateEventExtrasModal, UpdateEventExtrasModal } from "../modules/event/modals/create-event-extras-modal"
 
 const modals = {
   "event/create": CreateEventModal,
   "jobListing/create": CreateJobListingModal,
   "company/create": CreateCompanyModal,
   "extras/create": CreateEventExtrasModal,
-  "extras/update": CreateEventExtrasModal,
+  "extras/update": UpdateEventExtrasModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => {
