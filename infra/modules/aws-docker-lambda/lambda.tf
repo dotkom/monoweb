@@ -4,6 +4,7 @@ resource "aws_lambda_function" "this" {
   timeout       = var.function_timeout
   image_uri     = "${aws_ecr_repository.this.repository_url}:latest"
   package_type  = "Image"
+  memory_size   = var.memory
 
   environment {
     variables = var.environment_variables
