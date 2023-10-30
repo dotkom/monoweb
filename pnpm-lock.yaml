@@ -494,6 +494,12 @@ importers:
 
   packages/auth:
     dependencies:
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../core
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../db
       '@dotkomonline/env':
         specifier: workspace:*
         version: link:../env

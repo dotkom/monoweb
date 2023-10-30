@@ -1,22 +1,29 @@
-import { Database } from "@dotkomonline/db"
-import { Kysely, Selectable } from "kysely"
-import { type User, UserId, UserSchema, UserWrite } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
+import { type Kysely, type Selectable } from "kysely"
+import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
 
-export const mapToUser = (payload: Selectable<Database["owUser"]>): User => {
-  return UserSchema.parse(payload)
-}
+export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 
 export interface UserRepository {
-  getById(id: UserId): Promise<User | undefined>
-  getAll(limit: number): Promise<User[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User | undefined>
+  getById: (id: UserId) => Promise<User | undefined>
+  getBySubject: (cognitoSubject: string) => Promise<User | undefined>
+  getAll: (limit: number) => Promise<User[]>
+  create: (userWrite: UserWrite) => Promise<User>
+  update: (id: UserId, data: UserWrite) => Promise<User>
 }
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly db: Kysely<Database>) {}
   async getById(id: UserId) {
     const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
+    return user ? mapToUser(user) : undefined
+  }
+  async getBySubject(cognitoSubject: string) {
+    const user = await this.db
+      .selectFrom("owUser")
+      .selectAll()
+      .where("cognitoSub", "=", cognitoSubject)
+      .executeTakeFirst()
     return user ? mapToUser(user) : undefined
   }
   async getAll(limit: number) {
@@ -34,6 +41,6 @@ export class UserRepositoryImpl implements UserRepository {
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
-    return user ? mapToUser(user) : undefined
+    return mapToUser(user)
   }
 }
