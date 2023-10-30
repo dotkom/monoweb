@@ -9,6 +9,12 @@ variable "function_timeout" {
   default     = 60
 }
 
+variable "memory" {
+  description = "How much memory to allocate to lambda in MB"
+  type        = number
+  default     = 128
+}
+
 variable "environment_variables" {
   description = "Environment variables to attach to the lambda"
   type        = map(string)
