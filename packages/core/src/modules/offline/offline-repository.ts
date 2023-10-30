@@ -1,6 +1,6 @@
 import { Database } from "@dotkomonline/db"
 import { Offline, OfflineId, OfflineSchema } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable, sql } from "kysely"
+import { Insertable, Kysely, Selectable } from "kysely"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
 
 type OfflineWrite = Insertable<Database["offline"]>

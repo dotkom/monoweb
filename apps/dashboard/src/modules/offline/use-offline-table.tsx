@@ -14,7 +14,6 @@ interface Props {
 
 export const useOfflineTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<Offline>()
-  const { companies } = useCompanyAllQuery()
   const columns = useMemo(
     () => [
       columnHelper.accessor("title", {
@@ -37,7 +36,7 @@ export const useOfflineTable = ({ data }: Props) => {
         ),
       }),
     ],
-    [columnHelper, companies]
+    [columnHelper]
   )
 
   return useReactTable({
