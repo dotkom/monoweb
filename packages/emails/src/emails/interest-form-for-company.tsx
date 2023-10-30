@@ -15,6 +15,7 @@ const Props = z.object({
   requestsInstagramTakeover: z.boolean(),
   requestsTechTalksParticipation: z.boolean(),
   requestsExcursionParticipation: z.boolean(),
+  requestsCollaborationEvent: z.boolean(),
   comment: z.string(),
 })
 
@@ -39,6 +40,7 @@ export default function InterestFormForCompanyEmail({
   requestsInstagramTakeover = false,
   requestsTechTalksParticipation = true,
   requestsExcursionParticipation = true,
+  requestsCollaborationEvent = false,
   comment = "Vi er interessert i å ha samarbeid med Abakus samtidig!",
 }: TemplateProps<typeof Props>) {
   return (
@@ -70,6 +72,10 @@ export default function InterestFormForCompanyEmail({
               <InterestRow name="Instagram takeover" requested={requestsInstagramTakeover} />
               <InterestRow name="Tech Talks" requested={requestsTechTalksParticipation} />
               <InterestRow name="IT-ekskursjonen" requested={requestsExcursionParticipation} />
+              <InterestRow
+                name="Samarbeidsarrangement med andre linjeforeninger"
+                requested={requestsCollaborationEvent}
+              />
 
               <Heading as="h2">Andre kommentarer</Heading>
               <Text>{comment}</Text>

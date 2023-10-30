@@ -140,6 +140,18 @@ export const Form: FC = () => {
         />
         <CheckboxWithTooltip name="requestsTechTalksParticipation" label="Tech Talks" tooltip={techTalksTooltip} />
         <CheckboxWithTooltip name="requestsExcursionParticipation" label="IT-ekskursjonen" tooltip={excursionTooltip} />
+
+        <Controller
+          control={control}
+          name="requestsCollaborationEvent"
+          render={({ field }) => (
+            <Checkbox
+              label="Samarbeidsarrangement med andre linjeforeninger"
+              onCheckedChange={field.onChange}
+              checked={field.value}
+            />
+          )}
+        />
       </Section>
 
       <Section as="fieldset">
@@ -150,8 +162,11 @@ export const Form: FC = () => {
           Gjerne utdyp om dere har noen tanker om hvordan et arrangement kan se ut eller annet relevant. Still også
           spørsmål om dere lurer på noe.
         </Text>
+        <Text>
+          Dersom dere er interessert i samarbeid med andre linjerforeninger, gjerne spesifiser hvilke(n) linjer.
+        </Text>
 
-        <Textarea rows={10} {...register("comment")} />
+        <Textarea {...register("comment")} />
       </Section>
     </>
   )

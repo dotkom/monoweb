@@ -7,6 +7,7 @@ import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSubmitMutation } from "./mutation"
 import { FormSchema, formSchema } from "./form-schema"
+import Logo from "../../public/Online_bla.svg"
 
 export default function Page() {
   const form = useForm<FormSchema>({
@@ -18,6 +19,7 @@ export default function Page() {
       requestsInstagramTakeover: false,
       requestsTechTalksParticipation: false,
       requestsExcursionParticipation: false,
+      requestsCollaborationEvent: false,
     },
   })
   const dispatch = useSubmitMutation()
@@ -30,6 +32,7 @@ export default function Page() {
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
+        <img src="/Online_bla.svg" alt="Online logo" />
         <Title element="h1">Interesseskjema for bedrifter</Title>
         <Text>Dette skjemaet skal brukes til å melde interesse for samarbeid med Online.</Text>
 
