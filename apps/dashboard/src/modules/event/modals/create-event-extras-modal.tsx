@@ -1,10 +1,8 @@
+import { FC } from "react"
 import { Button, Flex, InputLabel, TextInput, Title } from "@mantine/core"
 import { ContextModalProps, modals } from "@mantine/modals"
-import { FC } from "react"
-import { useFieldArray, useForm } from "react-hook-form"
-
 import { Event, EventExtra } from "@dotkomonline/types"
-import { Control, useWatch } from "react-hook-form"
+import { Control, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
 
 type FormValues = {
@@ -30,7 +28,7 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ existingExtra?: Even
 }) => {
   const eventEdit = useEditEventMutation()
 
-  let defaultAlternatives: FormValues = {} as FormValues
+  let defaultAlternatives: FormValues
   const allExtras = innerProps.event.extrasChoice || []
   const existingExtra = innerProps.existingExtra
 
