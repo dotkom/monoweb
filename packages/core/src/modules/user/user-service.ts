@@ -13,13 +13,14 @@ import { type UserRepository } from "./user-repository"
 import { NotFoundError } from "../../errors/errors"
 
 export interface UserService {
-  getUser: (id: User["id"]) => Promise<User | undefined>
+  getUserById: (id: UserId) => Promise<User | undefined>
+  getUserBySubject: (id: User["cognitoSub"]) => Promise<User | undefined>
   getAllUsers: (limit: number) => Promise<User[]>
   createUser: (input: UserWrite) => Promise<User>
-  updateUser: (id: User["id"], payload: UserWrite) => Promise<User>
+  updateUser: (id: UserId, payload: UserWrite) => Promise<User>
   getPrivacyPermissionsByUserId: (id: string) => Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId: (
-    id: string,
+    id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ) => Promise<PrivacyPermissions>
 }
@@ -35,10 +36,18 @@ export class UserServiceImpl implements UserService {
     return users
   }
 
-  async getUser(id: User["id"]) {
+  async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
     if (!user) {
       throw new NotFoundError(`User with ID:${id} not found`)
+    }
+    return user
+  }
+
+  async getUserBySubject(id: User["cognitoSub"]) {
+    const user = await this.userRepository.getBySubject(id)
+    if (!user) {
+      throw new NotFoundError(`User with subject:${id} not found`)
     }
     return user
   }
@@ -50,7 +59,9 @@ export class UserServiceImpl implements UserService {
 
   async updateUser(id: UserId, data: UserWrite) {
     const res = await this.userRepository.update(id, data)
-    if (!res) {throw new NotFoundError(`User with ID:${id} not found`)}
+    if (!res) {
+      throw new NotFoundError(`User with ID:${id} not found`)
+    }
     return res
   }
 

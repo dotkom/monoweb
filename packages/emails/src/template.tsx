@@ -1,6 +1,6 @@
 import { type z } from "zod"
 import { render } from "@react-email/render"
-import { type FC } from "react"
+import React, { type FC } from "react"
 
 export class InvalidTemplateArguments extends Error {}
 

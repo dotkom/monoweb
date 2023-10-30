@@ -1,7 +1,7 @@
-import { type Payment, type PaymentProvider, type Product, type User } from "@dotkomonline/types"
-import { type PaymentRepository } from "./payment-repository"
-import { type ProductRepository } from "./product-repository"
-import { type RefundRequestRepository } from "./refund-request-repository"
+import { type Payment, type PaymentProvider, type Product, type ProductId, type UserId } from "@dotkomonline/types"
+import { type PaymentRepository } from "./payment-repository.js"
+import { type ProductRepository } from "./product-repository.js"
+import { type RefundRequestRepository } from "./refund-request-repository.js"
 import { getStripeObject, readableStripeAccounts } from "../../lib/stripe"
 import { type Cursor } from "../../utils/db-utils"
 import { type EventRepository } from "../event/event-repository"
@@ -10,11 +10,11 @@ export interface PaymentService {
   getPaymentProviders: () => (PaymentProvider & { paymentAlias: string })[]
   getPayments: (take: number, cursor?: Cursor) => Promise<Payment[]>
   createStripeCheckoutSessionForProductId: (
-    productId: Product["id"],
+    productId: ProductId,
     stripePublicKey: string,
     successRedirectUrl: string,
     cancelRedirectUrl: string,
-    userId: User["id"]
+    userId: UserId
   ) => Promise<{ redirectUrl: string }>
   fullfillStripeCheckoutSession: (stripeSessionId: string, intentId: string) => Promise<void>
   expireStripeCheckoutSession: (stripeSessionId: string) => Promise<void>
@@ -45,11 +45,11 @@ export class PaymentServiceImpl implements PaymentService {
   }
 
   async createStripeCheckoutSessionForProductId(
-    productId: Product["id"],
+    productId: ProductId,
     stripePublicKey: string,
     successRedirectUrl: string,
     cancelRedirectUrl: string,
-    userId: User["id"]
+    userId: UserId
   ): Promise<{ redirectUrl: string }> {
     const product = await this.productRepository.getById(productId)
     if (!product) {

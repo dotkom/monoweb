@@ -1,3 +1,4 @@
+export * from "./components/Accordion"
 export * from "./components/Alert"
 export * from "./components/Badge"
 export * from "./components/Button"

@@ -3,6 +3,7 @@ import {
   type NotificationPermissions,
   NotificationPermissionsSchema,
   type NotificationPermissionsWrite,
+  type UserId,
 } from "@dotkomonline/types"
 import { type Database } from "@dotkomonline/db"
 
@@ -11,10 +12,10 @@ export const mapToNotificationPermissions = (
 ): NotificationPermissions => NotificationPermissionsSchema.parse(payload)
 
 export interface NotificationPermissionsRepository {
-  getByUserId: (id: string) => Promise<NotificationPermissions | undefined>
+  getByUserId: (id: UserId) => Promise<NotificationPermissions | undefined>
   create: (data: Partial<NotificationPermissionsWrite>) => Promise<NotificationPermissions>
   update: (
-    userId: string,
+    userId: UserId,
     data: Partial<Omit<NotificationPermissionsWrite, "userId">>
   ) => Promise<NotificationPermissions | undefined>
 }
@@ -22,7 +23,7 @@ export interface NotificationPermissionsRepository {
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getByUserId(id: string): Promise<NotificationPermissions | undefined> {
+  async getByUserId(id: UserId): Promise<NotificationPermissions | undefined> {
     const notificationPermissions = await this.db
       .selectFrom("notificationPermissions")
       .selectAll()
@@ -43,7 +44,7 @@ export class NotificationPermissionsRepositoryImpl implements NotificationPermis
   }
 
   async update(
-    userId: string,
+    userId: UserId,
     data: Partial<Omit<NotificationPermissionsWrite, "userId">>
   ): Promise<NotificationPermissions | undefined> {
     const notificationPermissions = await this.db

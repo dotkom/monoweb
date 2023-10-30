@@ -1,7 +1,7 @@
 import { Badge } from "./Badge"
 
 export default {
-  title: "atoms/Badge",
+  title: "Badge",
   component: Badge,
 }
 

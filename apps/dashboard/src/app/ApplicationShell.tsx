@@ -1,6 +1,7 @@
 "use client"
 
-import { Icon } from "@iconify/react"
+import { type FC, type PropsWithChildren } from "react"
+import { useDisclosure } from "@mantine/hooks"
 import {
   AppShell,
   AppShellHeader,
@@ -12,8 +13,8 @@ import {
   NavLink,
   Title,
 } from "@mantine/core"
-import { useDisclosure } from "@mantine/hooks"
-import { useState, type FC, type PropsWithChildren } from "react"
+import { Icon } from "@iconify/react"
+import Link from "next/link"
 import { SignOutButton } from "./SignOutButton"
 
 const navigations = [
@@ -32,7 +33,7 @@ const navigations = [
     icon: "tabler:moneybag",
     children: [
       { label: "Bedrifter", href: "/company" },
-      { label: "Utlysninger", href: "/listing" },
+      { label: "Utlysninger", href: "/job-listing" },
     ],
   },
   {
@@ -63,23 +64,10 @@ const navigations = [
   },
 ] as const
 
-const getInitialExpandedNavs = () => {
-  const savedNavs = localStorage.getItem("expandedNavs")
-  return savedNavs ? JSON.parse(savedNavs) : []
-}
-
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
-  const [expandedNavs, setExpandedNavs] = useState(getInitialExpandedNavs)
 
-  const handleNavToggle = (label: string) => () => {
-    const isExpanded = expandedNavs.includes(label)
-    const updatedNavs = isExpanded ? expandedNavs.filter((nav: string) => nav !== label) : [...expandedNavs, label]
-
-    setExpandedNavs(updatedNavs)
-    localStorage.setItem("expandedNavs", JSON.stringify(updatedNavs))
-  }
   return (
     <AppShell
       header={{ height: 60 }}
@@ -108,11 +96,9 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             label={navigation.label}
             leftSection={<Icon icon={navigation.icon} />}
             childrenOffset={28}
-            opened={expandedNavs.includes(navigation.label)}
-            onChange={handleNavToggle(navigation.label)}
           >
             {navigation.children.map((child) => (
-              <NavLink key={child.label} label={child.label} href={child.href} />
+              <NavLink component={Link} key={child.label} label={child.label} href={child.href} />
             ))}
           </NavLink>
         ))}

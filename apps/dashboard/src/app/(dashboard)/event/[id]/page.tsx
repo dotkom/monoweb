@@ -5,14 +5,13 @@ import { Icon } from "@iconify/react"
 import { type FC } from "react"
 import { useRouter } from "next/navigation"
 import { useEventDetailsContext } from "./provider"
+import { EventAttendancePage } from "./details-attendance"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
 const EventDetailsFeedbackForms: FC = () => <h1>Tilbakemelding</h1>
-
-const EventDetailsAttendance: FC = () => <h1>Påmelding</h1>
 
 const SIDEBAR_LINKS = [
   {
@@ -43,7 +42,7 @@ const SIDEBAR_LINKS = [
     icon: "tabler:calendar-event",
     label: "Påmelding",
     slug: "attendance",
-    component: EventDetailsAttendance,
+    component: EventAttendancePage,
   },
 ]
 

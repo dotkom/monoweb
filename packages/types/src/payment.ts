@@ -31,6 +31,7 @@ export const ProductSchema = z.object({
   deletedAt: z.date().nullable(), // null = not deleted
 })
 
+export type ProductId = Product["id"]
 export type Product = z.infer<typeof ProductSchema>
 
 export const ProductWriteSchema = ProductSchema.omit({
@@ -55,6 +56,7 @@ export const PaymentSchema = z.object({
   status: z.enum(["UNPAID", "PAID", "REFUNDED"]),
 })
 
+export type PaymentId = Payment["id"]
 export type Payment = z.infer<typeof PaymentSchema>
 
 export const PaymentWriteSchema = PaymentSchema.partial({
@@ -78,6 +80,7 @@ export const RefundRequestSchema = z.object({
   handledBy: z.string().nullable(), // user that either approved or rejected the request
 })
 
+export type RefundRequestId = RefundRequest["id"]
 export type RefundRequest = z.infer<typeof RefundRequestSchema>
 
 export const RefundRequestWriteSchema = RefundRequestSchema.omit({

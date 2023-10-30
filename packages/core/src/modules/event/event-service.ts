@@ -1,19 +1,18 @@
-import { type Attendance, type AttendanceWrite, type Event, type EventWrite } from "@dotkomonline/types"
-import { type AttendanceRepository } from "./attendance-repository"
-import { type EventRepository } from "./event-repository"
+import { type Attendance, type AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
+import { type AttendanceRepository } from "./attendance-repository.js"
+import { type EventRepository } from "./event-repository.js"
 import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface EventService {
   createEvent: (eventCreate: EventWrite) => Promise<Event>
-  updateEvent: (id: Event["id"], payload: Omit<EventWrite, "id">) => Promise<Event>
-  getEventById: (id: Event["id"]) => Promise<Event>
+  updateEvent: (id: EventId, payload: Omit<EventWrite, "id">) => Promise<Event>
+  getEventById: (id: EventId) => Promise<Event>
   getEvents: (take: number, cursor?: Cursor) => Promise<Event[]>
   getEventsByCommitteeId: (committeeId: string, take: number, cursor?: Cursor) => Promise<Event[]>
-
-  createAttendance: (eventId: Event["id"], attendanceWrite: AttendanceWrite) => Promise<Attendance>
-  listAttendance: (eventId: Event["id"]) => Promise<Attendance[]>
-  createWaitlist: (eventId: Event["id"]) => Promise<Attendance>
+  createAttendance: (eventId: EventId, attendanceWrite: AttendanceWrite) => Promise<Attendance>
+  listAttendance: (eventId: EventId) => Promise<Attendance[]>
+  createWaitlist: (eventId: EventId) => Promise<Attendance>
 }
 
 export class EventServiceImpl implements EventService {
@@ -35,16 +34,12 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCommitteeId(
-    committeeId: string,
-    take: number,
-    cursor?: { id: string; createdAt: Date } | undefined
-  ): Promise<Event[]> {
+  async getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor)
     return events
   }
 
-  async getEventById(id: Event["id"]): Promise<Event> {
+  async getEventById(id: EventId): Promise<Event> {
     const event = await this.eventRepository.getById(id)
     if (!event) {
       throw new NotFoundError(`Event with ID:${id} not found`)
@@ -52,12 +47,12 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async updateEvent(id: Event["id"], eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
+  async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
     const event = await this.eventRepository.update(id, eventUpdate)
     return event
   }
 
-  async createAttendance(eventId: Event["id"], attendanceCreate: AttendanceWrite): Promise<Attendance> {
+  async createAttendance(eventId: EventId, attendanceCreate: AttendanceWrite): Promise<Attendance> {
     const attendance = await this.attendanceRepository.create({
       ...attendanceCreate,
       eventId,
@@ -65,12 +60,12 @@ export class EventServiceImpl implements EventService {
     return attendance
   }
 
-  async listAttendance(eventId: Event["id"]): Promise<Attendance[]> {
+  async listAttendance(eventId: EventId): Promise<Attendance[]> {
     const attendance = await this.attendanceRepository.getByEventId(eventId)
     return attendance
   }
 
-  async createWaitlist(eventId: Event["id"]): Promise<Attendance> {
+  async createWaitlist(eventId: EventId): Promise<Attendance> {
     const event = await this.getEventById(eventId)
     if (event.waitlist !== null) {
       throw new Error(`Attempted to create waitlist for event ${eventId}`)

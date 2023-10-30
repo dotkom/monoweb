@@ -23,7 +23,8 @@ import {
 import { type FC, type PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
+import Link from "next/link"
+import { navigationMenuTriggerStyle } from "./NavigationMenu.jsx"
 
 export const ProfileMenu = () => {
   const { status } = useSession()
@@ -54,7 +55,7 @@ export const ProfileMenu = () => {
   }
 
   return (
-    <div>
+    <button>
       <AvatarDropdown>
         <Avatar>
           <AvatarImage
@@ -64,7 +65,7 @@ export const ProfileMenu = () => {
           <AvatarFallback>PR</AvatarFallback>
         </Avatar>
       </AvatarDropdown>
-    </div>
+    </button>
   )
 }
 
@@ -72,6 +73,7 @@ interface Link {
   label: string
   icon: string
   shortcut?: string
+  href?: string
 }
 const linkGroups: Link[][] = [
   [
@@ -79,16 +81,19 @@ const linkGroups: Link[][] = [
       icon: "tabler:user",
       label: "Profil",
       shortcut: "⇧⌘P",
+      href: "/profile",
     },
     {
       icon: "tabler:credit-card",
       label: "Saldo",
       shortcut: "⌘B",
+      href: "/profile",
     },
     {
       icon: "tabler:settings",
       label: "Instillinger",
       shortcut: "⌘S",
+      href: "/profile",
     },
   ],
   [
@@ -119,35 +124,37 @@ const linkGroups: Link[][] = [
 ]
 
 const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-60">
-        <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
-        {linkGroups.map((group) => (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {group.map((link) => (
-                <DropdownMenuItem key={link.label}>
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+    <DropdownMenuContent className="w-60">
+      <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
+      {linkGroups.map((group) => (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            {group.map((link) => (
+              <DropdownMenuItem key={link.label}>
+                <Link href={link.href || ""}>
                   <Icon icon={link.icon} className="mr-2 h-4 w-4" />
                   <span>{link.label}</span>
                   {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </>
-        ))}
-        <DropdownMenuSeparator />
-        <ThemeMenuSub />
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={async () => signOut()}>
-          <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+        </>
+      ))}
+      <DropdownMenuSeparator />
+      <ThemeMenuSub />
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={async () => signOut()}>
+        <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
+        <span>Log out</span>
+        <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+)
 
 const ThemeMenuSub = () => {
   const { setTheme, theme } = useTheme()

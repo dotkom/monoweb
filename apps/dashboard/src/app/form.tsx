@@ -1,5 +1,7 @@
 import { type z } from "zod"
 import { type FC } from "react"
+import { ErrorMessage } from "@hookform/error-message"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Button,
   Checkbox,
@@ -7,26 +9,28 @@ import {
   Flex,
   MultiSelect,
   type MultiSelectProps,
+  NumberInput,
   Select,
+  type NumberInputProps,
   type SelectProps,
+  TagsInput,
+  type TagsInputProps,
   Textarea,
   type TextareaProps,
   TextInput,
   type TextInputProps,
 } from "@mantine/core"
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import {
   type Control,
   Controller,
   type DefaultValues,
   type FieldValue,
-  type FieldValues,
   type FormState,
   useForm,
   type UseFormRegister,
+  type FieldValues,
 } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ErrorMessage } from "@hookform/error-message"
-import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
@@ -40,13 +44,34 @@ type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 export function createMultipleSelectInput<F extends FieldValues>({
   ...props
 }: Omit<MultiSelectProps, "error">): InputProducerResult<F> {
-  return function FormSelectInput({ name, state, control }) {
+  return function FormMultiSelectInput({ name, state, control }) {
     return (
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
           <MultiSelect
+            {...props}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
+      />
+    )
+  }
+}
+
+export function createTagInput<F extends FieldValues>({
+  ...props
+}: Omit<TagsInputProps, "error">): InputProducerResult<F> {
+  return function FormTagInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <TagsInput
             {...props}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
             onChange={field.onChange}
@@ -138,6 +163,27 @@ export function createTextInput<F extends FieldValues>({
         {...register(name)}
         {...props}
         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+      />
+    )
+  }
+}
+
+export function createNumberInput<F extends FieldValues>({
+  ...props
+}: Omit<NumberInputProps, "error">): InputProducerResult<F> {
+  return function FormNumberInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <NumberInput
+            {...props}
+            value={field.value}
+            onChange={(value) => field.onChange({ target: { value } })}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+          />
+        )}
       />
     )
   }

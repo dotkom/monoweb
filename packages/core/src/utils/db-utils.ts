@@ -2,8 +2,7 @@ import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
 export const CursorSchema = z.object({
-  id: z.string(),
-  createdAt: z.date(),
+  id: z.string().ulid(),
 })
 
 export const PaginateInputSchema = z
@@ -16,11 +15,9 @@ export const PaginateInputSchema = z
 
 export type Cursor = z.infer<typeof CursorSchema>
 
-/* eslint-disable */
-export function paginateQuery(qb: SelectQueryBuilder<any, any, any>, cursor: Cursor) {
-  // This is not camelcased due to the query not going through the camelcase plugin.
-  // This is an exception.
-  return qb
-    .where(sql`id`, "<", sql`${cursor.id}`)
-    .orderBy("id", "desc")
+export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<DB, TB, O>, cursor?: Cursor) {
+  if (cursor) {
+    qb = qb.where(sql`id`, "<", sql`${cursor.id}`)
+  }
+  return qb.orderBy(sql`id`, "desc")
 }

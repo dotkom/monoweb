@@ -5,6 +5,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { type User } from "@dotkomonline/types"
 import { useMemo } from "react"
 import { GenericTable } from "src/components/GenericTable"
+import Link from "next/link"
 import { formatDate } from "../../../utils/format"
 import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
 
@@ -28,7 +29,7 @@ export default function UserPage() {
         id: "details",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" href={`/user/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/user/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),

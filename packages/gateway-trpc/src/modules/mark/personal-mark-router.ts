@@ -9,9 +9,15 @@ export const personalMarkRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
     ),
+  getByMark: protectedProcedure
+    .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id)),
   addToUser: protectedProcedure
     .input(PersonalMarkSchema)
     .mutation(async ({ input, ctx }) => ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)),
+  countUsersWithMark: protectedProcedure
+    .input(z.object({ id: PersonalMarkSchema.shape.markId }))
+    .query(async ({ input, ctx }) => ctx.personalMarkService.countUsersByMarkId(input.id)),
   removeFromUser: protectedProcedure
     .input(PersonalMarkSchema)
     .mutation(async ({ input, ctx }) =>

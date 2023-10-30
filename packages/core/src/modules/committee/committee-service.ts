@@ -1,10 +1,10 @@
-import { type Committee, type CommitteeWrite } from "@dotkomonline/types"
+import { type Committee, type CommitteeId, type CommitteeWrite } from "@dotkomonline/types"
 import { type CommitteeRepository } from "./committee-repository"
 import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface CommitteeService {
-  getCommittee: (id: Committee["id"]) => Promise<Committee>
+  getCommittee: (id: CommitteeId) => Promise<Committee>
   getCommittees: (take: number, cursor?: Cursor) => Promise<Committee[]>
   createCommittee: (payload: CommitteeWrite) => Promise<Committee>
 }
@@ -12,7 +12,7 @@ export interface CommitteeService {
 export class CommitteeServiceImpl implements CommitteeService {
   constructor(private readonly committeeRepository: CommitteeRepository) {}
 
-  async getCommittee(id: Committee["id"]) {
+  async getCommittee(id: CommitteeId) {
     const committee = await this.committeeRepository.getById(id)
     if (!committee) {
       throw new NotFoundError(`Company with ID:${id} not found`)

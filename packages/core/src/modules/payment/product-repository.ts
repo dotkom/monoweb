@@ -1,18 +1,18 @@
 import { type Kysely, type Selectable, sql } from "kysely"
-import { type Product, ProductSchema, type ProductWrite } from "@dotkomonline/types"
+import { type Product, type ProductId, ProductSchema, type ProductWrite } from "@dotkomonline/types"
 import { type Database } from "@dotkomonline/db"
 import { type DB } from "@dotkomonline/db/src/db.generated"
-import { type Cursor, paginateQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
 
 export interface ProductRepository {
   create: (data: ProductWrite) => Promise<Product | undefined>
-  update: (id: Product["id"], data: Omit<ProductWrite, "id">) => Promise<Product>
+  update: (id: ProductId, data: Omit<ProductWrite, "id">) => Promise<Product>
   getById: (id: string) => Promise<Product | undefined>
   getAll: (take: number, cursor?: Cursor) => Promise<Product[]>
-  delete: (id: Product["id"]) => Promise<void>
-  undelete: (id: Product["id"]) => Promise<void>
+  delete: (id: ProductId) => Promise<void>
+  undelete: (id: ProductId) => Promise<void>
 }
 
 export class ProductRepositoryImpl implements ProductRepository {
@@ -24,7 +24,7 @@ export class ProductRepositoryImpl implements ProductRepository {
     return mapToProduct(product)
   }
 
-  async update(id: Product["id"], data: Omit<ProductWrite, "id">): Promise<Product> {
+  async update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product> {
     const product = await this.db
       .updateTable("product")
       .set({
@@ -58,36 +58,32 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Product[]> {
-    let query = this.db
-      .selectFrom("product")
-      .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
-      .selectAll("product")
-      .select(
-        sql<
-          DB["productPaymentProvider"][]
-        >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
-          "paymentProviders"
+    const query = orderedQuery(
+      this.db
+        .selectFrom("product")
+        .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
+        .selectAll("product")
+        .select(
+          sql<
+            DB["productPaymentProvider"][]
+          >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
+            "paymentProviders"
+          )
         )
-      )
-      .groupBy("product.id")
-      .limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("id", "desc")
-    }
-
+        .groupBy("product.id")
+        .limit(take),
+      cursor
+    )
     const products = await query.execute()
     return products.map(mapToProduct)
   }
 
-  async delete(id: Product["id"]): Promise<void> {
+  async delete(id: ProductId): Promise<void> {
     // Soft delete since we don't want payments to ever be deleted or miss context
     await this.db.updateTable("product").set({ deletedAt: new Date() }).where("id", "=", id).execute()
   }
 
-  async undelete(id: Product["id"]): Promise<void> {
+  async undelete(id: ProductId): Promise<void> {
     await this.db.updateTable("product").set({ deletedAt: null }).where("id", "=", id).execute()
   }
 }
