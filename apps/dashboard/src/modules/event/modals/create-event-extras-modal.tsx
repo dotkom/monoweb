@@ -121,12 +121,7 @@ const Form: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         </InputLabel>
       </div>
 
-      <Title
-        order={3}
-        style={{
-          marginTop: "20px",
-        }}
-      >
+      <Title order={3} mt="md">
         Alternativer
       </Title>
       <hr />
@@ -138,9 +133,7 @@ const Form: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
             value: "",
           })
         }
-        style={{
-          marginTop: "10px",
-        }}
+        mt="sm"
       >
         Nytt alternativ
       </Button>
@@ -148,12 +141,7 @@ const Form: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
       {fields.map((field, index) => {
         return (
           <div key={field.id}>
-            <Flex
-              key={field.id}
-              style={{
-                marginTop: "10px",
-              }}
-            >
+            <Flex key={field.id} mt="sm">
               <TextInput
                 placeholder="Alternativ"
                 {...register(`alternatives.${index}.value` as const, {
@@ -164,14 +152,7 @@ const Form: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
                   width: "100%",
                 }}
               />
-              <Button
-                type="button"
-                onClick={() => remove(index)}
-                color="red"
-                style={{
-                  marginLeft: "10px",
-                }}
-              >
+              <Button type="button" onClick={() => remove(index)} color="red" ml="sm">
                 Slett
               </Button>
             </Flex>
