@@ -6,20 +6,19 @@
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "chalk": "^5.3.0",
-    "commander": "^11.0.0",
+    "commander": "^11.1.0",
     "kysely": "^0.26.3",
     "pg": "^8.11.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "@faker-js/faker": "^8.1.0",
-    "@types/eslint": "^8.44.5",
-    "@types/pg": "^8.10.5",
+    "@types/eslint": "^8.44.6",
+    "@types/pg": "^8.10.7",
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.51.0",
-    "tsx": "^3.13.0",
+    "eslint": "^8.52.0",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   },
   "scripts": {

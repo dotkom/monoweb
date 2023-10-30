@@ -32,14 +32,14 @@
   },
   "devDependencies": {
     "@dotkomonline/config": "workspace:*",
-    "@ladle/react": "^3.2.2",
-    "@types/react": "^18.2.24",
+    "@ladle/react": "^3.3.0",
+    "@types/react": "^18.2.33",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11",
+    "vite": "^4.5.0",
     "vitest": "^0.34.6"
   }
 }

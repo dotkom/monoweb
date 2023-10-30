@@ -8,7 +8,15 @@ locals {
     ? ["https://online.ntnu.no/api/auth/callback/cognito"]
     : []
   )
-  web_domain_name = "${terraform.workspace}.web.online.ntnu.no"
+  web_domain_name  = "${terraform.workspace}.web.online.ntnu.no"
+  web_project_name = "web-${terraform.workspace}"
+}
+
+module "web_database" {
+  source = "./modules/neon-project"
+
+  project_name = local.web_project_name
+  role_name    = "web"
 }
 
 module "web_cognito_client" {
