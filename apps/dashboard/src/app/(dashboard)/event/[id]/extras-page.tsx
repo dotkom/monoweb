@@ -21,12 +21,12 @@ export const ExtrasPage: FC = () => {
   const edit = useEditEventMutation()
 
   const deleteAlternative = (id: string) => {
-    const newChoices = event.extrasChoice?.filter((alt) => alt.id !== id)
+    const newChoices = event.attendeeQuestions?.filter((alt) => alt.id !== id)
     edit.mutate({
       id: event.id,
       event: {
         ...event,
-        extrasChoice: newChoices ?? [],
+        attendeeQuestions: newChoices ?? [],
       },
     })
   }
@@ -34,11 +34,11 @@ export const ExtrasPage: FC = () => {
   return (
     <Box>
       <Title order={3}>Valg</Title>
-      {event.extrasChoice === null && <p>Ingen ekstra valg er lagt til</p>}
+      {!event.attendeeQuestions?.length && <p>Ingen valg er lagt til</p>}
 
       <Button onClick={openCreate}>Legg til nytt valg</Button>
 
-      {event.extrasChoice?.map((extra) => (
+      {event.attendeeQuestions?.map((extra) => (
         <Paper key={extra.id} withBorder p={"md"} mt={"md"}>
           <Button mr={"sm"} color="yellow" onClick={() => openEdit(extra)}>
             Endre

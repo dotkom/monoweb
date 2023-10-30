@@ -14,7 +14,7 @@ type FormValues = {
 
 export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = ({ context, id, innerProps }) => {
   const editEvent = useEditEventMutation()
-  const allExtras = innerProps.event.extrasChoice || []
+  const allExtras = innerProps.event.attendeeQuestions || []
 
   const defaultAlternatives: FormValues = {
     question: "",
@@ -38,7 +38,7 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = (
       id: innerProps.event.id,
       event: {
         ...innerProps.event,
-        extrasChoice: newExtras,
+        attendeeQuestions: newExtras,
       },
     })
 
@@ -55,7 +55,7 @@ export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: Event
 }) => {
   const editEvent = useEditEventMutation()
 
-  const allExtras = innerProps.event.extrasChoice || []
+  const allExtras = innerProps.event.attendeeQuestions || []
   const existingExtra = innerProps.existingExtra
 
   const defaultAlternatives = {
@@ -84,7 +84,7 @@ export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: Event
       id: innerProps.event.id,
       event: {
         ...innerProps.event,
-        extrasChoice: newExtras,
+        attendeeQuestions: newExtras,
       },
     })
 
