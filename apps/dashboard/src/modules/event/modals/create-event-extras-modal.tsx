@@ -70,7 +70,7 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ existingExtra?: Even
             id: extra.id,
             name: data.question,
             choices: data.alternatives.map((alternative, i) => ({
-              id: Date.now().toString(36) + i,
+              id: `${i}`,
               name: alternative.value,
             })),
           }
@@ -81,10 +81,10 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ existingExtra?: Even
       newExtras = [
         ...allExtras,
         {
-          id: Date.now().toString(36),
+          id: `${allExtras.length - 1}`,
           name: data.question,
           choices: data.alternatives.map((alternative, i) => ({
-            id: Date.now().toString(36) + i,
+            id: `${i}`,
             name: alternative.value,
           })),
         },
