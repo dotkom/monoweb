@@ -1,4 +1,9 @@
-import { NotificationPermissionsWriteSchema, PrivacyPermissionsWriteSchema, UserWriteSchema, UserSchema } from "@dotkomonline/types"
+import {
+  NotificationPermissionsWriteSchema,
+  PrivacyPermissionsWriteSchema,
+  UserWriteSchema,
+  UserSchema,
+} from "@dotkomonline/types"
 import { protectedProcedure, publicProcedure } from "../../trpc"
 import { t } from "../../trpc"
 import { z } from "zod"
