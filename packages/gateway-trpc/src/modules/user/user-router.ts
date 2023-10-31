@@ -1,4 +1,4 @@
-import { NotificationPermissionsWriteSchema, PrivacyPermissionsWriteSchema, UserWriteSchema } from "@dotkomonline/types"
+import { NotificationPermissionsWriteSchema, PrivacyPermissionsWriteSchema, UserWriteSchema, UserSchema } from "@dotkomonline/types"
 import { protectedProcedure, publicProcedure } from "../../trpc"
 import { t } from "../../trpc"
 import { z } from "zod"
@@ -8,8 +8,8 @@ export const userRouter = t.router({
   all: publicProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
     return ctx.userService.getAllUsers(input.take)
   }),
-  get: publicProcedure.input(z.string()).query(({ input, ctx }) => {
-    return ctx.userService.getUser(input)
+  get: publicProcedure.input(UserSchema.shape.id).query(({ input, ctx }) => {
+    return ctx.userService.getUsrById(input)
   }),
   edit: protectedProcedure
     .input(
