@@ -3,7 +3,7 @@ import { type CompanyEventRepository } from "./company-event-repository" // Note
 import { type Cursor } from "../../utils/db-utils"
 
 export interface CompanyEventService {
-  getEventsByCompanyId: (companyId: CompanyId, take: number, cursor?: Cursor) => Promise<Event[]>
+  getEventsByCompanyId(companyId: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>
 }
 
 export class CompanyEventServiceImpl implements CompanyEventService {

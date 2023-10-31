@@ -1,5 +1,5 @@
 import { cva } from "cva"
-import type { VariantProps } from "cva"
+import { type VariantProps } from "cva"
 import * as React from "react"
 import { cn } from "../../utils"
 

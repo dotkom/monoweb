@@ -1,6 +1,6 @@
-import { type NextPageWithLayout } from "../_app"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
+import { type NextPageWithLayout } from "../_app"
 
 const EmailPage: NextPageWithLayout = () => <div>Email</div>
 

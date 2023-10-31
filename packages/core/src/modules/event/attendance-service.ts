@@ -2,10 +2,10 @@ import { type Attendee, type EventId, type UserId } from "@dotkomonline/types"
 import { type AttendanceRepository } from "./attendance-repository"
 
 export interface AttendanceService {
-  canAttend: (eventId: EventId) => Promise<Date | undefined>
-  registerForEvent: (userId: UserId, eventId: EventId) => Promise<Attendee | undefined>
-  deregisterForEvent: (userId: UserId, eventId: EventId) => Promise<Attendee | undefined>
-  registerForAttendance: (userId: UserId, attendanceId: string, attended: boolean) => Promise<Attendee | undefined>
+  canAttend(eventId: EventId): Promise<Date | undefined>
+  registerForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
+  deregisterForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
+  registerForAttendance(userId: UserId, attendanceId: string, attended: boolean): Promise<Attendee | undefined>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {

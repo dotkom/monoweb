@@ -2,7 +2,7 @@ import { type Committee, type CommitteeId, type EventCommittee, type EventId } f
 import { type EventCommitteeRepositoryImpl } from "./event-committee-repository"
 
 export interface EventCommitteeService {
-  getCommitteesForEvent: (eventId: EventId) => Promise<Committee[]>
+  getCommitteesForEvent(eventId: EventId): Promise<Committee[]>
 }
 
 export class EventCommitteeServiceImpl implements EventCommitteeService {

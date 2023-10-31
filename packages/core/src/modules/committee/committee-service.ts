@@ -4,9 +4,9 @@ import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface CommitteeService {
-  getCommittee: (id: CommitteeId) => Promise<Committee>
-  getCommittees: (take: number, cursor?: Cursor) => Promise<Committee[]>
-  createCommittee: (payload: CommitteeWrite) => Promise<Committee>
+  getCommittee(id: CommitteeId): Promise<Committee>
+  getCommittees(take: number, cursor?: Cursor): Promise<Committee[]>
+  createCommittee(payload: CommitteeWrite): Promise<Committee>
 }
 
 export class CommitteeServiceImpl implements CommitteeService {

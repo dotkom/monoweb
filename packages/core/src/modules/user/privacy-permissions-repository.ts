@@ -11,12 +11,12 @@ export const mapToPrivacyPermissions = (payload: Selectable<Database["privacyPer
   PrivacyPermissionsSchema.parse(payload)
 
 export interface PrivacyPermissionsRepository {
-  getByUserId: (id: UserId) => Promise<PrivacyPermissions | undefined>
-  create: (data: Partial<PrivacyPermissionsWrite>) => Promise<PrivacyPermissions>
-  update: (
+  getByUserId(id: UserId): Promise<PrivacyPermissions | undefined>
+  create(data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions>
+  update(
     userId: string,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-  ) => Promise<PrivacyPermissions | undefined>
+  ): Promise<PrivacyPermissions | undefined>
 }
 
 export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {

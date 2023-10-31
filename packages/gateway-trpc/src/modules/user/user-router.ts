@@ -4,7 +4,9 @@ import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const userRouter = t.router({
-  all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
+  all: publicProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
   get: publicProcedure.input(z.string()).query(async ({ input, ctx }) => ctx.userService.getUser(input)),
   edit: protectedProcedure
     .input(
@@ -14,7 +16,9 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) => ctx.userService.updateUser(changes.id, changes.data)),
-  getPrivacyPermissionssByUserId: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),
+  getPrivacyPermissionssByUserId: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),
   updatePrivacyPermissionssForUserId: protectedProcedure
     .input(
       z.object({

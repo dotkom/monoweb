@@ -13,16 +13,16 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 const mapToPayment = (data: Selectable<Database["payment"]>) => PaymentSchema.parse(data)
 
 export interface PaymentRepository {
-  create: (data: PaymentWrite) => Promise<Payment | undefined>
-  update: (id: PaymentId, data: Partial<PaymentWrite>) => Promise<Payment>
-  updateByPaymentProviderSessionId: (paymentProviderSessionId: string, data: Partial<PaymentWrite>) => Promise<Payment>
-  getById: (id: PaymentId) => Promise<Payment | undefined>
-  getByPaymentProviderOrderId: (paymentProviderOrderId: string) => Promise<Payment | undefined>
-  getAll: (take: number, cursor?: Cursor) => Promise<Payment[]>
-  getAllByUserId: (id: UserId, take: number, cursor?: Cursor) => Promise<Payment[]>
-  getAllByProductId: (id: ProductId, take: number, cursor?: Cursor) => Promise<Payment[]>
-  delete: (id: PaymentId) => Promise<void>
-  deleteByPaymentProviderSessionId: (paymentProviderSessionId: string) => Promise<void>
+  create(data: PaymentWrite): Promise<Payment | undefined>
+  update(id: PaymentId, data: Partial<PaymentWrite>): Promise<Payment>
+  updateByPaymentProviderSessionId(paymentProviderSessionId: string, data: Partial<PaymentWrite>): Promise<Payment>
+  getById(id: PaymentId): Promise<Payment | undefined>
+  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<Payment[]>
+  getAllByUserId(id: UserId, take: number, cursor?: Cursor): Promise<Payment[]>
+  getAllByProductId(id: ProductId, take: number, cursor?: Cursor): Promise<Payment[]>
+  delete(id: PaymentId): Promise<void>
+  deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void>
 }
 
 export class PaymentRepositoryImpl implements PaymentRepository {

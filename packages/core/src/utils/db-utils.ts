@@ -16,8 +16,11 @@ export const PaginateInputSchema = z
 export type Cursor = z.infer<typeof CursorSchema>
 
 export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<DB, TB, O>, cursor?: Cursor) {
+  let queryBuilder = qb
+
   if (cursor) {
-    qb = qb.where(sql`id`, "<", sql`${cursor.id}`)
+    queryBuilder = qb.where(sql`id`, "<", sql`${cursor.id}`)
   }
-  return qb.orderBy(sql`id`, "desc")
+
+  return queryBuilder.orderBy(sql`id`, "desc")
 }

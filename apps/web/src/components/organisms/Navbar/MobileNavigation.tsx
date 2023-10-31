@@ -51,12 +51,12 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
 }
 
 const MobileMenuItem = ({ link }: { link: MenuLink }) => (
-    <NavigationMenuLink asChild>
-      <Link
-        href={"href" in link ? link.href : "#"}
-        className="border-blue-12/10 mx-8 flex h-14 w-[calc(100%-theme(space.16))] items-center border-b text-lg font-semibold"
-      >
-        {link.title}
-      </Link>
-    </NavigationMenuLink>
-  )
+  <NavigationMenuLink asChild>
+    <Link
+      href={"href" in link ? link.href : "#"}
+      className="border-blue-12/10 mx-8 flex h-14 w-[calc(100%-theme(space.16))] items-center border-b text-lg font-semibold"
+    >
+      {link.title}
+    </Link>
+  </NavigationMenuLink>
+)

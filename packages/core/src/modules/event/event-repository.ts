@@ -6,11 +6,11 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
 export interface EventRepository {
-  create: (data: EventWrite) => Promise<Event | undefined>
-  update: (id: EventId, data: Omit<EventWrite, "id">) => Promise<Event>
-  getAll: (take: number, cursor?: Cursor) => Promise<Event[]>
-  getAllByCommitteeId: (committeeId: string, take: number, cursor?: Cursor) => Promise<Event[]>
-  getById: (id: string) => Promise<Event | undefined>
+  create(data: EventWrite): Promise<Event | undefined>
+  update(id: EventId, data: Omit<EventWrite, "id">): Promise<Event>
+  getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
+  getById(id: string): Promise<Event | undefined>
 }
 
 export class EventRepositoryImpl implements EventRepository {

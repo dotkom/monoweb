@@ -6,7 +6,7 @@ const USER_FORM_DEFAULT_VALUES: Partial<UserWrite> = {
 }
 
 interface UseUserWriteFormProps {
-  onSubmit: (data: UserWrite) => void
+  onSubmit(data: UserWrite): void
   defaultValues?: Partial<UserWrite>
   label?: string
 }
@@ -15,7 +15,8 @@ export const useUserWriteForm = ({
   onSubmit,
   label = "Edit User",
   defaultValues = USER_FORM_DEFAULT_VALUES,
-}: UseUserWriteFormProps) => useFormBuilder({
+}: UseUserWriteFormProps) =>
+  useFormBuilder({
     schema: UserWriteSchema,
     defaultValues,
     onSubmit,

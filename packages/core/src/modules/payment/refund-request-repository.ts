@@ -12,12 +12,12 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 const mapToRefundRequest = (data: Selectable<Database["refundRequest"]>) => RefundRequestSchema.parse(data)
 
 export interface RefundRequestRepository {
-  create: (data: RefundRequestWrite) => Promise<RefundRequest>
-  update: (id: RefundRequestId, data: Partial<RefundRequestWrite>) => Promise<RefundRequest>
-  delete: (id: RefundRequestId) => Promise<void>
-  getById: (id: RefundRequestId) => Promise<RefundRequest | undefined>
-  getByPaymentId: (paymentId: PaymentId) => Promise<RefundRequest | undefined>
-  getAll: (take: number, cursor?: Cursor) => Promise<RefundRequest[]>
+  create(data: RefundRequestWrite): Promise<RefundRequest>
+  update(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
+  delete(id: RefundRequestId): Promise<void>
+  getById(id: RefundRequestId): Promise<RefundRequest | undefined>
+  getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<RefundRequest[]>
 }
 
 export class RefundRequestRepositoryImpl implements RefundRequestRepository {

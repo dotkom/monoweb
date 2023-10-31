@@ -3,7 +3,7 @@
 import { createTRPCReact } from "@trpc/react-query"
 import { type CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server"
-import type { AppRouter } from "@dotkomonline/gateway-trpc"
+import { type AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
 import { env } from "@dotkomonline/env"
 

@@ -13,16 +13,16 @@ import { type UserRepository } from "./user-repository"
 import { NotFoundError } from "../../errors/errors"
 
 export interface UserService {
-  getUserById: (id: UserId) => Promise<User | undefined>
-  getUserBySubject: (id: User["cognitoSub"]) => Promise<User | undefined>
-  getAllUsers: (limit: number) => Promise<User[]>
-  createUser: (input: UserWrite) => Promise<User>
-  updateUser: (id: UserId, payload: UserWrite) => Promise<User>
-  getPrivacyPermissionsByUserId: (id: string) => Promise<PrivacyPermissions>
-  updatePrivacyPermissionsForUserId: (
+  getUserById(id: UserId): Promise<User | undefined>
+  getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
+  getAllUsers(limit: number): Promise<User[]>
+  createUser(input: UserWrite): Promise<User>
+  updateUser(id: UserId, payload: UserWrite): Promise<User>
+  getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
+  updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-  ) => Promise<PrivacyPermissions>
+  ): Promise<PrivacyPermissions>
 }
 
 export class UserServiceImpl implements UserService {

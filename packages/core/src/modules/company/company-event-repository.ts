@@ -5,7 +5,7 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 import { mapToEvent } from "../event/event-repository"
 
 export interface CompanyEventRepository {
-  getEventsByCompanyId: (company: CompanyId, take: number, cursor?: Cursor) => Promise<Event[]>
+  getEventsByCompanyId(company: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>
 }
 
 export class CompanyEventRepositoryImpl implements CompanyEventRepository {

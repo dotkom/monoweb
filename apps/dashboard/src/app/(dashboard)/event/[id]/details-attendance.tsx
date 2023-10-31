@@ -1,11 +1,11 @@
-import React, { FC, useMemo } from "react"
-import { useEventDetailsContext } from "./provider"
+import React, { type FC, useMemo } from "react"
 import { Box, Title, Checkbox } from "@mantine/core"
+import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
+import { type Attendee } from "@dotkomonline/types"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
 import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
-import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
 import { GenericTable } from "src/components/GenericTable"
-import { Attendee } from "@dotkomonline/types"
+import { useEventDetailsContext } from "./provider"
 
 interface CustomCheckboxProps {
   userId: string
@@ -67,7 +67,7 @@ export const EventAttendancePage: FC = () => {
       {eventAttendance?.map((attendance) => (
         <Box key={attendance.id} mb="sm">
           <Title order={4}>
-            {attendance.id} {"(" + attendance.attendees.length + "/" + attendance.limit + ")"}
+            {attendance.id} {`(${attendance.attendees.length}/${attendance.limit})`}
           </Title>
           <GenericTable table={table} />
         </Box>

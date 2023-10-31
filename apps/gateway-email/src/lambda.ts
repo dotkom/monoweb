@@ -1,4 +1,4 @@
-import type { Handler, APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda"
+import { type Handler, type APIGatewayProxyEventV2, type APIGatewayProxyResultV2 } from "aws-lambda"
 import { HelloWorldTemplate, InvalidTemplateArguments, type Template } from "@dotkomonline/emails"
 import { z, ZodError } from "zod"
 import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses"

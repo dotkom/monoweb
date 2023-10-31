@@ -6,19 +6,19 @@ import { type NextPageWithLayout } from "../_app"
 const PaymentPage: NextPageWithLayout = () => <div>Payment</div>
 
 const PaymentHeader = () => (
-    <div className="flex items-center">
-      <Icon icon={"tabler:credit-card"} width={24} />
-      <p className="ml-2">Betalinger</p>
-    </div>
-  )
+  <div className="flex items-center">
+    <Icon icon={"tabler:credit-card"} width={24} />
+    <p className="ml-2">Betalinger</p>
+  </div>
+)
 
 PaymentPage.getLayout = (page) => (
-    <MainLayout>
-      <ProfileLayout>
-        <PaymentHeader />
-        {page}
-      </ProfileLayout>
-    </MainLayout>
-  )
+  <MainLayout>
+    <ProfileLayout>
+      <PaymentHeader />
+      {page}
+    </ProfileLayout>
+  </MainLayout>
+)
 
 export default PaymentPage

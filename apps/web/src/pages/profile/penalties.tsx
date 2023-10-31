@@ -2,10 +2,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@d
 import { DotFilledIcon } from "@radix-ui/react-icons"
 import { type FC } from "react"
 import { addMinutes, format } from "date-fns"
-import { type NextPageWithLayout } from "../_app"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import MainLayout from "@/components/layout/MainLayout"
 import PenaltyRules from "@/utils/penalty-rules"
+import { type NextPageWithLayout } from "../_app"
 
 /* TODO - Set up connection to Users marks router */
 

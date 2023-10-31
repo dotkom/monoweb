@@ -19,6 +19,6 @@
     "types": ["vitest/globals"]
   },
   "include": ["apps/", "packages/"],
-    "types": ["vitest/globals"],
-    "noErrorTruncation": true
+  "types": ["vitest/globals"],
+  "noErrorTruncation": true
 }

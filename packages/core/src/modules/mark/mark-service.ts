@@ -4,11 +4,11 @@ import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
 
 export interface MarkService {
-  getMark: (id: MarkId) => Promise<Mark>
-  getMarks: (limit: number, cursor?: Cursor) => Promise<Mark[]>
-  createMark: (payload: MarkWrite) => Promise<Mark>
-  updateMark: (id: MarkId, payload: MarkWrite) => Promise<Mark>
-  deleteMark: (id: MarkId) => Promise<Mark>
+  getMark(id: MarkId): Promise<Mark>
+  getMarks(limit: number, cursor?: Cursor): Promise<Mark[]>
+  createMark(payload: MarkWrite): Promise<Mark>
+  updateMark(id: MarkId, payload: MarkWrite): Promise<Mark>
+  deleteMark(id: MarkId): Promise<Mark>
 }
 
 export class MarkServiceImpl implements MarkService {

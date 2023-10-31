@@ -6,19 +6,19 @@ import { type NextPageWithLayout } from "../_app"
 const AccessCardPage: NextPageWithLayout = () => <div>Access card</div>
 
 const AccessCardHeader = () => (
-    <div className="flex items-center">
-      <Icon icon={"tabler:school"} width={24} />
-      <p className="ml-2">Adgangskort (NTNU)</p>
-    </div>
-  )
+  <div className="flex items-center">
+    <Icon icon={"tabler:school"} width={24} />
+    <p className="ml-2">Adgangskort (NTNU)</p>
+  </div>
+)
 
 AccessCardPage.getLayout = (page) => (
-    <MainLayout>
-      <ProfileLayout>
-        <AccessCardHeader />
-        {page}
-      </ProfileLayout>
-    </MainLayout>
-  )
+  <MainLayout>
+    <ProfileLayout>
+      <AccessCardHeader />
+      {page}
+    </ProfileLayout>
+  </MainLayout>
+)
 
 export default AccessCardPage

@@ -24,7 +24,7 @@ import { type FC, type PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
 import { signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
-import { navigationMenuTriggerStyle } from "./NavigationMenu.jsx"
+import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = () => {
   const { status } = useSession()

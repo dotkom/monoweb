@@ -1,5 +1,5 @@
-import ProfileMenuItem from "./ProfileMenuItem"
 import { profileItems } from "@/utils/profileLinks"
+import ProfileMenuItem from "./ProfileMenuItem"
 
 const ProfileMenuContainer = () => (
   <div className=" border-slate-5 border-r-[1px] pr-5 pt-10 ">

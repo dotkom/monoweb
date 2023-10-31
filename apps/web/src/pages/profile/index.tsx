@@ -1,10 +1,10 @@
 import { type GetServerSideProps, type InferGetServerSidePropsType } from "next"
 import { getServerSession, type User } from "next-auth"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
-import { type NextPageWithLayout } from "../_app"
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
 import { ProfileLanding } from "@/components/views/ProfileView/components"
+import { type NextPageWithLayout } from "../_app"
 
 const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => (
   <ProfileLanding user={user} />

@@ -200,7 +200,7 @@ interface FormBuilderOptions<T extends z.ZodRawShape> {
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
-  onSubmit: (data: z.infer<z.ZodObject<T>>) => void
+  onSubmit(data: z.infer<z.ZodObject<T>>): void
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({

@@ -16,8 +16,8 @@ export const CreateCompanyModal: FC<ContextModalProps> = ({ context, id }) => {
 }
 
 export const useCreateCompanyModal = () => () =>
-    modals.openContextModal({
-      modal: "company/create",
-      title: "Registrer ny bedrift",
-      innerProps: {},
-    })
+  modals.openContextModal({
+    modal: "company/create",
+    title: "Registrer ny bedrift",
+    innerProps: {},
+  })

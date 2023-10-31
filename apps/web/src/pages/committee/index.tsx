@@ -4,7 +4,9 @@ import { trpc } from "@/utils/trpc"
 const CommitteePage = () => {
   const { data, isLoading } = trpc.committee.all.useQuery()
 
-  if (isLoading) {return <p>Loading...</p>}
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
 
   return (
     <ul className="text-blue-11 text-center text-2xl">

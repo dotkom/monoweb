@@ -5,14 +5,14 @@ import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface EventService {
-  createEvent: (eventCreate: EventWrite) => Promise<Event>
-  updateEvent: (id: EventId, payload: Omit<EventWrite, "id">) => Promise<Event>
-  getEventById: (id: EventId) => Promise<Event>
-  getEvents: (take: number, cursor?: Cursor) => Promise<Event[]>
-  getEventsByCommitteeId: (committeeId: string, take: number, cursor?: Cursor) => Promise<Event[]>
-  createAttendance: (eventId: EventId, attendanceWrite: AttendanceWrite) => Promise<Attendance>
-  listAttendance: (eventId: EventId) => Promise<Attendance[]>
-  createWaitlist: (eventId: EventId) => Promise<Attendance>
+  createEvent(eventCreate: EventWrite): Promise<Event>
+  updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
+  getEventById(id: EventId): Promise<Event>
+  getEvents(take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
+  createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
+  listAttendance(eventId: EventId): Promise<Attendance[]>
+  createWaitlist(eventId: EventId): Promise<Attendance>
 }
 
 export class EventServiceImpl implements EventService {

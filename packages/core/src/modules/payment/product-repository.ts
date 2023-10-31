@@ -7,12 +7,12 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
 
 export interface ProductRepository {
-  create: (data: ProductWrite) => Promise<Product | undefined>
-  update: (id: ProductId, data: Omit<ProductWrite, "id">) => Promise<Product>
-  getById: (id: string) => Promise<Product | undefined>
-  getAll: (take: number, cursor?: Cursor) => Promise<Product[]>
-  delete: (id: ProductId) => Promise<void>
-  undelete: (id: ProductId) => Promise<void>
+  create(data: ProductWrite): Promise<Product | undefined>
+  update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product>
+  getById(id: string): Promise<Product | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<Product[]>
+  delete(id: ProductId): Promise<void>
+  undelete(id: ProductId): Promise<void>
 }
 
 export class ProductRepositoryImpl implements ProductRepository {

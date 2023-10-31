@@ -6,10 +6,10 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 export const mapToCompany = (payload: Selectable<Database["company"]>): Company => CompanySchema.parse(payload)
 
 export interface CompanyRepository {
-  getById: (id: CompanyId) => Promise<Company | undefined>
-  getAll: (take: number, cursor?: Cursor) => Promise<Company[]>
-  create: (values: CompanyWrite) => Promise<Company | undefined>
-  update: (id: CompanyId, data: CompanyWrite) => Promise<Company>
+  getById(id: CompanyId): Promise<Company | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<Company[]>
+  create(values: CompanyWrite): Promise<Company | undefined>
+  update(id: CompanyId, data: CompanyWrite): Promise<Company>
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {

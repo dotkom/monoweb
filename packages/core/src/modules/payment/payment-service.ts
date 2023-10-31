@@ -7,21 +7,21 @@ import { type Cursor } from "../../utils/db-utils"
 import { type EventRepository } from "../event/event-repository"
 
 export interface PaymentService {
-  getPaymentProviders: () => (PaymentProvider & { paymentAlias: string })[]
-  getPayments: (take: number, cursor?: Cursor) => Promise<Payment[]>
-  createStripeCheckoutSessionForProductId: (
+  getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
+  getPayments(take: number, cursor?: Cursor): Promise<Payment[]>
+  createStripeCheckoutSessionForProductId(
     productId: ProductId,
     stripePublicKey: string,
     successRedirectUrl: string,
     cancelRedirectUrl: string,
     userId: UserId
-  ) => Promise<{ redirectUrl: string }>
-  fullfillStripeCheckoutSession: (stripeSessionId: string, intentId: string) => Promise<void>
-  expireStripeCheckoutSession: (stripeSessionId: string) => Promise<void>
-  refundPaymentById: (paymentId: string, checkRefundRequest?: boolean) => Promise<void>
-  refundPaymentByPaymentProviderOrderId: (paymentProviderOrderId: string, checkRefundRequest?: boolean) => Promise<void>
-  refundStripePaymentById: (paymentId: string, checkRefundRequest?: boolean) => Promise<void>
-  refundStripePaymentByStripeOrderId: (stripeOrderId: string, checkRefundRequest?: boolean) => Promise<void>
+  ): Promise<{ redirectUrl: string }>
+  fullfillStripeCheckoutSession(stripeSessionId: string, intentId: string): Promise<void>
+  expireStripeCheckoutSession(stripeSessionId: string): Promise<void>
+  refundPaymentById(paymentId: string, checkRefundRequest?: boolean): Promise<void>
+  refundPaymentByPaymentProviderOrderId(paymentProviderOrderId: string, checkRefundRequest?: boolean): Promise<void>
+  refundStripePaymentById(paymentId: string, checkRefundRequest?: boolean): Promise<void>
+  refundStripePaymentByStripeOrderId(stripeOrderId: string, checkRefundRequest?: boolean): Promise<void>
 }
 
 export class PaymentServiceImpl implements PaymentService {

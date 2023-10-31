@@ -6,9 +6,9 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => CommitteeSchema.parse(payload)
 
 export interface CommitteeRepository {
-  getById: (id: CommitteeId) => Promise<Committee | undefined>
-  getAll: (take: number, cursor?: Cursor) => Promise<Committee[]>
-  create: (values: CommitteeWrite) => Promise<Committee>
+  getById(id: CommitteeId): Promise<Committee | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<Committee[]>
+  create(values: CommitteeWrite): Promise<Committee>
 }
 
 export class CommitteeRepositoryImpl implements CommitteeRepository {

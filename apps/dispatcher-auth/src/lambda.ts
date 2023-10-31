@@ -1,4 +1,4 @@
-import { Handler, PostConfirmationConfirmSignUpTriggerEvent } from "aws-lambda"
+import { type Handler, type PostConfirmationConfirmSignUpTriggerEvent } from "aws-lambda"
 import { kysely } from "@dotkomonline/db"
 import { createServiceLayer } from "@dotkomonline/core"
 

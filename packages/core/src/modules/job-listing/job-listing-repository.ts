@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
-import { JobListing, JobListingId, JobListingSchema } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable, sql } from "kysely"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Database } from "@dotkomonline/db"
+import { type JobListing, type JobListingId, JobListingSchema } from "@dotkomonline/types"
+import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 type JobListingWrite = Insertable<Database["jobListing"]>
 
@@ -12,9 +12,8 @@ export interface JobListingRepository {
   update(id: JobListingId, data: JobListingWrite): Promise<JobListing>
 }
 
-const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing => {
-  return JobListingSchema.parse(jobListing)
-}
+const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing =>
+  JobListingSchema.parse(jobListing)
 
 export class JobListingRepositoryImpl implements JobListingRepository {
   constructor(private readonly db: Kysely<Database>) {}

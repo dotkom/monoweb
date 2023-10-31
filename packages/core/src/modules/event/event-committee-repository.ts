@@ -14,10 +14,10 @@ export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"
   EventCommitteeSchema.parse(payload)
 
 export interface EventCommitteeRepository {
-  getAllEventCommittees: (eventId: EventId, take: number, cursor?: Cursor) => Promise<EventCommittee[]>
-  getAllCommittees: (eventId: EventId, take: number, cursor?: Cursor) => Promise<Committee[]>
-  addCommitteeToEvent: (eventId: EventId, committeeId: CommitteeId) => Promise<void>
-  removeCommitteFromEvent: (eventId: EventId, committeeId: CommitteeId) => Promise<void>
+  getAllEventCommittees(eventId: EventId, take: number, cursor?: Cursor): Promise<EventCommittee[]>
+  getAllCommittees(eventId: EventId, take: number, cursor?: Cursor): Promise<Committee[]>
+  addCommitteeToEvent(eventId: EventId, committeeId: CommitteeId): Promise<void>
+  removeCommitteFromEvent(eventId: EventId, committeeId: CommitteeId): Promise<void>
 }
 
 export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {

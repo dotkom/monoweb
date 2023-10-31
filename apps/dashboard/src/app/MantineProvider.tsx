@@ -6,8 +6,8 @@ import { Notifications } from "@mantine/notifications"
 import { ModalProvider } from "./ModalProvider"
 
 export const MantineProvider: FC<PropsWithChildren> = ({ children }) => (
-    <MantineCoreProvider>
-      <Notifications />
-      <ModalProvider>{children}</ModalProvider>
-    </MantineCoreProvider>
-  )
+  <MantineCoreProvider>
+    <Notifications />
+    <ModalProvider>{children}</ModalProvider>
+  </MantineCoreProvider>
+)

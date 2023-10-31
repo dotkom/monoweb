@@ -13,7 +13,7 @@ import MainLayout from "../components/layout/MainLayout"
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 
 export type NextPageWithLayout<P = Record<string, never>> = NextPage<P> & {
-  getLayout?: (page: ReactElement) => ReactNode
+  getLayout?(page: ReactElement): ReactNode
 }
 
 type CustomAppProps<P> = AppProps & {

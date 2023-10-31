@@ -1,5 +1,6 @@
 import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next"
-import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"import { type Committee } from "@dotkomonline/types"
+import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
+import { type Committee } from "@dotkomonline/types"
 import { type FC } from "react"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { useRouter } from "next/router"

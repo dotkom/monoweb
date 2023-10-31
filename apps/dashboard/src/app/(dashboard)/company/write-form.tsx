@@ -7,7 +7,7 @@ const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
 }
 
 interface UseCompanyWriteFormProps {
-  onSubmit: (data: CompanyWrite) => void
+  onSubmit(data: CompanyWrite): void
   defaultValues?: Partial<CompanyWrite>
   label?: string
 }
@@ -16,7 +16,8 @@ export const useCompanyWriteForm = ({
   onSubmit,
   label = "Registrer ny bedrift",
   defaultValues = COMPANY_FORM_DEFAULT_VALUES,
-}: UseCompanyWriteFormProps) => useFormBuilder({
+}: UseCompanyWriteFormProps) =>
+  useFormBuilder({
     schema: CompanyWriteSchema,
     defaultValues,
     onSubmit,

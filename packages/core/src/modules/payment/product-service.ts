@@ -4,9 +4,9 @@ import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
 
 export interface ProductService {
-  createProduct: (productCreate: ProductWrite) => Promise<Product>
-  getProductById: (id: ProductId) => Promise<Product>
-  getProducts: (take: number, cursor?: Cursor) => Promise<Product[]>
+  createProduct(productCreate: ProductWrite): Promise<Product>
+  getProductById(id: ProductId): Promise<Product>
+  getProducts(take: number, cursor?: Cursor): Promise<Product[]>
 }
 
 export class ProductServiceImpl implements ProductService {

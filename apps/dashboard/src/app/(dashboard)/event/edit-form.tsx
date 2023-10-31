@@ -12,7 +12,7 @@ import {
 } from "../../form"
 
 interface UseEventEditFormProps {
-  onSubmit: (data: FormValidationResult) => void
+  onSubmit(data: FormValidationResult): void
   defaultValues?: Partial<FormValidationResult>
   label?: string
   committees: Committee[]
@@ -22,13 +22,10 @@ const FormValidationSchema = EventSchema.extend({
   committeeIds: z.array(z.string()),
 })
   .required({ id: true })
-  .refine(
-    (data) => data.start < data.end,
-    {
-      message: "Sluttidspunkt må være etter starttidspunkt",
-      path: ["end"],
-    }
-  )
+  .refine((data) => data.start < data.end, {
+    message: "Sluttidspunkt må være etter starttidspunkt",
+    path: ["end"],
+  })
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
@@ -37,7 +34,8 @@ export const useEventEditForm = ({
   onSubmit,
   label = "Opprett arrangement",
   defaultValues,
-}: UseEventEditFormProps) => useFormBuilder({
+}: UseEventEditFormProps) =>
+  useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,

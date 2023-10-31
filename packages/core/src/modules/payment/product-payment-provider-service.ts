@@ -7,10 +7,10 @@ import {
 import { type ProductPaymentProviderRepository } from "./product-payment-provider-repository"
 
 export interface ProductPaymentProviderService {
-  addPaymentProvider: (data: ProductPaymentProviderWrite) => Promise<ProductPaymentProvider | undefined>
-  deletePaymentProvider: (productId: ProductId, paymentProviderId: string) => Promise<void>
-  getAllByProductId: (productId: ProductId) => Promise<PaymentProvider[]>
-  productHasPaymentProviderId: (productId: ProductId, paymentProviderId: string) => Promise<boolean>
+  addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>
+  deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void>
+  getAllByProductId(productId: ProductId): Promise<PaymentProvider[]>
+  productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean>
 }
 
 export class ProductPaymentProviderServiceImpl implements ProductPaymentProviderService {

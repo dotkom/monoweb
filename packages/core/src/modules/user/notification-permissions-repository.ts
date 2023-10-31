@@ -12,12 +12,12 @@ export const mapToNotificationPermissions = (
 ): NotificationPermissions => NotificationPermissionsSchema.parse(payload)
 
 export interface NotificationPermissionsRepository {
-  getByUserId: (id: UserId) => Promise<NotificationPermissions | undefined>
-  create: (data: Partial<NotificationPermissionsWrite>) => Promise<NotificationPermissions>
-  update: (
+  getByUserId(id: UserId): Promise<NotificationPermissions | undefined>
+  create(data: Partial<NotificationPermissionsWrite>): Promise<NotificationPermissions>
+  update(
     userId: UserId,
     data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ) => Promise<NotificationPermissions | undefined>
+  ): Promise<NotificationPermissions | undefined>
 }
 
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {

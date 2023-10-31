@@ -1,6 +1,7 @@
 import { type GetServerSideProps } from "next"
 import { type FC } from "react"
-import { fetchCompanySectionData } from "src/api/get-company-page"import { CompanyInfoView, type Content } from "@/components/views/CompanyInfoView"
+import { fetchCompanySectionData } from "src/api/get-company-page"
+import { CompanyInfoView, type Content } from "@/components/views/CompanyInfoView"
 
 interface CompanyProps {
   sections: Content[]

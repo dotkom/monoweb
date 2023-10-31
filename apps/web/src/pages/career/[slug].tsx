@@ -13,6 +13,7 @@ export const getServerSideProps: GetServerSideProps<CareerProps> = async (ctx) =
   return { props: { career: data } }
 }
 
-const CareerAdPage: FC<CareerProps> = (props: CareerProps) => props.career ? <CareerAdView career={props.career} /> : <div>404 - Sanity not found</div>
+const CareerAdPage: FC<CareerProps> = (props: CareerProps) =>
+  props.career ? <CareerAdView career={props.career} /> : <div>404 - Sanity not found</div>
 
 export default CareerAdPage

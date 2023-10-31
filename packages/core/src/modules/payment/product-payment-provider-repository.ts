@@ -15,10 +15,10 @@ const mapToProductPaymentProvider = (data: Selectable<Database["productPaymentPr
 const mapToPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) => PaymentProviderSchema.parse(data)
 
 export interface ProductPaymentProviderRepository {
-  addPaymentProvider: (data: ProductPaymentProviderWrite) => Promise<ProductPaymentProvider | undefined>
-  deletePaymentProvider: (productId: ProductId, paymentProviderId: string) => Promise<void>
-  getAllByProductId: (productId: ProductId) => Promise<PaymentProvider[]>
-  productHasPaymentProviderId: (productId: ProductId, paymentProviderId: string) => Promise<boolean>
+  addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>
+  deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void>
+  getAllByProductId(productId: ProductId): Promise<PaymentProvider[]>
+  productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean>
 }
 
 export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {

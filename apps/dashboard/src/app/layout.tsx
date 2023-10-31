@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react"
+import { type PropsWithChildren } from "react"
 import { ColorSchemeScript } from "@mantine/core"
 import { AuthProvider } from "./AuthProvider"
 import { QueryProvider } from "./QueryProvider"

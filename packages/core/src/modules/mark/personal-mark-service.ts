@@ -6,14 +6,14 @@ import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
 
 export interface PersonalMarkService {
-  getPersonalMarksByMarkId: (markId: MarkId, take: number, cursor?: Cursor) => Promise<PersonalMark[]>
-  getPersonalMarksForUserId: (userId: UserId, take: number, cursor?: Cursor) => Promise<PersonalMark[]>
-  getMarksForUserId: (userId: UserId, take: number, cursor?: Cursor) => Promise<Mark[]>
-  addPersonalMarkToUserId: (userId: UserId, markId: MarkId) => Promise<PersonalMark>
-  removePersonalMarkFromUserId: (userId: UserId, markId: MarkId) => Promise<PersonalMark>
-  countUsersByMarkId: (markId: MarkId) => Promise<number>
-  getExpiryDateForUserId: (userId: UserId) => Promise<Date | null>
-  calculateExpiryDate: (marks: { createdAt: Date; duration: number }[]) => Date | null
+  getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
+  getPersonalMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
+  getMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
+  addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
+  removePersonalMarkFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
+  countUsersByMarkId(markId: MarkId): Promise<number>
+  getExpiryDateForUserId(userId: UserId): Promise<Date | null>
+  calculateExpiryDate(marks: { createdAt: Date; duration: number }[]): Date | null
 }
 
 export class PersonalMarkServiceImpl implements PersonalMarkService {

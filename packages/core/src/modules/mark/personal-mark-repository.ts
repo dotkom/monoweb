@@ -8,12 +8,12 @@ export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>)
   PersonalMarkSchema.parse(payload)
 
 export interface PersonalMarkRepository {
-  getByMarkId: (markId: MarkId) => Promise<PersonalMark[]>
-  getAllByUserId: (userId: UserId, take: number, cursor?: Cursor) => Promise<PersonalMark[]>
-  getAllMarksByUserId: (userId: UserId, take: number, cursor?: Cursor) => Promise<Mark[]>
-  addToUserId: (userId: UserId, markId: MarkId) => Promise<PersonalMark | undefined>
-  removeFromUserId: (userId: UserId, markId: MarkId) => Promise<PersonalMark | undefined>
-  getByUserId: (userId: UserId, markId: MarkId) => Promise<PersonalMark | undefined>
+  getByMarkId(markId: MarkId): Promise<PersonalMark[]>
+  getAllByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
+  getAllMarksByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
+  addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
+  removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
+  getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
   countUsersByMarkId: ((markId: MarkId) => Promise<number>) & ((markId: MarkId) => Promise<number>)
 }
 

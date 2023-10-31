@@ -6,11 +6,11 @@ import { type Cursor, orderedQuery } from "./../../utils/db-utils"
 export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => MarkSchema.parse(payload)
 
 export interface MarkRepository {
-  getById: (id: MarkId) => Promise<Mark | undefined>
-  getAll: (take: number, cursor?: Cursor) => Promise<Mark[]>
-  create: (markInsert: MarkWrite) => Promise<Mark | undefined>
-  update: (id: MarkId, markUpdate: MarkWrite) => Promise<Mark | undefined>
-  delete: (id: MarkId) => Promise<Mark | undefined>
+  getById(id: MarkId): Promise<Mark | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<Mark[]>
+  create(markInsert: MarkWrite): Promise<Mark | undefined>
+  update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | undefined>
+  delete(id: MarkId): Promise<Mark | undefined>
 }
 
 export class MarkRepositoryImpl implements MarkRepository {

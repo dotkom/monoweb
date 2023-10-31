@@ -1,5 +1,5 @@
 import { cva } from "cva"
-import type { VariantProps } from "cva"
+import { type VariantProps } from "cva"
 import React, { forwardRef } from "react"
 import { cn } from "../../utils"
 import { Icon } from "../Icon"

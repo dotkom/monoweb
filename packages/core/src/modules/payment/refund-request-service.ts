@@ -12,13 +12,13 @@ import { type RefundRequestRepository } from "./refund-request-repository"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface RefundRequestService {
-  createRefundRequest: (paymentId: PaymentId, userId: UserId, reason: string) => Promise<RefundRequest>
-  updateRefundRequest: (id: RefundRequestId, data: Partial<RefundRequestWrite>) => Promise<RefundRequest>
-  deleteRefundRequest: (id: RefundRequestId) => Promise<void>
-  getRefundRequestById: (id: RefundRequestId) => Promise<RefundRequest | undefined>
-  getRefundRequests: (take: number, cursor?: Cursor) => Promise<RefundRequest[]>
-  approveRefundRequest: (id: RefundRequestId, handledBy: UserId) => Promise<void>
-  rejectRefundRequest: (id: RefundRequestId, handledBy: UserId) => Promise<void>
+  createRefundRequest(paymentId: PaymentId, userId: UserId, reason: string): Promise<RefundRequest>
+  updateRefundRequest(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
+  deleteRefundRequest(id: RefundRequestId): Promise<void>
+  getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | undefined>
+  getRefundRequests(take: number, cursor?: Cursor): Promise<RefundRequest[]>
+  approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
+  rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
 }
 
 export class RefundRequestServiceImpl implements RefundRequestService {

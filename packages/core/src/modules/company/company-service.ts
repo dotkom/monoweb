@@ -4,10 +4,10 @@ import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface CompanyService {
-  getCompany: (id: CompanyId) => Promise<Company>
-  getCompanies: (take: number, cursor?: Cursor) => Promise<Company[]>
-  createCompany: (payload: CompanyWrite) => Promise<Company>
-  updateCompany: (id: CompanyId, payload: Omit<CompanyWrite, "id">) => Promise<Company>
+  getCompany(id: CompanyId): Promise<Company>
+  getCompanies(take: number, cursor?: Cursor): Promise<Company[]>
+  createCompany(payload: CompanyWrite): Promise<Company>
+  updateCompany(id: CompanyId, payload: Omit<CompanyWrite, "id">): Promise<Company>
 }
 
 export class CompanyServiceImpl implements CompanyService {

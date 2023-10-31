@@ -12,16 +12,16 @@ import {
 import { type MenuLink } from "./types"
 
 export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => (
-    <NavigationMenu className="ml-6 hidden w-min flex-1 justify-start md:flex">
-      <NavigationMenuList>
-        {links.map((link) => (
-          <NavigationMenuItem key={link.title}>
-            <DesktopNavigationLink link={link} />
-          </NavigationMenuItem>
-        ))}
-      </NavigationMenuList>
-    </NavigationMenu>
-  )
+  <NavigationMenu className="ml-6 hidden w-min flex-1 justify-start md:flex">
+    <NavigationMenuList>
+      {links.map((link) => (
+        <NavigationMenuItem key={link.title}>
+          <DesktopNavigationLink link={link} />
+        </NavigationMenuItem>
+      ))}
+    </NavigationMenuList>
+  </NavigationMenu>
+)
 
 const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
   const isGroupLink = "items" in link
@@ -46,11 +46,10 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
         </NavigationMenuContent>
       </>
     )
-  } 
-    return (
-      <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-        <Link href={link.href}>{link.title}</Link>
-      </NavigationMenuLink>
-    )
-  
+  }
+  return (
+    <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+      <Link href={link.href}>{link.title}</Link>
+    </NavigationMenuLink>
+  )
 }
