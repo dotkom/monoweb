@@ -46,7 +46,7 @@ module.exports = {
     "@typescript-eslint/array-type": ["error", { default: "array" }],
     "@typescript-eslint/await-thenable": "error",
     "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
-    "@typescript-eslint/method-signature-style": "error",
+    "@typescript-eslint/method-signature-style": ["error", "method"],
     "@typescript-eslint/no-meaningless-void-operator": "error",
     "@typescript-eslint/no-non-null-asserted-nullish-coalescing": "error",
     "@typescript-eslint/no-non-null-assertion": "error",
@@ -71,6 +71,7 @@ module.exports = {
     "consistent-return": "error",
     "curly": "error",
     "eqeqeq": ["error", "smart"],
+    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
     "import/no-duplicates": "error",
     "import/order": [
       "error",
