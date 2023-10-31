@@ -27,6 +27,9 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       FAGKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
       FAGKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
+
+      PROKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
+      PROKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -56,6 +59,9 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_PUBLIC_KEY: process.env.FAGKOM_STRIPE_PUBLIC_KEY,
       FAGKOM_STRIPE_SECRET_KEY: process.env.FAGKOM_STRIPE_SECRET_KEY,
       FAGKOM_STRIPE_WEBHOOK_SECRET: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET,
+
+      PROKOM_STRIPE_PUBLIC_KEY: process.env.PROKOM_STRIPE_PUBLIC_KEY,
+      PROKOM_STRIPE_SECRET_KEY: process.env.PROKOM_STRIPE_SECRET_KEY,
     },
   })
 
