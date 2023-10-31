@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 import Stripe from "stripe"
 import { env } from "@dotkomonline/env"
 
-const stripe = new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, {
+const stripe = new Stripe(env.PROKOM_STRIPE_SECRET_KEY, {
   apiVersion: "2023-08-16",
 })
 
