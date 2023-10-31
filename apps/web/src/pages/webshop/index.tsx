@@ -25,24 +25,28 @@ const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
 
   // render product
   return (
-    <div
-      className="mx-10 grid w-full justify-items-start"
-      style={{
-        gridTemplateColumns: "repeat(auto-fit, 250px)",
-      }}
-    >
-      <h1>Produkter</h1>
-      {products.map((product) => (
-        <a
-          key={product.id}
-          className="border-slate-4 block w-64 rounded-md border border-black p-8 shadow-md"
-          href={`/api/checkout_sessions?price_id=${product.price_id}`}
-        >
-          <img className="mt-2" src={product.image} width={200} height={200}></img>
-          <p className="mt-4 text-sm">{product.name}</p>
-          <p className="text-lg">{product.price} kr</p>
-        </a>
-      ))}
+    <div>
+      <h1 className="mb-8">Produkter</h1>
+      <div
+        className="mb-32 grid w-full justify-items-start"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, 250px)",
+        }}
+      >
+        {products.map((product) => (
+          <a
+            key={product.id}
+            className="border-slate-4 block w-64 self-start rounded-md border border-black p-8 shadow-md"
+            href={`/api/checkout_sessions?price_id=${product.price_id}`}
+          >
+            <div className="mx-auto h-40 w-40 overflow-hidden">
+              <img className="mt-2 rounded-xl" src={product.image} width={200} height={200}></img>
+            </div>
+            <p className="mt-4 text-sm">{product.name}</p>
+            <p className="text-lg">{product.price} kr</p>
+          </a>
+        ))}
+      </div>
     </div>
   )
 }
