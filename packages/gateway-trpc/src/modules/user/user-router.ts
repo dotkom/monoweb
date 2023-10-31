@@ -9,7 +9,7 @@ export const userRouter = t.router({
     return ctx.userService.getAllUsers(input.take)
   }),
   get: publicProcedure.input(UserSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.userService.getUsrById(input)
+    return ctx.userService.getUserById(input)
   }),
   edit: protectedProcedure
     .input(
