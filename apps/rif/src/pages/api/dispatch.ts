@@ -1,5 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next"
-
+import { type NextApiRequest, type NextApiResponse } from "next"
 import { formSchema } from "../../app/form-schema"
 
 const endpoint = process.env.EMAIL_ENDPOINT ?? "https://dev.gateway.online.ntnu.no/integrations/email"
@@ -19,7 +18,7 @@ export default async function Route(req: NextApiRequest, res: NextApiResponse) {
   const response = await fetch(endpoint, {
     headers: {
       "X-Email-Token": token,
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
     },
     method: "POST",
@@ -40,7 +39,7 @@ export default async function Route(req: NextApiRequest, res: NextApiResponse) {
   const confirmationResponse = await fetch(endpoint, {
     headers: {
       "X-Email-Token": token,
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
     },
     method: "POST",

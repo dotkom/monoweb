@@ -1,5 +1,5 @@
-import { AttendanceId, Attendee, EventId, UserId } from "@dotkomonline/types"
-import { AttendanceRepository } from "./attendance-repository"
+import { type AttendanceId, type Attendee, type EventId, type UserId } from "@dotkomonline/types"
+import { type AttendanceRepository } from "./attendance-repository"
 
 export interface AttendanceService {
   canAttend(eventId: EventId): Promise<Date | undefined>
@@ -28,7 +28,9 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   async registerForAttendance(_userId: UserId, _attendanceId: AttendanceId, _attended: boolean) {
     const attendee = await this.attendanceRepository.getAttendeeByIds(_userId, _attendanceId)
-    if (!attendee) throw new Error("Attendee not found")
+    if (!attendee) {
+      throw new Error("Attendee not found")
+    }
     const attendedAttendee = await this.attendanceRepository.updateAttendee(
       { ...attendee, attended: _attended },
       _userId,

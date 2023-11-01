@@ -2,7 +2,7 @@ import { notifications } from "@mantine/notifications"
 import { Icon } from "@iconify/react"
 import { useState } from "react"
 
-export type NotificationProps = {
+export interface NotificationProps {
   title: string
   message: string
 }

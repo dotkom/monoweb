@@ -1,6 +1,6 @@
 "use client"
 
-import { JobListing } from "@dotkomonline/types"
+import { type JobListing } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -46,7 +46,7 @@ export const useJobListingTable = ({ data }: Props) => {
   )
 
   return useReactTable({
-    data: data,
+    data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })

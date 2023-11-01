@@ -1,8 +1,8 @@
-import { Attendance, AttendanceWrite, Event, EventId, EventWrite } from "@dotkomonline/types"
+import { type Attendance, type AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
+import { type AttendanceRepository } from "./attendance-repository.js"
+import { type EventRepository } from "./event-repository.js"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
-import { AttendanceRepository } from "./attendance-repository"
-import { EventRepository } from "./event-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -10,7 +10,6 @@ export interface EventService {
   getEventById(id: EventId): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-
   createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
   listAttendance(eventId: EventId): Promise<Attendance[]>
   createWaitlist(eventId: EventId): Promise<Attendance>
@@ -50,9 +49,6 @@ export class EventServiceImpl implements EventService {
 
   async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
     const event = await this.eventRepository.update(id, eventUpdate)
-    if (!event) {
-      throw new NotFoundError(`Could not update Event(${id})`)
-    }
     return event
   }
 

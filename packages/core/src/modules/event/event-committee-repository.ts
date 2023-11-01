@@ -1,13 +1,17 @@
-import { Kysely, Selectable } from "kysely"
-import { Cursor } from "../../utils/db-utils"
-
-import { Database } from "@dotkomonline/db"
-import { Committee, CommitteeId, EventCommittee, EventCommitteeSchema, EventId } from "@dotkomonline/types"
+import { type Kysely, type Selectable } from "kysely"
+import { type Database } from "@dotkomonline/db"
+import {
+  type Committee,
+  type CommitteeId,
+  type EventCommittee,
+  EventCommitteeSchema,
+  type EventId,
+} from "@dotkomonline/types"
+import { type Cursor } from "../../utils/db-utils"
 import { mapToCommittee } from "../committee/committee-repository"
 
-export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"]>): EventCommittee => {
-  return EventCommitteeSchema.parse(payload)
-}
+export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"]>): EventCommittee =>
+  EventCommitteeSchema.parse(payload)
 
 export interface EventCommitteeRepository {
   getAllEventCommittees(eventId: EventId, take: number, cursor?: Cursor): Promise<EventCommittee[]>
