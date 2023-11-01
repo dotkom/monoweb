@@ -12,6 +12,10 @@ terraform {
       source  = "vercel/vercel"
       version = "~> 0.15"
     }
+    doppler = {
+      source  = "DopplerHQ/doppler"
+      version = "~> 1.3.0"
+    }
   }
 }
 

@@ -11,4 +11,6 @@ module "rif_vercel_project" {
   zone_id        = local.zone_id
   build_command  = "cd ../.. && pnpm build:rif"
   root_directory = "apps/rif"
+
+  environment_variables = nonsensitive(data.doppler_secrets.rif.map)
 }
