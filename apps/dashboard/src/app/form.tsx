@@ -106,7 +106,7 @@ export function createSelectInput<F extends FieldValues>({
 
 export function createIntegerSelectInput<F extends FieldValues>({
   ...props
-}: Omit<SelectProps, "error" | "data"> & { data: { value: number; label: string }[] }): InputProducerResult<F> {
+}: Omit<SelectProps, "data" | "error"> & { data: { value: number; label: string }[] }): InputProducerResult<F> {
   return function FormSelectInput({ name, state, control }) {
     return (
       <Controller

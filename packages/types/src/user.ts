@@ -17,7 +17,7 @@ export const UserWriteSchema = UserSchema.omit({
 
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
-type StudyYearsType = {
+interface StudyYears {
   [-1]: string
   0: string
   1: string
@@ -38,7 +38,7 @@ export const StudyYearAliases = {
   [4]: "4. klasse",
   [5]: "5. klasse",
   [6]: "PhD",
-} as StudyYearsType
+} as StudyYears
 
 export const studyYearOptions = Object.entries(StudyYearAliases).map(([value, label]) => ({
   value: parseInt(value),

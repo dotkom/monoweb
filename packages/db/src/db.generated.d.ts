@@ -152,10 +152,10 @@ export interface NotificationPermissions {
 }
 
 export interface OwUser {
-  cognitoSub: string;
-  createdAt: Generated<Timestamp>;
-  id: Generated<string>;
-  studyYear: Generated<number>;
+  cognitoSub: string
+  createdAt: Generated<Timestamp>
+  id: Generated<string>
+  studyYear: Generated<number>
 }
 
 export interface Payment {

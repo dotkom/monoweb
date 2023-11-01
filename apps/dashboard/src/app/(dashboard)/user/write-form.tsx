@@ -1,5 +1,5 @@
-import { createIntegerSelectInput, createTextInput, useFormBuilder } from "../../form"
 import { type UserWrite, UserWriteSchema, studyYearOptions } from "@dotkomonline/types"
+import { createIntegerSelectInput, createTextInput, useFormBuilder } from "../../form"
 
 const USER_FORM_DEFAULT_VALUES: Partial<UserWrite> = {
   cognitoSub: undefined,
