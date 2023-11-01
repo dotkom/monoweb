@@ -30,7 +30,7 @@ interface StudyYears {
 }
 
 export const StudyYearAliases = {
-  [-1]: "Ingen Medlemskap",
+  [-1]: "Ingen medlemskap",
   [0]: "Sosialt medlem",
   [1]: "1. klasse",
   [2]: "2. klasse",
