@@ -944,8 +944,8 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@ladle/react':
-        specifier: ^3.3.0
-        version: 3.3.0(@types/node@18.18.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+        specifier: ^3.3.1
+        version: 3.3.1(@types/node@18.18.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       '@types/react':
         specifier: ^18.2.33
         version: 18.2.33
@@ -3841,8 +3841,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: true
 
-  /@ladle/react@3.3.0(@types/node@18.18.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-iLknBbKL9RdDRZQ5XkP6Mp4mygJKMJmZ9K/+mV6P1p1ididPRJ7D2Qy7nt2oYcsbPDS4DZxVQ0FScDgO9qWiOg==}
+  /@ladle/react@3.3.1(@types/node@18.18.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-qy35SFWHb+w20Ea6OtIkA95kwTi6+4Zrk9unDPhUAIQwi0EDekMqrOmQJddqvc7Cwq9jujYzlKGbp70wyRqrrg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
