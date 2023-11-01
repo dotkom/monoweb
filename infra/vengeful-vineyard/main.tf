@@ -2,7 +2,7 @@ locals {
   vengeful_project_name    = "vengeful-vineyard-${terraform.workspace}"
   vengeful_domain_name     = "${terraform.workspace}.redwine.online.ntnu.no"
   vengeful_cdn_domain_name = "${terraform.workspace}.redwine-static.online.ntnu.no"
-  zone_id             = data.aws_route53_zone.online.zone_id
+  zone_id                  = data.aws_route53_zone.online.zone_id
 }
 
 module "vengeful_database" {
