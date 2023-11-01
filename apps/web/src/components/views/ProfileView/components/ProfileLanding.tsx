@@ -17,11 +17,11 @@ const FormInput: React.FC<FormInputProps> = ({ name, children, addMore, clickabl
       <div className="ml-4">
         <label>{name}</label>
       </div>
-      <hr className="border-slate-12 w-full opacity-50" />
-      <div className="ml-10 space-y-3 max-md:ml-1.5 sm:w-2/3 ">
+      <hr className="border-slate-12 opacity-50" />
+      <div className="mt-1 w-full space-y-3">
         <div
           className={cn(
-            "mt-3 flex items-center justify-between rounded-lg pl-2",
+            "flex items-center justify-between rounded-lg md:pl-2",
             clickable && "hover:bg-slate-3 hover:cursor-pointer"
           )}
         >
@@ -51,14 +51,14 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
         <div> (+47) 482 49 100</div>
       </FormInput>
       <FormInput name="Studie" clickable={false}>
-        <div className="space-y-8">
+        <div className="w-full space-y-8">
           <div>
             <p>Klassetrinn: </p>
           </div>
           <div>
             <p>Startår:</p>
           </div>
-          <div className="flex items-center space-x-10 ">
+          <div className="flex w-full items-center space-x-10 max-sm:space-x-1 ">
             <p>Studieløp:</p>
             <StudentProgress year={0} />
           </div>
