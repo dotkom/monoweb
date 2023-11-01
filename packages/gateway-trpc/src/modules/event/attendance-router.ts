@@ -17,16 +17,6 @@ export const attendanceRouter = t.router({
       const attendance = await ctx.eventService.listAttendance(input.eventId)
       return attendance
     }),
-  getByUserId: publicProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const attendance = await ctx.attendanceService.getByUserId(input.userId)
-      return attendance
-    }),
   attend: protectedProcedure
     .input(
       z.object({
