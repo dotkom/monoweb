@@ -1,5 +1,5 @@
-import { createIntegerSelectInput, createSelectInput, createTextInput, useFormBuilder } from "../../form"
-import { UserWrite, UserWriteSchema } from "@dotkomonline/types"
+import { createIntegerSelectInput, createTextInput, useFormBuilder } from "../../form"
+import { UserWrite, UserWriteSchema, studyYearOptions } from "@dotkomonline/types"
 
 const USER_FORM_DEFAULT_VALUES: Partial<UserWrite> = {
   cognitoSub: undefined,
@@ -31,16 +31,7 @@ export const useUserWriteForm = ({
         label: "Studieår",
         placeholder: "Velg studieår",
         withAsterisk: true,
-        data: [
-          { value: -1, label: "Ingen medlemskap" },
-          { value: 0, label: "Sosialt medlem" },
-          { value: 1, label: "1.Klasse" },
-          { value: 2, label: "2.Klasse" },
-          { value: 3, label: "3.Klasse" },
-          { value: 4, label: "4.Klasse" },
-          { value: 5, label: "5.Klasse" },
-          { value: 6, label: "PhD" },
-        ],
+        data: studyYearOptions,
       }),
     },
   })

@@ -16,3 +16,31 @@ export const UserWriteSchema = UserSchema.omit({
 })
 
 export type UserWrite = z.infer<typeof UserWriteSchema>
+
+type StudyYearsType = {
+  [-1]: string
+  0: string
+  1: string
+  2: string
+  3: string
+  4: string
+  5: string
+  6: string
+  [key: number]: string
+}
+
+export const StudyYearAliases = {
+  [-1]: "Ingen Medlemskap",
+  [0]: "Sosialt medlem",
+  [1]: "1. klasse",
+  [2]: "2. klasse",
+  [3]: "3. klasse",
+  [4]: "4. klasse",
+  [5]: "5. klasse",
+  [6]: "PhD",
+} as StudyYearsType
+
+export const studyYearOptions = Object.entries(StudyYearAliases).map(([value, label]) => ({
+  value: parseInt(value),
+  label,
+}))
