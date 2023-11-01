@@ -13,8 +13,7 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProp
   })
 
   const options = data.map((item, i) => (
-    // static list => using index as key is ok
-    <Combobox.Option value={item.value} key={i}>
+    <Combobox.Option value={item.value} key={item.value}>
       {item.label}
     </Combobox.Option>
   ))
