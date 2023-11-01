@@ -107,9 +107,9 @@ function toRegistration(event: { start: Date, end: Date, title: string, descript
   return {
     start,
     end: start, // 0 length
-    title: title,
+    title,
     description: event.description,
-    location: location,
+    location,
     id: event.id,
   }
 }
