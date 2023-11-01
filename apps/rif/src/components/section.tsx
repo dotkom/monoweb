@@ -1,8 +1,8 @@
-import { ComponentPropsWithoutRef, ElementType } from "react"
+import { type ComponentPropsWithoutRef, type ElementType } from "react"
 
-export type SectionProps<E extends ElementType> = {
+export type SectionProps<E extends ElementType> = ComponentPropsWithoutRef<E> & {
   as?: E
-} & ComponentPropsWithoutRef<E>
+}
 
 export function Section<E extends ElementType>({ children, as, ...props }: SectionProps<E>) {
   const Component = as ?? "section"

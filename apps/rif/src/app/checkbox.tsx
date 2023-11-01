@@ -1,11 +1,11 @@
 import { Controller, useFormContext } from "react-hook-form"
-import { FormSchema } from "./form-schema"
 import { Checkbox } from "@dotkomonline/ui"
-import { FC, ReactNode } from "react"
+import { type FC, type ReactNode } from "react"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import { Icon } from "@iconify/react"
+import { type FormSchema } from "./form-schema"
 
-export type CheckboxWithTooltipProps = {
+export interface CheckboxWithTooltipProps {
   name: keyof FormSchema
   label: string
   tooltip: ReactNode

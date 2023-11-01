@@ -2,10 +2,10 @@ import React from "react"
 import { Autocomplete } from "@mantine/core"
 
 interface GenericSearchProps<T> {
-  onSearch: (query: string) => void
-  onSubmit: (item: T) => void
+  onSearch(query: string): void
+  onSubmit(item: T): void
   items: T[]
-  dataMapper: (item: T) => string
+  dataMapper(item: T): string
 }
 
 const GenericSearch = <T,>({ onSearch, onSubmit, items, dataMapper }: GenericSearchProps<T>) => {

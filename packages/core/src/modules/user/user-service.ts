@@ -1,18 +1,17 @@
 import {
-  NotificationPermissions,
-  NotificationPermissionsWrite,
-  PrivacyPermissions,
-  PrivacyPermissionsWrite,
-  User,
-  UserId,
-  UserWrite,
+  type UserId,
+  type NotificationPermissions,
+  type NotificationPermissionsWrite,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserWrite,
 } from "@dotkomonline/types"
-
-import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { UserRepository } from "./user-repository"
-import { NotificationPermissionsRepository } from "./notification-permissions-repository"
+import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
+import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import { type UserRepository } from "./user-repository"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
@@ -30,9 +29,9 @@ export interface UserService {
 
 export class UserServiceImpl implements UserService {
   constructor(
-    private userRepository: UserRepository,
-    private privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly userRepository: UserRepository,
+    private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
   async getAllUsers(limit: number) {
     const users = await this.userRepository.getAll(limit)
@@ -41,7 +40,9 @@ export class UserServiceImpl implements UserService {
 
   async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
-    if (!user) throw new NotFoundError(`User with ID:${id} not found`)
+    if (user === undefined) {
+      throw new NotFoundError(`User with ID:${id} not found`)
+    }
     return user
   }
 
@@ -65,7 +66,6 @@ export class UserServiceImpl implements UserService {
 
   async updateUser(id: UserId, data: UserWrite) {
     const res = await this.userRepository.update(id, data)
-    if (!res) throw new NotFoundError(`User with ID:${id} not found`)
     return res
   }
 

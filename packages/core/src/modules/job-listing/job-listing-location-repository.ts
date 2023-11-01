@@ -1,6 +1,6 @@
-import { Database } from "@dotkomonline/db"
-import { DB } from "@dotkomonline/db/src/db.generated"
-import { Insertable, Kysely, Selectable } from "kysely"
+import { type Database } from "@dotkomonline/db"
+import { type DB } from "@dotkomonline/db/src/db.generated"
+import { type Insertable, type Kysely, type Selectable } from "kysely"
 
 type Location = DB["jobListingLocation"]
 
@@ -8,7 +8,7 @@ export type LocationSelect = Selectable<Location>
 type LocationId = LocationSelect["id"]
 
 type LocationInsert = Insertable<Location>
-type LocationDelete = {
+interface LocationDelete {
   id: LocationSelect["id"]
 }
 

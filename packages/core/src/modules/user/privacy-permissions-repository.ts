@@ -1,11 +1,14 @@
-import { Kysely, Selectable } from "kysely"
-import { PrivacyPermissions, PrivacyPermissionsSchema, PrivacyPermissionsWrite, UserId } from "@dotkomonline/types"
+import { type Kysely, type Selectable } from "kysely"
+import {
+  type PrivacyPermissions,
+  PrivacyPermissionsSchema,
+  type PrivacyPermissionsWrite,
+  type UserId,
+} from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
 
-import { Database } from "@dotkomonline/db"
-
-export const mapToPrivacyPermissions = (payload: Selectable<Database["privacyPermissions"]>): PrivacyPermissions => {
-  return PrivacyPermissionsSchema.parse(payload)
-}
+export const mapToPrivacyPermissions = (payload: Selectable<Database["privacyPermissions"]>): PrivacyPermissions =>
+  PrivacyPermissionsSchema.parse(payload)
 
 export interface PrivacyPermissionsRepository {
   getByUserId(id: UserId): Promise<PrivacyPermissions | undefined>

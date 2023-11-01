@@ -1,13 +1,13 @@
 "use client"
 
-import { FC } from "react"
+import { type FC } from "react"
 import { Checkbox, Label, Text, Textarea, TextInput, Title } from "@dotkomonline/ui"
-import { Section } from "../components/section"
 import { Controller, useFormContext } from "react-hook-form"
 import { ErrorMessage } from "@hookform/error-message"
 import { CustomErrorMessage } from "./custom-error-message"
-import { FormSchema } from "./form-schema"
+import { type FormSchema } from "./form-schema"
 import { CheckboxWithTooltip } from "./checkbox"
+import { Section } from "../components/section"
 
 const jobListingTooltip = (
   <Section>

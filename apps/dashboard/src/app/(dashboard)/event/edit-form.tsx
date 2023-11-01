@@ -1,4 +1,4 @@
-import { Committee } from "@dotkomonline/types"
+import { type Committee } from "@dotkomonline/types"
 import { z } from "zod"
 import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
@@ -11,8 +11,8 @@ import {
   useFormBuilder,
 } from "../../form"
 
-type UseEventEditFormProps = {
-  onSubmit: (data: FormValidationResult) => void
+interface UseEventEditFormProps {
+  onSubmit(data: FormValidationResult): void
   defaultValues?: Partial<FormValidationResult>
   label?: string
   committees: Committee[]
@@ -22,15 +22,10 @@ const FormValidationSchema = EventSchema.extend({
   committeeIds: z.array(z.string()),
 })
   .required({ id: true })
-  .refine(
-    (data) => {
-      return data.start < data.end
-    },
-    {
-      message: "Sluttidspunkt må være etter starttidspunkt",
-      path: ["end"],
-    }
-  )
+  .refine((data) => data.start < data.end, {
+    message: "Sluttidspunkt må være etter starttidspunkt",
+    path: ["end"],
+  })
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
@@ -39,8 +34,8 @@ export const useEventEditForm = ({
   onSubmit,
   label = "Opprett arrangement",
   defaultValues,
-}: UseEventEditFormProps) => {
-  return useFormBuilder({
+}: UseEventEditFormProps) =>
+  useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,
@@ -106,4 +101,3 @@ export const useEventEditForm = ({
       }),
     },
   })
-}

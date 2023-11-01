@@ -1,7 +1,7 @@
 import { PostgresAdapter, PostgresDialect } from "kysely"
 
 export class CockroachAdapter extends PostgresAdapter {
-  override acquireMigrationLock(): Promise<void> {
+  override async acquireMigrationLock(): Promise<void> {
     return Promise.resolve()
   }
 }

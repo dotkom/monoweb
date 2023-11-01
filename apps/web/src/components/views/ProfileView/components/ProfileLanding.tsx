@@ -1,8 +1,8 @@
 import { Icon, cn } from "@dotkomonline/ui"
-import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 import { Avatar } from "@radix-ui/react-avatar"
-import { NextPage } from "next"
-import { User } from "next-auth"
+import { type NextPage } from "next"
+import { type User } from "next-auth"
+import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 
 interface FormInputProps {
   name: string

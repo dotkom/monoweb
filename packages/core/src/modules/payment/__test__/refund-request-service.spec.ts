@@ -1,15 +1,15 @@
-import { RefundRequest } from "@dotkomonline/types"
+import { randomUUID } from "crypto"
+import { type RefundRequest } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
+import { paymentPayload } from "./payment-service.spec"
+import { productPayload } from "./product-service.spec"
 import { RefundRequestRepositoryImpl } from "../refund-request-repository"
-import { randomUUID } from "crypto"
 import { ProductRepositoryImpl } from "../product-repository"
 import { RefundRequestServiceImpl } from "../refund-request-service"
 import { PaymentRepositoryImpl } from "../payment-repository"
 import { PaymentServiceImpl } from "../payment-service"
 import { EventRepositoryImpl } from "../../event/event-repository"
-import { paymentPayload } from "./payment-service.spec"
-import { productPayload } from "./product-service.spec"
 
 export const refundRequestPayload: Omit<RefundRequest, "id"> = {
   createdAt: new Date(2022, 1, 1),

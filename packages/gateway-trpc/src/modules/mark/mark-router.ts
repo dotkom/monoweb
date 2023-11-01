@@ -6,19 +6,17 @@ import { t } from "../../trpc"
 
 export const markRouter = t.router({
   personal: personalMarkRouter,
-  create: protectedProcedure.input(MarkWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.markService.createMark(input)
-  }),
-  edit: protectedProcedure.input(MarkWriteSchema.required({ id: true })).mutation(({ input: changes, ctx }) => {
-    return ctx.markService.updateMark(changes.id, changes)
-  }),
-  all: protectedProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
-    return ctx.markService.getMarks(input.take, input.cursor)
-  }),
-  get: protectedProcedure.input(MarkSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.markService.getMark(input)
-  }),
-  delete: protectedProcedure.input(MarkSchema.shape.id).mutation(({ input, ctx }) => {
-    return ctx.markService.deleteMark(input)
-  }),
+  create: protectedProcedure
+    .input(MarkWriteSchema)
+    .mutation(async ({ input, ctx }) => ctx.markService.createMark(input)),
+  edit: protectedProcedure
+    .input(MarkWriteSchema.required({ id: true }))
+    .mutation(async ({ input: changes, ctx }) => ctx.markService.updateMark(changes.id, changes)),
+  all: protectedProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.markService.getMarks(input.take, input.cursor)),
+  get: protectedProcedure.input(MarkSchema.shape.id).query(async ({ input, ctx }) => ctx.markService.getMark(input)),
+  delete: protectedProcedure
+    .input(MarkSchema.shape.id)
+    .mutation(async ({ input, ctx }) => ctx.markService.deleteMark(input)),
 })

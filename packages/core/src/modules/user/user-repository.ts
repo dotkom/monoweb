@@ -1,16 +1,16 @@
-import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { type Database } from "@dotkomonline/db"
 import { sql, type Kysely, type Selectable } from "kysely"
 import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 
 export interface UserRepository {
-  getById: (id: UserId) => Promise<User | undefined>
-  getBySubject: (cognitoSubject: string) => Promise<User | undefined>
-  getAll: (limit: number) => Promise<User[]>
-  create: (userWrite: UserWrite) => Promise<User>
-  update: (id: UserId, data: UserWrite) => Promise<User>
+  getById(id: UserId): Promise<User | undefined>
+  getBySubject(cognitoSubject: string): Promise<User | undefined>
+  getAll(limit: number): Promise<User[]>
+  create(userWrite: UserWrite): Promise<User>
+  update(id: UserId, data: UserWrite): Promise<User>
   search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 

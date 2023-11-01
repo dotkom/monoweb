@@ -1,7 +1,7 @@
 "use client"
 
 import { ModalsProvider } from "@mantine/modals"
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { CreateCompanyModal } from "src/modules/company/modals/create-company-modal"
 import { CreateEventModal } from "src/modules/event/modals/create-event-modal"
 import { CreateJobListingModal } from "src/modules/job-listing/modals/create-job-listing-modal"
@@ -12,6 +12,6 @@ const modals = {
   "company/create": CreateCompanyModal,
 } as const
 
-export const ModalProvider: FC<PropsWithChildren> = ({ children }) => {
-  return <ModalsProvider modals={modals}>{children}</ModalsProvider>
-}
+export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (
+  <ModalsProvider modals={modals}>{children}</ModalsProvider>
+)

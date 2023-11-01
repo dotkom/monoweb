@@ -1,4 +1,4 @@
-import type { Handler, APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda"
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 import {
   HelloWorldTemplate,
   InterestFormForBedkomTemplate,
@@ -6,8 +6,8 @@ import {
   InvalidTemplateArguments,
   type Template,
 } from "@dotkomonline/emails"
-import { z, ZodError } from "zod"
-import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses"
+import { type APIGatewayProxyEventV2, type APIGatewayProxyResultV2, type Handler } from "aws-lambda"
+import { ZodError, z } from "zod"
 
 const ses = new SESClient()
 
@@ -47,7 +47,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
     const json = JSON.parse(event.body ?? "{}")
     const request = requestSchema.parse(json)
     const template = templateMap[request.template]
-    if (!template) {
+    if (!template.name) {
       return { statusCode: 400, body: "Unknown template name" }
     }
     const html = template(request.arguments)

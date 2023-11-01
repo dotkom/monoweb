@@ -1,10 +1,9 @@
-import { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
+import { type Mark, type MarkId, type PersonalMark, type UserId } from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
-
-import { Cursor } from "../../utils/db-utils"
-import { MarkService } from "./mark-service"
+import { type MarkService } from "./mark-service"
+import { type PersonalMarkRepository } from "./personal-mark-repository"
+import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
-import { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
   getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
@@ -39,16 +38,18 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   async addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
-    const mark = await this.markService.getMark(markId)
-    if (!mark) throw new NotFoundError(`Mark with ID:${markId} not found`)
     const personalMark = await this.personalMarkRepository.addToUserId(userId, markId)
-    if (!personalMark) throw new NotFoundError(`PersonalMark could not be created`)
+    if (!personalMark) {
+      throw new NotFoundError(`PersonalMark could not be created`)
+    }
     return personalMark
   }
 
   async removePersonalMarkFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
     const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId)
-    if (!personalMark) throw new NotFoundError(`PersonalMark could not be removed`)
+    if (!personalMark) {
+      throw new NotFoundError(`PersonalMark could not be removed`)
+    }
     return personalMark
   }
 
@@ -59,7 +60,7 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   async getExpiryDateForUserId(userId: UserId): Promise<Date | null> {
     const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, 1000)
-    const marks = await Promise.all(personalMarks.map((mark) => this.markService.getMark(mark.markId)))
+    const marks = await Promise.all(personalMarks.map(async (mark) => this.markService.getMark(mark.markId)))
     const expiryDate = this.calculateExpiryDate(marks)
     return expiryDate
   }
@@ -70,11 +71,13 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   adjustDateIfStartingInHoliday(date: Date): Date {
     if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
-      date = set(date, { month: 7, date: 15 })
-    } else if (date.getMonth() == 11) {
-      date = set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
-    } else if (date.getMonth() == 0 && date.getDate() < 15) {
-      date = set(date, { month: 0, date: 15 })
+      return set(date, { month: 7, date: 15 })
+    }
+    if (date.getMonth() === 11) {
+      return set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
+    }
+    if (date.getMonth() === 0 && date.getDate() < 15) {
+      return set(date, { month: 0, date: 15 })
     }
     return date
   }
@@ -83,9 +86,9 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     let additionalDays = 0
     if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
       additionalDays = 75
-    } else if (date.getMonth() == 11) {
+    } else if (date.getMonth() === 11) {
       additionalDays = 45
-    } else if (date.getMonth() == 0 && date.getDate() < 15) {
+    } else if (date.getMonth() === 0 && date.getDate() < 15) {
       additionalDays = 45
     }
     return add(date, { days: additionalDays })
@@ -106,7 +109,9 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
       endDate = this.adjustDateIfEndingInHoliday(date)
     }
 
-    if (!endDate || endDate < currentTime) return null
+    if (!endDate || endDate < currentTime) {
+      return null
+    }
     return endDate
   }
 }
