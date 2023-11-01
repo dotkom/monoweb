@@ -15,7 +15,8 @@ import { NotFoundError } from "../../errors/errors"
 import { Cursor } from "../../utils/db-utils"
 
 export interface UserService {
-  getUser(id: UserId): Promise<User | undefined>
+  getUserById(id: UserId): Promise<User | undefined>
+  getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   searchUsers(searchQuery: string, take: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
@@ -38,7 +39,7 @@ export class UserServiceImpl implements UserService {
     return users
   }
 
-  async getUser(id: UserId) {
+  async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
     if (!user) throw new NotFoundError(`User with ID:${id} not found`)
     return user
@@ -47,6 +48,14 @@ export class UserServiceImpl implements UserService {
   async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
     const users = await this.userRepository.search(searchQuery, take, cursor)
     return users
+  }
+
+  async getUserBySubject(id: User["cognitoSub"]) {
+    const user = await this.userRepository.getBySubject(id)
+    if (!user) {
+      throw new NotFoundError(`User with subject:${id} not found`)
+    }
+    return user
   }
 
   async createUser(input: UserWrite) {
