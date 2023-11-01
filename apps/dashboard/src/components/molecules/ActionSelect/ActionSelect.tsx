@@ -7,7 +7,7 @@ interface ActionSelectProps extends ComboboxProps {
   buttonProps?: ButtonProps
 }
 
-export const ActionSelect: FC<ActionSelectProps> = ({ data, ...props }) => {
+export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProps, ...comboBoxProps }) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
@@ -21,16 +21,17 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, ...props }) => {
 
   return (
     <Combobox
-      {...props}
+      {...comboBoxProps}
       store={combobox}
       position="bottom-start"
       onOptionSubmit={(val) => {
+        console.log(val)
         combobox.closeDropdown()
-        if (props.onChange) props.onChange(val)
+        if (onChange) onChange(val)
       }}
     >
       <Combobox.Target>
-        <Button onClick={() => combobox.toggleDropdown()} color="green" {...props.buttonProps}>
+        <Button onClick={() => combobox.toggleDropdown()} color="green" {...buttonProps}>
           Bruk mal
         </Button>
       </Combobox.Target>

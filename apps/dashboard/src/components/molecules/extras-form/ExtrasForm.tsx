@@ -1,37 +1,32 @@
-import { Box, Button, Flex, InputLabel, TextInput } from "@mantine/core"
+import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
 import { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
 import { Icon } from "@iconify/react"
 import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect"
-
-export type ExtrasFormValues = {
-  question: string
-  alternatives: {
-    value: string
-  }[]
-}
-
-const templates: Record<string, ExtrasFormValues> = {
-  "pizza/sushi": {
-    question: "Hvilken mat vil du ha?",
-    alternatives: [
-      {
-        value: "Pizza",
-      },
-      {
-        value: "Sushi",
-      },
-    ],
-  },
-}
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { templates } from "./templates"
 
 type TemplateKey = keyof typeof templates
+
+const FormValuesSchema = z.object({
+  question: z.string(),
+  alternatives: z.array(z.object({ value: z.string().min(1, "Dette feltet er påkrevd") })),
+})
+
+export type ExtrasFormValues = z.infer<typeof FormValuesSchema>
 
 interface Props {
   onSubmit: (data: ExtrasFormValues) => void
   defaultAlternatives: ExtrasFormValues
 }
+
+const templateChoices: { value: TemplateKey; label: TemplateKey }[] = Object.keys(templates).map((key) => ({
+  value: key as TemplateKey,
+  label: key as TemplateKey,
+}))
+
 export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
   const {
     register,
@@ -41,19 +36,14 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
     formState: { errors },
   } = useForm<ExtrasFormValues>({
     defaultValues: defaultAlternatives,
-    mode: "onBlur",
+    mode: "onSubmit",
+    resolver: zodResolver(FormValuesSchema),
   })
+
   const { fields, append, remove } = useFieldArray({
     name: "alternatives",
     control,
   })
-
-  const choices: { value: TemplateKey; label: string }[] = [
-    {
-      value: "pizza/sushi",
-      label: "Pizza/Sushi",
-    },
-  ]
 
   return (
     <Box>
@@ -61,7 +51,7 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         buttonProps={{
           w: "100%",
         }}
-        data={choices}
+        data={templateChoices}
         onChange={(value) => {
           const template = templates[value]
           setValue("question", template.question)
@@ -76,27 +66,29 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
           </Box>
           <Box mt="md">
             <InputLabel>Svaralternativer</InputLabel>
-            {fields.map((field, index) => {
-              return (
-                <div key={field.id}>
-                  <Flex key={field.id} mt={index ? "sm" : undefined}>
-                    <TextInput
-                      placeholder="Pizza"
-                      {...register(`alternatives.${index}.value` as const, {
-                        required: true,
-                      })}
-                      className={errors?.alternatives?.[index]?.value ? "error" : ""}
-                      style={{
-                        width: "100%",
-                      }}
-                    />
-                    <Button type="button" onClick={() => remove(index)} color="red" ml="sm" variant="light">
-                      <Icon icon="tabler:trash" />
-                    </Button>
-                  </Flex>
-                </div>
-              )
-            })}
+            {fields.map((field, index) => (
+              <Box key={field.id}>
+                <Flex key={field.id} mt={index ? "sm" : undefined}>
+                  <TextInput
+                    placeholder="Pizza"
+                    {...register(`alternatives.${index}.value` as const, {
+                      required: true,
+                    })}
+                    style={{
+                      width: "100%",
+                    }}
+                  />
+                  <Button type="button" onClick={() => remove(index)} color="red" ml="sm" variant="light">
+                    <Icon icon="tabler:trash" />
+                  </Button>
+                </Flex>
+                {errors.alternatives?.[index]?.value && (
+                  <Text size="xs" c="red">
+                    {errors.alternatives?.[index]?.value?.message ?? "Ukjent feil"}
+                  </Text>
+                )}
+              </Box>
+            ))}
           </Box>
           <Button
             type="button"
