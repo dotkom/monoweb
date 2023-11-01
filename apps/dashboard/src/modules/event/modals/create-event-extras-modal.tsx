@@ -15,7 +15,7 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = (
   }
 
   const onSubmit = (data: ExtrasFormValues) => {
-    let newExtras = [
+    const newExtras = [
       ...allExtras,
       {
         id: `${allExtras.length - 1}`,

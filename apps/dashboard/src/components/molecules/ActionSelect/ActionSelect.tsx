@@ -1,6 +1,4 @@
-import { Button, ButtonProps, ComboboxProps } from "@mantine/core"
-
-import { Combobox, useCombobox } from "@mantine/core"
+import { Button, ButtonProps, Combobox, ComboboxProps, useCombobox } from "@mantine/core"
 
 interface ActionSelectProps extends ComboboxProps {
   data: { value: string; label: string }[]
@@ -14,7 +12,7 @@ export function ActionSelect({ data, ...props }: ActionSelectProps) {
   })
 
   const options = data.map((item, i) => (
-    <Combobox.Option value={item.value} key={i}>
+    <Combobox.Option value={item.value} key={i + item.label}>
       {item.label}
     </Combobox.Option>
   ))

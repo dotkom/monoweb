@@ -63,12 +63,9 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         }}
         data={choices}
         onChange={(value) => {
-          const key = value as TemplateKey
-          if (key in templates) {
-            const template = templates[key]
-            setValue("question", template.question)
-            setValue("alternatives", template.alternatives)
-          }
+          const template = templates[value]
+          setValue("question", template.question)
+          setValue("alternatives", template.alternatives)
         }}
       />
       <Box mt="xl">
