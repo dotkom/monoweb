@@ -53,9 +53,11 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
           {children}
           {clickable ? <Icon icon="simple-line-icons:arrow-right" width={10} /> : ""}
         </div>
-        <p className="text-blue-10 text-sm hover:cursor-pointer" onClick={handleClick}>
-          {addMore ? "+ " + addMore : ""}
-        </p>
+        <button>
+          <p className="text-blue-10 text-sm hover:cursor-pointer" onClick={handleClick}>
+            {addMore ? "+ " + addMore : ""}
+          </p>
+        </button>
         {extraFields}
       </div>
     </div>

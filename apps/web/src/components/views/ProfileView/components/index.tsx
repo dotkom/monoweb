@@ -1,4 +1,3 @@
-export { default as ProfileEmail } from "./ProfileEmail"
 export { default as ProfileLanding } from "./ProfileLanding"
 export { default as ProfileMarks } from "./ProfileMarks"
 export { default as ProfileMembership } from "./ProfileMembership"
