@@ -3,6 +3,14 @@ import ical from "ical-generator";
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 
+const helpers = createServerSideHelpers({
+  router: appRouter,
+  ctx: await createContextInner({
+    auth: null,
+  }),
+  transformer, // optional - adds superjson serialization
+})
+
 function eventUrl(event: { id: string }) {
   // a better to to get/configure the url?
   return `https://new.online.ntnu.no/events/${event.id}`;
@@ -14,14 +22,6 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).end()
     return
   }
-
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: await createContextInner({
-      auth: null,
-    }),
-    transformer, // optional - adds superjson serialization
-  })
 
   const events = await helpers.event.all.fetch()
   const instance = ical({ name: `Online Linjeforening Arrangementer` });
@@ -55,14 +55,6 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: await createContextInner({
-      auth: null,
-    }),
-    transformer,
-  })
-
   const event = (await helpers.event.get.fetch(eventid)).event;
 
   const instance = ical();
@@ -95,13 +87,6 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: await createContextInner({
-      auth: null,
-    }),
-    transformer, // optional - adds superjson serialization
-  })
 
   // TODO figure out some auth here?
   // const user = await helpers.user.all.fetch()
