@@ -52,8 +52,8 @@ export class EventRepositoryImpl implements EventRepository {
     const eventPromises = event_ids
       .map(({ eventId }) => eventId)
       .filter((id): id is string => id !== null)
-      .map((id) => this.getById(id))
-      .filter((ev): ev is Promise<Event> => ev !== null);
+      .map(async (id) => this.getById(id))
+      .filter((ev): ev is Promise<Event> => ev !== undefined);
 
     const events = await Promise.all(eventPromises);
 
