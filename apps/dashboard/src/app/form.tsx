@@ -104,6 +104,28 @@ export function createSelectInput<F extends FieldValues>({
   }
 }
 
+export function createIntegerSelectInput<F extends FieldValues>({
+  ...props
+}: Omit<SelectProps, "error" | "data"> & { data: { value: number; label: string }[] }): InputProducerResult<F> {
+  return function FormSelectInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <Select
+            {...props}
+            data={props.data.map((item) => ({ ...item, value: item.value.toString() }))}
+            value={field.value?.toString() ?? ""}
+            onChange={(value) => field.onChange(value !== null ? parseInt(value) : null)}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+          />
+        )}
+      />
+    )
+  }
+}
+
 export function createDateTimeInput<F extends FieldValues>({
   ...props
 }: Omit<DateTimePickerProps, "error">): InputProducerResult<F> {

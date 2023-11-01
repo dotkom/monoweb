@@ -22,8 +22,8 @@ export default function UserPage() {
         header: () => "Creation Date",
         cell: (info) => formatDate(info.getValue()),
       }),
-      columnHelper.accessor("cognitoSub", {
-        header: () => "Cognito Sub",
+      columnHelper.accessor("studyYear", {
+        header: () => "Study Year",
       }),
       columnHelper.accessor((user) => user, {
         id: "details",
