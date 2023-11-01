@@ -1,6 +1,6 @@
-import Cors from "cors"
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next"
 import * as util from "util"
+import Cors from "cors"
+import { type NextApiHandler, type NextApiRequest, type NextApiResponse } from "next"
 
 const cors = Cors({
   origin: ["http://localhost:3002"],

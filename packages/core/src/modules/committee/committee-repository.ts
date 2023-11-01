@@ -1,23 +1,20 @@
-import { Committee, CommitteeSchema, CommitteeWrite } from "@dotkomonline/types"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
+import { type Committee, type CommitteeId, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types"
+import { type Kysely, type Selectable } from "kysely"
+import { type Database } from "@dotkomonline/db"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
-import { Database } from "@dotkomonline/db"
-
-export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => {
-  return CommitteeSchema.parse(payload)
-}
+export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => CommitteeSchema.parse(payload)
 
 export interface CommitteeRepository {
-  getById(id: string): Promise<Committee | undefined>
+  getById(id: CommitteeId): Promise<Committee | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Committee[]>
   create(values: CommitteeWrite): Promise<Committee>
 }
 
 export class CommitteeRepositoryImpl implements CommitteeRepository {
-  constructor(private db: Kysely<Database>) {}
+  constructor(private readonly db: Kysely<Database>) {}
 
-  async getById(id: string) {
+  async getById(id: CommitteeId) {
     const committee = await this.db.selectFrom("committee").selectAll().where("id", "=", id).executeTakeFirst()
     return committee ? mapToCommittee(committee) : undefined
   }

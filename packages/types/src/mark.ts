@@ -10,6 +10,7 @@ export const MarkSchema = z.object({
   duration: z.number(),
 })
 
+export type MarkId = Mark["id"]
 export type Mark = z.infer<typeof MarkSchema>
 
 export const MarkWriteSchema = MarkSchema.partial({

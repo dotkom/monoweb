@@ -14,6 +14,7 @@ export const CompanySchema = z.object({
   phone: z.string().nullable(),
 })
 
+export type CompanyId = Company["id"]
 export type Company = z.infer<typeof CompanySchema>
 
 export const CompanyWriteSchema = CompanySchema.partial({

@@ -1,19 +1,24 @@
-import { Payment, RefundRequest, RefundRequestWrite, User } from "@dotkomonline/types"
-
-import { Cursor } from "../../utils/db-utils"
-import { PaymentRepository } from "./payment-repository"
-import { PaymentService } from "./payment-service"
-import { ProductRepository } from "./product-repository"
-import { RefundRequestRepository } from "./refund-request-repository"
+import {
+  type PaymentId,
+  type RefundRequest,
+  type RefundRequestId,
+  type RefundRequestWrite,
+  type UserId,
+} from "@dotkomonline/types"
+import { type PaymentRepository } from "./payment-repository"
+import { type PaymentService } from "./payment-service"
+import { type ProductRepository } from "./product-repository"
+import { type RefundRequestRepository } from "./refund-request-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface RefundRequestService {
-  createRefundRequest(paymentId: Payment["id"], userId: User["id"], reason: string): Promise<RefundRequest>
-  updateRefundRequest(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>
-  deleteRefundRequest(id: RefundRequest["id"]): Promise<void>
-  getRefundRequestById(id: RefundRequest["id"]): Promise<RefundRequest | undefined>
+  createRefundRequest(paymentId: PaymentId, userId: UserId, reason: string): Promise<RefundRequest>
+  updateRefundRequest(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
+  deleteRefundRequest(id: RefundRequestId): Promise<void>
+  getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | undefined>
   getRefundRequests(take: number, cursor?: Cursor): Promise<RefundRequest[]>
-  approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void>
-  rejectRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void>
+  approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
+  rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
 }
 
 export class RefundRequestServiceImpl implements RefundRequestService {
@@ -24,7 +29,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     private readonly paymentService: PaymentService
   ) {}
 
-  async createRefundRequest(paymentId: Payment["id"], userId: User["id"], reason: string): Promise<RefundRequest> {
+  async createRefundRequest(paymentId: PaymentId, userId: UserId, reason: string): Promise<RefundRequest> {
     const payment = await this.paymentRepository.getById(paymentId)
 
     if (!payment) {
@@ -53,15 +58,15 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     })
   }
 
-  async updateRefundRequest(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest> {
+  async updateRefundRequest(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest> {
     return this.refundRequestRepository.update(id, data)
   }
 
-  async deleteRefundRequest(id: RefundRequest["id"]): Promise<void> {
+  async deleteRefundRequest(id: RefundRequestId): Promise<void> {
     return this.refundRequestRepository.delete(id)
   }
 
-  async getRefundRequestById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
+  async getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | undefined> {
     return this.refundRequestRepository.getById(id)
   }
 
@@ -69,7 +74,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     return this.refundRequestRepository.getAll(take, cursor)
   }
 
-  async approveRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
+  async approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void> {
     const refundRequest = await this.refundRequestRepository.getById(id)
 
     if (!refundRequest) {
@@ -89,7 +94,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     await this.paymentService.refundPaymentById(updatedRefundRequest.paymentId, false)
   }
 
-  async rejectRefundRequest(id: RefundRequest["id"], handledBy: User["id"]): Promise<void> {
+  async rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void> {
     const refundRequest = await this.refundRequestRepository.getById(id)
 
     if (!refundRequest) {

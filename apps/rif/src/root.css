@@ -1,0 +1,21 @@
+@import url(@dotkomonline/config/tailwind.css);
+@import url(@dotkomonline/config/typography.css);
+
+@layer base {
+  html {
+    font-size: 14px;
+  }
+
+  html,
+  body,
+  #__next {
+    @apply bg-indigo-1 h-full w-full;
+  }
+
+  body {
+    @apply m-0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

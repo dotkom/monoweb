@@ -1,10 +1,10 @@
 import { cva } from "cva"
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { cn } from "../../utils"
 
 export interface BadgeProps {
-  color: "red" | "green" | "amber" | "blue" | "slate"
-  variant: "light" | "solid" | "outline"
+  color: "amber" | "blue" | "green" | "red" | "slate"
+  variant: "light" | "outline" | "solid"
   className?: string
 }
 

@@ -35,3 +35,17 @@ tags = {
 
 Remember that the tags don't automatically flow down into modules used, so modules should have a tags variable that will
 be manually applied to all taggable resources declared in the module.
+
+## Environment variables
+
+To hack on the infrastructure codebase, you need AWS credentials plus environment variables defined.
+
+```bash
+# Set up your ~/.aws/credentials with
+aws configure
+
+# Get vercel token
+export VERCEL_TOKEN=...
+
+export TF_VAR_doppler_token=...
+```

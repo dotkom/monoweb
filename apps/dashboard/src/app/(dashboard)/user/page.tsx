@@ -2,11 +2,12 @@
 
 import { Skeleton, Stack, Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { User } from "@dotkomonline/types"
+import { type User } from "@dotkomonline/types"
 import { useMemo } from "react"
+import Link from "next/link"
+import { GenericTable } from "src/components/GenericTable"
 import { formatDate } from "../../../utils/format"
 import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
-import { GenericTable } from "src/components/GenericTable"
 
 export default function UserPage() {
   const { users, isLoading: isUsersLoading } = useUserAllQuery()
@@ -28,7 +29,7 @@ export default function UserPage() {
         id: "details",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" href={`/user/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/user/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),

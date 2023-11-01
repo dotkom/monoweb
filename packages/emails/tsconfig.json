@@ -1,15 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.cjs",
-    "**/*.mjs",
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
   "exclude": [],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "incremental": true,
+    "incremental": true
   }
 }

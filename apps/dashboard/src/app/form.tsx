@@ -1,34 +1,38 @@
-import { z } from "zod"
-import { FC } from "react"
+import { type z } from "zod"
+import { type FC } from "react"
+import { ErrorMessage } from "@hookform/error-message"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Button,
   Checkbox,
-  CheckboxProps,
+  type CheckboxProps,
   Flex,
   MultiSelect,
-  MultiSelectProps,
+  type MultiSelectProps,
+  NumberInput,
   Select,
-  SelectProps,
+  type NumberInputProps,
+  type SelectProps,
+  TagsInput,
+  type TagsInputProps,
   Textarea,
-  TextareaProps,
+  type TextareaProps,
   TextInput,
-  TextInputProps,
+  type TextInputProps,
 } from "@mantine/core"
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import {
-  Control,
+  type Control,
   Controller,
-  DefaultValues,
-  FieldValue,
-  FieldValues,
-  FormState,
+  type DefaultValues,
+  type FieldValue,
+  type FormState,
   useForm,
-  UseFormRegister,
+  type UseFormRegister,
+  type FieldValues,
 } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ErrorMessage } from "@hookform/error-message"
-import { DateTimePicker, DateTimePickerProps } from "@mantine/dates"
 
-type InputFieldContext<T extends FieldValues> = {
+interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
   control: Control<T>
@@ -40,13 +44,34 @@ type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 export function createMultipleSelectInput<F extends FieldValues>({
   ...props
 }: Omit<MultiSelectProps, "error">): InputProducerResult<F> {
-  return function FormSelectInput({ name, state, control }) {
+  return function FormMultiSelectInput({ name, state, control }) {
     return (
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
           <MultiSelect
+            {...props}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
+      />
+    )
+  }
+}
+
+export function createTagInput<F extends FieldValues>({
+  ...props
+}: Omit<TagsInputProps, "error">): InputProducerResult<F> {
+  return function FormTagInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <TagsInput
             {...props}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
             onChange={field.onChange}
@@ -143,18 +168,39 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
-function entriesOf<T extends Record<string, unknown>, K extends keyof T & string>(obj: T): [K, T[K]][] {
+export function createNumberInput<F extends FieldValues>({
+  ...props
+}: Omit<NumberInputProps, "error">): InputProducerResult<F> {
+  return function FormNumberInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <NumberInput
+            {...props}
+            value={field.value}
+            onChange={(value) => field.onChange({ target: { value } })}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+          />
+        )}
+      />
+    )
+  }
+}
+
+function entriesOf<T extends Record<string, unknown>, K extends string & keyof T>(obj: T): [K, T[K]][] {
   return Object.entries(obj) as [K, T[K]][]
 }
 
-type FormBuilderOptions<T extends z.ZodRawShape> = {
-  schema: z.ZodObject<T> | z.ZodEffects<z.ZodObject<T>>
+interface FormBuilderOptions<T extends z.ZodRawShape> {
+  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
-  onSubmit: (data: z.infer<z.ZodObject<T>>) => void
+  onSubmit(data: z.infer<z.ZodObject<T>>): void
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({

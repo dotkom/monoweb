@@ -1,11 +1,11 @@
-import type { inferAsyncReturnType } from "@trpc/server"
+import { type inferAsyncReturnType } from "@trpc/server"
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next"
 import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { getServerSession } from "next-auth"
 
-type AuthContextProps = {
+interface AuthContextProps {
   auth: {
     userId: string
   } | null

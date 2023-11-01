@@ -1,5 +1,4 @@
-import { Kysely, sql } from "kysely"
-
+import { type Kysely, sql } from "kysely"
 import { createTableWithDefaults } from "../utils"
 
 // Kysely reccomends using "any" in migrations

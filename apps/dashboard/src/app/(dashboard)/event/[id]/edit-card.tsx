@@ -1,8 +1,8 @@
-import { FC } from "react"
+import { type FC } from "react"
+import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
+import { useEventDetailsContext } from "./provider"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 import { useEventEditForm } from "../edit-form"
-import { useEventDetailsContext } from "./provider"
-import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
 
 export const EventEditCard: FC = () => {
   const { event, eventCommittees } = useEventDetailsContext()
@@ -10,13 +10,13 @@ export const EventEditCard: FC = () => {
   const { committees } = useCommitteeAllQuery()
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
-    committees: committees,
+    committees,
     onSubmit: (data) => {
       const { committeeIds, ...event } = data
       edit.mutate({
         id: data.id,
-        event: event,
-        committeeIds: committeeIds,
+        event,
+        committeeIds,
       })
     },
     defaultValues: {

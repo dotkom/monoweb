@@ -36,7 +36,7 @@ export const readableStripeAccounts = Array.from(Object.entries(stripeAccounts))
 export function getStripeObject(publicKey: string): Stripe | undefined {
   const accountDetails = lookupMap.get(publicKey)
   if (!accountDetails) {
-    return
+    return undefined
   }
 
   return new Stripe(accountDetails.secretKey, {

@@ -1,21 +1,20 @@
-import { Payment, PaymentProvider, Product, User } from "@dotkomonline/types"
+import { type Payment, type PaymentProvider, type Product, type ProductId, type UserId } from "@dotkomonline/types"
+import { type PaymentRepository } from "./payment-repository.js"
+import { type ProductRepository } from "./product-repository.js"
+import { type RefundRequestRepository } from "./refund-request-repository.js"
 import { getStripeObject, readableStripeAccounts } from "../../lib/stripe"
-import { Cursor } from "../../utils/db-utils"
-
-import { EventRepository } from "../event/event-repository"
-import { PaymentRepository } from "./payment-repository"
-import { ProductRepository } from "./product-repository"
-import { RefundRequestRepository } from "./refund-request-repository"
+import { type Cursor } from "../../utils/db-utils"
+import { type EventRepository } from "../event/event-repository"
 
 export interface PaymentService {
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
   getPayments(take: number, cursor?: Cursor): Promise<Payment[]>
   createStripeCheckoutSessionForProductId(
-    productId: Product["id"],
+    productId: ProductId,
     stripePublicKey: string,
     successRedirectUrl: string,
     cancelRedirectUrl: string,
-    userId: User["id"]
+    userId: UserId
   ): Promise<{ redirectUrl: string }>
   fullfillStripeCheckoutSession(stripeSessionId: string, intentId: string): Promise<void>
   expireStripeCheckoutSession(stripeSessionId: string): Promise<void>
@@ -46,11 +45,11 @@ export class PaymentServiceImpl implements PaymentService {
   }
 
   async createStripeCheckoutSessionForProductId(
-    productId: Product["id"],
+    productId: ProductId,
     stripePublicKey: string,
     successRedirectUrl: string,
     cancelRedirectUrl: string,
-    userId: User["id"]
+    userId: UserId
   ): Promise<{ redirectUrl: string }> {
     const product = await this.productRepository.getById(productId)
     if (!product) {
@@ -65,14 +64,16 @@ export class PaymentServiceImpl implements PaymentService {
 
     if (product.objectId !== null) {
       switch (product.type) {
-        case "EVENT":
+        case "EVENT": {
           const event = await this.eventRepository.getById(product.objectId)
           if (event) {
             productName = `Betaling for ${event.title}`
           }
           break
-        default:
+        }
+        default: {
           break
+        }
       }
     }
 
@@ -83,9 +84,7 @@ export class PaymentServiceImpl implements PaymentService {
 
     // Tests requires stripe to be awaited first but otherwise it works fine without.
     // Doesn't seem to make a difference having it like this. Idk, stripe sdk is weird.
-    const session = await (
-      await stripe
-    ).checkout.sessions.create({
+    const session = await stripe.checkout.sessions.create({
       line_items: [
         {
           price_data: {
@@ -109,7 +108,7 @@ export class PaymentServiceImpl implements PaymentService {
 
     await this.paymentRepository.create({
       productId: product.id,
-      userId: userId,
+      userId,
       status: "UNPAID",
       paymentProviderId: stripePublicKey,
       paymentProviderSessionId: session.id,
@@ -230,23 +229,17 @@ export class PaymentServiceImpl implements PaymentService {
       throw new Error("No stripe account found for the given public key")
     }
 
-    const paymentIntent = await (await stripe).paymentIntents.retrieve(payment.paymentProviderOrderId as string)
+    const paymentIntent = await stripe.paymentIntents.retrieve(payment.paymentProviderOrderId as string)
     const chargeId = paymentIntent.latest_charge as string | null | undefined
     if (!chargeId) {
       throw new Error("No charge found for the given payment intent")
     }
 
-    const refund = await (
-      await stripe
-    ).refunds.create({
-      charge: chargeId,
-    })
+    const refund = await stripe.refunds.create({ charge: chargeId })
     if (refund.failure_reason) {
       throw new Error(`Refund failed: ${refund.failure_reason}`)
     }
 
-    await this.paymentRepository.update(payment.id, {
-      status: "REFUNDED",
-    })
+    await this.paymentRepository.update(payment.id, { status: "REFUNDED" })
   }
 }

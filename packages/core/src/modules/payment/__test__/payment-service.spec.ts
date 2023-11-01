@@ -1,18 +1,16 @@
-import * as LocalStripeLib from "../../../lib/stripe"
-
-import { Event, Payment, Product } from "@dotkomonline/types"
+import { randomUUID } from "crypto"
+import { type Event, type Payment, type Product } from "@dotkomonline/types"
 import { describe, vi } from "vitest"
-
-import { EventRepositoryImpl } from "../../event/event-repository"
 import { Kysely } from "kysely"
+import Stripe from "stripe"
+import { paymentProvidersPayload } from "./product-payment-provider.spec"
+import { productPayload } from "./product-service.spec"
+import * as LocalStripeLib from "../../../lib/stripe"
+import { EventRepositoryImpl } from "../../event/event-repository"
 import { PaymentRepositoryImpl } from "../payment-repository"
 import { PaymentServiceImpl } from "../payment-service"
 import { ProductRepositoryImpl } from "../product-repository"
-import Stripe from "stripe"
 import { eventPayload } from "../../event/__test__/event-service.spec"
-import { paymentProvidersPayload } from "./product-payment-provider.spec"
-import { productPayload } from "./product-service.spec"
-import { randomUUID } from "crypto"
 import { RefundRequestRepositoryImpl } from "../refund-request-repository"
 
 export const paymentPayload: Omit<Payment, "id"> = {
@@ -258,7 +256,7 @@ describe("PaymentService", () => {
     ).resolves.toEqual(undefined)
     expect(paymentRepository.updateByPaymentProviderSessionId).toHaveBeenCalledWith(sessionId, {
       status: "PAID",
-      paymentProviderOrderId: paymentProviderOrderId,
+      paymentProviderOrderId,
     })
   })
 
