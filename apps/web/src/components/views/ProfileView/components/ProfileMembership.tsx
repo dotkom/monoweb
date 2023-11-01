@@ -1,14 +1,17 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Button, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@dotkomonline/ui"
 
 const ProfileMembership = () => {
-  const [active, setActive] = useState(true)
-  const [denied, setDenied] = useState(true)
-  const [approved, setApproved] = useState(false)
+  const [active, setActive] = useState(false)
+  const [denied, setDenied] = useState(false)
+  const [approved, setApproved] = useState(true)
 
-  setActive(false)
-  setDenied(false)
-  setApproved(true)
+  
+  useEffect(() => {
+    setActive(false)
+    setDenied(false)
+    setApproved(true)
+  }, []);
 
   return (
     <div className="my-10">
