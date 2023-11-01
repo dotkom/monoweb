@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import ical, { ICalEventData } from "ical-generator";
+import { type NextApiRequest, type NextApiResponse } from "next"
+import ical, { type ICalEventData } from "ical-generator";
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 
@@ -32,7 +32,6 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
 
 
   res.status(200).send(instance.toString())
-  return;
 }
 
 // a single event
@@ -54,8 +53,6 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
   instance.createEvent(toICal(event));
 
   res.status(200).send(instance.toString())
-
-  return;
 }
 
 
@@ -77,7 +74,7 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   // const user = await helpers.user.all.fetch()
   // console.log(user)
 
-  const events = await helpers.event.allByUserId.fetch({ 'id': userid })
+  const events = await helpers.event.allByUserId.fetch({ id: userid })
   const instance = ical({ name: `${userid} online kalender` });
 
   events.forEach(event => {
@@ -86,8 +83,6 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   });
 
   res.status(200).send(instance.toString())
-
-  return;
 }
 
 function toICal(event: { start: Date, end: Date, title: string, description: string | null, location: string | null, id: string }): ICalEventData {
@@ -110,7 +105,7 @@ function toRegistration(event: { start: Date, end: Date, title: string, descript
   const location = "På OW";
 
   return {
-    start: start,
+    start,
     end: start, // 0 length
     title: title,
     description: event.description,
