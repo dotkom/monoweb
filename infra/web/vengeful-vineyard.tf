@@ -5,14 +5,14 @@ locals {
 }
 
 module "vengeful_database" {
-  source = "./modules/neon-project"
+  source = "../modules/neon-project"
 
   project_name = local.vengeful_project_name
   role_name    = "vengeful"
 }
 
 module "vengeful_lambda" {
-  source = "./modules/aws-docker-lambda"
+  source = "../modules/aws-docker-lambda"
 
   ecr_repository_name   = "vengeful-vineyard-${terraform.workspace}"
   function_name         = "vengeful-vineyard-${terraform.workspace}"
@@ -28,7 +28,7 @@ module "vengeful_lambda" {
 }
 
 module "vengeful_gateway_domain_certificate" {
-  source = "./modules/aws-acm-certificate"
+  source = "../modules/aws-acm-certificate"
 
   domain  = local.vengeful_domain_name
   zone_id = local.zone_id
@@ -44,7 +44,7 @@ module "vengeful_gateway_domain_certificate" {
 }
 
 module "vengeful_gateway_proxy" {
-  source = "./modules/aws-api-gateway"
+  source = "../modules/aws-api-gateway"
 
   domain          = local.vengeful_domain_name
   zone_id         = local.zone_id
@@ -87,7 +87,7 @@ resource "aws_lambda_permission" "vengeful_backend_gateway_lambda" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "vengeful_cdn_domain_certificate" {
-  source = "./modules/aws-acm-certificate"
+  source = "../modules/aws-acm-certificate"
 
   domain  = local.vengeful_cdn_domain_name
   zone_id = local.zone_id
@@ -103,7 +103,7 @@ module "vengeful_cdn_domain_certificate" {
 }
 
 module "vengeful_cdn_bucket" {
-  source = "./modules/aws-s3-public-bucket"
+  source = "../modules/aws-s3-public-bucket"
 
   certificate_arn = module.vengeful_cdn_domain_certificate.certificate_arn
   domain_name     = local.vengeful_cdn_domain_name
