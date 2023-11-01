@@ -13,7 +13,7 @@ resource "aws_route53_record" "null_record" {
 }
 
 module "post_signup_trigger_lambda" {
-  source                = "./modules/aws-docker-lambda"
+  source                = "../modules/aws-docker-lambda"
   ecr_repository_name   = "dispatcher-auth-${terraform.workspace}"
   function_name         = "dispatcher-auth-${terraform.workspace}"
   execution_role_name   = "DispatcherAuthExecuteRole${title(terraform.workspace)}"
@@ -26,7 +26,7 @@ module "post_signup_trigger_lambda" {
 }
 
 module "cognito_domain_certificate" {
-  source = "./modules/aws-acm-certificate"
+  source = "../modules/aws-acm-certificate"
 
   domain  = local.cognito_domain_name
   zone_id = local.zone_id
@@ -42,7 +42,7 @@ module "cognito_domain_certificate" {
 }
 
 module "cognito_user_pool" {
-  source = "./modules/aws-cognito-pool"
+  source = "../modules/aws-cognito-pool"
 
   pool_name       = "monoweb-${terraform.workspace}"
   custom_domain   = local.cognito_domain_name

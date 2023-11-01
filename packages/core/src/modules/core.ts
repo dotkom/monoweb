@@ -1,5 +1,5 @@
-import { Kysely } from "kysely"
-import { Database } from "@dotkomonline/db"
+import { type Kysely } from "kysely"
+import { type Database } from "@dotkomonline/db"
 import { EventRepositoryImpl } from "./event/event-repository"
 import { CommitteeRepositoryImpl } from "./committee/committee-repository"
 import { CompanyRepositoryImpl } from "./company/company-repository"
@@ -37,7 +37,7 @@ import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
-export type ServerLayerOptions = {
+export interface ServerLayerOptions {
   db: Kysely<Database>
 }
 

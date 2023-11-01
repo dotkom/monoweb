@@ -1,38 +1,38 @@
+import { type z } from "zod"
+import { type FC } from "react"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Button,
   Checkbox,
-  CheckboxProps,
+  type CheckboxProps,
   Flex,
   MultiSelect,
-  MultiSelectProps,
+  type MultiSelectProps,
   NumberInput,
-  NumberInputProps,
   Select,
-  SelectProps,
+  type NumberInputProps,
+  type SelectProps,
   TagsInput,
-  TagsInputProps,
+  type TagsInputProps,
   Textarea,
-  TextareaProps,
+  type TextareaProps,
   TextInput,
-  TextInputProps,
+  type TextInputProps,
 } from "@mantine/core"
-import { DateTimePicker, DateTimePickerProps } from "@mantine/dates"
-import { FC } from "react"
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import {
-  Control,
+  type Control,
   Controller,
-  DefaultValues,
-  FieldValue,
-  FieldValues,
-  FormState,
+  type DefaultValues,
+  type FieldValue,
+  type FormState,
   useForm,
-  UseFormRegister,
+  type UseFormRegister,
+  type FieldValues,
 } from "react-hook-form"
-import { z } from "zod"
 
-type InputFieldContext<T extends FieldValues> = {
+interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
   control: Control<T>
@@ -211,18 +211,18 @@ export function createNumberInput<F extends FieldValues>({
   }
 }
 
-function entriesOf<T extends Record<string, unknown>, K extends keyof T & string>(obj: T): [K, T[K]][] {
+function entriesOf<T extends Record<string, unknown>, K extends string & keyof T>(obj: T): [K, T[K]][] {
   return Object.entries(obj) as [K, T[K]][]
 }
 
-type FormBuilderOptions<T extends z.ZodRawShape> = {
-  schema: z.ZodObject<T> | z.ZodEffects<z.ZodObject<T>>
+interface FormBuilderOptions<T extends z.ZodRawShape> {
+  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
-  onSubmit: (data: z.infer<z.ZodObject<T>>) => void
+  onSubmit(data: z.infer<z.ZodObject<T>>): void
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({

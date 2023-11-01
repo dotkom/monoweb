@@ -1,16 +1,16 @@
-import React, { FC, useMemo, useState } from "react"
-import { useEventDetailsContext } from "./provider"
-import { Box, Title, Checkbox } from "@mantine/core"
-import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
-import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
-import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
-import { GenericTable } from "src/components/GenericTable"
-import { Attendee, User } from "@dotkomonline/types"
-import { useUserSearchQuery } from "src/modules/user/queries/use-user-search-query"
-import GenericSearch from "src/components/GenericSearch"
-import { useRegisterForEventMutation } from "src/modules/event/mutations/use-register-for-event-mutation"
-import { useDeregisterForEventMutation } from "src/modules/event/mutations/use-deregister-for-event-mutation"
+import { type User, type Attendee } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
+import { Box, Checkbox, Title } from "@mantine/core"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import React, { useMemo, useState, type FC } from "react"
+import GenericSearch from "src/components/GenericSearch"
+import { GenericTable } from "src/components/GenericTable"
+import { useDeregisterForEventMutation } from "src/modules/event/mutations/use-deregister-for-event-mutation"
+import { useRegisterForEventMutation } from "src/modules/event/mutations/use-register-for-event-mutation"
+import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
+import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
+import { useUserSearchQuery } from "src/modules/user/queries/use-user-search-query"
+import { useEventDetailsContext } from "./provider"
 
 interface CustomCheckboxProps {
   userId: string
@@ -103,7 +103,7 @@ export const EventAttendancePage: FC = () => {
       {eventAttendance?.map((attendance) => (
         <Box key={attendance.id} mb="sm">
           <Title order={4}>
-            {attendance.id} {"(" + attendance.attendees.length + "/" + attendance.limit + ")"}
+            {attendance.id} {`(${attendance.attendees.length}/${attendance.limit})`}
           </Title>
           <GenericTable table={table} />
         </Box>

@@ -2,12 +2,12 @@
 
 import { Skeleton, Stack, Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { StudyYearAliases, User } from "@dotkomonline/types"
+import { StudyYearAliases, type User } from "@dotkomonline/types"
 import { useMemo } from "react"
+import Link from "next/link"
+import { GenericTable } from "src/components/GenericTable"
 import { formatDate } from "../../../utils/format"
 import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
-import { GenericTable } from "src/components/GenericTable"
-import Link from "next/link"
 
 export default function UserPage() {
   const { users, isLoading: isUsersLoading } = useUserAllQuery()

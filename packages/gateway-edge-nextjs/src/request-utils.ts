@@ -1,7 +1,7 @@
-import { NextApiRequest } from "next"
+import { type NextApiRequest } from "next"
 
-export const bufferRequest = (req: NextApiRequest) => {
-  return new Promise<Buffer>((resolve, reject) => {
+export const bufferRequest = async (req: NextApiRequest) =>
+  new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = []
 
     req.on("data", (chunk: Buffer) => {
@@ -14,4 +14,3 @@ export const bufferRequest = (req: NextApiRequest) => {
 
     req.on("error", reject)
   })
-}

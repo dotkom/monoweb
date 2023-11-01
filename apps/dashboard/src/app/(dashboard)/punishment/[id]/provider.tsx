@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import { Mark } from "@dotkomonline/types"
+import { type Mark } from "@dotkomonline/types"
 
 /** Context consisting of everything required to use and render the form */
 export const MarkDetailsContext = createContext<{

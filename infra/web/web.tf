@@ -13,14 +13,14 @@ locals {
 }
 
 module "web_database" {
-  source = "./modules/neon-project"
+  source = "../modules/neon-project"
 
   project_name = local.web_project_name
   role_name    = "web"
 }
 
 module "web_cognito_client" {
-  source = "./modules/aws-cognito-client"
+  source = "../modules/aws-cognito-client"
 
   user_pool_id  = module.cognito_user_pool.cognito_pool_id
   client_name   = "web"
@@ -28,7 +28,7 @@ module "web_cognito_client" {
 }
 
 module "web_vercel_project" {
-  source = "./modules/vercel-application"
+  source = "../modules/vercel-application"
 
   project_name   = "web"
   domain_name    = local.web_domain_name

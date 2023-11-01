@@ -1,15 +1,15 @@
-import { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
-import { Kysely } from "kysely"
-import { Database } from "@dotkomonline/db"
-import { mapToCompany } from "../company/company-repository"
+import { type Company, type CompanyId, type Event, type EventId } from "@dotkomonline/types"
+import { type Kysely } from "kysely"
+import { type Database } from "@dotkomonline/db"
 import { mapToEvent } from "./event-repository"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { mapToCompany } from "../company/company-repository"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export interface EventCompanyRepository {
-  createCompany: (id: EventId, company: CompanyId) => Promise<void>
-  deleteCompany: (id: EventId, company: CompanyId) => Promise<void>
-  getCompaniesByEventId: (id: EventId, take: number, cursor?: Cursor) => Promise<Company[]>
-  getEventsByCompanyId: (id: CompanyId, take: number, cursor?: Cursor) => Promise<Event[]>
+  createCompany(id: EventId, company: CompanyId): Promise<void>
+  deleteCompany(id: EventId, company: CompanyId): Promise<void>
+  getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor): Promise<Company[]>
+  getEventsByCompanyId(id: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {

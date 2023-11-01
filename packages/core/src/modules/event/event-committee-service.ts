@@ -1,5 +1,5 @@
-import { Committee, CommitteeId, EventCommittee, EventId } from "@dotkomonline/types"
-import { EventCommitteeRepositoryImpl } from "./event-committee-repository"
+import { type Committee, type CommitteeId, type EventCommittee, type EventId } from "@dotkomonline/types"
+import { type EventCommitteeRepositoryImpl } from "./event-committee-repository"
 
 export interface EventCommitteeService {
   getCommitteesForEvent(eventId: EventId): Promise<Committee[]>
@@ -28,10 +28,10 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
     const committeesToAdd = committees.filter((committeeId) => !currentCommitteeIds.includes(committeeId))
 
     // Create promises for removal and addition operations
-    const removePromises = committeesToRemove.map((committeeId) =>
+    const removePromises = committeesToRemove.map(async (committeeId) =>
       this.committeeOrganizerRepository.removeCommitteFromEvent(eventId, committeeId)
     )
-    const addPromises = committeesToAdd.map((committeeId) =>
+    const addPromises = committeesToAdd.map(async (committeeId) =>
       this.committeeOrganizerRepository.addCommitteeToEvent(eventId, committeeId)
     )
 
