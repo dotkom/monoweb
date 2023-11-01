@@ -1,12 +1,9 @@
 import MainLayout from "@/components/layout/MainLayout"
 import ProfileLayout from "@/components/layout/ProfileLayout"
-import { NextPageWithLayout } from "../_app"
 import { ProfileMembership } from "@/components/views/ProfileView/components"
-import { Icon } from "@dotkomonline/ui"
+import { type NextPageWithLayout } from "../_app"
 
-const MembershipPage: NextPageWithLayout = () => {
-  return <ProfileMembership />
-}
+const MembershipPage: NextPageWithLayout = () => <ProfileMembership />
 
 MembershipPage.getLayout = (page) => (
   <MainLayout>

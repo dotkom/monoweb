@@ -1,10 +1,14 @@
-import React from "react"
+import React, { useState } from "react"
 import { Button, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@dotkomonline/ui"
 
 const ProfileMembership = () => {
-  const active = false
-  const denied = false
-  const approved = true
+  const [active, setActive] = useState(true)
+  const [denied, setDenied] = useState(true)
+  const [approved, setApproved] = useState(false)
+
+  setActive(false)
+  setDenied(false)
+  setApproved(true)
 
   return (
     <div className="my-10">

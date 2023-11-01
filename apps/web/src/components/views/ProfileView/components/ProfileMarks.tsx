@@ -1,6 +1,6 @@
 import React from "react"
 
-const ProfileMarks = () => {
-  return <div>Marks</div>
-}
+const ProfileMarks = () => (
+  <div>Marks</div>
+)
 export default ProfileMarks

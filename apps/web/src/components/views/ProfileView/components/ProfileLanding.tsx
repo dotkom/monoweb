@@ -1,9 +1,9 @@
-import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
+import { useState } from "react"
 import { Button, Icon, cn } from "@dotkomonline/ui"
 import { Avatar } from "@radix-ui/react-avatar"
-import { NextPage } from "next"
-import { User } from "next-auth"
-import { useState } from "react"
+import { type NextPage } from "next"
+import { type User } from "next-auth"
+import StudentProgress from "@/components/molecules/StudentProgress/StudentProgress"
 
 interface IFormInput {
   name: string
@@ -56,7 +56,7 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
           </div>
           <button onClick={handleClick}>
             <p className="text-blue-10 text-sm hover:cursor-pointer">
-              {addMore ? "+ " + addMore : ""}
+              {addMore ? `+ ${addMore}` : ""}
             </p>
           </button>
           {extraFields}
@@ -79,44 +79,22 @@ const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = 
   )
 }
 
-const Landing: NextPage<{ user: User }> = ({ user }) => {
-  return (
-    <div className="my-8 w-full">
-      <div className="flex w-full flex-col">
-        <div className="ml-7 mt-4">
-          <p className="text-4xl">Profil</p>
-          <p className="opacity-70">Administrer dine kontoinnstillinger</p>
-          <FormInput name="Profil">
-            <div>
-              <Avatar></Avatar>
-              {user.name ?? "Ingen registrerte navn"}
-            </div>
-          </FormInput>
-          <FormInput name="Epost" addMore="Legg til epostadresse">
-            <div>{user.email ?? "Ingen registrerte eposter"}</div>
-          </FormInput>
-          <FormInput name="Telefon" addMore="Legg til telefonnummer">
-            <div> (+47) 482 49 100</div>
-          </FormInput>
-          <FormInput name="Studie" clickable={false}>
-            <div className="space-y-8">
-              <div>
-                <p>Klassetrinn: </p>
-              </div>
-              <div>
-                <p>Startår:</p>
-              </div>
-              <div className="flex items-center space-x-10 ">
-                <p>Studieløp:</p>
-                <StudentProgress year={0} />
-              </div>
-            </div>
-          </FormInput>
-        </div>
-        <FormInput name="Epost" addMore="Add Email Address">
-          <div>{user.email}</div>
+const Landing: NextPage<{ user: User }> = ({ user }) => (
+  <div className="my-8 w-full">
+    <div className="flex w-full flex-col">
+      <div className="ml-7 mt-4">
+        <p className="text-4xl">Profil</p>
+        <p className="opacity-70">Administrer dine kontoinnstillinger</p>
+        <FormInput name="Profil">
+          <div>
+            <Avatar></Avatar>
+            {user.name || "Ingen registrerte navn"}
+          </div>
         </FormInput>
-        <FormInput name="Telefon" addMore="Add Phone Number">
+        <FormInput name="Epost" addMore="Legg til epostadresse">
+          <div>{user.email || "Ingen registrerte eposter"}</div>
+        </FormInput>
+        <FormInput name="Telefon" addMore="Legg til telefonnummer">
           <div> (+47) 482 49 100</div>
         </FormInput>
         <FormInput name="Studie" clickable={false}>
@@ -134,8 +112,29 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
           </div>
         </FormInput>
       </div>
+      <FormInput name="Epost" addMore="Add Email Address">
+        <div>{user.email}</div>
+      </FormInput>
+      <FormInput name="Telefon" addMore="Add Phone Number">
+        <div> (+47) 482 49 100</div>
+      </FormInput>
+      <FormInput name="Studie" clickable={false}>
+        <div className="space-y-8">
+          <div>
+            <p>Klassetrinn: </p>
+          </div>
+          <div>
+            <p>Startår:</p>
+          </div>
+          <div className="flex items-center space-x-10 ">
+            <p>Studieløp:</p>
+            <StudentProgress year={0} />
+          </div>
+        </div>
+      </FormInput>
     </div>
-  )
-}
+  </div>
+)
+
 
 export default Landing

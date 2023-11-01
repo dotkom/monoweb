@@ -1,7 +1,6 @@
 import { Button } from "@dotkomonline/ui"
 
-const ProfileMyData = () => {
-  return (
+const ProfileMyData = () => (
     <div className="divide-slate-7 flex w-full flex-col divide-y">
       <div>
         <p className="mb-7 text-3xl font-semibold">Din data</p>
@@ -17,5 +16,4 @@ const ProfileMyData = () => {
       </div>
     </div>
   )
-}
 export default ProfileMyData
