@@ -1,7 +1,8 @@
 import { Database } from "@dotkomonline/db"
 import { Event, EventSchema, EventWrite } from "@dotkomonline/types"
-import { Kysely, Selectable } from "kysely"
+import { Kysely, Selectable, sql } from "kysely"
 import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { DB } from "@dotkomonline/db/src/db.generated"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
@@ -9,12 +10,13 @@ export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
   update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  getAllByUserAttending(userId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: Kysely<Database>) { }
 
   async create(data: EventWrite): Promise<Event | undefined> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
@@ -36,6 +38,32 @@ export class EventRepositoryImpl implements EventRepository {
     const events = await query.execute()
 
     return events.map((e) => mapToEvent(e))
+  }
+
+  async getAllByUserAttending(userId: string, take: number, cursor?: Cursor): Promise<Event[]> {
+
+    const event_ids = await this.db
+      .selectFrom("attendance")
+      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
+      // .selectAll("attendance")
+      .select("attendance.eventId")
+      // .select(
+      //   sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.user_id IS NOT NULL), '[]')`.as("attendees")
+      // )
+      .where("attendee.userId", "=", userId)
+      // .groupBy("attendance.id")
+      .groupBy("attendance.eventId")
+      .execute()
+
+    const eventPromises = event_ids
+      .map(({ eventId }) => eventId)
+      .filter((id): id is string => id !== null)
+      .map((id) => this.getById(id))
+      .filter((ev): ev is Promise<Event> => ev !== null);
+
+    const events = await Promise.all(eventPromises);
+
+    return events;
   }
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {

@@ -6,10 +6,11 @@ export interface AttendanceService {
   registerForEvent(userId: User["id"], eventId: Event["id"]): Promise<Attendee | undefined>
   deregisterForEvent(userId: User["id"], eventId: Event["id"]): Promise<Attendee | undefined>
   registerForAttendance(userId: User["id"], attendanceId: string, attended: boolean): Promise<Attendee | undefined>
+  getByUserId(userId: User["id"]): Promise<Attendee[] | undefined>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
-  constructor(private readonly attendanceRepository: AttendanceRepository) {}
+  constructor(private readonly attendanceRepository: AttendanceRepository) { }
 
   async canAttend(_eventId: string) {
     return new Date()
@@ -34,5 +35,10 @@ export class AttendanceServiceImpl implements AttendanceService {
       _attendanceId
     )
     return attendedAttendee
+  }
+
+  async getByUserId(userId: string) {
+    const lol =  await this.attendanceRepository.getByUserId(userId)
+    return lol
   }
 }

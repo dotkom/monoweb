@@ -35,6 +35,11 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
+  async getEventsByUserAttending(userId: string, take: number, cursor?: Cursor): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByUserAttending(userId, take, cursor)
+    return events
+  }
+
   async getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor)
     return events

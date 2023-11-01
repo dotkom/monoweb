@@ -8,6 +8,7 @@ function eventUrl(event: { id: string }) {
   return `https://new.online.ntnu.no/events/${event.id}`;
 }
 
+// ALL events
 export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.status(405).end()
@@ -41,6 +42,7 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
   return;
 }
 
+// a single event
 export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.status(405).end()
@@ -80,14 +82,15 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
 }
 
 
+// all events a user is attending
 export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.status(405).end()
     return
   }
 
-  const user = req.query.user as string;
-  if (!user) {
+  const userid = req.query.user as string;
+  if (!userid) {
     res.status(400).json({ message: "Missing user" })
     return
   }
@@ -100,8 +103,12 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
     transformer, // optional - adds superjson serialization
   })
 
-  const events = await helpers.event.all.fetch()
-  const instance = ical({ name: `${user} online kalender` });
+  // TODO figure out some auth here?
+  // const user = await helpers.user.all.fetch()
+  // console.log(user)
+
+  const events = await helpers.event.allByUserId.fetch({ 'id': userid })
+  const instance = ical({ name: `${userid} online kalender` });
 
   events.forEach(event => {
     instance.createEvent({
@@ -110,11 +117,11 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
       summary: event.title,
       description: event.description,
       location: event.location,
-      url: 'http://online.ntnu.no'
+      url: eventUrl(event)
     });
   });
 
-
   res.status(200).send(instance.toString())
+
   return;
 }
