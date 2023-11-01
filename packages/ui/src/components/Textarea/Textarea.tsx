@@ -13,29 +13,29 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, error, status, message, label, ...props }, ref) => (
-      <div className="grid w-full gap-2">
-        {label && <Label htmlFor={props.id}>{label}</Label>}
-        <textarea
-          className={cn(
-            "border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9 focus:ring-slate-8 focus:ring-brand flex h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-2 disabled:opacity-50",
-            statusVariants({ status: status ? status : error ? "danger" : undefined }), // Error implies danger
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-        {message && <p className={displayMessage({ status })}>{message}</p>}
-        {error && (
-          <div className={displayMessage({ status: "danger" })}>
-            <AlertIcon size={20} status="danger" className="mr-1" />
-            <p>
-              <span className="font-bold">Error:&nbsp;</span>
-              {error}
-            </p>
-          </div>
+    <div className="grid w-full gap-2">
+      {label && <Label htmlFor={props.id}>{label}</Label>}
+      <textarea
+        className={cn(
+          "border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9 focus:ring-slate-8 focus:ring-brand flex h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-2 disabled:opacity-50",
+          statusVariants({ status: status ? status : error ? "danger" : undefined }), // Error implies danger
+          className
         )}
-      </div>
-    )
+        ref={ref}
+        {...props}
+      />
+      {message && <p className={displayMessage({ status })}>{message}</p>}
+      {error && (
+        <div className={displayMessage({ status: "danger" })}>
+          <AlertIcon size={20} status="danger" className="mr-1" />
+          <p>
+            <span className="font-bold">Error:&nbsp;</span>
+            {error}
+          </p>
+        </div>
+      )}
+    </div>
+  )
 )
 Textarea.displayName = "Textarea"
 

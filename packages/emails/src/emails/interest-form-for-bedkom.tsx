@@ -20,12 +20,12 @@ const Props = z.object({
 })
 
 const InterestRow: FC<{ name: string; requested: boolean }> = ({ name, requested }) => (
-    <Row>
-      <Column>
-        {name}: {requested ? "Ja" : "Nei"}
-      </Column>
-    </Row>
-  )
+  <Row>
+    <Column>
+      {name}: {requested ? "Ja" : "Nei"}
+    </Column>
+  </Row>
+)
 
 export default function InterestFormForBedkomEmail({
   companyName = "Bekk",
