@@ -1,9 +1,9 @@
 import { z } from "zod"
 
 export const formSchema = z.object({
-  companyName: z.string().min(1).max(140),
-  contactName: z.string().min(1),
-  contactEmail: z.string().email(),
+  companyName: z.string().min(3, "Bedriftsnavnet må ha minimum tre bokstaver"),
+  contactName: z.string().min(1, "Navn til kontaktperson kan ikke være tomt"),
+  contactEmail: z.string().email("E-post adressen må være en gyldig e-post adresse"),
   contactTel: z.string(),
   requestsCompanyPresentation: z.boolean().default(false),
   requestsCourseEvent: z.boolean().default(false),
