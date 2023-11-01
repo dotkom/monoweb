@@ -1,11 +1,16 @@
-import React, { FC, useMemo } from "react"
+import React, { FC, useMemo, useState } from "react"
 import { useEventDetailsContext } from "./provider"
 import { Box, Title, Checkbox } from "@mantine/core"
 import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
 import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
 import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
 import { GenericTable } from "src/components/GenericTable"
-import { Attendee } from "@dotkomonline/types"
+import { Attendee, User } from "@dotkomonline/types"
+import { useUserSearchQuery } from "src/modules/user/queries/use-user-search-query"
+import GenericSearch from "src/components/GenericSearch"
+import { useRegisterForEventMutation } from "src/modules/event/mutations/use-register-for-event-mutation"
+import { useDeregisterForEventMutation } from "src/modules/event/mutations/use-deregister-for-event-mutation"
+import { Button } from "@dotkomonline/ui"
 
 interface CustomCheckboxProps {
   userId: string
@@ -33,6 +38,10 @@ CustomCheckbox.displayName = "attendanceToggle"
 export const EventAttendancePage: FC = () => {
   const { event } = useEventDetailsContext()
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
+  const [searchQuery, setSearchQuery] = useState("")
+  const { users } = useUserSearchQuery(searchQuery)
+  const registerForEvent = useRegisterForEventMutation()
+  const deregisterForEvent = useDeregisterForEventMutation()
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
@@ -51,19 +60,46 @@ export const EventAttendancePage: FC = () => {
           />
         ),
       }),
+      columnHelper.accessor((attendee) => attendee, {
+        id: "deregsiter",
+        header: () => "Meld av",
+        cell: (info) => (
+          <Button
+            onClick={() =>
+              deregisterForEvent.mutate({ attendanceId: info.getValue().attendanceId, userId: info.getValue().userId })
+            }
+          >
+            X
+          </Button>
+        ),
+      }),
     ],
-    [columnHelper]
+    [columnHelper, deregisterForEvent]
   )
 
   const table = useReactTable({
-    data: eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [],
+    data: useMemo(() => eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [], [eventAttendance]),
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
 
+  const handleUserSearch = (query: string) => {
+    setSearchQuery(query)
+  }
+
+  const handleUserClick = (user: User) => {
+    registerForEvent.mutate({ eventId: event.id, userId: user.id.toString() })
+  }
+
   return (
     <Box>
-      <Title order={3}>Påmeldte</Title>
+      <Title order={3}>Meld på</Title>
+      <GenericSearch
+        onSearch={handleUserSearch}
+        onSubmit={handleUserClick}
+        items={users}
+        dataMapper={(item: User) => item.id.toString()}
+      />
       {eventAttendance?.map((attendance) => (
         <Box key={attendance.id} mb="sm">
           <Title order={4}>
