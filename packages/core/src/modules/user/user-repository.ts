@@ -1,15 +1,17 @@
+import { Cursor, orderedQuery } from "../../utils/db-utils"
 import { type Database } from "@dotkomonline/db"
-import { type Kysely, type Selectable } from "kysely"
+import { sql, type Kysely, type Selectable } from "kysely"
 import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 
 export interface UserRepository {
-  getById(id: UserId): Promise<User | undefined>
-  getBySubject(cognitoSubject: string): Promise<User | undefined>
-  getAll(limit: number): Promise<User[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User>
+  getById: (id: UserId) => Promise<User | undefined>
+  getBySubject: (cognitoSubject: string) => Promise<User | undefined>
+  getAll: (limit: number) => Promise<User[]>
+  create: (userWrite: UserWrite) => Promise<User>
+  update: (id: UserId, data: UserWrite) => Promise<User>
+  search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -42,5 +44,17 @@ export class UserRepositoryImpl implements UserRepository {
       .returningAll()
       .executeTakeFirstOrThrow()
     return mapToUser(user)
+  }
+  async search(searchQuery: string, take: number, cursor?: Cursor) {
+    const query = orderedQuery(
+      this.db
+        .selectFrom("owUser")
+        .selectAll()
+        .where(sql`id::text`, "ilike", `%${searchQuery}%`)
+        .limit(take),
+      cursor
+    )
+    const users = await query.execute()
+    return users.map(mapToUser)
   }
 }

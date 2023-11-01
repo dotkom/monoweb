@@ -22,14 +22,17 @@ export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, erro
 
 TextInput.displayName = "TextInput"
 
-const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2", {
-  variants: {
-    error: {
-      true: "text-red-11 border-red-7",
-      false: "text-slate-12 border-slate-6",
+const input = cva(
+  "border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2 focus:ring-2 focus:ring-brand",
+  {
+    variants: {
+      error: {
+        true: "text-red-11 border-red-7",
+        false: "text-slate-12 border-slate-6",
+      },
+      disabled: {
+        true: "cursor-not-allowed text-slate-10",
+      },
     },
-    disabled: {
-      true: "cursor-not-allowed text-slate-10",
-    },
-  },
-})
+  }
+)

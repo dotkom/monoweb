@@ -18,15 +18,4 @@ locals {
   monoweb_aws_safe_doppler_secrets = {
     for key, value in data.doppler_secrets.monoweb.map : key => value if !contains(local.forbidden_aws_lambda_keys, key)
   }
-
-  vengeful_aws_safe_doppler_secrets = {
-    for key, value in data.doppler_secrets.vengeful.map : key => value if !contains(local.forbidden_aws_lambda_keys, key)
-  }
-}
-
-data "doppler_secrets" "vengeful" {
-  project = "vengeful-vineyard"
-  config  = terraform.workspace
-
-  provider = doppler.vengeful
 }
