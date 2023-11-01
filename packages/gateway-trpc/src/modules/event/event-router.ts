@@ -52,7 +52,7 @@ export const eventRouter = t.router({
     ),
   allByUserId: publicProcedure
     .input(z.object({ id: UserSchema.shape.id }))
-    .query(({ input, ctx }) =>
+    .query(async ({ input, ctx }) =>
       ctx.eventService.getEventsByUserAttending(input.id)
     ),
   allByCommittee: publicProcedure
