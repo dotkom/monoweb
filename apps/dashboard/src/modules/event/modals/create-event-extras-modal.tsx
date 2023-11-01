@@ -45,7 +45,7 @@ export const useCreateEventExtrasModal = ({ event }: { event: Event }) => {
   return () =>
     modals.openContextModal({
       modal: "extras/create",
-      title: "Opprett ny spørring",
+      title: "Legg til nytt deltakervalg",
       innerProps: {
         event,
       },
