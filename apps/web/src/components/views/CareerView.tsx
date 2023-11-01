@@ -1,6 +1,7 @@
 import { CareerProps } from "@/pages/career"
 import { FC } from "react"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
+import CompanyFiltersContainer from "../molecules/CompanyFiltersContainer"
 
 const CareerView: FC<CareerProps> = (props: CareerProps) => {
   // return <div> 404 Siden finnes ikke </div>
@@ -18,7 +19,10 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
           </p>
         </div>
       </div>
-      <div className="m-4 my-auto mt-[250px] w-[900px]">
+
+      <div className="m-4 my-auto grid md:grid-cols-[20rem_minmax(100px,1fr)] gap-x-20 mt-[250px] w-[900px]">
+        <CompanyFiltersContainer />
+        <div>
         <div className="border-slate-11 flex justify-between border-b-2">
           <p className="mb-2 w-[25%] text-xl font-medium">Bedrift</p>
           <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
@@ -32,6 +36,7 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
               <CompanyAdListItem career={c} />
             </>
           ))}
+        </div>
         </div>
         <div className="h-36"></div>
       </div>
