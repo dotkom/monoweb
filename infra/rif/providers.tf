@@ -1,0 +1,3 @@
+provider "vercel" {
+  team = "dotkom"
+}
