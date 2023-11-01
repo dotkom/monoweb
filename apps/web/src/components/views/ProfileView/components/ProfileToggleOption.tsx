@@ -1,16 +1,12 @@
 import { Toggle } from "@dotkomonline/ui"
-import { FC, ReactNode, useState, useEffect } from "react"
+import { FC, ReactNode } from "react"
 
 interface PrivacyProps {
   children: ReactNode
 }
 
 const PrivacyOption: FC<PrivacyProps> = ({ children }) => {
-  const [isChecked] = useState<boolean>(false)
-
-  useEffect(() => {
-    console.log(isChecked)
-  }, [isChecked])
+  // const [isChecked, setIsChecked] = useState<boolean>(false)
 
   return (
     <div className="w-full">

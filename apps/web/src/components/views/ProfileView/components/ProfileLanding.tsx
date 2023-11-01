@@ -13,27 +13,29 @@ interface IFormInput {
 }
 
 const FormInput: React.FC<IFormInput> = ({ name, children, addMore, clickable = true }) => {
-  const [extraFields, setExtraFields] = useState<JSX.Element | null>(null);
+  const [extraFields, setExtraFields] = useState<JSX.Element | null>(null)
 
-  const addExtraField = (fieldType: 'email' | 'tel', placeholder: string) => {
+  const addExtraField = (fieldType: "email" | "tel", placeholder: string) => {
     if (!extraFields) {
       const newField = (
         <div>
-          <input type={fieldType} className="my-2 border p-1 rounded" placeholder={placeholder} />
-          <Button color="blue" variant="solid" size="sm" className="ml-2">Legg til</Button>
+          <input type={fieldType} className="my-2 rounded border p-1" placeholder={placeholder} />
+          <Button color="blue" variant="solid" size="sm" className="ml-2">
+            Legg til
+          </Button>
         </div>
-      );
-      setExtraFields(newField);
+      )
+      setExtraFields(newField)
     }
-  };
+  }
 
   const handleClick = () => {
-    if (addMore === 'Legg til epostadresse') {
-      addExtraField('email', 'Ny epost');
-    } else if (addMore === 'Legg til telefonnummer') {
-      addExtraField('tel', 'Nytt telefonnummer');
+    if (addMore === "Legg til epostadresse") {
+      addExtraField("email", "Ny epost")
+    } else if (addMore === "Legg til telefonnummer") {
+      addExtraField("tel", "Nytt telefonnummer")
     }
-  };
+  }
 
   return (
     <div className="my-10 ">

@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react"
+import { FC } from "react"
 
 import PersonvernOption from "./ProfileToggleOption"
 
@@ -13,12 +13,6 @@ export const personList = [
 ]
 
 const PrivacyModule: FC = () => {
-  const [isChecked] = useState<boolean>(false)
-
-  useEffect(() => {
-    console.log(isChecked)
-  }, [isChecked])
-
   return (
     <div className="divide-slate-7 my-5 flex w-full flex-col divide-y">
       {personList.map((title) => {
