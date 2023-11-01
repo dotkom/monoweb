@@ -45,13 +45,8 @@ export class EventRepositoryImpl implements EventRepository {
     const event_ids = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      // .selectAll("attendance")
       .select("attendance.eventId")
-      // .select(
-      //   sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.user_id IS NOT NULL), '[]')`.as("attendees")
-      // )
       .where("attendee.userId", "=", userId)
-      // .groupBy("attendance.id")
       .groupBy("attendance.eventId")
       .execute()
 
