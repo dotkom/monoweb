@@ -12,11 +12,13 @@ import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { UserRepository } from "./user-repository"
 import { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { NotFoundError } from "../../errors/errors"
+import { Cursor } from "../../utils/db-utils"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
   getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
+  searchUsers(searchQuery: string, take: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: UserId, payload: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
@@ -41,6 +43,11 @@ export class UserServiceImpl implements UserService {
     const user = await this.userRepository.getById(id)
     if (!user) throw new NotFoundError(`User with ID:${id} not found`)
     return user
+  }
+
+  async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
+    const users = await this.userRepository.search(searchQuery, take, cursor)
+    return users
   }
 
   async getUserBySubject(id: User["cognitoSub"]) {
