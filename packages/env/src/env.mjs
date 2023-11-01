@@ -30,6 +30,7 @@ export const createEnvironment = () =>
 
       PROKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       PROKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
+      PROKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -62,6 +63,7 @@ export const createEnvironment = () =>
 
       PROKOM_STRIPE_PUBLIC_KEY: process.env.PROKOM_STRIPE_PUBLIC_KEY,
       PROKOM_STRIPE_SECRET_KEY: process.env.PROKOM_STRIPE_SECRET_KEY,
+      PROKOM_STRIPE_WEBHOOK_SECRET: process.env.PROKOM_STRIPE_WEBHOOK_SECRET,
     },
   })
 

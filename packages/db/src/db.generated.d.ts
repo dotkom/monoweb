@@ -207,6 +207,16 @@ export interface RefundRequest {
   userId: string | null;
 }
 
+export interface WebshopPurchase {
+  createdAt: Generated<Timestamp>;
+  delivered: boolean;
+  id: Generated<string>;
+  quantity: number;
+  stripePriceId: string;
+  stripeProductId: string;
+  userId: string | null;
+}
+
 export interface DB {
   attendance: Attendance;
   attendee: Attendee;
@@ -227,4 +237,5 @@ export interface DB {
   product: Product;
   productPaymentProvider: ProductPaymentProvider;
   refundRequest: RefundRequest;
+  webshopPurchase: WebshopPurchase;
 }

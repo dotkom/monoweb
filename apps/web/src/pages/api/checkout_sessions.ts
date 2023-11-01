@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         success_url: `http://${req.headers.host}?success=true`,
         cancel_url: `http://${req.headers.host}?canceled=true`,
       })
-      res.redirect(303, session.url)
+      res.redirect(303, session.url || "google.com")
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Internal Server Error"
       res.status(500).json({ statusCode: 500, message: errorMessage })

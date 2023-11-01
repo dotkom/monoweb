@@ -20,6 +20,7 @@ export declare type EnvironmentKeys =
   | "EMAIL_SECRET"
   | "PROKOM_STRIPE_PUBLIC_KEY"
   | "PROKOM_STRIPE_SECRET_KEY"
+  | "PROKOM_STRIPE_WEBHOOK_SECRET"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 
