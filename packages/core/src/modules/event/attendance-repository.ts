@@ -103,7 +103,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async addChoice(eventId: EventId, attendanceId: AttendanceId, questionId: string, choiceId: string) {
     const res = await this.db
       .updateTable("attendee")
-      .set({ eventQuestionsResponses: JSON.stringify([{ id: questionId, choice: choiceId }]) })
+      .set({ extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]) })
       .where("userId", "=", eventId)
       .where("attendanceId", "=", attendanceId)
       .returningAll()

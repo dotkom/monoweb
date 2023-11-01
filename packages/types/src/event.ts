@@ -28,7 +28,7 @@ export const EventSchema = z.object({
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
   waitlist: z.string().ulid().nullable(),
-  attendeeQuestions: z.array(EventExtraSchema).nullable(),
+  extras: z.array(EventExtraSchema).nullable(),
 })
 
 export type EventId = Event["id"]
@@ -42,7 +42,7 @@ export const EventWriteSchema = EventSchema.partial({
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 
-export const AttendeeattendeeQuestionsSchema = z.object({
+export const AttendeeextrasSchema = z.object({
   id: z.string(),
   choice: z.string(),
 })
@@ -54,7 +54,7 @@ export const AttendeeSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   attended: z.boolean(),
-  attendeeQuestions: z
+  extras: z
     .array(
       z.object({
         id: z.string(),
@@ -88,7 +88,7 @@ export const AttendanceSchema = z.object({
   attendees: z.array(AttendeeSchema),
   min: z.number().min(0).max(5),
   max: z.number().min(0).max(5),
-  attendeeQuestions: z.array(AttendanceExtrasSchema).nullable().optional(),
+  extras: z.array(AttendanceExtrasSchema).nullable().optional(),
 })
 
 export type AttendanceId = Attendance["id"]
@@ -109,7 +109,7 @@ export const AttendeeWriteSchema = AttendeeSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  attendeeQuestions: true,
+  extras: true,
 })
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>

@@ -18,7 +18,7 @@ export const events: Insertable<Database["event"]>[] = [
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Hovedbygget",
     waitlist: null,
-    attendeeQuestions: JSON.stringify([
+    extras: JSON.stringify([
       {
         id: "0",
         name: "Hva vil du ha til mat?",
@@ -73,6 +73,6 @@ export const events: Insertable<Database["event"]>[] = [
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Åre, Sverige",
     waitlist: null,
-    attendeeQuestions: null,
+    extras: null,
   },
 ]

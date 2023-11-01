@@ -47,7 +47,7 @@ export interface Attendee {
   attendanceId: string | null;
   attended: Generated<boolean>;
   createdAt: Generated<Timestamp>;
-  eventQuestionsResponses: Json | null;
+  extrasChoices: Json | null;
   id: Generated<string>;
   updatedAt: Generated<Timestamp>;
   userId: string | null;
@@ -76,10 +76,10 @@ export interface Company {
 }
 
 export interface Event {
-  attendeeQuestions: Json | null;
   createdAt: Generated<Timestamp>;
   description: string | null;
   end: Timestamp;
+  extras: Json | null;
   id: Generated<string>;
   imageUrl: string | null;
   location: string | null;

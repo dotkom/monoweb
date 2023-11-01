@@ -25,7 +25,7 @@ export class EventServiceImpl implements EventService {
   async createEvent(eventCreate: EventWrite): Promise<Event> {
     const toInsert: EventInsert = {
       ...eventCreate,
-      attendeeQuestions: JSON.stringify(eventCreate.attendeeQuestions),
+      extras: JSON.stringify(eventCreate.extras),
     }
 
     const event = await this.eventRepository.create(toInsert)
@@ -53,7 +53,7 @@ export class EventServiceImpl implements EventService {
   async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
     const toInsert: EventInsert = {
       ...eventUpdate,
-      attendeeQuestions: JSON.stringify(eventUpdate.attendeeQuestions),
+      extras: JSON.stringify(eventUpdate.extras),
     }
     const event = await this.eventRepository.update(id, toInsert)
     if (!event) {
@@ -92,7 +92,7 @@ export class EventServiceImpl implements EventService {
     await this.eventRepository.update(eventId, {
       ...event,
       waitlist: waitlist.id,
-      attendeeQuestions: JSON.stringify(event.attendeeQuestions),
+      extras: JSON.stringify(event.extras),
     })
     return waitlist
   }
