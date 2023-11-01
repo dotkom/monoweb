@@ -4,6 +4,7 @@ export const UserSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   cognitoSub: z.string().uuid(),
+  studyYear: z.number().int().min(-1).max(6),
 })
 
 export type UserId = User["id"]
