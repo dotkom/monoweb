@@ -15,6 +15,7 @@ module.exports = {
     "plugin:@typescript-eslint/stylistic",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended",
     "plugin:jsx-a11y/recommended",
     "turbo",
     "prettier",
@@ -38,7 +39,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
 
-  plugins: ["@typescript-eslint", "import"],
+  plugins: ["@typescript-eslint", "import", "prettier"],
 
   root: true,
 
