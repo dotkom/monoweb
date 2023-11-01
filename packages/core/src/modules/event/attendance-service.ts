@@ -9,7 +9,7 @@ export interface AttendanceService {
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
-  constructor(private readonly attendanceRepository: AttendanceRepository) { }
+  constructor(private readonly attendanceRepository: AttendanceRepository) {}
 
   async canAttend(_eventId: string) {
     return new Date()

@@ -10,7 +10,7 @@ export interface EventRepository {
   create(data: EventWrite): Promise<Event | undefined>
   update(id: Event["id"], data: Omit<EventWrite, "id">): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
-  getAllByUserAttending(userId: string, take: number, cursor?: Cursor): Promise<Event[]>
+  getAllByUserAttending(userId: string): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
@@ -40,7 +40,7 @@ export class EventRepositoryImpl implements EventRepository {
     return events.map((e) => mapToEvent(e))
   }
 
-  async getAllByUserAttending(userId: string, take: number, cursor?: Cursor): Promise<Event[]> {
+  async getAllByUserAttending(userId: string): Promise<Event[]> {
 
     const event_ids = await this.db
       .selectFrom("attendance")
