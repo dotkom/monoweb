@@ -16,7 +16,7 @@ data "aws_secretsmanager_secret_version" "email_token" {
 }
 
 module "email_lambda" {
-  source = "./modules/aws-docker-lambda"
+  source = "../modules/aws-docker-lambda"
 
   ecr_repository_name = "gateway-email-${terraform.workspace}"
   function_name       = "gateway-email-${terraform.workspace}"
