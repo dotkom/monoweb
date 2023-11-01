@@ -1,4 +1,5 @@
 import { Button, ButtonProps, Combobox, ComboboxProps, useCombobox } from "@mantine/core"
+import { FC } from "react"
 
 interface ActionSelectProps extends ComboboxProps {
   data: { value: string; label: string }[]
@@ -6,13 +7,14 @@ interface ActionSelectProps extends ComboboxProps {
   buttonProps?: ButtonProps
 }
 
-export function ActionSelect({ data, ...props }: ActionSelectProps) {
+export const ActionSelect: FC<ActionSelectProps> = ({ data, ...props }) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
   const options = data.map((item, i) => (
-    <Combobox.Option value={item.value} key={i + item.label}>
+    // static list => using index as key is ok
+    <Combobox.Option value={item.value} key={i}>
       {item.label}
     </Combobox.Option>
   ))
