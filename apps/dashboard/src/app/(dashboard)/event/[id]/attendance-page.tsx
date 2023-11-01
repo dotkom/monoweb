@@ -1,4 +1,4 @@
-import { User, type Attendee } from "@dotkomonline/types"
+import { type User, type Attendee } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { Box, Checkbox, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

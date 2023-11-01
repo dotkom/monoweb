@@ -9,17 +9,11 @@ import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const userRouter = t.router({
-  all: publicProcedure.input(PaginateInputSchema).query(({ input, ctx }) => {
-    return ctx.userService.getAllUsers(input.take)
-  }),
-  get: publicProcedure.input(UserSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.userService.getUserById(input)
-  }),
+  all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
+  get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getUserById(input)),
   search: publicProcedure
     .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
-    .query(({ input, ctx }) => {
-      return ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)
-    }),
+    .query(async ({ input, ctx }) => ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)),
   edit: protectedProcedure
     .input(
       z.object({

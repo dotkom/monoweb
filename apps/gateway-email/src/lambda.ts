@@ -47,7 +47,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
     const json = JSON.parse(event.body ?? "{}")
     const request = requestSchema.parse(json)
     const template = templateMap[request.template]
-    if (!template) {
+    if (!template.name) {
       return { statusCode: 400, body: "Unknown template name" }
     }
     const html = template(request.arguments)

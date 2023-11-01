@@ -11,7 +11,7 @@ import { type NotificationPermissionsRepository } from "./notification-permissio
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { type UserRepository } from "./user-repository"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
@@ -40,7 +40,7 @@ export class UserServiceImpl implements UserService {
 
   async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
-    if (!user) {
+    if (user === undefined) {
       throw new NotFoundError(`User with ID:${id} not found`)
     }
     return user
@@ -66,9 +66,6 @@ export class UserServiceImpl implements UserService {
 
   async updateUser(id: UserId, data: UserWrite) {
     const res = await this.userRepository.update(id, data)
-    if (!res) {
-      throw new NotFoundError(`User with ID:${id} not found`)
-    }
     return res
   }
 

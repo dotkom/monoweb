@@ -1,8 +1,8 @@
-import React, { FC } from "react"
+import React, { type FC } from "react"
 import { Body, Column, Container, Head, Heading, Html, Preview, Row, Section, Text } from "@react-email/components"
 import { Tailwind } from "@react-email/tailwind"
 import { z } from "zod"
-import { createTemplate, TemplateProps } from "../template"
+import { createTemplate, type TemplateProps } from "../template"
 
 const Props = z.object({
   companyName: z.string().min(1).max(140),
@@ -19,15 +19,13 @@ const Props = z.object({
   comment: z.string(),
 })
 
-const InterestRow: FC<{ name: string; requested: boolean }> = ({ name, requested }) => {
-  return (
+const InterestRow: FC<{ name: string; requested: boolean }> = ({ name, requested }) => (
     <Row>
       <Column>
         {name}: {requested ? "Ja" : "Nei"}
       </Column>
     </Row>
   )
-}
 
 export default function InterestFormForCompanyEmail({
   companyName = "Bekk",

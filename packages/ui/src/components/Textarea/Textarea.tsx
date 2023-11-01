@@ -1,5 +1,4 @@
 import { cva } from "cva"
-
 import * as React from "react"
 import { cn } from "../../utils"
 import { AlertIcon } from "../Alert/AlertIcon"
@@ -7,14 +6,13 @@ import { Label } from "../Label"
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
-  status?: "success" | "warning" | "danger"
+  status?: "danger" | "success" | "warning"
   error?: string
   message?: string
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, error, status, message, label, ...props }, ref) => {
-    return (
+  ({ className, error, status, message, label, ...props }, ref) => (
       <div className="grid w-full gap-2">
         {label && <Label htmlFor={props.id}>{label}</Label>}
         <textarea
@@ -38,7 +36,6 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
       </div>
     )
-  }
 )
 Textarea.displayName = "Textarea"
 

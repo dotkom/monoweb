@@ -102,7 +102,7 @@ export class JobListingServiceImpl implements JobListingService {
   private getNewLocationIds(newLocationNames: string[], allLocations: LocationSelect[]): string[] {
     return newLocationNames
       .map((name) => allLocations.find((x) => x.name === name)?.id || null)
-      .filter((x) => x !== undefined) as string[]
+      .filter((x) => x !== null) as string[]
   }
 
   private validateLocations(

@@ -1,4 +1,4 @@
-import { AttendanceId, type Attendee, type EventId, type UserId } from "@dotkomonline/types"
+import { type AttendanceId, type Attendee, type EventId, type UserId } from "@dotkomonline/types"
 import { type AttendanceRepository } from "./attendance-repository"
 
 export interface AttendanceService {

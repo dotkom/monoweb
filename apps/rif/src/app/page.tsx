@@ -1,13 +1,13 @@
 "use client"
 
-import { Form } from "./form"
 import { Button, Text, Title } from "@dotkomonline/ui"
-import { Section } from "../components/section"
 import { FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useSubmitMutation } from "./mutation"
-import { FormSchema, formSchema } from "./form-schema"
 import { Icon } from "@iconify/react"
+import { useSubmitMutation } from "./mutation"
+import { type FormSchema, formSchema } from "./form-schema"
+import { Form } from "./form"
+import { Section } from "../components/section"
 
 export default function Page() {
   const form = useForm<FormSchema>({

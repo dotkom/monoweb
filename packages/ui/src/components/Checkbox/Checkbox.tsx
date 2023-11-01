@@ -9,8 +9,7 @@ export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof Che
 }
 
 export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(
-  ({ className, label, ...props }, ref) => {
-    return (
+  ({ className, label, ...props }, ref) => (
       <div className="flex items-center">
         <CheckboxPrimitive.Root
           ref={ref}
@@ -34,7 +33,6 @@ export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimiti
         )}
       </div>
     )
-  }
 )
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
 

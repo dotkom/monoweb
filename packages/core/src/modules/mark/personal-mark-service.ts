@@ -38,10 +38,6 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   async addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
-    const mark = await this.markService.getMark(markId)
-    if (!mark) {
-      throw new NotFoundError(`Mark with ID:${markId} not found`)
-    }
     const personalMark = await this.personalMarkRepository.addToUserId(userId, markId)
     if (!personalMark) {
       throw new NotFoundError(`PersonalMark could not be created`)

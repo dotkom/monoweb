@@ -4,6 +4,7 @@ import { createServiceLayer } from "@dotkomonline/core"
 
 /** Create ow_user table record upon completed sign up */
 export const handler: Handler<PostConfirmationConfirmSignUpTriggerEvent> = async (event) => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (event.triggerSource !== "PostConfirmation_ConfirmSignUp") {
     return event
   }

@@ -5,9 +5,9 @@ import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { type FC } from "react"
 import { EventCompaniesPage } from "./companies-page"
-import { EventAttendancePage } from "./details-attendance"
 import { EventEditCard } from "./edit-card"
 import { useEventDetailsContext } from "./provider"
+import { EventAttendancePage } from "./attendance-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
