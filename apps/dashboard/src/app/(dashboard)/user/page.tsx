@@ -16,14 +16,14 @@ export default function UserPage() {
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
-        header: () => "User ID",
+        header: () => "Bruker-ID",
       }),
       columnHelper.accessor("createdAt", {
-        header: () => "Creation Date",
+        header: () => "Opprettet",
         cell: (info) => formatDate(info.getValue()),
       }),
       columnHelper.accessor("studyYear", {
-        header: () => "Study Year",
+        header: () => "Studieår",
       }),
       columnHelper.accessor((user) => user, {
         id: "details",
