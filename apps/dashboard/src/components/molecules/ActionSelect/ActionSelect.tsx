@@ -25,7 +25,6 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProp
       store={combobox}
       position="bottom-start"
       onOptionSubmit={(val) => {
-        console.log(val)
         combobox.closeDropdown()
         if (onChange) onChange(val)
       }}

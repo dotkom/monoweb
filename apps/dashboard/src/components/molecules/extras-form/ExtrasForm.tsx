@@ -23,8 +23,8 @@ interface Props {
 }
 
 const templateChoices: { value: TemplateKey; label: TemplateKey }[] = Object.keys(templates).map((key) => ({
-  value: key as TemplateKey,
-  label: key as TemplateKey,
+  value: key,
+  label: key,
 }))
 
 export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
