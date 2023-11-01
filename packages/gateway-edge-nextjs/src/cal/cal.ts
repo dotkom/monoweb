@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import ical from "ical-generator";
+import ical, { ICalEventData } from "ical-generator";
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 
@@ -27,14 +27,7 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
   const instance = ical({ name: `Online Linjeforening Arrangementer` });
 
   events.forEach(event => {
-    instance.createEvent({
-      start: event.start,
-      end: event.end,
-      summary: event.title,
-      description: event.description,
-      location: event.location,
-      url: eventUrl(event)
-    });
+    instance.createEvent(toICal(event));
   });
 
 
@@ -58,15 +51,7 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
   const event = (await helpers.event.get.fetch(eventid)).event;
 
   const instance = ical();
-
-  instance.createEvent({
-    start: event.start,
-    end: event.end,
-    summary: event.title,
-    description: event.description,
-    location: event.location,
-    url: eventUrl(event)
-  });
+  instance.createEvent(toICal(event));
 
   res.status(200).send(instance.toString())
 
@@ -96,17 +81,21 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   const instance = ical({ name: `${userid} online kalender` });
 
   events.forEach(event => {
-    instance.createEvent({
-      start: event.start,
-      end: event.end,
-      summary: event.title,
-      description: event.description,
-      location: event.location,
-      url: eventUrl(event)
-    });
+    instance.createEvent(toICal(event));
   });
 
   res.status(200).send(instance.toString())
 
   return;
+}
+
+function toICal(event: { start: Date, end: Date, title: string, description: string | null, location: string | null, id: string }): ICalEventData {
+  return {
+    start: event.start,
+    end: event.end,
+    summary: event.title,
+    description: event.description,
+    location: event.location,
+    url: eventUrl(event)
+  }
 }
