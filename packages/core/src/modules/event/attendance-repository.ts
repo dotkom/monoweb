@@ -1,23 +1,25 @@
-import { Database } from "@dotkomonline/db"
+import { type Database } from "@dotkomonline/db"
 import {
-  Attendance,
+  type Attendance,
+  type AttendanceId,
   AttendanceSchema,
-  AttendanceWrite,
-  Attendee,
+  type AttendanceWrite,
+  type Attendee,
   AttendeeSchema,
-  AttendeeWrite,
-  Event,
+  type AttendeeWrite,
+  type EventId,
 } from "@dotkomonline/types"
-import { Kysely, sql } from "kysely"
-import { DB } from "@dotkomonline/db/src/db.generated"
+import { type Kysely, sql } from "kysely"
+import { type DB } from "@dotkomonline/db/src/db.generated"
 
 export interface AttendanceRepository {
-  create: (attendanceWrite: AttendanceWrite) => Promise<Attendance>
-  createAttendee: (attendeeWrite: AttendeeWrite) => Promise<Attendee>
-  getAttendeeById: (userId: string) => Promise<Attendee>
-  updateAttendee: (attendeeWrite: AttendeeWrite, userId: string) => Promise<Attendee>
-  getByEventId: (eventId: Event["id"]) => Promise<Attendance[]>
-  getByAttendanceId(id: Attendance["id"]): Promise<Attendance | undefined>
+  create(attendanceWrite: AttendanceWrite): Promise<Attendance>
+  createAttendee(attendeeWrite: AttendeeWrite): Promise<Attendee>
+  removeAttendee(userId: string, attendanceId: string): Promise<Attendee>
+  getAttendeeByIds(userId: string, eventId: string): Promise<Attendee | undefined>
+  updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string): Promise<Attendee>
+  getByEventId(eventId: EventId): Promise<Attendance[]>
+  getByAttendanceId(id: AttendanceId): Promise<Attendance | undefined>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
@@ -49,9 +51,24 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return AttendeeSchema.parse(res)
   }
 
-  async getAttendeeById(userId: string) {
-    const res = await this.db.selectFrom("attendee").where("userId", "=", userId).executeTakeFirst()
+  async removeAttendee(userId: string, attendanceId: string) {
+    const res = await this.db
+      .deleteFrom("attendee")
+      .where("userId", "=", userId)
+      .where("attendanceId", "=", attendanceId)
+      .returningAll()
+      .executeTakeFirstOrThrow()
     return AttendeeSchema.parse(res)
+  }
+
+  async getAttendeeByIds(userId: string, attendanceId: string) {
+    const res = await this.db
+      .selectFrom("attendee")
+      .selectAll("attendee")
+      .where("userId", "=", userId)
+      .where("attendanceId", "=", attendanceId)
+      .executeTakeFirst()
+    return res ? AttendeeSchema.parse(res) : undefined
   }
 
   async getByEventId(eventId: string) {
@@ -65,20 +82,21 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .groupBy("attendance.id")
       .where("eventId", "=", eventId)
       .execute()
-    return res ? res.map((r) => AttendanceSchema.parse(r)) : []
+    return res.map((r) => AttendanceSchema.parse(r))
   }
 
-  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string) {
+  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string) {
     const res = await this.db
       .updateTable("attendee")
       .set({ ...attendeeWrite, updatedAt: new Date() })
-      .where("id", "=", userId)
+      .where("userId", "=", userId)
+      .where("attendanceId", "=", attendanceId)
       .returningAll()
-      .executeTakeFirst()
+      .executeTakeFirstOrThrow()
     return AttendeeSchema.parse(res)
   }
 
-  async getByAttendanceId(id: Attendance["id"]) {
+  async getByAttendanceId(id: AttendanceId) {
     const res = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")

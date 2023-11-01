@@ -1,10 +1,12 @@
-import { trpc } from "@/utils/trpc"
 import Link from "next/link"
+import { trpc } from "@/utils/trpc"
 
 const CompanyPage = () => {
   const { data, isLoading } = trpc.company.all.useQuery()
 
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
 
   return (
     <ul className="text-blue-11 text-center text-2xl">

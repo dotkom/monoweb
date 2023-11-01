@@ -3,16 +3,16 @@ import { forwardRef, useState } from "react"
 import { Label } from "@radix-ui/react-label"
 import { Icon } from "../Icon"
 
-export interface InputProps extends React.HTMLProps<HTMLInputElement> {
+export interface PasswordInputProps {
   placeholder?: string
   label?: string
   withAsterisk?: boolean
   error?: boolean | string
   inputInfo?: string
-  eyeColor: "default" | "slate" | "gray"
+  eyeColor: "default" | "gray" | "slate"
 }
 
-export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
+export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps & React.HTMLProps<HTMLInputElement>>(
   ({ label, withAsterisk, error, inputInfo, eyeColor, ...props }, ref) => {
     const [visible, setVisibility] = useState(false)
     const InputType = visible ? "text" : "password"
@@ -26,7 +26,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
         )}
         <p>{inputInfo}</p>
         <div className="relative">
-          <input type={InputType} {...props} ref={ref} className={input({ error: !!error })} />
+          <input type={InputType} {...props} ref={ref} className={input({ error: Boolean(error) })} />
           <div>
             <span className={eye({ color: eyeColor })}>
               <Icon
@@ -42,6 +42,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, InputProps>(
     )
   }
 )
+
+PasswordInput.displayName = "PasswordInput"
 
 const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2 w-full ", {
   variants: {
@@ -61,3 +63,5 @@ const eye = cva("absolute top-2 right-2 flex hover: cursor-pointer", {
     },
   },
 })
+
+PasswordInput.displayName = "PasswordInput"

@@ -1,10 +1,10 @@
 import { cva } from "cva"
-import type { VariantProps } from "cva"
+import { type VariantProps } from "cva"
 import React, { forwardRef } from "react"
 import { cn } from "../../utils"
 import { Icon } from "../Icon"
 
-type Color = "blue" | "red" | "amber" | "slate" | "green" | "blueDark"
+type Color = "amber" | "blue" | "green" | "red" | "slate"
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonStyles> {
   color?: Color
@@ -12,32 +12,32 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-  return (
-    <button
-      {...props}
-      disabled={props.disabled || props.loading}
-      className={cn(
-        buttonStyles({ variant: props.variant, size: props.size }),
-        props.color && getColorStyles(props.variant, props.color),
-        props.color === "amber" && props.variant === "solid" && "text-slate-1",
-        "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40",
-        props.className
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
+  <button
+    {...props}
+    disabled={props.disabled || props.loading}
+    className={cn(
+      buttonStyles({ variant: props.variant, size: props.size }),
+      props.color && getColorStyles(props.variant, props.color),
+      props.color === "amber" && props.variant === "solid" && "text-slate-1",
+      "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40",
+      props.className
+    )}
+    type={props.type}
+    ref={ref}
+  >
+    <div className="flex items-center justify-center">
+      {(props.loading || props.icon) && (
+        <i className="mr-1 flex">
+          {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+        </i>
       )}
-      type={props.type}
-      ref={ref}
-    >
-      <div className="flex items-center justify-center">
-        {(props.loading || props.icon) && (
-          <i className="mr-1 flex">
-            {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
-          </i>
-        )}
-        <span className="text-inherit">{props.children}</span>
-      </div>
-    </button>
-  )
-})
+      <span className="text-inherit">{props.children}</span>
+    </div>
+  </button>
+))
+
+Button.displayName = "Button"
 
 export const buttonStyles = cva(
   [

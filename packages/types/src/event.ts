@@ -17,8 +17,8 @@ export const EventSchema = z.object({
   waitlist: z.string().ulid().nullable(),
 })
 
-export type Event = z.infer<typeof EventSchema>
 export type EventId = Event["id"]
+export type Event = z.infer<typeof EventSchema>
 
 export const EventWriteSchema = EventSchema.partial({
   id: true,
@@ -51,7 +51,10 @@ export const AttendanceSchema = z.object({
   max: z.number().min(0).max(5),
 })
 
+export type AttendanceId = Attendance["id"]
 export type Attendance = z.infer<typeof AttendanceSchema>
+
+export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
 
 export const AttendanceWriteSchema = AttendanceSchema.partial({

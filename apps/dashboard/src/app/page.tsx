@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@dotkomonline/auth/src/dashboard.app"
 import { redirect } from "next/navigation"
-import { SignInButton } from "./SignInButton"
 import { Card, Container, Flex, Title, Text } from "@mantine/core"
+import { SignInButton } from "./SignInButton"
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)

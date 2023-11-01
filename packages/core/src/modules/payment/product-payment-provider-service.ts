@@ -1,12 +1,16 @@
-import { PaymentProvider, Product, ProductPaymentProvider, ProductPaymentProviderWrite } from "@dotkomonline/types"
-
-import { ProductPaymentProviderRepository } from "./product-payment-provider-repository"
+import {
+  type PaymentProvider,
+  type ProductId,
+  type ProductPaymentProvider,
+  type ProductPaymentProviderWrite,
+} from "@dotkomonline/types"
+import { type ProductPaymentProviderRepository } from "./product-payment-provider-repository"
 
 export interface ProductPaymentProviderService {
   addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>
-  deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void>
-  getAllByProductId(productId: Product["id"]): Promise<PaymentProvider[]>
-  productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean>
+  deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void>
+  getAllByProductId(productId: ProductId): Promise<PaymentProvider[]>
+  productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean>
 }
 
 export class ProductPaymentProviderServiceImpl implements ProductPaymentProviderService {
@@ -16,15 +20,15 @@ export class ProductPaymentProviderServiceImpl implements ProductPaymentProvider
     return this.productPaymentProviderRepository.addPaymentProvider(data)
   }
 
-  async deletePaymentProvider(productId: Product["id"], paymentProviderId: string): Promise<void> {
+  async deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void> {
     return this.productPaymentProviderRepository.deletePaymentProvider(productId, paymentProviderId)
   }
 
-  async getAllByProductId(productId: Product["id"]): Promise<PaymentProvider[]> {
+  async getAllByProductId(productId: ProductId): Promise<PaymentProvider[]> {
     return this.productPaymentProviderRepository.getAllByProductId(productId)
   }
 
-  async productHasPaymentProviderId(productId: Product["id"], paymentProviderId: string): Promise<boolean> {
+  async productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean> {
     return this.productPaymentProviderRepository.productHasPaymentProviderId(productId, paymentProviderId)
   }
 }

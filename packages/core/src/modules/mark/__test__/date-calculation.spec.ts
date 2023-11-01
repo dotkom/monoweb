@@ -1,10 +1,10 @@
+import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
-import { Mark } from "@dotkomonline/types"
+import { type Mark } from "@dotkomonline/types"
 import { MarkRepositoryImpl } from "../mark-repository"
 import { MarkServiceImpl } from "../mark-service"
 import { PersonalMarkRepositoryImpl } from "../personal-mark-repository"
 import { PersonalMarkServiceImpl } from "../personal-mark-service"
-import { randomUUID } from "crypto"
 
 describe("PersonalMarkDateCalculation", () => {
   const db = vi.mocked(Kysely.prototype, true)

@@ -8,24 +8,10 @@ const MembershipPage: NextPageWithLayout = () => {
   return <ProfileMembership />
 }
 
-const MembershipHeader = () => {
-  return (
-    <div className="flex items-center">
-      <Icon icon={"tabler:award"} width={24} />
-      <p className="ml-2">Medlemskap</p>
-    </div>
-  )
-}
-
-MembershipPage.getLayout = (page) => {
-  return (
-    <MainLayout>
-      <ProfileLayout>
-        <MembershipHeader />
-        {page}
-      </ProfileLayout>
-    </MainLayout>
-  )
-}
+MembershipPage.getLayout = (page) => (
+  <MainLayout>
+    <ProfileLayout>{page}</ProfileLayout>
+  </MainLayout>
+)
 
 export default MembershipPage

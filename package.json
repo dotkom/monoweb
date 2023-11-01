@@ -10,6 +10,9 @@
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
     "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
+    "build:gateway-email": "turbo run build --filter=@dotkomonline/gateway-email",
+    "build:dispatcher-auth": "turbo run build --filter=@dotkomonline/dispatcher-auth",
+    "build:rif": "turbo run build --filter=@dotkomonline/rif",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
@@ -21,7 +24,8 @@
     "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures && cd packages/db && pnpm generate-types",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com"
   },
   "workspaces": [
     "packages/*",
@@ -33,12 +37,12 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.50.0",
+    "eslint": "^8.52.0",
     "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.5",
+    "prettier-plugin-tailwindcss": "^0.5.6",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
-    "turbo": "^1.10.15",
+    "turbo": "^1.10.16",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }

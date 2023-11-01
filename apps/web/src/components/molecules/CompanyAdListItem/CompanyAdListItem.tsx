@@ -1,8 +1,8 @@
-import { CareerAd } from "@/api/get-career-ads"
 import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
-import { FC } from "react"
+import { type FC } from "react"
+import { type CareerAd } from "@/api/get-career-ads"
 
 interface CompanyAdListItemProps {
   career: CareerAd
@@ -11,7 +11,7 @@ interface CompanyAdListItemProps {
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemProps) => {
   const { company_name, image, career_type, location, deadline, slug } = props.career
 
-  const color = career_type == "Sommerjobb" ? "amber" : career_type == "Fulltid" ? "red" : "blue"
+  const color = career_type === "Sommerjobb" ? "amber" : career_type === "Fulltid" ? "red" : "blue"
 
   return (
     <div className="border-slate-11 flex h-16 items-center justify-between border-b">

@@ -1,15 +1,17 @@
+import { db } from "./db"
 import { attendances } from "./fixtures/attendance"
 import { attendees } from "./fixtures/attendee"
 import { committees } from "./fixtures/committee"
-import { companies } from "./fixtures/company"
-import { db } from "./db"
-import { eventCompany } from "./fixtures/event-company"
-import { events } from "./fixtures/event"
-import { marks } from "./fixtures/mark"
-import { productPaymentProviders } from "./fixtures/product-payment-provider"
-import { products } from "./fixtures/product"
-import { users } from "./fixtures/user"
 import { eventCommittees } from "./fixtures/committee-organizer"
+import { companies } from "./fixtures/company"
+import { events } from "./fixtures/event"
+import { eventCompany } from "./fixtures/event-company"
+import { jobListingLocationLinks, jobListingLocations, jobListings } from "./fixtures/job-listing"
+import { marks } from "./fixtures/mark"
+import { personalMarks } from "./fixtures/personal-mark"
+import { products } from "./fixtures/product"
+import { productPaymentProviders } from "./fixtures/product-payment-provider"
+import { users } from "./fixtures/user"
 
 export const runFixtures = async () => {
   await db
@@ -136,6 +138,12 @@ export const runFixtures = async () => {
     .execute()
 
   await db
+    .insertInto("personalMark")
+    .values(personalMarks)
+    .onConflict((oc) => oc.columns(["userId", "markId"]).doNothing())
+    .execute()
+
+  await db
     .insertInto("product")
     .values(products)
     .returning("id")
@@ -164,5 +172,26 @@ export const runFixtures = async () => {
     .values(eventCommittees)
     .returning("committeeId")
     .onConflict((oc) => oc.columns(["committeeId", "eventId"]).doNothing())
+    .execute()
+
+  await db
+    .insertInto("jobListing")
+    .values(jobListings)
+    .returning("id")
+    .onConflict((oc) => oc.column("id").doNothing())
+    .execute()
+
+  await db
+    .insertInto("jobListingLocation")
+    .values(jobListingLocations)
+    .returning(["id", "name"])
+    .onConflict((oc) => oc.column("id").doNothing())
+    .execute()
+
+  await db
+    .insertInto("jobListingLocationLink")
+    .values(jobListingLocationLinks)
+    .returning("id")
+    .onConflict((oc) => oc.column("id").doNothing())
     .execute()
 }

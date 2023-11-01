@@ -1,7 +1,7 @@
-import { trpc } from "@/utils/trpc"
-import { Payment } from "@dotkomonline/types"
+import { type Payment } from "@dotkomonline/types"
 import { Button, TextInput } from "@dotkomonline/ui"
-import { FC, useEffect, useState } from "react"
+import { type FC, useEffect, useState } from "react"
+import { trpc } from "@/utils/trpc"
 
 const RefundPage: FC = () => {
   const [payments, setPayments] = useState<Payment[]>([])

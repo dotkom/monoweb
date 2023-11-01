@@ -1,6 +1,7 @@
-import { Committee } from "@dotkomonline/types"
+import { type Committee } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
-import React, { FC } from "react"
+import React, { type FC } from "react"
+import Link from "next/link"
 
 interface Props {
   committees: Committee[]
@@ -15,7 +16,7 @@ const EventCommittees: FC<Props> = ({ committees }) => {
     <>
       {committees.map((committee, i) => (
         <React.Fragment key={committee.id}>
-          <Anchor size="sm" href={`/committee/${committee.id}`}>
+          <Anchor component={Link} size="sm" href={`/committee/${committee.id}`}>
             {committee.name}
           </Anchor>
           {i < committees.length - 1 && ", "}

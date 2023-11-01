@@ -1,17 +1,17 @@
-import { Company, Event } from "@dotkomonline/types"
-import { EventCompanyRepository } from "./event-company-repository"
-import { Cursor } from "../../utils/db-utils"
+import { type Company, type CompanyId, type EventId } from "@dotkomonline/types"
+import { type EventCompanyRepository } from "./event-company-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface EventCompanyService {
-  createCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
-  deleteCompany: (id: Event["id"], company: Company["id"]) => Promise<void>
-  getCompaniesByEventId: (id: Event["id"], take: number, cursor?: Cursor) => Promise<Company[]>
+  createCompany(id: EventId, company: CompanyId): Promise<void>
+  deleteCompany(id: EventId, company: CompanyId): Promise<void>
+  getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor): Promise<Company[]>
 }
 
 export class EventCompanyServiceImpl implements EventCompanyService {
   constructor(private readonly eventCompanyRepository: EventCompanyRepository) {}
 
-  async createCompany(id: Event["id"], company: Company["id"]) {
+  async createCompany(id: EventId, company: CompanyId) {
     try {
       const companies = await this.eventCompanyRepository.createCompany(id, company)
       return companies
@@ -20,11 +20,11 @@ export class EventCompanyServiceImpl implements EventCompanyService {
     }
   }
 
-  async deleteCompany(id: Event["id"], company: Company["id"]) {
+  async deleteCompany(id: EventId, company: CompanyId) {
     await this.eventCompanyRepository.deleteCompany(id, company)
   }
 
-  async getCompaniesByEventId(id: Event["id"], take: number, cursor?: Cursor) {
+  async getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor) {
     return await this.eventCompanyRepository.getCompaniesByEventId(id, take, cursor)
   }
 }
