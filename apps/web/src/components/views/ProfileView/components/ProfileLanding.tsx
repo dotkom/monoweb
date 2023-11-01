@@ -21,7 +21,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, children, addMore, clickabl
       <div className="mt-1 w-full space-y-3">
         <div
           className={cn(
-            "flex items-center justify-between rounded-lg md:pl-2",
+            "flex items-center justify-between rounded-lg pl-2",
             clickable && "hover:bg-slate-3 hover:cursor-pointer"
           )}
         >

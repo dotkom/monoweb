@@ -26,7 +26,7 @@ const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
   const [editMode, setEditMode] = useState(false)
 
   return (
-    <div className="m-x-auto shadow-slate-6 relative mb-5 max-w-[1000px] rounded-3xl px-4 shadow-lg max-md:w-[90vw] sm:mx-3  sm:px-6 ">
+    <div className="m-x-auto shadow-slate-6 relative mb-5 max-w-[1000px] rounded-3xl px-5 shadow-lg max-md:w-[90vw] sm:mx-3  sm:px-6 ">
       <div className="md:flex">
         <MobileMenuContainer />
         <ProfileMenuContainer />
