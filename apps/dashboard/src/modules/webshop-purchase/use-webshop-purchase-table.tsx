@@ -1,10 +1,10 @@
 "use client"
 
-import { WebshopPurchase } from "@dotkomonline/types"
+import { type WebshopPurchase } from "@dotkomonline/types"
 import { Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
-import { useCompanyAllQuery } from "../company/queries/use-company-all-query"
+import { formatDate } from "../../utils/format"
 
 interface Props {
   data: WebshopPurchase[]
@@ -12,39 +12,30 @@ interface Props {
 
 export const useWebshopPurchaseTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<WebshopPurchase>()
-  const { companies } = useCompanyAllQuery()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("stripeProductId", {
-        header: () => "Produkt",
-        cell: (info) => info.getValue().toString(),
-      }),
-      columnHelper.accessor("userId", {
+      columnHelper.accessor("firstName", {
         header: () => "Bruker",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("stripePriceId", {
-        header: () => "Pris",
-        cell: (info) => {
-          return <Text>{info.getValue().toString()}</Text>
-        },
+      columnHelper.accessor("stripeProductName", {
+        header: () => "Produkt",
+        cell: (info) => <Text>{info.getValue().toString()}</Text>,
       }),
       columnHelper.accessor("createdAt", {
-        header: () => "Tittel",
-        cell: (info) => info.getValue(),
+        header: () => "Dato kjøpt",
+        cell: (info) => formatDate(info.getValue()),
       }),
       columnHelper.accessor("delivered", {
-        header: () => "Aktiv til",
-        cell: (info) => {
-          return <Text>{info.getValue() ? "Ja" : "Nei"}</Text>
-        },
+        header: () => "Levert",
+        cell: (info) => <Text>{info.getValue() ? "Ja" : "Nei"}</Text>,
       }),
     ],
-    [columnHelper, companies]
+    [columnHelper]
   )
 
   return useReactTable({
-    data: data,
+    data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })

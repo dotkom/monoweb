@@ -11,6 +11,9 @@ export declare type EnvironmentKeys =
   | "NEXT_PUBLIC_VERCEL_URL"
   | "NEXTAUTH_SECRET"
   | "NODE_ENV"
+  | "PROKOM_STRIPE_PUBLIC_KEY"
+  | "PROKOM_STRIPE_SECRET_KEY"
+  | "PROKOM_STRIPE_WEBHOOK_SECRET"
   | "TRIKOM_STRIPE_PUBLIC_KEY"
   | "TRIKOM_STRIPE_SECRET_KEY"
   | "TRIKOM_STRIPE_WEBHOOK_SECRET"
@@ -18,9 +21,6 @@ export declare type EnvironmentKeys =
   | "WEB_COGNITO_CLIENT_ID"
   | "WEB_COGNITO_CLIENT_SECRET"
   | "WEB_COGNITO_ISSUER"
-  | "PROKOM_STRIPE_PUBLIC_KEY"
-  | "PROKOM_STRIPE_SECRET_KEY"
-  | "PROKOM_STRIPE_WEBHOOK_SECRET"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 

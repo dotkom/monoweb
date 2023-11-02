@@ -1,7 +1,7 @@
-import { WebshopPurchase, WebshopPurchaseId, WebshopPurchaseWrite } from "@dotkomonline/types"
+import { type WebshopPurchase, type WebshopPurchaseId, type WebshopPurchaseWrite } from "@dotkomonline/types"
+import { type WebshopPurchaseRepository } from "./webshop-purchase-repository"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
-import { WebshopPurchaseRepository } from "./webshop-purchase-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface WebshopPurchaseService {
   get(id: WebshopPurchaseId): Promise<WebshopPurchase>
@@ -15,7 +15,9 @@ export class WebshopPurchaseServiceImpl implements WebshopPurchaseService {
 
   async get(id: WebshopPurchaseId): Promise<WebshopPurchase> {
     const webshopPurchase = await this.webshopPurchaseRepository.getById(id)
-    if (!webshopPurchase) throw new NotFoundError(`WebshopPurchase with ID:${id} not found`)
+    if (!webshopPurchase) {
+      throw new NotFoundError(`WebshopPurchase with ID:${id} not found`)
+    }
     return webshopPurchase
   }
 
@@ -26,7 +28,9 @@ export class WebshopPurchaseServiceImpl implements WebshopPurchaseService {
 
   async create(payload: WebshopPurchaseWrite): Promise<WebshopPurchase> {
     const webshopPurchase = await this.webshopPurchaseRepository.create(payload)
-    if (!webshopPurchase) throw new Error("Failed to create webshopPurchase")
+    if (!webshopPurchase) {
+      throw new Error("Failed to create webshopPurchase")
+    }
 
     return webshopPurchase
   }

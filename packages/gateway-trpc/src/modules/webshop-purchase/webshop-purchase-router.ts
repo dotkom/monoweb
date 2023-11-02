@@ -4,9 +4,9 @@ import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const webshopPurchaseRouter = t.router({
-  create: t.procedure.input(WebshopPurchaseWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.webshopPurchaseService.create(input)
-  }),
+  create: t.procedure
+    .input(WebshopPurchaseWriteSchema)
+    .mutation(async ({ input, ctx }) => ctx.webshopPurchaseService.create(input)),
   edit: protectedProcedure
     .input(
       z.object({
@@ -14,13 +14,11 @@ export const webshopPurchaseRouter = t.router({
         input: WebshopPurchaseWriteSchema,
       })
     )
-    .mutation(({ input: changes, ctx }) => {
-      return ctx.webshopPurchaseService.update(changes.id, changes.input)
-    }),
-  all: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
-    return ctx.webshopPurchaseService.getAll(input.take, input.cursor)
-  }),
-  get: t.procedure.input(WebshopPurchaseSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.webshopPurchaseService.get(input)
-  }),
+    .mutation(async ({ input: changes, ctx }) => ctx.webshopPurchaseService.update(changes.id, changes.input)),
+  all: t.procedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.webshopPurchaseService.getAll(input.take, input.cursor)),
+  get: t.procedure
+    .input(WebshopPurchaseSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.webshopPurchaseService.get(input)),
 })

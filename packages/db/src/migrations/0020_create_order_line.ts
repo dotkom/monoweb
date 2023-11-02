@@ -1,4 +1,4 @@
-import { Kysely, sql } from "kysely"
+import { type Kysely, sql } from "kysely"
 import { createTableWithDefaults } from "../utils"
 
 // await ctx.webshopPurchaseService.create({
@@ -14,6 +14,7 @@ export async function up(db: Kysely<any>) {
     .addColumn("user_id", sql`ulid`, (col) => col.references("owUser.id").onDelete("cascade"))
     .addColumn("stripe_product_id", sql`character varying(100)`, (col) => col.notNull())
     .addColumn("stripe_product_name", sql`character varying(100)`, (col) => col.notNull())
+    .addColumn("stripe_price", sql`character varying(100)`, (col) => col.notNull())
     .addColumn("delivered", sql`boolean`, (col) => col.notNull())
     .addColumn("stripe_price_id", sql`character varying(100)`, (col) => col.notNull())
     .addColumn("quantity", sql`integer`, (col) => col.notNull())

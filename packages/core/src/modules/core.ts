@@ -34,7 +34,7 @@ import { JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-location-repository"
 import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
-import { WebshopPurchaseService, WebshopPurchaseServiceImpl } from "./webshop-purchase/webshop-purchase-service"
+import { WebshopPurchaseServiceImpl } from "./webshop-purchase/webshop-purchase-service"
 import { WebshopPurchaseRepositoryImpl } from "./webshop-purchase/webshop-purchase-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>

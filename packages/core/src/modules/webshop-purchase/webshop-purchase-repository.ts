@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
-import { Insertable, Kysely, Selectable, sql } from "kysely"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
-import { WebshopPurchase, WebshopPurchaseId, WebshopPurchaseSchema } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
+import { type Insertable, type Kysely, type Selectable } from "kysely"
+import { type WebshopPurchase, type WebshopPurchaseId, WebshopPurchaseSchema } from "@dotkomonline/types"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 type WebshopPurchaseWrite = Insertable<Database["webshopPurchase"]>
 
@@ -12,9 +12,8 @@ export interface WebshopPurchaseRepository {
   update(id: WebshopPurchaseId, data: WebshopPurchaseWrite): Promise<WebshopPurchase>
 }
 
-const mapToWebshopPurchase = (webshopPurchase: Selectable<Database["webshopPurchase"]>): WebshopPurchase => {
-  return WebshopPurchaseSchema.parse(webshopPurchase)
-}
+const mapToWebshopPurchase = (webshopPurchase: Selectable<Database["webshopPurchase"]>): WebshopPurchase =>
+  WebshopPurchaseSchema.parse(webshopPurchase)
 
 export class WebshopPurchaseRepositoryImpl implements WebshopPurchaseRepository {
   constructor(private readonly db: Kysely<Database>) {}

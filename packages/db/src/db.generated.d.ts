@@ -8,8 +8,6 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
 
-export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>
-
 export type PaymentProvider = "STRIPE"
 
 export type PaymentStatus = "PAID" | "REFUNDED" | "UNPAID"
@@ -62,12 +60,6 @@ export interface Company {
   phone: string | null
   type: string | null
   website: string
-}
-
-export interface DrizzleDrizzleMigrations {
-  id: Generated<number>
-  hash: string
-  createdAt: Int8 | null
 }
 
 export interface Event {
@@ -231,44 +223,24 @@ export interface WebshopPurchase {
 }
 
 export interface DB {
-  "attendance": Attendance
-  "attendee": Attendee
-  "committee": Committee
-  "company": Company
-  "event": Event
-  "eventCommittee": EventCommittee
-  "eventCompany": EventCompany
-  "jobListing": JobListing
-  "jobListingLocation": JobListingLocation
-  "jobListingLocationLink": JobListingLocationLink
-  "mark": Mark
-  "notificationPermissions": NotificationPermissions
-  "owUser": OwUser
-  "payment": Payment
-  "personalMark": PersonalMark
-  "privacyPermissions": PrivacyPermissions
-  "product": Product
-  "productPaymentProvider": ProductPaymentProvider
-  "refundRequest": RefundRequest
-  "webshopPurchase": WebshopPurchase
-  "attendance": Attendance
-  "attendee": Attendee
-  "committee": Committee
-  "company": Company
-  "drizzle.DrizzleMigrations": DrizzleDrizzleMigrations
-  "event": Event
-  "eventCommittee": EventCommittee
-  "eventCompany": EventCompany
-  "jobListing": JobListing
-  "jobListingLocation": JobListingLocation
-  "jobListingLocationLink": JobListingLocationLink
-  "mark": Mark
-  "notificationPermissions": NotificationPermissions
-  "owUser": OwUser
-  "payment": Payment
-  "personalMark": PersonalMark
-  "privacyPermissions": PrivacyPermissions
-  "product": Product
-  "productPaymentProvider": ProductPaymentProvider
-  "refundRequest": RefundRequest
+  attendance: Attendance
+  attendee: Attendee
+  committee: Committee
+  company: Company
+  event: Event
+  eventCommittee: EventCommittee
+  eventCompany: EventCompany
+  jobListing: JobListing
+  jobListingLocation: JobListingLocation
+  jobListingLocationLink: JobListingLocationLink
+  mark: Mark
+  notificationPermissions: NotificationPermissions
+  owUser: OwUser
+  payment: Payment
+  personalMark: PersonalMark
+  privacyPermissions: PrivacyPermissions
+  product: Product
+  productPaymentProvider: ProductPaymentProvider
+  refundRequest: RefundRequest
+  webshopPurchase: WebshopPurchase
 }

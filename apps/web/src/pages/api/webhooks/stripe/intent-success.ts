@@ -1,9 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next"
 import { env } from "@dotkomonline/env"
-
+import { type NextApiRequest, type NextApiResponse } from "next"
 import Stripe from "stripe"
-
-import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core"
+import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 
 export const config = {
@@ -12,11 +10,10 @@ export const config = {
   },
 }
 
-import { trpc } from "@/utils/trpc"
 import { SessionMetadataSchema } from "../../checkout_sessions"
 
-const bufferRequest = (req: NextApiRequest) => {
-  return new Promise<Buffer>((resolve, reject) => {
+const bufferRequest = async (req: NextApiRequest) =>
+  new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = []
 
     req.on("data", (chunk: Buffer) => {
@@ -29,7 +26,6 @@ const bufferRequest = (req: NextApiRequest) => {
 
     req.on("error", reject)
   })
-}
 
 export default async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -45,7 +41,7 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
 
   const endpointSecret = env.PROKOM_STRIPE_WEBHOOK_SECRET
 
-  if (!stripe || !endpointSecret) {
+  if (!endpointSecret) {
     console.warn("No stripe account found for the given public key")
     res.status(400).end()
     return
@@ -61,20 +57,12 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
     res.status(400).send(`Webhook Error: ${err.message}`)
     return
   }
-  //   @dotkomonline/web:dev: Unhandled event type: product.created
-  // @dotkomonline/web:dev: Unhandled event type: price.created
-  // @dotkomonline/web:dev: Unhandled event type: payment_intent.created
-  // @dotkomonline/web:dev: Unhandled event type: customer.created
-  // @dotkomonline/web:dev: Unhandled event type: payment_intent.succeeded
-  // @dotkomonline/web:dev: Unhandled event type: charge.succeeded
-  console.log(event.type, "-------------------------------------------------------------")
-  // console.log(event)
 
   switch (event.type) {
     case "product.created":
       console.log("product.created")
       break
-    case "checkout.session.completed":
+    case "checkout.session.completed": {
       console.log("intent found: ", event.object)
       const id = event.data.object.id // "cs_xxx"
 
@@ -83,19 +71,7 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
         expand: ["line_items"],
       })
 
-      // @dotkomonline/web:dev:     {
-      //   @dotkomonline/web:dev:       id: 'li_1O7PJLAPrlt6pRDLI0iB68pq',
-      //   @dotkomonline/web:dev:       object: 'item',
-      //   @dotkomonline/web:dev:       amount_discount: 0,
-      //   @dotkomonline/web:dev:       amount_subtotal: 3000,
-      //   @dotkomonline/web:dev:       amount_tax: 0,
-      //   @dotkomonline/web:dev:       amount_total: 3000,
-      //   @dotkomonline/web:dev:       currency: 'usd',
-      //   @dotkomonline/web:dev:       description: 'myproduct',
-      //   @dotkomonline/web:dev:       price: [Object],
-      //   @dotkomonline/web:dev:       quantity: 2
-      //   @dotkomonline/web:dev:     }
-      const lineItem = session?.line_items?.data[0]
+      const lineItem = session.line_items?.data[0]
       const price = lineItem?.price?.unit_amount
 
       const ctx = await createServiceLayer({ db: kysely })
@@ -112,37 +88,13 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
         stripePriceId: lineItem?.price?.id || "Fant ikke produktbeskrivelse",
         stripeProductId: lineItem?.price?.product.toString() || "Fant ikke produktbeskrivelse",
         stripeProductName: lineItem?.description || "Fant ikke produktbeskrivelse",
+        stripePrice: price || 0,
       })
 
       console.log("metadata", session.metadata)
 
-      // console.log(price)
-
-      // to save
-      // description
-      // price
-      // quantity
-
-      // Get the quantity
-      // console.log(session?.line_items)
-
-      // ctx.webshopPurchaseService.create({
-      //   userId: "1",
-      //   description: lineItem?.description || "fant ikke pris",
-      //   price: price,
-      //   quantity: lineItem?.quantity || 0,
-
-      // })
-      // })
-
-      // Get the product ID
-      // const ctx = await createServiceLayer({ db: kysely })
-
-      // console.log("000000000000000")
-      // console.log(event.data)
-      // console.log("000000000000000")
-
       break
+    }
     default:
       console.log(`Unhandled event type: ${event.type}`)
       break

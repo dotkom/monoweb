@@ -7,6 +7,7 @@ export const WebshopPurchaseSchema = z.object({
   stripeProductId: z.string().max(100),
   stripePriceId: z.string().max(100),
   stripeProductName: z.string().max(100),
+  stripePrice: z.number(),
   delivered: z.boolean(),
   quantity: z.number().int(),
   firstName: z.string(),

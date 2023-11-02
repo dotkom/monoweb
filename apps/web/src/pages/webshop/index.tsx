@@ -1,11 +1,12 @@
+import Image from "next/image"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { env } from "@dotkomonline/env"
-import { GetServerSideProps, InferGetServerSidePropsType } from "next"
-import { User, getServerSession } from "next-auth"
+import { type GetServerSideProps, type InferGetServerSidePropsType } from "next"
+import { type User, getServerSession } from "next-auth"
 import { useEffect } from "react"
 import Stripe from "stripe"
-import { NextPageWithLayout } from "../_app"
-import { CheckoutSessionQuery } from "../api/checkout_sessions"
+import { type NextPageWithLayout } from "../_app"
+import { type CheckoutSessionQuery } from "../api/checkout_sessions"
 
 const stripeLink = (price_id: string, user: User): string => {
   const obj: CheckoutSessionQuery = {
@@ -51,7 +52,13 @@ const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
             href={stripeLink(product.price_id, user)}
           >
             <div className="mx-auto h-40 w-40 overflow-hidden">
-              <img className="mt-2 rounded-xl" src={product.image} width={200} height={200}></img>
+              <Image
+                className="mt-2 rounded-xl"
+                src={product.image}
+                width={200}
+                height={200}
+                alt="Product image"
+              ></Image>
             </div>
             <p className="mt-4 text-sm">{product.name}</p>
             <p className="text-lg">{product.price} kr</p>
@@ -62,7 +69,7 @@ const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
   )
 }
 
-type ProductDisplay = {
+interface ProductDisplay {
   description: string
   price: string
   price_id: string
@@ -98,25 +105,24 @@ export const getServerSideProps: GetServerSideProps<{ user: User; products: Prod
         const price = await stripe.prices.retrieve(product.default_price.toString())
         return price
       }
+      return null
     })
   )
 
   const filteredProducts = data
     .filter((product) => product.default_price)
-    .map((product, index) => {
-      return {
-        name: product.name,
-        description: product.description || "No description",
-        id: product.id,
-        image: product.images[0],
-        price_id: product.default_price?.toString() || "No price",
-        price:
-          prices
-            .find((price) => price?.product.toString() === product.id)
-            ?.unit_amount?.toString()
-            ?.slice(0, -2) || "Problem loading price",
-      }
-    })
+    .map((product) => ({
+      name: product.name,
+      description: product.description || "No description",
+      id: product.id,
+      image: product.images[0],
+      price_id: product.default_price?.toString() || "No price",
+      price:
+        prices
+          .find((price) => price?.product.toString() === product.id)
+          ?.unit_amount?.toString()
+          ?.slice(0, -2) || "Problem loading price",
+    }))
 
   if (session === null) {
     return {
