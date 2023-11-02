@@ -2,7 +2,7 @@
 
 import { Skeleton, Stack, Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { StudyYearAliases, type User } from "@dotkomonline/types"
+import { StudyYearAliases, type StudyYears, type User } from "@dotkomonline/types"
 import { useMemo } from "react"
 import Link from "next/link"
 import { GenericTable } from "src/components/GenericTable"
@@ -24,7 +24,7 @@ export default function UserPage() {
       }),
       columnHelper.accessor("studyYear", {
         header: () => "Studieår",
-        cell: (info) => StudyYearAliases[info.getValue() as keyof typeof StudyYearAliases],
+        cell: (info) => StudyYearAliases[info.getValue() as keyof StudyYears],
       }),
       columnHelper.accessor((user) => user, {
         id: "details",

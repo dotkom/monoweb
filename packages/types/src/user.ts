@@ -17,7 +17,7 @@ export const UserWriteSchema = UserSchema.omit({
 
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
-interface StudyYears {
+export interface StudyYears {
   [-1]: string
   0: string
   1: string
