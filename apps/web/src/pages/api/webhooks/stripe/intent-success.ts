@@ -74,6 +74,8 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
       const lineItem = session.line_items?.data[0]
       const price = Number(lineItem?.price?.unit_amount) / 100
 
+      console.log("PRICE", typeof price)
+
       const ctx = await createServiceLayer({ db: kysely })
 
       const metadata = SessionMetadataSchema.parse(session.metadata)

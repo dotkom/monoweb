@@ -1,27 +1,27 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
-export const useEditJobListingMutation = () => {
+export const useEditWebshopPurchaseMutation = () => {
   const notification = useQueryNotification()
   const utils = trpc.useContext()
-  return trpc.jobListing.edit.useMutation({
+  return trpc.webshopPurchase.edit.useMutation({
     onMutate: () => {
       notification.loading({
-        title: "Oppdaterer stillingsannonse...",
-        message: "Stillingsannonsen blir oppdatert.",
+        title: "Oppdaterer...",
+        message: "",
       })
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       notification.complete({
-        title: "Stillingsannonse oppdatert",
-        message: `Stillingsannonsen "${data.title}" har blitt oppdatert.`,
+        title: "Oppdatert",
+        message: "",
       })
-      utils.jobListing.all.invalidate()
+      utils.webshopPurchase.all.invalidate()
     },
-    onError: (err) => {
+    onError: () => {
       notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under oppdatering av stillingsannonsen: ${err.toString()}.`,
+        title: "Feil",
+        message: "",
       })
     },
   })

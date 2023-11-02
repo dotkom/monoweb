@@ -1,9 +1,10 @@
 "use client"
 
 import { type WebshopPurchase } from "@dotkomonline/types"
-import { Text } from "@mantine/core"
+import { Button, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
+import { useEditWebshopPurchaseMutation } from "./mutations/use-edit-job-listing-mutation"
 import { formatDate } from "../../utils/format"
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 
 export const useWebshopPurchaseTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<WebshopPurchase>()
+  const edit = useEditWebshopPurchaseMutation()
   const columns = useMemo(
     () => [
       columnHelper.accessor("firstName", {
@@ -24,7 +26,7 @@ export const useWebshopPurchaseTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("stripePrice", {
         header: () => "Pris",
-        cell: (info) => <Text>{info.getValue().toString().slice(0, -2)}</Text>,
+        cell: (info) => <Text>{info.getValue()}</Text>,
       }),
       columnHelper.accessor("createdAt", {
         header: () => "Dato kjøpt",
@@ -34,8 +36,26 @@ export const useWebshopPurchaseTable = ({ data }: Props) => {
         header: () => "Levert",
         cell: (info) => <Text>{info.getValue() ? "Ja" : "Nei"}</Text>,
       }),
+      columnHelper.display({
+        id: "actions",
+        cell: (info) => (
+          <Button
+            onClick={() =>
+              edit.mutate({
+                id: info.row.original.id,
+                input: {
+                  ...info.row.original,
+                  delivered: !info.row.original.delivered,
+                },
+              })
+            }
+          >
+            Endre status
+          </Button>
+        ),
+      }),
     ],
-    [columnHelper]
+    [columnHelper, edit]
   )
 
   return useReactTable({
