@@ -2,7 +2,7 @@
 
 import { Skeleton, Stack, Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { type User } from "@dotkomonline/types"
+import { StudyYearAliases, type StudyYears, type User } from "@dotkomonline/types"
 import { useMemo } from "react"
 import Link from "next/link"
 import { GenericTable } from "src/components/GenericTable"
@@ -16,14 +16,15 @@ export default function UserPage() {
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
-        header: () => "User ID",
+        header: () => "Bruker-ID",
       }),
       columnHelper.accessor("createdAt", {
-        header: () => "Creation Date",
+        header: () => "Opprettet",
         cell: (info) => formatDate(info.getValue()),
       }),
-      columnHelper.accessor("cognitoSub", {
-        header: () => "Cognito Sub",
+      columnHelper.accessor("studyYear", {
+        header: () => "Studieår",
+        cell: (info) => StudyYearAliases[info.getValue() as keyof StudyYears],
       }),
       columnHelper.accessor((user) => user, {
         id: "details",
