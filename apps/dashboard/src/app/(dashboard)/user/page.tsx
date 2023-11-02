@@ -24,7 +24,7 @@ export default function UserPage() {
       }),
       columnHelper.accessor("studyYear", {
         header: () => "Studieår",
-        cell: (info) => StudyYearAliases[info.getValue()],
+        cell: (info) => StudyYearAliases[info.getValue() as keyof typeof StudyYearAliases],
       }),
       columnHelper.accessor((user) => user, {
         id: "details",

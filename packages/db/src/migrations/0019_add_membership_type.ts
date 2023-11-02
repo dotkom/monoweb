@@ -3,7 +3,7 @@ import { type Kysely } from "kysely"
 export async function up(db: Kysely<any>) {
   await db.schema
     .alterTable("ow_user")
-    .addColumn("study_year", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("study_year", "integer", (col) => col.notNull().defaultTo(-1))
     .execute()
 }
 

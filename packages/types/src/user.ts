@@ -26,7 +26,6 @@ interface StudyYears {
   4: string
   5: string
   6: string
-  [key: number]: string
 }
 
 export const StudyYearAliases = {
