@@ -22,6 +22,10 @@ export const useWebshopPurchaseTable = ({ data }: Props) => {
         header: () => "Produkt",
         cell: (info) => <Text>{info.getValue().toString()}</Text>,
       }),
+      columnHelper.accessor("stripePrice", {
+        header: () => "Pris",
+        cell: (info) => <Text>{info.getValue().toString().slice(0, -2)}</Text>,
+      }),
       columnHelper.accessor("createdAt", {
         header: () => "Dato kjøpt",
         cell: (info) => formatDate(info.getValue()),

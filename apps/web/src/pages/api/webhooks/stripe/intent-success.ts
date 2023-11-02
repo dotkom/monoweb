@@ -72,7 +72,7 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
       })
 
       const lineItem = session.line_items?.data[0]
-      const price = lineItem?.price?.unit_amount
+      const price = Number(lineItem?.price?.unit_amount) / 100
 
       const ctx = await createServiceLayer({ db: kysely })
 
@@ -90,8 +90,6 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
         stripeProductName: lineItem?.description || "Fant ikke produktbeskrivelse",
         stripePrice: price || 0,
       })
-
-      console.log("metadata", session.metadata)
 
       break
     }
