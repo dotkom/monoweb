@@ -1,9 +1,9 @@
-import { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
+import { type JobListing, type JobListingId, type JobListingWrite } from "@dotkomonline/types"
+import { type JobListingRepository } from "./job-listing-repository"
+import { type JobListingLocationRepository, type LocationSelect } from "./job-listing-location-repository"
+import { type JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
+import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
-import { JobListingRepository } from "./job-listing-repository"
-import { JobListingLocationRepository, LocationSelect } from "./job-listing-location-repository"
-import { JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 
 export interface JobListingService {
   get(id: JobListingId): Promise<JobListing>
@@ -22,7 +22,9 @@ export class JobListingServiceImpl implements JobListingService {
 
   async get(id: JobListingId): Promise<JobListing> {
     const jobListing = await this.jobListingRepository.getById(id)
-    if (!jobListing) throw new NotFoundError(`JobListing with ID:${id} not found`)
+    if (!jobListing) {
+      throw new NotFoundError(`JobListing with ID:${id} not found`)
+    }
     return jobListing
   }
 
@@ -35,7 +37,9 @@ export class JobListingServiceImpl implements JobListingService {
     const { locations, ...rest } = payload
 
     const jobListing = await this.jobListingRepository.create(rest)
-    if (!jobListing) throw new Error("Failed to create jobListing")
+    if (!jobListing) {
+      throw new Error("Failed to create jobListing")
+    }
 
     const allLocations = await this.jobListingLocationRepository.getAll()
 
@@ -52,7 +56,7 @@ export class JobListingServiceImpl implements JobListingService {
 
       await this.jobListingLocationLinkRepository.add({
         jobListingId: jobListing.id,
-        locationId: locationId,
+        locationId,
       })
     }
 
@@ -98,7 +102,7 @@ export class JobListingServiceImpl implements JobListingService {
   private getNewLocationIds(newLocationNames: string[], allLocations: LocationSelect[]): string[] {
     return newLocationNames
       .map((name) => allLocations.find((x) => x.name === name)?.id || null)
-      .filter((x) => x !== undefined) as string[]
+      .filter((x) => x !== null) as string[]
   }
 
   private validateLocations(
@@ -133,7 +137,7 @@ export class JobListingServiceImpl implements JobListingService {
     newLocationNames: string[]
   ) {
     for (const locationId of toRemove) {
-      await this.jobListingLocationLinkRepository.remove({ jobListingId: jobListing.id, locationId: locationId })
+      await this.jobListingLocationLinkRepository.remove({ jobListingId: jobListing.id, locationId })
     }
 
     for (let i = 0; i < toAdd.length; i++) {
@@ -144,7 +148,7 @@ export class JobListingServiceImpl implements JobListingService {
         })
         await this.jobListingLocationLinkRepository.add({ jobListingId: jobListing.id, locationId: newLocation.id })
       } else {
-        await this.jobListingLocationLinkRepository.add({ jobListingId: jobListing.id, locationId: locationId })
+        await this.jobListingLocationLinkRepository.add({ jobListingId: jobListing.id, locationId })
       }
     }
   }

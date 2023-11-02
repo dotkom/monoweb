@@ -4,9 +4,9 @@ import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const jobListingRouter = t.router({
-  create: t.procedure.input(JobListingWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.jobListingService.create(input)
-  }),
+  create: t.procedure
+    .input(JobListingWriteSchema)
+    .mutation(async ({ input, ctx }) => ctx.jobListingService.create(input)),
   edit: protectedProcedure
     .input(
       z.object({
@@ -14,16 +14,10 @@ export const jobListingRouter = t.router({
         input: JobListingWriteSchema,
       })
     )
-    .mutation(({ input: changes, ctx }) => {
-      return ctx.jobListingService.update(changes.id, changes.input)
-    }),
-  all: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
-    return ctx.jobListingService.getAll(input.take, input.cursor)
-  }),
-  get: t.procedure.input(JobListingSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.jobListingService.get(input)
-  }),
-  getLocations: t.procedure.input(PaginateInputSchema).query(({ ctx }) => {
-    return ctx.jobListingService.getLocations()
-  }),
+    .mutation(async ({ input: changes, ctx }) => ctx.jobListingService.update(changes.id, changes.input)),
+  all: t.procedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.jobListingService.getAll(input.take, input.cursor)),
+  get: t.procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => ctx.jobListingService.get(input)),
+  getLocations: t.procedure.input(PaginateInputSchema).query(async ({ ctx }) => ctx.jobListingService.getLocations()),
 })

@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction } from "react"
+import { createContext, type Dispatch, type SetStateAction } from "react"
 
 interface IProfileContext {
   editMode: boolean

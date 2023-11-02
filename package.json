@@ -12,6 +12,7 @@
     "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
     "build:gateway-email": "turbo run build --filter=@dotkomonline/gateway-email",
     "build:dispatcher-auth": "turbo run build --filter=@dotkomonline/dispatcher-auth",
+    "build:rif": "turbo run build --filter=@dotkomonline/rif",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",

@@ -1,5 +1,5 @@
+import { type MarkWrite, MarkWriteSchema } from "@dotkomonline/types"
 import { createNumberInput, createTextInput, useFormBuilder } from "../../form"
-import { MarkWrite, MarkWriteSchema } from "@dotkomonline/types"
 
 const MARK_FORM_DEFAULT_VALUES: Partial<MarkWrite> = {
   title: undefined,
@@ -7,8 +7,8 @@ const MARK_FORM_DEFAULT_VALUES: Partial<MarkWrite> = {
   duration: undefined,
 }
 
-type UseMarkWriteFormProps = {
-  onSubmit: (data: MarkWrite) => void
+interface UseMarkWriteFormProps {
+  onSubmit(data: MarkWrite): void
   defaultValues?: Partial<MarkWrite>
   label?: string
 }
@@ -17,8 +17,8 @@ export const useMarkWriteForm = ({
   onSubmit,
   label = "Edit Mark",
   defaultValues = MARK_FORM_DEFAULT_VALUES,
-}: UseMarkWriteFormProps) => {
-  return useFormBuilder({
+}: UseMarkWriteFormProps) =>
+  useFormBuilder({
     schema: MarkWriteSchema,
     defaultValues,
     onSubmit,
@@ -41,4 +41,3 @@ export const useMarkWriteForm = ({
       }),
     },
   })
-}

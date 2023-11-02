@@ -1,5 +1,5 @@
-import { ContextModalProps, modals } from "@mantine/modals"
-import { FC } from "react"
+import { modals, type ContextModalProps } from "@mantine/modals"
+import { type FC } from "react"
 import { useEventWriteForm } from "../../../app/(dashboard)/event/write-form"
 import { useCreateEventMutation } from "../mutations/use-create-event-mutation"
 
@@ -10,8 +10,8 @@ export const CreateEventModal: FC<ContextModalProps> = ({ context, id }) => {
     onSubmit: (data) => {
       const { committeeIds, ...event } = data
       create.mutate({
-        committeeIds: committeeIds,
-        event: event,
+        committeeIds,
+        event,
       })
       close()
     },
@@ -19,11 +19,9 @@ export const CreateEventModal: FC<ContextModalProps> = ({ context, id }) => {
   return <FormComponent />
 }
 
-export const useCreateEventModal = () => {
-  return () =>
-    modals.openContextModal({
-      modal: "event/create",
-      title: "Opprett nytt arrangement",
-      innerProps: {},
-    })
-}
+export const useCreateEventModal = () => () =>
+  modals.openContextModal({
+    modal: "event/create",
+    title: "Opprett nytt arrangement",
+    innerProps: {},
+  })
