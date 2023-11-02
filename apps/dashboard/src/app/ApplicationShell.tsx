@@ -1,21 +1,21 @@
 "use client"
 
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { useDisclosure } from "@mantine/hooks"
 import {
-  AppShellHeader,
   AppShell,
-  NavLink,
+  AppShellHeader,
   AppShellMain,
   AppShellNavbar,
   Burger,
   Flex,
   Group,
+  NavLink,
   Title,
 } from "@mantine/core"
-import { SignOutButton } from "./SignOutButton"
 import { Icon } from "@iconify/react"
 import Link from "next/link"
+import { SignOutButton } from "./SignOutButton"
 
 const navigations = [
   {

@@ -1,8 +1,8 @@
-import { Kysely } from "kysely"
-import { MarkRepositoryImpl } from "../mark-repository"
-import { MarkServiceImpl } from "./../mark-service"
-import { NotFoundError } from "../../../errors/errors"
 import { randomUUID } from "crypto"
+import { Kysely } from "kysely"
+import { MarkServiceImpl } from "./../mark-service"
+import { MarkRepositoryImpl } from "../mark-repository"
+import { NotFoundError } from "../../../errors/errors"
 
 describe("MarkService", () => {
   const db = vi.mocked(Kysely.prototype, true)

@@ -1,12 +1,11 @@
-import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
+import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
-
-import { Company } from "@dotkomonline/types"
-import { CompanyView } from "@/components/views/CompanyView"
-import { FC } from "react"
+import { type Company } from "@dotkomonline/types"
+import { type FC } from "react"
 import { createServerSideHelpers } from "@trpc/react-query/server"
-import { trpc } from "@/utils/trpc"
 import { useRouter } from "next/router"
+import { trpc } from "@/utils/trpc"
+import { CompanyView } from "@/components/views/CompanyView"
 
 const CompanyPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const router = useRouter()
@@ -23,7 +22,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     ctx: await createContextInner({
       auth: null,
     }),
-    transformer: transformer,
+    transformer,
   })
   const companies = await ssg.company.all.fetch()
   return {
@@ -38,7 +37,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
     ctx: await createContextInner({
       auth: null,
     }),
-    transformer: transformer,
+    transformer,
   })
   const id = ctx.params?.id
   if (!id) {

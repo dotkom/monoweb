@@ -1,4 +1,4 @@
-import { AttendanceWriteSchema, EventSchema } from "@dotkomonline/types"
+import { AttendanceSchema, AttendanceWriteSchema, EventSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
@@ -27,6 +27,29 @@ export const attendanceRouter = t.router({
       const res = await ctx.attendanceService.registerForEvent(ctx.auth.userId, input.eventId)
       return res
     }),
+  registerForEvent: protectedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+        userId: UserSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.attendanceService.registerForEvent(input.userId, input.eventId)
+      return res
+    }),
+  deregisterForEvent: protectedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+        userId: UserSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.attendanceService.deregisterAttendee(input.userId, input.attendanceId)
+      return res
+    }),
+
   registerAttendance: protectedProcedure
     .input(
       z.object({
@@ -35,16 +58,15 @@ export const attendanceRouter = t.router({
         attended: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      return await ctx.attendanceService.registerForAttendance(input.userId, input.attendanceId, input.attended)
-    }),
+    .mutation(
+      async ({ input, ctx }) =>
+        await ctx.attendanceService.registerForAttendance(input.userId, input.attendanceId, input.attended)
+    ),
   createWaitlist: protectedProcedure
     .input(
       z.object({
         eventId: EventSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      return await ctx.eventService.createWaitlist(input.eventId)
-    }),
+    .mutation(async ({ input, ctx }) => await ctx.eventService.createWaitlist(input.eventId)),
 })

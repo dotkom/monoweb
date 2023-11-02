@@ -1,9 +1,9 @@
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
-import { EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository"
-import { EventCompanyService, EventCompanyServiceImpl } from "../event-company-service"
-import { Company } from "@dotkomonline/types"
+import { type Company } from "@dotkomonline/types"
+import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository"
+import { type EventCompanyService, EventCompanyServiceImpl } from "../event-company-service"
 
 describe("EventCompanyService", () => {
   const db = vi.mocked(Kysely.prototype)

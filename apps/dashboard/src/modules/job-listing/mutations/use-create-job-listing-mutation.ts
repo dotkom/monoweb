@@ -1,6 +1,6 @@
+import { useRouter } from "next/navigation"
 import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
-import { useRouter } from "next/navigation"
 
 export const useCreateJobListingMutation = () => {
   const utils = trpc.useContext()

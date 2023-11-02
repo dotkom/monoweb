@@ -1,23 +1,20 @@
-import { Cursor, orderedQuery } from "../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
-import { Mark, MarkId, PersonalMark, PersonalMarkSchema, UserId } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Kysely, type Selectable } from "kysely"
+import { type Mark, type MarkId, type PersonalMark, PersonalMarkSchema, type UserId } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
 import { mapToMark } from "./mark-repository"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
-export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark => {
-  return PersonalMarkSchema.parse(payload)
-}
+export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark =>
+  PersonalMarkSchema.parse(payload)
 
 export interface PersonalMarkRepository {
   getByMarkId(markId: MarkId): Promise<PersonalMark[]>
-  countUsersByMarkId(markId: MarkId): Promise<number>
   getAllByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getAllMarksByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
   addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
   removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
   getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
-  countUsersByMarkId(markId: MarkId): Promise<number>
+  countUsersByMarkId: ((markId: MarkId) => Promise<number>) & ((markId: MarkId) => Promise<number>)
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {

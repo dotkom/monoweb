@@ -1,6 +1,6 @@
 "use client"
 
-import { Company } from "@dotkomonline/types"
+import { type Company } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -58,7 +58,7 @@ export const useCompanyTable = ({ data }: Props) => {
   )
 
   return useReactTable({
-    data: data,
+    data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })

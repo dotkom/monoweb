@@ -65,6 +65,7 @@
     "AWS_REGION",
     "AWS_SECRET_ACCESS_KEY",
     "AWS_ACCESS_KEY_ID",
-    "EMAIL_TOKEN"
+    "EMAIL_TOKEN",
+    "EMAIL_ENDPOINT"
   ]
 }

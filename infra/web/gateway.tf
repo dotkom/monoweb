@@ -3,7 +3,7 @@ locals {
 }
 
 module "api_gateway_domain_certificate" {
-  source = "./modules/aws-acm-certificate"
+  source = "../modules/aws-acm-certificate"
 
   domain  = local.gateway_domain_name
   zone_id = local.zone_id
@@ -19,7 +19,7 @@ module "api_gateway_domain_certificate" {
 }
 
 module "api_gateway" {
-  source = "./modules/aws-api-gateway"
+  source = "../modules/aws-api-gateway"
 
   domain          = local.gateway_domain_name
   zone_id         = local.zone_id

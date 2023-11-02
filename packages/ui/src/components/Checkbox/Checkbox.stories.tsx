@@ -4,11 +4,13 @@ import { Checkbox } from "./Checkbox"
 
 export default {
   title: "Checkbox",
-  decorators: [(Component) => (
-    <div className="p-10">
-      <Component />
-    </div>
-  )],
+  decorators: [
+    (Component) => (
+      <div className="p-10">
+        <Component />
+      </div>
+    ),
+  ],
 } satisfies StoryDefault
 
 export const Default = () => {

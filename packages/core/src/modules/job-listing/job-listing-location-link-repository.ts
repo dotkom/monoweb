@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
-import { DB } from "@dotkomonline/db/src/db.generated"
-import { JobListingId } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable } from "kysely"
+import { type Database } from "@dotkomonline/db"
+import { type DB } from "@dotkomonline/db/src/db.generated"
+import { type JobListingId } from "@dotkomonline/types"
+import { type Insertable, type Kysely, type Selectable } from "kysely"
 
 type Location = DB["jobListingLocation"]
 type LocationSelect = Selectable<Location>
@@ -10,7 +10,7 @@ type LocationId = LocationSelect["id"]
 type Link = DB["jobListingLocationLink"]
 type LinkSelect = Selectable<Link>
 type LinkInsert = Insertable<Link>
-type LinkDelete = {
+interface LinkDelete {
   jobListingId: JobListingId
   locationId: LocationId
 }

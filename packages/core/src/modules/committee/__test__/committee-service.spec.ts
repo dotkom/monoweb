@@ -1,6 +1,6 @@
-import { Kysely } from "kysely"
-import { Committee } from "@dotkomonline/types"
 import { randomUUID } from "crypto"
+import { Kysely } from "kysely"
+import { type Committee } from "@dotkomonline/types"
 import { NotFoundError } from "../../../errors/errors"
 import { CommitteeRepositoryImpl } from "../committee-repository"
 import { CommitteeServiceImpl } from "../committee-service"
@@ -28,6 +28,6 @@ describe("CommitteeService", () => {
   it("does not find non-existent committees", async () => {
     const id = randomUUID()
     vi.spyOn(committeeRepository, "getById").mockResolvedValueOnce(undefined)
-    await expect(() => committeeService.getCommittee(id)).rejects.toThrowError(NotFoundError)
+    await expect(async () => committeeService.getCommittee(id)).rejects.toThrowError(NotFoundError)
   })
 })

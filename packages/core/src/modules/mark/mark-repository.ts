@@ -1,12 +1,9 @@
-import { Cursor, orderedQuery } from "./../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
-import { Mark, MarkId, MarkSchema, MarkWrite } from "@dotkomonline/types"
+import { type Kysely, type Selectable } from "kysely"
+import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
+import { type Cursor, orderedQuery } from "./../../utils/db-utils"
 
-import { Database } from "@dotkomonline/db"
-
-export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => {
-  return MarkSchema.parse(payload)
-}
+export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => MarkSchema.parse(payload)
 
 export interface MarkRepository {
   getById(id: MarkId): Promise<Mark | undefined>
