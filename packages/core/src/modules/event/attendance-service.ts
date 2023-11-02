@@ -42,7 +42,9 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   async addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string) {
     const attendee = await this.attendanceRepository.getAttendeeByIds(eventId, attendanceId)
-    if (!attendee) throw new Error("Attendee not found")
+    if (!attendee) {
+      throw new Error("Attendee not found")
+    }
     const choice = await this.attendanceRepository.addChoice(eventId, attendanceId, questionId, choiceId)
     return choice
   }

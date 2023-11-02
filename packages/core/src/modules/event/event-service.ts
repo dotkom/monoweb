@@ -1,9 +1,9 @@
 import { type Attendance, type AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
-import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
 import { type AttendanceRepository } from "./attendance-repository.js"
-import { EventInsert } from "./event-repository"
+import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
+import { type Cursor } from "../../utils/db-utils"
+import { NotFoundError } from "../../errors/errors"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -56,9 +56,6 @@ export class EventServiceImpl implements EventService {
       extras: JSON.stringify(eventUpdate.extras),
     }
     const event = await this.eventRepository.update(id, toInsert)
-    if (!event) {
-      throw new NotFoundError(`Could not update Event(${id})`)
-    }
     return event
   }
 

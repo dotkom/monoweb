@@ -1,9 +1,8 @@
-import { Event } from "@dotkomonline/types"
-import { ContextModalProps, modals } from "@mantine/modals"
-import { FC } from "react"
+import { type Event } from "@dotkomonline/types"
+import { type ContextModalProps, modals } from "@mantine/modals"
+import { type FC } from "react"
 import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
-
-import { ExtrasForm, ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
+import { ExtrasForm, type ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
 
 export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = ({ context, id, innerProps }) => {
   const editEvent = useEditEventMutation()
@@ -41,8 +40,9 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = (
   return <ExtrasForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />
 }
 
-export const useCreateEventExtrasModal = ({ event }: { event: Event }) => {
-  return () =>
+export const useCreateEventExtrasModal =
+  ({ event }: { event: Event }) =>
+  () =>
     modals.openContextModal({
       modal: "extras/create",
       title: "Legg til nytt deltakervalg",
@@ -50,4 +50,3 @@ export const useCreateEventExtrasModal = ({ event }: { event: Event }) => {
         event,
       },
     })
-}

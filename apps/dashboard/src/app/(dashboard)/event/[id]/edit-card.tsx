@@ -1,12 +1,7 @@
-import { FC } from "react"
-import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
-import { useEditEventWithCommitteesMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-comittees"
-import { useEventEditForm } from "../edit-form"
-import { useEventDetailsContext } from "./provider"
 import { type FC } from "react"
 import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
 import { useEventDetailsContext } from "./provider"
-import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { useEditEventWithCommitteesMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-comittees"
 import { useEventEditForm } from "../edit-form"
 
 export const EventEditCard: FC = () => {
@@ -20,9 +15,8 @@ export const EventEditCard: FC = () => {
       const { committeeIds, ...event } = data
       edit.mutate({
         id: data.id,
-        committees: committeeIds,
         event,
-        committeeIds,
+        committees: committeeIds,
       })
     },
     defaultValues: {

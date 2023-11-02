@@ -1,9 +1,9 @@
-import { Button, ButtonProps, Combobox, ComboboxProps, useCombobox } from "@mantine/core"
-import { FC } from "react"
+import { Button, type ButtonProps, Combobox, type ComboboxProps, useCombobox } from "@mantine/core"
+import { type FC } from "react"
 
 interface ActionSelectProps extends ComboboxProps {
   data: { value: string; label: string }[]
-  onChange?: (value: string) => void
+  onChange?(value: string): void
   buttonProps?: ButtonProps
 }
 
@@ -12,7 +12,7 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProp
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const options = data.map((item, i) => (
+  const options = data.map((item) => (
     <Combobox.Option value={item.value} key={item.value}>
       {item.label}
     </Combobox.Option>
@@ -25,7 +25,9 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProp
       position="bottom-start"
       onOptionSubmit={(val) => {
         combobox.closeDropdown()
-        if (onChange) onChange(val)
+        if (onChange) {
+          onChange(val)
+        }
       }}
     >
       <Combobox.Target>

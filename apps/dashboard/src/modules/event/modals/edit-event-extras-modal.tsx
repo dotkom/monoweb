@@ -1,8 +1,8 @@
-import { Event, EventExtra } from "@dotkomonline/types"
-import { ContextModalProps, modals } from "@mantine/modals"
-import { FC } from "react"
+import { type Event, type EventExtra } from "@dotkomonline/types"
+import { type ContextModalProps, modals } from "@mantine/modals"
+import { type FC } from "react"
 import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
-import { ExtrasForm, ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
+import { ExtrasForm, type ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
 
 export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: EventExtra; event: Event }>> = ({
   context,
@@ -50,8 +50,9 @@ export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: Event
   return <ExtrasForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />
 }
 
-export const useEditEventExtrasModal = ({ event }: { event: Event }) => {
-  return (existingExtra: EventExtra) =>
+export const useEditEventExtrasModal =
+  ({ event }: { event: Event }) =>
+  (existingExtra: EventExtra) =>
     modals.openContextModal({
       modal: "extras/update",
       title: "Endre extra",
@@ -60,4 +61,3 @@ export const useEditEventExtrasModal = ({ event }: { event: Event }) => {
         existingExtra,
       },
     })
-}

@@ -1,7 +1,7 @@
 import { Box, Button, Paper, Title } from "@mantine/core"
-import { FC } from "react"
-import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
+import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 import { useCreateEventExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditEventExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
 
@@ -9,11 +9,11 @@ export const ExtrasPage: FC = () => {
   const { event } = useEventDetailsContext()
 
   const openCreate = useCreateEventExtrasModal({
-    event: event,
+    event,
   })
 
   const openEdit = useEditEventExtrasModal({
-    event: event,
+    event,
   })
 
   const edit = useEditEventMutation()

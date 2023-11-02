@@ -1,12 +1,11 @@
 import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
-import { FC } from "react"
+import { type FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-
 import { Icon } from "@iconify/react"
-import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { templates } from "./templates"
+import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect"
 
 type TemplateKey = keyof typeof templates
 
@@ -18,7 +17,7 @@ const FormValuesSchema = z.object({
 export type ExtrasFormValues = z.infer<typeof FormValuesSchema>
 
 interface Props {
-  onSubmit: (data: ExtrasFormValues) => void
+  onSubmit(data: ExtrasFormValues): void
   defaultAlternatives: ExtrasFormValues
 }
 
@@ -84,7 +83,7 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
                 </Flex>
                 {errors.alternatives?.[index]?.value && (
                   <Text size="xs" c="red">
-                    {errors.alternatives?.[index]?.value?.message ?? "Ukjent feil"}
+                    {errors.alternatives[index]?.value?.message ?? "Ukjent feil"}
                   </Text>
                 )}
               </Box>

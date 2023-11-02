@@ -77,12 +77,6 @@ export interface Company {
   website: string
 }
 
-export interface DrizzleDrizzleMigrations {
-  id: Generated<number>
-  hash: string
-  createdAt: Int8 | null
-}
-
 export interface Event {
   createdAt: Generated<Timestamp>
   description: string | null
@@ -231,24 +225,23 @@ export interface RefundRequest {
 }
 
 export interface DB {
-  "attendance": Attendance
-  "attendee": Attendee
-  "committee": Committee
-  "company": Company
-  "drizzle.DrizzleMigrations": DrizzleDrizzleMigrations
-  "event": Event
-  "eventCommittee": EventCommittee
-  "eventCompany": EventCompany
-  "jobListing": JobListing
-  "jobListingLocation": JobListingLocation
-  "jobListingLocationLink": JobListingLocationLink
-  "mark": Mark
-  "notificationPermissions": NotificationPermissions
-  "owUser": OwUser
-  "payment": Payment
-  "personalMark": PersonalMark
-  "privacyPermissions": PrivacyPermissions
-  "product": Product
-  "productPaymentProvider": ProductPaymentProvider
-  "refundRequest": RefundRequest
+  attendance: Attendance
+  attendee: Attendee
+  committee: Committee
+  company: Company
+  event: Event
+  eventCommittee: EventCommittee
+  eventCompany: EventCompany
+  jobListing: JobListing
+  jobListingLocation: JobListingLocation
+  jobListingLocationLink: JobListingLocationLink
+  mark: Mark
+  notificationPermissions: NotificationPermissions
+  owUser: OwUser
+  payment: Payment
+  personalMark: PersonalMark
+  privacyPermissions: PrivacyPermissions
+  product: Product
+  productPaymentProvider: ProductPaymentProvider
+  refundRequest: RefundRequest
 }
