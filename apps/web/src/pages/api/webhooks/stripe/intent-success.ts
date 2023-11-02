@@ -13,6 +13,7 @@ export const config = {
 }
 
 import { trpc } from "@/utils/trpc"
+import { SessionMetadataSchema } from "../../checkout_sessions"
 
 const bufferRequest = (req: NextApiRequest) => {
   return new Promise<Buffer>((resolve, reject) => {
@@ -99,7 +100,23 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
 
       const ctx = await createServiceLayer({ db: kysely })
 
-      console.log(price)
+      const metadata = SessionMetadataSchema.parse(session.metadata)
+
+      await ctx.webshopPurchaseService.create({
+        userId: metadata.userId,
+        firstName: metadata.userFirstName,
+        lastName: metadata.userLastName,
+        email: metadata.userEmail,
+        delivered: false,
+        quantity: 1,
+        stripePriceId: lineItem?.price?.id || "Fant ikke produktbeskrivelse",
+        stripeProductId: lineItem?.price?.product.toString() || "Fant ikke produktbeskrivelse",
+        stripeProductName: lineItem?.description || "Fant ikke produktbeskrivelse",
+      })
+
+      console.log("metadata", session.metadata)
+
+      // console.log(price)
 
       // to save
       // description
@@ -107,16 +124,16 @@ export default async function stripeHandler(req: NextApiRequest, res: NextApiRes
       // quantity
 
       // Get the quantity
-      console.log(session?.line_items)
+      // console.log(session?.line_items)
 
-      ctx.webshopPurchaseService.create({
-        userId: "1",
-        description: lineItem?.description || "fant ikke pris",
-        price: price,
-        quantity: lineItem?.quantity || 0,
+      // ctx.webshopPurchaseService.create({
+      //   userId: "1",
+      //   description: lineItem?.description || "fant ikke pris",
+      //   price: price,
+      //   quantity: lineItem?.quantity || 0,
 
-      })
-      })
+      // })
+      // })
 
       // Get the product ID
       // const ctx = await createServiceLayer({ db: kysely })

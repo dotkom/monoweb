@@ -210,10 +210,14 @@ export interface RefundRequest {
 export interface WebshopPurchase {
   createdAt: Generated<Timestamp>;
   delivered: boolean;
+  email: string;
+  firstName: string;
   id: Generated<string>;
+  lastName: string;
   quantity: number;
   stripePriceId: string;
   stripeProductId: string;
+  stripeProductName: string;
   userId: string | null;
 }
 
