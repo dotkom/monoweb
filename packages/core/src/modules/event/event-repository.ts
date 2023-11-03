@@ -1,13 +1,15 @@
 import { type Database } from "@dotkomonline/db"
-import { type Event, type EventId, EventSchema, type EventWrite } from "@dotkomonline/types"
-import { type Kysely, type Selectable } from "kysely"
+import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
+import { type Insertable, type Kysely, type Selectable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 
+export type EventInsert = Insertable<Database["event"]>
+
 export interface EventRepository {
-  create(data: EventWrite): Promise<Event | undefined>
-  update(id: EventId, data: Omit<EventWrite, "id">): Promise<Event>
+  create(data: EventInsert): Promise<Event>
+  update(id: EventId, data: EventInsert): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
@@ -16,12 +18,12 @@ export interface EventRepository {
 export class EventRepositoryImpl implements EventRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async create(data: EventWrite): Promise<Event | undefined> {
+  async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
     return mapToEvent(event)
   }
 
-  async update(id: EventId, data: Omit<EventWrite, "id">): Promise<Event> {
+  async update(id: EventId, data: EventInsert): Promise<Event> {
     const event = await this.db
       .updateTable("event")
       .set(data)
