@@ -1,9 +1,10 @@
-import { Box, Button, Paper, Title } from "@mantine/core"
+import { Icon } from "@iconify/react"
+import { ActionIcon, Box, Button, Paper, Title } from "@mantine/core"
 import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
-import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 import { useCreateEventExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditEventExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
+import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 
 export const ExtrasPage: FC = () => {
   const { event } = useEventDetailsContext()
@@ -36,12 +37,12 @@ export const ExtrasPage: FC = () => {
       <Box>
         {event.extras?.map((extra) => (
           <Paper key={extra.id} withBorder p={"md"} mt={"md"}>
-            <Button mr={"sm"} color="yellow" onClick={() => openEdit(extra)}>
-              Endre
-            </Button>
-            <Button color="red" onClick={() => deleteAlternative(extra.id)}>
-              Slett
-            </Button>
+            <ActionIcon variant="outline" onClick={() => openEdit(extra)} mr="md">
+              <Icon icon="tabler:edit" />
+            </ActionIcon>
+            <ActionIcon variant="outline" onClick={() => deleteAlternative(extra.id)} color="red">
+              <Icon icon="tabler:trash" />
+            </ActionIcon>
             <h3>{extra.name}</h3>
             {extra.choices.map((choice) => (
               <div key={choice.id}>
