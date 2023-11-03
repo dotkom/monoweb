@@ -8,7 +8,17 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
 
-export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>
+export type Json = ColumnType<JsonValue, string, string>
+
+export type JsonArray = JsonValue[]
+
+export type JsonObject = {
+  [K in string]?: JsonValue
+}
+
+export type JsonPrimitive = boolean | number | string | null
+
+export type JsonValue = JsonArray | JsonObject | JsonPrimitive
 
 export type PaymentProvider = "STRIPE"
 
@@ -37,6 +47,7 @@ export interface Attendee {
   attendanceId: string | null
   attended: Generated<boolean>
   createdAt: Generated<Timestamp>
+  extrasChoices: Json | null
   id: Generated<string>
   updatedAt: Generated<Timestamp>
   userId: string | null
@@ -64,16 +75,11 @@ export interface Company {
   website: string
 }
 
-export interface DrizzleDrizzleMigrations {
-  id: Generated<number>
-  hash: string
-  createdAt: Int8 | null
-}
-
 export interface Event {
   createdAt: Generated<Timestamp>
   description: string | null
   end: Timestamp
+  extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null

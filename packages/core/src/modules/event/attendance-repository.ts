@@ -20,6 +20,7 @@ export interface AttendanceRepository {
   updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string): Promise<Attendee>
   getByEventId(eventId: EventId): Promise<Attendance[]>
   getByAttendanceId(id: AttendanceId): Promise<Attendance | undefined>
+  addChoice(eventId: EventId, attendanceId: AttendanceId, questionId: string, choiceId: string): Promise<Attendee>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
@@ -108,5 +109,16 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .where("id", "=", id)
       .executeTakeFirst()
     return res ? AttendanceSchema.parse(res) : undefined
+  }
+
+  async addChoice(eventId: EventId, attendanceId: AttendanceId, questionId: string, choiceId: string) {
+    const res = await this.db
+      .updateTable("attendee")
+      .set({ extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]) })
+      .where("userId", "=", eventId)
+      .where("attendanceId", "=", attendanceId)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    return AttendeeSchema.parse(res)
   }
 }
