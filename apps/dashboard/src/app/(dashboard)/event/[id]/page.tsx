@@ -4,10 +4,11 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { type FC } from "react"
+import { EventAttendancePage } from "./attendance-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
+import { ExtrasPage } from "./extras-page"
 import { useEventDetailsContext } from "./provider"
-import { EventAttendancePage } from "./attendance-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
@@ -43,6 +44,12 @@ const SIDEBAR_LINKS = [
     label: "Påmelding",
     slug: "attendance",
     component: EventAttendancePage,
+  },
+  {
+    icon: "tabler:calendar-event",
+    label: "Valg",
+    slug: "extras",
+    component: ExtrasPage,
   },
 ]
 
