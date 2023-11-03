@@ -23,7 +23,7 @@ export const CheckboxWithTooltip: FC<CheckboxWithTooltipProps> = ({ label, name,
           <Checkbox label={label} onCheckedChange={field.onChange} checked={field.value as boolean} />
           <Tooltip.Provider>
             <Tooltip.Root>
-              <Tooltip.Trigger>
+              <Tooltip.Trigger type="button">
                 <Icon icon="tabler:info-circle" />
               </Tooltip.Trigger>
               <Tooltip.Portal>
