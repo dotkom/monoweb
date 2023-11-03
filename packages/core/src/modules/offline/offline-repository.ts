@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
-import { Offline, OfflineId, OfflineSchema } from "@dotkomonline/types"
-import { Insertable, Kysely, Selectable } from "kysely"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Database } from "@dotkomonline/db"
+import { type Offline, type OfflineId, OfflineSchema } from "@dotkomonline/types"
+import { type Insertable, type Kysely, type Selectable } from "kysely"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 type OfflineWrite = Insertable<Database["offline"]>
 
@@ -12,9 +12,7 @@ export interface OfflineRepository {
   update(id: OfflineId, data: OfflineWrite): Promise<Offline>
 }
 
-const mapToOffline = (offline: Selectable<Database["offline"]>): Offline => {
-  return OfflineSchema.parse(offline)
-}
+const mapToOffline = (offline: Selectable<Database["offline"]>): Offline => OfflineSchema.parse(offline)
 
 export class OfflineRepositoryImpl implements OfflineRepository {
   constructor(private readonly db: Kysely<Database>) {}

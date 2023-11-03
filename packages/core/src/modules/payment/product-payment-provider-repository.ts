@@ -1,14 +1,13 @@
-import { Kysely, Selectable } from "kysely"
+import { type Kysely, type Selectable } from "kysely"
 import {
-  PaymentProvider,
+  type PaymentProvider,
   PaymentProviderSchema,
-  ProductId,
-  ProductPaymentProvider,
+  type ProductId,
+  type ProductPaymentProvider,
   ProductPaymentProviderSchema,
-  ProductPaymentProviderWrite,
+  type ProductPaymentProviderWrite,
 } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Database } from "@dotkomonline/db"
 
 const mapToProductPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) =>
   ProductPaymentProviderSchema.parse(data)
@@ -61,6 +60,6 @@ export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProvi
       .where("paymentProviderId", "=", paymentProviderId)
       .executeTakeFirst()
 
-    return !!productPaymentProvider
+    return Boolean(productPaymentProvider)
   }
 }

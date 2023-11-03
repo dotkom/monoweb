@@ -1,10 +1,10 @@
-import { z } from "zod"
+import { type z } from "zod"
 import { render } from "@react-email/render"
-import React, { FC } from "react"
+import React, { type FC } from "react"
 
 export class InvalidTemplateArguments extends Error {}
 
-export type Template<T extends Record<string, unknown>> = {
+export interface Template<T extends Record<string, unknown>> {
   (args: z.infer<z.ZodSchema<T>>): string
   displayName: string
 }
@@ -17,7 +17,7 @@ export function createTemplate<T extends Record<string, unknown>>(
   const handler = (args: z.infer<typeof schema>) => {
     const result = schema.safeParse(args)
     if (!result.success) {
-      throw new InvalidTemplateArguments("Invalid arguments passed to email template: " + result.error.message)
+      throw new InvalidTemplateArguments(`Invalid arguments passed to email template: ${result.error.message}`)
     }
     return render(<Component {...args} />)
   }

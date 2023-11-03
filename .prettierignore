@@ -7,6 +7,8 @@ storybook-static
 **/**/.next
 **/**/public
 
+pnpm-lock.yaml
+
 *.lock
 *.log
 

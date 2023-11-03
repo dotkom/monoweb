@@ -1,7 +1,7 @@
-import { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
+import { type Offline, type OfflineId, type OfflineWrite } from "@dotkomonline/types"
+import { type OfflineRepository } from "./offline-repository"
 import { NotFoundError } from "../../errors/errors"
-import { Cursor } from "../../utils/db-utils"
-import { OfflineRepository } from "./offline-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface OfflineService {
   get(id: OfflineId): Promise<Offline>
@@ -15,7 +15,9 @@ export class OfflineServiceImpl implements OfflineService {
 
   async get(id: OfflineId): Promise<Offline> {
     const offline = await this.offlineRepository.getById(id)
-    if (!offline) throw new NotFoundError(`Offline with ID:${id} not found`)
+    if (!offline) {
+      throw new NotFoundError(`Offline with ID:${id} not found`)
+    }
     return offline
   }
 

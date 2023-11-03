@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
-import { Event, EventId, EventSchema, EventWrite } from "@dotkomonline/types"
-import { Kysely, Selectable } from "kysely"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Database } from "@dotkomonline/db"
+import { type Event, type EventId, EventSchema, type EventWrite } from "@dotkomonline/types"
+import { type Kysely, type Selectable } from "kysely"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
 

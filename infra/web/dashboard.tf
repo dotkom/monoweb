@@ -12,7 +12,7 @@ locals {
 }
 
 module "dashboard_cognito_client" {
-  source = "./modules/aws-cognito-client"
+  source = "../modules/aws-cognito-client"
 
   user_pool_id  = module.cognito_user_pool.cognito_pool_id
   client_name   = "dashboard"
@@ -20,7 +20,7 @@ module "dashboard_cognito_client" {
 }
 
 module "dashboard_vercel_project" {
-  source = "./modules/vercel-application"
+  source = "../modules/vercel-application"
 
   project_name   = "dashboard"
   domain_name    = local.dashboard_domain_name

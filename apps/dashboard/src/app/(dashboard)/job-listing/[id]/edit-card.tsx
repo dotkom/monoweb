@@ -1,6 +1,6 @@
-import { FC } from "react"
-import { useJobListingWriteForm } from "../write-form"
+import { type FC } from "react"
 import { useJobListingDetailsContext } from "./provider"
+import { useJobListingWriteForm } from "../write-form"
 import { useEditJobListingMutation } from "../../../../modules/job-listing/mutations/use-edit-job-listing-mutation"
 
 export const JobListingEditCard: FC = () => {

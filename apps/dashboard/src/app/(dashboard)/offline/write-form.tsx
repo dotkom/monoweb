@@ -1,11 +1,11 @@
+import { type z } from "zod"
 import { createDateTimeInput, createTextInput, useFormBuilder } from "src/app/form"
-import { z } from "zod"
 import { OfflineWriteSchema } from "../../../../../../packages/types/src/offline"
 
 const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {}
 
-type UseOfflineWriteFormProps = {
-  onSubmit: (data: FormValidationSchema) => void
+interface UseOfflineWriteFormProps {
+  onSubmit(data: FormValidationSchema): void
   defaultValues?: Partial<FormValidationSchema>
   label?: string
 }
@@ -17,8 +17,8 @@ export const useOfflineWriteForm = ({
   onSubmit,
   label = "Registrer",
   defaultValues = OFFLINE_FORM_DEFAULT_VALUES,
-}: UseOfflineWriteFormProps) => {
-  return useFormBuilder({
+}: UseOfflineWriteFormProps) =>
+  useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,
@@ -42,4 +42,3 @@ export const useOfflineWriteForm = ({
       }),
     },
   })
-}

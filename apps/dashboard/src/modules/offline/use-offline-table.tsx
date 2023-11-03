@@ -1,6 +1,6 @@
 "use client"
 
-import { Offline } from "@dotkomonline/types"
+import { type Offline } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -21,9 +21,7 @@ export const useOfflineTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("published", {
         header: () => "Utgivelsesdato",
-        cell: (info) => {
-          return <Text>{formatDate(info.getValue())}</Text>
-        },
+        cell: (info) => <Text>{formatDate(info.getValue())}</Text>,
       }),
       columnHelper.accessor((evt) => evt, {
         id: "actions",
@@ -39,7 +37,7 @@ export const useOfflineTable = ({ data }: Props) => {
   )
 
   return useReactTable({
-    data: data,
+    data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })

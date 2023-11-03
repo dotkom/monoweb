@@ -1,9 +1,8 @@
 import { Argument, program } from "commander"
-
-import { MigrationResultSet } from "kysely"
+import { type MigrationResultSet } from "kysely"
 import { createMigrator } from "@dotkomonline/db/src/migrator"
-import { db } from "./db"
 import { getLogger } from "@dotkomonline/logger"
+import { db } from "./db"
 
 export const logger = getLogger("migrator")
 
@@ -18,7 +17,7 @@ program
   )
   .option("-s, --with-seed", "Seed the database with fake data", false)
   .option("-f, --with-fixtures", "Add predictable data to the database", false)
-  .action(async (name: "up" | "down" | "down-all" | "latest", option) => {
+  .action(async (name: "down-all" | "down" | "latest" | "up", option) => {
     const migrator = createMigrator(db)
     let res: MigrationResultSet
 
@@ -42,7 +41,7 @@ program
           } else {
             break
           }
-        } while (res.results && res.results.length > 0 && !res.results[0].migrationName.startsWith("0001"))
+        } while (res.results.length > 0 && !res.results[0].migrationName.startsWith("0001"))
 
         if (res.error) {
           logger.error(`Failed to down all in migration "${res.results?.[0].migrationName}": ${res.error}`)
@@ -58,8 +57,9 @@ program
       if (res.results) {
         const errorFmt = res.error ? `: '${res.error}'` : ""
         logger.info(
-          "Migrating...\n" +
-            res.results.map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}${errorFmt}`).join("\n")
+          `Migrating...\n${res.results
+            .map((r, i) => `${i + 1}. ${r.direction} ${r.migrationName}: ${r.status}${errorFmt}`)
+            .join("\n")}`
         )
       } else {
         logger.warn(res)

@@ -1,7 +1,6 @@
-import { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
-
-import { Cursor } from "../../utils/db-utils"
-import { MarkRepository } from "./mark-repository"
+import { type Mark, type MarkId, type MarkWrite } from "@dotkomonline/types"
+import { type MarkRepository } from "./mark-repository"
+import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
 
 export interface MarkService {
@@ -17,7 +16,9 @@ export class MarkServiceImpl implements MarkService {
 
   async getMark(id: MarkId): Promise<Mark> {
     const mark = await this.markRepository.getById(id)
-    if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
+    if (!mark) {
+      throw new NotFoundError(`Mark with ID:${id} not found`)
+    }
     return mark
   }
 
@@ -28,19 +29,25 @@ export class MarkServiceImpl implements MarkService {
 
   async createMark(payload: MarkWrite): Promise<Mark> {
     const mark = await this.markRepository.create(payload)
-    if (!mark) throw new NotFoundError(`Mark could not be created`)
+    if (!mark) {
+      throw new NotFoundError(`Mark could not be created`)
+    }
     return mark
   }
 
   async updateMark(id: MarkId, payload: MarkWrite): Promise<Mark> {
     const mark = await this.markRepository.update(id, payload)
-    if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
+    if (!mark) {
+      throw new NotFoundError(`Mark with ID:${id} not found`)
+    }
     return mark
   }
 
   async deleteMark(id: MarkId): Promise<Mark> {
     const mark = await this.markRepository.delete(id)
-    if (!mark) throw new NotFoundError(`Mark with ID:${id} not found`)
+    if (!mark) {
+      throw new NotFoundError(`Mark with ID:${id} not found`)
+    }
     return mark
   }
 }

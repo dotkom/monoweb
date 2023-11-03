@@ -1,6 +1,6 @@
-import { FC } from "react"
-import { useOfflineWriteForm } from "../write-form"
+import { type FC } from "react"
 import { useOfflineDetailsContext } from "./provider"
+import { useOfflineWriteForm } from "../write-form"
 import { useEditOfflineMutation } from "../../../../modules/offline/mutations/use-edit-offline-mutation"
 
 export const OfflineEditCard: FC = () => {

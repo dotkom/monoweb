@@ -4,9 +4,7 @@ import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const offlineRouter = t.router({
-  create: t.procedure.input(OfflineWriteSchema).mutation(({ input, ctx }) => {
-    return ctx.offlineService.create(input)
-  }),
+  create: t.procedure.input(OfflineWriteSchema).mutation(async ({ input, ctx }) => ctx.offlineService.create(input)),
   edit: protectedProcedure
     .input(
       z.object({
@@ -14,13 +12,9 @@ export const offlineRouter = t.router({
         input: OfflineWriteSchema,
       })
     )
-    .mutation(({ input: changes, ctx }) => {
-      return ctx.offlineService.update(changes.id, changes.input)
-    }),
-  all: t.procedure.input(PaginateInputSchema).query(({ input, ctx }) => {
-    return ctx.offlineService.getAll(input.take, input.cursor)
-  }),
-  get: t.procedure.input(OfflineSchema.shape.id).query(({ input, ctx }) => {
-    return ctx.offlineService.get(input)
-  }),
+    .mutation(async ({ input: changes, ctx }) => ctx.offlineService.update(changes.id, changes.input)),
+  all: t.procedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.offlineService.getAll(input.take, input.cursor)),
+  get: t.procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.get(input)),
 })

@@ -9,7 +9,7 @@ export interface PasswordInputProps {
   withAsterisk?: boolean
   error?: boolean | string
   inputInfo?: string
-  eyeColor: "default" | "slate" | "gray"
+  eyeColor: "default" | "gray" | "slate"
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps & React.HTMLProps<HTMLInputElement>>(
@@ -26,7 +26,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps & R
         )}
         <p>{inputInfo}</p>
         <div className="relative">
-          <input type={InputType} {...props} ref={ref} className={input({ error: !!error })} />
+          <input type={InputType} {...props} ref={ref} className={input({ error: Boolean(error) })} />
           <div>
             <span className={eye({ color: eyeColor })}>
               <Icon
@@ -42,6 +42,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps & R
     )
   }
 )
+
+PasswordInput.displayName = "PasswordInput"
 
 const input = cva("border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2 w-full ", {
   variants: {

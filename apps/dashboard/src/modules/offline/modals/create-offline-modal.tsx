@@ -1,5 +1,5 @@
-import { FC } from "react"
-import { ContextModalProps, modals } from "@mantine/modals"
+import { type FC } from "react"
+import { type ContextModalProps, modals } from "@mantine/modals"
 import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"
 import { useOfflineWriteForm } from "../../../app/(dashboard)/offline/write-form"
 
@@ -15,11 +15,9 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   return <FormComponent />
 }
 
-export const useCreateOfflineModal = () => {
-  return () =>
-    modals.openContextModal({
-      modal: "offline/create",
-      title: "Opprett ny Offline",
-      innerProps: {},
-    })
-}
+export const useCreateOfflineModal = () => () =>
+  modals.openContextModal({
+    modal: "offline/create",
+    title: "Opprett ny Offline",
+    innerProps: {},
+  })

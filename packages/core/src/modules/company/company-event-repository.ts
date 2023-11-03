@@ -1,11 +1,11 @@
-import { Database } from "@dotkomonline/db"
-import { CompanyId, Event } from "@dotkomonline/types"
-import { Kysely } from "kysely"
-import { Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Database } from "@dotkomonline/db"
+import { type CompanyId, type Event } from "@dotkomonline/types"
+import { type Kysely } from "kysely"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 import { mapToEvent } from "../event/event-repository"
 
 export interface CompanyEventRepository {
-  getEventsByCompanyId: (company: CompanyId, take: number, cursor?: Cursor) => Promise<Event[]>
+  getEventsByCompanyId(company: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>
 }
 
 export class CompanyEventRepositoryImpl implements CompanyEventRepository {
