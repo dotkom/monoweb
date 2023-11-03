@@ -150,6 +150,7 @@ export interface Offline {
   image: string;
   published: Timestamp;
   title: string;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface OwUser {
