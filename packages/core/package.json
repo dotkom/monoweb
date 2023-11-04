@@ -16,6 +16,7 @@
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/static-object-s3": "workspace:*",
     "date-fns": "^2.30.0",
     "kysely": "^0.26.3",
     "stripe": "^13.11.0",

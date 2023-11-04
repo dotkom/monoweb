@@ -13,6 +13,7 @@
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
+    "@dotkomonline/static-object-s3": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@hookform/error-message": "^2.0.1",

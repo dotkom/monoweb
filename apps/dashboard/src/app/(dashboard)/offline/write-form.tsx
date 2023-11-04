@@ -1,5 +1,5 @@
-import { type z } from "zod"
-import { createDateTimeInput, createTextInput, useFormBuilder } from "src/app/form"
+import { z } from "zod"
+import { createDateTimeInput, createFileInput, createTextInput, useFormBuilder } from "src/app/form"
 import { OfflineWriteSchema } from "../../../../../../packages/types/src/offline"
 
 const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {}
@@ -10,7 +10,9 @@ interface UseOfflineWriteFormProps {
   label?: string
 }
 
-export const FormValidationSchema = OfflineWriteSchema
+export const FormValidationSchema = OfflineWriteSchema.extend({
+  file: z.instanceof(File),
+})
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
 export const useOfflineWriteForm = ({
@@ -32,7 +34,7 @@ export const useOfflineWriteForm = ({
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),
-      file: createTextInput({
+      file: createFileInput({
         label: "Fil",
         placeholder: "s3 link",
       }),

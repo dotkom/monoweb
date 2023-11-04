@@ -23,6 +23,14 @@ export const useOfflineTable = ({ data }: Props) => {
         header: () => "Utgivelsesdato",
         cell: (info) => <Text>{formatDate(info.getValue())}</Text>,
       }),
+      columnHelper.accessor("file", {
+        header: () => "Fil",
+        cell: (info) => (
+          <a target="_blank" href={info.getValue()}>
+            Link
+          </a>
+        ),
+      }),
       columnHelper.accessor((evt) => evt, {
         id: "actions",
         header: () => "Detaljer",

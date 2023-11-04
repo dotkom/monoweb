@@ -1,68 +1,60 @@
-import axios from "axios"
-import { readFile } from "fs/promises"
-import { PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
+import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import { S3Client } from "@aws-sdk/client-s3"
 
-export async function getPresignedPostData(
-  Bucket: string,
-  filepath: string,
-  mimeType: string,
-  maxSizeMB: number
-): Promise<PresignedPost> {
-  const s3 = new S3Client({
-    region: "eu-north-1",
-  })
+// export async function uploadFileBrowser(bucketName: string, file: File, maxSizeMB = 10) {
+//   if (!(file instanceof File)) {
+//     throw new Error("The file parameter must be an instance of File.")
+//   }
 
-  return await createPresignedPost(s3, {
-    Bucket,
-    Key: bucketKey(filepath),
-    Fields: {
-      "content-type": mimeType,
-    },
-    Conditions: [
-      ["content-length-range", 0, maxSizeMB * 1024 * 1024],
-      // specify content-type to be more generic- images only
-      // ["starts-with", "$Content-Type", "image/"],
-    ],
-  })
-}
+//   // Check the file size against maxSizeMB
+//   if (file.size > maxSizeMB * 1024 * 1024) {
+//     throw new Error(`File size exceeds the maximum limit of ${maxSizeMB} MB.`)
+//   }
 
-export async function uploadFile(
-  bucketName: string,
-  filepath: string,
-  mimeType: "image/jpeg" | string,
-  maxSizeMB = 10
-) {
-  try {
-    const { url, fields } = await getPresignedPostData(bucketName, filepath, mimeType, maxSizeMB)
+//   try {
+//     // Make sure to handle the getPresignedPostData to retrieve the URL and fields for the form
+//     const { url, fields } = await getPresignedPostData(bucketName, file.name, file.type, maxSizeMB)
 
-    const formData = Object.entries(fields).reduce((data, [key, value]) => {
-      data.append(key, value)
-      return data
-    }, new FormData())
+//     const formData = new FormData()
+//     Object.entries(fields).forEach(([key, value]) => {
+//       formData.append(key, value)
+//     })
 
-    const buf = await readFile(filepath)
+//     // Append the file to the formData
+//     formData.append("file", file)
 
-    formData.append("file", new Blob([buf]))
+//     // If axios is available
+//     return await axios.post(url, formData)
 
-    return await axios.post(url, formData)
-  } catch (e) {
-    throw new Error(`file (${filepath}) upload failed: ${e}`)
-  }
-}
+//     // OR, if you want to use the Fetch API instead
+//     // const response = await fetch(url, {
+//     //   method: 'POST',
+//     //   body: formData
+//     // });
+//     // return await response.json();
+//   } catch (e) {
+//     throw new Error(`File upload failed: ${e}`)
+//   }
+// }
 
-function bucketKey(fullPath: string): string {
-  // Find the last index of either forward slash or backslash
-  const lastSlashIndex = Math.max(fullPath.lastIndexOf("/"), fullPath.lastIndexOf("\\"))
+// export async function uploadFile(bucketName: string, filepath: string, mimeType: "image/jpeg", maxSizeMB = 10) {
+//   try {
+//     const { url, fields } = await getPresignedPostData(bucketName, filepath, mimeType, maxSizeMB)
 
-  // If neither is found, return the full path (no slashes means it's already just a file name)
-  if (lastSlashIndex === -1) {
-    return fullPath
-  }
+//     const formData = Object.entries(fields).reduce((data, [key, value]) => {
+//       data.append(key, value)
+//       return data
+//     }, new FormData())
 
-  // Otherwise, return the substring after the last found slash
-  return fullPath.substring(lastSlashIndex + 1)
-}
+//     const buf = await readFile(filepath)
+
+//     formData.append("file", new Blob([buf]))
+
+//     return await axios.post(url, formData)
+//   } catch (e) {
+//     throw new Error(`file (${filepath}) upload failed: ${e}`)
+//   }
+// }
 
 // const bigImg = "IMG_0283.jpeg"
 // const smallImg = "IMG_0278.jpeg"
@@ -73,3 +65,46 @@ function bucketKey(fullPath: string): string {
 
 //   console.log(ret.data)
 // })()
+
+export interface S3Repository {
+  getPresignedPostData(bucket: string, filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
+}
+
+export class S3RepositoryImpl implements S3Repository {
+  async getPresignedPostData(
+    bucket: string,
+    filepath: string,
+    mimeType: string,
+    maxSizeMB: number
+  ): Promise<PresignedPost> {
+    const s3 = new S3Client({
+      region: "eu-north-1",
+    })
+
+    return await createPresignedPost(s3, {
+      Bucket: bucket,
+      Key: this.bucketKey(filepath),
+      Fields: {
+        "content-type": mimeType,
+      },
+      Conditions: [
+        ["content-length-range", 0, maxSizeMB * 1024 * 1024],
+        // specify content-type to be more generic- images only
+        // ["starts-with", "$Content-Type", "image/"],
+      ],
+    })
+  }
+
+  bucketKey(fullPath: string): string {
+    // Find the last index of either forward slash or backslash
+    const lastSlashIndex = Math.max(fullPath.lastIndexOf("/"), fullPath.lastIndexOf("\\"))
+
+    // If neither is found, return the full path (no slashes means it's already just a file name)
+    if (lastSlashIndex === -1) {
+      return fullPath
+    }
+
+    // Otherwise, return the substring after the last found slash
+    return fullPath.substring(lastSlashIndex + 1)
+  }
+}

@@ -1,7 +1,15 @@
 import { type Offline, type OfflineId, type OfflineWrite } from "@dotkomonline/types"
 import { type OfflineRepository } from "./offline-repository"
+import { type S3Repository } from "../../../../static-object-s3/src"
 import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
+
+type Fields = Record<string, string>
+
+export interface PresignedPost {
+  url: string
+  fields: Fields
+}
 
 export interface OfflineService {
   get(id: OfflineId): Promise<Offline>
@@ -11,7 +19,10 @@ export interface OfflineService {
 }
 
 export class OfflineServiceImpl implements OfflineService {
-  constructor(private readonly offlineRepository: OfflineRepository) {}
+  constructor(
+    private readonly offlineRepository: OfflineRepository,
+    private readonly S3Repository: S3Repository
+  ) {}
 
   async get(id: OfflineId): Promise<Offline> {
     const offline = await this.offlineRepository.getById(id)
@@ -34,5 +45,10 @@ export class OfflineServiceImpl implements OfflineService {
   async update(id: OfflineId, payload: OfflineWrite): Promise<Offline> {
     const offline = await this.offlineRepository.update(id, payload)
     return offline
+  }
+
+  async getPresignedUrl(filename: string, mimeType: string): Promise<PresignedPost> {
+    const link = await this.S3Repository.getPresignedPostData("skog-testing", filename, mimeType, 10)
+    return link
   }
 }

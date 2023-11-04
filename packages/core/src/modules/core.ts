@@ -36,6 +36,7 @@ import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-loca
 import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
 import { OfflineRepositoryImpl } from "./offline/offline-repository"
 import { OfflineServiceImpl } from "./offline/offline-service"
+import { S3RepositoryImpl } from "../../../static-object-s3/src/index"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -44,6 +45,7 @@ export interface ServerLayerOptions {
 }
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
+  const S3Repository = new S3RepositoryImpl()
   const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository = new JobListingRepositoryImpl(db)
@@ -98,7 +100,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService = new MarkServiceImpl(markRepository)
   const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService = new OfflineServiceImpl(offlineRepository)
+  const offlineService = new OfflineServiceImpl(offlineRepository, S3Repository)
 
   return {
     userService,
