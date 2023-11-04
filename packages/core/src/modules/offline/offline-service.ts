@@ -16,6 +16,7 @@ export interface OfflineService {
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
   update(id: OfflineId, payload: OfflineWrite): Promise<Offline>
+  getPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
 }
 
 export class OfflineServiceImpl implements OfflineService {
@@ -47,7 +48,7 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async getPresignedUrl(filename: string, mimeType: string): Promise<PresignedPost> {
+  async getPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
     const link = await this.S3Repository.getPresignedPostData("skog-testing", filename, mimeType, 10)
     return link
   }

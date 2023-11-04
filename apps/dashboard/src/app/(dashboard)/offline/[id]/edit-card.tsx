@@ -1,53 +1,65 @@
+import axios from "axios"
 import { type FC } from "react"
 import { useOfflineDetailsContext } from "./provider"
-import { useOfflineWriteForm } from "../write-form"
 import { useEditOfflineMutation } from "../../../../modules/offline/mutations/use-edit-offline-mutation"
 import { trpc } from "../../../../utils/trpc"
+import { useOfflineWriteForm } from "../write-form"
+
+export async function uploadFile(file: File, fields: Record<string, string>, url: string) {
+  try {
+    const formData = new FormData()
+    Object.entries(fields).forEach(([key, value]) => {
+      formData.append(key, value)
+    })
+
+    // Append the file to the formData
+    formData.append("file", file)
+
+    await axios.post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+  } catch (e) {
+    throw new Error(`file (upload failed: ${e}`)
+  }
+}
 
 export const OfflineEditCard: FC = () => {
   const { offline } = useOfflineDetailsContext()
   const edit = useEditOfflineMutation()
-
-  const url = trpc.offline.getS3UploadLink
-  // {
-  //   filename: "henrik.pdf",
-  //   mimeType: "application/pdf",
-  // },
-
-  // const query = trpc.useQuery(["company.find", { id }], {
-  //   enabled: Boolean(id),
-  //   onSuccess(data) {
-  //     // call function to display modal with content from query
-  //     displayModal({ content: data })
-  //   },
-  // })
-
-  // const showModal = async (id: string) => {
-  //   setId(id)
-  // }
-
-  console.log(url)
+  const url = trpc.offline.getS3UploadLink.useMutation()
 
   const FormComponent = useOfflineWriteForm({
     label: "Oppdater",
-    onSubmit: (data) => {
-      // uploadFileBrowser("skog-testing", data.file)
-      url.mutate({
-        filename: data.file.name,
-        mimeType: data.file.type,
-      })
+    onSubmit: async (data) => {
+      let fileToStore = ""
+      if (data.file !== undefined) {
+        const stuffNeededToUpload = await url.mutateAsync({
+          filename: `offlines/${data.file.name}`,
+          mimeType: data.file.type,
+        })
+        console.log(stuffNeededToUpload)
 
-      const test = await trpc.offline.getS3UploadLink.useQuery({
-        filename: data.file.name,
-        mimeType: data.file.type,
-      })
+        await uploadFile(data.file, stuffNeededToUpload.fields, stuffNeededToUpload.url)
+
+        fileToStore = stuffNeededToUpload.fields.key
+      }
 
       edit.mutate({
         id: offline.id,
-        input: data,
+        input: {
+          ...data,
+          file: fileToStore,
+        },
       })
     },
-    defaultValues: offline,
+    defaultValues: {
+      title: offline.title,
+      published: offline.published,
+      image: offline.image,
+      id: offline.id,
+    },
   })
   return <FormComponent />
 }

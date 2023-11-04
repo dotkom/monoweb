@@ -11,7 +11,7 @@ interface UseOfflineWriteFormProps {
 }
 
 export const FormValidationSchema = OfflineWriteSchema.extend({
-  file: z.instanceof(File),
+  file: z.instanceof(File).optional(),
 })
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 

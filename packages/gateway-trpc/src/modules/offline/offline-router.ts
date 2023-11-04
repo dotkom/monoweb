@@ -24,5 +24,7 @@ export const offlineRouter = t.router({
         mimeType: z.string(),
       })
     )
-    .query(async ({ input, ctx }) => ctx.offlineService.getPresignedUrl(input.filename, input.mimeType)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.offlineService.getPresignedPost(`offlines/${input.filename}`, input.mimeType)
+    ),
 })

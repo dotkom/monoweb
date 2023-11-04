@@ -101,6 +101,9 @@ importers:
       '@trpc/server':
         specifier: ^10.43.0
         version: 10.43.0
+      axios:
+        specifier: 1.6.0
+        version: 1.6.0
       clsx:
         specifier: ^2.0.0
         version: 2.0.0
@@ -685,6 +688,9 @@ importers:
       '@dotkomonline/env':
         specifier: workspace:*
         version: link:../env
+      '@dotkomonline/static-object-s3':
+        specifier: workspace:*
+        version: link:../static-object-s3
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
