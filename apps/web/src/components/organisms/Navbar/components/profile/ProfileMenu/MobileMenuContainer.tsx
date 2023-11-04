@@ -1,9 +1,9 @@
-import { profileItems } from "@/utils/profileLinks"
-import React, { useEffect, useState } from "react"
-import ProfileMenuItem from "./ProfileMenuItem"
-import * as Popover from "@radix-ui/react-popover"
+import { useEffect, useState } from "react"
 import { Icon } from "@dotkomonline/ui"
+import * as Popover from "@radix-ui/react-popover"
 import { usePathname } from "next/navigation"
+import { profileItems } from "@/utils/profileLinks"
+import ProfileMenuItem from "./ProfileMenuItem"
 
 const MobileMenuContainer = () => {
   const currentSlug = usePathname()
@@ -40,8 +40,8 @@ const MobileMenuContainer = () => {
           <Popover.Content className="animate-in fade-in-10">
             <div className="bg-indigo-1 shadow-slate-8 flex w-screen flex-col rounded-lg p-3 shadow-sm md:hidden">
               {profileItems.map((item) => (
-                <Popover.Close>
-                  <ProfileMenuItem key={item.title} menuItem={item} />
+                <Popover.Close key={item.title}>
+                  <ProfileMenuItem menuItem={item} />
                 </Popover.Close>
               ))}
             </div>

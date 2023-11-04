@@ -1,24 +1,22 @@
-import { FC, PropsWithChildren, useState } from "react"
-import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer"
-import { ProfileContext } from "../views/ProfileView/context/ProfileContext"
+import { type FC, type PropsWithChildren, useState } from "react"
 import { Icon } from "@dotkomonline/ui"
 import { usePathname } from "next/navigation"
 import { profileItems } from "@/utils/profileLinks"
 import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer"
+import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer"
+import { ProfileContext } from "../views/ProfileView/context/ProfileContext"
 
 interface PageTitleProps {
   title: string
   icon: string
 }
 
-const PageTitle: FC<PageTitleProps> = ({ title, icon }) => {
-  return (
-    <div className="flex h-10 space-x-2 max-md:hidden">
-      <Icon icon={icon} width={"w-10"} />
-      <p className="text-3xl">{title}</p>
-    </div>
-  )
-}
+const PageTitle: FC<PageTitleProps> = ({ title, icon }) => (
+  <div className="flex h-10 space-x-2 max-md:hidden">
+    <Icon icon={icon} width={"w-10"} />
+    <p className="text-3xl">{title}</p>
+  </div>
+)
 
 const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
   const currentSlug = usePathname()
