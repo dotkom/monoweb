@@ -31,7 +31,7 @@ const MobileMenuContainer = () => {
               )}
             </span>
             <p className="flex grow justify-center">
-              <Icon icon={currentLink?.icon && currentLink.icon} width={28} />
+              <Icon icon={currentLink?.icon ? currentLink.icon : ""} width={28} />
               <span className="ml-2 mt-1 text-lg">{currentLink?.title}</span>
             </p>
           </div>
