@@ -7,7 +7,7 @@ export const articleRouter = t.router({
   create: protectedProcedure
     .input(ArticleWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.articleService.create(input)),
-  update: protectedProcedure
+  edit: protectedProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -18,7 +18,7 @@ export const articleRouter = t.router({
   all: publicProcedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => await ctx.articleService.getAll(input.take, input.cursor)),
-  getById: publicProcedure
+  get: publicProcedure
     .input(ArticleSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.articleService.getById(input)),
   getBySlug: publicProcedure
