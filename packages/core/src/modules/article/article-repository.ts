@@ -48,18 +48,12 @@ export class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   async getById(id: ArticleId): Promise<Article | undefined> {
-    const article = await this.db.selectFrom('articles')
-      .selectAll()
-      .where('id', '=', id)
-      .executeTakeFirst()
+    const article = await this.db.selectFrom("articles").selectAll().where("id", "=", id).executeTakeFirst()
     return article ? mapToArticle(article) : undefined
   }
 
   async getBySlug(slug: ArticleSlug): Promise<Article | undefined> {
-    const article = await this.db.selectFrom('articles')
-      .selectAll()
-      .where('slug', '=', slug)
-      .executeTakeFirst()
+    const article = await this.db.selectFrom("articles").selectAll().where("slug", "=", slug).executeTakeFirst()
     return article ? mapToArticle(article) : undefined
   }
 }
