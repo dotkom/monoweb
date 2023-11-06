@@ -39,8 +39,8 @@ import { OfflineServiceImpl } from "./offline/offline-service"
 import { ArticleRepositoryImpl } from "./article/article-repository"
 import { ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
 import { ArticleServiceImpl } from "./article/article-service"
+import { ArticleTagRepositoryImpl } from "./article/article-tag-repository"
 import { s3RepositoryImpl } from "../lib/s3/s3-repository"
-import { ArticleTagRepositoryImpl } from "./article/article-tag-repository";
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
