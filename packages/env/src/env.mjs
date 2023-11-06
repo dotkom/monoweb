@@ -3,7 +3,7 @@ import { z } from "zod"
 
 const environmentVariableSchema = z.string().nonempty()
 
-export const createEnvironment = () =>
+export const createEnvironment = (skipValidation = false) =>
   createEnv({
     clientPrefix: "NEXT_PUBLIC_",
     server: {
@@ -57,6 +57,7 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_SECRET_KEY: process.env.FAGKOM_STRIPE_SECRET_KEY,
       FAGKOM_STRIPE_WEBHOOK_SECRET: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET,
     },
+    skipValidation,
   })
 
 export const env = createEnvironment()

@@ -1,5 +1,5 @@
 import { sql } from "kysely"
-import { createTableWithDefaults } from "../utils"
+import { createTableWithDefaults } from "../utils.js"
 
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
