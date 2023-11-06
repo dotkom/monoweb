@@ -178,58 +178,6 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  apps/db-migrator:
-    dependencies:
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@dotkomonline/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
-      commander:
-        specifier: ^11.1.0
-        version: 11.1.0
-      kysely:
-        specifier: ^0.26.3
-        version: 0.26.3
-      pg:
-        specifier: ^8.11.3
-        version: 8.11.3
-      zod:
-        specifier: ^3.22.4
-        version: 3.22.4
-    devDependencies:
-      '@dotkomonline/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
-      '@types/eslint':
-        specifier: ^8.44.6
-        version: 8.44.6
-      '@types/pg':
-        specifier: ^8.10.7
-        version: 8.10.7
-      date-fns:
-        specifier: ^2.30.0
-        version: 2.30.0
-      dotenv-cli:
-        specifier: ^7.3.0
-        version: 7.3.0
-      eslint:
-        specifier: ^8.52.0
-        version: 8.52.0
-      tsx:
-        specifier: ^3.14.0
-        version: 3.14.0
-      typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
-
   apps/dispatcher-auth:
     dependencies:
       '@aws-sdk/client-cognito-identity-provider':
@@ -970,6 +918,58 @@ importers:
       vitest:
         specifier: ^0.34.6
         version: 0.34.6(@vitest/ui@0.34.6)
+
+  tools/migrator:
+    dependencies:
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
+      commander:
+        specifier: ^11.1.0
+        version: 11.1.0
+      kysely:
+        specifier: ^0.26.3
+        version: 0.26.3
+      pg:
+        specifier: ^8.11.3
+        version: 8.11.3
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@types/eslint':
+        specifier: ^8.44.6
+        version: 8.44.6
+      '@types/pg':
+        specifier: ^8.10.7
+        version: 8.10.7
+      date-fns:
+        specifier: ^2.30.0
+        version: 2.30.0
+      dotenv-cli:
+        specifier: ^7.3.0
+        version: 7.3.0
+      eslint:
+        specifier: ^8.52.0
+        version: 8.52.0
+      tsx:
+        specifier: ^3.14.0
+        version: 3.14.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
 
 packages:
 

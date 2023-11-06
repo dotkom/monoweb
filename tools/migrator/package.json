@@ -1,5 +1,5 @@
 {
-  "name": "@dotkomonline/db-migrator",
+  "name": "@dotkomonline/migrator",
   "type": "module",
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
