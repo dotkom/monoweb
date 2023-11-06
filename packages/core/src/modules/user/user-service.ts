@@ -19,7 +19,7 @@ export interface UserService {
   getAllUsers(limit: number): Promise<User[]>
   searchUsers(searchQuery: string, take: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: UserWrite): Promise<User>
+  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
@@ -64,7 +64,7 @@ export class UserServiceImpl implements UserService {
     return res
   }
 
-  async updateUser(id: UserId, data: UserWrite) {
+  async updateUser(id: UserId, data: Partial<UserWrite>) {
     const res = await this.userRepository.update(id, data)
     return res
   }
