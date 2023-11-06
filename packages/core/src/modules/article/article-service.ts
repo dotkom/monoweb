@@ -76,6 +76,11 @@ export class ArticleServiceImpl implements ArticleService {
     if (match === undefined) {
       throw new NotFoundError(`Article with ID:${id} not found`)
     }
-    return await this.articleTagLinkRepository.remove(id, tag)
+    await this.articleTagLinkRepository.remove(id, tag)
+    const articlesWithTag = await this.articleRepository.getByTags([tag], 1)
+    const isTagStillInUse = articlesWithTag.length !== 0
+    if (!isTagStillInUse) {
+      await this.articleTagRepository.delete(tag)
+    }
   }
 }
