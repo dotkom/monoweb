@@ -1,11 +1,11 @@
 import { type Committee, type CommitteeId, type CommitteeWrite } from "@dotkomonline/types"
 import { type CommitteeRepository } from "./committee-repository"
 import { NotFoundError } from "../../errors/errors"
-import { type Cursor } from "../../utils/db-utils"
+import { type Collection, type Pageable } from "../../utils/db-utils"
 
 export interface CommitteeService {
   getCommittee(id: CommitteeId): Promise<Committee>
-  getCommittees(take: number, cursor?: Cursor): Promise<Committee[]>
+  getCommittees(pageable: Pageable): Promise<Collection<Committee>>
   createCommittee(payload: CommitteeWrite): Promise<Committee>
 }
 
@@ -24,7 +24,7 @@ export class CommitteeServiceImpl implements CommitteeService {
     return await this.committeeRepository.create(payload)
   }
 
-  async getCommittees(take: number, cursor?: Cursor) {
-    return this.committeeRepository.getAll(take, cursor)
+  async getCommittees(pageable: Pageable) {
+    return this.committeeRepository.getAll(pageable)
   }
 }

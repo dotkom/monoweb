@@ -13,7 +13,7 @@ export const PaginateInputSchema = z
   .optional()
   .default({ take: 20, cursor: undefined })
 
-export type PaginateInput = z.infer<typeof PaginateInputSchema>
+export type Pageable = z.infer<typeof PaginateInputSchema>
 export type Cursor = z.infer<typeof CursorSchema>
 
 export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<DB, TB, O>, cursor?: Cursor) {
@@ -34,15 +34,15 @@ export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<
  */
 export const paginatedQuery = async <T extends OrderedIdentifier, DB, TB extends keyof DB, O extends OrderedIdentifier>(
   qb: SelectQueryBuilder<DB, TB, O>,
-  pagination: PaginateInput,
+  pageable: Pageable,
   mapper: (payload: O) => T
 ): Promise<Collection<T>> => {
   // Take N+1 to determine if there is a record behind `take`.
-  const pageWithNextLength = pagination.take + 1
+  const pageWithNextLength = pageable.take + 1
   let builder = qb.limit(pageWithNextLength)
   // If a cursor was provided, skip forwards to the specified record
-  if (pagination.cursor !== undefined) {
-    builder = builder.where(sql`id`, "<", sql`${pagination.cursor.id}`)
+  if (pageable.cursor !== undefined) {
+    builder = builder.where(sql`id`, "<", sql`${pageable.cursor.id}`)
   }
   // Always perform ordering on id.
   builder = builder.orderBy(sql`id`, "desc")
@@ -59,11 +59,11 @@ export const paginatedQuery = async <T extends OrderedIdentifier, DB, TB extends
     }
   }
 
-  const data = records.slice(0, pagination.take)
+  const data = records.slice(0, pageable.take).map(mapper)
   return {
     next: cursor,
-    data: data.map(mapper),
-    count: 0,
+    data,
+    count: Math.min(pageable.take, data.length),
   }
 }
 
