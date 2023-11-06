@@ -3,12 +3,12 @@ import path from "path"
 import { FileMigrationProvider, type Kysely, Migrator } from "kysely"
 import { type Database } from "./"
 
-export const createMigrator = (db: Kysely<Database>, url = new URL("migrations", import.meta.url)) =>
+export const createMigrator = (db: Kysely<Database>, urlOverride?: URL) =>
   new Migrator({
     db,
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: url.pathname,
+      migrationFolder: (urlOverride ?? new URL("migrations", new URL(import.meta.url))).pathname,
     }),
   })
