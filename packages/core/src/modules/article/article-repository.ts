@@ -6,7 +6,7 @@ import {
   ArticleSchema,
   type ArticleSlug,
   type ArticleWrite,
-} from "@dotkomonline/types/src/article"
+} from "@dotkomonline/types"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToArticle = (payload: Selectable<Database["articles"]>) => ArticleSchema.parse(payload)
