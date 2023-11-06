@@ -1,6 +1,7 @@
-import { type Kysely, sql } from "kysely"
+import { sql } from "kysely"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema
     .createTable("event_committee")
     .addColumn("committee_id", sql`ulid`, (col) => col.references("committee.id").onDelete("cascade"))
@@ -9,6 +10,7 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+/** @param db {import('kysely').Kysely */
+export async function down(db) {
   await db.schema.dropTable("event_committee").execute()
 }

@@ -1,6 +1,5 @@
-import { type Kysely } from "kysely"
-
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema
     .alterTable("committee")
     .addColumn("description", "text", (col) => col.notNull().defaultTo(""))
@@ -9,6 +8,7 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function down(db) {
   await db.schema.alterTable("committee").dropColumn("description").dropColumn("email").dropColumn("image").execute()
 }

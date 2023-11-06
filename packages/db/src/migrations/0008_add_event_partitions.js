@@ -1,6 +1,7 @@
-import { type Kysely, sql } from "kysely"
+import { sql } from "kysely"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema
     .alterTable("event")
     .addColumn("waitlist", sql`ulid`, (col) => col.references("attendance.id").defaultTo(null))
@@ -15,7 +16,8 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function down(db) {
   await db.schema.alterTable("event").dropColumn("waitlist").execute()
   await db.schema.alterTable("attendance").dropColumn("min").execute()
   await db.schema.alterTable("attendance").dropColumn("max").execute()
