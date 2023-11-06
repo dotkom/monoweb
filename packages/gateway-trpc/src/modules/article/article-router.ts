@@ -6,7 +6,7 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 export const articleRouter = t.router({
   create: protectedProcedure
     .input(ArticleWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.articleService.createArticle(input)),
+    .mutation(async ({ input, ctx }) => await ctx.articleService.create(input)),
   update: protectedProcedure
     .input(
       z.object({
@@ -14,19 +14,19 @@ export const articleRouter = t.router({
         input: ArticleWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.articleService.updateArticle(input.id, input.input)),
-  getAll: publicProcedure
+    .mutation(async ({ input, ctx }) => await ctx.articleService.update(input.id, input.input)),
+  all: publicProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => await ctx.articleService.getAllArticles(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => await ctx.articleService.getAll(input.take, input.cursor)),
   getById: publicProcedure
     .input(ArticleSchema.shape.id)
-    .query(async ({ input, ctx }) => await ctx.articleService.getArticleById(input)),
+    .query(async ({ input, ctx }) => await ctx.articleService.getById(input)),
   getBySlug: publicProcedure
     .input(ArticleSchema.shape.slug)
-    .query(async ({ input, ctx }) => await ctx.articleService.getArticleBySlug(input)),
+    .query(async ({ input, ctx }) => await ctx.articleService.getBySlug(input)),
   getTags: publicProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => await ctx.articleService.getAllTags(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => await ctx.articleService.getTags(input.take, input.cursor)),
   addTag: protectedProcedure
     .input(
       z.object({
