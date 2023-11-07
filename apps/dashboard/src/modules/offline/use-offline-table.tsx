@@ -31,9 +31,9 @@ export const useOfflineTable = ({ data }: Props) => {
             return "Ingen fil"
           }
           return (
-            <a target="_blank" href={val} rel="noopenere">
+            <Anchor target="_blank" href={val} rel="noopenere">
               Link
-            </a>
+            </Anchor>
           )
         },
       }),
