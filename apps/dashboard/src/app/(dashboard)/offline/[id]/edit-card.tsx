@@ -10,33 +10,19 @@ export const OfflineEditCard: FC = () => {
   const edit = useEditOfflineMutation()
   const upload = useS3UploadFile()
 
+  const handleUpload = async (file?: File) => (file?.name ? await upload(file) : null)
+
   const FormComponent = useOfflineWriteForm({
     label: "Oppdater",
     onSubmit: async (data) => {
-      let file = null
-      if (data.file !== undefined) {
-        file = await upload(data.file)
-      }
-
-      let image = null
-      if (data.image !== undefined) {
-        image = await upload(data.image)
-      }
+      // Only upload if files are present
+      const fileUrl = await handleUpload(data.file)
+      const imageUrl = await handleUpload(data.image)
 
       const toSave: Partial<OfflineWrite> = {
-        title: data.title,
-        published: data.published,
-        id: data.id,
-        fileUrl: file,
-        imageUrl: image,
-      }
-
-      if (file === null) {
-        delete toSave.fileUrl
-      }
-
-      if (image) {
-        delete toSave.imageUrl
+        ...data,
+        fileUrl: fileUrl || data.fileUrl, // Preserving existing URL if no new file uploaded
+        imageUrl: imageUrl || data.imageUrl, // Preserving existing URL if no new image uploaded
       }
 
       edit.mutate({

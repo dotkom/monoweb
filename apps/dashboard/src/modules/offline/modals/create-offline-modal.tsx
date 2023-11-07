@@ -10,24 +10,20 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const create = useCreateOfflineMutation()
   const upload = useS3UploadFile()
 
+  const handleUpload = async (file?: File) => (file?.name ? await upload(file) : null)
+
   const FormComponent = useOfflineWriteForm({
     onSubmit: async (data) => {
-      let file = null
-      if (data.file !== undefined) {
-        file = await upload(data.file)
-      }
-
-      let image = null
-      if (data.image !== undefined) {
-        image = await upload(data.image)
-      }
+      // Only upload if files are present
+      const fileUrl = await handleUpload(data.file)
+      const imageUrl = await handleUpload(data.image)
 
       const toSave: OfflineWrite = {
         title: data.title,
         published: data.published,
         id: data.id,
-        fileUrl: file,
-        imageUrl: image,
+        fileUrl,
+        imageUrl,
       }
 
       console.log(toSave)
