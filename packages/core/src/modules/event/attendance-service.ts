@@ -4,8 +4,8 @@ import { type AttendanceRepository } from "./attendance-repository"
 export interface AttendanceService {
   canAttend(eventId: EventId): Promise<Date | undefined>
   registerForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
-  deregisterAttendee(userId: UserId, attendanceId: AttendanceId): Promise<Attendee>
-  registerForAttendance(userId: UserId, attendanceId: AttendanceId, attended: boolean): Promise<Attendee | undefined>
+  deregisterAttendee(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
+  registerForAttendance(userId: UserId, attendanceId: string, attended: boolean): Promise<Attendee | undefined>
   addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string): Promise<Attendee | undefined>
 }
 
