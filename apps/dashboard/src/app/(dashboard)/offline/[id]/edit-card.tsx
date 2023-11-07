@@ -1,6 +1,6 @@
 import { type FC } from "react"
+import { type OfflineWrite } from "@dotkomonline/types"
 import { useOfflineDetailsContext } from "./provider"
-import { type OfflineWrite } from "../../../../../../../packages/types/src/offline"
 import { useEditOfflineMutation } from "../../../../modules/offline/mutations/use-edit-offline-mutation"
 import { useS3UploadFile } from "../../../../modules/offline/use-s3-upload-file"
 import { useOfflineWriteForm } from "../write-form"
