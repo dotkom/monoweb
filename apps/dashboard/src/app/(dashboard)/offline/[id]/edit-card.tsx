@@ -21,8 +21,8 @@ export const OfflineEditCard: FC = () => {
 
       const toSave: Partial<OfflineWrite> = {
         ...data,
-        fileUrl: fileUrl || data.fileUrl, // Preserving existing URL if no new file uploaded
-        imageUrl: imageUrl || data.imageUrl, // Preserving existing URL if no new image uploaded
+        fileUrl: fileUrl ?? data.fileUrl, // Preserving existing URL if no new file uploaded
+        imageUrl: imageUrl ?? data.imageUrl, // Preserving existing URL if no new image uploaded
       }
 
       edit.mutate({
