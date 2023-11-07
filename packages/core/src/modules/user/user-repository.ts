@@ -10,7 +10,7 @@ export interface UserRepository {
   getBySubject(cognitoSubject: string): Promise<User | undefined>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User | undefined>
+  update(id: UserId, data: UserWrite): Promise<User>
   search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
