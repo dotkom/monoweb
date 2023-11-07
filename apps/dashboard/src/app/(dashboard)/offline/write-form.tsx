@@ -2,7 +2,10 @@ import { z } from "zod"
 import { createDateTimeInput, createFileInput, createTextInput, useFormBuilder } from "src/app/form"
 import { OfflineWriteSchema } from "../../../../../../packages/types/src/offline"
 
-const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {}
+const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
+  fileUrl: null,
+  imageUrl: null,
+}
 
 interface UseOfflineWriteFormProps {
   onSubmit(data: FormValidationSchema): void
@@ -12,6 +15,9 @@ interface UseOfflineWriteFormProps {
 
 export const FormValidationSchema = OfflineWriteSchema.extend({
   file: z.instanceof(File).optional(),
+  image: z.instanceof(File).optional(),
+  fileUrl: z.string().nullable(),
+  imageUrl: z.string().nullable(),
 })
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
@@ -36,11 +42,13 @@ export const useOfflineWriteForm = ({
       }),
       file: createFileInput({
         label: "Fil",
-        placeholder: "s3 link",
+        placeholder: "Last opp",
+        existingFileUrl: defaultValues.fileUrl ?? undefined,
       }),
-      image: createTextInput({
+      image: createFileInput({
         label: "Bilde",
-        placeholder: "s3 link",
+        placeholder: "Last opp",
+        existingFileUrl: defaultValues.imageUrl ?? undefined,
       }),
     },
   })

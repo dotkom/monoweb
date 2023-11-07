@@ -42,6 +42,7 @@
     }
   },
   "globalEnv": [
+    "S3_BUCKET_MONOWEB",
     "NODE_ENV",
     "WEB_COGNITO_CLIENT_ID",
     "WEB_COGNITO_CLIENT_SECRET",

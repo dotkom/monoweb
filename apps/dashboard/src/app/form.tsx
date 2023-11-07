@@ -19,6 +19,9 @@ import {
   type TagsInputProps,
   type TextInputProps,
   type TextareaProps,
+  Text,
+  Box,
+  Anchor,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import { type FC } from "react"
@@ -194,21 +197,35 @@ export function createTextInput<F extends FieldValues>({
 
 export function createFileInput<F extends FieldValues>({
   ...props
-}: Omit<FileInputProps, "error">): InputProducerResult<F> {
+}: Omit<FileInputProps, "error"> & { existingFileUrl?: string }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
+    console.log(props)
     return (
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <FileInput
-            {...props}
-            value={field.value}
-            onChange={(value) => field.onChange({ target: { value } })}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-          />
+      <Box>
+        <Text>{props.label}</Text>
+        {props.existingFileUrl ? (
+          <Anchor href={props.existingFileUrl} mb="sm" display="block">
+            Link til ressurs
+          </Anchor>
+        ) : (
+          <Text mb="sm" fs="italic">
+            Ingen fil lastet opp
+          </Text>
         )}
-      ></Controller>
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <FileInput
+              {...props}
+              value={field.value}
+              onChange={(value) => field.onChange({ target: { value } })}
+              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+              label=""
+            />
+          )}
+        ></Controller>
+      </Box>
     )
   }
 }
@@ -259,6 +276,8 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     resolver: zodResolver(schema),
     defaultValues,
   })
+
+  console.log(form.formState.errors)
 
   const components = entriesOf(fields).map(([name, fc]) => {
     if (!fc) {

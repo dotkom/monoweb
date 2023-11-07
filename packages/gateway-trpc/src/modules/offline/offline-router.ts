@@ -9,7 +9,7 @@ export const offlineRouter = t.router({
     .input(
       z.object({
         id: OfflineSchema.shape.id,
-        input: OfflineWriteSchema,
+        input: OfflineWriteSchema.partial(),
       })
     )
     .mutation(async ({ input: changes, ctx }) => ctx.offlineService.update(changes.id, changes.input)),

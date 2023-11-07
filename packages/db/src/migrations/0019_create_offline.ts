@@ -5,8 +5,8 @@ export async function up(db: Kysely<any>) {
   await createTableWithDefaults("offline", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("title", sql`text`, (col) => col.notNull())
     .addColumn("published", sql`timestamptz`, (col) => col.notNull())
-    .addColumn("file", sql`text`, (col) => col.notNull())
-    .addColumn("image", sql`text`, (col) => col.notNull())
+    .addColumn("file", sql`text`)
+    .addColumn("image", sql`text`)
     .execute()
 }
 

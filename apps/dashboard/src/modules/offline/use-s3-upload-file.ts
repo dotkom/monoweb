@@ -2,10 +2,10 @@ import { s3UploadFile } from "../../utils/s3-upload-file"
 import { trpc } from "../../utils/trpc"
 
 export const useS3UploadFile = () => {
-  const url = trpc.offline.getS3UploadLink.useMutation()
+  const mutation = trpc.offline.getS3UploadLink.useMutation()
 
   return async (file: File) => {
-    const stuffNeededToUpload = await url.mutateAsync({
+    const stuffNeededToUpload = await mutation.mutateAsync({
       filename: `${file.name}`,
       mimeType: file.type,
     })

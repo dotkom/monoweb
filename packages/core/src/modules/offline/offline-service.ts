@@ -1,4 +1,5 @@
 import { type Offline, type OfflineId, type OfflineWrite } from "@dotkomonline/types"
+import { env } from "@dotkomonline/env"
 import { type OfflineRepository } from "./offline-repository"
 import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
@@ -15,7 +16,7 @@ export interface OfflineService {
   get(id: OfflineId): Promise<Offline>
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
-  update(id: OfflineId, payload: OfflineWrite): Promise<Offline>
+  update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline>
   getPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
 }
 
@@ -43,13 +44,13 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async update(id: OfflineId, payload: OfflineWrite): Promise<Offline> {
+  async update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline> {
     const offline = await this.offlineRepository.update(id, payload)
     return offline
   }
 
   async getPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    const link = await this.s3Repository.getPresignedPostData("skog-testing", filename, mimeType, 10)
+    const link = await this.s3Repository.getPresignedPostData(env.S3_BUCKET_MONOWEB, filename, mimeType, 10)
     return link
   }
 }
