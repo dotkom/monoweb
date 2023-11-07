@@ -27,16 +27,16 @@ export const OfflineEditCard: FC = () => {
         title: data.title,
         published: data.published,
         id: data.id,
-        file,
-        image,
+        fileUrl: file,
+        imageUrl: image,
       }
 
       if (file === null) {
-        delete toSave.file
+        delete toSave.fileUrl
       }
 
       if (image) {
-        delete toSave.image
+        delete toSave.imageUrl
       }
 
       edit.mutate({
@@ -49,9 +49,9 @@ export const OfflineEditCard: FC = () => {
     defaultValues: {
       title: offline.title,
       published: offline.published,
-      imageUrl: offline.image,
+      imageUrl: offline.imageUrl,
       id: offline.id,
-      fileUrl: offline.file,
+      fileUrl: offline.fileUrl,
     },
   })
   return <FormComponent />

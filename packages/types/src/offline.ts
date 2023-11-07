@@ -4,8 +4,8 @@ export const OfflineSchema = z.object({
   id: z.string().ulid(),
   title: z.string().max(1000).min(1),
   published: z.date(),
-  file: z.string().nullable(), // s3 link
-  image: z.string().nullable(), // s3 link
+  fileUrl: z.string().nullable(), // s3 link
+  imageUrl: z.string().nullable(), // s3 link
 })
 
 export const OfflineWriteSchema = OfflineSchema.partial({

@@ -12,7 +12,6 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
 
   const FormComponent = useOfflineWriteForm({
     onSubmit: async (data) => {
-      console.log("submitting", data)
       let file = null
       if (data.file !== undefined) {
         file = await upload(data.file)
@@ -27,8 +26,8 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         title: data.title,
         published: data.published,
         id: data.id,
-        file,
-        image,
+        fileUrl: file,
+        imageUrl: image,
       }
 
       console.log(toSave)
