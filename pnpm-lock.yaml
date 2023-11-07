@@ -682,6 +682,12 @@ importers:
 
   packages/core:
     dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.441.0
+        version: 3.441.0
+      '@aws-sdk/s3-presigned-post':
+        specifier: ^3.441.0
+        version: 3.441.0
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db

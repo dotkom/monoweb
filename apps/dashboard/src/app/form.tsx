@@ -196,20 +196,6 @@ export function createFileInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error">): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
-    // const onChange1: FileInputProps["onChange"] = (event) => {
-    //   if (!event) {
-    //     return
-    //   }
-
-    //   console.log(event)
-
-    //   registerProps.onChange({
-    //     target: event,
-    //   })
-    // }
-
-    // const { onChange: _, ...restProps } = registerProps
-
     return (
       <Controller
         control={control}

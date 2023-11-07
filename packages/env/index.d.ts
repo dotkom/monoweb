@@ -1,4 +1,5 @@
 export declare type EnvironmentKeys =
+  | "AWS_REGION"
   | "DASHBOARD_COGNITO_CLIENT_ID"
   | "DASHBOARD_COGNITO_CLIENT_SECRET"
   | "DASHBOARD_COGNITO_ISSUER"

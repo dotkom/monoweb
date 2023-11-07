@@ -19,6 +19,7 @@ export const createEnvironment = () =>
       VERCEL_URL: environmentVariableSchema.optional(),
       DATABASE_URL: environmentVariableSchema,
       NEXTAUTH_SECRET: environmentVariableSchema,
+      AWS_REGION: environmentVariableSchema,
 
       TRIKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       TRIKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
@@ -48,6 +49,7 @@ export const createEnvironment = () =>
       NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
       VERCEL_URL: process.env.VERCEL_URL,
       NEXT_PUBLIC_VERCEL_URL: process.env.VERCEL_URL,
+      AWS_REGION: process.env.AWS_REGION,
 
       TRIKOM_STRIPE_PUBLIC_KEY: process.env.TRIKOM_STRIPE_PUBLIC_KEY,
       TRIKOM_STRIPE_SECRET_KEY: process.env.TRIKOM_STRIPE_SECRET_KEY,

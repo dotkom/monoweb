@@ -19,7 +19,7 @@ export const useCreateOfflineMutation = () => {
         message: "Ressursen har blitt opprettet.",
       })
       utils.offline.all.invalidate()
-      router.push(`/job-listing/${data.id}`)
+      router.push(`/offline/${data.id}`)
     },
     onError: (err) => {
       notification.fail({
