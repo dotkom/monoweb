@@ -1,11 +1,11 @@
 export {
   Select,
   SelectTrigger,
+  SelectValue,
   SelectContent,
   SelectItem,
   SelectLabel,
   SelectSeparator,
-  SelectShortcut,
   SelectGroup,
   SelectPortal,
 } from "./Select"
