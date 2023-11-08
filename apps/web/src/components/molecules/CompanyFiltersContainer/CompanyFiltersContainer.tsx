@@ -1,11 +1,12 @@
-import { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import {CompanyFilter} from "../CompanyFilter/CompanyFilter"
 import {FilterItems} from "../CompanyFilter/filters"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectPortal, SelectTrigger } from "@dotkomonline/ui"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectValue, SelectPortal, SelectTrigger } from "@dotkomonline/ui"
 
 export interface CompanyFiltersContainer {
 
 }
+
 const filterJobs: FilterItems[] = [
   {
     title: "Jobbtyper",
@@ -17,7 +18,7 @@ const filterJobs: FilterItems[] = [
     ],
   },
 ]
-const Places = [
+const places = [
       "Oslo",
       "Bergen",
       "Trondheim",
