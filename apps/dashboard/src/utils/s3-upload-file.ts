@@ -1,7 +1,6 @@
 // Expected response: 204 No Content. Returns resource URL if successful.
 export async function s3UploadFile(file: File, fields: Record<string, string>, url: string): Promise<string> {
   try {
-    console.log(file, fields, url)
     const formData = new FormData()
     Object.entries(fields).forEach(([key, value]) => {
       formData.append(key, value)
@@ -19,8 +18,6 @@ export async function s3UploadFile(file: File, fields: Record<string, string>, u
     if (response.status !== 204) {
       throw new Error(`File upload failed: ${response.statusText}`)
     }
-
-    console.log(response)
 
     const resourceURL = response.headers.get("Location")
 

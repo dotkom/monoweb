@@ -32,13 +32,7 @@ export const OfflineEditCard: FC = () => {
         },
       })
     },
-    defaultValues: {
-      title: offline.title,
-      published: offline.published,
-      imageUrl: offline.imageUrl,
-      id: offline.id,
-      fileUrl: offline.fileUrl,
-    },
+    defaultValues: offline,
   })
   return <FormComponent />
 }

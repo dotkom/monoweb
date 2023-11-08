@@ -26,8 +26,6 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         imageUrl,
       }
 
-      console.log(toSave)
-
       create.mutate({
         ...toSave,
       })

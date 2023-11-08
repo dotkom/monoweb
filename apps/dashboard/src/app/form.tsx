@@ -199,7 +199,6 @@ export function createFileInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & { existingFileUrl?: string }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
-    console.log(props)
     return (
       <Box>
         <Text>{props.label}</Text>
@@ -276,8 +275,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     resolver: zodResolver(schema),
     defaultValues,
   })
-
-  console.log(form.formState.errors)
 
   const components = entriesOf(fields).map(([name, fc]) => {
     if (!fc) {
