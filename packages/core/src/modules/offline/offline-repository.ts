@@ -23,7 +23,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
   async update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline> {
     const result = await this.db
       .updateTable("offline")
-      .set(data)
+      .set({ ...data, updatedAt: new Date() })
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
