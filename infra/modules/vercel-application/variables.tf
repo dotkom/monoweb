@@ -25,8 +25,8 @@ variable "root_directory" {
 
 variable "environment_variables" {
   description = "Environment variables to the provisioned website"
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 variable "preset" {

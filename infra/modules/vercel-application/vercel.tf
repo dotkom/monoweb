@@ -18,7 +18,7 @@ resource "vercel_project_environment_variable" "environment_variables" {
   project_id = vercel_project.this.id
   key        = each.key
   value      = sensitive(each.value)
-  target = ["preview", "development", "production"]
+  target     = ["preview", "development", "production"]
 }
 
 resource "vercel_project_domain" "domain" {

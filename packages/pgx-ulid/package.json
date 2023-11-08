@@ -1,0 +1,9 @@
+{
+  "name": "@dotkomonline/pgx-ulid",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "docker:build": "sh ./build.sh",
+    "docker:push:prd": "docker tag pgx_ulid:0.1.3 public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3 && docker push public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3"
+  }
+}
