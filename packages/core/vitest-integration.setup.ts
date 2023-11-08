@@ -20,6 +20,6 @@ beforeEach(async () => {
   containers.push(container)
 })
 
-process.on("exit", async () => {
+process.on("beforeExit", async () => {
   await Promise.all(containers.map(async (container) => container.stop()))
 })

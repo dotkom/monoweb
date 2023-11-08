@@ -51,7 +51,7 @@ export const getAuthOptions = ({
       if (token.sub) {
         const user = await core.userService.getUserBySubject(token.sub)
         if (user === undefined) {
-          throw new Error(`Found no matching user for ${token.sub}`)
+          throw new NotFoundError(`Found no matching user for ${token.sub}`)
         }
         session.user.id = user.id
         session.sub = token.sub
