@@ -1,3 +1,5 @@
+import { cn } from "@dotkomonline/ui"
+
 interface IStudentProgressComponent {
   year: number
   id: number
@@ -9,12 +11,16 @@ interface IStudentProgress {
 
 const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => (
   <div
-    className={`${year <= id ? "border-[#153e75]" : "border-[#36b37e]"}
-      flex h-[45px] w-[45px] items-center justify-around rounded-[50%]  border-[4px] border-solid max-sm:h-[30px] max-sm:w-[30px]`}
+    className={cn(
+      year <= id ? "border-[#153e75]" : "border-[#36b37e]",
+      "flex h-[45px] w-[45px] items-center justify-around rounded-[50%]  border-[4px] border-solid max-sm:h-[30px] max-sm:w-[30px]"
+    )}
   >
     <div
-      className={`${year < id ? "text-[#153e75]" : year === id ? "bg-[#153e75] text-white" : "bg-[#36b37e] text-white"}
-          flex h-[20px] w-[20px] justify-center rounded-[50%] max-sm:h-[10px] max-sm:w-[10px] max-sm:items-center max-sm:p-2 max-sm:text-center`}
+      className={cn(
+        year < id ? "text-[#153e75]" : year === id ? "bg-[#153e75] text-white" : "bg-[#36b37e] text-white",
+        "flex h-[20px] w-[20px] justify-center rounded-[50%] max-sm:h-[10px] max-sm:w-[10px] max-sm:items-center max-sm:p-2 max-sm:text-center"
+      )}
     >
       <p className="max-sm:text-[1rem]">{id}</p>
     </div>
@@ -23,12 +29,17 @@ const ProgressCircle: React.FC<IStudentProgressComponent> = ({ year, id }) => (
 
 const HorizontalLine: React.FC<IStudentProgressComponent> = ({ year, id }) => (
   <div
-    className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} m-[-1px] h-[4px] w-[30px] self-center max-sm:w-[20px]`}
+    className={cn(
+      year <= id ? "bg-[#153e75]" : "bg-[#36b37e]",
+      "m-[-1px] h-[4px] w-[30px] self-center max-sm:w-[20px]"
+    )}
   />
 )
 
 const VerticalLine: React.FC<IStudentProgressComponent> = ({ year, id }) => (
-  <div className={`${year <= id ? "bg-[#153e75]" : "bg-[#36b37e]"} z-10 h-10 w-1 self-center sm:h-[50px] sm:w-[4px]`} />
+  <div
+    className={cn(year <= id ? "bg-[#153e75]" : "bg-[#36b37e]", "z-10 h-10 w-1 self-center sm:h-[50px] sm:w-[4px]")}
+  />
 )
 
 const StudentProgress: React.FC<IStudentProgress> = ({ year }) => (
