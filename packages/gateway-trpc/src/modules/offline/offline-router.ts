@@ -17,14 +17,12 @@ export const offlineRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.offlineService.getAll(input.take, input.cursor)),
   get: t.procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.get(input)),
-  getS3UploadLink: protectedProcedure
+  createPresignedPost: protectedProcedure
     .input(
       z.object({
         filename: z.string(),
         mimeType: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.offlineService.getPresignedPost(`offlines/${input.filename}`, input.mimeType)
-    ),
+    .mutation(async ({ input, ctx }) => ctx.offlineService.createPresignedPost(input.filename, input.mimeType)),
 })

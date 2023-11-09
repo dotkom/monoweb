@@ -17,7 +17,7 @@ export interface OfflineService {
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
   update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline>
-  getPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
+  createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
 }
 
 export class OfflineServiceImpl implements OfflineService {
@@ -49,8 +49,7 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async getPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    const link = await this.s3Repository.getPresignedPostData(env.S3_BUCKET_MONOWEB, filename, mimeType, 10)
-    return link
+  async createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
+    return this.s3Repository.createPresignedPost(env.S3_BUCKET_MONOWEB, `offlines/${filename}`, mimeType, 60) // 60 MB file limit
   }
 }

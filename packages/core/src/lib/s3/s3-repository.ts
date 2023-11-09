@@ -1,13 +1,13 @@
-import { type PresignedPost, createPresignedPost } from "@aws-sdk/s3-presigned-post"
+import { type PresignedPost, createPresignedPost as _createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import { S3Client } from "@aws-sdk/client-s3"
 import { env } from "@dotkomonline/env"
 
 export interface S3Repository {
-  getPresignedPostData(bucket: string, filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
+  createPresignedPost(bucket: string, filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
 }
 
 export class s3RepositoryImpl implements S3Repository {
-  async getPresignedPostData(
+  async createPresignedPost(
     bucket: string,
     filepath: string,
     mimeType: string,
@@ -17,7 +17,7 @@ export class s3RepositoryImpl implements S3Repository {
       region: env.AWS_REGION,
     })
 
-    return await createPresignedPost(s3, {
+    return await _createPresignedPost(s3, {
       Bucket: bucket,
       Key: filepath,
       Fields: {
