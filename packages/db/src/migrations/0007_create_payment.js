@@ -1,7 +1,8 @@
-import { type Kysely, sql } from "kysely"
-import { createTableWithDefaults } from "../utils"
+import { sql } from "kysely"
+import { createTableWithDefaults } from "../utils.js"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema.createType("payment_provider").asEnum(["STRIPE"]).execute()
   await db.schema.createType("product_type").asEnum(["EVENT"]).execute()
   await db.schema.createType("payment_status").asEnum(["UNPAID", "PAID", "REFUNDED"]).execute()
@@ -30,7 +31,8 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+/** @param db {import('kysely').Kysely */
+export async function down(db) {
   await db.schema.dropTable("product_payment_provider").execute()
   await db.schema.dropTable("payment").execute()
   await db.schema.dropTable("product").execute()

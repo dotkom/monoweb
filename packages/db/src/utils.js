@@ -1,15 +1,9 @@
-import { type SchemaModule, sql } from "kysely"
-
-interface DefaultOptions {
-  id?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-}
+import { sql } from "kysely"
 
 /**
  * Creates a table with default common fields.
  */
-export const createTableWithDefaults = (tableName: string, options: DefaultOptions, schema: SchemaModule) => {
+export const createTableWithDefaults = (tableName, options, schema) => {
   let table = schema.createTable(tableName)
   if (options.id) {
     table = table.addColumn("id", sql`ulid`, (col) => col.primaryKey().defaultTo(sql`gen_ulid()`))

@@ -1,7 +1,8 @@
-import { type Kysely, sql } from "kysely"
-import { createTableWithDefaults } from "../utils"
+import { sql } from "kysely"
+import { createTableWithDefaults } from "../utils.js"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema.createType("refund_request_status").asEnum(["PENDING", "APPROVED", "REJECTED"]).execute()
 
   await db.schema
@@ -26,7 +27,8 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function down(db) {
   await db.schema.alterTable("payment").dropColumn("payment_provider_order_id").execute()
 
   await db.schema

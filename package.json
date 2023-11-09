@@ -16,6 +16,7 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
+    "test:it": "turbo run test:it",
     "dev": "dotenv -e .env -- turbo run dev",
     "migrate": "dotenv -e .env -- turbo run migrate && cd packages/db && pnpm generate-types",
     "migrate-down": "dotenv -e .env -- turbo run migrate -- down && cd packages/db && pnpm generate-types",

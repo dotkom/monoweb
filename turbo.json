@@ -19,6 +19,9 @@
       "dependsOn": ["lint", "type-check"],
       "outputs": []
     },
+    "test:it": {
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },

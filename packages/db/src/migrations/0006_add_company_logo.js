@@ -1,9 +1,9 @@
-import { type Kysely } from "kysely"
-
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema.alterTable("company").addColumn("image", "text").execute()
 }
 
-export async function down(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function down(db) {
   await db.schema.alterTable("company").dropColumn("image").execute()
 }

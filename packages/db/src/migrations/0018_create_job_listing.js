@@ -1,7 +1,8 @@
-import { type Kysely, sql } from "kysely"
-import { createTableWithDefaults } from "../utils"
+import { sql } from "kysely"
+import { createTableWithDefaults } from "../utils.js"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await createTableWithDefaults("job_listing", { id: true, createdAt: true }, db.schema)
     .addColumn("company_id", sql`ulid`, (col) => col.references("company.id").onDelete("cascade"))
     .addColumn("title", sql`character varying(100)`, (col) => col.notNull())
@@ -27,7 +28,8 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+/** @param db {import('kysely').Kysely */
+export async function down(db) {
   await db.schema.dropTable("job_listing_location_link").execute()
   await db.schema.dropTable("job_listing_location").execute()
   await db.schema.dropTable("job_listing").execute()

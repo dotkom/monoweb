@@ -10,11 +10,10 @@ const defaultExclude = [
 
 export default defineConfig({
   test: {
-    exclude: defaultExclude.concat("**/.e2e-spec.ts"),
-    globals: true,
-    environment: "node",
-    coverage: {
-      reporter: ["lcov"],
-    },
+    exclude: defaultExclude.concat("**/*.spec.ts"),
+    include: ["**/*.e2e-spec.ts"],
+    threads: false,
+    mockReset: true,
+    setupFiles: ["./vitest-integration.setup.ts"],
   },
 })

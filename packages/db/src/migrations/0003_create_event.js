@@ -1,7 +1,8 @@
-import { type Kysely, sql } from "kysely"
-import { createTableWithDefaults } from "../utils"
+import { sql } from "kysely"
+import { createTableWithDefaults } from "../utils.js"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await db.schema.createType("event_status").asEnum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]).execute()
 
   await createTableWithDefaults("event", { id: true, createdAt: true, updatedAt: true }, db.schema)
@@ -44,7 +45,8 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+/** @param db {import('kysely').Kysely */
+export async function down(db) {
   await db.schema.dropTable("attendee").execute()
   await db.schema.dropTable("attendance").execute()
   await db.schema.dropTable("event_company").execute()

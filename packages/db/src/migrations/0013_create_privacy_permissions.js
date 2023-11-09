@@ -1,7 +1,8 @@
-import { type Kysely, sql } from "kysely"
-import { createTableWithDefaults } from "../utils"
+import { sql } from "kysely"
+import { createTableWithDefaults } from "../utils.js"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await createTableWithDefaults("privacy_permissions", { createdAt: true, updatedAt: true }, db.schema)
     .addColumn("user_id", sql`ulid`, (col) => col.notNull().unique().references("ow_user.id").onDelete("cascade"))
     .addColumn("profile_visible", "boolean", (col) => col.notNull().defaultTo(true))
@@ -13,6 +14,7 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function down(db) {
   await db.schema.dropTable("privacy_permissions").execute()
 }
