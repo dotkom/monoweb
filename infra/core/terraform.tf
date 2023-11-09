@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "monoweb-terraform"
-    key    = "vengeful-vineyard.tfstate"
+    key    = "core.tfstate"
     region = "eu-north-1"
   }
 
@@ -12,21 +12,13 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.23"
     }
-    doppler = {
-      source  = "DopplerHQ/doppler"
-      version = "~> 1.3.0"
-    }
-    neon = {
-      source  = "dotkom/neon"
-      version = "~> 0.1.1"
-    }
   }
 }
 
 locals {
+  # This module only has the production environment, as this module provisions core infrastructure independent of
+  # environments
   valid_workspaces = {
-    dev = 1
-    stg = 1
     prd = 1
   }
   valid_workspaces_current = local.valid_workspaces[terraform.workspace]
