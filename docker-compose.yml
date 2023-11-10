@@ -3,7 +3,7 @@ version: "3.2"
 services:
   db:
     container_name: ow_db
-    image: postgres
+    image: postgres@sha256:a80d0c1b119cf3d6bab27f72782f16e47ab8534ced937fa813ec2ab26e1fd81e
     restart: always
     environment:
       POSTGRES_PASSWORD: owpassword123
