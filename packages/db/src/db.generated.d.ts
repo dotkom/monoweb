@@ -157,6 +157,16 @@ export interface NotificationPermissions {
   userId: string
 }
 
+export interface Offline {
+  createdAt: Generated<Timestamp>
+  fileUrl: string | null
+  id: Generated<string>
+  imageUrl: string | null
+  published: Timestamp
+  title: string
+  updatedAt: Generated<Timestamp>
+}
+
 export interface OwUser {
   cognitoSub: string
   createdAt: Generated<Timestamp>
@@ -235,6 +245,7 @@ export interface DB {
   jobListingLocationLink: JobListingLocationLink
   mark: Mark
   notificationPermissions: NotificationPermissions
+  offline: Offline
   owUser: OwUser
   payment: Payment
   personalMark: PersonalMark

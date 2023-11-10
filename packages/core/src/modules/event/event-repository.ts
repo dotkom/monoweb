@@ -26,7 +26,7 @@ export class EventRepositoryImpl implements EventRepository {
   async update(id: EventId, data: EventInsert): Promise<Event> {
     const event = await this.db
       .updateTable("event")
-      .set(data)
+      .set({ ...data, updatedAt: new Date() })
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
