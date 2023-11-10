@@ -1,4 +1,4 @@
-import { type ServiceLayer } from "@dotkomonline/core"
+import { type ServiceLayer, NotFoundError } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
 import CognitoProvider from "next-auth/providers/cognito"
 
