@@ -2,6 +2,7 @@ import { type FC } from "react"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import { type OfflineWrite } from "@dotkomonline/types"
 import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"
+import { type File } from "../../../../stubs/file/File"
 import { useOfflineWriteForm } from "../../../app/(dashboard)/offline/write-form"
 import { useS3UploadFile } from "../use-s3-upload-file"
 import { useQueryNotification } from "../../../app/notifications"
@@ -28,7 +29,6 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         })
       }
 
-      // const imageUrl = await handleUpload(data.image)
       try {
         imageUrl = await handleUpload(data.image)
       } catch (e) {
