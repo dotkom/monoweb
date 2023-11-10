@@ -13,7 +13,6 @@ export default async function DashboardPage() {
   return (
     <Flex justify="center" align="center">
       <Container mt="xl">
-        HELLO WORLD
         <Card>
           <Flex direction="column" gap="2">
             <Title>Logg inn</Title>
