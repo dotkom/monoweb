@@ -14,8 +14,8 @@ interface UseOfflineWriteFormProps {
 }
 
 export const FormValidationSchema = OfflineWriteSchema.extend({
-  file: z.instanceof(File).optional(),
-  image: z.instanceof(File).optional(),
+  file: z.any().optional(),
+  image: z.any().optional(),
   fileUrl: z.string().nullable(),
   imageUrl: z.string().nullable(),
 })
