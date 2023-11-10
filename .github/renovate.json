@@ -4,7 +4,10 @@
   "packageRules": [
     {
       "matchPackagePatterns": ["^@dotkomonline/"],
-      "enabled": false
+      "enabled": false,
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
     },
     {
       "description": "Ignore nodejs and pnpm",
@@ -17,6 +20,4 @@
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": false,
-  "automergeType": "branch"
 }
