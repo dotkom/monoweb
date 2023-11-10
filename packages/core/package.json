@@ -22,9 +22,8 @@
     "stripe": "^13.11.0",
     "zod": "^3.22.4",
     "@aws-sdk/client-s3": "^3.441.0",
-    "@aws-sdk/s3-presigned-post": "^3.441.0"
-    "ulid": "^2.3.0",
-    "zod": "^3.22.4"
+    "@aws-sdk/s3-presigned-post": "^3.441.0",
+    "ulid": "^2.3.0"
   },
   "peerDependencies": {
     "next": "^13.5.6"
