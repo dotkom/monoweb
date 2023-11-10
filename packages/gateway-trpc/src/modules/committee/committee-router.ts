@@ -8,7 +8,7 @@ export const committeeRouter = t.router({
     .mutation(async ({ input, ctx }) => ctx.committeeService.createCommittee(input)),
   all: t.procedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.committeeService.getCommittees(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => ctx.committeeService.getCommittees(input)),
   get: t.procedure
     .input(CommitteeSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.committeeService.getCommittee(input)),
