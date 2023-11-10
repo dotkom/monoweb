@@ -23,5 +23,5 @@ export declare type EnvironmentKeys =
 
 export declare type Environment = Record<EnvironmentKeys, string>
 
-export declare const createEnvironment: () => Environment
+export declare const createEnvironment: (skipValidation?: boolean) => Environment
 export declare const env: Environment

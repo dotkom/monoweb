@@ -3,7 +3,7 @@
   "extends": ["config:base"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@dotkomonline/", "web", "monorepo", "onlineweb-cms", "db-migrator"],
+      "matchPackagePatterns": ["^@dotkomonline/"],
       "enabled": false
     },
     {

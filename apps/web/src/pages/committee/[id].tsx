@@ -24,9 +24,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }),
     transformer,
   })
-  const companies = await ssg.committee.all.fetch()
+  const committees = await ssg.committee.all.fetch({
+    take: 999,
+  })
   return {
-    paths: companies.map(({ id }) => ({ params: { id } })),
+    paths: committees.data.map(({ id }) => ({ params: { id } })),
     fallback: "blocking",
   }
 }
