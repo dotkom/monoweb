@@ -4,6 +4,7 @@ import { useOfflineDetailsContext } from "./provider"
 import { useEditOfflineMutation } from "../../../../modules/offline/mutations/use-edit-offline-mutation"
 import { useS3UploadFile } from "../../../../modules/offline/use-s3-upload-file"
 import { useOfflineWriteForm } from "../write-form"
+import { type File } from "../../../../../stubs/file/File"
 
 export const OfflineEditCard: FC = () => {
   const { offline } = useOfflineDetailsContext()
