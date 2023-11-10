@@ -1,13 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "configMigration": true,
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests", "docker:pinDigests"],
   "packageRules": [
     {
       "matchPackagePatterns": ["^@dotkomonline/"],
-      "enabled": false,
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchCurrentVersion": "!/^0/",
-      "automerge": true
+      "enabled": false
     },
     {
       "description": "Ignore nodejs and pnpm",
@@ -20,4 +18,6 @@
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
+  "automerge": true,
+  "automergeType": "branch"
 }
