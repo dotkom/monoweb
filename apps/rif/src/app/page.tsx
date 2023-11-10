@@ -15,7 +15,6 @@ export default function Page() {
     defaultValues: {
       requestsCompanyPresentation: false,
       requestsCourseEvent: false,
-      requestsJobListing: false,
       requestsInstagramTakeover: false,
       requestsTechTalksParticipation: false,
       requestsExcursionParticipation: false,
@@ -45,7 +44,12 @@ export default function Page() {
 
         <Text>Merk at skjemaet kun er for å melde interesse og fungerer da ikke som påmelding.</Text>
 
-        <Text>Andre henvendelser kan sendes på mail til bedriftskontakt@online.ntnu.no.</Text>
+        <Text>
+          På våre nettsider har vi en karriereside, hvor vi publiserer stillingsannonser på vegne av bedrifter som
+          ønsker å fremme ledige stillinger. Dersom dette er av interesse, ønsker vi gjerne å motta henvendelser via
+          e-post på <a href="mailto:bedriftskontrakt@online.ntnu.no">bedriftskontrakt@online.ntnu.no</a>. Eventuelle
+          andre henvendelser kan også rettes til samme e-postadresse.
+        </Text>
       </Section>
       <FormProvider {...form}>
         <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>

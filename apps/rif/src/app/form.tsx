@@ -9,16 +9,6 @@ import { type FormSchema } from "./form-schema"
 import { CheckboxWithTooltip } from "./checkbox"
 import { Section } from "../components/section"
 
-const jobListingTooltip = (
-  <Section>
-    <Text>
-      På <a href="https://online.ntnu.no/career">våre nettsider</a> har vi en karriereside, hvor vi publiserer
-      stillingsannonser på vegne av bedrifter som ønsker å fremme ledige stillinger. Dersom dette er av interesse,
-      ønsker vi gjerne å motta henvendelser via e-post på bedriftskontrakt@online.ntnu.no.
-    </Text>
-  </Section>
-)
-
 const instagramTakeoverTooltip = (
   <Section>
     <Text>
@@ -132,7 +122,6 @@ export const Form: FC = () => {
           render={({ field }) => <Checkbox label="Kurs" onCheckedChange={field.onChange} checked={field.value} />}
         />
 
-        <CheckboxWithTooltip name="requestsJobListing" label="Stillingsannonse" tooltip={jobListingTooltip} />
         <CheckboxWithTooltip
           name="requestsInstagramTakeover"
           label="Instagram Takeover"
