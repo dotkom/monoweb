@@ -24,3 +24,4 @@ export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<
 
   return queryBuilder.orderBy(sql`id`, "desc")
 }
+N
