@@ -6,44 +6,56 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+env:
+  DASHBOARD_COGNITO_CLIENT_ID: ${{ secrets.DASHBOARD_COGNITO_CLIENT_ID }}
+  DASHBOARD_COGNITO_CLIENT_SECRET: ${{ secrets.DASHBOARD_COGNITO_CLIENT_SECRET }}
+  DASHBOARD_COGNITO_ISSUER: ${{ secrets.DASHBOARD_COGNITO_ISSUER }}
+  WEB_COGNITO_CLIENT_ID: ${{ secrets.WEB_COGNITO_CLIENT_ID }}
+  WEB_COGNITO_CLIENT_SECRET: ${{ secrets.WEB_COGNITO_CLIENT_SECRET }}
+  WEB_COGNITO_ISSUER: ${{ secrets.WEB_COGNITO_ISSUER }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  TRIKOM_STRIPE_PUBLIC_KEY: ${{ secrets.TRIKOM_STRIPE_PUBLIC_KEY }}
+  TRIKOM_STRIPE_SECRET_KEY: ${{ secrets.TRIKOM_STRIPE_SECRET_KEY }}
+  TRIKOM_STRIPE_WEBHOOK_SECRET: ${{ secrets.TRIKOM_STRIPE_WEBHOOK_SECRET }}
+  FAGKOM_STRIPE_PUBLIC_KEY: ${{ secrets.FAGKOM_STRIPE_PUBLIC_KEY }}
+  FAGKOM_STRIPE_SECRET_KEY: ${{ secrets.FAGKOM_STRIPE_SECRET_KEY }}
+  FAGKOM_STRIPE_WEBHOOK_SECRET: ${{ secrets.FAGKOM_STRIPE_WEBHOOK_SECRET }}
+  S3_BUCKET_MONOWEB: ${{ secrets.S3_BUCKET_MONOWEB }}
+
 jobs:
   build:
     name: Build and Test
     timeout-minutes: 15
-    runs-on: ${{ matrix.os }}
-    # To use Remote Caching, uncomment the next lines and follow the steps below.
     # env:
     #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
     #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
+ 
+      - name: Cache turbo build setup
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.8.0
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: 18.18.0
+          cache: 'pnpm'
+ 
       - name: Install dependencies
         run: pnpm install
 
@@ -52,21 +64,7 @@ jobs:
       
       - name: Build
         run: pnpm run build
-        env:
-          DASHBOARD_COGNITO_CLIENT_ID: ${{ secrets.DASHBOARD_COGNITO_CLIENT_ID }}
-          DASHBOARD_COGNITO_CLIENT_SECRET: ${{ secrets.DASHBOARD_COGNITO_CLIENT_SECRET }}
-          DASHBOARD_COGNITO_ISSUER: ${{ secrets.DASHBOARD_COGNITO_ISSUER }}
-          WEB_COGNITO_CLIENT_ID: ${{ secrets.WEB_COGNITO_CLIENT_ID }}
-          WEB_COGNITO_CLIENT_SECRET: ${{ secrets.WEB_COGNITO_CLIENT_SECRET }}
-          WEB_COGNITO_ISSUER: ${{ secrets.WEB_COGNITO_ISSUER }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          TRIKOM_STRIPE_PUBLIC_KEY: ${{ secrets.TRIKOM_STRIPE_PUBLIC_KEY }}
-          TRIKOM_STRIPE_SECRET_KEY: ${{ secrets.TRIKOM_STRIPE_SECRET_KEY }}
-          TRIKOM_STRIPE_WEBHOOK_SECRET: ${{ secrets.TRIKOM_STRIPE_WEBHOOK_SECRET }}
-          FAGKOM_STRIPE_PUBLIC_KEY: ${{ secrets.FAGKOM_STRIPE_PUBLIC_KEY }}
-          FAGKOM_STRIPE_SECRET_KEY: ${{ secrets.FAGKOM_STRIPE_SECRET_KEY }}
-          FAGKOM_STRIPE_WEBHOOK_SECRET: ${{ secrets.FAGKOM_STRIPE_WEBHOOK_SECRET }}
-          S3_BUCKET_MONOWEB: ${{ secrets.S3_BUCKET_MONOWEB }}
+
+      - name: Test
+        run: pnpm run test
 
