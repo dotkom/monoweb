@@ -1,36 +1,41 @@
-import { type z } from "zod"
-import { type FC } from "react"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Button,
   Checkbox,
-  type CheckboxProps,
+  FileInput,
+  type FileInputProps,
   Flex,
   MultiSelect,
-  type MultiSelectProps,
   NumberInput,
   Select,
+  TagsInput,
+  TextInput,
+  Textarea,
+  type CheckboxProps,
+  type MultiSelectProps,
   type NumberInputProps,
   type SelectProps,
-  TagsInput,
   type TagsInputProps,
-  Textarea,
-  type TextareaProps,
-  TextInput,
   type TextInputProps,
+  type TextareaProps,
+  Text,
+  Box,
+  Anchor,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
+import { type FC } from "react"
 import {
-  type Control,
   Controller,
+  useForm,
+  type Control,
   type DefaultValues,
   type FieldValue,
-  type FormState,
-  useForm,
-  type UseFormRegister,
   type FieldValues,
+  type FormState,
+  type UseFormRegister,
 } from "react-hook-form"
+import { type z } from "zod"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
@@ -186,6 +191,40 @@ export function createTextInput<F extends FieldValues>({
         {...props}
         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
       />
+    )
+  }
+}
+
+export function createFileInput<F extends FieldValues>({
+  ...props
+}: Omit<FileInputProps, "error"> & { existingFileUrl?: string }): InputProducerResult<F> {
+  return function FormFileInput({ name, state, control }) {
+    return (
+      <Box>
+        <Text>{props.label}</Text>
+        {props.existingFileUrl ? (
+          <Anchor href={props.existingFileUrl} mb="sm" display="block">
+            Link til ressurs
+          </Anchor>
+        ) : (
+          <Text mb="sm" fs="italic">
+            Ingen fil lastet opp
+          </Text>
+        )}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <FileInput
+              {...props}
+              value={field.value}
+              onChange={(value) => field.onChange({ target: { value } })}
+              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+              label=""
+            />
+          )}
+        ></Controller>
+      </Box>
     )
   }
 }

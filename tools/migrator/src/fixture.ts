@@ -8,6 +8,7 @@ import { events } from "./fixtures/event"
 import { eventCompany } from "./fixtures/event-company"
 import { jobListingLocationLinks, jobListingLocations, jobListings } from "./fixtures/job-listing"
 import { marks } from "./fixtures/mark"
+import { offlines } from "./fixtures/offline"
 import { personalMarks } from "./fixtures/personal-mark"
 import { products } from "./fixtures/product"
 import { productPaymentProviders } from "./fixtures/product-payment-provider"
@@ -191,6 +192,13 @@ export const runFixtures = async () => {
   await db
     .insertInto("jobListingLocationLink")
     .values(jobListingLocationLinks)
+    .returning("id")
+    .onConflict((oc) => oc.column("id").doNothing())
+    .execute()
+
+  await db
+    .insertInto("offline")
+    .values(offlines)
     .returning("id")
     .onConflict((oc) => oc.column("id").doNothing())
     .execute()
