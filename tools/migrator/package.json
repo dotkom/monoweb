@@ -14,7 +14,7 @@
   "devDependencies": {
     "@dotkomonline/logger": "workspace:*",
     "@types/eslint": "^8.44.6",
-    "@types/pg": "^8.10.7",
+    "@types/pg": "^8.10.9",
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.52.0",
