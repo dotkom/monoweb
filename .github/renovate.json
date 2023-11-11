@@ -10,10 +10,7 @@
     {
       "description": "Ignore nodejs and pnpm",
       "matchPackageNames": ["node", "pnpm"],
-      "matchManagers": ["npm"],
-      "matchDepTypes": ["engines"],
-      "dependencyDashboardApproval": true,
-      "automerge": false
+      "enabled": false
     }
   ],
   "updateInternalDeps": true,
