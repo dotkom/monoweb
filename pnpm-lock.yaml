@@ -29,6 +29,9 @@ importers:
       turbo:
         specifier: ^1.10.16
         version: 1.10.16
+      turbo-ignore:
+        specifier: ^1.10.16
+        version: 1.10.16
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -15737,6 +15740,11 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /turbo-ignore@1.10.16:
+    resolution: {integrity: sha512-Xm2/pnXsunH2UQ3S92hQwRKiANNgXUhv2owqCFOmqwl3G2E+0yM2lSk+QLNYUu4XUqXkJrDv32GtZTDaPJ47vA==}
+    hasBin: true
+    dev: true
 
   /turbo-linux-64@1.10.16:
     resolution: {integrity: sha512-PpqEZHwLoizQ6sTUvmImcRmACyRk9EWLXGlqceogPZsJ1jTRK3sfcF9fC2W56zkSIzuLEP07k5kl+ZxJd8JMcg==}
