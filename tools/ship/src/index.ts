@@ -4,7 +4,7 @@ import { Command } from "commander"
 import { logger } from "./logger"
 import { type EnvironmentName, resolveContext } from "./config"
 import { build, getResolvedTag, push, tag } from "./docker"
-import { createClientContext, getEcrAuthorizationToken } from "./aws"
+import { createClientContext, getEcrAuthorizationToken, updateFunctionImage } from "./aws"
 
 const program = new Command("ship")
 
@@ -30,7 +30,8 @@ program
     logger.info("Pushing Docker image to AWS ECR Repository")
     await tag(context)
     await push(context, credentials)
-    logger.info("Push completed")
+    logger.info("Updating Lambda Function Code with latest image")
+    await updateFunctionImage(aws, context)
   })
 
 program.parse(process.argv)

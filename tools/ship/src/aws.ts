@@ -1,6 +1,9 @@
 import { ECRClient, GetAuthorizationTokenCommand } from "@aws-sdk/client-ecr"
 import invariant from "tiny-invariant"
-import { LambdaClient } from "@aws-sdk/client-lambda"
+import { LambdaClient, UpdateFunctionCodeCommand } from "@aws-sdk/client-lambda"
+import { type Context } from "./config"
+import { getResolvedRepositoryTag } from "./docker"
+import { logger } from "./logger"
 
 export interface ClientContext {
   ecr: ECRClient
@@ -28,4 +31,13 @@ export const getEcrAuthorizationToken = async (client: ClientContext) => {
   invariant(endpoint !== undefined, "Proxy endpoint must not be undefined")
 
   return { token, endpoint }
+}
+
+export const updateFunctionImage = async (client: ClientContext, context: Context) => {
+  const cmd = new UpdateFunctionCodeCommand({
+    FunctionName: context.environment.functionName,
+    ImageUri: getResolvedRepositoryTag(context),
+  })
+  const response = await client.lambda.send(cmd)
+  logger.info(`Function image update status: ${response.State}`)
 }
