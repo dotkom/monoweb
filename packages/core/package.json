@@ -31,7 +31,7 @@
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
     "@testcontainers/postgresql": "^10.2.2",
-    "@types/node": "^18.18.3",
+    "@types/node": "^18.18.9",
     "@vitest/ui": "^0.34.6",
     "eslint": "^8.52.0",
     "testcontainers": "^10.2.2",
