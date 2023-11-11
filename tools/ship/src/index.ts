@@ -15,7 +15,7 @@ interface DeployOptions {
 program
   .command("deploy")
   .argument("directory")
-  .option("-e, --env", "Environment to deploy", /^dev|stg|prd$/, "dev")
+  .option("-e, --env", "Environment to deploy", /^(?:dev|stg|prd)$/, "dev")
   .action(async (directory, options: DeployOptions) => {
     const relativePath = path.resolve("../../", directory)
     const buildRoot = path.resolve("../../")
