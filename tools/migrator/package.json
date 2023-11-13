@@ -13,11 +13,11 @@
   },
   "devDependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "@types/eslint": "^8.44.6",
+    "@types/eslint": "^8.44.7",
     "@types/pg": "^8.10.9",
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   },
