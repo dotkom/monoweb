@@ -37,7 +37,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6
+        version: 0.34.6(@vitest/ui@0.34.6)
 
   apps/dashboard:
     dependencies:
@@ -93,14 +93,14 @@ importers:
         specifier: ^8.10.7
         version: 8.10.7(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client':
-        specifier: ^10.43.0
-        version: 10.43.0(@trpc/server@10.43.0)
+        specifier: ^10.43.3
+        version: 10.43.3(@trpc/server@10.43.3)
       '@trpc/react-query':
-        specifier: ^10.43.0
-        version: 10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/server@10.43.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^10.43.3
+        version: 10.43.3(@tanstack/react-query@4.36.1)(@trpc/client@10.43.3)(@trpc/server@10.43.3)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server':
-        specifier: ^10.43.0
-        version: 10.43.0
+        specifier: ^10.43.3
+        version: 10.43.3
       clsx:
         specifier: ^2.0.0
         version: 2.0.0
@@ -413,17 +413,17 @@ importers:
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client':
-        specifier: ^10.43.0
-        version: 10.43.0(@trpc/server@10.43.0)
+        specifier: ^10.43.3
+        version: 10.43.3(@trpc/server@10.43.3)
       '@trpc/next':
-        specifier: ^10.43.0
-        version: 10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/react-query@10.43.0)(@trpc/server@10.43.0)(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^10.43.3
+        version: 10.43.3(@tanstack/react-query@4.36.1)(@trpc/client@10.43.3)(@trpc/react-query@10.43.3)(@trpc/server@10.43.3)(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
-        specifier: ^10.43.0
-        version: 10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/server@10.43.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^10.43.3
+        version: 10.43.3(@tanstack/react-query@4.36.1)(@trpc/client@10.43.3)(@trpc/server@10.43.3)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server':
-        specifier: ^10.43.0
-        version: 10.43.0
+        specifier: ^10.43.3
+        version: 10.43.3
       axios:
         specifier: 1.6.0
         version: 1.6.0
@@ -444,7 +444,7 @@ importers:
         version: 4.24.5(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
       next-superjson-plugin:
         specifier: ^0.5.9
-        version: 0.5.9(next@13.5.6)(superjson@1.13.3)
+        version: 0.5.10(next@13.5.6)(superjson@1.13.3)
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
@@ -523,7 +523,7 @@ importers:
         version: 3.3.5(ts-node@10.9.1)
       trpc-playground:
         specifier: ^1.0.4
-        version: 1.0.4(@trpc/server@10.43.0)(@types/node@18.18.9)(typescript@5.2.2)(zod@3.22.4)
+        version: 1.0.4(@trpc/server@10.43.3)(@types/node@18.18.9)(typescript@5.2.2)(zod@3.22.4)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -795,8 +795,8 @@ importers:
         specifier: workspace:*
         version: link:../db
       '@trpc/server':
-        specifier: ^10.43.0
-        version: 10.43.0
+        specifier: ^10.43.3
+        version: 10.43.3
       next:
         specifier: ^13.5.6
         version: 13.5.6(react-dom@18.2.0)(react@18.2.0)
@@ -937,7 +937,7 @@ importers:
         version: 4.5.0(@types/node@18.18.9)
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6
+        version: 0.34.6(@vitest/ui@0.34.6)
 
   tools/migrator:
     dependencies:
@@ -6900,64 +6900,65 @@ packages:
       - terser
     dev: true
 
-  /@trpc-playground/types@1.0.0(@trpc/server@10.43.0)(typescript@5.2.2):
+  /@trpc-playground/types@1.0.0(@trpc/server@10.43.3)(typescript@5.2.2):
     resolution: {integrity: sha512-Ap5aNaVlglfM9WLkPLKF2rHDZ8CwHcqK32A8YaqTyHUuoEFTSOh6oSgVU6Cv8toxClKiTXFvbWmE4aZxIoh4Zg==}
     peerDependencies:
       '@trpc/server': ^10
     dependencies:
-      '@trpc/server': 10.43.0
+      '@trpc/server': 10.43.3
       ts-essentials: 9.3.2(typescript@5.2.2)
     transitivePeerDependencies:
       - typescript
     dev: true
 
-  /@trpc/client@10.43.0(@trpc/server@10.43.0):
-    resolution: {integrity: sha512-8LbSpPHmIseb/Ke+GzL45y0itkKunGQWfxqHf2uy69RSRvER0vj+Gu67L8YD86FBgc/nsX/6GBuJiUet5lIDIw==}
+  /@trpc/client@10.43.3(@trpc/server@10.43.3):
+    resolution: {integrity: sha512-r/aE1l2iybJMlXCf+KWqSQpIloOqw/3jQhZD8F4VpvczWPI5fEQCmZZuPHAz2L/PiGE5K/ZwXQrJsT207ZQ2AQ==}
     peerDependencies:
-      '@trpc/server': 10.43.0
+      '@trpc/server': 10.43.3
     dependencies:
-      '@trpc/server': 10.43.0
+      '@trpc/server': 10.43.3
     dev: false
 
-  /@trpc/next@10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/react-query@10.43.0)(@trpc/server@10.43.0)(next@13.5.6)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-yakRlkvf6+uc3igYZi8nPkppJ8jFaCyd/7kvSckgsdLC8ofM+N9rrBkfqdfS5Pd53awkK/MMK8js9v/vabKb6A==}
+  /@trpc/next@10.43.3(@tanstack/react-query@4.36.1)(@trpc/client@10.43.3)(@trpc/react-query@10.43.3)(@trpc/server@10.43.3)(next@13.5.6)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-ioOqV5zJNi9iFibCfz0KqKNJsrONjBfF+JB3y845I+MKGZt7vhpBAJJucioLzhvnRwbwy4My3LTdjcyOsUtYUQ==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
-      '@trpc/client': 10.43.0
-      '@trpc/react-query': 10.43.0
-      '@trpc/server': 10.43.0
+      '@trpc/client': 10.43.3
+      '@trpc/react-query': 10.43.3
+      '@trpc/server': 10.43.3
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client': 10.43.0(@trpc/server@10.43.0)
-      '@trpc/react-query': 10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/server@10.43.0)(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/server': 10.43.0
+      '@trpc/client': 10.43.3(@trpc/server@10.43.3)
+      '@trpc/react-query': 10.43.3(@tanstack/react-query@4.36.1)(@trpc/client@10.43.3)(@trpc/server@10.43.3)(react-dom@18.2.0)(react@18.2.0)
+      '@trpc/server': 10.43.3
       next: 13.5.6(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-ssr-prepass: 1.5.0(react@18.2.0)
     dev: false
 
-  /@trpc/react-query@10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/server@10.43.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-5+pBnnV9QqnwpO5Li9T60hXHylV1USEjFkRjrnd7mJul/t2dKxs5ouv+YDRnOJ36oD9wDki5lBGk2sOgFrzGUw==}
+  /@trpc/react-query@10.43.3(@tanstack/react-query@4.36.1)(@trpc/client@10.43.3)(@trpc/server@10.43.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-yTmORp8pJ15GV8rR2QTR6bIPxk/Vbtl2vLTDz+G5GipKc+9kSRRYaVqbwzFuaPf5NOMK/JYkIsyIpitabQ1n9A==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
-      '@trpc/client': 10.43.0
-      '@trpc/server': 10.43.0
+      '@trpc/client': 10.43.3
+      '@trpc/server': 10.43.3
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client': 10.43.0(@trpc/server@10.43.0)
-      '@trpc/server': 10.43.0
+      '@trpc/client': 10.43.3(@trpc/server@10.43.3)
+      '@trpc/server': 10.43.3
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@trpc/server@10.43.0:
-    resolution: {integrity: sha512-1/h9KCPkTNNmpN5VKfKO4kPcl/W4Y9VQla4YGg4pydSh/+4b//0IPfvk3Oz4tz/tvWyAUlBKkBVhD3GfDLcAQA==}
+  /@trpc/server@10.43.3:
+    resolution: {integrity: sha512-U7HsNtgjupNvPzH6ho4rPlIXZ2t5PctOH6pmFX4jv4YJi98RjGuOhHUNhiiVb8KUw6Kuh5EHTAv7cUV+igbMuQ==}
+    engines: {node: '>=18.0.0'}
 
   /@tsconfig/node10@1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -12763,10 +12764,10 @@ packages:
       uuid: 8.3.2
     dev: false
 
-  /next-superjson-plugin@0.5.9(next@13.5.6)(superjson@1.13.3):
-    resolution: {integrity: sha512-xEU+SvrSDk8PGAQ2TrJM/OhkZBcWjWWqSjpUtlxTAI9ovTjKBxxQumcFt7oXzoBLJsRtq0BWTHrcnzL/9izXPQ==}
+  /next-superjson-plugin@0.5.10(next@13.5.6)(superjson@1.13.3):
+    resolution: {integrity: sha512-y3vAKlZfZP6iEDb0R+XQ6UQ7YYDxbsZ0iZlV50/Hvw0Fzl+ScQJj+CbXdcl+ETugK9JbhCS7G7hMCGIjiGkgXQ==}
     peerDependencies:
-      next: ^13
+      next: ^13.0 || ^14.0
       superjson: ^1
     dependencies:
       hoist-non-react-statics: 3.3.2
@@ -15546,15 +15547,15 @@ packages:
     resolution: {integrity: sha512-AqTiAOLcj85xS7vQ8QkAV41hPDIJ71XJB4RCUrzo/1GM2CQwhkJGaf9Hgr7BOugMRpgGUrqRg/DrBDl4H40+8g==}
     dev: true
 
-  /trpc-playground@1.0.4(@trpc/server@10.43.0)(@types/node@18.18.9)(typescript@5.2.2)(zod@3.22.4):
+  /trpc-playground@1.0.4(@trpc/server@10.43.3)(@types/node@18.18.9)(typescript@5.2.2)(zod@3.22.4):
     resolution: {integrity: sha512-6nVf1o2LNoo1g6oTS24yajoH7xV4CFjxGAbAH7qLXqa3yo9qB5QHsWLbrm1hNt51SyCG++P0zHJaCdVfgvEVDg==}
     peerDependencies:
       '@trpc/server': ^10
       zod: ^3
     dependencies:
       '@trpc-playground/html': 1.0.4(@types/node@18.18.9)
-      '@trpc-playground/types': 1.0.0(@trpc/server@10.43.0)(typescript@5.2.2)
-      '@trpc/server': 10.43.0
+      '@trpc-playground/types': 1.0.0(@trpc/server@10.43.3)(typescript@5.2.2)
+      '@trpc/server': 10.43.3
       lodash: 4.17.21
       uttp: 0.1.3
       zod: 3.22.4
@@ -16340,28 +16341,6 @@ packages:
       - terser
     dev: true
 
-  /vite-node@0.34.6(@types/node@18.18.9):
-    resolution: {integrity: sha512-nlBMJ9x6n7/Amaz6F3zJ97EBwR2FkzhBRxF5e+jE6LA3yi6Wtc2lyTij1OnDMIr34v5g/tVQtsVAzhT0jc5ygA==}
-    engines: {node: '>=v14.18.0'}
-    hasBin: true
-    dependencies:
-      cac: 6.7.14
-      debug: 4.3.4
-      mlly: 1.4.0
-      pathe: 1.1.1
-      picocolors: 1.0.0
-      vite: 4.5.0(@types/node@18.18.9)
-    transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-    dev: true
-
   /vite-tsconfig-paths@4.2.1(typescript@5.2.2)(vite@4.5.0):
     resolution: {integrity: sha512-GNUI6ZgPqT3oervkvzU+qtys83+75N/OuDaQl7HmOqFTb0pjZsuARrRipsyJhJ3enqV8beI1xhGbToR4o78nSQ==}
     peerDependencies:
@@ -16408,42 +16387,6 @@ packages:
         optional: true
     dependencies:
       '@types/node': 18.18.4
-      esbuild: 0.18.20
-      postcss: 8.4.31
-      rollup: 3.29.2
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
-  /vite@4.4.11(@types/node@18.18.9):
-    resolution: {integrity: sha512-ksNZJlkcU9b0lBwAGZGGaZHCMqHsc8OpgtoYhsQ4/I2v5cnpmmmqe5pM4nv/4Hn6G/2GhTdj0DhZh2e+Er1q5A==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 18.18.9
       esbuild: 0.18.20
       postcss: 8.4.31
       rollup: 3.29.2
@@ -16522,7 +16465,7 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /vitest@0.34.6:
+  /vitest@0.34.6(@vitest/ui@0.34.6):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -16560,6 +16503,7 @@ packages:
       '@vitest/runner': 0.34.6
       '@vitest/snapshot': 0.34.6
       '@vitest/spy': 0.34.6
+      '@vitest/ui': 0.34.6(vitest@0.34.6)
       '@vitest/utils': 0.34.6
       acorn: 8.10.0
       acorn-walk: 8.2.0
@@ -16576,72 +16520,6 @@ packages:
       tinypool: 0.7.0
       vite: 4.4.11(@types/node@18.18.4)
       vite-node: 0.34.6(@types/node@18.18.4)
-      why-is-node-running: 2.2.2
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-    dev: true
-
-  /vitest@0.34.6(@vitest/ui@0.34.6):
-    resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
-    engines: {node: '>=v14.18.0'}
-    hasBin: true
-    peerDependencies:
-      '@edge-runtime/vm': '*'
-      '@vitest/browser': '*'
-      '@vitest/ui': '*'
-      happy-dom: '*'
-      jsdom: '*'
-      playwright: '*'
-      safaridriver: '*'
-      webdriverio: '*'
-    peerDependenciesMeta:
-      '@edge-runtime/vm':
-        optional: true
-      '@vitest/browser':
-        optional: true
-      '@vitest/ui':
-        optional: true
-      happy-dom:
-        optional: true
-      jsdom:
-        optional: true
-      playwright:
-        optional: true
-      safaridriver:
-        optional: true
-      webdriverio:
-        optional: true
-    dependencies:
-      '@types/chai': 4.3.5
-      '@types/chai-subset': 1.3.3
-      '@types/node': 18.18.9
-      '@vitest/expect': 0.34.6
-      '@vitest/runner': 0.34.6
-      '@vitest/snapshot': 0.34.6
-      '@vitest/spy': 0.34.6
-      '@vitest/ui': 0.34.6(vitest@0.34.6)
-      '@vitest/utils': 0.34.6
-      acorn: 8.10.0
-      acorn-walk: 8.2.0
-      cac: 6.7.14
-      chai: 4.3.10
-      debug: 4.3.4
-      local-pkg: 0.4.3
-      magic-string: 0.30.2
-      pathe: 1.1.1
-      picocolors: 1.0.0
-      std-env: 3.3.3
-      strip-literal: 1.0.1
-      tinybench: 2.5.0
-      tinypool: 0.7.0
-      vite: 4.4.11(@types/node@18.18.9)
-      vite-node: 0.34.6(@types/node@18.18.9)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
