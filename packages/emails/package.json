@@ -7,7 +7,8 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "email:dev": "email dev --port 7777 --dir src/emails",
-    "email:export": "email export --dir src/emails"
+    "email:export": "email export --dir src/emails",
+    "type-check": "tsc --noEmit"
   },
   "main": "src/index.ts",
   "dependencies": {
