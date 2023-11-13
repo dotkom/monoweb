@@ -12,13 +12,13 @@ resource "vercel_project" "this" {
   root_directory = var.root_directory
 
   # Do not run on renovate pull requests
-  ignore_command = "[ \"$VERCEL_GIT_COMMIT_AUTHOR_LOGIN\" == \"renovate[bot]\" ]"
+  ignore_command = "[ \"$VERCEL_GIT_COMMIT_AUTHOR_LOGIN\" == \"renovate[bot]\" && npx turbo-ignore ]"
 }
 
 resource "vercel_project_environment_variable" "environment_variables" {
   for_each = var.environment_variables
 
-  project_id = vercel_project.this.id
+  project_id = vercel_project.this.idyesyes
   key        = each.key
   value      = sensitive(each.value)
   target     = ["preview", "development", "production"]
