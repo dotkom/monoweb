@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "turbo run build --filter=@dotkomonline/*",
+    "build": "turbo run build --filter=@dotkomonline/* --cache-dir=.turbo",
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
     "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
