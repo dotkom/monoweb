@@ -10,7 +10,8 @@
     "lint:fix": "eslint --fix .",
     "docker:build": "docker build --platform linux/amd64 -t gateway-email:latest -f Dockerfile ../..",
     "docker:push:dev": "docker tag gateway-email:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest",
-    "lambda:update:dev": "aws lambda update-function-code --function-name gateway-email-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest"
+    "lambda:update:dev": "aws lambda update-function-code --function-name gateway-email-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.438.0",

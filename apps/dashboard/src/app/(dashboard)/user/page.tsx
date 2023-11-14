@@ -5,9 +5,9 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { StudyYearAliases, type StudyYears, type User } from "@dotkomonline/types"
 import { useMemo } from "react"
 import Link from "next/link"
-import { GenericTable } from "src/components/GenericTable"
 import { formatDate } from "../../../utils/format"
 import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
+import { GenericTable } from "../../../components/GenericTable"
 
 export default function UserPage() {
   const { users, isLoading: isUsersLoading } = useUserAllQuery()

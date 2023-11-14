@@ -10,7 +10,8 @@
     "lint:fix": "eslint --fix .",
     "docker:build": "docker build --platform linux/amd64 -t dispatcher-auth:latest -f Dockerfile ../..",
     "docker:push:dev": "docker tag dispatcher-auth:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest",
-    "lambda:update:dev": "aws lambda update-function-code --function-name dispatcher-auth-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest"
+    "lambda:update:dev": "aws lambda update-function-code --function-name dispatcher-auth-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.438.0",

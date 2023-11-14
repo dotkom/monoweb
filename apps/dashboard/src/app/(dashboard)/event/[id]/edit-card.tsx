@@ -1,8 +1,8 @@
 import { type FC } from "react"
-import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
 import { useEventDetailsContext } from "./provider"
 import { useEditEventWithCommitteesMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-comittees"
 import { useEventEditForm } from "../edit-form"
+import { useCommitteeAllQuery } from "../../../../modules/committee/queries/use-committee-all-query"
 
 export const EventEditCard: FC = () => {
   const { event, eventCommittees } = useEventDetailsContext()

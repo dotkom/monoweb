@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { createDateTimeInput, createFileInput, createTextInput, useFormBuilder } from "src/app/form"
-import { OfflineWriteSchema } from "../../../../../../packages/types/src/offline"
+import { OfflineWriteSchema } from "@dotkomonline/types"
+import { createDateTimeInput, createFileInput, createTextInput, useFormBuilder } from "../../form"
 
 const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
   fileUrl: null,

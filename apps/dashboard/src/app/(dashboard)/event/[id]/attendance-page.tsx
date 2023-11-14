@@ -3,14 +3,14 @@ import { Button } from "@dotkomonline/ui"
 import { Box, Checkbox, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo, useState, type FC } from "react"
-import GenericSearch from "src/components/GenericSearch"
-import { GenericTable } from "src/components/GenericTable"
-import { useDeregisterForEventMutation } from "src/modules/event/mutations/use-deregister-for-event-mutation"
-import { useRegisterForEventMutation } from "src/modules/event/mutations/use-register-for-event-mutation"
-import { useUpdateEventAttendanceMutation } from "src/modules/event/mutations/use-update-event-attendance-mutation"
-import { useEventAttendanceGetQuery } from "src/modules/event/queries/use-event-attendance-get-query"
-import { useUserSearchQuery } from "src/modules/user/queries/use-user-search-query"
 import { useEventDetailsContext } from "./provider"
+import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
+import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
+import { useUserSearchQuery } from "../../../../modules/user/queries/use-user-search-query"
+import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
+import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
+import GenericSearch from "../../../../components/GenericSearch"
+import { GenericTable } from "../../../../components/GenericTable"
 
 interface CustomCheckboxProps {
   userId: string
@@ -78,7 +78,7 @@ export const EventAttendancePage: FC = () => {
   )
 
   const table = useReactTable({
-    data: useMemo(() => eventAttendance?.flatMap((attendance) => attendance.attendees) ?? [], [eventAttendance]),
+    data: useMemo(() => eventAttendance.flatMap((attendance) => attendance.attendees), [eventAttendance]),
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
@@ -100,7 +100,7 @@ export const EventAttendancePage: FC = () => {
         items={users}
         dataMapper={(item: User) => item.id.toString()}
       />
-      {eventAttendance?.map((attendance) => (
+      {eventAttendance.map((attendance) => (
         <Box key={attendance.id} mb="sm">
           <Title order={4}>
             {attendance.id} {`(${attendance.attendees.length}/${attendance.limit})`}
