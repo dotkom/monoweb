@@ -323,7 +323,7 @@ importers:
     dependencies:
       '@sanity/vision':
         specifier: ^3.19.1
-        version: 3.19.1(@babel/runtime@7.23.2)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.0)
+        version: 3.19.1(@babel/runtime@7.23.2)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.1)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -335,10 +335,10 @@ importers:
         version: 18.2.0
       sanity:
         specifier: ^3.19.1
-        version: 3.19.1(@types/node@18.18.9)(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.0)
+        version: 3.19.1(@types/node@18.18.9)(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1)
       styled-components:
-        specifier: ^6.1.0
-        version: 6.1.0(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^6.1.1
+        version: 6.1.1(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@sanity/eslint-config-studio':
         specifier: ^3.0.1
@@ -6074,7 +6074,7 @@ packages:
       - supports-color
     dev: false
 
-  /@sanity/portable-text-editor@3.19.1(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)(styled-components@6.1.0):
+  /@sanity/portable-text-editor@3.19.1(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)(styled-components@6.1.1):
     resolution: {integrity: sha512-czPndA+pXQv2f3jSkH0l/TADH98Pdaq8ByrQO9jfZiW0ooghjNo7U3hHxkybPTjicXywETTtfmpZvKOINEu6qw==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -6093,7 +6093,7 @@ packages:
       rxjs: 7.8.1
       slate: 0.94.1
       slate-react: 0.98.1(react-dom@18.2.0)(react@18.2.0)(slate@0.94.1)
-      styled-components: 6.1.0(react-dom@18.2.0)(react@18.2.0)
+      styled-components: 6.1.1(react-dom@18.2.0)(react@18.2.0)
     transitivePeerDependencies:
       - react-dom
       - supports-color
@@ -6122,7 +6122,7 @@ packages:
       - supports-color
     dev: false
 
-  /@sanity/ui@1.9.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.0):
+  /@sanity/ui@1.9.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.1):
     resolution: {integrity: sha512-XbkfUKIAPOOsEfw1FWljMwjcbFUBJ+tHQRSRsGPDFORzTtLCN0kUWmG+/LKeF2o+aahHKyoz/RD5WT/IsVZ7/w==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -6140,7 +6140,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-is: 18.2.0
       react-refractor: 2.1.7(react@18.2.0)
-      styled-components: 6.1.0(react-dom@18.2.0)(react@18.2.0)
+      styled-components: 6.1.1(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@sanity/util@3.19.1:
@@ -6161,7 +6161,7 @@ packages:
       uuid: 8.3.2
     dev: false
 
-  /@sanity/vision@3.19.1(@babel/runtime@7.23.2)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.0):
+  /@sanity/vision@3.19.1(@babel/runtime@7.23.2)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.1):
     resolution: {integrity: sha512-LlzY4MbrL0BGx5BLzJ/+axZQl0Z+0Ia5DookM/cA7rR1MDDDZJzWDWs6xbjf9bWVvABYrG4QXHr1Vj3q8EymkQ==}
     peerDependencies:
       react: ^18
@@ -6179,14 +6179,14 @@ packages:
       '@rexxars/react-split-pane': 0.1.93(react-dom@18.2.0)(react@18.2.0)
       '@sanity/color': 2.2.5
       '@sanity/icons': 2.7.0(react@18.2.0)
-      '@sanity/ui': 1.9.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.0)
+      '@sanity/ui': 1.9.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.1)
       '@uiw/react-codemirror': 4.21.9(@babel/runtime@7.23.2)(@codemirror/autocomplete@6.9.0)(@codemirror/language@6.8.0)(@codemirror/lint@6.4.0)(@codemirror/search@6.5.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.15.3)(codemirror@6.0.1)(react-dom@18.2.0)(react@18.2.0)
       hashlru: 2.3.0
       is-hotkey: 0.1.8
       json5: 2.2.3
       lodash: 4.17.21
       react: 18.2.0
-      styled-components: 6.1.0(react-dom@18.2.0)(react@18.2.0)
+      styled-components: 6.1.1(react-dom@18.2.0)(react@18.2.0)
     transitivePeerDependencies:
       - '@babel/runtime'
       - '@codemirror/lint'
@@ -14647,7 +14647,7 @@ packages:
       '@sanity/diff-match-patch': 3.1.1
     dev: false
 
-  /sanity@3.19.1(@types/node@18.18.9)(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.0):
+  /sanity@3.19.1(@types/node@18.18.9)(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1):
     resolution: {integrity: sha512-aykAp7u2IFPnxZn7lPrfAuuFivKhDjkzgj3NquaeJPPSqukj8Wgxs1yUZUHdNTOb3tt6WaZ1g5lzmMxOM7ePmA==}
     engines: {node: '>=18'}
     hasBin: true
@@ -14679,10 +14679,10 @@ packages:
       '@sanity/import': 3.19.1
       '@sanity/logos': 2.1.2(@sanity/color@2.2.5)(react@18.2.0)
       '@sanity/mutator': 3.19.1
-      '@sanity/portable-text-editor': 3.19.1(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)(styled-components@6.1.0)
+      '@sanity/portable-text-editor': 3.19.1(react-dom@18.2.0)(react@18.2.0)(rxjs@7.8.1)(styled-components@6.1.1)
       '@sanity/schema': 3.19.1
       '@sanity/types': 3.19.1
-      '@sanity/ui': 1.9.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.0)
+      '@sanity/ui': 1.9.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.1)
       '@sanity/util': 3.19.1
       '@sanity/uuid': 3.0.2
       '@tanstack/react-virtual': 3.0.0-beta.54(react@18.2.0)
@@ -14754,7 +14754,7 @@ packages:
       semver: 7.5.4
       shallow-equals: 1.0.0
       speakingurl: 14.0.1
-      styled-components: 6.1.0(react-dom@18.2.0)(react@18.2.0)
+      styled-components: 6.1.1(react-dom@18.2.0)(react@18.2.0)
       tar-fs: 2.1.1
       use-device-pixel-ratio: 1.1.2(react@18.2.0)
       use-hot-module-reload: 1.0.3(react@18.2.0)
@@ -15258,8 +15258,8 @@ packages:
       inline-style-parser: 0.1.1
     dev: true
 
-  /styled-components@6.1.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-VWNfYYBuXzuLS/QYEeoPgMErP26WL+dX9//rEh80B2mmlS1yRxRxuL5eax4m6ybYEUoHWlTy2XOU32767mlMkg==}
+  /styled-components@6.1.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-cpZZP5RrKRIClBW5Eby4JM1wElLVP4NQrJbJ0h10TidTyJf4SIIwa3zLXOoPb4gJi8MsJ8mjq5mu2IrEhZIAcQ==}
     engines: {node: '>= 16'}
     peerDependencies:
       react: '>= 16.8.0'
