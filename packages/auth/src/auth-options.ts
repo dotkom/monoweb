@@ -1,4 +1,4 @@
-import { type ServiceLayer } from "@dotkomonline/core"
+import { type ServiceLayer, NotFoundError } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
 import CognitoProvider from "next-auth/providers/cognito"
 
@@ -50,6 +50,9 @@ export const getAuthOptions = ({
     async session({ session, token }) {
       if (token.sub) {
         const user = await core.userService.getUserBySubject(token.sub)
+        if (user === undefined) {
+          throw new NotFoundError(`Found no matching user for ${token.sub}`)
+        }
         session.user.id = user.id
         session.sub = token.sub
       }

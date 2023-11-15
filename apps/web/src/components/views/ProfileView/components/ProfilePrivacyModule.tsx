@@ -8,7 +8,9 @@ export const personList = [
 function PrivacyModule() {
   return (
     <div className="divide-slate-7 my-5 flex w-full flex-col divide-y">
-      {personList.map((title) => <PersonvernOption key={title.key}>{title.optionsText}</PersonvernOption>)}
+      {personList.map((title) => (
+        <PersonvernOption key={title.key}>{title.optionsText}</PersonvernOption>
+      ))}
     </div>
   )
 }

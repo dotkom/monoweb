@@ -1,14 +1,14 @@
-import { promises as fs } from "fs"
-import * as path from "path"
+import fs from "fs/promises"
+import path from "path"
 import { FileMigrationProvider, type Kysely, Migrator } from "kysely"
 import { type Database } from "./"
 
-export const createMigrator = (db: Kysely<Database>) =>
+export const createMigrator = (db: Kysely<Database>, urlOverride?: URL) =>
   new Migrator({
     db,
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: new URL("migrations", import.meta.url).pathname,
+      migrationFolder: (urlOverride ?? new URL("migrations", new URL(import.meta.url))).pathname,
     }),
   })

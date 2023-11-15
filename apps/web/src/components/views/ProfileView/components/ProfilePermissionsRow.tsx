@@ -6,11 +6,11 @@ interface PermissionProps {
 }
 
 const PermissionRow: FC<PermissionProps> = ({ children }) => (
-    <div className="w-full">
-      <div className="col-span-4 mt-1">{children}</div>
-      <PermissionOption />
-      <PermissionOption />
-    </div>
-  )
+  <div className="w-full">
+    <div className="col-span-4 mt-1">{children}</div>
+    <PermissionOption />
+    <PermissionOption />
+  </div>
+)
 
 export default PermissionRow

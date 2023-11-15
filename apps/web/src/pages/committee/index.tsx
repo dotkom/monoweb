@@ -10,7 +10,7 @@ const CommitteePage = () => {
 
   return (
     <ul className="text-blue-11 text-center text-2xl">
-      {data?.map((committee) => (
+      {data?.data.map((committee) => (
         <li className="text-blue-11 hover:text-blue-9 cursor-pointer" key={committee.id}>
           <Link href={`committee/${committee.id}`}>{committee.name}</Link>
         </li>

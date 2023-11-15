@@ -10,7 +10,7 @@ export interface UserRepository {
   getBySubject(cognitoSubject: string): Promise<User | undefined>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User>
+  update(id: UserId, data: Partial<UserWrite>): Promise<User>
   search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
@@ -36,7 +36,7 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await this.db.insertInto("owUser").values(userWrite).returningAll().executeTakeFirstOrThrow()
     return mapToUser(user)
   }
-  async update(id: UserId, data: UserWrite) {
+  async update(id: UserId, data: Partial<UserWrite>) {
     const user = await this.db
       .updateTable("owUser")
       .set(data)

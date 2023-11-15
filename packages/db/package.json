@@ -18,8 +18,8 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@types/pg": "^8.10.7",
-    "eslint": "^8.52.0",
+    "@types/pg": "^8.10.9",
+    "eslint": "^8.53.0",
     "kysely-codegen": "^0.11.0",
     "typescript": "^5.2.2"
   }
