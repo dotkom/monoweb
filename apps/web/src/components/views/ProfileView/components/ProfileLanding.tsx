@@ -48,13 +48,13 @@ const Landing: NextPage<{ user: User }> = ({ user }) => (
           />
           <AvatarFallback>USER</AvatarFallback>
         </Avatar>
-        <p>{user.name ? user.name : "No registred name"}</p>
+        <p>{user.name ? user.name : "Ingen registrert navn"}</p>
       </div>
     </FormInput>
-    <FormInput name="Epost" addMore="Add Email Address">
-      <div>{user.email ? user.email : "No registred email"}</div>
+    <FormInput name="Epost">
+      <div>{user.email ? user.email : "Ingen registrert epostadresse"}</div>
     </FormInput>
-    <FormInput name="Telefon" addMore="Add Phone Number">
+    <FormInput name="Telefon">
       <div> (+47) 482 49 100 </div>
     </FormInput>
     <FormInput name="Studie" clickable={false}>
