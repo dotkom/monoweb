@@ -19,7 +19,7 @@
     "stripe": "^13.11.0"
   },
   "peerDependencies": {
-    "next": "^13.5.6"
+    "next": "^14.0.2"
   },
   "devDependencies": {
     "@vitest/ui": "^0.34.6",
