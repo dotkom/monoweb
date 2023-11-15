@@ -33,3 +33,14 @@ provider "aws" {
     }
   }
 }
+
+variable "doppler_token_grades" {
+  description = "TF Variable for the grades doppler token"
+  type        = string
+}
+
+provider "doppler" {
+  doppler_token = var.doppler_token_grades
+  alias         = "grades"
+}
+
