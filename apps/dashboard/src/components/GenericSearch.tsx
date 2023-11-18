@@ -6,7 +6,7 @@ interface GenericSearchProps<T> {
   onSubmit(item: T): void
   items: T[]
   dataMapper(item: T): string
-  placeholder?: string | undefined | null
+  placeholder?: string | null | undefined
 }
 
 const GenericSearch = <T,>({ onSearch, onSubmit, items, dataMapper, placeholder }: GenericSearchProps<T>) => {
