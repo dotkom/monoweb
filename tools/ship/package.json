@@ -2,8 +2,8 @@
   "name": "@dotkomonline/ship",
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-ecr": "^3.445.0",
-    "@aws-sdk/client-lambda": "^3.448.0",
+    "@aws-sdk/client-ecr": "^3.451.0",
+    "@aws-sdk/client-lambda": "^3.451.0",
     "@dotkomonline/env": "workspace:*",
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
