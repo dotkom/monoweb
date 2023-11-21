@@ -35,3 +35,32 @@ resource "aws_route_table" "public" {
 
   tags = var.tags
 }
+
+resource "aws_route_table_association" "public" {
+  count = length(var.public_subnets)
+  route_table_id = aws_route_table.public.id
+  subnet_id = aws_subnet.public[count.index].id
+}
+
+resource "aws_security_group" "default_security_group" {
+  name   = "default-security-group"
+  vpc_id = aws_vpc.this.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    self        = "false"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "any"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = var.tags
+}

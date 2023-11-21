@@ -18,7 +18,12 @@ resource "aws_ecs_cluster_capacity_providers" "this_fargate" {
 
 resource "aws_ecs_task_definition" "this" {
   family                = var.service_name
-  container_definitions = jsonencode([])
+  requires_compatibilities = ["FARGATE"]
+  network_mode = "awsvpc"
+  cpu = 512
+  memory = 2048
+
+  container_definitions = jsonencode(var.container_definitions)
 }
 
 resource "aws_ecs_service" "this" {
@@ -29,17 +34,21 @@ resource "aws_ecs_service" "this" {
 
   force_new_deployment = true
   task_definition = aws_ecs_task_definition.this.id
+  iam_role = aws_iam_role.ecs.arn
 
   scheduling_strategy = "REPLICA"
   launch_type = "FARGATE"
 
-  capacity_provider_strategy {
-    capacity_provider = aws_ecs_cluster_capacity_providers.this_fargate.id
+  network_configuration {
+    subnets = var.subnets
+    security_groups = var.security_groups
+    assign_public_ip = true
   }
 
-  placement_constraints {
-    type = var.placement_constraints.type
-    expression = var.placement_constraints.expression
+  load_balancer {
+    container_name = var.container_name
+    container_port = var.container_port
+    target_group_arn = var.load_balancer_target_group
   }
 
   tags = var.tags
