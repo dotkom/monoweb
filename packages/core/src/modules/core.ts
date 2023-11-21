@@ -36,8 +36,9 @@ import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-loca
 import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
 import { WebshopPurchaseServiceImpl } from "./webshop-purchase/webshop-purchase-service"
 import { WebshopPurchaseRepositoryImpl } from "./webshop-purchase/webshop-purchase-repository"
-import { s3RepositoryImpl } from "../lib/s3/s3-repository"
 import { OfflineRepositoryImpl } from "./offline/offline-repository"
+import { OfflineServiceImpl } from "./offline/offline-service"
+import { s3RepositoryImpl } from "../lib/s3/s3-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
