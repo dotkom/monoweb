@@ -5,10 +5,10 @@ import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/co
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type Mark, type MarkId } from "@dotkomonline/types"
 import Link from "next/link"
-import { GenericTable } from "src/components/GenericTable"
-import { usePunishmentAllQuery } from "src/modules/punishment/queries/use-punishment-all-query"
-import { useMarkCountUsersQuery } from "src/modules/punishment/queries/use-count-users-with-mark-query"
 import { formatDate } from "../../../utils/format"
+import { useMarkCountUsersQuery } from "../../../modules/punishment/queries/use-count-users-with-mark-query"
+import { usePunishmentAllQuery } from "../../../modules/punishment/queries/use-punishment-all-query"
+import { GenericTable } from "../../../components/GenericTable"
 
 function MarkUserCount({ markId }: { markId: MarkId }) {
   const { data } = useMarkCountUsersQuery(markId)

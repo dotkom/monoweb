@@ -36,6 +36,8 @@ import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-loca
 import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
 import { WebshopPurchaseServiceImpl } from "./webshop-purchase/webshop-purchase-service"
 import { WebshopPurchaseRepositoryImpl } from "./webshop-purchase/webshop-purchase-repository"
+import { s3RepositoryImpl } from "../lib/s3/s3-repository"
+import { OfflineRepositoryImpl } from "./offline/offline-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -44,6 +46,7 @@ export interface ServerLayerOptions {
 }
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
+  const s3Repository = new s3RepositoryImpl()
   const eventRepository = new EventRepositoryImpl(db)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository = new JobListingRepositoryImpl(db)
@@ -64,6 +67,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
   const webshopPurchaseRepositoryImpl = new WebshopPurchaseRepositoryImpl(db)
+  const offlineRepository = new OfflineRepositoryImpl(db)
 
   const userService = new UserServiceImpl(
     userRepository,
@@ -99,6 +103,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const markService = new MarkServiceImpl(markRepository)
   const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
   const webshopPurchaseService = new WebshopPurchaseServiceImpl(webshopPurchaseRepositoryImpl)
+  const offlineService = new OfflineServiceImpl(offlineRepository, s3Repository)
 
   return {
     userService,
@@ -117,5 +122,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     eventCommitteeService,
     jobListingService,
     webshopPurchaseService,
+    offlineService,
   }
 }

@@ -1,4 +1,5 @@
 export declare type EnvironmentKeys =
+  | "AWS_REGION"
   | "DASHBOARD_COGNITO_CLIENT_ID"
   | "DASHBOARD_COGNITO_CLIENT_SECRET"
   | "DASHBOARD_COGNITO_ISSUER"
@@ -14,6 +15,7 @@ export declare type EnvironmentKeys =
   | "PROKOM_STRIPE_PUBLIC_KEY"
   | "PROKOM_STRIPE_SECRET_KEY"
   | "PROKOM_STRIPE_WEBHOOK_SECRET"
+  | "S3_BUCKET_MONOWEB"
   | "TRIKOM_STRIPE_PUBLIC_KEY"
   | "TRIKOM_STRIPE_SECRET_KEY"
   | "TRIKOM_STRIPE_WEBHOOK_SECRET"
@@ -24,5 +26,5 @@ export declare type EnvironmentKeys =
 
 export declare type Environment = Record<EnvironmentKeys, string>
 
-export declare const createEnvironment: () => Environment
+export declare const createEnvironment: (skipValidation?: boolean) => Environment
 export declare const env: Environment

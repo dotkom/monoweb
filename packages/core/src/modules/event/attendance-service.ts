@@ -4,8 +4,9 @@ import { type AttendanceRepository } from "./attendance-repository"
 export interface AttendanceService {
   canAttend(eventId: EventId): Promise<Date | undefined>
   registerForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
-  deregisterAttendee(userId: UserId, attendanceId: AttendanceId): Promise<Attendee>
-  registerForAttendance(userId: UserId, attendanceId: AttendanceId, attended: boolean): Promise<Attendee | undefined>
+  deregisterAttendee(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
+  registerForAttendance(userId: UserId, attendanceId: string, attended: boolean): Promise<Attendee | undefined>
+  addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string): Promise<Attendee | undefined>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -37,5 +38,14 @@ export class AttendanceServiceImpl implements AttendanceService {
       _attendanceId
     )
     return attendedAttendee
+  }
+
+  async addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string) {
+    const attendee = await this.attendanceRepository.getAttendeeByIds(eventId, attendanceId)
+    if (!attendee) {
+      throw new Error("Attendee not found")
+    }
+    const choice = await this.attendanceRepository.addChoice(eventId, attendanceId, questionId, choiceId)
+    return choice
   }
 }

@@ -3,7 +3,7 @@ import { z } from "zod"
 
 const environmentVariableSchema = z.string().nonempty()
 
-export const createEnvironment = () =>
+export const createEnvironment = (skipValidation = false) =>
   createEnv({
     clientPrefix: "NEXT_PUBLIC_",
     server: {
@@ -19,6 +19,7 @@ export const createEnvironment = () =>
       VERCEL_URL: environmentVariableSchema.optional(),
       DATABASE_URL: environmentVariableSchema,
       NEXTAUTH_SECRET: environmentVariableSchema,
+      AWS_REGION: environmentVariableSchema,
 
       TRIKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       TRIKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
@@ -31,6 +32,7 @@ export const createEnvironment = () =>
       PROKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
       PROKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
       PROKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
+      S3_BUCKET_MONOWEB: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -52,6 +54,7 @@ export const createEnvironment = () =>
       NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
       VERCEL_URL: process.env.VERCEL_URL,
       NEXT_PUBLIC_VERCEL_URL: process.env.VERCEL_URL,
+      AWS_REGION: process.env.AWS_REGION,
 
       TRIKOM_STRIPE_PUBLIC_KEY: process.env.TRIKOM_STRIPE_PUBLIC_KEY,
       TRIKOM_STRIPE_SECRET_KEY: process.env.TRIKOM_STRIPE_SECRET_KEY,
@@ -64,7 +67,9 @@ export const createEnvironment = () =>
       PROKOM_STRIPE_PUBLIC_KEY: process.env.PROKOM_STRIPE_PUBLIC_KEY,
       PROKOM_STRIPE_SECRET_KEY: process.env.PROKOM_STRIPE_SECRET_KEY,
       PROKOM_STRIPE_WEBHOOK_SECRET: process.env.PROKOM_STRIPE_WEBHOOK_SECRET,
+      S3_BUCKET_MONOWEB: process.env.S3_BUCKET_MONOWEB,
     },
+    skipValidation,
   })
 
 export const env = createEnvironment()

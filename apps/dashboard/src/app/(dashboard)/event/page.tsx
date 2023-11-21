@@ -6,12 +6,12 @@ import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/co
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 import Link from "next/link"
-import { GenericTable } from "src/components/GenericTable"
-import { useCommitteeAllQuery } from "src/modules/committee/queries/use-committee-all-query"
-import EventCommittees from "src/components/molecules/company-name/event-committees"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { formatDate } from "../../../utils/format"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import EventCommittees from "../../../components/molecules/company-name/event-committees"
+import { GenericTable } from "../../../components/GenericTable"
 
 type TableColumns = Event & {
   committees: EventCommittee[]

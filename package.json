@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "turbo run build --filter=@dotkomonline/*",
+    "build": "turbo run build --filter=@dotkomonline/* --cache-dir=.turbo",
     "build:api": "turbo run build --filter=ow-api",
     "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
     "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
@@ -16,6 +16,7 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
+    "test:it": "turbo run test:it",
     "dev": "dotenv -e .env -- turbo run dev",
     "migrate": "dotenv -e .env -- turbo run migrate && cd packages/db && pnpm generate-types",
     "migrate-down": "dotenv -e .env -- turbo run migrate -- down && cd packages/db && pnpm generate-types",
@@ -25,7 +26,9 @@
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
-    "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com"
+    "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
+    "docker:login:public": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws",
+    "ship": "pnpm --filter=@dotkomonline/ship ship"
   },
   "workspaces": [
     "packages/*",
@@ -37,12 +40,13 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.6",
+    "prettier-plugin-tailwindcss": "^0.5.7",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "turbo": "^1.10.16",
+    "turbo-ignore": "^1.10.16",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }

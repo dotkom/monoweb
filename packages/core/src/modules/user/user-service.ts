@@ -10,7 +10,6 @@ import {
 import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { type UserRepository } from "./user-repository"
-import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
@@ -19,7 +18,7 @@ export interface UserService {
   getAllUsers(limit: number): Promise<User[]>
   searchUsers(searchQuery: string, take: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: UserWrite): Promise<User>
+  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
@@ -40,9 +39,6 @@ export class UserServiceImpl implements UserService {
 
   async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
-    if (user === undefined) {
-      throw new NotFoundError(`User with ID:${id} not found`)
-    }
     return user
   }
 
@@ -53,9 +49,6 @@ export class UserServiceImpl implements UserService {
 
   async getUserBySubject(id: User["cognitoSub"]) {
     const user = await this.userRepository.getBySubject(id)
-    if (!user) {
-      throw new NotFoundError(`User with subject:${id} not found`)
-    }
     return user
   }
 
@@ -64,7 +57,7 @@ export class UserServiceImpl implements UserService {
     return res
   }
 
-  async updateUser(id: UserId, data: UserWrite) {
+  async updateUser(id: UserId, data: Partial<UserWrite>) {
     const res = await this.userRepository.update(id, data)
     return res
   }
