@@ -22,8 +22,8 @@ resource "aws_lb_listener" "gradestats_app" {
   load_balancer_arn = module.core_alb.alb_arn
   port              = 443
   protocol          = "HTTPS"
-  ssl_policy = "ELBSecurityPolicy-2016-08"
-  certificate_arn = module.grades_certficiate.certificate_arn
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = module.grades_certficiate.certificate_arn
 
   default_action {
     type             = "forward"

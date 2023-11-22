@@ -15,17 +15,17 @@ module "core_vpc" {
 }
 
 module "grades_certficiate" {
-  source = "../modules/aws-acm-certificate"
-  domain = "grades.no"
+  source  = "../modules/aws-acm-certificate"
+  domain  = "grades.no"
   zone_id = data.aws_route53_zone.grades.zone_id
 
   tags = {
-    Project = "grades"
+    Project     = "grades"
     Environment = terraform.workspace
   }
 
   providers = {
-    aws.regional = aws.us-east-1
+    aws.regional = aws.eu-north-1
   }
 }
 
