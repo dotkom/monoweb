@@ -1,27 +1,27 @@
 variable "cluster_name" {
   description = "ECS Cluster name"
-  type = string
+  type        = string
 }
 
 variable "service_name" {
   description = "ECS Service name"
-  type = string
+  type        = string
 }
 
 variable "desired_count" {
   description = "Desired instance count of service"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
 
 variable "security_groups" {
   description = "Target security group"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "container_name" {
   description = "Name of the container"
-  type = string
+  type        = string
 }
 
 variable "container_port" {
@@ -30,17 +30,17 @@ variable "container_port" {
 
 variable "subnets" {
   description = "Subnets in VPC to connect to"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "load_balancer_target_group" {
   description = "Load balancer target group ARN"
-  type = string
+  type        = string
 }
 
 variable "container_definitions" {
   description = "ECS Container Definitions"
-  type = list(any)
+  type        = list(any)
 }
 
 variable "tags" {

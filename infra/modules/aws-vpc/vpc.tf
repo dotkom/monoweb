@@ -2,20 +2,20 @@ resource "aws_vpc" "this" {
   cidr_block = "10.0.0.0/16"
 
   provider = aws.regional
-  tags = var.tags
+  tags     = var.tags
 }
 
 resource "aws_subnet" "public" {
-  count = length(var.public_subnets)
-  vpc_id = aws_vpc.this.id
-  cidr_block = element(var.public_subnets, count.index)
+  count             = length(var.public_subnets)
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = element(var.public_subnets, count.index)
   availability_zone = element(var.availability_zones, count.index)
 }
 
 resource "aws_subnet" "private" {
-  count = length(var.private_subnets)
-  vpc_id = aws_vpc.this.id
-  cidr_block = element(var.private_subnets, count.index)
+  count             = length(var.private_subnets)
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = element(var.private_subnets, count.index)
   availability_zone = element(var.availability_zones, count.index)
 }
 
@@ -37,9 +37,9 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  count = length(var.public_subnets)
+  count          = length(var.public_subnets)
   route_table_id = aws_route_table.public.id
-  subnet_id = aws_subnet.public[count.index].id
+  subnet_id      = aws_subnet.public[count.index].id
 }
 
 resource "aws_security_group" "default_security_group" {
