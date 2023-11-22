@@ -65,7 +65,10 @@ const navigations = [
   {
     label: "Webshop",
     icon: "tabler:users-group",
-    children: [{ label: "Bestillinger", href: "/webshop-purchase" }],
+    children: [
+      { label: "Bestillinger", href: "/webshop-purchase" },
+      { label: "Produkter", href: "/product" },
+    ],
   },
 ] as const
 
