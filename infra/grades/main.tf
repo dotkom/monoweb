@@ -14,6 +14,21 @@ module "core_vpc" {
   }
 }
 
+module "grades_certficiate" {
+  source = "../modules/aws-acm-certificate"
+  domain = "grades.no"
+  zone_id = data.aws_route53_zone.grades.zone_id
+
+  tags = {
+    Project = "grades"
+    Environment = terraform.workspace
+  }
+
+  providers = {
+    aws.regional = aws.us-east-1
+  }
+}
+
 module "gradestats_web" {
   source                     = "../modules/aws-ecs-service"
   service_name               = "gradestats-web-${terraform.workspace}"
