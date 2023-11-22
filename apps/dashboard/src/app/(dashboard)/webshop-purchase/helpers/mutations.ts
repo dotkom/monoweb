@@ -1,6 +1,6 @@
-import { useRouter } from "next/navigation"
-import { useQueryNotification } from "../../../app/notifications"
-import { trpc } from "../../../utils/trpc"
+import { useRouter } from "next/router"
+import { trpc } from "../../../../utils/trpc"
+import { useQueryNotification } from "../../../notifications"
 
 export const useCreateJobListingMutation = () => {
   const utils = trpc.useContext()
@@ -25,6 +25,32 @@ export const useCreateJobListingMutation = () => {
       notification.fail({
         title: "Feil oppsto",
         message: `En feil oppsto under opprettelse av stillingsannonsen: ${err.toString()}.`,
+      })
+    },
+  })
+}
+
+export const useEditWebshopPurchaseMutation = () => {
+  const notification = useQueryNotification()
+  const utils = trpc.useContext()
+  return trpc.webshopPurchase.edit.useMutation({
+    onMutate: () => {
+      notification.loading({
+        title: "Oppdaterer...",
+        message: "",
+      })
+    },
+    onSuccess: () => {
+      notification.complete({
+        title: "Oppdatert",
+        message: "",
+      })
+      utils.webshopPurchase.all.invalidate()
+    },
+    onError: () => {
+      notification.fail({
+        title: "Feil",
+        message: "",
       })
     },
   })

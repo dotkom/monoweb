@@ -2,9 +2,9 @@
 
 import { Icon } from "@iconify/react"
 import { Button, ButtonGroup, Card, Group, Skeleton, Stack } from "@mantine/core"
+import { useWebshopPurchaseAllQuery } from "./helpers/queries"
+import { useWebshopPurchaseTable } from "./helpers/use-purchase-table"
 import { GenericTable } from "../../../components/GenericTable"
-import { useWebshopPurchaseTable } from "../../../modules/webshop-purchase/use-webshop-purchase-table"
-import { useWebshopPurchaseAllQuery } from "../../../modules/webshop-purchase/queries/use-job-listing-all-query"
 
 export default function WebshopPurchasePage() {
   const { webshopPurchase, isLoading: isWebshopPurchasesLoading } = useWebshopPurchaseAllQuery()

@@ -4,8 +4,8 @@ import { type WebshopPurchase } from "@dotkomonline/types"
 import { Button, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
-import { useEditWebshopPurchaseMutation } from "./mutations/use-edit-job-listing-mutation"
-import { formatDate } from "../../utils/format"
+import { useEditWebshopPurchaseMutation } from "./mutations"
+import { formatDate } from "../../../../utils/format"
 
 interface Props {
   data: WebshopPurchase[]
