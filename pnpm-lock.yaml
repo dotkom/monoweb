@@ -197,8 +197,8 @@ importers:
         version: link:../../packages/types
     devDependencies:
       '@types/aws-lambda':
-        specifier: ^8.10.126
-        version: 8.10.126
+        specifier: ^8.10.129
+        version: 8.10.129
       '@types/node':
         specifier: 18.18.9
         version: 18.18.9
@@ -222,8 +222,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@types/aws-lambda':
-        specifier: ^8.10.126
-        version: 8.10.126
+        specifier: ^8.10.129
+        version: 8.10.129
       '@types/node':
         specifier: 18.18.9
         version: 18.18.9
@@ -7052,8 +7052,8 @@ packages:
       '@types/estree': 1.0.1
     dev: true
 
-  /@types/aws-lambda@8.10.126:
-    resolution: {integrity: sha512-5eh4ffLdGYgGYI1Xr6W5L4IVse4RR7L2ns5OVUXA52nW5GFapIcGMcCzHAIMMOdpcQs3aGVxbvFlJNZH6IpgEQ==}
+  /@types/aws-lambda@8.10.129:
+    resolution: {integrity: sha512-0Rl7CpTPVws5cp0Ui1gZh4Q+TXC65bXVwTOGoI2RKW45dxWzyZGbjIX0uFjFYdIJ8vnD45y584rIIqvD2vBBfQ==}
     dev: true
 
   /@types/babel__core@7.20.3:
