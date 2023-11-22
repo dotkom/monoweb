@@ -29,6 +29,9 @@ export const createEnvironment = (skipValidation = false) =>
       FAGKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
       FAGKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
 
+      PROKOM_STRIPE_PUBLIC_KEY: environmentVariableSchema,
+      PROKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
+      PROKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
       S3_BUCKET_MONOWEB: environmentVariableSchema,
     },
     client: {
@@ -61,6 +64,9 @@ export const createEnvironment = (skipValidation = false) =>
       FAGKOM_STRIPE_SECRET_KEY: process.env.FAGKOM_STRIPE_SECRET_KEY,
       FAGKOM_STRIPE_WEBHOOK_SECRET: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET,
 
+      PROKOM_STRIPE_PUBLIC_KEY: process.env.PROKOM_STRIPE_PUBLIC_KEY,
+      PROKOM_STRIPE_SECRET_KEY: process.env.PROKOM_STRIPE_SECRET_KEY,
+      PROKOM_STRIPE_WEBHOOK_SECRET: process.env.PROKOM_STRIPE_WEBHOOK_SECRET,
       S3_BUCKET_MONOWEB: process.env.S3_BUCKET_MONOWEB,
     },
     skipValidation,

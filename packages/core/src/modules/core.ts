@@ -34,6 +34,8 @@ import { JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-location-repository"
 import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
+import { WebshopPurchaseServiceImpl } from "./webshop-purchase/webshop-purchase-service"
+import { WebshopPurchaseRepositoryImpl } from "./webshop-purchase/webshop-purchase-repository"
 import { OfflineRepositoryImpl } from "./offline/offline-repository"
 import { OfflineServiceImpl } from "./offline/offline-service"
 import { s3RepositoryImpl } from "../lib/s3/s3-repository"
@@ -65,6 +67,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
+  const webshopPurchaseRepositoryImpl = new WebshopPurchaseRepositoryImpl(db)
   const offlineRepository = new OfflineRepositoryImpl(db)
 
   const userService = new UserServiceImpl(
@@ -100,6 +103,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService = new MarkServiceImpl(markRepository)
   const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
+  const webshopPurchaseService = new WebshopPurchaseServiceImpl(webshopPurchaseRepositoryImpl)
   const offlineService = new OfflineServiceImpl(offlineRepository, s3Repository)
 
   return {
@@ -118,6 +122,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     personalMarkService,
     eventCommitteeService,
     jobListingService,
+    webshopPurchaseService,
     offlineService,
   }
 }

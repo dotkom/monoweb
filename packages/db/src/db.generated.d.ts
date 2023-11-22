@@ -8,18 +8,6 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
 
-export type Json = ColumnType<JsonValue, string, string>
-
-export type JsonArray = JsonValue[]
-
-export type JsonObject = {
-  [K in string]?: JsonValue
-}
-
-export type JsonPrimitive = boolean | number | string | null
-
-export type JsonValue = JsonArray | JsonObject | JsonPrimitive
-
 export type PaymentProvider = "STRIPE"
 
 export type PaymentStatus = "PAID" | "REFUNDED" | "UNPAID"
@@ -47,7 +35,6 @@ export interface Attendee {
   attendanceId: string | null
   attended: Generated<boolean>
   createdAt: Generated<Timestamp>
-  extrasChoices: Json | null
   id: Generated<string>
   updatedAt: Generated<Timestamp>
   userId: string | null
@@ -79,7 +66,6 @@ export interface Event {
   createdAt: Generated<Timestamp>
   description: string | null
   end: Timestamp
-  extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null
@@ -157,16 +143,6 @@ export interface NotificationPermissions {
   userId: string
 }
 
-export interface Offline {
-  createdAt: Generated<Timestamp>
-  fileUrl: string | null
-  id: Generated<string>
-  imageUrl: string | null
-  published: Timestamp
-  title: string
-  updatedAt: Generated<Timestamp>
-}
-
 export interface OwUser {
   cognitoSub: string
   createdAt: Generated<Timestamp>
@@ -232,6 +208,21 @@ export interface RefundRequest {
   userId: string | null
 }
 
+export interface WebshopPurchase {
+  createdAt: Generated<Timestamp>
+  delivered: boolean
+  email: string
+  firstName: string
+  id: Generated<string>
+  lastName: string
+  quantity: number
+  stripePrice: number
+  stripePriceId: string
+  stripeProductId: string
+  stripeProductName: string
+  userId: string | null
+}
+
 export interface DB {
   attendance: Attendance
   attendee: Attendee
@@ -245,7 +236,6 @@ export interface DB {
   jobListingLocationLink: JobListingLocationLink
   mark: Mark
   notificationPermissions: NotificationPermissions
-  offline: Offline
   owUser: OwUser
   payment: Payment
   personalMark: PersonalMark
@@ -253,4 +243,5 @@ export interface DB {
   product: Product
   productPaymentProvider: ProductPaymentProvider
   refundRequest: RefundRequest
+  webshopPurchase: WebshopPurchase
 }

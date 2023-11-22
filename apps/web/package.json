@@ -17,6 +17,7 @@
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/env": "workspace:*",
+    "@dotkomonline/core": "workspace:*",
     "@dotkomonline/gateway-edge-nextjs": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
@@ -51,6 +52,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.11.0",
+    "stripe": "^13.11.0",
     "superjson": "^1.13.3",
     "zod": "^3.22.4"
   },
