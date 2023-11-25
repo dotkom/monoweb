@@ -29,7 +29,7 @@
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react": "^7.33.2",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "postcss-import": "^15.1.0",
     "postcss": "^8.4.31",
     "tailwindcss-animate": "^1.0.7",
