@@ -3,7 +3,7 @@ import Cors from "cors"
 import { type NextApiHandler, type NextApiRequest, type NextApiResponse } from "next"
 
 const cors = Cors({
-  origin: ["http://localhost:3002"],
+  origin: ["http://localhost:3002", "http://dev.dashboard.online.ntnu.no", "https://dev.dashboard.online.ntnu.no"],
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
