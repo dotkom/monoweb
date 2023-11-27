@@ -22,13 +22,13 @@
     "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "next": "^14.0.2",
+    "next": "^14.0.3",
     "next-auth": "^4.24.5"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
     "@vitest/ui": "^0.34.6",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
