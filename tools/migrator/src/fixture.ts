@@ -13,6 +13,8 @@ import { personalMarks } from "./fixtures/personal-mark"
 import { products } from "./fixtures/product"
 import { productPaymentProviders } from "./fixtures/product-payment-provider"
 import { users } from "./fixtures/user"
+import { getProductsToInsert, getVariantsToInsert } from "./fixtures/webshopProduct"
+import { webshopPurchases } from "./fixtures/webshopPurchase"
 
 export const runFixtures = async () => {
   await db
@@ -201,5 +203,18 @@ export const runFixtures = async () => {
     .values(offlines)
     .returning("id")
     .onConflict((oc) => oc.column("id").doNothing())
+    .execute()
+
+  await db.insertInto("webshopPurchase").values(webshopPurchases).execute()
+
+  const webshopProductIds = await db
+    .insertInto("webshopProduct")
+    .values(getProductsToInsert())
+    .returning("id")
+    .execute()
+
+  await db
+    .insertInto("webshopProductVariant")
+    .values(getVariantsToInsert(webshopProductIds.map((row) => row.id)))
     .execute()
 }

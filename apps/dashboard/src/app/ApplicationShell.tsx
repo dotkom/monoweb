@@ -67,7 +67,7 @@ const navigations = [
     icon: "tabler:users-group",
     children: [
       { label: "Bestillinger", href: "/webshop-purchase" },
-      { label: "Produkter", href: "/product" },
+      { label: "Produkter", href: "/webshop-product" },
     ],
   },
 ] as const

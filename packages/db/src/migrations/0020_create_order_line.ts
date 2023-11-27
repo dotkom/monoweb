@@ -1,14 +1,6 @@
 import { type Kysely, sql } from "kysely"
 import { createTableWithDefaults } from "../utils"
 
-// await ctx.webshopPurchaseService.create({
-//   userId: metadata.userId,
-//   delivered: false,
-//   quantity: 1,
-//   stripePriceId: lineItem?.price?.id || "",
-//   stripeProductId: lineItem?.price?.product.toString() || "",
-// })
-
 export async function up(db: Kysely<any>) {
   await createTableWithDefaults("webshop_purchase", { id: true, createdAt: true }, db.schema)
     .addColumn("user_id", sql`ulid`, (col) => col.references("owUser.id").onDelete("cascade"))

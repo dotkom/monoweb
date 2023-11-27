@@ -39,6 +39,8 @@ import { WebshopPurchaseRepositoryImpl } from "./webshop-purchase/webshop-purcha
 import { OfflineRepositoryImpl } from "./offline/offline-repository"
 import { OfflineServiceImpl } from "./offline/offline-service"
 import { s3RepositoryImpl } from "../lib/s3/s3-repository"
+import { StripeProductRepositoryImpl } from "../lib/stripe/stripe-repository"
+import { WebshopProductServiceImpl } from "../lib/stripe/stripe-product-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -68,6 +70,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
   const webshopPurchaseRepositoryImpl = new WebshopPurchaseRepositoryImpl(db)
+
+  const webshopProductRepositoryImpl = new StripeProductRepositoryImpl()
   const offlineRepository = new OfflineRepositoryImpl(db)
 
   const userService = new UserServiceImpl(
@@ -105,6 +109,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const personalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
   const webshopPurchaseService = new WebshopPurchaseServiceImpl(webshopPurchaseRepositoryImpl)
   const offlineService = new OfflineServiceImpl(offlineRepository, s3Repository)
+  const webshopProductService = new WebshopProductServiceImpl(webshopProductRepositoryImpl)
 
   return {
     userService,
@@ -123,6 +128,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     eventCommitteeService,
     jobListingService,
     webshopPurchaseService,
+    webshopProductService,
     offlineService,
   }
 }

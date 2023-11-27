@@ -9,6 +9,7 @@ import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { webshopPurchaseRouter } from "./modules/webshop-purchase/webshop-purchase-router"
 import { offlineRouter } from "./modules/offline/offline-router"
+import { webshopProductRouter } from "./modules/payment/webshop-product-router"
 
 export const appRouter = t.router({
   committee: committeeRouter,
@@ -20,6 +21,7 @@ export const appRouter = t.router({
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,
   webshopPurchase: webshopPurchaseRouter,
+  webshopProduct: webshopProductRouter,
   offline: offlineRouter,
 })
 
