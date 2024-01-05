@@ -39,8 +39,8 @@ resource "aws_ecs_task_definition" "this" {
   family                   = var.service_name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 2048
-  memory                   = 4096
+  cpu                      = 256
+  memory                   = 2048
   execution_role_arn       = "arn:aws:iam::891459268445:role/ecsTaskExecutionRole"
   task_role_arn            = aws_iam_role.ecs.arn
 

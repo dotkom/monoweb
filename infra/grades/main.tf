@@ -42,7 +42,7 @@ module "gradestats_web" {
   container_definitions = [
     {
       name   = "gradestats_web"
-      cpu    = 512
+      cpu    = 256
       memory = 2048
       image  = "${aws_ecrpublic_repository.gradestats_app.repository_uri}:0.1.0"
       portMappings = [
@@ -91,7 +91,7 @@ module "gradestats_app" {
   container_definitions = [
     {
       name   = "gradestats_app"
-      cpu    = 512
+      cpu    = 256
       memory = 2048
       image  = "${aws_ecrpublic_repository.gradestats_web.repository_uri}:0.1.0"
       portMappings = [
