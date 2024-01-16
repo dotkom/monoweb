@@ -27,8 +27,11 @@ const places = [
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props:CompanyFiltersContainer) =>{
   return (
-  <div className="shadow-md px-5 py-5 border-slate-9 border-2 rounded-xl">
-      <h1 className="text-3xl">Filters</h1>
+  <div className="shadow-md border-slate-9 border-2 rounded-lg">
+      <div className="border-b-2 py-4 border-slate-10 flex justify-between flex-row">
+      <h4 className="mx-4 my-auto align-middle">Filter</h4>
+      <button className="mx-4 my-auto font-semibold text-red-9">Reset</button>
+      </div>
       <CompanyFilter filterContent={filterJobs}  />
   </div>
   );

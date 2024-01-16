@@ -19,17 +19,16 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
           </p>
         </div>
       </div>
-
-      <div className="m-4 my-auto grid md:grid-cols-[20rem_minmax(100px,1fr)] gap-x-20 mt-[250px] w-[900px]">
+      <div className="flex gap-x-5 mt-60 mb-10 flex-row">
         <CompanyFiltersContainer />
-        <div>
-        <div className="border-slate-11 flex justify-between border-b-2">
-          <p className="mb-2 w-[25%] text-xl font-medium">Bedrift</p>
-          <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
-          <p className="mb-2 w-[17.5%] text-xl font-medium">Sted</p>
-          <p className="mb-2 w-[17.5%] text-xl font-medium">Frist</p>
-          <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
-        </div>
+        <div className="w-96">
+          <div className="border-slate-11 flex justify-between border-b-2">
+            <p className="mb-2 w-1/4 text-xl font-medium">Bedrift</p>
+            <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
+            <p className="mb-2 w-[17.5%] text-xl font-medium">Sted</p>
+            <p className="mb-2 w-[17.5%] text-xl font-medium">Frist</p>
+            <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
+          </div>
         <div className="flex flex-col">
           {props.careers.map((c) => (
             <>
@@ -40,23 +39,6 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
         </div>
         <div className="h-36"></div>
       </div>
-    <div className="m-4 my-auto mt-[250px] w-[900px]">
-      <div className="border-slate-11 flex justify-between border-b-2">
-        <p className="mb-2 w-[25%] text-xl font-medium">Bedrift</p>
-        <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
-        <p className="mb-2 w-[17.5%] text-xl font-medium">Sted</p>
-        <p className="mb-2 w-[17.5%] text-xl font-medium">Frist</p>
-        <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
-      </div>
-      <div className="flex flex-col">
-        {props.careers.map((c) => (
-          <>
-            <CompanyAdListItem career={c} />
-          </>
-        ))}
-      </div>
-      <div className="h-36"></div>
-    </div>
   </div>
 )
   };
