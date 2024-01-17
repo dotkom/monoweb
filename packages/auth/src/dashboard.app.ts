@@ -8,4 +8,5 @@ export const authOptions = getAuthOptions({
   cognitoClientSecret: env.DASHBOARD_COGNITO_CLIENT_SECRET,
   cognitoIssuer: env.DASHBOARD_COGNITO_ISSUER,
   core: await createServiceLayer({ db: kysely }),
+  jwtSecret: env.NEXTAUTH_SECRET,
 })
