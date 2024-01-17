@@ -42,7 +42,7 @@ export class EventRepositoryImpl implements EventRepository {
   }
 
   async getAllByUserAttending(userId: string): Promise<Event[]> {
-    const event_ids = await this.db
+    const event_ids_query = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
       .select("attendance.eventId")
@@ -50,12 +50,11 @@ export class EventRepositoryImpl implements EventRepository {
       .groupBy("attendance.eventId")
       .execute()
 
-    const eventPromises = event_ids
+    const event_ids = event_ids_query
       .map(({ eventId }) => eventId)
       .filter((id): id is string => id !== null)
-      .map(async (id) => this.getById(id))
 
-    const events = (await Promise.all(eventPromises)).filter((ev): ev is Event => ev !== undefined)
+    const events = await this.getByIds(event_ids)
 
     return events
   }
@@ -74,8 +73,14 @@ export class EventRepositoryImpl implements EventRepository {
     const events = await query.execute()
     return events.map((e) => mapToEvent(e))
   }
+
   async getById(id: string): Promise<Event | undefined> {
     const event = await this.db.selectFrom("event").where("id", "=", id).selectAll().executeTakeFirst()
     return event === undefined ? undefined : mapToEvent(event)
+  }
+
+  async getByIds(id: string[]): Promise<Event[]> {
+    const events = await this.db.selectFrom("event").where("id", "in", id).selectAll().execute()
+    return events.map((e) => mapToEvent(e))
   }
 }
