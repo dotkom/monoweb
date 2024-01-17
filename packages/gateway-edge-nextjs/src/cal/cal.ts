@@ -14,7 +14,7 @@ const helpers = createServerSideHelpers({
 
 function eventUrl(event: Pick<Event, "id">) {
   // a better to to get/configure the url?
-  return `https://new.online.ntnu.no/events/${event.id}`
+  return `https://dev.web.online.ntnu.no/events/${event.id}`
 }
 
 // ALL events
@@ -93,8 +93,6 @@ function toICal(event: Pick<Event, "start" | "end" | "title" | "description" | "
     url: eventUrl(event),
   }
 }
-
-// function toRegistration(event: { start: Date, end: Date, title: string, description: string | null, location: string | null, id: string }): { start: Date, end: Date, title: string, description: string | null, location: string | null, id: string } {
 
 function toRegistration(
   event: Pick<Event, "start" | "title" | "description" | "id">
