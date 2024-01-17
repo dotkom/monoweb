@@ -5,12 +5,12 @@ import { MarkWriteSchema, type PersonalMark } from "@dotkomonline/types"
 import { Box, CloseButton, Group, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useEditMarkMutation } from "src/modules/punishment/mutations/use-edit-mark-mutation"
-import { useUserGetQuery } from "src/modules/user/queries/use-user-get-query"
-import { GenericTable } from "src/components/GenericTable"
-import { usePersonalMarkGetByMarkId } from "src/modules/punishment/queries/use-personal-mark-get-by-mark-id"
 import { useMarkDetailsContext } from "./provider"
 import { useMarkWriteForm } from "../write-form"
+import { useUserGetQuery } from "../../../../modules/user/queries/use-user-get-query"
+import { useEditMarkMutation } from "../../../../modules/punishment/mutations/use-edit-mark-mutation"
+import { usePersonalMarkGetByMarkId } from "../../../../modules/punishment/queries/use-personal-mark-get-by-mark-id"
+import { GenericTable } from "../../../../components/GenericTable"
 
 const UserNameCell: FC<{ userId: string }> = ({ userId }) => {
   const { user } = useUserGetQuery(userId)

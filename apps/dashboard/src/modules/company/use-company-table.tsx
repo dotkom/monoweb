@@ -5,7 +5,7 @@ import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { CompanyName } from "src/components/molecules/company-name/company-name"
+import { CompanyName } from "../../components/molecules/company-name/company-name"
 
 interface Props {
   data: Company[]

@@ -1,5 +1,5 @@
-import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
-import { createTextInput, useFormBuilder } from "../../form"
+import { type UserWrite, UserWriteSchema, studyYearOptions } from "@dotkomonline/types"
+import { createIntegerSelectInput, createTextInput, useFormBuilder } from "../../form"
 
 const USER_FORM_DEFAULT_VALUES: Partial<UserWrite> = {
   cognitoSub: undefined,
@@ -23,9 +23,15 @@ export const useUserWriteForm = ({
     label,
     fields: {
       cognitoSub: createTextInput({
-        label: "Cognito Sub",
-        placeholder: "Enter Cognito Sub ID",
+        label: "Cognito Bruker-ID",
+        placeholder: "00000000-0000-0000-0000-000000000000",
         withAsterisk: true,
+      }),
+      studyYear: createIntegerSelectInput({
+        label: "Studieår",
+        placeholder: "Velg studieår",
+        withAsterisk: true,
+        data: studyYearOptions,
       }),
     },
   })

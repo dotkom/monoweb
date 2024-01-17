@@ -26,14 +26,27 @@ export const eventRouter = t.router({
       z.object({
         id: EventSchema.shape.id,
         event: EventWriteSchema,
-        committeeIds: z.array(EventCommitteeSchema.shape.committeeId),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.eventService.updateEvent(input.id, input.event)
-      await ctx.eventCommitteeService.setEventCommittees(input.id, input.committeeIds)
       return event
     }),
+
+  editWithCommittees: protectedProcedure
+    .input(
+      z.object({
+        id: EventSchema.shape.id,
+        event: EventWriteSchema,
+        committees: z.array(EventCommitteeSchema.shape.committeeId),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const event = await ctx.eventService.updateEvent(input.id, input.event)
+      await ctx.eventCommitteeService.setEventCommittees(input.id, input.committees)
+      return event
+    }),
+
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input.take, input.cursor)
     const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
