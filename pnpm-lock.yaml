@@ -323,7 +323,7 @@ importers:
     dependencies:
       '@sanity/vision':
         specifier: ^3.20.1
-        version: 3.25.0(@babel/runtime@7.22.6)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.8)
+        version: 3.25.0(@babel/runtime@7.23.8)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.8)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -763,6 +763,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:^
         version: link:../gateway-trpc
+      '@dotkomonline/types':
+        specifier: workspace:^
+        version: link:../types
       '@trpc/react-query':
         specifier: ^10.38.5
         version: 10.43.0(@tanstack/react-query@4.36.1)(@trpc/client@10.43.0)(@trpc/server@10.43.0)(react-dom@18.2.0)(react@18.2.0)
@@ -6674,7 +6677,7 @@ packages:
       uuid: 8.3.2
     dev: false
 
-  /@sanity/vision@3.25.0(@babel/runtime@7.22.6)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.8):
+  /@sanity/vision@3.25.0(@babel/runtime@7.23.8)(@codemirror/lint@6.4.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@lezer/common@1.0.3)(codemirror@6.0.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.8):
     resolution: {integrity: sha512-x4sYW3hGQ+WD91MZytEGsWQadfuQWgEawo1jGEjndfbpSdCF+T0KSCN3AFWznd0bpYoAsq6fTZ9rIgMzuoEthg==}
     peerDependencies:
       react: ^18
@@ -6693,7 +6696,7 @@ packages:
       '@sanity/color': 3.0.0
       '@sanity/icons': 2.8.0(react@18.2.0)
       '@sanity/ui': 2.0.0(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)(styled-components@6.1.8)
-      '@uiw/react-codemirror': 4.21.9(@babel/runtime@7.22.6)(@codemirror/autocomplete@6.9.0)(@codemirror/language@6.8.0)(@codemirror/lint@6.4.0)(@codemirror/search@6.5.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.15.3)(codemirror@6.0.1)(react-dom@18.2.0)(react@18.2.0)
+      '@uiw/react-codemirror': 4.21.9(@babel/runtime@7.23.8)(@codemirror/autocomplete@6.9.0)(@codemirror/language@6.8.0)(@codemirror/lint@6.4.0)(@codemirror/search@6.5.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.15.3)(codemirror@6.0.1)(react-dom@18.2.0)(react@18.2.0)
       hashlru: 2.3.0
       is-hotkey: 0.1.8
       json5: 2.2.3
@@ -8149,7 +8152,7 @@ packages:
       '@codemirror/view': 6.15.3
     dev: false
 
-  /@uiw/react-codemirror@4.21.9(@babel/runtime@7.22.6)(@codemirror/autocomplete@6.9.0)(@codemirror/language@6.8.0)(@codemirror/lint@6.4.0)(@codemirror/search@6.5.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.15.3)(codemirror@6.0.1)(react-dom@18.2.0)(react@18.2.0):
+  /@uiw/react-codemirror@4.21.9(@babel/runtime@7.23.8)(@codemirror/autocomplete@6.9.0)(@codemirror/language@6.8.0)(@codemirror/lint@6.4.0)(@codemirror/search@6.5.0)(@codemirror/state@6.2.1)(@codemirror/theme-one-dark@6.1.2)(@codemirror/view@6.15.3)(codemirror@6.0.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-aeLegPz2iCvqJjhzXp2WUMqpMZDqxsTnF3rX9kGRlfY6vQLsrjoctj0cQ29uxEtFYJChOVjtCOtnQUlyIuNAHQ==}
     peerDependencies:
       '@babel/runtime': '>=7.11.0'
@@ -8160,7 +8163,7 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@babel/runtime': 7.22.6
+      '@babel/runtime': 7.23.8
       '@codemirror/commands': 6.2.4
       '@codemirror/state': 6.2.1
       '@codemirror/theme-one-dark': 6.1.2
