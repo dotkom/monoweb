@@ -65,9 +65,7 @@ export const eventRouter = t.router({
     ),
   allByUserId: publicProcedure
     .input(z.object({ id: UserSchema.shape.id }))
-    .query(async ({ input, ctx }) =>
-      ctx.eventService.getEventsByUserAttending(input.id)
-    ),
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
   allByCommittee: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>

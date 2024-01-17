@@ -17,7 +17,7 @@ export interface EventRepository {
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: Kysely<Database>) { }
+  constructor(private readonly db: Kysely<Database>) {}
 
   async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
@@ -42,7 +42,6 @@ export class EventRepositoryImpl implements EventRepository {
   }
 
   async getAllByUserAttending(userId: string): Promise<Event[]> {
-
     const event_ids = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
@@ -56,9 +55,9 @@ export class EventRepositoryImpl implements EventRepository {
       .filter((id): id is string => id !== null)
       .map(async (id) => this.getById(id))
 
-    const events = (await Promise.all(eventPromises)).filter((ev): ev is Event => ev !== undefined);
+    const events = (await Promise.all(eventPromises)).filter((ev): ev is Event => ev !== undefined)
 
-    return events;
+    return events
   }
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
