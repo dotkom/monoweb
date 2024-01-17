@@ -17,7 +17,7 @@
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
-    "@trpc/server": "^10.43.3",
+    "@trpc/server": "^10.45.0",
     "superjson": "^1.13.3",
     "zod": "^3.22.4"
   },
