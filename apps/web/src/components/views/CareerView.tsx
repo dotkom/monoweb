@@ -6,7 +6,7 @@ import CompanyFiltersContainer from "../molecules/CompanyFiltersContainer"
 const CareerView: FC<CareerProps> = (props: CareerProps) => {
   // return <div> 404 Siden finnes ikke </div>
 
-  return(
+  return (
     <div>
       <div className="bg-amber-9 absolute left-0 top-[56px] z-0 h-[250px] w-full opacity-30" />
       <div className="absolute left-0 top-[56px] z-10 flex h-[250px] w-full flex-col justify-center">
@@ -19,9 +19,9 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
           </p>
         </div>
       </div>
-      <div className="flex gap-x-5 mt-60 mb-10 flex-row">
+      <div className="mb-10 mt-60 flex w-screen flex-row justify-center gap-x-5">
         <CompanyFiltersContainer />
-        <div className="w-96">
+        <div className="w-1/2">
           <div className="border-slate-11 flex justify-between border-b-2">
             <p className="mb-2 w-1/4 text-xl font-medium">Bedrift</p>
             <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
@@ -29,18 +29,17 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
             <p className="mb-2 w-[17.5%] text-xl font-medium">Frist</p>
             <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
           </div>
-        <div className="flex flex-col">
-          {props.careers.map((c) => (
-            <>
-              <CompanyAdListItem career={c} />
-            </>
-          ))}
+          <div className="flex flex-col">
+            {props.careers.map((c) => (
+              <>
+                <CompanyAdListItem career={c} />
+              </>
+            ))}
+          </div>
         </div>
-        </div>
-        <div className="h-36"></div>
       </div>
-  </div>
-)
-  };
+    </div>
+  )
+}
 
 export default CareerView
