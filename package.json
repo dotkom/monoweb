@@ -40,14 +40,14 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.2.4",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "ts-node": "^10.9.2",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
+    "prettier-plugin-tailwindcss": "^0.5.7",
+    "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
-    "turbo": "^1.11.3",
-    "turbo-ignore": "^1.11.3",
-    "typescript": "^5.3.3",
+    "turbo": "^1.10.16",
+    "turbo-ignore": "^1.10.16",
+    "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
 }
