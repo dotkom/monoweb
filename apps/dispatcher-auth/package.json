@@ -8,20 +8,17 @@
     "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "docker:build": "docker build --platform linux/amd64 -t dispatcher-auth:latest -f Dockerfile ../..",
-    "docker:push:dev": "docker tag dispatcher-auth:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest",
-    "lambda:update:dev": "aws lambda update-function-code --function-name dispatcher-auth-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev:latest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.438.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.451.0",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/types": "workspace:*"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.126",
-    "@types/node": "18.18.9",
+    "@types/aws-lambda": "^8.10.129",
+    "@types/node": "18.18.13",
     "tsup": "^7.2.0",
     "typescript": "5.2.2"
   }

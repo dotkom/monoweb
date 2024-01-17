@@ -1,0 +1,12 @@
+{
+  "imageName": "dispatcher-auth",
+  "version": "latest",
+  "environments": [
+    {
+      "name": "dev",
+      "ecrRepository": "891459268445.dkr.ecr.eu-north-1.amazonaws.com/dispatcher-auth-dev",
+      "functionName": "dispatcher-auth-dev",
+      "dockerfile": "apps/dispatcher-auth/Dockerfile"
+    }
+  ]
+}

@@ -99,6 +99,7 @@ export const EventAttendancePage: FC = () => {
         onSubmit={handleUserClick}
         items={users}
         dataMapper={(item: User) => item.id.toString()}
+        placeholder="Søk etter bruker..."
       />
       {eventAttendance.map((attendance) => (
         <Box key={attendance.id} mb="sm">

@@ -22,6 +22,7 @@ export interface AuthOptions {
   cognitoClientSecret: string
   cognitoIssuer: string
   core: ServiceLayer
+  jwtSecret: string
 }
 
 export const getAuthOptions = ({
@@ -29,7 +30,9 @@ export const getAuthOptions = ({
   cognitoClientSecret,
   cognitoIssuer,
   core,
+  jwtSecret,
 }: AuthOptions): NextAuthOptions => ({
+  secret: jwtSecret,
   providers: [
     CognitoProvider({
       clientId: cognitoClientId,
