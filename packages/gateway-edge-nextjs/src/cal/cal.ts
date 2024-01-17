@@ -24,9 +24,9 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const events = await helpers.event.all.fetch()
   const instance = ical({ name: `Online Linjeforening Arrangementer` })
 
+  const events = await helpers.event.all.fetch()
   events.forEach((event) => {
     instance.createEvent(toICal(event))
   })
