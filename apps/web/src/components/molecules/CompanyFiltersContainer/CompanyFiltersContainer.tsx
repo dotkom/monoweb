@@ -29,11 +29,14 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
         <button className="text-red-9 mx-4 my-auto font-semibold">Reset</button>
       </div>
       <CompanyFilter filterContent={filterJobs} />
-      <select name="places" id="">
-        {places.map((place, key) => {
-          return <option key={key}>{place}</option>
-        })}
-      </select>
+      <div className="border-slate-10 mx-4 mb-4 border-b-2">
+        <p className=" mt-4 font-semibold ">Sted</p>
+        <select className="border-slate-10 radius h-10 w-full rounded-md border-2" name="places">
+          {places.map((place, key) => {
+            return <option key={key}>{place}</option>
+          })}
+        </select>
+      </div>
     </div>
   )
 }
