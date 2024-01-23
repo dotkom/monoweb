@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "sst bind next dev",
     "build:prod": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6007",
@@ -72,6 +72,9 @@
     "tailwindcss": "^3.3.5",
     "trpc-playground": "^1.0.4",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "sst": "^2.39.7",
+    "aws-cdk-lib": "2.110.1",
+    "constructs": "10.3.0"
   }
 }
