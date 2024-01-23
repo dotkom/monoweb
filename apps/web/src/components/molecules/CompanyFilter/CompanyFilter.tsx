@@ -3,12 +3,12 @@ import { FC } from "react"
 import { FilterItems } from "./filters"
 export interface CompanyFilter {}
 
-const FilterGrid: FC<{ filters: string[] }> = (filters) => {
+export const FilterGrid: FC<{ filters: string[] }> = (filters) => {
   return (
     <div>
-      {filters.filters.map((content) => (
-        <div className="flex-col rounded-md py-2 ">
-        <input className="mr-2 align-middle" type="checkbox"></input>
+      {filters.filters.map((content,index) => (
+        <div key={index} className="flex-col rounded-md py-2 ">
+        <input  className="mr-2 align-middle" type="checkbox"></input>
         <div className=" inline-block text-base">{content}</div>
       </div>
       ))}
@@ -25,7 +25,7 @@ export const CompanyFilter: FC<{ jobTypes: string[] }> = (jobtypes) => {
             <FilterGrid filters={jobtypes.jobTypes} />
           </div>
         </div>
-      <div className="border-slate-10 border-b-[1px]" />
+      <div className="border-slate-11 border-b-[1px]" />
     </div>
   )
 }
