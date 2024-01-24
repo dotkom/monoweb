@@ -8,7 +8,7 @@ import { logger } from "./logger"
 export type EnvironmentName = DeployEnvironment["name"]
 export type DeployEnvironment = z.infer<typeof DeployEnvironment>
 export const DeployEnvironment = z.object({
-  name: z.enum(["dev", "stg", "prd"]),
+  name: z.enum(["dev", "prd"]),
   ecrRepository: z.string().min(1, "ECR Repository name cannot be empty"),
   functionName: z.string().min(1, "AWS Lambda function name cannot be empty"),
   dockerfile: z.string(),
