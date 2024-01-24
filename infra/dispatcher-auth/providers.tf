@@ -3,7 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "cognito"
+      Project     = "dispatcher-auth"
       Environment = terraform.workspace
     }
   }
@@ -16,7 +16,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "cognito"
+      Project     = "dispatcher-auth"
       Environment = terraform.workspace
     }
   }
@@ -28,8 +28,18 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "cognito"
+      Project     = "dispatcher-auth"
       Environment = terraform.workspace
     }
   }
+}
+
+variable "doppler_token_monoweb" {
+  description = "TF Variable for the monoweb doppler token"
+  type        = string
+}
+
+provider "doppler" {
+  doppler_token = var.doppler_token_monoweb
+  alias         = "monoweb"
 }
