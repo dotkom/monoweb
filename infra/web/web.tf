@@ -22,7 +22,7 @@ module "web_database" {
 module "web_cognito_client" {
   source = "../modules/aws-cognito-client"
 
-  user_pool_id = data.aws_cognito_user_pools.user_pools.ids[0]
+  user_pool_id  = data.aws_cognito_user_pools.user_pools.ids[0]
   client_name   = "web"
   callback_urls = local.web_callback_urls
 }

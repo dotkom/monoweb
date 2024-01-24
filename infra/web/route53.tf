@@ -3,5 +3,5 @@ data "aws_route53_zone" "online" {
 }
 
 locals {
-  zone_id             = data.aws_route53_zone.online.zone_id
+  zone_id = data.aws_route53_zone.online.zone_id
 }
