@@ -12,19 +12,6 @@ resource "aws_route53_record" "null_record" {
   records = ["127.0.0.1"]
 }
 
-module "post_signup_trigger_lambda" {
-  source                = "../modules/aws-docker-lambda"
-  ecr_repository_name   = "dispatcher-auth-${terraform.workspace}"
-  function_name         = "dispatcher-auth-${terraform.workspace}"
-  execution_role_name   = "DispatcherAuthExecuteRole${title(terraform.workspace)}"
-  environment_variables = local.monoweb_aws_safe_doppler_secrets
-
-  tags = {
-    Project     = "monoweb"
-    Environment = terraform.workspace
-  }
-}
-
 module "cognito_domain_certificate" {
   source = "../modules/aws-acm-certificate"
 
@@ -41,6 +28,10 @@ module "cognito_domain_certificate" {
   }
 }
 
+data "aws_lambda_function" "post_signup_trigger" {
+  function_name = "dispatcher-auth-${terraform.workspace}"
+}
+
 module "cognito_user_pool" {
   source = "../modules/aws-cognito-pool"
 
@@ -49,7 +40,7 @@ module "cognito_user_pool" {
   zone_id         = local.zone_id
   certificate_arn = module.cognito_domain_certificate.certificate_arn
   triggers = {
-    post_confirmation = module.post_signup_trigger_lambda.lambda_arn
+    post_confirmation = terraform.workspace == "dev" ? data.aws_lambda_function.post_signup_trigger.arn : null
   }
   schema = [
     {
@@ -86,9 +77,11 @@ module "cognito_user_pool" {
 }
 
 resource "aws_lambda_permission" "post_signup_trigger" {
+  count = terraform.workspace == "dev" ? 1 : 0
+
   statement_id  = "CognitoExecuteLambda"
   action        = "lambda:InvokeFunction"
   principal     = "cognito-idp.amazonaws.com"
-  function_name = module.post_signup_trigger_lambda.lambda_name
+  function_name = data.aws_lambda_function.post_signup_trigger.function_name
   source_arn    = module.cognito_user_pool.cognito_pool_arn
 }

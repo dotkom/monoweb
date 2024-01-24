@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "monoweb-terraform"
-    key    = "cognito.tfstate"
+    key    = "dispatcher-auth.tfstate"
     region = "eu-north-1"
   }
 
@@ -11,6 +11,10 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.23"
+    }
+    doppler = {
+      source  = "DopplerHQ/doppler"
+      version = "~> 1.3.0"
     }
   }
 }
