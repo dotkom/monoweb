@@ -3,15 +3,6 @@ locals {
   zone_id             = data.aws_route53_zone.online.zone_id
 }
 
-# Required because AWS Cognito requires an A record at the parent domain
-resource "aws_route53_record" "null_record" {
-  name    = "auth.online.ntnu.no"
-  type    = "A"
-  zone_id = local.zone_id
-  ttl     = 3600
-  records = ["127.0.0.1"]
-}
-
 module "cognito_domain_certificate" {
   source = "../modules/aws-acm-certificate"
 
@@ -29,6 +20,8 @@ module "cognito_domain_certificate" {
 }
 
 data "aws_lambda_function" "post_signup_trigger" {
+  count = terraform.workspace == "dev" ? 1 : 0
+
   function_name = "dispatcher-auth-${terraform.workspace}"
 }
 
@@ -40,7 +33,7 @@ module "cognito_user_pool" {
   zone_id         = local.zone_id
   certificate_arn = module.cognito_domain_certificate.certificate_arn
   triggers = {
-    post_confirmation = terraform.workspace == "dev" ? data.aws_lambda_function.post_signup_trigger.arn : null
+    post_confirmation = terraform.workspace == "dev" ? data.aws_lambda_function.post_signup_trigger[0].arn : null
   }
   schema = [
     {
@@ -73,7 +66,7 @@ module "cognito_user_pool" {
     Environment = terraform.workspace
   }
 
-  depends_on = [module.cognito_domain_certificate, aws_route53_record.null_record]
+  depends_on = [module.cognito_domain_certificate]
 }
 
 resource "aws_lambda_permission" "post_signup_trigger" {
@@ -82,6 +75,6 @@ resource "aws_lambda_permission" "post_signup_trigger" {
   statement_id  = "CognitoExecuteLambda"
   action        = "lambda:InvokeFunction"
   principal     = "cognito-idp.amazonaws.com"
-  function_name = data.aws_lambda_function.post_signup_trigger.function_name
+  function_name = data.aws_lambda_function.post_signup_trigger[0].function_name
   source_arn    = module.cognito_user_pool.cognito_pool_arn
 }
