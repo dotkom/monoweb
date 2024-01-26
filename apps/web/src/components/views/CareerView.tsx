@@ -22,7 +22,7 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
       <div className="mb-10 mt-60 flex w-screen flex-row justify-center gap-x-5">
         <CompanyFiltersContainer />
         <div className="w-1/2">
-          <div className="border-slate-11 flex justify-between border-b-2">
+          <div className="border-slate-11 mt-20 flex justify-between border-b-2">
             <p className="mb-2 w-1/4 text-xl font-medium">Bedrift</p>
             <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
             <p className="mb-2 w-[17.5%] text-xl font-medium">Sted</p>
