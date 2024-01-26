@@ -1,10 +1,10 @@
 import Link from "next/link"
 import React from "react"
-import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
 import { type MenuLink } from "./types"
+import OnlineIcon from "@/components/atoms/OnlineIcon"
 
 const links: MenuLink[] = [
   {
@@ -16,28 +16,8 @@ const links: MenuLink[] = [
     href: "/career",
   },
   {
-    title: "Om oss",
-    items: [
-      {
-        title: "Interessegrupper",
-        href: "#",
-        description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
-      },
-      {
-        title: "Om Linjeforeningen Online",
-        href: "#",
-        description: "Informasjon om Linjeforeningen",
-      },
-    ],
-  },
-  {
     title: "For bedrifter",
-    items: [
-      { title: "Kontakt", href: "/company-info", description: "Kontakt Linjeforening" },
-      { title: "Kvitteringskjema", href: "/company-info", description: "Online sitt Kvitteringskjema" },
-      { title: "Faktura", href: "/company-info", description: "Faktura" },
-      { title: "Interesseskjema", href: "/company-info", description: "Interesert?" },
-    ],
+    href: "/company-info",
   },
 ]
 
