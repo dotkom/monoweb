@@ -59,6 +59,17 @@ const techTalksTooltip = (
   </Section>
 )
 
+const femalesInTechTooltip = (
+  <Section>
+    <Text>
+      FeminITs rolle i Online er å fremme fellesskap og nettverksbygging blant jenter og ikke-binære studenter. Våre
+      samarbeidsarrangementer er designet for å ikke bare inspirere, men også for å gi innsikt i realitetene jenter står
+      overfor i IT-bransjen. Vi ønsker å fremme relevante temaer, bidra til å styrke kompetanse og motivere gjennom å
+      dele verdifulle perspektiver.
+    </Text>
+  </Section>
+)
+
 export const Form: FC = () => {
   const { register, control, formState } = useFormContext<FormSchema>()
 
@@ -129,6 +140,11 @@ export const Form: FC = () => {
         />
         <CheckboxWithTooltip name="requestsTechTalksParticipation" label="Tech Talks" tooltip={techTalksTooltip} />
         <CheckboxWithTooltip name="requestsExcursionParticipation" label="IT-ekskursjonen" tooltip={excursionTooltip} />
+        <CheckboxWithTooltip
+          name="requestsFemalesInTechEvent"
+          label="Samarbeidsarrangement med FeminIT"
+          tooltip={femalesInTechTooltip}
+        />
 
         <Controller
           control={control}
