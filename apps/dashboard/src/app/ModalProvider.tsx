@@ -8,6 +8,7 @@ import { UpdateEventExtrasModal } from "../modules/event/modals/edit-event-extra
 import { CreateEventModal } from "../modules/event/modals/create-event-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateCompanyModal } from "../modules/company/modals/create-company-modal"
+import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
 
 const modals = {
   "event/create": CreateEventModal,
@@ -16,6 +17,7 @@ const modals = {
   "offline/create": CreateOfflineModal,
   "extras/create": CreateEventExtrasModal,
   "extras/update": UpdateEventExtrasModal,
+  "article/create": CreateArticleModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

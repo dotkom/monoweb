@@ -2,22 +2,22 @@
 
 import { Icon } from "@iconify/react"
 import { Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
-import { useCompanyAllQuery } from "../../../modules/company/queries/use-company-all-query"
-import { useCreateCompanyModal } from "../../../modules/company/modals/create-company-modal"
-import { useCompanyTable } from "../../../modules/company/use-company-table"
 import { GenericTable } from "../../../components/GenericTable"
+import { useArticleAllQuery } from "../../../modules/article/queries/use-article-all-query"
+import { useArticleTable } from "../../../modules/article/use-article-table"
+import { useCreateArticleModal } from "../../../modules/article/modals/create-article-modal"
 
 export default function CompanyPage() {
-  const { companies, isLoading: isCompaniesLoading } = useCompanyAllQuery()
-  const open = useCreateCompanyModal()
-  const table = useCompanyTable({ data: companies })
+  const { articles, isLoading: isArticlesLoading } = useArticleAllQuery()
+  const open = useCreateArticleModal()
+  const table = useArticleTable({ data: articles })
 
   return (
-    <Skeleton visible={isCompaniesLoading}>
+    <Skeleton visible={isArticlesLoading}>
       <Stack>
         <GenericTable table={table} />
         <Group justify="space-between">
-          <Button onClick={open}>Opprett bedrift</Button>
+          <Button onClick={open}>Opprett artikkel</Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />
