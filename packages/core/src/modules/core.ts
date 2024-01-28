@@ -40,10 +40,7 @@ import { ArticleRepositoryImpl } from "./article/article-repository"
 import { ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
 import { ArticleServiceImpl } from "./article/article-service"
 import { ArticleTagRepositoryImpl } from "./article/article-tag-repository"
-<<<<<<< HEAD
 import { s3RepositoryImpl } from "../lib/s3/s3-repository"
-=======
->>>>>>> d5ddee3c (Fix logic for deleting tags)
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
