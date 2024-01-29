@@ -1,18 +1,11 @@
-import { type GetServerSideProps } from "next"
-import { type FC } from "react"
-import { type CareerAd, fetchCareerAds } from "@/api/get-career-ads"
 import CareerView from "@/components/views/CareerView"
+import { trpc } from "@/utils/trpc"
 
-export interface CareerProps {
-  careers: CareerAd[]
+const CareerPage = () => {
+  const { data, isLoading } = trpc.jobListing.all.useQuery()
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
+  return <CareerView careers={data ?? []} />
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data = await fetchCareerAds()
-  return { props: { careers: data } }
-}
-
-const Career: FC<CareerProps> = (props: CareerProps) => <CareerView careers={props.careers} />
-// return <div>404 - Sanity not found</div>
-
-export default Career
+export default CareerPage
