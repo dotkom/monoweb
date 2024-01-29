@@ -1,8 +1,8 @@
-import { type User, type Attendee } from "@dotkomonline/types"
+import { type User, type Attendee, type Attendance } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
-import { Box, Checkbox, Title } from "@mantine/core"
+import { Box, Checkbox, NumberInput, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import React, { useMemo, useState, type FC } from "react"
+import React, { useMemo, useRef, useState, type FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
@@ -11,6 +11,8 @@ import { useRegisterForEventMutation } from "../../../../modules/event/mutations
 import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
 import GenericSearch from "../../../../components/GenericSearch"
 import { GenericTable } from "../../../../components/GenericTable"
+import { useQueryNotification } from "../../../notifications"
+import { trpc } from "../../../../utils/trpc"
 
 interface CustomCheckboxProps {
   userId: string
@@ -35,22 +37,27 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 
 CustomCheckbox.displayName = "attendanceToggle"
 
-export const EventAttendancePage: FC = () => {
-  const { event } = useEventDetailsContext()
-  const { eventAttendance } = useEventAttendanceGetQuery(event.id)
-  const [searchQuery, setSearchQuery] = useState("")
-  const { users } = useUserSearchQuery(searchQuery)
-  const registerForEvent = useRegisterForEventMutation()
+const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
+  const persistantvalue = useRef(0)
+  console.log(persistantvalue.current)
+  persistantvalue.current += 1
   const deregisterForEvent = useDeregisterForEventMutation()
 
-  const columnHelper = createColumnHelper<Attendee>()
+  const ids = attendance.attendees.map((attendee) => attendee.userId)
+
+  const au = trpc.user.getMany.useQuery(ids)
+
+  const columnHelper = createColumnHelper<Attendee & { user?: User }>()
   const columns = useMemo(
     () => [
       columnHelper.accessor("userId", {
         header: () => "Bruker",
       }),
+      columnHelper.accessor("user.studyYear", {
+        header: () => "Klassetrinn",
+      }),
       columnHelper.accessor((attendee) => attendee, {
-        id: "attended",
+        id: "attend",
         header: () => "Møtt",
         cell: (info) => (
           <CustomCheckbox
@@ -61,7 +68,7 @@ export const EventAttendancePage: FC = () => {
         ),
       }),
       columnHelper.accessor((attendee) => attendee, {
-        id: "deregsiter",
+        id: "deregister",
         header: () => "Meld av",
         cell: (info) => (
           <Button
@@ -77,38 +84,149 @@ export const EventAttendancePage: FC = () => {
     [columnHelper, deregisterForEvent]
   )
 
+  const attendeesAndUsers = useMemo(
+    () => attendance.attendees.map((attendee, i) => ({ ...attendee, user: au.data?.[i] })),
+    [au.data] // TODO: if you include attendance here, it will cause an infinite render loop. users are never loaded on first render, so if users not in dep array, it will always be undefined.
+  )
+
+  console.log(au.data)
+  console.log(attendeesAndUsers)
+
   const table = useReactTable({
-    data: useMemo(() => eventAttendance.flatMap((attendance) => attendance.attendees), [eventAttendance]),
+    data: attendeesAndUsers,
+    // data: attendance.attendees,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
+
+  return (
+    <Box key={attendance.id} mb="sm">
+      <Title order={4}>
+        {attendance.id} Kapasitet: {attendance.attendees.length} / {attendance.limit} Klasse {attendance.min}-
+        {attendance.max - 1}
+      </Title>
+      <GenericTable table={table} />
+    </Box>
+  )
+}
+
+export const EventAttendancePage: FC = () => {
+  const notification = useQueryNotification()
+  const { event } = useEventDetailsContext()
+  const { eventAttendance } = useEventAttendanceGetQuery(event.id)
+  const [searchQuery, setSearchQuery] = useState("")
+  const { users } = useUserSearchQuery(searchQuery)
+  const registerForEvent = useRegisterForEventMutation()
+  const [toAddNum, setToAddNum] = useState({
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+  })
+  const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
+  const utils = trpc.useContext()
+  const [limit, setLimit] = useState(20)
 
   const handleUserSearch = (query: string) => {
     setSearchQuery(query)
   }
 
   const handleUserClick = (user: User) => {
-    registerForEvent.mutate({ eventId: event.id, userId: user.id.toString() })
+    const pool = eventAttendance.find((pool) => pool.min <= user.studyYear && pool.max > user.studyYear)
+
+    if (!pool) {
+      notification.fail({
+        title: "Feil",
+        message: "Fant ingen pool for brukeren",
+      })
+      return
+    }
+
+    registerForEvent.mutate({ poolId: pool.id, userId: user.id.toString() })
+  }
+
+  const createNewGroup = () => {
+    // check if there are gaps in toAddNum, i.e. [1, 3] is not allowed. but [1, 2, 3] is allowed. [3, 5] is not allowed, but [3, 4, 5] is allowed.
+    const chosen = Object.entries(toAddNum)
+      .filter(([, value]) => value)
+      .map(([key]) => Number(key))
+
+    const min = Math.min(...chosen)
+    const max = Math.max(...chosen) + 1
+
+    if (min === max) {
+      notification.fail({
+        title: "Feil",
+        message: "Du må velge minst ett klassetrinn",
+      })
+      console.log("Feil, du må velge minst ett klassetrinn")
+    }
+
+    const sorted = chosen.sort((a, b) => a - b)
+    const isConsecutive = sorted.every((num, idx) => idx === 0 || num === sorted[idx - 1] + 1)
+
+    if (!isConsecutive) {
+      notification.fail({
+        title: "Feil",
+        message: "Du kan ikke hoppe over klassetrinn",
+      })
+      console.log("Feil, du kan ikke hoppe over klassetrinn")
+    }
+
+    console.log(min, max, sorted, isConsecutive)
+
+    addAttendance({
+      start: new Date(),
+      end: new Date(),
+      deregisterDeadline: new Date(),
+      eventId: event.id,
+      limit,
+      min,
+      max,
+      attendees: [],
+    })
+    utils.event.attendance.get.invalidate()
   }
 
   return (
     <Box>
-      <Title order={3}>Meld på</Title>
-      <GenericSearch
-        onSearch={handleUserSearch}
-        onSubmit={handleUserClick}
-        items={users}
-        dataMapper={(item: User) => item.id.toString()}
-        placeholder="Søk etter bruker..."
-      />
-      {eventAttendance.map((attendance) => (
-        <Box key={attendance.id} mb="sm">
-          <Title order={4}>
-            {attendance.id} {`(${attendance.attendees.length}/${attendance.limit})`}
-          </Title>
-          <GenericTable table={table} />
-        </Box>
-      ))}
+      <Title order={2}></Title>
+      <details>
+        <summary>Legg til ny gruppe</summary>
+        <table>
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <tr key={i}>
+              <td>{i}</td>
+              <td>
+                <Checkbox
+                  onChange={(e) => {
+                    const newToAddNum = { ...toAddNum }
+                    newToAddNum[i] = e.currentTarget.checked
+                    setToAddNum(newToAddNum)
+                  }}
+                />
+              </td>
+            </tr>
+          ))}
+        </table>
+        <NumberInput value={limit} onChange={(value) => setLimit(Number(value))} />
+        <Button onClick={() => createNewGroup()}>Lag ny gruppe</Button>
+      </details>
+      <Box>
+        <Title order={3}>Meld på</Title>
+        <GenericSearch
+          onSearch={handleUserSearch}
+          onSubmit={handleUserClick}
+          items={users}
+          dataMapper={(item: User) => item.id.toString()}
+          placeholder="Søk etter bruker..."
+        />
+        {eventAttendance.map((attendance) => (
+          <AttendanceTable key={attendance.id} attendance={attendance} />
+        ))}
+      </Box>
     </Box>
   )
 }
