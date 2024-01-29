@@ -195,6 +195,9 @@ importers:
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@types/aws-lambda':
         specifier: ^8.10.129
@@ -624,6 +627,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@aws-sdk/client-cognito-identity-provider':
+        specifier: ^3.451.0
+        version: 3.451.0
       '@aws-sdk/client-s3':
         specifier: ^3.451.0
         version: 3.451.0
@@ -8893,7 +8899,6 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
     dev: false
-    bundledDependencies: false
 
   /create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}

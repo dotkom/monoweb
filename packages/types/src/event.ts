@@ -87,7 +87,7 @@ export const AttendanceSchema = z.object({
   eventId: z.string(),
   attendees: z.array(AttendeeSchema),
   min: z.number().min(0).max(5),
-  max: z.number().min(0).max(5),
+  max: z.number().min(0).max(6),
   extras: z.array(AttendanceExtrasSchema).nullable().optional(),
 })
 

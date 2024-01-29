@@ -12,7 +12,7 @@ export const attendances: Insertable<Database["attendance"]>[] = [
     limit: 20,
     eventId: "01HB64TWZK1C5YK5J7VGNZPDGW",
     min: 0,
-    max: 5,
+    max: 4,
   },
   {
     id: "01HB64JAPW86EXS7A4XG8D6K3X",
@@ -23,8 +23,8 @@ export const attendances: Insertable<Database["attendance"]>[] = [
     deregisterDeadline: new Date("2023-06-18 15:00:00+00"),
     limit: 5,
     eventId: "01HB64TWZK1C5YK5J7VGNZPDGW",
-    min: 0,
-    max: 5,
+    min: 4,
+    max: 6,
   },
   {
     id: "01HB64JAPW4Q0XR46MK831NTB2",
@@ -35,7 +35,7 @@ export const attendances: Insertable<Database["attendance"]>[] = [
     deregisterDeadline: new Date("2023-06-20 15:00:00+00"),
     limit: 20,
     eventId: "01HB64TWZK1N8ABMH8JAE12101",
-    min: 0,
-    max: 5,
+    min: 1,
+    max: 4,
   },
 ]

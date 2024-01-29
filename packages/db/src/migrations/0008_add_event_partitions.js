@@ -8,12 +8,14 @@ export async function up(db) {
     .execute()
   await db.schema
     .alterTable("attendance")
-    .addColumn("min", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("min", "integer", (col) => col.notNull().defaultTo(0)) // Inclusive
     .execute()
   await db.schema
     .alterTable("attendance")
-    .addColumn("max", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("max", "integer", (col) => col.notNull().defaultTo(0)) // Exclusive
     .execute()
+
+  // 1 - 3 year -> min: 1, max: 4
 }
 
 /** @param db {import('kysely').Kysely} */

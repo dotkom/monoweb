@@ -42,6 +42,15 @@ export class UserServiceImpl implements UserService {
     return user
   }
 
+  async getManyUsersById(ids: UserId[]) {
+    const final = []
+    for (const id of ids) {
+      const user = await this.userRepository.getById(id)
+      final.push(user)
+    }
+    return final
+  }
+
   async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
     const users = await this.userRepository.search(searchQuery, take, cursor)
     return users

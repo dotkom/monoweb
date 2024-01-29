@@ -5,6 +5,7 @@ import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
 // import PortableText from "../../components/molecules/PortableText"
 import clsx from "clsx"
+import { useSessionWithDBUser } from ".."
 import { trpc } from "@/utils/trpc"
 
 interface StatusCardProps {
@@ -127,22 +128,14 @@ const getStatusCardData = (status: StatusState, datetime: Date): StatusCardProps
   }
 }
 
-const BITFIELD = {
-  "1": 1 << 0,
-  "2": 1 << 1,
-  "3": 1 << 2,
-  "4": 1 << 3,
-  "5": 1 << 4,
-  "sosial medlem": 1 << 5,
-}
-
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const { id } = props
   const { data: event } = trpc.event.get.useQuery(id)
   const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
-  const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
-  const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
-  const utils = trpc.useContext()
+  // const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
+  // const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
+  // const utils = trpc.useContext()
+  const user = useSessionWithDBUser()
 
   const STATUS = "OPEN"
 
@@ -151,36 +144,60 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
 
   const statusData = getStatusCardData(STATUS, inTenMinutes)
 
+  // Range: [min, max)
+  const groupIncludes = (min: number, max: number, group: number) => group < max && group >= min
+
+  const myGroups = attendance?.filter((a) => groupIncludes(a.min, a.max, user.user.studyYear ?? 100))
+  const otherGroups = attendance?.filter((group) => !groupIncludes(group.min, group.max, user.user.studyYear ?? 100))
+
+  console.log(myGroups)
+  console.log(otherGroups)
+
   return (
     <div>
-      <div className="flex">
-        <div>
+      <div className="flex w-full">
+        <div className="mr-10 w-[70%]">
           {/* Left column of page */}
           <h2>{event?.event.title}</h2>
-          {/* <PortableText blocks={event?.event.description ?? ""} /> */}
           <p>{event?.event.description}</p>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-1 flex-col">
           {/* Right column of page */}
-          <div className="border-slate-5 min-h-64 mb-8 min-w-[400px] border px-4 py-8">
+          <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
             <h2>Påmelding</h2>
             <div className="mt-2">
               <StatusCard {...statusData} />
             </div>
-            <div className="flex">
-              {attendance?.map((group, idx) => (
+            <div>
+              {myGroups?.map((group, idx) => (
                 <AttendanceGroup
-                  title={"1.-5. klasse"}
+                  title={`${Math.max(1, group.min)}-${group.max - 1}. klasse`}
                   numberOfPeople={group.attendees.length}
-                  totalSpots={group.max}
+                  totalSpots={group.limit}
                   key={idx}
                   className={idx === 0 ? "mr-2" : ""}
                 />
               ))}
+              <Button className="mt-2 w-full">Meld meg på</Button>
             </div>
+
+            {otherGroups?.length !== 0 && (
+              <div className="mt-4">
+                <p>Andre grupper</p>
+                {otherGroups?.map((group, idx) => (
+                  <AttendanceGroup
+                    title={"1.-5. klasse"}
+                    numberOfPeople={group.attendees.length}
+                    totalSpots={group.limit}
+                    key={idx}
+                    className={clsx(idx === 0 ? "mr-2" : "", "w-32")}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="border-slate-5 min-h-64 mb-8 min-w-[400px] border px-4 py-8">
+          <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
             <h2>Arrangør</h2>
             <table className="mx-auto mt-4">
               <tbody>
@@ -195,13 +212,13 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
               </tbody>
             </table>
           </div>
-          <div className="border-slate-5 min-h-64 mb-8 min-w-[400px] border px-4 py-8">
+          <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
             <h2>Oppmøte</h2>
             {/* practical information about where to meet */}
           </div>
         </div>
       </div>
-
+      {/* 
       <pre>{JSON.stringify(event, null, 2)}</pre>
       <Button
         onClick={async () => {
@@ -213,6 +230,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
             limit: 20,
             min: 1,
             max: 5,
+            groups: [1, 2, 3],
           })
           utils.event.attendance.get.invalidate()
         }}
@@ -230,7 +248,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
         Join random group
       </Button>
       <h2>Attendance</h2>
-      <pre>{JSON.stringify(attendance, null, 2)}</pre>
+      <pre>{JSON.stringify(attendance, null, 2)}</pre> */}
     </div>
   )
 }
