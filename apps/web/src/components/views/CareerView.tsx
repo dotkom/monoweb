@@ -1,10 +1,52 @@
-import { type FC } from "react"
-import { type CareerProps } from "@/pages/career"
+import { useState, type FC } from "react"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../molecules/CompanyFiltersContainer"
+import { type JobListing } from "@dotkomonline/types"
+
+interface CareerProps {
+  careers: JobListing[]
+}
+
+export interface EmploymentCheckbox {
+  name: string
+  checked: Boolean
+}
 
 const CareerView: FC<CareerProps> = (props: CareerProps) => {
   // return <div> 404 Siden finnes ikke </div>
+
+  const [chosenLocation, setChosenLocation] = useState<string>("Alle")
+  const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
+    { name: "Deltid", checked: false },
+    { name: "Fulltid", checked: false },
+    { name: "Sommerjobb/internship", checked: false },
+  ])
+
+  function filterLocation(jobListing: JobListing) {
+    if (chosenLocation === "Alle") {
+      return true
+    }
+    return jobListing.locations.includes(chosenLocation)
+  }
+
+  // 1. hvis ingen er valgt, return true
+  // 2. hvis en er valgt, sjekk om den er det samme som joblisting
+  // 3. hvis flere er valgt, sjekk om minst en av dem er det samme som joblisting
+  function filterEmployment(jobListing: JobListing) {
+    // check if no employment object has checked === true
+    if (chosenEmployments.every((employment) => !employment.checked)) {
+      return true
+    }
+
+    // check if employment is checked
+
+    return chosenEmployments.some((employment) => {
+      if (employment.checked && jobListing.employment == employment.name) {
+        return true
+      }
+      return false
+    })
+  }
 
   return (
     <div>
@@ -20,7 +62,12 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
         </div>
       </div>
       <div className="mb-10 mt-60 flex w-screen flex-row justify-center gap-x-5">
-        <CompanyFiltersContainer />
+        <CompanyFiltersContainer
+          chosenLocation={chosenLocation}
+          setChosenLocation={setChosenLocation}
+          chosenEmployments={chosenEmployments}
+          setChosenEmployments={setChosenEmployments}
+        />
         <div className="w-1/2">
           <div className="border-slate-11 mt-20 flex justify-between border-b-2">
             <p className="mb-2 w-1/4 text-xl font-medium">Bedrift</p>
@@ -30,11 +77,15 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
             <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
           </div>
           <div className="flex flex-col">
-            {props.careers.map((c) => (
-              <>
-                <CompanyAdListItem career={c} />
-              </>
-            ))}
+            {props.careers
+              .filter((jobListing) => {
+                return filterLocation(jobListing) && filterEmployment(jobListing)
+              })
+              .map((c, key) => (
+                <div key={key}>
+                  <CompanyAdListItem career={c} />
+                </div>
+              ))}
           </div>
         </div>
       </div>

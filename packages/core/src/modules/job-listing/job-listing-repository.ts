@@ -1,6 +1,6 @@
 import { type Database } from "@dotkomonline/db"
 import { type JobListing, type JobListingId, JobListingSchema } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
+import { type Insertable, type Kysely, sql } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 type JobListingWrite = Insertable<Database["jobListing"]>
@@ -12,8 +12,7 @@ export interface JobListingRepository {
   update(id: JobListingId, data: JobListingWrite): Promise<JobListing>
 }
 
-const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing =>
-  JobListingSchema.parse(jobListing)
+const mapToJobListing = (jobListing: unknown): JobListing => JobListingSchema.parse(jobListing)
 
 export class JobListingRepositoryImpl implements JobListingRepository {
   constructor(private readonly db: Kysely<Database>) {}
@@ -23,6 +22,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       .selectFrom("jobListing")
       .leftJoin("jobListingLocationLink", "jobListingLocationLink.jobListingId", "jobListing.id")
       .leftJoin("jobListingLocation", "jobListingLocation.id", "jobListingLocationLink.locationId")
+      .leftJoin("company", "company.id", "jobListing.companyId")
       .selectAll("jobListing")
       .select(
         sql<
@@ -31,7 +31,8 @@ export class JobListingRepositoryImpl implements JobListingRepository {
           "locations"
         )
       )
-      .groupBy("jobListing.id")
+      .select(sql`json_build_object('id', company.id, 'name', company.name, 'image', company.image)`.as("company"))
+      .groupBy(["jobListing.id", "company.id"])
   }
 
   async create(data: JobListingWrite): Promise<JobListing | undefined> {

@@ -1,11 +1,15 @@
-import { FC, PropsWithChildren } from "react"
-import { CompanyFilter, FilterGrid } from "../CompanyFilter/CompanyFilter"
+import { EmploymentCheckbox } from "@/components/views/CareerView"
+import { Dispatch, FC, PropsWithChildren, SetStateAction } from "react"
 
-export interface CompanyFiltersContainer {}
+interface CompanyFiltersContainer {
+  chosenLocation: string
+  setChosenLocation: Dispatch<SetStateAction<string>>
+  chosenEmployments: EmploymentCheckbox[]
+  setChosenEmployments: Dispatch<SetStateAction<EmploymentCheckbox[]>>
+}
 
-const jobTypes = ["Sommerjobb", "Fulltidsjobb", "Deltidsjobb", "Graduate"]
-const places = ["Alle","Oslo", "Bergen", "Trondheim", "Annet"]
-const sorter = ["Mine arrangementer", "Påmeldingsstart", "Frist"]
+const places = ["Alle", "Oslo", "Bergen", "Trondheim", "Annet"]
+const sorter = ["Frist", "Påmeldingsstart", "Opprettelse"]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => {
   return (
@@ -21,11 +25,36 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           placeholder="Søk jobbtittel eller nøkkelord"
         />
       </div>
-      <CompanyFilter jobTypes={jobTypes} />
+      <div>
+        <div className="mx-4">
+          <p className="mt-6 font-semibold">Jobbtyper</p>
+          <div>
+            {props.chosenEmployments.map((content, index) => (
+              <div key={index} className="flex-col rounded-md py-2 ">
+                <input
+                  className="accent-blue-12 mr-2 align-middle"
+                  type="checkbox"
+                  onChange={(e) => {
+                    content.checked = e.target.checked
+                    props.setChosenEmployments([...props.chosenEmployments])
+                  }}
+                ></input>
+                <div className=" inline-block text-base">{content.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div />
+      </div>
       <div className="border-slate-8 mb-4 border-b-[1px]">
         <div className="mx-4">
           <p className="mt-2 font-semibold">Sted</p>
-          <select className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]" name="places">
+          <select
+            value={props.chosenLocation}
+            onChange={(e) => props.setChosenLocation(e.target.value)}
+            className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
+            name="places"
+          >
             {places.map((place, key) => {
               return <option key={key}>{place}</option>
             })}

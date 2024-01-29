@@ -1,37 +1,32 @@
+import { type JobListing } from "@dotkomonline/types"
 import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
 import { type FC } from "react"
-import { type CareerAd } from "@/api/get-career-ads"
-
 interface CompanyAdListItemProps {
-  career: CareerAd
+  career: JobListing
 }
-
-const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemProps) => {
-  const { company_name, image, career_type, location, deadline, slug } = props.career
-
-  const color = career_type === "Sommerjobb" ? "amber" : career_type === "Fulltid" ? "red" : "blue"
-
+const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdListItemProps) => {
+  const color =
+    career.employment === "Sommerjobb/internship" ? "amber" : career.employment === "Fulltid" ? "red" : "blue"
+  const deadline = career.deadline ? format(career.deadline, "dd.MM.yyyy") : "Ingen frist"
   return (
     <div className="border-slate-11 flex h-16 items-center justify-between border-b">
       <div className="flex h-10 w-1/4 items-center gap-2 overflow-hidden">
-        <Image src={image.asset.url} width={70} height={40} alt={`${company_name}'s job posting`} />
-        <p>{company_name}</p>
+        <Image src={career.company.image || ""} width={70} height={40} alt={`${career.company.name}’s job posting`} />
+        <p>{career.company.name}</p>
       </div>
-
       <div className="w-1/4">
         <Badge color={color} variant="light">
-          {career_type}
+          {career.employment}
         </Badge>
       </div>
-      <span className="w-[17.5%]">{location.concat("")}</span>
-      <span className="w-[17.5%]">{format(new Date(deadline), "dd.MM.yyyy")}</span>
-      <a className="w-[15%]" href={`/career/${slug.current}`}>
+      <span className="w-[17.5%]">{career.locations.concat("")}</span>
+      <span className="w-[17.5%]">{deadline}</span>
+      <a className="w-[15%]" href={`/career/${career.id}`}>
         Les mer
       </a>
     </div>
   )
 }
-
 export default CompanyAdListItem

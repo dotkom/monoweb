@@ -4,35 +4,34 @@ import { type FC } from "react"
 import Link from "next/link"
 import PortableText from "@/components/molecules/PortableText"
 import { type CareerAd } from "@/api/get-career-ads"
+import { JobListing } from "@dotkomonline/types"
+import { format } from "date-fns"
 
 interface CareerAdViewProps {
-  career: CareerAd
+  career: JobListing
 }
 
-export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) => {
+export const CareerAdView: FC<CareerAdViewProps> = ({ career }) => {
   const {
+    company: { name: company_name, image }, //info: company_info, link, linkdin, twitter, facebook },
     title,
-    company_name,
-    image,
-    location,
+    ingress,
     deadline,
-    company_info,
-    content,
-    link,
-    linkdin,
-    twitter,
-    facebook,
-    career_role,
-  } = props.career
+    locations,
+    employment,
+    applicationLink,
+  } = career
 
+  const deadline2 = deadline ? format(deadline, "dd.MM.yyyy") : "Ingen frist"
   return (
     <div className="mx-auto mt-10 flex w-10/12 justify-between">
       <div className="w-1/3">
         <div className="relative pb-10">
-          <Image src={image.asset.url} width={4000} height={250} alt="company_image" />
+          <Image src={image || ""} width={4000} height={250} alt="company_image" />
         </div>
 
-        <p>{company_info}</p>
+        {/* <p>{company_info}</p> */}
+        <p>TODO</p>
 
         <div className="bg-slate-12 mx-auto mb-14 mt-10 h-[0.5px] w-full" />
         <Link href="/career">
@@ -44,32 +43,34 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
         <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <Icon icon="mdi:globe" className="text-blue-9" width={20} height={20} />
-          <p className="m-0 pl-2">{location}</p>
+          <p className="m-0 pl-2">{locations.join(" ")}</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-9 mb-[-3px] inline">
             <Icon icon="mdi:clock-outline" className="text-blue-9" width={20} height={20} />
           </div>
-          <p className="m-0 pl-2">{deadline}</p>
+          <p className="m-0 pl-2">{deadline2}</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-9 mb-[-3px] inline">
             <Icon icon="mdi:briefcase-outline" className="text-blue-9" width={20} height={20} />
           </div>
-          <p className="m-0 pl-2">{career_role}</p>
+          {/* <p className="m-0 pl-2">{career_role}</p> */}
+          <p className="m-0 pl-2">TODO</p>
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
           <div className="text-blue-9 mb-[-3px] inline">
             <Icon icon="mdi:content-copy" className="text-blue-9" width={20} height={20} />
           </div>
-          <p className="m-0 pl-2">{career_role}</p>
+          {/* <p className="m-0 pl-2">{career_role}</p> */}
+          <p className="m-0 pl-2">TODO</p>
         </div>
         <div className="bg-slate-9 mb-3 mt-7 h-[0.5px] w-full" />
         <div className="text-blue-9">
-          {linkdin && (
+          {/* {linkdin && (
             <Link href={linkdin}>
               <Icon width={40} height={40} icon="devicon:linkedin" className="m-1 inline-block" />
             </Link>
@@ -83,9 +84,9 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
             <Link href={facebook}>
               <Icon width={40} height={40} icon="devicon:facebook" className="m-1 inline-block" />
             </Link>
-          )}
+          )} */}
         </div>
-        <Link href={link}>
+        <Link href={applicationLink || ""}>
           <Button className="bg-blue-8 mt-3 w-20">Søk</Button>
         </Link>
       </div>
@@ -95,7 +96,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <p className="m-0 text-3xl">{title}</p>
         </div>
         <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col gap-6 [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
-          <PortableText blocks={content} />
+          {/* <PortableText blocks={content} /> */}
         </div>
       </div>
     </div>
