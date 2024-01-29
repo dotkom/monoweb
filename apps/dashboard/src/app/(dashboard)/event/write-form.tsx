@@ -20,6 +20,7 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
   subtitle: null,
   waitlist: null,
   committeeIds: [],
+  extras: [],
 }
 
 interface UseEventWriteFormProps {
