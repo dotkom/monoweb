@@ -21,7 +21,7 @@ export const EventEditCard: FC = () => {
     },
     defaultValues: {
       ...event,
-      committeeIds: eventCommittees.map((committee) => committee.id),
+      committeeIds: eventCommittees.map((committee) => committee.committeeId),
     },
   })
   return <FormComponent />
