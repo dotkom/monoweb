@@ -16,11 +16,13 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
   // return <div> 404 Siden finnes ikke </div>
 
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
+  const [searchName, setSearchName] = useState<string>("")
   const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
     { name: "Deltid", checked: false },
     { name: "Fulltid", checked: false },
     { name: "Sommerjobb/internship", checked: false },
   ])
+  const [chosenSort, setChosenSort] = useState<string>("Frist")
 
   function filterLocation(jobListing: JobListing) {
     if (chosenLocation === "Alle") {
@@ -29,6 +31,10 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
     return jobListing.locations.includes(chosenLocation)
   }
 
+  function filterName(jobListing: JobListing){
+    console.log(jobListing.company.name, searchName.toLowerCase)
+    return jobListing.company.name.toLowerCase().startsWith(searchName.toLowerCase())
+  }
   // 1. hvis ingen er valgt, return true
   // 2. hvis en er valgt, sjekk om den er det samme som joblisting
   // 3. hvis flere er valgt, sjekk om minst en av dem er det samme som joblisting
@@ -37,15 +43,35 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
     if (chosenEmployments.every((employment) => !employment.checked)) {
       return true
     }
-
     // check if employment is checked
-
     return chosenEmployments.some((employment) => {
       if (employment.checked && jobListing.employment == employment.name) {
         return true
       }
       return false
     })
+  }
+
+  function sortDates(jobListing1: JobListing, jobListing2: JobListing){
+    console.log(chosenSort)
+    if (chosenSort === "Frist"){
+      if (jobListing1.deadline?.getTime() == null){
+        return -1
+      }
+      else if (jobListing2.deadline?.getTime() == null) {
+        return 1
+      }
+      else{
+        return jobListing1.deadline.getTime() - jobListing2.deadline.getTime();
+      }
+    }
+    else if (chosenSort === "Påmeldingsstart"){
+        return jobListing1.start.getTime() - jobListing2.start.getTime();
+    }
+    else if (chosenSort === "Slutt"){
+      return jobListing1.end.getTime() - jobListing2.end.getTime();
+    }
+    return 0
   }
 
   return (
@@ -65,11 +91,15 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
         <CompanyFiltersContainer
           chosenLocation={chosenLocation}
           setChosenLocation={setChosenLocation}
+          searchName={searchName}
+          setSearchName={setSearchName}
           chosenEmployments={chosenEmployments}
           setChosenEmployments={setChosenEmployments}
+          chosenSort={chosenSort}
+          setChosenSort={setChosenSort}
         />
         <div className="w-1/2">
-          <div className="border-slate-11 mt-20 flex justify-between border-b-2">
+          <div className="border-slate-11 flex justify-between border-b-2">
             <p className="mb-2 w-1/4 text-xl font-medium">Bedrift</p>
             <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
             <p className="mb-2 w-[17.5%] text-xl font-medium">Sted</p>
@@ -79,7 +109,9 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
           <div className="flex flex-col">
             {props.careers
               .filter((jobListing) => {
-                return filterLocation(jobListing) && filterEmployment(jobListing)
+                return filterLocation(jobListing) && filterEmployment(jobListing) && filterName(jobListing)
+              }).sort((jobListing1,jobListing2) => {
+                return sortDates(jobListing1,jobListing2);
               })
               .map((c, key) => (
                 <div key={key}>
