@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useDeregisterForEventMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.event.attendance.deregisterForEvent.useMutation({
     onMutate: () => {
       notification.loading({

@@ -3,7 +3,6 @@ import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const useCreateEventMutation = () => {
-  const utils = trpc.useContext()
   const router = useRouter()
   const notification = useQueryNotification()
   return trpc.event.create.useMutation({

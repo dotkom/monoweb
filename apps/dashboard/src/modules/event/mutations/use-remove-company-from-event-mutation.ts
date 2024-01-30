@@ -2,7 +2,6 @@ import { trpc } from "../../../utils/trpc"
 import { useQueryNotification } from "../../../app/notifications"
 
 export const useRemoveCompanyFromEventMutation = () => {
-  const utils = trpc.useContext()
   const notification = useQueryNotification()
   return trpc.event.company.delete.useMutation({
     onMutate: () => {

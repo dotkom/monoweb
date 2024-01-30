@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useEditJobListingMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.jobListing.edit.useMutation({
     onMutate: () => {
       notification.loading({

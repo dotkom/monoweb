@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useEditOfflineMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.offline.edit.useMutation({
     onMutate: () => {
       notification.loading({
