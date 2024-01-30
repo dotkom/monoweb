@@ -16,7 +16,6 @@ export const useRegisterForEventMutation = () => {
         title: "Påmelding vellykket",
         message: `Bruker ${data.userId} ble påmeldt arrangementet.`,
       })
-      utils.event.attendance.get.invalidate()
     },
     onError: (err) => {
       notification.fail({

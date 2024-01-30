@@ -18,7 +18,7 @@ export const useCreateCompanyMutation = () => {
         title: "Bedrift opprettet",
         message: `Bedriften "${data.name}" har blitt opprettet.`,
       })
-      utils.company.all.invalidate()
+
       router.push(`/company/${data.id}`)
     },
     onError: (err) => {

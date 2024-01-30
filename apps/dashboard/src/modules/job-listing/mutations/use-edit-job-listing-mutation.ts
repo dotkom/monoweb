@@ -16,7 +16,6 @@ export const useEditJobListingMutation = () => {
         title: "Stillingsannonse oppdatert",
         message: `Stillingsannonsen "${data.title}" har blitt oppdatert.`,
       })
-      utils.jobListing.all.invalidate()
     },
     onError: (err) => {
       notification.fail({

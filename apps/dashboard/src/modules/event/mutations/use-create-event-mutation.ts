@@ -18,7 +18,7 @@ export const useCreateEventMutation = () => {
         title: "Arrangement opprettet",
         message: `Arrangementet "${data.title}" har blitt opprettet.`,
       })
-      utils.event.all.invalidate()
+
       router.push(`/event/${data.id}`)
     },
     onError: (err) => {

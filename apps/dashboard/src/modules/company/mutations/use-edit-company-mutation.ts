@@ -16,7 +16,6 @@ export const useEditCompanyMutation = () => {
         title: "Bedrift oppdatert",
         message: `Bedriften "${data.name}" har blitt oppdatert.`,
       })
-      utils.company.all.invalidate()
     },
     onError: (err) => {
       notification.fail({

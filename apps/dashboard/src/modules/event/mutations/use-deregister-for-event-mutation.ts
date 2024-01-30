@@ -16,7 +16,6 @@ export const useDeregisterForEventMutation = () => {
         title: "Avmelding vellykket",
         message: `Bruker ble meldt av arrangementet.`,
       })
-      utils.event.attendance.get.invalidate()
     },
     onError: (err) => {
       notification.fail({

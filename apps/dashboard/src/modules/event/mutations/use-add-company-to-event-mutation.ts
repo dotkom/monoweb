@@ -16,7 +16,6 @@ export const useAddCompanyToEventMutation = () => {
         title: "Bedrift lagt til",
         message: "Bedriften har blitt lagt til arrangørlisten.",
       })
-      utils.event.company.get.invalidate()
     },
   })
 }

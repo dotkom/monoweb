@@ -16,8 +16,6 @@ export const useEditEventMutation = () => {
         title: "Arrangement oppdatert",
         message: `Arrangementet "${data.title}" har blitt oppdatert.`,
       })
-      utils.event.all.invalidate()
-      utils.event.get.invalidate()
     },
     onError: (err) => {
       notification.fail({

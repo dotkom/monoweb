@@ -18,7 +18,7 @@ export const useCreateArticleMutation = () => {
         title: "Artikkel opprettet",
         message: `Artikkeln "${data.title}" har blitt opprettet.`,
       })
-      utils.company.all.invalidate()
+
       router.push(`/article/${data.id}`)
     },
     onError: (err) => {

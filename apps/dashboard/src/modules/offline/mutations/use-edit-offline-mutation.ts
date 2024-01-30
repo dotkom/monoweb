@@ -16,7 +16,6 @@ export const useEditOfflineMutation = () => {
         title: "Ressursen oppdatert",
         message: `Ressursen "${data.title}" har blitt oppdatert.`,
       })
-      utils.offline.all.invalidate()
     },
     onError: (err) => {
       notification.fail({

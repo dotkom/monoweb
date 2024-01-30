@@ -18,7 +18,7 @@ export const useCreateJobListingMutation = () => {
         title: "Stillingsannonse opprettet",
         message: `Stillingsannonse "${data.title}" har blitt opprettet.`,
       })
-      utils.jobListing.all.invalidate()
+
       router.push(`/job-listing/${data.id}`)
     },
     onError: (err) => {

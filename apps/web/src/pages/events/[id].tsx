@@ -28,7 +28,6 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
             min: 1,
             max: 5,
           })
-          utils.event.attendance.get.invalidate()
         }}
       >
         Add attendance group
@@ -38,7 +37,6 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
           await attendEvent({
             eventId: id,
           })
-          utils.event.attendance.get.invalidate()
         }}
       >
         Join random group

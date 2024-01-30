@@ -18,7 +18,7 @@ export const useCreateOfflineMutation = () => {
         title: "Opprettet",
         message: "Ressursen har blitt opprettet.",
       })
-      utils.offline.all.invalidate()
+
       router.push(`/offline/${data.id}`)
     },
     onError: (err) => {

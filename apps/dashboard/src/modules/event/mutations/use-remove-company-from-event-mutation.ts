@@ -16,7 +16,6 @@ export const useRemoveCompanyFromEventMutation = () => {
         title: "Bedrift fjernet",
         message: "Bedriften har blitt fjernet fra arrangørlisten.",
       })
-      utils.event.company.get.invalidate()
     },
   })
 }

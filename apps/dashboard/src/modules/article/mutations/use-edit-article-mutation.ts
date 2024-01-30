@@ -16,7 +16,6 @@ export const useEditArticleMutation = () => {
         title: "Artikkelen oppdatert",
         message: `Artikkelen "${data.title}" har blitt oppdatert.`,
       })
-      utils.company.all.invalidate()
     },
     onError: (err) => {
       notification.fail({

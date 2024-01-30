@@ -16,8 +16,6 @@ export const useEditUserMutation = () => {
         title: "Bruker oppdatert",
         message: `Bruker "${data.id}" har blitt oppdatert.`,
       })
-      utils.user.all.invalidate()
-      utils.user.get.invalidate()
     },
     onError: (err) => {
       notification.fail({
