@@ -3,7 +3,6 @@ import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const useCreateOfflineMutation = () => {
-  const utils = trpc.useContext()
   const router = useRouter()
   const notification = useQueryNotification()
   return trpc.offline.create.useMutation({
@@ -18,7 +17,7 @@ export const useCreateOfflineMutation = () => {
         title: "Opprettet",
         message: "Ressursen har blitt opprettet.",
       })
-      utils.offline.all.invalidate()
+
       router.push(`/offline/${data.id}`)
     },
     onError: (err) => {

@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useEditOfflineMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.offline.edit.useMutation({
     onMutate: () => {
       notification.loading({
@@ -16,7 +16,6 @@ export const useEditOfflineMutation = () => {
         title: "Ressursen oppdatert",
         message: `Ressursen "${data.title}" har blitt oppdatert.`,
       })
-      utils.offline.all.invalidate()
     },
     onError: (err) => {
       notification.fail({

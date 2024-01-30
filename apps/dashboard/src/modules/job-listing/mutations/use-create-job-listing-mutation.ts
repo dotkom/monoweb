@@ -3,7 +3,6 @@ import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const useCreateJobListingMutation = () => {
-  const utils = trpc.useContext()
   const router = useRouter()
   const notification = useQueryNotification()
   return trpc.jobListing.create.useMutation({
@@ -18,7 +17,7 @@ export const useCreateJobListingMutation = () => {
         title: "Stillingsannonse opprettet",
         message: `Stillingsannonse "${data.title}" har blitt opprettet.`,
       })
-      utils.jobListing.all.invalidate()
+
       router.push(`/job-listing/${data.id}`)
     },
     onError: (err) => {
