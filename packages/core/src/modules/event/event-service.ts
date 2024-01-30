@@ -67,6 +67,14 @@ export class EventServiceImpl implements EventService {
     return attendance
   }
 
+  async deleteAttendance(attendanceId: string): Promise<boolean> {
+    const attendance = await this.attendanceRepository.delete(attendanceId)
+    if (attendance.numDeletedRows === BigInt(1)) {
+      return true
+    }
+    return false
+  }
+
   async listAttendance(eventId: EventId): Promise<Attendance[]> {
     const attendance = await this.attendanceRepository.getByEventId(eventId)
     return attendance

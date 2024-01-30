@@ -195,9 +195,6 @@ importers:
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
-      zod:
-        specifier: ^3.22.4
-        version: 3.22.4
     devDependencies:
       '@types/aws-lambda':
         specifier: ^8.10.129
@@ -355,6 +352,18 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
+
+  apps/shell:
+    dependencies:
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
 
   apps/web:
     dependencies:

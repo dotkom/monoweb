@@ -1,18 +1,18 @@
-import { type User, type Attendee, type Attendance } from "@dotkomonline/types"
+import { type Attendance, type Attendee, type User } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { Box, Checkbox, NumberInput, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import React, { useMemo, useRef, useState, type FC } from "react"
+import React, { useMemo, useState, type FC } from "react"
 import { useEventDetailsContext } from "./provider"
+import GenericSearch from "../../../../components/GenericSearch"
+import { GenericTable } from "../../../../components/GenericTable"
+import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
+import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
 import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
 import { useUserSearchQuery } from "../../../../modules/user/queries/use-user-search-query"
-import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
-import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
-import GenericSearch from "../../../../components/GenericSearch"
-import { GenericTable } from "../../../../components/GenericTable"
-import { useQueryNotification } from "../../../notifications"
 import { trpc } from "../../../../utils/trpc"
+import { useQueryNotification } from "../../../notifications"
 
 interface CustomCheckboxProps {
   userId: string
@@ -38,10 +38,9 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 CustomCheckbox.displayName = "attendanceToggle"
 
 const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
-  const persistantvalue = useRef(0)
-  console.log(persistantvalue.current)
-  persistantvalue.current += 1
   const deregisterForEvent = useDeregisterForEventMutation()
+
+  const deleteGroup = trpc.event.attendance.delete.useMutation()
 
   const ids = attendance.attendees.map((attendee) => attendee.userId)
 
@@ -99,11 +98,18 @@ const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
     columns,
   })
 
+  const deleteGroup2 = () => {
+    deleteGroup.mutate({
+      id: attendance.id,
+    })
+  }
+
   return (
     <Box key={attendance.id} mb="sm">
       <Title order={4}>
         {attendance.id} Kapasitet: {attendance.attendees.length} / {attendance.limit} Klasse {attendance.min}-
         {attendance.max - 1}
+        <Button onClick={() => deleteGroup2()}>Slett</Button>
       </Title>
       <GenericTable table={table} />
     </Box>
@@ -126,7 +132,6 @@ export const EventAttendancePage: FC = () => {
     5: false,
   })
   const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
-  const utils = trpc.useContext()
   const [limit, setLimit] = useState(20)
 
   const handleUserSearch = (query: string) => {
@@ -161,7 +166,8 @@ export const EventAttendancePage: FC = () => {
         title: "Feil",
         message: "Du må velge minst ett klassetrinn",
       })
-      console.log("Feil, du må velge minst ett klassetrinn")
+      console.error("Feil, du må velge minst ett klassetrinn")
+      return
     }
 
     const sorted = chosen.sort((a, b) => a - b)
@@ -172,10 +178,9 @@ export const EventAttendancePage: FC = () => {
         title: "Feil",
         message: "Du kan ikke hoppe over klassetrinn",
       })
-      console.log("Feil, du kan ikke hoppe over klassetrinn")
+      console.error("Feil, du kan ikke hoppe over klassetrinn")
+      return
     }
-
-    console.log(min, max, sorted, isConsecutive)
 
     addAttendance({
       start: new Date(),
@@ -187,7 +192,6 @@ export const EventAttendancePage: FC = () => {
       max,
       attendees: [],
     })
-    utils.event.attendance.get.invalidate()
   }
 
   return (
@@ -203,7 +207,7 @@ export const EventAttendancePage: FC = () => {
                 <Checkbox
                   onChange={(e) => {
                     const newToAddNum = { ...toAddNum }
-                    newToAddNum[i] = e.currentTarget.checked
+                    newToAddNum[i as keyof typeof newToAddNum] = e.currentTarget.checked
                     setToAddNum(newToAddNum)
                   }}
                 />

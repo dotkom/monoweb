@@ -1,19 +1,20 @@
 import { type Database } from "@dotkomonline/db"
+import { type DB } from "@dotkomonline/db/src/db.generated"
 import {
+  AttendanceSchema,
+  AttendeeSchema,
   type Attendance,
   type AttendanceId,
-  AttendanceSchema,
   type AttendanceWrite,
   type Attendee,
-  AttendeeSchema,
   type AttendeeWrite,
   type EventId,
 } from "@dotkomonline/types"
-import { type Kysely, sql } from "kysely"
-import { type DB } from "@dotkomonline/db/src/db.generated"
+import { type DeleteResult, sql, type Kysely } from "kysely"
 
 export interface AttendanceRepository {
   create(attendanceWrite: AttendanceWrite): Promise<Attendance>
+  delete(id: AttendanceId): Promise<DeleteResult>
   createAttendee(attendeeWrite: AttendeeWrite): Promise<Attendee>
   removeAttendee(userId: string, attendanceId: string): Promise<Attendee>
   getAttendeeByIds(userId: string, eventId: string): Promise<Attendee | undefined>
@@ -30,11 +31,33 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const res = await this.db
       .insertInto("attendance")
       .values({
-        ...attendanceWrite,
+        createdAt: attendanceWrite.createdAt,
+        updatedAt: attendanceWrite.updatedAt,
+        start: attendanceWrite.start,
+        end: attendanceWrite.end,
+        deregisterDeadline: attendanceWrite.deregisterDeadline,
+        limit: attendanceWrite.limit,
+        eventId: attendanceWrite.eventId,
+        id: attendanceWrite.id,
+        min: attendanceWrite.min,
+        max: attendanceWrite.max,
       })
       .returningAll()
       .executeTakeFirstOrThrow()
-    return AttendanceSchema.parse(res)
+
+    const attendees = await this.db
+      .selectFrom("attendee")
+      .selectAll("attendee")
+      .where("attendanceId", "=", res.id)
+      .execute()
+    return AttendanceSchema.parse({
+      ...res,
+      attendees,
+    })
+  }
+
+  async delete(id: AttendanceId) {
+    return await this.db.deleteFrom("attendance").where("id", "=", id).executeTakeFirst()
   }
 
   async createAttendee(attendeeWrite: AttendeeWrite) {

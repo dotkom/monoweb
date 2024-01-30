@@ -7,6 +7,16 @@ export const attendanceRouter = t.router({
     const attendance = await ctx.eventService.createAttendance(input.eventId, input)
     return attendance
   }),
+  delete: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const attendance = await ctx.eventService.deleteAttendance(input.id)
+      return attendance
+    }),
   get: publicProcedure
     .input(
       z.object({
