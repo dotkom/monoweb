@@ -12,7 +12,7 @@ interface IDPRepository {
   getAll(limit: number): Promise<IDPUser[]>
   create(userWrite: UserWrite): Promise<User>
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
-  search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  search(searchQuery: string, take: number, cursor?: Cursor): Promise<IDPUser[]>
 }
 
 const IDPUserSchema = z.object({
@@ -32,14 +32,16 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
   }
 
   private async listUsersWithFilter(limit: number, filterAttribute?: string, filterValue?: string): Promise<IDPUser[]> {
-    const constructFilter = (att: string, val: string) => `${att} = "${val}"`
+    const constructFilter = (att: string, filtertype: "exact" | "prefix", val: string) =>
+      `${att} ${filtertype === "exact" ? "=" : "^="} "${val}"`
+
     const commandConfig: ListUsersCommandInput = {
       UserPoolId: "eu-north-1_wnSVVBSoo",
       Limit: limit,
     }
 
     if (filterAttribute && filterValue) {
-      const filter = constructFilter(filterAttribute, filterValue)
+      const filter = constructFilter(filterAttribute, "exact", filterValue)
       commandConfig["Filter"] = filter
     }
 
@@ -74,11 +76,16 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
     return this.listUsersWithFilter(limit)
   }
 
-  async create(userWrite: UserWrite): Promise<User> {
+  async search(searchQuery: string, take: number): Promise<IDPUser[]> {
+    const users = await this.listUsersWithFilter(take, "given_name", searchQuery)
+    return users
+  }
+
+  async create(): Promise<User> {
     throw new Error("Method not implemented.")
   }
 
-  async update(id: UserId, data: Partial<UserWrite>): Promise<User> {
+  async update(): Promise<User> {
     throw new Error("Method not implemented.")
   }
 

@@ -6,5 +6,4 @@ import { CognitoIDPRepositoryImpl } from "@dotkomonline/core/src/lib/IDP-reposit
 
 const idp = new CognitoIDPRepositoryImpl()
 
-// idp.getAll(10).then(console.log)
-idp.getBySubject("20fd4962-466e-4fd5-9cc1-cca586caa04e").then(console.log)
+idp.search("henrik", 10).then(console.log)
