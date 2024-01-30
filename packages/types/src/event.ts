@@ -51,6 +51,7 @@ export const AttendeeSchema = z.object({
   id: z.string(),
   attendanceId: z.string().ulid(),
   userId: z.string().ulid(),
+  userCognitoSub: z.string().uuid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   attended: z.boolean(),
@@ -64,6 +65,15 @@ export const AttendeeSchema = z.object({
     .nullable()
     .optional(),
 })
+
+export const AttendeeWithAuthData = AttendeeSchema.merge(
+  z.object({
+    givenName: z.string(),
+    familyName: z.string(),
+    email: z.string().email(),
+    gender: z.string(),
+  })
+)
 
 export const AttendanceExtrasSchema = z.object({
   id: z.string(),
@@ -91,11 +101,17 @@ export const AttendanceSchema = z.object({
   extras: z.array(AttendanceExtrasSchema).nullable().optional(),
 })
 
+export const AttendanceWithAuthData = AttendanceSchema.extend({
+  attendees: z.array(AttendeeWithAuthData),
+})
+
 export type AttendanceId = Attendance["id"]
 export type Attendance = z.infer<typeof AttendanceSchema>
+export type AttendanceWithAuthData = z.infer<typeof AttendanceWithAuthData>
 
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
+export type AttendeeWithAuthData = z.infer<typeof AttendeeWithAuthData>
 
 export const AttendanceWriteSchema = AttendanceSchema.partial({
   id: true,

@@ -31,25 +31,25 @@ export type RefundRequestStatus = "APPROVED" | "PENDING" | "REJECTED";
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Articles {
-  author: string
-  content: string
-  createdAt: Generated<Timestamp>
-  excerpt: string
-  id: Generated<string>
-  imageUrl: string
-  photographer: string
-  slug: string
-  title: string
-  updatedAt: Generated<Timestamp>
+  author: string;
+  content: string;
+  createdAt: Generated<Timestamp>;
+  excerpt: string;
+  id: Generated<string>;
+  imageUrl: string;
+  photographer: string;
+  slug: string;
+  title: string;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface ArticleTagLink {
-  article: string
-  tag: string
+  article: string;
+  tag: string;
 }
 
 export interface ArticleTags {
-  name: string
+  name: string;
 }
 
 export interface Attendance {
@@ -72,6 +72,10 @@ export interface Attendee {
   extrasChoices: Json | null;
   id: Generated<string>;
   updatedAt: Generated<Timestamp>;
+<<<<<<< HEAD
+=======
+  userCognitoSub: string | null;
+>>>>>>> 58bff56d (Working attendance crud)
   userId: string | null;
 }
 
@@ -256,6 +260,12 @@ export interface RefundRequest {
 
 export interface DB {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  articles: Articles;
+  articleTagLink: ArticleTagLink;
+  articleTags: ArticleTags;
+>>>>>>> 58bff56d (Working attendance crud)
   attendance: Attendance;
   attendee: Attendee;
   committee: Committee;
@@ -276,6 +286,7 @@ export interface DB {
   product: Product;
   productPaymentProvider: ProductPaymentProvider;
   refundRequest: RefundRequest;
+<<<<<<< HEAD
 =======
   articles: Articles
   articleTagLink: ArticleTagLink
@@ -301,4 +312,6 @@ export interface DB {
   productPaymentProvider: ProductPaymentProvider
   refundRequest: RefundRequest
 >>>>>>> a1cd080e (Create backend and dashboard for creating articles (#705))
+=======
+>>>>>>> 58bff56d (Working attendance crud)
 }

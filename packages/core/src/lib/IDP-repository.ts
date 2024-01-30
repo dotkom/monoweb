@@ -3,11 +3,10 @@ import {
   ListUsersCommand,
   type ListUsersCommandInput,
 } from "@aws-sdk/client-cognito-identity-provider"
-import { type User, type UserId, type UserWrite } from "@dotkomonline/types"
-import { z } from "zod"
+import { type User, type UserId, type UserWrite, type IDPUser, IDPUserSchema } from "@dotkomonline/types"
 import { type Cursor } from "../utils/db-utils"
 
-interface IDPRepository {
+export interface IDPRepository {
   getBySubject(cognitoSubject: string): Promise<IDPUser | undefined>
   getAll(limit: number): Promise<IDPUser[]>
   create(userWrite: UserWrite): Promise<User>
@@ -15,23 +14,20 @@ interface IDPRepository {
   search(searchQuery: string, take: number, cursor?: Cursor): Promise<IDPUser[]>
 }
 
-const IDPUserSchema = z.object({
-  email: z.string(),
-  gender: z.string(),
-  familyName: z.string(),
-  givenName: z.string(),
-  subject: z.string(),
-})
-
-type IDPUser = z.infer<typeof IDPUserSchema>
-
 export class CognitoIDPRepositoryImpl implements IDPRepository {
   private readonly client: CognitoIdentityProviderClient
   constructor() {
     this.client = new CognitoIdentityProviderClient({ region: "eu-north-1" })
   }
 
-  private async listUsersWithFilter(limit: number, filterAttribute?: string, filterValue?: string): Promise<IDPUser[]> {
+  private async listUsersWithFilter(
+    limit: number,
+    filter?: {
+      filterType: "exact" | "prefix"
+      filterAttribute: string
+      filterValue: string
+    }
+  ): Promise<IDPUser[]> {
     const constructFilter = (att: string, filtertype: "exact" | "prefix", val: string) =>
       `${att} ${filtertype === "exact" ? "=" : "^="} "${val}"`
 
@@ -40,8 +36,10 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
       Limit: limit,
     }
 
-    if (filterAttribute && filterValue) {
-      const filter = constructFilter(filterAttribute, "exact", filterValue)
+    const { filterType, filterAttribute, filterValue } = filter || {}
+
+    if (filterAttribute && filterValue && filterType) {
+      const filter = constructFilter(filterAttribute, filterType, filterValue)
       commandConfig["Filter"] = filter
     }
 
@@ -77,7 +75,13 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
   }
 
   async search(searchQuery: string, take: number): Promise<IDPUser[]> {
-    const users = await this.listUsersWithFilter(take, "given_name", searchQuery)
+    console.log("Searching for", searchQuery)
+    const users = await this.listUsersWithFilter(take, {
+      filterAttribute: "given_name",
+      filterType: "prefix",
+      filterValue: searchQuery,
+    })
+    console.log("Found", users)
     return users
   }
 
@@ -90,7 +94,11 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
   }
 
   async getBySubject(cognitoSubject: string): Promise<IDPUser | undefined> {
-    const users = await this.listUsersWithFilter(1, "sub", cognitoSubject)
+    const users = await this.listUsersWithFilter(1, {
+      filterAttribute: "sub",
+      filterType: "exact",
+      filterValue: cognitoSubject,
+    })
     if (users.length !== 1) {
       return undefined
     }

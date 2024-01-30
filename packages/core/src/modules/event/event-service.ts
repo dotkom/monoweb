@@ -1,9 +1,18 @@
-import { type Attendance, type AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
+import {
+  AttendanceWithAuthData,
+  AttendeeWithAuthData,
+  type Attendance,
+  type AttendanceWrite,
+  type Event,
+  type EventId,
+  type EventWrite,
+} from "@dotkomonline/types"
+import { NotFoundError } from "../../errors/errors"
+import { type Cursor } from "../../utils/db-utils"
+import { UserService } from "../user/user-service.js"
 import { type AttendanceRepository } from "./attendance-repository.js"
 import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
-import { type Cursor } from "../../utils/db-utils"
-import { NotFoundError } from "../../errors/errors"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -12,14 +21,15 @@ export interface EventService {
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
-  listAttendance(eventId: EventId): Promise<Attendance[]>
+  listAttendance(eventId: EventId): Promise<AttendanceWithAuthData[]>
   createWaitlist(eventId: EventId): Promise<Attendance>
 }
 
 export class EventServiceImpl implements EventService {
   constructor(
     private readonly eventRepository: EventRepository,
-    private readonly attendanceRepository: AttendanceRepository
+    private readonly attendanceRepository: AttendanceRepository,
+    private readonly userService: UserService
   ) {}
 
   async createEvent(eventCreate: EventWrite): Promise<Event> {
@@ -75,9 +85,45 @@ export class EventServiceImpl implements EventService {
     return false
   }
 
-  async listAttendance(eventId: EventId): Promise<Attendance[]> {
-    const attendance = await this.attendanceRepository.getByEventId(eventId)
-    return attendance
+  async listAttendance(eventId: EventId): Promise<AttendanceWithAuthData[]> {
+    const attendances = await this.attendanceRepository.getByEventId(eventId)
+
+    const result: AttendanceWithAuthData[] = []
+
+    for (const attendance of attendances) {
+      const ids = attendance.attendees.map((attendee) => attendee.userCognitoSub)
+      if (ids.length === 0) {
+        result.push({
+          ...attendance,
+          attendees: [],
+        })
+        continue
+      }
+
+      const users = await this.userService.getUserBySubjectIDP(ids)
+
+      if (!users || users.length !== ids.length) {
+        throw new Error("Not all users were found at IDP")
+      }
+
+      const mergedUsers: AttendeeWithAuthData[] = users.map((user) => {
+        const attendee = attendance.attendees.find((attendee) => attendee.userCognitoSub === user.subject)
+        if (!attendee) {
+          throw new Error("Attendee not found")
+        }
+        return {
+          ...attendee,
+          ...user,
+        }
+      })
+
+      result.push({
+        ...attendance,
+        attendees: mergedUsers,
+      })
+    }
+
+    return result
   }
 
   async createWaitlist(eventId: EventId): Promise<Attendance> {

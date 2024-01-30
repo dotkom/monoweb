@@ -31,11 +31,12 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
+        cognitoSub: z.string(),
         poolId: AttendanceSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendanceService.registerForEvent(input.userId, input.poolId)
+      const res = await ctx.attendanceService.registerForEvent(input.userId, input.cognitoSub, input.poolId)
       return res
     }),
   deregisterForEvent: protectedProcedure

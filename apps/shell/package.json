@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "dotenv -e .env.local tsx src/index.ts"
+    "dev": "dotenv -e .env -- tsx src/index.ts"
   },
   "dependencies": {
     "@dotkomonline/core": "workspace:*",

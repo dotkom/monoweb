@@ -13,6 +13,9 @@ export const userRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getUserById(input)),
+  getBySubAsync: publicProcedure
+    .input(UserSchema.shape.id)
+    .mutation(async ({ input, ctx }) => ctx.userService.getUserBySubject(input)),
   getMany: publicProcedure
     .input(z.array(UserSchema.shape.id))
     .query(async ({ input, ctx }) => ctx.userService.getManyUsersById(input)),
@@ -51,4 +54,12 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.userService.updateNotificationPermissionsForUserId(input.id, input.data)),
+  searchUsersFromIDP: protectedProcedure
+    .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) =>
+      ctx.userService.searchUsersFromIDP(input.searchQuery, input.paginate.take, input.paginate.cursor)
+    ),
+  getBySubFromIDP: protectedProcedure
+    .input(z.array(UserSchema.shape.id))
+    .mutation(async ({ input, ctx }) => ctx.userService.getUserBySubjectIDP(input)),
 })

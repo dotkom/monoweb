@@ -71,11 +71,11 @@ export const useEventEditForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeIds: createMultipleSelectInput({
-        label: "Arrangør",
-        placeholder: "Arrkom",
-        data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
-      }),
+      // committeeIds: createMultipleSelectInput({
+      //   label: "Arrangør",
+      //   placeholder: "Arrkom",
+      //   data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
+      // }),
       status: createSelectInput({
         label: "Event status",
         placeholder: "Velg en",

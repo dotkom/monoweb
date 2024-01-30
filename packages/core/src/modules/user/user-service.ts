@@ -1,15 +1,17 @@
 import {
-  type UserId,
+  type IDPUser,
   type NotificationPermissions,
   type NotificationPermissionsWrite,
   type PrivacyPermissions,
   type PrivacyPermissionsWrite,
   type User,
+  type UserId,
   type UserWrite,
 } from "@dotkomonline/types"
 import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { type UserRepository } from "./user-repository"
+import { type IDPRepository } from "../../lib/IDP-repository"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
@@ -24,16 +26,24 @@ export interface UserService {
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
+  searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<IDPUser[]>
+  getUserBySubjectIDP(id: User["cognitoSub"][]): Promise<IDPUser[] | undefined>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
+    private readonly idpRepository: IDPRepository
   ) {}
   async getAllUsers(limit: number) {
     const users = await this.userRepository.getAll(limit)
+    return users
+  }
+
+  async searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor) {
+    const users = await this.idpRepository.search(searchQuery, take, cursor)
     return users
   }
 
@@ -59,6 +69,21 @@ export class UserServiceImpl implements UserService {
   async getUserBySubject(id: User["cognitoSub"]) {
     const user = await this.userRepository.getBySubject(id)
     return user
+  }
+
+  async getUserBySubjectIDP(id: User["cognitoSub"][]) {
+    console.log("Fetching users from IDP with subject: ", id)
+    const result = []
+    for (const sub of id) {
+      const user = await this.idpRepository.getBySubject(sub)
+      if (!user) {
+        continue
+      }
+      result.push(user)
+    }
+
+    console.log("Found users: ", result)
+    return result
   }
 
   async createUser(input: UserWrite) {

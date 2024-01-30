@@ -1,18 +1,17 @@
-import { type Attendance, type Attendee, type User } from "@dotkomonline/types"
+import { AttendanceWithAuthData, AttendeeWithAuthData, type IDPUser, type User } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { Box, Checkbox, NumberInput, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import React, { useMemo, useState, type FC } from "react"
-import { useEventDetailsContext } from "./provider"
+import React, { memo, useMemo, useState, type FC } from "react"
 import GenericSearch from "../../../../components/GenericSearch"
 import { GenericTable } from "../../../../components/GenericTable"
 import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
 import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
 import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
-import { useUserSearchQuery } from "../../../../modules/user/queries/use-user-search-query"
 import { trpc } from "../../../../utils/trpc"
 import { useQueryNotification } from "../../../notifications"
+import { useEventDetailsContext } from "./provider"
 
 interface CustomCheckboxProps {
   userId: string
@@ -37,7 +36,7 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 
 CustomCheckbox.displayName = "attendanceToggle"
 
-const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
+const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData }) => {
   const deregisterForEvent = useDeregisterForEventMutation()
 
   const deleteGroup = trpc.event.attendance.delete.useMutation()
@@ -46,11 +45,16 @@ const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
 
   const au = trpc.user.getMany.useQuery(ids)
 
-  const columnHelper = createColumnHelper<Attendee & { user?: User }>()
+  const columnHelper = createColumnHelper<AttendeeWithAuthData & { user?: User }>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("userId", {
+      columnHelper.accessor((attendee) => attendee, {
+        id: "userId",
         header: () => "Bruker",
+        cell: (info) => {
+          const user = info.getValue()
+          return `${user.givenName} ${user.familyName}`
+        },
       }),
       columnHelper.accessor("user.studyYear", {
         header: () => "Klassetrinn",
@@ -72,7 +76,10 @@ const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
         cell: (info) => (
           <Button
             onClick={() =>
-              deregisterForEvent.mutate({ attendanceId: info.getValue().attendanceId, userId: info.getValue().userId })
+              deregisterForEvent.mutate({
+                attendanceId: info.getValue().attendanceId,
+                userId: info.getValue().userId,
+              })
             }
           >
             X
@@ -87,9 +94,6 @@ const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
     () => attendance.attendees.map((attendee, i) => ({ ...attendee, user: au.data?.[i] })),
     [au.data] // TODO: if you include attendance here, it will cause an infinite render loop. users are never loaded on first render, so if users not in dep array, it will always be undefined.
   )
-
-  console.log(au.data)
-  console.log(attendeesAndUsers)
 
   const table = useReactTable({
     data: attendeesAndUsers,
@@ -116,13 +120,15 @@ const AttendanceTable = ({ attendance }: { attendance: Attendance }) => {
   )
 }
 
+AttendanceTable.displayName = "AttendanceTable"
+
 export const EventAttendancePage: FC = () => {
   const notification = useQueryNotification()
   const { event } = useEventDetailsContext()
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
   const [searchQuery, setSearchQuery] = useState("")
-  const { users } = useUserSearchQuery(searchQuery)
   const registerForEvent = useRegisterForEventMutation()
+  const dbUserMut = trpc.user.getBySubAsync.useMutation()
   const [toAddNum, setToAddNum] = useState({
     0: false,
     1: false,
@@ -134,22 +140,43 @@ export const EventAttendancePage: FC = () => {
   const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
   const [limit, setLimit] = useState(20)
 
+  const { data: usersFromIdp = [] } = trpc.user.searchUsersFromIDP.useQuery(
+    { searchQuery },
+    {
+      enabled: searchQuery.length > 1,
+    }
+  )
+
+  console.log(usersFromIdp)
+
   const handleUserSearch = (query: string) => {
     setSearchQuery(query)
   }
 
-  const handleUserClick = (user: User) => {
-    const pool = eventAttendance.find((pool) => pool.min <= user.studyYear && pool.max > user.studyYear)
+  const handleUserClick = async (user: IDPUser) => {
+    setSearchQuery("")
+    const dbUser = await dbUserMut.mutateAsync(user.subject)
+    if (!dbUser) {
+      notification.fail({
+        title: "Feil",
+        message: "Fant ikke brukeren i databasen",
+      })
+
+      console.error("Fant ikke brukeren i databasen", user)
+      return
+    }
+    const pool = eventAttendance.find((pool) => pool.min <= dbUser.studyYear && pool.max > dbUser.studyYear)
 
     if (!pool) {
       notification.fail({
         title: "Feil",
         message: "Fant ingen pool for brukeren",
       })
+      console.error("Fant ingen pool for brukeren. Klassetrinn: ", dbUser.studyYear, "Pooler: ", eventAttendance)
       return
     }
 
-    registerForEvent.mutate({ poolId: pool.id, userId: user.id.toString() })
+    registerForEvent.mutate({ poolId: pool.id, userId: dbUser.id.toString(), cognitoSub: dbUser.cognitoSub })
   }
 
   const createNewGroup = () => {
@@ -223,8 +250,8 @@ export const EventAttendancePage: FC = () => {
         <GenericSearch
           onSearch={handleUserSearch}
           onSubmit={handleUserClick}
-          items={users}
-          dataMapper={(item: User) => item.id.toString()}
+          items={usersFromIdp}
+          dataMapper={(item: IDPUser) => `${item.givenName} ${item.familyName}`}
           placeholder="Søk etter bruker..."
         />
         {eventAttendance.map((attendance) => (
