@@ -3,7 +3,6 @@ import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const useCreateArticleMutation = () => {
-  const utils = trpc.useContext()
   const router = useRouter()
   const notification = useQueryNotification()
   return trpc.article.create.useMutation({
@@ -18,7 +17,7 @@ export const useCreateArticleMutation = () => {
         title: "Artikkel opprettet",
         message: `Artikkeln "${data.title}" har blitt opprettet.`,
       })
-      utils.company.all.invalidate()
+
       router.push(`/article/${data.id}`)
     },
     onError: (err) => {

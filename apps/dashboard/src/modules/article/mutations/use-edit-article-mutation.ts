@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useEditArticleMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.article.edit.useMutation({
     onMutate: () => {
       notification.loading({
@@ -16,7 +16,6 @@ export const useEditArticleMutation = () => {
         title: "Artikkelen oppdatert",
         message: `Artikkelen "${data.title}" har blitt oppdatert.`,
       })
-      utils.company.all.invalidate()
     },
     onError: (err) => {
       notification.fail({
