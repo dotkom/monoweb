@@ -8,7 +8,8 @@ const Home: React.FC = () => {
     <div>
       <p>Homepage</p>
       <pre>{JSON.stringify(auth, null, 2)}</pre>
-      <ImageCarousel images="String"/>
+      <ImageCarousel images="hei" />
+      hei
     </div>
   )
 }
