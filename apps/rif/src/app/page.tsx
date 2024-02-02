@@ -47,8 +47,8 @@ export default function Page() {
         <Text>
           På våre nettsider har vi en karriereside, hvor vi publiserer stillingsannonser på vegne av bedrifter som
           ønsker å fremme ledige stillinger. Dersom dette er av interesse, ønsker vi gjerne å motta henvendelser via
-          e-post på <a href="mailto:bedriftskontakt@online.ntnu.no">bedriftskontakt@online.ntnu.no</a>. Eventuelle
-          andre henvendelser kan også rettes til samme e-postadresse.
+          e-post på <a href="mailto:bedriftskontakt@online.ntnu.no">bedriftskontakt@online.ntnu.no</a>. Eventuelle andre
+          henvendelser kan også rettes til samme e-postadresse.
         </Text>
       </Section>
       <FormProvider {...form}>
