@@ -1,6 +1,6 @@
 import Link from "next/link"
 import React from "react"
-import OnlineIcon from "@/components/atoms/OnlineIcon"
+import OnlineLogo from "@/components/atoms/OnlineLogo"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
@@ -46,7 +46,7 @@ export const Navbar = () => (
     <div className="border-blue-12/20 flex h-16 border-b">
       <MobileNavigation links={links} />
       <Link href="/" className="flex items-center">
-        <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
+        <OnlineLogo className="fill-brand h-[24px] dark:fill-white" />
       </Link>
       <MainNavigation links={links} />
       <div className="flex flex-grow items-center justify-end md:flex-grow-0">

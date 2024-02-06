@@ -2,6 +2,7 @@ import { useState, type FC } from "react"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../molecules/CompanyFiltersContainer"
 import { type JobListing } from "@dotkomonline/types"
+import OnlineIcon from "../atoms/OnlineIcon"
 
 interface CareerProps {
   careers: JobListing[]
@@ -32,7 +33,6 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
   }
 
   function filterName(jobListing: JobListing){
-    console.log(jobListing.company.name, searchName.toLowerCase)
     return jobListing.company.name.toLowerCase().startsWith(searchName.toLowerCase())
   }
   // 1. hvis ingen er valgt, return true
@@ -53,7 +53,6 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
   }
 
   function sortDates(jobListing1: JobListing, jobListing2: JobListing){
-    console.log(chosenSort)
     if (chosenSort === "Frist"){
       if (jobListing1.deadline?.getTime() == null){
         return -1
@@ -76,18 +75,16 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
 
   return (
     <div>
-      <div className="bg-amber-9 absolute left-0 top-[56px] z-0 h-[250px] w-full opacity-30" />
-      <div className="absolute left-0 top-[56px] z-10 flex h-[250px] w-full flex-col justify-center">
-        <div className="text-slate-3 m-auto h-[200px] max-w-[800px] p-5 text-center">
-          <p className="leading-1.4 mt-5  text-4xl font-bold">
-            Er du på jakt etter <span className="bg-amber-6 bg-center bg-no-repeat">jobb</span>?
-          </p>
-          <p className="leading-1.4 mt-7 text-2xl font-bold">
-            Her har du en liste over bedrifter som er ute etter deg som informatikkstudent!
-          </p>
+      <div className="left-0 z-0 w-full border-b shadow-sm border-slate-7">
+      <div className="p-5 flex flex-row justify-evenly gap-96">
+        <div className="flex flex-col">
+        <h2 className="border-b-0 mt-4">Karrieremuligheter</h2>
+        <p className="text-slate-9 pt-2">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
         </div>
+        <OnlineIcon className="h-16 w-16 float-right"></OnlineIcon>
       </div>
-      <div className="mb-10 mt-60 flex w-screen flex-row justify-center gap-x-5">
+      </div>
+      <div className="mb-10 mt-10 flex w-screen flex-row justify-center gap-x-5">
         <CompanyFiltersContainer
           chosenLocation={chosenLocation}
           setChosenLocation={setChosenLocation}
@@ -99,14 +96,7 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
           setChosenSort={setChosenSort}
         />
         <div className="w-1/2">
-          <div className="border-slate-11 flex justify-between border-b-2">
-            <p className="mb-2 w-1/4 text-xl font-medium">Bedrift</p>
-            <p className="mb-2 w-[25%] text-xl font-medium">Rolle</p>
-            <p className="mb-2 w-[17.5%] text-xl font-medium">Sted</p>
-            <p className="mb-2 w-[17.5%] text-xl font-medium">Frist</p>
-            <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
-          </div>
-          <div className="flex flex-col">
+          <div className="flex gap-6 flex-col">
             {props.careers
               .filter((jobListing) => {
                 return filterLocation(jobListing) && filterEmployment(jobListing) && filterName(jobListing)
