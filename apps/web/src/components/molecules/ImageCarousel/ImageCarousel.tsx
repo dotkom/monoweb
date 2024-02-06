@@ -19,7 +19,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({images}) => {
     return <div>
     <p>OFFLINE</p>
     <div className="flex flex-row space-x-8">
-        <button onClick={handleLeftButtonClick}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+        <button onClick={handleLeftButtonClick}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="lightGray" className="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
 </svg>
 </button>
@@ -28,7 +28,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({images}) => {
                 <div key={index} className="bg-blue-11 w-12 h-20 outline-4 rounded-md rounded">{image}</div>
             ))}
         </div>
-        <button onClick={handleRightButtonClick}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+        <button onClick={handleRightButtonClick}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="lightGray" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
 </svg>
 </button>
