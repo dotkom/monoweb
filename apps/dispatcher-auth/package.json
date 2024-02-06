@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.451.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.507.0",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/types": "workspace:*"
