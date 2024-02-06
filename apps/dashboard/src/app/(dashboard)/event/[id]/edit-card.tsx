@@ -1,19 +1,28 @@
-import { FC } from "react"
-import { useEventWriteForm } from "../write-form"
-import { EventWriteSchema } from "@dotkomonline/types"
+import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
-import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { useEditEventWithCommitteesMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-comittees"
+import { useEventEditForm } from "../edit-form"
+import { useCommitteeAllQuery } from "../../../../modules/committee/queries/use-committee-all-query"
 
 export const EventEditCard: FC = () => {
-  const { event } = useEventDetailsContext()
-  const edit = useEditEventMutation()
-  const FormComponent = useEventWriteForm({
+  const { event, eventCommittees } = useEventDetailsContext()
+  const edit = useEditEventWithCommitteesMutation()
+  const { committees } = useCommitteeAllQuery()
+  const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
+    committees,
     onSubmit: (data) => {
-      const result = EventWriteSchema.required({ id: true }).parse(data)
-      edit.mutate(result)
+      const { committeeIds, ...event } = data
+      edit.mutate({
+        id: data.id,
+        event,
+        committees: committeeIds,
+      })
     },
-    defaultValues: { ...event },
+    defaultValues: {
+      ...event,
+      committeeIds: eventCommittees.map((committee) => committee.committeeId),
+    },
   })
   return <FormComponent />
 }

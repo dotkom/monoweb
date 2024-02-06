@@ -1,24 +1,18 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
-import { FC } from "react"
-import { useEventDetailsContext } from "./provider"
+import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { useRouter } from "next/navigation"
+import { type FC } from "react"
+import { EventAttendancePage } from "./attendance-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
-import { useRouter } from "next/navigation"
+import { ExtrasPage } from "./extras-page"
+import { useEventDetailsContext } from "./provider"
 
-const EventDetailsCompanies: FC = () => {
-  return <h1>Bedrifter</h1>
-}
+const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
-const EventDetailsFeedbackForms: FC = () => {
-  return <h1>Tilbakemelding</h1>
-}
-
-const EventDetailsAttendance: FC = () => {
-  return <h1>Påmelding</h1>
-}
+const EventDetailsFeedbackForms: FC = () => <h1>Tilbakemelding</h1>
 
 const SIDEBAR_LINKS = [
   {
@@ -49,7 +43,13 @@ const SIDEBAR_LINKS = [
     icon: "tabler:calendar-event",
     label: "Påmelding",
     slug: "attendance",
-    component: EventDetailsAttendance,
+    component: EventAttendancePage,
+  },
+  {
+    icon: "tabler:calendar-event",
+    label: "Valg",
+    slug: "extras",
+    component: ExtrasPage,
   },
 ]
 

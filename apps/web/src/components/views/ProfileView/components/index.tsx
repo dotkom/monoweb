@@ -1,1 +1,5 @@
 export { default as ProfileLanding } from "./ProfileLanding"
+export { default as ProfileMarks } from "./ProfileMarks"
+export { default as ProfileMembership } from "./ProfileMembership"
+export { default as ProfilePassword } from "./ProfilePassword"
+export { default as ProfilePrivacy } from "./ProfilePrivacy"

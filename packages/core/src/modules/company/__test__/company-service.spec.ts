@@ -1,7 +1,6 @@
-import { Company } from "@dotkomonline/types"
 import { randomUUID } from "crypto"
+import { type Company } from "@dotkomonline/types"
 import { Kysely } from "kysely"
-
 import { NotFoundError } from "../../../errors/errors"
 import { CompanyRepositoryImpl } from "../company-repository"
 import { CompanyServiceImpl } from "../company-service"

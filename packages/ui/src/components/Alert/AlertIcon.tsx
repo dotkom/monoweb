@@ -1,6 +1,6 @@
+import { cva, type VariantProps } from "cva"
+import { type FC } from "react"
 import { Icon } from "../Icon"
-import { cva, VariantProps } from "cva"
-import { FC } from "react"
 import { cn } from "../../utils"
 
 interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
@@ -8,13 +8,11 @@ interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
   size?: number
 }
 
-export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => {
-  return (
-    <>
-      <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
-    </>
-  )
-}
+export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => (
+  <>
+    <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
+  </>
+)
 
 const iconKey = (status: AlertIconProps["status"]) => {
   switch (status) {

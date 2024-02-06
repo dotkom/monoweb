@@ -1,11 +1,10 @@
+import { randomUUID } from "crypto"
 import { describe, vi } from "vitest"
-
 import { Kysely } from "kysely"
-import { NotFoundError } from "../../../errors/errors"
-import { Product } from "@dotkomonline/types"
+import { type Product } from "@dotkomonline/types"
 import { ProductRepositoryImpl } from "./../product-repository"
 import { ProductServiceImpl } from "./../product-service"
-import { randomUUID } from "crypto"
+import { NotFoundError } from "../../../errors/errors"
 
 export const productPayload: Omit<Product, "id"> = {
   createdAt: new Date(2022, 1, 1),

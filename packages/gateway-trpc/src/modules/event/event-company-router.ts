@@ -1,7 +1,7 @@
 import { CompanySchema, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { PaginateInputSchema } from "@dotkomonline/core"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const eventCompanyRouter = t.router({
   create: protectedProcedure
@@ -11,9 +11,7 @@ export const eventCompanyRouter = t.router({
         company: CompanySchema.shape.id,
       })
     )
-    .mutation(({ input, ctx }) => {
-      return ctx.eventCompanyService.createCompany(input.id, input.company)
-    }),
+    .mutation(async ({ input, ctx }) => ctx.eventCompanyService.createCompany(input.id, input.company)),
   delete: protectedProcedure
     .input(
       z.object({
@@ -21,9 +19,7 @@ export const eventCompanyRouter = t.router({
         company: CompanySchema.shape.id,
       })
     )
-    .mutation(({ input, ctx }) => {
-      return ctx.eventCompanyService.deleteCompany(input.id, input.company)
-    }),
+    .mutation(async ({ input, ctx }) => ctx.eventCompanyService.deleteCompany(input.id, input.company)),
   get: publicProcedure
     .input(
       z.object({
@@ -31,7 +27,7 @@ export const eventCompanyRouter = t.router({
         pagination: PaginateInputSchema,
       })
     )
-    .query(({ input, ctx }) => {
-      return ctx.eventCompanyService.getCompaniesByEventId(input.id, input.pagination.take, input.pagination.cursor)
-    }),
+    .query(async ({ input, ctx }) =>
+      ctx.eventCompanyService.getCompaniesByEventId(input.id, input.pagination.take, input.pagination.cursor)
+    ),
 })

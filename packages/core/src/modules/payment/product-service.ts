@@ -1,12 +1,11 @@
-import { Product, ProductWrite } from "@dotkomonline/types"
-
-import { Cursor } from "../../utils/db-utils"
+import { type Product, type ProductId, type ProductWrite } from "@dotkomonline/types"
+import { type ProductRepository } from "./product-repository"
+import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
-import { ProductRepository } from "./product-repository"
 
 export interface ProductService {
   createProduct(productCreate: ProductWrite): Promise<Product>
-  getProductById(id: Product["id"]): Promise<Product>
+  getProductById(id: ProductId): Promise<Product>
   getProducts(take: number, cursor?: Cursor): Promise<Product[]>
 }
 
@@ -21,7 +20,7 @@ export class ProductServiceImpl implements ProductService {
     return product
   }
 
-  async getProductById(id: Product["id"]): Promise<Product> {
+  async getProductById(id: ProductId): Promise<Product> {
     const product = await this.productRepository.getById(id)
     if (!product) {
       throw new NotFoundError("Could not find the product")

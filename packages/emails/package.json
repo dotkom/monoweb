@@ -7,19 +7,20 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "email:dev": "email dev --port 7777 --dir src/emails",
-    "email:export": "email export --dir src/emails"
+    "email:export": "email export --dir src/emails",
+    "type-check": "tsc --noEmit"
   },
   "main": "src/index.ts",
   "dependencies": {
-    "@react-email/components": "^0.0.7",
-    "@react-email/render": "^0.0.7",
-    "@react-email/tailwind": "^0.0.9",
+    "@react-email/components": "^0.0.11",
+    "@react-email/render": "^0.0.9",
+    "@react-email/tailwind": "^0.0.12",
     "react": "^18.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^18.2.24",
-    "eslint": "^8.50.0",
+    "@types/react": "^18.2.38",
+    "eslint": "^8.54.0",
     "react-email": "^1.9.5",
     "typescript": "^5.2.2"
   }

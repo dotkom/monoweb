@@ -1,3 +1,4 @@
+export * from "./components/Accordion"
 export * from "./components/Alert"
 export * from "./components/Badge"
 export * from "./components/Button"
@@ -13,5 +14,6 @@ export * from "./components/Avatar"
 export * from "./components/Circle"
 export * from "./components/Text"
 export * from "./components/DropdownMenu"
+export * from "./components/Accordion"
 
 export * from "./utils"

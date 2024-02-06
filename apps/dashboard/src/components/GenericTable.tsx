@@ -1,7 +1,7 @@
 import { flexRender, type Table as ReactTable } from "@tanstack/react-table"
 import { Card, Table, TableThead, TableTr, TableTh, TableTd, TableTbody } from "@mantine/core"
 
-export type GenericTableProps<T> = {
+export interface GenericTableProps<T> {
   table: ReactTable<T>
 }
 

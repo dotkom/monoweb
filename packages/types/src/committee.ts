@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const CommitteeSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   name: z.string(),
   description: z.string(),
@@ -9,6 +9,7 @@ export const CommitteeSchema = z.object({
   image: z.string().nullable(),
 })
 
+export type CommitteeId = Committee["id"]
 export type Committee = z.infer<typeof CommitteeSchema>
 
 export const CommitteeWriteSchema = CommitteeSchema.partial({

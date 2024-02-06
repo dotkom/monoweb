@@ -19,6 +19,9 @@
       "dependsOn": ["lint", "type-check"],
       "outputs": []
     },
+    "test:it": {
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },
@@ -42,6 +45,7 @@
     }
   },
   "globalEnv": [
+    "S3_BUCKET_MONOWEB",
     "NODE_ENV",
     "WEB_COGNITO_CLIENT_ID",
     "WEB_COGNITO_CLIENT_SECRET",
@@ -58,6 +62,11 @@
     "FAGKOM_STRIPE_WEBHOOK_SECRET",
     "TRIKOM_STRIPE_PUBLIC_KEY",
     "TRIKOM_STRIPE_SECRET_KEY",
-    "TRIKOM_STRIPE_WEBHOOK_SECRET"
+    "TRIKOM_STRIPE_WEBHOOK_SECRET",
+    "AWS_REGION",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_ACCESS_KEY_ID",
+    "EMAIL_TOKEN",
+    "EMAIL_ENDPOINT"
   ]
 }

@@ -1,17 +1,22 @@
-import { Cursor, paginateQuery } from "../../utils/db-utils"
-import { Kysely, Selectable } from "kysely"
-import { Payment, RefundRequest, RefundRequestSchema, RefundRequestWrite } from "@dotkomonline/types"
-
-import { Database } from "@dotkomonline/db"
+import { type Kysely, type Selectable } from "kysely"
+import {
+  type PaymentId,
+  type RefundRequest,
+  type RefundRequestId,
+  RefundRequestSchema,
+  type RefundRequestWrite,
+} from "@dotkomonline/types"
+import { type Database } from "@dotkomonline/db"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 const mapToRefundRequest = (data: Selectable<Database["refundRequest"]>) => RefundRequestSchema.parse(data)
 
 export interface RefundRequestRepository {
   create(data: RefundRequestWrite): Promise<RefundRequest>
-  update(id: RefundRequest["id"], data: Partial<RefundRequestWrite>): Promise<RefundRequest>
-  delete(id: RefundRequest["id"]): Promise<void>
-  getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined>
-  getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined>
+  update(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
+  delete(id: RefundRequestId): Promise<void>
+  getById(id: RefundRequestId): Promise<RefundRequest | undefined>
+  getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | undefined>
   getAll(take: number, cursor?: Cursor): Promise<RefundRequest[]>
 }
 
@@ -28,7 +33,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
     return mapToRefundRequest(refundRequest)
   }
 
-  async update(id: RefundRequest["id"], data: RefundRequestWrite): Promise<RefundRequest> {
+  async update(id: RefundRequestId, data: RefundRequestWrite): Promise<RefundRequest> {
     const refundRequest = await this.db
       .updateTable("refundRequest")
       .set({
@@ -42,17 +47,17 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
     return mapToRefundRequest(refundRequest)
   }
 
-  async delete(id: RefundRequest["id"]): Promise<void> {
+  async delete(id: RefundRequestId): Promise<void> {
     await this.db.deleteFrom("refundRequest").where("id", "=", id).execute()
   }
 
-  async getById(id: RefundRequest["id"]): Promise<RefundRequest | undefined> {
+  async getById(id: RefundRequestId): Promise<RefundRequest | undefined> {
     const refundRequest = await this.db.selectFrom("refundRequest").selectAll().where("id", "=", id).executeTakeFirst()
 
     return refundRequest ? mapToRefundRequest(refundRequest) : undefined
   }
 
-  async getByPaymentId(paymentId: Payment["id"]): Promise<RefundRequest | undefined> {
+  async getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | undefined> {
     const refundRequest = await this.db
       .selectFrom("refundRequest")
       .selectAll()
@@ -63,14 +68,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<RefundRequest[]> {
-    let query = this.db.selectFrom("refundRequest").selectAll().limit(take)
-
-    if (cursor) {
-      query = paginateQuery(query, cursor)
-    } else {
-      query = query.orderBy("createdAt", "desc").orderBy("id", "desc")
-    }
-
+    const query = orderedQuery(this.db.selectFrom("refundRequest").selectAll().limit(take), cursor)
     const refundRequests = await query.execute()
     return refundRequests.map(mapToRefundRequest)
   }

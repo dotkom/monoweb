@@ -23,6 +23,13 @@ variable "zone_id" {
   type        = string
 }
 
+variable "triggers" {
+  description = "AWS Lambda triggers"
+  type = object({
+    post_confirmation = string
+  })
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = object({})

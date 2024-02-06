@@ -1,11 +1,11 @@
 "use client"
 
-import { Company } from "@dotkomonline/types"
+import { type Company } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { CompanyName } from "src/components/molecules/company-name/company-name"
+import { CompanyName } from "../../components/molecules/company-name/company-name"
 
 interface Props {
   data: Company[]
@@ -48,7 +48,7 @@ export const useCompanyTable = ({ data }: Props) => {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Anchor size="sm" component={Link} href={`/company/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/company/${info.getValue().id}`}>
             Se mer
           </Anchor>
         ),
@@ -58,7 +58,7 @@ export const useCompanyTable = ({ data }: Props) => {
   )
 
   return useReactTable({
-    data: data,
+    data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })

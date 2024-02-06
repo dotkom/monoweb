@@ -1,25 +1,29 @@
-import { protectedProcedure, t } from "../../trpc"
-
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { z } from "zod"
+import { PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
+import { t, protectedProcedure } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: protectedProcedure
-    .input(z.object({ id: z.string().uuid(), paginate: PaginateInputSchema }))
-    .query(({ input, ctx }) => {
-      return ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
-    }),
+    .input(z.object({ id: UserSchema.shape.id, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) =>
+      ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
+    ),
+  getByMark: protectedProcedure
+    .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id)),
   addToUser: protectedProcedure
-    .input(z.object({ userId: z.string().uuid(), markId: z.string().uuid() }))
-    .mutation(({ input, ctx }) => {
-      return ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)
-    }),
+    .input(PersonalMarkSchema)
+    .mutation(async ({ input, ctx }) => ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)),
+  countUsersWithMark: protectedProcedure
+    .input(z.object({ id: PersonalMarkSchema.shape.markId }))
+    .query(async ({ input, ctx }) => ctx.personalMarkService.countUsersByMarkId(input.id)),
   removeFromUser: protectedProcedure
-    .input(z.object({ userId: z.string().uuid(), markId: z.string().uuid() }))
-    .mutation(({ input, ctx }) => {
-      return ctx.personalMarkService.removePersonalMarkFromUserId(input.userId, input.markId)
-    }),
-  getExpiryDateForUser: protectedProcedure.input(z.string().uuid()).query(({ input, ctx }) => {
-    return ctx.personalMarkService.getExpiryDateForUserId(input)
-  }),
+    .input(PersonalMarkSchema)
+    .mutation(async ({ input, ctx }) =>
+      ctx.personalMarkService.removePersonalMarkFromUserId(input.userId, input.markId)
+    ),
+  getExpiryDateForUser: protectedProcedure
+    .input(UserSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getExpiryDateForUserId(input)),
 })

@@ -1,5 +1,5 @@
 # npm
-node_modules
+node_modules/
 # next.js build files
 .next
 # environment variables
@@ -14,14 +14,12 @@ package-lock.json
 # typescript
 *.tsbuildinfo
 
-node_modules
 .turbo
 dist/
-.next/
 build/
-coverage
-**/.vscode
+coverage/
 .vscode
+.DS_Store
 
-storybook-static
-apps/dashboards/.vscode/settings.json
+storybook-static/
+.react-email

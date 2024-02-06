@@ -5,10 +5,9 @@ All infrastructure as code defined in Terraform lies here.
 Make sure you are using Terraform Workspaces to separate deployment environments. For a primer on workspaces in
 terraform, see https://developer.hashicorp.com/terraform/language/state/workspaces.
 
-Monoweb deploys to three environments:
+Monoweb deploys to two environments:
 
 - dev
-- stg
 - prd
 
 Each environment maps to the environment with the same name in the Doppler workspace.
@@ -35,3 +34,17 @@ tags = {
 
 Remember that the tags don't automatically flow down into modules used, so modules should have a tags variable that will
 be manually applied to all taggable resources declared in the module.
+
+## Environment variables
+
+To hack on the infrastructure codebase, you need AWS credentials plus environment variables defined.
+
+```bash
+# Set up your ~/.aws/credentials with
+aws configure
+
+# Get vercel token
+export VERCEL_TOKEN=...
+
+export TF_VAR_doppler_token=...
+```

@@ -1,20 +1,21 @@
 "use client"
 
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { useDisclosure } from "@mantine/hooks"
 import {
-  AppShellHeader,
   AppShell,
-  NavLink,
+  AppShellHeader,
   AppShellMain,
   AppShellNavbar,
   Burger,
   Flex,
   Group,
+  NavLink,
   Title,
 } from "@mantine/core"
-import { SignOutButton } from "./SignOutButton"
 import { Icon } from "@iconify/react"
+import Link from "next/link"
+import { SignOutButton } from "./SignOutButton"
 
 const navigations = [
   {
@@ -32,7 +33,7 @@ const navigations = [
     icon: "tabler:moneybag",
     children: [
       { label: "Bedrifter", href: "/company" },
-      { label: "Utlysninger", href: "/listing" },
+      { label: "Utlysninger", href: "/job-listing" },
     ],
   },
   {
@@ -97,7 +98,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             childrenOffset={28}
           >
             {navigation.children.map((child) => (
-              <NavLink key={child.label} label={child.label} href={child.href} />
+              <NavLink component={Link} key={child.label} label={child.label} href={child.href} />
             ))}
           </NavLink>
         ))}

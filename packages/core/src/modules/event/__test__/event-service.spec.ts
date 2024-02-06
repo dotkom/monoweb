@@ -1,12 +1,11 @@
+import { randomUUID } from "crypto"
+import { type Event } from "@dotkomonline/types"
 import { describe, vi } from "vitest"
-
-import { Event } from "@dotkomonline/types"
+import { Kysely } from "kysely"
 import { NotFoundError } from "../../../errors/errors"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
-import { Kysely } from "kysely"
-import { randomUUID } from "crypto"
 
 export const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",
@@ -22,8 +21,8 @@ export const eventPayload: Omit<Event, "id"> = {
   updatedAt: new Date(2022, 1, 1),
   status: "PUBLIC",
   type: "COMPANY",
-  committeeId: null,
   waitlist: null,
+  extras: null,
 }
 
 describe("EventService", () => {

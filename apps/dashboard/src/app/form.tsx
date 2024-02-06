@@ -1,32 +1,43 @@
-import { z } from "zod"
-import { FC } from "react"
+import { ErrorMessage } from "@hookform/error-message"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Button,
   Checkbox,
-  CheckboxProps,
+  FileInput,
+  type FileInputProps,
   Flex,
+  MultiSelect,
+  NumberInput,
   Select,
-  SelectProps,
-  Textarea,
-  TextareaProps,
+  TagsInput,
   TextInput,
-  TextInputProps,
+  Textarea,
+  type CheckboxProps,
+  type MultiSelectProps,
+  type NumberInputProps,
+  type SelectProps,
+  type TagsInputProps,
+  type TextInputProps,
+  type TextareaProps,
+  Text,
+  Box,
+  Anchor,
 } from "@mantine/core"
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
+import { type FC } from "react"
 import {
-  Control,
   Controller,
-  DefaultValues,
-  FieldValue,
-  FieldValues,
-  FormState,
   useForm,
-  UseFormRegister,
+  type Control,
+  type DefaultValues,
+  type FieldValue,
+  type FieldValues,
+  type FormState,
+  type UseFormRegister,
 } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ErrorMessage } from "@hookform/error-message"
-import { DateTimePicker, DateTimePickerProps } from "@mantine/dates"
+import { type z } from "zod"
 
-type InputFieldContext<T extends FieldValues> = {
+interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
   control: Control<T>
@@ -34,6 +45,48 @@ type InputFieldContext<T extends FieldValues> = {
   defaultValue: FieldValue<T>
 }
 type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
+
+export function createMultipleSelectInput<F extends FieldValues>({
+  ...props
+}: Omit<MultiSelectProps, "error">): InputProducerResult<F> {
+  return function FormMultiSelectInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <MultiSelect
+            {...props}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
+      />
+    )
+  }
+}
+
+export function createTagInput<F extends FieldValues>({
+  ...props
+}: Omit<TagsInputProps, "error">): InputProducerResult<F> {
+  return function FormTagInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <TagsInput
+            {...props}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
+      />
+    )
+  }
+}
 
 export function createSelectInput<F extends FieldValues>({
   ...props
@@ -48,6 +101,28 @@ export function createSelectInput<F extends FieldValues>({
             {...props}
             value={field.value}
             onChange={field.onChange}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+          />
+        )}
+      />
+    )
+  }
+}
+
+export function createIntegerSelectInput<F extends FieldValues>({
+  ...props
+}: Omit<SelectProps, "data" | "error"> & { data: { value: number; label: string }[] }): InputProducerResult<F> {
+  return function FormSelectInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <Select
+            {...props}
+            data={props.data.map((item) => ({ ...item, value: item.value.toString() }))}
+            value={field.value?.toString() ?? ""}
+            onChange={(value) => field.onChange(value !== null ? parseInt(value) : null)}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
           />
         )}
@@ -120,18 +195,73 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
-function entriesOf<T extends Record<string, unknown>, K extends keyof T & string>(obj: T): [K, T[K]][] {
+export function createFileInput<F extends FieldValues>({
+  ...props
+}: Omit<FileInputProps, "error"> & { existingFileUrl?: string }): InputProducerResult<F> {
+  return function FormFileInput({ name, state, control }) {
+    return (
+      <Box>
+        <Text>{props.label}</Text>
+        {props.existingFileUrl ? (
+          <Anchor href={props.existingFileUrl} mb="sm" display="block">
+            Link til ressurs
+          </Anchor>
+        ) : (
+          <Text mb="sm" fs="italic">
+            Ingen fil lastet opp
+          </Text>
+        )}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <FileInput
+              {...props}
+              value={field.value}
+              onChange={(value) => field.onChange({ target: { value } })}
+              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+              label=""
+            />
+          )}
+        ></Controller>
+      </Box>
+    )
+  }
+}
+
+export function createNumberInput<F extends FieldValues>({
+  ...props
+}: Omit<NumberInputProps, "error">): InputProducerResult<F> {
+  return function FormNumberInput({ name, state, control }) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <NumberInput
+            {...props}
+            value={field.value}
+            onChange={(value) => field.onChange({ target: { value } })}
+            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+          />
+        )}
+      />
+    )
+  }
+}
+
+function entriesOf<T extends Record<string, unknown>, K extends string & keyof T>(obj: T): [K, T[K]][] {
   return Object.entries(obj) as [K, T[K]][]
 }
 
-type FormBuilderOptions<T extends z.ZodRawShape> = {
-  schema: z.ZodObject<T>
+interface FormBuilderOptions<T extends z.ZodRawShape> {
+  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
-  onSubmit: (data: z.infer<z.ZodObject<T>>) => void
+  onSubmit(data: z.infer<z.ZodObject<T>>): void
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
