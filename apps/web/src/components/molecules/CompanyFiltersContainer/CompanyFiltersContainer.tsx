@@ -1,4 +1,5 @@
 import { EmploymentCheckbox } from "@/components/views/CareerView"
+import { Icon } from "@dotkomonline/ui"
 import { Dispatch, FC, PropsWithChildren, SetStateAction } from "react"
 
 interface CompanyFiltersContainer {
@@ -18,23 +19,23 @@ const sorter = ["Frist", "Påmeldingsstart", "Opprettelse"]
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => {
   return (
     <div className="border-slate-8  w-72 h-fit rounded-lg border-[1px] shadow-sm">
-      <div className="border-slate-8 flex flex-row justify-between border-b-[1px] py-4">
+      <div className="border-slate-8 flex flex-row justify-between border-b py-4">
         <h4 className="mx-4 my-auto align-middle">Filter</h4>
       </div>
       <div className="mx-4">
-        <p className="mt-2 font-semibold">Søk</p>
+        <p className="mt-4 font-semibold">Søk</p>
         <input
           onChange={(e) => {
             props.setSearchName(e.target.value)
           }}
-          className="border-slate-10 w-full rounded-md border-2 py-2 pl-2"
+          className="border-slate-8 w-full rounded-md border-2 py-2 pl-2"
           type="text"
           placeholder="Søk jobbtittel eller nøkkelord"
         />
       </div>
       <div>
         <div className="mx-4">
-          <p className="mt-6 font-semibold">Jobbtyper</p>
+          <p className="mt-4 font-semibold">Jobbtyper</p>
           <div>
             {props.chosenEmployments.map((content, index) => (
               <div key={index} className="flex-col rounded-md py-2 ">
@@ -53,7 +54,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
         </div>
         <div />
       </div>
-      <div className="border-slate-8 mb-4 border-b-[1px]">
+      <div className="border-slate-8 mb-4 border-b">
         <div className="mx-4">
           <p className="mt-2 font-semibold">Sted</p>
           <select
