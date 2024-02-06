@@ -659,8 +659,8 @@ importers:
         specifier: workspace:*
         version: link:../types
       '@testcontainers/postgresql':
-        specifier: ^10.2.2
-        version: 10.2.2
+        specifier: ^10.7.1
+        version: 10.7.1
       '@types/node':
         specifier: ^18.18.13
         version: 18.18.13
@@ -671,8 +671,8 @@ importers:
         specifier: ^8.54.0
         version: 8.54.0
       testcontainers:
-        specifier: ^10.2.2
-        version: 10.2.2
+        specifier: ^10.7.1
+        version: 10.7.1
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -4718,7 +4718,7 @@ packages:
       '@octokit/request-error': 3.0.3
       '@octokit/types': 9.3.2
       is-plain-object: 5.0.0
-      node-fetch: 2.6.12
+      node-fetch: 2.7.0
       universal-user-agent: 6.0.0
     transitivePeerDependencies:
       - encoding
@@ -7097,10 +7097,10 @@ packages:
     resolution: {integrity: sha512-jtkwqdP2rY2iCCDVAFuaNBH3fiEi29aTn2RhtIoky8DTTiCdc48plpHHreLwmv1PICJ4AJUUESaq3xa8fZH8+g==}
     dev: false
 
-  /@testcontainers/postgresql@10.2.2:
-    resolution: {integrity: sha512-G1xJKe8omeNzngK0dj4R2cSYxWyOUdTXD/oBA03AqIwdReq/gi4WjT6CJqGbkqQy9opXZV6ug3gHMja+wM5BCA==}
+  /@testcontainers/postgresql@10.7.1:
+    resolution: {integrity: sha512-2tlrD7vRNdi+nynFCNaGbjTTE7aUNk9Pipcu7PIkPGc8v1AxJdc1BnmI07I1yfW18kOqRi7fo7x4gOlqzAOXJQ==}
     dependencies:
-      testcontainers: 10.2.2
+      testcontainers: 10.7.1
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -8893,7 +8893,6 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
     dev: false
-    bundledDependencies: false
 
   /create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
@@ -12958,18 +12957,6 @@ packages:
     resolution: {integrity: sha512-qN8v/s2PAJwGUtr1/hYTpNKlD6Y9rc4p8KSmJXyGdYGZsDGKXrGThikLFP9OCHFeLeEpQzPwiAtdIvBLqm//Hw==}
     dev: true
 
-  /node-fetch@2.6.12:
-    resolution: {integrity: sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-    dependencies:
-      whatwg-url: 5.0.0
-    dev: true
-
   /node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
     engines: {node: 4.x || >=6.0.0}
@@ -15537,10 +15524,11 @@ packages:
       streamx: 2.15.2
     dev: true
 
-  /testcontainers@10.2.2:
-    resolution: {integrity: sha512-5GZ93rtoVXMx/s3xZjydftrKLnv1Yf+ETzGkXYRCm16LB60W48SGodxuiouYvNlVy0y0ogoQhdOw3DqsPActEA==}
+  /testcontainers@10.7.1:
+    resolution: {integrity: sha512-JarbT6o7fv1siUts4tGv3wBoYrWKxjla69+5QWG9+bcd4l+ECJ3ikfGD/hpXRmRBsnjzeWyV+tL9oWOBRzk+lA==}
     dependencies:
       '@balena/dockerignore': 1.0.2
+      '@types/dockerode': 3.3.23
       archiver: 5.3.2
       async-lock: 1.4.0
       byline: 5.0.0
