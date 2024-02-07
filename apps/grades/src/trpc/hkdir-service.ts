@@ -44,18 +44,29 @@ export const HkdirSubject = z.object({
   "Oppgave (ny fra h2012)": z.string().nullish().default(null),
 })
 
+export type HkdirGrade = z.infer<typeof HkdirGrade>
+export const HkdirGrade = z.object({
+  "Årstall": z.string(),
+  "Semester": z.string(),
+  "Semesternavn": z.string(),
+  "Karakter": z.string(),
+  "Emnekode": z.string(),
+  "Antall kandidater totalt": z.string(),
+})
+
 const HKDIR_API_BASE_URL = "https://dbh.hkdir.no/api/Tabeller/hentJSONTabellData"
 
 type QueryOption = Record<string, unknown>
 interface QueryOptions {
   sortBy?: string[]
-  groupBy?: QueryOption[]
+  groupBy?: string[]
   filter: QueryOption[]
 }
 
 export interface HkdirService {
   getDepartments(institution: string): Promise<HkdirDepartment[]>
   getSubjects(institution: string): Promise<HkdirSubject[]>
+  getSubjectGrades(institution: string): Promise<HkdirGrade[]>
 }
 
 export class HkdirServiceImpl implements HkdirService {
@@ -84,6 +95,19 @@ export class HkdirServiceImpl implements HkdirService {
       ],
     })
     return await this.query(HkdirSubject.array(), query)
+  }
+
+  async getSubjectGrades(institution: string): Promise<HkdirGrade[]> {
+    const query = this.createQuery(308, {
+      groupBy: ["Årstall", "Semester", "Karakter", "Emnekode", "Institusjonskode"],
+      filter: [
+        this.createQueryFilter("Institusjonskode", [institution.toString()]),
+        this.createTopQueryFilter("Årstall", 3),
+        this.createAllQueryFilter("Emnekode"),
+        this.createAllQueryFilter("Semester"),
+      ],
+    })
+    return await this.query(HkdirGrade.array(), query)
   }
 
   private createQuery(tableId: number, options: QueryOptions): Record<string, unknown> {
