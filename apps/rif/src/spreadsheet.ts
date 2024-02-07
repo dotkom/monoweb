@@ -61,7 +61,7 @@ export const createSpreadsheetRow = async (form: FormSchema) => {
     companyName: form.companyName,
     contactName: form.contactName,
     contactMail: form.contactEmail,
-    phone: form.contactTel,
+    phone: form.contactTel.replace("+", "00"),
     bedpres: form.requestsCompanyPresentation,
     kurs: form.requestsCourseEvent,
     instagram: form.requestsInstagramTakeover,
