@@ -90,7 +90,7 @@ export class HkdirServiceImpl implements HkdirService {
         this.createQueryFilter("Institusjonskode", [institution.toString()]),
         this.createQueryFilter("Nivåkode", ["HN", "LN"]),
         this.createQueryFilter("Status", ["1", "2"]),
-        this.createTopQueryFilter("Årstall", 3),
+        this.createTopQueryFilter("Årstall", 1),
         this.createExcludeQueryFilter("Avdelingskode", ["000000"]),
       ],
     })
