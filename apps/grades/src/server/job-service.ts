@@ -1,4 +1,5 @@
 import { getLogger } from "@dotkomonline/logger"
+import Queue from "p-queue"
 import { type FacultyRepository } from "@/server/faculty-repository"
 import { type HkdirService } from "@/server/hkdir-service"
 import { type DepartmentRepository } from "@/server/department-repository"
@@ -11,6 +12,7 @@ export interface JobService {
 
 export class JobServiceImpl implements JobService {
   private readonly logger = getLogger("JobService")
+  private readonly concurrencyLevel = parseInt(process.env.MAX_CONCURRENCY ?? "10")
 
   public constructor(
     private readonly facultyRepository: FacultyRepository,
@@ -66,38 +68,45 @@ export class JobServiceImpl implements JobService {
   public async performSubjectSynchronizationJob() {
     this.logger.info("Synchronizing subjects from HKDir")
     const subjects = await this.hkdirService.getSubjects("1150")
-    this.logger.info(`Beginning synchronization of ${subjects.length} subjects`)
+    this.logger.info(
+      `Beginning synchronization of ${subjects.length} subjects with concurrency level of ${this.concurrencyLevel}`
+    )
 
-    let count = 0
+    const queue = new Queue({ concurrency: this.concurrencyLevel })
+
     for (const subject of subjects) {
-      if (count !== 0 && count % 100 === 0) {
-        this.logger.info(`Synchronized ${count} subjects`)
-      }
+      queue.add(async () => {
+        // Pull the department for the given subject from the database
+        const department = await this.departmentRepository.getDepartmentByReferenceId(subject.Avdelingskode)
+        if (department === null) {
+          throw new Error(`Department with reference ID ${subject.Avdelingskode} not found`)
+        }
 
-      // Pull the department for the given subject from the database
-      const department = await this.departmentRepository.getDepartmentByReferenceId(subject.Avdelingskode)
-      if (department === null) {
-        throw new Error(`Department with reference ID ${subject.Avdelingskode} not found`)
-      }
-
-      // Attempt to register the subject
-      let existingSubject = await this.subjectRepository.getSubjectByReferenceId(subject.Emnekode)
-      if (existingSubject === null) {
-        // A lot of subjects have a -x suffix, which we want to remove for the slug
-        const slug = subject.Emnekode.replace(/-(1|2|a|b|k)$/, "").toLowerCase()
-        existingSubject = await this.subjectRepository.createSubject({
-          name: subject.Emnenavn,
-          refId: subject.Emnekode,
-          educationalLevel: subject.Nivåkode,
-          instructionLanguage: subject["Underv.språk"],
-          credits: parseFloat(subject.Studiepoeng),
-          departmentId: department.id,
-          slug,
-        })
-      }
-
-      count++
+        // Attempt to register the subject
+        let existingSubject = await this.subjectRepository.getSubjectByReferenceId(subject.Emnekode)
+        if (existingSubject === null) {
+          // A lot of subjects have a -x suffix, which we want to remove for the slug
+          const slug = subject.Emnekode.replace(/-(1|2|a|b|k)$/, "").toLowerCase()
+          existingSubject = await this.subjectRepository.createSubject({
+            name: subject.Emnenavn,
+            refId: subject.Emnekode,
+            educationalLevel: subject.Nivåkode,
+            instructionLanguage: subject["Underv.språk"],
+            credits: parseFloat(subject.Studiepoeng),
+            departmentId: department.id,
+            slug,
+          })
+        }
+      })
     }
+
+    queue.on("next", () => {
+      if (queue.size % 100 !== 0 && queue.size % 100 === 0) {
+        this.logger.info(`Queue processing for subjects reached ${queue.size} jobs left`)
+      }
+    })
+
+    await queue.onIdle()
     this.logger.info("Synchronization of subjects complete")
   }
 }
