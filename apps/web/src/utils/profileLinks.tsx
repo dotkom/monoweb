@@ -12,7 +12,7 @@ export const profileItems = [
   {
     title: "Prikker & Suspensjoner",
     slug: "/profile/penalties",
-    icon: "pajamas:cancel",
+    icon: "tabler:alert-triangle",
   },
   {
     title: "Passord",
@@ -20,28 +20,8 @@ export const profileItems = [
     icon: "tabler:lock",
   },
   {
-    title: "Epost",
-    slug: "/profile/email",
-    icon: "tabler:mail-filled",
-  },
-  {
     title: "Medlemskap",
     slug: "/profile/membership",
     icon: "tabler:award",
-  },
-  {
-    title: "Betalinger",
-    slug: "/profile/payments",
-    icon: "tabler:credit-card",
-  },
-  {
-    title: "Varsler",
-    slug: "/profile/notifications",
-    icon: "tabler:bell-ringing-filled",
-  },
-  {
-    title: "Adgangskort (NTNU)",
-    slug: "/profile/access-card",
-    icon: "tabler:school",
   },
 ]

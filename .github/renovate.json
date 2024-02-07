@@ -1,22 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "configMigration": true,
+  "extends": ["config:recommended"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@dotkomonline/", "web", "monorepo", "onlineweb-cms", "db-migrator"],
+      "matchPackagePatterns": ["^@dotkomonline/"],
       "enabled": false
     },
     {
       "description": "Ignore nodejs and pnpm",
       "matchPackageNames": ["node", "pnpm"],
-      "matchManagers": ["npm"],
-      "matchDepTypes": ["engines"],
-      "dependencyDashboardApproval": true,
-      "automerge": false
+      "enabled": false
     }
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": false,
+  "automerge": true,
   "automergeType": "branch"
 }

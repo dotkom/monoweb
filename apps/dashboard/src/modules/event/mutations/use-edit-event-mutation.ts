@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useEditEventMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.event.edit.useMutation({
     onMutate: () => {
       notification.loading({
@@ -16,8 +16,6 @@ export const useEditEventMutation = () => {
         title: "Arrangement oppdatert",
         message: `Arrangementet "${data.title}" har blitt oppdatert.`,
       })
-      utils.event.all.invalidate()
-      utils.event.get.invalidate()
     },
     onError: (err) => {
       notification.fail({

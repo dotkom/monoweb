@@ -4,6 +4,10 @@
 .next
 .turbo
 .react-email
+.git
+
+.dockerignore
+.env*
 
 node_modules
 infra

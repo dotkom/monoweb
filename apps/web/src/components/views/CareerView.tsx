@@ -6,8 +6,8 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => (
   // return <div> 404 Siden finnes ikke </div>
 
   <div>
-    <div className="bg-amber-9 absolute left-0 top-[56px] z-0 h-[250px] w-full opacity-30" />
-    <div className="absolute left-0 top-[56px] z-10 flex h-[250px] w-full flex-col justify-center">
+    <div className="bg-amber-9 absolute left-0 top-[56px] h-[250px] w-full opacity-30" />
+    <div className="absolute left-0 top-[56px] flex h-[250px] w-full flex-col justify-center">
       <div className="text-slate-3 m-auto h-[200px] max-w-[800px] p-5 text-center">
         <p className="leading-1.4 mt-5  text-4xl font-bold">
           Er du på jakt etter <span className="bg-amber-6 bg-center bg-no-repeat">jobb</span>?

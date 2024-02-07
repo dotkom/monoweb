@@ -34,8 +34,12 @@ const links: MenuLink[] = [
     title: "For bedrifter",
     items: [
       { title: "Kontakt", href: "/company-info", description: "Kontakt Linjeforening" },
-      { title: "Kvitteringskjema", href: "/company-info", description: "Online sitt Kvitteringskjema" },
-      { title: "Faktura", href: "/company-info", description: "Faktura" },
+      {
+        title: "Kvitteringskjema",
+        href: "https://kvittering.online.ntnu.no/",
+        description: "Online sitt Kvitteringskjema",
+      },
+      { title: "Faktura", href: "https://faktura.online.ntnu.no/", description: "Faktura" },
       { title: "Interesseskjema", href: "/company-info", description: "Interesert?" },
     ],
   },

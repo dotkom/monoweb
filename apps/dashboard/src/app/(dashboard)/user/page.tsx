@@ -2,12 +2,12 @@
 
 import { Skeleton, Stack, Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { StudyYearAliases, type User } from "@dotkomonline/types"
+import { StudyYearAliases, type StudyYears, type User } from "@dotkomonline/types"
 import { useMemo } from "react"
 import Link from "next/link"
-import { GenericTable } from "src/components/GenericTable"
 import { formatDate } from "../../../utils/format"
 import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
+import { GenericTable } from "../../../components/GenericTable"
 
 export default function UserPage() {
   const { users, isLoading: isUsersLoading } = useUserAllQuery()
@@ -24,7 +24,7 @@ export default function UserPage() {
       }),
       columnHelper.accessor("studyYear", {
         header: () => "Studieår",
-        cell: (info) => StudyYearAliases[info.getValue()],
+        cell: (info) => StudyYearAliases[info.getValue() as keyof StudyYears],
       }),
       columnHelper.accessor((user) => user, {
         id: "details",

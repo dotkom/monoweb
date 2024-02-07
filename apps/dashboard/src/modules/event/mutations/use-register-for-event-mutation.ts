@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useRegisterForEventMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.event.attendance.registerForEvent.useMutation({
     onMutate: () => {
       notification.loading({
@@ -16,7 +16,6 @@ export const useRegisterForEventMutation = () => {
         title: "Påmelding vellykket",
         message: `Bruker ${data.userId} ble påmeldt arrangementet.`,
       })
-      utils.event.attendance.get.invalidate()
     },
     onError: (err) => {
       notification.fail({
