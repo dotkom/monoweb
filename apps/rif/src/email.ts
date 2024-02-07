@@ -14,7 +14,7 @@ export const deliverConfirmationEmail = async (form: FormSchema) => {
     body: JSON.stringify({
       template: "interest-form-for-bedkom",
       source: "bedkom@online.ntnu.no",
-      to: ["mats.jun.larsen@online.ntnu.no"],
+      to: ["bedkom@online.ntnu.no"],
       cc: [],
       bcc: [],
       subject: `[Interesse] ${form.companyName}`,
