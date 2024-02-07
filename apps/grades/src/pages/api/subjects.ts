@@ -1,5 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next"
-import { HkdirServiceImpl } from "@/trpc/hkdir-service"
+import { HkdirServiceImpl } from "@/server/hkdir-service"
 
 export default async function route(req: NextApiRequest, res: NextApiResponse) {
   const service = new HkdirServiceImpl(fetch)
