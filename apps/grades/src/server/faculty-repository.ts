@@ -20,7 +20,12 @@ export class FacultyRepositoryImpl implements FacultyRepository {
   constructor(private readonly db: Database) {}
 
   async createFaculty(input: Insertable<NtnuFaculty>): Promise<Faculty> {
-    const faculty = await this.db.insertInto("ntnuFaculty").values(input).returningAll().executeTakeFirstOrThrow()
+    const faculty = await this.db
+      .insertInto("ntnuFaculty")
+      .values(input)
+      .onConflict((eb) => eb.columns(["refId"]).doUpdateSet({ ...input }))
+      .returningAll()
+      .executeTakeFirstOrThrow()
     return Faculty.parse(faculty)
   }
 

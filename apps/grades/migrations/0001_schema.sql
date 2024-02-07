@@ -6,7 +6,9 @@ CREATE TABLE IF NOT EXISTS ntnu_faculty
 (
     id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     ref_id TEXT NOT NULL,
-    name   TEXT NOT NULL
+    name   TEXT NOT NULL,
+
+    CONSTRAINT ntnu_faculty_uq_ref_id UNIQUE (ref_id)
 );
 
 CREATE TABLE IF NOT EXISTS ntnu_faculty_department
@@ -16,7 +18,8 @@ CREATE TABLE IF NOT EXISTS ntnu_faculty_department
     faculty_id UUID NOT NULL,
     name       TEXT NOT NULL,
 
-    CONSTRAINT fk_faculty_id FOREIGN KEY (faculty_id) REFERENCES ntnu_faculty (id)
+    CONSTRAINT ntnu_faculty_department_fk_faculty_id FOREIGN KEY (faculty_id) REFERENCES ntnu_faculty (id),
+    CONSTRAINT ntnu_faculty_department_uq_ref_id UNIQUE (ref_id)
 );
 
 CREATE TABLE IF NOT EXISTS subject
@@ -31,7 +34,8 @@ CREATE TABLE IF NOT EXISTS subject
     educational_level    TEXT  NOT NULL,
     credits              FLOAT NOT NULL,
 
-    CONSTRAINT fk_department_id FOREIGN KEY (department_id) REFERENCES ntnu_faculty_department (id)
+    CONSTRAINT subject_fk_department_id FOREIGN KEY (department_id) REFERENCES ntnu_faculty_department (id),
+    CONSTRAINT subject_uq_ref_id UNIQUE (ref_id)
 );
 
 CREATE TYPE subject_season AS ENUM ('SPRING', 'AUTUMN', 'WINTER', 'SUMMER');

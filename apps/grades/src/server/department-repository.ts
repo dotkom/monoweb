@@ -24,6 +24,7 @@ export class DepartmentRepositoryImpl implements DepartmentRepository {
     const department = await this.db
       .insertInto("ntnuFacultyDepartment")
       .values(input)
+      .onConflict((eb) => eb.columns(["refId"]).doUpdateSet({ ...input }))
       .returningAll()
       .executeTakeFirstOrThrow()
     return Department.parse(department)

@@ -25,7 +25,12 @@ export class SubjectRepositoryImpl implements SubjectRepository {
   constructor(private readonly db: Database) {}
 
   async createSubject(input: Insertable<DatabaseSubject>): Promise<Subject> {
-    const subject = await this.db.insertInto("subject").values(input).returningAll().executeTakeFirstOrThrow()
+    const subject = await this.db
+      .insertInto("subject")
+      .values(input)
+      .onConflict((eb) => eb.columns(["refId"]).doUpdateSet({ ...input }))
+      .returningAll()
+      .executeTakeFirstOrThrow()
     return Subject.parse(subject)
   }
 

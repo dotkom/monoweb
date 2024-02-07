@@ -7,7 +7,7 @@ const logger = getLogger("api/repopulate")
 
 export default async function route(req: NextApiRequest, res: NextApiResponse) {
   const skip = (req.query.skip as string | undefined)?.split(",")
-  logger.info(`Initializing repopulation job with skip ${skip?.join(", ")}) ?? "<none>"}`)
+  logger.info(`Initializing repopulation job with skip ${skip?.join(", ") ?? "<none>"}`)
 
   const kysely = await createKysely()
   const core = createServiceLayer({ fetch, db: kysely })
