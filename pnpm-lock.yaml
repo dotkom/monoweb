@@ -236,15 +236,24 @@ importers:
 
   apps/grades:
     dependencies:
+      kysely:
+        specifier: ^0.27.2
+        version: 0.27.2
       next:
         specifier: 14.1.0
         version: 14.1.0(react-dom@18.2.0)(react@18.2.0)
+      pg:
+        specifier: ^8.11.3
+        version: 8.11.3
       react:
         specifier: ^18
         version: 18.2.0
       react-dom:
         specifier: ^18
         version: 18.2.0(react@18.2.0)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@dotkomonline/config':
         specifier: workspace:*
@@ -264,6 +273,9 @@ importers:
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
+      kysely-codegen:
+        specifier: ^0.11.0
+        version: 0.11.0(kysely@0.27.2)(pg@8.11.3)
       postcss:
         specifier: ^8
         version: 8.4.32
@@ -12295,8 +12307,40 @@ packages:
       pg: 8.11.3
     dev: true
 
+  /kysely-codegen@0.11.0(kysely@0.27.2)(pg@8.11.3):
+    resolution: {integrity: sha512-8aklzXygjANshk5BoGSQ0BWukKIoPL4/k1iFWyteGUQ/VtB1GlyrELBZv1GglydjLGECSSVDpsOgEXyWQmuksg==}
+    hasBin: true
+    peerDependencies:
+      '@libsql/kysely-libsql': ^0.3.0
+      better-sqlite3: '>=7.6.2'
+      kysely: '>=0.19.12'
+      mysql2: ^2.3.3 || ^3.0.0
+      pg: ^8.8.0
+    peerDependenciesMeta:
+      '@libsql/kysely-libsql':
+        optional: true
+      better-sqlite3:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+    dependencies:
+      chalk: 4.1.2
+      dotenv: 16.3.1
+      git-diff: 2.0.6
+      kysely: 0.27.2
+      micromatch: 4.0.5
+      minimist: 1.2.8
+      pg: 8.11.3
+    dev: true
+
   /kysely@0.26.3:
     resolution: {integrity: sha512-yWSgGi9bY13b/W06DD2OCDDHQmq1kwTGYlQ4wpZkMOJqMGCstVCFIvxCCVG4KfY1/3G0MhDAcZsip/Lw8/vJWw==}
+    engines: {node: '>=14.0.0'}
+
+  /kysely@0.27.2:
+    resolution: {integrity: sha512-DmRvEfiR/NLpgsTbSxma2ldekhsdcd65+MNiKXyd/qj7w7X5e3cLkXxcj+MypsRDjPhHQ/CD5u3Eq1sBYzX0bw==}
     engines: {node: '>=14.0.0'}
 
   /language-subtag-registry@0.3.22:

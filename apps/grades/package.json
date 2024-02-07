@@ -8,20 +8,25 @@
     "start": "next start",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "generate": "kysely-codegen --dialect postgres --camel-case --out-file src/db.generated.d.ts"
   },
   "dependencies": {
+    "kysely": "^0.27.2",
+    "pg": "^8.11.3",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.1.0"
+    "next": "14.1.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@dotkomonline/config": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8.56.0",
     "autoprefixer": "^10.0.1",
+    "eslint": "^8.56.0",
+    "kysely-codegen": "^0.11.0",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
