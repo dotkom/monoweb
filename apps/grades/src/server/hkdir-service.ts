@@ -12,8 +12,8 @@ export const HkdirDepartment = z.object({
   "Gyldig_til": z.string().nullish().default(null),
   "fagkode_avdeling": z.string().nullish().default(null),
   "fagnavn_avdeling": z.string().nullish().default(null),
-  "Fakultetskode": z.string().nullish().default(null),
-  "Fakueltetsnavn": z.string().nullish().default(null),
+  "Fakultetskode": z.string(),
+  "Fakultetsnavn": z.string(),
   "Avdelingskode (3 siste siffer)": z.string(),
 })
 
