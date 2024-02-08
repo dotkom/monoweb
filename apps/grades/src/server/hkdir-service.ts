@@ -45,11 +45,12 @@ export const HkdirSubject = z.object({
 })
 
 export type HkdirGrade = z.infer<typeof HkdirGrade>
+export type HkdirGradeKey = HkdirGrade["Karakter"]
 export const HkdirGrade = z.object({
   "Årstall": z.string(),
   "Semester": z.string(),
   "Semesternavn": z.string(),
-  "Karakter": z.string(),
+  "Karakter": z.enum(["A", "B", "C", "D", "E", "F", "G", "H"]),
   "Emnekode": z.string(),
   "Antall kandidater totalt": z.string(),
 })
@@ -102,7 +103,7 @@ export class HkdirServiceImpl implements HkdirService {
       groupBy: ["Årstall", "Semester", "Karakter", "Emnekode", "Institusjonskode"],
       filter: [
         this.createQueryFilter("Institusjonskode", [institution.toString()]),
-        this.createTopQueryFilter("Årstall", 3),
+        this.createTopQueryFilter("Årstall", 1),
         this.createAllQueryFilter("Emnekode"),
         this.createAllQueryFilter("Semester"),
       ],

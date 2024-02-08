@@ -6,6 +6,10 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type SubjectSeason = "AUTUMN" | "SPRING" | "SUMMER" | "WINTER"
 
+export type SubjectWriteLogGrade = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H"
+
+export type Timestamp = ColumnType<Date, Date | string, Date | string>
+
 export interface NtnuFaculty {
   id: Generated<string>
   name: string
@@ -46,9 +50,19 @@ export interface SubjectSeasonGrade {
   year: number
 }
 
+export interface SubjectSeasonGradeWriteLog {
+  createdAt: Generated<Timestamp>
+  grade: SubjectWriteLogGrade
+  id: Generated<string>
+  season: SubjectSeason
+  subjectId: string
+  year: number
+}
+
 export interface DB {
   ntnuFaculty: NtnuFaculty
   ntnuFacultyDepartment: NtnuFacultyDepartment
   subject: Subject
   subjectSeasonGrade: SubjectSeasonGrade
+  subjectSeasonGradeWriteLog: SubjectSeasonGradeWriteLog
 }

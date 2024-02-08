@@ -1,5 +1,5 @@
 import Queue from "p-queue"
-const defaultConcurrnecy = parseInt(process.env.MAX_CONCURRENCY ?? "10")
+const defaultConcurrency = parseInt(process.env.MAX_CONCURRENCY ?? "10")
 
 export interface AsyncExecuteOptions {
   build(queue: Queue, concurrency: number): void
@@ -10,7 +10,7 @@ export interface AsyncExecuteOptions {
 export const executeWithAsyncQueue = async ({
   build,
   onTaskComplete,
-  concurrency = defaultConcurrnecy,
+  concurrency = defaultConcurrency,
 }: AsyncExecuteOptions) => {
   const queue = new Queue({ concurrency })
   queue.on("next", () => onTaskComplete(queue.size))

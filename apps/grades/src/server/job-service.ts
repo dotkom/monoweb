@@ -4,12 +4,16 @@ import { type HkdirService } from "@/server/hkdir-service"
 import { type DepartmentRepository } from "@/server/department-repository"
 import { type SubjectRepository } from "@/server/subject-repository"
 import { executeWithAsyncQueue } from "@/server/util"
+import { type GradeRepository } from "@/server/grade-repository"
+import { mapHkdirGradeToGrade, mapHkdirSemesterToSeason } from "@/server/hkdir-util"
 
 export interface JobService {
   performFacultySynchronizationJob(): Promise<void>
   performSubjectSynchronizationJob(): Promise<void>
+  performGradeSynchronizationJob(): Promise<void>
 }
 
+// TODO: Evaluate whether all of these should run in PostGreSQL transactions
 export class JobServiceImpl implements JobService {
   private readonly logger = getLogger("JobService")
 
@@ -17,6 +21,7 @@ export class JobServiceImpl implements JobService {
     private readonly facultyRepository: FacultyRepository,
     private readonly departmentRepository: DepartmentRepository,
     private readonly subjectRepository: SubjectRepository,
+    private readonly gradeRepository: GradeRepository,
     private readonly hkdirService: HkdirService
   ) {}
 
@@ -110,5 +115,78 @@ export class JobServiceImpl implements JobService {
       },
     })
     this.logger.info("Synchronization of subjects complete")
+  }
+
+  /**
+   * Synchronize grades from HKDir to the database.
+   *
+   * This job is a bit more complex than the others, because HKDir doesn't provide a result-set for the grades. Instead
+   * they provide a list of subjects, and for each subject a list of grades. This means we have to iterate over all
+   * subjects, and for each subject iterate over all grades.
+   */
+  public async performGradeSynchronizationJob() {
+    this.logger.info("Synchronizing grades from HKDir")
+    const grades = await this.hkdirService.getSubjectGrades("1150")
+    this.logger.info(`Beginning synchronization of ${grades.length} grades`)
+
+    await executeWithAsyncQueue({
+      build: (queue, concurrency) => {
+        this.logger.info(`Processing grades using async queue with ${concurrency} concurrency`)
+        for (const grade of grades) {
+          queue.add(async () => {
+            // We need a reference to the subject from the reference id given by HKDir
+            const subject = await this.subjectRepository.getSubjectByReferenceId(grade.Emnekode)
+            if (subject === null) {
+              // TODO: Evaluate whether we should create the subject if it doesn't exist
+              return
+            }
+
+            // First we need to get or insert the matching grade.
+            let existingGrade = await this.gradeRepository.getGradeBySemester(
+              subject.id,
+              mapHkdirSemesterToSeason(grade.Semester),
+              parseInt(grade.Årstall)
+            )
+            if (existingGrade === null) {
+              existingGrade = await this.gradeRepository.createGrade({
+                subjectId: subject.id,
+                season: mapHkdirSemesterToSeason(grade.Semester),
+                year: parseInt(grade.Årstall),
+                grade: 0,
+              })
+            }
+
+            // If there exists a previous write log entry for the subject, season, year and grade, we need to skip this
+            // grade, as it has already been processed.
+            const previousWriteLogEntry = await this.gradeRepository.getPreviousWriteLogEntry(
+              existingGrade.subjectId,
+              mapHkdirSemesterToSeason(grade.Semester),
+              parseInt(grade.Årstall),
+              grade.Karakter
+            )
+            if (previousWriteLogEntry !== null) {
+              return
+            }
+
+            // Then we need to update the grade distribution for the current grade
+            const key = mapHkdirGradeToGrade(grade.Karakter)
+            const studentsWithGrade = parseInt(grade["Antall kandidater totalt"])
+            await this.gradeRepository.updateGradeWithExplicitLock(
+              existingGrade.id,
+              {
+                [key]: studentsWithGrade,
+              },
+              grade.Karakter
+            )
+          })
+        }
+      },
+      onTaskComplete: (remainingTasks) => {
+        if (remainingTasks && remainingTasks % 100 === 0) {
+          this.logger.info(`Queue processing for grades reached ${remainingTasks} jobs left`)
+        }
+      },
+    })
+    this.logger.info("Synchronization of grades complete")
   }
 }

@@ -20,5 +20,9 @@ export default async function route(req: NextApiRequest, res: NextApiResponse) {
     await core.jobService.performSubjectSynchronizationJob()
   }
 
+  if (!skip?.includes("grade")) {
+    await core.jobService.performGradeSynchronizationJob()
+  }
+
   res.status(200).send({})
 }
