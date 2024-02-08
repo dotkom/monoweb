@@ -40,6 +40,21 @@ variable "max_scaling" {
   default     = 1
 }
 
+variable "certificate_name" {
+  description = "Name of the certificate to use"
+  type        = string
+}
+
+variable "certificate_domain_validation_options" {
+  description = "Domain validation options for the certificate"
+  type = set(object({
+    domain_name           = string
+    resource_record_name  = string
+    resource_record_type  = string
+    resource_record_value = string
+  }))
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = object({})

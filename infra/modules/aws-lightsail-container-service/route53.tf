@@ -14,7 +14,7 @@ resource "aws_route53_record" "alias" {
 
 resource "aws_route53_record" "certificate" {
   for_each = {
-    for record in aws_lightsail_certificate.this.domain_validation_options : record.domain_name => {
+    for record in var.certificate_domain_validation_options : record.domain_name => {
       resource_record_name  = record.resource_record_name
       resource_record_type  = record.resource_record_type
       resource_record_value = record.resource_record_value

@@ -5,7 +5,7 @@ resource "aws_lightsail_container_service" "this" {
 
   public_domain_names {
     certificate {
-      certificate_name = aws_lightsail_certificate.this.name
+      certificate_name = var.certificate_name
       domain_names = [
         var.public_domain_name,
       ]
@@ -20,7 +20,7 @@ resource "aws_lightsail_container_service" "this" {
 
   tags = var.tags
 
-  depends_on = [aws_lightsail_certificate.this, aws_route53_record.certificate]
+  depends_on = [aws_route53_record.certificate]
 }
 
 resource "aws_lightsail_container_service_deployment_version" "this" {
@@ -48,12 +48,4 @@ resource "aws_lightsail_container_service_deployment_version" "this" {
       success_codes       = "200-499"
     }
   }
-}
-
-resource "aws_lightsail_certificate" "this" {
-  name                      = "${var.service_name}-certificate"
-  domain_name               = var.public_domain_name
-  subject_alternative_names = []
-
-  tags = var.tags
 }
