@@ -42,7 +42,7 @@ resource "aws_lightsail_container_service_deployment_version" "this" {
     health_check {
       healthy_threshold   = 2
       unhealthy_threshold = 10
-      timeout_seconds     = 2
+      timeout_seconds     = var.healthcheck_timeout
       interval_seconds    = 30
       path                = "/"
       success_codes       = "200-499"

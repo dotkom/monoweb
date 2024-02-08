@@ -55,6 +55,12 @@ variable "certificate_domain_validation_options" {
   }))
 }
 
+variable "healthcheck_timeout" {
+  description = "Timeout for the healthcheck"
+  type        = number
+  default     = 2
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = object({})
