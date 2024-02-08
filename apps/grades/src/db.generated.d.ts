@@ -24,6 +24,7 @@ export interface NtnuFacultyDepartment {
 }
 
 export interface Subject {
+  averageGrade: Generated<number>
   credits: number
   departmentId: string
   educationalLevel: string
@@ -32,6 +33,7 @@ export interface Subject {
   name: string
   refId: string
   slug: string
+  totalRegistered: Generated<number>
 }
 
 export interface SubjectSeasonGrade {

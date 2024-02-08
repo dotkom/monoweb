@@ -3,6 +3,7 @@ import { type Insertable, type Updateable } from "kysely"
 import { type SubjectSeasonGrade } from "@/db.generated"
 import { type Database } from "@/server/kysely"
 import { HkdirGrade, type HkdirGradeKey } from "@/server/hkdir-service"
+import { mapHkdirGradeToGradeFactor } from "@/server/hkdir-util"
 
 export type Grade = z.infer<typeof Grade>
 export type Season = Grade["season"]
@@ -35,11 +36,7 @@ export const GradeWriteLog = z.object({
 
 export interface GradeRepository {
   createGrade(input: Insertable<SubjectSeasonGrade>): Promise<Grade>
-  updateGradeWithExplicitLock(
-    id: string,
-    input: Updateable<SubjectSeasonGrade>,
-    hkdirKey: HkdirGradeKey
-  ): Promise<Grade>
+  updateGrade(id: string, input: Updateable<SubjectSeasonGrade>, hkdirKey: HkdirGradeKey, count: number): Promise<void>
   getGradeBySemester(subjectId: string, season: Season, year: number): Promise<Grade | null>
   getPreviousWriteLogEntry(
     subjectId: string,
@@ -73,19 +70,20 @@ export class GradeRepositoryImpl implements GradeRepository {
     return grade ? Grade.parse(grade) : null
   }
 
-  async updateGradeWithExplicitLock(
+  async updateGrade(
     id: string,
     input: Updateable<SubjectSeasonGrade>,
-    hkdirKey: HkdirGradeKey
-  ): Promise<Grade> {
-    const grade = await this.db
+    hkdirKey: HkdirGradeKey,
+    count: number
+  ): Promise<void> {
+    await this.db
       .transaction()
       .setIsolationLevel("read committed")
       .execute(async (tx) => {
         // If this throws, then it means we have a read inconsistency from the caller.
         const grade = await tx
           .selectFrom("subjectSeasonGrade")
-          .selectAll()
+          .select(["subjectId", "season", "year"])
           .where("id", "=", id)
           .forUpdate()
           .executeTakeFirstOrThrow()
@@ -98,6 +96,27 @@ export class GradeRepositoryImpl implements GradeRepository {
             grade: hkdirKey,
           })
           .execute()
+        // We need to update the grade distribution for the current grade as well.
+        if (count !== 0 && hkdirKey !== "H" && hkdirKey !== "G") {
+          const { totalRegistered, averageGrade } = await tx
+            .selectFrom("subject")
+            .select(["totalRegistered", "averageGrade"])
+            .where("id", "=", grade.subjectId)
+            .executeTakeFirstOrThrow()
+          const newTotalRegistered = totalRegistered + count
+          const multiplicationFactor = mapHkdirGradeToGradeFactor(hkdirKey)
+          const newAverageGrade = (averageGrade * totalRegistered + count * multiplicationFactor) / newTotalRegistered
+          // Set the new average grade and total registered count
+          await tx
+            .updateTable("subject")
+            .set({
+              totalRegistered: newTotalRegistered,
+              averageGrade: newAverageGrade,
+            })
+            .where("id", "=", grade.subjectId)
+            .execute()
+        }
+
         return await tx
           .updateTable("subjectSeasonGrade")
           .set(input)
@@ -105,7 +124,6 @@ export class GradeRepositoryImpl implements GradeRepository {
           .returningAll()
           .executeTakeFirstOrThrow()
       })
-    return Grade.parse(grade)
   }
 
   async getPreviousWriteLogEntry(

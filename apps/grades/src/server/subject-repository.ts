@@ -13,6 +13,8 @@ export const Subject = z.object({
   instructionLanguage: z.string(),
   educationalLevel: z.string(),
   credits: z.number(),
+  averageGrade: z.number().nonnegative(),
+  totalRegistered: z.number().int().nonnegative(),
 })
 
 export interface SubjectRepository {
@@ -21,6 +23,7 @@ export interface SubjectRepository {
   getSubjectById(id: string): Promise<Subject | null>
   getSubjectsBySearchExpression(expression: string, take: number, skip: number): Promise<Subject[]>
   getSubjectsByPopularity(take: number, skip: number): Promise<Subject[]>
+  getSubjectsByAverageGrade(take: number, skip: number): Promise<Subject[]>
 }
 
 export class SubjectRepositoryImpl implements SubjectRepository {
@@ -70,26 +73,20 @@ export class SubjectRepositoryImpl implements SubjectRepository {
     // We determine popularity by the number of grades given to the subject
     const subjects = await this.db
       .selectFrom("subject")
-      .leftJoin("subjectSeasonGrade", "subjectSeasonGrade.subjectId", "subject.id")
-      .selectAll("subject")
-      .select(({ eb }) => [
-        eb
-          .parens(
-            sql`
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedA", sql.lit(0)))} +
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedB", sql.lit(0)))} + 
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedC", sql.lit(0)))} +
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedD", sql.lit(0)))} +
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedE", sql.lit(0)))} +
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedF", sql.lit(0)))} +
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedPass", sql.lit(0)))} +
-          ${eb.fn.sum(eb.fn.coalesce("subjectSeasonGrade.gradedFail", sql.lit(0)))}
-          `
-          )
-          .as("students"),
-      ])
-      .groupBy("subject.id")
-      .orderBy("students", "desc")
+      .selectAll()
+      .orderBy("totalRegistered", "desc")
+      .limit(take)
+      .offset(skip)
+      .execute()
+    return subjects.map((x) => Subject.parse(x))
+  }
+
+  async getSubjectsByAverageGrade(take: number, skip: number): Promise<Subject[]> {
+    // We determine popularity by the number of grades given to the subject
+    const subjects = await this.db
+      .selectFrom("subject")
+      .selectAll()
+      .orderBy("averageGrade", "desc")
       .limit(take)
       .offset(skip)
       .execute()

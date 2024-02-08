@@ -171,12 +171,13 @@ export class JobServiceImpl implements JobService {
             // Then we need to update the grade distribution for the current grade
             const key = mapHkdirGradeToGrade(grade.Karakter)
             const studentsWithGrade = parseInt(grade["Antall kandidater totalt"])
-            await this.gradeRepository.updateGradeWithExplicitLock(
+            await this.gradeRepository.updateGrade(
               existingGrade.id,
               {
                 [key]: studentsWithGrade,
               },
-              grade.Karakter
+              grade.Karakter,
+              studentsWithGrade
             )
           })
         }

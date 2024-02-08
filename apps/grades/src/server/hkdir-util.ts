@@ -1,4 +1,5 @@
 import { type Grade, type Season } from "@/server/grade-repository"
+import { type HkdirGradeKey } from "@/server/hkdir-service"
 
 export const mapHkdirSemesterToSeason = (semester: string): Season => {
   switch (semester) {
@@ -12,6 +13,25 @@ export const mapHkdirSemesterToSeason = (semester: string): Season => {
       return "WINTER"
     default:
       throw new Error(`Unknown semester: ${semester}`)
+  }
+}
+
+export const mapHkdirGradeToGradeFactor = (grade: Exclude<HkdirGradeKey, "G" | "H">): number => {
+  switch (grade) {
+    case "A":
+      return 5
+    case "B":
+      return 4
+    case "C":
+      return 3
+    case "D":
+      return 2
+    case "E":
+      return 1
+    case "F":
+      return 0
+    default:
+      throw new Error(`Unknown grade: ${grade}`)
   }
 }
 
