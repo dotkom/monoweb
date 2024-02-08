@@ -1,9 +1,12 @@
 import process from "node:process"
 import pg from "pg"
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
+import { getLogger } from "@dotkomonline/logger"
 import { type DB } from "@/db.generated"
 
 export type Database = Awaited<ReturnType<typeof createKysely>>
+
+const logger = getLogger("server/kysely")
 
 export const createKysely = () => {
   const conn = new pg.Pool({
@@ -14,5 +17,8 @@ export const createKysely = () => {
       pool: conn,
     }),
     plugins: [new CamelCasePlugin()],
+    log: (evt) => {
+      logger.info(evt.query.sql)
+    },
   })
 }

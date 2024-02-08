@@ -5,6 +5,7 @@ import { type DepartmentRepository, DepartmentRepositoryImpl } from "@/server/de
 import { type JobService, JobServiceImpl } from "@/server/job-service"
 import { type SubjectRepository, SubjectRepositoryImpl } from "@/server/subject-repository"
 import { type GradeRepository, GradeRepositoryImpl } from "@/server/grade-repository"
+import { type SubjectService, SubjectServiceImpl } from "@/server/subject-service"
 
 export interface CreateServiceLayerOptions {
   fetch: WindowOrWorkerGlobalScope["fetch"]
@@ -26,9 +27,11 @@ export const createServiceLayer = (opts: CreateServiceLayerOptions) => {
     gradeRepository,
     hkdirService
   )
+  const subjectService: SubjectService = new SubjectServiceImpl(subjectRepository)
 
   return {
     hkdirService,
     jobService,
+    subjectService,
   }
 }
