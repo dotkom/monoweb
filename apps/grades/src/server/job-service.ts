@@ -133,6 +133,11 @@ export class JobServiceImpl implements JobService {
       build: (queue, concurrency) => {
         this.logger.info(`Processing grades using async queue with ${concurrency} concurrency`)
         for (const grade of grades) {
+          const studentsWithGrade = parseInt(grade["Antall kandidater totalt"])
+          if (studentsWithGrade === 0) {
+            continue
+          }
+
           queue.add(async () => {
             // We need a reference to the subject from the reference id given by HKDir
             const subject = await this.subjectRepository.getSubjectByReferenceId(grade.Emnekode)
@@ -141,17 +146,19 @@ export class JobServiceImpl implements JobService {
               return
             }
 
+            const year = parseInt(grade.Årstall)
+
             // First we need to get or insert the matching grade.
             let existingGrade = await this.gradeRepository.getGradeBySemester(
               subject.id,
               mapHkdirSemesterToSeason(grade.Semester),
-              parseInt(grade.Årstall)
+              year
             )
             if (existingGrade === null) {
               existingGrade = await this.gradeRepository.createGrade({
                 subjectId: subject.id,
                 season: mapHkdirSemesterToSeason(grade.Semester),
-                year: parseInt(grade.Årstall),
+                year,
                 grade: 0,
               })
             }
@@ -161,7 +168,7 @@ export class JobServiceImpl implements JobService {
             const previousWriteLogEntry = await this.gradeRepository.getPreviousWriteLogEntry(
               existingGrade.subjectId,
               mapHkdirSemesterToSeason(grade.Semester),
-              parseInt(grade.Årstall),
+              year,
               grade.Karakter
             )
             if (previousWriteLogEntry !== null) {
@@ -170,7 +177,6 @@ export class JobServiceImpl implements JobService {
 
             // Then we need to update the grade distribution for the current grade
             const key = mapHkdirGradeToGrade(grade.Karakter)
-            const studentsWithGrade = parseInt(grade["Antall kandidater totalt"])
             await this.gradeRepository.updateGrade(
               existingGrade.id,
               {
