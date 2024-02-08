@@ -1,7 +1,8 @@
-import { type Kysely, sql } from "kysely"
+import { sql } from "kysely"
 import { createTableWithDefaults } from "../utils"
 
-export async function up(db: Kysely<any>) {
+/** @param db {import('kysely').Kysely} */
+export async function up(db) {
   await createTableWithDefaults("offline", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("title", sql`text`, (col) => col.notNull())
     .addColumn("published", sql`timestamptz`, (col) => col.notNull())
@@ -10,6 +11,7 @@ export async function up(db: Kysely<any>) {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+/** @param db {import('kysely').Kysely} */
+export async function down(db) {
   await db.schema.dropTable("offline").execute()
 }
