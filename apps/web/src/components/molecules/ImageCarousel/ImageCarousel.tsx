@@ -14,22 +14,35 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ images }) => {
     const newIndex = Math.min(startIndex + 5, images.length - 5)
     setStartIndex(newIndex)
   }
+  const [isHoveredRight, setIsHoveredRight] = useState(false)
+  const [isHoveredLeft, setIsHoveredLeft] = useState(false)
 
   const visibleImages = images.slice(startIndex, startIndex + 5)
   return (
     <div>
       <p>OFFLINE</p>
       <div className="flex flex-row space-x-8">
-        <button onClick={handleLeftButtonClick}>
+        <button
+          onMouseEnter={() => setIsHoveredLeft(true)}
+          onMouseLeave={() => setIsHoveredLeft(false)}
+          onClick={handleLeftButtonClick}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
+            className="icon icon-tabler icon-tabler-arrow-narrow-left"
+            width="44"
+            height="44"
             viewBox="0 0 24 24"
-            stroke-width="2.5"
-            stroke="lightGray"
-            className="h-6 w-6"
+            stroke-width="1.5"
+            stroke={isHoveredLeft ? "gray" : "lightgray"}
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 12l14 0" />
+            <path d="M5 12l4 4" />
+            <path d="M5 12l4 -4" />
           </svg>
         </button>
         <div className="flex flex-row space-x-8">
@@ -39,16 +52,27 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ images }) => {
             </div>
           ))}
         </div>
-        <button onClick={handleRightButtonClick}>
+        <button
+          onMouseEnter={() => setIsHoveredRight(true)}
+          onMouseLeave={() => setIsHoveredRight(false)}
+          onClick={handleRightButtonClick}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
+            className="icon icon-tabler icon-tabler-arrow-narrow-right"
+            width="44"
+            height="44"
             viewBox="0 0 24 24"
-            stroke-width="2.5"
-            stroke="lightGray"
-            className="h-6 w-6"
+            stroke-width="1.5"
+            stroke={isHoveredRight ? "gray" : "lightgray"}
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 12l14 0" />
+            <path d="M15 16l4 -4" />
+            <path d="M15 8l4 4" />
           </svg>
         </button>
       </div>
