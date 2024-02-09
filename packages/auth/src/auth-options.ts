@@ -1,6 +1,6 @@
-import { type ServiceLayer, NotFoundError } from "@dotkomonline/core"
+import { type ServiceLayer } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
-import CognitoProvider from "next-auth/providers/cognito"
+import Auth0Provider from "next-auth/providers/auth0"
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -18,26 +18,26 @@ declare module "next-auth" {
 }
 
 export interface AuthOptions {
-  cognitoClientId: string
-  cognitoClientSecret: string
-  cognitoIssuer: string
+  auth0ClientId: string
+  auth0ClientSecret: string
+  auth0Issuer: string
   core: ServiceLayer
   jwtSecret: string
 }
 
 export const getAuthOptions = ({
-  cognitoClientId,
-  cognitoClientSecret,
-  cognitoIssuer,
+  auth0ClientId: oidcClientId,
+  auth0ClientSecret: oidcClientSecret,
+  auth0Issuer: oidcIssuer,
   core,
   jwtSecret,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
   providers: [
-    CognitoProvider({
-      clientId: cognitoClientId,
-      clientSecret: cognitoClientSecret,
-      issuer: cognitoIssuer,
+    Auth0Provider({
+      clientId: oidcClientId,
+      clientSecret: oidcClientSecret,
+      issuer: oidcIssuer,
       profile: (profile): User => ({
         id: profile.sub,
         name: `${profile.given_name} ${profile.family_name}`,
@@ -52,9 +52,9 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        const user = await core.userService.getUserBySubject(token.sub)
+        let user = await core.userService.getUserBySubject(token.sub)
         if (user === undefined) {
-          throw new NotFoundError(`Found no matching user for ${token.sub}`)
+          user = await core.userService.createUser({ auth0Sub: token.sub, studyYear: -1 })
         }
         session.user.id = user.id
         session.sub = token.sub
