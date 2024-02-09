@@ -61,9 +61,6 @@ The project uses pgx ulid PostgreSQL extension for ULID support. This needs to b
 
 This should not be necessary, as we now create a monoweb user when a user from Auth0 first logs in.
 
-The Cognito dispatcher should handle syncing its pool with the `ow_user` table automatically, but in cases where this
-doesn't happen, we can manually sync.
-
 1. Install Auth0 CLI
 2. Log into Auth0 with `auth0 login`
 3. Install PostGreSQL Client (for debian/ubuntu-based: `sudo apt install postgresql-client-14` (or later versions))
