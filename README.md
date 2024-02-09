@@ -57,26 +57,27 @@ doppler run --preserve-env pnpm dev
 
 The project uses pgx ulid PostgreSQL extension for ULID support. This needs to be installed in your local database.  For convenience, you can use the docker image: public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3 that includes the necessary extension pre installed.
 
-### [Cognito] How to sync user pool with OW
+### [Auth0] How to sync user pool with OW
+
+This should not be necessary, as we now create a monoweb user when a user from Auth0 first logs in.
 
 The Cognito dispatcher should handle syncing its pool with the `ow_user` table automatically, but in cases where this
 doesn't happen, we can manually sync.
 
-1. Install AWS CLI
-2. Log into AWS with AWS CLI `aws configure`
+1. Install Auth0 CLI
+2. Log into Auth0 with `auth0 login`
 3. Install PostGreSQL Client (for debian/ubuntu-based: `sudo apt install postgresql-client-14` (or later versions))
 4. Install jq `sudo apt install jq`
 5. Load the database into the shell. (`export DATABASE_URL=$(doppler secrets get DATABASE_URL --plain)`)
 6. Run the command below to sync.
 
 ```shell
-aws cognito-idp list-users --user-pool-id eu-north-1_wnSVVBSoo --filter 'cognito:user_status = "CONFIRMED"' \
-  | jq ".Users[].Username" \
-  | xargs -I '{}' psql -Atx $DATABASE_URL -c "INSERT INTO ow_user (cognito_sub) VALUES ('{}') ON CONFLICT DO NOTHING"
+# you actually need to paginate...
+auth0 api users \
+  | jq ".[].user_id"
+  | xargs -I '{}' \
+  psql -Atx $DATABASE_URL -c "INSERT INTO ow_user (auth0_sub) VALUES ('{}') ON CONFLICT DO NOTHING"
 ```
-
-If you need to run this in stg/prd, simply replace the `--user-pool-id` argument to AWS CLI. You can find the values
-in the AWS dashboard or in the terraform state.
 
 ### [Payment] How to configure stripe (locally)
 
