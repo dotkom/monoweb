@@ -25,9 +25,6 @@ doppler run -- pnpm dev
 
 ### [Auth0] How to sync user pool with OW
 
-The Cognito dispatcher should handle syncing its pool with the `ow_user` table automatically, but in cases where this
-doesn't happen, we can manually sync.
-
 1. Install Auth0 CLI
 2. Log into Auth0 with `auth0 login`
 3. Install PostGreSQL Client (for debian/ubuntu-based: `sudo apt install postgresql-client-14` (or later versions))
