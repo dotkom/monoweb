@@ -1,5 +1,5 @@
-use async_trait::async_trait;
 use crate::pg::Database;
+use async_trait::async_trait;
 use sqlx::types::Uuid;
 use sqlx::FromRow;
 
@@ -13,7 +13,6 @@ pub struct Faculty {
 #[async_trait]
 pub trait FacultyRepository: Sync {
     async fn create_faculty(&self, name: String, ref_id: String) -> Result<Faculty, sqlx::Error>;
-    async fn get_faculty_by_ref_id(&self, ref_id: &str) -> Result<Option<Faculty>, sqlx::Error>;
 }
 
 pub struct FacultyRepositoryImpl<'a> {
@@ -39,17 +38,6 @@ impl<'a> FacultyRepository for FacultyRepositoryImpl<'a> {
         .bind(name)
         .bind(ref_id)
         .fetch_one(self.db)
-        .await
-    }
-
-    async fn get_faculty_by_ref_id(&self, ref_id: &str) -> Result<Option<Faculty>, sqlx::Error> {
-        sqlx::query_as::<_, Faculty>(
-            r#"
-            SELECT * FROM faculty WHERE ref_id = $1
-            "#,
-        )
-        .bind(ref_id)
-        .fetch_optional(self.db)
         .await
     }
 }
