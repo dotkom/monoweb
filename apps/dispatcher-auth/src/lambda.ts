@@ -14,7 +14,7 @@ export const handler: Handler<PostConfirmationConfirmSignUpTriggerEvent> = async
   }
   const core = await createServiceLayer({ db: kysely })
   await core.userService.createUser({
-    cognitoSub: sub,
+    auth0Sub: sub,
     studyYear: -1,
   })
   return event
