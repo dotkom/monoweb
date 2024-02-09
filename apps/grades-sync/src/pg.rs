@@ -13,7 +13,7 @@ pub async fn create_postgres_pool() -> Result<Pool<Postgres>, sqlx::Error> {
         .log_statements(LevelFilter::Debug)
         .log_slow_statements(LevelFilter::Warn, Duration::from_secs(1));
     let pool = PgPoolOptions::new()
-        .max_connections(100)
+        .max_connections(80)
         .connect_with(opts)
         .await?;
     Ok(pool)

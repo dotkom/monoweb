@@ -1,7 +1,8 @@
+use crate::grade_repository::SubjectGradingKey;
 use crate::pg::Database;
 use async_trait::async_trait;
 use sqlx::types::Uuid;
-use sqlx::FromRow;
+use sqlx::{Error, FromRow};
 
 #[derive(Debug, FromRow)]
 pub struct Subject {
@@ -16,6 +17,29 @@ pub struct Subject {
     pub average_grade: f32,
     pub total_students: i32,
     pub failed_students: i32,
+}
+
+impl Subject {
+    pub fn get_next_average(&self, key: SubjectGradingKey, count: i32) -> f32 {
+        if key.is_pass_or_fail_key() {
+            return self.average_grade;
+        }
+
+        let complete_factor = self.average_grade * self.total_students as f32
+            + count as f32 * key.to_multiplication_factor();
+        complete_factor / (self.total_students + count) as f32
+    }
+
+    pub fn get_next_failed_students(&self, key: SubjectGradingKey, count: i32) -> i32 {
+        if key.is_evaluated_as_failed() {
+            return self.failed_students + count;
+        }
+        self.failed_students
+    }
+
+    pub fn get_next_total_students(&self, count: i32) -> i32 {
+        self.total_students + count
+    }
 }
 
 #[async_trait]
@@ -33,6 +57,7 @@ pub trait SubjectRepository: Sync {
         total_students: i32,
         failed_students: i32,
     ) -> Result<Subject, sqlx::Error>;
+    async fn find_subject_by_ref_id(&self, ref_id: String) -> Result<Option<Subject>, sqlx::Error>;
 }
 
 pub struct SubjectRepositoryImpl<'a> {
@@ -79,6 +104,17 @@ impl<'a> SubjectRepository for SubjectRepositoryImpl<'a> {
         .bind(total_students)
         .bind(failed_students)
         .fetch_one(self.db)
+        .await
+    }
+
+    async fn find_subject_by_ref_id(&self, ref_id: String) -> Result<Option<Subject>, Error> {
+        sqlx::query_as::<_, Subject>(
+            r#"
+            SELECT * FROM subject WHERE ref_id = $1;
+            "#,
+        )
+        .bind(ref_id)
+        .fetch_optional(self.db)
         .await
     }
 }

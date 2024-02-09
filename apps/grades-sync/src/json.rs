@@ -1,3 +1,4 @@
+use crate::grade_repository::SubjectGradingKey;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -81,4 +82,17 @@ pub struct HkdirSubject {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct HkdirGrade {}
+pub struct HkdirGrade {
+    #[serde(rename = "Årstall")]
+    pub year: String,
+    #[serde(rename = "Semester")]
+    pub semester: String,
+    #[serde(rename = "Semesternavn")]
+    pub semester_name: String,
+    #[serde(rename = "Karakter")]
+    pub grade: SubjectGradingKey,
+    #[serde(rename = "Emnekode")]
+    pub subject_code: String,
+    #[serde(rename = "Antall kandidater totalt")]
+    pub total_candidates: String,
+}

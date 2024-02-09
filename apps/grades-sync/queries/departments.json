@@ -1,0 +1,39 @@
+{
+  "tabell_id": 210,
+  "api_versjon": 1,
+  "statuslinje": "N",
+  "kodetekst": "J",
+  "desimal_separator": ".",
+  "variabler": [
+    "*"
+  ],
+  "sortBy": [
+    "Nivå"
+  ],
+  "filter": [
+    {
+      "variabel": "Institusjonskode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "1150"
+        ],
+        "exclude": [
+          ""
+        ]
+      }
+    },
+    {
+      "variabel": "Avdelingskode",
+      "selection": {
+        "filter": "all",
+        "values": [
+          "*"
+        ],
+        "exclude": [
+          "000000"
+        ]
+      }
+    }
+  ]
+}
