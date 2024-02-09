@@ -1,0 +1,17 @@
+[package]
+name = "grades-sync"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sqlx = { version = "0.7", features = ["runtime-tokio", "tls-rustls", "uuid", "json", "migrate", "postgres"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.11", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0.79"
+dotenv = "0.15.0"
+log = { version = "0.4.20", features = [] }
+env_logger = "0.11.1"
