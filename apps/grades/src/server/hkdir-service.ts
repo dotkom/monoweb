@@ -23,7 +23,7 @@ export const HkdirSubject = z.object({
   "Institusjonsnavn": z.string(),
   "Avdelingskode": z.string(),
   "Avdelingsnavn": z.string(),
-  "Avdelingskode_SSB": z.string(),
+  "Avdelingskode_SSB": z.string().nullish().default(null),
   "Årstall": z.string(),
   "Semester": z.string(),
   "Semesternavn": z.string(),
@@ -91,7 +91,7 @@ export class HkdirServiceImpl implements HkdirService {
         this.createQueryFilter("Institusjonskode", [institution.toString()]),
         this.createQueryFilter("Nivåkode", ["HN", "LN"]),
         this.createQueryFilter("Status", ["1", "2"]),
-        this.createTopQueryFilter("Årstall", 1),
+        // this.createTopQueryFilter("Årstall", 1),
         this.createExcludeQueryFilter("Avdelingskode", ["000000"]),
       ],
     })
@@ -103,7 +103,7 @@ export class HkdirServiceImpl implements HkdirService {
       groupBy: ["Årstall", "Semester", "Karakter", "Emnekode", "Institusjonskode"],
       filter: [
         this.createQueryFilter("Institusjonskode", [institution.toString()]),
-        this.createTopQueryFilter("Årstall", 1),
+        // this.createTopQueryFilter("Årstall", 1),
         this.createAllQueryFilter("Emnekode"),
         this.createAllQueryFilter("Semester"),
       ],

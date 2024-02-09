@@ -94,7 +94,7 @@ export class JobServiceImpl implements JobService {
             let existingSubject = await this.subjectRepository.getSubjectByReferenceId(subject.Emnekode)
             if (existingSubject === null) {
               // A lot of subjects have a -x suffix, which we want to remove for the slug
-              const slug = subject.Emnekode.replace(/-[12ABK]$/, "").toLowerCase()
+              const slug = subject.Emnekode.replace(/-[123ABK]$/, "").toLowerCase()
               existingSubject = await this.subjectRepository.createSubject({
                 name: subject.Emnenavn,
                 refId: subject.Emnekode,
