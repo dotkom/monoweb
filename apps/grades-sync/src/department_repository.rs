@@ -19,6 +19,7 @@ pub trait DepartmentRepository: Sync {
         ref_id: String,
         faculty_id: Uuid,
     ) -> Result<Department, sqlx::Error>;
+    async fn get_department_by_ref_id(&self, ref_id: String) -> Result<Department, sqlx::Error>;
 }
 
 pub struct DepartmentRepositoryImpl<'a> {
@@ -49,6 +50,17 @@ impl<'a> DepartmentRepository for DepartmentRepositoryImpl<'a> {
         .bind(name)
         .bind(ref_id)
         .bind(faculty_id)
+        .fetch_one(self.db)
+        .await
+    }
+
+    async fn get_department_by_ref_id(&self, ref_id: String) -> Result<Department, sqlx::Error> {
+        sqlx::query_as::<_, Department>(
+            r#"
+            SELECT * FROM department WHERE ref_id = $1;
+            "#,
+        )
+        .bind(ref_id)
         .fetch_one(self.db)
         .await
     }
