@@ -7,7 +7,7 @@ pub async fn create_postgres_pool() -> Result<Pool<Postgres>, sqlx::Error> {
     let database_url =
         std::env::var("DATABASE_URL").expect("missing DATABASE_URL environment variable");
     let pool = PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(100)
         .connect(&database_url)
         .await?;
     Ok(pool)

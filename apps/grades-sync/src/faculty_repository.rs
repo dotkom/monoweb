@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use crate::pg::Database;
 use sqlx::types::Uuid;
 use sqlx::FromRow;
@@ -9,13 +10,10 @@ pub struct Faculty {
     pub ref_id: String,
 }
 
+#[async_trait]
 pub trait FacultyRepository: Sync {
-    async fn create_faculty(&self, name: String, ref_id: String) -> Result<Faculty, sqlx::Error>
-    where
-        Self: Sized;
-    async fn get_faculty_by_ref_id(&self, ref_id: &str) -> Result<Option<Faculty>, sqlx::Error>
-    where
-        Self: Sized;
+    async fn create_faculty(&self, name: String, ref_id: String) -> Result<Faculty, sqlx::Error>;
+    async fn get_faculty_by_ref_id(&self, ref_id: &str) -> Result<Option<Faculty>, sqlx::Error>;
 }
 
 pub struct FacultyRepositoryImpl<'a> {
@@ -28,13 +26,14 @@ impl<'a> FacultyRepositoryImpl<'a> {
     }
 }
 
+#[async_trait]
 impl<'a> FacultyRepository for FacultyRepositoryImpl<'a> {
     async fn create_faculty(&self, name: String, ref_id: String) -> Result<Faculty, sqlx::Error> {
         sqlx::query_as::<_, Faculty>(
             r#"
-            INSERT INTO ntnu_faculty (name, ref_id) VALUES ($1, $2)
+            INSERT INTO faculty (name, ref_id) VALUES ($1, $2)
             ON CONFLICT (ref_id) DO UPDATE SET name = $1, ref_id = $2
-            RETURNING ALL
+            RETURNING *;
             "#,
         )
         .bind(name)
@@ -46,7 +45,7 @@ impl<'a> FacultyRepository for FacultyRepositoryImpl<'a> {
     async fn get_faculty_by_ref_id(&self, ref_id: &str) -> Result<Option<Faculty>, sqlx::Error> {
         sqlx::query_as::<_, Faculty>(
             r#"
-            SELECT * FROM ntnu_faculty WHERE ref_id = $1
+            SELECT * FROM faculty WHERE ref_id = $1
             "#,
         )
         .bind(ref_id)

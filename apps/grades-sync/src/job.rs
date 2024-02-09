@@ -1,8 +1,9 @@
-use crate::faculty_repository::{FacultyRepository};
+
+use crate::faculty_repository::FacultyRepository;
 use crate::hkdir::get_departments;
 
 use log::info;
-use tokio::task::JoinSet;
+
 
 pub trait JobService {
     async fn perform_faculty_synchronization(&self) -> anyhow::Result<()>;
@@ -24,21 +25,26 @@ impl<'a> JobService for JobServiceImpl<'a> {
     async fn perform_faculty_synchronization(&self) -> anyhow::Result<()> {
         info!("performing faculty synchronization");
         let departments = get_departments().await?;
-        let _processed_count = 0;
+        let department_count = departments.len();
         info!(
             "performing synchronization for {} departments",
-            departments.len()
+            department_count
         );
-        let mut set = JoinSet::new();
-        for (i, _department) in departments.iter().enumerate() {
-            set.spawn(async move {
-                info!("processing department {}", i);
-            });
-        }
 
-        while let Some(result) = set.join_next().await {
-            result?;
-        }
+        async_scoped::TokioScope::scope_and_block(|s| {
+            for department in departments {
+                s.spawn(async move {
+                    // Create the faculty if it doesn't exist. The underlying query performs an on
+                    // conflict update, which means that we do not need to check if the faculty
+                    // exists before creating it.
+                    self
+                        .faculty_repository
+                        .create_faculty(department.faculty_code, department.faculty_name)
+                        .await
+                        .unwrap();
+                });
+            }
+        });
         Ok(())
     }
 

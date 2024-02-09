@@ -1,5 +1,5 @@
 use crate::json::HkdirDepartment;
-use reqwest::{Client};
+use reqwest::Client;
 use serde_json::{json, Value};
 
 const HKDIR_API_URL: &str = "https://dbh.hkdir.no/api/Tabeller/hentJSONTabellData";

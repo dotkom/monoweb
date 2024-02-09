@@ -21,5 +21,5 @@ async fn main() {
 
     job_service.perform_faculty_synchronization().await.unwrap();
 
-    println!("Hello, world!");
+    connection.close().await;
 }
