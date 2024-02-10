@@ -1,6 +1,5 @@
 import { z } from "zod"
-import { type Insertable, sql } from "kysely"
-import { type Subject as DatabaseSubject } from "@/db.generated"
+import { sql } from "kysely"
 import { type Database } from "@/server/kysely"
 
 export type Subject = z.infer<typeof Subject>
@@ -14,11 +13,11 @@ export const Subject = z.object({
   educationalLevel: z.string(),
   credits: z.number(),
   averageGrade: z.number().nonnegative(),
-  totalRegistered: z.number().int().nonnegative(),
+  totalStudents: z.number().int().nonnegative(),
+  failedStudents: z.number().int().nonnegative(),
 })
 
 export interface SubjectRepository {
-  createSubject(input: Insertable<DatabaseSubject>): Promise<Subject>
   getSubjectByReferenceId(refId: string): Promise<Subject | null>
   getSubjectById(id: string): Promise<Subject | null>
   getSubjectsBySearchExpression(expression: string, take: number, skip: number): Promise<Subject[]>
@@ -28,16 +27,6 @@ export interface SubjectRepository {
 
 export class SubjectRepositoryImpl implements SubjectRepository {
   constructor(private readonly db: Database) {}
-
-  async createSubject(input: Insertable<DatabaseSubject>): Promise<Subject> {
-    const subject = await this.db
-      .insertInto("subject")
-      .values(input)
-      .onConflict((eb) => eb.columns(["refId"]).doUpdateSet({ ...input }))
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return Subject.parse(subject)
-  }
 
   async getSubjectByReferenceId(refId: string): Promise<Subject | null> {
     const subject = await this.db.selectFrom("subject").selectAll().where("refId", "=", refId).executeTakeFirst()
@@ -74,7 +63,7 @@ export class SubjectRepositoryImpl implements SubjectRepository {
     const subjects = await this.db
       .selectFrom("subject")
       .selectAll()
-      .orderBy("totalRegistered", "desc")
+      .orderBy("totalStudents", "desc")
       .limit(take)
       .offset(skip)
       .execute()

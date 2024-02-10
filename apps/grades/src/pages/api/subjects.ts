@@ -11,7 +11,7 @@ const QuerySchema = z.object({
 
 export default async function route(req: NextApiRequest, res: NextApiResponse) {
   const query = QuerySchema.parse(req.query)
-  const kysely = await createKysely()
+  const kysely = createKysely()
   const core = createServiceLayer({ fetch, db: kysely })
 
   const subjects = await core.subjectService.search(query.q, query.take, query.skip)
