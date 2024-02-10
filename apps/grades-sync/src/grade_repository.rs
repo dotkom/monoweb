@@ -3,7 +3,7 @@ use crate::subject_repository::Subject;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Uuid;
-use sqlx::FromRow;
+use sqlx::{Executor, FromRow};
 
 #[derive(Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize, Copy, Clone)]
 #[sqlx(type_name = "subject_grading_season", rename_all = "UPPERCASE")]
@@ -179,6 +179,7 @@ impl<'a> GradeRepository for GradeRepositoryImpl<'a> {
     ) -> Result<Grade, sqlx::Error> {
         // TODO: Refactor this logic out, it's only here because it's a transaction right now
         let mut tx = self.db.begin().await?;
+        tx.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED;").await?;
         let grade = sqlx::query_as::<_, Grade>(
             r#"
             SELECT * FROM subject_season_grade WHERE subject_id = $1 AND season = $2 AND year = $3
@@ -197,7 +198,7 @@ impl<'a> GradeRepository for GradeRepositoryImpl<'a> {
                 sqlx::query_as::<_, Grade>(
                     r#"
                     INSERT INTO subject_season_grade (subject_id, season, year, graded_a, graded_b, graded_c, graded_d, graded_f, graded_pass, graded_fail)
-                    VALUES ($1, $2, $3, 0, 0, 0, 0, 0, 0, 0)
+                    VALUES ($1, $2, $3, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
                     RETURNING *;
                     "#
                 ).bind(subject_id)

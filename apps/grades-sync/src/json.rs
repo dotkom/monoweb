@@ -81,7 +81,7 @@ pub struct HkdirSubject {
     pub task: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct HkdirGrade {
     #[serde(rename = "Årstall")]
     pub year: String,

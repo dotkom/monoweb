@@ -34,7 +34,7 @@ async fn main() {
     );
 
     // job_service.perform_faculty_synchronization().await.unwrap();
-    // job_service.perform_subject_synchronization().await.unwrap();
+    job_service.perform_subject_synchronization().await.unwrap();
     job_service.perform_grade_synchronization().await.unwrap();
 
     pool.close().await;

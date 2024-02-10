@@ -1,8 +1,10 @@
 use crate::faculty_repository::FacultyRepository;
 use crate::hkdir::{get_departments, get_grades, get_subjects, map_season_index_to};
 use async_trait::async_trait;
-use itertools::Itertools;
+use itertools::{Itertools};
 use std::cmp::min;
+
+
 
 use crate::department_repository::DepartmentRepository;
 use crate::grade_repository::GradeRepository;
@@ -129,11 +131,21 @@ impl<'a> JobService for JobServiceImpl<'a> {
             grade_count, chunks_count
         );
 
-        let grades_chunked = grades
+        let grades_grouped_by_subject = grades
             .into_iter()
+            // Group all the grades by the subject code to prevent them to be split across threads
+            .into_grouping_map_by(|grade| grade.subject_code.clone())
+            .collect::<Vec<HkdirGrade>>()
+            .values()
+            .cloned()
+            .collect::<Vec<Vec<HkdirGrade>>>();
+
+        let grades_chunked = grades_grouped_by_subject
+            .into_iter()
+            // Split the chunks into smaller chunks, each of which is to be put in a separate worker
             .chunks(chunks_count)
             .into_iter()
-            .map(|chunk| chunk.collect())
+            .map(|chunk| chunk.flatten().collect())
             .collect::<Vec<Vec<HkdirGrade>>>();
 
         async_scoped::TokioScope::scope_and_block(|s| {
