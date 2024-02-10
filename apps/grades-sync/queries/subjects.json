@@ -39,19 +39,6 @@
       }
     },
     {
-      "variabel": "Status",
-      "selection": {
-        "filter": "item",
-        "values": [
-          "1",
-          "2"
-        ],
-        "exclude": [
-          ""
-        ]
-      }
-    },
-    {
       "variabel": "Avdelingskode",
       "selection": {
         "filter": "all",
@@ -73,18 +60,6 @@
         "exclude": [
           "1",
           "2"
-        ]
-      }
-    },
-    {
-      "variabel": "Årstall",
-      "selection": {
-        "filter": "top",
-        "values": [
-          "2"
-        ],
-        "exclude": [
-          ""
         ]
       }
     }

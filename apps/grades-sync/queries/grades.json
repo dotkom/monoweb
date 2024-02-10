@@ -50,19 +50,6 @@
           ""
         ]
       }
-    },
-
-    {
-      "variabel": "Årstall",
-      "selection": {
-        "filter": "top",
-        "values": [
-          "2"
-        ],
-        "exclude": [
-          ""
-        ]
-      }
     }
   ]
 }

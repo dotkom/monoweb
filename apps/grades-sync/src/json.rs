@@ -42,7 +42,7 @@ pub struct HkdirSubject {
     #[serde(rename = "Avdelingsnavn")]
     pub department_name: String,
     #[serde(rename = "Avdelingskode_SSB")]
-    pub department_code_ssb: String,
+    pub department_code_ssb: Option<String>,
     #[serde(rename = "Årstall")]
     pub year: String,
     #[serde(rename = "Semester")]
