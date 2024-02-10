@@ -4,8 +4,6 @@ use async_trait::async_trait;
 use itertools::{Itertools};
 use std::cmp::min;
 
-
-
 use crate::department_repository::DepartmentRepository;
 use crate::grade_repository::GradeRepository;
 use crate::json::{HkdirDepartment, HkdirGrade, HkdirSubject};
@@ -55,27 +53,18 @@ impl<'a> JobService for JobServiceImpl<'a> {
         info!("performing faculty synchronization");
         let departments = get_departments().await?;
         let department_count = departments.len();
-        let chunks_count = min(department_count / MAX_TASK_COUNT, 1000);
+        let _chunks_count = min(department_count / MAX_TASK_COUNT, 1000);
         info!(
-            "performing synchronization for {} departments across {} threads",
-            department_count, chunks_count
+            "performing synchronization for {} departments", department_count
         );
 
-        let departments_chunked = departments
+        futures::future::join_all(departments
             .into_iter()
-            .chunks(chunks_count)
-            .into_iter()
-            .map(|chunk| chunk.collect())
-            .collect::<Vec<Vec<HkdirDepartment>>>();
-        async_scoped::TokioScope::scope_and_block(|s| {
-            for departments in departments_chunked {
-                s.spawn(async move {
-                    for department in departments {
-                        self.synchronize_single_faculty(department).await.unwrap();
-                    }
-                });
-            }
-        });
+            .map(|department| {
+                async move {
+                    self.synchronize_single_faculty(department).await.unwrap();
+                }
+            })).await;
         info!("synchronization complete");
         Ok(())
     }
@@ -84,28 +73,18 @@ impl<'a> JobService for JobServiceImpl<'a> {
         info!("performing subject synchronization");
         let subjects = get_subjects().await?;
         let subject_count = subjects.len();
-        let chunks_count = min(subject_count / MAX_TASK_COUNT, 1000);
         info!(
-            "performing synchronization for {} subjects across {} threads",
-            subject_count, chunks_count
+            "performing synchronization for {} subjects",
+            subject_count
         );
 
-        let subjects_chunked = subjects
+        futures::future::join_all(subjects
             .into_iter()
-            .chunks(chunks_count)
-            .into_iter()
-            .map(|chunk| chunk.collect())
-            .collect::<Vec<Vec<HkdirSubject>>>();
-        async_scoped::TokioScope::scope_and_block(|s| {
-            for subjects in subjects_chunked {
-                s.spawn(async move {
-                    for subject in subjects {
-                        self.synchronize_single_subject(subject).await.unwrap();
-                    }
-                });
-            }
-        });
-
+            .map(|subject| {
+                async move {
+                    self.synchronize_single_subject(subject).await.unwrap();
+                }
+            })).await;
         info!("synchronization complete");
         Ok(())
     }
@@ -113,53 +92,26 @@ impl<'a> JobService for JobServiceImpl<'a> {
     async fn perform_grade_synchronization(&self) -> anyhow::Result<()> {
         info!("performing grade synchronization");
         let grades = get_grades().await?;
-        // Here, we also skip the grades where the number of students is 0.
-        let grades = grades
-            .into_iter()
-            .filter(|grade| {
-                grade
-                    .total_candidates
-                    .parse::<i32>()
-                    .expect("invalid number for total candidates")
-                    > 0
-            })
-            .collect::<Vec<HkdirGrade>>();
-        let grade_count = grades.len();
-        let chunks_count = min(grade_count / MAX_TASK_COUNT, 1000);
         info!(
-            "performing synchronization for {} grades across {} threads",
-            grade_count, chunks_count
+            "performing synchronization for {} grades",
+            grades.len()
         );
-
-        let grades_grouped_by_subject = grades
-            .into_iter()
-            // Group all the grades by the subject code to prevent them to be split across threads
+        let map = grades.into_iter()
+            .filter(|grade| grade
+                .total_candidates
+                .parse::<i32>()
+                .expect("invalid number for total candidates") > 0
+            )
             .into_grouping_map_by(|grade| grade.subject_code.clone())
-            .collect::<Vec<HkdirGrade>>()
-            .values()
-            .cloned()
-            .collect::<Vec<Vec<HkdirGrade>>>();
-
-        let grades_chunked = grades_grouped_by_subject
-            .into_iter()
-            // Split the chunks into smaller chunks, each of which is to be put in a separate worker
-            .chunks(chunks_count)
-            .into_iter()
-            .map(|chunk| chunk.flatten().collect())
-            .collect::<Vec<Vec<HkdirGrade>>>();
-
-        async_scoped::TokioScope::scope_and_block(|s| {
-            for grades in grades_chunked {
-                s.spawn(async move {
+            // TODO: Maybe there is a way to avoid this collect?
+            .collect::<Vec<_>>();
+        futures::future::join_all(map.into_values().map(|grades| {
+                async move {
                     for grade in grades {
-                        self.synchronize_single_grade(grade)
-                            .await
-                            .expect("failed to synchronize grade");
+                        self.synchronize_single_grade(grade).await.unwrap();
                     }
-                });
-            }
-        });
-
+                }
+            })).await;
         info!("synchronization complete");
         Ok(())
     }
