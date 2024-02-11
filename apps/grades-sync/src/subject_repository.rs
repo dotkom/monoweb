@@ -21,12 +21,19 @@ pub struct Subject {
 
 impl Subject {
     pub fn get_next_average(&self, key: SubjectGradingKey, count: i32) -> f32 {
-        if key.is_pass_or_fail_key() {
-            return self.average_grade;
-        }
-
+        let multiplication_factor = match key {
+            SubjectGradingKey::A => 5.0,
+            SubjectGradingKey::B => 4.0,
+            SubjectGradingKey::C => 3.0,
+            SubjectGradingKey::D => 2.0,
+            SubjectGradingKey::E => 1.0,
+            SubjectGradingKey::F => 0.0,
+            // In the case of "pass" or "fail", we return the average grade as is, because according
+            // to the rules, the average grade is not affected by pass or fails.
+            _ => return self.average_grade
+        };
         let complete_factor = self.average_grade * self.total_students as f32
-            + count as f32 * key.to_multiplication_factor();
+            + count as f32 * multiplication_factor;
         complete_factor / (self.total_students + count) as f32
     }
 

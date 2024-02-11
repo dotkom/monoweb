@@ -595,6 +595,7 @@ dependencies = [
  "env_logger",
  "futures",
  "itertools",
+ "lazy_static",
  "log",
  "regex",
  "reqwest",

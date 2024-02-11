@@ -40,22 +40,6 @@ impl SubjectGradingKey {
         }
     }
 
-    pub fn to_multiplication_factor(self) -> f32 {
-        match self {
-            SubjectGradingKey::A => 5.0,
-            SubjectGradingKey::B => 4.0,
-            SubjectGradingKey::C => 3.0,
-            SubjectGradingKey::D => 2.0,
-            SubjectGradingKey::E => 1.0,
-            SubjectGradingKey::F => 0.0,
-            x => panic!("invalid grading key: {:?}", x),
-        }
-    }
-
-    pub fn is_pass_or_fail_key(self) -> bool {
-        matches!(self, SubjectGradingKey::G | SubjectGradingKey::H)
-    }
-
     pub fn is_evaluated_as_failed(self) -> bool {
         matches!(self, SubjectGradingKey::F | SubjectGradingKey::H)
     }

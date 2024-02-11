@@ -2,14 +2,18 @@ use crate::faculty_repository::FacultyRepository;
 use crate::hkdir::{get_departments, get_grades, get_subjects, map_season_index_to};
 use async_trait::async_trait;
 use itertools::{Itertools};
-use std::cmp::min;
+use lazy_static::lazy_static;
 
 use crate::department_repository::DepartmentRepository;
 use crate::grade_repository::GradeRepository;
 use crate::json::{HkdirDepartment, HkdirGrade, HkdirSubject};
 use crate::subject_repository::SubjectRepository;
-use log::info;
+use log::{info, warn};
 use regex::Regex;
+
+lazy_static! {
+    static ref SUFFIX_REGEX: Regex = Regex::new("-[A-Za-z0-9]+$").unwrap();
+}
 
 #[async_trait]
 pub trait JobService: Sync {
@@ -45,15 +49,12 @@ impl<'a> JobServiceImpl<'a> {
     }
 }
 
-const MAX_TASK_COUNT: usize = 100;
-
 #[async_trait]
 impl<'a> JobService for JobServiceImpl<'a> {
     async fn perform_faculty_synchronization(&self) -> anyhow::Result<()> {
         info!("performing faculty synchronization");
         let departments = get_departments().await?;
         let department_count = departments.len();
-        let _chunks_count = min(department_count / MAX_TASK_COUNT, 1000);
         info!(
             "performing synchronization for {} departments", department_count
         );
@@ -142,8 +143,7 @@ impl<'a> JobService for JobServiceImpl<'a> {
         // Forge a slug from the subject name. A lot of the subject code fields from
         // HKDir have a -1 or another number appended to them, which is not useful
         // because we're using to seeing 'TDT4120' instead of 'TDT4120-1'.
-        let re = Regex::new("-[A-Za-z0-9]+$").unwrap();
-        let slug = re.replace_all(&subject.subject_code, "").to_lowercase();
+        let slug = SUFFIX_REGEX.replace_all(&subject.subject_code, "").to_lowercase();
         // Find a reference to the department.
         let department = self
             .department_repository
@@ -176,11 +176,16 @@ impl<'a> JobService for JobServiceImpl<'a> {
         // First we find the matching subject, or else we return early.
         let subject = match self
             .subject_repository
-            .find_subject_by_ref_id(grade.subject_code)
+            .find_subject_by_ref_id(grade.subject_code.clone())
             .await?
         {
             Some(subject) => subject,
-            None => return Ok(()),
+            // TODO: Determine under which circumstances the subject doesn't actually exist before
+            //  we attempt to synchronize grades for it.
+            None => {
+                warn!("subject {} does not exist", grade.subject_code);
+                return Ok(())
+            },
         };
         let year = grade.year.parse::<i32>().unwrap();
         let season_key = map_season_index_to(grade.semester.as_str());
