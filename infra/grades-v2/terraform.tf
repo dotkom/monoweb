@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "monoweb-terraform"
-    key    = "grades_v2.tfstate"
+    key    = "grades-v2.tfstate"
     region = "eu-north-1"
   }
 
