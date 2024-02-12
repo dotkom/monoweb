@@ -10,6 +10,8 @@ resource "vercel_project" "this" {
 
   build_command  = var.build_command
   root_directory = var.root_directory
+
+  ignore_command = "bash vercel-ignore.sh"
 }
 
 resource "vercel_project_environment_variable" "environment_variables" {
