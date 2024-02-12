@@ -2,7 +2,7 @@ import { beforeEach, describe, it, expect } from "vitest"
 import { createEnvironment } from "@dotkomonline/env"
 import { createKysely } from "@dotkomonline/db"
 import { type Company } from "@dotkomonline/types"
-import { addDays, subDays } from "date-fns"
+import { addDays, addMinutes, subDays } from "date-fns"
 import { getCompanyMock, getJobListingMock } from "../../../../mock"
 import { createServiceLayer, type ServiceLayer } from "../../core"
 import {
@@ -65,8 +65,9 @@ describe("job-listings", () => {
     await expect(
       core.jobListingService.createJobListing(
         getJobListingMock(company.id, {
-          start: new Date(),
-          end: addDays(new Date(), 2),
+          start: addMinutes(new Date(), 1),
+          end: addDays(new Date(), 1),
+          deadline: addDays(new Date(), 2),
         })
       )
     ).rejects.toThrow(InvalidDeadlineError)
@@ -80,5 +81,43 @@ describe("job-listings", () => {
         })
       )
     ).rejects.toThrow(InvalidLocationError)
+  })
+
+  it("should be able to update locations by diffing", async () => {
+    const jobListing = await core.jobListingService.createJobListing(
+      getJobListingMock(company.id, {
+        locations: ["Oslo", "Trondheim"],
+      })
+    )
+    const newLocations = ["Trondheim", "Bergen"]
+    const updated = await core.jobListingService.updateJobListingById(jobListing.id, {
+      ...getJobListingMock(company.id),
+      locations: newLocations,
+    })
+
+    expect(updated.locations).not.toContain("Oslo")
+    expect(updated.locations).toEqual(newLocations)
+  })
+
+  it("performing a diff which leaves a tag unused deletes the unused tag", async () => {
+    const jobListing = await core.jobListingService.createJobListing(
+      getJobListingMock(company.id, {
+        locations: ["Oslo", "Trondheim"],
+      })
+    )
+
+    const allLocations = await core.jobListingService.getLocations()
+    expect(allLocations).toContain("Oslo")
+
+    const newLocations = ["Trondheim"]
+    const updated = await core.jobListingService.updateJobListingById(jobListing.id, {
+      ...getJobListingMock(company.id),
+      locations: newLocations,
+    })
+
+    const updatedAllLocations = await core.jobListingService.getLocations()
+    expect(updatedAllLocations).not.toContain("Oslo")
+    expect(updatedAllLocations).toContain("Trondheim")
+    expect(updated.locations).toEqual(newLocations)
   })
 })

@@ -26,3 +26,16 @@ export const JobListingWriteSchema = JobListingSchema.partial({
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]
 export type JobListingWrite = z.infer<typeof JobListingWriteSchema>
+
+export const JobListingLocationSchema = z.object({
+  id: z.string().ulid(),
+  name: z.string().min(1),
+})
+
+export const JobListingLocationWriteSchema =JobListingLocationSchema.partial({
+  id: true,
+})
+
+export type JobListingLocation = z.infer<typeof JobListingLocationSchema>
+export type JobListingLocationId = JobListingLocation["id"]
+export type JobListingLocationWrite = z.infer<typeof JobListingLocationWriteSchema>
