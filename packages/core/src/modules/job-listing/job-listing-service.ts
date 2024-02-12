@@ -1,15 +1,22 @@
 import { type JobListing, type JobListingId, type JobListingWrite } from "@dotkomonline/types"
+import { isAfter, isBefore } from "date-fns"
 import { type JobListingRepository } from "./job-listing-repository"
 import { type JobListingLocationRepository, type LocationSelect } from "./job-listing-location-repository"
 import { type JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
+import assert from "../../../assert"
+
+export class InvalidStartDateError extends Error {}
+export class InvalidEndDateError extends Error {}
+export class InvalidLocationError extends Error {}
+export class InvalidDeadlineError extends Error {}
 
 export interface JobListingService {
-  get(id: JobListingId): Promise<JobListing>
+  getById(id: JobListingId): Promise<JobListing>
   getAll(take: number, cursor?: Cursor): Promise<JobListing[]>
-  create(payload: JobListingWrite): Promise<JobListing>
-  update(id: JobListingId, payload: JobListingWrite): Promise<JobListing>
+  createJobListing(payload: JobListingWrite): Promise<JobListing>
+  updateJobListingById(id: JobListingId, payload: JobListingWrite): Promise<JobListing>
   getLocations(): Promise<string[]>
 }
 
@@ -20,7 +27,7 @@ export class JobListingServiceImpl implements JobListingService {
     private readonly jobListingLocationLinkRepository: JobListingLocationLinkRepository
   ) {}
 
-  async get(id: JobListingId): Promise<JobListing> {
+  async getById(id: JobListingId): Promise<JobListing> {
     const jobListing = await this.jobListingRepository.getById(id)
     if (!jobListing) {
       throw new NotFoundError(`JobListing with ID:${id} not found`)
@@ -29,34 +36,27 @@ export class JobListingServiceImpl implements JobListingService {
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<JobListing[]> {
-    const jobListings = await this.jobListingRepository.getAll(take, cursor)
-    return jobListings
+    return await this.jobListingRepository.getAll(take, cursor)
   }
 
-  async create(payload: JobListingWrite): Promise<JobListing> {
-    const { locations, ...rest } = payload
+  async createJobListing({ locations, ...input }: JobListingWrite): Promise<JobListing> {
+    assert(isBefore(input.start, new Date()), new InvalidStartDateError("Start date cannot be before today"))
+    assert(isBefore(input.end, input.start), new InvalidEndDateError("End date cannot be before start date"))
+    assert(
+      input.deadline === null || isAfter(input.deadline, input.start),
+      new InvalidDeadlineError("Deadline cannot be after start date")
+    )
+    assert(locations.length > 0, new InvalidLocationError("At least one location is required"))
 
-    const jobListing = await this.jobListingRepository.create(rest)
-    if (!jobListing) {
-      throw new Error("Failed to create jobListing")
-    }
-
+    const jobListing = await this.jobListingRepository.createJobListing(input)
     const allLocations = await this.jobListingLocationRepository.getAll()
-
     for (const location of locations) {
-      let locationId
-
-      const existingLocation = allLocations.find((x) => x.name === location)
-      if (existingLocation) {
-        locationId = existingLocation.id
-      } else {
-        const newLocation = await this.jobListingLocationRepository.add({ name: location })
-        locationId = newLocation.id
-      }
-
+      const match =
+        allLocations.find((x) => x.name === location) ??
+        (await this.jobListingLocationRepository.add({ name: location }))
       await this.jobListingLocationLinkRepository.add({
         jobListingId: jobListing.id,
-        locationId,
+        locationId: match.id,
       })
     }
 
@@ -66,11 +66,8 @@ export class JobListingServiceImpl implements JobListingService {
     }
   }
 
-  async update(id: JobListingId, payload: JobListingWrite): Promise<JobListing> {
-    const { locations, ...rest } = payload
-
-    const jobListing = await this.jobListingRepository.update(id, rest)
-
+  async updateJobListingById(id: JobListingId, { locations, ...input }: JobListingWrite): Promise<JobListing> {
+    const jobListing = await this.jobListingRepository.updateJobListingById(id, input)
     const allLocations = await this.jobListingLocationRepository.getAll()
 
     const currentLocationIds = this.getCurrentLocationIds(jobListing, allLocations)
