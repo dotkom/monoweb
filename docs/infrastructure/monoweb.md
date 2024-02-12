@@ -12,6 +12,8 @@ It uses a PostgreSQL database as its primary data store.
 The application is deployed using Vercel. The deployment is triggered by a push to the `main` branch of the repository.
 The infrastructure is provisioned through [modules/vercel-application](/infra/modules/vercel-application/README.md).
 
+The source for this deployment is inside the core infrastructure project. [Source](/infra/core/vercel.tf)
+
 This serverless application also hosts the backend, available under `/api/trpc/`.
 
 DNS is managed with Route53.
@@ -20,6 +22,8 @@ DNS is managed with Route53.
 
 The dashboard is deployed using Vercel. The deployment is triggered by a push to the `main` branch of the repository.
 The infrastructure is provisioned through [modules/vercel-application](/infra/modules/vercel-application/README.md).
+
+The source for this deployment is inside the core infrastructure project. [Source](/infra/core/vercel.tf)
 
 ## PostgreSQL Database
 
