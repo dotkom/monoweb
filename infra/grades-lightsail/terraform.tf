@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "monoweb-terraform"
-    key    = "grades.tfstate"
+    key    = "grades-lightsail.tfstate"
     region = "eu-north-1"
   }
 
@@ -21,7 +21,6 @@ terraform {
 
 locals {
   valid_workspaces = {
-    dev = 1
     prd = 1
   }
   valid_workspaces_current = local.valid_workspaces[terraform.workspace]

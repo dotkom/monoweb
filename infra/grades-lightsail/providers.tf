@@ -3,7 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "grades"
+      Project     = "grades-lightsail"
       Environment = terraform.workspace
     }
   }
@@ -16,7 +16,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "grades"
+      Project     = "grades-lightsail"
       Environment = terraform.workspace
     }
   }
@@ -28,7 +28,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "grades"
+      Project     = "grades-lightsail"
       Environment = terraform.workspace
     }
   }
