@@ -33,3 +33,7 @@ provider "aws" {
     }
   }
 }
+
+provider "vercel" {
+  team = "dotkom"
+}

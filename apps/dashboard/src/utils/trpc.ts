@@ -9,7 +9,7 @@ import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
   if (env.NEXT_PUBLIC_NODE_ENV === "production") {
-    return "https://dev.web.online.ntnu.no"
+    return "https://web.online.ntnu.no"
   }
   return `http://localhost:3000`
 }
