@@ -32,7 +32,7 @@ export const JobListingLocationSchema = z.object({
   name: z.string().min(1),
 })
 
-export const JobListingLocationWriteSchema =JobListingLocationSchema.partial({
+export const JobListingLocationWriteSchema = JobListingLocationSchema.partial({
   id: true,
 })
 

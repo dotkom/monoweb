@@ -18,6 +18,8 @@ export const jobListingRouter = t.router({
   all: t.procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.jobListingService.getAll(input.take, input.cursor)),
-  get: t.procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => ctx.jobListingService.getById(input)),
+  get: t.procedure
+    .input(JobListingSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.jobListingService.getById(input)),
   getLocations: t.procedure.input(PaginateInputSchema).query(async ({ ctx }) => ctx.jobListingService.getLocations()),
 })
