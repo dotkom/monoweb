@@ -3,8 +3,8 @@ import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
-// import PortableText from "../../components/molecules/PortableText"
 import clsx from "clsx"
+import { AttendanceGroup } from "./AttendanceGroup"
 import { useSessionWithDBUser } from ".."
 import { trpc } from "@/utils/trpc"
 
@@ -20,22 +20,6 @@ const StatusCard = ({ title, text, background }: StatusCardProps) => (
       <p className="text-lg font-bold">{title}</p>
       <p dangerouslySetInnerHTML={{ __html: text }} />
     </div>
-  </div>
-)
-
-interface AttendanceGroupProps {
-  title: string
-  numberOfPeople: number
-  totalSpots: number
-  className?: string
-}
-
-const AttendanceGroup = ({ title, numberOfPeople, totalSpots, className }: AttendanceGroupProps) => (
-  <div className={clsx("bg-slate-4 rounded-lg p-4", className)}>
-    <p className="text-center text-sm font-bold">{title}</p>
-    <p className="mt-1 text-center text-lg font-semibold">
-      {numberOfPeople}/{totalSpots}
-    </p>
   </div>
 )
 
@@ -132,10 +116,14 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   const { id } = props
   const { data: event } = trpc.event.get.useQuery(id)
   const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
+  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation()
+  const attendMutation = trpc.event.attendance.registerForEvent.useMutation()
   // const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
   // const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
   // const utils = trpc.useContext()
   const user = useSessionWithDBUser()
+
+  console.log("USER", user)
 
   const STATUS = "OPEN"
 
@@ -147,11 +135,34 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   // Range: [min, max)
   const groupIncludes = (min: number, max: number, group: number) => group < max && group >= min
 
-  const myGroups = attendance?.filter((a) => groupIncludes(a.min, a.max, user.user.studyYear ?? 100))
+  const myGroups = attendance?.find((a) => groupIncludes(a.min, a.max, user.user.studyYear ?? 100))
   const otherGroups = attendance?.filter((group) => !groupIncludes(group.min, group.max, user.user.studyYear ?? 100))
 
-  console.log(myGroups)
-  console.log(otherGroups)
+  const isUser = (attendee: { userId: string }) => attendee.userId === user.user.id
+  const userInGroup = (group: { userId: string; attendanceId: string }[]) => group.find(isUser)
+
+  const attendee = (myGroups !== undefined && userInGroup(myGroups.attendees)) || false
+
+  const isAttending = Boolean(attendee)
+
+  const attend = () => {
+    if (!user.user.id) {
+      return
+    }
+
+    if (!myGroups) {
+      return
+    }
+
+    attendMutation.mutateAsync({ cognitoSub: user.user.cognitoSub || "", poolId: myGroups.id, userId: user.user.id })
+  }
+
+  const unAttend = () => {
+    if (!attendee || !myGroups) {
+      return
+    }
+    unattendMutation.mutateAsync({ attendanceId: myGroups?.id, userId: user.user.id || "" })
+  }
 
   return (
     <div>
@@ -169,16 +180,23 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
               <StatusCard {...statusData} />
             </div>
             <div>
-              {myGroups?.map((group, idx) => (
+              {myGroups && (
                 <AttendanceGroup
-                  title={`${Math.max(1, group.min)}-${group.max - 1}. klasse`}
-                  numberOfPeople={group.attendees.length}
-                  totalSpots={group.limit}
-                  key={idx}
-                  className={idx === 0 ? "mr-2" : ""}
+                  title={`${Math.max(1, myGroups.min)}-${myGroups.max - 1}. klasse`}
+                  numberOfPeople={myGroups.attendees.length}
+                  totalSpots={myGroups.limit}
+                  isAttending={isAttending}
                 />
-              ))}
-              <Button className="mt-2 w-full">Meld meg på</Button>
+              )}
+              {isAttending ? (
+                <Button className="mt-2 w-full text-white" color="red" variant="solid" onClick={unAttend}>
+                  Meld meg av
+                </Button>
+              ) : (
+                <Button className="mt-2 w-full" onClick={attend}>
+                  Meld meg på
+                </Button>
+              )}
             </div>
 
             {otherGroups?.length !== 0 && (
@@ -191,6 +209,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
                     totalSpots={group.limit}
                     key={idx}
                     className={clsx(idx === 0 ? "mr-2" : "", "w-32")}
+                    isAttending={false}
                   />
                 ))}
               </div>
@@ -214,41 +233,9 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
           </div>
           <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
             <h2>Oppmøte</h2>
-            {/* practical information about where to meet */}
           </div>
         </div>
       </div>
-      {/* 
-      <pre>{JSON.stringify(event, null, 2)}</pre>
-      <Button
-        onClick={async () => {
-          addAttendance({
-            start: new Date(),
-            end: new Date(),
-            deregisterDeadline: new Date(),
-            eventId: id,
-            limit: 20,
-            min: 1,
-            max: 5,
-            groups: [1, 2, 3],
-          })
-          utils.event.attendance.get.invalidate()
-        }}
-      >
-        Add attendance group
-      </Button>
-      <Button
-        onClick={async () => {
-          attendEvent({
-            eventId: id,
-          })
-          utils.event.attendance.get.invalidate()
-        }}
-      >
-        Join random group
-      </Button>
-      <h2>Attendance</h2>
-      <pre>{JSON.stringify(attendance, null, 2)}</pre> */}
     </div>
   )
 }

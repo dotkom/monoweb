@@ -4,7 +4,6 @@ import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
   createCheckboxInput,
   createDateTimeInput,
-  createMultipleSelectInput,
   createSelectInput,
   createTextInput,
   createTextareaInput,
@@ -29,12 +28,7 @@ const FormValidationSchema = EventSchema.extend({
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
-export const useEventEditForm = ({
-  committees,
-  onSubmit,
-  label = "Opprett arrangement",
-  defaultValues,
-}: UseEventEditFormProps) =>
+export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) =>
   useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,

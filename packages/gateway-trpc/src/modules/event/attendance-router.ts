@@ -31,7 +31,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
-        cognitoSub: z.string(),
+        cognitoSub: z.string().uuid(),
         poolId: AttendanceSchema.shape.id,
       })
     )

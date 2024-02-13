@@ -1,18 +1,18 @@
 import {
-  AttendanceWithAuthData,
-  AttendeeWithAuthData,
+  type AttendanceWithAuthData,
+  type AttendeeWithAuthData,
   type Attendance,
   type AttendanceWrite,
   type Event,
   type EventId,
   type EventWrite,
 } from "@dotkomonline/types"
-import { NotFoundError } from "../../errors/errors"
-import { type Cursor } from "../../utils/db-utils"
-import { UserService } from "../user/user-service.js"
 import { type AttendanceRepository } from "./attendance-repository.js"
 import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
+import { NotFoundError } from "../../errors/errors"
+import { type Cursor } from "../../utils/db-utils"
+import { type UserService } from "../user/user-service.js"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
