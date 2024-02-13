@@ -30,6 +30,28 @@ export type RefundRequestStatus = "APPROVED" | "PENDING" | "REJECTED";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export interface Articles {
+  author: string
+  content: string
+  createdAt: Generated<Timestamp>
+  excerpt: string
+  id: Generated<string>
+  imageUrl: string
+  photographer: string
+  slug: string
+  title: string
+  updatedAt: Generated<Timestamp>
+}
+
+export interface ArticleTagLink {
+  article: string
+  tag: string
+}
+
+export interface ArticleTags {
+  name: string
+}
+
 export interface Attendance {
   createdAt: Generated<Timestamp>;
   deregisterDeadline: Timestamp;
@@ -233,6 +255,7 @@ export interface RefundRequest {
 }
 
 export interface DB {
+<<<<<<< HEAD
   attendance: Attendance;
   attendee: Attendee;
   committee: Committee;
@@ -253,4 +276,29 @@ export interface DB {
   product: Product;
   productPaymentProvider: ProductPaymentProvider;
   refundRequest: RefundRequest;
+=======
+  articles: Articles
+  articleTagLink: ArticleTagLink
+  articleTags: ArticleTags
+  attendance: Attendance
+  attendee: Attendee
+  committee: Committee
+  company: Company
+  event: Event
+  eventCommittee: EventCommittee
+  eventCompany: EventCompany
+  jobListing: JobListing
+  jobListingLocation: JobListingLocation
+  jobListingLocationLink: JobListingLocationLink
+  mark: Mark
+  notificationPermissions: NotificationPermissions
+  offline: Offline
+  owUser: OwUser
+  payment: Payment
+  personalMark: PersonalMark
+  privacyPermissions: PrivacyPermissions
+  product: Product
+  productPaymentProvider: ProductPaymentProvider
+  refundRequest: RefundRequest
+>>>>>>> a1cd080e (Create backend and dashboard for creating articles (#705))
 }
