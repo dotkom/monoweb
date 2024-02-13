@@ -1,8 +1,7 @@
 import { type AttendanceWithAuthData, type AttendeeWithAuthData, type IDPUser, type User } from "@dotkomonline/types"
-import { Button } from "@dotkomonline/ui"
-import { Box, Checkbox, NumberInput, Title } from "@mantine/core"
+import { Box, Checkbox, NumberInput, Title, Text, Divider, Button, Flex } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import React, { memo, useMemo, useState, type FC } from "react"
+import React, { useMemo, useState, type FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import GenericSearch from "../../../../components/GenericSearch"
 import { GenericTable } from "../../../../components/GenericTable"
@@ -12,6 +11,7 @@ import { useUpdateEventAttendanceMutation } from "../../../../modules/event/muta
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
 import { trpc } from "../../../../utils/trpc"
 import { useQueryNotification } from "../../../notifications"
+import { notifications } from "@mantine/notifications"
 
 interface CustomCheckboxProps {
   userId: string
@@ -37,6 +37,7 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 CustomCheckbox.displayName = "attendanceToggle"
 
 const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData }) => {
+  const notification = useQueryNotification()
   const deregisterForEvent = useDeregisterForEventMutation()
 
   const deleteGroup = trpc.event.attendance.delete.useMutation()
@@ -75,6 +76,7 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
         header: () => "Meld av",
         cell: (info) => (
           <Button
+            color="red"
             onClick={() =>
               deregisterForEvent.mutate({
                 attendanceId: info.getValue().attendanceId,
@@ -103,6 +105,14 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
   })
 
   const deleteGroup2 = () => {
+    if (attendance.attendees.length > 0) {
+      notifications.show({
+        title: "Feil",
+        message: "Gruppen har deltakere, og kan ikke slettes",
+      })
+      return
+    }
+
     deleteGroup.mutate({
       id: attendance.id,
     })
@@ -110,11 +120,20 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
 
   return (
     <Box key={attendance.id} mb="sm">
-      <Title order={4}>
-        {attendance.id} Kapasitet: {attendance.attendees.length} / {attendance.limit} Klasse {attendance.min}-
-        {attendance.max - 1}
-        <Button onClick={() => deleteGroup2()}>Slett</Button>
-      </Title>
+      <Flex justify="space-between">
+        <Box>
+          <Text>
+            Klasse {attendance.min}- {attendance.max - 1}
+          </Text>
+          <Text>
+            Kapasitet: {attendance.attendees.length} / {attendance.limit}
+          </Text>
+        </Box>
+
+        <Button onClick={() => deleteGroup2()} color="red">
+          Slett gruppe
+        </Button>
+      </Flex>
       <GenericTable table={table} />
     </Box>
   )
@@ -226,10 +245,11 @@ export const EventAttendancePage: FC = () => {
       <Title order={2}></Title>
       <details>
         <summary>Legg til ny gruppe</summary>
+        <Title order={5}>Velg klassetrinn</Title>
         <table>
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <tr key={i}>
-              <td>{i}</td>
+          {["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"].map((option, i) => (
+            <tr key={option}>
+              <td width="100">{option}</td>
               <td>
                 <Checkbox
                   onChange={(e) => {
@@ -242,8 +262,11 @@ export const EventAttendancePage: FC = () => {
             </tr>
           ))}
         </table>
+        <Title order={5}>Kapasitet</Title>
         <NumberInput value={limit} onChange={(value) => setLimit(Number(value))} />
-        <Button onClick={() => createNewGroup()}>Lag ny gruppe</Button>
+        <Button onClick={() => createNewGroup()} mt={16}>
+          Lag ny gruppe
+        </Button>
       </details>
       <Box>
         <Title order={3}>Meld på</Title>
@@ -254,6 +277,10 @@ export const EventAttendancePage: FC = () => {
           dataMapper={(item: IDPUser) => `${item.givenName} ${item.familyName}`}
           placeholder="Søk etter bruker..."
         />
+        <Divider mt={16} />
+        <Title order={3} mt={16}>
+          Grupper
+        </Title>
         {eventAttendance.map((attendance) => (
           <AttendanceTable key={attendance.id} attendance={attendance} />
         ))}
