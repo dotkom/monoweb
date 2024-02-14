@@ -1,17 +1,17 @@
 import { type Database } from "@dotkomonline/db"
+import { UserDBSchema, type UserDB, type UserId, type UserWrite } from "@dotkomonline/types"
 import { sql, type Kysely, type Selectable } from "kysely"
-import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { orderedQuery, type Cursor } from "../../utils/db-utils"
 
-export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
+export const mapToUser = (payload: Selectable<Database["owUser"]>): UserDB => UserDBSchema.parse(payload)
 
 export interface UserRepository {
-  getById(id: UserId): Promise<User | undefined>
-  getBySubject(cognitoSubject: string): Promise<User | undefined>
-  getAll(limit: number): Promise<User[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: Partial<UserWrite>): Promise<User>
-  search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  getById(id: UserId): Promise<UserDB | undefined>
+  getBySubject(cognitoSubject: string): Promise<UserDB | undefined>
+  getAll(limit: number): Promise<UserDB[]>
+  create(userWrite: UserWrite): Promise<UserDB>
+  update(id: UserId, data: Partial<UserWrite>): Promise<UserDB>
+  search(searchQuery: string, take: number, cursor?: Cursor): Promise<UserDB[]>
 }
 
 export class UserRepositoryImpl implements UserRepository {

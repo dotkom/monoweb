@@ -1,8 +1,9 @@
 import {
-  type AttendanceWithAuthData,
-  type AttendeeWithAuthData,
+  type User,
   type Attendance,
+  type AttendanceWithUser,
   type AttendanceWrite,
+  type AttendeeUser,
   type Event,
   type EventId,
   type EventWrite,
@@ -21,7 +22,7 @@ export interface EventService {
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
-  listAttendance(eventId: EventId): Promise<AttendanceWithAuthData[]>
+  listAttendance(eventId: EventId): Promise<AttendanceWithUser[]>
   createWaitlist(eventId: EventId): Promise<Attendance>
 }
 
@@ -85,13 +86,13 @@ export class EventServiceImpl implements EventService {
     return false
   }
 
-  async listAttendance(eventId: EventId): Promise<AttendanceWithAuthData[]> {
+  async listAttendance(eventId: EventId): Promise<AttendanceWithUser[]> {
     const attendances = await this.attendanceRepository.getByEventId(eventId)
 
-    const result: AttendanceWithAuthData[] = []
+    const result: AttendanceWithUser[] = []
 
     for (const attendance of attendances) {
-      const ids = attendance.attendees.map((attendee) => attendee.userCognitoSub)
+      const ids = attendance.attendees.map((attendee) => attendee.userId)
       if (ids.length === 0) {
         result.push({
           ...attendance,
@@ -100,14 +101,12 @@ export class EventServiceImpl implements EventService {
         continue
       }
 
-      const users = await this.userService.getUserBySubjectIDP(ids)
+      const users: User[] = (await Promise.all(ids.map(async (id) => this.userService.getUserById(id)))).filter(
+        (user): user is User => Boolean(user)
+      )
 
-      if (!users || users.length !== ids.length) {
-        throw new Error("Not all users were found at IDP")
-      }
-
-      const mergedUsers: AttendeeWithAuthData[] = users.map((user) => {
-        const attendee = attendance.attendees.find((attendee) => attendee.userCognitoSub === user.subject)
+      const mergedUsers: AttendeeUser[] = users.map((user) => {
+        const attendee = attendance.attendees.find((attendee) => attendee.userId === user.id)
         if (!attendee) {
           throw new Error("Attendee not found")
         }

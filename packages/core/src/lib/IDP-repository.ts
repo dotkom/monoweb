@@ -3,15 +3,15 @@ import {
   ListUsersCommand,
   type ListUsersCommandInput,
 } from "@aws-sdk/client-cognito-identity-provider"
-import { type User, type UserId, type UserWrite, type IDPUser, IDPUserSchema } from "@dotkomonline/types"
+import { type User, type UserId, type UserWrite, type UserIDP, UserIDPSchema } from "@dotkomonline/types"
 import { type Cursor } from "../utils/db-utils"
 
 export interface IDPRepository {
-  getBySubject(cognitoSubject: string): Promise<IDPUser | undefined>
-  getAll(limit: number): Promise<IDPUser[]>
+  getBySubject(cognitoSubject: string): Promise<UserIDP | undefined>
+  getAll(limit: number): Promise<UserIDP[]>
   create(userWrite: UserWrite): Promise<User>
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
-  search(searchQuery: string, take: number, cursor?: Cursor): Promise<IDPUser[]>
+  search(searchQuery: string, take: number, cursor?: Cursor): Promise<UserIDP[]>
 }
 
 export class CognitoIDPRepositoryImpl implements IDPRepository {
@@ -27,7 +27,7 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
       filterAttribute: string
       filterValue: string
     }
-  ): Promise<IDPUser[]> {
+  ): Promise<UserIDP[]> {
     const constructFilter = (att: string, filtertype: "exact" | "prefix", val: string) =>
       `${att} ${filtertype === "exact" ? "=" : "^="} "${val}"`
 
@@ -60,28 +60,26 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
         subject: user.Attributes?.find((attr) => attr.Name === "sub")?.Value,
       }
 
-      const parsed = IDPUserSchema.safeParse(userData)
+      const parsed = UserIDPSchema.safeParse(userData)
 
       if (parsed.success === false) {
-        console.error("Failed to parse IDPUser", user.Attributes)
+        console.error("Failed to parse UserIDP", user.Attributes)
         return null
       }
       return parsed.data
-    }).filter((user) => user !== null) as IDPUser[]
+    }).filter((user) => user !== null) as UserIDP[]
   }
 
-  async getAll(limit: number): Promise<IDPUser[]> {
+  async getAll(limit: number): Promise<UserIDP[]> {
     return this.listUsersWithFilter(limit)
   }
 
-  async search(searchQuery: string, take: number): Promise<IDPUser[]> {
-    console.log("Searching for", searchQuery)
+  async search(searchQuery: string, take: number): Promise<UserIDP[]> {
     const users = await this.listUsersWithFilter(take, {
       filterAttribute: "given_name",
       filterType: "prefix",
       filterValue: searchQuery,
     })
-    console.log("Found", users)
     return users
   }
 
@@ -93,7 +91,7 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
     throw new Error("Method not implemented.")
   }
 
-  async getBySubject(cognitoSubject: string): Promise<IDPUser | undefined> {
+  async getBySubject(cognitoSubject: string): Promise<UserIDP | undefined> {
     const users = await this.listUsersWithFilter(1, {
       filterAttribute: "sub",
       filterType: "exact",

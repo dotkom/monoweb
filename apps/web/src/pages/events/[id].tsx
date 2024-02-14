@@ -123,8 +123,6 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   // const utils = trpc.useContext()
   const user = useSessionWithDBUser()
 
-  console.log("USER", user)
-
   const STATUS = "OPEN"
 
   const inTenMinutes = new Date()

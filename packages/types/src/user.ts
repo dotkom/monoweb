@@ -1,16 +1,20 @@
 import { z } from "zod"
+import { UserIDPSchema } from "./user-idp"
 
-export const UserSchema = z.object({
+export const UserDBSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   cognitoSub: z.string().uuid(),
   studyYear: z.number().int().min(-1).max(6),
 })
 
+export const UserSchema = UserDBSchema.merge(UserIDPSchema)
+
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>
+export type UserDB = z.infer<typeof UserDBSchema>
 
-export const UserWriteSchema = UserSchema.omit({
+export const UserWriteSchema = UserDBSchema.omit({
   id: true,
   createdAt: true,
 })

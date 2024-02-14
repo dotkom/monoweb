@@ -21,7 +21,6 @@ export class AttendanceServiceImpl implements AttendanceService {
       attendanceId: poolId,
       userId,
       attended: false,
-      userCognitoSub: cognitoSub,
     })
     return attendee
   }

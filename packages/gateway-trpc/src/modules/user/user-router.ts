@@ -18,12 +18,7 @@ export const userRouter = t.router({
     .mutation(async ({ input, ctx }) => ctx.userService.getUserBySubject(input)),
   getMany: publicProcedure
     .input(z.array(UserSchema.shape.id))
-    .query(async ({ input, ctx }) => ctx.userService.getManyUsersById(input)),
-  search: publicProcedure
-    .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) =>
-      ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)
-    ),
+    .query(async ({ input, ctx }) => ctx.userService.getUsersById(input)),
   edit: protectedProcedure
     .input(
       z.object({

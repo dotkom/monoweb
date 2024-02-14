@@ -1,5 +1,6 @@
 import {
-  type IDPUser,
+  type UserDB,
+  type UserIDP,
   type NotificationPermissions,
   type NotificationPermissionsWrite,
   type PrivacyPermissions,
@@ -16,18 +17,18 @@ import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
+  getUsersById(ids: UserId[]): Promise<User[] | undefined>
   getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
-  searchUsers(searchQuery: string, take: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
+  createUser(input: UserWrite): Promise<UserDB>
+  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<UserDB>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<IDPUser[]>
-  getUserBySubjectIDP(id: User["cognitoSub"][]): Promise<IDPUser[] | undefined>
+  searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  getUserBySubjectIDP(id: User["cognitoSub"][]): Promise<UserIDP[] | undefined>
 }
 
 export class UserServiceImpl implements UserService {
@@ -37,42 +38,74 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
     private readonly idpRepository: IDPRepository
   ) {}
+  private mergeUsers(userDB: UserDB | undefined, usersIDP: UserIDP | undefined): User | undefined {
+    if (!userDB || !usersIDP) {
+      return undefined
+    }
+    return {
+      ...userDB,
+      ...usersIDP,
+    }
+  }
+
+  private mergeUsersArray(usersDB: (UserDB | undefined)[], usersIDP: (UserIDP | undefined)[]): User[] {
+    return usersDB.map((user) => {
+      if (user === undefined) {
+        throw new Error("User from DB is undefined")
+      }
+      const userFromIDP = usersIDP.find((u) => u?.subject === user.cognitoSub)
+      if (!userFromIDP) {
+        throw new Error(`User with cognitoSub ${user.cognitoSub} not found in IDP`)
+      }
+      return {
+        ...user,
+        ...userFromIDP,
+      }
+    })
+  }
+
   async getAllUsers(limit: number) {
-    const users = await this.userRepository.getAll(limit)
-    return users
+    const usersDB = await this.userRepository.getAll(limit)
+    const usersIDP = await this.idpRepository.getAll(limit)
+    return this.mergeUsersArray(usersDB, usersIDP)
+  }
+
+  async getUsersById(ids: UserId[]) {
+    const usersDB = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
+    if (usersDB.includes(undefined)) {
+      throw new Error("User from DB is undefined")
+    }
+    const usersIDP = await Promise.all(usersDB.map(async (u) => this.idpRepository.getBySubject(u?.cognitoSub || ""))) // TODO: this is a hack
+    return this.mergeUsersArray(usersDB, usersIDP)
   }
 
   async searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor) {
-    const users = await this.idpRepository.search(searchQuery, take, cursor)
-    return users
+    const usersIDP = await this.idpRepository.search(searchQuery, take, cursor)
+    const usersDB = await Promise.all(usersIDP.map(async (user) => this.userRepository.getBySubject(user.subject)))
+    return this.mergeUsersArray(usersDB, usersIDP)
   }
 
   async getUserById(id: UserId) {
-    const user = await this.userRepository.getById(id)
-    return user
-  }
-
-  async getManyUsersById(ids: UserId[]) {
-    const final = []
-    for (const id of ids) {
-      const user = await this.userRepository.getById(id)
-      final.push(user)
+    const userDB = await this.userRepository.getById(id)
+    if (!userDB) {
+      return undefined
     }
-    return final
-  }
+    const userIDP = await this.idpRepository.getBySubject(userDB.cognitoSub)
 
-  async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
-    const users = await this.userRepository.search(searchQuery, take, cursor)
-    return users
+    if (!userIDP) {
+      return undefined
+    }
+
+    return this.mergeUsers(userDB, userIDP)
   }
 
   async getUserBySubject(id: User["cognitoSub"]) {
-    const user = await this.userRepository.getBySubject(id)
-    return user
+    const userDB = await this.userRepository.getBySubject(id)
+    const userIDP = await this.idpRepository.getBySubject(id)
+    return this.mergeUsers(userDB, userIDP)
   }
 
   async getUserBySubjectIDP(id: User["cognitoSub"][]) {
-    console.log("Fetching users from IDP with subject: ", id)
     const result = []
     for (const sub of id) {
       const user = await this.idpRepository.getBySubject(sub)
@@ -82,7 +115,6 @@ export class UserServiceImpl implements UserService {
       result.push(user)
     }
 
-    console.log("Found users: ", result)
     return result
   }
 

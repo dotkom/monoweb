@@ -1,5 +1,5 @@
 import { z } from "zod"
-export const IDPUserSchema = z.object({
+export const UserIDPSchema = z.object({
   email: z.string(),
   gender: z.string(),
   familyName: z.string(),
@@ -7,4 +7,4 @@ export const IDPUserSchema = z.object({
   subject: z.string(),
 })
 
-export type IDPUser = z.infer<typeof IDPUserSchema>
+export type UserIDP = z.infer<typeof UserIDPSchema>

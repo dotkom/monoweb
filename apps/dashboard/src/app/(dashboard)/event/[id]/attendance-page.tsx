@@ -1,4 +1,4 @@
-import { type AttendanceWithAuthData, type AttendeeWithAuthData, type IDPUser, type User } from "@dotkomonline/types"
+import { type AttendanceWithUser, type AttendeeUser, type UserIDP, type User } from "@dotkomonline/types"
 import { Box, Checkbox, NumberInput, Title, Text, Divider, Button, Flex } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo, useState, type FC } from "react"
@@ -40,13 +40,13 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 
 CustomCheckbox.displayName = "CustomCheckbox"
 
-const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData }) => {
+const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => {
   const deregisterMut = useDeregisterForEventMutation()
   const deleteGroupMut = trpc.event.attendance.delete.useMutation()
   const ids = attendance.attendees.map((attendee) => attendee.userId)
   const userIds = trpc.user.getMany.useQuery(ids)
 
-  const columnHelper = createColumnHelper<AttendeeWithAuthData & { user?: User }>()
+  const columnHelper = createColumnHelper<AttendeeUser & { user?: User }>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((attendee) => attendee, {
@@ -203,7 +203,7 @@ export const EventAttendancePage: FC = () => {
     setSearchQuery(query)
   }
 
-  const handleUserClick = async (user: IDPUser) => {
+  const handleUserClick = async (user: UserIDP) => {
     setSearchQuery("")
     const dbUser = await dbUserMut.mutateAsync(user.subject)
 
@@ -256,7 +256,6 @@ export const EventAttendancePage: FC = () => {
   }
 
   const checkNumber = (min: number, max: number) => {
-    console.log(min, max)
     if (min === max) {
       // works because min is inclusive and max is exclusive, and both are -1 if no numbers are chosen
       throw new Error("Du må velge minst ett klassetrinn")
@@ -324,8 +323,9 @@ export const EventAttendancePage: FC = () => {
           onSearch={handleUserSearch}
           onSubmit={handleUserClick}
           items={usersFromIdp}
-          dataMapper={(item: IDPUser) => `${item.givenName} ${item.familyName}`}
+          dataMapper={(item: UserIDP) => `${item.givenName} ${item.familyName}`}
           placeholder="Søk etter bruker..."
+          resetOnClick
         />
       </Box>
       <Divider my={16} />

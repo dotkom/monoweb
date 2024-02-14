@@ -67,12 +67,10 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         userId: attendeeWrite.userId,
         attendanceId: attendeeWrite.attendanceId,
         attended: attendeeWrite.attended,
-        userCognitoSub: attendeeWrite.userCognitoSub,
       })
       .returningAll()
       .executeTakeFirstOrThrow()
       .catch((err) => console.log(err))
-    console.log({ res })
     return AttendeeSchema.parse(res)
   }
 
