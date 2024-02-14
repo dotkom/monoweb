@@ -6,7 +6,7 @@ import { protectedProcedure, t } from "../../trpc"
 export const jobListingRouter = t.router({
   create: t.procedure
     .input(JobListingWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.jobListingService.create(input)),
+    .mutation(async ({ input, ctx }) => ctx.jobListingService.createJobListing(input)),
   edit: protectedProcedure
     .input(
       z.object({
@@ -14,10 +14,12 @@ export const jobListingRouter = t.router({
         input: JobListingWriteSchema,
       })
     )
-    .mutation(async ({ input: changes, ctx }) => ctx.jobListingService.update(changes.id, changes.input)),
+    .mutation(async ({ input: changes, ctx }) => ctx.jobListingService.updateJobListingById(changes.id, changes.input)),
   all: t.procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.jobListingService.getAll(input.take, input.cursor)),
-  get: t.procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => ctx.jobListingService.get(input)),
+  get: t.procedure
+    .input(JobListingSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.jobListingService.getById(input)),
   getLocations: t.procedure.input(PaginateInputSchema).query(async ({ ctx }) => ctx.jobListingService.getLocations()),
 })

@@ -1,40 +1,38 @@
 import { type Database } from "@dotkomonline/db"
-import { type DB } from "@dotkomonline/db/src/db.generated"
-import { type JobListingId } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable } from "kysely"
-
-type Location = DB["jobListingLocation"]
-type LocationSelect = Selectable<Location>
-type LocationId = LocationSelect["id"]
-
-type Link = DB["jobListingLocationLink"]
-type LinkSelect = Selectable<Link>
-type LinkInsert = Insertable<Link>
-interface LinkDelete {
-  jobListingId: JobListingId
-  locationId: LocationId
-}
+import { type JobListingId, type JobListingLocationId } from "@dotkomonline/types"
+import { type Kysely } from "kysely"
 
 export interface JobListingLocationLinkRepository {
-  add(payload: LinkInsert): Promise<LinkSelect>
-  remove(payload: LinkDelete): Promise<void>
+  add(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void>
+  remove(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void>
+  removeByLocationName(jobListingId: JobListingId, locationName: string): Promise<void>
 }
 
 export class JobListingLocationLinkRepositoryImpl implements JobListingLocationLinkRepository {
   constructor(private readonly db: Kysely<Database>) {}
-  async add(payload: LinkInsert): Promise<LinkSelect> {
-    return this.db
+  async add(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void> {
+    await this.db
       .insertInto("jobListingLocationLink")
-      .values({ locationId: payload.locationId, jobListingId: payload.jobListingId })
+      .values({ locationId, jobListingId })
       .returningAll()
       .executeTakeFirstOrThrow()
   }
 
-  async remove(payload: LinkDelete): Promise<void> {
+  async removeByLocationName(jobListingId: JobListingId, locationName: string): Promise<void> {
     await this.db
       .deleteFrom("jobListingLocationLink")
-      .where("jobListingId", "=", payload.jobListingId)
-      .where("locationId", "=", payload.locationId)
+      .where("jobListingId", "=", jobListingId)
+      .where("locationId", "=", (eb) =>
+        eb.selectFrom("jobListingLocation").where("name", "=", locationName).select("id")
+      )
+      .execute()
+  }
+
+  async remove(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void> {
+    await this.db
+      .deleteFrom("jobListingLocationLink")
+      .where("jobListingId", "=", jobListingId)
+      .where("locationId", "=", locationId)
       .execute()
   }
 }

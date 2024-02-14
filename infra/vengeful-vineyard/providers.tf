@@ -3,7 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "monoweb"
+      Project     = "vengeful-vineyard"
       Environment = terraform.workspace
     }
   }
@@ -15,7 +15,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "monoweb"
+      Project     = "vengeful-vineyard"
       Environment = terraform.workspace
     }
   }
@@ -27,7 +27,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "monoweb"
+      Project     = "vengeful-vineyard"
       Environment = terraform.workspace
     }
   }
