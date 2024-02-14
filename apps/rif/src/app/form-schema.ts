@@ -11,6 +11,7 @@ export const formSchema = z.object({
   requestsTechTalksParticipation: z.boolean().default(false),
   requestsExcursionParticipation: z.boolean().default(false),
   requestsCollaborationEvent: z.boolean().default(false),
+  requestsFemalesInTechEvent: z.boolean().default(false),
   comment: z.string().default("Ingen kommentar"),
 })
 

@@ -9,6 +9,7 @@ import { userRouter } from "./modules/user/user-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { offlineRouter } from "./modules/offline/offline-router"
+import { articleRouter } from "./modules/article/article-router"
 
 export const appRouter = t.router({
   committee: committeeRouter,
@@ -21,6 +22,7 @@ export const appRouter = t.router({
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,
   offline: offlineRouter,
+  article: articleRouter,
 })
 
 export type AppRouter = typeof appRouter

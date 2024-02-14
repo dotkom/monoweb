@@ -2,7 +2,6 @@ import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const useAddCompanyToEventMutation = () => {
-  const utils = trpc.useContext()
   const notification = useQueryNotification()
   return trpc.event.company.create.useMutation({
     onMutate: () => {
@@ -16,7 +15,6 @@ export const useAddCompanyToEventMutation = () => {
         title: "Bedrift lagt til",
         message: "Bedriften har blitt lagt til arrangørlisten.",
       })
-      utils.event.company.get.invalidate()
     },
   })
 }

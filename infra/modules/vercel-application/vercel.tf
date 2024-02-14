@@ -11,8 +11,7 @@ resource "vercel_project" "this" {
   build_command  = var.build_command
   root_directory = var.root_directory
 
-  # Do not run on renovate pull requests
-  ignore_command = "[ \"$VERCEL_GIT_COMMIT_AUTHOR_LOGIN\" == \"renovate[bot]\" || npx turbo-ignore ]"
+  ignore_command = "if [[ $VERCEL_GIT_COMMIT_REF =~ ^renovate ]]; then exit 0; else exit 1; fi"
 }
 
 resource "vercel_project_environment_variable" "environment_variables" {

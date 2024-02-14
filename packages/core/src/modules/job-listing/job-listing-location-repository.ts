@@ -1,49 +1,64 @@
 import { type Database } from "@dotkomonline/db"
-import { type DB } from "@dotkomonline/db/src/db.generated"
-import { type Insertable, type Kysely, type Selectable } from "kysely"
+import { type Kysely } from "kysely"
+import {
+  type JobListingLocation,
+  type JobListingLocationId,
+  JobListingLocationSchema,
+  type JobListingLocationWrite,
+} from "@dotkomonline/types"
 
-type Location = DB["jobListingLocation"]
-
-export type LocationSelect = Selectable<Location>
-type LocationId = LocationSelect["id"]
-
-type LocationInsert = Insertable<Location>
-interface LocationDelete {
-  id: LocationSelect["id"]
-}
+export const mapToJobListingLocation = (payload: JobListingLocation): JobListingLocation =>
+  JobListingLocationSchema.parse(payload)
 
 export interface JobListingLocationRepository {
-  add(payload: LocationInsert): Promise<LocationSelect>
-  remove(payload: LocationDelete): Promise<LocationSelect>
+  add(payload: JobListingLocationWrite): Promise<JobListingLocation>
+  remove(id: JobListingLocationId): Promise<void>
+  removeByZeroUsage(): Promise<void>
 
-  getAll(): Promise<LocationSelect[]>
-  getByName(name: string): Promise<LocationSelect>
-  getById(id: LocationId): Promise<LocationSelect>
+  getAll(): Promise<JobListingLocation[]>
+  findByName(name: string): Promise<JobListingLocation | null>
+  findById(id: JobListingLocationId): Promise<JobListingLocation | null>
 }
 
 export class JobListingLocationRepositoryImpl implements JobListingLocationRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getAll(): Promise<LocationSelect[]> {
+  async getAll(): Promise<JobListingLocation[]> {
     const locations = await this.db.selectFrom("jobListingLocation").selectAll().orderBy("name", "asc").execute()
-    return locations
+    return locations.map(mapToJobListingLocation)
   }
 
-  async add(payload: LocationInsert): Promise<LocationSelect> {
-    return this.db.insertInto("jobListingLocation").values(payload).returningAll().executeTakeFirstOrThrow()
+  async add(payload: JobListingLocationWrite): Promise<JobListingLocation> {
+    const location = await this.db
+      .insertInto("jobListingLocation")
+      .values(payload)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    return mapToJobListingLocation(location)
   }
 
-  async remove(payload: LocationDelete): Promise<LocationSelect> {
-    const location = await this.getById(payload.id)
-    await this.db.deleteFrom("jobListingLocation").where("id", "=", payload.id).execute()
-    return location
+  async remove(id: JobListingLocationId): Promise<void> {
+    await this.db.deleteFrom("jobListingLocation").where("id", "=", id).execute()
   }
 
-  async getByName(name: string): Promise<LocationSelect> {
-    return this.db.selectFrom("jobListingLocation").where("name", "=", name).selectAll().executeTakeFirstOrThrow()
+  async findByName(name: string): Promise<JobListingLocation | null> {
+    const location = await this.db
+      .selectFrom("jobListingLocation")
+      .where("name", "=", name)
+      .selectAll()
+      .executeTakeFirst()
+    return location ? mapToJobListingLocation(location) : null
   }
 
-  async getById(id: LocationId): Promise<LocationSelect> {
-    return this.db.selectFrom("jobListingLocation").where("id", "=", id).selectAll().executeTakeFirstOrThrow()
+  async findById(id: JobListingLocationId): Promise<JobListingLocation | null> {
+    const location = await this.db.selectFrom("jobListingLocation").where("id", "=", id).selectAll().executeTakeFirst()
+    return location ? mapToJobListingLocation(location) : null
+  }
+
+  async removeByZeroUsage(): Promise<void> {
+    await this.db
+      .deleteFrom("jobListingLocation")
+      .where("id", "not in", (eb) => eb.selectFrom("jobListingLocationLink").select("locationId"))
+      .execute()
   }
 }

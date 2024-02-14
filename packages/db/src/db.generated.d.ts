@@ -30,6 +30,28 @@ export type RefundRequestStatus = "APPROVED" | "PENDING" | "REJECTED"
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>
 
+export interface Articles {
+  author: string
+  content: string
+  createdAt: Generated<Timestamp>
+  excerpt: string
+  id: Generated<string>
+  imageUrl: string
+  photographer: string
+  slug: string
+  title: string
+  updatedAt: Generated<Timestamp>
+}
+
+export interface ArticleTagLink {
+  article: string
+  tag: string
+}
+
+export interface ArticleTags {
+  name: string
+}
+
 export interface Attendance {
   createdAt: Generated<Timestamp>
   deregisterDeadline: Timestamp
@@ -233,6 +255,9 @@ export interface RefundRequest {
 }
 
 export interface DB {
+  articles: Articles
+  articleTagLink: ArticleTagLink
+  articleTags: ArticleTags
   attendance: Attendance
   attendee: Attendee
   committee: Committee
