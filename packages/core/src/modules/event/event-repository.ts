@@ -50,9 +50,7 @@ export class EventRepositoryImpl implements EventRepository {
       .groupBy("attendance.eventId")
       .execute()
 
-    const event_ids = event_ids_query
-      .map(({ eventId }) => eventId)
-      .filter((id): id is string => id !== null)
+    const event_ids = event_ids_query.map(({ eventId }) => eventId).filter((id): id is string => id !== null)
 
     const events = await this.getByIds(event_ids)
 
