@@ -1,4 +1,4 @@
-import { type AttendanceWithUser, type AttendeeUser, type UserIDP, type User } from "@dotkomonline/types"
+import { type AttendanceWithUser, type AttendeeUser, type UserIDP } from "@dotkomonline/types"
 import { Box, Checkbox, NumberInput, Title, Text, Divider, Button, Flex } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo, useState, type FC } from "react"
@@ -43,10 +43,8 @@ CustomCheckbox.displayName = "CustomCheckbox"
 const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => {
   const deregisterMut = useDeregisterForEventMutation()
   const deleteGroupMut = trpc.event.attendance.delete.useMutation()
-  const ids = attendance.attendees.map((attendee) => attendee.userId)
-  const userIds = trpc.user.getMany.useQuery(ids)
 
-  const columnHelper = createColumnHelper<AttendeeUser & { user?: User }>()
+  const columnHelper = createColumnHelper<AttendeeUser>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((attendee) => attendee, {
@@ -57,7 +55,7 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => 
           return `${user.givenName} ${user.familyName}`
         },
       }),
-      columnHelper.accessor("user.studyYear", {
+      columnHelper.accessor("studyYear", {
         header: () => "Klassetrinn",
       }),
       columnHelper.accessor((attendee) => attendee, {
@@ -92,13 +90,8 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => 
     [columnHelper, deregisterMut]
   )
 
-  const attendeesAndUsers = useMemo(
-    () => attendance.attendees.map((attendee, i) => ({ ...attendee, user: userIds.data?.[i] })),
-    [userIds.data] // TODO: if you include attendance here, it will cause an infinite render loop. users are never loaded on first render, so if users not in dep array, it will always be undefined.
-  )
-
   const table = useReactTable({
-    data: attendeesAndUsers,
+    data: attendance.attendees,
     // data: attendance.attendees,
     getCoreRowModel: getCoreRowModel(),
     columns,

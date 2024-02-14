@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { UserIDPSchema } from "./user-idp"
+import { UserDBSchema } from "./user"
 
 const EventExtraSchema = z.object({
   id: z.string(),
@@ -66,7 +67,7 @@ export const AttendeeSchema = z.object({
     .optional(),
 })
 
-export const AttendeeUser = AttendeeSchema.merge(UserIDPSchema)
+export const AttendeeUser = AttendeeSchema.merge(UserIDPSchema).merge(UserDBSchema)
 
 export const AttendanceExtrasSchema = z.object({
   id: z.string(),
