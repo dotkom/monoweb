@@ -2,6 +2,7 @@ import { type AttendanceWithAuthData, type AttendeeWithAuthData, type IDPUser, t
 import { Box, Checkbox, NumberInput, Title, Text, Divider, Button, Flex } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo, useState, type FC } from "react"
+import { notifications } from "@mantine/notifications"
 import { useEventDetailsContext } from "./provider"
 import GenericSearch from "../../../../components/GenericSearch"
 import { GenericTable } from "../../../../components/GenericTable"
@@ -10,8 +11,11 @@ import { useRegisterForEventMutation } from "../../../../modules/event/mutations
 import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
 import { trpc } from "../../../../utils/trpc"
-import { useQueryNotification } from "../../../notifications"
-import { notifications } from "@mantine/notifications"
+
+const poolOverlaps = (pools: { min: number; max: number }[]): boolean =>
+  pools.some((pool, i) => pools.some((otherPool, j) => i !== j && pool.min < otherPool.max && pool.max > otherPool.min))
+
+const isConsecutive = (arr: number[]): boolean => arr.every((num, idx) => idx === 0 || num === arr[idx - 1] + 1)
 
 interface CustomCheckboxProps {
   userId: string
@@ -34,17 +38,13 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
   )
 })
 
-CustomCheckbox.displayName = "attendanceToggle"
+CustomCheckbox.displayName = "CustomCheckbox"
 
 const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData }) => {
-  const notification = useQueryNotification()
-  const deregisterForEvent = useDeregisterForEventMutation()
-
-  const deleteGroup = trpc.event.attendance.delete.useMutation()
-
+  const deregisterMut = useDeregisterForEventMutation()
+  const deleteGroupMut = trpc.event.attendance.delete.useMutation()
   const ids = attendance.attendees.map((attendee) => attendee.userId)
-
-  const au = trpc.user.getMany.useQuery(ids)
+  const userIds = trpc.user.getMany.useQuery(ids)
 
   const columnHelper = createColumnHelper<AttendeeWithAuthData & { user?: User }>()
   const columns = useMemo(
@@ -78,7 +78,7 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
           <Button
             color="red"
             onClick={() =>
-              deregisterForEvent.mutate({
+              deregisterMut.mutate({
                 attendanceId: info.getValue().attendanceId,
                 userId: info.getValue().userId,
               })
@@ -89,12 +89,12 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
         ),
       }),
     ],
-    [columnHelper, deregisterForEvent]
+    [columnHelper, deregisterMut]
   )
 
   const attendeesAndUsers = useMemo(
-    () => attendance.attendees.map((attendee, i) => ({ ...attendee, user: au.data?.[i] })),
-    [au.data] // TODO: if you include attendance here, it will cause an infinite render loop. users are never loaded on first render, so if users not in dep array, it will always be undefined.
+    () => attendance.attendees.map((attendee, i) => ({ ...attendee, user: userIds.data?.[i] })),
+    [userIds.data] // TODO: if you include attendance here, it will cause an infinite render loop. users are never loaded on first render, so if users not in dep array, it will always be undefined.
   )
 
   const table = useReactTable({
@@ -104,7 +104,7 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
     columns,
   })
 
-  const deleteGroup2 = () => {
+  const deleteGroup = () => {
     if (attendance.attendees.length > 0) {
       notifications.show({
         title: "Feil",
@@ -113,7 +113,7 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
       return
     }
 
-    deleteGroup.mutate({
+    deleteGroupMut.mutate({
       id: attendance.id,
     })
   }
@@ -130,7 +130,7 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
           </Text>
         </Box>
 
-        <Button onClick={() => deleteGroup2()} color="red">
+        <Button onClick={() => deleteGroup()} color="red">
           Slett gruppe
         </Button>
       </Flex>
@@ -141,8 +141,41 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithAuthData })
 
 AttendanceTable.displayName = "AttendanceTable"
 
+interface Year {
+  0: boolean
+  1: boolean
+  2: boolean
+  3: boolean
+  4: boolean
+  5: boolean
+}
+
+const YearForm = ({
+  toAddNum,
+  setToAddNum,
+}: {
+  toAddNum: Year
+  setToAddNum: React.Dispatch<React.SetStateAction<Year>>
+}) => (
+  <table>
+    {["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"].map((option, i) => (
+      <tr key={option}>
+        <td width="100">{option}</td>
+        <td>
+          <Checkbox
+            onChange={(e) => {
+              const newToAddNum = { ...toAddNum }
+              newToAddNum[i as keyof typeof newToAddNum] = e.currentTarget.checked
+              setToAddNum(newToAddNum)
+            }}
+          />
+        </td>
+      </tr>
+    ))}
+  </table>
+)
+
 export const EventAttendancePage: FC = () => {
-  const notification = useQueryNotification()
   const { event } = useEventDetailsContext()
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
   const [searchQuery, setSearchQuery] = useState("")
@@ -166,8 +199,6 @@ export const EventAttendancePage: FC = () => {
     }
   )
 
-  console.log(usersFromIdp)
-
   const handleUserSearch = (query: string) => {
     setSearchQuery(query)
   }
@@ -175,27 +206,61 @@ export const EventAttendancePage: FC = () => {
   const handleUserClick = async (user: IDPUser) => {
     setSearchQuery("")
     const dbUser = await dbUserMut.mutateAsync(user.subject)
+
+    const userAlreadyRegistered = eventAttendance.some((pool) =>
+      pool.attendees.some((attendee) => attendee.userId === dbUser?.id)
+    )
+
+    if (userAlreadyRegistered) {
+      notifications.show({
+        title: "Feil",
+        message: "Brukeren er allerede påmeldt",
+      })
+      return
+    }
+
     if (!dbUser) {
-      notification.fail({
+      notifications.show({
         title: "Feil",
         message: "Fant ikke brukeren i databasen",
       })
 
-      console.error("Fant ikke brukeren i databasen", user)
       return
     }
     const pool = eventAttendance.find((pool) => pool.min <= dbUser.studyYear && pool.max > dbUser.studyYear)
 
     if (!pool) {
-      notification.fail({
+      notifications.show({
         title: "Feil",
         message: "Fant ingen pool for brukeren",
       })
-      console.error("Fant ingen pool for brukeren. Klassetrinn: ", dbUser.studyYear, "Pooler: ", eventAttendance)
       return
     }
 
     registerForEvent.mutate({ poolId: pool.id, userId: dbUser.id.toString(), cognitoSub: dbUser.cognitoSub })
+  }
+
+  const checkOverlaps = (min: number, max: number) => {
+    const overlapsWithExistingPools = poolOverlaps([...eventAttendance, { min, max }])
+    if (overlapsWithExistingPools) {
+      throw new Error("Klassetrinnene overlapper med en eksisterende gruppe")
+    }
+  }
+
+  const checkConsecutive = (chosenNumbers: number[]) => {
+    // Can only choose consecutive numbers
+    const sorted = chosenNumbers.sort((a, b) => a - b)
+    if (!isConsecutive(sorted)) {
+      throw new Error("Du kan ikke hoppe over klassetrinn")
+    }
+  }
+
+  const checkNumber = (min: number, max: number) => {
+    console.log(min, max)
+    if (min === max) {
+      // works because min is inclusive and max is exclusive, and both are -1 if no numbers are chosen
+      throw new Error("Du må velge minst ett klassetrinn")
+    }
   }
 
   const createNewGroup = () => {
@@ -204,27 +269,18 @@ export const EventAttendancePage: FC = () => {
       .filter(([, value]) => value)
       .map(([key]) => Number(key))
 
-    const min = Math.min(...chosen)
-    const max = Math.max(...chosen) + 1
+    const min = chosen.length ? Math.min(...chosen) : -1
+    const max = chosen.length ? Math.max(...chosen) + 1 : -1
 
-    if (min === max) {
-      notification.fail({
+    try {
+      checkNumber(min, max)
+      checkConsecutive(chosen)
+      checkOverlaps(min, max)
+    } catch (e) {
+      notifications.show({
         title: "Feil",
-        message: "Du må velge minst ett klassetrinn",
+        message: (e as Error).message,
       })
-      console.error("Feil, du må velge minst ett klassetrinn")
-      return
-    }
-
-    const sorted = chosen.sort((a, b) => a - b)
-    const isConsecutive = sorted.every((num, idx) => idx === 0 || num === sorted[idx - 1] + 1)
-
-    if (!isConsecutive) {
-      notification.fail({
-        title: "Feil",
-        message: "Du kan ikke hoppe over klassetrinn",
-      })
-      console.error("Feil, du kan ikke hoppe over klassetrinn")
       return
     }
 
@@ -242,34 +298,28 @@ export const EventAttendancePage: FC = () => {
 
   return (
     <Box>
-      <Title order={2}></Title>
-      <details>
-        <summary>Legg til ny gruppe</summary>
-        <Title order={5}>Velg klassetrinn</Title>
-        <table>
-          {["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"].map((option, i) => (
-            <tr key={option}>
-              <td width="100">{option}</td>
-              <td>
-                <Checkbox
-                  onChange={(e) => {
-                    const newToAddNum = { ...toAddNum }
-                    newToAddNum[i as keyof typeof newToAddNum] = e.currentTarget.checked
-                    setToAddNum(newToAddNum)
-                  }}
-                />
-              </td>
-            </tr>
-          ))}
-        </table>
-        <Title order={5}>Kapasitet</Title>
-        <NumberInput value={limit} onChange={(value) => setLimit(Number(value))} />
-        <Button onClick={() => createNewGroup()} mt={16}>
-          Lag ny gruppe
-        </Button>
-      </details>
       <Box>
-        <Title order={3}>Meld på</Title>
+        <Title order={3}>Lag ny gruppe</Title>
+        <details>
+          <summary
+            style={{
+              userSelect: "none",
+            }}
+          >
+            Detaljer
+          </summary>
+          <Title order={5}>Velg klassetrinn</Title>
+          <YearForm toAddNum={toAddNum} setToAddNum={setToAddNum} />
+          <Title order={5}>Kapasitet</Title>
+          <NumberInput value={limit} onChange={(value) => setLimit(Number(value))} />
+          <Button onClick={() => createNewGroup()} mt={16}>
+            Lag ny gruppe
+          </Button>
+        </details>
+      </Box>
+      <Divider my={16} />
+      <Box>
+        <Title order={3}>Meld på bruker</Title>
         <GenericSearch
           onSearch={handleUserSearch}
           onSubmit={handleUserClick}
@@ -277,7 +327,9 @@ export const EventAttendancePage: FC = () => {
           dataMapper={(item: IDPUser) => `${item.givenName} ${item.familyName}`}
           placeholder="Søk etter bruker..."
         />
-        <Divider mt={16} />
+      </Box>
+      <Divider my={16} />
+      <Box>
         <Title order={3} mt={16}>
           Grupper
         </Title>
