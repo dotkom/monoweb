@@ -7,14 +7,28 @@ interface GenericSearchProps<T> {
   items: T[]
   dataMapper(item: T): string
   placeholder?: string | null | undefined
+  resetOnClick?: boolean
 }
 
-const GenericSearch = <T,>({ onSearch, onSubmit, items, dataMapper, placeholder }: GenericSearchProps<T>) => {
-  const handleChange = (value: string) => {
-    onSearch(value)
+const GenericSearch = <T,>({
+  onSearch,
+  onSubmit,
+  items,
+  dataMapper,
+  placeholder,
+  resetOnClick,
+}: GenericSearchProps<T>) => {
+  const [value, setValue] = React.useState("")
 
-    const selectedItem = items.find((item) => dataMapper(item) === value)
+  const handleChange = (newValue: string) => {
+    setValue(newValue)
+    onSearch(newValue)
+
+    const selectedItem = items.find((item) => dataMapper(item) === newValue)
     if (selectedItem) {
+      if (resetOnClick) {
+        setValue("")
+      }
       onSubmit(selectedItem)
     }
   }
@@ -44,6 +58,7 @@ const GenericSearch = <T,>({ onSearch, onSubmit, items, dataMapper, placeholder 
       onChange={handleChange}
       placeholder={placeholderText}
       className="flex-grow"
+      value={value}
     />
   )
 }
