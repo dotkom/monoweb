@@ -2,7 +2,6 @@ import { type AttendanceWithUser, type AttendeeUser, type UserIDP } from "@dotko
 import { Box, Checkbox, NumberInput, Title, Text, Divider, Button, Flex } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo, useState, type FC } from "react"
-import { notifications } from "@mantine/notifications"
 import { useEventDetailsContext } from "./provider"
 import GenericSearch from "../../../../components/GenericSearch"
 import { GenericTable } from "../../../../components/GenericTable"
@@ -11,6 +10,7 @@ import { useRegisterForEventMutation } from "../../../../modules/event/mutations
 import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
 import { trpc } from "../../../../utils/trpc"
+import { notifyFail } from "../../../notifications"
 
 const poolOverlaps = (pools: { min: number; max: number }[]): boolean =>
   pools.some((pool, i) => pools.some((otherPool, j) => i !== j && pool.min < otherPool.max && pool.max > otherPool.min))
@@ -92,14 +92,14 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => 
 
   const table = useReactTable({
     data: attendance.attendees,
-    // data: attendance.attendees,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
 
   const deleteGroup = () => {
     if (attendance.attendees.length > 0) {
-      notifications.show({
+      console.log("Gruppen har deltakere, og kan ikke slettes")
+      notifyFail({
         title: "Feil",
         message: "Gruppen har deltakere, og kan ikke slettes",
       })
@@ -205,7 +205,7 @@ export const EventAttendancePage: FC = () => {
     )
 
     if (userAlreadyRegistered) {
-      notifications.show({
+      notifyFail({
         title: "Feil",
         message: "Brukeren er allerede påmeldt",
       })
@@ -213,7 +213,7 @@ export const EventAttendancePage: FC = () => {
     }
 
     if (!dbUser) {
-      notifications.show({
+      notifyFail({
         title: "Feil",
         message: "Fant ikke brukeren i databasen",
       })
@@ -223,7 +223,7 @@ export const EventAttendancePage: FC = () => {
     const pool = eventAttendance.find((pool) => pool.min <= dbUser.studyYear && pool.max > dbUser.studyYear)
 
     if (!pool) {
-      notifications.show({
+      notifyFail({
         title: "Feil",
         message: "Fant ingen pool for brukeren",
       })
@@ -269,7 +269,7 @@ export const EventAttendancePage: FC = () => {
       checkConsecutive(chosen)
       checkOverlaps(min, max)
     } catch (e) {
-      notifications.show({
+      notifyFail({
         title: "Feil",
         message: (e as Error).message,
       })
