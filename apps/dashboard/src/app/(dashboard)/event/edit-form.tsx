@@ -4,6 +4,7 @@ import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createMultipleSelectInput,
   createSelectInput,
   createTextInput,
   createTextareaInput,
@@ -28,7 +29,12 @@ const FormValidationSchema = EventSchema.extend({
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
-export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defaultValues }: UseEventEditFormProps) =>
+export const useEventEditForm = ({
+  committees,
+  onSubmit,
+  label = "Opprett arrangement",
+  defaultValues,
+}: UseEventEditFormProps) =>
   useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
@@ -65,11 +71,12 @@ export const useEventEditForm = ({ onSubmit, label = "Opprett arrangement", defa
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      // committeeIds: createMultipleSelectInput({
-      //   label: "Arrangør",
-      //   placeholder: "Arrkom",
-      //   data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
-      // }),
+      committeeIds: createMultipleSelectInput({
+        label: "Arrangør",
+        placeholder: "Arrkom",
+        // data:
+        data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
+      }),
       status: createSelectInput({
         label: "Event status",
         placeholder: "Velg en",

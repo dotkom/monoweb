@@ -98,7 +98,6 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => 
 
   const deleteGroup = () => {
     if (attendance.attendees.length > 0) {
-      console.log("Gruppen har deltakere, og kan ikke slettes")
       notifyFail({
         title: "Feil",
         message: "Gruppen har deltakere, og kan ikke slettes",
