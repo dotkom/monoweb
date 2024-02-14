@@ -12,7 +12,7 @@ export const EventEditCard: FC = () => {
 
   const defaultValues = {
     ...event,
-    committeeIds: eventCommittees.map((committee) => committee.name),
+    committeeIds: eventCommittees.map((committee) => committee.id),
   }
 
   console.log(eventCommittees)
