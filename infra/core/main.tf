@@ -20,3 +20,7 @@ resource "aws_route53_record" "null_record" {
   ttl     = 3600
   records = ["127.0.0.1"]
 }
+
+resource "aws_route53_zone" "vinstraff_no" {
+  name = "vinstraff.no"
+}
