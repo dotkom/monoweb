@@ -38,7 +38,7 @@ module.exports = {
         white: "#ffffee",
         background: "var(--color-background)", //#asjkdl
         foreground: "hsl(var(--color-slate-12) / <alpha-value>)",
-        accent: "#FFEDB3",
+        accent: "#FAB759",
         brand: {
           lighter: "#1277A5",
           light: "#106A93",

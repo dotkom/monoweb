@@ -11,6 +11,7 @@ export interface EventRepository {
   create(data: EventInsert): Promise<Event>
   update(id: EventId, data: EventInsert): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  getAllOrderedByDate(ascending: boolean, take: number, cursor?: Cursor): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
@@ -37,6 +38,17 @@ export class EventRepositoryImpl implements EventRepository {
     const query = orderedQuery(this.db.selectFrom("event").selectAll().limit(take), cursor)
     const events = await query.execute()
 
+    return events.map((e) => mapToEvent(e))
+  }
+
+  async getAllOrderedByDate(ascending: boolean, take: number) {
+    const query = this.db
+      .selectFrom("event")
+      .selectAll()
+      .orderBy("start", ascending ? "asc" : "desc")
+      .limit(take)
+
+    const events = await query.execute()
     return events.map((e) => mapToEvent(e))
   }
 

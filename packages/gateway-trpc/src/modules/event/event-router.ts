@@ -47,6 +47,24 @@ export const eventRouter = t.router({
       return event
     }),
 
+  allOrderedByDate: publicProcedure
+    .input(
+      z
+        .object({ take: z.number().default(10), ascending: z.boolean().default(false) })
+        .default({ take: 10, ascending: false })
+    )
+    .query(async ({ input, ctx }) => {
+      const events = await ctx.eventService.getEventsOrderedByDate(input.ascending, input.take)
+      const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
+
+      const results = await Promise.all(committees)
+
+      return events.map((event, i) => ({
+        ...event,
+        committees: results[i],
+      }))
+    }),
+
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input.take, input.cursor)
     const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
