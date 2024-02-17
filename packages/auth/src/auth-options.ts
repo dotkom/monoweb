@@ -1,4 +1,4 @@
-import { type ServiceLayer, NotFoundError } from "@dotkomonline/core"
+import { type ServiceLayer } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
@@ -52,9 +52,9 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        const user = await core.userService.getUserBySubject(token.sub)
+        let user = await core.userService.getUserBySubject(token.sub)
         if (user === undefined) {
-          throw new NotFoundError(`Found no matching user for ${token.sub}`)
+          user = await core.userService.createUser({ auth0Sub: token.sub, studyYear: -1 })
         }
         session.user.id = user.id
         session.sub = token.sub
