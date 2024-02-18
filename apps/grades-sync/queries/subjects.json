@@ -1,0 +1,67 @@
+{
+  "tabell_id": 208,
+  "api_versjon": 1,
+  "statuslinje": "N",
+  "kodetekst": "J",
+  "desimal_separator": ".",
+  "variabler": [
+    "*"
+  ],
+  "sortBy": [
+    "Årstall",
+    "Institusjonskode",
+    "Avdelingskode"
+  ],
+  "filter": [
+    {
+      "variabel": "Institusjonskode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "1150"
+        ],
+        "exclude": [
+          ""
+        ]
+      }
+    },
+    {
+      "variabel": "Nivåkode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "HN",
+          "LN"
+        ],
+        "exclude": [
+          ""
+        ]
+      }
+    },
+    {
+      "variabel": "Avdelingskode",
+      "selection": {
+        "filter": "all",
+        "values": [
+          "*"
+        ],
+        "exclude": [
+          "000000"
+        ]
+      }
+    },
+    {
+      "variabel": "Oppgave (ny fra h2012)",
+      "selection": {
+        "filter": "all",
+        "values": [
+          "*"
+        ],
+        "exclude": [
+          "1",
+          "2"
+        ]
+      }
+    }
+  ]
+}
