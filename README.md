@@ -19,11 +19,11 @@ https://owdocs.vercel.app
 The project requires environment variables to run locally. All variables are validated using the env package (located at packages/env/src/env.mjs).
 
 ### Internal Tooling
-Internalli we use Doppler for our secrets management.
+Internally we use Doppler for our secrets management. Send a message to someone in Dotkom or send a mail to `dotkom@online.ntnu.no` if you believe you should have access.
 
 #### Doppler CLI Setup
 1. Install Doppler CLI: Follow the instructions at Doppler CLI Documentation: https://docs.doppler.com/docs/install-cli
-2. Authenticate: Run `doppler login` and sign in with your @online.ntnu.no account.
+2. Authenticate: Run `doppler login`
 3. Configure environment using `doppler setup`
 
 #### Environment Selection
