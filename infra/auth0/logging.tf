@@ -35,8 +35,8 @@ data "aws_iam_policy_document" "auth0_log_policy" {
     principals {
       type = "Service"
       identifiers = [
+        "delivery.logs.amazonaws.com",
         "events.amazonaws.com",
-        "delivery.logs.amazonaws.com"
       ]
     }
   }
@@ -53,8 +53,8 @@ data "aws_iam_policy_document" "auth0_log_policy" {
     principals {
       type = "Service"
       identifiers = [
+        "delivery.logs.amazonaws.com",
         "events.amazonaws.com",
-        "delivery.logs.amazonaws.com"
       ]
     }
 
@@ -68,11 +68,11 @@ data "aws_iam_policy_document" "auth0_log_policy" {
 
 resource "aws_cloudwatch_log_resource_policy" "auth0" {
   policy_document = data.aws_iam_policy_document.auth0_log_policy.json
-  policy_name     = "auth0-log-publishing-policy"
+  policy_name     = "auth0-log-publishing-policy-${terraform.workspace}"
 }
 
 resource "aws_cloudwatch_event_rule" "auth0" {
-  name           = "Auth0_event_rule"
+  name           = "Auth0_event_rule_${terraform.workspace}"
   description    = "Auth0 logs forwarded to AWS"
   event_bus_name = aws_cloudwatch_event_bus.messenger.name
 
