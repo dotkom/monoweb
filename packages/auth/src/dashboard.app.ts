@@ -4,9 +4,9 @@ import { kysely } from "@dotkomonline/db"
 import { getAuthOptions } from "./auth-options"
 
 export const authOptions = getAuthOptions({
-  cognitoClientId: env.DASHBOARD_COGNITO_CLIENT_ID,
-  cognitoClientSecret: env.DASHBOARD_COGNITO_CLIENT_SECRET,
-  cognitoIssuer: env.DASHBOARD_COGNITO_ISSUER,
+  auth0ClientId: env.DASHBOARD_AUTH0_CLIENT_ID,
+  auth0ClientSecret: env.DASHBOARD_AUTH0_CLIENT_SECRET,
+  auth0Issuer: env.DASHBOARD_AUTH0_ISSUER,
   core: await createServiceLayer({ db: kysely }),
   jwtSecret: env.NEXTAUTH_SECRET,
 })

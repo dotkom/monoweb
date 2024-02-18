@@ -18,7 +18,7 @@ import { type Cursor } from "../../utils/db-utils"
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
   getUsersById(ids: UserId[]): Promise<User[] | undefined>
-  getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
+  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<UserDB>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<UserDB>
@@ -28,7 +28,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  getUserBySubjectIDP(id: User["cognitoSub"][]): Promise<UserIDP[] | undefined>
+  getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<UserIDP[] | undefined>
 }
 
 export class UserServiceImpl implements UserService {
@@ -99,13 +99,13 @@ export class UserServiceImpl implements UserService {
     return this.mergeUsers(userDB, userIDP)
   }
 
-  async getUserBySubject(id: User["cognitoSub"]) {
+  async getUserBySubject(id: User["auth0sub"]) {
     const userDB = await this.userRepository.getBySubject(id)
     const userIDP = await this.idpRepository.getBySubject(id)
     return this.mergeUsers(userDB, userIDP)
   }
 
-  async getUserBySubjectIDP(id: User["cognitoSub"][]) {
+  async getUserBySubjectIDP(id: User["auth0sub"][]) {
     const result = []
     for (const sub of id) {
       const user = await this.idpRepository.getBySubject(sub)

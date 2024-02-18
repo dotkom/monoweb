@@ -181,34 +181,6 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  apps/dispatcher-auth:
-    dependencies:
-      '@aws-sdk/client-cognito-identity-provider':
-        specifier: ^3.507.0
-        version: 3.507.0
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-    devDependencies:
-      '@types/aws-lambda':
-        specifier: ^8.10.129
-        version: 8.10.129
-      '@types/node':
-        specifier: 18.18.13
-        version: 18.18.13
-      tsup:
-        specifier: ^7.2.0
-        version: 7.2.0(ts-node@10.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-
   apps/gateway-email:
     dependencies:
       '@aws-sdk/client-ses':

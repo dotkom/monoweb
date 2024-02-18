@@ -19,12 +19,6 @@ module "cognito_domain_certificate" {
   }
 }
 
-data "aws_lambda_function" "post_signup_trigger" {
-  count = terraform.workspace == "dev" ? 1 : 0
-
-  function_name = "dispatcher-auth-${terraform.workspace}"
-}
-
 module "cognito_user_pool" {
   source = "../modules/aws-cognito-pool"
 

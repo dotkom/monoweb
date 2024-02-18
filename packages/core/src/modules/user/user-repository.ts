@@ -6,12 +6,12 @@ import { orderedQuery, type Cursor } from "../../utils/db-utils"
 export const mapToUser = (payload: Selectable<Database["owUser"]>): UserDB => UserDBSchema.parse(payload)
 
 export interface UserRepository {
-  getById(id: UserId): Promise<UserDB | undefined>
-  getBySubject(cognitoSubject: string): Promise<UserDB | undefined>
-  getAll(limit: number): Promise<UserDB[]>
-  create(userWrite: UserWrite): Promise<UserDB>
-  update(id: UserId, data: Partial<UserWrite>): Promise<UserDB>
-  search(searchQuery: string, take: number, cursor?: Cursor): Promise<UserDB[]>
+  getById(id: UserId): Promise<User | undefined>
+  getBySubject(auth0Subject: string): Promise<User | undefined>
+  getAll(limit: number): Promise<User[]>
+  create(userWrite: UserWrite): Promise<User>
+  update(id: UserId, data: Partial<UserWrite>): Promise<User>
+  search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -20,12 +20,8 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
     return user ? mapToUser(user) : undefined
   }
-  async getBySubject(cognitoSubject: string) {
-    const user = await this.db
-      .selectFrom("owUser")
-      .selectAll()
-      .where("cognitoSub", "=", cognitoSubject)
-      .executeTakeFirst()
+  async getBySubject(auth0Subject: string) {
+    const user = await this.db.selectFrom("owUser").selectAll().where("auth0Sub", "=", auth0Subject).executeTakeFirst()
     return user ? mapToUser(user) : undefined
   }
   async getAll(limit: number) {

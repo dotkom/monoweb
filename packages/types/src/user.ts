@@ -4,7 +4,7 @@ import { UserIDPSchema } from "./user-idp"
 export const UserDBSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
-  cognitoSub: z.string().uuid(),
+  auth0Sub: z.string(),
   studyYear: z.number().int().min(-1).max(6),
 })
 

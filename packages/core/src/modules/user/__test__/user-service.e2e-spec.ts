@@ -19,7 +19,7 @@ describe("users", () => {
     expect(none).toHaveLength(0)
 
     const user = await core.userService.createUser({
-      cognitoSub: crypto.randomUUID(),
+      auth0Sub: crypto.randomUUID(),
       studyYear: 0,
     })
 
@@ -30,13 +30,13 @@ describe("users", () => {
   it("will not allow two users the same subject", async () => {
     const subject = crypto.randomUUID()
     const first = await core.userService.createUser({
-      cognitoSub: subject,
+      auth0Sub: subject,
       studyYear: 0,
     })
     expect(first).toBeDefined()
     await expect(
       core.userService.createUser({
-        cognitoSub: subject,
+        auth0Sub: subject,
         studyYear: 0,
       })
     ).rejects.toThrow()
@@ -44,7 +44,7 @@ describe("users", () => {
 
   it("will find users by their user id", async () => {
     const user = await core.userService.createUser({
-      cognitoSub: crypto.randomUUID(),
+      auth0Sub: crypto.randomUUID(),
       studyYear: 0,
     })
 
@@ -57,16 +57,16 @@ describe("users", () => {
   it("can update users given their id", async () => {
     await expect(
       core.userService.updateUser(ulid(), {
-        cognitoSub: crypto.randomUUID(),
+        auth0Sub: crypto.randomUUID(),
       })
     ).rejects.toThrow()
     const user = await core.userService.createUser({
-      cognitoSub: crypto.randomUUID(),
+      auth0Sub: crypto.randomUUID(),
       studyYear: 0,
     })
     const updated = await core.userService.updateUser(user.id, {
-      cognitoSub: crypto.randomUUID(),
+      auth0Sub: crypto.randomUUID(),
     })
-    expect(updated.cognitoSub).not.toEqual(user.cognitoSub)
+    expect(updated.auth0Sub).not.toEqual(user.auth0Sub)
   })
 })
