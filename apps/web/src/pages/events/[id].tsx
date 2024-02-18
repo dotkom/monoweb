@@ -149,7 +149,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
       return
     }
 
-    attendMutation.mutateAsync({ cognitoSub: user.user.cognitoSub || "", poolId: myGroups.id, userId: user.user.id })
+    attendMutation.mutateAsync({ poolId: myGroups.id, userId: user.user.id })
   }
 
   const unAttend = () => {

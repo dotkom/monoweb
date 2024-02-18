@@ -229,7 +229,7 @@ export const EventAttendancePage: FC = () => {
       return
     }
 
-    registerForEvent.mutate({ poolId: pool.id, userId: dbUser.id.toString(), cognitoSub: dbUser.cognitoSub })
+    registerForEvent.mutate({ poolId: pool.id, userId: dbUser.id.toString() })
   }
 
   const checkOverlaps = (min: number, max: number) => {

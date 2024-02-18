@@ -49,19 +49,22 @@ export class UserServiceImpl implements UserService {
   }
 
   private mergeUsersArray(usersDB: (UserDB | undefined)[], usersIDP: (UserIDP | undefined)[]): User[] {
-    return usersDB.map((user) => {
-      if (user === undefined) {
-        throw new Error("User from DB is undefined")
-      }
-      const userFromIDP = usersIDP.find((u) => u?.subject === user.cognitoSub)
-      if (!userFromIDP) {
-        throw new Error(`User with cognitoSub ${user.cognitoSub} not found in IDP`)
-      }
-      return {
-        ...user,
-        ...userFromIDP,
-      }
-    })
+    return usersDB
+      .map((user) => {
+        if (user === undefined) {
+          console.error("User from DB is undefined", user)
+          return undefined
+        }
+        const userFromIDP = usersIDP.find((u) => u?.subject === user.auth0Sub)
+        if (!userFromIDP) {
+          throw new Error(`User with auth0Sub ${user.auth0Sub} not found in IDP`)
+        }
+        return {
+          ...user,
+          ...userFromIDP,
+        }
+      })
+      .filter((u) => u !== undefined) as User[]
   }
 
   async getAllUsers(limit: number) {
@@ -75,7 +78,7 @@ export class UserServiceImpl implements UserService {
     if (usersDB.includes(undefined)) {
       throw new Error("User from DB is undefined")
     }
-    const usersIDP = await Promise.all(usersDB.map(async (u) => this.idpRepository.getBySubject(u?.cognitoSub || ""))) // TODO: this is a hack
+    const usersIDP = await Promise.all(usersDB.map(async (u) => this.idpRepository.getBySubject(u?.auth0Sub || ""))) // TODO: this is a hack
     return this.mergeUsersArray(usersDB, usersIDP)
   }
 
@@ -90,7 +93,7 @@ export class UserServiceImpl implements UserService {
     if (!userDB) {
       return undefined
     }
-    const userIDP = await this.idpRepository.getBySubject(userDB.cognitoSub)
+    const userIDP = await this.idpRepository.getBySubject(userDB.auth0Sub)
 
     if (!userIDP) {
       return undefined
@@ -99,13 +102,13 @@ export class UserServiceImpl implements UserService {
     return this.mergeUsers(userDB, userIDP)
   }
 
-  async getUserBySubject(id: User["auth0sub"]) {
+  async getUserBySubject(id: User["auth0Sub"]) {
     const userDB = await this.userRepository.getBySubject(id)
     const userIDP = await this.idpRepository.getBySubject(id)
     return this.mergeUsers(userDB, userIDP)
   }
 
-  async getUserBySubjectIDP(id: User["auth0sub"][]) {
+  async getUserBySubjectIDP(id: User["auth0Sub"][]) {
     const result = []
     for (const sub of id) {
       const user = await this.idpRepository.getBySubject(sub)

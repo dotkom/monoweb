@@ -28,7 +28,6 @@ export async function up(db) {
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
-    .addColumn("userCognitoSub", "varchar(255)")
     .execute()
 
   await db.schema

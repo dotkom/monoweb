@@ -22,7 +22,7 @@ export const users: Insertable<Database["owUser"]>[] = [
   },
   {
     createdAt: new Date("2023-04-30 21:22:17.627253+00"),
-    auth0Sub: "auth0|7ba93bf4-2e11-40a9-bcd7-9078ee9090bb",
+    auth0Sub: "auth0|61ea20bf-6964-4484-b7b8-e81952606973",
     studyYear: 3,
   },
 ]

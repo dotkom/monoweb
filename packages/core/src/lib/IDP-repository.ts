@@ -119,10 +119,15 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
   }
 
   async search(searchQuery: string, take: number): Promise<UserIDP[]> {
+    const givenName = searchQuery.split(" ")[0]
+    const familyName = searchQuery.split(" ")[1] || ""
+
     const users = await this.client.users.getAll({
       per_page: take,
-      q: `given_name:${searchQuery}*`,
+      q: `given_name:${givenName}* OR family_name:${familyName}* OR family_name:${givenName}`,
     })
+
+    console.dir(users)
 
     return users.data.map((user) => ({
       email: user.email,

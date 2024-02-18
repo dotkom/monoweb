@@ -1,5 +1,5 @@
 import { type Database } from "@dotkomonline/db"
-import { UserDBSchema, type UserDB, type UserId, type UserWrite } from "@dotkomonline/types"
+import { type User, UserDBSchema, type UserDB, type UserId, type UserWrite } from "@dotkomonline/types"
 import { sql, type Kysely, type Selectable } from "kysely"
 import { orderedQuery, type Cursor } from "../../utils/db-utils"
 

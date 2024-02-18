@@ -3,7 +3,7 @@ import { type AttendanceRepository } from "./attendance-repository"
 
 export interface AttendanceService {
   canAttend(eventId: EventId): Promise<Date | undefined>
-  registerForEvent(userId: UserId, cognitoSub: string, eventId: EventId): Promise<Attendee | undefined>
+  registerForEvent(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
   deregisterAttendee(userId: UserId, eventId: EventId): Promise<Attendee | undefined>
   registerForAttendance(userId: UserId, attendanceId: string, attended: boolean): Promise<Attendee | undefined>
   addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string): Promise<Attendee | undefined>
@@ -15,8 +15,8 @@ export class AttendanceServiceImpl implements AttendanceService {
   async canAttend(_eventId: string) {
     return new Date()
   }
-  async registerForEvent(userId: UserId, cognitoSub: string, poolId: AttendanceId) {
-    console.log("registering for event: ", userId, cognitoSub, poolId)
+  async registerForEvent(userId: UserId, poolId: AttendanceId) {
+    console.log("registering for event: ", userId, poolId)
     const attendee = await this.attendanceRepository.createAttendee({
       attendanceId: poolId,
       userId,

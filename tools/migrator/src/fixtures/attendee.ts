@@ -7,7 +7,6 @@ export const attendees: Insertable<Database["attendee"]>[] = [
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     userId: "01HNE783GYXSFSFFPMWNQNQG5Q",
-    userCognitoSub: "7ba93bf4-2e11-40a9-bcd7-9078ee9090bb",
     attendanceId: "01HB64JAPWJBMZN3HN6RF5GPVF",
     extrasChoices: JSON.stringify([
       {
