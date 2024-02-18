@@ -133,21 +133,12 @@ const AttendanceTable = ({ attendance }: { attendance: AttendanceWithUser }) => 
 
 AttendanceTable.displayName = "AttendanceTable"
 
-interface Year {
-  0: boolean
-  1: boolean
-  2: boolean
-  3: boolean
-  4: boolean
-  5: boolean
-}
-
 const YearForm = ({
   toAddNum,
   setToAddNum,
 }: {
-  toAddNum: Year
-  setToAddNum: React.Dispatch<React.SetStateAction<Year>>
+  toAddNum: boolean[]
+  setToAddNum: React.Dispatch<React.SetStateAction<boolean[]>>
 }) => (
   <table>
     {["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"].map((option, i) => (
@@ -156,8 +147,8 @@ const YearForm = ({
         <td>
           <Checkbox
             onChange={(e) => {
-              const newToAddNum = { ...toAddNum }
-              newToAddNum[i as keyof typeof newToAddNum] = e.currentTarget.checked
+              const newToAddNum = [...toAddNum]
+              newToAddNum[i] = e.currentTarget.checked
               setToAddNum(newToAddNum)
             }}
           />
@@ -173,14 +164,7 @@ export const EventAttendancePage: FC = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const registerForEvent = useRegisterForEventMutation()
   const dbUserMut = trpc.user.getBySubAsync.useMutation()
-  const [toAddNum, setToAddNum] = useState({
-    0: false,
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-    5: false,
-  })
+  const [toAddNum, setToAddNum] = useState([false, false, false, false, false, false])
   const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
   const [limit, setLimit] = useState(20)
 
@@ -256,9 +240,12 @@ export const EventAttendancePage: FC = () => {
 
   const createNewGroup = () => {
     // check if there are gaps in toAddNum, i.e. [1, 3] is not allowed. but [1, 2, 3] is allowed. [3, 5] is not allowed, but [3, 4, 5] is allowed.
-    const chosen = Object.entries(toAddNum)
-      .filter(([, value]) => value)
-      .map(([key]) => Number(key))
+
+    // transform from [false, true, false, true, false, false] to [1, 3]
+    const chosen = toAddNum
+      .map((value, index) => [index, value] as [number, boolean])
+      .filter(([_, value]) => value)
+      .map(([index]) => index)
 
     const min = chosen.length ? Math.min(...chosen) : -1
     const max = chosen.length ? Math.max(...chosen) + 1 : -1
@@ -276,9 +263,9 @@ export const EventAttendancePage: FC = () => {
     }
 
     addAttendance({
-      start: new Date(),
-      end: new Date(),
-      deregisterDeadline: new Date(),
+      start: new Date(), // TODO: functionality missing
+      end: new Date(), // TODO: functionality missing
+      deregisterDeadline: new Date(), // TODO: functionality missing
       eventId: event.id,
       limit,
       min,
