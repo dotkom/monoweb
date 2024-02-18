@@ -3,15 +3,13 @@ import {
   ListUsersCommand,
   type ListUsersCommandInput,
 } from "@aws-sdk/client-cognito-identity-provider"
-import { type User, type UserId, type UserWrite, type UserIDP, UserIDPSchema } from "@dotkomonline/types"
-import { type Cursor } from "../utils/db-utils"
+import { UserIDPSchema, type UserIDP } from "@dotkomonline/types"
+import { ManagementClient } from "auth0"
 
 export interface IDPRepository {
-  getBySubject(cognitoSubject: string): Promise<UserIDP | undefined>
+  getBySubject(IDPuserId: string): Promise<UserIDP | undefined>
   getAll(limit: number): Promise<UserIDP[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: Partial<UserWrite>): Promise<User>
-  search(searchQuery: string, take: number, cursor?: Cursor): Promise<UserIDP[]>
+  search(searchQuery: string, take: number): Promise<UserIDP[]>
 }
 
 export class CognitoIDPRepositoryImpl implements IDPRepository {
@@ -83,23 +81,68 @@ export class CognitoIDPRepositoryImpl implements IDPRepository {
     return users
   }
 
-  async create(): Promise<User> {
-    throw new Error("Method not implemented.")
-  }
-
-  async update(): Promise<User> {
-    throw new Error("Method not implemented.")
-  }
-
-  async getBySubject(cognitoSubject: string): Promise<UserIDP | undefined> {
+  async getBySubject(IDPuserId: string): Promise<UserIDP | undefined> {
     const users = await this.listUsersWithFilter(1, {
       filterAttribute: "sub",
       filterType: "exact",
-      filterValue: cognitoSubject,
+      filterValue: IDPuserId,
     })
     if (users.length !== 1) {
       return undefined
     }
     return users[0]
+  }
+}
+
+export class Auth0IDPRepositoryImpl implements IDPRepository {
+  private readonly client: ManagementClient
+  constructor() {
+    this.client = new ManagementClient({
+      domain: "onlineweb.eu.auth0.com",
+      clientId: "p8yuWw2OfVYgbZG0HkXqKaIGZJpFTJN2",
+      clientSecret: "pk5c4R2XW5AshfYUFT1d-H-hKpoStjdBXxj0aGCqasXO34WOrm9nZulpiwSHNS8i",
+    })
+  }
+
+  async getAll(limit: number): Promise<UserIDP[]> {
+    const users = await this.client.users.getAll({
+      per_page: limit,
+    })
+
+    return users.data.map((user) => ({
+      email: user.email,
+      familyName: user.family_name,
+      gender: "male",
+      givenName: user.given_name,
+      subject: user.user_id,
+    }))
+  }
+
+  async search(searchQuery: string, take: number): Promise<UserIDP[]> {
+    const users = await this.client.users.getAll({
+      per_page: take,
+      q: `given_name:${searchQuery}*`,
+    })
+
+    return users.data.map((user) => ({
+      email: user.email,
+      familyName: user.family_name,
+      gender: "male",
+      givenName: user.given_name,
+      subject: user.user_id,
+    }))
+  }
+
+  async getBySubject(IDPuserId: string): Promise<UserIDP | undefined> {
+    const res = await this.client.users.get({
+      id: IDPuserId,
+    })
+    return {
+      email: res.data.email,
+      familyName: res.data.family_name,
+      gender: "male",
+      givenName: res.data.given_name,
+      subject: res.data.user_id,
+    }
   }
 }

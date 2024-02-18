@@ -4,9 +4,9 @@ import { appRouter, createContextInner, transformer } from "@dotkomonline/gatewa
 import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
-import { trpc } from "@/utils/trpc"
 import { AttendanceGroup } from "./AttendanceGroup"
 import { useSessionWithDBUser } from ".."
+import { trpc } from "@/utils/trpc"
 
 interface StatusCardProps {
   title: string
@@ -118,9 +118,6 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
   const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation()
   const attendMutation = trpc.event.attendance.registerForEvent.useMutation()
-  // const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
-  // const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
-  // const utils = trpc.useContext()
   const user = useSessionWithDBUser()
 
   const STATUS = "OPEN"

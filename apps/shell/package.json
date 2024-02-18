@@ -1,0 +1,15 @@
+{
+  "name": "@dotkomonline/shell",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "dotenv -e .env -- tsx src/index.ts"
+  },
+  "dependencies": {
+    "@dotkomonline/core": "workspace:*",
+    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/types": "workspace:*"
+  },
+  "devDependencies": {
+  }
+}

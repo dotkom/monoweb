@@ -41,7 +41,7 @@ import { ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-reposit
 import { ArticleServiceImpl } from "./article/article-service"
 import { ArticleTagRepositoryImpl } from "./article/article-tag-repository"
 import { s3RepositoryImpl } from "../lib/s3/s3-repository"
-import { CognitoIDPRepositoryImpl } from "../lib/IDP-repository"
+import { Auth0IDPRepositoryImpl, CognitoIDPRepositoryImpl } from "../lib/IDP-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -75,12 +75,13 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
   const cognitoIDPRepository = new CognitoIDPRepositoryImpl()
+  const auth0IDPRepositoryImpl = new Auth0IDPRepositoryImpl()
 
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository,
-    cognitoIDPRepository
+    auth0IDPRepositoryImpl
   )
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository, userService)
   const eventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -131,5 +132,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
+    cognitoIDPRepository,
+    auth0IDPRepositoryImpl,
   }
 }

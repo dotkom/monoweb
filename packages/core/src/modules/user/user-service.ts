@@ -79,8 +79,8 @@ export class UserServiceImpl implements UserService {
     return this.mergeUsersArray(usersDB, usersIDP)
   }
 
-  async searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor) {
-    const usersIDP = await this.idpRepository.search(searchQuery, take, cursor)
+  async searchUsersFromIDP(searchQuery: string, take: number) {
+    const usersIDP = await this.idpRepository.search(searchQuery, take)
     const usersDB = await Promise.all(usersIDP.map(async (user) => this.userRepository.getBySubject(user.subject)))
     return this.mergeUsersArray(usersDB, usersIDP)
   }
