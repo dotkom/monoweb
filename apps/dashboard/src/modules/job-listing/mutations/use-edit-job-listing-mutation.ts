@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useEditJobListingMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.jobListing.edit.useMutation({
     onMutate: () => {
       notification.loading({
@@ -16,7 +16,6 @@ export const useEditJobListingMutation = () => {
         title: "Stillingsannonse oppdatert",
         message: `Stillingsannonsen "${data.title}" har blitt oppdatert.`,
       })
-      utils.jobListing.all.invalidate()
     },
     onError: (err) => {
       notification.fail({

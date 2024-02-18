@@ -5,10 +5,9 @@ All infrastructure as code defined in Terraform lies here.
 Make sure you are using Terraform Workspaces to separate deployment environments. For a primer on workspaces in
 terraform, see https://developer.hashicorp.com/terraform/language/state/workspaces.
 
-Monoweb deploys to three environments:
+Monoweb deploys to two environments:
 
 - dev
-- stg
 - prd
 
 Each environment maps to the environment with the same name in the Doppler workspace.

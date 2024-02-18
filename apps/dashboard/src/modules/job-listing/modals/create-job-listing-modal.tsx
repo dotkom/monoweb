@@ -1,7 +1,7 @@
 import { type FC } from "react"
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { useJobListingWriteForm } from "src/app/(dashboard)/job-listing/write-form"
 import { useCreateJobListingMutation } from "../mutations/use-create-job-listing-mutation"
+import { useJobListingWriteForm } from "../../../app/(dashboard)/job-listing/write-form"
 
 export const CreateJobListingModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)

@@ -9,16 +9,6 @@ import { type FormSchema } from "./form-schema"
 import { CheckboxWithTooltip } from "./checkbox"
 import { Section } from "../components/section"
 
-const jobListingTooltip = (
-  <Section>
-    <Text>
-      På <a href="https://online.ntnu.no/career">våre nettsider</a> har vi en karriereside, hvor vi publiserer
-      stillingsannonser på vegne av bedrifter som ønsker å fremme ledige stillinger. Dersom dette er av interesse,
-      ønsker vi gjerne å motta henvendelser via e-post på bedriftskontrakt@online.ntnu.no.
-    </Text>
-  </Section>
-)
-
 const instagramTakeoverTooltip = (
   <Section>
     <Text>
@@ -65,6 +55,17 @@ const techTalksTooltip = (
       seg selv og vise fram sin faglige styrke. Dette vil være spredt utover hele dagen på et frokostseminar,
       lunsj-event eller kvelds-event. Formatet på arrangementet kan variere fra år til år. Vi begynner å kontakte
       aktuelle bedrifter på slutten av høstsemesteret.
+    </Text>
+  </Section>
+)
+
+const femalesInTechTooltip = (
+  <Section>
+    <Text>
+      FeminITs rolle i Online er å fremme fellesskap og nettverksbygging blant jenter og ikke-binære studenter. Våre
+      samarbeidsarrangementer er designet for å ikke bare inspirere, men også for å gi innsikt i realitetene jenter står
+      overfor i IT-bransjen. Vi ønsker å fremme relevante temaer, bidra til å styrke kompetanse og motivere gjennom å
+      dele verdifulle perspektiver.
     </Text>
   </Section>
 )
@@ -132,7 +133,6 @@ export const Form: FC = () => {
           render={({ field }) => <Checkbox label="Kurs" onCheckedChange={field.onChange} checked={field.value} />}
         />
 
-        <CheckboxWithTooltip name="requestsJobListing" label="Stillingsannonse" tooltip={jobListingTooltip} />
         <CheckboxWithTooltip
           name="requestsInstagramTakeover"
           label="Instagram Takeover"
@@ -140,6 +140,11 @@ export const Form: FC = () => {
         />
         <CheckboxWithTooltip name="requestsTechTalksParticipation" label="Tech Talks" tooltip={techTalksTooltip} />
         <CheckboxWithTooltip name="requestsExcursionParticipation" label="IT-ekskursjonen" tooltip={excursionTooltip} />
+        <CheckboxWithTooltip
+          name="requestsFemalesInTechEvent"
+          label="Samarbeidsarrangement med FeminIT"
+          tooltip={femalesInTechTooltip}
+        />
 
         <Controller
           control={control}

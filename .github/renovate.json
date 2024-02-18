@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "configMigration": true,
+  "extends": ["config:recommended"],
   "packageRules": [
     {
       "matchPackagePatterns": ["^@dotkomonline/"],
@@ -9,14 +10,11 @@
     {
       "description": "Ignore nodejs and pnpm",
       "matchPackageNames": ["node", "pnpm"],
-      "matchManagers": ["npm"],
-      "matchDepTypes": ["engines"],
-      "dependencyDashboardApproval": true,
-      "automerge": false
+      "enabled": false
     }
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": false,
+  "automerge": true,
   "automergeType": "branch"
 }

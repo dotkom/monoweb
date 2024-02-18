@@ -3,7 +3,6 @@ import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const useCreateCompanyMutation = () => {
-  const utils = trpc.useContext()
   const router = useRouter()
   const notification = useQueryNotification()
   return trpc.company.create.useMutation({
@@ -18,7 +17,7 @@ export const useCreateCompanyMutation = () => {
         title: "Bedrift opprettet",
         message: `Bedriften "${data.name}" har blitt opprettet.`,
       })
-      utils.company.all.invalidate()
+
       router.push(`/company/${data.id}`)
     },
     onError: (err) => {

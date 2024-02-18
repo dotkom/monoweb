@@ -23,7 +23,7 @@ export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, erro
 TextInput.displayName = "TextInput"
 
 const input = cva(
-  "border-solid border outline-none focus:border-blue-7 bg-slate-3 rounded-md p-2 focus:ring-2 focus:ring-brand",
+  "border-solid border outline-none focus:border-blue-7 bg-white-3 hover:bg-white-4 active:bg-white-5 rounded-md p-2 focus:ring-2 focus:ring-brand",
   {
     variants: {
       error: {

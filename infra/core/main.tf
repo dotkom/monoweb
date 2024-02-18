@@ -11,3 +11,16 @@ resource "aws_ecrpublic_repository" "pgx_ulid" {
 
   provider = aws.us-east-1
 }
+
+# Required because AWS Cognito requires an A record at the parent domain
+resource "aws_route53_record" "null_record" {
+  name    = "auth.online.ntnu.no"
+  type    = "A"
+  zone_id = data.aws_route53_zone.online.zone_id
+  ttl     = 3600
+  records = ["127.0.0.1"]
+}
+
+resource "aws_route53_zone" "vinstraff_no" {
+  name = "vinstraff.no"
+}

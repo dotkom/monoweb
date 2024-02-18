@@ -3,7 +3,7 @@ import { trpc } from "../../../utils/trpc"
 
 export const useDeregisterForEventMutation = () => {
   const notification = useQueryNotification()
-  const utils = trpc.useContext()
+
   return trpc.event.attendance.deregisterForEvent.useMutation({
     onMutate: () => {
       notification.loading({
@@ -16,7 +16,6 @@ export const useDeregisterForEventMutation = () => {
         title: "Avmelding vellykket",
         message: `Bruker ble meldt av arrangementet.`,
       })
-      utils.event.attendance.get.invalidate()
     },
     onError: (err) => {
       notification.fail({
