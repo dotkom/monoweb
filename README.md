@@ -16,17 +16,21 @@ https://owdocs.vercel.app
    - You can run `pnpm dev --filter=<project>` to run a certain project from root, such as `pnpm dev --filter=web`
 
 ## Environment Setup
+
 The project requires environment variables to run locally. All variables are validated using the env package (located at packages/env/src/env.mjs).
 
 ### Internal Tooling
+
 Internally we use Doppler for our secrets management. Send a message to someone in Dotkom or send a mail to `dotkom@online.ntnu.no` if you believe you should have access.
 
 #### Doppler CLI Setup
-1. Install Doppler CLI: Follow the instructions at Doppler CLI Documentation: https://docs.doppler.com/docs/install-cli
+
+1. Install Doppler CLI: Follow the instructions at [Doppler CLI Documentation](https://docs.doppler.com/docs/install-cli)
 2. Authenticate: Run `doppler login`
 3. Configure environment using `doppler setup`
 
 #### Environment Selection
+
 Our setup includes two environments: dev (development) and prd (production).
 
 Use `doppler setup` to choose your environment.
@@ -34,6 +38,7 @@ Use `doppler setup` to choose your environment.
 **Important note**: The dev environment connects to a shared database. To avoid annoying other devs using this databsae, avoid performing migrations or changing too much data on this database. Set up your own database instance for such operations:
 
 #### Running with the Shared Database
+
 If you choose to use the shared database in the dev environment:
 
 Run this in the root of the repo:
@@ -42,14 +47,15 @@ Run this in the root of the repo:
 This approach is suitable for general development and testing where database modifications are not required.
 
 #### Running the Project with your own database
+
 ```sh
-export DATABASE_URL=<your_database_url>
+export DATABASE_URL="postgres://<username>:<password>@0.0.0.0:5432/<db_name>"
 doppler run --preserve-env pnpm dev
 ```
 
 ### Local Database Setup
-The project uses pgx ulid PostgreSQL extension for ULID support. This needs to be installed in your local database.  For convenience, you can use the docker image: public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3 that includes the necessary extension pre installed.
 
+The project uses pgx ulid PostgreSQL extension for ULID support. This needs to be installed in your local database.  For convenience, you can use the docker image: public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3 that includes the necessary extension pre installed.
 
 ### [Cognito] How to sync user pool with OW
 
