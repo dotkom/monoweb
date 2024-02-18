@@ -43,6 +43,7 @@ resource "aws_route53_record" "auth0_custom_domain" {
 
 resource "auth0_branding" "branding" {
   favicon_url = "https://online.ntnu.no/img/icons/icon-256.png"
+  # this appears to be bugged, TF appears to read it as picture_url?
   logo_url    = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
 
   colors {
@@ -204,8 +205,8 @@ resource "doppler_secret" "auth0_issuer_monoweb" {
 resource "auth0_client" "onlineweb_frontend" {
   app_type = "spa"
   allowed_logout_urls = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:8000"] : [],
-    terraform.workspace == "prd" ? ["https://old.online.ntnu.no/auth/login/"] : [],
+    terraform.workspace == "dev" ? ["http://localhost:8080"] : [],
+    terraform.workspace == "prd" ? ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"] : [],
   ])
   callbacks = flatten([
     terraform.workspace == "dev" ? ["http://localhost:8080/authentication/callback"] : [],
