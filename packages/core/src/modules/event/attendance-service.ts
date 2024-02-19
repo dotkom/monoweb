@@ -16,7 +16,6 @@ export class AttendanceServiceImpl implements AttendanceService {
     return new Date()
   }
   async registerForEvent(userId: UserId, poolId: AttendanceId) {
-    console.log("registering for event: ", userId, poolId)
     const attendee = await this.attendanceRepository.createAttendee({
       attendanceId: poolId,
       userId,

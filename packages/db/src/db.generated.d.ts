@@ -1,4 +1,4 @@
-import type { ColumnType } from "kysely"
+import { type ColumnType } from "kysely"
 
 export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA"
 

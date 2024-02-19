@@ -74,7 +74,6 @@ export const useEventEditForm = ({
       committeeIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
-        // data:
         data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
       }),
       status: createSelectInput({

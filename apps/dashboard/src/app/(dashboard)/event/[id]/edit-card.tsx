@@ -8,15 +8,11 @@ export const EventEditCard: FC = () => {
   const { event, eventCommittees } = useEventDetailsContext()
   const edit = useEditEventWithCommitteesMutation()
   const { committees } = useCommitteeAllQuery()
-  console.log(eventCommittees, "HELLO")
 
   const defaultValues = {
     ...event,
     committeeIds: eventCommittees.map((committee) => committee.id),
   }
-
-  console.log(eventCommittees)
-  console.log("passed in default values", defaultValues)
 
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",

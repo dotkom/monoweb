@@ -4,9 +4,9 @@ import { appRouter, createContextInner, transformer } from "@dotkomonline/gatewa
 import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
+import { trpc } from "@/utils/trpc"
 import { AttendanceGroup } from "./AttendanceGroup"
 import { useSessionWithDBUser } from ".."
-import { trpc } from "@/utils/trpc"
 
 interface StatusCardProps {
   title: string
