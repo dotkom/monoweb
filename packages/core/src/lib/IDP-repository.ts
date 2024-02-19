@@ -99,7 +99,7 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
   private readonly client: ManagementClient
   constructor() {
     this.client = new ManagementClient({
-      domain: env.AUTH0_MANAGEMENT_API_ISSUER,
+      domain: "onlineweb.eu.auth0.com",
       clientId: env.AUTH0_MANAGEMENT_API_CLIENT_ID,
       clientSecret: env.AUTH0_MANAGEMENT_API_CLIENT_SECRET,
     })
