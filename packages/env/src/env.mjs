@@ -15,9 +15,9 @@ export const createEnvironment = (skipValidation = false) =>
       WEB_AUTH0_CLIENT_SECRET: environmentVariableSchema,
       WEB_AUTH0_ISSUER: environmentVariableSchema,
 
-      AUTH0_MANAGEMENT_API_CLIENT_ID: environmentVariableSchema,
-      AUTH0_MANAGEMENT_API_CLIENT_SECRET: environmentVariableSchema,
-      AUTH0_MANAGEMENT_API_ISSUER: environmentVariableSchema,
+      GTX_AUTH0_CLIENT_ID: environmentVariableSchema,
+      GTX_AUTH0_CLIENT_SECRET: environmentVariableSchema,
+      GTX_AUTH0_ISSUER: environmentVariableSchema,
 
       NODE_ENV: z.enum(["development", "test", "production"]).optional(),
       VERCEL_URL: environmentVariableSchema.optional(),
@@ -48,9 +48,9 @@ export const createEnvironment = (skipValidation = false) =>
       WEB_AUTH0_CLIENT_SECRET: process.env.WEB_AUTH0_CLIENT_SECRET,
       WEB_AUTH0_ISSUER: process.env.WEB_AUTH0_ISSUER,
 
-      AUTH0_MANAGEMENT_API_CLIENT_ID: process.env.AUTH0_MANAGEMENT_API_CLIENT_ID,
-      AUTH0_MANAGEMENT_API_CLIENT_SECRET: process.env.AUTH0_MANAGEMENT_API_CLIENT_SECRET,
-      AUTH0_MANAGEMENT_API_ISSUER: process.env.AUTH0_MANAGEMENT_API_ISSUER,
+      GTX_AUTH0_CLIENT_ID: process.env.GTX_AUTH0_CLIENT_ID,
+      GTX_AUTH0_CLIENT_SECRET: process.env.GTX_AUTH0_CLIENT_SECRET,
+      GTX_AUTH0_ISSUER: process.env.GTX_AUTH0_ISSUER,
 
       DATABASE_URL: process.env.DATABASE_URL,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

@@ -50,8 +50,17 @@ export const EventAttendancePage: FC = () => {
   const handleUserClick = async (user: UserIDP) => {
     const dbUser = await dbUserMut.mutateAsync(user.subject)
 
+    if (!dbUser) {
+      notifyFail({
+        title: "Feil",
+        message: "Fant ikke brukeren i databasen",
+      })
+
+      return
+    }
+
     const userAlreadyRegistered = eventAttendance.some((pool) =>
-      pool.attendees.some((attendee) => attendee.userId === dbUser?.id)
+      pool.attendees.some((attendee) => attendee.userId === dbUser.id)
     )
 
     if (userAlreadyRegistered) {
@@ -62,14 +71,6 @@ export const EventAttendancePage: FC = () => {
       return
     }
 
-    if (!dbUser) {
-      notifyFail({
-        title: "Feil",
-        message: "Fant ikke brukeren i databasen",
-      })
-
-      return
-    }
     const pool = eventAttendance.find((pool) => pool.min <= dbUser.studyYear && pool.max > dbUser.studyYear)
 
     if (!pool) {

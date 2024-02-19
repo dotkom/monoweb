@@ -100,8 +100,8 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
   constructor() {
     this.client = new ManagementClient({
       domain: "onlineweb.eu.auth0.com",
-      clientId: env.AUTH0_MANAGEMENT_API_CLIENT_ID,
-      clientSecret: env.AUTH0_MANAGEMENT_API_CLIENT_SECRET,
+      clientId: env.GTX_AUTH0_CLIENT_ID,
+      clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
     })
   }
 
@@ -113,7 +113,7 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
     return users.data.map((user) => ({
       email: user.email,
       familyName: user.family_name,
-      gender: "male",
+      gender: "TODO",
       givenName: user.given_name,
       subject: user.user_id,
     }))
