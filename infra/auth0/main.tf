@@ -388,7 +388,7 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/auth0"],
     {
-      "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+      "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
       "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace])
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
