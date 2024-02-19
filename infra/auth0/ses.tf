@@ -1,6 +1,3 @@
-
-
-
 resource "auth0_email_provider" "amazon_ses_email_provider" {
   name                 = "ses"
   enabled              = true

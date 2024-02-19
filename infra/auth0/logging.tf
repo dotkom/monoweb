@@ -16,8 +16,12 @@ resource "aws_cloudwatch_event_bus" "messenger" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target#cloudwatch-log-group-usage
 resource "aws_cloudwatch_log_group" "log_storage" {
-  name              = "auth0-logs-${terraform.workspace}"
-  retention_in_days = 180
+  name = "auth0-logs-${terraform.workspace}"
+  retention_in_days = {
+    "dev" = 1
+    # TODO: probably shorten?
+    "prd" = 180
+  }[terraform.workspace]
 }
 
 

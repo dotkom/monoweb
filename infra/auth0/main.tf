@@ -1,9 +1,9 @@
 resource "auth0_tenant" "tenant" {
   allow_organization_name_in_authentication_api = false
-  allowed_logout_urls                           = []
+  allowed_logout_urls                           = ["https://online.ntnu.no"]
   default_audience                              = "https://online.ntnu.no"
   default_directory                             = null
-  default_redirection_uri                       = null
+  default_redirection_uri                       = "https://online.ntnu.no"
   enabled_locales                               = ["nb", "en", "no", "nn"]
   friendly_name                                 = "Online, Linjeforeningen for informatikk"
   idle_session_lifetime                         = 72
@@ -18,7 +18,10 @@ resource "auth0_tenant" "tenant" {
 data "auth0_tenant" "tenant" {}
 
 locals {
-  custom_domain = terraform.workspace == "prd" ? "id.online.ntnu.no" : "dev.id.online.ntnu.no"
+  custom_domain = {
+    "dev" = "dev.id.online.ntnu.no"
+    "prd" = "id.online.ntnu.no"
+  }[terraform.workspace]
 }
 
 # we cannot set that this is the domain used in email here.
@@ -44,7 +47,7 @@ resource "aws_route53_record" "auth0_custom_domain" {
 resource "auth0_branding" "branding" {
   favicon_url = "https://online.ntnu.no/img/icons/icon-256.png"
   # this appears to be bugged, TF appears to read it as picture_url?
-  logo_url    = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
+  logo_url = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
 
   colors {
     # Online-orange
@@ -115,16 +118,16 @@ resource "auth0_resource_server" "online" {
 
 resource "auth0_client" "vengeful_vineyard_frontend" {
   app_type = "regular_web"
-  callbacks = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:3000"] : [],
-    terraform.workspace == "prd" ? [] : [],
-  ])
+  callbacks = {
+    "dev" = ["http://localhost:3000"]
+    "prd" = []
+  }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
   name                          = "Vengeful Vineyard${terraform.workspace == "dev" ? " Dev" : ""}"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
   oidc_conformant               = true
-  
+
   jwt_configuration {
     alg = "RS256"
   }
@@ -204,15 +207,15 @@ resource "doppler_secret" "auth0_issuer_monoweb" {
 
 resource "auth0_client" "onlineweb_frontend" {
   app_type = "spa"
-  allowed_logout_urls = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:8080"] : [],
-    terraform.workspace == "prd" ? ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"] : [],
-  ])
-  callbacks = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:8080/authentication/callback"] : [],
-    terraform.workspace == "prd" ? ["https://online.ntnu.no/authentication/callback"] : [],
-  ])
-  grant_types                   = ["authorization_code", "refresh_token"]
+  allowed_logout_urls = {
+    "dev" = ["http://localhost:8080"]
+    "prd" = ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"]
+  }[terraform.workspace]
+  callbacks = {
+    "dev" = ["http://localhost:8080/authentication/callback"]
+    "prd" = ["https://online.ntnu.no/authentication/callback"]
+  }[terraform.workspace]
+  grant_types                   = ["authorization_code", "implicit", "refresh_token"]
   name                          = "OnlineWeb Frontend${terraform.workspace == "dev" ? " Dev" : ""}"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
@@ -318,16 +321,16 @@ resource "auth0_resource_server" "auth0_management_api" {
 
 resource "auth0_client" "onlineweb4" {
   allowed_clients = []
-  allowed_logout_urls = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:8000", "http://127.0.0.1:8000"] : [],
-    terraform.workspace == "prd" ? ["https://online.ntnu.no"] : [],
-  ])
+  allowed_logout_urls = {
+    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
+    "prd" = ["https://online.ntnu.no"]
+  }[terraform.workspace]
   allowed_origins = []
   app_type        = "regular_web"
-  callbacks = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"] : [],
-    terraform.workspace == "prd" ? ["https://online.ntnu.no/auth0/callback"] : [],
-  ])
+  callbacks = {
+    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
+    "prd" = ["https://online.ntnu.no/auth0/callback"]
+  }[terraform.workspace]
   grant_types     = ["authorization_code", "client_credentials", "refresh_token"]
   name            = "OnlineWeb4${terraform.workspace == "dev" ? " Dev" : ""}"
   is_first_party  = true
@@ -355,15 +358,22 @@ resource "auth0_client" "monoweb_web" {
   allowed_logout_urls = []
   allowed_origins     = []
   app_type            = "regular_web"
-  callbacks = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:3000/api/auth/callback/auth0"] : [],
-    terraform.workspace == "prd" ? [] : [],
-  ])
+  # you go here if you decline an auth grant
+  initiate_login_uri = "https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"
+  callbacks = concat(
+    ["https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"],
+    {
+      "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+      "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
+  }[terraform.workspace])
 
-  grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
+  grant_types     = ["authorization_code", "refresh_token"]
   is_first_party  = true
   name            = "Monoweb Web${terraform.workspace == "dev" ? " Dev" : ""}"
   oidc_conformant = true
+
+  # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
+  organization_require_behavior = "no_prompt"
   jwt_configuration {
     alg = "RS256"
   }
@@ -375,13 +385,16 @@ data "auth0_client" "monoweb_web" {
 
 resource "auth0_client" "monoweb_dashboard" {
   app_type = "regular_web"
-  callbacks = flatten([
-    terraform.workspace == "dev" ? ["http://localhost:3000/api/auth/callback/auth0"] : [],
-    terraform.workspace == "prd" ? [] : [],
-  ])
+  callbacks = concat(
+    ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/auth0"],
+    {
+      "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+      "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
+  }[terraform.workspace])
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
   name            = "Monoweb Dashboard${terraform.workspace == "dev" ? " Dev" : ""}"
   oidc_conformant = true
+  is_first_party  = true
 
   jwt_configuration {
     alg = "RS256"
@@ -429,7 +442,6 @@ resource "auth0_pages" "pages" {
   }
 }
 
-
 resource "auth0_role" "dotkom" {
   description = "Test"
   name        = "Dotkom"
@@ -438,9 +450,6 @@ resource "auth0_role" "dotkom" {
 resource "auth0_client_grant" "auth0_account_management_api_management_client_https_onlineweb_eu_auth0_com_api_v2" {
   audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
   client_id = auth0_client.auth0_account_management_api_management_client.client_id
-  depends_on = [
-    auth0_client.auth0_account_management_api_management_client
-  ]
   scopes = [
     "read:client_grants",
     "create:client_grants",
