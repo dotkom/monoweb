@@ -3,6 +3,7 @@ import {
   ListUsersCommand,
   type ListUsersCommandInput,
 } from "@aws-sdk/client-cognito-identity-provider"
+import { env } from "@dotkomonline/env"
 import { UserIDPSchema, type UserIDP } from "@dotkomonline/types"
 import { ManagementClient } from "auth0"
 
@@ -98,9 +99,9 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
   private readonly client: ManagementClient
   constructor() {
     this.client = new ManagementClient({
-      domain: "onlineweb.eu.auth0.com",
-      clientId: "p8yuWw2OfVYgbZG0HkXqKaIGZJpFTJN2",
-      clientSecret: "pk5c4R2XW5AshfYUFT1d-H-hKpoStjdBXxj0aGCqasXO34WOrm9nZulpiwSHNS8i",
+      domain: env.AUTH0_MANAGEMENT_API_ISSUER,
+      clientId: env.AUTH0_MANAGEMENT_API_CLIENT_ID,
+      clientSecret: env.AUTH0_MANAGEMENT_API_CLIENT_SECRET,
     })
   }
 

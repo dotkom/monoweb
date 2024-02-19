@@ -4,11 +4,11 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { type FC } from "react"
-import { EventAttendancePage } from "./attendance-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { ExtrasPage } from "./extras-page"
 import { useEventDetailsContext } from "./provider"
+import { EventAttendancePage } from "./attendance-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
@@ -63,7 +63,7 @@ export default function EventDetailsPage() {
         <Title>{event.title}</Title>
       </Group>
 
-      <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
+      <Tabs defaultValue={SIDEBAR_LINKS[0].slug} keepMounted={false}>
         <Tabs.List>
           {SIDEBAR_LINKS.map(({ label, icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon icon={icon} width={14} height={14} />}>
