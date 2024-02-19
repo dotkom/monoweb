@@ -148,6 +148,7 @@ locals {
   monoweb = {
     web       = data.auth0_client.monoweb_web
     dashboard = data.auth0_client.monoweb_dashboard
+    gtx       = data.auth0_client.gtx
   }
 }
 
@@ -317,6 +318,33 @@ resource "auth0_resource_server" "auth0_management_api" {
   identifier  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
   name        = "Auth0 Management API"
   signing_alg = "RS256"
+}
+
+resource "auth0_client" "gtx" {
+  allowed_clients = []
+  allowed_origins = []
+  app_type        = "non_interactive" # this is a machine to machine application
+  grant_types     = ["client_credentials"]
+  name            = "gtx"
+  is_first_party  = true
+  oidc_conformant = true
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
+data "auth0_client" "gtx" {
+  client_id = auth0_client.gtx.client_id
+}
+
+resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
+  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+  client_id = auth0_client.gtx.client_id
+  scopes = [
+    "read:users",
+    "read:user_idp_tokens"
+  ]
 }
 
 resource "auth0_client" "onlineweb4" {
