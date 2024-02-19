@@ -1,3 +1,4 @@
+// TODO: Rename and move this
 module "gradestats_app_repository" {
   source = "../aws-ecr-repository"
 

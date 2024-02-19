@@ -1,8 +1,8 @@
 locals {
   vengeful_project_name       = "vengeful-vineyard-${terraform.workspace}"
-  vengeful_domain_name        = "${terraform.workspace}.redwine.online.ntnu.no"
-  vengeful_server_domain_name = "api.${terraform.workspace}.redwine.online.ntnu.no"
-  zone_id                     = data.aws_route53_zone.online.zone_id
+  vengeful_domain_name        = terraform.workspace == "prd" ? "vinstraff.no" : "${terraform.workspace}.vinstraff.no"
+  vengeful_server_domain_name = terraform.workspace == "prd" ? "api.vinstraff.no" : "${terraform.workspace}.api.vinstraff.no"
+  zone_id                     = data.aws_route53_zone.vinstraff.zone_id
 }
 
 module "vengeful_database" {
@@ -26,7 +26,7 @@ module "vengeful_vineyard_server_certificate" {
 module "vengeful_vineyard_server" {
   source = "../modules/aws-lightsail-container-service"
 
-  dns_zone_id           = data.aws_route53_zone.online.zone_id
+  dns_zone_id           = data.aws_route53_zone.vinstraff.zone_id
   public_domain_name    = local.vengeful_server_domain_name
   service_name          = "vengeful-server-${terraform.workspace}"
   environment_variables = data.doppler_secrets.vengeful.map
