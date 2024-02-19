@@ -37,7 +37,6 @@ provider "auth0" {
 }
 
 provider "aws" {
-  alias  = "eu-north-1"
   region = "eu-north-1"
 
   default_tags {
@@ -47,14 +46,6 @@ provider "aws" {
     }
   }
 }
-
-data "aws_route53_zone" "online" {
-  name = "online.ntnu.no"
-}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
 
 locals {
   valid_workspaces = {
