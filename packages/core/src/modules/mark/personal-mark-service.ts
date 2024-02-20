@@ -32,8 +32,8 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     return personalMarks
   }
 
-  async getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]> {
-    const personalMarks = await this.personalMarkRepository.getByMarkId(markId)
+  async getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getByMarkId(markId, take, cursor)
     return personalMarks
   }
 
