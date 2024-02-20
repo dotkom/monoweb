@@ -35,6 +35,8 @@ const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServ
     }
   }, [])
 
+  console.log(products)
+
   // render product
   return (
     <div>

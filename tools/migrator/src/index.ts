@@ -72,6 +72,7 @@ program
     }
 
     if (res.error) {
+      console.dir(res.error, { depth: null })
       logger.warn("Error while running migrations:")
       logger.warn(JSON.stringify(res.error))
       process.exit(1)
