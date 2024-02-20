@@ -16,6 +16,21 @@ const links: MenuLink[] = [
     href: "/career",
   },
   {
+    title: "Om oss",
+    items: [
+      {
+        title: "Interessegrupper",
+        href: "#",
+        description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
+      },
+      {
+        title: "Om Linjeforeningen Online",
+        href: "#",
+        description: "Informasjon om Linjeforeningen",
+      },
+    ],
+  },
+  {
     title: "For bedrifter",
     items: [
       { title: "Kontakt", href: "/company-info", description: "Kontakt Linjeforening" },
