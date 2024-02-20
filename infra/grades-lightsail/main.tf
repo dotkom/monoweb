@@ -51,7 +51,7 @@ module "gradestats_web" {
   public_domain_name    = local.app_public_domain_name
   service_name          = "gradestats-web-${terraform.workspace}"
   environment_variables = data.doppler_secrets.grades.map
-  image_tag             = "0.1.1"
+  image_tag             = "0.1.2"
 
   certificate_domain_validation_options = module.gradestats_web_certificate.certificate_domain_validation_options
   certificate_name                      = module.gradestats_web_certificate.certificate_name
