@@ -47,7 +47,7 @@ export const EventAttendancePage: FC = () => {
     },
   })
 
-  const handleUserClick = async (user: UserIDP) => {
+  const handleAttendUser = async (user: UserIDP) => {
     const dbUser = await dbUserMut.mutateAsync(user.subject)
 
     if (!dbUser) {
@@ -90,7 +90,7 @@ export const EventAttendancePage: FC = () => {
         <Title mb={10} order={3}>
           Meld på bruker
         </Title>
-        <UserSearch onSubmit={handleUserClick} />
+        <UserSearch onSubmit={handleAttendUser} />
       </Box>
       <Divider my={32} />
       <Box>
