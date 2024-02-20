@@ -1,47 +1,47 @@
-import { type Database } from "@dotkomonline/db"
 import { type Kysely } from "kysely"
-import { ArticleRepositoryImpl } from "./article/article-repository"
-import { ArticleServiceImpl } from "./article/article-service"
-import { ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
-import { ArticleTagRepositoryImpl } from "./article/article-tag-repository"
+import { type Database } from "@dotkomonline/db"
+import { EventRepositoryImpl } from "./event/event-repository"
 import { CommitteeRepositoryImpl } from "./committee/committee-repository"
+import { CompanyRepositoryImpl } from "./company/company-repository"
+import { EventCompanyRepositoryImpl } from "./event/event-company-repository"
+import { AttendanceRepositoryImpl } from "./event/attendance-repository"
+import { UserRepositoryImpl } from "./user/user-repository"
+import { ProductRepositoryImpl } from "./payment/product-repository"
+import { PaymentRepositoryImpl } from "./payment/payment-repository"
+import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-provider-repository"
+import { RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
+import { MarkRepositoryImpl } from "./mark/mark-repository"
+import { PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
+import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository"
+import { NotificationPermissionsRepositoryImpl } from "./user/notification-permissions-repository"
+import { UserServiceImpl } from "./user/user-service"
+import { EventServiceImpl } from "./event/event-service"
+import { AttendanceServiceImpl } from "./event/attendance-service"
 import { CommitteeServiceImpl } from "./committee/committee-service"
+import { CompanyServiceImpl } from "./company/company-service"
+import { EventCompanyServiceImpl } from "./event/event-company-service"
+import { ProductServiceImpl } from "./payment/product-service"
+import { PaymentServiceImpl } from "./payment/payment-service"
+import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service"
+import { RefundRequestServiceImpl } from "./payment/refund-request-service"
+import { MarkServiceImpl } from "./mark/mark-service"
+import { PersonalMarkServiceImpl } from "./mark/personal-mark-service"
 import { CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { CompanyEventServiceImpl } from "./company/company-event-service"
-import { CompanyRepositoryImpl } from "./company/company-repository"
-import { CompanyServiceImpl } from "./company/company-service"
-import { AttendanceRepositoryImpl } from "./event/attendance-repository"
-import { AttendanceServiceImpl } from "./event/attendance-service"
-import { EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
 import { EventCommitteeServiceImpl } from "./event/event-committee-service"
-import { EventCompanyRepositoryImpl } from "./event/event-company-repository"
-import { EventCompanyServiceImpl } from "./event/event-company-service"
-import { EventRepositoryImpl } from "./event/event-repository"
-import { EventServiceImpl } from "./event/event-service"
-import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
-import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-location-repository"
+import { EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
 import { JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { JobListingServiceImpl } from "./job-listing/job-listing-service"
-import { MarkRepositoryImpl } from "./mark/mark-repository"
-import { MarkServiceImpl } from "./mark/mark-service"
-import { PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
-import { PersonalMarkServiceImpl } from "./mark/personal-mark-service"
+import { JobListingLocationRepositoryImpl } from "./job-listing/job-listing-location-repository"
+import { JobListingLocationLinkRepositoryImpl } from "./job-listing/job-listing-location-link-repository"
 import { OfflineRepositoryImpl } from "./offline/offline-repository"
 import { OfflineServiceImpl } from "./offline/offline-service"
-import { PaymentRepositoryImpl } from "./payment/payment-repository"
-import { PaymentServiceImpl } from "./payment/payment-service"
-import { ProductPaymentProviderRepositoryImpl } from "./payment/product-payment-provider-repository"
-import { ProductPaymentProviderServiceImpl } from "./payment/product-payment-provider-service"
-import { ProductRepositoryImpl } from "./payment/product-repository"
-import { ProductServiceImpl } from "./payment/product-service"
-import { RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
-import { RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { NotificationPermissionsRepositoryImpl } from "./user/notification-permissions-repository"
-import { PrivacyPermissionsRepositoryImpl } from "./user/privacy-permissions-repository"
-import { UserRepositoryImpl } from "./user/user-repository"
-import { UserServiceImpl } from "./user/user-service"
+import { ArticleRepositoryImpl } from "./article/article-repository"
+import { ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
+import { ArticleServiceImpl } from "./article/article-service"
+import { ArticleTagRepositoryImpl } from "./article/article-tag-repository"
 import { s3RepositoryImpl } from "../lib/s3/s3-repository"
-import { Auth0IDPRepositoryImpl } from "../lib/IDP-repository"
+import { Auth0IDPRepositoryImpl, type IDPRepository } from "../lib/IDP-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -74,13 +74,13 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
-  const auth0IDPRepositoryImpl = new Auth0IDPRepositoryImpl()
+  const auth0Repository: IDPRepository = new Auth0IDPRepositoryImpl()
 
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository,
-    auth0IDPRepositoryImpl
+    auth0Repository
   )
   const eventService = new EventServiceImpl(eventRepository, attendanceRepository, userService)
   const eventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -131,6 +131,5 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
-    auth0IDPRepositoryImpl,
   }
 }

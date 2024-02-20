@@ -51,9 +51,7 @@ export const userRouter = t.router({
     .mutation(async ({ input, ctx }) => ctx.userService.updateNotificationPermissionsForUserId(input.id, input.data)),
   searchUsersFromIDP: protectedProcedure
     .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) =>
-      ctx.userService.searchUsersFromIDP(input.searchQuery, input.paginate.take, input.paginate.cursor)
-    ),
+    .query(async ({ input, ctx }) => ctx.userService.searchUsersFromIDP(input.searchQuery, input.paginate.take)),
   getBySubFromIDP: protectedProcedure
     .input(z.array(UserSchema.shape.id))
     .mutation(async ({ input, ctx }) => ctx.userService.getUserBySubjectIDP(input)),
