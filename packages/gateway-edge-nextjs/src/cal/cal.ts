@@ -5,6 +5,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/src/web.app"
+import jwt from 'jsonwebtoken';
 
 const helpers = createServerSideHelpers({
   router: appRouter,
@@ -64,20 +65,29 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const userid = req.query.user as string
-  if (!userid) {
-    res.status(400).json({ message: "Missing user" })
+  const token = req.query.user as string
+  if (!token) {
+    res.status(400).json({ message: "Missing token" })
     return
   }
 
-  // TODO figure out some auth here?
-  // const user = await helpers.user.all.fetch()
-  // console.log(user)
+  const cal_key = process.env.CAL_KEY;
+  if (!cal_key) {
+    res.status(500).json({ message: "Missing key" })
+  }
+
+  let userid: string = "";
+  try {
+    userid = jwt.verify(token, cal_key as string) as string;
+  } catch {
+    res.status(400).json({ message: "bad key" })
+  }
+
 
   const events = await helpers.event.allByUserId.fetch({ id: userid })
   const instance = ical({ name: `${userid} online kalender` })
 
-  events.forEach((event) => {
+  events.forEach((event: any) => {
     instance.createEvent(toICal(event))
     instance.createEvent(toICal(toRegistration(event)))
   })
@@ -85,7 +95,7 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).send(instance.toString())
 }
 
-// sign it without any question
+// make a token for the signed in user
 export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.status(405).end()
@@ -98,7 +108,14 @@ export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
     res.status(400).json({ message: "Not signed in" })
   }
 
-  res.status(200).json({ authed_id })
+  const cal_key = process.env.CAL_KEY;
+  if (!cal_key) {
+    res.status(500).json({ message: "Missing key" })
+  }
+
+  const token = jwt.sign(authed_id as string, cal_key as string, {});
+
+  res.status(200).json({ token })
 }
 
 function toICal(event: Pick<Event, "description" | "end" | "id" | "location" | "start" | "title">): ICalEventData {
