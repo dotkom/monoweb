@@ -1,8 +1,9 @@
 import { Box, Button, Checkbox, NumberInput, Title } from "@mantine/core"
 import { modals, type ContextModalProps } from "@mantine/modals"
-import { useState, type FC } from "react"
+import React, { useState, type FC } from "react"
 import { notifyComplete, notifyFail } from "../../../app/notifications"
 import { trpc } from "../../../utils/trpc"
+import { useEventAttendanceGetQuery } from "../queries/use-event-attendance-get-query"
 
 const YearForm = ({
   toAddNum,
@@ -42,12 +43,12 @@ const poolOverlaps = (pools: { min: number; max: number }[]): boolean =>
 const isConsecutive = (arr: number[]): boolean => arr.every((num, idx) => idx === 0 || num === arr[idx - 1] + 1)
 
 interface PoolModalProps {
-  existingPools: { min: number; max: number }[]
   eventId: string
 }
 
 export const CreatePoolModal: FC<ContextModalProps<PoolModalProps>> = ({ context, id, innerProps }) => {
   const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
+  const { eventAttendance: existingPools } = useEventAttendanceGetQuery(innerProps.eventId)
 
   const onSubmit = (values: { min: number; max: number; limit: number }) => {
     addAttendance({
@@ -89,7 +90,7 @@ export const CreatePoolModal: FC<ContextModalProps<PoolModalProps>> = ({ context
   }
 
   const checkOverlaps = (min: number, max: number) => {
-    const overlapsWithExistingPools = poolOverlaps([...innerProps.existingPools, { min, max }])
+    const overlapsWithExistingPools = poolOverlaps([...existingPools, { min, max }])
     if (overlapsWithExistingPools) {
       throw new Error("Klassetrinnene overlapper med en eksisterende pulje")
     }
@@ -146,13 +147,12 @@ export const CreatePoolModal: FC<ContextModalProps<PoolModalProps>> = ({ context
 }
 
 export const useCreatePoolModal =
-  ({ existingPools, eventId }: PoolModalProps) =>
+  ({ eventId }: PoolModalProps) =>
   () =>
     modals.openContextModal({
       modal: "event/attendance/create-pool",
       title: "Ny pulje",
       innerProps: {
-        existingPools,
         eventId,
       },
     })

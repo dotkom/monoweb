@@ -17,7 +17,7 @@ export const EventAttendancePage: FC = () => {
   const { eventAttendance } = useEventAttendanceGetQuery(event.id)
   const registerForEvent = useRegisterForEventMutation()
   const dbUserMut = trpc.user.getBySubAsync.useMutation()
-  const openPoolModal = useCreatePoolModal({ eventId: event.id, existingPools: eventAttendance })
+  const openPoolModal = useCreatePoolModal({ eventId: event.id })
 
   const GeneralAttributesForm = useFormBuilder({
     schema: z.object({
