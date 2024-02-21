@@ -17,7 +17,7 @@ export interface EventRepository {
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: Kysely<Database>) { }
 
   async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
@@ -78,6 +78,9 @@ export class EventRepositoryImpl implements EventRepository {
   }
 
   async getByIds(id: string[]): Promise<Event[]> {
+    if (id.length == 0) {
+      return [];
+    }
     const events = await this.db.selectFrom("event").where("id", "in", id).selectAll().execute()
     return events.map((e) => mapToEvent(e))
   }
