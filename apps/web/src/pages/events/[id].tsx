@@ -4,9 +4,9 @@ import { appRouter, createContextInner, transformer } from "@dotkomonline/gatewa
 import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
-import { trpc } from "@/utils/trpc"
 import { AttendanceGroup } from "./AttendanceGroup"
 import { useSessionWithDBUser } from ".."
+import { trpc } from "@/utils/trpc"
 
 interface StatusCardProps {
   title: string
@@ -116,8 +116,17 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   const { id } = props
   const { data: event } = trpc.event.get.useQuery(id)
   const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
-  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation()
-  const attendMutation = trpc.event.attendance.registerForEvent.useMutation()
+  const utils = trpc.useUtils()
+  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation({
+    onSuccess: () => {
+      utils.event.attendance.get.invalidate({ eventId: id })
+    },
+  })
+  const attendMutation = trpc.event.attendance.registerForEvent.useMutation({
+    onSuccess: () => {
+      utils.event.attendance.get.invalidate({ eventId: id })
+    },
+  })
   const user = useSessionWithDBUser()
 
   const STATUS = "OPEN"
@@ -149,14 +158,14 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
       return
     }
 
-    attendMutation.mutateAsync({ poolId: myGroups.id, userId: user.user.id })
+    attendMutation.mutate({ poolId: myGroups.id, userId: user.user.id })
   }
 
   const unAttend = () => {
     if (!attendee || !myGroups) {
       return
     }
-    unattendMutation.mutateAsync({ attendanceId: myGroups?.id, userId: user.user.id || "" })
+    unattendMutation.mutate({ attendanceId: myGroups?.id, userId: user.user.id || "" })
   }
 
   return (
