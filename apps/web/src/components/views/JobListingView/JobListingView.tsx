@@ -1,8 +1,8 @@
 import { useState, type FC } from "react"
-import CompanyAdListItem from "../molecules/CompanyAdListItem"
-import CompanyFiltersContainer from "../molecules/CompanyFiltersContainer"
 import { type JobListing } from "@dotkomonline/types"
-import OnlineIcon from "../atoms/OnlineIcon"
+import CompanyAdListItem from "../../molecules/CompanyAdListItem"
+import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
+import OnlineIcon from "../../atoms/OnlineIcon"
 
 interface CareerProps {
   careers: JobListing[]
@@ -10,12 +10,10 @@ interface CareerProps {
 
 export interface EmploymentCheckbox {
   name: string
-  checked: Boolean
+  checked: boolean
 }
 
-const CareerView: FC<CareerProps> = (props: CareerProps) => {
-  // return <div> 404 Siden finnes ikke </div>
-
+const JobListingView: FC<CareerProps> = (props: CareerProps) => {
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")
   const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
@@ -32,12 +30,10 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
     return jobListing.locations.includes(chosenLocation)
   }
 
-  function filterName(jobListing: JobListing){
+  function filterName(jobListing: JobListing) {
     return jobListing.company.name.toLowerCase().startsWith(searchName.toLowerCase())
   }
-  // 1. hvis ingen er valgt, return true
-  // 2. hvis en er valgt, sjekk om den er det samme som joblisting
-  // 3. hvis flere er valgt, sjekk om minst en av dem er det samme som joblisting
+  
   function filterEmployment(jobListing: JobListing) {
     // check if no employment object has checked === true
     if (chosenEmployments.every((employment) => !employment.checked)) {
@@ -52,37 +48,33 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
     })
   }
 
-  function sortDates(jobListing1: JobListing, jobListing2: JobListing){
-    if (chosenSort === "Frist"){
-      if (jobListing1.deadline?.getTime() == null){
+  function sortDates(jobListing1: JobListing, jobListing2: JobListing) {
+    if (chosenSort === "Frist") {
+      if (jobListing1.deadline?.getTime() == null) {
         return -1
-      }
-      else if (jobListing2.deadline?.getTime() == null) {
+      } else if (jobListing2.deadline?.getTime() == null) {
         return 1
       }
-      else{
-        return jobListing1.deadline.getTime() - jobListing2.deadline.getTime();
-      }
-    }
-    else if (chosenSort === "Påmeldingsstart"){
-        return jobListing1.start.getTime() - jobListing2.start.getTime();
-    }
-    else if (chosenSort === "Slutt"){
-      return jobListing1.end.getTime() - jobListing2.end.getTime();
+
+      return jobListing1.deadline.getTime() - jobListing2.deadline.getTime()
+    } else if (chosenSort === "Påmeldingsstart") {
+      return jobListing1.start.getTime() - jobListing2.start.getTime()
+    } else if (chosenSort === "Slutt") {
+      return jobListing1.end.getTime() - jobListing2.end.getTime()
     }
     return 0
   }
 
   return (
     <div>
-      <div className="left-0 z-0 w-full border-b shadow-sm border-slate-7">
-      <div className="p-5 flex flex-row justify-evenly gap-96">
-        <div className="flex flex-col">
-        <h2 className="border-b-0 mt-4">Karrieremuligheter</h2>
-        <p className="text-slate-9 pt-2">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
+      <div className="border-slate-7 left-0 z-0 w-full border-b shadow-sm">
+        <div className="flex flex-row justify-evenly gap-96 p-5">
+          <div className="flex flex-col">
+            <h2 className="mt-4 border-b-0">Karrieremuligheter</h2>
+            <p className="text-slate-9 pt-2">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
+          </div>
+          <OnlineIcon className="float-right h-16 w-16"></OnlineIcon>
         </div>
-        <OnlineIcon className="h-16 w-16 float-right"></OnlineIcon>
-      </div>
       </div>
       <div className="mb-10 mt-10 flex w-screen flex-row justify-center gap-x-5">
         <CompanyFiltersContainer
@@ -96,13 +88,12 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
           setChosenSort={setChosenSort}
         />
         <div className="w-1/2">
-          <div className="flex gap-6 flex-col">
+          <div className="flex flex-col gap-6">
             {props.careers
-              .filter((jobListing) => {
-                return filterLocation(jobListing) && filterEmployment(jobListing) && filterName(jobListing)
-              }).sort((jobListing1,jobListing2) => {
-                return sortDates(jobListing1,jobListing2);
-              })
+              .filter(
+                (jobListing) => filterLocation(jobListing) && filterEmployment(jobListing) && filterName(jobListing)
+              )
+              .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2))
               .map((c, key) => (
                 <div key={key}>
                   <CompanyAdListItem career={c} />
@@ -115,4 +106,4 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => {
   )
 }
 
-export default CareerView
+export default JobListingView
