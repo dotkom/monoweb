@@ -753,6 +753,9 @@ importers:
       next:
         specifier: ^14.0.3
         version: 14.0.4(react-dom@18.2.0)(react@18.2.0)
+      next-auth:
+        specifier: ^4.24.5
+        version: 4.24.5(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       stripe:
         specifier: ^13.11.0
         version: 13.11.0
