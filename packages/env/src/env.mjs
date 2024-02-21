@@ -7,13 +7,13 @@ export const createEnvironment = (skipValidation = false) =>
   createEnv({
     clientPrefix: "NEXT_PUBLIC_",
     server: {
-      DASHBOARD_COGNITO_CLIENT_ID: environmentVariableSchema,
-      DASHBOARD_COGNITO_CLIENT_SECRET: environmentVariableSchema,
-      DASHBOARD_COGNITO_ISSUER: environmentVariableSchema,
+      DASHBOARD_AUTH0_CLIENT_ID: environmentVariableSchema,
+      DASHBOARD_AUTH0_CLIENT_SECRET: environmentVariableSchema,
+      DASHBOARD_AUTH0_ISSUER: environmentVariableSchema,
 
-      WEB_COGNITO_CLIENT_ID: environmentVariableSchema,
-      WEB_COGNITO_CLIENT_SECRET: environmentVariableSchema,
-      WEB_COGNITO_ISSUER: environmentVariableSchema,
+      WEB_AUTH0_CLIENT_ID: environmentVariableSchema,
+      WEB_AUTH0_CLIENT_SECRET: environmentVariableSchema,
+      WEB_AUTH0_ISSUER: environmentVariableSchema,
 
       NODE_ENV: z.enum(["development", "test", "production"]).optional(),
       VERCEL_URL: environmentVariableSchema.optional(),
@@ -36,13 +36,13 @@ export const createEnvironment = (skipValidation = false) =>
       NEXT_PUBLIC_VERCEL_URL: environmentVariableSchema.optional(),
     },
     runtimeEnv: {
-      DASHBOARD_COGNITO_CLIENT_ID: process.env.DASHBOARD_COGNITO_CLIENT_ID,
-      DASHBOARD_COGNITO_CLIENT_SECRET: process.env.DASHBOARD_COGNITO_CLIENT_SECRET,
-      DASHBOARD_COGNITO_ISSUER: process.env.DASHBOARD_COGNITO_ISSUER,
+      DASHBOARD_AUTH0_CLIENT_ID: process.env.DASHBOARD_AUTH0_CLIENT_ID,
+      DASHBOARD_AUTH0_CLIENT_SECRET: process.env.DASHBOARD_AUTH0_CLIENT_SECRET,
+      DASHBOARD_AUTH0_ISSUER: process.env.DASHBOARD_AUTH0_ISSUER,
 
-      WEB_COGNITO_CLIENT_ID: process.env.WEB_COGNITO_CLIENT_ID,
-      WEB_COGNITO_CLIENT_SECRET: process.env.WEB_COGNITO_CLIENT_SECRET,
-      WEB_COGNITO_ISSUER: process.env.WEB_COGNITO_ISSUER,
+      WEB_AUTH0_CLIENT_ID: process.env.WEB_AUTH0_CLIENT_ID,
+      WEB_AUTH0_CLIENT_SECRET: process.env.WEB_AUTH0_CLIENT_SECRET,
+      WEB_AUTH0_ISSUER: process.env.WEB_AUTH0_ISSUER,
 
       DATABASE_URL: process.env.DATABASE_URL,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

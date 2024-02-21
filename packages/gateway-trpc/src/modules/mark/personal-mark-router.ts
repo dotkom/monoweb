@@ -11,7 +11,7 @@ export const personalMarkRouter = t.router({
     ),
   getByMark: protectedProcedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id)),
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id, input.paginate.take)),
   addToUser: protectedProcedure
     .input(PersonalMarkSchema)
     .mutation(async ({ input, ctx }) => ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)),

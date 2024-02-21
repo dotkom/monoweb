@@ -16,7 +16,10 @@ beforeEach(async () => {
   const env = createEnvironment()
   const kysely = createKysely(env)
   const migrator = createMigrator(kysely, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
-  await migrator.migrateToLatest()
+  const result = await migrator.migrateToLatest()
+  if (result.error) {
+    console.warn(`Error running migrations in test: ${result.error}`)
+  }
   containers.push(container)
 })
 

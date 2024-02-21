@@ -33,7 +33,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 const navigationMenuTriggerStyle = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-semibold transition-colors focus:outline-none focus:bg-slate-4 disabled:opacity-50 disabled:pointer-events-none bg-transparent hover:bg-slate-4 data-[state=open]:bg-slate-4 h-10 py-2 px-4 group"
+  "inline-flex items-center justify-center relative rounded-md text-sm font-semibold transition-colors focus:outline-none focus:bg-slate-4 disabled:opacity-50 disabled:pointer-events-none bg-transparent hover:bg-slate-4 data-[state=open]:bg-slate-4 h-10 py-2 px-4 group"
 )
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -51,6 +51,7 @@ const NavigationMenuTrigger = React.forwardRef<
       className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
       aria-hidden="true"
     />
+    <div className="group absolute left-0 top-0 hidden h-[200%] w-full justify-start group-data-[state=open]:block" />
   </NavigationMenuPrimitive.Trigger>
 ))
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
@@ -79,7 +80,7 @@ const NavigationMenuViewport = React.forwardRef<
   <div className={cn("absolute left-0 top-full flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
       className={cn(
-        "origin-top-center data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:zoom-in-90 data-[state=closed]:zoom-out-95 border-slate-12/10 bg-slate-1 dark:bg-slate-5 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border shadow-lg md:w-[var(--radix-navigation-menu-viewport-width)]",
+        "origin-top-center data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:zoom-in-90 data-[state=closed]:zoom-out-95 border-slate-12/10 bg-slate-1 dark:bg-slate-5 relative h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border shadow-lg md:w-[var(--radix-navigation-menu-viewport-width)]",
         className
       )}
       ref={ref}

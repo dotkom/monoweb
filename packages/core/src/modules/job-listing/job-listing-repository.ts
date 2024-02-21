@@ -8,8 +8,8 @@ type JobListingWrite = Insertable<Database["jobListing"]>
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | undefined>
   getAll(take: number, cursor?: Cursor): Promise<JobListing[]>
-  create(values: JobListingWrite): Promise<JobListing | undefined>
-  update(id: JobListingId, data: JobListingWrite): Promise<JobListing>
+  createJobListing(values: JobListingWrite): Promise<JobListing>
+  updateJobListingById(id: JobListingId, data: JobListingWrite): Promise<JobListing>
 }
 
 const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing =>
@@ -34,12 +34,12 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       .groupBy("jobListing.id")
   }
 
-  async create(data: JobListingWrite): Promise<JobListing | undefined> {
-    const jobListing = await this.db.insertInto("jobListing").values(data).returningAll().executeTakeFirst()
-    return jobListing ? this.getById(jobListing.id) : undefined
+  async createJobListing(data: JobListingWrite): Promise<JobListing> {
+    const jobListing = await this.db.insertInto("jobListing").values(data).returningAll().executeTakeFirstOrThrow()
+    return this.getById(jobListing.id)
   }
 
-  async update(id: JobListingId, data: JobListingWrite): Promise<JobListing> {
+  async updateJobListingById(id: JobListingId, data: JobListingWrite): Promise<JobListing> {
     await this.db.updateTable("jobListing").set(data).where("id", "=", id).execute()
     return this.getById(id)
   }
