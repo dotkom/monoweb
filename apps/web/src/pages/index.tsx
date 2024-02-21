@@ -9,8 +9,6 @@ const Home: React.FC = () => {
   const offlinePdfs = offlines.map((pdfs) => pdfs.fileUrl)
   const offlineImgs = offlines.map((imgs) => imgs.imageUrl)
 
-  console.log(offlineImgs)
-
   return (
     <div>
       <p>Homepage</p>

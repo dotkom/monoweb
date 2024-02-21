@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 // import { trpc } from "@/utils/trpc"
 
 interface ImageCarouselProps {
@@ -12,62 +12,55 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
   const [currentSlide, setCurrentSlide] = useState(1)
   const [isHoveredRight, setIsHoveredRight] = useState(false)
   const [isHoveredLeft, setIsHoveredLeft] = useState(false)
-  const imgWidth = 240
+  const imgWidth = 196
   const imgMarginR = 14
+  const imgWMargin = imgWidth + imgMarginR
   const fullImgPerSlide = 4
-  const fourImgWidth = (imgWidth + imgMarginR) * fullImgPerSlide
-  const imgNum = 6
+  const fourImgWidth = imgWMargin * fullImgPerSlide
+  const imgNum = 10
   const imgNumOnLastPage = imgNum % fullImgPerSlide
   const slideNum = Math.ceil(imgNum / fullImgPerSlide)
   const totalImgWidth = (imgWidth + imgMarginR) * imgNum
+
+  const mapRightImage = (lastPageNum: number) => {
+    const mapping = [3, 0, 1, 2]
+    return mapping[lastPageNum]
+  }
 
   const handleLeftButtonClick = () => {
     setCurrentPos((prev) => (prev < fourImgWidth ? 0 : prev - fourImgWidth))
   }
 
   const handleRightButtonClick = () => {
-    // setCurrentPos((prev) => (prev > (slideNum - 1) * fourImgWidth + 960 ? 840 * 2 : prev + fourImgWidth))
     if (currentSlide < slideNum - 1) {
       setCurrentPos((prev) => prev + fourImgWidth)
       setCurrentSlide((prev) => prev + 1)
+      console.log(".")
     } else {
-      switch (imgNumOnLastPage) {
-        case 0: {
-          console.log("0")
-          setCurrentSlide(1)
-          setCurrentPos(fourImgWidth * currentSlide)
-          break
-        }
-        case 1: {
-          console.log("1")
-          setCurrentSlide((prev) => prev + 1)
-          setCurrentPos((prev) => (prev > (slideNum - 1) * fourImgWidth + 960 ? 840 * 2 : prev + fourImgWidth))
-          break
-        }
-        case 2: {
-          console.log("2")
-          setCurrentSlide((prev) => prev + 1)
-          setCurrentPos((prev) => prev + imgWidth + 200)
-          break
-        }
-        case 3: {
-          console.log("3")
-          setCurrentSlide((prev) => prev + 1)
-          setCurrentPos((prev) => (prev > (slideNum - 1) * fourImgWidth + 960 ? 840 * 2 : prev + fourImgWidth))
-          break
-        }
-        default: {
-          console.log("default")
-          setCurrentPos(0)
-          break
-        }
-      }
+      setCurrentSlide((prev) => prev + 1)
+      setCurrentPos((prev) => prev + imgWMargin * mapRightImage(imgNumOnLastPage) + 150)
     }
-
-    // setCurrentPos((prev) =>
-    //   prev + fourImgWidth + 841 > totalImgWidth ? totalImgWidth - fourImgWidth - 110 : prev + fourImgWidth
-    // )
   }
+
+  let renderImages = []
+  renderImages.push(images[0])
+  renderImages.push(images[1])
+  renderImages.push(images[2])
+  renderImages.push(images[3])
+
+  renderImages.push(images[4])
+  renderImages.push(images[5])
+  renderImages.push(images[0])
+  renderImages.push(images[1])
+
+  renderImages.push(images[2])
+  renderImages.push(images[3])
+  // renderImages.push(images[4])
+  // renderImages.push(images[5])
+
+  // renderImages.push(images[0])
+  // renderImages.push(images[1])
+  // renderImages.push(images[2])
 
   // const visibleImages = images.slice(startIndex, startIndex + 5)
   return (
@@ -102,8 +95,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             className="flex w-[960px] transition-transform duration-500"
             style={{ transform: `translateX(-${currentPos}px)`, transitionDuration: "1s" }}
           >
-            {images.map((image, index) => (
-              <img key={index} src={image} alt="Offline" className={`mr-4 w-60 flex-shrink-0`} />
+            {renderImages.map((image, index) => (
+              <img key={index} src={image} alt="Offline" className={`mr-4 w-56 flex-shrink-0`} />
             ))}
           </div>
         </div>
