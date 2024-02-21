@@ -1,6 +1,6 @@
 import { type FormSchema } from "./app/form-schema"
 
-const endpoint = process.env.EMAIL_ENDPOINT ?? "https://dev.gateway.online.ntnu.no/integrations/email"
+const endpoint = process.env.EMAIL_ENDPOINT ?? "https://brevduen.staging.online.ntnu.no/integrations/email"
 const token = process.env.EMAIL_TOKEN ?? "__NO_TOKEN_PROVIDED__"
 
 export const deliverConfirmationEmail = async (form: FormSchema) => {

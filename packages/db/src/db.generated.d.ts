@@ -189,7 +189,7 @@ export interface Offline {
 }
 
 export interface OwUser {
-  cognitoSub: string
+  auth0Sub: string | null
   createdAt: Generated<Timestamp>
   id: Generated<string>
   studyYear: Generated<number>

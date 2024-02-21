@@ -2,7 +2,7 @@ import { type CompanyWrite, type JobListingWrite, type UserWrite } from "@dotkom
 import { addWeeks, addYears } from "date-fns"
 
 export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
-  cognitoSub: "8697a463-46fe-49c2-b74c-f6cc98358298",
+  auth0Sub: "8697a463-46fe-49c2-b74c-f6cc98358298",
   studyYear: 0,
   ...defaults,
 })

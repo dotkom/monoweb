@@ -9,8 +9,10 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --fix .",
     "docker:build": "docker build --platform linux/amd64 -t gateway-email:latest -f Dockerfile ../..",
-    "docker:push:dev": "docker tag gateway-email:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest",
-    "lambda:update:dev": "aws lambda update-function-code --function-name gateway-email-dev --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gateway-email-dev:latest",
+    "docker:push:staging": "docker tag gateway-email:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest",
+    "docker:push:prod": "docker tag gateway-email:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest",
+    "lambda:update:staging": "aws lambda update-function-code --function-name brevduen-staging --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest",
+    "lambda:update:prod": "aws lambda update-function-code --function-name brevduen-prod --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
