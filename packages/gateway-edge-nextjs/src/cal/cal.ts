@@ -3,6 +3,8 @@ import ical, { type ICalEventData } from "ical-generator"
 import { type Event } from "@dotkomonline/types"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../auth/src/web.app"
 
 const helpers = createServerSideHelpers({
   router: appRouter,
@@ -81,6 +83,22 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   })
 
   res.status(200).send(instance.toString())
+}
+
+// sign it without any question
+export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "GET") {
+    res.status(405).end()
+    return
+  }
+
+  const session = await getServerSession(req, res, authOptions);
+  const authed_id = session?.user.id;
+  if (!authed_id) {
+    res.status(400).json({ message: "Not signed in" })
+  }
+
+  res.status(200).json({ authed_id })
 }
 
 function toICal(event: Pick<Event, "description" | "end" | "id" | "location" | "start" | "title">): ICalEventData {
