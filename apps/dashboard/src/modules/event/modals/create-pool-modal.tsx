@@ -8,11 +8,21 @@ import { useEventAttendanceGetQuery } from "../queries/use-event-attendance-get-
 const YearForm = ({
   toAddNum,
   setToAddNum,
+  existingPools,
 }: {
   toAddNum: boolean[]
   setToAddNum: React.Dispatch<React.SetStateAction<boolean[]>>
+  existingPools: { min: number; max: number }[]
 }) => {
+  const getRange = ({ min, max }: { min: number; max: number }): number[] => [
+    ...Array.from({ length: max - min }, (_, i) => min + i),
+  ]
+
+  const occupiedPools = (pools: { min: number; max: number }[]): number[] =>
+    Array.from(new Set(pools.map(getRange).flatMap((x) => x)))
+
   const labels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
+  const occupied = occupiedPools(existingPools)
 
   return (
     <table>
@@ -23,6 +33,7 @@ const YearForm = ({
             <td>
               <Checkbox
                 checked={idx}
+                disabled={occupied.includes(i)}
                 onChange={(e) => {
                   const newToAddNum = [...toAddNum]
                   newToAddNum[i] = e.currentTarget.checked
@@ -36,9 +47,6 @@ const YearForm = ({
     </table>
   )
 }
-
-const poolOverlaps = (pools: { min: number; max: number }[]): boolean =>
-  pools.some((pool, i) => pools.some((otherPool, j) => i !== j && pool.min < otherPool.max && pool.max > otherPool.min))
 
 const isConsecutive = (arr: number[]): boolean => arr.every((num, idx) => idx === 0 || num === arr[idx - 1] + 1)
 
@@ -81,18 +89,10 @@ export const CreatePoolModal: FC<ContextModalProps<PoolModalProps>> = ({ context
 
     checkNumber(min, max)
     checkConsecutive(chosen)
-    checkOverlaps(min, max)
 
     return {
       min,
       max,
-    }
-  }
-
-  const checkOverlaps = (min: number, max: number) => {
-    const overlapsWithExistingPools = poolOverlaps([...existingPools, { min, max }])
-    if (overlapsWithExistingPools) {
-      throw new Error("Klassetrinnene overlapper med en eksisterende pulje")
     }
   }
 
@@ -114,7 +114,7 @@ export const CreatePoolModal: FC<ContextModalProps<PoolModalProps>> = ({ context
   return (
     <Box>
       <Title order={5}>Velg klassetrinn</Title>
-      <YearForm toAddNum={toAddNum} setToAddNum={setToAddNum} />
+      <YearForm toAddNum={toAddNum} setToAddNum={setToAddNum} existingPools={existingPools} />
       <Title order={5}>Kapasitet</Title>
       <NumberInput value={limit} onChange={(value) => setLimit(Number(value))} />
       <Button
