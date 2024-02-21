@@ -1,7 +1,6 @@
-import { describe, vi } from "vitest"
-
-import { Event } from "@dotkomonline/types"
 import { randomUUID } from "crypto"
+import { type Event } from "@dotkomonline/types"
+import { describe, vi } from "vitest"
 import { Kysely } from "kysely"
 import { NotFoundError } from "../../../errors/errors"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
@@ -23,6 +22,7 @@ export const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   waitlist: null,
+  extras: null,
 }
 
 describe("EventService", () => {

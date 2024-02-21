@@ -1,44 +1,54 @@
 import {
-  NotificationPermissions,
-  NotificationPermissionsWrite,
-  PrivacyPermissions,
-  PrivacyPermissionsWrite,
-  User,
-  UserId,
-  UserWrite,
+  type UserId,
+  type NotificationPermissions,
+  type NotificationPermissionsWrite,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserWrite,
 } from "@dotkomonline/types"
-
-import { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { UserRepository } from "./user-repository"
-import { NotificationPermissionsRepository } from "./notification-permissions-repository"
-import { NotFoundError } from "../../errors/errors"
+import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
+import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import { type UserRepository } from "./user-repository"
+import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
-  getUser(id: User["id"]): Promise<User | undefined>
+  getUserById(id: UserId): Promise<User | undefined>
+  getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
+  searchUsers(searchQuery: string, take: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
-  updateUser(id: User["id"], payload: UserWrite): Promise<User>
+  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
-    id: string,
+    id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(
-    private userRepository: UserRepository,
-    private privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly userRepository: UserRepository,
+    private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
   async getAllUsers(limit: number) {
     const users = await this.userRepository.getAll(limit)
     return users
   }
 
-  async getUser(id: User["id"]) {
+  async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
-    if (!user) throw new NotFoundError(`User with ID:${id} not found`)
+    return user
+  }
+
+  async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
+    const users = await this.userRepository.search(searchQuery, take, cursor)
+    return users
+  }
+
+  async getUserBySubject(id: User["cognitoSub"]) {
+    const user = await this.userRepository.getBySubject(id)
     return user
   }
 
@@ -47,9 +57,8 @@ export class UserServiceImpl implements UserService {
     return res
   }
 
-  async updateUser(id: UserId, data: UserWrite) {
+  async updateUser(id: UserId, data: Partial<UserWrite>) {
     const res = await this.userRepository.update(id, data)
-    if (!res) throw new NotFoundError(`User with ID:${id} not found`)
     return res
   }
 

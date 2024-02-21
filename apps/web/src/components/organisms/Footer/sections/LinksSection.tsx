@@ -1,6 +1,5 @@
 import { cva } from "cva"
-
-import { FooterLinkType } from "../Footer"
+import { type FooterLinkType } from "../Footer"
 import { FooterLink } from "../components/FooterLink"
 
 interface LinksSectionProps {

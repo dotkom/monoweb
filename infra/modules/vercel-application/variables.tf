@@ -23,6 +23,12 @@ variable "root_directory" {
   type        = string
 }
 
+variable "environment_variables" {
+  description = "Environment variables to the provisioned website"
+  type        = map(string)
+  default     = {}
+}
+
 variable "preset" {
   description = "Vercel preset"
   type        = string

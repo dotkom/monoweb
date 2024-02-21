@@ -1,33 +1,15 @@
-import { ComponentStory } from "@storybook/react"
-
+import { Story } from "@ladle/react"
 import { TextInput } from "./TextInput"
 
 export default {
-  title: "atoms/TextInput",
-  component: TextInput,
+  title: "TextInput",
 }
 
-const Template: ComponentStory<typeof TextInput> = (args) => {
-  return (
-    <div style={{ padding: "40px", maxWidth: "300px" }}>
-      <TextInput id="name" label="Full name" {...args} />
-    </div>
-  )
-}
-
-export const Default = Template.bind({})
-
-export const RequiredButton = Template.bind({})
-RequiredButton.args = { required: true }
-
-export const Placeholder = Template.bind({})
-Placeholder.args = { placeholder: "Chad Thunder" }
-
-export const Error = Template.bind({})
-Error.args = { error: true, value: "Invalid text" }
-
-export const ErrorWithMessage = Template.bind({})
-ErrorWithMessage.args = { error: "Too short", value: "Shrimp gang" }
-
-export const Disabled = Template.bind({})
-Disabled.args = { disabled: true, value: "Do not touch my pringles" }
+export const Template: Story = () => <TextInput id="name" label="Full name" />
+export const Required: Story = () => <TextInput id="name" label="Full name" required />
+export const Placeholder: Story = () => <TextInput id="name" label="Full name" placeholder="Chad Thunder" />
+export const WithError: Story = () => <TextInput id="name" label="Full name" value="Invalid text" error />
+export const ErrorWithMessage: Story = () => (
+  <TextInput id="name" label="Full name" value="Invalid text" error="Too short" />
+)
+export const Disabled: Story = () => <TextInput id="name" label="Full name" disabled />

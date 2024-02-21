@@ -16,7 +16,9 @@
     "experimentalDecorators": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"],
-    "noErrorTruncation": true
-  }
+    "types": ["vitest/globals"]
+  },
+  "include": ["apps/", "packages/", "tools/"],
+  "types": ["vitest/globals"],
+  "noErrorTruncation": true
 }

@@ -1,15 +1,12 @@
-import { StoryObj } from "@storybook/react"
+import { Story, StoryDefault } from "@ladle/react"
 import { Label } from "./Label"
+import { LabelProps } from "@radix-ui/react-label"
 
 export default {
   title: "Label",
-  component: Label,
-}
-type Story = StoryObj<typeof Label>
+} satisfies StoryDefault<LabelProps>
 
-export const Default: Story = {
-  render: (args) => {
-    return <Label {...args} />
-  },
-  args: { id: "airplane-mode", children: "Airplane mode" },
+export const Default: Story<LabelProps> = (args) => {
+  return <Label {...args} />
 }
+Default.args = { id: "airplane-mode", children: "Airplane mode" }

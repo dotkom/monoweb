@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix .",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage"
   },
@@ -18,17 +19,22 @@
     "@dotkomonline/db": "workspace:*",
     "date-fns": "^2.30.0",
     "kysely": "^0.26.3",
-    "stripe": "^13.9.0",
-    "zod": "^3.22.4"
+    "stripe": "^13.11.0",
+    "zod": "^3.22.4",
+    "@aws-sdk/client-s3": "^3.507.0",
+    "@aws-sdk/s3-presigned-post": "^3.507.0",
+    "ulid": "^2.3.0"
   },
   "peerDependencies": {
-    "next": "^13.5.4"
+    "next": "^14.0.3"
   },
   "devDependencies": {
     "@dotkomonline/types": "workspace:*",
-    "@types/node": "^18.18.3",
+    "@testcontainers/postgresql": "^10.7.1",
+    "@types/node": "^18.18.13",
     "@vitest/ui": "^0.34.6",
-    "eslint": "^8.50.0",
+    "eslint": "^8.54.0",
+    "testcontainers": "^10.7.1",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }

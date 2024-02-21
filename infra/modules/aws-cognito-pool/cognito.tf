@@ -17,6 +17,10 @@ resource "aws_cognito_user_pool" "this" {
     case_sensitive = true
   }
 
+  lambda_config {
+    post_confirmation = var.triggers.post_confirmation
+  }
+
   dynamic "schema" {
     for_each = var.schema
     content {

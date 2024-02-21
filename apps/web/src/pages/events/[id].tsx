@@ -1,9 +1,9 @@
-import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next"
+import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
-import { FC } from "react"
-import { trpc } from "@/utils/trpc"
+import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
+import { trpc } from "@/utils/trpc"
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const { id } = props

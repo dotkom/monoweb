@@ -1,4 +1,3 @@
-
 name: 🐞 Bug Report
 description: Create a bug report to help us improve
 title: "bug: "
@@ -23,11 +22,11 @@ body:
   - type: textarea
     attributes:
       label: 🖥️ Provide environment information
-      description: Describe the device and OS information   
+      description: Describe the device and OS information
       value: |
         - OS/Device: 
         - Browser: 
         - Version:
-        
+
     validations:
       required: true

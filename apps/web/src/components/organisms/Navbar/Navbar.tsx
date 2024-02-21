@@ -1,10 +1,10 @@
-import OnlineIcon from "@/components/atoms/OnlineIcon"
 import Link from "next/link"
 import React from "react"
+import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { MenuLink } from "./types"
+import { type MenuLink } from "./types"
 
 const links: MenuLink[] = [
   {
@@ -34,26 +34,28 @@ const links: MenuLink[] = [
     title: "For bedrifter",
     items: [
       { title: "Kontakt", href: "/company-info", description: "Kontakt Linjeforening" },
-      { title: "Kvitteringskjema", href: "/company-info", description: "Online sitt Kvitteringskjema" },
-      { title: "Faktura", href: "/company-info", description: "Faktura" },
+      {
+        title: "Kvitteringskjema",
+        href: "https://kvittering.online.ntnu.no/",
+        description: "Online sitt Kvitteringskjema",
+      },
+      { title: "Faktura", href: "https://faktura.online.ntnu.no/", description: "Faktura" },
       { title: "Interesseskjema", href: "/company-info", description: "Interesert?" },
     ],
   },
 ]
 
-export const Navbar = () => {
-  return (
-    <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
-      <div className="border-blue-12/20 flex h-16 border-b">
-        <MobileNavigation links={links} />
-        <Link href="/" className="flex items-center">
-          <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
-        </Link>
-        <MainNavigation links={links} />
-        <div className="flex flex-grow items-center justify-end md:flex-grow-0">
-          <ProfileMenu />
-        </div>
+export const Navbar = () => (
+  <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
+    <div className="border-blue-12/20 flex h-16 border-b">
+      <MobileNavigation links={links} />
+      <Link href="/" className="flex items-center">
+        <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
+      </Link>
+      <MainNavigation links={links} />
+      <div className="flex flex-grow items-center justify-end md:flex-grow-0">
+        <ProfileMenu />
       </div>
-    </header>
-  )
-}
+    </div>
+  </header>
+)

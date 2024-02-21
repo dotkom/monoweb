@@ -16,11 +16,33 @@ https://owdocs.vercel.app
    - You can run `pnpm dev --filter=<project>` to run a certain project from root, such as `pnpm dev --filter=web`
 
 ## Environment
+
 You need to set up environment variables for the project to work. You can get them on [doppler.com](https://doppler.com), or using the cli:
 
 ```sh
 doppler run -- pnpm dev
 ```
+
+### [Cognito] How to sync user pool with OW
+
+The Cognito dispatcher should handle syncing its pool with the `ow_user` table automatically, but in cases where this
+doesn't happen, we can manually sync.
+
+1. Install AWS CLI
+2. Log into AWS with AWS CLI `aws configure`
+3. Install PostGreSQL Client (for debian/ubuntu-based: `sudo apt install postgresql-client-14` (or later versions))
+4. Install jq `sudo apt install jq`
+5. Load the database into the shell. (`export DATABASE_URL=$(doppler secrets get DATABASE_URL --plain)`)
+6. Run the command below to sync.
+
+```shell
+aws cognito-idp list-users --user-pool-id eu-north-1_wnSVVBSoo --filter 'cognito:user_status = "CONFIRMED"' \
+  | jq ".Users[].Username" \
+  | xargs -I '{}' psql -Atx $DATABASE_URL -c "INSERT INTO ow_user (cognito_sub) VALUES ('{}') ON CONFLICT DO NOTHING"
+```
+
+If you need to run this in stg/prd, simply replace the `--user-pool-id` argument to AWS CLI. You can find the values
+in the AWS dashboard or in the terraform state.
 
 ### [Payment] How to configure stripe (locally)
 

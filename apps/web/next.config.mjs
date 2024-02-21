@@ -8,7 +8,7 @@ const config = {
     domains: ["cdn.sanity.io", "onlineweb4-prod.s3.eu-north-1.amazonaws.com"],
   },
   experimental: {
-    swcPlugins: [["next-superjson-plugin", {}]]
+    swcPlugins: [["next-superjson-plugin", {}]],
   },
   transpilePackages: [
     "@dotkomonline/auth",

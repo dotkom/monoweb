@@ -11,14 +11,16 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@dotkomonline/core": "workspace:*",
     "@dotkomonline/env": "workspace:*",
-    "next": "^13.5.4",
-    "next-auth": "^4.23.2",
+    "@dotkomonline/db": "workspace:*",
+    "next": "^14.0.3",
+    "next-auth": "^4.24.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "eslint": "^8.50.0",
+    "eslint": "^8.54.0",
     "typescript": "^5.2.2"
   }
 }

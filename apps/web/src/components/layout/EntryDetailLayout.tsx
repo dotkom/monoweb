@@ -1,10 +1,10 @@
-import { FC, PropsWithChildren } from "react"
+import { type FC, type PropsWithChildren } from "react"
 import { cn } from "@dotkomonline/ui"
 
 export interface EntryDetailLayoutProps {
   title: string
   type: string | null
-  color?: "BLUE" | "GREEN" | "AMBER"
+  color?: "AMBER" | "BLUE" | "GREEN"
 }
 
 export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({

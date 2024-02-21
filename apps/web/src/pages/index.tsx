@@ -1,14 +1,21 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useSession } from "next-auth/react"
 import ImageCarousel from "@/components/molecules/ImageCarousel/ImageCarousel"
+import { trpc } from "@/utils/trpc"
 
 const Home: React.FC = () => {
+  const { data: offlines = [], ...query } = trpc.offline.all.useQuery({ take: 999 })
   const auth = useSession()
+  const offlinePdfs = offlines.map((pdfs) => pdfs.fileUrl)
+  const offlineImgs = offlines.map((imgs) => imgs.imageUrl)
+
+  console.log(offlineImgs)
+
   return (
     <div>
       <p>Homepage</p>
       <pre>{JSON.stringify(auth, null, 2)}</pre>
-      <ImageCarousel images={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]} />
+      <ImageCarousel images={offlineImgs} pdfs={offlinePdfs} />
     </div>
   )
 }

@@ -9,6 +9,7 @@ export const CommitteeSchema = z.object({
   image: z.string().nullable(),
 })
 
+export type CommitteeId = Committee["id"]
 export type Committee = z.infer<typeof CommitteeSchema>
 
 export const CommitteeWriteSchema = CommitteeSchema.partial({
