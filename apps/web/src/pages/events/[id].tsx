@@ -4,9 +4,9 @@ import { appRouter, createContextInner, transformer } from "@dotkomonline/gatewa
 import { type FC } from "react"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
+import { trpc } from "@/utils/trpc"
 import { AttendanceGroup } from "./AttendanceGroup"
 import { useSessionWithDBUser } from ".."
-import { trpc } from "@/utils/trpc"
 
 interface StatusCardProps {
   title: string
@@ -190,6 +190,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
                   numberOfPeople={myGroups.attendees.length}
                   totalSpots={myGroups.limit}
                   isAttending={isAttending}
+                  canAttend={true}
                 />
               )}
               {isAttending ? (
@@ -205,15 +206,16 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
 
             {otherGroups?.length !== 0 && (
               <div className="mt-4">
-                <p>Andre grupper</p>
+                <p>Andre grupper med reserverte plasser</p>
                 {otherGroups?.map((group, idx) => (
                   <AttendanceGroup
                     title={"1.-5. klasse"}
                     numberOfPeople={group.attendees.length}
                     totalSpots={group.limit}
                     key={idx}
-                    className={clsx(idx === 0 ? "mr-2" : "", "w-32")}
+                    className={clsx(idx === 0 ? "mr-2" : "", "mt-4 w-32")}
                     isAttending={false}
+                    canAttend={false}
                   />
                 ))}
               </div>

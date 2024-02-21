@@ -9,6 +9,7 @@ import { EventEditCard } from "./edit-card"
 import { ExtrasPage } from "./extras-page"
 import { useEventDetailsContext } from "./provider"
 import { EventAttendancePage } from "./attendance-page"
+import { EventAttendanceInfoPage } from "./attendance-info-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
@@ -40,10 +41,16 @@ const SIDEBAR_LINKS = [
     component: EventDetailsFeedbackForms,
   },
   {
-    icon: "tabler:calendar-event",
-    label: "Påmelding",
+    icon: "tabler:user",
+    label: "Påmeldte",
     slug: "attendance",
     component: EventAttendancePage,
+  },
+  {
+    icon: "tabler:calendar-event",
+    label: "Påmeldingsinformasjon",
+    slug: "attendanceInfo",
+    component: EventAttendanceInfoPage,
   },
   {
     icon: "tabler:calendar-event",

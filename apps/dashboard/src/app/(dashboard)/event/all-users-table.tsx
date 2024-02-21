@@ -1,12 +1,9 @@
-import { type AttendanceWithUser, type AttendeeUser } from "@dotkomonline/types"
-import { Checkbox, Button, Box, Flex, Text } from "@mantine/core"
-import { createColumnHelper, useReactTable, getCoreRowModel } from "@tanstack/react-table"
+import { Button, Checkbox } from "@mantine/core"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo } from "react"
 import { GenericTable } from "../../../components/GenericTable"
 import { useDeregisterForEventMutation } from "../../../modules/event/mutations/use-deregister-for-event-mutation"
 import { useUpdateEventAttendanceMutation } from "../../../modules/event/mutations/use-update-event-attendance-mutation"
-import { trpc } from "../../../utils/trpc"
-import { notifyFail } from "../../notifications"
 
 interface CustomCheckboxProps {
   userId: string
@@ -31,11 +28,19 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
 
 CustomCheckbox.displayName = "CustomCheckbox"
 
-export const PoolsTable = ({ attendance }: { attendance: AttendanceWithUser }) => {
-  const deregisterMut = useDeregisterForEventMutation()
-  const deleteGroupMut = trpc.event.attendance.delete.useMutation()
+interface User {
+  givenName: string
+  familyName: string
+  studyYear: number
+  userId: string
+  attendanceId: string
+  attended: boolean
+}
 
-  const columnHelper = createColumnHelper<AttendeeUser>()
+export const AllAttendeesTable = ({ users }: { users: User[] }) => {
+  const deregisterMut = useDeregisterForEventMutation()
+
+  const columnHelper = createColumnHelper<User>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((attendee) => attendee, {
@@ -82,44 +87,12 @@ export const PoolsTable = ({ attendance }: { attendance: AttendanceWithUser }) =
   )
 
   const table = useReactTable({
-    data: attendance.attendees,
+    data: users,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
 
-  const deleteGroup = () => {
-    if (attendance.attendees.length > 0) {
-      notifyFail({
-        title: "Feil",
-        message: "Gruppen har deltakere, og kan ikke slettes",
-      })
-      return
-    }
-
-    deleteGroupMut.mutate({
-      id: attendance.id,
-    })
-  }
-
-  return (
-    <Box>
-      <Flex justify="space-between">
-        <Box>
-          <Text>
-            Klasse {attendance.min}- {attendance.max - 1}
-          </Text>
-          <Text>
-            Reserverte plasser: {attendance.attendees.length} / {attendance.limit}
-          </Text>
-        </Box>
-
-        <Button onClick={() => deleteGroup()} color="red">
-          Slett pulje
-        </Button>
-      </Flex>
-      <GenericTable table={table} />
-    </Box>
-  )
+  return <GenericTable table={table} />
 }
 
-PoolsTable.displayName = "PoolsTable"
+AllAttendeesTable.displayName = "AllAttendeesTable"
