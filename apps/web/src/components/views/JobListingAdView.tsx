@@ -2,16 +2,16 @@ import { Button, Icon } from "@dotkomonline/ui"
 import Image from "next/image"
 import { type FC } from "react"
 import Link from "next/link"
+import { type JobListing } from "@dotkomonline/types"
+import { format } from "date-fns"
 import PortableText from "@/components/molecules/PortableText"
 import { type CareerAd } from "@/api/get-career-ads"
-import { JobListing } from "@dotkomonline/types"
-import { format } from "date-fns"
 
-interface CareerAdViewProps {
+interface JobListingAdViewProps {
   career: JobListing
 }
 
-export const CareerAdView: FC<CareerAdViewProps> = ({ career }) => {
+export const JobListingAdView: FC<JobListingAdViewProps> = ({ career }) => {
   const {
     company: { name: company_name, image }, //info: company_info, link, linkdin, twitter, facebook },
     title,

@@ -1,4 +1,4 @@
-import CareerView from "@/components/views/CareerView"
+import JobListingView from "@/components/views/JobListingView/JobListingView"
 import { trpc } from "@/utils/trpc"
 
 const CareerPage = () => {
@@ -6,6 +6,6 @@ const CareerPage = () => {
   if (isLoading) {
     return <p>Loading...</p>
   }
-  return <CareerView careers={data ?? []} />
+  return <JobListingView careers={data ?? []} />
 }
 export default CareerPage
