@@ -1,7 +1,7 @@
 import { type Database } from "@dotkomonline/db"
 import { type DB } from "@dotkomonline/db/src/db.generated"
 import {
-  AttendanceSchema,
+  AttendancePoolSchema,
   AttendeeSchema,
   type Attendance,
   type AttendanceId,
@@ -50,7 +50,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .selectAll("attendee")
       .where("attendanceId", "=", res.id)
       .execute()
-    return AttendanceSchema.parse({
+    return AttendancePoolSchema.parse({
       ...res,
       attendees,
     })
@@ -105,7 +105,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .groupBy("attendance.id")
       .where("eventId", "=", eventId)
       .execute()
-    return res.map((r) => AttendanceSchema.parse(r))
+    return res.map((r) => AttendancePoolSchema.parse(r))
   }
 
   async updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string) {
@@ -130,7 +130,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .groupBy("attendance.id")
       .where("id", "=", id)
       .executeTakeFirst()
-    return res ? AttendanceSchema.parse(res) : undefined
+    return res ? AttendancePoolSchema.parse(res) : undefined
   }
 
   async addChoice(eventId: EventId, attendanceId: AttendanceId, questionId: string, choiceId: string) {

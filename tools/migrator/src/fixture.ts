@@ -1,10 +1,8 @@
 import { db } from "./db"
-import { attendances } from "./fixtures/attendance"
-import { attendees } from "./fixtures/attendee"
 import { committees } from "./fixtures/committee"
 import { eventCommittees } from "./fixtures/committee-organizer"
 import { companies } from "./fixtures/company"
-import { events } from "./fixtures/event"
+import { events, attendees, pools } from "./fixtures/event"
 import { eventCompany } from "./fixtures/event-company"
 import { jobListingLocationLinks, jobListingLocations, jobListings } from "./fixtures/job-listing"
 import { marks } from "./fixtures/mark"
@@ -78,7 +76,6 @@ export const runFixtures = async () => {
         subtitle: (eb) => eb.ref("excluded.subtitle"),
         imageUrl: (eb) => eb.ref("excluded.imageUrl"),
         location: (eb) => eb.ref("excluded.location"),
-        waitlist: (eb) => eb.ref("excluded.waitlist"),
       })
     )
     .execute()
@@ -90,16 +87,13 @@ export const runFixtures = async () => {
     .execute()
 
   await db
-    .insertInto("attendance")
-    .values(attendances)
+    .insertInto("attendancePool")
+    .values(pools)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
         createdAt: (eb) => eb.ref("excluded.createdAt"),
         updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        start: (eb) => eb.ref("excluded.start"),
-        end: (eb) => eb.ref("excluded.end"),
-        deregisterDeadline: (eb) => eb.ref("excluded.deregisterDeadline"),
         limit: (eb) => eb.ref("excluded.limit"),
         eventId: (eb) => eb.ref("excluded.eventId"),
         min: (eb) => eb.ref("excluded.min"),

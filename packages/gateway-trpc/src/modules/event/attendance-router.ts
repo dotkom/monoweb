@@ -1,4 +1,4 @@
-import { AttendanceSchema, AttendanceWriteSchema, EventSchema, UserSchema } from "@dotkomonline/types"
+import { AttendancePoolSchema, AttendanceWriteSchema, EventSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
@@ -10,7 +10,7 @@ export const attendanceRouter = t.router({
   delete: protectedProcedure
     .input(
       z.object({
-        id: AttendanceSchema.shape.id,
+        id: AttendancePoolSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -31,7 +31,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         userId: UserSchema.shape.id,
-        poolId: AttendanceSchema.shape.id,
+        poolId: AttendancePoolSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -41,7 +41,7 @@ export const attendanceRouter = t.router({
   deregisterForEvent: protectedProcedure
     .input(
       z.object({
-        attendanceId: AttendanceSchema.shape.id,
+        attendanceId: AttendancePoolSchema.shape.id,
         userId: UserSchema.shape.id,
       })
     )

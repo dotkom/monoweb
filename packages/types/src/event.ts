@@ -28,20 +28,31 @@ export const EventSchema = z.object({
   subtitle: z.string().nullable(),
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
-  waitlist: z.string().ulid().nullable(),
   extras: z.array(EventExtraSchema).nullable(),
 })
 
 export type EventId = Event["id"]
 export type Event = z.infer<typeof EventSchema>
 
-export const EventWriteSchema = EventSchema.partial({
+export const EventWriteSchema = EventSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 })
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
+
+export const AttendanceSchema = z.object({
+  registerStart: z.date(),
+  registerEnd: z.date(),
+  deregisterDeadline: z.date(),
+  mergeTime: z.date(),
+})
+
+export const AttendanceEventSchema = EventSchema.extend({
+  attendance: AttendanceSchema,
+})
+export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
 
 export const AttendeeextrasSchema = z.object({
   id: z.string(),
@@ -68,45 +79,30 @@ export const AttendeeSchema = z.object({
 
 export const AttendeeUser = AttendeeSchema.merge(UserSchema)
 
-export const AttendanceExtrasSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  choices: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-    })
-  ),
-})
-
-export const AttendanceSchema = z.object({
+export const AttendancePoolSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  start: z.date(),
-  end: z.date(),
-  deregisterDeadline: z.date(),
-  limit: z.number(),
-  eventId: z.string(),
-  attendees: z.array(AttendeeSchema),
   min: z.number().min(0).max(5),
   max: z.number().min(0).max(6),
-  extras: z.array(AttendanceExtrasSchema).nullable().optional(),
+  eventId: z.string(),
+  limit: z.number(),
+  attendees: z.array(AttendeeSchema),
 })
 
-export const AttendanceWithUser = AttendanceSchema.extend({
+export const AttendanceWithUser = AttendancePoolSchema.extend({
   attendees: z.array(AttendeeUser),
 })
 
 export type AttendanceId = Attendance["id"]
-export type Attendance = z.infer<typeof AttendanceSchema>
+export type Attendance = z.infer<typeof AttendancePoolSchema>
 export type AttendanceWithUser = z.infer<typeof AttendanceWithUser>
 
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeUser = z.infer<typeof AttendeeUser>
 
-export const AttendanceWriteSchema = AttendanceSchema.partial({
+export const AttendanceWriteSchema = AttendancePoolSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,

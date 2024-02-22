@@ -1,4 +1,4 @@
-import { type ColumnType } from "kysely"
+import type { ColumnType } from "kysely"
 
 export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA"
 
@@ -52,21 +52,19 @@ export interface ArticleTags {
   name: string
 }
 
-export interface Attendance {
+export interface AttendancePool {
   createdAt: Generated<Timestamp>
-  deregisterDeadline: Timestamp
-  end: Timestamp
   eventId: string | null
   id: Generated<string>
-  limit: number
-  max: Generated<number>
-  min: Generated<number>
-  start: Timestamp
+  limit: number | null
+  max: number | null
+  min: number | null
   updatedAt: Generated<Timestamp>
+  waitlist: string | null
 }
 
 export interface Attendee {
-  attendanceId: string | null
+  attendanceId: string
   attended: Generated<boolean>
   createdAt: Generated<Timestamp>
   extrasChoices: Json | null
@@ -99,20 +97,23 @@ export interface Company {
 
 export interface Event {
   createdAt: Generated<Timestamp>
+  deregisterDeadline: Timestamp | null
   description: string | null
   end: Timestamp
   extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null
+  mergeTime: Timestamp | null
   public: boolean
+  registerEnd: Timestamp | null
+  registerStart: Timestamp | null
   start: Timestamp
   status: EventStatus
   subtitle: string | null
   title: string
   type: EventType | null
   updatedAt: Generated<Timestamp>
-  waitlist: string | null
 }
 
 export interface EventCommittee {
@@ -258,7 +259,7 @@ export interface DB {
   articles: Articles
   articleTagLink: ArticleTagLink
   articleTags: ArticleTags
-  attendance: Attendance
+  attendancePool: AttendancePool
   attendee: Attendee
   committee: Committee
   company: Company

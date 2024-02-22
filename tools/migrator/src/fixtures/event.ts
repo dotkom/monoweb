@@ -3,6 +3,10 @@ import { type Insertable } from "kysely"
 
 export const events: Insertable<Database["event"]>[] = [
   {
+    registerStart: new Date("2023-02-22 13:30:04.713+00"),
+    registerEnd: new Date("2023-02-22 13:30:04.713+00"),
+    deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
+    mergeTime: new Date("2023-02-22 13:30:04.713+00"),
     id: "01HB64TWZK1C5YK5J7VGNZPDGW",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
@@ -17,7 +21,6 @@ export const events: Insertable<Database["event"]>[] = [
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Hovedbygget",
-    waitlist: null,
     extras: JSON.stringify([
       {
         id: "0",
@@ -58,6 +61,10 @@ export const events: Insertable<Database["event"]>[] = [
     ]),
   },
   {
+    registerStart: new Date("2023-02-22 13:30:04.713+00"),
+    registerEnd: new Date("2023-02-22 13:30:04.713+00"),
+    deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
+    mergeTime: new Date("2023-02-22 13:30:04.713+00"),
     id: "01HB64TWZK1N8ABMH8JAE12101",
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
@@ -91,7 +98,53 @@ export const events: Insertable<Database["event"]>[] = [
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Åre, Sverige",
-    waitlist: null,
     extras: null,
+  },
+]
+
+export const pools: Insertable<Database["attendancePool"]>[] = [
+  {
+    id: "01HB64JAPWJBMZN3HN6RF5GPVF",
+    createdAt: new Date("2023-02-22 13:30:04.713+00"),
+    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
+    min: 0,
+    max: 4,
+    limit: 10,
+  },
+  {
+    id: "01HB64JAPW86EXS7A4XG8D6K3X",
+    createdAt: new Date("2023-02-23 11:03:49.289+00"),
+    updatedAt: new Date("2023-02-23 11:03:49.289+00"),
+    limit: 10,
+    min: 4,
+    max: 6,
+  },
+  {
+    id: "01HB64JAPW4Q0XR46MK831NTB2",
+    createdAt: new Date("2023-02-25 11:03:49.289+00"),
+    updatedAt: new Date("2023-02-25 11:03:49.289+00"),
+    limit: 10,
+    min: 1,
+    max: 4,
+  },
+]
+
+export const attendees: Insertable<Database["attendee"]>[] = [
+  {
+    id: "01HB64JAPWNDTA2PXF0BK6YTAE",
+    createdAt: new Date("2023-02-22 13:30:04.713+00"),
+    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
+    userId: "01HNE783GYXSFSFFPMWNQNQG5Q",
+    attendanceId: "01HB64JAPWJBMZN3HN6RF5GPVF",
+    extrasChoices: JSON.stringify([
+      {
+        id: "1",
+        choice: "1",
+      },
+      {
+        id: "2",
+        choice: "3",
+      },
+    ]),
   },
 ]

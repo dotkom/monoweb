@@ -23,7 +23,6 @@ export interface EventService {
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
   listAttendance(eventId: EventId): Promise<AttendanceWithUser[]>
-  createWaitlist(eventId: EventId): Promise<Attendance>
 }
 
 export class EventServiceImpl implements EventService {
@@ -123,27 +122,5 @@ export class EventServiceImpl implements EventService {
     }
 
     return result
-  }
-
-  async createWaitlist(eventId: EventId): Promise<Attendance> {
-    const event = await this.getEventById(eventId)
-    if (event.waitlist !== null) {
-      throw new Error(`Attempted to create waitlist for event ${eventId}`)
-    }
-    const waitlist = await this.attendanceRepository.create({
-      eventId,
-      start: new Date(),
-      end: new Date(),
-      deregisterDeadline: new Date(),
-      limit: 999999,
-      min: 0,
-      max: 0,
-    })
-    await this.eventRepository.update(eventId, {
-      ...event,
-      waitlist: waitlist.id,
-      extras: JSON.stringify(event.extras),
-    })
-    return waitlist
   }
 }
