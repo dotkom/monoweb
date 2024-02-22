@@ -48,8 +48,8 @@ export class EventRepositoryImpl implements EventRepository {
       .innerJoin("event", "event.id", "attendance.eventId")
       .selectAll("event")
       .where("attendee.userId", "=", userId)
-      .execute();
-    return eventsResult.map(mapToEvent);
+      .execute()
+    return eventsResult.map(mapToEvent)
   }
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
