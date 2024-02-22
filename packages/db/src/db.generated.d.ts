@@ -4,8 +4,9 @@ export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA"
 
 export type EventType = "ACADEMIC" | "BEDPRES" | "COMPANY" | "SOCIAL"
 
-export type Generated<T> =
-  T extends ColumnType<infer S, infer I, infer U> ? ColumnType<S, I | undefined, U> : ColumnType<T, T | undefined, T>
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>
 
 export type Json = ColumnType<JsonValue, string, string>
 
