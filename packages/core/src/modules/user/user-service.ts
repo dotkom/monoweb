@@ -14,9 +14,9 @@ import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
-  getUserBySubject(id: User["cognitoSub"]): Promise<User | undefined>
+  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
-  searchUsers(searchQuery: string, take: number): Promise<User[]>
+  searchUsers(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
@@ -24,6 +24,11 @@ export interface UserService {
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
+  getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions>
+  updateNotificationPermissionsForUserId(
+    id: string,
+    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
+  ): Promise<NotificationPermissions>
 }
 
 export class UserServiceImpl implements UserService {
@@ -47,7 +52,7 @@ export class UserServiceImpl implements UserService {
     return users
   }
 
-  async getUserBySubject(id: User["cognitoSub"]) {
+  async getUserBySubject(id: User["auth0Sub"]) {
     const user = await this.userRepository.getBySubject(id)
     return user
   }

@@ -8,7 +8,7 @@ export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>)
   PersonalMarkSchema.parse(payload)
 
 export interface PersonalMarkRepository {
-  getByMarkId(markId: MarkId): Promise<PersonalMark[]>
+  getByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getAllByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getAllMarksByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
   addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
@@ -48,8 +48,12 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     return marks.map(mapToMark)
   }
 
-  async getByMarkId(markId: MarkId): Promise<PersonalMark[]> {
-    const personalMarks = await this.db.selectFrom("personalMark").selectAll().where("markId", "=", markId).execute()
+  async getByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
+    const query = orderedQuery(
+      this.db.selectFrom("personalMark").selectAll().where("markId", "=", markId).limit(take),
+      cursor
+    )
+    const personalMarks = await query.execute()
     return personalMarks.map(mapToPersonalMark)
   }
 
