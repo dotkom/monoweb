@@ -48,7 +48,6 @@ export class EventRepositoryImpl implements EventRepository {
       .innerJoin("event", "event.id", "attendance.eventId")
       .selectAll("event")
       .where("attendee.userId", "=", userId)
-      .groupBy("event.id")
       .execute();
     return eventsResult.map(mapToEvent);
   }
