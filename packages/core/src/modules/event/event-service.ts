@@ -10,6 +10,7 @@ export interface EventService {
   updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: EventId): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
   listAttendance(eventId: EventId): Promise<Attendance[]>
