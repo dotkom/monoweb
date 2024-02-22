@@ -199,9 +199,8 @@ export class PaymentServiceImpl implements PaymentService {
   }
 
   async refundPayment(payment: Payment, product: Product): Promise<void> {
-    const paymentProvider = product.paymentProviders.find(
-      (p) => p.paymentProviderId === payment.paymentProviderId
-    )?.paymentProvider
+    const paymentProvider = product.paymentProviders.find((p) => p.paymentProviderId === payment.paymentProviderId)
+      ?.paymentProvider
 
     switch (paymentProvider) {
       case "STRIPE":

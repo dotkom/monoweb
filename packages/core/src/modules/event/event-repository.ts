@@ -17,7 +17,7 @@ export interface EventRepository {
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: Kysely<Database>) { }
+  constructor(private readonly db: Kysely<Database>) {}
 
   async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
