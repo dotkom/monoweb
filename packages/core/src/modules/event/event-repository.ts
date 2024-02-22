@@ -42,19 +42,15 @@ export class EventRepositoryImpl implements EventRepository {
   }
 
   async getAllByUserAttending(userId: string): Promise<Event[]> {
-    const event_ids_query = await this.db
+    const eventsResult = await this.db
       .selectFrom("attendance")
       .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .select("attendance.eventId")
+      .innerJoin("event", "event.id", "attendance.eventId")
+      .selectAll("event")
       .where("attendee.userId", "=", userId)
-      .groupBy("attendance.eventId")
-      .execute()
-
-    const event_ids = event_ids_query.map(({ eventId }) => eventId).filter((id): id is string => id !== null)
-
-    const events = await this.getByIds(event_ids)
-
-    return events
+      .groupBy("event.id")
+      .execute();
+    return eventsResult.map(mapToEvent);
   }
 
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
