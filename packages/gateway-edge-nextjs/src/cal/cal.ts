@@ -15,9 +15,12 @@ const helpers = createServerSideHelpers({
   transformer, // optional - adds superjson serialization
 })
 
-function eventUrl(event: Pick<Event, "id">) {
+function eventUrl(req: NextApiRequest, event: Pick<Event, "id">) {
+  const proto = req.headers["x-forwarded-proto"] || "http";
+  const host = req.headers["x-forwarded-host"] || "online.ntnu.no";
+
   // a better to to get/configure the url?
-  return `https://dev.web.online.ntnu.no/events/${event.id}`
+  return `${proto}://${host}/events/${event.id}`
 }
 
 // ALL events
@@ -31,7 +34,7 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
 
   const events = await helpers.event.all.fetch()
   events.forEach((event) => {
-    instance.createEvent(toICal(event))
+    instance.createEvent(toICal(req, event))
   })
 
   res.status(200).send(instance.toString())
@@ -53,7 +56,7 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
   const event = (await helpers.event.get.fetch(eventid)).event
 
   const instance = ical()
-  instance.createEvent(toICal(event))
+  instance.createEvent(toICal(req, event))
 
   res.status(200).send(instance.toString())
 }
@@ -88,8 +91,8 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   const instance = ical({ name: `${userid} online kalender` })
 
   events.forEach((event: any) => {
-    instance.createEvent(toICal(event))
-    instance.createEvent(toICal(toRegistration(event)))
+    instance.createEvent(toICal(req, event))
+    instance.createEvent(toICal(req, toRegistration(event)))
   })
 
   res.status(200).send(instance.toString())
@@ -118,14 +121,14 @@ export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({ token })
 }
 
-function toICal(event: Pick<Event, "description" | "end" | "id" | "location" | "start" | "title">): ICalEventData {
+function toICal(req: NextApiRequest, event: Pick<Event, "description" | "end" | "id" | "location" | "start" | "title">): ICalEventData {
   return {
     start: event.start,
     end: event.end,
     summary: event.title,
     description: event.description,
     location: event.location,
-    url: eventUrl(event),
+    url: eventUrl(req, event),
   }
 }
 
