@@ -31,7 +31,7 @@ const InfoBox: FC<{ eventAttendance: AttendanceWithUser[] }> = ({ eventAttendanc
       <Table>
         <Table.Thead>
           <Table.Tr>
-            <Table.Td>Totalt plasser tildelt: </Table.Td>
+            <Table.Td>Totalt antall plasser</Table.Td>
             <Table.Td>{eventAttendance.reduce((acc, pool) => acc + pool.limit, 0)}</Table.Td>
           </Table.Tr>
           <Table.Tr>
@@ -39,7 +39,7 @@ const InfoBox: FC<{ eventAttendance: AttendanceWithUser[] }> = ({ eventAttendanc
             <Table.Td>{rangeToString(eventAttendance.filter((ev) => ev.limit !== 0).map(getRange))}</Table.Td>
           </Table.Tr>
           <Table.Tr>
-            <Table.Td>Grupper som får plasser etter sammenslåing</Table.Td>
+            <Table.Td>Grupper som kan melde seg på etter sammenslåing</Table.Td>
             <Table.Td>{rangeToString(eventAttendance.filter((ev) => ev.limit === 0).map(getRange))}</Table.Td>
           </Table.Tr>
           <Table.Tr>
@@ -121,7 +121,7 @@ export const EventAttendanceInfoPage: FC = () => {
       <Divider my={32} />
       <Box>
         <Title mb={10} order={3}>
-          Puljer
+          Reserverte plasser
         </Title>
         <InfoBox eventAttendance={eventAttendance} />
         <Button mt={16} onClick={openPoolModal}>
