@@ -72,12 +72,4 @@ export class EventRepositoryImpl implements EventRepository {
     const event = await this.db.selectFrom("event").where("id", "=", id).selectAll().executeTakeFirst()
     return event === undefined ? undefined : mapToEvent(event)
   }
-
-  async getByIds(id: string[]): Promise<Event[]> {
-    if (id.length == 0) {
-      return [];
-    }
-    const events = await this.db.selectFrom("event").where("id", "in", id).selectAll().execute()
-    return events.map((e) => mapToEvent(e))
-  }
 }
