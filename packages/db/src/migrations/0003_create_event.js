@@ -42,7 +42,7 @@ export async function up(db) {
     .execute()
 
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("attendanceId", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
+    .addColumn("attendancePoolId", sql`ulid`, (col) => col.references("attendance_pool.id").onDelete("cascade"))
     .addColumn("userId", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("extrasChoices", "json")
     .execute()

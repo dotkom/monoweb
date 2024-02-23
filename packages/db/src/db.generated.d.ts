@@ -52,9 +52,20 @@ export interface ArticleTags {
   name: string
 }
 
-export interface AttendancePool {
+export interface Attendance {
   createdAt: Generated<Timestamp>
+  deregisterDeadline: Timestamp
   eventId: string | null
+  id: Generated<string>
+  mergeTime: Timestamp
+  registerEnd: Timestamp
+  registerStart: Timestamp
+  updatedAt: Generated<Timestamp>
+}
+
+export interface AttendancePool {
+  attendanceId: string | null
+  createdAt: Generated<Timestamp>
   id: Generated<string>
   limit: number | null
   max: number | null
@@ -64,7 +75,7 @@ export interface AttendancePool {
 }
 
 export interface Attendee {
-  attendanceId: string
+  attendancePoolId: string | null
   attended: Generated<boolean>
   createdAt: Generated<Timestamp>
   extrasChoices: Json | null
@@ -97,17 +108,13 @@ export interface Company {
 
 export interface Event {
   createdAt: Generated<Timestamp>
-  deregisterDeadline: Timestamp | null
   description: string | null
   end: Timestamp
   extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null
-  mergeTime: Timestamp | null
   public: boolean
-  registerEnd: Timestamp | null
-  registerStart: Timestamp | null
   start: Timestamp
   status: EventStatus
   subtitle: string | null
@@ -259,6 +266,7 @@ export interface DB {
   articles: Articles
   articleTagLink: ArticleTagLink
   articleTags: ArticleTags
+  attendance: Attendance
   attendancePool: AttendancePool
   attendee: Attendee
   committee: Committee

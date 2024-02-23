@@ -1,5 +1,6 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
+import { ResultIds } from "../fixture"
 
 const employments = {
   fulltime: "Fulltid",
@@ -8,10 +9,13 @@ const employments = {
   other: "Annet",
 } as const
 
-export const jobListings: Insertable<Database["jobListing"]>[] = [
+// export const jobListings: Insertable<Database["jobListing"]>[] = [
+export const getJobListingFixtures: (companyId: ResultIds["company"]) => Insertable<Database["jobListing"]>[] = (
+  companyIds
+) => [
   {
     id: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Job at Bekk",
     ingress: "Join us at Bekk!",
     description: "Et konsulentselskap som forøvrig er hovedsponsor for Online Linjeforening",
@@ -26,7 +30,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4Y764E5Q5DY9YTT9ZF6",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[1],
     title: "Job at Junior Consulting",
     ingress: "Become a consultant at Junior Consulting!",
     description: "Et konsulentselskap drevet av erfaringssultne studenter",
@@ -41,7 +45,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4Y7RHCCQ5SYN31CVFRG",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[1],
     title: "Software engineer - summer intern",
     ingress:
       "Er du på utkikk etter sommerjobb innenfor edtech-sektoren? Kateter har oppnådd stor suksess ved å tilby Gløsinger kurs i utfordrende fag til en billig penge.",
@@ -58,7 +62,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4Y7XW6S2VBTPBJWMTN0",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Produktutvikler",
     ingress:
       "Brenner du for å skape noe nytt, og få ting til å skje? Vi er et team på seks personer med mål om å utvikle revolusjonerende teknologi for kunder over hele verden, og ser etter deg som ønsker å være med på reisen fremover.",
@@ -75,7 +79,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4Y9HFYK1NJV8SKSPKN3",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Energisommerjobb 2024: Vil du være med å forme fremtiden?",
     ingress:
       "Nå kan du prøve deg som forsker for en sommer hos SINTEF, et av Europas største uavhengige forskningsinstitutt!",
@@ -92,7 +96,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4Y9D8FJ8WHBY6GF67AW",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Sommerjobb i Sticos",
     ingress:
       "I perioden juni - august søker vi studenter til sommerjobb. Du får også anledning til å ta 3-4 uker ferie i juli.",
@@ -109,7 +113,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4Y998QA09CMCAJKGSD7",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Sommeren er best hos Avinor – bli med å utvikle fremtidens luftfart!",
     ingress:
       "Kunne du tenke deg en sommer der du er med og bidrar til å gjøre en liten forskjell i verden og samtidig gi deg selv en flying start på egen karriere? Avinors sommerprogram 2024 er klar for din søknad. Velkommen til oss!",
@@ -126,7 +130,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YAYQAR9V47DA5X1Q7C",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Norkart Sommer Internship 2024",
     ingress:
       "I Norkart er du med på å digitalisere Norge – ikke i teorien – men i virkeligheten. Vi er en markedsledende system- og dataleverandør innenfor stat, kommune og næringsliv - noe som gjør at våre løsninger påvirker hverdagen til svært mange personer.",
@@ -143,7 +147,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YAW54151ZE3ABZVGSX",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Software Engineering Summer Internship",
     ingress: "Are you our new Software Engineering Intern?",
     description:
@@ -159,7 +163,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YAQXGEH10C4XTT8J5K",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Associate Solutions Engineer - Norway",
     ingress: "Are You Our New Associate Solution Engineer?",
     description:
@@ -175,7 +179,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YA5CA0QYF0PEBGZNGZ",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Graduate Software Engineer - Norway",
     ingress: "Are You Our New Graduate Software Engineer?",
     description:
@@ -191,7 +195,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YAZN6ABDPB17K52NAH",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Form din fremtid gjennom internship i Deloitte Consulting",
     ingress:
       "Er du student og ønsker kompetanseheving og verdifull praksis for fremtiden? Da vil vi oppfordre deg til å søke internship hos oss i Consulting!",
@@ -208,7 +212,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YAMPR4PG0GSYBM9Y32",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Summer Internship 2024 - AI and Product Development",
     ingress:
       "Aneo is a renewable energy company with headquarters in Trondheim, established in 2022 by TrønderEnergi and HitecVision. Aneo invests heavily in wind power, solar power, electrification and energy efficiency in the Nordic region.",
@@ -225,7 +229,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YA6AH85A2EZ0BJP4MN",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Nyutdannet innen IT høsten 2024 og vil jobbe med Software Development?",
     ingress:
       "Ønsker du å bli en del av et felleskap med unge og engasjerte talenter som vil bygge en spennende karriere innen IT? Da er Ignite-programmet til Capgemini det perfekte starten for deg!",
@@ -243,7 +247,7 @@ export const jobListings: Insertable<Database["jobListing"]>[] = [
   },
   {
     id: "01HD77R4YCTMJ7XPRHCEDQ616B",
-    companyId: "01HB64TWZJD1F83E5XNB96NF2R",
+    companyId: companyIds[0],
     title: "Kickstart karrieren som konsulent i twoday",
     ingress:
       "I twoday kan du starte karrieren som fast ansatt sammen med en håndplukket gjeng.\r\nMålet er å få deg raskt ut på prosjekt – parallelt med spennede kurs, fagkvelder, reiser\r\nog mye sosialt.",

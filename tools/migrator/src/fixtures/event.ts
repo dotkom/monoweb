@@ -1,13 +1,9 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
+import { type ResultIds } from "../fixture"
 
-export const events: Insertable<Database["event"]>[] = [
+export const getEventsFixtures: () => Insertable<Database["event"]>[] = () => [
   {
-    registerStart: new Date("2023-02-22 13:30:04.713+00"),
-    registerEnd: new Date("2023-02-22 13:30:04.713+00"),
-    deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
-    mergeTime: new Date("2023-02-22 13:30:04.713+00"),
-    id: "01HB64TWZK1C5YK5J7VGNZPDGW",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     title: "Kurs i å lage fixtures",
@@ -61,11 +57,6 @@ export const events: Insertable<Database["event"]>[] = [
     ]),
   },
   {
-    registerStart: new Date("2023-02-22 13:30:04.713+00"),
-    registerEnd: new Date("2023-02-22 13:30:04.713+00"),
-    deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
-    mergeTime: new Date("2023-02-22 13:30:04.713+00"),
-    id: "01HB64TWZK1N8ABMH8JAE12101",
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
     title: "Åre 2024",
@@ -102,9 +93,34 @@ export const events: Insertable<Database["event"]>[] = [
   },
 ]
 
-export const pools: Insertable<Database["attendancePool"]>[] = [
+export const getAttendanceFixtures: (event_ids: ResultIds["event"]) => Insertable<Database["attendance"]>[] = (
+  event_ids
+) => [
   {
-    id: "01HB64JAPWJBMZN3HN6RF5GPVF",
+    eventId: event_ids[0],
+    registerStart: new Date("2023-02-22 13:30:04.713+00"),
+    registerEnd: new Date("2023-02-22 13:30:04.713+00"),
+    deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
+    mergeTime: new Date("2023-02-22 13:30:04.713+00"),
+    createdAt: new Date("2023-02-22 13:30:04.713+00"),
+    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
+  },
+  {
+    eventId: event_ids[1],
+    registerStart: new Date("2023-02-23 11:03:49.289+00"),
+    registerEnd: new Date("2023-02-23 11:03:49.289+00"),
+    deregisterDeadline: new Date("2023-02-23 11:03:49.289+00"),
+    mergeTime: new Date("2023-02-23 11:03:49.289+00"),
+    createdAt: new Date("2023-02-23 11:03:49.289+00"),
+    updatedAt: new Date("2023-02-23 11:03:49.289+00"),
+  },
+]
+
+export const getPoolFixtures: (attendance_ids: ResultIds["attendance"]) => Insertable<Database["attendancePool"]>[] = (
+  attendance_ids
+) => [
+  {
+    attendanceId: attendance_ids[0],
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     min: 0,
@@ -112,7 +128,7 @@ export const pools: Insertable<Database["attendancePool"]>[] = [
     limit: 10,
   },
   {
-    id: "01HB64JAPW86EXS7A4XG8D6K3X",
+    attendanceId: attendance_ids[0],
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
     limit: 10,
@@ -120,7 +136,7 @@ export const pools: Insertable<Database["attendancePool"]>[] = [
     max: 6,
   },
   {
-    id: "01HB64JAPW4Q0XR46MK831NTB2",
+    attendanceId: attendance_ids[1],
     createdAt: new Date("2023-02-25 11:03:49.289+00"),
     updatedAt: new Date("2023-02-25 11:03:49.289+00"),
     limit: 10,
@@ -129,13 +145,16 @@ export const pools: Insertable<Database["attendancePool"]>[] = [
   },
 ]
 
-export const attendees: Insertable<Database["attendee"]>[] = [
+// export const attendees: Insertable<Database["attendee"]>[] = [
+export const getAttendeesFixtures: (
+  user_ids: ResultIds["owUser"],
+  pool_ids: ResultIds["attendancePool"]
+) => Insertable<Database["attendee"]>[] = (user_ids, pool_ids) => [
   {
-    id: "01HB64JAPWNDTA2PXF0BK6YTAE",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-    userId: "01HNE783GYXSFSFFPMWNQNQG5Q",
-    attendanceId: "01HB64JAPWJBMZN3HN6RF5GPVF",
+    userId: user_ids[0],
+    attendancePoolId: pool_ids[0],
     extrasChoices: JSON.stringify([
       {
         id: "1",
@@ -146,5 +165,23 @@ export const attendees: Insertable<Database["attendee"]>[] = [
         choice: "3",
       },
     ]),
+  },
+]
+
+export const getEventCompany: (
+  event_ids: ResultIds["event"],
+  company_ids: ResultIds["company"]
+) => Insertable<Database["eventCompany"]>[] = (event_ids, company_ids) => [
+  {
+    eventId: event_ids[0],
+    companyId: company_ids[0],
+  },
+  {
+    eventId: event_ids[0],
+    companyId: company_ids[1],
+  },
+  {
+    eventId: event_ids[1],
+    companyId: company_ids[1],
   },
 ]
