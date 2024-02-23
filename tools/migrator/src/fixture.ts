@@ -1,12 +1,12 @@
 import { db } from "./db"
-import { attendances } from "./fixtures/attendance"
-import { attendees } from "./fixtures/attendee"
-import { committees } from "./fixtures/committee"
-import { eventCommittees } from "./fixtures/committee-organizer"
-import { companies } from "./fixtures/company"
-import { events } from "./fixtures/event"
-import { eventCompany } from "./fixtures/event-company"
-import { jobListingLocationLinks, jobListingLocations, jobListings } from "./fixtures/job-listing"
+import { getAttendanceFixtures } from "./fixtures/attendance"
+import { getAttendeeFixtures } from "./fixtures/attendee"
+import { getCommitteeFixtures } from "./fixtures/committee"
+import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
+import { getCompanyFixtures } from "./fixtures/company"
+import { getEventFixtures } from "./fixtures/event"
+import { getEventCompany } from "./fixtures/event-company"
+import { getJobListingFixtures, jobListingLocationLinks, jobListingLocations } from "./fixtures/job-listing"
 import { marks } from "./fixtures/mark"
 import { offlines } from "./fixtures/offline"
 import { personalMarks } from "./fixtures/personal-mark"
@@ -14,7 +14,31 @@ import { products } from "./fixtures/product"
 import { productPaymentProviders } from "./fixtures/product-payment-provider"
 import { users } from "./fixtures/user"
 
+// https://stackoverflow.com/a/74801694
+type LengthArray<T, N extends number, R extends T[] = []> = number extends N
+  ? T[]
+  : R["length"] extends N
+  ? R
+  : LengthArray<T, N, [T, ...R]>
+
+export interface ResultIds {
+  owUser: LengthArray<string, 4>
+  company: LengthArray<string, 2>
+  committee: LengthArray<string, 2>
+  event: LengthArray<string, 2>
+  attendance: LengthArray<string, 2>
+  attendancePool: LengthArray<string, 3>
+}
+
 export const runFixtures = async () => {
+  const resultIds: ResultIds = {
+    owUser: ["", "", "", ""],
+    company: ["", ""],
+    committee: ["", ""],
+    event: ["", ""],
+    attendance: ["", ""],
+    attendancePool: ["", "", ""],
+  }
   await db
     .insertInto("owUser")
     .values(users)
@@ -25,10 +49,16 @@ export const runFixtures = async () => {
       })
     )
     .execute()
+    .then((result) => {
+      result.forEach((row, idx) => {
+        resultIds.owUser[idx] = row.id
+      })
+    })
 
+  const companyFixtures = getCompanyFixtures()
   await db
     .insertInto("company")
-    .values(companies)
+    .values(companyFixtures)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
@@ -44,10 +74,16 @@ export const runFixtures = async () => {
       })
     )
     .execute()
+    .then((result) => {
+      result.forEach((row, idx) => {
+        resultIds.company[idx] = row.id
+      })
+    })
 
+  const committeFixtures = getCommitteeFixtures()
   await db
     .insertInto("committee")
-    .values(committees)
+    .values(committeFixtures)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
@@ -59,10 +95,16 @@ export const runFixtures = async () => {
       })
     )
     .execute()
+    .then((result) => {
+      result.forEach((row, idx) => {
+        resultIds.committee[idx] = row.id
+      })
+    })
 
+  const eventFixtures = getEventFixtures()
   await db
     .insertInto("event")
-    .values(events)
+    .values(eventFixtures)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
@@ -78,20 +120,26 @@ export const runFixtures = async () => {
         subtitle: (eb) => eb.ref("excluded.subtitle"),
         imageUrl: (eb) => eb.ref("excluded.imageUrl"),
         location: (eb) => eb.ref("excluded.location"),
-        waitlist: (eb) => eb.ref("excluded.waitlist"),
       })
     )
     .execute()
+    .then((result) => {
+      result.forEach((row, idx) => {
+        resultIds.event[idx] = row.id
+      })
+    })
 
+  const eventCompanyFixtures = getEventCompany(resultIds.event, resultIds.company)
   await db
     .insertInto("eventCompany")
-    .values(eventCompany)
+    .values(eventCompanyFixtures)
     .onConflict((oc) => oc.columns(["eventId", "companyId"]).doNothing())
     .execute()
 
+  const attendanceFixtures = getAttendanceFixtures(resultIds.event)
   await db
     .insertInto("attendance")
-    .values(attendances)
+    .values(attendanceFixtures)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
@@ -107,20 +155,14 @@ export const runFixtures = async () => {
       })
     )
     .execute()
-
-  await db
-    .insertInto("attendee")
-    .values(attendees)
-    .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        userId: (eb) => eb.ref("excluded.userId"),
-        attendanceId: (eb) => eb.ref("excluded.attendanceId"),
+    .then((result) => {
+      result.forEach((row, idx) => {
+        resultIds.attendance[idx] = row.id
       })
-    )
-    .execute()
+    })
+
+  const attendeeFixtures = getAttendeeFixtures(resultIds.attendance, resultIds.owUser)
+  await db.insertInto("attendee").values(attendeeFixtures).returning("id").execute()
 
   await db
     .insertInto("mark")
@@ -168,16 +210,18 @@ export const runFixtures = async () => {
     .onConflict((oc) => oc.columns(["productId", "paymentProviderId"]).doNothing())
     .execute()
 
+  const eventCommitteFixtures = getEventCommitteeFixtures(resultIds.event, resultIds.committee)
   await db
     .insertInto("eventCommittee")
-    .values(eventCommittees)
+    .values(eventCommitteFixtures)
     .returning("committeeId")
     .onConflict((oc) => oc.columns(["committeeId", "eventId"]).doNothing())
     .execute()
 
+  const jobListingFixtures = getJobListingFixtures(resultIds.company)
   await db
     .insertInto("jobListing")
-    .values(jobListings)
+    .values(jobListingFixtures)
     .returning("id")
     .onConflict((oc) => oc.column("id").doNothing())
     .execute()
