@@ -30,6 +30,14 @@ export interface ResultIds {
   attendancePool: LengthArray<string, 3>
 }
 
+export const updateResultIds = <T extends keyof ResultIds>(resultIds: ResultIds, key: T, results: { id: string }[]) => {
+  results.forEach((result, index) => {
+    if (index < resultIds[key].length) {
+      resultIds[key][index] = result.id
+    }
+  })
+}
+
 export const runFixtures = async () => {
   const resultIds: ResultIds = {
     owUser: ["", "", "", ""],
@@ -49,11 +57,7 @@ export const runFixtures = async () => {
       })
     )
     .execute()
-    .then((result) => {
-      result.forEach((row, idx) => {
-        resultIds.owUser[idx] = row.id
-      })
-    })
+    .then(updateResultIds.bind(null, resultIds, "owUser"))
 
   const companyFixtures = getCompanyFixtures()
   await db
@@ -74,11 +78,7 @@ export const runFixtures = async () => {
       })
     )
     .execute()
-    .then((result) => {
-      result.forEach((row, idx) => {
-        resultIds.company[idx] = row.id
-      })
-    })
+    .then(updateResultIds.bind(null, resultIds, "company"))
 
   const committeFixtures = getCommitteeFixtures()
   await db
@@ -95,11 +95,7 @@ export const runFixtures = async () => {
       })
     )
     .execute()
-    .then((result) => {
-      result.forEach((row, idx) => {
-        resultIds.committee[idx] = row.id
-      })
-    })
+    .then(updateResultIds.bind(null, resultIds, "committee"))
 
   const eventFixtures = getEventFixtures()
   await db
@@ -123,11 +119,7 @@ export const runFixtures = async () => {
       })
     )
     .execute()
-    .then((result) => {
-      result.forEach((row, idx) => {
-        resultIds.event[idx] = row.id
-      })
-    })
+    .then(updateResultIds.bind(null, resultIds, "event"))
 
   const eventCompanyFixtures = getEventCompany(resultIds.event, resultIds.company)
   await db
@@ -155,11 +147,7 @@ export const runFixtures = async () => {
       })
     )
     .execute()
-    .then((result) => {
-      result.forEach((row, idx) => {
-        resultIds.attendance[idx] = row.id
-      })
-    })
+    .then(updateResultIds.bind(null, resultIds, "attendance"))
 
   const attendeeFixtures = getAttendeeFixtures(resultIds.attendance, resultIds.owUser)
   await db.insertInto("attendee").values(attendeeFixtures).returning("id").execute()
