@@ -14,20 +14,29 @@ import { products } from "./fixtures/product"
 import { productPaymentProviders } from "./fixtures/product-payment-provider"
 import { users } from "./fixtures/user"
 
-// https://stackoverflow.com/a/74801694
-type LengthArray<T, N extends number, R extends T[] = []> = number extends N
-  ? T[]
-  : R["length"] extends N
-  ? R
-  : LengthArray<T, N, [T, ...R]>
+// Derived from https://stackoverflow.com/a/74801694
+type LengthArray<Length extends number, _Rest extends string[] = []> = _Rest["length"] extends Length
+  ? _Rest
+  : LengthArray<Length, [string, ..._Rest]>
+
+type GetResultIdArrayTypeFor<key extends keyof typeof resultIdLengths> = LengthArray<(typeof resultIdLengths)[key]>
+
+const resultIdLengths = {
+  owUser: 4,
+  company: 2,
+  committee: 2,
+  event: 2,
+  attendance: 2,
+  attendancePool: 3,
+} as const
 
 export interface ResultIds {
-  owUser: LengthArray<string, 4>
-  company: LengthArray<string, 2>
-  committee: LengthArray<string, 2>
-  event: LengthArray<string, 2>
-  attendance: LengthArray<string, 2>
-  attendancePool: LengthArray<string, 3>
+  owUser: GetResultIdArrayTypeFor<"owUser">
+  company: GetResultIdArrayTypeFor<"company">
+  committee: GetResultIdArrayTypeFor<"committee">
+  event: GetResultIdArrayTypeFor<"event">
+  attendance: GetResultIdArrayTypeFor<"attendance">
+  attendancePool: GetResultIdArrayTypeFor<"attendancePool">
 }
 
 export const runFixtures = async () => {
