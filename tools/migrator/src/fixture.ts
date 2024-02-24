@@ -18,23 +18,15 @@ import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
 
+interface WithIdentifier {
+  id: string
+}
+
 export type InsertedIds = {
   [K in keyof DB]: string[]
 }
 
-export const updateResultIds = <T extends keyof InsertedIds>(
-  resultIds: InsertedIds,
-  key: T,
-  results: { id: string }[]
-) => {
-  results.forEach((result, index) => {
-    if (index < resultIds[key].length) {
-      resultIds[key][index] = result.id
-    }
-  })
-}
-
-const mapId = (results: { id: string }[]) => results.map((res) => res.id)
+const mapId = (results: WithIdentifier[]) => results.map((res) => res.id)
 
 export const runFixtures = async () => {
   const insertedIds = {} as InsertedIds
