@@ -41,12 +41,12 @@ export const attendanceRouter = t.router({
   deregisterForEvent: protectedProcedure
     .input(
       z.object({
-        attendanceId: AttendancePoolSchema.shape.id,
+        attendancePoolId: AttendancePoolSchema.shape.id,
         userId: UserSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendanceService.deregisterAttendee(input.userId, input.attendanceId)
+      const res = await ctx.attendanceService.deregisterAttendee(input.userId, input.attendancePoolId)
       return res
     }),
 
@@ -54,13 +54,13 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         userId: z.string(),
-        attendanceId: z.string(),
+        attendancePoolId: z.string(),
         attended: z.boolean(),
       })
     )
     .mutation(
       async ({ input, ctx }) =>
-        await ctx.attendanceService.registerForAttendance(input.userId, input.attendanceId, input.attended)
+        await ctx.attendanceService.registerForAttendance(input.userId, input.attendancePoolId, input.attended)
     ),
   createWaitlist: protectedProcedure
     .input(
@@ -68,18 +68,18 @@ export const attendanceRouter = t.router({
         eventId: EventSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.eventService.createWaitlist(input.eventId)),
+    .mutation(async ({ input, ctx }) => await ctx.attendanceService.createWaitlist(input.eventId)),
   addChoice: protectedProcedure
     .input(
       z.object({
         eventId: EventSchema.shape.id,
-        attendanceId: z.string(),
+        attendancePoolId: z.string(),
         questionId: z.string(),
         choiceId: z.string(),
       })
     )
     .mutation(
       async ({ input, ctx }) =>
-        await ctx.attendanceService.addChoice(input.eventId, input.attendanceId, input.questionId, input.choiceId)
+        await ctx.attendanceService.addChoice(input.eventId, input.attendancePoolId, input.questionId, input.choiceId)
     ),
 })

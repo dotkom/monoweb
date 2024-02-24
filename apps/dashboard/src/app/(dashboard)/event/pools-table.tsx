@@ -17,7 +17,7 @@ const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: Cus
   const updateAttendance = useUpdateEventAttendanceMutation()
 
   const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
-    updateAttendance.mutate({ userId, attendanceId, attended: currentCheckedState })
+    updateAttendance.mutate({ userId, attendancePoolId: attendanceId, attended: currentCheckedState })
   }
   return (
     <Checkbox
@@ -68,7 +68,7 @@ export const PoolsTable = ({ attendance }: { attendance: AttendanceWithUser }) =
             color="red"
             onClick={() =>
               deregisterMut.mutate({
-                attendanceId: info.getValue().attendancePoolId,
+                attendancePoolId: info.getValue().attendancePoolId,
                 userId: info.getValue().userId,
               })
             }

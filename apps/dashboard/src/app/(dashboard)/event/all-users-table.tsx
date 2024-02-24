@@ -7,19 +7,19 @@ import { useUpdateEventAttendanceMutation } from "../../../modules/event/mutatio
 
 interface CustomCheckboxProps {
   userId: string
-  attendanceId: string
+  attendancePoolId: string
   defaultChecked?: boolean
 }
-const CustomCheckbox = React.memo(({ attendanceId, userId, defaultChecked }: CustomCheckboxProps) => {
+const CustomCheckbox = React.memo(({ attendancePoolId, userId, defaultChecked }: CustomCheckboxProps) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
 
   const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
-    updateAttendance.mutate({ userId, attendanceId, attended: currentCheckedState })
+    updateAttendance.mutate({ userId, attendancePoolId: attendanceId, attended: currentCheckedState })
   }
   return (
     <Checkbox
       onChange={(event) => {
-        toggleAttendance(userId, attendanceId, event.currentTarget.checked)
+        toggleAttendance(userId, attendancePoolId, event.currentTarget.checked)
       }}
       defaultChecked={defaultChecked}
     />
@@ -33,7 +33,7 @@ interface User {
   familyName: string
   studyYear: number
   userId: string
-  attendanceId: string
+  attendancePoolId: string
   attended: boolean
 }
 
@@ -60,7 +60,7 @@ export const AllAttendeesTable = ({ users }: { users: User[] }) => {
         cell: (info) => (
           <CustomCheckbox
             userId={info.getValue().userId}
-            attendanceId={info.getValue().attendanceId}
+            attendancePoolId={info.getValue().attendancePoolId}
             defaultChecked={info.getValue().attended}
           />
         ),
@@ -73,7 +73,7 @@ export const AllAttendeesTable = ({ users }: { users: User[] }) => {
             color="red"
             onClick={() =>
               deregisterMut.mutate({
-                attendanceId: info.getValue().attendanceId,
+                attendancePoolId: info.getValue().attendancePoolId,
                 userId: info.getValue().userId,
               })
             }

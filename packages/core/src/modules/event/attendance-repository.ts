@@ -28,7 +28,7 @@ export interface AttendanceRepository {
   getAttendeeById(userId: string, eventId: string): Promise<Attendee | undefined>
   updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string): Promise<Attendee>
   getPoolByEventId(eventId: EventId): Promise<AttendancePool[]>
-  getByAttendanceId(id: AttendanceId): Promise<AttendancePool | undefined>
+  getPoolById(id: AttendanceId): Promise<AttendancePool | undefined>
   addChoice(eventId: EventId, attendanceId: AttendanceId, questionId: string, choiceId: string): Promise<Attendee>
 }
 
@@ -129,26 +129,26 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return res.map((r) => AttendancePoolSchema.parse(r))
   }
 
-  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string) {
+  async updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendancePoolId: string) {
     const res = await this.db
       .updateTable("attendee")
       .set({ ...attendeeWrite, updatedAt: new Date() })
       .where("userId", "=", userId)
-      .where("attendanceId", "=", attendanceId)
+      .where("attendancePoolId", "=", attendancePoolId)
       .returningAll()
       .executeTakeFirstOrThrow()
     return AttendeeSchema.parse(res)
   }
 
-  async getByAttendanceId(id: AttendanceId) {
+  async getPoolById(id: AttendanceId) {
     const res = await this.db
-      .selectFrom("attendance")
-      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .selectAll("attendance")
+      .selectFrom("attendancePool")
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
+      .selectAll("attendancePool")
       .select(
         sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
       )
-      .groupBy("attendance.id")
+      .groupBy("attendancePool.id")
       .where("id", "=", id)
       .executeTakeFirst()
     return res ? AttendancePoolSchema.parse(res) : undefined
@@ -159,7 +159,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .updateTable("attendee")
       .set({ extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]) })
       .where("userId", "=", eventId)
-      .where("attendanceId", "=", attendanceId)
+      .where("attendancePoolId", "=", attendanceId)
       .returningAll()
       .executeTakeFirstOrThrow()
     return AttendeeSchema.parse(res)
