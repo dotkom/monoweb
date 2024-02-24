@@ -104,6 +104,5 @@ export const runFixtures = async () => {
     .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
     .execute()
   await db.insertInto("productPaymentProvider").values(getProductPaymentProviderFixtures(insertedIds.product)).execute()
-
   await db.insertInto("personalMark").values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser)).execute()
 }
