@@ -3,11 +3,11 @@ version: "3.2"
 services:
   db:
     container_name: ow_db
-    image: postgres
+    image: public.ecr.aws/dotkom/dotkom/pgx-ulid:0.1.3
     restart: always
     environment:
       POSTGRES_PASSWORD: owpassword123
       POSTGRES_USER: ow
       POSTGRES_DB: ow
     ports:
-      - 6543:5432
+      - "5432:5432"
