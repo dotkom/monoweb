@@ -17,5 +17,5 @@ development purposes.
 3. Follow the guide on [Neon Branching](https://neon.tech/docs/introduction/branching)
 
 This provisions a specific compute endpoint for your branch, which you should use for development. Consult the primary
-[developer guide](./developer-guide.md) for more information on how to override the environment variables (and database
+[developer guide](/CONTRIBUTING.md) for more information on how to override the environment variables (and database
 URL) when running the applications.
