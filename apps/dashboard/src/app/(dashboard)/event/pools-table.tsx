@@ -55,7 +55,7 @@ export const PoolsTable = ({ attendance }: { attendance: AttendanceWithUser }) =
         cell: (info) => (
           <CustomCheckbox
             userId={info.getValue().userId}
-            attendanceId={info.getValue().attendanceId}
+            attendanceId={info.getValue().attendancePoolId}
             defaultChecked={info.getValue().attended}
           />
         ),
@@ -68,7 +68,7 @@ export const PoolsTable = ({ attendance }: { attendance: AttendanceWithUser }) =
             color="red"
             onClick={() =>
               deregisterMut.mutate({
-                attendanceId: info.getValue().attendanceId,
+                attendanceId: info.getValue().attendancePoolId,
                 userId: info.getValue().userId,
               })
             }

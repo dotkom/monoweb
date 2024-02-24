@@ -41,19 +41,23 @@ export const runFixtures = async () => {
   const insertedIds = {} as InsertedIds
 
   insertedIds.owUser = await db.insertInto("owUser").values(getUserFixtures()).returning("id").execute().then(mapId)
+
   insertedIds.company = await db
     .insertInto("company")
     .values(getCompanyFixtures())
     .returning("id")
     .execute()
     .then(mapId)
+
   insertedIds.committee = await db
     .insertInto("committee")
     .values(getCommitteeFixtures())
     .returning("id")
     .execute()
     .then(mapId)
+
   insertedIds.event = await db.insertInto("event").values(getEventFixtures()).returning("id").execute().then(mapId)
+
   insertedIds.attendance = await db
     .insertInto("attendance")
     .values(getAttendanceFixtures(insertedIds.event))
@@ -76,30 +80,35 @@ export const runFixtures = async () => {
     .then(mapId)
 
   insertedIds.mark = await db.insertInto("mark").values(getMarkFixtures()).returning("id").execute().then(mapId)
+
   insertedIds.product = await db
     .insertInto("product")
     .values(getProductFixtures())
     .returning("id")
     .execute()
     .then(mapId)
+
   insertedIds.jobListing = await db
     .insertInto("jobListing")
     .values(getJobListingFixtures(insertedIds.company))
     .returning("id")
     .execute()
     .then(mapId)
+
   insertedIds.jobListingLocation = await db
     .insertInto("jobListingLocation")
     .values(getJobListingLocationFixtures())
     .returning("id")
     .execute()
     .then(mapId)
+
   insertedIds.jobListingLocationLink = await db
     .insertInto("jobListingLocationLink")
     .values(getJobListingLocationLinkFixtures(insertedIds.jobListing, insertedIds.jobListingLocation))
     .returning("id")
     .execute()
     .then(mapId)
+
   insertedIds.offline = await db
     .insertInto("offline")
     .values(getOfflineFixtures())
@@ -111,6 +120,7 @@ export const runFixtures = async () => {
     .insertInto("eventCommittee")
     .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
     .execute()
+
   await db.insertInto("productPaymentProvider").values(getProductPaymentProviderFixtures(insertedIds.product)).execute()
 
   await db.insertInto("personalMark").values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser)).execute()

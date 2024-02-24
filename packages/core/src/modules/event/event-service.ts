@@ -1,8 +1,8 @@
 import {
   type User,
-  type Attendance,
+  type AttendancePool,
   type AttendanceWithUser,
-  type AttendanceWrite,
+  type AttendancePoolWrite,
   type AttendeeUser,
   type Event,
   type EventId,
@@ -21,7 +21,7 @@ export interface EventService {
   getEventById(id: EventId): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-  createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
+  createAttendance(eventId: EventId, attendanceWrite: AttendancePoolWrite): Promise<AttendancePool>
   listAttendance(eventId: EventId): Promise<AttendanceWithUser[]>
 }
 
@@ -69,7 +69,7 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async createAttendance(eventId: EventId, attendanceCreate: AttendanceWrite): Promise<Attendance> {
+  async createAttendance(eventId: EventId, attendanceCreate: AttendancePoolWrite): Promise<AttendancePool> {
     const attendance = await this.attendanceRepository.create({
       ...attendanceCreate,
       eventId,
@@ -86,7 +86,7 @@ export class EventServiceImpl implements EventService {
   }
 
   async listAttendance(eventId: EventId): Promise<AttendanceWithUser[]> {
-    const attendances = await this.attendanceRepository.getByEventId(eventId)
+    const attendances = await this.attendanceRepository.getPoolByEventId(eventId)
 
     const result: AttendanceWithUser[] = []
 

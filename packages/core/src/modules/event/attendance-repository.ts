@@ -3,24 +3,32 @@ import { type DB } from "@dotkomonline/db/src/db.generated"
 import {
   AttendancePoolSchema,
   AttendeeSchema,
-  type Attendance,
+  type AttendancePool,
   type AttendanceId,
-  type AttendanceWrite,
+  type AttendancePoolWrite,
   type Attendee,
   type AttendeeWrite,
   type EventId,
+  AttendanceWrite,
+  AttendanceSchema,
+  Attendance,
 } from "@dotkomonline/types"
 import { type DeleteResult, sql, type Kysely } from "kysely"
 
 export interface AttendanceRepository {
   create(attendanceWrite: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<DeleteResult>
+
+  createPool(attendancePoolWrite: AttendancePoolWrite): Promise<AttendancePool>
+  deletePool(id: AttendanceId): Promise<DeleteResult>
+
   createAttendee(attendeeWrite: AttendeeWrite): Promise<Attendee>
   removeAttendee(userId: string, attendanceId: string): Promise<Attendee>
-  getAttendeeByIds(userId: string, eventId: string): Promise<Attendee | undefined>
+
+  getAttendeeById(userId: string, eventId: string): Promise<Attendee | undefined>
   updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string): Promise<Attendee>
-  getByEventId(eventId: EventId): Promise<Attendance[]>
-  getByAttendanceId(id: AttendanceId): Promise<Attendance | undefined>
+  getPoolByEventId(eventId: EventId): Promise<AttendancePool[]>
+  getByAttendanceId(id: AttendanceId): Promise<AttendancePool | undefined>
   addChoice(eventId: EventId, attendanceId: AttendanceId, questionId: string, choiceId: string): Promise<Attendee>
 }
 
@@ -31,33 +39,43 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const res = await this.db
       .insertInto("attendance")
       .values({
-        createdAt: attendanceWrite.createdAt,
-        updatedAt: attendanceWrite.updatedAt,
-        start: attendanceWrite.start,
-        end: attendanceWrite.end,
-        deregisterDeadline: attendanceWrite.deregisterDeadline,
-        limit: attendanceWrite.limit,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         eventId: attendanceWrite.eventId,
-        id: attendanceWrite.id,
-        min: attendanceWrite.min,
-        max: attendanceWrite.max,
+        mergeTime: attendanceWrite.mergeTime,
+        registerEnd: attendanceWrite.registerEnd,
+        registerStart: attendanceWrite.registerStart,
+        deregisterDeadline: attendanceWrite.deregisterDeadline,
       })
       .returningAll()
       .executeTakeFirstOrThrow()
 
-    const attendees = await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .where("attendanceId", "=", res.id)
-      .execute()
-    return AttendancePoolSchema.parse({
-      ...res,
-      attendees,
-    })
+    return AttendanceSchema.parse(res)
   }
 
   async delete(id: AttendanceId) {
     return await this.db.deleteFrom("attendance").where("id", "=", id).executeTakeFirst()
+  }
+
+  async createPool(attendancePoolWrite: AttendancePoolWrite) {
+    const res = await this.db
+      .insertInto("attendancePool")
+      .values({
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        attendanceId: attendancePoolWrite.attendanceId,
+        limit: attendancePoolWrite.limit,
+        max: attendancePoolWrite.max,
+        min: attendancePoolWrite.min,
+        waitlist: attendancePoolWrite.waitlist,
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    return AttendancePoolSchema.parse(res)
+  }
+
+  async deletePool(id: AttendanceId) {
+    return await this.db.deleteFrom("attendancePool").where("id", "=", id).executeTakeFirst()
   }
 
   async createAttendee(attendeeWrite: AttendeeWrite) {
@@ -65,45 +83,48 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .insertInto("attendee")
       .values({
         userId: attendeeWrite.userId,
-        attendanceId: attendeeWrite.attendanceId,
         attended: attendeeWrite.attended,
+        attendancePoolId: attendeeWrite.attendancePoolId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returningAll()
       .executeTakeFirstOrThrow()
-      .catch((err) => console.log(err))
     return AttendeeSchema.parse(res)
   }
 
-  async removeAttendee(userId: string, attendanceId: string) {
+  async removeAttendee(userId: string, attendancePoolId: string) {
     const res = await this.db
       .deleteFrom("attendee")
       .where("userId", "=", userId)
-      .where("attendanceId", "=", attendanceId)
+      .where("attendancePoolId", "=", attendancePoolId)
       .returningAll()
       .executeTakeFirstOrThrow()
     return AttendeeSchema.parse(res)
   }
 
-  async getAttendeeByIds(userId: string, attendanceId: string) {
+  async getAttendeeById(userId: string, attendancePoolId: string) {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
       .where("userId", "=", userId)
-      .where("attendanceId", "=", attendanceId)
+      .where("attendancePoolId", "=", attendancePoolId)
       .executeTakeFirst()
     return res ? AttendeeSchema.parse(res) : undefined
   }
 
-  async getByEventId(eventId: string) {
+  async getPoolByEventId(eventId: string) {
     const res = await this.db
-      .selectFrom("attendance")
-      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .selectAll("attendance")
+      .selectFrom("attendancePool")
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
+      .leftJoin("event", "event.id", "attendancePool.attendanceId")
+      .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
+      .selectAll("attendancePool")
       .select(
         sql<DB["attendee"][]>`COALESCE(json_agg(attendee) FILTER (WHERE attendee.id IS NOT NULL), '[]')`.as("attendees")
       )
-      .groupBy("attendance.id")
-      .where("eventId", "=", eventId)
+      .groupBy("attendancePool.id")
+      .where("attendance.eventId", "=", eventId)
       .execute()
     return res.map((r) => AttendancePoolSchema.parse(r))
   }

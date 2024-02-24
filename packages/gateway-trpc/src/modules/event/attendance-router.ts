@@ -1,9 +1,9 @@
-import { AttendancePoolSchema, AttendanceWriteSchema, EventSchema, UserSchema } from "@dotkomonline/types"
+import { AttendancePoolSchema, AttendancePoolWriteSchema, EventSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
-  create: protectedProcedure.input(AttendanceWriteSchema).mutation(async ({ input, ctx }) => {
+  create: protectedProcedure.input(AttendancePoolWriteSchema).mutation(async ({ input, ctx }) => {
     const attendance = await ctx.eventService.createAttendance(input.eventId, input)
     return attendance
   }),

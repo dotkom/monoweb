@@ -43,25 +43,37 @@ export const EventWriteSchema = EventSchema.omit({
 export type EventWrite = z.infer<typeof EventWriteSchema>
 
 export const AttendanceSchema = z.object({
+  id: z.string().ulid(),
   registerStart: z.date(),
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
   mergeTime: z.date(),
+  eventId: z.string().ulid(),
+})
+
+export const AttendanceWriteSchema = AttendanceSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 })
 
 export const AttendanceEventSchema = EventSchema.extend({
   attendance: AttendanceSchema,
 })
+
+export type Attendance = z.infer<typeof AttendanceSchema>
+export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
+
 export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
 
-export const AttendeeextrasSchema = z.object({
+export const AttendeeExtrasSchema = z.object({
   id: z.string(),
   choice: z.string(),
 })
 
 export const AttendeeSchema = z.object({
   id: z.string(),
-  attendanceId: z.string().ulid(),
+  attendancePoolId: z.string().ulid(),
   userId: z.string().ulid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -88,6 +100,8 @@ export const AttendancePoolSchema = z.object({
   eventId: z.string(),
   limit: z.number(),
   attendees: z.array(AttendeeSchema),
+  waitlist: z.string().ulid().nullable(),
+  attendanceId: z.string().ulid(),
 })
 
 export const AttendanceWithUser = AttendancePoolSchema.extend({
@@ -95,14 +109,14 @@ export const AttendanceWithUser = AttendancePoolSchema.extend({
 })
 
 export type AttendanceId = Attendance["id"]
-export type Attendance = z.infer<typeof AttendancePoolSchema>
+export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export type AttendanceWithUser = z.infer<typeof AttendanceWithUser>
 
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeUser = z.infer<typeof AttendeeUser>
 
-export const AttendanceWriteSchema = AttendancePoolSchema.partial({
+export const AttendancePoolWriteSchema = AttendancePoolSchema.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -117,5 +131,5 @@ export const AttendeeWriteSchema = AttendeeSchema.omit({
   extras: true,
 })
 
-export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
+export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>

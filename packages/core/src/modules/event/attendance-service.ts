@@ -17,7 +17,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
   async registerForEvent(userId: UserId, poolId: AttendanceId) {
     const attendee = await this.attendanceRepository.createAttendee({
-      attendanceId: poolId,
+      attendancePoolId: poolId,
       userId,
       attended: false,
     })
@@ -30,7 +30,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async registerForAttendance(_userId: UserId, _attendanceId: AttendanceId, _attended: boolean) {
-    const attendee = await this.attendanceRepository.getAttendeeByIds(_userId, _attendanceId)
+    const attendee = await this.attendanceRepository.getAttendeeById(_userId, _attendanceId)
     if (!attendee) {
       throw new Error("Attendee not found")
     }
@@ -43,7 +43,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string) {
-    const attendee = await this.attendanceRepository.getAttendeeByIds(eventId, attendanceId)
+    const attendee = await this.attendanceRepository.getAttendeeById(eventId, attendanceId)
     if (!attendee) {
       throw new Error("Attendee not found")
     }

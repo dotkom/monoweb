@@ -10,9 +10,7 @@ import { trpc } from "../../../../utils/trpc"
 import { notifyFail } from "../../../notifications"
 
 const InfoBox: FC<{ eventAttendance: AttendanceWithUser[] }> = ({ eventAttendance }) => {
-  const getRange = ({ min, max }: { min: number; max: number }): number[] => [
-    ...Array.from({ length: max - min }, (_, i) => min + i),
-  ]
+  const getRange = ({ min, max }: { min: number; max: number }): number[] => Array.from({ length: max - min }, (_, i) => min + i)
 
   const rangeToString = (ranges: number[][]): string => {
     // example: [1,2] [2,3]  => 1,2,3
