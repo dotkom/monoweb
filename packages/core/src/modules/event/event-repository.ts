@@ -1,5 +1,5 @@
 import { type Database } from "@dotkomonline/db"
-import { type Event, type EventId, EventSchema, EventExtra } from "@dotkomonline/types"
+import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
 import { type Insertable, type Kysely, type Selectable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
@@ -8,30 +8,11 @@ export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.p
 export type EventInsert = Insertable<Database["event"]>
 
 export interface EventRepository {
-  createEvent(data: EventInsert): Promise<Event>
-  updateEvent(id: EventId, data: EventInsert): Promise<Event>
-  eventGetAll(take: number, cursor?: Cursor): Promise<Event[]>
-  getEventAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
+  create(data: EventInsert): Promise<Event>
+  update(id: EventId, data: EventInsert): Promise<Event>
+  getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
-  createEventExtras(eventId: EventId, extras: EventExtra[]): Promise<void>
-
-  createPool(attendanceWrite: AttendanceWrite): Promise<Attendance>
-  deletePool(id: AttendanceId): Promise<DeleteResult>
-
-  createAttendee(attendeeWrite: AttendeeWrite): Promise<Attendee>
-  updateAttendee(attendeeWrite: AttendeeWrite, userId: string, attendanceId: string): Promise<Attendee>
-  deleteAttendee(userId: string, attendanceId: string): Promise<Attendee>
-  getAttendeeByEvent(userId: string, eventId: string): Promise<Attendee | undefined>
-
-  getAttendeesByEvent(eventId: EventId): Promise<Attendance[]>
-  getAttendeesByPool(id: AttendanceId): Promise<Attendance | undefined>
-
-  createAttendeeExtrasChoice(
-    eventId: EventId,
-    attendanceId: AttendanceId,
-    questionId: string,
-    choiceId: string
-  ): Promise<Attendee>
 }
 
 export class EventRepositoryImpl implements EventRepository {

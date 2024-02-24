@@ -1,6 +1,6 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
-import { ResultIds } from "../fixture"
+import { type InsertedIds } from "../fixture"
 
 const employments = {
   fulltime: "Fulltid",
@@ -10,11 +10,10 @@ const employments = {
 } as const
 
 // export const jobListings: Insertable<Database["jobListing"]>[] = [
-export const getJobListingFixtures: (companyId: ResultIds["company"]) => Insertable<Database["jobListing"]>[] = (
+export const getJobListingFixtures: (companyId: InsertedIds["company"]) => Insertable<Database["jobListing"]>[] = (
   companyIds
 ) => [
   {
-    id: "01HD77R4Y4S3WJ44NZ8029VP4P",
     companyId: companyIds[0],
     title: "Job at Bekk",
     ingress: "Join us at Bekk!",
@@ -29,7 +28,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     deadlineAsap: false, // Placeholder value
   },
   {
-    id: "01HD77R4Y764E5Q5DY9YTT9ZF6",
     companyId: companyIds[1],
     title: "Job at Junior Consulting",
     ingress: "Become a consultant at Junior Consulting!",
@@ -44,7 +42,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     deadlineAsap: false, // Placeholder value
   },
   {
-    id: "01HD77R4Y7RHCCQ5SYN31CVFRG",
     companyId: companyIds[1],
     title: "Software engineer - summer intern",
     ingress:
@@ -61,7 +58,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4Y7XW6S2VBTPBJWMTN0",
     companyId: companyIds[0],
     title: "Produktutvikler",
     ingress:
@@ -78,7 +74,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.parttime,
   },
   {
-    id: "01HD77R4Y9HFYK1NJV8SKSPKN3",
     companyId: companyIds[0],
     title: "Energisommerjobb 2024: Vil du være med å forme fremtiden?",
     ingress:
@@ -95,7 +90,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4Y9D8FJ8WHBY6GF67AW",
     companyId: companyIds[0],
     title: "Sommerjobb i Sticos",
     ingress:
@@ -112,7 +106,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4Y998QA09CMCAJKGSD7",
     companyId: companyIds[0],
     title: "Sommeren er best hos Avinor – bli med å utvikle fremtidens luftfart!",
     ingress:
@@ -129,7 +122,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4YAYQAR9V47DA5X1Q7C",
     companyId: companyIds[0],
     title: "Norkart Sommer Internship 2024",
     ingress:
@@ -146,7 +138,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4YAW54151ZE3ABZVGSX",
     companyId: companyIds[0],
     title: "Software Engineering Summer Internship",
     ingress: "Are you our new Software Engineering Intern?",
@@ -162,7 +153,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4YAQXGEH10C4XTT8J5K",
     companyId: companyIds[0],
     title: "Associate Solutions Engineer - Norway",
     ingress: "Are You Our New Associate Solution Engineer?",
@@ -178,7 +168,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.fulltime,
   },
   {
-    id: "01HD77R4YA5CA0QYF0PEBGZNGZ",
     companyId: companyIds[0],
     title: "Graduate Software Engineer - Norway",
     ingress: "Are You Our New Graduate Software Engineer?",
@@ -194,7 +183,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.fulltime,
   },
   {
-    id: "01HD77R4YAZN6ABDPB17K52NAH",
     companyId: companyIds[0],
     title: "Form din fremtid gjennom internship i Deloitte Consulting",
     ingress:
@@ -211,7 +199,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4YAMPR4PG0GSYBM9Y32",
     companyId: companyIds[0],
     title: "Summer Internship 2024 - AI and Product Development",
     ingress:
@@ -228,7 +215,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.internship,
   },
   {
-    id: "01HD77R4YA6AH85A2EZ0BJP4MN",
     companyId: companyIds[0],
     title: "Nyutdannet innen IT høsten 2024 og vil jobbe med Software Development?",
     ingress:
@@ -246,7 +232,6 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
     employment: employments.fulltime,
   },
   {
-    id: "01HD77R4YCTMJ7XPRHCEDQ616B",
     companyId: companyIds[0],
     title: "Kickstart karrieren som konsulent i twoday",
     ingress:
@@ -264,29 +249,32 @@ export const getJobListingFixtures: (companyId: ResultIds["company"]) => Inserta
   },
 ]
 
-export const jobListingLocations: Insertable<Database["jobListingLocation"]>[] = [
-  { name: "Fredrikstad", id: "01HD99TC1RF2DBYKBTJZDN35GG" },
-  { name: "Tromsø", id: "01HD99TC1T89TQ76VSW1PWQ6BQ" },
-  { name: "Bodø", id: "01HD99TC1TSFA62739TJ21KDMV" },
-  { name: "Oslo", id: "01HD99TC1T9DFGM6APVQ6FV8HM" },
-  { name: "Trondheim", id: "01HD99TC1THMR30405QJ9ZVYE8" },
+export const getJobListingLocationFixtures: () => Insertable<Database["jobListingLocation"]>[] = () => [
+  { name: "Fredrikstad" },
+  { name: "Tromsø" },
+  { name: "Bodø" },
+  { name: "Oslo" },
+  { name: "Trondheim" },
 ]
 
-export const jobListingLocationLinks: Insertable<Database["jobListingLocationLink"]>[] = [
+export const getJobListingLocationLinkFixtures: (
+  jobListingIds: string[],
+  locationIds: string[]
+) => Insertable<Database["jobListingLocationLink"]>[] = (jobListingIds, locationIds) => [
   {
-    jobListingId: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    locationId: "01HD99TC1T9DFGM6APVQ6FV8HM",
+    jobListingId: jobListingIds[0],
+    locationId: locationIds[0],
   },
   {
-    jobListingId: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    locationId: "01HD99TC1THMR30405QJ9ZVYE8",
+    jobListingId: jobListingIds[0],
+    locationId: locationIds[1],
   },
   {
-    jobListingId: "01HD77R4Y4S3WJ44NZ8029VP4P",
-    locationId: "01HD99TC1T89TQ76VSW1PWQ6BQ",
+    jobListingId: jobListingIds[0],
+    locationId: locationIds[1],
   },
   {
-    jobListingId: "01HD77R4Y764E5Q5DY9YTT9ZF6",
-    locationId: "01HD99TC1THMR30405QJ9ZVYE8",
+    jobListingId: jobListingIds[0],
+    locationId: locationIds[1],
   },
 ]

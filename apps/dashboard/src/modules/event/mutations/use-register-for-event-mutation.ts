@@ -14,7 +14,7 @@ export const useRegisterForEventMutation = () => {
     onSuccess: (data) => {
       notification.complete({
         title: "Påmelding vellykket",
-        message: `Bruker ${data.userId} ble påmeldt arrangementet.`,
+        message: `Bruker ${data?.userId} ble påmeldt arrangementet.`,
       })
     },
     onError: (err) => {

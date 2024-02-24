@@ -1,8 +1,7 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
-import { type ResultIds } from "../fixture"
 
-export const getEventsFixtures: () => Insertable<Database["event"]>[] = () => [
+export const getEventFixtures: () => Insertable<Database["event"]>[] = () => [
   {
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
@@ -90,98 +89,5 @@ export const getEventsFixtures: () => Insertable<Database["event"]>[] = () => [
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Åre, Sverige",
     extras: null,
-  },
-]
-
-export const getAttendanceFixtures: (event_ids: ResultIds["event"]) => Insertable<Database["attendance"]>[] = (
-  event_ids
-) => [
-  {
-    eventId: event_ids[0],
-    registerStart: new Date("2023-02-22 13:30:04.713+00"),
-    registerEnd: new Date("2023-02-22 13:30:04.713+00"),
-    deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
-    mergeTime: new Date("2023-02-22 13:30:04.713+00"),
-    createdAt: new Date("2023-02-22 13:30:04.713+00"),
-    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-  },
-  {
-    eventId: event_ids[1],
-    registerStart: new Date("2023-02-23 11:03:49.289+00"),
-    registerEnd: new Date("2023-02-23 11:03:49.289+00"),
-    deregisterDeadline: new Date("2023-02-23 11:03:49.289+00"),
-    mergeTime: new Date("2023-02-23 11:03:49.289+00"),
-    createdAt: new Date("2023-02-23 11:03:49.289+00"),
-    updatedAt: new Date("2023-02-23 11:03:49.289+00"),
-  },
-]
-
-export const getPoolFixtures: (attendance_ids: ResultIds["attendance"]) => Insertable<Database["attendancePool"]>[] = (
-  attendance_ids
-) => [
-  {
-    attendanceId: attendance_ids[0],
-    createdAt: new Date("2023-02-22 13:30:04.713+00"),
-    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-    min: 0,
-    max: 4,
-    limit: 10,
-  },
-  {
-    attendanceId: attendance_ids[0],
-    createdAt: new Date("2023-02-23 11:03:49.289+00"),
-    updatedAt: new Date("2023-02-23 11:03:49.289+00"),
-    limit: 10,
-    min: 4,
-    max: 6,
-  },
-  {
-    attendanceId: attendance_ids[1],
-    createdAt: new Date("2023-02-25 11:03:49.289+00"),
-    updatedAt: new Date("2023-02-25 11:03:49.289+00"),
-    limit: 10,
-    min: 1,
-    max: 4,
-  },
-]
-
-// export const attendees: Insertable<Database["attendee"]>[] = [
-export const getAttendeesFixtures: (
-  user_ids: ResultIds["owUser"],
-  pool_ids: ResultIds["attendancePool"]
-) => Insertable<Database["attendee"]>[] = (user_ids, pool_ids) => [
-  {
-    createdAt: new Date("2023-02-22 13:30:04.713+00"),
-    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-    userId: user_ids[0],
-    attendancePoolId: pool_ids[0],
-    extrasChoices: JSON.stringify([
-      {
-        id: "1",
-        choice: "1",
-      },
-      {
-        id: "2",
-        choice: "3",
-      },
-    ]),
-  },
-]
-
-export const getEventCompany: (
-  event_ids: ResultIds["event"],
-  company_ids: ResultIds["company"]
-) => Insertable<Database["eventCompany"]>[] = (event_ids, company_ids) => [
-  {
-    eventId: event_ids[0],
-    companyId: company_ids[0],
-  },
-  {
-    eventId: event_ids[0],
-    companyId: company_ids[1],
-  },
-  {
-    eventId: event_ids[1],
-    companyId: company_ids[1],
   },
 ]

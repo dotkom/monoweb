@@ -1,7 +1,7 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
 
-export const committees: Insertable<Database["committee"]>[] = [
+export const getCommitteeFixtures: () => Insertable<Database["committee"]>[] = () => [
   {
     id: "01HB64JAPVE9RXE19JX2BXSNJX",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),

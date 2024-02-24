@@ -1,12 +1,10 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
-import { type ResultIds } from "../fixture"
+import { type InsertedIds } from "../fixture"
 
-// const eventCommittees = getEventCommitteeFixtures(resultIds.event, resultIds.committee)
-// export const eventCommittees: Insertable<Database["eventCommittee"]>[] = [
 export const getEventCommitteeFixtures: (
-  eventIds: ResultIds["event"],
-  committeeIds: ResultIds["committee"]
+  eventIds: InsertedIds["event"],
+  committeeIds: InsertedIds["committee"]
 ) => Insertable<Database["eventCommittee"]>[] = (eventIds, committeeIds) => [
   {
     eventId: eventIds[0],
