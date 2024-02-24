@@ -6,30 +6,27 @@ import { getCommitteeFixtures } from "./fixtures/committee"
 import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
 import { getEventFixtures } from "./fixtures/event"
-import { getJobListingFixtures, jobListingLocationLinks, jobListingLocations } from "./fixtures/job-listing"
-import { marks } from "./fixtures/mark"
-import { offlines } from "./fixtures/offline"
-import { personalMarks } from "./fixtures/personal-mark"
-import { products } from "./fixtures/product"
-import { productPaymentProviders } from "./fixtures/product-payment-provider"
-import { users } from "./fixtures/user"
+import {
+  getJobListingFixtures,
+  getJobListingLocationFixtures,
+  getJobListingLocationLinkFixtures,
+} from "./fixtures/job-listing"
+import { getMarkFixtures } from "./fixtures/mark"
+import { getOfflineFixtures } from "./fixtures/offline"
+import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
+import { getProductFixtures } from "./fixtures/product"
+import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
+import { getUserFixtures } from "./fixtures/user"
 
-async function insert(tableName: keyof DB, fixtures: unknown[]) {
-  const resultIds = await db.insertInto(tableName).values(fixtures).execute()
-  console.log(`Inserted ${resultIds.length} rows into ${tableName}`)
-}
-
-async function insertReturn(tableName: keyof DB, fixtures: unknown[]): Promise<string[]> {
-  const resultIds = await db.insertInto(tableName).values(fixtures).returning("id").execute()
-  console.log(`Inserted ${resultIds.length} rows into ${tableName}`)
-  return resultIds.map((result) => result.id)
-}
-
-export type ResultIds = {
+export type InsertedIds = {
   [K in keyof DB]: string[]
 }
 
-export const updateResultIds = <T extends keyof ResultIds>(resultIds: ResultIds, key: T, results: { id: string }[]) => {
+export const updateResultIds = <T extends keyof InsertedIds>(
+  resultIds: InsertedIds,
+  key: T,
+  results: { id: string }[]
+) => {
   results.forEach((result, index) => {
     if (index < resultIds[key].length) {
       resultIds[key][index] = result.id
@@ -37,22 +34,76 @@ export const updateResultIds = <T extends keyof ResultIds>(resultIds: ResultIds,
   })
 }
 
-export const runFixtures = async () => {
-  const resultIds: ResultIds = {} as ResultIds
+const mapId = (results: { id: string }[]) => results.map((res) => res.id)
 
-  resultIds.owUser = await insertReturn("owUser", users)
-  resultIds.company = await insertReturn("company", getCompanyFixtures())
-  resultIds.committee = await insertReturn("committee", getCommitteeFixtures())
-  resultIds.event = await insertReturn("event", getEventFixtures())
-  resultIds.attendance = await insertReturn("attendance", getAttendanceFixtures(resultIds.event))
-  resultIds.attendee = await insertReturn("attendee", getAttendeeFixtures(resultIds.attendance, resultIds.owUser))
-  resultIds.mark = await insertReturn("mark", marks)
-  await insert("personalMark", personalMarks)
-  resultIds.product = await insertReturn("product", products)
-  await insert("productPaymentProvider", productPaymentProviders)
-  await insert("eventCommittee", getEventCommitteeFixtures(resultIds.event, resultIds.committee))
-  resultIds.jobListing = await insertReturn("jobListing", getJobListingFixtures(resultIds.company))
-  resultIds.jobListingLocation = await insertReturn("jobListingLocation", jobListingLocations)
-  resultIds.jobListingLocationLink = await insertReturn("jobListingLocationLink", jobListingLocationLinks)
-  resultIds.offline = await insertReturn("offline", offlines)
+export const runFixtures = async () => {
+  const insertedIds = {} as InsertedIds
+
+  insertedIds.owUser = await db.insertInto("owUser").values(getUserFixtures()).returning("id").execute().then(mapId)
+  insertedIds.company = await db
+    .insertInto("company")
+    .values(getCompanyFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+  insertedIds.committee = await db
+    .insertInto("committee")
+    .values(getCommitteeFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+  insertedIds.event = await db.insertInto("event").values(getEventFixtures()).returning("id").execute().then(mapId)
+  insertedIds.attendance = await db
+    .insertInto("attendance")
+    .values(getAttendanceFixtures(insertedIds.event))
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.attendee = await db
+    .insertInto("attendee")
+    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.mark = await db.insertInto("mark").values(getMarkFixtures()).returning("id").execute().then(mapId)
+  insertedIds.product = await db
+    .insertInto("product")
+    .values(getProductFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+  insertedIds.jobListing = await db
+    .insertInto("jobListing")
+    .values(getJobListingFixtures(insertedIds.company))
+    .returning("id")
+    .execute()
+    .then(mapId)
+  insertedIds.jobListingLocation = await db
+    .insertInto("jobListingLocation")
+    .values(getJobListingLocationFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+  insertedIds.jobListingLocationLink = await db
+    .insertInto("jobListingLocationLink")
+    .values(getJobListingLocationLinkFixtures(insertedIds.jobListing, insertedIds.jobListingLocation))
+    .returning("id")
+    .execute()
+    .then(mapId)
+  insertedIds.offline = await db
+    .insertInto("offline")
+    .values(getOfflineFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  await db
+    .insertInto("eventCommittee")
+    .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
+    .execute()
+  await db.insertInto("productPaymentProvider").values(getProductPaymentProviderFixtures(insertedIds.product)).execute()
+
+  await db.insertInto("personalMark").values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser)).execute()
 }

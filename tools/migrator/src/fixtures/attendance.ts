@@ -1,8 +1,8 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
-import { type ResultIds } from "../fixture"
+import { type InsertedIds } from "../fixture"
 
-export const getAttendanceFixtures: (eventIds: ResultIds["event"]) => Insertable<Database["attendance"]>[] = (
+export const getAttendanceFixtures: (eventIds: InsertedIds["event"]) => Insertable<Database["attendance"]>[] = (
   eventIds
 ) => [
   {

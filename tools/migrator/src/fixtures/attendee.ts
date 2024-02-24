@@ -1,10 +1,10 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
-import { type ResultIds } from "../fixture"
+import { type InsertedIds } from "../fixture"
 
 export const getAttendeeFixtures: (
-  attendanceIds: ResultIds["attendance"],
-  userIds: ResultIds["owUser"]
+  attendanceIds: InsertedIds["attendance"],
+  userIds: InsertedIds["owUser"]
 ) => Insertable<Database["attendee"]>[] = (attendanceIds, userIds) => [
   {
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
