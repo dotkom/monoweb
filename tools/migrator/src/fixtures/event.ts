@@ -1,9 +1,8 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
 
-export const events: Insertable<Database["event"]>[] = [
+export const getEventFixtures: () => Insertable<Database["event"]>[] = () => [
   {
-    id: "01HB64TWZK1C5YK5J7VGNZPDGW",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
     title: "Kurs i å lage fixtures",
@@ -58,7 +57,6 @@ export const events: Insertable<Database["event"]>[] = [
     ]),
   },
   {
-    id: "01HB64TWZK1N8ABMH8JAE12101",
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
     title: "Åre 2024",
