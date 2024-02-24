@@ -1,5 +1,7 @@
 import { type DB } from "@dotkomonline/db/src/db.generated"
 import { db } from "./db"
+import { getAttendanceFixtures } from "./fixtures/attendance"
+import { getAttendeeFixtures } from "./fixtures/attendee"
 import { getCommitteeFixtures } from "./fixtures/committee"
 import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
@@ -15,32 +17,26 @@ import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
-import { getAttendanceFixtures } from "./fixtures/attendance"
-import { getAttendeeFixtures } from "./fixtures/attendee"
-import { getPoolFixtures } from "./fixtures/attendance-pool"
+
+interface WithIdentifier {
+  id: string
+}
 
 export type InsertedIds = {
   [K in keyof DB]: string[]
 }
 
-export const updateResultIds = <T extends keyof InsertedIds>(
-  resultIds: InsertedIds,
-  key: T,
-  results: { id: string }[]
-) => {
-  results.forEach((result, index) => {
-    if (index < resultIds[key].length) {
-      resultIds[key][index] = result.id
-    }
-  })
-}
-
-const mapId = (results: { id: string }[]) => results.map((res) => res.id)
+const mapId = (results: WithIdentifier[]) => results.map((res) => res.id)
 
 export const runFixtures = async () => {
   const insertedIds = {} as InsertedIds
 
-  insertedIds.owUser = await db.insertInto("owUser").values(getUserFixtures()).returning("id").execute().then(mapId)
+  insertedIds.owUser = await db //
+    .insertInto("owUser")
+    .values(getUserFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
 
   insertedIds.company = await db
     .insertInto("company")
@@ -56,7 +52,12 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
-  insertedIds.event = await db.insertInto("event").values(getEventFixtures()).returning("id").execute().then(mapId)
+  insertedIds.event = await db //
+    .insertInto("event")
+    .values(getEventFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
 
   insertedIds.attendance = await db
     .insertInto("attendance")
@@ -67,19 +68,24 @@ export const runFixtures = async () => {
 
   insertedIds.attendancePool = await db
     .insertInto("attendancePool")
-    .values(getPoolFixtures(insertedIds.attendance))
+    .values(getAttendanceFixtures(insertedIds.event))
     .returning("id")
     .execute()
     .then(mapId)
 
   insertedIds.attendee = await db
     .insertInto("attendee")
-    .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendancePool))
+    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
     .returning("id")
     .execute()
     .then(mapId)
 
-  insertedIds.mark = await db.insertInto("mark").values(getMarkFixtures()).returning("id").execute().then(mapId)
+  insertedIds.mark = await db //
+    .insertInto("mark")
+    .values(getMarkFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
 
   insertedIds.product = await db
     .insertInto("product")
@@ -116,12 +122,19 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
+  // Tables with keys that are not used in other tables
   await db
     .insertInto("eventCommittee")
     .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
     .execute()
 
-  await db.insertInto("productPaymentProvider").values(getProductPaymentProviderFixtures(insertedIds.product)).execute()
+  await db //
+    .insertInto("productPaymentProvider")
+    .values(getProductPaymentProviderFixtures(insertedIds.product))
+    .execute()
 
-  await db.insertInto("personalMark").values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser)).execute()
+  await db //
+    .insertInto("personalMark")
+    .values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser))
+    .execute()
 }
