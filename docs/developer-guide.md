@@ -39,8 +39,8 @@ compiler, this would pose a problem, since the compiler does not want to enter `
 However, since we use the Next.js Compiler for the web applications, and TSup for the other applications, we can tell
 the Next.js Compiler or TSup compiler to bundle the libraries as part of the build process.
 
-In Next.js, this is done by adding `transpilePackages` in the `next.config.mjs` files. In Tsup builds, we configure
-simply tell it to bundle everything into a single file.
+In Next.js, this is done by adding `transpilePackages` in the `next.config.mjs` files. In Tsup builds, we simply tell it
+to bundle everything into a single file.
 
 Examples of both can be found in the different applications in the `apps/` directory. For example, `apps/web` uses
 Next.js, and `apps/gateway-email` uses TSup.
@@ -110,12 +110,12 @@ you do not have access to Doppler:
 # .env
 
 # Auth0 client configuration, get these from the Auth0 dashboard
-AUTH0_MANAGEMENT_API_CLIENT_ID=
-AUTH0_MANAGEMENT_API_CLIENT_SECRET=
-AUTH0_MANAGEMENT_API_ISSUER=https://dev.id.online.ntnu.no
 DASHBOARD_AUTH0_CLIENT_ID=
 DASHBOARD_AUTH0_CLIENT_SECRET=
 DASHBOARD_AUTH0_ISSUER=https://dev.id.online.ntnu.no
+WEB_AUTH0_CLIENT_ID=
+WEB_AUTH0_CLIENT_SECRET=
+WEB_AUTH0_ISSUER=https://dev.id.online.ntnu.no
 GTX_AUTH0_CLIENT_ID=
 GTX_AUTH0_CLIENT_SECRET=
 GTX_AUTH0_ISSUER=https://dev.id.online.ntnu.no
