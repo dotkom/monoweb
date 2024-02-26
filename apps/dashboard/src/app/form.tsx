@@ -223,7 +223,7 @@ export function createFileInput<F extends FieldValues>({
               label=""
             />
           )}
-        ></Controller>
+        />
       </Box>
     )
   }

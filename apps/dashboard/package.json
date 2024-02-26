@@ -6,8 +6,8 @@
     "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -43,17 +43,14 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@dotkomonline/config": "workspace:^",
-    "@types/eslint": "^8.44.7",
     "@types/node": "^18.18.13",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.54.0",
-    "eslint-config-next": "^14.0.3",
     "open-color": "^1.9.1",
     "postcss": "^8.4.31",
-    "prettier": "^3.1.0",
     "tailwindcss": "^3.3.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
