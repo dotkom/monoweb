@@ -21,8 +21,8 @@ export const createKysely = (env: Environment) =>
     plugins: [new CamelCasePlugin()],
   })
 
-// biome-ignore lint/suspicious/noRedeclare: error
 // @ts-expect-error: does not like re-declaring global
+// biome-ignore lint/suspicious/noRedeclare: error
 export const kysely = global.kysely || createKysely(env)
 
 if (env.NODE_ENV !== "production") {
