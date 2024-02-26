@@ -954,6 +954,9 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
