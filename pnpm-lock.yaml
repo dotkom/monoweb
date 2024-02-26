@@ -184,6 +184,9 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       '@types/aws-lambda':
         specifier: ^8.10.129
         version: 8.10.129

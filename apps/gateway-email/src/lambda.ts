@@ -15,10 +15,10 @@ const templates = [
   HelloWorldTemplate,
   InterestFormForBedkomTemplate,
   InterestFormForCompanyTemplate,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: this should be any
 ] satisfies Template<any>[]
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: this too, should be any
 const templateMap = templates.reduce<Record<string, Template<any>>>((acc, curr) => {
   acc[curr.displayName] = curr
   return acc
@@ -77,7 +77,8 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
   } catch (err) {
     if (err instanceof ZodError) {
       return { statusCode: 400, body: "Provided arguments don't match email input schema" }
-    } else if (err instanceof InvalidTemplateArguments) {
+    }
+    if (err instanceof InvalidTemplateArguments) {
       return { statusCode: 400, body: "Arguments provided to template don't match the template's arguments" }
     }
     console.error(err)
