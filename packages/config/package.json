@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
+  "scripts": {
+    "lint": "biome check . --apply",
+    "lint-check": "biome check ."
+  },
   "files": [
     "tailwind-preset.d.ts",
     "tailwind-preset.js",
@@ -12,9 +16,6 @@
     "typography.css",
     "biome.json"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
     "@radix-ui/colors": "^3.0.0",

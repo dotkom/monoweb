@@ -70,8 +70,8 @@ module.exports = {
     "@typescript-eslint/switch-exhaustiveness-check": "error",
     "arrow-body-style": ["error", "as-needed"],
     "consistent-return": "error",
-    "curly": "error",
-    "eqeqeq": ["error", "smart"],
+    curly: "error",
+    eqeqeq: ["error", "smart"],
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
     "import/no-duplicates": "error",
     "import/order": [
@@ -122,7 +122,7 @@ module.exports = {
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/display-name": "error",
-    "yoda": ["error", "never"],
+    yoda: ["error", "never"],
   },
 
   settings: {
