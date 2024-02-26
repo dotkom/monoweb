@@ -10,11 +10,11 @@
   },
   "formatter": {
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "lineEnding": "lf"
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
       "trailingComma": "es5",
       "semicolons": "asNeeded",
       "lineWidth": 120,
