@@ -521,9 +521,9 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
-      eslint:
-        specifier: ^8.54.0
-        version: 8.54.0
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
