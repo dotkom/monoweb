@@ -1,27 +1,27 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
+  Anchor,
+  Box,
   Button,
   Checkbox,
   FileInput,
-  type FileInputProps,
   Flex,
   MultiSelect,
   NumberInput,
   Select,
   TagsInput,
+  Text,
   TextInput,
   Textarea,
   type CheckboxProps,
+  type FileInputProps,
   type MultiSelectProps,
   type NumberInputProps,
   type SelectProps,
   type TagsInputProps,
   type TextInputProps,
   type TextareaProps,
-  Text,
-  Box,
-  Anchor,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import { type FC } from "react"
@@ -34,6 +34,7 @@ import {
   type FieldValues,
   type FormState,
   type UseFormRegister,
+  type UseFormReturn,
 } from "react-hook-form"
 import { type z } from "zod"
 
@@ -261,7 +262,7 @@ interface FormBuilderOptions<T extends z.ZodRawShape> {
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
-  onSubmit(data: z.infer<z.ZodObject<T>>): void
+  onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
@@ -295,7 +296,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
 
   return function Form() {
     return (
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit((a) => onSubmit(a, form))}>
         <Flex direction="column" gap="md">
           {components}
 
