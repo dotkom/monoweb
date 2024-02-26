@@ -153,7 +153,7 @@ TRIKOM_STRIPE_WEBHOOK_SECRET=
 
 ### Running with your own PostgreSQL database
 
-> This section requires you to have both Docker and Docker Compose installed.
+> This section requires you to have both [Docker](#tools) and [Docker Compose](#tools) installed.
 
 We use PostgreSQL 15 with the `pgx_ulid` extension. You can use the `packages/pgx-ulid` package to build the extension
 into a Docker image, and then run the image to get a PostgreSQL instance with the extension.
