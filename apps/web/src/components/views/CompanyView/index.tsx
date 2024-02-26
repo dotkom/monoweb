@@ -35,8 +35,9 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
 
           <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
             {icons.map(({ icon, text, href }, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: icons is a static array
               <div key={index} className="flex items-center gap-x-2">
-                <Icon icon={icon} width="28"></Icon>
+                <Icon icon={icon} width="28" />
                 {href === null ? (
                   <span>{text}</span>
                 ) : (
@@ -52,8 +53,8 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={`Kommende arrangementer`} events={props.events} isLoading={props.isLoadingEvents} />
-        <EventList title={`Åpne jobbtilbud`} events={props.events} isLoading={props.isLoadingEvents} />{" "}
+        <EventList title={"Kommende arrangementer"} events={props.events} isLoading={props.isLoadingEvents} />
+        <EventList title={"Åpne jobbtilbud"} events={props.events} isLoading={props.isLoadingEvents} />{" "}
         {/* TODO: Separate listings list later */}
       </div>
     </EntryDetailLayout>

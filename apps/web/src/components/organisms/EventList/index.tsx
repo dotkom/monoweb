@@ -18,7 +18,7 @@ export const EventList: FC<EventListProps> = (props: EventListProps) => (
       ) : (
         (props.events || []).map((event) => (
           <li key={event.id}>
-            <EventListItem {...event} attending={1} max_attending={10}></EventListItem>
+            <EventListItem {...event} attending={1} max_attending={10} />
           </li>
         ))
       )}

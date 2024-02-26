@@ -62,15 +62,13 @@ const RefundPage: FC = () => {
     },
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFormChange = (event: React.FormEvent<HTMLInputElement>, setState: any) => {
+  const handleFormChange = (event: React.FormEvent<HTMLInputElement>, setState: typeof setRefundFormState) => {
     const target = event.currentTarget
     const name = target.name
     const type = target.type
     const value = target.value
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setState((prevState: any) => ({
+    setState((prevState) => ({
       ...prevState,
       [name]: type === "number" ? parseInt(value) : value,
     }))

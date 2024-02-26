@@ -22,8 +22,10 @@ export const createKysely = (env: Environment) =>
   })
 
 // biome-ignore lint/suspicious/noRedeclare: error
+// @ts-expect-error: does not like re-declaring global
 export const kysely = global.kysely || createKysely(env)
 
 if (env.NODE_ENV !== "production") {
+  // @ts-expect-error: does not like re-declaring global
   global.kysely = kysely
 }
