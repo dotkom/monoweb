@@ -591,6 +591,9 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
@@ -603,9 +606,6 @@ importers:
       '@vitest/ui':
         specifier: ^0.34.6
         version: 0.34.6(vitest@0.34.6)
-      eslint:
-        specifier: ^8.54.0
-        version: 8.54.0
       testcontainers:
         specifier: ^10.7.1
         version: 10.7.1
