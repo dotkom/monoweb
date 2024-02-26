@@ -30,7 +30,7 @@ export class MarkServiceImpl implements MarkService {
   async createMark(payload: MarkWrite): Promise<Mark> {
     const mark = await this.markRepository.create(payload)
     if (!mark) {
-      throw new NotFoundError(`Mark could not be created`)
+      throw new NotFoundError("Mark could not be created")
     }
     return mark
   }

@@ -1,6 +1,6 @@
 module.exports = {
   plugins: {
-    "autoprefixer": {},
+    autoprefixer: {},
     "postcss-preset-mantine": {},
     "postcss-simple-vars": {
       variables: {

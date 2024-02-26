@@ -7,8 +7,8 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
@@ -18,8 +18,8 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@types/pg": "^8.10.9",
-    "eslint": "^8.54.0",
     "kysely-codegen": "^0.11.0",
     "typescript": "^5.2.2"
   }

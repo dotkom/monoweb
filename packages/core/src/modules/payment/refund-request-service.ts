@@ -103,7 +103,8 @@ export class RefundRequestServiceImpl implements RefundRequestService {
 
     if (refundRequest.status === "REJECTED") {
       throw new Error("Refund request already rejected")
-    } else if (refundRequest.status === "APPROVED") {
+    }
+    if (refundRequest.status === "APPROVED") {
       throw new Error("Refund request already approved")
     }
 

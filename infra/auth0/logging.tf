@@ -19,6 +19,7 @@ resource "aws_cloudwatch_log_group" "log_storage" {
   name = "auth0-logs-${terraform.workspace}"
   retention_in_days = {
     "dev" = 1
+    "stg" = 1
     # TODO: probably shorten?
     "prd" = 180
   }[terraform.workspace]

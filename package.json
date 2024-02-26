@@ -13,7 +13,7 @@
     "build:gateway-email": "turbo run build --filter=@dotkomonline/gateway-email",
     "build:rif": "turbo run build --filter=@dotkomonline/rif",
     "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix",
+    "lint-check": "turbo run lint-check",
     "test": "turbo run test",
     "test:it": "turbo run test:it",
     "dev": "dotenv -e .env -- turbo run dev",
@@ -39,9 +39,6 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.54.0",
-    "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "turbo": "^1.10.16",

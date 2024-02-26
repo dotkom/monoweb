@@ -40,6 +40,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
         </div>
         <div className="grid max-w-fit grid-flow-col-dense gap-3">
           {tags.map((tag: string, key: number) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: badges do not change across renders
             <Badge key={key} variant="light" color="slate" className="font-bold">
               {tag}
             </Badge>
