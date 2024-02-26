@@ -17,6 +17,7 @@ import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
+import { getPoolFixtures } from "./fixtures/attendance-pool"
 
 interface WithIdentifier {
   id: string
@@ -68,14 +69,14 @@ export const runFixtures = async () => {
 
   insertedIds.attendancePool = await db
     .insertInto("attendancePool")
-    .values(getAttendanceFixtures(insertedIds.event))
+    .values(getPoolFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
     .then(mapId)
 
   insertedIds.attendee = await db
     .insertInto("attendee")
-    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
+    .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendancePool))
     .returning("id")
     .execute()
     .then(mapId)

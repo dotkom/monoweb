@@ -1,32 +1,33 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
+  Anchor,
+  Box,
   Button,
   Checkbox,
   FileInput,
-  type FileInputProps,
   Flex,
   MultiSelect,
   NumberInput,
   Select,
   TagsInput,
+  Text,
   TextInput,
   Textarea,
   type CheckboxProps,
+  type FileInputProps,
   type MultiSelectProps,
   type NumberInputProps,
   type SelectProps,
   type TagsInputProps,
   type TextInputProps,
   type TextareaProps,
-  Text,
-  Box,
-  Anchor,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import { type FC } from "react"
 import {
   Controller,
+  type UseFormReturn,
   useForm,
   type Control,
   type DefaultValues,
@@ -63,6 +64,60 @@ export function createMultipleSelectInput<F extends FieldValues>({
           />
         )}
       />
+    )
+  }
+}
+
+interface YearFormProps {
+  selected: number[]
+  setSelected(value: number[]): void
+  existing: number[]
+  labels: string[]
+}
+
+const YearForm = ({ selected, existing, setSelected, labels }: YearFormProps) => (
+  // const labels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
+
+  <table>
+    {labels.map((label, idx) => (
+      <tbody key={idx}>
+        <tr>
+          <td width="100">{label}</td>
+          <td>
+            <Checkbox
+              checked={selected.includes(idx)}
+              disabled={existing.includes(idx)}
+              onChange={() => {
+                const includes = selected.includes(idx)
+                if (includes) {
+                  setSelected(selected.filter((a) => a !== idx))
+                } else {
+                  setSelected([...selected, idx])
+                }
+              }}
+            />
+          </td>
+        </tr>
+      </tbody>
+    ))}
+  </table>
+)
+
+export default YearForm
+
+export function createLabelledCheckboxGroupInput<F extends FieldValues>({
+  ...props
+}: Omit<YearFormProps, "error" | "selected" | "setSelected">): InputProducerResult<F> {
+  return function LabelledCheckboxGroupInput({ name, state, control }) {
+    return (
+      <div>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => <YearForm {...props} setSelected={field.onChange} selected={field.value} />}
+        />
+      </div>
     )
   }
 }
@@ -261,7 +316,7 @@ interface FormBuilderOptions<T extends z.ZodRawShape> {
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
-  onSubmit(data: z.infer<z.ZodObject<T>>): void
+  onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
@@ -295,7 +350,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
 
   return function Form() {
     return (
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit((values) => onSubmit(values, form))}>
         <Flex direction="column" gap="md">
           {components}
 

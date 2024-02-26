@@ -64,14 +64,12 @@ export interface Attendance {
 }
 
 export interface AttendancePool {
-  attendanceId: string | null;
+  attendanceId: string;
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
-  limit: number | null;
-  max: number | null;
-  min: number | null;
+  limit: number;
   updatedAt: Generated<Timestamp>;
-  waitlist: string | null;
+  yearCriteria: Json | null;
 }
 
 export interface Attendee {
@@ -198,7 +196,7 @@ export interface Offline {
 }
 
 export interface OwUser {
-  auth0Sub: string | null;
+  auth0Sub: string;
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
   studyYear: Generated<number>;
@@ -262,6 +260,17 @@ export interface RefundRequest {
   userId: string | null;
 }
 
+export interface WaitlistAttendee {
+  attendanceId: string | null;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  isPunished: boolean | null;
+  position: number | null;
+  registeredAt: Timestamp | null;
+  updatedAt: Generated<Timestamp>;
+  userId: string | null;
+}
+
 export interface DB {
   articles: Articles;
   articleTagLink: ArticleTagLink;
@@ -287,4 +296,5 @@ export interface DB {
   product: Product;
   productPaymentProvider: ProductPaymentProvider;
   refundRequest: RefundRequest;
+  waitlistAttendee: WaitlistAttendee;
 }

@@ -1,9 +1,9 @@
-import { type EventId } from "@dotkomonline/types"
+import { type AttendanceId } from "@dotkomonline/types"
 import { trpc } from "../../../utils/trpc"
 
-export const useEventAttendanceGetQuery = (eventId: EventId) => {
-  const { data: eventAttendance = [], ...query } = trpc.event.attendance.get.useQuery({
-    eventId,
+export const useEventAttendanceGetQuery = (id: AttendanceId) => {
+  const { data: pools, ...query } = trpc.event.attendance.dashboardInfoPage.useQuery({
+    id,
   })
-  return { eventAttendance, ...query }
+  return { pools, ...query }
 }

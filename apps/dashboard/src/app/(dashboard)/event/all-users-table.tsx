@@ -1,25 +1,25 @@
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo } from "react"
+import { type AttendeeWithUser, type AttendeeId } from "@dotkomonline/types"
 import { GenericTable } from "../../../components/GenericTable"
 import { useDeregisterForEventMutation } from "../../../modules/event/mutations/use-deregister-for-event-mutation"
 import { useUpdateEventAttendanceMutation } from "../../../modules/event/mutations/use-update-event-attendance-mutation"
 
 interface CustomCheckboxProps {
-  userId: string
-  attendancePoolId: string
+  attendeeId: AttendeeId
   defaultChecked?: boolean
 }
-const CustomCheckbox = React.memo(({ attendancePoolId, userId, defaultChecked }: CustomCheckboxProps) => {
+const CustomCheckbox = React.memo(({ attendeeId, defaultChecked }: CustomCheckboxProps) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
 
-  const toggleAttendance = (userId: string, attendanceId: string, currentCheckedState: boolean) => {
-    updateAttendance.mutate({ userId, attendancePoolId: attendanceId, attended: currentCheckedState })
+  const toggleAttendance = (attendeeId: AttendeeId, currentCheckedState: boolean) => {
+    updateAttendance.mutate({ id: attendeeId, attended: currentCheckedState })
   }
   return (
     <Checkbox
       onChange={(event) => {
-        toggleAttendance(userId, attendancePoolId, event.currentTarget.checked)
+        toggleAttendance(attendeeId, event.currentTarget.checked)
       }}
       defaultChecked={defaultChecked}
     />
@@ -28,19 +28,10 @@ const CustomCheckbox = React.memo(({ attendancePoolId, userId, defaultChecked }:
 
 CustomCheckbox.displayName = "CustomCheckbox"
 
-interface User {
-  givenName: string
-  familyName: string
-  studyYear: number
-  userId: string
-  attendancePoolId: string
-  attended: boolean
-}
-
-export const AllAttendeesTable = ({ users }: { users: User[] }) => {
+export const AllAttendeesTable = ({ users }: { users: AttendeeWithUser[] }) => {
   const deregisterMut = useDeregisterForEventMutation()
 
-  const columnHelper = createColumnHelper<User>()
+  const columnHelper = createColumnHelper<AttendeeWithUser>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((attendee) => attendee, {
@@ -57,13 +48,7 @@ export const AllAttendeesTable = ({ users }: { users: User[] }) => {
       columnHelper.accessor((attendee) => attendee, {
         id: "attend",
         header: () => "Møtt",
-        cell: (info) => (
-          <CustomCheckbox
-            userId={info.getValue().userId}
-            attendancePoolId={info.getValue().attendancePoolId}
-            defaultChecked={info.getValue().attended}
-          />
-        ),
+        cell: (info) => <CustomCheckbox attendeeId={info.getValue().id} defaultChecked={info.getValue().attended} />,
       }),
       columnHelper.accessor((attendee) => attendee, {
         id: "deregister",
@@ -73,8 +58,7 @@ export const AllAttendeesTable = ({ users }: { users: User[] }) => {
             color="red"
             onClick={() =>
               deregisterMut.mutate({
-                attendancePoolId: info.getValue().attendancePoolId,
-                userId: info.getValue().userId,
+                id: info.getValue().id,
               })
             }
           >

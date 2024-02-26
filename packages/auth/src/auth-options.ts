@@ -52,6 +52,7 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
+        console.log("RUNNING")
         let user = await core.userService.getUserBySubject(token.sub)
         if (user === undefined) {
           user = await core.userService.createUser({ auth0Sub: token.sub, studyYear: -1 })

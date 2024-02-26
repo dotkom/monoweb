@@ -18,7 +18,6 @@ export async function up(db) {
     .addColumn("extras", "json")
     .execute()
 
-  // create table "attendance"
   await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("eventId", sql`ulid`, (col) => col.references("event.id").onDelete("cascade"))
     .addColumn("registerStart", "timestamptz", (col) => col.notNull())
@@ -28,23 +27,29 @@ export async function up(db) {
     .execute()
 
   await createTableWithDefaults("attendance_pool", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("max", "integer")
-    .addColumn("min", "integer")
-    .addColumn("limit", "integer")
-    .addColumn("waitlist", sql`ulid`, (col) => col.references("attendance_pool.id").onDelete("cascade"))
-    .addColumn("attendanceId", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
+    .addColumn("attendanceId", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade").notNull())
+    .addColumn("yearCriteria", "json")
+    .addColumn("limit", "integer", (col) => col.notNull())
     .execute()
 
-  await createTableWithDefaults("event_company", {}, db.schema)
-    .addColumn("event_id", sql`ulid`, (col) => col.references("event.id").onDelete("cascade"))
-    .addColumn("company_id", sql`ulid`, (col) => col.references("company.id").onDelete("cascade"))
-    .addPrimaryKeyConstraint("event_company_pk", ["event_id", "company_id"])
+  await createTableWithDefaults("waitlist_attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    .addColumn("attendanceId", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
+    .addColumn("userId", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
+    .addColumn("position", "integer")
+    .addColumn("isPunished", "boolean")
+    .addColumn("registeredAt", "timestamptz")
     .execute()
 
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("attendancePoolId", sql`ulid`, (col) => col.references("attendance_pool.id").onDelete("cascade"))
     .addColumn("userId", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("extrasChoices", "json")
+    .execute()
+
+  await createTableWithDefaults("event_company", {}, db.schema)
+    .addColumn("event_id", sql`ulid`, (col) => col.references("event.id").onDelete("cascade"))
+    .addColumn("company_id", sql`ulid`, (col) => col.references("company.id").onDelete("cascade"))
+    .addPrimaryKeyConstraint("event_company_pk", ["event_id", "company_id"])
     .execute()
 }
 

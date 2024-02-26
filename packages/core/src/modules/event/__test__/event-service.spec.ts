@@ -3,7 +3,7 @@ import { type Event } from "@dotkomonline/types"
 import { describe, vi } from "vitest"
 import { Kysely } from "kysely"
 import { NotFoundError } from "../../../errors/errors"
-import { AttendanceRepositoryImpl } from "../attendance-repository"
+import { AttendanceRepositoryImpl } from "../../attendance/attendance-repository"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
 

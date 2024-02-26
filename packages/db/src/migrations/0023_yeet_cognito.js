@@ -5,7 +5,7 @@ export async function up(db) {
   await db.schema
     .alterTable("ow_user")
     .dropColumn("cognito_sub")
-    .addColumn("auth0_sub", sql`character varying(50)`, (col) => col.unique())
+    .addColumn("auth0_sub", sql`character varying(50)`, (col) => col.unique().notNull())
     .execute()
 }
 
@@ -14,6 +14,6 @@ export async function down(db) {
   await db.schema
     .alterTable("ow_user")
     .dropColumn("cognito_sub")
-    .addColumn("auth0_sub", sql`uuid`, (col) => col.unique())
+    .addColumn("auth0_sub", sql`uuid`, (col) => col.unique().notNull())
     .execute()
 }

@@ -10,8 +10,8 @@ import { CompanyEventRepositoryImpl, type CompanyEventRepository } from "./compa
 import { CompanyEventServiceImpl, type CompanyEventService } from "./company/company-event-service"
 import { CompanyRepositoryImpl, type CompanyRepository } from "./company/company-repository"
 import { CompanyServiceImpl, type CompanyService } from "./company/company-service"
-import { AttendanceRepositoryImpl, type AttendanceRepository } from "./event/attendance-repository"
-import { AttendanceServiceImpl, type AttendanceService } from "./event/attendance-service"
+import { AttendanceRepositoryImpl, type AttendanceRepository } from "./attendance/attendance-repository"
+import { AttendanceServiceImpl, type AttendanceService } from "./attendance/attendance-service"
 import { EventCommitteeRepositoryImpl, type EventCommitteeRepository } from "./event/event-committee-repository"
 import { EventCommitteeServiceImpl, type EventCommitteeService } from "./event/event-committee-service"
 import { EventCompanyRepositoryImpl, type EventCompanyRepository } from "./event/event-company-repository"
@@ -107,7 +107,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const eventService: EventService = new EventServiceImpl(eventRepository, attendanceRepository, userService)
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
-  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository)
+  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, db, userService)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(
     jobListingRepository,

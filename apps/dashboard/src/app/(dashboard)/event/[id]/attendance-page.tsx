@@ -4,58 +4,27 @@ import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
-import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
+import { useEventAttendeesGetQuery } from "../../../../modules/event/queries/use-event-attendees-get-query"
 import { trpc } from "../../../../utils/trpc"
-import { notifyFail } from "../../../notifications"
 import { AllAttendeesTable } from "../all-users-table"
 
 export const EventAttendancePage: FC = () => {
-  const { event } = useEventDetailsContext()
-  const { eventAttendance } = useEventAttendanceGetQuery(event.id)
+  const { attendance } = useEventDetailsContext()
+  const { attendees } = useEventAttendeesGetQuery(attendance?.id || "")
   const registerForEvent = useRegisterForEventMutation()
   const dbUserMut = trpc.user.getBySubAsync.useMutation()
 
   const handleAttendUser = async (user: UserIDP) => {
+    if (attendance === null) {
+      throw new Error("Attendance is null")
+    }
+
     const dbUser = await dbUserMut.mutateAsync(user.subject)
-
-    if (!dbUser) {
-      notifyFail({
-        title: "Feil",
-        message: "Fant ikke brukeren i databasen",
-      })
-
-      return
+    if (dbUser === undefined) {
+      throw new Error("Attendance is null")
     }
 
-    const userAlreadyRegistered = eventAttendance.some((pool) =>
-      pool.attendees.some((attendee) => attendee.userId === dbUser.id)
-    )
-
-    if (userAlreadyRegistered) {
-      notifyFail({
-        title: "Feil",
-        message: "Brukeren er allerede påmeldt",
-      })
-      return
-    }
-
-    const pool = eventAttendance.find((pool) => pool.min <= dbUser.studyYear && pool.max > dbUser.studyYear)
-
-    if (!pool) {
-      notifyFail({
-        title: "Feil",
-        message: "Fant ingen pool for brukeren",
-      })
-      return
-    }
-
-    registerForEvent.mutate({ poolId: pool.id, userId: dbUser.id.toString() })
-  }
-  const allAttendees = []
-  for (const pool of eventAttendance) {
-    for (const attendee of pool.attendees) {
-      allAttendees.push(attendee)
-    }
+    registerForEvent.mutate({ attendanceId: attendance.id, userId: dbUser.id })
   }
 
   return (
@@ -71,7 +40,7 @@ export const EventAttendancePage: FC = () => {
         <Title mb={10} order={3}>
           Alle påmeldte
         </Title>
-        <AllAttendeesTable users={allAttendees} />
+        <AllAttendeesTable users={attendees} />
       </Box>
     </Box>
   )

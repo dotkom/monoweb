@@ -28,7 +28,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<UserIDP[] | undefined>
+  getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<UserIDP[]>
 }
 
 export class UserServiceImpl implements UserService {
@@ -102,9 +102,15 @@ export class UserServiceImpl implements UserService {
     return this.mergeUsers(userDB, userIDP)
   }
 
-  async getUserBySubject(id: User["auth0Sub"]) {
-    const userDB = await this.userRepository.getBySubject(id)
-    const userIDP = await this.idpRepository.getBySubject(id)
+  async getUserBySubject(subject: User["auth0Sub"]) {
+    const userDB = await this.userRepository.getBySubject(subject)
+    const userIDP = await this.idpRepository.getBySubject(subject)
+
+    if (!userDB || !userIDP) {
+      console.log("User not found in DB or IDP", userDB, userIDP)
+      return undefined
+    }
+
     return this.mergeUsers(userDB, userIDP)
   }
 

@@ -9,11 +9,11 @@ import { CreateEventModal } from "../modules/event/modals/create-event-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateCompanyModal } from "../modules/company/modals/create-company-modal"
 import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
-import { CreatePoolModal } from "../modules/event/modals/create-pool-modal"
+import { PoolModal } from "../modules/event/modals/create-pool-modal"
 
 const modals = {
   "event/create": CreateEventModal,
-  "event/attendance/create-pool": CreatePoolModal,
+  "event/attendance/pool": PoolModal,
   "jobListing/create": CreateJobListingModal,
   "company/create": CreateCompanyModal,
   "offline/create": CreateOfflineModal,

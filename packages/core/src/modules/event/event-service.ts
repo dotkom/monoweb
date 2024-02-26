@@ -1,14 +1,5 @@
-import {
-  type User,
-  type AttendancePool,
-  type AttendanceWithUser,
-  type AttendancePoolWrite,
-  type AttendeeUser,
-  type Event,
-  type EventId,
-  type EventWrite,
-} from "@dotkomonline/types"
-import { type AttendanceRepository } from "./attendance-repository.js"
+import { type Event, type EventId, type EventWrite } from "@dotkomonline/types"
+import { type AttendanceRepository } from "../attendance/attendance-repository.js"
 import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
 import { NotFoundError } from "../../errors/errors"
@@ -21,8 +12,6 @@ export interface EventService {
   getEventById(id: EventId): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-  createAttendance(eventId: EventId, attendanceWrite: AttendancePoolWrite): Promise<AttendancePool>
-  listAttendance(eventId: EventId): Promise<AttendanceWithUser[]>
 }
 
 export class EventServiceImpl implements EventService {
@@ -67,60 +56,5 @@ export class EventServiceImpl implements EventService {
     }
     const event = await this.eventRepository.update(id, toInsert)
     return event
-  }
-
-  async createAttendance(eventId: EventId, attendanceCreate: AttendancePoolWrite): Promise<AttendancePool> {
-    const attendance = await this.attendanceRepository.create({
-      ...attendanceCreate,
-      eventId,
-    })
-    return attendance
-  }
-
-  async deleteAttendance(attendanceId: string): Promise<boolean> {
-    const attendance = await this.attendanceRepository.delete(attendanceId)
-    if (attendance.numDeletedRows === BigInt(1)) {
-      return true
-    }
-    return false
-  }
-
-  async listAttendance(eventId: EventId): Promise<AttendanceWithUser[]> {
-    const attendances = await this.attendanceRepository.getPoolByEventId(eventId)
-
-    const result: AttendanceWithUser[] = []
-
-    for (const attendance of attendances) {
-      const ids = attendance.attendees.map((attendee) => attendee.userId)
-      if (ids.length === 0) {
-        result.push({
-          ...attendance,
-          attendees: [],
-        })
-        continue
-      }
-
-      const users: User[] = (await Promise.all(ids.map(async (id) => this.userService.getUserById(id)))).filter(
-        (user): user is User => Boolean(user)
-      )
-
-      const mergedUsers: AttendeeUser[] = users.map((user) => {
-        const attendee = attendance.attendees.find((attendee) => attendee.userId === user.id)
-        if (!attendee) {
-          throw new Error("Attendee not found")
-        }
-        return {
-          ...attendee,
-          ...user,
-        }
-      })
-
-      result.push({
-        ...attendance,
-        attendees: mergedUsers,
-      })
-    }
-
-    return result
   }
 }

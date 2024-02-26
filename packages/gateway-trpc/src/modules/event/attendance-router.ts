@@ -1,85 +1,112 @@
-import { AttendancePoolSchema, AttendancePoolWriteSchema, EventSchema, UserSchema } from "@dotkomonline/types"
+import {
+  AttendancePoolSchema,
+  AttendancePoolWriteSchema,
+  AttendanceSchema,
+  AttendanceWriteSchema,
+  AttendeeSchema,
+  EventSchema,
+  UserSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { protectedProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
-  create: protectedProcedure.input(AttendancePoolWriteSchema).mutation(async ({ input, ctx }) => {
-    const attendance = await ctx.eventService.createAttendance(input.eventId, input)
-    return attendance
-  }),
-  delete: protectedProcedure
+  createPool: protectedProcedure
+    .input(AttendancePoolWriteSchema)
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.create(input)),
+
+  updatePool: protectedProcedure
+    .input(
+      z.object({
+        input: AttendancePoolWriteSchema.partial(),
+        id: AttendancePoolSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.update(input.input, input.id)),
+
+  deletePool: protectedProcedure
     .input(
       z.object({
         id: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const attendance = await ctx.eventService.deleteAttendance(input.id)
-      return attendance
-    }),
-  get: publicProcedure
-    .input(
-      z.object({
-        eventId: EventSchema.shape.id,
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const attendance = await ctx.eventService.listAttendance(input.eventId)
-      return attendance
-    }),
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.delete(input.id)),
+
   registerForEvent: protectedProcedure
     .input(
       z.object({
         userId: UserSchema.shape.id,
-        poolId: AttendancePoolSchema.shape.id,
+        attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendanceService.registerForEvent(input.userId, input.poolId)
-      return res
-    }),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendanceService.attendee.registerForEvent(input.userId, input.attendanceId)
+    ),
+
   deregisterForEvent: protectedProcedure
     .input(
       z.object({
-        attendancePoolId: AttendancePoolSchema.shape.id,
-        userId: UserSchema.shape.id,
+        id: AttendeeSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const res = await ctx.attendanceService.deregisterAttendee(input.userId, input.attendancePoolId)
-      return res
-    }),
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.attendee.deregisterForEvent(input.id)),
 
   registerAttendance: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
-        attendancePoolId: z.string(),
+        id: AttendeeSchema.shape.id,
         attended: z.boolean(),
       })
     )
-    .mutation(
-      async ({ input, ctx }) =>
-        await ctx.attendanceService.registerForAttendance(input.userId, input.attendancePoolId, input.attended)
-    ),
-  createWaitlist: protectedProcedure
+    .mutation(async ({ input, ctx }) => await ctx.attendanceService.attendee.updateAttended(input.attended, input.id)),
+
+  addExtraChoice: protectedProcedure
     .input(
       z.object({
-        eventId: EventSchema.shape.id,
-      })
-    )
-    .mutation(async ({ input, ctx }) => await ctx.attendanceService.createWaitlist(input.eventId)),
-  addChoice: protectedProcedure
-    .input(
-      z.object({
-        eventId: EventSchema.shape.id,
-        attendancePoolId: z.string(),
+        id: AttendeeSchema.shape.id,
         questionId: z.string(),
         choiceId: z.string(),
       })
     )
     .mutation(
       async ({ input, ctx }) =>
-        await ctx.attendanceService.addChoice(input.eventId, input.attendancePoolId, input.questionId, input.choiceId)
+        await ctx.attendanceService.attendee.updateExtraChoices(input.id, input.questionId, input.choiceId)
     ),
+
+  dashboardInfoPage: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendanceService.dashboardUC.getAttendanceInfo(input.id)),
+
+  getAttendees: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendanceService.dashboardUC.getAttendees(input.id)),
+
+  getAttendanceByEventId: protectedProcedure
+    .input(
+      z.object({
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendanceService.attendance.getByEventId(input.eventId)),
+
+  // update attendance
+  updateAttendance: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+        attendance: AttendanceWriteSchema.partial(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      console.log("hello")
+      return ctx.attendanceService.attendance.update(input.attendance, input.id)
+    }),
 })
