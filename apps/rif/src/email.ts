@@ -7,7 +7,7 @@ export const deliverConfirmationEmail = async (form: FormSchema) => {
   const response = await fetch(endpoint, {
     headers: {
       "X-Email-Token": token,
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
     },
     method: "POST",
@@ -32,7 +32,7 @@ export const deliverNotificationEmail = async (form: FormSchema) => {
   const response = await fetch(endpoint, {
     headers: {
       "X-Email-Token": token,
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
     },
     method: "POST",
@@ -42,7 +42,7 @@ export const deliverNotificationEmail = async (form: FormSchema) => {
       to: [form.contactEmail],
       cc: [],
       bcc: [],
-      subject: `Kvittering for meldt interesse til Online`,
+      subject: "Kvittering for meldt interesse til Online",
       replyTo: ["bedkom@online.ntnu.no"],
       arguments: {
         ...form,

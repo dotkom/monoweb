@@ -248,12 +248,12 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       '@dotkomonline/config':
         specifier: workspace:^
         version: link:../../packages/config
-      '@types/eslint':
-        specifier: ^8.44.7
-        version: 8.44.7
       '@types/node':
         specifier: ^18.18.13
         version: 18.18.13
@@ -266,12 +266,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.31)
-      eslint:
-        specifier: ^8.54.0
-        version: 8.54.0
-      eslint-config-next:
-        specifier: ^14.0.3
-        version: 14.0.3(eslint@8.54.0)(typescript@5.2.2)
       postcss:
         specifier: ^8.4.31
         version: 8.4.31
