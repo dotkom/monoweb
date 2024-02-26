@@ -5,15 +5,15 @@
   "types": "./src/index.ts",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "eslint": "^8.54.0",
+    "@biomejs/biome": "^1.5.3",
     "typescript": "^5.2.2"
   }
 }
