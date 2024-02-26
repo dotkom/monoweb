@@ -113,43 +113,7 @@ If you are not using Doppler, you need to use a standalone `.env` file placed in
 These are the environment variables that are required to run the applications. Below is a template that you can copy if
 you do not have access to Doppler:
 
-```bash
-# .env
-
-# Auth0 client configuration, get these from the Auth0 dashboard
-DASHBOARD_AUTH0_CLIENT_ID=
-DASHBOARD_AUTH0_CLIENT_SECRET=
-DASHBOARD_AUTH0_ISSUER=https://dev.id.online.ntnu.no
-WEB_AUTH0_CLIENT_ID=
-WEB_AUTH0_CLIENT_SECRET=
-WEB_AUTH0_ISSUER=https://dev.id.online.ntnu.no
-GTX_AUTH0_CLIENT_ID=
-GTX_AUTH0_CLIENT_SECRET=
-GTX_AUTH0_ISSUER=https://dev.id.online.ntnu.no
-
-# Private secret for signing calendar generation and NextAuth JWTs
-# Generate these yourself with `openssl rand -base64 32` or similar tool
-CAL_KEY=
-NEXTAUTH_SECRET=
-
-# PostgreSQL with pgx-ulid installed
-DATABASE_URL=
-
-# Email API gateway
-EMAIL_ENDPOINT=https://brevduen.staging.online.ntnu.no/integrations/email
-EMAIL_TOKEN=
-
-# Stripe public, secret and webhook secret
-FAGKOM_STRIPE_PUBLIC_KEY=
-FAGKOM_STRIPE_SECRET_KEY=
-FAGKOM_STRIPE_WEBHOOK_SECRET=
-PROKOM_STRIPE_PUBLIC_KEY=
-PROKOM_STRIPE_SECRET_KEY=
-PROKOM_STRIPE_WEBHOOK_SECRET=
-TRIKOM_STRIPE_PUBLIC_KEY=
-TRIKOM_STRIPE_SECRET_KEY=
-TRIKOM_STRIPE_WEBHOOK_SECRET=
-```
+Please consult the example [.env.example](.env.example) file for the environment variables necessary.
 
 ### Running with your own PostgreSQL database
 
