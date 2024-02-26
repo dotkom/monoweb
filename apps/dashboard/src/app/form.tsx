@@ -296,7 +296,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
 
   return function Form() {
     return (
-      <form onSubmit={form.handleSubmit((a) => onSubmit(a, form))}>
+      <form onSubmit={form.handleSubmit((values) => onSubmit(values, form))}>
         <Flex direction="column" gap="md">
           {components}
 
