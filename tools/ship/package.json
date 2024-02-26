@@ -1,6 +1,11 @@
 {
   "name": "@dotkomonline/ship",
   "type": "module",
+  "scripts": {
+    "ship": "tsx ./src/index.ts",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check ."
+  },
   "dependencies": {
     "@aws-sdk/client-ecr": "^3.507.0",
     "@aws-sdk/client-lambda": "^3.507.0",
@@ -13,17 +18,11 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@dotkomonline/logger": "workspace:*",
     "@types/dockerode": "^3.3.23",
-    "@types/eslint": "^8.44.7",
     "@types/ignore-walk": "^4.0.3",
-    "eslint": "^8.54.0",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
-  },
-  "scripts": {
-    "ship": "tsx ./src/index.ts",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix ."
   }
 }
