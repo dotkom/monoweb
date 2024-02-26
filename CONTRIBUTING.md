@@ -101,6 +101,13 @@ export DATABASE_URL="postgres://<username>:<password>@localhost:5432/<db_name>"
 doppler run --preserve-env pnpm dev
 ```
 
+If you are not using Doppler, you need to use a standalone `.env` file placed in the project root. For how to populate the `.env` file, see [this chapter](#required-environment-variables). For how to start local development, follow the rest of the chapter where you omit the use of Doppler:
+
+```diff
+- doppler run pnpm dev
++ pnpm dev
+```
+
 ### Required Environment Variables
 
 These are the environment variables that are required to run the applications. Below is a template that you can copy if
