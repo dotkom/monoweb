@@ -69,7 +69,7 @@ The following tools are used to develop Monoweb:
 
 ## Local Development
 
-To get started with local development, ensure you have the applicable tools installed. To build and run all the
+To get started with local development, ensure you have the [applicable tools](#tools) installed. To build and run all the
 applications, you can use the following commands:
 
 ```bash
