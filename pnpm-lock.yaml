@@ -902,12 +902,12 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
-      '@types/eslint':
-        specifier: ^8.44.7
-        version: 8.44.7
       '@types/pg':
         specifier: ^8.10.9
         version: 8.10.9
@@ -917,9 +917,6 @@ importers:
       dotenv-cli:
         specifier: ^7.3.0
         version: 7.3.0
-      eslint:
-        specifier: ^8.54.0
-        version: 8.54.0
       tsx:
         specifier: ^3.14.0
         version: 3.14.0
