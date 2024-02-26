@@ -6,11 +6,12 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@dotkomonline/env": "workspace:*",
     "winston": "^3.11.0"
   },
