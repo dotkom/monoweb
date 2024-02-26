@@ -5,31 +5,20 @@
   "main": "index.js",
   "private": true,
   "files": [
-    "eslint-preset.js",
     "tailwind-preset.d.ts",
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
-    "typography.css"
+    "typography.css",
+    "biome.json"
   ],
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "eslint-config-next": "^14.0.3",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-config-turbo": "^1.10.16",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-perfectionist": "^2.4.2",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint": "^8.54.0",
     "postcss-import": "^15.1.0",
     "postcss": "^8.4.31",
     "tailwindcss-animate": "^1.0.7",
