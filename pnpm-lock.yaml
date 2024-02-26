@@ -703,12 +703,12 @@ importers:
         specifier: ^13.11.0
         version: 13.11.0
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
       '@vitest/ui':
         specifier: ^0.34.6
         version: 0.34.6(vitest@0.34.6)
-      eslint:
-        specifier: ^8.54.0
-        version: 8.54.0
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
