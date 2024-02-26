@@ -2,7 +2,6 @@
   "name": "@dotkomonline/config",
   "sideEffects": false,
   "version": "1.0.0",
-  "main": "index.js",
   "private": true,
   "scripts": {
     "lint": "biome check . --apply",

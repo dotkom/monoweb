@@ -21,9 +21,7 @@
     "@biomejs/biome": "^1.5.3",
     "@dotkomonline/logger": "workspace:*",
     "@types/dockerode": "^3.3.23",
-    "@types/eslint": "^8.44.7",
     "@types/ignore-walk": "^4.0.3",
-    "eslint": "^8.54.0",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }
