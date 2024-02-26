@@ -5,7 +5,10 @@
       "**/node_modules/**",
       "**/build/**",
       "**/dist/**",
-      "**/.next/**"
+      "**/out/**",
+      "**/.next/**",
+      "**/.react-email/**",
+      "**/.turbo/**"
     ]
   },
   "formatter": {
