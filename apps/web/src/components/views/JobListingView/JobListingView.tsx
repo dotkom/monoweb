@@ -3,6 +3,7 @@ import { type JobListing } from "@dotkomonline/types"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
 import OnlineIcon from "../../atoms/OnlineIcon"
+import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
 
 interface CareerProps {
   careers: JobListing[]
@@ -23,47 +24,7 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
   ])
   const [chosenSort, setChosenSort] = useState<string>("Frist")
 
-  function filterLocation(jobListing: JobListing) {
-    if (chosenLocation === "Alle") {
-      return true
-    }
-    return jobListing.locations.includes(chosenLocation)
-  }
 
-  function filterName(jobListing: JobListing) {
-    return jobListing.company.name.toLowerCase().startsWith(searchName.toLowerCase())
-  }
-  
-  function filterEmployment(jobListing: JobListing) {
-    // check if no employment object has checked === true
-    if (chosenEmployments.every((employment) => !employment.checked)) {
-      return true
-    }
-    // check if employment is checked
-    return chosenEmployments.some((employment) => {
-      if (employment.checked && jobListing.employment == employment.name) {
-        return true
-      }
-      return false
-    })
-  }
-
-  function sortDates(jobListing1: JobListing, jobListing2: JobListing) {
-    if (chosenSort === "Frist") {
-      if (jobListing1.deadline?.getTime() == null) {
-        return -1
-      } else if (jobListing2.deadline?.getTime() == null) {
-        return 1
-      }
-
-      return jobListing1.deadline.getTime() - jobListing2.deadline.getTime()
-    } else if (chosenSort === "Påmeldingsstart") {
-      return jobListing1.start.getTime() - jobListing2.start.getTime()
-    } else if (chosenSort === "Slutt") {
-      return jobListing1.end.getTime() - jobListing2.end.getTime()
-    }
-    return 0
-  }
 
   return (
     <div>
@@ -91,9 +52,9 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
           <div className="flex flex-col gap-6">
             {props.careers
               .filter(
-                (jobListing) => filterLocation(jobListing) && filterEmployment(jobListing) && filterName(jobListing)
+                (jobListing => filterJobListings(jobListing, chosenLocation, chosenEmployments, searchName, chosenSort))
               )
-              .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2))
+              .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2, chosenSort))
               .map((c, key) => (
                 <div key={key}>
                   <CompanyAdListItem career={c} />

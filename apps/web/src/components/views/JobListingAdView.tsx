@@ -13,7 +13,7 @@ interface JobListingAdViewProps {
 
 export const JobListingAdView: FC<JobListingAdViewProps> = ({ career }) => {
   const {
-    company: { name: company_name, image }, //info: company_info, link, linkdin, twitter, facebook },
+    company: { name: company_name, image }, 
     title,
     ingress,
     deadline,
