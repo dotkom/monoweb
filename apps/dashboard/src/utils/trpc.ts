@@ -11,7 +11,7 @@ const getBaseUrl = () => {
   if (env.NEXT_PUBLIC_NODE_ENV === "production") {
     return "https://web.online.ntnu.no"
   }
-  return `http://localhost:3000`
+  return "http://localhost:3000"
 }
 
 export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {

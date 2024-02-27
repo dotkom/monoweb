@@ -50,6 +50,7 @@ provider "aws" {
 locals {
   valid_workspaces = {
     dev = 1
+    stg = 1
     prd = 1
   }
   valid_workspaces_current = local.valid_workspaces[terraform.workspace]

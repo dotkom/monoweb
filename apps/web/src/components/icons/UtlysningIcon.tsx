@@ -16,6 +16,7 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
     height="1em"
     {...props}
   >
+    <title>Utlysning icon</title>
     <path
       d="M8.52 84h238.96v19.195l-14.482 8.31V134L153 155.574l-.521-44.069h-50.321L102 155.574l-78.998-12.589v-31.48L8.52 103.701V84Z"
       style={{

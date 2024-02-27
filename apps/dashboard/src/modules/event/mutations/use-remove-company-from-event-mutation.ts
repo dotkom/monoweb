@@ -7,7 +7,7 @@ export const useRemoveCompanyFromEventMutation = () => {
     onMutate: () => {
       notification.loading({
         title: "Fjerner bedrift",
-        message: `Fjerner bedriften fra arrangørlisten til dette arrangementet.`,
+        message: "Fjerner bedriften fra arrangørlisten til dette arrangementet.",
       })
     },
     onSuccess: () => {

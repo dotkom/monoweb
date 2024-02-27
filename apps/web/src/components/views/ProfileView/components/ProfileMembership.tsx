@@ -1,5 +1,3 @@
-/* eslint-disable no-constant-binary-expression */
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import React from "react"
 import { Button, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@dotkomonline/ui"
 

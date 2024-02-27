@@ -12,7 +12,7 @@ const getBaseUrl = () => {
   if (env.NEXT_PUBLIC_VERCEL_URL) {
     return `https://${env.VERCEL_URL}`
   }
-  return `http://localhost:3000`
+  return "http://localhost:3000"
 }
 
 const config: CreateTRPCClientOptions<AppRouter> = {

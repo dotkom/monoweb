@@ -35,6 +35,7 @@ import {
   type FieldValues,
   type FormState,
   type UseFormRegister,
+  type UseFormReturn,
 } from "react-hook-form"
 import { type z } from "zod"
 
@@ -278,7 +279,7 @@ export function createFileInput<F extends FieldValues>({
               label=""
             />
           )}
-        ></Controller>
+        />
       </Box>
     )
   }

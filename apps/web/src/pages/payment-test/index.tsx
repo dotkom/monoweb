@@ -144,15 +144,19 @@ const PaymentTestPage: FC = () => {
       <h1>Payment Test</h1>
 
       {/* Use migration fixtures instead */}
-      <button onClick={onSeedClick} className="hidden">
+      <button type="button" onClick={onSeedClick} className="hidden">
         Create and insert seed data
       </button>
       {isSeeding && <p>Seeding...</p>}
 
       <div>
         <h3>Products</h3>
-        <button onClick={() => productsQuery.refetch()}>Fetch data</button>
-        <button onClick={() => setIsShowingCreateProductForm(true)}>Create product</button>
+        <button type="button" onClick={() => productsQuery.refetch()}>
+          Fetch data
+        </button>
+        <button type="button" onClick={() => setIsShowingCreateProductForm(true)}>
+          Create product
+        </button>
         {isShowingCreateProductForm && (
           <form
             onSubmit={(e) => {
@@ -197,7 +201,9 @@ const PaymentTestPage: FC = () => {
 
       <div>
         <h3>Payment providers</h3>
-        <button onClick={() => paymentProvidersQuery.refetch()}>Fetch data</button>
+        <button type="button" onClick={() => paymentProvidersQuery.refetch()}>
+          Fetch data
+        </button>
         <pre>{JSON.stringify(paymentProvidersQuery.data, null, 4)}</pre>
       </div>
 
@@ -223,11 +229,15 @@ const PaymentTestPage: FC = () => {
         />
       </fieldset>
 
-      <button onClick={onCheckoutClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+      <button
+        type="button"
+        onClick={onCheckoutClick}
+        className="border-blue-7 hover:border-blue-8 rounded-md border p-2"
+      >
         Proceed to stripe checkout
       </button>
 
-      <button onClick={onFetchClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+      <button type="button" onClick={onFetchClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
         Fetch product data
       </button>
 
@@ -240,7 +250,7 @@ const PaymentTestPage: FC = () => {
         <input id="paymentId" type="text" value={paymentId} onChange={(e) => setPaymentId(e.target.value)} />
       </fieldset>
 
-      <button onClick={onRefundClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
+      <button type="button" onClick={onRefundClick} className="border-blue-7 hover:border-blue-8 rounded-md border p-2">
         Refund PaymentId
       </button>
     </div>

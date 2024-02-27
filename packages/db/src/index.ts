@@ -8,9 +8,7 @@ export { createMigrator } from "./migrator"
 export type Database = DB
 
 declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-var
-  var kysely: Kysely<Database> | undefined
+  let kysely: Kysely<Database> | undefined
 }
 
 export const createKysely = (env: Environment) =>
@@ -23,8 +21,11 @@ export const createKysely = (env: Environment) =>
     plugins: [new CamelCasePlugin()],
   })
 
+// @ts-expect-error: does not like re-declaring global
+// biome-ignore lint/suspicious/noRedeclare: error
 export const kysely = global.kysely || createKysely(env)
 
 if (env.NODE_ENV !== "production") {
+  // @ts-expect-error: does not like re-declaring global
   global.kysely = kysely
 }

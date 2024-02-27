@@ -13,7 +13,7 @@ const PrivacyOption: FC<PrivacyProps> = ({ children }) => (
       <p className=" m-0 w-full flex-auto p-1 text-sm font-normal not-italic">{children}</p>
       <div className="w-15 m-0 flex-auto p-0">
         {/* <Toggle label={""} isChecked={isChecked} setIsChecked={setIsChecked}></Toggle>      !!!!! BYTTES NÅR TOGGLETING SKAL BRUKES !!!!!*/}
-        <Toggle></Toggle>
+        <Toggle />
       </div>
     </div>
   </div>

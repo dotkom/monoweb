@@ -6,8 +6,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint --fix .",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:ui": "vitest --ui --passWithNoTests",
@@ -26,9 +26,9 @@
     "next-auth": "^4.24.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@dotkomonline/types": "workspace:*",
     "@vitest/ui": "^0.34.6",
-    "eslint": "^8.54.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }

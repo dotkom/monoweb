@@ -30,7 +30,6 @@ export default function Page() {
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/Online_bla.svg" alt="Online logo" />
         <Title element="h1">Interesseskjema for bedrifter</Title>
         <Text>Dette skjemaet skal brukes til å melde interesse for samarbeid med Online.</Text>

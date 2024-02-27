@@ -7,7 +7,7 @@ export const useAddCompanyToEventMutation = () => {
     onMutate: () => {
       notification.loading({
         title: "Legger til bedrift...",
-        message: `Legger til bedriften som arrangør av dette arrangementet.`,
+        message: "Legger til bedriften som arrangør av dette arrangementet.",
       })
     },
     onSuccess: () => {

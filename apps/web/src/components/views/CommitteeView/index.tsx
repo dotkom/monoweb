@@ -28,19 +28,16 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
 
           <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
             {icons.map(({ icon, text, href }, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: icons is a static array
               <div key={index} className="flex items-center gap-x-2">
-                <Icon icon={icon} width="28"></Icon>
-                {
-                  // Unsure if it is future-proofing
-                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                  href === null ? (
-                    <span>{text}</span>
-                  ) : (
-                    <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
-                      {text ? text : "N/A"}
-                    </a>
-                  )
-                }
+                <Icon icon={icon} width="28" />
+                {href === null ? (
+                  <span>{text}</span>
+                ) : (
+                  <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
+                    {text ? text : "N/A"}
+                  </a>
+                )}
               </div>
             ))}
           </div>
@@ -49,8 +46,8 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={`Kommende arrangementer`} events={props.events} isLoading={props.isLoadingEvents} />
-        <EventList title={`Tidligere arrangementer`} events={props.events} isLoading={props.isLoadingEvents} />{" "}
+        <EventList title={"Kommende arrangementer"} events={props.events} isLoading={props.isLoadingEvents} />
+        <EventList title={"Tidligere arrangementer"} events={props.events} isLoading={props.isLoadingEvents} />{" "}
         {/* TODO: Separate logic for earlier eventlist later */}
       </div>
     </EntryDetailLayout>
