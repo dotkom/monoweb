@@ -1,19 +1,19 @@
 import { z } from "zod"
 
 export enum InvoiceRelation {
-  COMPANY_PRESENTATION = "company_presentation",
-  COURSE_EVENT = "course_event",
-  OFFLINE_ADVERTISEMENT = "offline_advertisement",
-  JOB_LISTING = "job_listing",
-  TECH_TALKS_PARTICIPATION = "tech_talks_participation",
-  EXCURSION_PARTICIPATION = "excursion_participation",
-  OTHER = "other",
+  COMPANY_PRESENTATION = "Bedriftspresentasjon",
+  COURSE_EVENT = "Kurs",
+  OFFLINE_ADVERTISEMENT = "Annonse i Offline",
+  JOB_LISTING = "Jobbannonse",
+  TECH_TALKS_PARTICIPATION = "Tech Talks",
+  EXCURSION_PARTICIPATION = "ITEX",
+  OTHER = "Annet",
 }
 
 export enum DeliveryMethod {
-  EMAIL = "email",
-  POST = "post",
-  EHF = "ehf",
+  EMAIL = "E-post",
+  POST = "Post",
+  EHF = "EHF",
 }
 
 export const formSchema = z.object({
@@ -24,7 +24,7 @@ export const formSchema = z.object({
   contactTel: z.string(),
   invoiceRelation: z.nativeEnum(InvoiceRelation),
   preferredDeliveryMethod: z.nativeEnum(DeliveryMethod),
-  preferredPurchaseOrderNumber: z.string().nullish().default(null),
+  preferredPurchaseOrderNumber: z.coerce.number().nullish().default(null),
   preferredDueDateLength: z.number().int().min(1).max(90).default(14),
   comment: z.string().default("Ingen kommentar"),
 })
