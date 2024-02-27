@@ -11,6 +11,14 @@ import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
+  createAttendance: protectedProcedure
+    .input(
+      z.object({
+        obj: AttendanceWriteSchema.partial(),
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.attendance.create(input.obj, input.eventId)),
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.create(input)),
@@ -79,7 +87,7 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.dashboardUC.getAttendanceInfo(input.id)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.pool.getByAttendanceId(input.id)),
 
   getAttendees: protectedProcedure
     .input(
@@ -87,7 +95,7 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.dashboardUC.getAttendees(input.id)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.attendee.getByAttendanceId(input.id)),
 
   getAttendanceByEventId: protectedProcedure
     .input(

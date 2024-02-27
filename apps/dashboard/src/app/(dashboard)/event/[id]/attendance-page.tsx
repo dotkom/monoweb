@@ -1,4 +1,4 @@
-import { type UserIDP } from "@dotkomonline/types"
+import { type Attendance, type UserIDP } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
@@ -10,18 +10,26 @@ import { AllAttendeesTable } from "../all-users-table"
 
 export const EventAttendancePage: FC = () => {
   const { attendance } = useEventDetailsContext()
-  const { attendees } = useEventAttendeesGetQuery(attendance?.id || "")
+
+  if (!attendance) {
+    return <div>Ingen påmelding</div>
+  }
+
+  return <Page attendance={attendance} />
+}
+
+interface Props {
+  attendance: Attendance
+}
+const Page: FC<Props> = ({ attendance }) => {
+  const { attendees } = useEventAttendeesGetQuery(attendance.id)
   const registerForEvent = useRegisterForEventMutation()
   const dbUserMut = trpc.user.getBySubAsync.useMutation()
 
   const handleAttendUser = async (user: UserIDP) => {
-    if (attendance === null) {
-      throw new Error("Attendance is null")
-    }
-
     const dbUser = await dbUserMut.mutateAsync(user.subject)
     if (dbUser === undefined) {
-      throw new Error("Attendance is null")
+      throw new Error("db user not found")
     }
 
     registerForEvent.mutate({ attendanceId: attendance.id, userId: dbUser.id })

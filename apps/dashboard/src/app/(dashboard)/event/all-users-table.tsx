@@ -1,7 +1,7 @@
+import { type AttendeeUser, type AttendeeId } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo } from "react"
-import { type AttendeeWithUser, type AttendeeId } from "@dotkomonline/types"
 import { GenericTable } from "../../../components/GenericTable"
 import { useDeregisterForEventMutation } from "../../../modules/event/mutations/use-deregister-for-event-mutation"
 import { useUpdateEventAttendanceMutation } from "../../../modules/event/mutations/use-update-event-attendance-mutation"
@@ -28,21 +28,21 @@ const CustomCheckbox = React.memo(({ attendeeId, defaultChecked }: CustomCheckbo
 
 CustomCheckbox.displayName = "CustomCheckbox"
 
-export const AllAttendeesTable = ({ users }: { users: AttendeeWithUser[] }) => {
+export const AllAttendeesTable = ({ users }: { users: AttendeeUser[] }) => {
   const deregisterMut = useDeregisterForEventMutation()
 
-  const columnHelper = createColumnHelper<AttendeeWithUser>()
+  const columnHelper = createColumnHelper<AttendeeUser>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((attendee) => attendee, {
         id: "userId",
         header: () => "Bruker",
         cell: (info) => {
-          const user = info.getValue()
-          return `${user.givenName} ${user.familyName}`
+          const attendee = info.getValue()
+          return `${attendee.user.givenName} ${attendee.user.familyName}`
         },
       }),
-      columnHelper.accessor("studyYear", {
+      columnHelper.accessor("user.studyYear", {
         header: () => "Klassetrinn",
       }),
       columnHelper.accessor((attendee) => attendee, {

@@ -1,13 +1,50 @@
-import { type AttendancePoolWithNumAttendees } from "@dotkomonline/types"
+import { AttendanceSchema, type Attendance, type AttendancePoolWithNumAttendees } from "@dotkomonline/types"
 import { Box, Button, Card, Divider, Flex, Table, Text, Title } from "@mantine/core"
 import { type FC } from "react"
-import { z } from "zod"
+import { type z } from "zod"
 import { useEventDetailsContext } from "./provider"
-import { openCreatePoolModal, openEditPoolModal } from "../../../../modules/event/modals/create-pool-modal"
+import { openCreatePoolModal } from "../../../../modules/event/modals/create-pool-modal"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
 import { trpc } from "../../../../utils/trpc"
 import { createDateTimeInput, useFormBuilder } from "../../../form"
 import { notifyComplete, notifyFail } from "../../../notifications"
+import { openEditPoolModal } from "../../../../modules/event/modals/edit-pool-modal"
+
+interface GeneralAttributesFormProps {
+  onSubmit(values: z.infer<typeof Schema>): void
+  defaultValues?: z.infer<typeof Schema>
+  label: string
+}
+
+const Schema = AttendanceSchema.omit({
+  eventId: true,
+  id: true,
+})
+
+const useGeneralAttributesForm = ({ onSubmit, defaultValues, label }: GeneralAttributesFormProps) =>
+  useFormBuilder({
+    schema: Schema,
+    defaultValues,
+    onSubmit: (values) => {
+      console.log(values)
+      onSubmit(values)
+    },
+    label,
+    fields: {
+      registerStart: createDateTimeInput({
+        label: "Påmeldingsstart",
+      }),
+      registerEnd: createDateTimeInput({
+        label: "Påmeldingsslutt",
+      }),
+      deregisterDeadline: createDateTimeInput({
+        label: "Frist avmelding",
+      }),
+      mergeTime: createDateTimeInput({
+        label: "Gruppemerging",
+      }),
+    },
+  })
 
 const rangeToString = (ranges: number[][]): string => {
   // example: [1,2] [2,3]  => 1,2,3
@@ -15,7 +52,7 @@ const rangeToString = (ranges: number[][]): string => {
   return flat.sort().join(", ")
 }
 
-const InfoBox: FC<{ pools: AttendancePoolWithNumAttendees }> = ({ pools }) => {
+const InfoBox: FC<{ pools: AttendancePoolWithNumAttendees[] }> = ({ pools }) => {
   const all = [0, 1, 2, 3, 4, 5]
 
   const notIncluded = (ranges: number[][]): number[] => {
@@ -54,8 +91,69 @@ const InfoBox: FC<{ pools: AttendancePoolWithNumAttendees }> = ({ pools }) => {
 
 export const EventAttendanceInfoPage: FC = () => {
   const { attendance } = useEventDetailsContext()
-  const { pools } = useEventAttendanceGetQuery(attendance?.id || "") // TODO wtf fix this
-  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation()
+  const { event } = useEventDetailsContext()
+
+  if (!attendance) {
+    return <NoAttendancePage eventId={event.id} />
+  }
+
+  return <EventAttendance attendance={attendance} />
+}
+
+interface NoAttendancePageProps {
+  eventId: string
+}
+export const NoAttendancePage: FC<NoAttendancePageProps> = ({ eventId }) => {
+  const mutation = trpc.event.attendance.createAttendance.useMutation({
+    onError: (error) => {
+      notifyFail({
+        title: "Feil",
+        message: error.message,
+      })
+    },
+    onMutate: () => {
+      notifyComplete({
+        title: "Laster",
+        message: "Laster...",
+      })
+    },
+    onSuccess: () => {
+      notifyComplete({
+        title: "Suksess",
+        message: "Opprettet",
+      })
+    },
+  })
+
+  const Form = useGeneralAttributesForm({
+    onSubmit: (values) => {
+      mutation.mutate({
+        eventId,
+        obj: {
+          registerStart: values.registerStart,
+          registerEnd: values.registerEnd,
+          mergeTime: values.mergeTime,
+          deregisterDeadline: values.deregisterDeadline,
+        },
+      })
+    },
+    label: "Opprett påmelding",
+  })
+
+  return (
+    <Box>
+      <Title order={5}>Ingen påmelding</Title>
+      <Form />
+    </Box>
+  )
+}
+
+interface EventAttendanceProps {
+  attendance: Attendance
+}
+export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
+  const { pools } = useEventAttendanceGetQuery(attendance.id)
+
   const updateAttendanceMut = trpc.event.attendance.updateAttendance.useMutation({
     onError: (error) => {
       notifyFail({
@@ -78,6 +176,23 @@ export const EventAttendanceInfoPage: FC = () => {
     },
   })
 
+  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation()
+  const GeneralAttributesForm = useGeneralAttributesForm({
+    defaultValues: attendance,
+    label: "Lagre",
+    onSubmit: (values) => {
+      updateAttendanceMut.mutate({
+        id: attendance.id,
+        attendance: {
+          registerStart: values.registerStart,
+          registerEnd: values.registerEnd,
+          mergeTime: values.mergeTime,
+          deregisterDeadline: values.deregisterDeadline,
+        },
+      })
+    },
+  })
+
   const deleteGroup = (id: string, numAttendees: number) => {
     if (numAttendees > 0) {
       notifyFail({
@@ -91,61 +206,6 @@ export const EventAttendanceInfoPage: FC = () => {
       id,
     })
   }
-
-  const updateGroup = (id: string, limit: number, yearCriteria: number[]) => {
-    openEditPoolModal({
-      attendanceId: attendance?.id || "",
-      defaultValues: {
-        limit,
-        yearCriteria,
-      },
-    })
-
-    deleteGroupMut.mutate({
-      id,
-    })
-  }
-
-  const GeneralAttributesForm = useFormBuilder({
-    schema: z.object({
-      registerStart: z.date(),
-      registerEnd: z.date(),
-      poolMergeTime: z.date(),
-      deregisterDeadline: z.date(),
-    }),
-    defaultValues: {
-      registerStart: attendance?.registerStart || new Date(),
-      registerEnd: attendance?.registerEnd || new Date(),
-      poolMergeTime: attendance?.mergeTime || new Date(),
-      deregisterDeadline: attendance?.deregisterDeadline || new Date(),
-    },
-    onSubmit: (values) => {
-      updateAttendanceMut.mutate({
-        id: attendance?.id || "",
-        attendance: {
-          registerStart: values.registerStart,
-          registerEnd: values.registerEnd,
-          mergeTime: values.poolMergeTime,
-          deregisterDeadline: values.deregisterDeadline,
-        },
-      })
-    },
-    label: "Lagre",
-    fields: {
-      registerStart: createDateTimeInput({
-        label: "Påmeldingsstart",
-      }),
-      registerEnd: createDateTimeInput({
-        label: "Påmeldingsslutt",
-      }),
-      deregisterDeadline: createDateTimeInput({
-        label: "Frist avmelding",
-      }),
-      poolMergeTime: createDateTimeInput({
-        label: "Gruppemerging",
-      }),
-    },
-  })
 
   return (
     <Box>
@@ -164,10 +224,10 @@ export const EventAttendanceInfoPage: FC = () => {
         <Button
           mt={16}
           onClick={openCreatePoolModal({
-            attendanceId: attendance?.id || "",
+            attendanceId: attendance.id,
           })}
         >
-          Opprett ny pulje2
+          Opprett ny pulje
         </Button>
       </Box>
       <Box>
@@ -182,7 +242,14 @@ export const EventAttendanceInfoPage: FC = () => {
               </Box>
               <Box>
                 <Button
-                  onClick={() => updateGroup(attendance.id, attendance.limit, attendance.yearCriteria)}
+                  onClick={openEditPoolModal({
+                    attendanceId: attendance.id,
+                    defaultValues: {
+                      limit: attendance.limit,
+                      yearCriteria: attendance.yearCriteria,
+                    },
+                    poolId: attendance.id,
+                  })}
                   color="yellow"
                   mr={16}
                 >

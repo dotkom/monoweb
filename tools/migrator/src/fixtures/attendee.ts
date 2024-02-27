@@ -10,7 +10,7 @@ export const getAttendeeFixtures: (
   {
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-    userId: user_ids[0],
+    userId: user_ids[3],
     attendancePoolId: pool_ids[0],
     extrasChoices: JSON.stringify([
       {

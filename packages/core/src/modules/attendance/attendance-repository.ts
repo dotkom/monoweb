@@ -1,9 +1,10 @@
 import { type Database } from "@dotkomonline/db"
 import {
   AttendancePoolSchema,
+  type AttendancePoolWithNumAttendees,
   AttendanceSchema,
+  AttendeeDBUserSchema,
   AttendeeSchema,
-  type UserId,
   WaitlistAttendeeSchema,
   type Attendance,
   type AttendanceId,
@@ -12,14 +13,18 @@ import {
   type AttendancePoolWrite,
   type AttendanceWrite,
   type Attendee,
+  type AttendeeDBUser,
   type AttendeeId,
   type AttendeeWrite,
   type EventId,
+  type UserDB,
+  type UserId,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
   type WaitlistAttendeeWrite,
+  AttendancePoolWithNumAttendeesSchema,
 } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
+import { sql, type Kysely } from "kysely"
 import { type DeleteResult, type UpdateResult } from "../utils"
 
 function prepareJsonInsert<T extends object>(obj: T, key: keyof T): T & { [key in keyof T]: string } {
@@ -31,7 +36,10 @@ function prepareJsonInsert<T extends object>(obj: T, key: keyof T): T & { [key i
 
 const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj)
 const mapToPool = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
+const mapToPoolWithNumAttendees = (obj: unknown): AttendancePoolWithNumAttendees =>
+  AttendancePoolWithNumAttendeesSchema.parse(obj)
 const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj)
+const mapToAttendeeWithUser = (obj: unknown): AttendeeDBUser => AttendeeDBUserSchema.parse(obj)
 const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttendeeSchema.parse(obj)
 
 // Responsible for:
@@ -40,17 +48,17 @@ const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttend
 //  waitlist_attendee
 //  attendee
 interface _AttendanceRepository {
-  create(obj: AttendanceWrite): Promise<Attendance>
+  create(obj: Partial<AttendanceWrite>): Promise<Attendance>
   delete(id: AttendanceId): Promise<DeleteResult>
   getById(id: AttendanceId): Promise<Attendance | undefined>
-  getByEventId(id: EventId): Promise<Attendance>
+  getByEventId(id: EventId): Promise<Attendance | undefined>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult>
 }
 
 interface _AttendancePoolRepository {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<DeleteResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePoolWithNumAttendees[]>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<UpdateResult>
   get(id: AttendancePoolId): Promise<AttendancePool | undefined>
 }
@@ -67,8 +75,8 @@ interface _AttendeeRepository {
   getById(id: AttendeeId): Promise<Attendee>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<UpdateResult>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<Attendee[]>
-  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeDBUser[]>
+  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | undefined>
 }
 
 export interface AttendanceRepository {
@@ -106,17 +114,29 @@ class _AttendanceRepositoryImpl implements _AttendanceRepository {
     return mapToAttendance(res)
   }
 
-  async getByEventId(id: EventId): Promise<Attendance> {
-    return mapToAttendance(
-      await this.db.selectFrom("attendance").selectAll("attendance").where("eventId", "=", id).executeTakeFirstOrThrow()
-    )
+  async getByEventId(id: EventId) {
+    // return mapToAttendance(
+    //   await this.db.selectFrom("attendance").selectAll("attendance").where("eventId", "=", id).executeTakeFirstOrThrow()
+    // )
+
+    const res = await this.db
+      .selectFrom("attendance")
+      .selectAll("attendance")
+      .where("eventId", "=", id)
+      .executeTakeFirst()
+
+    if (!res) {
+      return undefined
+    }
+
+    return mapToAttendance(res)
   }
 }
 
 class _PoolRepositoryImpl implements _AttendancePoolRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async get(id: AttendancePoolId): Promise<AttendancePool | undefined> {
+  async get(id: AttendancePoolId) {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
@@ -130,7 +150,7 @@ class _PoolRepositoryImpl implements _AttendancePoolRepository {
     return mapToPool(res)
   }
 
-  async create(obj: AttendancePoolWrite): Promise<AttendancePool> {
+  async create(obj: AttendancePoolWrite) {
     return mapToPool(
       await this.db
         .insertInto("attendancePool")
@@ -147,19 +167,35 @@ class _PoolRepositoryImpl implements _AttendancePoolRepository {
     }
   }
 
-  async getByAttendanceId(id: AttendanceId): Promise<AttendancePool[]> {
+  async getByAttendanceId(id: AttendancePoolId): Promise<AttendancePoolWithNumAttendees[]> {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
       .where("attendanceId", "=", id)
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
+      .select(({ fn, val, ref }) => [
+        fn.count(ref("attendee.id")).as("numAttendees"),
+        val("attendancePool.id").as("poolId"),
+      ])
+      .groupBy("attendancePool.id")
       .execute()
-    return res.map(mapToPool)
+
+    return res
+      .map((pool) => ({
+        ...pool,
+        numAttendees: Number(pool.numAttendees),
+      }))
+      .map(mapToPoolWithNumAttendees)
   }
 
-  async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<UpdateResult> {
+  async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
+    const insertObj = prepareJsonInsert(obj, "yearCriteria")
+    console.log("INSERT")
+    console.log(insertObj)
+
     const res = await this.db
       .updateTable("attendancePool")
-      .set(prepareJsonInsert(obj, "yearCriteria"))
+      .set(insertObj)
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
     return {
@@ -188,16 +224,17 @@ class _WaitlistAttendeRepositoryImpl implements _WaitlistAttendeRepository {
 class _AttendeeRepositoryImpl implements _AttendeeRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null> {
+  async getByUserId(userId: UserId, attendanceId: AttendanceId) {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
+      .leftJoin("attendancePool", "attendancePool.id", "attendee.attendancePoolId")
       .where("userId", "=", userId)
-      .where("attendancePoolId", "=", attendanceId)
+      .where("attendancePool.attendanceId", "=", attendanceId)
       .executeTakeFirst()
 
     if (!res) {
-      return null
+      return undefined
     }
 
     return mapToAttendee(res)
@@ -226,14 +263,30 @@ class _AttendeeRepositoryImpl implements _AttendeeRepository {
     )
   }
 
-  async getByAttendanceId(attendanceId: AttendanceId): Promise<Attendee[]> {
-    return (
-      await this.db
-        .selectFrom("attendee")
-        .selectAll("attendee")
-        .where("attendee.attendancePoolId", "=", attendanceId)
-        .execute()
-    ).map(mapToAttendee)
+  async getByAttendanceId(attendanceId: AttendanceId) {
+    const res = await this.db
+      .selectFrom("attendee")
+      .selectAll("attendee")
+      .leftJoin("owUser", "owUser.id", "attendee.userId")
+      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
+      .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
+      .select(sql<UserDB[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .where("attendance.id", "=", attendanceId)
+      .groupBy("attendee.id")
+      .execute()
+
+    console.log("-----------------------")
+    console.dir(res, { depth: null })
+
+    return res
+      .map((value) => ({
+        ...value,
+        user: {
+          ...value.user[0],
+          createdAt: new Date(value.user[0].createdAt),
+        },
+      }))
+      .map(mapToAttendeeWithUser)
   }
 
   async getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]> {

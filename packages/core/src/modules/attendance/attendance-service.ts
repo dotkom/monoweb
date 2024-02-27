@@ -1,6 +1,7 @@
 import { type Database } from "@dotkomonline/db"
 import {
-  YearCriteriaSchema,
+  type AttendancePoolWithNumAttendees,
+  AttendeeUserSchema,
   type Attendance,
   type AttendanceId,
   type AttendancePool,
@@ -9,26 +10,24 @@ import {
   type AttendanceWrite,
   type Attendee,
   type AttendeeId,
+  type AttendeeUser,
+  type AttendeeWithUser,
   type AttendeeWrite,
+  type EventId,
   type UserId,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
   type WaitlistAttendeeWrite,
-  type EventId,
-  type AttendancePoolWithNumAttendees,
-  type AttendeeWithUser,
-  AttendeesWithUser,
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
 import { type AttendanceRepository } from "./attendance-repository"
-import type * as DashboardUsecase from "./dashboard"
 import { type UserService } from "../user/user-service"
 
 interface _AttendanceService {
-  create(obj: AttendanceWrite): Promise<Attendance>
+  create(obj: Partial<AttendanceWrite>, eventId: EventId): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | undefined>
-  getByEventId(id: EventId): Promise<Attendance>
+  getByEventId(id: EventId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
 }
 
@@ -36,6 +35,7 @@ interface _AttendancePoolService {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
+  getByAttendanceId(id: string): Promise<AttendancePoolWithNumAttendees[]>
 }
 
 interface _WaitlistAttendeService {
@@ -44,11 +44,12 @@ interface _WaitlistAttendeService {
 }
 
 interface _AttendeeService {
-  getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]>
+  getByPoolId(poolId: AttendancePoolId): Promise<Pick<Attendee, "user">[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeWithUser>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
   registerForEvent(userId: string, poolId: string): Promise<Attendee>
   deregisterForEvent(id: AttendeeId): Promise<void>
+  getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
 }
 
 export interface AttendanceService {
@@ -56,7 +57,7 @@ export interface AttendanceService {
   pool: _AttendancePoolService
   waitlistAttendee: _WaitlistAttendeService
   attendee: _AttendeeService
-  dashboardUC: DashboardUsecase.DashboardAttendanceUC
+  // dashboardUC: DashboardAttendanceUC
 }
 
 class _AttendanceServiceImpl implements _AttendanceService {
@@ -65,9 +66,7 @@ class _AttendanceServiceImpl implements _AttendanceService {
   }
 
   async update(obj: AttendanceWrite, id: AttendanceId): Promise<Attendance> {
-    console.log("HELLLLLLOOOOOOOOo")
     const res = await this.attendanceRepository.attendance.update(obj, id)
-    console.log(res)
     if (res.numUpdatedRows === 1) {
       const attendance = await this.attendanceRepository.attendance.getById(id)
       if (attendance === undefined) {
@@ -79,8 +78,11 @@ class _AttendanceServiceImpl implements _AttendanceService {
     throw new Error("TODO: decide on how to handle the case where the update fails")
   }
 
-  async create(obj: AttendanceWrite): Promise<Attendance> {
-    return this.attendanceRepository.attendance.create(obj)
+  async create(obj: Partial<AttendanceWrite>, id: EventId): Promise<Attendance> {
+    return this.attendanceRepository.attendance.create({
+      eventId: id,
+      ...obj,
+    })
   }
 
   async delete(id: AttendanceId): Promise<void> {
@@ -91,13 +93,22 @@ class _AttendanceServiceImpl implements _AttendanceService {
     return this.attendanceRepository.attendance.getById(id)
   }
 
-  async getByEventId(id: EventId): Promise<Attendance> {
-    return this.attendanceRepository.attendance.getByEventId(id)
+  async getByEventId(id: EventId) {
+    const result = await this.attendanceRepository.attendance.getByEventId(id)
+    if (result === undefined) {
+      return null
+    }
+
+    return result
   }
 }
 class _PoolServiceImpl implements _AttendancePoolService {
   constructor(private readonly attendanceRepository: AttendanceRepository) {
     this.attendanceRepository = attendanceRepository
+  }
+
+  async getByAttendanceId(id: AttendanceId) {
+    return this.attendanceRepository.pool.getByAttendanceId(id)
   }
 
   async create(obj: AttendancePoolWrite): Promise<AttendancePool> {
@@ -121,6 +132,10 @@ class _PoolServiceImpl implements _AttendancePoolService {
     }
 
     throw new Error("TODO: decide on how to handle the case where the update fails")
+  }
+
+  async getPoolsByAttendanceId(attendanceId: string): Promise<AttendancePool[]> {
+    return this.attendanceRepository.pool.getByAttendanceId(attendanceId)
   }
 }
 
@@ -155,7 +170,7 @@ class _AttendeeServiceImpl implements _AttendeeService {
     await this.attendanceRepository.attendee.delete(id)
   }
 
-  async getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]> {
+  async getByPoolId(poolId: AttendancePoolId) {
     return this.attendanceRepository.attendee.getByPoolId(poolId)
   }
 
@@ -196,7 +211,9 @@ class _AttendeeServiceImpl implements _AttendeeService {
     }
 
     const userAlreadyRegistered = await this.attendanceRepository.attendee.getByUserId(userId, attendanceId)
-    if (userAlreadyRegistered !== null) {
+    console.log("already registered", userAlreadyRegistered)
+    console.log(userId, attendanceId)
+    if (userAlreadyRegistered !== undefined) {
       throw new Error("User is already registered")
     }
 
@@ -226,74 +243,70 @@ class _AttendeeServiceImpl implements _AttendeeService {
     await this.attendanceRepository.attendee.delete(id)
   }
 
-  async getByAttendanceId(attendanceId: string): Promise<Attendee[]> {
-    return this.attendanceRepository.attendee.getByAttendanceId(attendanceId)
-  }
-}
+  async getByAttendanceId(attendanceId: string) {
+    const attendees = await this.attendanceRepository.attendee.getByAttendanceId(attendanceId)
+    const idpUsers = await this.userService.getUserBySubjectIDP(attendees.map(({ user }) => user.auth0Sub))
 
-class DashboardUCImpl implements DashboardUsecase.DashboardAttendanceUC {
-  // attendanceRepository: AttendanceRepository = {} as AttendanceRepository
-  // userService: UserService = {} as UserService
-  constructor(
-    private readonly db: Kysely<Database>,
-    private readonly attendanceRepository: AttendanceRepository,
-    private readonly userService: UserService
-  ) {
-    this.db = db
-    this.attendanceRepository = attendanceRepository
-    this.userService = userService
-  }
-
-  async getAttendanceInfo(id: AttendanceId): Promise<AttendancePoolWithNumAttendees> {
-    const pools = await this.db
-      .selectFrom("attendancePool")
-      .selectAll("attendancePool")
-      .where("attendanceId", "=", id)
-      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
-      .select(({ fn, val, ref }) => [
-        fn.count(ref("attendee.id")).as("numAttendees"),
-        val("attendancePool.id").as("poolId"),
-      ])
-      .groupBy("attendancePool.id")
-      .execute()
-
-    const mappedPools = pools.map((pool) => ({
-      ...pool,
-      yearCriteria: YearCriteriaSchema.parse(pool.yearCriteria),
-      numAttendees: Number(pool.numAttendees),
-    }))
-
-    return mappedPools
-  }
-
-  async getAttendees(attendanceId: AttendanceId): Promise<AttendeeWithUser[]> {
-    const dbUsers = (
-      await this.db
-        .selectFrom("attendee")
-        .leftJoin("owUser", "owUser.id", "attendee.userId")
-        .selectAll("owUser")
-        .selectAll("attendee")
-
-        .leftJoin("attendancePool", "attendancePool.id", "attendee.attendancePoolId")
-        .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-        .where("attendance.id", "=", attendanceId)
-        .execute()
-    ).map((user) => ({
-      ...user,
-      extrasChoices: user.extrasChoices ? JSON.parse(user.extrasChoices as string) : null,
-    }))
-
-    const idpUsers = await this.userService.getUserBySubjectIDP(dbUsers.map((user) => user.auth0Sub as string))
-
-    return dbUsers.map((user) => {
-      const idpUser = idpUsers.find((idpUser) => idpUser.subject === user.auth0Sub)
-      return AttendeesWithUser.parse({
+    return attendees.map((user) => {
+      const idpUser = idpUsers.find((idpUser) => idpUser.subject === user.user.auth0Sub)
+      console.log("----------------IDP--------------")
+      console.log(idpUser)
+      return AttendeeUserSchema.parse({
         ...user,
-        ...idpUser,
+        user: {
+          ...user.user,
+          ...idpUser,
+        },
       })
     })
   }
 }
+
+// export interface DashboardAttendanceUC {
+//   // getAttendanceInfo(id: EventId): Promise<AttendancePoolWithNumAttendees>
+//   getAttendees(attendanceId: string): Promise<AttendeeWithUser[]>
+// }
+// class DashboardUCImpl implements DashboardAttendanceUC {
+//   // attendanceRepository: AttendanceRepository = {} as AttendanceRepository
+//   // userService: UserService = {} as UserService
+//   constructor(
+//     private readonly db: Kysely<Database>,
+//     private readonly attendanceRepository: AttendanceRepository,
+//     private readonly userService: UserService
+//   ) {
+//     this.db = db
+//     this.attendanceRepository = attendanceRepository
+//     this.userService = userService
+//   }
+
+//   async getAttendees(attendanceId: AttendanceId): Promise<AttendeeWithUser[]> {
+//     const dbUsers = (
+//       await this.db
+//         .selectFrom("attendee")
+//         .leftJoin("owUser", "owUser.id", "attendee.userId")
+//         .selectAll("owUser")
+//         .selectAll("attendee")
+
+//         .leftJoin("attendancePool", "attendancePool.id", "attendee.attendancePoolId")
+//         .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
+//         .where("attendance.id", "=", attendanceId)
+//         .execute()
+//     ).map((user) => ({
+//       ...user,
+//       extrasChoices: user.extrasChoices ? JSON.parse(user.extrasChoices as string) : null,
+//     }))
+
+//     const idpUsers = await this.userService.getUserBySubjectIDP(dbUsers.map((user) => user.auth0Sub as string))
+
+//     return dbUsers.map((user) => {
+//       const idpUser = idpUsers.find((idpUser) => idpUser.subject === user.auth0Sub)
+//       return AttendeesWithUser.parse({
+//         ...user,
+//         ...idpUser,
+//       })
+//     })
+//   }
+// }
 
 // Main service for all of the attendance domain
 export class AttendanceServiceImpl implements AttendanceService {
@@ -301,7 +314,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   pool: _AttendancePoolService
   waitlistAttendee: _WaitlistAttendeService
   attendee: _AttendeeService
-  dashboardUC: DashboardUsecase.DashboardAttendanceUC
+  // dashboardUC: DashboardAttendanceUC
 
   constructor(
     private readonly attendanceRepository: AttendanceRepository,
@@ -312,6 +325,6 @@ export class AttendanceServiceImpl implements AttendanceService {
     this.pool = new _PoolServiceImpl(attendanceRepository)
     this.waitlistAttendee = new _WaitlistAttendeServiceImpl(attendanceRepository)
     this.attendee = new _AttendeeServiceImpl(attendanceRepository, userService)
-    this.dashboardUC = new DashboardUCImpl(db, attendanceRepository, userService)
+    // this.dashboardUC = new DashboardUCImpl(db, attendanceRepository, userService)
   }
 }

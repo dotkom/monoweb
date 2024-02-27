@@ -41,16 +41,16 @@ const SIDEBAR_LINKS = [
     component: EventDetailsFeedbackForms,
   },
   {
+    icon: "tabler:calendar-event",
+    label: "Påmelding",
+    slug: "attendanceInfo",
+    component: EventAttendanceInfoPage,
+  },
+  {
     icon: "tabler:user",
     label: "Påmeldte",
     slug: "attendance",
     component: EventAttendancePage,
-  },
-  {
-    icon: "tabler:calendar-event",
-    label: "Påmeldingsinformasjon",
-    slug: "attendanceInfo",
-    component: EventAttendanceInfoPage,
   },
   {
     icon: "tabler:calendar-event",

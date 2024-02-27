@@ -10,12 +10,13 @@ export default function EventDetailsLayout({ children, params }: PropsWithChildr
   const { event, eventCommittees, isLoading: eventCommitteesLoading } = useEventGetQuery(params.id)
   const { data: attendance, isLoading: attendanceLoading } = trpc.event.attendance.getAttendanceByEventId.useQuery(
     {
-      eventId: event?.id || "",
+      eventId: event?.id ?? "",
     },
     {
       enabled: Boolean(event),
     }
   )
+
   return (
     <>
       {eventCommitteesLoading || attendanceLoading || !event || attendance === undefined ? (

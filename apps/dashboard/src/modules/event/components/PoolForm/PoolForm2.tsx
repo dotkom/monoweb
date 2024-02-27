@@ -1,99 +1,65 @@
+import { type AttendancePool } from "@dotkomonline/types"
 import { Box, Button } from "@mantine/core"
 import { type FC } from "react"
 import { z } from "zod"
 import { validateAndReturn } from "./utils"
 import { createLabelledCheckboxGroupInput, createNumberInput, useFormBuilder } from "../../../../app/form"
-import { notifyComplete, notifyFail } from "../../../../app/notifications"
-import { trpc } from "../../../../utils/trpc"
-import { useEventAttendanceGetQuery } from "../../queries/use-event-attendance-get-query"
+import { notifyFail } from "../../../../app/notifications"
 
-interface PoolFormProps {
-  attendanceId: string
-  defaultValues?: Schema
-  update?: boolean
+export interface PoolFormProps {
+  onSubmit(values: PoolFormSchema): void
+  attendancePools: AttendancePool[]
   onClose(): void
+  defaultValues: PoolFormSchema
+  mode: "create" | "update"
 }
 
-const Schema = z.object({
+export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()),
   limit: z.number(),
 })
-type Schema = z.infer<typeof Schema>
+export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
-export const PoolForm: FC<PoolFormProps> = ({ attendanceId, defaultValues, update, onClose }) => {
-  const { pools } = useEventAttendanceGetQuery(attendanceId)
-  const existingPools = [...new Set(pools?.map(({ yearCriteria }) => yearCriteria).flat())]
+export const usePoolFormLogic = (props: PoolFormProps) => {
+  const existingPools = [...new Set(props.attendancePools.map(({ yearCriteria }) => yearCriteria).flat())]
+
   const Form = useFormBuilder({
-    schema: Schema,
-    defaultValues: defaultValues || { yearCriteria: [], limit: 1 },
+    schema: PoolFormSchema,
+    defaultValues: props.defaultValues,
     fields: {
       yearCriteria: createLabelledCheckboxGroupInput({
         existing: existingPools,
         labels: ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"],
       }),
       limit: createNumberInput({
-        label: "Kapasitet",
+        label: "Kapasitet1",
       }),
     },
-    label: "Opprett pulje",
+    label: props.mode === "create" ? "Opprett pulje" : "Endre pulje",
     onSubmit: (values, form) => {
-      // setError("yearCriteria", { type: "manual", message: "Velg minst en gruppe" })
       form.resetField("yearCriteria")
-      onSubmit(values)
-    },
-  })
-
-  const { mutate: createPool } = trpc.event.attendance.createPool.useMutation({
-    onSuccess: () => {
-      notifyComplete({
-        title: "Pulje opprettet",
-        message: "Puljen er opprettet",
-      })
-    },
-  })
-
-  const { mutate: updatePool } = trpc.event.attendance.updatePool.useMutation({
-    onSuccess: () => {
-      notifyComplete({
-        title: "Pulje opprettet",
-        message: "Puljen er opprettet",
-      })
-    },
-  })
-
-  const onSubmit = (values: Schema) => {
-    try {
-      validateAndReturn(values.yearCriteria)
-      // form.reset()
-
-      if (update) {
-        updatePool({
-          input: {
-            limit: values.limit,
-            yearCriteria: values.yearCriteria,
-          },
-          id: pools?.[0]?.id || "",
+      try {
+        validateAndReturn(values.yearCriteria)
+        props.onSubmit(values)
+      } catch (e) {
+        notifyFail({
+          title: "Oops!",
+          message: (e as Error).message,
         })
-        return
       }
+    },
+  })
 
-      createPool({
-        limit: values.limit,
-        yearCriteria: values.yearCriteria,
-        attendanceId,
-      })
-    } catch (e) {
-      notifyFail({
-        title: "Feil",
-        message: (e as Error).message,
-      })
-    }
-  }
+  return { Form }
+}
+export const PoolForm: FC<PoolFormProps> = (props) => {
+  console.log(props.mode)
+  const { Form } = usePoolFormLogic(props)
 
   return (
     <Box>
       <Form />
-      <Button onClick={onClose} mt={16} color="gray">
+      <Button onClick={props.onClose} mt={16} color="gray">
         Lukk
       </Button>
     </Box>
