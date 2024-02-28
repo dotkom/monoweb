@@ -13,14 +13,14 @@ export const AttendancePage: FC = () => {
   const { event } = useEventDetailsContext()
 
   if (!attendance) {
-    return <NoAttendancePage eventId={event.id} />
+    return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <EventAttendance attendance={attendance} />
+  return <_AttendancePage attendance={attendance} />
 }
 
-export const NoAttendancePage: FC<{ eventId: string }> = ({ eventId }) => {
-  const mutation = trpc.event.attendance.createAttendance.useMutation()
+const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
+  const mutation = trpc.event.addAttendance.useMutation()
   const AttendanceForm = useAttendanceForm({
     defaultValues: {
       registerStart: new Date(),
@@ -30,15 +30,7 @@ export const NoAttendancePage: FC<{ eventId: string }> = ({ eventId }) => {
     },
     label: "Opprett",
     onSubmit: (values) => {
-      mutation.mutate({
-        eventId,
-        obj: {
-          registerStart: values.registerStart,
-          registerEnd: values.registerEnd,
-          mergeTime: values.mergeTime,
-          deregisterDeadline: values.deregisterDeadline,
-        },
-      })
+      mutation.mutate({ eventId, obj: values })
     },
   })
 
@@ -53,14 +45,14 @@ export const NoAttendancePage: FC<{ eventId: string }> = ({ eventId }) => {
 interface EventAttendanceProps {
   attendance: Attendance
 }
-export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
+const _AttendancePage: FC<EventAttendanceProps> = ({ attendance }) => {
   const { pools } = useEventAttendanceGetQuery(attendance.id)
 
   const updateAttendance = trpc.event.attendance.updateAttendance.useMutation()
 
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,
-    label: "Lagre",
+    label: "Oppdater",
     onSubmit: (values) => {
       updateAttendance.mutate({
         id: attendance.id,
@@ -76,7 +68,7 @@ export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
 
   const PoolsForm = usePoolsForm({
     attendanceId: attendance.id,
-    pools: pools ?? [],
+    pools,
   })
 
   return (

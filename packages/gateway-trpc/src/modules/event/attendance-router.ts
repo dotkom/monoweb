@@ -19,14 +19,6 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.attendanceService.attendance.isAttending(input.userId, input.attendanceId)),
-  createAttendance: protectedProcedure
-    .input(
-      z.object({
-        obj: AttendanceWriteSchema.partial(),
-        eventId: EventSchema.shape.id,
-      })
-    )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.attendance.create(input.obj, input.eventId)),
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.create(input)),

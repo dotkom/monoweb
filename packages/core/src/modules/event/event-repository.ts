@@ -13,10 +13,27 @@ export interface EventRepository {
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
+  addAttendance(eventId: EventId, attendanceId: string): Promise<Event>
 }
 
 export class EventRepositoryImpl implements EventRepository {
   constructor(private readonly db: Kysely<Database>) {}
+
+  async addAttendance(eventId: EventId, attendanceId: string) {
+    const result = await this.db.updateTable("event").where("id", "=", eventId).set({ attendanceId }).executeTakeFirst()
+
+    if (Number(result.numUpdatedRows) !== 1) {
+      throw new Error("Failed to add attendance to event")
+    }
+
+    const event = await this.getById(eventId)
+
+    if (event === undefined) {
+      throw new Error("Event not found")
+    }
+
+    return event
+  }
 
   async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()

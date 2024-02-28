@@ -1,5 +1,11 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { CompanySchema, EventCommitteeSchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
+import {
+  AttendanceWriteSchema,
+  CompanySchema,
+  EventCommitteeSchema,
+  EventSchema,
+  EventWriteSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
@@ -78,6 +84,14 @@ export const eventRouter = t.router({
       eventCommittees: committees,
     }
   }),
+  addAttendance: protectedProcedure
+    .input(
+      z.object({
+        obj: AttendanceWriteSchema.partial(),
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.obj)),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
 })

@@ -11,7 +11,7 @@ export interface _AttendancePoolService {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
-  getByAttendanceId(id: string): Promise<AttendancePool[] | null>
+  getByAttendanceId(id: string): Promise<AttendancePool[]>
 }
 
 export class _PoolServiceImpl implements _AttendancePoolService {

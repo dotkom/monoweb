@@ -9,7 +9,7 @@ import {
 import { AttendanceRepository } from "../repositories"
 
 export interface _AttendanceService {
-  create(obj: Partial<AttendanceWrite>, eventId: EventId): Promise<Attendance>
+  create(obj: Partial<AttendanceWrite>): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
@@ -43,7 +43,7 @@ export class _AttendanceServiceImpl implements _AttendanceService {
     throw new Error("Failed to update attendance")
   }
 
-  async create(obj: Partial<AttendanceWrite>, id: EventId) {
+  async create(obj: Partial<AttendanceWrite>) {
     return this.attendanceRepository.attendance.create(obj)
   }
 
