@@ -1,4 +1,4 @@
-import { type Database } from "@dotkomonline/db"
+import { type Database } from "@dotkomonline/db";
 import {
   AttendancePoolSchema,
   type AttendancePoolWithNumAttendees,
@@ -23,24 +23,33 @@ import {
   type WaitlistAttendeeId,
   type WaitlistAttendeeWrite,
   AttendancePoolWithNumAttendeesSchema,
-} from "@dotkomonline/types"
-import { sql, type Kysely } from "kysely"
-import { type DeleteResult, type UpdateResult } from "../utils"
+} from "@dotkomonline/types";
+import { sql, type Kysely } from "kysely";
+import { type DeleteResult, type UpdateResult } from "../utils";
 
-function prepareJsonInsert<T extends object>(obj: T, key: keyof T): T & { [key in keyof T]: string } {
+function prepareJsonInsert<T extends object>(
+  obj: T,
+  key: keyof T
+): T & { [key in keyof T]: string } {
   return {
     ...obj,
     [key]: JSON.stringify(obj[key]),
-  }
+  };
 }
 
-const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj)
-const mapToPool = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
-const mapToPoolWithNumAttendees = (obj: unknown): AttendancePoolWithNumAttendees =>
-  AttendancePoolWithNumAttendeesSchema.parse(obj)
-const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj)
-const mapToAttendeeWithUser = (obj: unknown): AttendeeDBUser => AttendeeDBUserSchema.parse(obj)
-const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttendeeSchema.parse(obj)
+const mapToAttendance = (obj: unknown): Attendance =>
+  AttendanceSchema.parse(obj);
+const mapToPool = (obj: unknown): AttendancePool =>
+  AttendancePoolSchema.parse(obj);
+const mapToPoolWithNumAttendees = (
+  obj: unknown
+): AttendancePoolWithNumAttendees =>
+  AttendancePoolWithNumAttendeesSchema.parse(obj);
+const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj);
+const mapToAttendeeWithUser = (obj: unknown): AttendeeDBUser =>
+  AttendeeDBUserSchema.parse(obj);
+const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee =>
+  WaitlistAttendeeSchema.parse(obj);
 
 // Responsible for:
 //  attendance
@@ -48,70 +57,106 @@ const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttend
 //  waitlist_attendee
 //  attendee
 interface _AttendanceRepository {
-  create(obj: Partial<AttendanceWrite>): Promise<Attendance>
-  delete(id: AttendanceId): Promise<DeleteResult>
-  getById(id: AttendanceId): Promise<Attendance | undefined>
-  getByEventId(id: EventId): Promise<Attendance | undefined>
-  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult>
+  create(obj: Partial<AttendanceWrite>): Promise<Attendance>;
+  delete(id: AttendanceId): Promise<DeleteResult>;
+  getById(id: AttendanceId): Promise<Attendance | undefined>;
+  getByEventId(id: EventId): Promise<Attendance | undefined>;
+  update(
+    obj: Partial<AttendanceWrite>,
+    id: AttendanceId
+  ): Promise<UpdateResult>;
 }
 
 interface _AttendancePoolRepository {
-  create(obj: AttendancePoolWrite): Promise<AttendancePool>
-  delete(id: AttendancePoolId): Promise<DeleteResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePoolWithNumAttendees[]>
-  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<UpdateResult>
-  get(id: AttendancePoolId): Promise<AttendancePool | undefined>
+  create(obj: AttendancePoolWrite): Promise<AttendancePool>;
+  delete(id: AttendancePoolId): Promise<DeleteResult>;
+  getByAttendanceId(
+    attendanceId: AttendanceId
+  ): Promise<AttendancePoolWithNumAttendees[]>;
+  getByEventId(eventId: EventId): Promise<AttendancePoolWithNumAttendees[]>;
+  update(
+    obj: Partial<AttendancePoolWrite>,
+    id: AttendancePoolId
+  ): Promise<UpdateResult>;
+  get(id: AttendancePoolId): Promise<AttendancePool | undefined>;
 }
 
 interface _WaitlistAttendeRepository {
-  create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
-  delete(id: WaitlistAttendeeId): Promise<DeleteResult>
+  create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>;
+  delete(id: WaitlistAttendeeId): Promise<DeleteResult>;
 }
 
 interface _AttendeeRepository {
-  create(obj: AttendeeWrite): Promise<Attendee>
-  delete(id: AttendeeId): Promise<DeleteResult>
-  getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]>
-  getById(id: AttendeeId): Promise<Attendee>
-  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<UpdateResult>
-  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeDBUser[]>
-  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | undefined>
+  create(obj: AttendeeWrite): Promise<Attendee>;
+  delete(id: AttendeeId): Promise<DeleteResult>;
+  getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]>;
+  getById(id: AttendeeId): Promise<Attendee>;
+  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<UpdateResult>;
+  updateExtraChoices(
+    id: AttendeeId,
+    questionId: string,
+    choiceId: string
+  ): Promise<UpdateResult>;
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeDBUser[]>;
+  getByUserId(
+    userId: UserId,
+    attendanceId: AttendanceId
+  ): Promise<Attendee | undefined>;
 }
 
 export interface AttendanceRepository {
-  attendance: _AttendanceRepository
-  pool: _AttendancePoolRepository
-  waitlistAttendee: _WaitlistAttendeRepository
-  attendee: _AttendeeRepository
+  attendance: _AttendanceRepository;
+  pool: _AttendancePoolRepository;
+  waitlistAttendee: _WaitlistAttendeRepository;
+  attendee: _AttendeeRepository;
 }
 
 class _AttendanceRepositoryImpl implements _AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
   async create(obj: AttendanceWrite): Promise<Attendance> {
-    return mapToAttendance(await this.db.insertInto("attendance").returningAll().values(obj).executeTakeFirstOrThrow())
+    return mapToAttendance(
+      await this.db
+        .insertInto("attendance")
+        .returningAll()
+        .values(obj)
+        .executeTakeFirstOrThrow()
+    );
   }
 
-  async update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult> {
-    const res = await this.db.updateTable("attendance").set(obj).where("id", "=", id).executeTakeFirstOrThrow()
+  async update(
+    obj: Partial<AttendanceWrite>,
+    id: AttendanceId
+  ): Promise<UpdateResult> {
+    const res = await this.db
+      .updateTable("attendance")
+      .set(obj)
+      .where("id", "=", id)
+      .executeTakeFirstOrThrow();
     return {
       numUpdatedRows: Number(res.numUpdatedRows),
-    }
+    };
   }
 
   async delete(id: AttendanceId): Promise<DeleteResult> {
-    const result = await this.db.deleteFrom("attendance").where("id", "=", id).executeTakeFirst()
+    const result = await this.db
+      .deleteFrom("attendance")
+      .where("id", "=", id)
+      .executeTakeFirst();
     return {
       numDeletedRows: Number(result.numDeletedRows),
-    }
+    };
   }
 
   async getById(id: AttendanceId): Promise<Attendance | undefined> {
-    const res = await this.db.selectFrom("attendance").selectAll("attendance").where("id", "=", id).executeTakeFirst()
+    const res = await this.db
+      .selectFrom("attendance")
+      .selectAll("attendance")
+      .where("id", "=", id)
+      .executeTakeFirst();
     if (!res) {
-      return undefined
+      return undefined;
     }
-    return mapToAttendance(res)
+    return mapToAttendance(res);
   }
 
   async getByEventId(id: EventId) {
@@ -123,13 +168,13 @@ class _AttendanceRepositoryImpl implements _AttendanceRepository {
       .selectFrom("attendance")
       .selectAll("attendance")
       .where("eventId", "=", id)
-      .executeTakeFirst()
+      .executeTakeFirst();
 
     if (!res) {
-      return undefined
+      return undefined;
     }
 
-    return mapToAttendance(res)
+    return mapToAttendance(res);
   }
 }
 
@@ -141,13 +186,13 @@ class _PoolRepositoryImpl implements _AttendancePoolRepository {
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
       .where("id", "=", id)
-      .executeTakeFirst()
+      .executeTakeFirst();
 
     if (!res) {
-      return undefined
+      return undefined;
     }
 
-    return mapToPool(res)
+    return mapToPool(res);
   }
 
   async create(obj: AttendancePoolWrite) {
@@ -157,17 +202,22 @@ class _PoolRepositoryImpl implements _AttendancePoolRepository {
         .returningAll()
         .values(prepareJsonInsert(obj, "yearCriteria"))
         .executeTakeFirstOrThrow()
-    )
+    );
   }
 
   async delete(id: AttendancePoolId): Promise<DeleteResult> {
-    const res = await this.db.deleteFrom("attendancePool").where("id", "=", id).executeTakeFirst()
+    const res = await this.db
+      .deleteFrom("attendancePool")
+      .where("id", "=", id)
+      .executeTakeFirst();
     return {
       numDeletedRows: Number(res.numDeletedRows),
-    }
+    };
   }
 
-  async getByAttendanceId(id: AttendancePoolId): Promise<AttendancePoolWithNumAttendees[]> {
+  async getByAttendanceId(
+    id: AttendancePoolId
+  ): Promise<AttendancePoolWithNumAttendees[]> {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
@@ -178,29 +228,51 @@ class _PoolRepositoryImpl implements _AttendancePoolRepository {
         val("attendancePool.id").as("poolId"),
       ])
       .groupBy("attendancePool.id")
-      .execute()
+      .execute();
 
     return res
       .map((pool) => ({
         ...pool,
         numAttendees: Number(pool.numAttendees),
       }))
-      .map(mapToPoolWithNumAttendees)
+      .map(mapToPoolWithNumAttendees);
+  }
+
+  async getByEventId(id: EventId): Promise<AttendancePoolWithNumAttendees[]> {
+    const res = await this.db
+      .selectFrom("attendancePool")
+      .selectAll("attendancePool")
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
+      .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
+      .where("attendance.eventId", "=", id)
+      .select(({ fn, val, ref }) => [
+        fn.count(ref("attendee.id")).as("numAttendees"),
+        val("attendancePool.id").as("poolId"),
+      ])
+      .groupBy("attendancePool.id")
+      .execute();
+
+    return res
+      .map((pool) => ({
+        ...pool,
+        numAttendees: Number(pool.numAttendees),
+      }))
+      .map(mapToPoolWithNumAttendees);
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
-    const insertObj = prepareJsonInsert(obj, "yearCriteria")
-    console.log("INSERT")
-    console.log(insertObj)
+    const insertObj = prepareJsonInsert(obj, "yearCriteria");
+    console.log("INSERT");
+    console.log(insertObj);
 
     const res = await this.db
       .updateTable("attendancePool")
       .set(insertObj)
       .where("id", "=", id)
-      .executeTakeFirstOrThrow()
+      .executeTakeFirstOrThrow();
     return {
       numUpdatedRows: Number(res.numUpdatedRows),
-    }
+    };
   }
 }
 
@@ -209,15 +281,22 @@ class _WaitlistAttendeRepositoryImpl implements _WaitlistAttendeRepository {
 
   async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
     return mapToWaitlistAttendee(
-      await this.db.insertInto("waitlistAttendee").values(obj).returningAll().executeTakeFirstOrThrow()
-    )
+      await this.db
+        .insertInto("waitlistAttendee")
+        .values(obj)
+        .returningAll()
+        .executeTakeFirstOrThrow()
+    );
   }
 
   async delete(id: WaitlistAttendeeId): Promise<DeleteResult> {
-    const res = await this.db.deleteFrom("waitlistAttendee").where("id", "=", id).executeTakeFirst()
+    const res = await this.db
+      .deleteFrom("waitlistAttendee")
+      .where("id", "=", id)
+      .executeTakeFirst();
     return {
       numDeletedRows: Number(res.numDeletedRows),
-    }
+    };
   }
 }
 
@@ -228,16 +307,20 @@ class _AttendeeRepositoryImpl implements _AttendeeRepository {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
-      .leftJoin("attendancePool", "attendancePool.id", "attendee.attendancePoolId")
+      .leftJoin(
+        "attendancePool",
+        "attendancePool.id",
+        "attendee.attendancePoolId"
+      )
       .where("userId", "=", userId)
       .where("attendancePool.attendanceId", "=", attendanceId)
-      .executeTakeFirst()
+      .executeTakeFirst();
 
     if (!res) {
-      return undefined
+      return undefined;
     }
 
-    return mapToAttendee(res)
+    return mapToAttendee(res);
   }
 
   async create(obj: AttendeeWrite): Promise<Attendee> {
@@ -247,20 +330,27 @@ class _AttendeeRepositoryImpl implements _AttendeeRepository {
         .values(prepareJsonInsert(obj, "extrasChoices"))
         .returningAll()
         .executeTakeFirstOrThrow()
-    )
+    );
   }
 
   async delete(id: AttendeeId): Promise<DeleteResult> {
-    const res = await this.db.deleteFrom("attendee").where("id", "=", id).executeTakeFirst()
+    const res = await this.db
+      .deleteFrom("attendee")
+      .where("id", "=", id)
+      .executeTakeFirst();
     return {
       numDeletedRows: Number(res.numDeletedRows),
-    }
+    };
   }
 
   async getById(id: AttendeeId): Promise<Attendee> {
     return mapToAttendee(
-      await this.db.selectFrom("attendee").selectAll("attendee").where("id", "=", id).executeTakeFirstOrThrow()
-    )
+      await this.db
+        .selectFrom("attendee")
+        .selectAll("attendee")
+        .where("id", "=", id)
+        .executeTakeFirstOrThrow()
+    );
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
@@ -268,15 +358,25 @@ class _AttendeeRepositoryImpl implements _AttendeeRepository {
       .selectFrom("attendee")
       .selectAll("attendee")
       .leftJoin("owUser", "owUser.id", "attendee.userId")
-      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
+      .leftJoin(
+        "attendancePool",
+        "attendee.attendancePoolId",
+        "attendancePool.id"
+      )
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .select(sql<UserDB[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .select(
+        sql<
+          UserDB[]
+        >`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as(
+          "user"
+        )
+      )
       .where("attendance.id", "=", attendanceId)
       .groupBy("attendee.id")
-      .execute()
+      .execute();
 
-    console.log("-----------------------")
-    console.dir(res, { depth: null })
+    console.log("-----------------------");
+    console.dir(res, { depth: null });
 
     return res
       .map((value) => ({
@@ -286,13 +386,17 @@ class _AttendeeRepositoryImpl implements _AttendeeRepository {
           createdAt: new Date(value.user[0].createdAt),
         },
       }))
-      .map(mapToAttendeeWithUser)
+      .map(mapToAttendeeWithUser);
   }
 
   async getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]> {
     return (
-      await this.db.selectFrom("attendee").selectAll("attendee").where("attendancePoolId", "=", poolId).execute()
-    ).map(mapToAttendee)
+      await this.db
+        .selectFrom("attendee")
+        .selectAll("attendee")
+        .where("attendancePoolId", "=", poolId)
+        .execute()
+    ).map(mapToAttendee);
   }
 
   async update(obj: AttendeeWrite, id: AttendeeId): Promise<UpdateResult> {
@@ -300,33 +404,39 @@ class _AttendeeRepositoryImpl implements _AttendeeRepository {
       .updateTable("attendee")
       .set(prepareJsonInsert(obj, "extrasChoices"))
       .where("id", "=", id)
-      .executeTakeFirstOrThrow()
+      .executeTakeFirstOrThrow();
 
     return {
       numUpdatedRows: Number(res.numUpdatedRows),
-    }
+    };
   }
 
-  async updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult> {
+  async updateExtraChoices(
+    id: AttendeeId,
+    questionId: string,
+    choiceId: string
+  ): Promise<UpdateResult> {
     const res = await this.db
       .updateTable("attendee")
-      .set({ extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]) })
+      .set({
+        extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]),
+      })
       .where("id", "=", id)
-      .executeTakeFirstOrThrow()
+      .executeTakeFirstOrThrow();
 
-    return { numUpdatedRows: Number(res.numUpdatedRows) }
+    return { numUpdatedRows: Number(res.numUpdatedRows) };
   }
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
-  attendance: _AttendanceRepository
-  pool: _AttendancePoolRepository
-  waitlistAttendee: _WaitlistAttendeRepository
-  attendee: _AttendeeRepository
+  attendance: _AttendanceRepository;
+  pool: _AttendancePoolRepository;
+  waitlistAttendee: _WaitlistAttendeRepository;
+  attendee: _AttendeeRepository;
   constructor(private readonly db: Kysely<Database>) {
-    this.attendance = new _AttendanceRepositoryImpl(this.db)
-    this.pool = new _PoolRepositoryImpl(this.db)
-    this.waitlistAttendee = new _WaitlistAttendeRepositoryImpl(this.db)
-    this.attendee = new _AttendeeRepositoryImpl(this.db)
+    this.attendance = new _AttendanceRepositoryImpl(this.db);
+    this.pool = new _PoolRepositoryImpl(this.db);
+    this.waitlistAttendee = new _WaitlistAttendeRepositoryImpl(this.db);
+    this.attendee = new _AttendeeRepositoryImpl(this.db);
   }
 }

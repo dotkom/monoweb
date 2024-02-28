@@ -1,5 +1,5 @@
-import { ErrorMessage } from "@hookform/error-message"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { ErrorMessage } from "@hookform/error-message";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Anchor,
   Box,
@@ -22,12 +22,11 @@ import {
   type TagsInputProps,
   type TextInputProps,
   type TextareaProps,
-} from "@mantine/core"
-import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
-import { type FC } from "react"
+} from "@mantine/core";
+import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates";
+import { type FC } from "react";
 import {
   Controller,
-  type UseFormReturn,
   useForm,
   type Control,
   type DefaultValues,
@@ -36,17 +35,17 @@ import {
   type FormState,
   type UseFormRegister,
   type UseFormReturn,
-} from "react-hook-form"
-import { type z } from "zod"
+} from "react-hook-form";
+import { type z } from "zod";
 
 interface InputFieldContext<T extends FieldValues> {
-  name: FieldValue<T>
-  register: UseFormRegister<T>
-  control: Control<T>
-  state: FormState<T>
-  defaultValue: FieldValue<T>
+  name: FieldValue<T>;
+  register: UseFormRegister<T>;
+  control: Control<T>;
+  state: FormState<T>;
+  defaultValue: FieldValue<T>;
 }
-type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
+type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>;
 
 export function createMultipleSelectInput<F extends FieldValues>({
   ...props
@@ -59,68 +58,87 @@ export function createMultipleSelectInput<F extends FieldValues>({
         render={({ field }) => (
           <MultiSelect
             {...props}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={
+              state.errors[name] && (
+                <ErrorMessage errors={state.errors} name={name} />
+              )
+            }
             onChange={field.onChange}
             value={field.value}
           />
         )}
       />
-    )
-  }
+    );
+  };
 }
 
-interface YearFormProps {
-  selected: number[]
-  setSelected(value: number[]): void
-  existing: number[]
-  labels: string[]
+interface CheckboxGroupsProps {
+  selected: number[];
+  setSelected(value: number[]): void;
+  disabledOptions?: number[];
+  labels: string[];
 }
 
-const YearForm = ({ selected, existing, setSelected, labels }: YearFormProps) => (
-  // const labels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
+const CheckboxGroup = ({
+  selected,
+  disabledOptions,
+  setSelected,
+  labels,
+}: CheckboxGroupsProps) => {
+  const onChange = (idx: number) => () => {
+    if (selected.includes(idx)) {
+      setSelected(selected.filter((val) => val !== idx));
+    } else {
+      setSelected([...selected, idx]);
+    }
+  };
 
-  <table>
-    {labels.map((label, idx) => (
-      <tbody key={idx}>
-        <tr>
-          <td width="100">{label}</td>
-          <td>
-            <Checkbox
-              checked={selected.includes(idx)}
-              disabled={existing.includes(idx)}
-              onChange={() => {
-                const includes = selected.includes(idx)
-                if (includes) {
-                  setSelected(selected.filter((a) => a !== idx))
-                } else {
-                  setSelected([...selected, idx])
-                }
-              }}
-            />
-          </td>
-        </tr>
-      </tbody>
-    ))}
-  </table>
-)
-
-export default YearForm
+  return (
+    <table>
+      {labels.map((label, idx) => (
+        <tbody key={idx}>
+          <tr>
+            <td width="100">{label}</td>
+            <td>
+              <Checkbox
+                checked={selected.includes(idx)}
+                disabled={disabledOptions?.includes(idx)}
+                onChange={onChange(idx)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      ))}
+    </table>
+  );
+};
 
 export function createLabelledCheckboxGroupInput<F extends FieldValues>({
   ...props
-}: Omit<YearFormProps, "error" | "selected" | "setSelected">): InputProducerResult<F> {
+}: Omit<
+  CheckboxGroupsProps,
+  "error" | "selected" | "setSelected"
+>): InputProducerResult<F> {
   return function LabelledCheckboxGroupInput({ name, state, control }) {
     return (
       <div>
-        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        {state.errors[name] && (
+          <ErrorMessage errors={state.errors} name={name} />
+        )}
         <Controller
           control={control}
           name={name}
-          render={({ field }) => <YearForm {...props} setSelected={field.onChange} selected={field.value} />}
+          render={({ field }) => (
+            <CheckboxGroup
+              {...props}
+              setSelected={field.onChange}
+              selected={field.value}
+            />
+          )}
         />
       </div>
-    )
-  }
+    );
+  };
 }
 
 export function createTagInput<F extends FieldValues>({
@@ -134,14 +152,18 @@ export function createTagInput<F extends FieldValues>({
         render={({ field }) => (
           <TagsInput
             {...props}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={
+              state.errors[name] && (
+                <ErrorMessage errors={state.errors} name={name} />
+              )
+            }
             onChange={field.onChange}
             value={field.value}
           />
         )}
       />
-    )
-  }
+    );
+  };
 }
 
 export function createSelectInput<F extends FieldValues>({
@@ -157,17 +179,23 @@ export function createSelectInput<F extends FieldValues>({
             {...props}
             value={field.value}
             onChange={field.onChange}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={
+              state.errors[name] && (
+                <ErrorMessage errors={state.errors} name={name} />
+              )
+            }
           />
         )}
       />
-    )
-  }
+    );
+  };
 }
 
 export function createIntegerSelectInput<F extends FieldValues>({
   ...props
-}: Omit<SelectProps, "data" | "error"> & { data: { value: number; label: string }[] }): InputProducerResult<F> {
+}: Omit<SelectProps, "data" | "error"> & {
+  data: { value: number; label: string }[];
+}): InputProducerResult<F> {
   return function FormSelectInput({ name, state, control }) {
     return (
       <Controller
@@ -176,15 +204,24 @@ export function createIntegerSelectInput<F extends FieldValues>({
         render={({ field }) => (
           <Select
             {...props}
-            data={props.data.map((item) => ({ ...item, value: item.value.toString() }))}
+            data={props.data.map((item) => ({
+              ...item,
+              value: item.value.toString(),
+            }))}
             value={field.value?.toString() ?? ""}
-            onChange={(value) => field.onChange(value !== null ? parseInt(value) : null)}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            onChange={(value) =>
+              field.onChange(value !== null ? parseInt(value) : null)
+            }
+            error={
+              state.errors[name] && (
+                <ErrorMessage errors={state.errors} name={name} />
+              )
+            }
           />
         )}
       />
-    )
-  }
+    );
+  };
 }
 
 export function createDateTimeInput<F extends FieldValues>({
@@ -201,12 +238,16 @@ export function createDateTimeInput<F extends FieldValues>({
             defaultValue={new Date()}
             value={field.value}
             onChange={field.onChange}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={
+              state.errors[name] && (
+                <ErrorMessage errors={state.errors} name={name} />
+              )
+            }
           />
         )}
       />
-    )
-  }
+    );
+  };
 }
 
 export function createCheckboxInput<F extends FieldValues>({
@@ -217,10 +258,14 @@ export function createCheckboxInput<F extends FieldValues>({
       <Checkbox
         {...register(name)}
         {...props}
-        error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        error={
+          state.errors[name] && (
+            <ErrorMessage errors={state.errors} name={name} />
+          )
+        }
       />
-    )
-  }
+    );
+  };
 }
 
 export function createTextareaInput<F extends FieldValues>({
@@ -231,10 +276,14 @@ export function createTextareaInput<F extends FieldValues>({
       <Textarea
         {...register(name)}
         {...props}
-        error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        error={
+          state.errors[name] && (
+            <ErrorMessage errors={state.errors} name={name} />
+          )
+        }
       />
-    )
-  }
+    );
+  };
 }
 
 export function createTextInput<F extends FieldValues>({
@@ -245,15 +294,21 @@ export function createTextInput<F extends FieldValues>({
       <TextInput
         {...register(name)}
         {...props}
-        error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        error={
+          state.errors[name] && (
+            <ErrorMessage errors={state.errors} name={name} />
+          )
+        }
       />
-    )
-  }
+    );
+  };
 }
 
 export function createFileInput<F extends FieldValues>({
   ...props
-}: Omit<FileInputProps, "error"> & { existingFileUrl?: string }): InputProducerResult<F> {
+}: Omit<FileInputProps, "error"> & {
+  existingFileUrl?: string;
+}): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
@@ -275,14 +330,18 @@ export function createFileInput<F extends FieldValues>({
               {...props}
               value={field.value}
               onChange={(value) => field.onChange({ target: { value } })}
-              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+              error={
+                state.errors[name] && (
+                  <ErrorMessage errors={state.errors} name={name} />
+                )
+              }
               label=""
             />
           )}
         />
       </Box>
-    )
-  }
+    );
+  };
 }
 
 export function createNumberInput<F extends FieldValues>({
@@ -298,26 +357,38 @@ export function createNumberInput<F extends FieldValues>({
             {...props}
             value={field.value}
             onChange={(value) => field.onChange({ target: { value } })}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={
+              state.errors[name] && (
+                <ErrorMessage errors={state.errors} name={name} />
+              )
+            }
           />
         )}
       />
-    )
-  }
+    );
+  };
 }
 
-function entriesOf<T extends Record<string, unknown>, K extends string & keyof T>(obj: T): [K, T[K]][] {
-  return Object.entries(obj) as [K, T[K]][]
+function entriesOf<
+  T extends Record<string, unknown>,
+  K extends string & keyof T
+>(obj: T): [K, T[K]][] {
+  return Object.entries(obj) as [K, T[K]][];
 }
 
 interface FormBuilderOptions<T extends z.ZodRawShape> {
-  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
+  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>;
   fields: Partial<{
-    [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
-  }>
-  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
-  label: string
-  onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
+    [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<
+      z.infer<z.ZodObject<T>>
+    >;
+  }>;
+  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>;
+  label: string;
+  onSubmit(
+    data: z.infer<z.ZodObject<T>>,
+    form: UseFormReturn<z.infer<z.ZodObject<T>>>
+  ): void;
 }
 
 export function useFormBuilder<T extends z.ZodRawShape>({
@@ -330,13 +401,13 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
     defaultValues,
-  })
+  });
 
   const components = entriesOf(fields).map(([name, fc]) => {
     if (!fc) {
-      throw new Error()
+      throw new Error();
     }
-    const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
+    const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc;
     return (
       <Component
         defaultValue={form.formState.defaultValues?.[name]}
@@ -346,8 +417,8 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         control={form.control}
         state={form.formState}
       />
-    )
-  })
+    );
+  });
 
   return function Form() {
     return (
@@ -360,6 +431,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
           </div>
         </Flex>
       </form>
-    )
-  }
+    );
+  };
 }

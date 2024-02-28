@@ -1,28 +1,33 @@
-import { type ServiceLayer } from "@dotkomonline/core"
-import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
-import Auth0Provider from "next-auth/providers/auth0"
+import { type ServiceLayer } from "@dotkomonline/core";
+import {
+  type DefaultSession,
+  type DefaultUser,
+  type User,
+  type NextAuthOptions,
+} from "next-auth";
+import Auth0Provider from "next-auth/providers/auth0";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: User
-    sub: string
-    id: string
+    user: User;
+    sub: string;
+    id: string;
   }
 
   interface User extends DefaultUser {
-    id: string
-    name: string
-    email: string
-    image?: string
+    id: string;
+    name: string;
+    email: string;
+    image?: string;
   }
 }
 
 export interface AuthOptions {
-  auth0ClientId: string
-  auth0ClientSecret: string
-  auth0Issuer: string
-  core: ServiceLayer
-  jwtSecret: string
+  auth0ClientId: string;
+  auth0ClientSecret: string;
+  auth0Issuer: string;
+  core: ServiceLayer;
+  jwtSecret: string;
 }
 
 export const getAuthOptions = ({
@@ -52,15 +57,17 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        console.log("RUNNING")
-        let user = await core.userService.getUserBySubject(token.sub)
+        let user = await core.userService.getUserBySubject(token.sub);
         if (user === undefined) {
-          user = await core.userService.createUser({ auth0Sub: token.sub, studyYear: -1 })
+          user = await core.userService.createUser({
+            auth0Sub: token.sub,
+            studyYear: -1,
+          });
         }
-        session.user.id = user.id
-        session.sub = token.sub
+        session.user.id = user.id;
+        session.sub = token.sub;
       }
-      return session
+      return session;
     },
   },
-})
+});

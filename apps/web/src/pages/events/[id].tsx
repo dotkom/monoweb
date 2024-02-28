@@ -1,17 +1,25 @@
-import { type GetStaticPaths, type GetStaticPropsContext, type InferGetStaticPropsType } from "next"
-import { createServerSideHelpers } from "@trpc/react-query/server"
-import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
-import { type FC } from "react"
-import { Button } from "@dotkomonline/ui"
-import clsx from "clsx"
-import { trpc } from "@/utils/trpc"
-import { AttendanceGroup } from "./AttendanceGroup"
-import { useSessionWithDBUser } from ".."
+import {
+  type GetStaticPaths,
+  type GetStaticPropsContext,
+  type InferGetStaticPropsType,
+} from "next";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import {
+  appRouter,
+  createContextInner,
+  transformer,
+} from "@dotkomonline/gateway-trpc";
+import { type FC } from "react";
+import { Button } from "@dotkomonline/ui";
+import clsx from "clsx";
+import { trpc } from "@/utils/trpc";
+import { AttendanceGroup } from "./AttendanceGroup";
+import { useSessionWithDBUser } from "..";
 
 interface StatusCardProps {
-  title: string
-  text: string
-  background: string
+  title: string;
+  text: string;
+  background: string;
 }
 
 const StatusCard = ({ title, text, background }: StatusCardProps) => (
@@ -21,152 +29,195 @@ const StatusCard = ({ title, text, background }: StatusCardProps) => (
       <p dangerouslySetInnerHTML={{ __html: text }} />
     </div>
   </div>
-)
+);
 
-type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
+type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN";
 
 const STATUS_STATE_COLOR: { [key in StatusState]: `bg-${string}-4` } = {
   NOT_OPENED: "bg-red-4",
   OPEN: "bg-green-4",
   CLOSED: "bg-purple-4",
-}
+};
 
 const STATUS_TEXTS: { [key in StatusState]: { title: string } } = {
   OPEN: { title: "Åpen" },
   NOT_OPENED: { title: "Ikke åpnet" },
   CLOSED: { title: "Stengt" },
-}
+};
 
 interface DateString {
-  value: string
-  isRelative: boolean
+  value: string;
+  isRelative: boolean;
 }
 
 // todo: move out of file
 const dateToString = (attendanceOpeningDate: Date): DateString => {
   // todo: move out of scope
-  const THREE_DAYS_MS = 259_200_000
-  const ONE_DAY_MS = 86_400_000
-  const ONE_HOUR_MS = 3_600_000
-  const ONE_MINUTE_MS = 60_000
-  const ONE_SECOND_MS = 1_000
+  const THREE_DAYS_MS = 259_200_000;
+  const ONE_DAY_MS = 86_400_000;
+  const ONE_HOUR_MS = 3_600_000;
+  const ONE_MINUTE_MS = 60_000;
+  const ONE_SECOND_MS = 1_000;
 
-  const now = new Date().getTime()
-  const dateDifference = attendanceOpeningDate.getTime() - now
+  const now = new Date().getTime();
+  const dateDifference = attendanceOpeningDate.getTime() - now;
 
   if (Math.abs(dateDifference) > THREE_DAYS_MS) {
     const formatter = new Intl.DateTimeFormat("nb-NO", {
       day: "numeric",
       month: "long",
       weekday: "long",
-    })
+    });
 
     // "mandag 12. april"
-    const value = formatter.format(attendanceOpeningDate)
+    const value = formatter.format(attendanceOpeningDate);
 
-    return { value, isRelative: false }
+    return { value, isRelative: false };
   }
 
-  const days = Math.floor(Math.abs(dateDifference) / ONE_DAY_MS)
-  const hours = Math.floor((Math.abs(dateDifference) % ONE_DAY_MS) / ONE_HOUR_MS)
-  const minutes = Math.floor((Math.abs(dateDifference) % ONE_HOUR_MS) / ONE_MINUTE_MS)
-  const seconds = Math.floor((Math.abs(dateDifference) % ONE_MINUTE_MS) / ONE_SECOND_MS)
+  const days = Math.floor(Math.abs(dateDifference) / ONE_DAY_MS);
+  const hours = Math.floor(
+    (Math.abs(dateDifference) % ONE_DAY_MS) / ONE_HOUR_MS
+  );
+  const minutes = Math.floor(
+    (Math.abs(dateDifference) % ONE_HOUR_MS) / ONE_MINUTE_MS
+  );
+  const seconds = Math.floor(
+    (Math.abs(dateDifference) % ONE_MINUTE_MS) / ONE_SECOND_MS
+  );
 
-  let value = "nå"
+  let value = "nå";
 
   if (days > 0) {
-    value = `${days} dag${days === 1 ? "" : "er"}`
+    value = `${days} dag${days === 1 ? "" : "er"}`;
   } else if (hours > 0) {
-    value = `${hours} time${hours === 1 ? "" : "r"}`
+    value = `${hours} time${hours === 1 ? "" : "r"}`;
   } else if (minutes > 0) {
-    value = `${minutes} minutt${minutes === 1 ? "" : "er"}`
+    value = `${minutes} minutt${minutes === 1 ? "" : "er"}`;
   } else if (seconds > 0) {
-    value = `${seconds} sekund${seconds === 1 ? "" : "er"}`
+    value = `${seconds} sekund${seconds === 1 ? "" : "er"}`;
   }
 
-  return { value, isRelative: true }
-}
+  return { value, isRelative: true };
+};
 
 const getStatusDate = (date: Date, status: StatusState): string => {
-  const { value, isRelative } = dateToString(date)
+  const { value, isRelative } = dateToString(date);
 
   switch (status) {
     case "NOT_OPENED":
-      return isRelative ? `Åpner om <strong>${value}</strong>` : `Åpner <strong>${value}</strong>`
+      return isRelative
+        ? `Åpner om <strong>${value}</strong>`
+        : `Åpner <strong>${value}</strong>`;
     case "OPEN":
-      return isRelative ? `Stenger om <strong>${value}</strong>` : `Stenger <strong>${value}</strong>`
+      return isRelative
+        ? `Stenger om <strong>${value}</strong>`
+        : `Stenger <strong>${value}</strong>`;
     case "CLOSED":
-      return isRelative ? `Stengte for <strong>${value}</strong> siden` : `Stengte $<strong>{value}</strong>`
+      return isRelative
+        ? `Stengte for <strong>${value}</strong> siden`
+        : `Stengte $<strong>{value}</strong>`;
     default:
-      return "ukjent"
+      return "ukjent";
   }
-}
+};
 
-const getStatusCardData = (status: StatusState, datetime: Date): StatusCardProps => {
-  const { title } = STATUS_TEXTS[status]
+const getStatusCardData = (
+  status: StatusState,
+  datetime: Date
+): StatusCardProps => {
+  const { title } = STATUS_TEXTS[status];
 
   return {
     title,
     text: getStatusDate(datetime, status),
     background: STATUS_STATE_COLOR[status],
-  }
-}
+  };
+};
 
-const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-  const { id } = props
-  const { data: event } = trpc.event.get.useQuery(id)
-  const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
-  const utils = trpc.useUtils()
-  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation({
-    onSuccess: () => {
-      utils.event.attendance.get.invalidate({ eventId: id })
-    },
-  })
+const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (
+  props
+) => {
+  const { id: eventId } = props;
+  const { data: event } = trpc.event.get.useQuery(eventId);
+  const { data: attendance } =
+    trpc.event.attendance.getAttendanceByEventId.useQuery({
+      eventId,
+    });
+  const { data: pools } = trpc.event.attendance.getPoolsByEventId.useQuery({
+    eventId,
+  });
+
+  const utils = trpc.useUtils();
+  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation(
+    {
+      onSuccess: () => {
+        utils.event.attendance.getPoolsByEventId.invalidate({ eventId });
+        utils.event.attendance.isAttending.invalidate({
+          attendanceId: attendance?.id || "",
+          userId: session.user.id,
+        });
+      },
+    }
+  );
   const attendMutation = trpc.event.attendance.registerForEvent.useMutation({
     onSuccess: () => {
-      utils.event.attendance.get.invalidate({ eventId: id })
+      utils.event.attendance.getPoolsByEventId.invalidate({ eventId });
+      utils.event.attendance.isAttending.invalidate({
+        attendanceId: attendance?.id || "",
+        userId: session.user.id,
+      });
     },
-  })
-  const user = useSessionWithDBUser()
+  });
+  const session = useSessionWithDBUser();
 
-  const STATUS = "OPEN"
+  const { data: selfAttendee } = trpc.event.attendance.isAttending.useQuery({
+    attendanceId: attendance?.id || "",
+    userId: session.user.id,
+  });
 
-  const inTenMinutes = new Date()
-  inTenMinutes.setMinutes(inTenMinutes.getMinutes() + 10)
+  const STATUS = "OPEN";
 
-  const statusData = getStatusCardData(STATUS, inTenMinutes)
+  const inTenMinutes = new Date();
+  inTenMinutes.setMinutes(inTenMinutes.getMinutes() + 10);
 
-  // Range: [min, max)
-  const groupIncludes = (min: number, max: number, group: number) => group < max && group >= min
+  const statusData = getStatusCardData(STATUS, inTenMinutes);
 
-  const myGroups = attendance?.find((a) => groupIncludes(a.min, a.max, user.user.studyYear ?? 100))
-  const otherGroups = attendance?.filter((group) => !groupIncludes(group.min, group.max, user.user.studyYear ?? 100))
+  const myGroups = pools?.find((a) =>
+    a.yearCriteria.includes(session.user.studyYear)
+  );
+  const otherGroups = pools?.filter((group) => group.id !== myGroups?.id);
 
-  const isUser = (attendee: { userId: string }) => attendee.userId === user.user.id
-  const userInGroup = (group: { userId: string; attendanceId: string }[]) => group.find(isUser)
-
-  const attendee = (myGroups !== undefined && userInGroup(myGroups.attendees)) || false
-
-  const isAttending = Boolean(attendee)
+  const isAttending = Boolean(selfAttendee);
 
   const attend = () => {
-    if (!user.user.id) {
-      return
+    if (!session.user.id) {
+      return;
     }
 
-    if (!myGroups) {
-      return
+    if (!attendance?.id) {
+      return;
     }
 
-    attendMutation.mutate({ poolId: myGroups.id, userId: user.user.id })
-  }
+    attendMutation.mutate({
+      attendanceId: attendance.id,
+      userId: session.user.id,
+    });
+  };
 
   const unAttend = () => {
-    if (!attendee || !myGroups) {
-      return
+    if (!session.user.id) {
+      return;
     }
-    unattendMutation.mutate({ attendanceId: myGroups?.id, userId: user.user.id || "" })
-  }
+
+    if (!selfAttendee?.id) {
+      return;
+    }
+
+    unattendMutation.mutate({
+      id: selfAttendee.id,
+    });
+  };
 
   return (
     <div>
@@ -186,15 +237,20 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
             <div>
               {myGroups && (
                 <AttendanceGroup
-                  title={`${Math.max(1, myGroups.min)}-${myGroups.max - 1}. klasse`}
-                  numberOfPeople={myGroups.attendees.length}
+                  title={"TODO: navn"}
+                  numberOfPeople={myGroups.numAttendees}
                   totalSpots={myGroups.limit}
                   isAttending={isAttending}
                   canAttend={true}
                 />
               )}
               {isAttending ? (
-                <Button className="mt-2 w-full text-white" color="red" variant="solid" onClick={unAttend}>
+                <Button
+                  className="mt-2 w-full text-white"
+                  color="red"
+                  variant="solid"
+                  onClick={unAttend}
+                >
                   Meld meg av
                 </Button>
               ) : (
@@ -210,7 +266,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
                 {otherGroups?.map((group, idx) => (
                   <AttendanceGroup
                     title={"1.-5. klasse"}
-                    numberOfPeople={group.attendees.length}
+                    numberOfPeople={group.numAttendees}
                     totalSpots={group.limit}
                     key={idx}
                     className={clsx(idx === 0 ? "mr-2" : "", "mt-4 w-32")}
@@ -243,8 +299,8 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const helpers = createServerSideHelpers({
@@ -253,29 +309,31 @@ export const getStaticPaths: GetStaticPaths = async () => {
       auth: null,
     }),
     transformer, // optional - adds superjson serialization
-  })
+  });
 
-  const events = await helpers.event.all.fetch()
+  const events = await helpers.event.all.fetch();
   return {
     paths: events.map(({ id }) => ({ params: { id } })),
     fallback: "blocking",
-  }
-}
+  };
+};
 
-export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>) => {
+export const getStaticProps = async (
+  ctx: GetStaticPropsContext<{ id: string }>
+) => {
   const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: await createContextInner({
       auth: null,
     }),
     transformer, // optional - adds superjson serialization
-  })
+  });
 
-  const id = ctx.params?.id
+  const id = ctx.params?.id;
   if (!id) {
-    return { notFound: true }
+    return { notFound: true };
   }
-  await helpers.event.get.prefetch(id)
+  await helpers.event.get.prefetch(id);
 
   return {
     props: {
@@ -283,7 +341,7 @@ export const getStaticProps = async (ctx: GetStaticPropsContext<{ id: string }>)
       id,
     },
     revalidate: 86400,
-  }
-}
+  };
+};
 
-export default EventDetailPage
+export default EventDetailPage;
