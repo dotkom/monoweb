@@ -18,7 +18,6 @@ export interface _AttendancePoolRepository {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<DeleteResult>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
-  getByEventId(eventId: EventId): Promise<AttendancePool[]>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<UpdateResult>
   get(id: AttendancePoolId): Promise<AttendancePool | null>
 }
@@ -30,24 +29,41 @@ export class _PoolRepositoryImpl implements _AttendancePoolRepository {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
-      .where("id", "=", id)
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
+      .select(({ fn, val, ref }) => [
+        fn.count(ref("attendee.id")).as("numAttendees"),
+        val("attendancePool.id").as("poolId"),
+      ])
+      .groupBy("attendancePool.id")
+      .where("attendancePool.id", "=", id)
       .executeTakeFirst()
 
     if (!res) {
       return null
     }
 
-    return mapToPool(res)
+    return mapToPool({
+      ...res,
+      numAttendees: Number(res.numAttendees),
+    })
   }
 
   async create(obj: AttendancePoolWrite) {
-    return mapToPool(
-      await this.db
-        .insertInto("attendancePool")
-        .returningAll()
-        .values(prepareJsonInsert(obj, "yearCriteria"))
-        .executeTakeFirstOrThrow()
-    )
+    const result = await this.db
+      .insertInto("attendancePool")
+      .returning("attendancePool.id")
+      .values(prepareJsonInsert(obj, "yearCriteria"))
+      .executeTakeFirstOrThrow()
+
+    if (result.id === undefined) {
+      throw new Error("Failed to create pool")
+    }
+
+    const res = await this.get(result.id)
+    if (res === null) {
+      throw new Error("Failed to create pool, could not find pool after creation")
+    }
+    return res
   }
 
   async delete(id: AttendancePoolId) {
@@ -63,28 +79,6 @@ export class _PoolRepositoryImpl implements _AttendancePoolRepository {
       .selectAll("attendancePool")
       .where("attendanceId", "=", id)
       .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
-      .select(({ fn, val, ref }) => [
-        fn.count(ref("attendee.id")).as("numAttendees"),
-        val("attendancePool.id").as("poolId"),
-      ])
-      .groupBy("attendancePool.id")
-      .execute()
-
-    return res
-      .map((pool) => ({
-        ...pool,
-        numAttendees: Number(pool.numAttendees),
-      }))
-      .map(mapToPoolWithNumAttendees)
-  }
-
-  async getByEventId(id: EventId) {
-    const res = await this.db
-      .selectFrom("attendancePool")
-      .selectAll("attendancePool")
-      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
-      .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .where("attendance.eventId", "=", id)
       .select(({ fn, val, ref }) => [
         fn.count(ref("attendee.id")).as("numAttendees"),
         val("attendancePool.id").as("poolId"),

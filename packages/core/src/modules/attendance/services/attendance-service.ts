@@ -12,7 +12,6 @@ export interface _AttendanceService {
   create(obj: Partial<AttendanceWrite>, eventId: EventId): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
-  getByEventId(id: EventId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
   isAttending(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
@@ -45,10 +44,7 @@ export class _AttendanceServiceImpl implements _AttendanceService {
   }
 
   async create(obj: Partial<AttendanceWrite>, id: EventId) {
-    return this.attendanceRepository.attendance.create({
-      eventId: id,
-      ...obj,
-    })
+    return this.attendanceRepository.attendance.create(obj)
   }
 
   async delete(id: AttendanceId) {
@@ -57,14 +53,5 @@ export class _AttendanceServiceImpl implements _AttendanceService {
 
   async getById(id: AttendanceId) {
     return this.attendanceRepository.attendance.getById(id)
-  }
-
-  async getByEventId(id: EventId) {
-    const result = await this.attendanceRepository.attendance.getByEventId(id)
-    if (result === undefined) {
-      return null
-    }
-
-    return result
   }
 }

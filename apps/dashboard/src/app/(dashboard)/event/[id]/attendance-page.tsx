@@ -5,7 +5,6 @@ import { useAttendanceForm } from "../../../../modules/attendance/components/att
 import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
 import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
 import { useEventAttendanceGetQuery } from "../../../../modules/attendance/queries/use-event-attendance-get-query"
-import { baseDeleteMutationOpts, baseUpdateMutationOpts } from "../../../../utils/helpers"
 import { trpc } from "../../../../utils/trpc"
 import { useEventDetailsContext } from "./provider"
 
@@ -21,7 +20,7 @@ export const AttendancePage: FC = () => {
 }
 
 export const NoAttendancePage: FC<{ eventId: string }> = ({ eventId }) => {
-  const mutation = trpc.event.attendance.createAttendance.useMutation(baseDeleteMutationOpts)
+  const mutation = trpc.event.attendance.createAttendance.useMutation()
   const AttendanceForm = useAttendanceForm({
     defaultValues: {
       registerStart: new Date(),
@@ -57,7 +56,7 @@ interface EventAttendanceProps {
 export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
   const { pools } = useEventAttendanceGetQuery(attendance.id)
 
-  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation(baseUpdateMutationOpts)
+  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation()
 
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,

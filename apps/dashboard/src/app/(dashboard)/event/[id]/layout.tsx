@@ -8,9 +8,9 @@ import { trpc } from "../../../../utils/trpc"
 
 export default function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
   const { event, eventCommittees, isLoading: eventCommitteesLoading } = useEventGetQuery(params.id)
-  const { data: attendance, isLoading: attendanceLoading } = trpc.event.attendance.getAttendanceByEventId.useQuery(
+  const { data: attendance, isLoading: attendanceLoading } = trpc.event.attendance.getAttendance.useQuery(
     {
-      eventId: event?.id ?? "",
+      id: event?.attendanceId ?? "",
     },
     {
       enabled: Boolean(event),

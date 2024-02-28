@@ -53,16 +53,16 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
-  insertedIds.event = await db //
-    .insertInto("event")
-    .values(getEventFixtures())
+  insertedIds.attendance = await db
+    .insertInto("attendance")
+    .values(getAttendanceFixtures())
     .returning("id")
     .execute()
     .then(mapId)
 
-  insertedIds.attendance = await db
-    .insertInto("attendance")
-    .values(getAttendanceFixtures(insertedIds.event))
+  insertedIds.event = await db //
+    .insertInto("event")
+    .values(getEventFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
     .then(mapId)

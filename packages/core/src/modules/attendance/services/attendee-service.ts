@@ -16,6 +16,7 @@ export interface _AttendeeService {
   registerForEvent(userId: string, poolId: string): Promise<Attendee>
   deregisterForEvent(id: AttendeeId): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
+  updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser>
 }
 
 export class _AttendeeServiceImpl implements _AttendeeService {
@@ -35,7 +36,7 @@ export class _AttendeeServiceImpl implements _AttendeeService {
     await this.attendanceRepository.attendee.delete(id)
   }
 
-  async updateAttended(attended: boolean, id: AttendeeId) {
+  async updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser> {
     const res = await this.attendanceRepository.attendee.update({ attended }, id)
     if (res.numUpdatedRows === 1) {
       const attendee = await this.attendanceRepository.attendee.getById(id)
@@ -51,7 +52,7 @@ export class _AttendeeServiceImpl implements _AttendeeService {
 
       return {
         ...attendee,
-        ...idpUser,
+        user: idpUser,
       }
     }
 

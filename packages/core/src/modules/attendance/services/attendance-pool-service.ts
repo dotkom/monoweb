@@ -12,7 +12,6 @@ export interface _AttendancePoolService {
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
   getByAttendanceId(id: string): Promise<AttendancePool[] | null>
-  getByEventId(id: EventId): Promise<AttendancePool[] | null>
 }
 
 export class _PoolServiceImpl implements _AttendancePoolService {
@@ -22,10 +21,6 @@ export class _PoolServiceImpl implements _AttendancePoolService {
 
   async getByAttendanceId(id: AttendanceId) {
     return this.attendanceRepository.pool.getByAttendanceId(id)
-  }
-
-  async getByEventId(id: EventId) {
-    return this.attendanceRepository.pool.getByEventId(id)
   }
 
   async create(obj: AttendancePoolWrite) {

@@ -6,7 +6,6 @@ export const AttendanceSchema = z.object({
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
   mergeTime: z.date(),
-  eventId: z.string().ulid(),
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({

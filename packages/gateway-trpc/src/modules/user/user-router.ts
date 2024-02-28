@@ -38,17 +38,18 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.userService.updatePrivacyPermissionsForUserId(input.id, input.data)),
-  getNotificationPermissionssByUserId: protectedProcedure
-    .input(z.string())
-    .query(async ({ input, ctx }) => ctx.userService.getNotificationPermissionsByUserId(input)),
-  updateNotificationPermissionssForUserId: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        data: NotificationPermissionsWriteSchema.omit({ userId: true }).partial(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => ctx.userService.updateNotificationPermissionsForUserId(input.id, input.data)),
+  // not used
+  // getNotificationPermissionssByUserId: protectedProcedure
+  //   .input(z.string())
+  //   .query(async ({ input, ctx }) => ctx.userService.getNotificationPermissionsByUserId(input)),
+  // updateNotificationPermissionssForUserId: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       id: z.string(),
+  //       data: NotificationPermissionsWriteSchema.omit({ userId: true }).partial(),
+  //     })
+  //   )
+  //   .mutation(async ({ input, ctx }) => ctx.userService.updateNotificationPermissionsForUserId(input.id, input.data)),
   searchUsersFromIDP: protectedProcedure
     .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.userService.searchUsersFromIDP(input.searchQuery, input.paginate.take)),

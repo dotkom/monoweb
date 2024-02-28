@@ -105,23 +105,13 @@ export const attendanceRouter = t.router({
     )
     .query(async ({ input, ctx }) => ctx.attendanceService.attendee.getByAttendanceId(input.id)),
 
-  getAttendanceByEventId: protectedProcedure
+  getAttendance: protectedProcedure
     .input(
       z.object({
-        eventId: EventSchema.shape.id,
+        id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.attendance.getByEventId(input.eventId)),
-
-  getPoolsByEventId: protectedProcedure
-    .input(
-      z.object({
-        eventId: EventSchema.shape.id,
-      })
-    )
-    .query(async ({ input, ctx }) => ctx.attendanceService.pool.getByEventId(input.eventId)),
-
-  // update attendance
+    .query(async ({ input, ctx }) => ctx.attendanceService.attendance.getById(input.id)),
   updateAttendance: protectedProcedure
     .input(
       z.object({
@@ -129,8 +119,5 @@ export const attendanceRouter = t.router({
         attendance: AttendanceWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      console.log("hello")
-      return ctx.attendanceService.attendance.update(input.attendance, input.id)
-    }),
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.attendance.update(input.attendance, input.id)),
 })

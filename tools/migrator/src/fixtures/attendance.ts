@@ -1,12 +1,8 @@
 import { type Insertable } from "kysely"
 import { type Database } from "@dotkomonline/db"
-import { type InsertedIds } from "../fixture"
 
-export const getAttendanceFixtures: (event_ids: InsertedIds["event"]) => Insertable<Database["attendance"]>[] = (
-  event_ids
-) => [
+export const getAttendanceFixtures: () => Insertable<Database["attendance"]>[] = () => [
   {
-    eventId: event_ids[0],
     registerStart: new Date("2023-02-22 13:30:04.713+00"),
     registerEnd: new Date("2023-02-22 13:30:04.713+00"),
     deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
@@ -15,7 +11,6 @@ export const getAttendanceFixtures: (event_ids: InsertedIds["event"]) => Inserta
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
   },
   {
-    eventId: event_ids[1],
     registerStart: new Date("2023-02-23 11:03:49.289+00"),
     registerEnd: new Date("2023-02-23 11:03:49.289+00"),
     deregisterDeadline: new Date("2023-02-23 11:03:49.289+00"),

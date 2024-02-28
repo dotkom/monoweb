@@ -15,7 +15,6 @@ export interface _AttendanceRepository {
   create(obj: Partial<AttendanceWrite>): Promise<Attendance>
   delete(id: AttendanceId): Promise<DeleteResult>
   getById(id: AttendanceId): Promise<Attendance | null>
-  getByEventId(id: EventId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult>
 }
 
@@ -44,20 +43,6 @@ export class _AttendanceRepositoryImpl implements _AttendanceRepository {
     if (!res) {
       return null
     }
-    return mapToAttendance(res)
-  }
-
-  async getByEventId(id: EventId) {
-    const res = await this.db
-      .selectFrom("attendance")
-      .selectAll("attendance")
-      .where("eventId", "=", id)
-      .executeTakeFirst()
-
-    if (!res) {
-      return null
-    }
-
     return mapToAttendance(res)
   }
 }

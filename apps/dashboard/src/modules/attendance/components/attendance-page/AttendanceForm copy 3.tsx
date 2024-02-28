@@ -2,14 +2,14 @@ import { AttendanceSchema, type Attendance, type AttendancePool } from "@dotkomo
 import { Box, Button, Card, Divider, Flex, Table, Text, Title } from "@mantine/core"
 import { type FC } from "react"
 import { type z } from "zod"
-import { useEventDetailsContext } from "./provider"
 import { openCreatePoolModal } from "../../../../modules/attendance/modals/create-pool-modal"
-import { useEventAttendanceGetQuery } from "../../../../modules/attendance/queries/use-event-attendance-get-query"
-import { trpc } from "../../../../utils/trpc"
-import { createDateTimeInput, useFormBuilder } from "../../../form"
-import { notifyComplete, notifyFail } from "../../../notifications"
 import { openEditPoolModal } from "../../../../modules/attendance/modals/edit-pool-modal"
+import { useEventAttendanceGetQuery } from "../../../../modules/attendance/queries/use-event-attendance-get-query"
 import { baseDeleteMutationOpts, baseUpdateMutationOpts } from "../../../../utils/helpers"
+import { trpc } from "../../../../utils/trpc"
+import { createDateTimeInput, useFormBuilder } from "../../../../app/form"
+import { useEventDetailsContext } from "../../../../app/(dashboard)/event/[id]/provider"
+import { notifyFail } from "../../../../app/notifications"
 
 interface AttendanceForm {
   onSubmit(values: z.infer<typeof AttendanceFormSchema>): void
@@ -88,8 +88,7 @@ const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
 }
 
 export const EventAttendanceInfoPage: FC = () => {
-  const { attendance } = useEventDetailsContext()
-  const { event } = useEventDetailsContext()
+  const { attendance, event } = useEventDetailsContext()
 
   if (!attendance) {
     return <NoAttendancePage eventId={event.id} />
@@ -102,7 +101,7 @@ interface NoAttendancePageProps {
   eventId: string
 }
 export const NoAttendancePage: FC<NoAttendancePageProps> = ({ eventId }) => {
-  const mutation = trpc.event.attendance.createAttendance.useMutation(baseDeleteMutationOpts)
+  const mutation = trpc.event.attendance.createAttendance.useMutation(baseDeleteMutationOpts())
 
   const Form = useAttendanceForm({
     onSubmit: (values) => {
@@ -133,8 +132,8 @@ interface EventAttendanceProps {
 export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
   const { pools } = useEventAttendanceGetQuery(attendance.id)
 
-  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation(baseUpdateMutationOpts)
-  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation(baseDeleteMutationOpts)
+  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation(baseUpdateMutationOpts())
+  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation(baseDeleteMutationOpts())
 
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,
