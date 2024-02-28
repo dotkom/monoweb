@@ -29,6 +29,7 @@ export const EventSchema = z.object({
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
   extras: z.array(EventExtraSchema).nullable(),
+  attendanceId: z.string().nullable(),
 })
 
 export type EventId = Event["id"]

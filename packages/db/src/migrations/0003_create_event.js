@@ -16,6 +16,7 @@ export async function up(db) {
     .addColumn("image_url", "varchar(255)")
     .addColumn("location", "varchar(255)")
     .addColumn("extras", "json")
+    .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
     .execute()
 
   await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
