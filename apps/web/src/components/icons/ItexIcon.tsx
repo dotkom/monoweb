@@ -16,6 +16,7 @@ const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
     height="1em"
     {...props}
   >
+    <title>Itex logo</title>
     <path
       d="M39.004 212.531 5.5 230.959v18.846h67.427l-.418-20.103-33.505-17.171ZM38.167 207.506l-20.103-8.376v-28.479l21.778-12.564 20.521 11.727v27.641l-22.196 10.051Z"
       style={{

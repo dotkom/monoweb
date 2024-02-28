@@ -4,9 +4,9 @@ import { type File } from "../../stubs/file/File"
 export async function s3UploadFile(file: File, fields: Record<string, string>, url: string): Promise<string> {
   try {
     const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(fields)) {
       formData.append(key, value)
-    })
+    }
 
     // Append the file to the formData
     formData.append("file", file)

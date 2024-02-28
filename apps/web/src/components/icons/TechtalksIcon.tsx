@@ -15,6 +15,7 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
     height="1em"
     {...props}
   >
+    <title>TechTalks icon</title>
     <path
       d="M244.205 69.445H101.263c-4.521 0-8.185 2.944-8.185 6.581v39.066L78.002 134.94h166.203c4.52 0 8.185-2.944 8.185-6.581V76.026c0-3.637-3.665-6.581-8.185-6.581"
       style={{

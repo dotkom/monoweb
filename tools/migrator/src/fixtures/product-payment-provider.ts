@@ -1,14 +1,16 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
 
-export const productPaymentProviders: Insertable<Database["productPaymentProvider"]>[] = [
+export const getProductPaymentProviderFixtures: (
+  productIds: string[]
+) => Insertable<Database["productPaymentProvider"]>[] = (productIds) => [
   {
-    productId: "01HB64TWZMXJEXKB3M7RQ705E5",
+    productId: productIds[0],
     paymentProvider: "STRIPE",
     paymentProviderId: "pk_test_t3JLACvjcDHrHyEQEkQYm3Hz",
   },
   {
-    productId: "01HB64TWZM3GN9R4DEYK0Q6RZG",
+    productId: productIds[1],
     paymentProvider: "STRIPE",
     paymentProviderId: "pk_test_t3JLACvjcDHrHyEQEkQYm3Hz",
   },

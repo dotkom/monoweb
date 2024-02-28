@@ -20,8 +20,14 @@ data "auth0_tenant" "tenant" {}
 locals {
   custom_domain = {
     "dev" = "dev.id.online.ntnu.no"
+    "stg" = "stg.id.online.ntnu.no"
     "prd" = "id.online.ntnu.no"
   }[terraform.workspace]
+  name_suffix = {
+    "dev" = " Dev"
+    "stg" = " Staging"
+    "prd" = ""
+  }
 }
 
 # we cannot set that this is the domain used in email here.
@@ -120,10 +126,11 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   app_type = "regular_web"
   callbacks = {
     "dev" = ["http://localhost:3000"]
+    "stg" = []
     "prd" = []
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Vengeful Vineyard${terraform.workspace == "dev" ? " Dev" : ""}"
+  name                          = "Vengeful Vineyard${local.name_suffix[terraform.workspace]}"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
   oidc_conformant               = true
@@ -140,7 +147,7 @@ data "auth0_client" "vengeful_vineyard_frontend" {
 locals {
   projects = {
     # key here must be project name
-    vengeful-vineyard  = data.auth0_client.vengeful_vineyard_frontend
+    # vengeful-vineyard  = data.auth0_client.vengeful_vineyard_frontend
     onlineweb4         = data.auth0_client.onlineweb4
     onlineweb-frontend = data.auth0_client.onlineweb_frontend
   }
@@ -210,14 +217,16 @@ resource "auth0_client" "onlineweb_frontend" {
   app_type = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:8080"]
+    "stg" = ["https://*-dotkom.vercel.app", "https://dev.online.ntnu.no"]
     "prd" = ["https://old.online.ntnu.no/auth/login/", "https://online.ntnu.no"]
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:8080/authentication/callback"]
+    "stg" = ["https://*-dotkom.vercel.app/authentication/callback"]
     "prd" = ["https://online.ntnu.no/authentication/callback"]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "implicit", "refresh_token"]
-  name                          = "OnlineWeb Frontend${terraform.workspace == "dev" ? " Dev" : ""}"
+  name                          = "OnlineWeb Frontend${local.name_suffix[terraform.workspace]}"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
   oidc_conformant               = true
@@ -351,16 +360,18 @@ resource "auth0_client" "onlineweb4" {
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
+    "stg" = ["https://dev.online.ntnu.no"]
     "prd" = ["https://online.ntnu.no"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "regular_web"
   callbacks = {
     "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
-    "prd" = ["https://online.ntnu.no/auth0/callback"]
+    "stg" = ["https://dev.online.ntnu.no/auth0/callback/"]
+    "prd" = ["https://online.ntnu.no/auth0/callback/"]
   }[terraform.workspace]
   grant_types     = ["authorization_code", "client_credentials", "refresh_token"]
-  name            = "OnlineWeb4${terraform.workspace == "dev" ? " Dev" : ""}"
+  name            = "OnlineWeb4${local.name_suffix[terraform.workspace]}"
   is_first_party  = true
   oidc_conformant = true
 
@@ -392,12 +403,13 @@ resource "auth0_client" "monoweb_web" {
     ["https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"],
     {
       "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+      "stg" = [] # TODO
       "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace])
 
   grant_types     = ["authorization_code", "refresh_token"]
   is_first_party  = true
-  name            = "Monoweb Web${terraform.workspace == "dev" ? " Dev" : ""}"
+  name            = "Monoweb Web${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
 
   # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
@@ -417,10 +429,11 @@ resource "auth0_client" "monoweb_dashboard" {
     ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/auth0"],
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
+      "stg" = [] # TODO
       "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace])
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
-  name            = "Monoweb Dashboard${terraform.workspace == "dev" ? " Dev" : ""}"
+  name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
   is_first_party  = true
 

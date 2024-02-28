@@ -1,9 +1,8 @@
 import { type Database } from "@dotkomonline/db"
 import { type Insertable } from "kysely"
 
-export const committees: Insertable<Database["committee"]>[] = [
+export const getCommitteeFixtures: () => Insertable<Database["committee"]>[] = () => [
   {
-    id: "01HB64JAPVE9RXE19JX2BXSNJX",
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     name: "Dotkom",
     description:
@@ -13,7 +12,6 @@ export const committees: Insertable<Database["committee"]>[] = [
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0990ab67-0f5b-4c4d-95f1-50a5293335a5.png",
   },
   {
-    id: "01HB64JAPVVHCWQAWQGFATVZXZ",
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     name: "Bedkom",
     description:
@@ -23,7 +21,6 @@ export const committees: Insertable<Database["committee"]>[] = [
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/974b88bd-de01-4b59-856f-f53d9bb600a0.png",
   },
   {
-    id: "01HB64JAPW4FP1BJV0NTQSBF19",
     createdAt: new Date("2023-02-25 11:03:49.289+00"),
     name: "Arrkom",
     description:
@@ -33,7 +30,6 @@ export const committees: Insertable<Database["committee"]>[] = [
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0954f3de-da25-44eb-b3a9-7dbba7e23f25.png",
   },
   {
-    id: "01HB64JAPW06HQ00VE2GZ4NFQ4",
     createdAt: new Date("2023-02-15 11:03:49.289+00"),
     name: "Hovedstyret",
     email: "hovedstyret@online.ntnu.no",

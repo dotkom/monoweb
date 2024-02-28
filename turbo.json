@@ -25,7 +25,7 @@
     "lint": {
       "outputs": []
     },
-    "lint:fix": {
+    "lint-check": {
       "outputs": []
     },
     "dev": {

@@ -14,11 +14,11 @@ export const Text: FC<TextProps> = (props) => (
 const text = cva("text-slate-12", {
   variants: {
     size: {
-      "xs": "text-xs",
-      "sm": "text-sm",
-      "md": "text-md",
-      "lg": "text-lg",
-      "xl": "text-xl",
+      xs: "text-xs",
+      sm: "text-sm",
+      md: "text-md",
+      lg: "text-lg",
+      xl: "text-xl",
       "2xl": "text-2xl",
     },
     truncate: {

@@ -55,7 +55,7 @@ export const ProfileMenu = () => {
   }
 
   return (
-    <button>
+    <button type="button">
       <AvatarDropdown>
         <Avatar>
           <AvatarImage
@@ -69,13 +69,13 @@ export const ProfileMenu = () => {
   )
 }
 
-interface Link {
+interface LinkDetail {
   label: string
   icon: string
   shortcut?: string
   href?: string
 }
-const linkGroups: Link[][] = [
+const linkGroups: LinkDetail[][] = [
   [
     {
       icon: "tabler:user",
