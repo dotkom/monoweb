@@ -1,33 +1,30 @@
-import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core";
-import { type FC } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { Icon } from "@iconify/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { templates } from "./templates";
-import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect";
+import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
+import { type FC } from "react"
+import { useFieldArray, useForm } from "react-hook-form"
+import { Icon } from "@iconify/react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { templates } from "./templates"
+import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect"
 
-type TemplateKey = keyof typeof templates;
+type TemplateKey = keyof typeof templates
 
 const FormValuesSchema = z.object({
   question: z.string(),
-  alternatives: z.array(
-    z.object({ value: z.string().min(1, "Dette feltet er påkrevd") })
-  ),
-});
+  alternatives: z.array(z.object({ value: z.string().min(1, "Dette feltet er påkrevd") })),
+})
 
-export type ExtrasFormValues = z.infer<typeof FormValuesSchema>;
+export type ExtrasFormValues = z.infer<typeof FormValuesSchema>
 
 interface Props {
-  onSubmit(data: ExtrasFormValues): void;
-  defaultAlternatives: ExtrasFormValues;
+  onSubmit(data: ExtrasFormValues): void
+  defaultAlternatives: ExtrasFormValues
 }
 
-const templateChoices: { value: TemplateKey; label: TemplateKey }[] =
-  Object.keys(templates).map((key) => ({
-    value: key,
-    label: key,
-  }));
+const templateChoices: { value: TemplateKey; label: TemplateKey }[] = Object.keys(templates).map((key) => ({
+  value: key,
+  label: key,
+}))
 
 export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
   const {
@@ -40,12 +37,12 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
     defaultValues: defaultAlternatives,
     mode: "onSubmit",
     resolver: zodResolver(FormValuesSchema),
-  });
+  })
 
   const { fields, append, remove } = useFieldArray({
     name: "alternatives",
     control,
-  });
+  })
 
   return (
     <Box>
@@ -56,20 +53,16 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         }}
         data={templateChoices}
         onChange={(value) => {
-          const template = templates[value];
-          setValue("question", template.question);
-          setValue("alternatives", template.alternatives);
+          const template = templates[value]
+          setValue("question", template.question)
+          setValue("alternatives", template.alternatives)
         }}
       />
       <Box mt="xl">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box>
             <InputLabel>Spørsmål</InputLabel>
-            <TextInput
-              {...register("question")}
-              title="Spørsmål"
-              placeholder="Hvilken mat vil du ha?"
-            />
+            <TextInput {...register("question")} title="Spørsmål" placeholder="Hvilken mat vil du ha?" />
           </Box>
           <Box mt="md">
             <InputLabel>Svaralternativer</InputLabel>
@@ -85,20 +78,13 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
                       width: "100%",
                     }}
                   />
-                  <Button
-                    type="button"
-                    onClick={() => remove(index)}
-                    color="red"
-                    ml="sm"
-                    variant="light"
-                  >
+                  <Button type="button" onClick={() => remove(index)} color="red" ml="sm" variant="light">
                     <Icon icon="tabler:trash" />
                   </Button>
                 </Flex>
                 {errors.alternatives?.[index]?.value && (
                   <Text size="xs" c="red">
-                    {errors.alternatives[index]?.value?.message ??
-                      "Ukjent feil"}
+                    {errors.alternatives[index]?.value?.message ?? "Ukjent feil"}
                   </Text>
                 )}
               </Box>
@@ -129,5 +115,5 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         </form>
       </Box>
     </Box>
-  );
-};
+  )
+}
