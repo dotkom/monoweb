@@ -11,9 +11,9 @@ import { AttendanceRepository } from "../repositories"
 export interface _AttendanceService {
   create(obj: Partial<AttendanceWrite>, eventId: EventId): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
-  getById(id: AttendanceId): Promise<Attendance | undefined>
+  getById(id: AttendanceId): Promise<Attendance | null>
   getByEventId(id: EventId): Promise<Attendance | null>
-  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
+  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
   isAttending(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
@@ -22,10 +22,8 @@ export class _AttendanceServiceImpl implements _AttendanceService {
     this.attendanceRepository = attendanceRepository
   }
 
-  async isAttending(userId: UserId, attendanceId: EventId): Promise<Attendee | null> {
+  async isAttending(userId: UserId, attendanceId: EventId) {
     const attendee = await this.attendanceRepository.attendee.getByUserId(userId, attendanceId)
-
-    console.log(attendee)
 
     if (attendee === undefined) {
       return null
@@ -34,7 +32,7 @@ export class _AttendanceServiceImpl implements _AttendanceService {
     return attendee
   }
 
-  async update(obj: AttendanceWrite, id: AttendanceId): Promise<Attendance> {
+  async update(obj: AttendanceWrite, id: AttendanceId) {
     const res = await this.attendanceRepository.attendance.update(obj, id)
     if (res.numUpdatedRows === 1) {
       const attendance = await this.attendanceRepository.attendance.getById(id)
@@ -43,22 +41,21 @@ export class _AttendanceServiceImpl implements _AttendanceService {
       }
       return attendance
     }
-
-    throw new Error("TODO: decide on how to handle the case where the update fails")
+    throw new Error("Failed to update attendance")
   }
 
-  async create(obj: Partial<AttendanceWrite>, id: EventId): Promise<Attendance> {
+  async create(obj: Partial<AttendanceWrite>, id: EventId) {
     return this.attendanceRepository.attendance.create({
       eventId: id,
       ...obj,
     })
   }
 
-  async delete(id: AttendanceId): Promise<void> {
+  async delete(id: AttendanceId) {
     await this.attendanceRepository.attendance.delete(id)
   }
 
-  async getById(id: AttendanceId): Promise<Attendance | undefined> {
+  async getById(id: AttendanceId) {
     return this.attendanceRepository.attendance.getById(id)
   }
 

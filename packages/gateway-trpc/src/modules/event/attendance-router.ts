@@ -89,7 +89,7 @@ export const attendanceRouter = t.router({
         await ctx.attendanceService.attendee.updateExtraChoices(input.id, input.questionId, input.choiceId)
     ),
 
-  dashboardInfoPage: protectedProcedure
+  getPoolsByAttendanceId: protectedProcedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,

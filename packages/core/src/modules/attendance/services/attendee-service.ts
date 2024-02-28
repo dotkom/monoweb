@@ -5,7 +5,6 @@ import {
   type Attendee,
   type AttendeeId,
   type AttendeeUser,
-  type AttendeeWithUser,
   type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"
@@ -13,8 +12,6 @@ import { type UserService } from "../../user/user-service"
 import { AttendanceRepository } from "../repositories"
 
 export interface _AttendeeService {
-  getByPoolId(poolId: AttendancePoolId): Promise<Pick<Attendee, "user">[]>
-  updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeWithUser>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
   registerForEvent(userId: string, poolId: string): Promise<Attendee>
   deregisterForEvent(id: AttendeeId): Promise<void>
@@ -30,22 +27,22 @@ export class _AttendeeServiceImpl implements _AttendeeService {
     this.userService = userService
   }
 
-  async create(obj: AttendeeWrite): Promise<Attendee> {
+  async create(obj: AttendeeWrite) {
     return this.attendanceRepository.attendee.create(obj)
   }
 
-  async delete(id: AttendeeId): Promise<void> {
+  async delete(id: AttendeeId) {
     await this.attendanceRepository.attendee.delete(id)
   }
 
-  async getByPoolId(poolId: AttendancePoolId) {
-    return this.attendanceRepository.attendee.getByPoolId(poolId)
-  }
-
-  async updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeWithUser> {
+  async updateAttended(attended: boolean, id: AttendeeId) {
     const res = await this.attendanceRepository.attendee.update({ attended }, id)
     if (res.numUpdatedRows === 1) {
       const attendee = await this.attendanceRepository.attendee.getById(id)
+      if (attendee === null) {
+        throw new Error("Attendee not found")
+      }
+
       const idpUser = await this.userService.getUserById(attendee.userId)
 
       if (idpUser === undefined) {
@@ -61,11 +58,15 @@ export class _AttendeeServiceImpl implements _AttendeeService {
     throw new Error("TODO: decide on how to handle the case where the update fails")
   }
 
-  async updateExtraChoices(id: AttendanceId, questionId: string, choiceId: string): Promise<Attendee> {
+  async updateExtraChoices(id: AttendanceId, questionId: string, choiceId: string) {
     const res = await this.attendanceRepository.attendee.updateExtraChoices(id, questionId, choiceId)
 
     if (res.numUpdatedRows === 1) {
-      return this.attendanceRepository.attendee.getById(id)
+      const attendee = await this.attendanceRepository.attendee.getById(id)
+      if (attendee === null) {
+        throw new Error("Attendee not found, this should not happen seeing that it was just updated.")
+      }
+      return attendee
     }
 
     throw new Error("TODO: decide on how to handle the case where the update fails")
@@ -79,8 +80,6 @@ export class _AttendeeServiceImpl implements _AttendeeService {
     }
 
     const userAlreadyRegistered = await this.attendanceRepository.attendee.getByUserId(userId, attendanceId)
-    console.log("already registered", userAlreadyRegistered)
-    console.log(userId, attendanceId)
     if (userAlreadyRegistered !== undefined) {
       throw new Error("User is already registered")
     }
@@ -90,9 +89,6 @@ export class _AttendeeServiceImpl implements _AttendeeService {
       const year = user.studyYear
       return pool.yearCriteria.includes(year)
     })
-
-    console.log(pools, poolWithMatchingCriteria, user.studyYear)
-    console.log(user)
 
     if (poolWithMatchingCriteria === undefined) {
       throw new Error("User does not match any pool")

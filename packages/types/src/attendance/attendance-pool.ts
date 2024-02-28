@@ -10,25 +10,16 @@ export const AttendancePoolSchema = z.object({
   limit: z.number(),
   attendanceId: z.string().ulid(),
   yearCriteria: YearCriteriaSchema,
-  numAttendees: z.number().optional(),
-  attendees: z.array(AttendeeSchema).optional(),
+  numAttendees: z.number(),
 })
-
-export const AttendancePoolWithNumAttendeesSchema = AttendancePoolSchema.merge(
-  z.object({
-    numAttendees: z.number(),
-  })
-)
 
 export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  attendees: true,
+  numAttendees: true,
 })
 
 export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
 export type AttendancePoolId = AttendancePool["id"]
-
-export type AttendancePoolWithNumAttendees = z.infer<typeof AttendancePoolWithNumAttendeesSchema>

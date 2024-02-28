@@ -1,54 +1,103 @@
-import { type Attendance, type UserIDP } from "@dotkomonline/types"
-import { Box, Divider, Title } from "@mantine/core"
+import { type Attendance } from "@dotkomonline/types"
+import { Box, Divider, Text, Title } from "@mantine/core"
 import { type FC } from "react"
-import { useEventDetailsContext } from "./provider"
-import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
-import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
-import { useEventAttendeesGetQuery } from "../../../../modules/event/queries/use-event-attendees-get-query"
+import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
+import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
+import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
+import { useEventAttendanceGetQuery } from "../../../../modules/attendance/queries/use-event-attendance-get-query"
+import { baseDeleteMutationOpts, baseUpdateMutationOpts } from "../../../../utils/helpers"
 import { trpc } from "../../../../utils/trpc"
-import { AllAttendeesTable } from "../all-users-table"
+import { useEventDetailsContext } from "./provider"
 
-export const EventAttendancePage: FC = () => {
+export const AttendancePage: FC = () => {
   const { attendance } = useEventDetailsContext()
+  const { event } = useEventDetailsContext()
 
   if (!attendance) {
-    return <div>Ingen påmelding</div>
+    return <NoAttendancePage eventId={event.id} />
   }
 
-  return <Page attendance={attendance} />
+  return <EventAttendance attendance={attendance} />
 }
 
-interface Props {
+export const NoAttendancePage: FC<{ eventId: string }> = ({ eventId }) => {
+  const mutation = trpc.event.attendance.createAttendance.useMutation(baseDeleteMutationOpts)
+  const AttendanceForm = useAttendanceForm({
+    defaultValues: {
+      registerStart: new Date(),
+      registerEnd: new Date(),
+      mergeTime: new Date(),
+      deregisterDeadline: new Date(),
+    },
+    label: "Opprett",
+    onSubmit: (values) => {
+      mutation.mutate({
+        eventId,
+        obj: {
+          registerStart: values.registerStart,
+          registerEnd: values.registerEnd,
+          mergeTime: values.mergeTime,
+          deregisterDeadline: values.deregisterDeadline,
+        },
+      })
+    },
+  })
+
+  return (
+    <Box>
+      <Title order={5}>Ingen påmelding</Title>
+      <AttendanceForm />
+    </Box>
+  )
+}
+
+interface EventAttendanceProps {
   attendance: Attendance
 }
-const Page: FC<Props> = ({ attendance }) => {
-  const { attendees } = useEventAttendeesGetQuery(attendance.id)
-  const registerForEvent = useRegisterForEventMutation()
-  const dbUserMut = trpc.user.getBySubAsync.useMutation()
+export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
+  const { pools } = useEventAttendanceGetQuery(attendance.id)
 
-  const handleAttendUser = async (user: UserIDP) => {
-    const dbUser = await dbUserMut.mutateAsync(user.subject)
-    if (dbUser === undefined) {
-      throw new Error("db user not found")
-    }
+  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation(baseUpdateMutationOpts)
 
-    registerForEvent.mutate({ attendanceId: attendance.id, userId: dbUser.id })
-  }
+  const AttendanceForm = useAttendanceForm({
+    defaultValues: attendance,
+    label: "Lagre",
+    onSubmit: (values) => {
+      updateAttendance.mutate({
+        id: attendance.id,
+        attendance: {
+          registerStart: values.registerStart,
+          registerEnd: values.registerEnd,
+          mergeTime: values.mergeTime,
+          deregisterDeadline: values.deregisterDeadline,
+        },
+      })
+    },
+  })
+
+  const PoolsForm = usePoolsForm({
+    attendanceId: attendance.id,
+    pools: pools ?? [],
+  })
 
   return (
     <Box>
       <Box>
         <Title mb={10} order={3}>
-          Meld på bruker
+          Generelt
         </Title>
-        <UserSearch onSubmit={handleAttendUser} />
+        <AttendanceForm />
       </Box>
       <Divider my={32} />
       <Box>
         <Title mb={10} order={3}>
-          Alle påmeldte
+          Reserverte plasser
         </Title>
-        <AllAttendeesTable users={attendees} />
+        <InfoBox pools={pools || []} />
+      </Box>
+      <Box>
+        <PoolsForm />
+        {pools?.length === 0 && <Text fs="italic">Ingen puljer</Text>}
       </Box>
     </Box>
   )

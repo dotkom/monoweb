@@ -1,11 +1,9 @@
 import { type Database } from "@dotkomonline/db"
 import {
   AttendancePoolSchema,
-  AttendancePoolWithNumAttendeesSchema,
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
-  type AttendancePoolWithNumAttendees,
   type AttendancePoolWrite,
   type EventId,
 } from "@dotkomonline/types"
@@ -14,16 +12,15 @@ import { prepareJsonInsert } from "../../../utils/db-utils"
 import { type DeleteResult, type UpdateResult } from "../../utils"
 
 const mapToPool = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
-const mapToPoolWithNumAttendees = (obj: unknown): AttendancePoolWithNumAttendees =>
-  AttendancePoolWithNumAttendeesSchema.parse(obj)
+const mapToPoolWithNumAttendees = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
 
 export interface _AttendancePoolRepository {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<DeleteResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePoolWithNumAttendees[]>
-  getByEventId(eventId: EventId): Promise<AttendancePoolWithNumAttendees[]>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
+  getByEventId(eventId: EventId): Promise<AttendancePool[]>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<UpdateResult>
-  get(id: AttendancePoolId): Promise<AttendancePool | undefined>
+  get(id: AttendancePoolId): Promise<AttendancePool | null>
 }
 
 export class _PoolRepositoryImpl implements _AttendancePoolRepository {
@@ -37,7 +34,7 @@ export class _PoolRepositoryImpl implements _AttendancePoolRepository {
       .executeTakeFirst()
 
     if (!res) {
-      return undefined
+      return null
     }
 
     return mapToPool(res)
@@ -53,14 +50,14 @@ export class _PoolRepositoryImpl implements _AttendancePoolRepository {
     )
   }
 
-  async delete(id: AttendancePoolId): Promise<DeleteResult> {
+  async delete(id: AttendancePoolId) {
     const res = await this.db.deleteFrom("attendancePool").where("id", "=", id).executeTakeFirst()
     return {
       numDeletedRows: Number(res.numDeletedRows),
     }
   }
 
-  async getByAttendanceId(id: AttendancePoolId): Promise<AttendancePoolWithNumAttendees[]> {
+  async getByAttendanceId(id: AttendancePoolId) {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
@@ -81,7 +78,7 @@ export class _PoolRepositoryImpl implements _AttendancePoolRepository {
       .map(mapToPoolWithNumAttendees)
   }
 
-  async getByEventId(id: EventId): Promise<AttendancePoolWithNumAttendees[]> {
+  async getByEventId(id: EventId) {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
@@ -105,14 +102,12 @@ export class _PoolRepositoryImpl implements _AttendancePoolRepository {
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
     const insertObj = prepareJsonInsert(obj, "yearCriteria")
-    console.log("INSERT")
-    console.log(insertObj)
-
     const res = await this.db
       .updateTable("attendancePool")
       .set(insertObj)
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
+
     return {
       numUpdatedRows: Number(res.numUpdatedRows),
     }

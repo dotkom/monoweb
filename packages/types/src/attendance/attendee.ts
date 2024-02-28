@@ -13,9 +13,7 @@ export const AttendeeSchema = z.object({
   updatedAt: z.coerce.date(),
 
   attendancePoolId: z.string().ulid(),
-
   userId: z.string().ulid(),
-  user: UserSchema.optional(),
 
   attended: z.boolean(),
   extrasChoices: z.array(ExtraChoice).nullable(),
@@ -32,7 +30,7 @@ export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
 
 export const AttendeeUserSchema = AttendeeSchema.merge(z.object({ user: UserSchema }))
-export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
-
 export const AttendeeDBUserSchema = AttendeeSchema.merge(z.object({ user: UserDBSchema }))
+
+export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
 export type AttendeeDBUser = z.infer<typeof AttendeeDBUserSchema>

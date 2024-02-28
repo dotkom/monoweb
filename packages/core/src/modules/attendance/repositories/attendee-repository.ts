@@ -21,12 +21,11 @@ const mapToAttendeeWithUser = (obj: unknown): AttendeeDBUser => AttendeeDBUserSc
 export interface _AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
   delete(id: AttendeeId): Promise<DeleteResult>
-  getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]>
-  getById(id: AttendeeId): Promise<Attendee>
+  getById(id: AttendeeId): Promise<Attendee | null>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<UpdateResult>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeDBUser[]>
-  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | undefined>
+  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
 export class _AttendeeRepositoryImpl implements _AttendeeRepository {
@@ -42,7 +41,7 @@ export class _AttendeeRepositoryImpl implements _AttendeeRepository {
       .executeTakeFirst()
 
     if (!res) {
-      return undefined
+      return null
     }
 
     return mapToAttendee(res)
@@ -92,12 +91,6 @@ export class _AttendeeRepositoryImpl implements _AttendeeRepository {
         },
       }))
       .map(mapToAttendeeWithUser)
-  }
-
-  async getByPoolId(poolId: AttendancePoolId): Promise<Attendee[]> {
-    return (
-      await this.db.selectFrom("attendee").selectAll("attendee").where("attendancePoolId", "=", poolId).execute()
-    ).map(mapToAttendee)
   }
 
   async update(obj: AttendeeWrite, id: AttendeeId): Promise<UpdateResult> {

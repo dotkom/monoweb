@@ -14,35 +14,35 @@ const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj
 export interface _AttendanceRepository {
   create(obj: Partial<AttendanceWrite>): Promise<Attendance>
   delete(id: AttendanceId): Promise<DeleteResult>
-  getById(id: AttendanceId): Promise<Attendance | undefined>
-  getByEventId(id: EventId): Promise<Attendance | undefined>
+  getById(id: AttendanceId): Promise<Attendance | null>
+  getByEventId(id: EventId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult>
 }
 
 export class _AttendanceRepositoryImpl implements _AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
-  async create(obj: AttendanceWrite): Promise<Attendance> {
+  async create(obj: AttendanceWrite) {
     return mapToAttendance(await this.db.insertInto("attendance").returningAll().values(obj).executeTakeFirstOrThrow())
   }
 
-  async update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult> {
+  async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
     const res = await this.db.updateTable("attendance").set(obj).where("id", "=", id).executeTakeFirstOrThrow()
     return {
       numUpdatedRows: Number(res.numUpdatedRows),
     }
   }
 
-  async delete(id: AttendanceId): Promise<DeleteResult> {
+  async delete(id: AttendanceId) {
     const result = await this.db.deleteFrom("attendance").where("id", "=", id).executeTakeFirst()
     return {
       numDeletedRows: Number(result.numDeletedRows),
     }
   }
 
-  async getById(id: AttendanceId): Promise<Attendance | undefined> {
+  async getById(id: AttendanceId) {
     const res = await this.db.selectFrom("attendance").selectAll("attendance").where("id", "=", id).executeTakeFirst()
     if (!res) {
-      return undefined
+      return null
     }
     return mapToAttendance(res)
   }
@@ -55,7 +55,7 @@ export class _AttendanceRepositoryImpl implements _AttendanceRepository {
       .executeTakeFirst()
 
     if (!res) {
-      return undefined
+      return null
     }
 
     return mapToAttendance(res)

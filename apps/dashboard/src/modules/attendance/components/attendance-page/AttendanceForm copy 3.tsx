@@ -1,34 +1,32 @@
-import { AttendanceSchema, type Attendance, type AttendancePoolWithNumAttendees } from "@dotkomonline/types"
+import { AttendanceSchema, type Attendance, type AttendancePool } from "@dotkomonline/types"
 import { Box, Button, Card, Divider, Flex, Table, Text, Title } from "@mantine/core"
 import { type FC } from "react"
 import { type z } from "zod"
 import { useEventDetailsContext } from "./provider"
-import { openCreatePoolModal } from "../../../../modules/event/modals/create-pool-modal"
-import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
+import { openCreatePoolModal } from "../../../../modules/attendance/modals/create-pool-modal"
+import { useEventAttendanceGetQuery } from "../../../../modules/attendance/queries/use-event-attendance-get-query"
 import { trpc } from "../../../../utils/trpc"
 import { createDateTimeInput, useFormBuilder } from "../../../form"
 import { notifyComplete, notifyFail } from "../../../notifications"
-import { openEditPoolModal } from "../../../../modules/event/modals/edit-pool-modal"
+import { openEditPoolModal } from "../../../../modules/attendance/modals/edit-pool-modal"
+import { baseDeleteMutationOpts, baseUpdateMutationOpts } from "../../../../utils/helpers"
 
-interface GeneralAttributesFormProps {
-  onSubmit(values: z.infer<typeof Schema>): void
-  defaultValues?: z.infer<typeof Schema>
+interface AttendanceForm {
+  onSubmit(values: z.infer<typeof AttendanceFormSchema>): void
+  defaultValues?: z.infer<typeof AttendanceFormSchema>
   label: string
 }
 
-const Schema = AttendanceSchema.omit({
+const AttendanceFormSchema = AttendanceSchema.omit({
   eventId: true,
   id: true,
 })
 
-const useGeneralAttributesForm = ({ onSubmit, defaultValues, label }: GeneralAttributesFormProps) =>
+const useAttendanceForm = ({ onSubmit, defaultValues, label }: AttendanceForm) =>
   useFormBuilder({
-    schema: Schema,
+    schema: AttendanceFormSchema,
     defaultValues,
-    onSubmit: (values) => {
-      console.log(values)
-      onSubmit(values)
-    },
+    onSubmit,
     label,
     fields: {
       registerStart: createDateTimeInput({
@@ -52,7 +50,7 @@ const rangeToString = (ranges: number[][]): string => {
   return flat.sort().join(", ")
 }
 
-const InfoBox: FC<{ pools: AttendancePoolWithNumAttendees[] }> = ({ pools }) => {
+const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
   const all = [0, 1, 2, 3, 4, 5]
 
   const notIncluded = (ranges: number[][]): number[] => {
@@ -104,28 +102,9 @@ interface NoAttendancePageProps {
   eventId: string
 }
 export const NoAttendancePage: FC<NoAttendancePageProps> = ({ eventId }) => {
-  const mutation = trpc.event.attendance.createAttendance.useMutation({
-    onError: (error) => {
-      notifyFail({
-        title: "Feil",
-        message: error.message,
-      })
-    },
-    onMutate: () => {
-      notifyComplete({
-        title: "Laster",
-        message: "Laster...",
-      })
-    },
-    onSuccess: () => {
-      notifyComplete({
-        title: "Suksess",
-        message: "Opprettet",
-      })
-    },
-  })
+  const mutation = trpc.event.attendance.createAttendance.useMutation(baseDeleteMutationOpts)
 
-  const Form = useGeneralAttributesForm({
+  const Form = useAttendanceForm({
     onSubmit: (values) => {
       mutation.mutate({
         eventId,
@@ -154,34 +133,14 @@ interface EventAttendanceProps {
 export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
   const { pools } = useEventAttendanceGetQuery(attendance.id)
 
-  const updateAttendanceMut = trpc.event.attendance.updateAttendance.useMutation({
-    onError: (error) => {
-      notifyFail({
-        title: "Feil",
-        message: error.message,
-      })
-    },
+  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation(baseUpdateMutationOpts)
+  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation(baseDeleteMutationOpts)
 
-    onMutate: () => {
-      notifyComplete({
-        title: "Laster",
-        message: "Laster...",
-      })
-    },
-    onSuccess: () => {
-      notifyComplete({
-        title: "Suksess",
-        message: "Oppdatert",
-      })
-    },
-  })
-
-  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation()
-  const GeneralAttributesForm = useGeneralAttributesForm({
+  const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,
     label: "Lagre",
     onSubmit: (values) => {
-      updateAttendanceMut.mutate({
+      updateAttendance.mutate({
         id: attendance.id,
         attendance: {
           registerStart: values.registerStart,
@@ -213,7 +172,7 @@ export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
         <Title mb={10} order={3}>
           Generelt
         </Title>
-        <GeneralAttributesForm />
+        <AttendanceForm />
       </Box>
       <Divider my={32} />
       <Box>

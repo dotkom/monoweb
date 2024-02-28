@@ -8,8 +8,8 @@ import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { ExtrasPage } from "./extras-page"
 import { useEventDetailsContext } from "./provider"
-import { EventAttendancePage } from "./attendance-page"
-import { EventAttendanceInfoPage } from "./attendance-info-page"
+import { AttendeesPage } from "./attendees-page"
+import { AttendancePage } from "./attendance-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
@@ -44,13 +44,13 @@ const SIDEBAR_LINKS = [
     icon: "tabler:calendar-event",
     label: "Påmelding",
     slug: "attendanceInfo",
-    component: EventAttendanceInfoPage,
+    component: AttendancePage,
   },
   {
     icon: "tabler:user",
     label: "Påmeldte",
     slug: "attendance",
-    component: EventAttendancePage,
+    component: AttendeesPage,
   },
   {
     icon: "tabler:calendar-event",

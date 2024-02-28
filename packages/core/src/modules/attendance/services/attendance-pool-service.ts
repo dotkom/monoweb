@@ -2,7 +2,6 @@ import {
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
-  type AttendancePoolWithNumAttendees,
   type AttendancePoolWrite,
   type EventId,
 } from "@dotkomonline/types"
@@ -12,8 +11,8 @@ export interface _AttendancePoolService {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
-  getByAttendanceId(id: string): Promise<AttendancePoolWithNumAttendees[]>
-  getByEventId(id: EventId): Promise<AttendancePoolWithNumAttendees[]>
+  getByAttendanceId(id: string): Promise<AttendancePool[] | null>
+  getByEventId(id: EventId): Promise<AttendancePool[] | null>
 }
 
 export class _PoolServiceImpl implements _AttendancePoolService {
@@ -29,30 +28,28 @@ export class _PoolServiceImpl implements _AttendancePoolService {
     return this.attendanceRepository.pool.getByEventId(id)
   }
 
-  async create(obj: AttendancePoolWrite): Promise<AttendancePool> {
+  async create(obj: AttendancePoolWrite) {
     const res = await this.attendanceRepository.pool.create(obj)
-    console.log(res)
     return res
   }
 
-  async delete(id: AttendancePoolId): Promise<void> {
+  async delete(id: AttendancePoolId) {
     await this.attendanceRepository.pool.delete(id)
   }
 
-  async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool> {
+  async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
     const res = await this.attendanceRepository.pool.update(obj, id)
     if (res.numUpdatedRows === 1) {
       const pool = await this.attendanceRepository.pool.get(id)
-      if (pool === undefined) {
+      if (pool === null) {
         throw new Error("Pool not found")
       }
       return pool
     }
-
-    throw new Error("TODO: decide on how to handle the case where the update fails")
+    throw new Error("Failed to update pool")
   }
 
-  async getPoolsByAttendanceId(attendanceId: string): Promise<AttendancePool[]> {
-    return this.attendanceRepository.pool.getByAttendanceId(attendanceId)
+  async getPoolsByAttendanceId(attendanceId: string) {
+    return this.attendanceRepository.pool.getByAttendanceId(attendanceId) ?? null
   }
 }
