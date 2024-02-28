@@ -96,7 +96,6 @@ export const EventAttendance: FC<EventAttendanceProps> = ({ attendance }) => {
       </Box>
       <Box>
         <PoolsForm />
-        {pools?.length === 0 && <Text fs="italic">Ingen puljer</Text>}
       </Box>
     </Box>
   )

@@ -52,7 +52,6 @@ export class UserServiceImpl implements UserService {
     return usersDB
       .map((user) => {
         if (user === undefined) {
-          console.error("User from DB is undefined", user)
           return undefined
         }
         const userFromIDP = usersIDP.find((u) => u?.subject === user.auth0Sub)

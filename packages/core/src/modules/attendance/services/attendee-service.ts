@@ -81,7 +81,7 @@ export class _AttendeeServiceImpl implements _AttendeeService {
     }
 
     const userAlreadyRegistered = await this.attendanceRepository.attendee.getByUserId(userId, attendanceId)
-    if (userAlreadyRegistered !== undefined) {
+    if (userAlreadyRegistered !== null) {
       throw new Error("User is already registered")
     }
 

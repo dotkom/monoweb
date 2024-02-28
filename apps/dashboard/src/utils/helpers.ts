@@ -37,7 +37,6 @@ export const baseDeleteMutationOpts = () => {
   const id = crypto.randomUUID()
   return {
     onError: (error: TrpcError) => {
-      console.log("running with id", id)
       notifyFail({
         title: "Feil",
         message: error.message,
@@ -45,7 +44,6 @@ export const baseDeleteMutationOpts = () => {
       })
     },
     onMutate: () => {
-      console.log("running with id", id)
       notifyLoading({
         title: "Laster",
         message: "Laster...",
@@ -53,7 +51,6 @@ export const baseDeleteMutationOpts = () => {
       })
     },
     onSuccess: () => {
-      console.log("running with id", id)
       notifyComplete({
         title: "Suksess",
         message: "Slettet",
