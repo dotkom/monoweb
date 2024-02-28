@@ -39,7 +39,6 @@ describe("UserService", () => {
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
 
-
   const auth0Client = vi.mocked(ManagementClient.prototype)
   const idpRepo = new Auth0IDPRepositoryImpl(auth0Client)
   const userService = new UserServiceImpl(
