@@ -60,6 +60,8 @@ import { Auth0IDPRepositoryImpl, type IDPRepository } from "../lib/IDP-repositor
 import { s3RepositoryImpl, type S3Repository } from "../lib/s3/s3-repository"
 import { AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/repositories"
 import { AttendanceService, AttendanceServiceImpl } from "./attendance/services"
+import { ManagementClient } from "auth0"
+import { env } from "@dotkomonline/env"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -97,7 +99,13 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
-  const auth0Repository: IDPRepository = new Auth0IDPRepositoryImpl()
+
+  const auth0ManagementClient = new ManagementClient({
+    domain: "onlineweb.eu.auth0.com",
+    clientId: env.GTX_AUTH0_CLIENT_ID,
+    clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
+  })
+  const auth0Repository: IDPRepository = new Auth0IDPRepositoryImpl(auth0ManagementClient)
 
   const userService: UserService = new UserServiceImpl(
     userRepository,

@@ -9,14 +9,7 @@ export interface IDPRepository {
 }
 
 export class Auth0IDPRepositoryImpl implements IDPRepository {
-  private readonly client: ManagementClient
-  constructor() {
-    this.client = new ManagementClient({
-      domain: "onlineweb.eu.auth0.com",
-      clientId: env.GTX_AUTH0_CLIENT_ID,
-      clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
-    })
-  }
+  constructor(private readonly client: ManagementClient) {}
 
   async getAll(limit: number): Promise<UserIDP[]> {
     const users = await this.client.users.getAll({
