@@ -74,7 +74,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="icon icon-tabler icon-tabler-arrow-narrow-left w-12 h-12 duration-300 hover:scale-110"
+            className="icon icon-tabler icon-tabler-arrow-narrow-left h-12 w-12 duration-300 hover:scale-110"
             width="44"
             height="44"
             viewBox="0 0 24 24"
@@ -107,7 +107,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="icon icon-tabler icon-tabler-arrow-narrow-right w-14 h-14 duration-300 hover:scale-110"
+            className="icon icon-tabler icon-tabler-arrow-narrow-right h-14 w-14 duration-300 hover:scale-110"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke={isHoveredRight ? "gray" : "lightgray"}
