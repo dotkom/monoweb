@@ -1,0 +1,57 @@
+import {
+  Committee,
+  CommitteeId,
+  CommitteeSchema,
+  CommitteeWrite,
+  InterestGroup,
+  InterestGroupId,
+  InterestGroupSchema,
+  InterestGroupWrite,
+} from "@dotkomonline/types";
+import { type Kysely, type Selectable } from "kysely";
+import { type Database } from "@dotkomonline/db";
+import {
+  type Collection,
+  type Pageable,
+  paginatedQuery,
+} from "../../utils/db-utils";
+
+export const mapToInterestGroup = (
+  payload: Selectable<Database["interestGroup"]>
+): InterestGroup => InterestGroupSchema.parse(payload);
+
+export interface InterestGroupRepository {
+  getById(id: InterestGroupId): Promise<InterestGroup | undefined>;
+  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>;
+  create(values: InterestGroupWrite): Promise<InterestGroup>;
+}
+
+export class InterestGroupRepositoryImpl implements InterestGroupRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async getById(id: CommitteeId) {
+    const interestGroup = await this.db
+      .selectFrom("interestGroup")
+      .selectAll()
+      .where("id", "=", id)
+      .executeTakeFirst();
+    return interestGroup ? mapToInterestGroup(interestGroup) : undefined;
+  }
+
+  async getAll(pageable: Pageable) {
+    return await paginatedQuery(
+      this.db.selectFrom("interestGroup").selectAll(),
+      pageable,
+      mapToInterestGroup
+    );
+  }
+
+  async create(values: CommitteeWrite) {
+    const interestGroup = await this.db
+      .insertInto("interestGroup")
+      .values(values)
+      .returningAll()
+      .executeTakeFirstOrThrow();
+    return mapToInterestGroup(interestGroup);
+  }
+}
