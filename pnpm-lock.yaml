@@ -747,9 +747,6 @@ importers:
       '@trpc/react-query':
         specifier: ^10.45.0
         version: 10.45.0(@tanstack/react-query@4.36.1)(@trpc/client@10.45.0)(@trpc/server@10.45.0)(react-dom@18.2.0)(react@18.2.0)
-      '@types/jsonwebtoken':
-        specifier: ^9.0.5
-        version: 9.0.5
       ical-generator:
         specifier: ^5.0.1
         version: 5.0.1(@types/node@18.18.13)
@@ -766,6 +763,9 @@ importers:
         specifier: ^13.11.0
         version: 13.11.0
     devDependencies:
+      '@types/jsonwebtoken':
+        specifier: ^9.0.5
+        version: 9.0.5
       '@vitest/ui':
         specifier: ^0.34.6
         version: 0.34.6(vitest@0.34.6)
@@ -7518,7 +7518,7 @@ packages:
     resolution: {integrity: sha512-VRLSGzik+Unrup6BsouBeHsf4d1hOEgYWTm/7Nmw1sXoN1+tRly/Gy/po3yeahnP4jfnQWWAhQAqcNfH7ngOkA==}
     dependencies:
       '@types/node': 18.18.13
-    dev: false
+    dev: true
 
   /@types/lodash.isequal@4.5.8:
     resolution: {integrity: sha512-uput6pg4E/tj2LGxCZo9+y27JNyB2OZuuI/T5F+ylVDYuqICLG2/ktjxx0v6GvVntAf8TvEzeQLcV0ffRirXuA==}

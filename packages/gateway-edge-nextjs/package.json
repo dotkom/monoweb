@@ -21,7 +21,6 @@
     "@trpc/react-query": "^10.45.0",
     "ical-generator": "^5.0.1",
     "jsonwebtoken": "^9.0.2",
-    "@types/jsonwebtoken": "^9.0.5",
     "next-auth": "^4.24.5",
     "stripe": "^13.11.0"
   },
@@ -32,6 +31,7 @@
     "@vitest/ui": "^0.34.6",
     "eslint": "^8.54.0",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "@types/jsonwebtoken": "^9.0.5"
   }
 }
