@@ -9,6 +9,7 @@ import { personalMarkRouter } from "./modules/mark/personal-mark-router";
 import { jobListingRouter } from "./modules/job-listing/job-listing-router";
 import { offlineRouter } from "./modules/offline/offline-router";
 import { articleRouter } from "./modules/article/article-router";
+import { interestGroupRouter } from "./modules/interest-group/interest-group-router";
 
 export const appRouter = t.router({
   committee: committeeRouter,
@@ -21,6 +22,7 @@ export const appRouter = t.router({
   jobListing: jobListingRouter,
   offline: offlineRouter,
   article: articleRouter,
+  interestGroup: interestGroupRouter,
 });
 
 export type AppRouter = typeof appRouter;

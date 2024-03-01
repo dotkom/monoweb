@@ -1,8 +1,4 @@
 import {
-  Committee,
-  CommitteeId,
-  CommitteeSchema,
-  CommitteeWrite,
   InterestGroup,
   InterestGroupId,
   InterestGroupSchema,
@@ -14,22 +10,25 @@ import {
   type Collection,
   type Pageable,
   paginatedQuery,
+  orderedQuery,
 } from "../../utils/db-utils";
-
-export const mapToInterestGroup = (
-  payload: Selectable<Database["interestGroup"]>
-): InterestGroup => InterestGroupSchema.parse(payload);
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>;
-  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>;
+  getAll(pageable: Pageable): Promise<InterestGroup[] | undefined>;
   create(values: InterestGroupWrite): Promise<InterestGroup>;
+}
+
+function mapToInterestGroup(
+  interestGroup: Selectable<Database["interestGroup"]>
+): InterestGroup {
+  return InterestGroupSchema.parse(interestGroup);
 }
 
 export class InterestGroupRepositoryImpl implements InterestGroupRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getById(id: CommitteeId) {
+  async getById(id: InterestGroupId): Promise<InterestGroup | undefined> {
     const interestGroup = await this.db
       .selectFrom("interestGroup")
       .selectAll()
@@ -38,18 +37,18 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
     return interestGroup ? mapToInterestGroup(interestGroup) : undefined;
   }
 
-  async getAll(pageable: Pageable) {
-    return await paginatedQuery(
-      this.db.selectFrom("interestGroup").selectAll(),
-      pageable,
-      mapToInterestGroup
-    );
+  async getAll(pageable: Pageable): Promise<InterestGroup[] | undefined> {
+    const interestGroups = await this.db
+      .selectFrom("interestGroup")
+      .selectAll()
+      .execute();
+    return interestGroups.map(mapToInterestGroup);
   }
 
-  async create(values: CommitteeWrite) {
+  async create(values: InterestGroupWrite): Promise<InterestGroup> {
     const interestGroup = await this.db
       .insertInto("interestGroup")
-      .values(values)
+      .values({ ...values })
       .returningAll()
       .executeTakeFirstOrThrow();
     return mapToInterestGroup(interestGroup);

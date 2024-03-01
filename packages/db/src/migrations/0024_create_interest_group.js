@@ -1,18 +1,15 @@
 import { sql } from "kysely";
+import { createTableWithDefaults } from "../utils.js";
 
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
-  await db.schema
-    .createTable("interest_group")
-    .addColumn("interest_group_id", sql`ulid`, (col) => col.primaryKey())
-    .addColumn("name", "text", (col) => col.notNull())
-    .addColumn("description", "text", (col) => col.notNull())
-    .addColumn("created_at", "timestamptz", (col) =>
-      col.notNull().default(sql`now()`)
-    )
-    .addColumn("updated_at", "timestamptz", (col) =>
-      col.notNull().default(sql`now()`)
-    )
+  await createTableWithDefaults(
+    "interest_group",
+    { id: true, createdAt: true, updatedAt: true },
+    db.schema
+  )
+    .addColumn("name", sql`text`, (col) => col.notNull())
+    .addColumn("description", sql`text`)
     .execute();
 }
 
