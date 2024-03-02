@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import { Icon } from "@iconify/react";
-import { Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core";
-import { GenericTable } from "../../../components/GenericTable";
-import { useArticleAllQuery } from "../../../modules/article/queries/use-article-all-query";
-import { useArticleTable } from "../../../modules/article/use-article-table";
-import { useCreateArticleModal } from "../../../modules/article/modals/create-article-modal";
+import { Icon } from "@iconify/react"
+import { Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
+import { GenericTable } from "../../../components/GenericTable"
+import { useArticleAllQuery } from "../../../modules/article/queries/use-article-all-query"
+import { useArticleTable } from "../../../modules/article/use-article-table"
+import { useCreateArticleModal } from "../../../modules/article/modals/create-article-modal"
 
 export default function CompanyPage() {
-  const { articles, isLoading: isArticlesLoading } = useArticleAllQuery();
-  const open = useCreateArticleModal();
-  const table = useArticleTable({ data: articles });
+  const { articles, isLoading: isArticlesLoading } = useArticleAllQuery()
+  const open = useCreateArticleModal()
+  const table = useArticleTable({ data: articles })
 
   return (
     <Skeleton visible={isArticlesLoading}>
@@ -29,5 +29,5 @@ export default function CompanyPage() {
         </Group>
       </Stack>
     </Skeleton>
-  );
+  )
 }
