@@ -11,7 +11,7 @@ export const InterestGroupDetailsContext = createContext<{
 export const useInterestGroupDetailsContext = () => {
   const ctx = useContext(InterestGroupDetailsContext)
   if (ctx === null) {
-    throw new Error("useOfflineDetailsContext called without Provider in tree")
+    throw new Error("useInterestGroupDetailsContext must be used within a InterestGroupDetailsContext.Provider")
   }
   return ctx
 }

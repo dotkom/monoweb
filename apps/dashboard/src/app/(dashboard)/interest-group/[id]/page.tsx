@@ -5,12 +5,19 @@ import { Box, Button, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
 import { useInterestGroupDetailsContext } from "./provider"
-// import { OfflineEditCard } from "./edit-card"
+import { InterestGroupEditCard } from "./edit-card"
+
+const SIDEBAR_LINKS = [
+  {
+    icon: "tabler:building-warehouse",
+    label: "Info",
+    slug: "info",
+    component: InterestGroupEditCard,
+  },
+] as const
 
 export default function InterestGroupDetailsPage() {
-  const { interestGroup } = useInterestGroupDetailsContext()
   const router = useRouter()
-
   const remove = useDeleteInterestGroupMutation()
   return (
     <Box p="md">
@@ -19,15 +26,20 @@ export default function InterestGroupDetailsPage() {
         <Title>Test</Title>
       </Group>
 
-      <Button
-        color="red"
-        onClick={() => {
-          remove.mutate(interestGroup.id)
-          router.back()
-        }}
-      >
-        Delete
-      </Button>
+      <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
+        <Tabs.List>
+          {SIDEBAR_LINKS.map(({ label, icon, slug }) => (
+            <Tabs.Tab key={slug} value={slug} leftSection={<Icon icon={icon} width={14} height={14} />}>
+              {label}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+        {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
+          <Tabs.Panel mt="md" key={slug} value={slug}>
+            <Component />
+          </Tabs.Panel>
+        ))}
+      </Tabs>
     </Box>
   )
 }

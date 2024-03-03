@@ -23,7 +23,7 @@ export const useInterestGroupWriteForm = ({
     schema: InterestGroupFormValidationSchema,
     defaultValues: defaultValues,
     onSubmit,
-    label: "Create new interest group",
+    label,
     fields: {
       name: createTextInput({
         label: "Name",
