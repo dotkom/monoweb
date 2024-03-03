@@ -1,6 +1,7 @@
 "use client"
 
-import { InterestGroup, type Offline } from "@dotkomonline/types"
+import { InterestGroup } from "@dotkomonline/types"
+import { Icon } from "@iconify/react"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -21,6 +22,19 @@ export const useInterestGroupTable = ({ data }: Props) => {
       columnHelper.accessor("description", {
         header: () => "Kort beskrivelse",
         cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("link", {
+        header: () => "Slack Link",
+        cell: (info) => {
+          const link = info.getValue()
+          if (!link) return
+
+          return (
+            <Anchor href={link} target="_blank" rel="noopener noreferrer">
+              <Icon icon="logos:slack-icon" width={23} height={23} />
+            </Anchor>
+          )
+        },
       }),
       columnHelper.accessor((evt) => evt, {
         id: "actions",

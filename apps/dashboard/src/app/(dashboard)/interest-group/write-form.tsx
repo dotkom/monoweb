@@ -35,5 +35,10 @@ export const useInterestGroupWriteForm = ({
         withAsterisk: true,
         rows: 5,
       }),
+      link: createTextInput({
+        label: "Slack Link",
+        placeholder: "https://fadderuka.no",
+        type: "url",
+      }),
     },
   })

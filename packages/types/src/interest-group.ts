@@ -6,6 +6,7 @@ export const InterestGroupSchema = z.object({
   updatedAt: z.date(),
   name: z.string(),
   description: z.string(),
+  link: z.string().optional(),
 })
 
 export type InterestGroup = z.infer<typeof InterestGroupSchema>

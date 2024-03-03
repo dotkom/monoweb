@@ -8,10 +8,8 @@ export const CreateInterestGroupModal: FC<ContextModalProps> = ({ context, id })
   const create = useCreateInterestGroupMutation()
   const FormComponent = useInterestGroupWriteForm({
     onSubmit: (data) => {
-      console.log("data")
       create.mutate({
-        name: data.name,
-        description: data.description,
+        ...data,
         updatedAt: new Date(),
       })
       close()

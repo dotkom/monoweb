@@ -6,6 +6,7 @@ export async function up(db) {
   await createTableWithDefaults("interest_group", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("name", sql`text`, (col) => col.notNull())
     .addColumn("description", sql`text`)
+    .addColumn("link", sql`text`)
     .execute()
 }
 
