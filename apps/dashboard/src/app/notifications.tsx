@@ -9,31 +9,38 @@ export interface NotificationProps {
   message: string
   id?: string
   method?: "show" | "update"
+  autoClose?: number | false
 }
 
 interface NotificationConfig {
   color: string
   icon: JSX.Element
   loading?: boolean
+  autoClose?: number | false
 }
 
 // Factory function to create a notification method
 // Defaults to showing a notification
 const createNotificationMethod =
   (config: NotificationConfig) =>
-  ({ title, message, id, method }: NotificationProps) =>
-    notifications[method || "show"]({
+  ({ title, message, id, method: _method, autoClose }: NotificationProps) => {
+    const method = _method || "show"
+
+    return notifications[method]({
+      ...config,
       title,
       message,
       id,
-      ...config,
+      autoClose,
     })
+  }
 
 // Notification configurations
 const notificationConfigs: Record<string, NotificationConfig> = {
   fail: {
     color: "red",
     icon: <Icon icon="tabler:mood-sad-dizzy" />,
+    autoClose: false // Never auto close failed notifications
   },
   success: {
     color: "green",
@@ -96,22 +103,22 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
   return {
     loading: () =>
       loading({
-        title: notificationText.fail,
-        message: notificationText.fail,
+        title: notificationText.loading,
+        message: "",
         id,
         method: "show",
       }),
     complete: () =>
       complete({
-        title: notificationText.fail,
-        message: notificationText.fail,
+        title: notificationText.success,
+        message: "",
         id,
         method: "update",
       }),
     fail: (error: TRPCClientErrorLike<AppRouter>) =>
       fail({
         title: notificationText.fail,
-        message: `${notificationText.fail}: ${error.message}`,
+        message: `Feilmelding: ${error.message}`,
         id,
         method: "update",
       }),
