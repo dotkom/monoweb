@@ -40,7 +40,7 @@ const notificationConfigs: Record<string, NotificationConfig> = {
   fail: {
     color: "red",
     icon: <Icon icon="tabler:mood-sad-dizzy" />,
-    autoClose: false // Never auto close failed notifications
+    autoClose: false, // Never auto close failed notifications
   },
   success: {
     color: "green",

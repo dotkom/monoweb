@@ -26,7 +26,6 @@ export const useRegisterForEventMutation = () => {
   })
 }
 
-
 export const useDeregisterForEventMutation = () => {
   const notification = useQueryNotification()
 
