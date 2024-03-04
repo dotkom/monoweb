@@ -54,7 +54,6 @@ export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
                       attendanceId,
                       defaultValues: {
                         limit: pool.limit,
-                        yearCriteria: pool.yearCriteria,
                       },
                       poolId: pool.id,
                     })}

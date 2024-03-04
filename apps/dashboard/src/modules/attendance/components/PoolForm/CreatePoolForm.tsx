@@ -6,27 +6,27 @@ import { validateAndReturn } from "./utils"
 import { createLabelledCheckboxGroupInput, createNumberInput, useFormBuilder } from "../../../../app/form"
 import { notifyFail } from "../../../../app/notifications"
 
-export interface PoolFormProps {
-  onSubmit(values: PoolFormSchema): void
+export interface CreatePoolFormProps {
+  onSubmit(values: CreatePoolFormSchema): void
   attendancePools: AttendancePool[]
   onClose(): void
-  defaultValues: PoolFormSchema
+  defaultValues: CreatePoolFormSchema
   mode: "create" | "update"
 }
 
-export const PoolFormSchema = z.object({
+export const CreatePoolFormSchema = z.object({
   yearCriteria: z.array(z.number()),
   limit: z.number(),
 })
-export type PoolFormSchema = z.infer<typeof PoolFormSchema>
+export type CreatePoolFormSchema = z.infer<typeof CreatePoolFormSchema>
 
-export const usePoolFormLogic = (props: PoolFormProps) => {
+export const useCreatePoolFormLogic = (props: CreatePoolFormProps) => {
   const existingPools = [...new Set(props.attendancePools.flatMap(({ yearCriteria }) => yearCriteria))]
 
   const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
 
   const Form = useFormBuilder({
-    schema: PoolFormSchema,
+    schema: CreatePoolFormSchema,
     defaultValues: props.defaultValues,
     fields: {
       yearCriteria: createLabelledCheckboxGroupInput({
@@ -54,8 +54,8 @@ export const usePoolFormLogic = (props: PoolFormProps) => {
 
   return { Form }
 }
-export const PoolForm: FC<PoolFormProps> = (props) => {
-  const { Form } = usePoolFormLogic(props)
+export const CreatePoolForm: FC<CreatePoolFormProps> = (props) => {
+  const { Form } = useCreatePoolFormLogic(props)
 
   return (
     <Box>
