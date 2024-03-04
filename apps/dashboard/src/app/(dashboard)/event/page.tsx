@@ -11,14 +11,12 @@ import EventCommittees from "../../../components/molecules/company-name/event-co
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { formatDate } from "../../../utils/format"
-import { trpc } from "../../../utils/trpc"
 
 type TableColumns = Event & {
   committees: Committee[]
 }
 
 export default function EventPage() {
-  trpc.event.test.useQuery()
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
   const open = useCreateEventModal()
 

@@ -3,10 +3,10 @@ import { Box, Divider, Title } from "@mantine/core"
 import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
-import { useRegisterForEventMutation } from "../../../../modules/attendance/mutations/use-register-for-event-mutation"
-import { useEventAttendeesGetQuery } from "../../../../modules/attendance/queries/use-event-attendees-get-query"
-import { trpc } from "../../../../utils/trpc"
 import { AllAttendeesTable } from "../all-users-table"
+import { useGetUserBySub } from "../../../../modules/user/queries/use-user-get-query"
+import { useEventAttendeesGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
+import { useRegisterForEventMutation } from "../../../../modules/attendance/mutations/use-attendee-mutations"
 
 export const AttendeesPage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -25,7 +25,7 @@ interface Props {
 const Page: FC<Props> = ({ attendance }) => {
   const { attendees } = useEventAttendeesGetQuery(attendance.id)
   const registerForEvent = useRegisterForEventMutation()
-  const getUser = trpc.user.getBySubAsync.useMutation()
+  const getUser = useGetUserBySub()
 
   const handleAttendUser = async (user: UserIDP) => {
     const dbUser = await getUser.mutateAsync(user.subject)

@@ -1,17 +1,17 @@
 import { type AttendancePool } from "@dotkomonline/types"
 import { Box, Button, Card, Flex, Text } from "@mantine/core"
 import { notifyFail } from "../../../../app/notifications"
-import { trpc } from "../../../../utils/trpc"
 import { openCreatePoolModal } from "../../modals/create-pool-modal"
 import { openEditPoolModal } from "../../modals/edit-pool-modal"
 import { rangeToString } from "./utils"
+import { useDeletePoolMutation } from "../../mutations/use-pool-mutations"
 
 interface EventAttendanceProps {
   pools: AttendancePool[]
   attendanceId: string
 }
 export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
-  const deleteGroupMut = trpc.event.attendance.deletePool.useMutation()
+  const deleteGroupMut = useDeletePoolMutation()
 
   const deleteGroup = (id: string, numAttendees: number) => {
     if (numAttendees > 0) {

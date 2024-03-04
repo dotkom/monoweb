@@ -1,7 +1,7 @@
 import { type UserIDP } from "@dotkomonline/types"
 import { useState, type FC } from "react"
-import { trpc } from "../../../utils/trpc"
 import GenericSearch from "../../GenericSearch"
+import { useSearchUsersFromIDP } from "../../../modules/user/queries/use-user-get-query"
 
 interface UserSearchProps {
   onSubmit(data: UserIDP): void
@@ -9,13 +9,7 @@ interface UserSearchProps {
 
 export const UserSearch: FC<UserSearchProps> = ({ onSubmit }) => {
   const [searchQuery, setSearchQuery] = useState("")
-
-  const { data: usersFromIdp = [] } = trpc.user.searchUsersFromIDP.useQuery(
-    { searchQuery },
-    {
-      enabled: searchQuery.length > 1,
-    }
-  )
+  const { usersFromIdp } = useSearchUsersFromIDP(searchQuery)
 
   const handleUserSearch = (query: string) => {
     setSearchQuery(query)

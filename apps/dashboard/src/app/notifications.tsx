@@ -1,6 +1,8 @@
 import { notifications } from "@mantine/notifications"
 import { Icon } from "@iconify/react"
 import { useState } from "react"
+import { TRPCClientErrorLike } from "@trpc/client"
+import { AppRouter } from "@dotkomonline/gateway-trpc"
 
 export interface NotificationProps {
   title: string
@@ -62,11 +64,74 @@ export const useQueryNotification = () => {
   }
 }
 
+const messages = {
+  create: {
+    success: "Opprettet",
+    fail: "Opprettelse feilet",
+    loading: "Oppretter",
+  },
+  update: {
+    success: "Oppdatert",
+    fail: "Oppdatering feilet",
+    loading: "Oppdaterer",
+  },
+  delete: {
+    success: "Slettet",
+    fail: "Sletting feilet",
+    loading: "Sletter",
+  },
+} as const
+
+interface Props {
+  method: "create" | "update" | "delete"
+}
+export const useQueryGenericMutationNotification = ({ method }: Props) => {
+  const [id] = useState(() => crypto.randomUUID())
+  const loading = createNotificationMethod(notificationConfigs.loading)
+  const complete = createNotificationMethod(notificationConfigs.complete)
+  const fail = createNotificationMethod(notificationConfigs.fail)
+
+  const notificationText = messages[method]
+
+  return {
+    loading: () =>
+      loading({
+        title: notificationText.fail,
+        message: notificationText.fail,
+        id,
+        method: "show",
+      }),
+    complete: () =>
+      complete({
+        title: notificationText.fail,
+        message: notificationText.fail,
+        id,
+        method: "update",
+      }),
+    fail: (error: TRPCClientErrorLike<AppRouter>) =>
+      fail({
+        title: notificationText.fail,
+        message: `${notificationText.fail}: ${error.message}`,
+        id,
+        method: "update",
+      }),
+  }
+}
+
 export const notifyLoading = (props: NotificationProps) =>
-  notifications[props.method || "show"]({ ...props, ...notificationConfigs.loading })
+  notifications[props.method || "show"]({
+    ...props,
+    ...notificationConfigs.loading,
+  })
 
 export const notifyComplete = (props: NotificationProps) =>
-  notifications[props.method || "show"]({ ...props, ...notificationConfigs.complete })
+  notifications[props.method || "show"]({
+    ...props,
+    ...notificationConfigs.complete,
+  })
 
 export const notifyFail = (props: NotificationProps) =>
-  notifications[props.method || "show"]({ ...props, ...notificationConfigs.fail })
+  notifications[props.method || "show"]({
+    ...props,
+    ...notificationConfigs.fail,
+  })

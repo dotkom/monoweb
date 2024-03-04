@@ -3,8 +3,7 @@ import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo } from "react"
 import { GenericTable } from "../../../components/GenericTable"
-import { useDeregisterForEventMutation } from "../../../modules/attendance/mutations/use-deregister-for-event-mutation"
-import { useUpdateEventAttendanceMutation } from "../../../modules/attendance/mutations/use-update-event-attendance-mutation"
+import { useDeregisterForEventMutation, useUpdateEventAttendanceMutation } from "../../../modules/attendance/mutations/use-attendee-mutations"
 
 interface CustomCheckboxProps {
   attendeeId: AttendeeId

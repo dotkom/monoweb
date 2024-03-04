@@ -2,19 +2,15 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren } from "react"
-import { EventDetailsContext } from "./provider"
+import { useAttendanceGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
 import { useEventGetQuery } from "../../../../modules/event/queries/use-event-get-query"
-import { trpc } from "../../../../utils/trpc"
+import { EventDetailsContext } from "./provider"
 
 export default function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
   const { event, eventCommittees, isLoading: eventCommitteesLoading } = useEventGetQuery(params.id)
-  const { data: attendance, isLoading: attendanceLoading } = trpc.event.attendance.getAttendance.useQuery(
-    {
-      id: event?.attendanceId ?? "",
-    },
-    {
-      enabled: Boolean(event),
-    }
+  const { data: attendance, isLoading: attendanceLoading } = useAttendanceGetQuery(
+    event?.attendanceId ?? "",
+    Boolean(event)
   )
 
   return (

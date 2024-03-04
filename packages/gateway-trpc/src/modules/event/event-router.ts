@@ -12,7 +12,6 @@ import { eventCompanyRouter } from "./event-company-router"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const eventRouter = t.router({
-  test: publicProcedure.query(() => ({ data: undefined })),
   create: protectedProcedure
     .input(
       z.object({

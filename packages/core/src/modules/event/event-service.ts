@@ -11,14 +11,6 @@ export interface EventService {
   getEventById(id: EventId): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-  // addAttendance: protectedProcedure
-  // .input(
-  //   z.object({
-  //     obj: AttendanceWriteSchema.partial(),
-  //     eventId: EventSchema.shape.id,
-  //   })
-  // )
-  // .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.obj)),
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event>
 }
 

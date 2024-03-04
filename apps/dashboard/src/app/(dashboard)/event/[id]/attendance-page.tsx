@@ -4,9 +4,12 @@ import { type FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
 import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
-import { useEventAttendanceGetQuery } from "../../../../modules/attendance/queries/use-event-attendance-get-query"
-import { trpc } from "../../../../utils/trpc"
+import { usePoolsGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
 import { useEventDetailsContext } from "./provider"
+import {
+  useAddAttendanceMutation,
+  useUpdateAttendanceMutation,
+} from "../../../../modules/attendance/mutations/use-attendance-mutations"
 
 export const AttendancePage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -20,7 +23,7 @@ export const AttendancePage: FC = () => {
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
-  const mutation = trpc.event.addAttendance.useMutation()
+  const mutation = useAddAttendanceMutation()
   const AttendanceForm = useAttendanceForm({
     defaultValues: {
       registerStart: new Date(),
@@ -46,9 +49,9 @@ interface EventAttendanceProps {
   attendance: Attendance
 }
 const _AttendancePage: FC<EventAttendanceProps> = ({ attendance }) => {
-  const { pools } = useEventAttendanceGetQuery(attendance.id)
+  const { pools } = usePoolsGetQuery(attendance.id)
 
-  const updateAttendance = trpc.event.attendance.updateAttendance.useMutation()
+  const updateAttendance = useUpdateAttendanceMutation()
 
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,

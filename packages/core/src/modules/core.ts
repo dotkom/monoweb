@@ -113,7 +113,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     notificationPermissionsRepository,
     auth0Repository
   )
-  const eventService: EventService = new EventServiceImpl(eventRepository)
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, userService)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
@@ -122,6 +121,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingLocationRepository,
     jobListingLocationLinkRepository
   )
+
+  const eventService: EventService = new EventServiceImpl(eventRepository, attendanceService)
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
   const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)

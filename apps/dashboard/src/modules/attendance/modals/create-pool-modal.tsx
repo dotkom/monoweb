@@ -1,23 +1,15 @@
 import { modals, type ContextModalProps } from "@mantine/modals"
 import { type FC } from "react"
-import { notifyComplete } from "../../../app/notifications"
-import { trpc } from "../../../utils/trpc"
 import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
-import { useEventAttendanceGetQuery } from "../queries/use-event-attendance-get-query"
+import { usePoolsGetQuery } from "../queries/use-get-queries"
+import { useCreatePoolMutation } from "../mutations/use-pool-mutations"
 
 interface CreatePoolModalProps {
   attendanceId: string
 }
 export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ context, id, innerProps }) => {
-  const { mutate: createPool } = trpc.event.attendance.createPool.useMutation({
-    onSuccess: () => {
-      notifyComplete({
-        title: "Pulje opprettet",
-        message: "Puljen er opprettet",
-      })
-    },
-  })
-  const { pools } = useEventAttendanceGetQuery(innerProps.attendanceId)
+  const { mutate: createPool } = useCreatePoolMutation()
+  const { pools } = usePoolsGetQuery(innerProps.attendanceId)
   const onClose = () => context.closeModal(id)
   const onSubmit = (values: PoolFormSchema) => {
     createPool({
