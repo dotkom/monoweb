@@ -34,7 +34,7 @@ export const usePoolFormLogic = (props: PoolFormProps) => {
         labels: yearLabels,
       }),
       limit: createNumberInput({
-        label: "Kapasitet1",
+        label: "Kapasitet",
       }),
     },
     label: props.mode === "create" ? "Opprett pulje" : "Endre pulje",
