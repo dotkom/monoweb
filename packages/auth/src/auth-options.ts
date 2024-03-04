@@ -52,7 +52,7 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        let user = await core.userService.getUserBySubject(token.sub)
+        let user = await core.userService.getDBUserBySubject(token.sub)
         if (user === undefined) {
           user = await core.userService.createUser({
             auth0Sub: token.sub,

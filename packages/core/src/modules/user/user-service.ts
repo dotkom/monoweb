@@ -19,6 +19,7 @@ export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
   getUsersById(ids: UserId[]): Promise<User[] | undefined>
   getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
+  getDBUserBySubject(id: User["auth0Sub"]): Promise<UserDB | undefined>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<UserDB>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<UserDB>
@@ -79,6 +80,10 @@ export class UserServiceImpl implements UserService {
     }
     const usersIDP = await Promise.all(usersDB.map(async (u) => this.idpRepository.getBySubject(u?.auth0Sub || ""))) // TODO: this is a hack
     return this.mergeUsersArray(usersDB, usersIDP)
+  }
+
+  async getDBUserBySubject(id: User["auth0Sub"]) {
+    return this.userRepository.getBySubject(id)
   }
 
   async searchUsersFromIDP(searchQuery: string, take: number) {
