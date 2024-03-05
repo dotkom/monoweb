@@ -18,7 +18,6 @@ export class Auth0IDPRepositoryImpl implements Auth0Repository {
     return users.data.map((user) => ({
       email: user.email,
       familyName: user.family_name,
-      gender: "TODO",
       givenName: user.given_name,
       subject: user.user_id,
     }))
@@ -36,7 +35,6 @@ export class Auth0IDPRepositoryImpl implements Auth0Repository {
     return users.data.map((user) => ({
       email: user.email,
       familyName: user.family_name,
-      gender: "male",
       givenName: user.given_name,
       subject: user.user_id,
     }))
@@ -49,7 +47,6 @@ export class Auth0IDPRepositoryImpl implements Auth0Repository {
     return {
       email: res.data.email,
       familyName: res.data.family_name,
-      gender: "male",
       givenName: res.data.given_name,
       subject: res.data.user_id,
     }
