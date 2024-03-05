@@ -38,9 +38,7 @@ describe("users", () => {
     const subject = crypto.randomUUID()
     const first = await core.userService.createUser(fakeUser(subject))
     expect(first).toBeDefined()
-    await expect(
-      core.userService.createUser(fakeUser(subject))
-    ).rejects.toThrow()
+    await expect(core.userService.createUser(fakeUser(subject))).rejects.toThrow()
   })
 
   it("will find users by their user id", async () => {

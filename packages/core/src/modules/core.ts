@@ -167,6 +167,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
-    auth0Repository
+    auth0Repository,
   }
 }

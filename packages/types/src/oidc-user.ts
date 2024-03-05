@@ -8,7 +8,7 @@ export const OidcUser = z.object({
   email: z.string(),
 
   //TODO: per 5th march 24, we don't have gender in auth0. This should be added when the data is migrated to auth0.
-  // gender: z.string(), 
+  // gender: z.string(),
 })
 
 export type OidcUser = z.infer<typeof OidcUser>

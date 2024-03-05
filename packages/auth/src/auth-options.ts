@@ -60,7 +60,6 @@ export const getAuthOptions = ({
   },
   callbacks: {
     async session({ session, token }) {
-      console.log("CALLBACK")
       if (token.sub) {
         const user = await core.userService.getUserBySubject(token.sub)
 
@@ -79,5 +78,5 @@ export const getAuthOptions = ({
       }
       return session
     },
-   },
+  },
 })
