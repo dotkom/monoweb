@@ -4,6 +4,10 @@ import { addWeeks, addYears } from "date-fns"
 export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
   auth0Sub: "8697a463-46fe-49c2-b74c-f6cc98358298",
   studyYear: 0,
+  email: "test@gmail.com",
+  firstName: "Test",
+  lastName: "User",
+  name: "Test User",
   ...defaults,
 })
 
