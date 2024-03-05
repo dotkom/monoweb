@@ -2,6 +2,24 @@ import { type ServiceLayer } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
+interface Auth0TokenClaims {
+  given_name: string
+  family_name: string
+  nickname: string
+  name: string
+  picture: string
+  gender: string
+  updated_at: string
+  email: string
+  email_verified: boolean
+  iss: string
+  aud: string
+  iat: number
+  exp: number
+  sub: string
+  sid: string
+}
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: User
@@ -40,7 +58,7 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile): User => ({
+      profile: (profile: Auth0TokenClaims): User => ({
         id: profile.sub,
         name: profile.name,
         email: profile.email,
