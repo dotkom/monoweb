@@ -4,7 +4,7 @@ import { ulid } from "ulid"
 import { createEnvironment } from "@dotkomonline/env"
 import { createKysely } from "@dotkomonline/db"
 import { createServiceLayer, type ServiceLayer } from "../../core"
-import { User, UserWrite } from "@dotkomonline/types"
+import { UserWrite } from "@dotkomonline/types"
 
 const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),
@@ -13,6 +13,7 @@ const fakeUser = (subject?: string): UserWrite => ({
   givenName: "Test",
   familyName: "User",
   name: "Test User",
+  lastSyncedAt: null,
 })
 
 describe("users", () => {

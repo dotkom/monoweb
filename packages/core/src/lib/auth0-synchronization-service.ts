@@ -1,4 +1,4 @@
-import { User } from "@dotkomonline/types"
+import { User, UserWrite } from "@dotkomonline/types"
 import { UserService } from "../modules/user/user-service"
 import { Auth0Repository } from "./auth0-repository"
 
@@ -39,13 +39,14 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     if (!token.email || !token.sub || !token.name || !token.givenName || !token.familyName) {
       throw new Error("Missing user data in claims")
     }
-    const userData = {
+    const userData: UserWrite = {
       auth0Sub: token.sub,
       studyYear: -1,
       email: token.email,
       name: token.name,
       givenName: token.givenName,
       familyName: token.familyName,
+      lastSyncedAt: new Date(),
     }
 
     return this.userService.createUser(userData)
@@ -55,7 +56,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   async handleSyncUserWithAuth0(user: User) {
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
-    if (user.updatedAt < oneDayAgo) {
+    if (!user.lastSyncedAt || user.lastSyncedAt < oneDayAgo) {
       console.log("updating user", user.id, user.auth0Sub)
       const idpUser = await this.auth0Repository.getBySubject(user.auth0Sub)
 
@@ -68,6 +69,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
         givenName: idpUser.givenName,
         familyName: idpUser.familyName,
         name: `${idpUser.givenName} ${idpUser.familyName}`,
+        lastSyncedAt: new Date(),
       })
     }
     return undefined

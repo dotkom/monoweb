@@ -196,6 +196,7 @@ export interface OwUser {
   familyName: string
   givenName: string
   id: Generated<string>
+  lastSyncedAt: Timestamp | null
   name: string
   studyYear: Generated<number>
   updatedAt: Generated<Timestamp>

@@ -11,6 +11,7 @@ export async function up(db) {
     .addColumn("family_name", "varchar(255)", (col) => col.notNull())
     .addColumn("name", "varchar(255)", (col) => col.notNull())
     .addColumn("study_year", "integer", (col) => col.notNull().defaultTo(-1))
+    .addColumn("last_synced_at", "timestamp with time zone", (col) => col.defaultTo(null))
     .execute()
 }
 

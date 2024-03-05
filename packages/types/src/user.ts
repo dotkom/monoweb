@@ -10,6 +10,7 @@ export const UserSchema = z.object({
   givenName: z.string(),
   familyName: z.string(),
   name: z.string(),
+  lastSyncedAt: z.date().nullable(),
 })
 
 export type UserId = User["id"]
