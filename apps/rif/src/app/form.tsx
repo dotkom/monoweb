@@ -98,14 +98,14 @@ export const Form: FC = () => {
         </Label>
 
         <Label>
-          E-post adresse
+          E-postadresse
           <TextInput placeholder="ola.nordmann@bedrift.no" type="email" {...register("contactEmail")} />
           <ErrorMessage name="contactEmail" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
 
         <Label>
           Telefonnummer
-          <TextInput placeholder="+47 444 99 55" type="tel" {...register("contactTel")} />
+          <TextInput placeholder="+47 444 99 555" type="tel" {...register("contactTel")} />
           <ErrorMessage name="contactTel" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
       </Section>
@@ -167,9 +167,7 @@ export const Form: FC = () => {
           Gjerne utdyp om dere har noen tanker om hvordan et arrangement kan se ut eller annet relevant. Still også
           spørsmål om dere lurer på noe.
         </Text>
-        <Text>
-          Dersom dere er interessert i samarbeid med andre linjerforeninger, gjerne spesifiser hvilke(n) linjer.
-        </Text>
+        <Text>Dersom dere er interessert i samarbeid med andre linjeforeninger, gjerne spesifiser hvilke(n).</Text>
 
         <Textarea {...register("comment")} />
       </Section>
