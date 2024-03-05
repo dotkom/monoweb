@@ -193,9 +193,9 @@ export interface OwUser {
   auth0Sub: string | null
   createdAt: Generated<Timestamp>
   email: string
-  firstName: string
+  givenName: string
   id: Generated<string>
-  lastName: string
+  familyName: string
   name: string
   studyYear: Generated<number>
   updatedAt: Generated<Timestamp>

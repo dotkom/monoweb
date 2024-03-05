@@ -7,8 +7,8 @@ export const UserSchema = z.object({
   studyYear: z.number().int().min(-1).max(6),
   updatedAt: z.date(),
   email: z.string().email(),
-  firstName: z.string(),
-  lastName: z.string(),
+  givenName: z.string(),
+  familyName: z.string(),
   name: z.string(),
 })
 

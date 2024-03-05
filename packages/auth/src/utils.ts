@@ -18,8 +18,8 @@ export const createNewUser = async (core: ServiceLayer, token: JWTToken) => {
     studyYear: -1,
     email: token.email,
     name: token.name,
-    firstName: token.givenName,
-    lastName: token.familyName,
+    givenName: token.givenName,
+    familyName: token.familyName,
   }
 
   return core.userService.createUser(userData)
@@ -40,8 +40,8 @@ export const syncUserWithAuth0 = async (core: ServiceLayer, user: User) => {
 
     return core.userService.updateUser(user.id, {
       email: idpUser.email,
-      firstName: idpUser.givenName,
-      lastName: idpUser.familyName,
+      givenName: idpUser.givenName,
+      familyName: idpUser.familyName,
       name: `${idpUser.givenName} ${idpUser.familyName}`,
     })
   }
