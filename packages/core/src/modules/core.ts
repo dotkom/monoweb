@@ -73,7 +73,7 @@ export interface ServerLayerOptions {
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const s3Repository: S3Repository = new s3RepositoryImpl()
   const auth0ManagementClient = new ManagementClient({
-    domain: "onlineweb.eu.auth0.com",
+    domain: env.GTX_AUTH0_DOMAIN,
     clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
     clientId: env.GTX_AUTH0_CLIENT_ID,
   })
