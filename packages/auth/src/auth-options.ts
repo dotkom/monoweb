@@ -1,7 +1,6 @@
 import { type ServiceLayer } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
-import { createNewUser, syncUserWithAuth0 as handleUserSyncLocal } from "./utils"
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -60,14 +59,15 @@ export const getAuthOptions = ({
         const user = await core.userService.getUserBySubject(token.sub)
 
         if (user === undefined) {
-          const newUser = await createNewUser(core, token)
+          // const newUser = await createNewUser(core, token)
+          const newUser = await core.auth0SynchronizationService.createNewUser(token)
 
           session.user.id = newUser.id
           session.sub = token.sub
           return session
         }
 
-        handleUserSyncLocal(core, user)
+        await core.auth0SynchronizationService.handleSyncUserWithAuth0(user)
 
         session.user.id = user.id
         session.sub = token.sub
