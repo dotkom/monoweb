@@ -42,7 +42,7 @@ export const getAuthOptions = ({
       issuer: oidcIssuer,
       profile: (profile): User => ({
         id: profile.sub,
-        name: `${profile.given_name} ${profile.family_name}`,
+        name: profile.name,
         email: profile.email,
         image: profile.picture ?? undefined,
         givenName: profile.given_name,
