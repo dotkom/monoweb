@@ -119,17 +119,21 @@ const getStatusCardData = (status: StatusState, datetime: Date): StatusCardProps
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const { id: eventId } = props
   const { data: event } = trpc.event.get.useQuery(eventId)
-  const { data: attendance } = trpc.event.attendance.getAttendanceByEventId.useQuery({
-    eventId,
+
+  const attendanceId = event?.event.attendanceId
+  const { data: attendance } = trpc.event.attendance.getAttendance.useQuery({
+    id: attendanceId || "",
   })
-  const { data: pools } = trpc.event.attendance.getPoolsByEventId.useQuery({
-    eventId,
+  const { data: pools } = trpc.event.attendance.getPoolsByAttendanceId.useQuery({
+    id: attendanceId || "",
   })
 
   const utils = trpc.useUtils()
   const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation({
     onSuccess: () => {
-      utils.event.attendance.getPoolsByEventId.invalidate({ eventId })
+      utils.event.attendance.getPoolsByAttendanceId.invalidate({
+        id: attendanceId || "",
+      })
       utils.event.attendance.isAttending.invalidate({
         attendanceId: attendance?.id || "",
         userId: session.user.id,
@@ -138,7 +142,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   })
   const attendMutation = trpc.event.attendance.registerForEvent.useMutation({
     onSuccess: () => {
-      utils.event.attendance.getPoolsByEventId.invalidate({ eventId })
+      utils.event.attendance.getPoolsByAttendanceId.invalidate({ id: attendanceId || "" })
       utils.event.attendance.isAttending.invalidate({
         attendanceId: attendance?.id || "",
         userId: session.user.id,
