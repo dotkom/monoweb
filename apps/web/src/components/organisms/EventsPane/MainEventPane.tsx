@@ -13,7 +13,7 @@ export function MainEventPane({ event }: { event: Event }) {
   const tags = ["📌Festet", "Arrangementer"]
   return (
     <div className="border-slate-10 gap-4 rounded-lg border bg-[#FFFFFF] p-4 shadow-md">
-      <img src={event.imageUrl} alt={event.title} />
+      { event.imageUrl && <img src={event.imageUrl} alt={event.title} /> }
       <div>
         <div className="mt-3">
           {tags.map((tag) => (
