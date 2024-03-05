@@ -1,6 +1,6 @@
 import {
   type UserDB,
-  type UserIDP,
+  type OidcUser,
   type NotificationPermissions,
   type NotificationPermissionsWrite,
   type PrivacyPermissions,
@@ -12,7 +12,7 @@ import {
 import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { type UserRepository } from "./user-repository"
-import { type IDPRepository } from "../../lib/IDP-repository"
+import { type Auth0Repository } from "../../lib/auth0-repository"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
@@ -29,7 +29,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<UserIDP[]>
+  getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<OidcUser[]>
 }
 
 export class UserServiceImpl implements UserService {
@@ -37,9 +37,9 @@ export class UserServiceImpl implements UserService {
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
-    private readonly idpRepository: IDPRepository
+    private readonly idpRepository: Auth0Repository
   ) {}
-  private mergeUsers(userDB: UserDB | undefined, usersIDP: UserIDP | undefined): User | undefined {
+  private mergeUsers(userDB: UserDB | undefined, usersIDP: OidcUser | undefined): User | undefined {
     if (!userDB || !usersIDP) {
       return undefined
     }
@@ -49,7 +49,7 @@ export class UserServiceImpl implements UserService {
     }
   }
 
-  private mergeUsersArray(usersDB: (UserDB | undefined)[], usersIDP: (UserIDP | undefined)[]): User[] {
+  private mergeUsersArray(usersDB: (UserDB | undefined)[], usersIDP: (OidcUser | undefined)[]): User[] {
     return usersDB
       .map((user) => {
         if (user === undefined) {
@@ -87,7 +87,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async searchUsersFromIDP(searchQuery: string, take: number) {
-    const usersIDP = await this.idpRepository.search(searchQuery, take)
+    const usersIDP = await this.idpRepository.searchByFullName(searchQuery, take)
     const usersDB = await Promise.all(usersIDP.map(async (user) => this.userRepository.getBySubject(user.subject)))
     return this.mergeUsersArray(usersDB, usersIDP)
   }

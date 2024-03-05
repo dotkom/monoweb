@@ -1,17 +1,16 @@
-import { env } from "@dotkomonline/env"
-import { type UserIDP } from "@dotkomonline/types"
+import { type OidcUser } from "@dotkomonline/types"
 import { ManagementClient } from "auth0"
 
-export interface IDPRepository {
-  getBySubject(IDPuserId: string): Promise<UserIDP | undefined>
-  getAll(limit: number): Promise<UserIDP[]>
-  search(searchQuery: string, take: number): Promise<UserIDP[]>
+export interface Auth0Repository {
+  getBySubject(sub: string): Promise<OidcUser | undefined>
+  getAll(limit: number): Promise<OidcUser[]>
+  searchByFullName(query: string, take: number): Promise<OidcUser[]>
 }
 
-export class Auth0IDPRepositoryImpl implements IDPRepository {
+export class Auth0IDPRepositoryImpl implements Auth0Repository {
   constructor(private readonly client: ManagementClient) {}
 
-  async getAll(limit: number): Promise<UserIDP[]> {
+  async getAll(limit: number): Promise<OidcUser[]> {
     const users = await this.client.users.getAll({
       per_page: limit,
     })
@@ -25,9 +24,9 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
     }))
   }
 
-  async search(searchQuery: string, take: number): Promise<UserIDP[]> {
-    const givenName = searchQuery.split(" ")[0]
-    const familyName = searchQuery.split(" ")[1] || ""
+  async searchByFullName(query: string, take: number): Promise<OidcUser[]> {
+    const givenName = query.split(" ")[0]
+    const familyName = query.split(" ")[1] || ""
 
     const users = await this.client.users.getAll({
       per_page: take,
@@ -43,7 +42,7 @@ export class Auth0IDPRepositoryImpl implements IDPRepository {
     }))
   }
 
-  async getBySubject(IDPuserId: string): Promise<UserIDP | undefined> {
+  async getBySubject(IDPuserId: string): Promise<OidcUser | undefined> {
     const res = await this.client.users.get({
       id: IDPuserId,
     })

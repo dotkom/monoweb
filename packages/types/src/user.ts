@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { UserIDPSchema } from "./user-idp"
+import { OidcUser } from "./oidc-user"
 
 export const UserDBSchema = z.object({
   id: z.string(),
@@ -8,7 +8,7 @@ export const UserDBSchema = z.object({
   studyYear: z.number().int().min(-1).max(6),
 })
 
-export const UserSchema = UserDBSchema.merge(UserIDPSchema)
+export const UserSchema = UserDBSchema.merge(OidcUser)
 
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>

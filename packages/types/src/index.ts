@@ -11,7 +11,7 @@ export * from "./event-committee"
 export * from "./job-listing"
 export * from "./offline"
 export * from "./article"
-export * from "./user-idp"
+export * from "./oidc-user"
 
 export * from "./attendance/attendance"
 export * from "./attendance/attendance-pool"

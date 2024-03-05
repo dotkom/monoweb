@@ -6,7 +6,7 @@ import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-reposit
 import { UserRepositoryImpl } from "../user-repository"
 import { UserServiceImpl } from "../user-service"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
-import { Auth0IDPRepositoryImpl, IDPRepository } from "../../../lib/IDP-repository"
+import { Auth0IDPRepositoryImpl, Auth0Repository } from "../../../lib/auth0-repository"
 import { ManagementClient } from "auth0"
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {

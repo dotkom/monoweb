@@ -56,7 +56,7 @@ import {
 } from "./user/privacy-permissions-repository"
 import { UserRepositoryImpl, type UserRepository } from "./user/user-repository"
 import { UserServiceImpl, type UserService } from "./user/user-service"
-import { Auth0IDPRepositoryImpl, type IDPRepository } from "../lib/IDP-repository"
+import { Auth0IDPRepositoryImpl, type Auth0Repository } from "../lib/auth0-repository"
 import { s3RepositoryImpl, type S3Repository } from "../lib/s3/s3-repository"
 import { ManagementClient } from "auth0"
 import { env } from "@dotkomonline/env"
@@ -117,7 +117,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     clientId: env.GTX_AUTH0_CLIENT_ID,
     clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
   })
-  const auth0Repository: IDPRepository = new Auth0IDPRepositoryImpl(auth0ManagementClient)
+  const auth0Repository: Auth0Repository = new Auth0IDPRepositoryImpl(auth0ManagementClient)
 
   const userService: UserService = new UserServiceImpl(
     userRepository,
