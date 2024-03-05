@@ -7,7 +7,7 @@ export interface Auth0Repository {
   searchByFullName(query: string, take: number): Promise<OidcUser[]>
 }
 
-export class Auth0IDPRepositoryImpl implements Auth0Repository {
+export class Auth0RepositoryImpl implements Auth0Repository {
   constructor(private readonly client: ManagementClient) {}
 
   async getAll(limit: number): Promise<OidcUser[]> {
@@ -40,9 +40,9 @@ export class Auth0IDPRepositoryImpl implements Auth0Repository {
     }))
   }
 
-  async getBySubject(IDPuserId: string): Promise<OidcUser | undefined> {
+  async getBySubject(sub: string): Promise<OidcUser | undefined> {
     const res = await this.client.users.get({
-      id: IDPuserId,
+      id: sub,
     })
     return {
       email: res.data.email,

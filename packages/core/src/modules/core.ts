@@ -59,7 +59,7 @@ import {
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
 import { type S3Repository, s3RepositoryImpl } from "../lib/s3/s3-repository"
-import { Auth0IDPRepositoryImpl, Auth0Repository } from "../lib/auth0-repository"
+import { Auth0RepositoryImpl, Auth0Repository } from "../lib/auth0-repository"
 import { ManagementClient } from "auth0"
 import { env } from "@dotkomonline/env"
 
@@ -76,7 +76,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
     clientId: env.GTX_AUTH0_CLIENT_ID,
   })
-  const auth0Repository: Auth0Repository = new Auth0IDPRepositoryImpl(auth0ManagementClient)
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
 
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
