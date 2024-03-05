@@ -3,14 +3,6 @@ import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions 
 import Auth0Provider from "next-auth/providers/auth0"
 import { createNewUser, syncUserWithAuth0 as handleUserSyncLocal } from "./utils"
 
-function splitName(name: string) {
-  const [firstName, ...lastName] = name.split(" ")
-  return {
-    firstName,
-    lastName: lastName.join(" "),
-  }
-}
-
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: User
@@ -23,6 +15,8 @@ declare module "next-auth" {
     name: string
     email: string
     image?: string
+    givenName?: string
+    familyName?: string
   }
 }
 
@@ -52,6 +46,8 @@ export const getAuthOptions = ({
         name: `${profile.given_name} ${profile.family_name}`,
         email: profile.email,
         image: profile.picture ?? undefined,
+        givenName: profile.given_name,
+        familyName: profile.family_name,
       }),
     }),
   ],

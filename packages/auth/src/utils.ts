@@ -1,33 +1,25 @@
 import { type ServiceLayer } from "@dotkomonline/core"
 import { User } from "@dotkomonline/types"
 
-function splitName(name: string) {
-  const [firstName, ...lastName] = name.split(" ")
-  return {
-    firstName,
-    lastName: lastName.join(" "),
-  }
-}
-
 type JWTToken = {
   email?: string | null
   sub?: string | null
   name?: string | null
+  givenName?: string | null
+  familyName?: string | null
 }
 
 export const createNewUser = async (core: ServiceLayer, token: JWTToken) => {
-  if (!token.email || !token.sub || !token.name) {
+  if (!token.email || !token.sub || !token.name || !token.givenName || !token.familyName) {
     throw new Error("Missing user data in claims")
   }
-  const { firstName, lastName } = splitName(token.name)
-
   const userData = {
     auth0Sub: token.sub,
     studyYear: -1,
     email: token.email,
     name: token.name,
-    firstName,
-    lastName,
+    firstName: token.givenName,
+    lastName: token.familyName,
   }
 
   return core.userService.createUser(userData)
