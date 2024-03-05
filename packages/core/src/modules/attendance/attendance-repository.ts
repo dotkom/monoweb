@@ -7,18 +7,18 @@ import {
   type EventId,
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
-import { type DeleteResult, type UpdateResult } from "../../utils"
+import { type DeleteResult, type UpdateResult } from "../utils"
 
 const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj)
 
-export interface _AttendanceRepository {
+export interface AttendanceRepository {
   create(obj: Partial<AttendanceWrite>): Promise<Attendance>
   delete(id: AttendanceId): Promise<DeleteResult>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult>
 }
 
-export class _AttendanceRepositoryImpl implements _AttendanceRepository {
+export class AttendanceRepositoryImpl implements AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
   async create(obj: AttendanceWrite) {
     return mapToAttendance(await this.db.insertInto("attendance").returningAll().values(obj).executeTakeFirstOrThrow())

@@ -4,7 +4,6 @@ import {
   AttendanceSchema,
   AttendanceWriteSchema,
   AttendeeSchema,
-  EventSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -18,10 +17,10 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.attendance.isAttending(input.userId, input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.isAttending(input.userId, input.attendanceId)),
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.create(input)),
+    .mutation(async ({ input, ctx }) => ctx.attendancePoolService.create(input)),
 
   updatePool: protectedProcedure
     .input(
@@ -30,7 +29,7 @@ export const attendanceRouter = t.router({
         id: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.update(input.input, input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendancePoolService.update(input.input, input.id)),
 
   deletePool: protectedProcedure
     .input(
@@ -38,7 +37,7 @@ export const attendanceRouter = t.router({
         id: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.pool.delete(input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendancePoolService.delete(input.id)),
 
   registerForEvent: protectedProcedure
     .input(
@@ -47,9 +46,7 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.attendanceService.attendee.registerForEvent(input.userId, input.attendanceId)
-    ),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.registerForEvent(input.userId, input.attendanceId)),
 
   deregisterForEvent: protectedProcedure
     .input(
@@ -57,7 +54,7 @@ export const attendanceRouter = t.router({
         id: AttendeeSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.attendee.deregisterForEvent(input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(input.id)),
 
   registerAttendance: protectedProcedure
     .input(
@@ -66,7 +63,7 @@ export const attendanceRouter = t.router({
         attended: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.attendanceService.attendee.updateAttended(input.attended, input.id)),
+    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.attended, input.id)),
 
   addExtraChoice: protectedProcedure
     .input(
@@ -77,8 +74,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(
-      async ({ input, ctx }) =>
-        await ctx.attendanceService.attendee.updateExtraChoices(input.id, input.questionId, input.choiceId)
+      async ({ input, ctx }) => await ctx.attendeeService.updateExtraChoices(input.id, input.questionId, input.choiceId)
     ),
 
   getPoolsByAttendanceId: protectedProcedure
@@ -87,7 +83,7 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.pool.getByAttendanceId(input.id)),
+    .query(async ({ input, ctx }) => ctx.attendancePoolService.getByAttendanceId(input.id)),
 
   getAttendees: protectedProcedure
     .input(
@@ -95,7 +91,7 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.attendee.getByAttendanceId(input.id)),
+    .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.id)),
 
   getAttendance: protectedProcedure
     .input(
@@ -103,7 +99,7 @@ export const attendanceRouter = t.router({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.attendance.getById(input.id)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.getById(input.id)),
   updateAttendance: protectedProcedure
     .input(
       z.object({
@@ -111,5 +107,5 @@ export const attendanceRouter = t.router({
         attendance: AttendanceWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.attendance.update(input.attendance, input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.update(input.attendance, input.id)),
 })

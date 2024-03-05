@@ -12,13 +12,13 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import { sql, type Kysely } from "kysely"
-import { prepareJsonInsert } from "../../../utils/db-utils"
-import { type DeleteResult, type UpdateResult } from "../../utils"
+import { prepareJsonInsert } from "../../utils/db-utils"
+import { type DeleteResult, type UpdateResult } from "../utils"
 
 const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj)
 const mapToAttendeeWithUser = (obj: unknown): AttendeeDBUser => AttendeeDBUserSchema.parse(obj)
 
-export interface _AttendeeRepository {
+export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
   delete(id: AttendeeId): Promise<DeleteResult>
   getById(id: AttendeeId): Promise<Attendee | null>
@@ -28,7 +28,7 @@ export interface _AttendeeRepository {
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
-export class _AttendeeRepositoryImpl implements _AttendeeRepository {
+export class AttendeeRepositoryImpl implements AttendeeRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
   async getByUserId(userId: UserId, attendanceId: AttendanceId) {

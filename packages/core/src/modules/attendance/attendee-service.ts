@@ -8,10 +8,11 @@ import {
   type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"
-import { type UserService } from "../../user/user-service"
-import { AttendanceRepository } from "../repositories"
+import { type UserService } from "../user/user-service"
+import { AttendeeRepository } from "./attendee-repository"
+import { AttendancePoolRepository } from "./attendance-pool-repository"
 
-export interface _AttendeeService {
+export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
   registerForEvent(userId: string, poolId: string): Promise<Attendee>
   deregisterForEvent(id: AttendeeId): Promise<void>
@@ -19,27 +20,28 @@ export interface _AttendeeService {
   updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser>
 }
 
-export class _AttendeeServiceImpl implements _AttendeeService {
+export class AttendeeServiceImpl implements AttendeeService {
   constructor(
-    private readonly attendanceRepository: AttendanceRepository,
+    private readonly attendeeRepository: AttendeeRepository,
+    private readonly attendancePoolRepository: AttendancePoolRepository,
     private readonly userService: UserService
   ) {
-    this.attendanceRepository = attendanceRepository
+    this.attendeeRepository = attendeeRepository
     this.userService = userService
   }
 
   async create(obj: AttendeeWrite) {
-    return this.attendanceRepository.attendee.create(obj)
+    return this.attendeeRepository.create(obj)
   }
 
   async delete(id: AttendeeId) {
-    await this.attendanceRepository.attendee.delete(id)
+    await this.attendeeRepository.delete(id)
   }
 
   async updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser> {
-    const res = await this.attendanceRepository.attendee.update({ attended }, id)
+    const res = await this.attendeeRepository.update({ attended }, id)
     if (res.numUpdatedRows === 1) {
-      const attendee = await this.attendanceRepository.attendee.getById(id)
+      const attendee = await this.attendeeRepository.getById(id)
       if (attendee === null) {
         throw new Error("Attendee not found")
       }
@@ -60,10 +62,10 @@ export class _AttendeeServiceImpl implements _AttendeeService {
   }
 
   async updateExtraChoices(id: AttendanceId, questionId: string, choiceId: string) {
-    const res = await this.attendanceRepository.attendee.updateExtraChoices(id, questionId, choiceId)
+    const res = await this.attendeeRepository.updateExtraChoices(id, questionId, choiceId)
 
     if (res.numUpdatedRows === 1) {
-      const attendee = await this.attendanceRepository.attendee.getById(id)
+      const attendee = await this.attendeeRepository.getById(id)
       if (attendee === null) {
         throw new Error("Attendee not found, this should not happen seeing that it was just updated.")
       }
@@ -80,12 +82,12 @@ export class _AttendeeServiceImpl implements _AttendeeService {
       throw new Error("User not found")
     }
 
-    const userAlreadyRegistered = await this.attendanceRepository.attendee.getByUserId(userId, attendanceId)
+    const userAlreadyRegistered = await this.attendeeRepository.getByUserId(userId, attendanceId)
     if (userAlreadyRegistered !== null) {
       throw new Error("User is already registered")
     }
 
-    const pools = await this.attendanceRepository.pool.getByAttendanceId(attendanceId)
+    const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
     const poolWithMatchingCriteria = pools.find((pool) => {
       const year = user.studyYear
       return pool.yearCriteria.includes(year)
@@ -95,7 +97,7 @@ export class _AttendeeServiceImpl implements _AttendeeService {
       throw new Error("User does not match any pool")
     }
 
-    const attendee = await this.attendanceRepository.attendee.create({
+    const attendee = await this.attendeeRepository.create({
       attendancePoolId: poolWithMatchingCriteria.id,
       userId,
       attended: false,
@@ -105,11 +107,11 @@ export class _AttendeeServiceImpl implements _AttendeeService {
   }
 
   async deregisterForEvent(id: AttendeeId) {
-    await this.attendanceRepository.attendee.delete(id)
+    await this.attendeeRepository.delete(id)
   }
 
   async getByAttendanceId(attendanceId: string) {
-    const attendees = await this.attendanceRepository.attendee.getByAttendanceId(attendanceId)
+    const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
     const idpUsers = await this.userService.getUserBySubjectIDP(attendees.map(({ user }) => user.auth0Sub))
 
     return attendees.map((user) => {

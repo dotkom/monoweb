@@ -5,37 +5,37 @@ import {
   type AttendancePoolWrite,
   type EventId,
 } from "@dotkomonline/types"
-import { AttendanceRepository } from "../repositories"
+import { AttendancePoolRepository } from "./attendance-pool-repository"
 
-export interface _AttendancePoolService {
+export interface AttendancePoolService {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
   getByAttendanceId(id: string): Promise<AttendancePool[]>
 }
 
-export class _PoolServiceImpl implements _AttendancePoolService {
-  constructor(private readonly attendanceRepository: AttendanceRepository) {
-    this.attendanceRepository = attendanceRepository
+export class AttendancePoolServiceImpl implements AttendancePoolService {
+  constructor(private readonly attendancePoolRepository: AttendancePoolRepository) {
+    this.attendancePoolRepository = attendancePoolRepository
   }
 
   async getByAttendanceId(id: AttendanceId) {
-    return this.attendanceRepository.pool.getByAttendanceId(id)
+    return this.attendancePoolRepository.getByAttendanceId(id)
   }
 
   async create(obj: AttendancePoolWrite) {
-    const res = await this.attendanceRepository.pool.create(obj)
+    const res = await this.attendancePoolRepository.create(obj)
     return res
   }
 
   async delete(id: AttendancePoolId) {
-    await this.attendanceRepository.pool.delete(id)
+    await this.attendancePoolRepository.delete(id)
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
-    const res = await this.attendanceRepository.pool.update(obj, id)
+    const res = await this.attendancePoolRepository.update(obj, id)
     if (res.numUpdatedRows === 1) {
-      const pool = await this.attendanceRepository.pool.get(id)
+      const pool = await this.attendancePoolRepository.get(id)
       if (pool === null) {
         throw new Error("Pool not found")
       }
@@ -45,6 +45,6 @@ export class _PoolServiceImpl implements _AttendancePoolService {
   }
 
   async getPoolsByAttendanceId(attendanceId: string) {
-    return this.attendanceRepository.pool.getByAttendanceId(attendanceId) ?? null
+    return this.attendancePoolRepository.getByAttendanceId(attendanceId) ?? null
   }
 }

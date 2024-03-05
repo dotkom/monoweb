@@ -3,7 +3,7 @@ import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
 import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
-import { AttendanceService } from "../attendance/services"
+import { AttendanceService } from "../attendance/attendance-service"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -21,7 +21,7 @@ export class EventServiceImpl implements EventService {
   ) {}
 
   async addAttendance(eventId: EventId, obj: AttendanceWrite) {
-    const attendance = await this.attendanceService.attendance.create(obj)
+    const attendance = await this.attendanceService.create(obj)
     const event = this.eventRepository.addAttendance(eventId, attendance.id)
 
     return event

@@ -8,13 +8,13 @@ import {
   type EventId,
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
-import { prepareJsonInsert } from "../../../utils/db-utils"
-import { type DeleteResult, type UpdateResult } from "../../utils"
+import { prepareJsonInsert } from "../../utils/db-utils"
+import { type DeleteResult, type UpdateResult } from "../utils"
 
 const mapToPool = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
 const mapToPoolWithNumAttendees = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
 
-export interface _AttendancePoolRepository {
+export interface AttendancePoolRepository {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<DeleteResult>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
@@ -22,7 +22,7 @@ export interface _AttendancePoolRepository {
   get(id: AttendancePoolId): Promise<AttendancePool | null>
 }
 
-export class _PoolRepositoryImpl implements _AttendancePoolRepository {
+export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
   async get(id: AttendancePoolId) {

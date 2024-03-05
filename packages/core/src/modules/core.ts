@@ -58,10 +58,16 @@ import { UserRepositoryImpl, type UserRepository } from "./user/user-repository"
 import { UserServiceImpl, type UserService } from "./user/user-service"
 import { Auth0IDPRepositoryImpl, type IDPRepository } from "../lib/IDP-repository"
 import { s3RepositoryImpl, type S3Repository } from "../lib/s3/s3-repository"
-import { AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/repositories"
-import { AttendanceService, AttendanceServiceImpl } from "./attendance/services"
 import { ManagementClient } from "auth0"
 import { env } from "@dotkomonline/env"
+import { AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
+import { AttendancePoolRepository, AttendancePoolRepositoryImpl } from "./attendance/attendance-pool-repository"
+import { WaitlistAttendeRepository, WaitlistAttendeRepositoryImpl } from "./attendance/waitlist-attendee-repository"
+import { AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
+import { AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
+import { AttendancePoolService, AttendancePoolServiceImpl } from "./attendance/attendance-pool-service"
+import { WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
+import { AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -82,8 +88,14 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const committeeOrganizerRepository: EventCommitteeRepository = new EventCommitteeRepositoryImpl(db)
-  const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
+
   const userRepository: UserRepository = new UserRepositoryImpl(db)
+
+  const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
+  const attendancePoolRepository: AttendancePoolRepository = new AttendancePoolRepositoryImpl(db)
+  const waitlistAttendeRepository: WaitlistAttendeRepository = new WaitlistAttendeRepositoryImpl(db)
+  const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
+
   const productRepository: ProductRepository = new ProductRepositoryImpl(db)
   const paymentRepository: PaymentRepository = new PaymentRepositoryImpl(db)
   const productPaymentProviderRepository: ProductPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(
@@ -113,13 +125,23 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     notificationPermissionsRepository,
     auth0Repository
   )
+
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
-  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, userService)
+  // const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, userService)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(
     jobListingRepository,
     jobListingLocationRepository,
     jobListingLocationLinkRepository
+  )
+
+  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, attendeeRepository)
+  const attendancePoolService: AttendancePoolService = new AttendancePoolServiceImpl(attendancePoolRepository)
+  const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(waitlistAttendeRepository)
+  const attendeeService: AttendeeService = new AttendeeServiceImpl(
+    attendeeRepository,
+    attendancePoolRepository,
+    userService
   )
 
   const eventService: EventService = new EventServiceImpl(eventRepository, attendanceService)
@@ -156,7 +178,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     eventService,
     committeeService,
     companyService,
-    attendanceService,
     companyEventService,
     eventCompanyService,
     productService,
@@ -169,5 +190,9 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
+    attendanceService,
+    attendancePoolService,
+    waitlistAttendeService,
+    attendeeService,
   }
 }
