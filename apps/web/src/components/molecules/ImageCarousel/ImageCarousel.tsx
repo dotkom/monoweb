@@ -5,7 +5,7 @@ interface ImageCarouselProps {
   images: string[]
   pdfs: string[]
 }
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   // const imagesPerSlide = 5
   // const totalSlides = Math.ceil(images.length / imagesPerSlide)
   const [currentPos, setCurrentPos] = useState(0)
@@ -20,7 +20,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
   const imgNum = 10
   const imgNumOnLastPage = imgNum % fullImgPerSlide
   const slideNum = Math.ceil(imgNum / fullImgPerSlide)
-  const totalImgWidth = (imgWidth + imgMarginR) * imgNum
+  // const totalImgWidth = (imgWidth + imgMarginR) * imgNum
 
   const mapRightImage = (lastPageNum: number) => {
     const mapping = [3, 0, 1, 2]
@@ -28,14 +28,19 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
   }
 
   const handleLeftButtonClick = () => {
-    setCurrentPos((prev) => (prev < fourImgWidth ? 0 : prev - fourImgWidth))
+    // setCurrentPos((prev) => (prev < fourImgWidth ? 0 : prev - fourImgWidth))
+    if (currentSlide > 1) {
+      setCurrentSlide((prev) => prev - 1)
+      setCurrentPos((prev) => prev - fourImgWidth)
+    } else {
+      setCurrentPos(0)
+    }
   }
 
   const handleRightButtonClick = () => {
     if (currentSlide < slideNum - 1) {
-      setCurrentPos((prev) => prev + fourImgWidth)
       setCurrentSlide((prev) => prev + 1)
-      console.log(".")
+      setCurrentPos((prev) => prev + fourImgWidth)
     } else {
       setCurrentSlide((prev) => prev + 1)
       setCurrentPos((prev) => prev + imgWMargin * mapRightImage(imgNumOnLastPage) + 150)
@@ -62,7 +67,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
   // renderImages.push(images[1])
   // renderImages.push(images[2])
 
-  // const visibleImages = images.slice(startIndex, startIndex + 5)
   return (
     <div>
       <p>OFFLINE</p>
@@ -78,11 +82,11 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             width="44"
             height="44"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke={isHoveredLeft ? "gray" : "lightgray"}
             fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M5 12l14 0" />
@@ -95,7 +99,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             className="flex w-[960px] transition-transform duration-500"
             style={{ transform: `translateX(-${currentPos}px)`, transitionDuration: "1s" }}
           >
-            {renderImages.map((image, index) => (
+            {images.map((image, index) => (
               <img key={index} src={image} alt="Offline" className={`mr-4 w-56 flex-shrink-0`} />
             ))}
           </div>
@@ -111,11 +115,11 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             width="44"
             height="44"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke={isHoveredRight ? "gray" : "lightgray"}
             fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M5 12l14 0" />
