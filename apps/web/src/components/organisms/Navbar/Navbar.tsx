@@ -46,8 +46,8 @@ const links: MenuLink[] = [
 ]
 
 export const Navbar = () => (
-  <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
-    <div className="border-blue-12/20 flex h-16 border-b">
+  <header className="w-full">
+    <div className="border-blue-12/20 flex h-16 border-b px-10">
       <MobileNavigation links={links} />
       <Link href="/" className="flex items-center">
         <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
