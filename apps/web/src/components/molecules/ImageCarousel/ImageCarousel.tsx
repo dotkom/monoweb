@@ -5,22 +5,16 @@ interface ImageCarouselProps {
   images: string[]
   pdfs: string[]
 }
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
-  // const imagesPerSlide = 5
-  // const totalSlides = Math.ceil(images.length / imagesPerSlide)
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
   const [currentPos, setCurrentPos] = useState(0)
   const [currentSlide, setCurrentSlide] = useState(1)
   const [isHoveredRight, setIsHoveredRight] = useState(false)
   const [isHoveredLeft, setIsHoveredLeft] = useState(false)
   const imgWidth = 196
-  const imgMarginR = 14
-  const imgWMargin = imgWidth + imgMarginR
-  const fullImgPerSlide = 4
-  const fourImgWidth = imgWMargin * fullImgPerSlide
-  const imgNum = 10
-  const imgNumOnLastPage = imgNum % fullImgPerSlide
-  const slideNum = Math.ceil(imgNum / fullImgPerSlide)
-  // const totalImgWidth = (imgWidth + imgMarginR) * imgNum
+  const imgWMargin = imgWidth + 14
+  const fourImgWidth = imgWMargin * 4
+  const imgNum = images.length
+  const slideNum = Math.ceil(imgNum / 4)
 
   const mapRightImage = (lastPageNum: number) => {
     const mapping = [3, 0, 1, 2]
@@ -28,7 +22,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   }
 
   const handleLeftButtonClick = () => {
-    // setCurrentPos((prev) => (prev < fourImgWidth ? 0 : prev - fourImgWidth))
     if (currentSlide > 1) {
       setCurrentSlide((prev) => prev - 1)
       setCurrentPos((prev) => prev - fourImgWidth)
@@ -41,10 +34,10 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     if (currentSlide < slideNum - 1) {
       setCurrentSlide((prev) => prev + 1)
       setCurrentPos((prev) => prev + fourImgWidth)
-    } else {
+    } else if (currentSlide < slideNum) {
       setCurrentSlide((prev) => prev + 1)
-      setCurrentPos((prev) => prev + imgWMargin * mapRightImage(imgNumOnLastPage) + 150)
-    }
+      setCurrentPos(imgWMargin * imgNum - fourImgWidth - 46)
+    } 
   }
 
   let renderImages = []
@@ -60,12 +53,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
   renderImages.push(images[2])
   renderImages.push(images[3])
-  // renderImages.push(images[4])
-  // renderImages.push(images[5])
-
-  // renderImages.push(images[0])
-  // renderImages.push(images[1])
-  // renderImages.push(images[2])
 
   return (
     <div>
@@ -78,7 +65,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="icon icon-tabler icon-tabler-arrow-narrow-left h-12 w-12 duration-300 hover:scale-110"
+            className="icon icon-tabler icon-tabler-arrow-narrow-left h-14 w-14 duration-300 hover:scale-110"
             width="44"
             height="44"
             viewBox="0 0 24 24"
@@ -94,16 +81,20 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             <path d="M9 8l-4 4" />
           </svg>
         </button>
+
         <div className="relative overflow-hidden">
           <div
             className="flex w-[960px] transition-transform duration-500"
             style={{ transform: `translateX(-${currentPos}px)`, transitionDuration: "1s" }}
           >
             {images.map((image, index) => (
-              <img key={index} src={image} alt="Offline" className={`mr-4 w-56 flex-shrink-0`} />
+              <a key={index} href={pdfs[index]} className="mr-4 w-56 flex-shrink-0 hover:scale-105">
+                <img src={image} alt="Offline" className="block w-full"/>
+              </a>
             ))}
           </div>
         </div>
+
         <button
           onMouseEnter={() => setIsHoveredRight(true)}
           onMouseLeave={() => setIsHoveredRight(false)}
