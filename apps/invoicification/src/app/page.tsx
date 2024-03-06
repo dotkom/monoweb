@@ -7,6 +7,7 @@ import { DeliveryMethod, formSchema, FormSchema, InvoiceRelation } from "./form-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react"
 import { Form } from "./form"
+import { useSubmitMutation } from "./mutation"
 
 export default function Page() {
   const form = useForm<FormSchema>({
@@ -17,11 +18,9 @@ export default function Page() {
       preferredDueDateLength: 14,
     },
   })
-  const dispatch = {
-    isLoading: false,
-  }
+  const dispatch = useSubmitMutation()
   const onSubmit = (data: FormSchema) => {
-    console.log(data)
+    dispatch.mutate(data)
     form.reset()
   }
 

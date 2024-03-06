@@ -25,7 +25,7 @@ export const formSchema = z.object({
   invoiceRelation: z.nativeEnum(InvoiceRelation),
   preferredDeliveryMethod: z.nativeEnum(DeliveryMethod),
   preferredPurchaseOrderNumber: z.coerce.number().nullish().default(null),
-  preferredDueDateLength: z.number().int().min(1).max(90).default(14),
+  preferredDueDateLength: z.coerce.number().int().min(1).max(90).default(14),
   comment: z.string().default("Ingen kommentar"),
 })
 
