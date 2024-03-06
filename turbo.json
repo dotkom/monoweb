@@ -25,7 +25,7 @@
     "lint": {
       "outputs": []
     },
-    "lint:fix": {
+    "lint-check": {
       "outputs": []
     },
     "dev": {
@@ -47,12 +47,12 @@
   "globalEnv": [
     "S3_BUCKET_MONOWEB",
     "NODE_ENV",
-    "WEB_COGNITO_CLIENT_ID",
-    "WEB_COGNITO_CLIENT_SECRET",
-    "WEB_COGNITO_ISSUER",
-    "DASHBOARD_COGNITO_CLIENT_ID",
-    "DASHBOARD_COGNITO_CLIENT_SECRET",
-    "DASHBOARD_COGNITO_ISSUER",
+    "WEB_AUTH0_CLIENT_ID",
+    "WEB_AUTH0_CLIENT_SECRET",
+    "WEB_AUTH0_ISSUER",
+    "DASHBOARD_AUTH0_CLIENT_ID",
+    "DASHBOARD_AUTH0_CLIENT_SECRET",
+    "DASHBOARD_AUTH0_ISSUER",
     "NEXTAUTH_SECRET",
     "DATABASE_URL",
     "VERCEL_URL",

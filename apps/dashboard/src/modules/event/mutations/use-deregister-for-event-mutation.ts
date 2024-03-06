@@ -14,7 +14,7 @@ export const useDeregisterForEventMutation = () => {
     onSuccess: () => {
       notification.complete({
         title: "Avmelding vellykket",
-        message: `Bruker ble meldt av arrangementet.`,
+        message: "Bruker ble meldt av arrangementet.",
       })
     },
     onError: (err) => {

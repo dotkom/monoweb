@@ -10,7 +10,7 @@ export const seed = async () => {
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
-        cognitoSub: (eb) => eb.ref("excluded.cognitoSub"),
+        auth0Sub: (eb) => eb.ref("excluded.auth0Sub"),
       })
     )
     .execute()

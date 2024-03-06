@@ -32,15 +32,15 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     return personalMarks
   }
 
-  async getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]> {
-    const personalMarks = await this.personalMarkRepository.getByMarkId(markId)
+  async getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getByMarkId(markId, take, cursor)
     return personalMarks
   }
 
   async addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
     const personalMark = await this.personalMarkRepository.addToUserId(userId, markId)
     if (!personalMark) {
-      throw new NotFoundError(`PersonalMark could not be created`)
+      throw new NotFoundError("PersonalMark could not be created")
     }
     return personalMark
   }
@@ -48,7 +48,7 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   async removePersonalMarkFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
     const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId)
     if (!personalMark) {
-      throw new NotFoundError(`PersonalMark could not be removed`)
+      throw new NotFoundError("PersonalMark could not be removed")
     }
     return personalMark
   }

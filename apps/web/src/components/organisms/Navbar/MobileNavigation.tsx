@@ -41,7 +41,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                   )}
                 </NavigationMenuItem>
               ))}
-              <NavigationMenuItem></NavigationMenuItem>
+              <NavigationMenuItem />
             </NavigationMenuList>
           </NavigationMenu>
         </Popover.Content>

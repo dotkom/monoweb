@@ -1,205 +1,133 @@
+import { type DB } from "@dotkomonline/db/src/db.generated"
 import { db } from "./db"
-import { attendances } from "./fixtures/attendance"
-import { attendees } from "./fixtures/attendee"
-import { committees } from "./fixtures/committee"
-import { eventCommittees } from "./fixtures/committee-organizer"
-import { companies } from "./fixtures/company"
-import { events } from "./fixtures/event"
-import { eventCompany } from "./fixtures/event-company"
-import { jobListingLocationLinks, jobListingLocations, jobListings } from "./fixtures/job-listing"
-import { marks } from "./fixtures/mark"
-import { offlines } from "./fixtures/offline"
-import { personalMarks } from "./fixtures/personal-mark"
-import { products } from "./fixtures/product"
-import { productPaymentProviders } from "./fixtures/product-payment-provider"
-import { users } from "./fixtures/user"
+import { getAttendanceFixtures } from "./fixtures/attendance"
+import { getAttendeeFixtures } from "./fixtures/attendee"
+import { getCommitteeFixtures } from "./fixtures/committee"
+import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
+import { getCompanyFixtures } from "./fixtures/company"
+import { getEventFixtures } from "./fixtures/event"
+import {
+  getJobListingFixtures,
+  getJobListingLocationFixtures,
+  getJobListingLocationLinkFixtures,
+} from "./fixtures/job-listing"
+import { getMarkFixtures } from "./fixtures/mark"
+import { getOfflineFixtures } from "./fixtures/offline"
+import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
+import { getProductFixtures } from "./fixtures/product"
+import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
+import { getUserFixtures } from "./fixtures/user"
+
+interface WithIdentifier {
+  id: string
+}
+
+export type InsertedIds = {
+  [K in keyof DB]: string[]
+}
+
+const mapId = (results: WithIdentifier[]) => results.map((res) => res.id)
 
 export const runFixtures = async () => {
-  await db
+  const insertedIds = {} as InsertedIds
+
+  insertedIds.owUser = await db //
     .insertInto("owUser")
-    .values(users)
+    .values(getUserFixtures())
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
+  insertedIds.company = await db
     .insertInto("company")
-    .values(companies)
+    .values(getCompanyFixtures())
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        name: (eb) => eb.ref("excluded.name"),
-        description: (eb) => eb.ref("excluded.description"),
-        phone: (eb) => eb.ref("excluded.phone"),
-        email: (eb) => eb.ref("excluded.email"),
-        website: (eb) => eb.ref("excluded.website"),
-        location: (eb) => eb.ref("excluded.location"),
-        type: (eb) => eb.ref("excluded.type"),
-        image: (eb) => eb.ref("excluded.image"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
+  insertedIds.committee = await db
     .insertInto("committee")
-    .values(committees)
+    .values(getCommitteeFixtures())
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        name: (eb) => eb.ref("excluded.name"),
-        description: (eb) => eb.ref("excluded.description"),
-        email: (eb) => eb.ref("excluded.email"),
-        image: (eb) => eb.ref("excluded.image"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
+  insertedIds.event = await db //
     .insertInto("event")
-    .values(events)
+    .values(getEventFixtures())
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        title: (eb) => eb.ref("excluded.title"),
-        start: (eb) => eb.ref("excluded.start"),
-        end: (eb) => eb.ref("excluded.end"),
-        status: (eb) => eb.ref("excluded.status"),
-        type: (eb) => eb.ref("excluded.type"),
-        public: (eb) => eb.ref("excluded.public"),
-        description: (eb) => eb.ref("excluded.description"),
-        subtitle: (eb) => eb.ref("excluded.subtitle"),
-        imageUrl: (eb) => eb.ref("excluded.imageUrl"),
-        location: (eb) => eb.ref("excluded.location"),
-        waitlist: (eb) => eb.ref("excluded.waitlist"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
-    .insertInto("eventCompany")
-    .values(eventCompany)
-    .onConflict((oc) => oc.columns(["eventId", "companyId"]).doNothing())
-    .execute()
-
-  await db
+  insertedIds.attendance = await db
     .insertInto("attendance")
-    .values(attendances)
+    .values(getAttendanceFixtures(insertedIds.event))
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        start: (eb) => eb.ref("excluded.start"),
-        end: (eb) => eb.ref("excluded.end"),
-        deregisterDeadline: (eb) => eb.ref("excluded.deregisterDeadline"),
-        limit: (eb) => eb.ref("excluded.limit"),
-        eventId: (eb) => eb.ref("excluded.eventId"),
-        min: (eb) => eb.ref("excluded.min"),
-        max: (eb) => eb.ref("excluded.max"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
+  insertedIds.attendee = await db
     .insertInto("attendee")
-    .values(attendees)
+    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        userId: (eb) => eb.ref("excluded.userId"),
-        attendanceId: (eb) => eb.ref("excluded.attendanceId"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
+  insertedIds.mark = await db //
     .insertInto("mark")
-    .values(marks)
+    .values(getMarkFixtures())
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        title: (eb) => eb.ref("excluded.title"),
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        category: (eb) => eb.ref("excluded.category"),
-        details: (eb) => eb.ref("excluded.details"),
-        duration: (eb) => eb.ref("excluded.duration"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
-    .insertInto("personalMark")
-    .values(personalMarks)
-    .onConflict((oc) => oc.columns(["userId", "markId"]).doNothing())
-    .execute()
-
-  await db
+  insertedIds.product = await db
     .insertInto("product")
-    .values(products)
+    .values(getProductFixtures())
     .returning("id")
-    .onConflict((oc) =>
-      oc.column("id").doUpdateSet({
-        createdAt: (eb) => eb.ref("excluded.createdAt"),
-        updatedAt: (eb) => eb.ref("excluded.updatedAt"),
-        type: (eb) => eb.ref("excluded.type"),
-        objectId: (eb) => eb.ref("excluded.objectId"),
-        amount: (eb) => eb.ref("excluded.amount"),
-        deletedAt: (eb) => eb.ref("excluded.deletedAt"),
-        isRefundable: (eb) => eb.ref("excluded.isRefundable"),
-        refundRequiresApproval: (eb) => eb.ref("excluded.refundRequiresApproval"),
-      })
-    )
     .execute()
+    .then(mapId)
 
-  await db
-    .insertInto("productPaymentProvider")
-    .values(productPaymentProviders)
-    .onConflict((oc) => oc.columns(["productId", "paymentProviderId"]).doNothing())
+  insertedIds.jobListing = await db
+    .insertInto("jobListing")
+    .values(getJobListingFixtures(insertedIds.company))
+    .returning("id")
     .execute()
+    .then(mapId)
 
+  insertedIds.jobListingLocation = await db
+    .insertInto("jobListingLocation")
+    .values(getJobListingLocationFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.jobListingLocationLink = await db
+    .insertInto("jobListingLocationLink")
+    .values(getJobListingLocationLinkFixtures(insertedIds.jobListing, insertedIds.jobListingLocation))
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.offline = await db
+    .insertInto("offline")
+    .values(getOfflineFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  // Tables with keys that are not used in other tables
   await db
     .insertInto("eventCommittee")
-    .values(eventCommittees)
-    .returning("committeeId")
-    .onConflict((oc) => oc.columns(["committeeId", "eventId"]).doNothing())
+    .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
     .execute()
 
-  await db
-    .insertInto("jobListing")
-    .values(jobListings)
-    .returning("id")
-    .onConflict((oc) => oc.column("id").doNothing())
+  await db //
+    .insertInto("productPaymentProvider")
+    .values(getProductPaymentProviderFixtures(insertedIds.product))
     .execute()
 
-  await db
-    .insertInto("jobListingLocation")
-    .values(jobListingLocations)
-    .returning(["id", "name"])
-    .onConflict((oc) => oc.column("id").doNothing())
-    .execute()
-
-  await db
-    .insertInto("jobListingLocationLink")
-    .values(jobListingLocationLinks)
-    .returning("id")
-    .onConflict((oc) => oc.column("id").doNothing())
-    .execute()
-
-  await db
-    .insertInto("offline")
-    .values(offlines)
-    .returning("id")
-    .onConflict((oc) => oc.column("id").doNothing())
+  await db //
+    .insertInto("personalMark")
+    .values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser))
     .execute()
 }

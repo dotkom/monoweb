@@ -39,14 +39,14 @@ export const ProfileMenu = () => {
         <Button
           variant="subtle"
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-          onClick={async () => signIn("cognito")}
+          onClick={async () => signIn("auth0")}
         >
           Log in
         </Button>
         <Button
           variant="gradient"
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          onClick={async () => signIn("cognito")}
+          onClick={async () => signIn("auth0")}
         >
           Sign up
         </Button>
@@ -55,7 +55,7 @@ export const ProfileMenu = () => {
   }
 
   return (
-    <button>
+    <button type="button">
       <AvatarDropdown>
         <Avatar>
           <AvatarImage
@@ -69,13 +69,13 @@ export const ProfileMenu = () => {
   )
 }
 
-interface Link {
+interface LinkDetail {
   label: string
   icon: string
   shortcut?: string
   href?: string
 }
-const linkGroups: Link[][] = [
+const linkGroups: LinkDetail[][] = [
   [
     {
       icon: "tabler:user",

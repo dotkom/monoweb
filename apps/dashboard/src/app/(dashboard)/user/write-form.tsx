@@ -2,7 +2,7 @@ import { type UserWrite, UserWriteSchema, studyYearOptions } from "@dotkomonline
 import { createIntegerSelectInput, createTextInput, useFormBuilder } from "../../form"
 
 const USER_FORM_DEFAULT_VALUES: Partial<UserWrite> = {
-  cognitoSub: undefined,
+  auth0Sub: undefined,
 }
 
 interface UseUserWriteFormProps {
@@ -22,8 +22,8 @@ export const useUserWriteForm = ({
     onSubmit,
     label,
     fields: {
-      cognitoSub: createTextInput({
-        label: "Cognito Bruker-ID",
+      auth0Sub: createTextInput({
+        label: "Auth0 Bruker-ID",
         placeholder: "00000000-0000-0000-0000-000000000000",
         withAsterisk: true,
       }),
