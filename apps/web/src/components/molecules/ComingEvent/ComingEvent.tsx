@@ -1,41 +1,24 @@
-import { Badge } from "@dotkomonline/ui"
-import Image from "next/image"
-import React from "react"
+import { Badge } from "@dotkomonline/ui";
+import Image from "next/image";
+import React from "react";
 
-interface ComingEventProps {
-  img: string
-  title: string
-  tag: string
-  attending: number
-  max_attending: number
-  date: string
-  info_link: string
-}
+export const ComingEvent = () => {
+  return (
+    <div className="rounded-2xl overflow-hidden w-full h-[88px] bg-[#031024] flex items-center justify-center flex-row">
+      <div className="w-1/2 h-full">
+        <img
+          src="https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2F3d71d8a0-4376-4c6e-bcbe-4cbee0af42ed.png&w=1200&q=75"
+          alt="online"
+          className="object-cover object-center h-full w-full"
+        />
+      </div>
 
-// TODO: mye relative og absolute her.... too bad!
-export const ComingEvent: React.FC<ComingEventProps> = (props) => (
-  <div className="relative h-[100px] max-w-[400px] overflow-hidden rounded-xl shadow-md">
-    <div className="m-0 inline-block align-top">
-      <Image src={props.img} alt={props.title} width={100} height={100} className="object-cover" />
-    </div>
-    <div className="m-0 inline-block p-2 align-top">
-      <span>
-        <span>{/* PLACEHOLDER */}</span>
+      <div className="flex flex-col justify-center ml-4">
+        <h3 className="m-0 text-white">KiD - Velkommen til arbeidslivet</h3>
         <div>
-          <p className="m-0">{props.title}</p>
-          <p className="m-0">{props.date}</p>
-          <p className="m-0">
-            {props.attending}/{props.max_attending}
-          </p>
+          <p className="text-white">50/50</p>
         </div>
-      </span>
+      </div>
     </div>
-
-    <Badge color="green" variant="solid" className="absolute right-3 top-3">
-      {props.tag}
-    </Badge>
-    <a href={props.info_link}>
-      <p className="absolute bottom-3 right-3 m-0">Info</p>
-    </a>
-  </div>
-)
+  );
+};
