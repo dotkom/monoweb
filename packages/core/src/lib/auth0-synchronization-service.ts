@@ -2,6 +2,7 @@ import { User, UserWrite } from "@dotkomonline/types"
 import { UserService } from "../modules/user/user-service"
 import { Auth0Repository } from "./auth0-repository"
 
+// Id token returned from Auth0. We don't want core to depend on next-auth, so we duplicate the type here.
 type JWTToken = {
   email?: string | null
   sub?: string | null
