@@ -16,18 +16,14 @@ type JWTToken = {
  */
 export interface Auth0SynchronizationService {
   /**
-   * Creates a new user in the local database using the provided JWT token.
+   * If no record of the user exists in the local database, save it to the database.
    */
-  createNewUser: (token: JWTToken) => Promise<User>
+  createUser: (token: JWTToken) => Promise<User>
 
   /**
-   * Synchronizes the provided user with data from Auth0. Only updates user if the user's updatedAt field is more than 1 day ago.
+   * Synchronize record of user in database with user data from Auth0.
    */
-  handleSyncUserWithAuth0: (user: User) => Promise<User | undefined>
-}
-export interface Auth0SynchronizationService {
-  createNewUser: (token: JWTToken) => Promise<User>
-  handleSyncUserWithAuth0: (user: User) => Promise<User | undefined>
+  synchronizeUser: (user: User) => Promise<User | undefined>
 }
 
 export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationService {
@@ -36,7 +32,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     private readonly auth0Repository: Auth0Repository
   ) {}
 
-  async createNewUser(token: JWTToken) {
+  async createUser(token: JWTToken) {
     if (!token.email || !token.sub || !token.name || !token.givenName || !token.familyName) {
       throw new Error("Missing user data in claims")
     }
@@ -54,7 +50,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   }
 
   // if user.updatedAt is more than 1 day ago, update user
-  async handleSyncUserWithAuth0(user: User) {
+  async synchronizeUser(user: User) {
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
     if (!user.lastSyncedAt || user.lastSyncedAt < oneDayAgo) {

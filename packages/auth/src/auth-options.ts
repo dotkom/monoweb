@@ -78,14 +78,14 @@ export const getAuthOptions = ({
 
         if (user === undefined) {
           // const newUser = await createNewUser(core, token)
-          const newUser = await core.auth0SynchronizationService.createNewUser(token)
+          const newUser = await core.auth0SynchronizationService.createUser(token)
 
           session.user.id = newUser.id
           session.sub = token.sub
           return session
         }
 
-        await core.auth0SynchronizationService.handleSyncUserWithAuth0(user)
+        await core.auth0SynchronizationService.synchronizeUser(user)
 
         session.user.id = user.id
         session.sub = token.sub
