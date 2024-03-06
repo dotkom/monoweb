@@ -1,25 +1,8 @@
 import React, { FC, useEffect } from "react"
-import { Controller, useFormContext } from "react-hook-form"
+import { useFormContext } from "react-hook-form"
 import { DeliveryMethod, FormSchema, InvoiceRelation } from "./form-schema"
 import { Section } from "../components/section"
-import {
-  Label,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectIcon,
-  SelectItem,
-  SelectLabel,
-  SelectPortal,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectTrigger,
-  SelectValue,
-  SelectViewport,
-  Textarea,
-  TextInput,
-  Title,
-} from "@dotkomonline/ui"
+import { Label, Textarea, TextInput, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
 import { CustomErrorMessage } from "./custom-error-message"
 import { useOrganization } from "./use-organization"
@@ -41,6 +24,9 @@ export const Form: FC = () => {
   const organizationNumber = watch("organizationNumber")
 
   useEffect(() => {
+    if (organizationNumber?.length !== 9) {
+      return
+    }
     brreg.mutate(organizationNumber)
   }, [organizationNumber, brreg.mutate])
 
@@ -97,11 +83,12 @@ export const Form: FC = () => {
               name="invoiceRelation"
               placeholder="Velg anledning"
               options={Object.entries(InvoiceRelation).map(([key, value]) => ({
-                value: key,
+                value,
                 label: value,
               }))}
             />
           </div>
+          <ErrorMessage name="invoiceRelation" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
 
         <legend>
@@ -116,21 +103,24 @@ export const Form: FC = () => {
               name="preferredDeliveryMethod"
               placeholder="Velg leveringsmetode"
               options={Object.entries(DeliveryMethod).map(([key, value]) => ({
-                value: key,
+                value,
                 label: value,
               }))}
             />
           </div>
+          <ErrorMessage name="preferredDeliveryMethod" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
 
         <Label>
           Ønsker PO-nummer
           <TextInput placeholder="Ingen preferanse" {...register("preferredPurchaseOrderNumber")} />
+          <ErrorMessage name="preferredPurchaseOrderNumber" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
 
         <Label>
           Ønsker spesiell antall dager til forfallsdato
           <TextInput type="number" placeholder="Ingen preferanse" {...register("preferredDueDateLength")} />
+          <ErrorMessage name="preferredDueDateLength" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
 
         <legend>
@@ -139,6 +129,7 @@ export const Form: FC = () => {
         <Label>
           Ekstra informasjon, spørsmål eller kommentarer
           <Textarea {...register("comment")} />
+          <ErrorMessage name="comment" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
       </Section>
     </>

@@ -10,21 +10,26 @@ import {
   SelectValue,
   SelectViewport,
 } from "@dotkomonline/ui"
-import { Control, Controller, FieldValue } from "react-hook-form"
-import React, { ComponentPropsWithoutRef, FC } from "react"
+import { Control, Controller, FieldValue, FieldValues } from "react-hook-form"
+import React, { ComponentPropsWithoutRef } from "react"
 
-export type ControlledSelectProps = {
-  control: Control
-  name: FieldValue
+export type ControlledSelectProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>
+  name: FieldValue<TFieldValues>
   placeholder: string
-  options: ComponentPropsWithoutRef<SelectItem>[]
+  options: ComponentPropsWithoutRef<typeof SelectItem>[]
 }
 
-export const ControlledSelect: FC<ControlledSelectProps> = ({ control, name, placeholder, options }) => {
+export function ControlledSelect<TFieldValues extends FieldValues>({
+  control,
+  name,
+  placeholder,
+  options,
+}: ControlledSelectProps<TFieldValues>) {
   return (
     <Controller
       render={({ field }) => (
-        <Select defaultValue={field.value} onValueChange={field.onChange}>
+        <Select value={field.value} onValueChange={field.onChange}>
           <SelectTrigger>
             <SelectValue placeholder={placeholder} />
             <SelectIcon />

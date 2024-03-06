@@ -3,7 +3,7 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { Section } from "../components/section"
 import { FormProvider, useForm } from "react-hook-form"
-import { DeliveryMethod, formSchema, FormSchema } from "./form-schema"
+import { DeliveryMethod, formSchema, FormSchema, InvoiceRelation } from "./form-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react"
 import { Form } from "./form"
@@ -13,6 +13,7 @@ export default function Page() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       preferredDeliveryMethod: DeliveryMethod.EHF,
+      invoiceRelation: InvoiceRelation.EXCURSION_PARTICIPATION,
       preferredDueDateLength: 14,
     },
   })
@@ -42,17 +43,19 @@ export default function Page() {
         </Text>
       </Section>
       <FormProvider {...form}>
-        <Form />
+        <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>
+          <Form />
 
-        <Button type="submit" disabled={dispatch.isLoading}>
-          {dispatch.isLoading ? (
-            <>
-              <Icon className="animate-spin" icon="tabler:loader-2" />
-            </>
-          ) : (
-            "Send inn fakturainformasjon"
-          )}
-        </Button>
+          <Button type="submit" disabled={dispatch.isLoading}>
+            {dispatch.isLoading ? (
+              <>
+                <Icon className="animate-spin" icon="tabler:loader-2" />
+              </>
+            ) : (
+              "Send inn fakturainformasjon"
+            )}
+          </Button>
+        </Section>
       </FormProvider>
     </main>
   )
