@@ -12,7 +12,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      // {auth.status === "unauthenticated" && <OnlineCompanySplash />}
+      {/* auth.status === "unauthenticated" && <OnlineCompanySplash /> */}
 
       <div className="grid grid-cols-2 gap-4 p-10 sm:grid-cols-3 md:grid-cols-5">
         <LargeEventTile className="hidden md:block" />
