@@ -1,5 +1,4 @@
 import { useState } from "react"
-// import { trpc } from "@/utils/trpc"
 
 interface ImageCarouselProps {
   images: string[]
@@ -7,52 +6,23 @@ interface ImageCarouselProps {
 }
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
   const [currentPos, setCurrentPos] = useState(0)
-  const [currentSlide, setCurrentSlide] = useState(1)
   const [isHoveredRight, setIsHoveredRight] = useState(false)
   const [isHoveredLeft, setIsHoveredLeft] = useState(false)
-  const imgWidth = 196
-  const imgWMargin = imgWidth + 14
-  const fourImgWidth = imgWMargin * 4
-  const imgNum = images.length
-  const slideNum = Math.ceil(imgNum / 4)
 
-  const mapRightImage = (lastPageNum: number) => {
-    const mapping = [3, 0, 1, 2]
-    return mapping[lastPageNum]
-  }
+  const imgWidth = 196
+  const imgMargin = 14
+  const imgWMargin = imgWidth + imgMargin
+  const imagesPerSlide = 4
+  const totalWidth = imgWMargin * images.length
+  const slideNum = Math.ceil(images.length / imagesPerSlide)
 
   const handleLeftButtonClick = () => {
-    if (currentSlide > 1) {
-      setCurrentSlide((prev) => prev - 1)
-      setCurrentPos((prev) => prev - fourImgWidth)
-    } else {
-      setCurrentPos(0)
-    }
+    setCurrentPos((prev) => Math.max(prev - imgWMargin * imagesPerSlide, 0))
   }
 
   const handleRightButtonClick = () => {
-    if (currentSlide < slideNum - 1) {
-      setCurrentSlide((prev) => prev + 1)
-      setCurrentPos((prev) => prev + fourImgWidth)
-    } else if (currentSlide < slideNum) {
-      setCurrentSlide((prev) => prev + 1)
-      setCurrentPos(imgWMargin * imgNum - fourImgWidth - 46)
-    } 
+    setCurrentPos((prev) => Math.min(prev + imgWMargin * imagesPerSlide, totalWidth - imgWMargin * imagesPerSlide - 46))
   }
-
-  let renderImages = []
-  renderImages.push(images[0])
-  renderImages.push(images[1])
-  renderImages.push(images[2])
-  renderImages.push(images[3])
-
-  renderImages.push(images[4])
-  renderImages.push(images[5])
-  renderImages.push(images[0])
-  renderImages.push(images[1])
-
-  renderImages.push(images[2])
-  renderImages.push(images[3])
 
   return (
     <div>
@@ -62,6 +32,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
           onMouseEnter={() => setIsHoveredLeft(true)}
           onMouseLeave={() => setIsHoveredLeft(false)}
           onClick={handleLeftButtonClick}
+          type="button"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +46,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
+            <title>Left arrow</title>
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M5 12l14 0" />
             <path d="M9 16l-4 -4" />
@@ -88,8 +60,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             style={{ transform: `translateX(-${currentPos}px)`, transitionDuration: "1s" }}
           >
             {images.map((image, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: pictures don't change
               <a key={index} href={pdfs[index]} className="mr-4 w-56 flex-shrink-0 hover:scale-105">
-                <img src={image} alt="Offline" className="block w-full"/>
+                <img src={image} alt="Offline" className="block w-full" />
               </a>
             ))}
           </div>
@@ -99,6 +72,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
           onMouseEnter={() => setIsHoveredRight(true)}
           onMouseLeave={() => setIsHoveredRight(false)}
           onClick={handleRightButtonClick}
+          type="button"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -110,6 +84,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, pdfs }) => {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
+            <title>Right arrow</title>
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M5 12l14 0" />
             <path d="M15 16l4 -4" />

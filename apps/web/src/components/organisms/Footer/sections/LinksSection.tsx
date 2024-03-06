@@ -27,4 +27,4 @@ const section = cva("my-8 flex flex-col justify-center gap-8 sm:flex-row", {
       false: "sm:mt-0",
     },
   },
-})  
+})
