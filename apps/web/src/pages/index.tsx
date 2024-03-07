@@ -1,8 +1,8 @@
 import React from "react"
-import { useSession } from "next-auth/react"
+import { useSession as _useSession } from "next-auth/react"
 import { trpc } from "@/utils/trpc"
 
-export const useSessionWithDBUser = (): {
+export const useSession = (): {
   isLoading: boolean
   user: {
     id: string
@@ -12,7 +12,7 @@ export const useSessionWithDBUser = (): {
     studyYear: number
   }
 } => {
-  const { data: session, status } = useSession()
+  const { data: session, status } = _useSession()
   const { data, isLoading: dbCallLoading } = trpc.user.get.useQuery(session?.user.id ?? "", {
     enabled: Boolean(session?.user.id),
   })
@@ -39,7 +39,7 @@ export const useSessionWithDBUser = (): {
 }
 
 const Home: React.FC = () => {
-  const auth = useSessionWithDBUser()
+  const auth = useSession()
   return (
     <div>
       <p>Homepage</p>

@@ -1,10 +1,10 @@
 import { type Database } from "@dotkomonline/db"
 import {
-  AttendeeDBUserSchema,
   AttendeeSchema,
+  AttendeeUser,
+  AttendeeUserSchema,
   type AttendanceId,
   type Attendee,
-  type AttendeeDBUser,
   type AttendeeId,
   type AttendeeWrite,
   type User,
@@ -15,7 +15,7 @@ import { prepareJsonInsert } from "../../utils/db-utils"
 import { type DeleteResult, type UpdateResult } from "../utils"
 
 const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj)
-const mapToAttendeeWithUser = (obj: unknown): AttendeeDBUser => AttendeeDBUserSchema.parse(obj)
+const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
@@ -23,7 +23,7 @@ export interface AttendeeRepository {
   getById(id: AttendeeId): Promise<Attendee | null>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<UpdateResult>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeDBUser[]>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeUser[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
@@ -87,6 +87,8 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         user: {
           ...value.user[0],
           createdAt: new Date(value.user[0].createdAt),
+          updatedAt: new Date(value.user[0].updatedAt),
+          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
         },
       }))
       .map(mapToAttendeeWithUser)

@@ -1,4 +1,4 @@
-import { type Attendance, type UserIDP } from "@dotkomonline/types"
+import { User, type Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
@@ -25,15 +25,9 @@ interface Props {
 const Page: FC<Props> = ({ attendance }) => {
   const { attendees } = useEventAttendeesGetQuery(attendance.id)
   const registerForEvent = useRegisterForEventMutation()
-  const getUser = useGetUserBySub()
 
-  const handleAttendUser = async (user: UserIDP) => {
-    const dbUser = await getUser.mutateAsync(user.subject)
-    if (dbUser === undefined) {
-      throw new Error("db user not found")
-    }
-
-    registerForEvent.mutate({ attendanceId: attendance.id, userId: dbUser.id })
+  const handleAttendUser = async (user: User) => {
+    registerForEvent.mutate({ attendanceId: attendance.id, userId: user.id })
   }
 
   return (

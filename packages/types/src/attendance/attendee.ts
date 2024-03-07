@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/sort-type-constituents */
 import { z } from "zod"
-import { UserDBSchema, UserSchema } from "../user"
+import { UserSchema } from "../user"
 
 export const ExtraChoice = z.object({
   id: z.string(),
@@ -28,9 +28,5 @@ export const AttendeeWriteSchema = AttendeeSchema.partial({
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
-
 export const AttendeeUserSchema = AttendeeSchema.merge(z.object({ user: UserSchema }))
-export const AttendeeDBUserSchema = AttendeeSchema.merge(z.object({ user: UserDBSchema }))
-
 export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
-export type AttendeeDBUser = z.infer<typeof AttendeeDBUserSchema>

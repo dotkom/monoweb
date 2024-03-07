@@ -17,8 +17,7 @@ import { type Cursor } from "../../utils/db-utils"
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
   getUsersById(ids: UserId[]): Promise<User[] | undefined>
-  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
-  getDBUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
+  getByAuth0Sub(id: User["auth0Sub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
@@ -28,7 +27,6 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<OidcUser[]>
 }
 
 export class UserServiceImpl implements UserService {
@@ -38,48 +36,20 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
     private readonly idpRepository: Auth0Repository
   ) {}
-  private mergeUsers(User: User | undefined, usersIDP: OidcUser | undefined): User | undefined {
-    if (!User || !usersIDP) {
-      return undefined
-    }
-    return {
-      ...User,
-      ...usersIDP,
-    }
-  }
-
-  private mergeUsersArray(usersDB: (User | undefined)[], usersIDP: (OidcUser | undefined)[]): User[] {
-    return usersDB
-      .map((user) => {
-        if (user === undefined) {
-          return undefined
-        }
-        const userFromIDP = usersIDP.find((u) => u?.subject === user.auth0Sub)
-        if (!userFromIDP) {
-          throw new Error(`User with auth0Sub ${user.auth0Sub} not found in IDP`)
-        }
-        return {
-          ...user,
-          ...userFromIDP,
-        }
-      })
-      .filter((u) => u !== undefined) as User[]
-  }
 
   async getAllUsers(limit: number) {
     return await this.userRepository.getAll(limit)
   }
 
   async getUsersById(ids: UserId[]) {
-    const usersDB = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
-    if (usersDB.includes(undefined)) {
+    const users = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
+    if (users.includes(undefined)) {
       throw new Error("User from DB is undefined")
     }
-    const usersIDP = await Promise.all(usersDB.map(async (u) => this.idpRepository.getBySubject(u?.auth0Sub || ""))) // TODO: this is a hack
-    return this.mergeUsersArray(usersDB, usersIDP)
+    return users as User[]
   }
 
-  async getDBUserBySubject(id: User["auth0Sub"]) {
+  async getByAuth0Sub(id: User["auth0Sub"]) {
     return this.userRepository.getBySubject(id)
   }
 
@@ -88,42 +58,12 @@ export class UserServiceImpl implements UserService {
   }
 
   async getUserById(id: UserId) {
-    const User = await this.userRepository.getById(id)
-    if (!User) {
-      return undefined
-    }
-    const userIDP = await this.idpRepository.getBySubject(User.auth0Sub)
-
-    if (!userIDP) {
+    const user = await this.userRepository.getById(id)
+    if (!user) {
       return undefined
     }
 
-    return this.mergeUsers(User, userIDP)
-  }
-
-  async getUserBySubject(subject: User["auth0Sub"]) {
-    const User = await this.userRepository.getBySubject(subject)
-    const userIDP = await this.idpRepository.getBySubject(subject)
-
-    if (!User || !userIDP) {
-      console.log("User not found in DB or IDP", User, userIDP)
-      return undefined
-    }
-
-    return this.mergeUsers(User, userIDP)
-  }
-
-  async getUserBySubjectIDP(id: User["auth0Sub"][]) {
-    const result = []
-    for (const sub of id) {
-      const user = await this.idpRepository.getBySubject(sub)
-      if (!user) {
-        continue
-      }
-      result.push(user)
-    }
-
-    return result
+    return user
   }
 
   async createUser(input: UserWrite) {

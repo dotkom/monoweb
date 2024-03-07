@@ -16,5 +16,5 @@ export const useSearchUsersFromIDP = (searchQuery: string) => {
 }
 
 export const useGetUserBySub = () => {
-  return trpc.user.getBySubAsync.useMutation()
+  return trpc.user.getByAuth0Sub.useMutation()
 }

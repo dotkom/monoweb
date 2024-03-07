@@ -6,7 +6,7 @@ import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
 import { trpc } from "@/utils/trpc"
 import { AttendanceGroup } from "./AttendanceGroup"
-import { useSessionWithDBUser } from ".."
+import { useSession } from ".."
 
 interface StatusCardProps {
   title: string
@@ -149,7 +149,7 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
       })
     },
   })
-  const session = useSessionWithDBUser()
+  const session = useSession()
 
   const { data: selfAttendee } = trpc.event.attendance.isAttending.useQuery({
     attendanceId: attendance?.id || "",

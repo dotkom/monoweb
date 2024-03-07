@@ -1,7 +1,5 @@
 import {
-  AttendeeUserSchema,
   type AttendanceId,
-  type AttendancePoolId,
   type Attendee,
   type AttendeeId,
   type AttendeeUser,
@@ -112,17 +110,6 @@ export class AttendeeServiceImpl implements AttendeeService {
 
   async getByAttendanceId(attendanceId: string) {
     const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const idpUsers = await this.userService.getUserBySubjectIDP(attendees.map(({ user }) => user.auth0Sub))
-
-    return attendees.map((user) => {
-      const idpUser = idpUsers.find((idpUser) => idpUser.subject === user.user.auth0Sub)
-      return AttendeeUserSchema.parse({
-        ...user,
-        user: {
-          ...user.user,
-          ...idpUser,
-        },
-      })
-    })
+    return attendees
   }
 }
