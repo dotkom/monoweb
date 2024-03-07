@@ -71,8 +71,6 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
 
       return this.userService.updateUser(user.id, {
         email: idpUser.email,
-        // givenName: idpUser.givenName,
-        // familyName: idpUser.familyName,
         name: idpUser.name,
         lastSyncedAt: new Date(),
         // givenName: idpUser.givenName,
