@@ -36,41 +36,27 @@ export class AttendeeServiceImpl implements AttendeeService {
     await this.attendeeRepository.delete(id)
   }
 
-  async updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser> {
-    const res = await this.attendeeRepository.update({ attended }, id)
-    if (res.numUpdatedRows === 1) {
-      const attendee = await this.attendeeRepository.getById(id)
-      if (attendee === null) {
-        throw new Error("Attendee not found")
-      }
+  async updateAttended(attended: boolean, id: AttendeeId) {
+    const attendee = await this.attendeeRepository.update({ attended }, id)
+    const user = await this.userService.getUserById(attendee.userId)
 
-      const idpUser = await this.userService.getUserById(attendee.userId)
-
-      if (idpUser === undefined) {
+      if (user === undefined) {
         throw new Error("User not found")
       }
 
       return {
         ...attendee,
-        user: idpUser,
+        user
       }
     }
 
-    throw new Error("TODO: decide on how to handle the case where the update fails")
-  }
-
   async updateExtraChoices(id: AttendanceId, questionId: string, choiceId: string) {
-    const res = await this.attendeeRepository.updateExtraChoices(id, questionId, choiceId)
+    const attendee = await this.attendeeRepository.updateExtraChoices(id, questionId, choiceId)
 
-    if (res.numUpdatedRows === 1) {
-      const attendee = await this.attendeeRepository.getById(id)
       if (attendee === null) {
         throw new Error("Attendee not found, this should not happen seeing that it was just updated.")
       }
       return attendee
-    }
-
-    throw new Error("TODO: decide on how to handle the case where the update fails")
   }
 
   async registerForEvent(userId: UserId, attendanceId: AttendanceId) {

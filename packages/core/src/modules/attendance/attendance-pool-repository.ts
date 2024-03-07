@@ -1,25 +1,37 @@
 import { type Database } from "@dotkomonline/db"
+import { type DeleteResult } from "@dotkomonline/db/utils"
 import {
   AttendancePoolSchema,
   type AttendanceId,
-  type AttendancePool,
   type AttendancePoolId,
-  type AttendancePoolWrite,
-  type EventId,
+  type AttendancePoolWrite
 } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
+import { Selectable, type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
-import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
+import { z } from "zod"
 
-const mapToPool = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
-const mapToPoolWithNumAttendees = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
+type DatabasePool1 = Selectable<Database["attendancePool"]>
+type DatabasePool2 = Selectable<Database["attendancePool"]> & { numAttendees: number }
+
+const Pool1 = AttendancePoolSchema.omit({
+  numAttendees: true,
+})
+const Pool2 = AttendancePoolSchema
+
+type Pool1 = z.infer<typeof Pool1>
+type Pool2 = z.infer<typeof Pool2>
+
+const mapToPool1 = (payload: DatabasePool1) => {
+  return Pool1.parse(payload) }
+
+const mapToPool2 = (payload: DatabasePool2) => Pool2.parse(payload)
 
 export interface AttendancePoolRepository {
-  create(obj: AttendancePoolWrite): Promise<AttendancePool>
+  create(obj: AttendancePoolWrite): Promise<Pool2>
   delete(id: AttendancePoolId): Promise<DeleteResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
-  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<UpdateResult>
-  get(id: AttendancePoolId): Promise<AttendancePool | null>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<Pool2[]>
+  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<Pool1>
+  get(id: AttendancePoolId): Promise<Pool2 | null>
 }
 
 export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
@@ -42,7 +54,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       return null
     }
 
-    return mapToPool({
+    return mapToPool2({
       ...res,
       numAttendees: Number(res.numAttendees),
     })
@@ -91,7 +103,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
         ...pool,
         numAttendees: Number(pool.numAttendees),
       }))
-      .map(mapToPoolWithNumAttendees)
+      .map(mapToPool2)
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
@@ -100,10 +112,9 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       .updateTable("attendancePool")
       .set(insertObj)
       .where("id", "=", id)
+      .returningAll()
       .executeTakeFirstOrThrow()
 
-    return {
-      numUpdatedRows: Number(res.numUpdatedRows),
-    }
+    return mapToPool1(res)
   }
 }

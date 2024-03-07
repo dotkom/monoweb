@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { AttendeeSchema } from "./attendee"
 
 export const YearCriteriaSchema = z.array(z.number())
 

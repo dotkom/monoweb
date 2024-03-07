@@ -10,19 +10,19 @@ import {
   type User,
   type UserId,
 } from "@dotkomonline/types"
-import { sql, type Kysely } from "kysely"
+import { Selectable, sql, type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
 import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
 
-const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj)
+const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
 const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
   delete(id: AttendeeId): Promise<DeleteResult>
   getById(id: AttendeeId): Promise<Attendee | null>
-  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<UpdateResult>
-  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult>
+  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee>
+  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeUser[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
@@ -94,27 +94,27 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .map(mapToAttendeeWithUser)
   }
 
-  async update(obj: AttendeeWrite, id: AttendeeId): Promise<UpdateResult> {
+  async update(obj: AttendeeWrite, id: AttendeeId) {
     const res = await this.db
       .updateTable("attendee")
       .set(prepareJsonInsert(obj, "extrasChoices"))
       .where("id", "=", id)
+      .returningAll()
       .executeTakeFirstOrThrow()
 
-    return {
-      numUpdatedRows: Number(res.numUpdatedRows),
-    }
+    return mapToAttendee(res)
   }
 
-  async updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<UpdateResult> {
+  async updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string) {
     const res = await this.db
       .updateTable("attendee")
       .set({
         extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]),
       })
       .where("id", "=", id)
+      .returningAll()
       .executeTakeFirstOrThrow()
 
-    return { numUpdatedRows: Number(res.numUpdatedRows) }
+    return mapToAttendee(res)
   }
 }
