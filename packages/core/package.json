@@ -17,6 +17,7 @@
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/logger": "workspace:*",
     "date-fns": "^2.30.0",
     "kysely": "^0.26.3",
     "stripe": "^13.11.0",

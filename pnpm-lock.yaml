@@ -615,6 +615,9 @@ importers:
       '@dotkomonline/env':
         specifier: workspace:*
         version: link:../env
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../logger
       auth0:
         specifier: ^4.3.1
         version: 4.3.1
@@ -7494,7 +7497,6 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
     dev: false
-    bundledDependencies: false
 
   /create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
