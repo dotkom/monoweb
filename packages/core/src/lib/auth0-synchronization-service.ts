@@ -1,6 +1,7 @@
 import { User, UserWrite } from "@dotkomonline/types"
 import { UserService } from "../modules/user/user-service"
 import { Auth0Repository } from "./auth0-repository"
+import { logger } from "../../logger"
 
 // Id token returned from Auth0. We don't want core to depend on next-auth, so we duplicate the type here.
 type JWTToken = {
@@ -61,7 +62,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
     if (!user.lastSyncedAt || user.lastSyncedAt < oneDayAgo) {
-      console.log("updating user", user.id, user.auth0Sub)
+      logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
       const idpUser = await this.auth0Repository.getBySubject(user.auth0Sub)
 
       if (idpUser === undefined) {

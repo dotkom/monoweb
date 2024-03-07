@@ -627,6 +627,9 @@ importers:
       '@dotkomonline/env':
         specifier: workspace:*
         version: link:../env
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../logger
       auth0:
         specifier: ^4.3.1
         version: 4.3.1
