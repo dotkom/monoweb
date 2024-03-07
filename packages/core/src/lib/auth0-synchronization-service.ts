@@ -32,17 +32,24 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     private readonly auth0Repository: Auth0Repository
   ) {}
 
+  // TODO: Include givenName and familyName when we gather this from our users.
   async createUser(token: JWTToken) {
-    if (!token.email || !token.sub || !token.name || !token.givenName || !token.familyName) {
+    if (
+      !token.email ||
+      !token.sub ||
+      !token.name
+      //  || !token.givenName || !token.familyName
+    ) {
       throw new Error("Missing user data in claims")
     }
+
     const userData: UserWrite = {
       auth0Sub: token.sub,
       studyYear: -1,
       email: token.email,
       name: token.name,
-      givenName: token.givenName,
-      familyName: token.familyName,
+      // givenName: token.givenName,
+      // familyName: token.familyName,
       lastSyncedAt: new Date(),
     }
 
@@ -63,9 +70,9 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
 
       return this.userService.updateUser(user.id, {
         email: idpUser.email,
-        givenName: idpUser.givenName,
-        familyName: idpUser.familyName,
-        name: `${idpUser.givenName} ${idpUser.familyName}`,
+        // givenName: idpUser.givenName,
+        // familyName: idpUser.familyName,
+        name: idpUser.name,
         lastSyncedAt: new Date(),
       })
     }

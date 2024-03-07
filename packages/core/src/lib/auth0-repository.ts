@@ -13,8 +13,9 @@ export class Auth0RepositoryImpl implements Auth0Repository {
     })
     return {
       email: res.data.email,
-      familyName: res.data.family_name,
-      givenName: res.data.given_name,
+      // familyName: res.data.family_name,
+      // givenName: res.data.given_name,
+      name: res.data.name,
       subject: res.data.user_id,
     }
   }
