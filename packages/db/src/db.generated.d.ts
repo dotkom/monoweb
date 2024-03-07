@@ -198,8 +198,14 @@ export interface Offline {
 export interface OwUser {
   auth0Sub: string;
   createdAt: Generated<Timestamp>;
+  email: string;
+  familyName: string;
+  givenName: string;
   id: Generated<string>;
+  lastSyncedAt: Timestamp | null;
+  name: string;
   studyYear: Generated<number>;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Payment {

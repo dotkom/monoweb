@@ -3,12 +3,11 @@ import {
   AttendeeDBUserSchema,
   AttendeeSchema,
   type AttendanceId,
-  type AttendancePoolId,
   type Attendee,
   type AttendeeDBUser,
   type AttendeeId,
   type AttendeeWrite,
-  type UserDB,
+  type User,
   type UserId,
 } from "@dotkomonline/types"
 import { sql, type Kysely } from "kysely"
@@ -77,7 +76,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .leftJoin("owUser", "owUser.id", "attendee.userId")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .select(sql<UserDB[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
       .where("attendance.id", "=", attendanceId)
       .groupBy("attendee.id")
       .execute()

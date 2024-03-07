@@ -23,6 +23,10 @@ export declare type EnvironmentKeys =
   | "WEB_AUTH0_CLIENT_ID"
   | "WEB_AUTH0_CLIENT_SECRET"
   | "WEB_AUTH0_ISSUER"
+  | "GTX_AUTH0_CLIENT_ID"
+  | "GTX_AUTH0_CLIENT_SECRET"
+  | "GTX_AUTH0_ISSUER"
+  | "GTX_AUTH0_DOMAIN"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 

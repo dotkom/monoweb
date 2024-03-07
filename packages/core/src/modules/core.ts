@@ -1,9 +1,22 @@
 import { type Database } from "@dotkomonline/db"
+import { env } from "@dotkomonline/env"
+import { ManagementClient } from "auth0"
 import { type Kysely } from "kysely"
+import { Auth0RepositoryImpl, type Auth0Repository } from "../lib/auth0-repository"
+import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../lib/auth0-synchronization-service"
+import { s3RepositoryImpl, type S3Repository } from "../lib/s3/s3-repository"
 import { ArticleRepositoryImpl, type ArticleRepository } from "./article/article-repository"
 import { ArticleServiceImpl, type ArticleService } from "./article/article-service"
 import { ArticleTagLinkRepositoryImpl, type ArticleTagLinkRepository } from "./article/article-tag-link-repository"
 import { ArticleTagRepositoryImpl, type ArticleTagRepository } from "./article/article-tag-repository"
+import { AttendancePoolRepository, AttendancePoolRepositoryImpl } from "./attendance/attendance-pool-repository"
+import { AttendancePoolService, AttendancePoolServiceImpl } from "./attendance/attendance-pool-service"
+import { AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
+import { AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
+import { AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
+import { AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
+import { WaitlistAttendeRepository, WaitlistAttendeRepositoryImpl } from "./attendance/waitlist-attendee-repository"
+import { WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
 import { CommitteeRepositoryImpl, type CommitteeRepository } from "./committee/committee-repository"
 import { CommitteeServiceImpl, type CommitteeService } from "./committee/committee-service"
 import { CompanyEventRepositoryImpl, type CompanyEventRepository } from "./company/company-event-repository"
@@ -56,18 +69,6 @@ import {
 } from "./user/privacy-permissions-repository"
 import { UserRepositoryImpl, type UserRepository } from "./user/user-repository"
 import { UserServiceImpl, type UserService } from "./user/user-service"
-import { Auth0IDPRepositoryImpl, type Auth0Repository } from "../lib/auth0-repository"
-import { s3RepositoryImpl, type S3Repository } from "../lib/s3/s3-repository"
-import { ManagementClient } from "auth0"
-import { env } from "@dotkomonline/env"
-import { AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
-import { AttendancePoolRepository, AttendancePoolRepositoryImpl } from "./attendance/attendance-pool-repository"
-import { WaitlistAttendeRepository, WaitlistAttendeRepositoryImpl } from "./attendance/waitlist-attendee-repository"
-import { AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
-import { AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
-import { AttendancePoolService, AttendancePoolServiceImpl } from "./attendance/attendance-pool-service"
-import { WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
-import { AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -77,6 +78,13 @@ export interface ServerLayerOptions {
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const s3Repository: S3Repository = new s3RepositoryImpl()
+  const auth0ManagementClient = new ManagementClient({
+    domain: env.GTX_AUTH0_DOMAIN,
+    clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
+    clientId: env.GTX_AUTH0_CLIENT_ID,
+  })
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -111,13 +119,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
-
-  const auth0ManagementClient = new ManagementClient({
-    domain: "onlineweb.eu.auth0.com",
-    clientId: env.GTX_AUTH0_CLIENT_ID,
-    clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
-  })
-  const auth0Repository: Auth0Repository = new Auth0IDPRepositoryImpl(auth0ManagementClient)
 
   const userService: UserService = new UserServiceImpl(
     userRepository,
@@ -173,6 +174,11 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     articleTagLinkRepository
   )
 
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userService,
+    auth0Repository
+  )
+
   return {
     userService,
     eventService,
@@ -194,5 +200,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendancePoolService,
     waitlistAttendeService,
     attendeeService,
+    auth0Repository,
+    auth0SynchronizationService,
   }
 }

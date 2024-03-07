@@ -15,5 +15,6 @@ export * from "./components/Circle"
 export * from "./components/Text"
 export * from "./components/DropdownMenu"
 export * from "./components/Accordion"
+export * from "./components/Select"
 
 export * from "./utils"

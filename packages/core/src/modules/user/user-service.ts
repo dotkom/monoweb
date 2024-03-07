@@ -1,5 +1,4 @@
 import {
-  type UserDB,
   type OidcUser,
   type NotificationPermissions,
   type NotificationPermissionsWrite,
@@ -19,16 +18,16 @@ export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
   getUsersById(ids: UserId[]): Promise<User[] | undefined>
   getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
-  getDBUserBySubject(id: User["auth0Sub"]): Promise<UserDB | undefined>
+  getDBUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<UserDB>
-  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<UserDB>
+  createUser(input: UserWrite): Promise<User>
+  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  searchUsersFromIDP(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   getUserBySubjectIDP(id: User["auth0Sub"][]): Promise<OidcUser[]>
 }
 
@@ -39,17 +38,17 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
     private readonly idpRepository: Auth0Repository
   ) {}
-  private mergeUsers(userDB: UserDB | undefined, usersIDP: OidcUser | undefined): User | undefined {
-    if (!userDB || !usersIDP) {
+  private mergeUsers(User: User | undefined, usersIDP: OidcUser | undefined): User | undefined {
+    if (!User || !usersIDP) {
       return undefined
     }
     return {
-      ...userDB,
+      ...User,
       ...usersIDP,
     }
   }
 
-  private mergeUsersArray(usersDB: (UserDB | undefined)[], usersIDP: (OidcUser | undefined)[]): User[] {
+  private mergeUsersArray(usersDB: (User | undefined)[], usersIDP: (OidcUser | undefined)[]): User[] {
     return usersDB
       .map((user) => {
         if (user === undefined) {
@@ -68,9 +67,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async getAllUsers(limit: number) {
-    const usersDB = await this.userRepository.getAll(limit)
-    const usersIDP = await this.idpRepository.getAll(limit)
-    return this.mergeUsersArray(usersDB, usersIDP)
+    return await this.userRepository.getAll(limit)
   }
 
   async getUsersById(ids: UserId[]) {
@@ -86,36 +83,34 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.getBySubject(id)
   }
 
-  async searchUsersFromIDP(searchQuery: string, take: number) {
-    const usersIDP = await this.idpRepository.searchByFullName(searchQuery, take)
-    const usersDB = await Promise.all(usersIDP.map(async (user) => this.userRepository.getBySubject(user.subject)))
-    return this.mergeUsersArray(usersDB, usersIDP)
+  async searchByFullName(searchQuery: string, take: number) {
+    return this.userRepository.searchByFullName(searchQuery, take)
   }
 
   async getUserById(id: UserId) {
-    const userDB = await this.userRepository.getById(id)
-    if (!userDB) {
+    const User = await this.userRepository.getById(id)
+    if (!User) {
       return undefined
     }
-    const userIDP = await this.idpRepository.getBySubject(userDB.auth0Sub)
+    const userIDP = await this.idpRepository.getBySubject(User.auth0Sub)
 
     if (!userIDP) {
       return undefined
     }
 
-    return this.mergeUsers(userDB, userIDP)
+    return this.mergeUsers(User, userIDP)
   }
 
   async getUserBySubject(subject: User["auth0Sub"]) {
-    const userDB = await this.userRepository.getBySubject(subject)
+    const User = await this.userRepository.getBySubject(subject)
     const userIDP = await this.idpRepository.getBySubject(subject)
 
-    if (!userDB || !userIDP) {
-      console.log("User not found in DB or IDP", userDB, userIDP)
+    if (!User || !userIDP) {
+      console.log("User not found in DB or IDP", User, userIDP)
       return undefined
     }
 
-    return this.mergeUsers(userDB, userIDP)
+    return this.mergeUsers(User, userIDP)
   }
 
   async getUserBySubjectIDP(id: User["auth0Sub"][]) {

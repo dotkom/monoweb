@@ -2,6 +2,24 @@ import { type ServiceLayer } from "@dotkomonline/core"
 import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
+interface Auth0TokenClaims {
+  given_name: string
+  family_name: string
+  nickname: string
+  name: string
+  picture: string
+  gender: string
+  updated_at: string
+  email: string
+  email_verified: boolean
+  iss: string
+  aud: string
+  iat: number
+  exp: number
+  sub: string
+  sid: string
+}
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: User
@@ -14,6 +32,8 @@ declare module "next-auth" {
     name: string
     email: string
     image?: string
+    givenName?: string
+    familyName?: string
   }
 }
 
@@ -38,11 +58,13 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile): User => ({
+      profile: (profile: Auth0TokenClaims): User => ({
         id: profile.sub,
-        name: `${profile.given_name} ${profile.family_name}`,
+        name: profile.name,
         email: profile.email,
         image: profile.picture ?? undefined,
+        givenName: profile.given_name,
+        familyName: profile.family_name,
       }),
     }),
   ],
@@ -52,13 +74,19 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        let user = await core.userService.getDBUserBySubject(token.sub)
+        const user = await core.userService.getUserBySubject(token.sub)
+
         if (user === undefined) {
-          user = await core.userService.createUser({
-            auth0Sub: token.sub,
-            studyYear: -1,
-          })
+          // const newUser = await createNewUser(core, token)
+          const newUser = await core.auth0SynchronizationService.createUser(token)
+
+          session.user.id = newUser.id
+          session.sub = token.sub
+          return session
         }
+
+        await core.auth0SynchronizationService.synchronizeUser(user)
+
         session.user.id = user.id
         session.sub = token.sub
       }

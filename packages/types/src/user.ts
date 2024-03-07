@@ -1,22 +1,25 @@
 import { z } from "zod"
-import { OidcUser } from "./oidc-user"
 
-export const UserDBSchema = z.object({
+export const UserSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   auth0Sub: z.string(),
   studyYear: z.number().int().min(-1).max(6),
+  updatedAt: z.date(),
+  email: z.string().email(),
+  givenName: z.string(),
+  familyName: z.string(),
+  name: z.string(),
+  lastSyncedAt: z.date().nullable(),
 })
-
-export const UserSchema = UserDBSchema.merge(OidcUser)
 
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>
-export type UserDB = z.infer<typeof UserDBSchema>
 
-export const UserWriteSchema = UserDBSchema.omit({
+export const UserWriteSchema = UserSchema.omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
 })
 
 export type UserWrite = z.infer<typeof UserWriteSchema>
