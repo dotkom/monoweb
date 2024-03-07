@@ -4,7 +4,7 @@ import { Auth0Repository } from "./auth0-repository"
 import { logger } from "../../logger"
 
 // Id token returned from Auth0. We don't want core to depend on next-auth, so we duplicate the type here.
-type JWTToken = {
+type Auth0IdToken = {
   email?: string | null
   sub?: string | null
   name?: string | null
@@ -19,7 +19,7 @@ export interface Auth0SynchronizationService {
   /**
    * If no record of the user exists in the local database, save it to the database.
    */
-  createUser: (token: JWTToken) => Promise<User>
+  createUser: (token: Auth0IdToken) => Promise<User>
 
   /**
    * Synchronize record of user in database with user data from Auth0.
@@ -34,7 +34,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   ) {}
 
   // TODO: Include givenName and familyName when we gather this from our users.
-  async createUser(token: JWTToken) {
+  async createUser(token: Auth0IdToken) {
     if (
       !token.email ||
       !token.sub ||
