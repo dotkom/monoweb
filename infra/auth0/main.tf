@@ -9,7 +9,7 @@ resource "auth0_tenant" "tenant" {
   idle_session_lifetime                         = 72
   # TODO: make S3 bucket for this
   # this is just the O
-  picture_url      = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/680/"
+  picture_url      = "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/679/"
   sandbox_version  = "18"
   session_lifetime = 168
   support_email    = "dotkom@online.ntnu.no"
@@ -19,9 +19,9 @@ data "auth0_tenant" "tenant" {}
 
 locals {
   custom_domain = {
-    "dev" = "dev.id.online.ntnu.no"
-    "stg" = "stg.id.online.ntnu.no"
-    "prd" = "id.online.ntnu.no"
+    "dev" = "auth.dev.online.ntnu.no"
+    "stg" = "auth.stg.online.ntnu.no"
+    "prd" = "auth.online.ntnu.no"
   }[terraform.workspace]
   name_suffix = {
     "dev" = " Dev"
@@ -123,11 +123,24 @@ resource "auth0_resource_server" "online" {
 # }
 
 resource "auth0_client" "vengeful_vineyard_frontend" {
-  app_type = "regular_web"
+  app_type = "spa"
   callbacks = {
-    "dev" = ["http://localhost:3000"]
-    "stg" = []
-    "prd" = []
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
+    ]
+    "stg" = [
+      "https://staging.vinstraff.no",
+      "https://staging.vinstraff.no/docs/oauth2-redirect",
+    ]
+    "prd" = [
+      "https://vinstraff.no",
+      "https://vinstraff.no/docs/oauth2-redirect",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+    ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
   name                          = "Vengeful Vineyard${local.name_suffix[terraform.workspace]}"
@@ -174,6 +187,15 @@ resource "doppler_secret" "client_secrets" {
   config  = terraform.workspace
   name    = "AUTH0_CLIENT_SECRET"
   value   = each.value.client_secret
+}
+
+resource "doppler_secret" "mgmt_tenants" {
+  for_each = local.projects
+
+  project = each.key
+  config  = terraform.workspace
+  name    = "AUTH0_MGMT_TENANT"
+  value   = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
 }
 
 resource "doppler_secret" "auth0_issuer_rest" {
@@ -242,6 +264,7 @@ data "auth0_client" "onlineweb_frontend" {
 
 resource "auth0_client" "auth0_account_management_api_management_client" {
   is_first_party = true
+  app_type       = "non_interactive"
   name           = "Auth0 Account Management API Management Client"
 
   jwt_configuration {
@@ -259,13 +282,6 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.monoweb_dashboard.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
   ]
-}
-
-
-resource "auth0_client_grant" "vengeful_test_https_online_ntnu_no" {
-  audience  = "https://online.ntnu.no"
-  client_id = auth0_client.vengeful_vineyard_frontend.client_id
-  scopes    = ["online"]
 }
 
 resource "auth0_prompt" "prompts" {
@@ -361,17 +377,18 @@ resource "auth0_client" "onlineweb4" {
   allowed_logout_urls = {
     "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
     "stg" = ["https://dev.online.ntnu.no"]
-    "prd" = ["https://online.ntnu.no"]
+    "prd" = ["https://old.online.ntnu.no"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "regular_web"
   callbacks = {
     "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
     "stg" = ["https://dev.online.ntnu.no/auth0/callback/"]
-    "prd" = ["https://online.ntnu.no/auth0/callback/"]
+    "prd" = ["https://old.online.ntnu.no/auth0/callback/"]
   }[terraform.workspace]
-  grant_types     = ["authorization_code", "client_credentials", "refresh_token"]
-  name            = "OnlineWeb4${local.name_suffix[terraform.workspace]}"
+  grant_types = ["authorization_code", "client_credentials", "refresh_token"]
+  name        = "OnlineWeb4${local.name_suffix[terraform.workspace]}"
+
   is_first_party  = true
   oidc_conformant = true
 
