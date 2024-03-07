@@ -160,9 +160,11 @@ data "auth0_client" "vengeful_vineyard_frontend" {
 locals {
   projects = {
     # key here must be project name
-    # vengeful-vineyard  = data.auth0_client.vengeful_vineyard_frontend
-    onlineweb4         = data.auth0_client.onlineweb4
-    onlineweb-frontend = data.auth0_client.onlineweb_frontend
+    vengeful-vineyard    = data.auth0_client.vengeful_vineyard_frontend
+    onlineweb4           = data.auth0_client.onlineweb4
+    onlineweb-frontend   = data.auth0_client.onlineweb_frontend
+    appkom-opptakssystem = data.auth0_client.appkom_opptak
+    appkom-onlineapp     = data.auth0_client.appkom_events_app
   }
 
   monoweb = {
@@ -281,6 +283,8 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.monoweb_web.client_id,
     auth0_client.monoweb_dashboard.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
+    auth0_client.appkom_opptak.client_id,
+    auth0_client.appkom_events_app.client_id,
   ]
 }
 
