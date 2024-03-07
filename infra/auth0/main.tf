@@ -237,6 +237,15 @@ resource "doppler_secret" "auth0_issuer_monoweb" {
   value   = "https://${local.custom_domain}"
 }
 
+resource "doppler_secret" "mgmt_tenants_monoweb" {
+  for_each = local.monoweb
+
+  project = "monoweb"
+  config  = terraform.workspace
+  name    = "${upper(each.key)}_AUTH0_MGMT_TENANT"
+  value   = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+}
+
 resource "auth0_client" "onlineweb_frontend" {
   app_type = "spa"
   allowed_logout_urls = {
