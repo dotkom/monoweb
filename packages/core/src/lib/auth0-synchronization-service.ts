@@ -24,7 +24,7 @@ export interface Auth0SynchronizationService {
   /**
    * Synchronize record of user in database with user data from Auth0.
    */
-  synchronizeUser: (user: User) => Promise<User | undefined>
+  synchronizeUser: (user: User) => Promise<User | null>
 }
 
 export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationService {
@@ -65,18 +65,19 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
       const idpUser = await this.auth0Repository.getBySubject(user.auth0Sub)
 
-      if (idpUser === undefined) {
+      if (idpUser === null) {
         throw new Error("User does not exist in Auth0")
       }
 
       return this.userService.updateUser(user.id, {
         email: idpUser.email,
-        // givenName: idpUser.givenName,
-        // familyName: idpUser.familyName,
         name: idpUser.name,
         lastSyncedAt: new Date(),
+        // givenName: idpUser.givenName,
+        // familyName: idpUser.familyName,
       })
     }
-    return undefined
+
+    return null
   }
 }
