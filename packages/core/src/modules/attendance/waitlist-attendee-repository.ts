@@ -6,7 +6,7 @@ import {
   type WaitlistAttendeeWrite,
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
-import { type DeleteResult } from "../utils"
+import { type DeleteResult } from "@dotkomonline/db/utils"
 
 const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttendeeSchema.parse(obj)
 

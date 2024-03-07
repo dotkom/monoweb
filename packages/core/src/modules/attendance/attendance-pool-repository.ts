@@ -9,7 +9,7 @@ import {
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
-import { type DeleteResult, type UpdateResult } from "../utils"
+import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
 
 const mapToPool = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)
 const mapToPoolWithNumAttendees = (obj: unknown): AttendancePool => AttendancePoolSchema.parse(obj)

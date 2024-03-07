@@ -7,7 +7,7 @@ import {
   type EventId,
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
-import { type DeleteResult, type UpdateResult } from "../utils"
+import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
 
 const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj)
 

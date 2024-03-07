@@ -12,7 +12,7 @@ import {
 } from "@dotkomonline/types"
 import { sql, type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
-import { type DeleteResult, type UpdateResult } from "../utils"
+import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
 
 const mapToAttendee = (obj: unknown): Attendee => AttendeeSchema.parse(obj)
 const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)
