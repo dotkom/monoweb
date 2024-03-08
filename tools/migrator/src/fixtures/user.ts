@@ -10,7 +10,7 @@ export const getUserFixtures: () => Insertable<Database["owUser"]>[] = () => [
     // familyName: "baugertod",
     name: "brage baugerod",
     studyYear: 3,
-    lastSyncedAt: null,
+    lastSyncedAt: new Date(),
   },
   {
     auth0Sub: "auth0|7f6e0389-b49f-4bbc-b401-505f4b53fb3c", // njal.sorland@online.ntnu.no
@@ -20,7 +20,7 @@ export const getUserFixtures: () => Insertable<Database["owUser"]>[] = () => [
     // familyName: "sorland",
     name: "njal sorland",
     studyYear: 5,
-    lastSyncedAt: null,
+    lastSyncedAt: new Date(),
   },
   {
     createdAt: new Date("2023-04-30 21:22:17.627253+00"), // henrikskog01@gmail.com
@@ -30,6 +30,6 @@ export const getUserFixtures: () => Insertable<Database["owUser"]>[] = () => [
     // familyName: "skog",
     name: "henrik skog",
     studyYear: 3,
-    lastSyncedAt: null,
+    lastSyncedAt: new Date(),
   },
 ]
