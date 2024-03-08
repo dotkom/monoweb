@@ -10,8 +10,8 @@ const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),
   studyYear: 0,
   email: "testuser512312412@gmail.com",
-  givenName: "Test",
-  familyName: "User",
+  // givenName: "Test",
+  // familyName: "User",
   name: "Test User",
   lastSyncedAt: null,
 })

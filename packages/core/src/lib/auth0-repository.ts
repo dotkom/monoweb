@@ -26,7 +26,6 @@ export class Auth0RepositoryImpl implements Auth0Repository {
         if (e.errorCode === "inexistent_user") {
           return null
         }
-
       }
 
       // Error was caused by other reasons than user not existing
