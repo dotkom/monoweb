@@ -7,13 +7,13 @@ export async function up(db) {
     .addColumn("email", "varchar(255)")
     .addColumn("name", "varchar(255)")
     .addColumn("updated_at", "timestamptz", (col) => col.defaultTo(sql`now()`).notNull())
-    .addColumn("last_synced_at", "timestamp with time zone", (col) => col.defaultTo(null))
+    .addColumn("last_synced_at", "timestamp with time zone", (col) => col.defaultTo(sql`now()`).notNull())
     .execute()
 
   // populate data for new columns
   const users = await db.selectFrom("ow_user").selectAll().execute()
   for (const user of users) {
-    const email = `${user.id}@gmail.com`
+    const email = `${user.id}@invalid.local`
     const name = `${user.id}`
     await db.updateTable("ow_user").set({ email, name }).where("id", "=", user.id).execute()
   }
