@@ -17,7 +17,7 @@ import { type Cursor } from "../../utils/db-utils"
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
   getUsersById(ids: UserId[]): Promise<User[] | undefined>
-  getByAuth0Sub(id: User["auth0Sub"]): Promise<User | undefined>
+  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
@@ -33,8 +33,7 @@ export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
-    private readonly idpRepository: Auth0Repository
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
   async getAllUsers(limit: number) {
@@ -49,7 +48,7 @@ export class UserServiceImpl implements UserService {
     return users as User[]
   }
 
-  async getByAuth0Sub(id: User["auth0Sub"]) {
+  async getUserBySubject(id: User["auth0Sub"]) {
     return this.userRepository.getBySubject(id)
   }
 

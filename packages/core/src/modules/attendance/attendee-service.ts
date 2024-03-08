@@ -40,23 +40,23 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendee = await this.attendeeRepository.update({ attended }, id)
     const user = await this.userService.getUserById(attendee.userId)
 
-      if (user === undefined) {
-        throw new Error("User not found")
-      }
-
-      return {
-        ...attendee,
-        user
-      }
+    if (user === undefined) {
+      throw new Error("User not found")
     }
+
+    return {
+      ...attendee,
+      user,
+    }
+  }
 
   async updateExtraChoices(id: AttendanceId, questionId: string, choiceId: string) {
     const attendee = await this.attendeeRepository.updateExtraChoices(id, questionId, choiceId)
 
-      if (attendee === null) {
-        throw new Error("Attendee not found, this should not happen seeing that it was just updated.")
-      }
-      return attendee
+    if (attendee === null) {
+      throw new Error("Attendee not found, this should not happen seeing that it was just updated.")
+    }
+    return attendee
   }
 
   async registerForEvent(userId: UserId, attendanceId: AttendanceId) {

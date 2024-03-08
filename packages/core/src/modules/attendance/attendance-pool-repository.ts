@@ -4,7 +4,7 @@ import {
   AttendancePoolSchema,
   type AttendanceId,
   type AttendancePoolId,
-  type AttendancePoolWrite
+  type AttendancePoolWrite,
 } from "@dotkomonline/types"
 import { Selectable, type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
@@ -22,7 +22,8 @@ type Pool1 = z.infer<typeof Pool1>
 type Pool2 = z.infer<typeof Pool2>
 
 const mapToPool1 = (payload: DatabasePool1) => {
-  return Pool1.parse(payload) }
+  return Pool1.parse(payload)
+}
 
 const mapToPool2 = (payload: DatabasePool2) => Pool2.parse(payload)
 

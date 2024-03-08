@@ -1,11 +1,6 @@
 import { type Database } from "@dotkomonline/db"
 import { type DeleteResult } from "@dotkomonline/db/utils"
-import {
-  AttendanceSchema,
-  type Attendance,
-  type AttendanceId,
-  type AttendanceWrite
-} from "@dotkomonline/types"
+import { AttendanceSchema, type Attendance, type AttendanceId, type AttendanceWrite } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
 
 const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj)
@@ -24,7 +19,12 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
-    const res = await this.db.updateTable("attendance").set(obj).returningAll().where("id", "=", id).executeTakeFirstOrThrow()
+    const res = await this.db
+      .updateTable("attendance")
+      .set(obj)
+      .returningAll()
+      .where("id", "=", id)
+      .executeTakeFirstOrThrow()
     return mapToAttendance(res)
   }
 
