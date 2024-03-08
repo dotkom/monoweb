@@ -8,7 +8,7 @@ export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
   // givenName: "Test",
   // familyName: "User",
   name: "Test User",
-  lastSyncedAt: null,
+  lastSyncedAt: new Date(),
   ...defaults,
 })
 

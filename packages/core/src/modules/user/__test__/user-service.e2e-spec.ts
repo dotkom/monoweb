@@ -13,7 +13,7 @@ const fakeUser = (subject?: string): UserWrite => ({
   // givenName: "Test",
   // familyName: "User",
   name: "Test User",
-  lastSyncedAt: null,
+  lastSyncedAt: new Date(),
 })
 
 describe("users", () => {

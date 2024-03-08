@@ -200,7 +200,7 @@ export interface OwUser {
   createdAt: Generated<Timestamp>
   email: string
   id: Generated<string>
-  lastSyncedAt: Timestamp | null
+  lastSyncedAt: Generated<Timestamp>
   name: string
   studyYear: Generated<number>
   updatedAt: Generated<Timestamp>

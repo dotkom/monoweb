@@ -6,20 +6,20 @@ export async function up(db) {
     .alterTable("ow_user")
     .addColumn("email", "varchar(255)")
     .addColumn("name", "varchar(255)")
+    .addColumn("last_synced_at", "timestamptz", (col) => col.defaultTo(sql`now()`))
     .addColumn("updated_at", "timestamptz", (col) => col.defaultTo(sql`now()`))
-    .addColumn("last_synced_at", "timestampz", (col) => col.defaultTo(sql`now()`))
-    .addColumn("study_year", "integer", (col) => col.defaultTo(-1))
     .execute()
 
   // populate data for new columns
   const users = await db.selectFrom("ow_user").selectAll().execute()
   for (const user of users) {
     const email = `${user.id}@invalid.local`
+    const now = new Date()
     await db
       .updateTable("ow_user")
-      .set({ email, name: user.id, updated_at: sql`now()`, last_synced_at: sql`now()`, study_year: -1 })
+      .set({ email, name: user.id, updated_at: now, last_synced_at: now })
       .where("id", "=", user.id)
-      .execute()
+      .executeTakeFirst()
   }
 
   // enforce constraints
@@ -30,7 +30,6 @@ export async function up(db) {
     .alterColumn("name", (col) => col.setNotNull())
     .alterColumn("updated_at", (col) => col.setNotNull())
     .alterColumn("last_synced_at", (col) => col.setNotNull())
-    .alterColumn("study_year", (col) => col.setNotNull())
     .execute()
 }
 
