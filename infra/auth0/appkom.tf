@@ -34,7 +34,6 @@ resource "auth0_client" "appkom_events_app" {
     "dev" = ["http://localhost:3000"]
     "stg" = []
     "prd" = [
-      "ntnu.online.app://onlineweb-prod.eu.auth0.com/ios/ntnu.online.app/callback",
       "ntnu.online.app://auth.online.ntnu.no/ios/ntnu.online.app/callback",
     ]
   }[terraform.workspace]
@@ -47,9 +46,7 @@ resource "auth0_client" "appkom_events_app" {
     ]
     "stg" = []
     "prd" = [
-      "ntnu.online.app://onlineweb-prod.eu.auth0.com/ios/ntnu.online.app/callback",
       "ntnu.online.app://auth.online.ntnu.no/ios/ntnu.online.app/callback",
-      "https://onlineweb-prod.eu.auth0.com/android/ntnu.online.app/callback",
       "https://auth.online.ntnu.no/android/ntnu.online.app/callback",
     ]
   }[terraform.workspace]
