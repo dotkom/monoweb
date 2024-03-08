@@ -59,6 +59,10 @@ import {
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
 import { type S3Repository, s3RepositoryImpl } from "../lib/s3/s3-repository"
+import { Auth0RepositoryImpl, Auth0Repository } from "../lib/auth0-repository"
+import { ManagementClient } from "auth0"
+import { env } from "@dotkomonline/env"
+import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../lib/auth0-synchronization-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -68,6 +72,13 @@ export interface ServerLayerOptions {
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const s3Repository: S3Repository = new s3RepositoryImpl()
+  const auth0ManagementClient = new ManagementClient({
+    domain: env.GTX_AUTH0_ISSUER,
+    clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
+    clientId: env.GTX_AUTH0_CLIENT_ID,
+  })
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -139,6 +150,11 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     articleTagLinkRepository
   )
 
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userService,
+    auth0Repository
+  )
+
   return {
     userService,
     eventService,
@@ -157,5 +173,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
+    auth0Repository,
+    auth0SynchronizationService,
   }
 }

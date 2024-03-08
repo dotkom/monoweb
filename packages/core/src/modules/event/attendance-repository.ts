@@ -48,7 +48,6 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       .returningAll()
       .executeTakeFirstOrThrow()
       .catch((err) => console.log(err))
-    console.log({ res })
     return AttendeeSchema.parse(res)
   }
 

@@ -1,4 +1,4 @@
-import { type ColumnType } from "kysely"
+import type { ColumnType } from "kysely"
 
 export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA"
 
@@ -192,8 +192,12 @@ export interface Offline {
 export interface OwUser {
   auth0Sub: string | null
   createdAt: Generated<Timestamp>
+  email: string
   id: Generated<string>
+  lastSyncedAt: Timestamp | null
+  name: string
   studyYear: Generated<number>
+  updatedAt: Generated<Timestamp>
 }
 
 export interface Payment {
