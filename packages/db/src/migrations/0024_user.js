@@ -19,7 +19,6 @@ export async function up(db) {
   }
 
   // enforce constraints
-  // await db.schema.alterTable("ow_user").alterColumn("email", (col) => col.notNullable()).alterColumn("name", (col) => col.notNullable()).execute()
   await db.schema.alterTable("ow_user").addUniqueConstraint("", ["email"]).execute()
   await db.schema
     .alterTable("ow_user")
