@@ -1,4 +1,5 @@
 import { type Database } from "@dotkomonline/db"
+import { type DeleteResult } from "@dotkomonline/db/utils"
 import {
   AttendeeSchema,
   AttendeeUser,
@@ -12,7 +13,6 @@ import {
 } from "@dotkomonline/types"
 import { Selectable, sql, type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
-import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
 
 const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
 const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)

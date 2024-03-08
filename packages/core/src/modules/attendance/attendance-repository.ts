@@ -1,13 +1,12 @@
 import { type Database } from "@dotkomonline/db"
+import { type DeleteResult } from "@dotkomonline/db/utils"
 import {
   AttendanceSchema,
   type Attendance,
   type AttendanceId,
-  type AttendanceWrite,
-  type EventId,
+  type AttendanceWrite
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
-import { type DeleteResult, type UpdateResult } from "@dotkomonline/db/utils"
 
 const mapToAttendance = (obj: unknown): Attendance => AttendanceSchema.parse(obj)
 
@@ -15,7 +14,7 @@ export interface AttendanceRepository {
   create(obj: Partial<AttendanceWrite>): Promise<Attendance>
   delete(id: AttendanceId): Promise<DeleteResult>
   getById(id: AttendanceId): Promise<Attendance | null>
-  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<UpdateResult>
+  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
@@ -25,10 +24,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
-    const res = await this.db.updateTable("attendance").set(obj).where("id", "=", id).executeTakeFirstOrThrow()
-    return {
-      numUpdatedRows: Number(res.numUpdatedRows),
-    }
+    const res = await this.db.updateTable("attendance").set(obj).returningAll().where("id", "=", id).executeTakeFirstOrThrow()
+    return mapToAttendance(res)
   }
 
   async delete(id: AttendanceId) {

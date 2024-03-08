@@ -16,6 +16,7 @@ export class Auth0RepositoryImpl implements Auth0Repository {
       const parsed = OidcUser.parse({
         email: res.data.email,
         subject: res.data.user_id,
+        name: res.data.name,
         // familyName: res.data.family_name,
         // givenName: res.data.given_name,
       })
