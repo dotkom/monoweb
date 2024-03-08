@@ -15,7 +15,6 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "auth0": "^4.3.1",
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
