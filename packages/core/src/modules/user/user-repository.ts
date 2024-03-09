@@ -36,6 +36,9 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await this.db
       .updateTable("owUser")
       .set(data)
+      .set({
+        updatedAt: new Date(),
+      })
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
