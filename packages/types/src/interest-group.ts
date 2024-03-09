@@ -6,7 +6,7 @@ export const InterestGroupSchema = z.object({
   updatedAt: z.date(),
   name: z.string(),
   description: z.string(),
-  link: z.string().optional(),
+  link: z.string().nullable(), //slack link
 })
 
 export type InterestGroup = z.infer<typeof InterestGroupSchema>
@@ -15,6 +15,7 @@ export type InterestGroupId = InterestGroup["id"]
 export const InterestGroupWriteSchema = InterestGroupSchema.omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
 })
 
 export type InterestGroupWrite = z.infer<typeof InterestGroupWriteSchema>

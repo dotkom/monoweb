@@ -6,11 +6,13 @@ import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutat
 import { useDeleteInterestGroupModal } from "src/modules/interest-group/modals/confirm-delete-modal"
 import { Button } from "@mantine/core"
 import { Icon } from "@iconify/react"
+import { useRouter } from "next/navigation"
 
 export const InterestGroupEditCard: FC = () => {
   const { interestGroup } = useInterestGroupDetailsContext()
   const edit = useUpdateInterestGroupMutation()
   const open = useDeleteInterestGroupModal(interestGroup.id)
+  const router = useRouter()
   const FormComponent = useInterestGroupWriteForm({
     label: "Oppdater interessegruppe",
     onSubmit: (data) => {
@@ -18,6 +20,7 @@ export const InterestGroupEditCard: FC = () => {
         id: interestGroup.id,
         values: data,
       })
+      router.push("/interest-group/")
     },
     defaultValues: interestGroup,
   })

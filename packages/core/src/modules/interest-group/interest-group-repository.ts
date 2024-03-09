@@ -31,7 +31,7 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
   async create(values: InterestGroupWrite): Promise<InterestGroup> {
     const interestGroup = await this.db
       .insertInto("interestGroup")
-      .values({ ...values })
+      .values({ ...values, createdAt: new Date(), updatedAt: new Date() })
       .returningAll()
       .executeTakeFirstOrThrow()
     return mapToInterestGroup(interestGroup)

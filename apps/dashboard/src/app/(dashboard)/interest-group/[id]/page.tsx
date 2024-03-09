@@ -1,10 +1,8 @@
 "use client"
 
 import { Icon } from "@iconify/react"
-import { Box, Button, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
-import { useInterestGroupDetailsContext } from "./provider"
 import { InterestGroupEditCard } from "./edit-card"
 
 const SIDEBAR_LINKS = [
@@ -18,7 +16,6 @@ const SIDEBAR_LINKS = [
 
 export default function InterestGroupDetailsPage() {
   const router = useRouter()
-  const remove = useDeleteInterestGroupMutation()
   return (
     <Box p="md">
       <Group>

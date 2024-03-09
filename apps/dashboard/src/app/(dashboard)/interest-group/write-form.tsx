@@ -10,24 +10,20 @@ interface UseInterestGroupWriteFormProps {
   label?: string
 }
 
-export const InterestGroupFormValidationSchema = InterestGroupWriteSchema.omit({
-  updatedAt: true,
-})
-
 export const useInterestGroupWriteForm = ({
   onSubmit,
   label = "Lag ny interessegruppe",
   defaultValues = INTEREST_GROUP_FORM_DEFAULT_VALUES,
 }: UseInterestGroupWriteFormProps) =>
   useFormBuilder({
-    schema: InterestGroupFormValidationSchema,
+    schema: InterestGroupWriteSchema,
     defaultValues: defaultValues,
     onSubmit,
     label,
     fields: {
       name: createTextInput({
         label: "Name",
-        placeholder: "Fadderuka 2023",
+        placeholder: "Interessegruppe",
         withAsterisk: true,
       }),
       description: createTextareaInput({
@@ -37,7 +33,7 @@ export const useInterestGroupWriteForm = ({
       }),
       link: createTextInput({
         label: "Slack Link",
-        placeholder: "https://fadderuka.no",
+        placeholder: "https://onlinentnu.slack.com/archives/C03S8TX1L",
         type: "url",
       }),
     },

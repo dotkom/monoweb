@@ -129,6 +129,7 @@ export interface InterestGroup {
   createdAt: Generated<Timestamp>
   description: string | null
   id: Generated<string>
+  imageUrl: string | null
   link: string | null
   name: string
   updatedAt: Generated<Timestamp>

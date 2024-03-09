@@ -10,7 +10,6 @@ export const CreateInterestGroupModal: FC<ContextModalProps> = ({ context, id })
     onSubmit: (data) => {
       create.mutate({
         ...data,
-        updatedAt: new Date(),
       })
       close()
     },
