@@ -1,6 +1,7 @@
 import { type Database } from "@dotkomonline/db"
 import { type DeleteResult } from "@dotkomonline/db/utils"
 import {
+  AttendancePool,
   AttendancePoolSchema,
   type AttendanceId,
   type AttendancePoolId,
@@ -10,29 +11,16 @@ import { Selectable, type Kysely } from "kysely"
 import { prepareJsonInsert } from "../../utils/db-utils"
 import { z } from "zod"
 
-type DatabasePool1 = Selectable<Database["attendancePool"]>
-type DatabasePool2 = Selectable<Database["attendancePool"]> & { numAttendees: number }
+type DatabasePool = Selectable<Database["attendancePool"]> & { numAttendees: number }
 
-const Pool1 = AttendancePoolSchema.omit({
-  numAttendees: true,
-})
-const Pool2 = AttendancePoolSchema
-
-type Pool1 = z.infer<typeof Pool1>
-type Pool2 = z.infer<typeof Pool2>
-
-const mapToPool1 = (payload: DatabasePool1) => {
-  return Pool1.parse(payload)
-}
-
-const mapToPool2 = (payload: DatabasePool2) => Pool2.parse(payload)
+const mapToPool = (payload: DatabasePool) => AttendancePoolSchema.parse(payload)
 
 export interface AttendancePoolRepository {
-  create(obj: AttendancePoolWrite): Promise<Pool2>
+  create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<DeleteResult>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<Pool2[]>
-  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<Pool1>
-  get(id: AttendancePoolId): Promise<Pool2 | null>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
+  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
+  get(id: AttendancePoolId): Promise<AttendancePool | null>
 }
 
 export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
@@ -55,7 +43,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       return null
     }
 
-    return mapToPool2({
+    return mapToPool({
       ...res,
       numAttendees: Number(res.numAttendees),
     })
@@ -104,18 +92,18 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
         ...pool,
         numAttendees: Number(pool.numAttendees),
       }))
-      .map(mapToPool2)
+      .map(mapToPool)
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
     const insertObj = prepareJsonInsert(obj, "yearCriteria")
-    const res = await this.db
-      .updateTable("attendancePool")
-      .set(insertObj)
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
+    await this.db.updateTable("attendancePool").set(insertObj).where("id", "=", id).executeTakeFirstOrThrow()
 
-    return mapToPool1(res)
+    const res = await this.get(id)
+    if (res === null) {
+      throw new Error("Failed to update pool, could not find pool after update")
+    }
+
+    return mapToPool(res)
   }
 }

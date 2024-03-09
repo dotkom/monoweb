@@ -9,11 +9,12 @@ import {
 import { type UserService } from "../user/user-service"
 import { AttendeeRepository } from "./attendee-repository"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
+import { AttendanceRepository } from "./attendance-repository"
 
 export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
-  registerForEvent(userId: string, poolId: string): Promise<Attendee>
-  deregisterForEvent(id: AttendeeId): Promise<void>
+  registerForEvent(userId: string, poolId: string, time: Date): Promise<Attendee>
+  deregisterForEvent(id: AttendeeId, attendanceId: AttendanceId, time: Date): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser>
 }
@@ -22,6 +23,7 @@ export class AttendeeServiceImpl implements AttendeeService {
   constructor(
     private readonly attendeeRepository: AttendeeRepository,
     private readonly attendancePoolRepository: AttendancePoolRepository,
+    private readonly attendanceRespository: AttendanceRepository,
     private readonly userService: UserService
   ) {
     this.attendeeRepository = attendeeRepository
@@ -59,18 +61,35 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async registerForEvent(userId: UserId, attendanceId: AttendanceId) {
+  async registerForEvent(userId: UserId, attendanceId: AttendanceId, now: Date) {
     const user = await this.userService.getUserById(userId)
 
     if (user === undefined) {
       throw new Error("User not found")
     }
 
+    // is user already registered?
     const userAlreadyRegistered = await this.attendeeRepository.getByUserId(userId, attendanceId)
     if (userAlreadyRegistered !== null) {
       throw new Error("User is already registered")
     }
 
+    // is attendance open?
+    const attendance = await this.attendanceRespository.getById(attendanceId)
+
+    if (attendance === null) {
+      throw new Error("Attendance not found")
+    }
+
+    if (attendance.registerStart > now) {
+      throw new Error("Attendance has not started yet")
+    }
+
+    if (attendance.registerEnd < now) {
+      throw new Error("Attendance has ended")
+    }
+
+    // does the user have a pool to register to?
     const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
     const poolWithMatchingCriteria = pools.find((pool) => {
       const year = user.studyYear
@@ -90,7 +109,20 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async deregisterForEvent(id: AttendeeId) {
+  async deregisterForEvent(id: AttendeeId, attendanceId: AttendanceId, now: Date) {
+    // require attendance id to avoid having to fetch 1. attendee then 2. pool then 3. attendance
+    // this can be changed/new method added to only attendee id if there arises a use case for deregistering from an attendance without knowing the attendance id
+
+    const attendance = await this.attendanceRespository.getById(attendanceId)
+
+    if (attendance === null) {
+      throw new Error("Attendance not found")
+    }
+
+    if (attendance.deregisterDeadline < now) {
+      throw new Error("The deregister deadline has passed")
+    }
+
     await this.attendeeRepository.delete(id)
   }
 

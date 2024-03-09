@@ -24,6 +24,25 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
   }
 
   async create(obj: AttendancePoolWrite) {
+    console.log("RUNNING")
+    // 1. Check if there are gaps in obj.yearCriteria
+    const hasGaps = (values: number[]): boolean => {
+      const min = values.length ? Math.min(...values) : -1
+      const max = values.length ? Math.max(...values) + 1 : -1
+
+      if (min === max) {
+        return true
+      }
+
+      const sorted = values.sort((a, b) => a - b)
+      return !sorted.every((num, idx) => idx === 0 || num === sorted[idx - 1] + 1)
+    }
+
+    console.log(obj.yearCriteria)
+    if (hasGaps(obj.yearCriteria)) {
+      throw new Error("Year criteria is not continous")
+    }
+
     const res = await this.attendancePoolRepository.create(obj)
     return res
   }
@@ -34,14 +53,7 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
     const res = await this.attendancePoolRepository.update(obj, id)
-    if (res.numUpdatedRows === 1) {
-      const pool = await this.attendancePoolRepository.get(id)
-      if (pool === null) {
-        throw new Error("Pool not found")
-      }
-      return pool
-    }
-    throw new Error("Failed to update pool")
+    return res
   }
 
   async getPoolsByAttendanceId(attendanceId: string) {

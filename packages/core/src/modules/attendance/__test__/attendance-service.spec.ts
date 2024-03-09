@@ -33,7 +33,12 @@ describe("Attendance after merge time", () => {
 
   const userService: UserService = new UserServiceImpl(userRepository)
 
-  const attendeeService: AttendeeService = new AttendeeServiceImpl(attendeeRepository, attendancePoolRepository)
+  const attendeeService: AttendeeService = new AttendeeServiceImpl(
+    attendeeRepository,
+    attendancePoolRepository,
+    attendanceRepository,
+    userService
+  )
 
   const attendance: Attendance = {
     id: ulid(),

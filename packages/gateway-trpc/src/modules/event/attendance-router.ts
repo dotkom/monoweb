@@ -46,15 +46,18 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.registerForEvent(input.userId, input.attendanceId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendeeService.registerForEvent(input.userId, input.attendanceId, new Date())
+    ),
 
   deregisterForEvent: protectedProcedure
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
+        attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(input.id,input.attendanceId, new Date())),
 
   registerAttendance: protectedProcedure
     .input(
