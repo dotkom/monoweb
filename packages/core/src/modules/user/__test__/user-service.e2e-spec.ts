@@ -1,10 +1,11 @@
 import crypto from "crypto"
-import { beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { ulid } from "ulid"
 import { createEnvironment } from "@dotkomonline/env"
-import { createKysely } from "@dotkomonline/db"
+import { Database, createKysely } from "@dotkomonline/db"
 import { createServiceLayer, type ServiceLayer } from "../../core"
 import { UserWrite } from "@dotkomonline/types"
+import { Kysely } from "kysely"
 
 const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),
@@ -18,11 +19,16 @@ const fakeUser = (subject?: string): UserWrite => ({
 
 describe("users", () => {
   let core: ServiceLayer
+  let db: Kysely<Database>
 
   beforeEach(async () => {
     const env = createEnvironment()
-    const db = createKysely(env)
+    db = createKysely(env)
     core = await createServiceLayer({ db })
+  })
+
+  afterEach(async () => {
+    await db.destroy()
   })
 
   it("can create new users", async () => {
