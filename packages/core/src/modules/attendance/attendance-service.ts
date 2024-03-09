@@ -36,15 +36,8 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async update(obj: AttendanceWrite, id: AttendanceId) {
-    const res = await this.attendanceRepository.update(obj, id)
-    if (res.numUpdatedRows === 1) {
-      const attendance = await this.attendanceRepository.getById(id)
-      if (attendance === undefined) {
-        throw new Error("Attendance not found")
-      }
-      return attendance
-    }
-    throw new Error("Failed to update attendance")
+    const attendance = await this.attendanceRepository.update(obj, id)
+    return attendance
   }
 
   async create(obj: AttendanceWrite) {
