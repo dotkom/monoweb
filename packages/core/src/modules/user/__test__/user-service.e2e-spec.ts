@@ -36,10 +36,6 @@ describe("users", () => {
     await db.destroy()
   })
 
-  afterEach(async () => {
-    await db.destroy()
-  })
-
   it("can create new users", async () => {
     const none = await core.userService.getAllUsers(100)
     expect(none).toHaveLength(0)
