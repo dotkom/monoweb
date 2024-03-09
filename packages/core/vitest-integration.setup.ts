@@ -37,28 +37,27 @@ async function runMigrations(env: Environment) {
 
 async function resetTestDatabase(container: StartedPostgreSqlContainer, env: Environment) {
   try {
+    // Create client for the default database and use it to drop and recreate the test database
+    const dbString = container.getConnectionUri().replace("/main", "/postgres")
+    const kysely = createKysely({
+      ...env,
+      DATABASE_URL: dbString,
+    })
 
-  // Create client for the default database and use it to drop and recreate the test database
-  const dbString = container.getConnectionUri().replace("/main", "/postgres")
-  const kysely = createKysely({
-    ...env,
-    DATABASE_URL: dbString,
-  })
+    const deleteQuery = sql`drop database if exists ${sql.ref(testDBConfig.database)}`.compile(kysely)
+    const createQuery = sql`create database ${sql.ref(testDBConfig.database)}`.compile(kysely)
 
-  const deleteQuery = sql`drop database if exists ${sql.ref(testDBConfig.database)}`.compile(kysely)
-  const createQuery = sql`create database ${sql.ref(testDBConfig.database)}`.compile(kysely)
+    await kysely.executeQuery(deleteQuery)
+    await kysely.executeQuery(createQuery)
 
-  await kysely.executeQuery(deleteQuery)
-  await kysely.executeQuery(createQuery)
-
-  await kysely.destroy()
-
+    await kysely.destroy()
   } catch (e) {
     console.error(e)
-}
+  }
 }
 
 beforeAll(async () => {
+  console.log("Starting database container")
   container = await setupDatabaseContainer()
 }, 30000)
 
