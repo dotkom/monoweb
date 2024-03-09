@@ -61,6 +61,10 @@ resource "auth0_branding" "branding" {
     # online-blue
     page_background = "#0D5474"
   }
+
+  universal_login {
+    body = file("branding/universal_login_base.html")
+  }
 }
 
 resource "auth0_resource_server" "online" {
