@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it, expect } from "vitest"
+import { beforeAll, afterEach, beforeEach, describe, it, expect } from "vitest"
 import { createEnvironment } from "@dotkomonline/env"
 import { Database, createKysely } from "@dotkomonline/db"
 import { type Company } from "@dotkomonline/types"
@@ -12,15 +12,24 @@ import {
   InvalidStartDateError,
 } from "../job-listing-service"
 import { Kysely } from "kysely"
+import { buildDbUrl, setupTestDB } from "../../../../vitest-integration.setup"
 
 describe("job-listings", () => {
   let core: ServiceLayer
   let company: Company
   let db: Kysely<Database>
+  const dbName = "joblisting"
 
   beforeEach(async () => {
     const env = createEnvironment()
-    db = createKysely(env)
+    await setupTestDB(env, dbName)
+
+    const testDbURL = buildDbUrl(dbName)
+    db = createKysely({
+      ...env,
+      DATABASE_URL: testDbURL,
+    })
+
     core = await createServiceLayer({ db })
     company = await core.companyService.createCompany(getCompanyMock())
   })

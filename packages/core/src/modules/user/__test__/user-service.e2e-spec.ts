@@ -6,6 +6,7 @@ import { Database, createKysely } from "@dotkomonline/db"
 import { createServiceLayer, type ServiceLayer } from "../../core"
 import { UserWrite } from "@dotkomonline/types"
 import { Kysely } from "kysely"
+import { buildDbUrl, setupTestDB } from "../../../../vitest-integration.setup"
 
 const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),
@@ -20,11 +21,23 @@ const fakeUser = (subject?: string): UserWrite => ({
 describe("users", () => {
   let core: ServiceLayer
   let db: Kysely<Database>
+  const dbName = "user"
 
   beforeEach(async () => {
     const env = createEnvironment()
-    db = createKysely(env)
+    await setupTestDB(env, dbName)
+
+    const testDbURL = buildDbUrl(dbName)
+    db = createKysely({
+      ...env,
+      DATABASE_URL: testDbURL,
+    })
+
     core = await createServiceLayer({ db })
+  })
+
+  afterEach(async () => {
+    await db.destroy()
   })
 
   afterEach(async () => {

@@ -14,11 +14,5 @@ export default defineConfig({
     include: ["**/*.e2e-spec.ts"],
     mockReset: true,
     setupFiles: ["./vitest-integration.setup.ts"],
-    poolOptions: {
-      threads: {
-        maxThreads: 1,
-        minThreads: 1,
-      },
-    },
   },
 })

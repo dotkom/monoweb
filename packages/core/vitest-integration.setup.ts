@@ -1,8 +1,8 @@
-import { beforeEach, beforeAll, afterEach } from "vitest"
-import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
-import { createMigrator, createKysely, Database } from "@dotkomonline/db"
+import { Database, createKysely, createMigrator } from "@dotkomonline/db"
 import { Environment, createEnvironment } from "@dotkomonline/env"
-import { sql } from "kysely"
+import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
+import { Kysely, sql } from "kysely"
+import { beforeAll } from "vitest"
 
 // Configuration settings for the database container
 const testDBConfig = {
@@ -28,48 +28,53 @@ async function setupDatabaseContainer() {
   return container
 }
 
-async function runMigrations(env: Environment) {
-  const kysely = createKysely(env)
-  const migrator = createMigrator(kysely, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
+async function runMigrations(env: Environment, dbName: string) {
+  const url = buildDbUrl(dbName)
+  const db = createKysely({
+    ...env,
+    DATABASE_URL: url,
+  })
+  const migrator = createMigrator(db, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
   await migrator.migrateToLatest().catch(console.warn)
-  await kysely.destroy()
+  await db.destroy()
 }
 
-async function resetTestDatabase(container: StartedPostgreSqlContainer, env: Environment) {
+export function buildDbUrl(dbName: string): string {
+  return `postgres://${testDBConfig.username}:${
+    testDBConfig.password
+  }@localhost:${container.getFirstMappedPort()}/${dbName}`
+}
+
+async function resetTestDatabase(env: Environment, dbName: string) {
   try {
     // Create client for the default database and use it to drop and recreate the test database
-    const dbString = container.getConnectionUri().replace("/main", "/postgres")
-    const kysely = createKysely({
+    const url = buildDbUrl("postgres")
+    const db = createKysely({
       ...env,
-      DATABASE_URL: dbString,
+      DATABASE_URL: url,
     })
 
-    const deleteQuery = sql`drop database if exists ${sql.ref(testDBConfig.database)}`.compile(kysely)
-    const createQuery = sql`create database ${sql.ref(testDBConfig.database)}`.compile(kysely)
+    const deleteQuery = sql`drop database if exists ${sql.ref(dbName)}`.compile(db)
+    const createQuery = sql`create database ${sql.ref(dbName)}`.compile(db)
 
-    await kysely.executeQuery(deleteQuery)
-    await kysely.executeQuery(createQuery)
+    await db.executeQuery(deleteQuery)
+    await db.executeQuery(createQuery)
 
-    await kysely.destroy()
+    await db.destroy()
   } catch (e) {
+    console.log("Error resetting database")
     console.error(e)
   }
 }
 
+export async function setupTestDB(env: Environment, dbName: string) {
+  await resetTestDatabase(env, dbName)
+  await runMigrations(env, dbName)
+}
+
 beforeAll(async () => {
-  console.log("Starting database container")
   container = await setupDatabaseContainer()
 }, 30000)
-
-beforeEach(async () => {
-  const env = createEnvironment()
-  await runMigrations(env)
-})
-
-afterEach(async () => {
-  const env = createEnvironment()
-  await resetTestDatabase(container, env)
-})
 
 process.on("beforeExit", async () => {
   // await container.stop()
