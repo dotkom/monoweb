@@ -1,6 +1,6 @@
-import { beforeEach, describe, it, expect } from "vitest"
+import { afterEach, beforeEach, describe, it, expect } from "vitest"
 import { createEnvironment } from "@dotkomonline/env"
-import { createKysely } from "@dotkomonline/db"
+import { Database, createKysely } from "@dotkomonline/db"
 import { type Company } from "@dotkomonline/types"
 import { addDays, addMinutes, subDays } from "date-fns"
 import { getCompanyMock, getJobListingMock } from "../../../../mock"
@@ -11,16 +11,22 @@ import {
   InvalidLocationError,
   InvalidStartDateError,
 } from "../job-listing-service"
+import { Kysely } from "kysely"
 
 describe("job-listings", () => {
   let core: ServiceLayer
   let company: Company
+  let db: Kysely<Database>
 
   beforeEach(async () => {
     const env = createEnvironment()
-    const db = createKysely(env)
+    db = createKysely(env)
     core = await createServiceLayer({ db })
     company = await core.companyService.createCompany(getCompanyMock())
+  })
+
+  afterEach(async () => {
+    await db.destroy()
   })
 
   it("can create new job listings", async () => {
