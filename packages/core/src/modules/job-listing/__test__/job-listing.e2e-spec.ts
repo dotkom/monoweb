@@ -1,9 +1,11 @@
-import { beforeAll, afterEach, beforeEach, describe, it, expect } from "vitest"
+import { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
-import { Database, createKysely } from "@dotkomonline/db"
 import { type Company } from "@dotkomonline/types"
 import { addDays, addMinutes, subDays } from "date-fns"
+import { Kysely } from "kysely"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { getCompanyMock, getJobListingMock } from "../../../../mock"
+import { getTestDb, setupTestDB } from "../../../../vitest-integration.setup"
 import { createServiceLayer, type ServiceLayer } from "../../core"
 import {
   InvalidDeadlineError,
@@ -11,8 +13,6 @@ import {
   InvalidLocationError,
   InvalidStartDateError,
 } from "../job-listing-service"
-import { Kysely } from "kysely"
-import { buildDbUrl, setupTestDB } from "../../../../vitest-integration.setup"
 
 describe("job-listings", () => {
   let core: ServiceLayer
@@ -24,11 +24,7 @@ describe("job-listings", () => {
     const env = createEnvironment()
     await setupTestDB(env, dbName)
 
-    const testDbURL = buildDbUrl(dbName)
-    db = createKysely({
-      ...env,
-      DATABASE_URL: testDbURL,
-    })
+    db = getTestDb(env, dbName)
 
     core = await createServiceLayer({ db })
     company = await core.companyService.createCompany(getCompanyMock())

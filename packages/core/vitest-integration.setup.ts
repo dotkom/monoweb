@@ -1,5 +1,5 @@
 import { Database, createKysely, createMigrator } from "@dotkomonline/db"
-import { Environment, createEnvironment } from "@dotkomonline/env"
+import { Environment } from "@dotkomonline/env"
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
 import { Kysely, sql } from "kysely"
 import { beforeAll } from "vitest"
@@ -29,30 +29,30 @@ async function setupDatabaseContainer() {
 }
 
 async function runMigrations(env: Environment, dbName: string) {
-  const url = buildDbUrl(dbName)
-  const db = createKysely({
-    ...env,
-    DATABASE_URL: url,
-  })
+  const db = getTestDb(env, dbName)
   const migrator = createMigrator(db, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
   await migrator.migrateToLatest().catch(console.warn)
   await db.destroy()
 }
 
-export function buildDbUrl(dbName: string): string {
+function buildDbUrl(dbName: string): string {
   return `postgres://${testDBConfig.username}:${
     testDBConfig.password
   }@localhost:${container.getFirstMappedPort()}/${dbName}`
 }
 
+export function getTestDb(env: Environment, dbName: string): Kysely<Database> {
+  const url = buildDbUrl(dbName)
+  return createKysely({
+    ...env,
+    DATABASE_URL: url,
+  })
+}
+
 async function resetTestDatabase(env: Environment, dbName: string) {
   try {
     // Create client for the default database and use it to drop and recreate the test database
-    const url = buildDbUrl("postgres")
-    const db = createKysely({
-      ...env,
-      DATABASE_URL: url,
-    })
+    const db = getTestDb(env, "main")
 
     const deleteQuery = sql`drop database if exists ${sql.ref(dbName)}`.compile(db)
     const createQuery = sql`create database ${sql.ref(dbName)}`.compile(db)

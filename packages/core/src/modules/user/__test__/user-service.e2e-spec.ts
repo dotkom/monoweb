@@ -1,12 +1,12 @@
-import crypto from "crypto"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { ulid } from "ulid"
+import { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
-import { Database, createKysely } from "@dotkomonline/db"
-import { createServiceLayer, type ServiceLayer } from "../../core"
 import { UserWrite } from "@dotkomonline/types"
+import crypto from "crypto"
 import { Kysely } from "kysely"
-import { buildDbUrl, setupTestDB } from "../../../../vitest-integration.setup"
+import { ulid } from "ulid"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { getTestDb, setupTestDB } from "../../../../vitest-integration.setup"
+import { createServiceLayer, type ServiceLayer } from "../../core"
 
 const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),
@@ -27,11 +27,7 @@ describe("users", () => {
     const env = createEnvironment()
     await setupTestDB(env, dbName)
 
-    const testDbURL = buildDbUrl(dbName)
-    db = createKysely({
-      ...env,
-      DATABASE_URL: testDbURL,
-    })
+    db = getTestDb(env, dbName)
 
     core = await createServiceLayer({ db })
   })
