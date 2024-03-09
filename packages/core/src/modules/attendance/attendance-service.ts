@@ -10,7 +10,7 @@ import { AttendeeRepository } from "./attendee-repository"
 import { AttendanceRepository } from "./attendance-repository"
 
 export interface AttendanceService {
-  create(obj: Partial<AttendanceWrite>): Promise<Attendance>
+  create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
@@ -47,7 +47,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     throw new Error("Failed to update attendance")
   }
 
-  async create(obj: Partial<AttendanceWrite>) {
+  async create(obj: AttendanceWrite) {
     return this.attendanceRepository.create(obj)
   }
 
