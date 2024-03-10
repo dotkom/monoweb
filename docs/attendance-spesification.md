@@ -1,10 +1,18 @@
 ## Concepts
-A pool with a capacity of 0 is called a 0-pool.
-A user whos year matches _a pool with capacity_, is a wanted user, also just called user.
-A user whose year matches a 0-pool is a semi-wanted user.
-A user whose year does not match any pool is an unwanted user.
-A user with a prikk and with a year that matches a pool is called a marked wanted user.
-The pool which is created at the time of merging is called the merge pool.
+
+A pool with a capacity of 0 can be referred to as a a _0-pool_.
+
+A pool with a capacity more than 0 can be referred to as a _capacity pool_.
+
+A user whos year matches a pool (capacity more than 0) can be referred to as a _target user_.
+
+A user whose year matches a 0-pool can be referred to as a _reserve user_.
+
+A user whose year does not match any pool nor 0-pool can be referred to as an _unasigned user_.
+
+A target user with a prikk is called a _marked target user_.
+
+The pool which is created at the time of merging is called the _merge pool_.
 
 ## Pools
 The registration for an event consists of pools.
@@ -15,22 +23,21 @@ The capacity of an event is the total capacity of all its pools.
 
 ## Pools with 0 capacity (0-pools)
 
-A semi-wanted user can sign up for the waiting list for the merge-pool such that they will have a sign-up time of the merge time.
+Reserve users are those whose year matches a pool with a capacity of zero (0-pool). They cannot directly register for an event because their designated pool doesn't have any slots available.
 
-Thus:
+Despite not having a direct slot in the event due to the 0-pool status, reserve users can sign up for the waiting list for what will become the merge pool once all pools consolidate at a predefined merge time. Their registration time for the waiting list on the merge pool is set to the time of the merge + the time they took to register after the initial main registration start.
 
-A semi-wanted user who registers 5 minutes after the registration start and a semi-wanted user who registers 5 minutes after the consolidation time will have an equal starting point on the final waiting list / opportunities to get into the event.
-
-However, the final order between the semi-wanted users is determined by the absolute time they register. In this way, it matters when you register, even if you do not have a reserved spot.
-
+This means that, in practice, registering earlier gives a reserve user a better position on the waiting list for the merge pool compared to other reserve users, acknowledging the initiative of signing up sooner even though the users may not have a direct slot in the event.
 
 ## Prikker
+
+> TODO: this is not finished. I don't remember exactly how we decided to implement this.
 
 A user with a prikk cannot register for an event until 24 hours after the registration start.
 
 If functionality is created for all users to be able to click "sign me up" at the start of registration, the real registration time will be set to the registration time + 24h. 
 
-When determining the order of a user with a prikk and a semi-wanted user, the user with a prikk will be prioritized and placed in front.
+When determining the order of a user with a prikk and a reserve user, the user with a prikk will be prioritized and placed in front.
 
 ## Waiting List
 
@@ -48,15 +55,15 @@ All of the attended users will switch pool to the merge pool.  The attendance li
 
 ### Rules for forming the waiting list for the merge pool
 
-The following are the rules for how the order of the waiting list for the consolidated pool is determined. Users within each gruop are ordered by the time they registered on the waiting list.
+The following are the rules for how the order of the waiting list for the merge pool is determined. Users within each gruop are ordered by the time they registered on the waiting list.
 
-1. Wanted users on the waiting list
+1. Target users on the waiting list
 
-2. Marked wanted users
+2. Marked target users
 
-3. Semi-wanted users
+3. reserve users
 
-4. Semi-wanted marked users
+4. reserve marked users
 
 ## Bumping
 
@@ -64,11 +71,7 @@ The organizer can choose to make changes to the waiting list and registration li
 
 This is the actions the organizer can take based on the situation of the user.
 
-#### Registered user
-
-No action available
-
-#### Wanted user on waiting list
+#### Target user on waiting list for their designated pool
 
 Bump user to being registered for the event
 - User takes the place of a registered user. The registered user ends up at the top of the waiting list
@@ -76,18 +79,14 @@ Bump user to being registered for the event
 Bump user to the top of the waiting list
 - Users who were above the user in waiting are moved down one position.
 
-#### Semi-wanted user on waiting list
+#### Target user which is not on waiting list
 
-No actions available
+Should be be added to the waiting list, then [### Target user on waiting list for their designated pool](#target-user-on-waiting-list-for-their-designated-pool) applies.
 
-#### User which is not registered or on waiting list
+#### Reserve user on waiting list for the merge pool / not on waiting list
 
-Same as for [### Registered user](#registered-user), logically speaking
+No actions available. In the future, actions might be added here.
 
-#### Semi-wanted user, not on waiting list
-
-No actions available
-
-#### Not wanted user
+#### Unassigned user
 
 No actions available
