@@ -28,7 +28,11 @@ interface CustomCheckboxProps {
   )
 }
 
-export const AllAttendeesTable = ({ users, attendanceId }: { users: AttendeeUser[], attendanceId: AttendanceId }) => {
+interface AllAttendeesTableProps {
+  users: AttendeeUser[]
+  attendanceId: AttendanceId
+}
+export const AllAttendeesTable = ({ users, attendanceId }: AllAttendeesTableProps) => {
   const deregisterMut = useDeregisterForEventMutation()
 
   const columnHelper = createColumnHelper<AttendeeUser>()

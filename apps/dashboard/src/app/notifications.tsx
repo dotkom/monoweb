@@ -1,6 +1,6 @@
 import { notifications } from "@mantine/notifications"
 import { Icon } from "@iconify/react"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import { TRPCClientErrorLike } from "@trpc/client"
 import { AppRouter } from "@dotkomonline/gateway-trpc"
 
@@ -14,7 +14,7 @@ export interface NotificationProps {
 
 interface NotificationConfig {
   color: string
-  icon: JSX.Element
+  icon: ReactNode
   loading?: boolean
   autoClose?: number | false
 }

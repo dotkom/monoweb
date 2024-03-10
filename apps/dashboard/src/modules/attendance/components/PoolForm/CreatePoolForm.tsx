@@ -2,7 +2,6 @@ import { type AttendancePool } from "@dotkomonline/types"
 import { Box, Button } from "@mantine/core"
 import { type FC } from "react"
 import { z } from "zod"
-import { validateAndReturn } from "./utils"
 import { createLabelledCheckboxGroupInput, createNumberInput, useFormBuilder } from "../../../../app/form"
 import { notifyFail } from "../../../../app/notifications"
 
@@ -15,15 +14,15 @@ export interface CreatePoolFormProps {
 }
 
 export const CreatePoolFormSchema = z.object({
-  yearCriteria: z.array(z.number()),
+  yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   limit: z.number(),
 })
 export type CreatePoolFormSchema = z.infer<typeof CreatePoolFormSchema>
 
-export const useCreatePoolFormLogic = (props: CreatePoolFormProps) => {
+export const useCreatePoolForm = (props: CreatePoolFormProps) => {
   const existingPools = [...new Set(props.attendancePools.flatMap(({ yearCriteria }) => yearCriteria))]
 
-  const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
+  const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse", "PHD1"]
 
   const Form = useFormBuilder({
     schema: CreatePoolFormSchema,
@@ -41,7 +40,6 @@ export const useCreatePoolFormLogic = (props: CreatePoolFormProps) => {
     onSubmit: (values, form) => {
       form.resetField("yearCriteria")
       try {
-        validateAndReturn(values.yearCriteria)
         props.onSubmit(values)
       } catch (e) {
         notifyFail({
@@ -55,7 +53,7 @@ export const useCreatePoolFormLogic = (props: CreatePoolFormProps) => {
   return { Form }
 }
 export const CreatePoolForm: FC<CreatePoolFormProps> = (props) => {
-  const { Form } = useCreatePoolFormLogic(props)
+  const { Form } = useCreatePoolForm(props)
 
   return (
     <Box>
