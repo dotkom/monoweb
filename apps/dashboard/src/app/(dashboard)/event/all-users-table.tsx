@@ -12,7 +12,7 @@ interface CustomCheckboxProps {
   attendeeId: AttendeeId
   defaultChecked?: boolean
 }
-const CustomCheckbox = React.memo(({ attendeeId, defaultChecked }: CustomCheckboxProps) => {
+  const CustomCheckbox = ({ attendeeId, defaultChecked }: CustomCheckboxProps) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
 
   const toggleAttendance = (attendeeId: AttendeeId, currentCheckedState: boolean) => {
@@ -26,9 +26,7 @@ const CustomCheckbox = React.memo(({ attendeeId, defaultChecked }: CustomCheckbo
       defaultChecked={defaultChecked}
     />
   )
-})
-
-CustomCheckbox.displayName = "CustomCheckbox"
+}
 
 export const AllAttendeesTable = ({ users }: { users: AttendeeUser[] }) => {
   const deregisterMut = useDeregisterForEventMutation()
@@ -41,7 +39,8 @@ export const AllAttendeesTable = ({ users }: { users: AttendeeUser[] }) => {
         header: () => "Bruker",
         cell: (info) => {
           const attendee = info.getValue()
-          return `${attendee.user.givenName} ${attendee.user.familyName}`
+          // return `${attendee.user.givenName} ${attendee.user.familyName}`
+          return `${attendee.user.name}`
         },
       }),
       columnHelper.accessor("user.studyYear", {
