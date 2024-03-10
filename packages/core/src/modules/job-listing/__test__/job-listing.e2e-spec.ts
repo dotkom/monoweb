@@ -1,11 +1,9 @@
-import { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
 import { type Company } from "@dotkomonline/types"
 import { addDays, addMinutes, subDays } from "date-fns"
-import { Kysely } from "kysely"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { getCompanyMock, getJobListingMock } from "../../../../mock"
-import { getTestDb, setupTestDB } from "../../../../vitest-integration.setup"
+import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { createServiceLayer, type ServiceLayer } from "../../core"
 import {
   InvalidDeadlineError,
@@ -17,21 +15,18 @@ import {
 describe("job-listings", () => {
   let core: ServiceLayer
   let company: Company
-  let db: Kysely<Database>
-  const dbName = "joblisting"
+  let cleanup: CleanupFunction
 
   beforeEach(async () => {
     const env = createEnvironment()
-    await setupTestDB(env, dbName)
-
-    db = getTestDb(env, dbName)
-
-    core = await createServiceLayer({ db })
+    const context = await createServiceLayerForTesting(env, "job-listing")
+    cleanup = context.cleanup
+    core = await createServiceLayer({ db: context.kysely })
     company = await core.companyService.createCompany(getCompanyMock())
   })
 
   afterEach(async () => {
-    await db.destroy()
+    await cleanup()
   })
 
   it("can create new job listings", async () => {

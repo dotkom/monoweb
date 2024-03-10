@@ -1,80 +1,67 @@
 import { Database, createKysely, createMigrator } from "@dotkomonline/db"
-import { Environment } from "@dotkomonline/env"
+import { createEnvironment, Environment } from "@dotkomonline/env"
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
 import { Kysely, sql } from "kysely"
-import { beforeAll } from "vitest"
+import { beforeAll, afterAll } from "vitest"
 
-// Configuration settings for the database container
-const testDBConfig = {
-  password: "local",
-  username: "local",
-  database: "main",
-  imageName: "public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3",
-}
-
-// Used globally for all tests
 let container: StartedPostgreSqlContainer
-
-async function setupDatabaseContainer() {
-  const container = await new PostgreSqlContainer(testDBConfig.imageName)
-    .withExposedPorts(5432)
-    .withUsername(testDBConfig.username)
-    .withPassword(testDBConfig.password)
-    .withDatabase(testDBConfig.database)
-    .withReuse()
-    .start()
-
-  process.env.DATABASE_URL = container.getConnectionUri()
-  return container
-}
+let host: Kysely<Database>
 
 async function runMigrations(env: Environment, dbName: string) {
-  const db = getTestDb(env, dbName)
+  const db = createKyselyForDatabase(env, dbName)
   const migrator = createMigrator(db, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
   await migrator.migrateToLatest().catch(console.warn)
   await db.destroy()
 }
 
-function buildDbUrl(dbName: string): string {
-  return `postgres://${testDBConfig.username}:${
-    testDBConfig.password
-  }@localhost:${container.getFirstMappedPort()}/${dbName}`
-}
-
-export function getTestDb(env: Environment, dbName: string): Kysely<Database> {
-  const url = buildDbUrl(dbName)
+function createKyselyForDatabase(env: Environment, dbName: string): Kysely<Database> {
   return createKysely({
     ...env,
-    DATABASE_URL: url,
+    DATABASE_URL: `postres://local:local@${container.getHost()}:${container.getFirstMappedPort()}/${dbName}`,
   })
 }
 
-async function resetTestDatabase(env: Environment, dbName: string) {
+async function createTestDatabase(dbName: string) {
   try {
-    // Create client for the default database and use it to drop and recreate the test database
-    const db = getTestDb(env, "main")
-
-    const deleteQuery = sql`drop database if exists ${sql.ref(dbName)}`.compile(db)
-    const createQuery = sql`create database ${sql.ref(dbName)}`.compile(db)
-
-    await db.executeQuery(deleteQuery)
-    await db.executeQuery(createQuery)
-
-    await db.destroy()
+    await host.executeQuery(sql`drop database if exists ${sql.ref(dbName)}`.compile(host))
+    await host.executeQuery(sql`create database ${sql.ref(dbName)}`.compile(host))
   } catch (e) {
-    console.log("Error resetting database")
+    console.error("Error resetting database")
     console.error(e)
   }
 }
 
-export async function setupTestDB(env: Environment, dbName: string) {
-  await resetTestDatabase(env, dbName)
-  await runMigrations(env, dbName)
+export type CleanupFunction = () => Promise<void>
+
+export async function createServiceLayerForTesting(env: Environment, database: string) {
+  await createTestDatabase(database)
+  await runMigrations(env, database)
+  const kysely = createKyselyForDatabase(env, database)
+
+  return {
+    kysely,
+    cleanup: async () => {
+      await kysely.destroy()
+    },
+  }
 }
 
 beforeAll(async () => {
-  container = await setupDatabaseContainer()
+  container = await new PostgreSqlContainer("public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3")
+    .withExposedPorts(5432)
+    .withUsername("local")
+    .withPassword("local")
+    .withDatabase("main")
+    .withReuse()
+    .start()
+
+  process.env.DATABASE_URL = container.getConnectionUri()
+  host = createKysely(createEnvironment())
 }, 30000)
+
+afterAll(async () => {
+  await host.destroy()
+})
 
 process.on("beforeExit", async () => {
   // await container.stop()
