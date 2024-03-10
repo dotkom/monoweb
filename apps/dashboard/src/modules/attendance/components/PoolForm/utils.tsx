@@ -6,18 +6,9 @@ export function validateAndReturn(values: number[]): number[] {
   const max = values.length ? Math.max(...values) + 1 : -1
 
   checkNumber(min, max)
-  checkConsecutive(values)
 
   // array from min to exclusive max
   return Array.from({ length: max - min }, (_, i) => i + min)
-}
-
-const checkConsecutive = (chosenNumbers: number[]) => {
-  // Can only choose consecutive numbers
-  const sorted = chosenNumbers.sort((a, b) => a - b)
-  if (!isConsecutive(sorted)) {
-    throw new Error("Du kan ikke hoppe over klassetrinn")
-  }
 }
 
 const checkNumber = (min: number, max: number) => {

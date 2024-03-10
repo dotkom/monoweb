@@ -1,11 +1,9 @@
-import { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
 import { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
-import crypto, { randomUUID } from "crypto"
-import { Kysely } from "kysely"
+import crypto from "crypto"
 import { ulid } from "ulid"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { getTestDb, setupTestDB } from "../../../../vitest-integration.setup"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { createServiceLayer, type ServiceLayer } from "../../core"
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
@@ -95,20 +93,17 @@ const setupFakeFullAttendance = async (
 
 describe("attendance", () => {
   let core: ServiceLayer
-  let db: Kysely<Database>
-  const dbName = "attendance"
+  let cleanup: CleanupFunction
 
   beforeEach(async () => {
     const env = createEnvironment()
-    await setupTestDB(env, dbName)
-
-    db = getTestDb(env, dbName)
-
-    core = await createServiceLayer({ db })
+    const context = await createServiceLayerForTesting(env, "attendance")
+    cleanup = context.cleanup
+    core = await createServiceLayer({ db: context.kysely })
   })
 
   afterEach(async () => {
-    await db.destroy()
+    await cleanup()
   })
 
   it("basic crud", async () => {
@@ -146,7 +141,6 @@ describe("attendance", () => {
     expect(attendees).toHaveLength(1)
   })
 
-  // TODO: implement logic in service.
   it("should not allow registration end before start when creating attendance", async () => {
     const start = new Date("2021-01-01")
     const end = new Date("2021-01-04")
@@ -178,16 +172,21 @@ describe("attendance", () => {
     }
   })
 
-  it("should prevent creation of pools with discontinuous year criteria", async () => {
-    await expect(async () => {
-      const res = await setupFakeFullAttendance(core, {
-        attendance: {},
-        pools: [{ yearCriteria: [1, 3] }],
-        users: [],
-      })
+  it("should not allow deleting a pool with attendees", async () => {
+    const res = await setupFakeFullAttendance(core, {
+      attendance: {},
+      pools: [{ yearCriteria: [1, 3] }],
+      users: [{ studyYear: 1 }, { studyYear: 3 }],
+    })
 
-      return res
-    }).rejects.toThrowError("not continous")
+    const pool = res.pools[0]
+    const user = res.users[0]
+
+    await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date())
+
+    await expect(() => {
+      return core.attendancePoolService.delete(pool.id)
+    }).rejects.toThrowError("Pool has attendees")
   })
 
   it("should enforce registration and deregistration within specified start and end times", async () => {
@@ -220,17 +219,63 @@ describe("attendance", () => {
     }).rejects.toThrowError("The deregister deadline has passed")
   })
 
-  // TODO: implement logic in service.
-  it.skip("simulates a normal attendance with all cases", async () => {
-    // Verify attendees can deregister before the deadline but not after
+  it("simulates a normal attendance with all cases", async () => {
+    // Step 1: Setup the attendance with multiple pools and varying year criteria
+    const { users, pools, attendance } = await setupFakeFullAttendance(core, {
+      attendance: {
+        registerStart: new Date("2021-01-01"),
+        registerEnd: new Date("2021-01-07"),
+        deregisterDeadline: new Date("2021-01-05"),
+        mergeTime: new Date("2021-01-06"),
+      },
+      pools: [
+        { limit: 2, yearCriteria: [1] }, // Pool for 1st-year students
+        { limit: 2, yearCriteria: [2] }, // Pool for 2nd-year students
+        { limit: 2, yearCriteria: [3, 4] }, // Pool for 3rd and 4th-year students
+      ],
+      users: [
+        { studyYear: 1 }, // User in 1st year
+        { studyYear: 1 }, // Another user in 1st year
+        { studyYear: 2 }, // User in 2nd year
+        { studyYear: 3 }, // User in 3rd year
+      ],
+    })
+
+    // Step 2: Register each user to the event and verify successful registration
+    for (const user of users) {
+      const registrationDate = new Date("2021-01-02")
+      const attendee = await core.attendeeService.registerForEvent(user.id, attendance.id, registrationDate)
+      expect(attendee).not.toBeNull()
+    }
+
+    // Step 3: Attempt to register a user beyond pool capacity and expect failure
+    const extraUser = getFakeUser({ studyYear: 1 })
+    const extraUserCreated = await core.userService.createUser(extraUser)
+    await expect(
+      core.attendeeService.registerForEvent(extraUserCreated.id, attendance.id, new Date("2021-01-02"))
+    ).rejects.toThrowError()
+
+    // Step 4: Deregister a user before the deadline and verify
+    const attendeeToDeregister = await core.attendeeService.getByUserId(users[0].id, attendance.id)
+    if (attendeeToDeregister === null) throw new Error("Attendee not found")
+    await expect(
+      core.attendeeService.deregisterForEvent(attendeeToDeregister.id, attendance.id, new Date("2021-01-04"))
+    ).resolves.not.toThrowError()
+
+    // Step 5: Attempt to deregister a user after the deadline and expect failure
+    const attendeeToDeregisterLate = await core.attendeeService.getByUserId(users[1].id, attendance.id)
+    if (attendeeToDeregisterLate === null) throw new Error("Attendee not found")
+    await expect(
+      core.attendeeService.deregisterForEvent(attendeeToDeregisterLate.id, attendance.id, new Date("2021-01-06"))
+    ).rejects.toThrowError("The deregister deadline has passed")
+
+    // Step 6: Verify pool merging logic (if applicable)
   })
 
-  // TODO: implement logic in service.
-  it.skip("should correctly handle pool merging at the specified merge time", async () => {
-    // Test pool merging functionality occurs correctly at the merge time
-  })
+  // TODO: not yet implemented in service.
+  it.skip("should correctly handle pool merging at the specified merge time", async () => {})
 
-  // TODO : implement logic in service.
+  // TODO: implement logic in service.
   it.skip("should correctly manage registrations for social membership pool", async () => {
     // Ensure only those with social memberships can register for the designated pool
   })

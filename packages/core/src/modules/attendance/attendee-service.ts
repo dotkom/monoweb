@@ -17,6 +17,7 @@ export interface AttendeeService {
   deregisterForEvent(id: AttendeeId, attendanceId: AttendanceId, time: Date): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser>
+  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -36,6 +37,11 @@ export class AttendeeServiceImpl implements AttendeeService {
 
   async delete(id: AttendeeId) {
     await this.attendeeRepository.delete(id)
+  }
+
+  async getByUserId(userId: UserId, attendanceId: AttendanceId) {
+    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+    return attendee
   }
 
   async updateAttended(attended: boolean, id: AttendeeId) {

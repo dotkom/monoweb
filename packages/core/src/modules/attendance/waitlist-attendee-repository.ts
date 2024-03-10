@@ -13,6 +13,7 @@ const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttend
 export interface WaitlistAttendeRepository {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
   delete(id: WaitlistAttendeeId): Promise<DeleteResult>
+  getByAttendanceId(id: string): Promise<WaitlistAttendee[]>
 }
 
 export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository {
@@ -29,5 +30,14 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
     return {
       numDeletedRows: Number(res.numDeletedRows),
     }
+  }
+
+  async getByAttendanceId(id: string) {
+    const res = await this.db
+      .selectFrom("waitlistAttendee")
+      .selectAll("waitlistAttendee")
+      .where("attendanceId", "=", id)
+      .execute()
+    return res.map(mapToWaitlistAttendee)
   }
 }
