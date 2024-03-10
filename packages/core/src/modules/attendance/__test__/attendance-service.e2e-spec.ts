@@ -15,10 +15,10 @@ const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
 })
 
 const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => ({
-  deregisterDeadline: write.deregisterDeadline ?? new Date(),
-  mergeTime: write.mergeTime ?? new Date(),
-  registerEnd: write.registerEnd ?? new Date(),
-  registerStart: write.registerStart ?? new Date(),
+  deregisterDeadline: write.deregisterDeadline ?? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now by default
+  mergeTime: write.mergeTime ?? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now by default
+  registerEnd: write.registerEnd ?? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now by default
+  registerStart: write.registerStart ?? new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday by default
 })
 
 // const fakePool012: AttendancePool = {

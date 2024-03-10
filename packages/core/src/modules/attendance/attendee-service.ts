@@ -67,7 +67,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async registerForEvent(userId: UserId, attendanceId: AttendanceId, now: Date) {
+  async registerForEvent(userId: UserId, attendanceId: AttendanceId, registrationTime: Date) {
     const user = await this.userService.getUserById(userId)
 
     if (user === undefined) {
@@ -87,11 +87,11 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new Error("Attendance not found")
     }
 
-    if (attendance.registerStart > now) {
+    if (registrationTime < attendance.registerStart) {
       throw new Error("Attendance has not started yet")
     }
 
-    if (attendance.registerEnd < now) {
+    if (registrationTime > attendance.registerEnd) {
       throw new Error("Attendance has ended")
     }
 
