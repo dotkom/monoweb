@@ -34,6 +34,7 @@ export const runFixtures = async () => {
 
   insertedIds.owUser = await db //
     .insertInto("owUser")
+    .onConflict((eb) => eb.doNothing())
     .values(getUserFixtures())
     .returning("id")
     .execute()
@@ -41,6 +42,7 @@ export const runFixtures = async () => {
 
   insertedIds.company = await db
     .insertInto("company")
+    .onConflict((eb) => eb.doNothing())
     .values(getCompanyFixtures())
     .returning("id")
     .execute()
@@ -48,6 +50,7 @@ export const runFixtures = async () => {
 
   insertedIds.committee = await db
     .insertInto("committee")
+    .onConflict((eb) => eb.doNothing())
     .values(getCommitteeFixtures())
     .returning("id")
     .execute()
@@ -55,6 +58,7 @@ export const runFixtures = async () => {
 
   insertedIds.attendance = await db
     .insertInto("attendance")
+    .onConflict((eb) => eb.doNothing())
     .values(getAttendanceFixtures())
     .returning("id")
     .execute()
@@ -62,6 +66,7 @@ export const runFixtures = async () => {
 
   insertedIds.event = await db //
     .insertInto("event")
+    .onConflict((eb) => eb.doNothing())
     .values(getEventFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
@@ -69,6 +74,7 @@ export const runFixtures = async () => {
 
   insertedIds.attendancePool = await db
     .insertInto("attendancePool")
+    .onConflict((eb) => eb.doNothing())
     .values(getPoolFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
@@ -76,6 +82,7 @@ export const runFixtures = async () => {
 
   insertedIds.attendee = await db
     .insertInto("attendee")
+    .onConflict((eb) => eb.doNothing())
     .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendancePool))
     .returning("id")
     .execute()
@@ -83,6 +90,7 @@ export const runFixtures = async () => {
 
   insertedIds.mark = await db //
     .insertInto("mark")
+    .onConflict((eb) => eb.doNothing())
     .values(getMarkFixtures())
     .returning("id")
     .execute()
@@ -90,6 +98,7 @@ export const runFixtures = async () => {
 
   insertedIds.product = await db
     .insertInto("product")
+    .onConflict((eb) => eb.doNothing())
     .values(getProductFixtures())
     .returning("id")
     .execute()
@@ -97,6 +106,7 @@ export const runFixtures = async () => {
 
   insertedIds.jobListing = await db
     .insertInto("jobListing")
+    .onConflict((eb) => eb.doNothing())
     .values(getJobListingFixtures(insertedIds.company))
     .returning("id")
     .execute()
@@ -104,6 +114,7 @@ export const runFixtures = async () => {
 
   insertedIds.jobListingLocation = await db
     .insertInto("jobListingLocation")
+    .onConflict((eb) => eb.doNothing())
     .values(getJobListingLocationFixtures())
     .returning("id")
     .execute()
@@ -111,6 +122,7 @@ export const runFixtures = async () => {
 
   insertedIds.jobListingLocationLink = await db
     .insertInto("jobListingLocationLink")
+    .onConflict((eb) => eb.doNothing())
     .values(getJobListingLocationLinkFixtures(insertedIds.jobListing, insertedIds.jobListingLocation))
     .returning("id")
     .execute()
@@ -118,6 +130,7 @@ export const runFixtures = async () => {
 
   insertedIds.offline = await db
     .insertInto("offline")
+    .onConflict((eb) => eb.doNothing())
     .values(getOfflineFixtures())
     .returning("id")
     .execute()
@@ -126,16 +139,19 @@ export const runFixtures = async () => {
   // Tables with keys that are not used in other tables
   await db
     .insertInto("eventCommittee")
+    .onConflict((eb) => eb.doNothing())
     .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
     .execute()
 
   await db //
     .insertInto("productPaymentProvider")
+    .onConflict((eb) => eb.doNothing())
     .values(getProductPaymentProviderFixtures(insertedIds.product))
     .execute()
 
   await db //
     .insertInto("personalMark")
+    .onConflict((eb) => eb.doNothing())
     .values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser))
     .execute()
 }
