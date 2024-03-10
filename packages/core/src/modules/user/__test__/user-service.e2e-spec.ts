@@ -1,10 +1,10 @@
-import crypto from "crypto"
-import { beforeEach, describe, expect, it } from "vitest"
-import { ulid } from "ulid"
 import { createEnvironment } from "@dotkomonline/env"
-import { createKysely } from "@dotkomonline/db"
-import { createServiceLayer, type ServiceLayer } from "../../core"
 import { UserWrite } from "@dotkomonline/types"
+import crypto from "crypto"
+import { ulid } from "ulid"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
+import { createServiceLayer, type ServiceLayer } from "../../core"
 
 const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),
@@ -18,11 +18,17 @@ const fakeUser = (subject?: string): UserWrite => ({
 
 describe("users", () => {
   let core: ServiceLayer
+  let cleanup: CleanupFunction
 
   beforeEach(async () => {
     const env = createEnvironment()
-    const db = createKysely(env)
-    core = await createServiceLayer({ db })
+    const context = await createServiceLayerForTesting(env, "user")
+    cleanup = context.cleanup
+    core = await createServiceLayer({ db: context.kysely })
+  })
+
+  afterEach(async () => {
+    await cleanup()
   })
 
   it("can create new users", async () => {
