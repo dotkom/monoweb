@@ -17,7 +17,7 @@ async function runMigrations(env: Environment, dbName: string) {
 function createKyselyForDatabase(env: Environment, dbName: string): Kysely<Database> {
   return createKysely({
     ...env,
-    DATABASE_URL: `postres://local:local@localhost:${container.getFirstMappedPort()}/${dbName}`,
+    DATABASE_URL: `postres://local:local@${container.getHost()}:${container.getFirstMappedPort()}/${dbName}`,
   })
 }
 
