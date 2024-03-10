@@ -33,7 +33,7 @@ export const runFixtures = async () => {
 
   insertedIds.owUser = await db //
     .insertInto("owUser")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getUserFixtures())
     .returning("id")
     .execute()
@@ -41,7 +41,7 @@ export const runFixtures = async () => {
 
   insertedIds.company = await db
     .insertInto("company")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getCompanyFixtures())
     .returning("id")
     .execute()
@@ -49,7 +49,7 @@ export const runFixtures = async () => {
 
   insertedIds.committee = await db
     .insertInto("committee")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getCommitteeFixtures())
     .returning("id")
     .execute()
@@ -57,7 +57,7 @@ export const runFixtures = async () => {
 
   insertedIds.event = await db //
     .insertInto("event")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getEventFixtures())
     .returning("id")
     .execute()
@@ -65,7 +65,7 @@ export const runFixtures = async () => {
 
   insertedIds.attendance = await db
     .insertInto("attendance")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getAttendanceFixtures(insertedIds.event))
     .returning("id")
     .execute()
@@ -73,7 +73,7 @@ export const runFixtures = async () => {
 
   insertedIds.attendee = await db
     .insertInto("attendee")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
     .returning("id")
     .execute()
@@ -81,7 +81,7 @@ export const runFixtures = async () => {
 
   insertedIds.mark = await db //
     .insertInto("mark")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getMarkFixtures())
     .returning("id")
     .execute()
@@ -89,7 +89,7 @@ export const runFixtures = async () => {
 
   insertedIds.product = await db
     .insertInto("product")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getProductFixtures())
     .returning("id")
     .execute()
@@ -97,7 +97,7 @@ export const runFixtures = async () => {
 
   insertedIds.jobListing = await db
     .insertInto("jobListing")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getJobListingFixtures(insertedIds.company))
     .returning("id")
     .execute()
@@ -105,7 +105,7 @@ export const runFixtures = async () => {
 
   insertedIds.jobListingLocation = await db
     .insertInto("jobListingLocation")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getJobListingLocationFixtures())
     .returning("id")
     .execute()
@@ -113,7 +113,7 @@ export const runFixtures = async () => {
 
   insertedIds.jobListingLocationLink = await db
     .insertInto("jobListingLocationLink")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getJobListingLocationLinkFixtures(insertedIds.jobListing, insertedIds.jobListingLocation))
     .returning("id")
     .execute()
@@ -121,7 +121,7 @@ export const runFixtures = async () => {
 
   insertedIds.offline = await db
     .insertInto("offline")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getOfflineFixtures())
     .returning("id")
     .execute()
@@ -130,19 +130,19 @@ export const runFixtures = async () => {
   // Tables with keys that are not used in other tables
   await db
     .insertInto("eventCommittee")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getEventCommitteeFixtures(insertedIds.event, insertedIds.committee))
     .execute()
 
   await db //
     .insertInto("productPaymentProvider")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getProductPaymentProviderFixtures(insertedIds.product))
     .execute()
 
   await db //
     .insertInto("personalMark")
-    .onConflict((conflict) => conflict.doNothing())
+    .onConflict((eb) => eb.doNothing())
     .values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser))
     .execute()
 }
