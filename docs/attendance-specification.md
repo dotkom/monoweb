@@ -1,6 +1,6 @@
 # Introduction
 
-This document describes the rules and logic for how the attendance system works. The document is intended to be used as a reference for the implementation of the system, and as a source of information for anyone interested.
+This document describes the rules and logic for how the attendance system works. The document is intended to be used as a reference for the implementation of the system, and as a source of information for anyone interested. It is also really useful for getting help in writing code from LLMs 😇
 
 ## Brief overview
 
