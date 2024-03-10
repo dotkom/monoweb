@@ -2,19 +2,22 @@
 
 A pool with a capacity of 0 can be referred to as a a _0-pool_.
 
-A pool with a capacity more than 0 can be referred to as a _capacity pool_.
+A pool with a capacity of more than 0 can be referred to as a _capacity pool_.
 
-A user whos year matches a pool (capacity more than 0) can be referred to as a _target user_.
+A user whos year matches a capacity pool can be referred to as a _target user_.
 
 A user whose year matches a 0-pool can be referred to as a _reserve user_.
 
-A user whose year does not match any pool nor 0-pool can be referred to as an _unasigned user_.
+A user whose year does not match any pool can be referred to as an _unassigned user_.
 
 A target user with a prikk is called a _marked target user_.
+
+A reserve user with a prikk is called a _marked reserve user_.
 
 The pool which is created at the time of merging is called the _merge pool_.
 
 ## Pools
+
 The registration for an event consists of pools.
 
 A pool has a capacity and a rule for which year students can register for the pool.
@@ -25,7 +28,7 @@ The capacity of an event is the total capacity of all its pools.
 
 Reserve users are those whose year matches a pool with a capacity of zero (0-pool). They cannot directly register for an event because their designated pool doesn't have any slots available.
 
-Despite not having a direct slot in the event due to the 0-pool status, reserve users can sign up for the waiting list for what will become the merge pool once all pools consolidate at a predefined merge time. Their registration time for the waiting list on the merge pool is set to the time of the merge + the time they took to register after the initial main registration start.
+Despite not having a direct slot in the event due to the 0-pool status, reserve users can sign up for the waiting list for what will become the merge pool once all pools merge at a predefined merge time. Their registration time for the waiting list on the merge pool is set to the time of the merge + the time they took to register after the initial main registration start.
 
 This means that, in practice, registering earlier gives a reserve user a better position on the waiting list for the merge pool compared to other reserve users, acknowledging the initiative of signing up sooner even though the users may not have a direct slot in the event.
 
@@ -72,6 +75,8 @@ The organizer can choose to make changes to the waiting list and registration li
 This is the actions the organizer can take based on the situation of the user.
 
 #### Target user on waiting list for their designated pool
+
+The overall capacity of the event is not changed by bumping. 
 
 Bump user to being registered for the event
 - User takes the place of a registered user. The registered user ends up at the top of the waiting list
