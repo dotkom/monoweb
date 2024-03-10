@@ -1,6 +1,6 @@
 # Introduction
 
-This document describes the rules and logic for how the attendance system works. The document is intended to be used as a reference for the implementation of the attendance and waiting list functionality in the frontend and backend.
+This document describes the rules and logic for how the attendance system works. The document is intended to be used as a reference for the implementation of the system, and as a source of information for anyone interested.
 
 ## Brief overview
 
