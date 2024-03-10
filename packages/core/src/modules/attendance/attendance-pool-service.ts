@@ -2,13 +2,12 @@ import {
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
-  type AttendancePoolWrite,
-  type EventId,
+  type AttendancePoolWrite
 } from "@dotkomonline/types"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 
 export interface AttendancePoolService {
-  create(obj: AttendancePoolWrite): Promise<AttendancePool>
+  create(write: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
   getByAttendanceId(id: string): Promise<AttendancePool[]>
@@ -23,8 +22,18 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
     return this.attendancePoolRepository.getByAttendanceId(id)
   }
 
-  async create(obj: AttendancePoolWrite) {
-    const res = await this.attendancePoolRepository.create(obj)
+  async create(write: AttendancePoolWrite) {
+    const pools = await this.attendancePoolRepository.getByAttendanceId(write.attendanceId)
+
+    const existingYearCriteria = pools.flatMap((pool) => pool.yearCriteria)
+
+    const overlap = write.yearCriteria.some((year) => existingYearCriteria.includes(year))
+
+    if (overlap) {
+      throw new Error("Year criteria overlap")
+    }
+
+    const res = await this.attendancePoolRepository.create(write)
     return res
   }
 

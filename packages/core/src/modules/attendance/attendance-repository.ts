@@ -16,9 +16,7 @@ export interface AttendanceRepository {
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
   async create(obj: AttendanceWrite) {
-    console.log("inserting", obj)
     const res = await this.db.insertInto("attendance").values(obj).returningAll().executeTakeFirstOrThrow()
-    console.log(res)
     return mapToAttendance(res)
   }
 

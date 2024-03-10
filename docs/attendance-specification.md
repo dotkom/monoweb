@@ -29,6 +29,8 @@ A reserve user with a prikk is called a _marked reserve user_.
 
 The registration for an event consists of pools. A pool has a capacity and a rule for which year students can register for the pool. The capacity of an event is the total capacity of all its pools.
 
+No two pools in an event can have overlapping rules for which year students can register for the pool. This means that a user never can register for more than one pool in an event.
+
 Reserve users can sign up for the waiting list for what will become the merge pool once all pools merge at a predefined merge time. Their registration time for the waiting list on the merge pool is set to the time of the merge + the time they took to register after the initial main registration start.
 
 This means that, in practice, registering earlier gives a reserve user a better position on the waiting list for the merge pool compared to other reserve users, encouraging reserve users to sign up sooner even though the users may not have a direct slot in the event.

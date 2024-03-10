@@ -172,6 +172,20 @@ describe("attendance", () => {
     }
   })
 
+  // it should not allow creating pools with over lapping year criteria
+  it("should not allow creating pools with overlapping year criteria", async () => {
+    await expect(async () => {
+    await setupFakeFullAttendance(core, {
+      attendance: {},
+      pools: [
+        { limit: 1, yearCriteria: [1, 2] },
+        { limit: 1, yearCriteria: [2, 3] },
+      ],
+      users: [],
+    })
+    }).rejects.toThrowError("Year criteria overlap")
+  })
+
   it("should not allow deleting a pool with attendees", async () => {
     const res = await setupFakeFullAttendance(core, {
       attendance: {},
