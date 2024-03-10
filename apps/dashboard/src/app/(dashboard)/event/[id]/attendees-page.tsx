@@ -43,7 +43,7 @@ const Page: FC<Props> = ({ attendance }) => {
         <Title mb={10} order={3}>
           Alle påmeldte
         </Title>
-        <AllAttendeesTable users={attendees} />
+        <AllAttendeesTable users={attendees} attendanceId={attendance.id} />
       </Box>
     </Box>
   )

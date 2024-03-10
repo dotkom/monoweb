@@ -1,4 +1,4 @@
-import { type AttendeeUser, type AttendeeId } from "@dotkomonline/types"
+import { type AttendeeUser, type AttendeeId, AttendanceId } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo } from "react"
@@ -28,7 +28,7 @@ interface CustomCheckboxProps {
   )
 }
 
-export const AllAttendeesTable = ({ users }: { users: AttendeeUser[] }) => {
+export const AllAttendeesTable = ({ users, attendanceId }: { users: AttendeeUser[], attendanceId: AttendanceId }) => {
   const deregisterMut = useDeregisterForEventMutation()
 
   const columnHelper = createColumnHelper<AttendeeUser>()
@@ -60,6 +60,7 @@ export const AllAttendeesTable = ({ users }: { users: AttendeeUser[] }) => {
             onClick={() =>
               deregisterMut.mutate({
                 id: info.getValue().id,
+                attendanceId: attendanceId
               })
             }
           >
@@ -68,7 +69,7 @@ export const AllAttendeesTable = ({ users }: { users: AttendeeUser[] }) => {
         ),
       }),
     ],
-    [columnHelper, deregisterMut]
+    [columnHelper, deregisterMut, attendanceId]
   )
 
   const table = useReactTable({
