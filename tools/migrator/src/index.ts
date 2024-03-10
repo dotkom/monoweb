@@ -3,6 +3,7 @@ import { type MigrationResultSet } from "kysely"
 import { createMigrator } from "@dotkomonline/db/src/migrator"
 import { getLogger } from "@dotkomonline/logger"
 import { db } from "./db"
+import { resetDatabase } from "./utils"
 
 export const logger = getLogger("migrator")
 
@@ -17,9 +18,15 @@ program
   )
   .option("-s, --with-seed", "Seed the database with fake data", false)
   .option("-f, --with-fixtures", "Add predictable data to the database", false)
+  .option("-w, --with-db-wipe", "Wipe all existing data in database", false)
   .action(async (name: "down-all" | "down" | "latest" | "up", option) => {
     const migrator = createMigrator(db)
     let res: MigrationResultSet
+
+    if (option.withDbWipe) {
+      await resetDatabase()
+      logger.info("Database wiped")
+    }
 
     let handlesItself = false
     switch (name) {
@@ -74,8 +81,8 @@ program
     }
 
     if (res.error) {
-      logger.warn("Error while running migrations:")
-      logger.warn(JSON.stringify(res.error))
+      logger.warn("Error while running migrations")
+      console.dir(res.error, { depth: null }) // prints stack trace
       process.exit(1)
     }
 

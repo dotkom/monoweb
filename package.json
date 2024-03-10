@@ -22,7 +22,7 @@
     "migrate-down": "dotenv -e .env -- turbo run migrate -- down && cd packages/db && pnpm generate-types",
     "migrate-down-all": "dotenv -e .env -- turbo run migrate -- down-all && cd packages/db && pnpm generate-types",
     "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed && cd packages/db && pnpm generate-types",
-    "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures && cd packages/db && pnpm generate-types",
+    "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures --with-db-wipe && cd packages/db && pnpm generate-types",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
