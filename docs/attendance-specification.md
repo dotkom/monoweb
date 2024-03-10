@@ -1,4 +1,12 @@
-## Concepts
+# Introduction
+
+This document describes the rules and logic for how the attendance system works. The document is intended to be used as a reference for the implementation of the attendance and waiting list functionality in the frontend and backend.
+
+## Brief overview
+
+The attendance system is used to manage the registration and waiting list for events. The system is designed to handle events with multiple pools, where each pool has a capacity and a rule for which year students can register for the pool. The system has a merge functionality, where all pools merge into one pool at a predefined time. The system also has a waiting list functionality, where users can sign up for the waiting list for a pool if the pool is full. If a spot becomes available in a pool, users on that pool's waiting list will get the spot.
+
+## Definitions
 
 A pool with a capacity of 0 can be referred to as a a _0-pool_.
 
