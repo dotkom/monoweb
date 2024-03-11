@@ -20,7 +20,7 @@ export const CreateInterestGroupModal: FC<ContextModalProps> = ({ context, id })
 export const useCreateInterestGroupModal = () => () => {
   return modals.openContextModal({
     modal: "interestGroup/create",
-    title: "Create new interest group",
+    title: "Lag en ny interessegruppe",
     innerProps: {},
   })
 }
