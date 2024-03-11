@@ -1,8 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from "jose"
-import { getLogger } from "@dotkomonline/logger"
 import { z } from "zod"
-
-const logger = getLogger("jwt-crypto")
 
 /**
  * Verify a JWT using a remote JSON Web Key Set.
@@ -51,19 +48,19 @@ export const tryRefreshToken = async ({
     }),
   })
   if (!response.ok && response.status !== 400) {
-    logger.error("Received non-200 response when trying to refresh token", response.statusText, await response.text())
+    console.error("Received non-200 response when trying to refresh token", response.statusText, await response.text())
     throw new OfflineRefreshRequestError(`Failed to refresh token, non-200 response from ${endpoint}`)
   }
 
   if (response.status === 400) {
-    logger.warn("Failed to refresh token, received 400 response", await response.text())
+    console.warn("Failed to refresh token, received 400 response", await response.text())
     return null
   }
 
   const json = await response.json()
   const result = TokenEndpointResponse.safeParse(json)
   if (!result.success) {
-    logger.error("Failed to parse token endpoint response", result.error)
+    console.error("Failed to parse token endpoint response", result.error)
     throw new OfflineRefreshRequestError(
       `Token endpoint did not conform to the token endpoint shape, ${result.error.message}`
     )
