@@ -22,12 +22,12 @@ export const useInterestGroupWriteForm = ({
     label,
     fields: {
       name: createTextInput({
-        label: "Name",
+        label: "Navn",
         placeholder: "Interessegruppe",
         withAsterisk: true,
       }),
       description: createTextareaInput({
-        label: "Description",
+        label: "Kort beskrivelse",
         withAsterisk: true,
         rows: 5,
       }),

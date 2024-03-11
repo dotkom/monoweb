@@ -16,7 +16,7 @@ export const DeleteInterestGroupModal: FC<
   return (
     <Box>
       <Text c="red" mb={20} fw={700}>
-        Are you sure you want to delete this interest group?
+        Er du sikker på at du vil slette denne interessegruppen?
       </Text>
       <Button
         variant="outline"
@@ -27,7 +27,7 @@ export const DeleteInterestGroupModal: FC<
           router.push("/interest-group")
         }}
       >
-        Delete
+        Slett
       </Button>
     </Box>
   )
@@ -36,7 +36,7 @@ export const DeleteInterestGroupModal: FC<
 export const useDeleteInterestGroupModal = (interestGroupId: string) => () => {
   return modals.openContextModal({
     modal: "interestGroup/delete",
-    title: "Delete interest group",
+    title: "Slett interessegruppe",
     innerProps: { interestGroupId },
   })
 }

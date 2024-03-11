@@ -17,7 +17,7 @@ const InterestGroupPage = () => {
           <GenericTable table={table} />
         </Card>
         <Group justify="space-between">
-          <Button onClick={open}>Create Interest Group</Button>
+          <Button onClick={open}>Opprett interessegruppe</Button>
         </Group>
       </Stack>
     </Skeleton>
