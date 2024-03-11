@@ -4,6 +4,7 @@ import type { inferAsyncReturnType } from "@trpc/server"
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next"
 import { type Environment } from "@dotkomonline/env"
 import { createVerifier } from "@dotkomonline/jwt-crypto"
+import { type JwtService } from "@dotkomonline/jwt-crypto"
 
 interface AuthContextProps {
   auth: {
@@ -19,13 +20,12 @@ export const createContextInner = async (opts: AuthContextProps) => {
   }
 }
 
-export const createContext = async (opts: CreateNextContextOptions, env: Environment) => {
+export const createContext = async (opts: CreateNextContextOptions, jwtService: JwtService) => {
   const bearer = opts.req.headers.authorization
-  const verifier = await createVerifier(env.GTX_AUTH0_ISSUER)
-
-  if (bearer !== undefined) {
+  if (bearer?.startsWith("Bearer ")) {
     try {
-      const result = await verifier(token)
+      const token = bearer.substring("Bearer ".length)
+      const result = await jwtService.verify(token)
       console.log("forwarding request for", result.payload.sub)
 
       if (result.payload.sub === undefined) {
