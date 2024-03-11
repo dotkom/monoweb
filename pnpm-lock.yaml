@@ -391,6 +391,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
+      '@dotkomonline/jwt-crypto':
+        specifier: workspace:*
+        version: link:../../packages/jwt-crypto
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -7601,6 +7604,7 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
     dev: false
+    bundledDependencies: false
 
   /create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
