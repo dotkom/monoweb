@@ -391,6 +391,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
+      '@dotkomonline/jwt-crypto':
+        specifier: workspace:*
+        version: link:../../packages/jwt-crypto
       '@dotkomonline/jwt-nextjs':
         specifier: workspace:*
         version: link:../../packages/jwt-nextjs
