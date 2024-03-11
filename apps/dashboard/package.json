@@ -14,7 +14,7 @@
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
-    "@dotkomonline/jwt-crypto": "workspace:*",
+    "@dotkomonline/jwt-nextjs": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",

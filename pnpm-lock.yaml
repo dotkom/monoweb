@@ -60,9 +60,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
-      '@dotkomonline/jwt-crypto':
+      '@dotkomonline/jwt-nextjs':
         specifier: workspace:*
-        version: link:../../packages/jwt-crypto
+        version: link:../../packages/jwt-nextjs
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -360,9 +360,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
-      '@dotkomonline/jwt-crypto':
+      '@dotkomonline/jwt-nextjs':
         specifier: workspace:*
-        version: link:../../packages/jwt-crypto
+        version: link:../../packages/jwt-nextjs
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -841,6 +841,25 @@ importers:
         specifier: ^1.5.3
         version: 1.6.4
 
+  packages/jwt-nextjs:
+    dependencies:
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
+      '@dotkomonline/jwt-crypto':
+        specifier: workspace:*
+        version: link:../jwt-crypto
+      next:
+        specifier: ^14.1.3
+        version: 14.2.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next-auth:
+        specifier: ^4.24.5
+        version: 4.24.5(next@14.2.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.6.4
+
   packages/logger:
     dependencies:
       '@dotkomonline/env':
@@ -934,7 +953,7 @@ importers:
         version: link:../config
       '@ladle/react':
         specifier: ^4.0.3
-        version: 4.0.3(@swc/helpers@0.5.2)(@types/node@20.12.7)(@types/react@18.2.48)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sugarss@4.0.1(postcss@8.4.31))(typescript@5.4.5)
+        version: 4.0.3(@swc/helpers@0.5.5)(@types/node@20.12.7)(@types/react@18.2.48)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sugarss@4.0.1(postcss@8.4.31))(typescript@5.4.5)
       '@types/react':
         specifier: ^18.2.38
         version: 18.2.48
@@ -2179,8 +2198,17 @@ packages:
   '@next/env@14.0.4':
     resolution: {integrity: sha512-irQnbMLbUNQpP1wcE5NstJtbuA/69kRfzBrpAD7Gsn8zm/CY6YQYc3HQBz8QPxwISG26tIm5afvvVbu508oBeQ==}
 
+  '@next/env@14.2.5':
+    resolution: {integrity: sha512-/zZGkrTOsraVfYjGP8uM0p6r0BDT6xWpkjdVbcz66PJVSpwXX3yNiRycxAuDfBKGWBrZBXRuK/YVlkNgxHGwmA==}
+
   '@next/swc-darwin-arm64@14.0.4':
     resolution: {integrity: sha512-mF05E/5uPthWzyYDyptcwHptucf/jj09i2SXBPwNzbgBNc+XnwzrL0U6BmPjQeOL+FiB+iG1gwBeq7mlDjSRPg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@next/swc-darwin-arm64@14.2.5':
+    resolution: {integrity: sha512-/9zVxJ+K9lrzSGli1///ujyRfon/ZneeZ+v4ptpiPoOU+GKZnm8Wj8ELWU1Pm7GHltYRBklmXMTUqM/DqQ99FQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -2191,8 +2219,20 @@ packages:
     cpu: [x64]
     os: [darwin]
 
+  '@next/swc-darwin-x64@14.2.5':
+    resolution: {integrity: sha512-vXHOPCwfDe9qLDuq7U1OYM2wUY+KQ4Ex6ozwsKxp26BlJ6XXbHleOUldenM67JRyBfVjv371oneEvYd3H2gNSA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
   '@next/swc-linux-arm64-gnu@14.0.4':
     resolution: {integrity: sha512-VwwZKrBQo/MGb1VOrxJ6LrKvbpo7UbROuyMRvQKTFKhNaXjUmKTu7wxVkIuCARAfiI8JpaWAnKR+D6tzpCcM4w==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@next/swc-linux-arm64-gnu@14.2.5':
+    resolution: {integrity: sha512-vlhB8wI+lj8q1ExFW8lbWutA4M2ZazQNvMWuEDqZcuJJc78iUnLdPPunBPX8rC4IgT6lIx/adB+Cwrl99MzNaA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -2203,8 +2243,20 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@next/swc-linux-arm64-musl@14.2.5':
+    resolution: {integrity: sha512-NpDB9NUR2t0hXzJJwQSGu1IAOYybsfeB+LxpGsXrRIb7QOrYmidJz3shzY8cM6+rO4Aojuef0N/PEaX18pi9OA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
   '@next/swc-linux-x64-gnu@14.0.4':
     resolution: {integrity: sha512-/s/Pme3VKfZAfISlYVq2hzFS8AcAIOTnoKupc/j4WlvF6GQ0VouS2Q2KEgPuO1eMBwakWPB1aYFIA4VNVh667A==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@next/swc-linux-x64-gnu@14.2.5':
+    resolution: {integrity: sha512-8XFikMSxWleYNryWIjiCX+gU201YS+erTUidKdyOVYi5qUQo/gRxv/3N1oZFCgqpesN6FPeqGM72Zve+nReVXQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -2215,8 +2267,20 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@next/swc-linux-x64-musl@14.2.5':
+    resolution: {integrity: sha512-6QLwi7RaYiQDcRDSU/os40r5o06b5ue7Jsk5JgdRBGGp8l37RZEh9JsLSM8QF0YDsgcosSeHjglgqi25+m04IQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
   '@next/swc-win32-arm64-msvc@14.0.4':
     resolution: {integrity: sha512-7Wv4PRiWIAWbm5XrGz3D8HUkCVDMMz9igffZG4NB1p4u1KoItwx9qjATHz88kwCEal/HXmbShucaslXCQXUM5w==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@next/swc-win32-arm64-msvc@14.2.5':
+    resolution: {integrity: sha512-1GpG2VhbspO+aYoMOQPQiqc/tG3LzmsdBH0LhnDS3JrtDx2QmzXe0B6mSZZiN3Bq7IOMXxv1nlsjzoS1+9mzZw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -2227,8 +2291,20 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@next/swc-win32-ia32-msvc@14.2.5':
+    resolution: {integrity: sha512-Igh9ZlxwvCDsu6438FXlQTHlRno4gFpJzqPjSIBZooD22tKeI4fE/YMRoHVJHmrQ2P5YL1DoZ0qaOKkbeFWeMg==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+
   '@next/swc-win32-x64-msvc@14.0.4':
     resolution: {integrity: sha512-yEh2+R8qDlDCjxVpzOTEpBLQTEFAcP2A8fUFLaWNap9GitYKkKv1//y2S6XY6zsR4rCOPRpU7plYDR+az2n30A==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@next/swc-win32-x64-msvc@14.2.5':
+    resolution: {integrity: sha512-tEQ7oinq1/CjSG9uSTerca3v4AZ+dFa+4Yu6ihaG8Ud8ddqLQgFGcnwYls13H5X5CPDPZJdYxyeMui6muOLd4g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -3405,8 +3481,14 @@ packages:
   '@swc/counter@0.1.2':
     resolution: {integrity: sha512-9F4ys4C74eSTEUNndnER3VJ15oru2NumfQxS8geE+f3eB5xvfxpWyqE5XlVnxb/R14uoXi6SLbBwwiDSkv+XEw==}
 
+  '@swc/counter@0.1.3':
+    resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
+
   '@swc/helpers@0.5.2':
     resolution: {integrity: sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==}
+
+  '@swc/helpers@0.5.5':
+    resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
 
   '@swc/types@0.1.5':
     resolution: {integrity: sha512-myfUej5naTBWnqOCc/MdVOLVjXUXtIA+NpDrDBKJtLLg2shUjBu3cZmB/85RyitKc55+lUUyl7oRfLOvkr2hsw==}
@@ -3947,6 +4029,9 @@ packages:
 
   caniuse-lite@1.0.30001578:
     resolution: {integrity: sha512-J/jkFgsQ3NEl4w2lCoM9ZPxrD+FoBNJ7uJUpGVjIg/j0OwJosWM36EPDv+Yyi0V4twBk9pPmlFS+PLykgEvUmg==}
+
+  caniuse-lite@1.0.30001651:
+    resolution: {integrity: sha512-9Cf+Xv1jJNe1xPZLGuUXLNkE1BoDkqRqYyFJ9TDYSqhduqA4hu4oR9HluGoWYQC/aj8WHjsGVV+bwkh0+tegRg==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -5552,6 +5637,24 @@ packages:
       sass: ^1.3.0
     peerDependenciesMeta:
       '@opentelemetry/api':
+        optional: true
+      sass:
+        optional: true
+
+  next@14.2.5:
+    resolution: {integrity: sha512-0f8aRfBVL+mpzfBjYfQuLWh2WyAwtJXCRfkPF4UJ5qd2YwrHczsrSzXU4tRMV0OAxR8ZJZWPFn6uhSC56UTsLA==}
+    engines: {node: '>=18.17.0'}
+    hasBin: true
+    peerDependencies:
+      '@opentelemetry/api': ^1.1.0
+      '@playwright/test': ^1.41.2
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      sass: ^1.3.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@playwright/test':
         optional: true
       sass:
         optional: true
@@ -8499,7 +8602,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@ladle/react@4.0.3(@swc/helpers@0.5.2)(@types/node@20.12.7)(@types/react@18.2.48)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sugarss@4.0.1(postcss@8.4.31))(typescript@5.4.5)':
+  '@ladle/react@4.0.3(@swc/helpers@0.5.5)(@types/node@20.12.7)(@types/react@18.2.48)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sugarss@4.0.1(postcss@8.4.31))(typescript@5.4.5)':
     dependencies:
       '@babel/code-frame': 7.23.5
       '@babel/core': 7.24.5
@@ -8512,7 +8615,7 @@ snapshots:
       '@mdx-js/mdx': 3.0.1
       '@mdx-js/react': 3.0.1(@types/react@18.2.48)(react@18.2.0)
       '@vitejs/plugin-react': 4.2.1(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)))
-      '@vitejs/plugin-react-swc': 3.6.0(@swc/helpers@0.5.2)(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)))
+      '@vitejs/plugin-react-swc': 3.6.0(@swc/helpers@0.5.5)(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)))
       axe-core: 4.9.0
       boxen: 7.1.1
       chokidar: 3.6.0
@@ -8662,31 +8765,60 @@ snapshots:
 
   '@next/env@14.0.4': {}
 
+  '@next/env@14.2.5': {}
+
   '@next/swc-darwin-arm64@14.0.4':
+    optional: true
+
+  '@next/swc-darwin-arm64@14.2.5':
     optional: true
 
   '@next/swc-darwin-x64@14.0.4':
     optional: true
 
+  '@next/swc-darwin-x64@14.2.5':
+    optional: true
+
   '@next/swc-linux-arm64-gnu@14.0.4':
+    optional: true
+
+  '@next/swc-linux-arm64-gnu@14.2.5':
     optional: true
 
   '@next/swc-linux-arm64-musl@14.0.4':
     optional: true
 
+  '@next/swc-linux-arm64-musl@14.2.5':
+    optional: true
+
   '@next/swc-linux-x64-gnu@14.0.4':
+    optional: true
+
+  '@next/swc-linux-x64-gnu@14.2.5':
     optional: true
 
   '@next/swc-linux-x64-musl@14.0.4':
     optional: true
 
+  '@next/swc-linux-x64-musl@14.2.5':
+    optional: true
+
   '@next/swc-win32-arm64-msvc@14.0.4':
+    optional: true
+
+  '@next/swc-win32-arm64-msvc@14.2.5':
     optional: true
 
   '@next/swc-win32-ia32-msvc@14.0.4':
     optional: true
 
+  '@next/swc-win32-ia32-msvc@14.2.5':
+    optional: true
+
   '@next/swc-win32-x64-msvc@14.0.4':
+    optional: true
+
+  '@next/swc-win32-x64-msvc@14.2.5':
     optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -10003,7 +10135,7 @@ snapshots:
   '@swc/core-win32-x64-msvc@1.4.17':
     optional: true
 
-  '@swc/core@1.4.17(@swc/helpers@0.5.2)':
+  '@swc/core@1.4.17(@swc/helpers@0.5.5)':
     dependencies:
       '@swc/counter': 0.1.2
       '@swc/types': 0.1.5
@@ -10018,12 +10150,19 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.4.17
       '@swc/core-win32-ia32-msvc': 1.4.17
       '@swc/core-win32-x64-msvc': 1.4.17
-      '@swc/helpers': 0.5.2
+      '@swc/helpers': 0.5.5
 
   '@swc/counter@0.1.2': {}
 
+  '@swc/counter@0.1.3': {}
+
   '@swc/helpers@0.5.2':
     dependencies:
+      tslib: 2.6.2
+
+  '@swc/helpers@0.5.5':
+    dependencies:
+      '@swc/counter': 0.1.3
       tslib: 2.6.2
 
   '@swc/types@0.1.5': {}
@@ -10271,9 +10410,9 @@ snapshots:
 
   '@vercel/stega@0.1.0': {}
 
-  '@vitejs/plugin-react-swc@3.6.0(@swc/helpers@0.5.2)(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)))':
+  '@vitejs/plugin-react-swc@3.6.0(@swc/helpers@0.5.5)(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)))':
     dependencies:
-      '@swc/core': 1.4.17(@swc/helpers@0.5.2)
+      '@swc/core': 1.4.17(@swc/helpers@0.5.5)
       vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31))
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -10616,6 +10755,8 @@ snapshots:
   caniuse-lite@1.0.30001538: {}
 
   caniuse-lite@1.0.30001578: {}
+
+  caniuse-lite@1.0.30001651: {}
 
   ccount@2.0.1: {}
 
@@ -12633,6 +12774,21 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       uuid: 8.3.2
 
+  next-auth@4.24.5(next@14.2.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@babel/runtime': 7.22.6
+      '@panva/hkdf': 1.1.1
+      cookie: 0.5.0
+      jose: 4.14.4
+      next: 14.2.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      oauth: 0.9.15
+      openid-client: 5.4.3
+      preact: 10.16.0
+      preact-render-to-string: 5.2.6(preact@10.16.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      uuid: 8.3.2
+
   next-superjson-plugin@0.5.10(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(superjson@1.13.3):
     dependencies:
       hoist-non-react-statics: 3.3.2
@@ -12667,6 +12823,31 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 14.0.4
       '@next/swc-win32-ia32-msvc': 14.0.4
       '@next/swc-win32-x64-msvc': 14.0.4
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
+  next@14.2.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@next/env': 14.2.5
+      '@swc/helpers': 0.5.5
+      busboy: 1.6.0
+      caniuse-lite: 1.0.30001651
+      graceful-fs: 4.2.11
+      postcss: 8.4.31
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-jsx: 5.1.1(react@18.2.0)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 14.2.5
+      '@next/swc-darwin-x64': 14.2.5
+      '@next/swc-linux-arm64-gnu': 14.2.5
+      '@next/swc-linux-arm64-musl': 14.2.5
+      '@next/swc-linux-x64-gnu': 14.2.5
+      '@next/swc-linux-x64-musl': 14.2.5
+      '@next/swc-win32-arm64-msvc': 14.2.5
+      '@next/swc-win32-ia32-msvc': 14.2.5
+      '@next/swc-win32-x64-msvc': 14.2.5
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -13950,7 +14131,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.4.17(@swc/helpers@0.5.2)
+      '@swc/core': 1.4.17(@swc/helpers@0.5.5)
     optional: true
 
   tsconfck@3.0.3(typescript@5.4.5):
@@ -13980,7 +14161,7 @@ snapshots:
       sucrase: 3.34.0
       tree-kill: 1.2.2
     optionalDependencies:
-      '@swc/core': 1.4.17(@swc/helpers@0.5.2)
+      '@swc/core': 1.4.17(@swc/helpers@0.5.5)
       postcss: 8.4.38
       typescript: 5.4.5
     transitivePeerDependencies:
