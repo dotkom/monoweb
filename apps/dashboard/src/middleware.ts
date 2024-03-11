@@ -1,36 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { env } from "@dotkomonline/env"
-import { createVerifier, tryRefreshToken } from "@dotkomonline/jwt-crypto"
+import { JwtService, getRefreshToken, isJwtExpiredError } from "@dotkomonline/jwt-crypto";
 import { getToken } from "next-auth/jwt"
 
-const getBaseUrl = () => {
-  // TODO: Replace with trpc gateway url
-  if (env.NEXT_PUBLIC_NODE_ENV === "production") {
-    return "https://web.online.ntnu.no"
-  }
-  return "http://localhost:3000"
-}
-
 const getProxyUrl = (req: NextRequest) => {
+  const baseUrl = env.NEXT_PUBLIC_NODE_ENV === "production" ? "https://web.online.ntnu.no" : "http://localhost:3000"
   const source = new URL(req.url)
-  const target = new URL(source.pathname, getBaseUrl())
+  const target = new URL(source.pathname, baseUrl)
   for (const [key, value] of source.searchParams) {
     target.searchParams.set(key, value)
   }
   return target
 }
 
-const isJwtExpiredError = (error: unknown): boolean => {
-  return (
-    error !== null &&
-    typeof error === "object" &&
-    "code" in error &&
-    typeof error.code === "function" &&
-    error.code() === "ERR_JWT_EXPIRED"
-  )
-}
-
-const verifierPromise = createVerifier(env.DASHBOARD_AUTH0_ISSUER)
+const jwtService = new JwtService(env.GTX_AUTH0_ISSUER)
 
 export async function middleware(req: NextRequest) {
   const target = getProxyUrl(req)
@@ -47,10 +30,9 @@ export async function middleware(req: NextRequest) {
 
   // Otherwise, we'll verify the token, and optionally refresh it if it has
   // expired. Then we'll pass the request through to the trpc server.
-  const verifier = await verifierPromise
   try {
     // Attempt to verify the token, and forward the request if successful.
-    void (await verifier(token.accessToken))
+    await jwtService.verify(token.accessToken)
     req.headers.set("Authorization", `Bearer ${token.accessToken}`)
     return NextResponse.rewrite(target, {
       request: {
@@ -61,7 +43,7 @@ export async function middleware(req: NextRequest) {
     // If the token has expired, and we have a refresh token, we'll attempt to
     // refresh the token and forward the request with the new token.
     if (isJwtExpiredError(error) && token.refreshToken !== undefined) {
-      const accessToken = await tryRefreshToken({
+      const accessToken = await getRefreshToken({
         issuer: env.DASHBOARD_AUTH0_ISSUER,
         refreshToken: token.refreshToken,
         clientId: env.DASHBOARD_AUTH0_CLIENT_ID,
