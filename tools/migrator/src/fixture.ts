@@ -130,8 +130,8 @@ export const runFixtures = async () => {
 
   insertedIds.interestGroup = await db
     .insertInto("interestGroup")
-    .values(getInterestGroupFixtures())
     .onConflict((eb) => eb.doNothing())
+    .values(getInterestGroupFixtures())
     .returning("id")
     .execute()
     .then(mapId)
