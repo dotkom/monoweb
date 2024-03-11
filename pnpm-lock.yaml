@@ -41,6 +41,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
+      '@dotkomonline/jwt-crypto':
+        specifier: workspace:*
+        version: link:../../packages/jwt-crypto
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -776,6 +779,12 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
+      '@dotkomonline/jwt-crypto':
+        specifier: workspace:*
+        version: link:../jwt-crypto
       '@trpc/server':
         specifier: ^10.45.0
         version: 10.45.0
@@ -807,6 +816,25 @@ importers:
       vitest:
         specifier: ^0.34.6
         version: 0.34.6(@vitest/ui@0.34.6)
+
+  packages/jwt-crypto:
+    dependencies:
+      '@dotkomonline/env':
+        specifier: workspace:*
+        version: link:../env
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../logger
+      jose:
+        specifier: ^5.2.3
+        version: 5.2.3
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
 
   packages/logger:
     dependencies:
@@ -9600,6 +9628,10 @@ packages:
 
   /jose@4.14.4:
     resolution: {integrity: sha512-j8GhLiKmUAh+dsFXlX1aJCbt5KMibuKb+d7j1JaOJG6s2UjX1PQlW+OKB/sD4a/5ZYF4RcmYmLSndOoU3Lt/3g==}
+    dev: false
+
+  /jose@5.2.3:
+    resolution: {integrity: sha512-KUXdbctm1uHVL8BYhnyHkgp3zDX5KW8ZhAKVFEfUbU2P8Alpzjb+48hHvjOdQIyPshoblhzsuqOwEEAbtHVirA==}
     dev: false
 
   /joycon@3.1.1:

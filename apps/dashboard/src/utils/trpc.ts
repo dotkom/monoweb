@@ -7,13 +7,6 @@ import { type AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
 import { env } from "@dotkomonline/env"
 
-const getBaseUrl = () => {
-  if (env.NEXT_PUBLIC_NODE_ENV === "production") {
-    return "https://web.online.ntnu.no"
-  }
-  return "http://localhost:3000"
-}
-
 export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
   transformer: superjson,
   links: [
@@ -22,7 +15,7 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
         env.NEXT_PUBLIC_NODE_ENV === "development" || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
-      url: `${getBaseUrl()}/api/trpc`,
+      url: `/api/trpc`,
       async fetch(url, options) {
         return fetch(url, {
           ...options,
