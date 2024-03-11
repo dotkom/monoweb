@@ -38,7 +38,7 @@ export const createContext = async (opts: CreateNextContextOptions, env: Environ
       })
     } catch (error) {
       console.error("Error verifying token", error)
-      throw error;
+      throw error
     }
   }
   return createContextInner({ auth: null })
