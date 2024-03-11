@@ -5,7 +5,7 @@ import { createTableWithDefaults } from "../utils.js"
 export async function up(db) {
   await createTableWithDefaults("interest_group", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("name", sql`text`, (col) => col.notNull())
-    .addColumn("description", sql`text`)
+    .addColumn("description", sql`text`, (col) => col.notNull())
     .addColumn("link", sql`text`)
     .execute()
 }

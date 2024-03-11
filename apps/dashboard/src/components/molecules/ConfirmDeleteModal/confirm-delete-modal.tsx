@@ -1,14 +1,14 @@
-import { ContextModalProps, modals } from "@mantine/modals";
-import { FC } from "react";
-import { Box, Button, Text, Title } from "@mantine/core";
-import { useRouter } from "next/navigation";
-import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation";
+import { ContextModalProps, modals } from "@mantine/modals"
+import { FC } from "react"
+import { Box, Button, Text, Title } from "@mantine/core"
+import { useRouter } from "next/navigation"
+import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
 
 interface ConfirmDeleteModalProps {
-  title: string;
-  text: string;
+  title: string
+  text: string
   // should contain a router push and a delete mutation
-  onConfirm: () => void;
+  onConfirm: () => void
 }
 
 export const useConfirmDeleteModal = (props: ConfirmDeleteModalProps) => () => {
@@ -24,5 +24,5 @@ export const useConfirmDeleteModal = (props: ConfirmDeleteModalProps) => () => {
     confirmProps: { color: "red" },
     labels: { confirm: "Slett", cancel: "ikke slett" },
     onConfirm: props.onConfirm,
-  });
-};
+  })
+}
