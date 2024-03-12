@@ -1,0 +1,22 @@
+{
+  "name": "@dotkomonline/jwt-crypto",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dotkomonline/env": "workspace:*",
+    "@dotkomonline/logger": "workspace:*",
+    "jose": "^5.2.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.5.3"
+  }
+}
