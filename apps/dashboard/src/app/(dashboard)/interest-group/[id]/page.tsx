@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { InterestGroupEditCard } from "./edit-card"
+import { useInterestGroupDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
@@ -16,11 +17,12 @@ const SIDEBAR_LINKS = [
 
 export default function InterestGroupDetailsPage() {
   const router = useRouter()
+  const { interestGroup } = useInterestGroupDetailsContext()
   return (
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>Test</Title>
+        <Title>{interestGroup.name}</Title>
       </Group>
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>

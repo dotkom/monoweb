@@ -1,6 +1,5 @@
 "use client"
-import { Icon } from "@iconify/react"
-import { Button, Card, Group, Skeleton, Stack, Tabs, Title } from "@mantine/core"
+import { Button, Card, Group, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "src/components/GenericTable"
 import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { useCreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"

@@ -10,7 +10,6 @@ import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-
 import { CreateCompanyModal } from "../modules/company/modals/create-company-modal"
 import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
-import { DeleteInterestGroupModal } from "src/modules/interest-group/modals/confirm-delete-modal"
 
 const modals = {
   "event/create": CreateEventModal,
@@ -21,7 +20,6 @@ const modals = {
   "extras/update": UpdateEventExtrasModal,
   "article/create": CreateArticleModal,
   "interestGroup/create": CreateInterestGroupModal,
-  "interestGroup/delete": DeleteInterestGroupModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

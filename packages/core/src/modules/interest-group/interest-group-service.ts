@@ -1,10 +1,10 @@
 import { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
 import { InterestGroupRepository } from "./interest-group-repository"
-import { type Collection } from "../../utils/db-utils"
+import { Cursor } from "../../utils/db-utils"
 
 export interface InterestGroupService {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>
-  getAll(): Promise<InterestGroup[] | undefined>
+  getAll(take: number, cursor?: Cursor): Promise<InterestGroup[]>
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: InterestGroupWrite): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
@@ -17,11 +17,8 @@ export class InterestGroupServiceImpl implements InterestGroupService {
     return this.interestGroupRepository.getById(id)
   }
 
-  async getAll(): Promise<InterestGroup[] | undefined> {
-    return this.interestGroupRepository.getAll({
-      take: 100,
-      cursor: undefined,
-    })
+  async getAll(take: number, cursor?: Cursor): Promise<InterestGroup[]> {
+    return this.interestGroupRepository.getAll(take, cursor)
   }
 
   async create(values: InterestGroupWrite): Promise<InterestGroup> {

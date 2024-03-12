@@ -1,4 +1,3 @@
-import { id } from "date-fns/locale"
 import { trpc } from "../../../utils/trpc"
 
 export const useInterestGroupAllQuery = () => {

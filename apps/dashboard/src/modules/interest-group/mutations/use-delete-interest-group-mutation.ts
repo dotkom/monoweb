@@ -7,14 +7,14 @@ export const useDeleteInterestGroupMutation = () => {
   return trpc.interestGroup.delete.useMutation({
     onMutate: () => {
       notification.loading({
-        title: "Oppretter interessegruppe...",
-        message: "Interessegruppen blir opprettet.",
+        title: "Sletter interessegrupper",
+        message: "Interessegruppen slettes. Vennligst vent.",
       })
     },
     onSuccess: () => {
       notification.complete({
-        title: "Interessegruppen er opprettet",
-        message: "Interessegruppen har blitt slettet.",
+        title: "Interessegruppen er slettet",
+        message: "Interessegruppen er fjernet fra systemet.",
       })
     },
     onError: (err) => {
