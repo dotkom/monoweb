@@ -17,6 +17,8 @@ export class JwtService {
     this.jwks ??= createRemoteJWKSet(this.jwksUrl)
     return jwtVerify(token, this.jwks, {
       clockTolerance: "5s",
+      // Auth0 tokens are signed with RS256
+      // https://auth0.com/docs/secure/tokens/access-tokens#sample-access-token
       algorithms: ["RS256"],
       // Auth0's issuer contains a trailing slash, but Next Auth does not
       issuer: `${this.issuer}/`,

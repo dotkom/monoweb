@@ -1,4 +1,4 @@
-import { getRefreshToken, JwtService } from "@dotkomonline/jwt-crypto"
+import { getRefreshToken, isJwtExpiredError, JwtService } from "@dotkomonline/jwt-crypto"
 import { NextRequest, NextResponse } from "next/server"
 import { DefaultJWT, getToken } from "next-auth/jwt"
 
@@ -67,7 +67,7 @@ export const createMiddleware = ({
     } catch (error) {
       // If the token has expired, and we have a refresh token, we'll attempt to
       // refresh the token and forward the request with the new token.
-      if (token.refreshToken !== undefined) {
+      if (isJwtExpiredError(error) && token.refreshToken !== undefined) {
         const accessToken = await getRefreshToken({
           issuer,
           refreshToken: token.refreshToken,
