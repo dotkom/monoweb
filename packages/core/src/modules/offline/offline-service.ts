@@ -2,8 +2,8 @@ import { type Offline, type OfflineId, type OfflineWrite } from "@dotkomonline/t
 import { env } from "@dotkomonline/env"
 import { type OfflineRepository } from "./offline-repository"
 import { type Cursor } from "../../utils/db-utils"
-import { NotFoundError } from "../../errors/errors"
 import { type S3Repository } from "../external/s3-repository"
+import { OfflineNotFoundError } from "./offline-error"
 
 type Fields = Record<string, string>
 
@@ -29,7 +29,7 @@ export class OfflineServiceImpl implements OfflineService {
   async get(id: OfflineId): Promise<Offline> {
     const offline = await this.offlineRepository.getById(id)
     if (offline === undefined) {
-      throw new NotFoundError(`Offline with ID:${id} not found`)
+      throw new OfflineNotFoundError(id)
     }
     return offline
   }

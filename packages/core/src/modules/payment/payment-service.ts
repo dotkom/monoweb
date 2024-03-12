@@ -5,6 +5,21 @@ import { type RefundRequestRepository } from "./refund-request-repository.js"
 import { type Cursor } from "../../utils/db-utils"
 import { type EventRepository } from "../event/event-repository"
 import Stripe from "stripe"
+import { ProductNotFoundError, ProductProviderMismatchError } from "./product-error"
+import {
+  InvalidPaymentStatusError,
+  MissingStripeSessionUrlError,
+  PaymentNotFoundError,
+  StripeAccountNotFoundError,
+  UnrefundablePaymentError,
+} from "./payment-error"
+import {
+  InvalidRefundRequestStatusError,
+  RefundProcessingFailureError,
+  RefundRequestNotFoundError,
+} from "./refund-request-error"
+import assert from "../../../assert"
+import { IllegalStateError } from "../../error"
 
 export interface StripeAccount {
   stripe: Stripe
@@ -61,6 +76,14 @@ export class PaymentServiceImpl implements PaymentService {
     return this.paymentRepository.getAll(take, cursor)
   }
 
+  /**
+   * Create a Stripe checkout session for a product.
+   *
+   * @throws {ProductNotFoundError} if the product does not exist
+   * @throws {ProductProviderMismatchError} if the product does not have the given payment provider
+   * @throws {StripeAccountNotFoundError} if the given stripe public key does not exist
+   * @throws {MissingStripeSessionUrlError} if the stripe session does not have a url
+   */
   async createStripeCheckoutSessionForProductId(
     productId: ProductId,
     stripePublicKey: string,
@@ -70,11 +93,11 @@ export class PaymentServiceImpl implements PaymentService {
   ): Promise<{ redirectUrl: string }> {
     const product = await this.productRepository.getById(productId)
     if (!product) {
-      throw new Error("Product not found")
+      throw new ProductNotFoundError(productId)
     }
 
     if (!product.paymentProviders.find((p) => p.paymentProviderId === stripePublicKey)) {
-      throw new Error("The stripe public key supplied is not a valid payment provider for this product")
+      throw new ProductProviderMismatchError()
     }
 
     let productName = `N/A (${product.id})`
@@ -96,12 +119,9 @@ export class PaymentServiceImpl implements PaymentService {
 
     const stripe = this.findStripeSdkByPublicKey(stripePublicKey)
     if (!stripe) {
-      console.log(stripePublicKey)
-      throw new Error(`No stripe account found for public key ${stripePublicKey}`)
+      throw new StripeAccountNotFoundError(stripePublicKey)
     }
 
-    // Tests requires stripe to be awaited first but otherwise it works fine without.
-    // Doesn't seem to make a difference having it like this. Idk, stripe sdk is weird.
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -121,7 +141,7 @@ export class PaymentServiceImpl implements PaymentService {
     })
 
     if (!session.url) {
-      throw new Error("Session URL not found")
+      throw new MissingStripeSessionUrlError()
     }
 
     await this.paymentRepository.create({
@@ -151,15 +171,31 @@ export class PaymentServiceImpl implements PaymentService {
     await this.paymentRepository.deleteByPaymentProviderSessionId(stripeSessionId)
   }
 
-  async commonRefundSetup(
-    paymentId?: string,
-    paymentProviderOrderId?: string,
+  /**
+   * Validate and setup the common refund flow for a payment.
+   *
+   * @throws {PaymentNotFoundError} if the payment does not exist
+   * @throws {ProductNotFoundError} if the product does not exist
+   * @throws {UnrefundablePaymentError} if the product is not refundable
+   * @throws {InvalidPaymentStatusError} if the payment status is not "PAID"
+   * @throws {RefundRequestNotFoundError} if the payment has no refund request
+   * @throws {InvalidRefundRequestStatusError} if the refund request status is not "APPROVED"
+   */
+  private async commonRefundSetup(
+    paymentId: string,
+    paymentProviderOrderId: undefined,
+    checkRefundRequest?: boolean
+  ): Promise<{ payment: Payment; product: Product }>
+  private async commonRefundSetup(
+    paymentId: undefined,
+    paymentProviderOrderId: string,
+    checkRefundRequest?: boolean
+  ): Promise<{ payment: Payment; product: Product }>
+  private async commonRefundSetup(
+    paymentId: string | undefined,
+    paymentProviderOrderId: string | undefined,
     checkRefundRequest = true
   ): Promise<{ payment: Payment; product: Product }> {
-    if (!paymentId && !paymentProviderOrderId) {
-      throw new Error("Either paymentId or paymentProviderOrderId must be supplied")
-    }
-
     let payment: Payment | undefined
     if (paymentId) {
       payment = await this.paymentRepository.getById(paymentId)
@@ -168,30 +204,34 @@ export class PaymentServiceImpl implements PaymentService {
     }
 
     if (!payment) {
-      throw new Error("Payment not found")
+      // Non-null assertion used because TypeScript is unable to deduce that
+      // both paymentId and paymentProviderOrderId cannot be undefined at this
+      // point.
+      // biome-ignore lint/style/noNonNullAssertion: typescript unwise
+      throw new PaymentNotFoundError(paymentId ?? paymentProviderOrderId!)
     }
 
     const product = await this.productRepository.getById(payment.productId)
     if (!product) {
-      throw new Error("Product not found")
+      throw new ProductNotFoundError(payment.productId)
     }
 
     if (!product.isRefundable) {
-      throw new Error("Product is not refundable")
+      throw new UnrefundablePaymentError()
     }
 
     if (payment.status !== "PAID") {
-      throw new Error("Payment is not in the correct state to be refunded")
+      throw new InvalidPaymentStatusError("PAID")
     }
 
     if (product.refundRequiresApproval && checkRefundRequest) {
       const refundRequest = await this.refundRequestRepository.getByPaymentId(payment.id)
       if (!refundRequest) {
-        throw new Error("Product requires a refund request to be refunded")
+        throw new RefundRequestNotFoundError(payment.id)
       }
 
       if (refundRequest.status !== "APPROVED") {
-        throw new Error("Refund request needs to be approved for the payment to be refunded")
+        throw new InvalidRefundRequestStatusError("APPROVED", refundRequest.status)
       }
     }
 
@@ -216,6 +256,11 @@ export class PaymentServiceImpl implements PaymentService {
     await this.refundPayment(payment, product)
   }
 
+  /**
+   * Refund a payment.
+   *
+   * @throws {IllegalStateError} if the payment provider is not recognized
+   */
   async refundPayment(payment: Payment, product: Product): Promise<void> {
     const paymentProvider = product.paymentProviders.find(
       (p) => p.paymentProviderId === payment.paymentProviderId
@@ -223,10 +268,9 @@ export class PaymentServiceImpl implements PaymentService {
 
     switch (paymentProvider) {
       case "STRIPE":
-        await this.refundStripePayment(payment)
-        break
+        return await this.refundStripePayment(payment)
       default:
-        throw new Error("Could not find the payment provider for the given payment")
+        throw new IllegalStateError(`Unrecognized payment provider ${paymentProvider}`)
     }
   }
 
@@ -242,21 +286,28 @@ export class PaymentServiceImpl implements PaymentService {
     await this.refundStripePayment(payment)
   }
 
+  /**
+   * Refund a Stripe payment.
+   *
+   * @throws {StripeAccountNotFoundError} if the payment provider is not recognized
+   * @throws {InvalidPaymentStatusError} if the payment status is not "PAID"
+   * @throws {RefundProcessingFailureError} if the refund processing failed
+   */
   async refundStripePayment(payment: Payment) {
     const stripe = this.findStripeSdkByPublicKey(payment.paymentProviderId)
     if (!stripe) {
-      throw new Error("No stripe account found for the given public key")
+      throw new StripeAccountNotFoundError(payment.paymentProviderId)
     }
 
     const paymentIntent = await stripe.paymentIntents.retrieve(payment.paymentProviderOrderId as string)
     const chargeId = paymentIntent.latest_charge as string | null | undefined
     if (!chargeId) {
-      throw new Error("No charge found for the given payment intent")
+      throw new InvalidPaymentStatusError("PAID")
     }
 
     const refund = await stripe.refunds.create({ charge: chargeId })
     if (refund.failure_reason) {
-      throw new Error(`Refund failed: ${refund.failure_reason}`)
+      throw new RefundProcessingFailureError(refund.failure_reason)
     }
 
     await this.paymentRepository.update(payment.id, { status: "REFUNDED" })
