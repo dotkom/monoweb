@@ -150,6 +150,5 @@ The following applications run on the following ports:
 - `/apps/dashboard`: 3002
 - `/apps/rif`: 3003
 - `/apps/invoicing`: 3004
-- `/apps/sanity`: 3333
 - `/apps/gateway-email`: AWS Lambda only
 - `/packages/ui`: 61000 (ladle)
