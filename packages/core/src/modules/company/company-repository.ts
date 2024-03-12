@@ -8,7 +8,7 @@ export const mapToCompany = (payload: Selectable<Database["company"]>): Company 
 export interface CompanyRepository {
   getById(id: CompanyId): Promise<Company | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Company[]>
-  create(values: CompanyWrite): Promise<Company | undefined>
+  create(values: CompanyWrite): Promise<Company>
   update(id: CompanyId, data: CompanyWrite): Promise<Company>
 }
 
@@ -26,9 +26,9 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     return companies.map(mapToCompany)
   }
 
-  async create(data: CompanyWrite): Promise<Company | undefined> {
-    const company = await this.db.insertInto("company").values(data).returningAll().executeTakeFirst()
-    return company ? mapToCompany(company) : company
+  async create(data: CompanyWrite): Promise<Company> {
+    const company = await this.db.insertInto("company").values(data).returningAll().executeTakeFirstOrThrow()
+    return mapToCompany(company)
   }
 
   async update(id: CompanyId, data: Omit<CompanyWrite, "id">): Promise<Company> {

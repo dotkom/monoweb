@@ -1,7 +1,7 @@
 import { type Company, type CompanyId, type CompanyWrite } from "@dotkomonline/types"
 import { type CompanyRepository } from "./company-repository"
-import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
+import { CompanyNotFoundError } from "./company-error"
 
 export interface CompanyService {
   getCompany(id: CompanyId): Promise<Company>
@@ -13,10 +13,15 @@ export interface CompanyService {
 export class CompanyServiceImpl implements CompanyService {
   constructor(private readonly companyRepository: CompanyRepository) {}
 
+  /**
+   * Get a company by its id
+   *
+   * @throws {CompanyNotFoundError} if the company does not exist
+   */
   async getCompany(id: CompanyId): Promise<Company> {
     const company = await this.companyRepository.getById(id)
     if (!company) {
-      throw new NotFoundError(`Company with ID:${id} not found`)
+      throw new CompanyNotFoundError(id)
     }
     return company
   }
@@ -28,9 +33,6 @@ export class CompanyServiceImpl implements CompanyService {
 
   async createCompany(payload: CompanyWrite): Promise<Company> {
     const company = await this.companyRepository.create(payload)
-    if (!company) {
-      throw new Error("Failed to create company")
-    }
     return company
   }
 

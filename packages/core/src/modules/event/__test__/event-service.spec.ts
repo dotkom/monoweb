@@ -2,10 +2,10 @@ import { randomUUID } from "crypto"
 import { type Event } from "@dotkomonline/types"
 import { describe, vi } from "vitest"
 import { Kysely } from "kysely"
-import { NotFoundError } from "../../../errors/errors"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
+import { EventNotFoundError } from "../event-error"
 
 export const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",
@@ -47,7 +47,7 @@ describe("EventService", () => {
     const id = randomUUID()
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(undefined)
     const missing = eventService.getEventById(id)
-    await expect(missing).rejects.toThrow(NotFoundError)
+    await expect(missing).rejects.toThrow(EventNotFoundError)
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce({ id, ...eventPayload })
     const real = await eventService.getEventById(id)
     expect(real).toEqual({ id, ...eventPayload })

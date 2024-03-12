@@ -26,6 +26,11 @@ export class OfflineServiceImpl implements OfflineService {
     private readonly s3Repository: S3Repository
   ) {}
 
+  /**
+   * Get an offline by its id
+   *
+   * @throws {OfflineNotFoundError} if the offline does not exist
+   */
   async get(id: OfflineId): Promise<Offline> {
     const offline = await this.offlineRepository.getById(id)
     if (offline === undefined) {

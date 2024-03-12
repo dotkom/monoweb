@@ -1,8 +1,8 @@
 import { randomUUID } from "crypto"
 import { Kysely } from "kysely"
-import { MarkServiceImpl } from "./../mark-service"
+import { MarkServiceImpl } from "../mark-service"
 import { MarkRepositoryImpl } from "../mark-repository"
-import { NotFoundError } from "../../../errors/errors"
+import { MarkNotFoundError } from "../mark-error"
 
 describe("MarkService", () => {
   const db = vi.mocked(Kysely.prototype, true)
@@ -27,7 +27,7 @@ describe("MarkService", () => {
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
     vi.spyOn(markRepository, "getById").mockResolvedValueOnce(undefined)
-    await expect(markService.getMark(unknownID)).rejects.toThrow(NotFoundError)
+    await expect(markService.getMark(unknownID)).rejects.toThrow(MarkNotFoundError)
     expect(markRepository.getById).toHaveBeenCalledWith(unknownID)
   })
 })
