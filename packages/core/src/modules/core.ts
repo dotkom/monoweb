@@ -58,13 +58,15 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
-import { type S3Repository, s3RepositoryImpl } from "../lib/s3/s3-repository"
+import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
-import { Auth0RepositoryImpl, Auth0Repository } from "../lib/auth0-repository"
+import { Auth0RepositoryImpl, Auth0Repository } from "./external/auth0-repository"
 import { ManagementClient } from "auth0"
 import { env } from "@dotkomonline/env"
-import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../lib/auth0-synchronization-service"
+import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./external/auth0-synchronization-service"
+import { S3Client } from "@aws-sdk/client-s3"
+import Stripe from "stripe"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -73,14 +75,31 @@ export interface ServerLayerOptions {
 }
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
-  const s3Repository: S3Repository = new s3RepositoryImpl()
+  const s3Client = new S3Client({
+    region: env.AWS_REGION,
+  })
   const auth0ManagementClient = new ManagementClient({
     domain: "onlineweb.eu.auth0.com",
     clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
     clientId: env.GTX_AUTH0_CLIENT_ID,
   })
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+  const trikomStripeSdk = new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
+  const fagkomStripeSdk = new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
+  const stripeAccounts = {
+    trikom: {
+      stripe: trikomStripeSdk,
+      publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
+      webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
+    },
+    fagkom: {
+      stripe: fagkomStripeSdk,
+      publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
+      webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
+    },
+  }
 
+  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -109,7 +128,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
-
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
@@ -132,7 +150,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     paymentRepository,
     productRepository,
     eventRepository,
-    refundRequestRepository
+    refundRequestRepository,
+    stripeAccounts
   )
   const productPaymentProviderService: ProductPaymentProviderService = new ProductPaymentProviderServiceImpl(
     productPaymentProviderRepository
@@ -151,7 +170,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     articleTagRepository,
     articleTagLinkRepository
   )
-
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
   const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(

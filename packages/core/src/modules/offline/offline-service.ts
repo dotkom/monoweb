@@ -3,7 +3,7 @@ import { env } from "@dotkomonline/env"
 import { type OfflineRepository } from "./offline-repository"
 import { type Cursor } from "../../utils/db-utils"
 import { NotFoundError } from "../../errors/errors"
-import { type S3Repository } from "../../lib/s3/s3-repository"
+import { type S3Repository } from "../external/s3-repository"
 
 type Fields = Record<string, string>
 

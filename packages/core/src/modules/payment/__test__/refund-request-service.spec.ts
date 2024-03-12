@@ -31,7 +31,8 @@ describe("RefundRequestService", () => {
     paymentRepository,
     productRepository,
     eventRepository,
-    refundRequestRepository
+    refundRequestRepository,
+    {}
   )
   const refundRequestService = new RefundRequestServiceImpl(
     refundRequestRepository,
