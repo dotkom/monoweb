@@ -59,6 +59,8 @@ import {
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
 import { type S3Repository, s3RepositoryImpl } from "../lib/s3/s3-repository"
+import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
+import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
 import { Auth0RepositoryImpl, Auth0Repository } from "../lib/auth0-repository"
 import { ManagementClient } from "auth0"
 import { env } from "@dotkomonline/env"
@@ -150,6 +152,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     articleTagLinkRepository
   )
 
+  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
+  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
   const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
     userService,
     auth0Repository
@@ -173,6 +177,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
+    interestGroupRepository,
+    interestGroupService,
     auth0Repository,
     auth0SynchronizationService,
   }

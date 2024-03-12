@@ -112,7 +112,9 @@ export function createSelectInput<F extends FieldValues>({
 
 export function createIntegerSelectInput<F extends FieldValues>({
   ...props
-}: Omit<SelectProps, "data" | "error"> & { data: { value: number; label: string }[] }): InputProducerResult<F> {
+}: Omit<SelectProps, "data" | "error"> & {
+  data: { value: number; label: string }[]
+}): InputProducerResult<F> {
   return function FormSelectInput({ name, state, control }) {
     return (
       <Controller
@@ -121,7 +123,10 @@ export function createIntegerSelectInput<F extends FieldValues>({
         render={({ field }) => (
           <Select
             {...props}
-            data={props.data.map((item) => ({ ...item, value: item.value.toString() }))}
+            data={props.data.map((item) => ({
+              ...item,
+              value: item.value.toString(),
+            }))}
             value={field.value?.toString() ?? ""}
             onChange={(value) => field.onChange(value !== null ? parseInt(value) : null)}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
@@ -198,7 +203,9 @@ export function createTextInput<F extends FieldValues>({
 
 export function createFileInput<F extends FieldValues>({
   ...props
-}: Omit<FileInputProps, "error"> & { existingFileUrl?: string }): InputProducerResult<F> {
+}: Omit<FileInputProps, "error"> & {
+  existingFileUrl?: string
+}): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
@@ -296,10 +303,13 @@ export function useFormBuilder<T extends z.ZodRawShape>({
 
   return function Form() {
     return (
-      <form onSubmit={form.handleSubmit((values) => onSubmit(values, form))}>
+      <form
+        onSubmit={form.handleSubmit((values) => {
+          return onSubmit(values, form)
+        })}
+      >
         <Flex direction="column" gap="md">
           {components}
-
           <div>
             <Button type="submit">{label}</Button>
           </div>

@@ -125,6 +125,15 @@ export interface EventCompany {
   eventId: string
 }
 
+export interface InterestGroup {
+  createdAt: Generated<Timestamp>
+  description: string | null
+  id: Generated<string>
+  link: string | null
+  name: string
+  updatedAt: Generated<Timestamp>
+}
+
 export interface JobListing {
   applicationEmail: string | null
   applicationLink: string | null
@@ -269,6 +278,7 @@ export interface DB {
   event: Event
   eventCommittee: EventCommittee
   eventCompany: EventCompany
+  interestGroup: InterestGroup
   jobListing: JobListing
   jobListingLocation: JobListingLocation
   jobListingLocationLink: JobListingLocationLink
