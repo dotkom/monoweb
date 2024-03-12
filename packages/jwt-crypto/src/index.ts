@@ -18,7 +18,8 @@ export class JwtService {
     return jwtVerify(token, this.jwks, {
       clockTolerance: "5s",
       algorithms: ["RS256"],
-      issuer: this.issuer,
+      // Auth0's issuer contains a trailing slash, but Next Auth does not
+      issuer: `${this.issuer}/`,
     })
   }
 }
