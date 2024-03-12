@@ -2,6 +2,7 @@ import { User, UserWrite } from "@dotkomonline/types"
 import { UserService } from "../user/user-service"
 import { Auth0Repository } from "./auth0-repository"
 import { getLogger, Logger } from "@dotkomonline/logger"
+import { IllegalStateError } from "../../error"
 
 // Id token returned from Auth0. We don't want core to depend on next-auth, so we duplicate the type here.
 type Auth0IdToken = {
@@ -40,7 +41,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       !token.name
       //  || !token.givenName || !token.familyName
     ) {
-      throw new Error("Missing user data in claims")
+      throw new IllegalStateError("Missing user data in claims")
     }
 
     const userData: UserWrite = {
@@ -65,7 +66,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       const auth0User = await this.auth0Repository.getBySubject(user.auth0Sub)
 
       if (auth0User === null) {
-        throw new Error("User does not exist in Auth0")
+        throw new IllegalStateError("User does not exist in Auth0")
       }
 
       return this.userService.updateUser(user.id, {

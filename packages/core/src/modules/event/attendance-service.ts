@@ -1,5 +1,6 @@
 import { type AttendanceId, type Attendee, type EventId, type UserId } from "@dotkomonline/types"
 import { type AttendanceRepository } from "./attendance-repository"
+import { EventNotFoundError } from "./event-error"
 
 export interface AttendanceService {
   canAttend(eventId: EventId): Promise<Date | undefined>
@@ -27,10 +28,15 @@ export class AttendanceServiceImpl implements AttendanceService {
     return attendee
   }
 
+  /**
+   * Register for an attendance
+   *
+   * @throws {EventNotFoundError} if attendee is not found
+   */
   async registerForAttendance(_userId: UserId, _attendanceId: AttendanceId, _attended: boolean) {
     const attendee = await this.attendanceRepository.getAttendeeByIds(_userId, _attendanceId)
     if (!attendee) {
-      throw new Error("Attendee not found")
+      throw new EventNotFoundError(_userId)
     }
     const attendedAttendee = await this.attendanceRepository.updateAttendee(
       { ...attendee, attended: _attended },
@@ -40,10 +46,15 @@ export class AttendanceServiceImpl implements AttendanceService {
     return attendedAttendee
   }
 
+  /**
+   * Add a choice to an attendee
+   *
+   * @throws {EventNotFoundError} if attendee is not found
+   */
   async addChoice(eventId: string, attendanceId: string, questionId: string, choiceId: string) {
     const attendee = await this.attendanceRepository.getAttendeeByIds(eventId, attendanceId)
     if (!attendee) {
-      throw new Error("Attendee not found")
+      throw new EventNotFoundError(attendanceId)
     }
     const choice = await this.attendanceRepository.addChoice(eventId, attendanceId, questionId, choiceId)
     return choice

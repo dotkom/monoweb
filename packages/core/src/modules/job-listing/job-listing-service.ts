@@ -4,13 +4,14 @@ import { type JobListingRepository } from "./job-listing-repository"
 import { type JobListingLocationRepository } from "./job-listing-location-repository"
 import { type JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 import { type Cursor } from "../../utils/db-utils"
-import { NotFoundError } from "../../errors/errors"
 import assert from "../../../assert"
-
-export class InvalidStartDateError extends Error {}
-export class InvalidEndDateError extends Error {}
-export class InvalidLocationError extends Error {}
-export class InvalidDeadlineError extends Error {}
+import {
+  InvalidDeadlineError,
+  InvalidEndDateError,
+  MissingLocationError,
+  InvalidStartDateError,
+  JobListingNotFoundError,
+} from "./job-listing-error"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing>
@@ -27,10 +28,15 @@ export class JobListingServiceImpl implements JobListingService {
     private readonly jobListingLocationLinkRepository: JobListingLocationLinkRepository
   ) {}
 
+  /**
+   * Get a job listing by its id
+   *
+   * @throws {JobListingNotFoundError} if the job listing does not exist
+   */
   async getById(id: JobListingId): Promise<JobListing> {
     const jobListing = await this.jobListingRepository.getById(id)
     if (!jobListing) {
-      throw new NotFoundError(`JobListing with ID:${id} not found`)
+      throw new JobListingNotFoundError(id)
     }
     return jobListing
   }
@@ -69,14 +75,22 @@ export class JobListingServiceImpl implements JobListingService {
     }
   }
 
+  /**
+   * Validate a write model for inconsistencies
+   *
+   * @throws {InvalidStartDateError} if the start date is before today
+   * @throws {InvalidEndDateError} if the end date is before the start date
+   * @throws {InvalidDeadlineError} if the deadline is after the start date
+   * @throws {MissingLocationError} if the location is empty
+   */
   private validateWriteModel(input: JobListingWrite): void {
-    assert(isAfter(input.start, new Date()), new InvalidStartDateError("Start date cannot be before today"))
-    assert(isAfter(input.end, input.start), new InvalidEndDateError("End date cannot be before start date"))
+    assert(isAfter(input.start, new Date()), new InvalidStartDateError("start date cannot be before today"))
+    assert(isAfter(input.end, input.start), new InvalidEndDateError("end date cannot be before start date"))
     assert(
       input.deadline !== null ? isBefore(input.deadline, input.start) : true,
-      new InvalidDeadlineError("Deadline cannot be after start date")
+      new InvalidDeadlineError("deadline cannot be after start date")
     )
-    assert(input.locations.length > 0, new InvalidLocationError("At least one location is required"))
+    assert(input.locations.length > 0, new MissingLocationError())
   }
 
   private getLocationDiff(actual: string[], expected: string[]) {

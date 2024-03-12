@@ -18,7 +18,6 @@ import {
   RefundProcessingFailureError,
   RefundRequestNotFoundError,
 } from "./refund-request-error"
-import assert from "../../../assert"
 import { IllegalStateError } from "../../error"
 
 export interface StripeAccount {

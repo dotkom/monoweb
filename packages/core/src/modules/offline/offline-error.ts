@@ -1,7 +1,7 @@
-import { ApplicationError } from "../../error"
+import { NotFoundError } from "../../error"
 
-export class OfflineNotFoundError extends ApplicationError {
+export class OfflineNotFoundError extends NotFoundError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Offline with ID:${id} not found`)
+    super(`Offline with ID:${id} not found`)
   }
 }
