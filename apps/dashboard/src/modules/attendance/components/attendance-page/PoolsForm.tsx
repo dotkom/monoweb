@@ -3,7 +3,7 @@ import { Box, Button, Card, Flex, Text } from "@mantine/core"
 import { notifyFail } from "../../../../app/notifications"
 import { openCreatePoolModal } from "../../modals/create-pool-modal"
 import { openEditPoolModal } from "../../modals/edit-pool-modal"
-import { rangeToString } from "./utils"
+import { formatPoolYearCriterias } from "./utils"
 import { useDeletePoolMutation } from "../../mutations/use-pool-mutations"
 
 interface EventAttendanceProps {
@@ -43,7 +43,7 @@ export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
             <Card shadow="sm" padding="lg" radius="md" withBorder key={pool.id} mt={16}>
               <Flex justify="space-between">
                 <Box>
-                  <Text>{rangeToString([pool.yearCriteria])}</Text>
+                  <Text>{formatPoolYearCriterias([pool.yearCriteria])}</Text>
                   <Text>
                     Reserverte plasser: {pool.numAttendees} / {pool.limit}
                   </Text>

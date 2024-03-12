@@ -1,5 +1,11 @@
-export const rangeToString = (ranges: number[][]): string => {
-  // example: [1,2] [2,3]  => 1,2,3
-  const flat = ranges.flat()
-  return flat.sort().join(", ")
+
+/**
+ * Formats the year criterias into a string representation to show to the user.
+ * 
+ * @param yearCriterias - The year criterias to format.
+ * @returns The formatted string representation of the year criterias.
+ */
+export const formatPoolYearCriterias = (yearCriterias: number[][]): string => {
+  const flat = yearCriterias.flat()
+  return flat.sort((a, b) => a - b).join(", ")
 }

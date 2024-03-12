@@ -1,7 +1,7 @@
 import { type AttendancePool } from "@dotkomonline/types"
 import { Box, Table } from "@mantine/core"
 import { type FC } from "react"
-import { rangeToString } from "./utils"
+import { formatPoolYearCriterias } from "./utils"
 
 export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
   const all = [0, 1, 2, 3, 4, 5]
@@ -21,13 +21,13 @@ export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
           <Table.Tr>
             <Table.Td>Grupper med reserverte plasser</Table.Td>
             <Table.Td>
-              {rangeToString(pools.filter(({ limit }) => limit !== 0).map(({ yearCriteria }) => yearCriteria))}
+              {formatPoolYearCriterias(pools.filter(({ limit }) => limit !== 0).map(({ yearCriteria }) => yearCriteria))}
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
             <Table.Td>Grupper som kan melde seg på etter sammenslåing</Table.Td>
             <Table.Td>
-              {rangeToString(pools.filter((ev) => ev.limit === 0).map(({ yearCriteria }) => yearCriteria))}
+              {formatPoolYearCriterias(pools.filter((ev) => ev.limit === 0).map(({ yearCriteria }) => yearCriteria))}
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
