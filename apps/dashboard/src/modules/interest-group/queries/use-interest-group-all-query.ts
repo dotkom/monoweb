@@ -1,6 +1,9 @@
 import { trpc } from "../../../utils/trpc"
 
 export const useInterestGroupAllQuery = () => {
-  const { data: interestGroups = [], ...query } = trpc.interestGroup.all.useQuery({ take: 999 })
-  return { interestGroups, ...query }
+  const { data, ...query } = trpc.interestGroup.all.useQuery()
+  if (data === undefined || query.isLoading) {
+    return { interestGroups: [], ...query }
+  }
+  return { interestGroups: data.data, ...query }
 }

@@ -9,7 +9,7 @@ export const interestGroupRouter = t.router({
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.create(input)),
   all: publicProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => await ctx.interestGroupService.getAll(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => await ctx.interestGroupService.getAll(input)),
   get: publicProcedure
     .input(InterestGroupSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getById(input)),
