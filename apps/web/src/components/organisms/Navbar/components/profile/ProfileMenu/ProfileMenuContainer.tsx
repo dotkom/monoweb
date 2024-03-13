@@ -1,12 +1,12 @@
-import { profileItems } from "@/utils/profileLinks"
-import ProfileMenuItem from "./ProfileMenuItem"
+import { profileItems } from "@/utils/profileLinks";
+import ProfileMenuItem from "./ProfileMenuItem";
 
 const ProfileMenuContainer = () => (
-  <div className=" border-slate-5 pr-5 pt-10 max-md:hidden md:border-r-[1px]">
+  <div className=" h-fit border-slate-5 p-3 space-y-3 min-w-[20rem] rounded-2xl border-2 max-md:hidden">
     {profileItems.map((item) => (
       <ProfileMenuItem key={item.title} menuItem={item} />
     ))}
   </div>
-)
+);
 
-export default ProfileMenuContainer
+export default ProfileMenuContainer;
