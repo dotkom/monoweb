@@ -1,37 +1,37 @@
 export const profileItems = [
   {
     title: "Min Profil",
-    slug: "/profile",
+    slug: "/settings",
     icon: "tabler:user",
     description: "Endre din profilinformasjon",
   },
   {
     title: "Personvern",
-    slug: "/profile/privacy",
+    slug: "/settings/privacy",
     icon: "uil:shield-check",
     description: "Endre dine personverninnstillinger",
   },
   {
     title: "Passord",
-    slug: "/profile/password",
+    slug: "/settings/password",
     icon: "lucide:lock",
     description: "Endre ditt passord",
   },
   {
     title: "Varsler",
-    slug: "/profile/notifications",
+    slug: "/settings/notifications",
     icon: "tabler:bell-ringing",
     description: "Endre dine varslingsinnstillinger",
   },
   {
     title: "Medlemskap",
-    slug: "/profile/membership",
+    slug: "/settings/membership",
     icon: "tabler:award",
     description: "Se ditt medlemskap",
   },
   {
     title: "Prikker & Suspensjoner",
-    slug: "/profile/penalties",
+    slug: "/settings/penalties",
     icon: "tabler:circle-x",
     description: "Skal fjernes",
   },

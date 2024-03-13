@@ -33,7 +33,7 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
       <div className={cn("mr-4 h-7 w-7")}>
         <Icon icon={icon} width="w-7" />
       </div>
-      <p className="">{title}</p>
+      <p className="font-medium">{title}</p>
     </Link>
   );
 };

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { profileItems } from "@/utils/profileLinks";
 import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer";
 import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer";
-import { ProfileContext } from "../views/ProfileView/context/ProfileContext";
+import { ProfileContext } from "../views/SettingsView/context/ProfileContext";
 
 interface PageTitleProps {
   title: string;
