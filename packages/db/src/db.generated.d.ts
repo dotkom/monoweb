@@ -1,4 +1,4 @@
-import { type ColumnType } from "kysely"
+import type { ColumnType } from "kysely"
 
 export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA"
 
@@ -125,6 +125,15 @@ export interface EventCompany {
   eventId: string
 }
 
+export interface InterestGroup {
+  createdAt: Generated<Timestamp>
+  description: string | null
+  id: Generated<string>
+  link: string | null
+  name: string
+  updatedAt: Generated<Timestamp>
+}
+
 export interface JobListing {
   applicationEmail: string | null
   applicationLink: string | null
@@ -192,8 +201,12 @@ export interface Offline {
 export interface OwUser {
   auth0Sub: string | null
   createdAt: Generated<Timestamp>
+  email: string
   id: Generated<string>
+  lastSyncedAt: Generated<Timestamp>
+  name: string
   studyYear: Generated<number>
+  updatedAt: Generated<Timestamp>
 }
 
 export interface Payment {
@@ -265,6 +278,7 @@ export interface DB {
   event: Event
   eventCommittee: EventCommittee
   eventCompany: EventCompany
+  interestGroup: InterestGroup
   jobListing: JobListing
   jobListingLocation: JobListingLocation
   jobListingLocationLink: JobListingLocationLink

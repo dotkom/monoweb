@@ -15,6 +15,10 @@ export const createEnvironment = (skipValidation = false) =>
       WEB_AUTH0_CLIENT_SECRET: environmentVariableSchema,
       WEB_AUTH0_ISSUER: environmentVariableSchema,
 
+      GTX_AUTH0_CLIENT_ID: environmentVariableSchema,
+      GTX_AUTH0_CLIENT_SECRET: environmentVariableSchema,
+      GTX_AUTH0_ISSUER: environmentVariableSchema,
+
       NODE_ENV: z.enum(["development", "test", "production"]).optional(),
       VERCEL_URL: environmentVariableSchema.optional(),
       DATABASE_URL: environmentVariableSchema,
@@ -43,6 +47,10 @@ export const createEnvironment = (skipValidation = false) =>
       WEB_AUTH0_CLIENT_ID: process.env.WEB_AUTH0_CLIENT_ID,
       WEB_AUTH0_CLIENT_SECRET: process.env.WEB_AUTH0_CLIENT_SECRET,
       WEB_AUTH0_ISSUER: process.env.WEB_AUTH0_ISSUER,
+
+      GTX_AUTH0_CLIENT_ID: process.env.GTX_AUTH0_CLIENT_ID,
+      GTX_AUTH0_CLIENT_SECRET: process.env.GTX_AUTH0_CLIENT_SECRET,
+      GTX_AUTH0_ISSUER: process.env.GTX_AUTH0_ISSUER,
 
       DATABASE_URL: process.env.DATABASE_URL,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

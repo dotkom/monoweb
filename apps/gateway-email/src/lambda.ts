@@ -4,6 +4,7 @@ import {
   InterestFormForBedkomTemplate,
   InterestFormForCompanyTemplate,
   InvalidTemplateArguments,
+  InvoiceFormForBedKomTemplate,
   type Template,
 } from "@dotkomonline/emails"
 import { type APIGatewayProxyEventV2, type APIGatewayProxyResultV2, type Handler } from "aws-lambda"
@@ -15,6 +16,7 @@ const templates = [
   HelloWorldTemplate,
   InterestFormForBedkomTemplate,
   InterestFormForCompanyTemplate,
+  InvoiceFormForBedKomTemplate,
   // biome-ignore lint/suspicious/noExplicitAny: this should be any
 ] satisfies Template<any>[]
 

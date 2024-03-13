@@ -14,7 +14,7 @@ export default function TakkPage() {
         <Text>Du vil nå få en bekreftelse på e-post med en kopi av informasjonen du har sendt oss.</Text>
         <Text>
           Andre henvendelser kan sendes på mail til{" "}
-          <a href="mailto:bedriftskontrakt@online.ntnu.no">mailto:bedriftskontrakt@online.ntnu.no</a>
+          <a href="mailto:bedriftskontakt@online.ntnu.no">bedriftskontakt@online.ntnu.no</a>
         </Text>
       </Section>
     </main>
