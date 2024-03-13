@@ -3,7 +3,7 @@ import { useInterestGroupDetailsContext } from "./provider"
 import { useInterestGroupWriteForm } from "../write-form"
 import { useUpdateInterestGroupMutation } from "src/modules/interest-group/mutations/use-update-interest-group-mutation"
 import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
-import { Button } from "@mantine/core"
+import { Button, Checkbox, Stack } from "@mantine/core"
 import { Icon } from "@iconify/react"
 import { useRouter } from "next/navigation"
 import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
@@ -33,11 +33,23 @@ export const InterestGroupEditCard: FC = () => {
     defaultValues: interestGroup,
   })
   return (
-    <div>
+    <Stack gap="xs">
       <FormComponent />
-      <Button variant="outline" color="red" style={{ marginTop: "1rem" }} onClick={open}>
-        <Icon icon="tabler:trash" />
-      </Button>
-    </div>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center"}}>
+        <Button variant="outline" color="red" style={{ width: "55px", marginRight: "24px" }} onClick={open}>
+          <Icon icon="tabler:trash" />
+        </Button>
+        <Checkbox label="Aktiv?" onChange={ () =>
+            edit.mutate({
+              id: interestGroup.id,
+              values: {
+                name: interestGroup.name,
+                description: interestGroup.description,
+                link: interestGroup.link,
+                isActive: !interestGroup.isActive,
+              }
+            })} checked={interestGroup.isActive} />
+      </div>
+    </Stack>
   )
 }
