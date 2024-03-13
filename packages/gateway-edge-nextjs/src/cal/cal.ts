@@ -30,12 +30,13 @@ export async function CalendarAll(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const instance = ical({ name: `Online Linjeforening Arrangementer` })
+  const instance = ical({ name: "Online Linjeforening Arrangementer" })
 
   const events = await helpers.event.all.fetch()
-  events.forEach((event) => {
+
+  for (const event of events) {
     instance.createEvent(toICal(req, event))
-  })
+  }
 
   res.status(200).send(instance.toString())
 }
@@ -89,10 +90,10 @@ export async function CalendarUser(req: NextApiRequest, res: NextApiResponse) {
   const events = await helpers.event.allByUserId.fetch({ id: userid })
   const instance = ical({ name: `${userid} online kalender` })
 
-  events.forEach((event: any) => {
+  for (const event of events) {
     instance.createEvent(toICal(req, event))
     instance.createEvent(toICal(req, toRegistration(event)))
-  })
+  }
 
   res.status(200).send(instance.toString())
 }
