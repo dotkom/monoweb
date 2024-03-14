@@ -35,11 +35,13 @@ export const InterestGroupEditCard: FC = () => {
   return (
     <Stack gap="xs">
       <FormComponent />
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center"}}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
         <Button variant="outline" color="red" style={{ width: "55px", marginRight: "24px" }} onClick={open}>
           <Icon icon="tabler:trash" />
         </Button>
-        <Checkbox label="Aktiv?" onChange={ () =>
+        <Checkbox
+          label="Aktiv?"
+          onChange={() =>
             edit.mutate({
               id: interestGroup.id,
               values: {
@@ -47,8 +49,11 @@ export const InterestGroupEditCard: FC = () => {
                 description: interestGroup.description,
                 link: interestGroup.link,
                 isActive: !interestGroup.isActive,
-              }
-            })} checked={interestGroup.isActive} />
+              },
+            })
+          }
+          checked={interestGroup.isActive}
+        />
       </div>
     </Stack>
   )
