@@ -43,13 +43,7 @@ export const InterestGroupEditCard: FC = () => {
           label="Aktiv?"
           onChange={() =>
             edit.mutate({
-              id: interestGroup.id,
-              values: {
-                name: interestGroup.name,
-                description: interestGroup.description,
-                link: interestGroup.link,
-                isActive: !interestGroup.isActive,
-              },
+              ...interestGroup, values: { ...interestGroup, isActive: !interestGroup.isActive, },
             })
           }
           checked={interestGroup.isActive}
