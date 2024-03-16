@@ -2,7 +2,7 @@ import {
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
-  type AttendancePoolWrite
+  type AttendancePoolWrite,
 } from "@dotkomonline/types"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 

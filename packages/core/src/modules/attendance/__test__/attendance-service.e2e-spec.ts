@@ -21,7 +21,6 @@ const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => 
   registerStart: write.registerStart ?? new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday by default
 })
 
-// const fakePool012: AttendancePool = {
 const getFakePool = (write: Partial<AttendancePoolWrite>): AttendancePoolWrite => ({
   attendanceId: write.attendanceId ?? ulid(),
   limit: write.limit ?? 10,
@@ -175,14 +174,14 @@ describe("attendance", () => {
   // it should not allow creating pools with over lapping year criteria
   it("should not allow creating pools with overlapping year criteria", async () => {
     await expect(async () => {
-    await setupFakeFullAttendance(core, {
-      attendance: {},
-      pools: [
-        { limit: 1, yearCriteria: [1, 2] },
-        { limit: 1, yearCriteria: [2, 3] },
-      ],
-      users: [],
-    })
+      await setupFakeFullAttendance(core, {
+        attendance: {},
+        pools: [
+          { limit: 1, yearCriteria: [1, 2] },
+          { limit: 1, yearCriteria: [2, 3] },
+        ],
+        users: [],
+      })
     }).rejects.toThrowError("Year criteria overlap")
   })
 

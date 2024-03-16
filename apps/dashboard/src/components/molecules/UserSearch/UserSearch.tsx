@@ -1,6 +1,6 @@
 import { useState, type FC } from "react"
 import GenericSearch from "../../GenericSearch"
-import { useSearchUsersFromIDP } from "../../../modules/user/queries/use-user-get-query"
+import { useSearchUsers } from "../../../modules/user/queries/use-user-get-query"
 import { User } from "@dotkomonline/types"
 
 interface UserSearchProps {
@@ -9,7 +9,7 @@ interface UserSearchProps {
 
 export const UserSearch: FC<UserSearchProps> = ({ onSubmit }) => {
   const [searchQuery, setSearchQuery] = useState("")
-  const { usersFromIdp } = useSearchUsersFromIDP(searchQuery)
+  const { users } = useSearchUsers(searchQuery)
 
   const handleUserSearch = (query: string) => {
     setSearchQuery(query)
@@ -22,7 +22,7 @@ export const UserSearch: FC<UserSearchProps> = ({ onSubmit }) => {
         setSearchQuery("")
         onSubmit(user)
       }}
-      items={usersFromIdp}
+      items={users}
       dataMapper={(item: User) => `${item.name}`}
       placeholder="Søk etter bruker..."
       resetOnClick

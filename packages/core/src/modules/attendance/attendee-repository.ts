@@ -1,5 +1,4 @@
 import { type Database } from "@dotkomonline/db"
-import { type DeleteResult } from "@dotkomonline/db/utils"
 import {
   AttendeeSchema,
   AttendeeUser,
@@ -19,7 +18,7 @@ const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
-  delete(id: AttendeeId): Promise<DeleteResult>
+  delete(id: AttendeeId): Promise<Attendee | null>
   getById(id: AttendeeId): Promise<Attendee | null>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
@@ -39,11 +38,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .where("attendancePool.attendanceId", "=", attendanceId)
       .executeTakeFirst()
 
-    if (!res) {
-      return null
-    }
-
-    return mapToAttendee(res)
+    return res ? mapToAttendee(res) : null
   }
 
   async create(obj: AttendeeWrite): Promise<Attendee> {
@@ -56,11 +51,9 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     )
   }
 
-  async delete(id: AttendeeId): Promise<DeleteResult> {
-    const res = await this.db.deleteFrom("attendee").where("id", "=", id).executeTakeFirst()
-    return {
-      numDeletedRows: Number(res.numDeletedRows),
-    }
+  async delete(id: AttendeeId) {
+    const res = await this.db.deleteFrom("attendee").where("id", "=", id).returningAll().executeTakeFirst()
+    return res ? mapToAttendee(res) : null
   }
 
   async getById(id: AttendeeId): Promise<Attendee> {

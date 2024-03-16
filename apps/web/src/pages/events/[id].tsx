@@ -6,7 +6,7 @@ import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
 import { trpc } from "@/utils/trpc"
 import { AttendanceGroup } from "./AttendanceGroup"
-import { useSession } from ".."
+import { useSession, type Session } from ".."
 
 interface StatusCardProps {
   title: string
@@ -116,9 +116,116 @@ const getStatusCardData = (status: StatusState, datetime: Date): StatusCardProps
   }
 }
 
+const useEventDetail = (user: NonNullable<Session["user"]>, eventId: string) => {
+  const { data: event } = trpc.event.get.useQuery(eventId)
+  const session = useSession()
+
+  if (session.user === null) {
+    return <div>Ikke logget inn</div>
+  }
+
+  const attendanceId = event?.event.attendanceId
+  const { data: attendance } = trpc.event.attendance.getAttendance.useQuery({
+    id: attendanceId || "",
+  })
+  const { data: pools } = trpc.event.attendance.getPoolsByAttendanceId.useQuery({
+    id: attendanceId || "",
+  })
+
+  const utils = trpc.useUtils()
+  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation({
+    onSuccess: () => {
+      utils.event.attendance.getPoolsByAttendanceId.invalidate({
+        id: attendanceId || "",
+      })
+      utils.event.attendance.isAttending.invalidate({
+        attendanceId: attendance?.id || "",
+        userId: user.id,
+      })
+    },
+  })
+  const attendMutation = trpc.event.attendance.registerForEvent.useMutation({
+    onSuccess: () => {
+      utils.event.attendance.getPoolsByAttendanceId.invalidate({ id: attendanceId || "" })
+      utils.event.attendance.isAttending.invalidate({
+        attendanceId: attendance?.id || "",
+        userId: user.id,
+      })
+    },
+  })
+
+  const { data: selfAttendee } = trpc.event.attendance.isAttending.useQuery({
+    attendanceId: attendance?.id || "",
+    userId: user.id,
+  })
+
+  const STATUS = "OPEN"
+
+  const inTenMinutes = new Date()
+  inTenMinutes.setMinutes(inTenMinutes.getMinutes() + 10)
+
+  const statusData = getStatusCardData(STATUS, inTenMinutes)
+
+  const myGroups = pools?.find((a) => a.yearCriteria.includes(user.studyYear))
+  const otherGroups = pools?.filter((group) => group.id !== myGroups?.id)
+
+  const isAttending = Boolean(selfAttendee)
+
+  const attend = () => {
+    if (!user.id) {
+      return
+    }
+
+    if (!attendance?.id) {
+      return
+    }
+
+    attendMutation.mutate({
+      attendanceId: attendance.id,
+      userId: user.id,
+    })
+  }
+
+  const unAttend = () => {
+    if (!user.id) {
+      return
+    }
+
+    if (!selfAttendee?.id) {
+      return
+    }
+
+    if (!attendance?.id) {
+      return
+    }
+
+    unattendMutation.mutate({
+      id: selfAttendee.id,
+      attendanceId: attendance.id,
+    })
+  }
+
+  return {
+    event,
+    attendance,
+    pools,
+    statusData,
+    myGroups,
+    otherGroups,
+    isAttending,
+    attend,
+    unAttend,
+  }
+}
+
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const { id: eventId } = props
   const { data: event } = trpc.event.get.useQuery(eventId)
+  const session = useSession()
+
+  if (session.user === null) {
+    return <div>Ikke logget inn</div>
+  }
 
   const attendanceId = event?.event.attendanceId
   const { data: attendance } = trpc.event.attendance.getAttendance.useQuery({
@@ -149,7 +256,6 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
       })
     },
   })
-  const session = useSession()
 
   const { data: selfAttendee } = trpc.event.attendance.isAttending.useQuery({
     attendanceId: attendance?.id || "",
@@ -192,8 +298,13 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
       return
     }
 
+    if (!attendance?.id) {
+      return
+    }
+
     unattendMutation.mutate({
       id: selfAttendee.id,
+      attendanceId: attendance.id,
     })
   }
 

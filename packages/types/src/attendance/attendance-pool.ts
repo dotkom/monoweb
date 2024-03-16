@@ -3,7 +3,7 @@ import { z } from "zod"
 export const YearCriteriaSchema = z.array(z.number())
 
 export const AttendancePoolSchema = z.object({
-  id: z.string(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   limit: z.number(),
@@ -22,3 +22,9 @@ export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({
 export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
 export type AttendancePoolId = AttendancePool["id"]
+
+export const AttendancePoolBaseSchema = AttendancePoolSchema.omit({
+  numAttendees: true,
+})
+
+export type AttendancePoolBase = z.infer<typeof AttendancePoolBaseSchema>

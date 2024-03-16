@@ -2,39 +2,31 @@ import React from "react"
 import { useSession as _useSession } from "next-auth/react"
 import { trpc } from "@/utils/trpc"
 
-export const useSession = (): {
+export interface Session {
   isLoading: boolean
   user: {
     id: string
     email: string
     name: string
-    image: string
-    studyYear: number
-  }
-} => {
+    image?: string
+    studyYear: number | null
+  } | null
+}
+
+export const useSession = (): Session => {
   const { data: session, status } = _useSession()
+
   const { data, isLoading: dbCallLoading } = trpc.user.get.useQuery(session?.user.id ?? "", {
     enabled: Boolean(session?.user.id),
   })
 
-  // Initialize user with default values
-  const defaultUser = {
-    id: "",
-    email: "",
-    name: "",
-    image: "",
-    studyYear: 0,
-  }
+  const user = session?.user ? { studyYear: data?.studyYear ?? null, ...session.user } : null
+
+  user
 
   return {
     isLoading: dbCallLoading || status === "loading",
-    user: {
-      id: session?.user.id ?? defaultUser.id,
-      email: session?.user.email ?? defaultUser.email,
-      name: session?.user.name ?? defaultUser.name,
-      image: session?.user.image ?? defaultUser.image,
-      studyYear: data?.studyYear ?? defaultUser.studyYear,
-    },
+    user,
   }
 }
 

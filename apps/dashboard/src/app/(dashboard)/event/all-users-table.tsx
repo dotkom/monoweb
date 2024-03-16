@@ -12,7 +12,7 @@ interface CustomCheckboxProps {
   attendeeId: AttendeeId
   defaultChecked?: boolean
 }
-  const CustomCheckbox = ({ attendeeId, defaultChecked }: CustomCheckboxProps) => {
+const CustomCheckbox = ({ attendeeId, defaultChecked }: CustomCheckboxProps) => {
   const updateAttendance = useUpdateEventAttendanceMutation()
 
   const toggleAttendance = (attendeeId: AttendeeId, currentCheckedState: boolean) => {
@@ -64,7 +64,7 @@ export const AllAttendeesTable = ({ users, attendanceId }: AllAttendeesTableProp
             onClick={() =>
               deregisterMut.mutate({
                 id: info.getValue().id,
-                attendanceId: attendanceId
+                attendanceId: attendanceId,
               })
             }
           >

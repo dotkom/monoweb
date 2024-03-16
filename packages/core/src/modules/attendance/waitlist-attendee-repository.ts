@@ -6,13 +6,12 @@ import {
   type WaitlistAttendeeWrite,
 } from "@dotkomonline/types"
 import { type Kysely } from "kysely"
-import { type DeleteResult } from "@dotkomonline/db/utils"
 
 const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttendeeSchema.parse(obj)
 
 export interface WaitlistAttendeRepository {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
-  delete(id: WaitlistAttendeeId): Promise<DeleteResult>
+  delete(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
   getByAttendanceId(id: string): Promise<WaitlistAttendee[]>
 }
 
@@ -25,11 +24,9 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
     )
   }
 
-  async delete(id: WaitlistAttendeeId): Promise<DeleteResult> {
+  async delete(id: WaitlistAttendeeId) {
     const res = await this.db.deleteFrom("waitlistAttendee").where("id", "=", id).executeTakeFirst()
-    return {
-      numDeletedRows: Number(res.numDeletedRows),
-    }
+    return res ? mapToWaitlistAttendee(res) : null
   }
 
   async getByAttendanceId(id: string) {

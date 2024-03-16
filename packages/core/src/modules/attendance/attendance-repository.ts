@@ -1,5 +1,4 @@
 import { type Database } from "@dotkomonline/db"
-import { type DeleteResult } from "@dotkomonline/db/utils"
 import { AttendanceSchema, type Attendance, type AttendanceId, type AttendanceWrite } from "@dotkomonline/types"
 import { Selectable, type Kysely } from "kysely"
 
@@ -8,7 +7,7 @@ const mapToAttendance = (obj: DatabaseAttendance): Attendance => AttendanceSchem
 
 export interface AttendanceRepository {
   create(obj: AttendanceWrite): Promise<Attendance>
-  delete(id: AttendanceId): Promise<DeleteResult>
+  delete(id: AttendanceId): Promise<Attendance | null>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
 }
@@ -31,10 +30,8 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   async delete(id: AttendanceId) {
-    const result = await this.db.deleteFrom("attendance").where("id", "=", id).executeTakeFirst()
-    return {
-      numDeletedRows: Number(result.numDeletedRows),
-    }
+    const result = await this.db.deleteFrom("attendance").where("id", "=", id).returningAll().executeTakeFirst()
+    return result ? mapToAttendance(result) : null
   }
 
   async getById(id: AttendanceId) {

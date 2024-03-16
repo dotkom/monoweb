@@ -5,14 +5,14 @@ export const useUserGetQuery = (id: string) => {
   return { user, ...query }
 }
 
-export const useSearchUsersFromIDP = (searchQuery: string) => {
-  const { data: usersFromIdp = [] } = trpc.user.searchByFullName.useQuery(
+export const useSearchUsers = (searchQuery: string) => {
+  const { data: users = [] } = trpc.user.searchByFullName.useQuery(
     { searchQuery },
     {
       enabled: searchQuery.length > 1,
     }
   )
-  return { usersFromIdp }
+  return { users }
 }
 
 export const useGetUserBySub = () => {
