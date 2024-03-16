@@ -9,7 +9,7 @@ import {
   type AttendancePoolWrite,
 } from "@dotkomonline/types"
 import { Selectable, type Kysely } from "kysely"
-import { prepareJsonInsert } from "../../utils/db-utils"
+import { withInsertJsonValue } from "../../utils/db-utils"
 
 type DatabasePool = Selectable<Database["attendancePool"]> & { numAttendees: number }
 type DatabasePoolBase = Selectable<Database["attendancePool"]>
@@ -55,7 +55,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
     const result = await this.db
       .insertInto("attendancePool")
       .returning("attendancePool.id")
-      .values(prepareJsonInsert(obj, "yearCriteria"))
+      .values(withInsertJsonValue(obj, "yearCriteria"))
       .executeTakeFirstOrThrow()
 
     const res = await this.get(result.id)
@@ -93,7 +93,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
-    const insertObj = prepareJsonInsert(obj, "yearCriteria")
+    const insertObj = withInsertJsonValue(obj, "yearCriteria")
     await this.db.updateTable("attendancePool").set(insertObj).where("id", "=", id).executeTakeFirstOrThrow()
 
     const res = await this.get(id)

@@ -11,7 +11,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import { Selectable, sql, type Kysely } from "kysely"
-import { prepareJsonInsert } from "../../utils/db-utils"
+import { withInsertJsonValue } from "../../utils/db-utils"
 
 const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
 const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)
@@ -45,7 +45,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return mapToAttendee(
       await this.db
         .insertInto("attendee")
-        .values(prepareJsonInsert(obj, "extrasChoices"))
+        .values(withInsertJsonValue(obj, "extrasChoices"))
         .returningAll()
         .executeTakeFirstOrThrow()
     )
@@ -90,7 +90,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   async update(obj: AttendeeWrite, id: AttendeeId) {
     const res = await this.db
       .updateTable("attendee")
-      .set(prepareJsonInsert(obj, "extrasChoices"))
+      .set(withInsertJsonValue(obj, "extrasChoices"))
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
