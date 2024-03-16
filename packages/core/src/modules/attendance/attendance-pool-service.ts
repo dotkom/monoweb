@@ -5,6 +5,7 @@ import {
   type AttendancePoolWrite,
 } from "@dotkomonline/types"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
+import { AttendeeService } from "./attendee-service"
 
 export interface AttendancePoolService {
   create(write: AttendancePoolWrite): Promise<AttendancePool>
@@ -14,7 +15,7 @@ export interface AttendancePoolService {
 }
 
 export class AttendancePoolServiceImpl implements AttendancePoolService {
-  constructor(private readonly attendancePoolRepository: AttendancePoolRepository) {
+  constructor(private readonly attendancePoolRepository: AttendancePoolRepository, private readonly attendeeService: AttendeeService) {
     this.attendancePoolRepository = attendancePoolRepository
   }
 
@@ -38,6 +39,12 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
   }
 
   async delete(id: AttendancePoolId) {
+    const attendees = await this.attendeeService.getByAttendanceId(id)
+
+    if (attendees.length > 0) {
+      throw new Error("Cannot delete attendance pool with attendees")
+    }
+
     await this.attendancePoolRepository.delete(id)
   }
 
