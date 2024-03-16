@@ -42,10 +42,25 @@ export class AttendanceServiceImpl implements AttendanceService {
   /**
    * Creates a new attendance record.
    * Validates dates according to the following rules:
-   * registerStart < mergeTime, deregisterDeadline < registerEnd
+   * registerStart < mergeTime < registerEnd
    *
    */
   async create(obj: AttendanceWrite) {
+    // registerStart < mergeTime
+    if(obj.registerStart > obj.mergeTime) {
+      throw new Error("Register start must be before merge time")
+    }
+
+    // registerStart < registerEnd
+    if(obj.registerStart > obj.registerEnd) {
+      throw new Error("Register start must be before register end")
+    }
+
+    // mergeTime < registerEnd
+    if(obj.mergeTime > obj.registerEnd) {
+      throw new Error("Merge time must be before register end")
+    }
+
     return this.attendanceRepository.create(obj)
   }
 
