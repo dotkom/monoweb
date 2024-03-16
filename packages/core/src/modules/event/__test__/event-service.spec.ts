@@ -36,7 +36,11 @@ describe("EventService", () => {
     vi.spyOn(eventRepository, "create").mockResolvedValueOnce({ id, ...eventPayload })
     const event = await eventService.createEvent(eventPayload)
     expect(event).toEqual({ id, ...eventPayload })
-    expect(eventRepository.create).toHaveBeenCalledWith(eventPayload)
+    expect(eventRepository.create).toHaveBeenCalledWith({
+      ...eventPayload,
+      // This is because extras is a jsonb column in the database
+      extras: "null",
+    })
   })
 
   it("finds events by id", async () => {
