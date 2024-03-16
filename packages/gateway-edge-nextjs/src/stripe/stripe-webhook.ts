@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next"
 import type Stripe from "stripe"
-import { createServiceLayer, getStripeObject, getStripeWebhookSecret } from "@dotkomonline/core"
+import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 import { bufferRequest } from "../request-utils"
 
@@ -13,8 +13,9 @@ export async function stripeHandler(req: NextApiRequest, res: NextApiResponse) {
   const publicKey = req.query.publickey as string
   const sig = req.headers["stripe-signature"] as string
 
-  const stripe = getStripeObject(publicKey)
-  const endpointSecret = getStripeWebhookSecret(publicKey)
+  const ctx = await createServiceLayer({ db: kysely })
+  const stripe = ctx.paymentService.findStripeSdkByPublicKey(publicKey)
+  const endpointSecret = ctx.paymentService.findWebhookSecretByPublicKey(publicKey)
 
   if (!stripe || !endpointSecret) {
     console.warn("No stripe account found for the given public key")

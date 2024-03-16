@@ -1,10 +1,9 @@
+import { S3Client } from "@aws-sdk/client-s3"
 import { type Database } from "@dotkomonline/db"
 import { env } from "@dotkomonline/env"
 import { ManagementClient } from "auth0"
 import { type Kysely } from "kysely"
-import { Auth0RepositoryImpl, type Auth0Repository } from "../lib/auth0-repository"
-import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../lib/auth0-synchronization-service"
-import { s3RepositoryImpl, type S3Repository } from "../lib/s3/s3-repository"
+import Stripe from "stripe"
 import { ArticleRepositoryImpl, type ArticleRepository } from "./article/article-repository"
 import { ArticleServiceImpl, type ArticleService } from "./article/article-service"
 import { ArticleTagLinkRepositoryImpl, type ArticleTagLinkRepository } from "./article/article-tag-link-repository"
@@ -29,6 +28,9 @@ import { EventCompanyRepositoryImpl, type EventCompanyRepository } from "./event
 import { EventCompanyServiceImpl, type EventCompanyService } from "./event/event-company-service"
 import { EventRepositoryImpl, type EventRepository } from "./event/event-repository"
 import { EventServiceImpl, type EventService } from "./event/event-service"
+import { S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { InterestGroupRepositoryImpl, type InterestGroupRepository } from "./interest-group/interest-group-repository"
+import { InterestGroupServiceImpl, type InterestGroupService } from "./interest-group/interest-group-service"
 import {
   JobListingLocationLinkRepositoryImpl,
   type JobListingLocationLinkRepository,
@@ -69,6 +71,8 @@ import {
 } from "./user/privacy-permissions-repository"
 import { UserRepositoryImpl, type UserRepository } from "./user/user-repository"
 import { UserServiceImpl, type UserService } from "./user/user-service"
+import { Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
+import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./external/auth0-synchronization-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -77,14 +81,31 @@ export interface ServerLayerOptions {
 }
 
 export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
-  const s3Repository: S3Repository = new s3RepositoryImpl()
+  const s3Client = new S3Client({
+    region: env.AWS_REGION,
+  })
   const auth0ManagementClient = new ManagementClient({
     domain: "onlineweb.eu.auth0.com",
     clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
     clientId: env.GTX_AUTH0_CLIENT_ID,
   })
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+  const trikomStripeSdk = new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
+  const fagkomStripeSdk = new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
+  const stripeAccounts = {
+    trikom: {
+      stripe: trikomStripeSdk,
+      publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
+      webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
+    },
+    fagkom: {
+      stripe: fagkomStripeSdk,
+      publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
+      webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
+    },
+  }
 
+  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -119,7 +140,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
-
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
@@ -140,7 +160,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     waitlistAttendeRepository,
     attendancePoolRepository
   )
-  const attendancePoolService: AttendancePoolService = new AttendancePoolServiceImpl(attendancePoolRepository)
   const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(waitlistAttendeRepository)
   const attendeeService: AttendeeService = new AttendeeServiceImpl(
     attendeeRepository,
@@ -148,6 +167,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendanceRepository,
     userService
   )
+  const attendancePoolService: AttendancePoolService = new AttendancePoolServiceImpl(attendancePoolRepository, attendeeService)
 
   const eventService: EventService = new EventServiceImpl(eventRepository, attendanceService)
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
@@ -158,7 +178,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     paymentRepository,
     productRepository,
     eventRepository,
-    refundRequestRepository
+    refundRequestRepository,
+    stripeAccounts
   )
   const productPaymentProviderService: ProductPaymentProviderService = new ProductPaymentProviderServiceImpl(
     productPaymentProviderRepository
@@ -177,7 +198,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     articleTagRepository,
     articleTagLinkRepository
   )
-
+  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
+  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
   const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
     userService,
     auth0Repository
@@ -204,6 +226,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendancePoolService,
     waitlistAttendeService,
     attendeeService,
+    interestGroupRepository,
+    interestGroupService,
     auth0Repository,
     auth0SynchronizationService,
   }

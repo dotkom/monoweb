@@ -1,6 +1,7 @@
 import { committeeRouter } from "./modules/committee/committee-router"
 import { companyRouter } from "./modules/company/company-router"
 import { eventRouter } from "./modules/event/event-router"
+import { attendanceRouter } from "./modules/event/attendance-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { paymentRouter } from "./modules/payment/payment-router"
 import { t } from "./trpc"
@@ -9,10 +10,12 @@ import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { offlineRouter } from "./modules/offline/offline-router"
 import { articleRouter } from "./modules/article/article-router"
+import { interestGroupRouter } from "./modules/interest-group/interest-group-router"
 
 export const appRouter = t.router({
   committee: committeeRouter,
   event: eventRouter,
+  attendance: attendanceRouter,
   user: userRouter,
   company: companyRouter,
   payment: paymentRouter,
@@ -21,6 +24,7 @@ export const appRouter = t.router({
   jobListing: jobListingRouter,
   offline: offlineRouter,
   article: articleRouter,
+  interestGroup: interestGroupRouter,
 })
 
 export type AppRouter = typeof appRouter

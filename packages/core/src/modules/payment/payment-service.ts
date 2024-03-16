@@ -2,11 +2,19 @@ import { type Payment, type PaymentProvider, type Product, type ProductId, type 
 import { type PaymentRepository } from "./payment-repository.js"
 import { type ProductRepository } from "./product-repository.js"
 import { type RefundRequestRepository } from "./refund-request-repository.js"
-import { getStripeObject, readableStripeAccounts } from "../../lib/stripe"
 import { type Cursor } from "../../utils/db-utils"
 import { type EventRepository } from "../event/event-repository"
+import Stripe from "stripe"
+
+export interface StripeAccount {
+  stripe: Stripe
+  publicKey: string
+  webhookSecret: string
+}
 
 export interface PaymentService {
+  findStripeSdkByPublicKey(publicKey: string): Stripe | null
+  findWebhookSecretByPublicKey(publicKey: string): string | null
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
   getPayments(take: number, cursor?: Cursor): Promise<Payment[]>
   createStripeCheckoutSessionForProductId(
@@ -29,14 +37,23 @@ export class PaymentServiceImpl implements PaymentService {
     private readonly paymentRepository: PaymentRepository,
     private readonly productRepository: ProductRepository,
     private readonly eventRepository: EventRepository,
-    private readonly refundRequestRepository: RefundRequestRepository
+    private readonly refundRequestRepository: RefundRequestRepository,
+    private readonly stripeAccounts: Record<string, StripeAccount>
   ) {}
 
+  findStripeSdkByPublicKey(publicKey: string): Stripe | null {
+    return Object.values(this.stripeAccounts).find((account) => account.publicKey === publicKey)?.stripe ?? null
+  }
+
+  findWebhookSecretByPublicKey(publicKey: string): string | null {
+    return Object.values(this.stripeAccounts).find((account) => account.publicKey === publicKey)?.webhookSecret ?? null
+  }
+
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[] {
-    return readableStripeAccounts.map(({ alias, publicKey }) => ({
+    return Object.entries(this.stripeAccounts).map(([alias, account]) => ({
       paymentAlias: alias,
       paymentProvider: "STRIPE",
-      paymentProviderId: publicKey,
+      paymentProviderId: account.publicKey,
     }))
   }
 
@@ -77,9 +94,10 @@ export class PaymentServiceImpl implements PaymentService {
       }
     }
 
-    const stripe = getStripeObject(stripePublicKey)
+    const stripe = this.findStripeSdkByPublicKey(stripePublicKey)
     if (!stripe) {
-      throw new Error("No stripe account found for the given public key")
+      console.log(stripePublicKey)
+      throw new Error(`No stripe account found for public key ${stripePublicKey}`)
     }
 
     // Tests requires stripe to be awaited first but otherwise it works fine without.
@@ -225,7 +243,7 @@ export class PaymentServiceImpl implements PaymentService {
   }
 
   async refundStripePayment(payment: Payment) {
-    const stripe = getStripeObject(payment.paymentProviderId)
+    const stripe = this.findStripeSdkByPublicKey(payment.paymentProviderId)
     if (!stripe) {
       throw new Error("No stripe account found for the given public key")
     }

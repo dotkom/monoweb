@@ -141,3 +141,14 @@ docker run -d -p 5432:5432 public.ecr.aws/dotkom/dotkom/pgx-ulid \
 # Set your DATABASE_URL to the following:
 export DATABASE_URL="postgres://postgres:postgres@localhost:5432/postgres"
 ```
+
+### What runs where?
+
+The following applications run on the following ports:
+
+- `/apps/web`: 3000
+- `/apps/dashboard`: 3002
+- `/apps/rif`: 3003
+- `/apps/invoicing`: 3004
+- `/apps/gateway-email`: AWS Lambda only
+- `/packages/ui`: 61000 (ladle)

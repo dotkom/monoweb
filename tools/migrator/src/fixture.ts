@@ -18,6 +18,7 @@ import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
+import { getInterestGroupFixtures } from "./fixtures/interest-group"
 
 interface WithIdentifier {
   id: string
@@ -132,6 +133,14 @@ export const runFixtures = async () => {
     .insertInto("offline")
     .onConflict((eb) => eb.doNothing())
     .values(getOfflineFixtures())
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.interestGroup = await db
+    .insertInto("interestGroup")
+    .onConflict((eb) => eb.doNothing())
+    .values(getInterestGroupFixtures())
     .returning("id")
     .execute()
     .then(mapId)

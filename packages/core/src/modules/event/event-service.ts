@@ -10,6 +10,7 @@ export interface EventService {
   updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: EventId): Promise<Event>
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event>
 }
@@ -39,6 +40,11 @@ export class EventServiceImpl implements EventService {
 
   async getEvents(take: number, cursor?: Cursor): Promise<Event[]> {
     const events = await this.eventRepository.getAll(take, cursor)
+    return events
+  }
+
+  async getEventsByUserAttending(userId: string): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByUserAttending(userId)
     return events
   }
 

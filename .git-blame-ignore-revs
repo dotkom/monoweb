@@ -1,0 +1,9 @@
+# This file contains git sha1 hashes of commits that should not be included
+# accounted for when `git blame` is run.  This is useful to exclude commits
+# that move mass amounts of code, or perform formatting changes.
+
+# Updated ESLint Configuration (#595)
+f05afbb829a7634a229945ff07ec06b5e728c124
+
+# Migration from ESLint and Prettier to Biome (#821)
+d1859745e79c08ce7e3c06d0b41b0b8c9ebcaaa5
