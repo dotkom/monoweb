@@ -12,7 +12,7 @@ export interface EventService {
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-  addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event>
+  addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
 }
 
 export class EventServiceImpl implements EventService {
