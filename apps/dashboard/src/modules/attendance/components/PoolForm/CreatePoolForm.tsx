@@ -22,7 +22,7 @@ export type CreatePoolFormSchema = z.infer<typeof CreatePoolFormSchema>
 export const useCreatePoolForm = (props: CreatePoolFormProps) => {
   const existingPools = [...new Set(props.attendancePools.flatMap(({ yearCriteria }) => yearCriteria))]
 
-  const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse", "PHD1"]
+  const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse", "PHD"]
 
   const Form = useFormBuilder({
     schema: CreatePoolFormSchema,
