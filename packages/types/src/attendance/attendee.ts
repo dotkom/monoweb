@@ -8,7 +8,7 @@ export const ExtraChoice = z.object({
 })
 
 export const AttendeeSchema = z.object({
-  id: z.string(),
+  id: z.string().ulid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 
@@ -28,5 +28,5 @@ export const AttendeeWriteSchema = AttendeeSchema.partial({
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
-export const AttendeeUserSchema = AttendeeSchema.merge(z.object({ user: UserSchema }))
+export const AttendeeUserSchema = AttendeeSchema.extend({ user: UserSchema })
 export type AttendeeUser = z.infer<typeof AttendeeUserSchema>

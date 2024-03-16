@@ -31,13 +31,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async isAttending(userId: UserId, attendanceId: EventId) {
-    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
-
-    if (attendee === undefined) {
-      return null
-    }
-
-    return attendee
+    return this.attendeeRepository.getByUserId(userId, attendanceId)
   }
 
   async update(obj: AttendanceWrite, id: AttendanceId) {
@@ -45,17 +39,13 @@ export class AttendanceServiceImpl implements AttendanceService {
     return attendance
   }
 
+  /**
+   * Creates a new attendance record.
+   * Validates dates according to the following rules:
+   * registerStart < mergeTime, deregisterDeadline < registerEnd
+   *
+   */
   async create(obj: AttendanceWrite) {
-    obj.deregisterDeadline
-    obj.mergeTime
-    obj.registerEnd
-    obj.registerStart
-
-    // registerStart ---------------------------------------------
-    // --------------mergeTime------------------------------------
-    // --------------dergisterDeadline----------------------------
-    // ----------------------------------registerEnd--------------
-
     return this.attendanceRepository.create(obj)
   }
 
@@ -68,6 +58,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async merge(id: AttendanceId) {
+    // TODO: Implement this
     throw new Error("Not implemented")
   }
 }

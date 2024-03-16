@@ -1,5 +1,4 @@
 import {
-  type OidcUser,
   type NotificationPermissions,
   type NotificationPermissionsWrite,
   type PrivacyPermissions,
@@ -11,7 +10,6 @@ import {
 import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
 import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import { type UserRepository } from "./user-repository"
-import { type Auth0Repository } from "../../lib/auth0-repository"
 import { type Cursor } from "../../utils/db-utils"
 
 export interface UserService {
@@ -58,10 +56,6 @@ export class UserServiceImpl implements UserService {
 
   async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
-    if (!user) {
-      return undefined
-    }
-
     return user
   }
 

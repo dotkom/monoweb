@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const WaitlistAttendeeSchema = z.object({
-  id: z.string(),
+  id: z.string().ulid(),
   createdAt: z.date(),
   updatedAt: z.date(),
 

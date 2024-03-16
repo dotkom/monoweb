@@ -14,7 +14,7 @@ import { AttendanceRepository } from "./attendance-repository"
 export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
   registerForEvent(userId: string, poolId: string, time: Date): Promise<Attendee>
-  deregisterForEvent(id: AttendeeId, attendanceId: AttendanceId, time: Date): Promise<void>
+  deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
@@ -115,11 +115,8 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async deregisterForEvent(id: AttendeeId, attendanceId: AttendanceId, now: Date) {
-    // require attendance id to avoid having to fetch 1. attendee then 2. pool then 3. attendance
-    // this can be changed/new method added to only attendee id if there arises a use case for deregistering from an attendance without knowing the attendance id
-
-    const attendance = await this.attendanceRespository.getById(attendanceId)
+  async deregisterForEvent(id: AttendeeId, now: Date) {
+    const attendance = await this.attendanceRespository.getByAttendeeId(id)
 
     if (attendance === null) {
       throw new Error("Attendance not found")
