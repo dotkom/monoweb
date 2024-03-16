@@ -138,6 +138,10 @@ describe("attendance", () => {
     const attendees = await core.attendeeService.getByAttendanceId(attendance.id)
 
     expect(attendees).toHaveLength(1)
+
+    const attendeesInPool = await core.attendeeService.getByAttendancePoolId(insertedPool.id)
+
+    expect(attendeesInPool).toHaveLength(1)
   })
 
   it("should not allow registration end before start when creating attendance", async () => {
@@ -185,20 +189,26 @@ describe("attendance", () => {
     }).rejects.toThrowError("Year criteria overlap")
   })
 
-  it("should not allow deleting a pool with attendees", async () => {
+  it("should not allow deleting a pool or attendance when there is attendees", async () => {
     const res = await setupFakeFullAttendance(core, {
       attendance: {},
       pools: [{ yearCriteria: [1, 3] }],
       users: [{ studyYear: 1 }, { studyYear: 3 }],
     })
 
-    const pool = res.pools[0]
     const user = res.users[0]
 
-    await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.id, res.attendance.id, new Date())
 
-    await expect(() => {
-      return core.attendancePoolService.delete(pool.id)
+    expect(attendee).not.toBeNull()
+
+    const pool = res.pools[0]
+    await expect(async () => {
+      await core.attendancePoolService.delete(pool.id)
+    }).rejects.toThrowError()
+
+    await expect(async () => {
+      await core.attendanceService.delete(res.attendance.id)
     }).rejects.toThrowError()
   })
 

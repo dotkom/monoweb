@@ -1,5 +1,6 @@
 import { type Database } from "@dotkomonline/db"
 import {
+  AttendancePoolId,
   AttendeeSchema,
   AttendeeUser,
   AttendeeUserSchema,
@@ -22,7 +23,8 @@ export interface AttendeeRepository {
   getById(id: AttendeeId): Promise<Attendee | null>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee>
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeUser[]>
+  getByAttendanceId(id: AttendanceId): Promise<AttendeeUser[]>
+  getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
@@ -71,6 +73,30 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
       .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
       .where("attendance.id", "=", attendanceId)
+      .groupBy("attendee.id")
+      .execute()
+
+    return res
+      .map((value) => ({
+        ...value,
+        user: {
+          ...value.user[0],
+          createdAt: new Date(value.user[0].createdAt),
+          updatedAt: new Date(value.user[0].updatedAt),
+          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
+        },
+      }))
+      .map(mapToAttendeeWithUser)
+  }
+
+  async getByAttendancePoolId(id: AttendancePoolId) {
+    const res = await this.db
+      .selectFrom("attendee")
+      .selectAll("attendee")
+      .leftJoin("owUser", "owUser.id", "attendee.userId")
+      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
+      .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .where("attendancePool.id", "=", id)
       .groupBy("attendee.id")
       .execute()
 

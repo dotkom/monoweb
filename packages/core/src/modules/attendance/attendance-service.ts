@@ -47,17 +47,17 @@ export class AttendanceServiceImpl implements AttendanceService {
    */
   async create(obj: AttendanceWrite) {
     // registerStart < mergeTime
-    if(obj.registerStart > obj.mergeTime) {
+    if (obj.registerStart > obj.mergeTime) {
       throw new Error("Register start must be before merge time")
     }
 
     // registerStart < registerEnd
-    if(obj.registerStart > obj.registerEnd) {
+    if (obj.registerStart > obj.registerEnd) {
       throw new Error("Register start must be before register end")
     }
 
     // mergeTime < registerEnd
-    if(obj.mergeTime > obj.registerEnd) {
+    if (obj.mergeTime > obj.registerEnd) {
       throw new Error("Merge time must be before register end")
     }
 
@@ -65,6 +65,12 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async delete(id: AttendanceId) {
+    const attendees = await this.attendeeRepository.getByAttendanceId(id)
+
+    if (attendees.length > 0) {
+      throw new Error("Cannot delete attendance with attendees")
+    }
+
     await this.attendanceRepository.delete(id)
   }
 

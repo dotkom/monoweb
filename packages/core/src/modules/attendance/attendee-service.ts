@@ -1,4 +1,6 @@
 import {
+  AttendancePool,
+  AttendancePoolId,
   type AttendanceId,
   type Attendee,
   type AttendeeId,
@@ -13,9 +15,10 @@ import { AttendanceRepository } from "./attendance-repository"
 
 export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
-  registerForEvent(userId: string, poolId: string, time: Date): Promise<Attendee>
+  registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
+  getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<AttendeeUser>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
@@ -112,6 +115,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attended: false,
       extrasChoices: null,
     })
+
     return attendee
   }
 
@@ -129,8 +133,13 @@ export class AttendeeServiceImpl implements AttendeeService {
     await this.attendeeRepository.delete(id)
   }
 
-  async getByAttendanceId(attendanceId: string) {
-    const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
+  async getByAttendanceId(id: AttendanceId) {
+    const attendees = await this.attendeeRepository.getByAttendanceId(id)
+    return attendees
+  }
+
+  async getByAttendancePoolId(id: AttendancePoolId) {
+    const attendees = await this.attendeeRepository.getByAttendancePoolId(id)
     return attendees
   }
 }

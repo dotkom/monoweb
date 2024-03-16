@@ -15,7 +15,10 @@ export interface AttendancePoolService {
 }
 
 export class AttendancePoolServiceImpl implements AttendancePoolService {
-  constructor(private readonly attendancePoolRepository: AttendancePoolRepository, private readonly attendeeService: AttendeeService) {
+  constructor(
+    private readonly attendancePoolRepository: AttendancePoolRepository,
+    private readonly attendeeService: AttendeeService
+  ) {
     this.attendancePoolRepository = attendancePoolRepository
   }
 
@@ -39,7 +42,7 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
   }
 
   async delete(id: AttendancePoolId) {
-    const attendees = await this.attendeeService.getByAttendanceId(id)
+    const attendees = await this.attendeeService.getByAttendancePoolId(id)
 
     if (attendees.length > 0) {
       throw new Error("Cannot delete attendance pool with attendees")
