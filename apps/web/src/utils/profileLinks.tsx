@@ -35,4 +35,4 @@ export const profileItems = [
     icon: "tabler:circle-x",
     description: "Skal fjernes",
   },
-];
+]

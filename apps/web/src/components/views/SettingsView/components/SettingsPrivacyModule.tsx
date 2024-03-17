@@ -1,4 +1,4 @@
-import PersonvernOption from "./SettingsToggleOption";
+import PersonvernOption from "./SettingsToggleOption"
 
 export const personList = [
   {
@@ -8,11 +8,10 @@ export const personList = [
   },
   {
     key: 1,
-    optionsText:
-      "Tillate at bilder av deg på offentlige arrangementer kan legges ut",
+    optionsText: "Tillate at bilder av deg på offentlige arrangementer kan legges ut",
     state: false,
   },
-];
+]
 
 function PrivacyModule() {
   return (
@@ -21,7 +20,7 @@ function PrivacyModule() {
         <PersonvernOption key={title.key}>{title.optionsText}</PersonvernOption>
       ))}
     </div>
-  );
+  )
 }
 
-export default PrivacyModule;
+export default PrivacyModule

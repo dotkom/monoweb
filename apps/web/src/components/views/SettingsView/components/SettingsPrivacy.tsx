@@ -1,4 +1,4 @@
-import PrivacyModule from "./SettingsPrivacyModule";
+import PrivacyModule from "./SettingsPrivacyModule"
 
 const ProfilePrivacy = () => (
   <div className="my-10 flex w-full flex-col">
@@ -8,5 +8,5 @@ const ProfilePrivacy = () => (
     </p>
     <PrivacyModule />
   </div>
-);
-export default ProfilePrivacy;
+)
+export default ProfilePrivacy

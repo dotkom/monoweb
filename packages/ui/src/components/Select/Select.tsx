@@ -1,12 +1,12 @@
-import * as SelectPrimitive from "@radix-ui/react-select";
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react";
-import { Icon } from "../Icon";
-import { cn } from "../../utils";
+import * as SelectPrimitive from "@radix-ui/react-select"
+import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react"
+import { Icon } from "../Icon"
+import { cn } from "../../utils"
 
-export const Select = SelectPrimitive.Root;
-export const SelectValue = SelectPrimitive.Value;
-export const SelectPortal = SelectPrimitive.Portal;
-export const SelectGroup = SelectPrimitive.Group;
+export const Select = SelectPrimitive.Root
+export const SelectValue = SelectPrimitive.Value
+export const SelectPortal = SelectPrimitive.Portal
+export const SelectGroup = SelectPrimitive.Group
 
 export const SelectTrigger = forwardRef<
   ElementRef<typeof SelectPrimitive.Trigger>,
@@ -25,7 +25,7 @@ export const SelectTrigger = forwardRef<
   >
     {children}
   </SelectPrimitive.Trigger>
-));
+))
 
 export const SelectIcon = forwardRef<
   ElementRef<typeof SelectPrimitive.Icon>,
@@ -34,7 +34,7 @@ export const SelectIcon = forwardRef<
   <SelectPrimitive.Icon ref={ref} {...props}>
     <Icon icon="tabler:chevron-down" />
   </SelectPrimitive.Icon>
-));
+))
 
 export const SelectContent = forwardRef<
   ElementRef<typeof SelectPrimitive.Content>,
@@ -49,14 +49,11 @@ export const SelectContent = forwardRef<
     )}
     {...props}
   />
-));
+))
 
 export const SelectScrollUpButton = forwardRef<
   ElementRef<typeof SelectPrimitive.ScrollUpButton>,
-  Omit<
-    ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>,
-    "children"
-  >
+  Omit<ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>, "children">
 >((props, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
@@ -65,14 +62,11 @@ export const SelectScrollUpButton = forwardRef<
   >
     <Icon icon="tabler:chevron-up" />
   </SelectPrimitive.ScrollUpButton>
-));
+))
 
 export const SelectScrollDownButton = forwardRef<
   ElementRef<typeof SelectPrimitive.ScrollDownButton>,
-  Omit<
-    ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>,
-    "children"
-  >
+  Omit<ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>, "children">
 >((props, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
@@ -81,34 +75,24 @@ export const SelectScrollDownButton = forwardRef<
   >
     <Icon icon="tabler:chevron-down" />
   </SelectPrimitive.ScrollDownButton>
-));
+))
 
 export const SelectViewport = forwardRef<
   ElementRef<typeof SelectPrimitive.Viewport>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Viewport>
->((props, ref) => (
-  <SelectPrimitive.Viewport
-    ref={ref}
-    className="p-[5px] bg-white-3"
-    {...props}
-  />
-));
+>((props, ref) => <SelectPrimitive.Viewport ref={ref} className="p-[5px] bg-white-3" {...props} />)
 
 export const SelectLabel = forwardRef<
   ElementRef<typeof SelectPrimitive.Label>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >((props, ref) => (
-  <SelectPrimitive.Label
-    ref={ref}
-    className="px-[25px] text-xs leading-[25px] text-slate-11"
-    {...props}
-  />
-));
+  <SelectPrimitive.Label ref={ref} className="px-[25px] text-xs leading-[25px] text-slate-11" {...props} />
+))
 
 export const SelectItem = forwardRef<
   ElementRef<typeof SelectPrimitive.Item>,
   Omit<ComponentPropsWithoutRef<typeof SelectPrimitive.Item>, "children"> & {
-    label: string;
+    label: string
   }
 >(({ label, className, ...props }, ref) => (
   <SelectPrimitive.Item
@@ -124,4 +108,4 @@ export const SelectItem = forwardRef<
       <Icon icon="tabler:check" />
     </SelectPrimitive.ItemIndicator>
   </SelectPrimitive.Item>
-));
+))
