@@ -19,9 +19,22 @@ export interface Auth0SynchronizationService {
   createUser(token: Auth0IdToken): Promise<User>
 
   /**
-   * Synchronize record of user in database with user data from Auth0.
+   * Auth0 is the source of truth for user data. We keep a local read only copy of the user data in the application database to make it easier to query and to avoid having to cache results from Auth0.
+   * The only place user data is updated from is monoweb. Monoweb makes sure to keep the local user data in sync with Auth0 when updating user data.
+   * 
+   * However, it is possible that users are updated from the Auth0 dashboard or that an update succeeds to auth0 but the update to the local database fails. 
+   * 
+   * To make sure the db user table is synchronized with Auth0 on such occasions, users are synchronized with Auth0 every time they log in.
+   * 
+   * To avoid unnecessary load, this synchronization is only done once every 24 hours.
+   * 
    */
-  synchronizeUser(user: User): Promise<User | null>
+  handleUserSync(user: User): Promise<void>
+
+  /**
+   * Handle synchronization of a user from Auth0 to the local database.
+   */
+  synchronizeUser(user: User): Promise<void>
 }
 
 export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationService {
@@ -56,32 +69,31 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     return this.userService.createUser(userData)
   }
 
-  private userIsStale(user: User) {
+  async synchronizeUser(user: User) {
+    this.logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
+    const auth0User = await this.auth0Repository.getBySubject(user.auth0Sub)
+
+    if (auth0User === null) {
+      throw new Error("User does not exist in Auth0")
+    }
+
+    await this.userService.updateUser(user.id, {
+      email: auth0User.email,
+      name: auth0User.name,
+      lastSyncedAt: new Date(),
+    })
+  }
+
+  private userShouldBeSynchronized(user: User) {
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
 
-    return !user.lastSyncedAt || user.lastSyncedAt < oneDayAgo
+    return user.lastSyncedAt < oneDayAgo
   }
 
-  // if user.updatedAt is more than 1 day ago, update user
-  async synchronizeUser(user: User) {
-    if (this.userIsStale(user)) {
-      this.logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
-      const auth0User = await this.auth0Repository.getBySubject(user.auth0Sub)
-
-      if (auth0User === null) {
-        throw new Error("User does not exist in Auth0")
-      }
-
-      return this.userService.updateUser(user.id, {
-        email: auth0User.email,
-        name: auth0User.name,
-        lastSyncedAt: new Date(),
-        // givenName: idpUser.givenName,
-        // familyName: idpUser.familyName,
-      })
+  async handleUserSync(user: User) {
+    if (this.userShouldBeSynchronized(user)) {
+      await this.synchronizeUser(user)
     }
-
-    return null
   }
 }

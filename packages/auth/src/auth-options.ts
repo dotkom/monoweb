@@ -84,7 +84,7 @@ export const getAuthOptions = ({
           return session
         }
 
-        await core.auth0SynchronizationService.synchronizeUser(user)
+        await core.auth0SynchronizationService.handleUserSync(user)
 
         session.user.id = user.id
         session.sub = token.sub
