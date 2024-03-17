@@ -11,7 +11,7 @@ Each of our Terraform-managed services are described in detail in their respecti
 - Monoweb: [docs/infrastructure/monoweb.md](./monoweb.md)
 - Vengeful Vineyard: [docs/infrastructure/vengeful-vineyard.md](./vengeful-vineyard.md)
 - Report Interest Form: [docs/infrastructure/rif.md](./rif.md)
-- Gateway Email: [docs/infrastructure/brevdue.md](./brevdue.md)
+- Gateway Email: [docs/infrastructure/brevduen.md](./brevduen.md)
 - Gradestats: [docs/infrastructure/gradestats.md](./gradestats.md)
 - OnlineWeb4: [docs/infrastructure/onlineweb4.md](./onlineweb4.md)
 

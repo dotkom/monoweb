@@ -30,7 +30,7 @@ importers:
         specifier: ^0.34.6
         version: 0.34.6(@vitest/ui@0.34.6)
 
-  apps/brevdue:
+  apps/brevduen:
     dependencies:
       '@aws-sdk/client-ses':
         specifier: ^3.507.0
