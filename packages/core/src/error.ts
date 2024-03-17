@@ -38,23 +38,15 @@ export class InternalServerError extends ApplicationError {
 
 export class BadRequestError extends ApplicationError {
   constructor(details?: string) {
-    super(
-      clientErrorResponse.BadRequest.type,
-      clientErrorResponse.BadRequest.code,
-      clientErrorResponse.BadRequest.title,
-      details
-    )
+    const { type, code, title } = clientErrorResponse.BadRequest
+    super(type, code, title, details)
   }
 }
 
 export class NotFoundError extends ApplicationError {
   constructor(details: string) {
-    super(
-      clientErrorResponse.NotFound.type,
-      clientErrorResponse.NotFound.code,
-      clientErrorResponse.NotFound.title,
-      details
-    )
+    const { type, code, title } = clientErrorResponse.NotFound
+    super(type, code, title, details)
   }
 }
 
