@@ -56,11 +56,16 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     return this.userService.createUser(userData)
   }
 
-  // if user.updatedAt is more than 1 day ago, update user
-  async synchronizeUser(user: User) {
+  private userIsStale(user: User) {
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
-    if (!user.lastSyncedAt || user.lastSyncedAt < oneDayAgo) {
+
+    return !user.lastSyncedAt || user.lastSyncedAt < oneDayAgo
+  }
+
+  // if user.updatedAt is more than 1 day ago, update user
+  async synchronizeUser(user: User) {
+    if (this.userIsStale(user)) {
       this.logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
       const auth0User = await this.auth0Repository.getBySubject(user.auth0Sub)
 
