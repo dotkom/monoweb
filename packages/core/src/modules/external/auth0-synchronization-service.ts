@@ -21,13 +21,13 @@ export interface Auth0SynchronizationService {
   /**
    * Auth0 is the source of truth for user data. We keep a local read only copy of the user data in the application database to make it easier to query and to avoid having to cache results from Auth0.
    * The only place user data is updated from is monoweb. Monoweb makes sure to keep the local user data in sync with Auth0 when updating user data.
-   * 
-   * However, it is possible that users are updated from the Auth0 dashboard or that an update succeeds to auth0 but the update to the local database fails. 
-   * 
+   *
+   * However, it is possible that users are updated from the Auth0 dashboard or that an update succeeds to auth0 but the update to the local database fails.
+   *
    * To make sure the db user table is synchronized with Auth0 on such occasions, users are synchronized with Auth0 every time they log in.
-   * 
+   *
    * To avoid unnecessary load, this synchronization is only done once every 24 hours.
-   * 
+   *
    */
   handleUserSync(user: User): Promise<void>
 
