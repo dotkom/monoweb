@@ -1,5 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { CompanySchema, EventCommitteeSchema, EventSchema, EventWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, EventCommitteeSchema, EventSchema, EventWriteSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
@@ -63,6 +63,9 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.companyEventService.getEventsByCompanyId(input.id, input.paginate.take, input.paginate.cursor)
     ),
+  allByUserId: publicProcedure
+    .input(z.object({ id: UserSchema.shape.id }))
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
   allByCommittee: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>

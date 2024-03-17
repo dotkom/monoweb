@@ -5,7 +5,6 @@ import { Kysely } from "kysely"
 import Stripe from "stripe"
 import { paymentProvidersPayload } from "./product-payment-provider.spec"
 import { productPayload } from "./product-service.spec"
-import * as LocalStripeLib from "../../../lib/stripe"
 import { EventRepositoryImpl } from "../../event/event-repository"
 import { PaymentRepositoryImpl } from "../payment-repository"
 import { PaymentServiceImpl } from "../payment-service"
@@ -182,15 +181,22 @@ describe("PaymentService", () => {
   const productRepository = new ProductRepositoryImpl(db)
   const eventRepository = new EventRepositoryImpl(db)
   const refundRequestRepository = new RefundRequestRepositoryImpl(db)
+  const stripe = new Stripe("doesntmatter", { apiVersion: "2023-08-16" })
+  const stripeAccounts = {
+    doesntmatter: {
+      stripe,
+      publicKey: "obviouslyInvalidPaymentProviderId",
+      webhookSecret: "doesntmatterWebhookSecret",
+    },
+  }
   const paymentService = new PaymentServiceImpl(
     paymentRepository,
     productRepository,
     eventRepository,
-    refundRequestRepository
+    refundRequestRepository,
+    stripeAccounts
   )
-
-  const stripe = new Stripe("doesntmatter", { apiVersion: "2023-08-16" })
-  vi.spyOn(LocalStripeLib, "getStripeObject").mockResolvedValue(stripe)
+  vi.spyOn(paymentService, "findStripeSdkByPublicKey").mockReturnValue(stripe)
 
   const paymentPayloadExtended: Payment = {
     ...paymentPayload,

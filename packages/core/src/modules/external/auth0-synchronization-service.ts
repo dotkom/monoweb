@@ -1,7 +1,7 @@
 import { User, UserWrite } from "@dotkomonline/types"
-import { UserService } from "../modules/user/user-service"
+import { UserService } from "../user/user-service"
 import { Auth0Repository } from "./auth0-repository"
-import { logger } from "../../logger"
+import { getLogger, Logger } from "@dotkomonline/logger"
 
 // Id token returned from Auth0. We don't want core to depend on next-auth, so we duplicate the type here.
 type Auth0IdToken = {
@@ -12,22 +12,21 @@ type Auth0IdToken = {
   familyName?: string | null
 }
 
-/**
- * Synchronize users in a local database user table with Auth0.
- */
 export interface Auth0SynchronizationService {
   /**
    * If no record of the user exists in the local database, save it to the database.
    */
-  createUser: (token: Auth0IdToken) => Promise<User>
+  createUser(token: Auth0IdToken): Promise<User>
 
   /**
    * Synchronize record of user in database with user data from Auth0.
    */
-  synchronizeUser: (user: User) => Promise<User | null>
+  synchronizeUser(user: User): Promise<User | null>
 }
 
 export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationService {
+  private readonly logger: Logger = getLogger(Auth0SynchronizationServiceImpl.name)
+
   constructor(
     private readonly userService: UserService,
     private readonly auth0Repository: Auth0Repository
@@ -62,16 +61,16 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
     if (!user.lastSyncedAt || user.lastSyncedAt < oneDayAgo) {
-      logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
-      const idpUser = await this.auth0Repository.getBySubject(user.auth0Sub)
+      this.logger.log("info", "Synchronizing user with Auth0", { userId: user.id })
+      const auth0User = await this.auth0Repository.getBySubject(user.auth0Sub)
 
-      if (idpUser === null) {
+      if (auth0User === null) {
         throw new Error("User does not exist in Auth0")
       }
 
       return this.userService.updateUser(user.id, {
-        email: idpUser.email,
-        name: idpUser.name,
+        email: auth0User.email,
+        name: auth0User.name,
         lastSyncedAt: new Date(),
         // givenName: idpUser.givenName,
         // familyName: idpUser.familyName,
