@@ -1,7 +1,7 @@
-import { ApplicationError } from "../../error"
+import { NotFoundError } from "../../error"
 
-export class MarkNotFoundError extends ApplicationError {
+export class MarkNotFoundError extends NotFoundError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Mark with ID:${id} not found`)
+    super(`Mark with ID:${id} not found`)
   }
 }

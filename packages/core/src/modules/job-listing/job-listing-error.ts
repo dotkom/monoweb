@@ -1,31 +1,31 @@
-import { ApplicationError } from "../../error"
+import { NotFoundError, ParameterValidationError } from "../../error"
 
-export class JobListingNotFoundError extends ApplicationError {
+export class JobListingNotFoundError extends NotFoundError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `JobListing with ID:${id} not found`)
+    super(`Job Listing with ID:${id} not found`)
   }
 }
 
-export class InvalidStartDateError extends ApplicationError {
+export class InvalidStartDateError extends ParameterValidationError {
   constructor(reason: string) {
-    super("/problem/bad-request", 400, `The start date is invalid: ${reason}`)
+    super(`The start date is invalid: ${reason}`)
   }
 }
 
-export class InvalidEndDateError extends ApplicationError {
+export class InvalidEndDateError extends ParameterValidationError {
   constructor(reason: string) {
-    super("/problem/bad-request", 400, `The end date is invalid: ${reason}`)
+    super(`The end date is invalid: ${reason}`)
   }
 }
 
-export class MissingLocationError extends ApplicationError {
+export class MissingLocationError extends ParameterValidationError {
   constructor() {
-    super("/problem/bad-request", 400, "The location is invalid")
+    super("A job listing must have at least one location")
   }
 }
 
-export class InvalidDeadlineError extends ApplicationError {
+export class InvalidDeadlineError extends ParameterValidationError {
   constructor(reason: string) {
-    super("/problem/bad-request", 400, `The deadline is invalid: ${reason}`)
+    super(`The deadline is invalid: ${reason}`)
   }
 }

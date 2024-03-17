@@ -1,19 +1,19 @@
-import { ApplicationError } from "../../error"
+import { BadRequestError, InternalServerError, NotFoundError } from "../../error"
 
-export class RefundRequestNotFoundError extends ApplicationError {
+export class RefundRequestNotFoundError extends NotFoundError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Refund request for payment with ID:${id} not found`)
+    super(`Refund request for payment with ID:${id} not found`)
   }
 }
 
-export class InvalidRefundRequestStatusError extends ApplicationError {
+export class InvalidRefundRequestStatusError extends BadRequestError {
   constructor(expected: string, actual: string) {
-    super("/problem/bad-request", 400, `The refund request status is invalid, wanted ${expected} but was ${actual}`)
+    super(`The refund request status is invalid, wanted ${expected} but was ${actual}`)
   }
 }
 
-export class RefundProcessingFailureError extends ApplicationError {
+export class RefundProcessingFailureError extends InternalServerError {
   constructor(reason: string) {
-    super("/problem/internal-server-error", 500, `The refund processing failed: ${reason}`)
+    super(`The refund processing failed: ${reason}`)
   }
 }

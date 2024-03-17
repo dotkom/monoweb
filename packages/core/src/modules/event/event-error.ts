@@ -1,13 +1,13 @@
-import { ApplicationError } from "../../error"
+import { BadRequestError, NotFoundError } from "../../error"
 
-export class EventNotFoundError extends ApplicationError {
+export class EventNotFoundError extends NotFoundError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Event with ID:${id} not found`)
+    super(`Event with ID:${id} not found`)
   }
 }
 
-export class EventAlreadyHasWaitlistError extends ApplicationError {
+export class EventAlreadyHasWaitlistError extends BadRequestError {
   constructor(id: string) {
-    super("/problem/bad-request", 400, `Event with ID:${id} already has a waitlist`)
+    super(`Event with ID:${id} already has a waitlist`)
   }
 }
