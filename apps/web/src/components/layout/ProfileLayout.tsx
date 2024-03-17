@@ -31,12 +31,10 @@ const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
       </div>
       <div className="flex space-x-6 mt-4">
         <ProfileMenuContainer />
-        <div className="m-x-auto border-2 border-slate-5  relative mb-5 max-w-[1000px] rounded-2xl p-5  max-md:w-[90vw] md:mx-3 ">
+        <div className="border-2 border-slate-5 relative mb-5 rounded-2xl md:mx-3 ">
           <MobileMenuContainer />
           <ProfileContext.Provider value={{ editMode, setEditMode }}>
-            <div className="md:mx-5 md:mt-16 md:w-[550px]">
-              <div className="my-2 md:ml-5 ">{children}</div>
-            </div>
+            <div className="md:mx-5 md:mt-16 md:w-[750px]">{children}</div>
           </ProfileContext.Provider>
         </div>
       </div>
