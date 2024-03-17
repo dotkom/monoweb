@@ -1,6 +1,4 @@
 import MainLayout from "@/components/layout/MainLayout";
-import ProfileLayout from "@/components/layout/ProfileLayout";
-import { ProfileLanding } from "@/components/views/SettingsView/components";
 import { authOptions } from "@dotkomonline/auth/src/web.app";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { User, getServerSession } from "next-auth";

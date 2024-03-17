@@ -1,13 +1,13 @@
-import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
-import { type NextPageWithLayout } from "../_app"
+import MainLayout from "@/components/layout/MainLayout";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import { type NextPageWithLayout } from "../_app";
 
-const PasswordPage: NextPageWithLayout = () => <div>Password</div>
+const PasswordPage: NextPageWithLayout = () => <div>Password</div>;
 
 PasswordPage.getLayout = (page) => (
   <MainLayout>
-    <ProfileLayout>{page}</ProfileLayout>
+    <SettingsLayout>{page}</SettingsLayout>
   </MainLayout>
-)
+);
 
-export default PasswordPage
+export default PasswordPage;

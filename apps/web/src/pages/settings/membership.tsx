@@ -1,13 +1,13 @@
 import MainLayout from "@/components/layout/MainLayout";
-import ProfileLayout from "@/components/layout/ProfileLayout";
-import { ProfileMembership } from "@/components/views/SettingsView/components";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import { SettingsMembership } from "@/components/views/SettingsView/components";
 import { type NextPageWithLayout } from "../_app";
 
-const MembershipPage: NextPageWithLayout = () => <ProfileMembership />;
+const MembershipPage: NextPageWithLayout = () => <SettingsMembership />;
 
 MembershipPage.getLayout = (page) => (
   <MainLayout>
-    <ProfileLayout>{page}</ProfileLayout>
+    <SettingsLayout>{page}</SettingsLayout>
   </MainLayout>
 );
 

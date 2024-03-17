@@ -5,17 +5,17 @@ import {
 import { getServerSession, type User } from "next-auth";
 import { authOptions } from "@dotkomonline/auth/src/web.app";
 import MainLayout from "@/components/layout/MainLayout";
-import ProfileLayout from "@/components/layout/ProfileLayout";
-import { ProfileLanding } from "@/components/views/SettingsView/components";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import { SettingsLanding } from "@/components/views/SettingsView/components";
 import { type NextPageWithLayout } from "../_app";
 
 const LandingPage: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ user }) => <ProfileLanding user={user} />;
+> = ({ user }) => <SettingsLanding user={user} />;
 
 LandingPage.getLayout = (page) => (
   <MainLayout>
-    <ProfileLayout>{page}</ProfileLayout>
+    <SettingsLayout>{page}</SettingsLayout>
   </MainLayout>
 );
 

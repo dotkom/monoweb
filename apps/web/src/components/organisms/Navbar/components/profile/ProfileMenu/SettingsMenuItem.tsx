@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-interface ProfileMenuItemProps {
+interface SettingsMenuItemProps {
   menuItem: {
     title: string;
     slug: string;
@@ -11,7 +11,7 @@ interface ProfileMenuItemProps {
   };
 }
 
-const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
+const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
   const router = useRouter();
 
   const { title, slug, icon } = menuItem;
@@ -38,4 +38,4 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ menuItem }) => {
   );
 };
 
-export default ProfileMenuItem;
+export default SettingsMenuItem;

@@ -1,9 +1,8 @@
 import { type FC, type PropsWithChildren, useState } from "react";
-import { Icon } from "@dotkomonline/ui";
 import { usePathname } from "next/navigation";
 import { profileItems } from "@/utils/profileLinks";
 import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer";
-import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/ProfileMenuContainer";
+import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/SettingsMenuContainer";
 import { ProfileContext } from "../views/SettingsView/context/ProfileContext";
 
 interface PageTitleProps {
@@ -11,14 +10,7 @@ interface PageTitleProps {
   icon: string;
 }
 
-const PageTitle: FC<PageTitleProps> = ({ title, icon }) => (
-  <div className="flex h-10 space-x-2 max-md:hidden">
-    <Icon icon={icon} width={"w-10"} />
-    <p className="text-3xl">{title}</p>
-  </div>
-);
-
-const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
+const SettingsLayout: FC<PropsWithChildren> = ({ children }) => {
   const currentSlug = usePathname();
   const currentLink = profileItems.find((item) => item.slug === currentSlug);
   const [editMode, setEditMode] = useState(false);
@@ -42,4 +34,4 @@ const ProfileLayout: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export default ProfileLayout;
+export default SettingsLayout;

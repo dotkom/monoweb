@@ -1,5 +1,5 @@
-export { default as ProfileLanding } from "./ProfileLanding"
-export { default as ProfileMarks } from "./ProfileMarks"
-export { default as ProfileMembership } from "./ProfileMembership"
-export { default as ProfilePassword } from "./ProfilePassword"
-export { default as ProfilePrivacy } from "./ProfilePrivacy"
+export { default as SettingsLanding } from "./SettingsLanding";
+export { default as SettingsMarks } from "./SettingsMarks";
+export { default as SettingsMembership } from "./SettingsMembership";
+export { default as SettingsPassword } from "./SettingsPassword";
+export { default as SettingsPrivacy } from "./SettingsPrivacy";
