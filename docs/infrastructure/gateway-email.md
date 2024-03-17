@@ -3,7 +3,7 @@
 The Gateway Email service is a AWS Lambda handler built in TypeScript that dispatches email through AWS SES. The emails
 themselves are designed using https://react.email, and is made available through templates.
 
-[Deployment Source](/infra/web/emails.tf) | [Source Code](/apps/gateway-email/src/lambda.ts)
+[Deployment Source](/infra/web/emails.tf) | [Source Code](/apps/brevdue/src/lambda.ts)
 
 ## Email Dispatcher
 
