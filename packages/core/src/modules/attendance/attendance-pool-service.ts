@@ -1,4 +1,5 @@
 import {
+  AttendancePoolBase,
   type AttendanceId,
   type AttendancePool,
   type AttendancePoolId,
@@ -10,7 +11,7 @@ import { AttendeeService } from "./attendee-service"
 export interface AttendancePoolService {
   create(write: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<void>
-  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
+  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolBase | null>
   getByAttendanceId(id: string): Promise<AttendancePool[]>
 }
 
@@ -52,8 +53,7 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
-    const res = await this.attendancePoolRepository.update(obj, id)
-    return res
+    return this.attendancePoolRepository.update(obj, id)
   }
 
   async getPoolsByAttendanceId(attendanceId: string) {

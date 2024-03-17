@@ -21,7 +21,7 @@ export interface AttendancePoolRepository {
   create(obj: AttendancePoolWrite): Promise<AttendancePool>
   delete(id: AttendancePoolId): Promise<AttendancePoolBase | null>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
-  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePool>
+  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolBase | null>
   get(id: AttendancePoolId): Promise<AttendancePool | null>
 }
 
@@ -94,13 +94,8 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
     const insertObj = withInsertJsonValue(obj, "yearCriteria")
-    await this.db.updateTable("attendancePool").set(insertObj).where("id", "=", id).executeTakeFirstOrThrow()
+    const inserted = await this.db.updateTable("attendancePool").set(insertObj).where("id", "=", id).returningAll().executeTakeFirstOrThrow()
 
-    const res = await this.get(id)
-    if (res === null) {
-      throw new Error("Failed to update pool, could not find pool after update")
-    }
-
-    return mapToPool(res)
+    return inserted ? mapToPoolBase(inserted) : null
   }
 }
