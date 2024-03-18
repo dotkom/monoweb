@@ -1,7 +1,8 @@
-import { NotFoundError } from "../../error"
+import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../problem-details-registry"
 
-export class OfflineNotFoundError extends NotFoundError {
+export class OfflineNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super(`Offline with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Offline with ID:${id} not found`)
   }
 }

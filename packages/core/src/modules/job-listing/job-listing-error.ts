@@ -1,31 +1,32 @@
-import { NotFoundError, ParameterValidationError } from "../../error"
+import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../problem-details-registry"
 
-export class JobListingNotFoundError extends NotFoundError {
+export class JobListingNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super(`Job Listing with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Job Listing with ID:${id} not found`)
   }
 }
 
-export class InvalidStartDateError extends ParameterValidationError {
+export class InvalidStartDateError extends ApplicationError {
   constructor(reason: string) {
-    super(`The start date is invalid: ${reason}`)
+    super(PROBLEM_DETAILS.UnprocessableContent, `The start date is invalid: ${reason}`)
   }
 }
 
-export class InvalidEndDateError extends ParameterValidationError {
+export class InvalidEndDateError extends ApplicationError {
   constructor(reason: string) {
-    super(`The end date is invalid: ${reason}`)
+    super(PROBLEM_DETAILS.UnprocessableContent, `The end date is invalid: ${reason}`)
   }
 }
 
-export class MissingLocationError extends ParameterValidationError {
+export class MissingLocationError extends ApplicationError {
   constructor() {
-    super("A job listing must have at least one location")
+    super(PROBLEM_DETAILS.UnprocessableContent, "The location is missing")
   }
 }
 
-export class InvalidDeadlineError extends ParameterValidationError {
+export class InvalidDeadlineError extends ApplicationError {
   constructor(reason: string) {
-    super(`The deadline is invalid: ${reason}`)
+    super(PROBLEM_DETAILS.UnprocessableContent, `The deadline is invalid: ${reason}`)
   }
 }

@@ -1,7 +1,8 @@
-import { NotFoundError } from "../../error"
+import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../problem-details-registry"
 
-export class CommitteeNotFoundError extends NotFoundError {
+export class CommitteeNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super(`Committee with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Committee with ID:${id} not found`)
   }
 }

@@ -1,4 +1,15 @@
-import { clientErrorResponse, serverErrorResponse } from "./utils/http-response-constants"
+import { PROBLEM_DETAILS } from "./problem-details-registry"
+
+/**
+ * Represents a problem details type.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc9457#name-the-problem-details-json-ob
+ */
+export interface ProblemDetailsType {
+  type: string
+  status: number
+  title: string
+}
 
 /**
  * Exception type modelled after RFC9457 Problem Details for HTTP APIs
@@ -12,48 +23,25 @@ import { clientErrorResponse, serverErrorResponse } from "./utils/http-response-
  * to be able to handle it properly.
  */
 export class ApplicationError extends Error {
-  constructor(
-    public readonly type: string,
-    public readonly status: number,
-    public readonly title: string,
-    public readonly detail?: string
-  ) {
+  public readonly type: string
+  public readonly status: number
+  public readonly title: string
+  public readonly detail?: string
+
+  constructor(problemType: ProblemDetailsType, detail?: string) {
+    const { type, status, title } = problemType
+
     super(detail ?? title)
+
+    this.type = type
+    this.status = status
+    this.title = title
+    this.detail = detail
   }
 }
 
 export class IllegalStateError extends ApplicationError {
-  constructor(description: string) {
-    const { type, code, title } = serverErrorResponse.InternalServerError
-    super(type, code, title, `Illegal state reached: ${description}`)
-  }
-}
-
-export class InternalServerError extends ApplicationError {
   constructor(detail: string) {
-    const { type, code, title } = serverErrorResponse.InternalServerError
-    super(type, code, title, detail)
-  }
-}
-
-export class BadRequestError extends ApplicationError {
-  constructor(details?: string) {
-    const { type, code, title } = clientErrorResponse.BadRequest
-    super(type, code, title, details)
-  }
-}
-
-export class NotFoundError extends ApplicationError {
-  constructor(details: string) {
-    const { type, code, title } = clientErrorResponse.NotFound
-    super(type, code, title, details)
-  }
-}
-
-export class ParameterValidationError extends ApplicationError {
-  constructor(details?: string) {
-    const { type, code } = clientErrorResponse.UnprocessableContent
-    const title = "Request parameters validation failed"
-    super(type, code, title, details)
+    super(PROBLEM_DETAILS.InvalidState, detail)
   }
 }

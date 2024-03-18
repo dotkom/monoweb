@@ -1,13 +1,14 @@
-import { BadRequestError, NotFoundError } from "../../error"
+import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../problem-details-registry"
 
-export class ProductNotFoundError extends NotFoundError {
+export class ProductNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super(`Product with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Product with ID:${id} not found`)
   }
 }
 
-export class ProductProviderMismatchError extends BadRequestError {
+export class ProductProviderMismatchError extends ApplicationError {
   constructor() {
-    super(`The given stripe public key does not match the product's stripe public key`)
+    super(PROBLEM_DETAILS.BadRequest, `The given stripe public key does not match the product's stripe public key`)
   }
 }

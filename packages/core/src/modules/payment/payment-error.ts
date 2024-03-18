@@ -1,31 +1,32 @@
-import { BadRequestError, NotFoundError } from "../../error"
+import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../problem-details-registry"
 
-export class StripeAccountNotFoundError extends NotFoundError {
+export class StripeAccountNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super(`Stripe account with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Stripe account with ID:${id} not found`)
   }
 }
 
-export class MissingStripeSessionUrlError extends BadRequestError {
+export class MissingStripeSessionUrlError extends ApplicationError {
   constructor() {
-    super("The stripe session url is missing")
+    super(PROBLEM_DETAILS.BadRequest, "The stripe session url is missing")
   }
 }
 
-export class PaymentNotFoundError extends NotFoundError {
+export class PaymentNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super(`Payment with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Payment with ID:${id} not found`)
   }
 }
 
-export class UnrefundablePaymentError extends BadRequestError {
+export class UnrefundablePaymentError extends ApplicationError {
   constructor() {
-    super("The payment is not refundable")
+    super(PROBLEM_DETAILS.BadRequest, "The payment is not refundable")
   }
 }
 
-export class InvalidPaymentStatusError extends BadRequestError {
+export class InvalidPaymentStatusError extends ApplicationError {
   constructor(wantedStatus: string) {
-    super(`The payment status is invalid, wanted ${wantedStatus}`)
+    super(PROBLEM_DETAILS.BadRequest, `The payment status is invalid, wanted ${wantedStatus}`)
   }
 }

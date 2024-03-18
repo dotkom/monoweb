@@ -1,7 +1,8 @@
 import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../problem-details-registry"
 
 export class AttendeeNotFoundError extends ApplicationError {
-  constructor(id: string) {
-    super("/problem/not-found", 404, `Attendee with ID:${id} not found`)
+  constructor(detail: string) {
+    super(PROBLEM_DETAILS.NotFound, detail)
   }
 }
