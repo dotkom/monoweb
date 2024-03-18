@@ -48,6 +48,6 @@ export class ApplicationError extends Error {
 
 export class IllegalStateError extends ApplicationError {
   constructor(detail: string) {
-    super(PROBLEM_DETAILS.InvalidState, detail)
+    super(PROBLEM_DETAILS.IllegalState, detail)
   }
 }

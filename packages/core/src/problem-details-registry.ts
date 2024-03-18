@@ -35,9 +35,9 @@ export const PROBLEM_DETAILS: ProblemDetailsTypes = {
     title: "Internal Server Error",
     type: `${RFC_REGISTRY_BASE}-500-internal-server-error`,
   },
-  InvalidState: {
+  IllegalState: {
     status: 500,
     title: "Invalid state reached",
-    type: "/problem/invalid-state", // TODO: create page for this that describes how to resolve the problem and change this to a URL to that page. (https://datatracker.ietf.org/doc/html/rfc9457#section-4-10)
+    type: "/problem/illegal-state", // TODO: create page for this that describes how to resolve the problem and change this to a URL to that page. (https://datatracker.ietf.org/doc/html/rfc9457#section-4-10)
   },
 }
