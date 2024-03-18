@@ -18,7 +18,7 @@ export class ApplicationError extends Error {
     public readonly title: string,
     public readonly detail?: string
   ) {
-    super(detail || title)
+    super(detail ?? title)
   }
 }
 
