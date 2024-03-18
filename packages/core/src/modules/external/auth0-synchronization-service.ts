@@ -11,7 +11,7 @@ export interface Auth0SynchronizationService {
    * However, the monoweb db can still get out of sync with the auth0 db. It is possible that users are updated from the Auth0 dashboard or that a monoweb update succeeds to auth0 but the update to the local database fails.
    *
    * To make sure the db user table is synchronized with Auth0 on such occasions, this method synchronizes the user data from Auth0 to the local database based on some given criteria left to the implementation.
-   * 
+   *
    * @returns The synchronized user object.
    */
   handleUserSync(sub: string): Promise<User>
@@ -45,7 +45,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
         name: auth0User.name,
         lastSyncedAt: new Date(),
       }
-  
+
       return this.userService.createUser(userData)
     }
 
@@ -57,10 +57,10 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   }
 
   /**
-    * Syncs down user if not synced within the last 24 hours.
-    * @param auth0Sub The Auth0 subject of the user to synchronize.
-    * @returns User
-    */
+   * Syncs down user if not synced within the last 24 hours.
+   * @param auth0Sub The Auth0 subject of the user to synchronize.
+   * @returns User
+   */
   async handleUserSync(auth0Sub: string) {
     const user = await this.userService.getUserBySubject(auth0Sub)
 
