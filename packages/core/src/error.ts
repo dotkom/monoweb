@@ -3,6 +3,10 @@ import { PROBLEM_DETAILS } from "./problem-details-registry"
 /**
  * Represents a problem details type.
  *
+ * This implementation does not yet support:
+ * - instance member
+ * - extension members
+ *
  * @see https://datatracker.ietf.org/doc/html/rfc9457#name-the-problem-details-json-ob
  */
 export interface ProblemDetailsType {
@@ -16,7 +20,9 @@ export interface ProblemDetailsType {
  *
  * @see https://tools.ietf.org/html/rfc7807
  *
- * This implementation does not yet support the `instance` members.
+ * This implementation does not yet support:
+ * - instance member
+ * - extension members
  *
  * All exceptions thrown by the application modules should be of this type in
  * order to be detailed enough for the client to understand the problem and
