@@ -1,13 +1,13 @@
-import { ProblemDetailsType } from "./error"
+import { ProblemDetails } from "./error"
 
 const RFC_REGISTRY_BASE = "https://datatracker.ietf.org/doc/html/rfc9110#name"
 
 type ProblemDetailsTypes = {
-  BadRequest: ProblemDetailsType
-  NotFound: ProblemDetailsType
-  UnprocessableContent: ProblemDetailsType
-  InternalServerError: ProblemDetailsType
-  IllegalState: ProblemDetailsType
+  BadRequest: ProblemDetails
+  NotFound: ProblemDetails
+  UnprocessableContent: ProblemDetails
+  InternalServerError: ProblemDetails
+  IllegalState: ProblemDetails
 }
 
 /**
