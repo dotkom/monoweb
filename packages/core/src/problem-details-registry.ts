@@ -3,7 +3,11 @@ import { ProblemDetailsType } from "./error"
 const RFC_REGISTRY_BASE = "https://datatracker.ietf.org/doc/html/rfc9110#name"
 
 type ProblemDetailsTypes = {
-  [key: string]: ProblemDetailsType
+  BadRequest: ProblemDetailsType
+  NotFound: ProblemDetailsType
+  UnprocessableContent: ProblemDetailsType
+  InternalServerError: ProblemDetailsType
+  IllegalState: ProblemDetailsType
 }
 
 /**
