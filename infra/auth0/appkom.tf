@@ -35,6 +35,7 @@ resource "auth0_client" "appkom_events_app" {
     "stg" = []
     "prd" = [
       "ntnu.online.app://auth.online.ntnu.no/ios/ntnu.online.app/callback",
+      "https://auth.online.ntnu.no/android/ntnu.online.app/callback",
     ]
   }[terraform.workspace]
   allowed_origins = []
