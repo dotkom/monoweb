@@ -18,6 +18,11 @@ resource "auth0_client" "appkom_opptak" {
   is_first_party  = true
   oidc_conformant = true
 
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
   jwt_configuration {
     alg = "RS256"
   }
@@ -59,6 +64,11 @@ resource "auth0_client" "appkom_events_app" {
 
   jwt_configuration {
     alg = "RS256"
+  }
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
   }
 
   mobile {

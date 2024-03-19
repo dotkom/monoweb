@@ -153,6 +153,11 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   is_first_party                = true
   oidc_conformant               = true
 
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
   jwt_configuration {
     alg = "RS256"
   }
@@ -271,6 +276,11 @@ resource "auth0_client" "onlineweb_frontend" {
 
   jwt_configuration {
     alg = "RS256"
+  }
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
   }
 }
 
@@ -410,6 +420,11 @@ resource "auth0_client" "onlineweb4" {
   is_first_party  = true
   oidc_conformant = true
 
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
   jwt_configuration {
     alg = "RS256"
   }
@@ -447,6 +462,11 @@ resource "auth0_client" "monoweb_web" {
   name            = "Monoweb Web${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
 
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
   # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
   organization_require_behavior = "no_prompt"
   jwt_configuration {
@@ -471,6 +491,11 @@ resource "auth0_client" "monoweb_dashboard" {
   name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true
   is_first_party  = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
 
   jwt_configuration {
     alg = "RS256"
