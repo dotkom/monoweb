@@ -23,6 +23,7 @@ export interface AttendancePoolRepository {
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolBase | null>
   get(id: AttendancePoolId): Promise<AttendancePool | null>
+  getNumAttendees(id: AttendancePoolId): Promise<number>
 }
 
 export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
@@ -102,5 +103,15 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       .executeTakeFirstOrThrow()
 
     return inserted ? mapToPoolBase(inserted) : null
+  }
+
+  async getNumAttendees(id: AttendancePoolId) {
+    const res = await this.db
+      .selectFrom("attendee")
+      .where("attendancePoolId", "=", id)
+      .select(({ fn }) => [fn.count("id").as("numAttendees")])
+      .executeTakeFirstOrThrow()
+
+    return Number(res.numAttendees)
   }
 }

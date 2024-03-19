@@ -10,6 +10,7 @@ import { AttendeeRepository } from "./attendee-repository"
 import { AttendanceRepository } from "./attendance-repository"
 import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
+import { AttendanceValidationError, CantDeleteAttendanceError } from "./attendance-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -48,17 +49,17 @@ export class AttendanceServiceImpl implements AttendanceService {
   async create(obj: AttendanceWrite) {
     // registerStart < mergeTime
     if (obj.registerStart > obj.mergeTime) {
-      throw new Error("Register start must be before merge time")
+      throw new AttendanceValidationError("Register start must be before merge time")
     }
 
     // registerStart < registerEnd
     if (obj.registerStart > obj.registerEnd) {
-      throw new Error("Register start must be before register end")
+      throw new AttendanceValidationError("Register start must be before register end")
     }
 
     // mergeTime < registerEnd
     if (obj.mergeTime > obj.registerEnd) {
-      throw new Error("Merge time must be before register end")
+      throw new AttendanceValidationError("Merge time must be before register end")
     }
 
     return this.attendanceRepository.create(obj)
@@ -68,7 +69,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     const attendees = await this.attendeeRepository.getByAttendanceId(id)
 
     if (attendees.length > 0) {
-      throw new Error("Cannot delete attendance with attendees")
+      throw new CantDeleteAttendanceError("Cannot delete attendance with attendees")
     }
 
     await this.attendanceRepository.delete(id)

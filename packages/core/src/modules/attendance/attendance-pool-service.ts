@@ -7,6 +7,7 @@ import {
 } from "@dotkomonline/types"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendeeService } from "./attendee-service"
+import { AttendancePoolValidationError, CantDeletePoolError } from "./attendance-pool-error"
 
 export interface AttendancePoolService {
   create(write: AttendancePoolWrite): Promise<AttendancePool>
@@ -35,7 +36,7 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
     const overlap = write.yearCriteria.some((year) => existingYearCriteria.includes(year))
 
     if (overlap) {
-      throw new Error("Year criteria overlap")
+      throw new AttendancePoolValidationError("Year criteria overlap")
     }
 
     const res = await this.attendancePoolRepository.create(write)
@@ -46,7 +47,7 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
     const attendees = await this.attendeeService.getByAttendancePoolId(id)
 
     if (attendees.length > 0) {
-      throw new Error("Cannot delete attendance pool with attendees")
+      throw new CantDeletePoolError("Pools with attendees cannot be deleted. Deregister attendees first.")
     }
 
     await this.attendancePoolRepository.delete(id)

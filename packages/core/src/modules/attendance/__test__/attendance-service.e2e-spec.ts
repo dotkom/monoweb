@@ -5,6 +5,9 @@ import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { createServiceLayer, type ServiceLayer } from "../../core"
+import { CantDeleteAttendanceError, AttendanceValidationError } from "../attendance-error"
+import { AttendeeRegistrationError, AttendeeDeregistrationError } from "../attendee-error"
+import { CantDeletePoolError, AttendancePoolValidationError } from "../attendance-pool-error"
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
   auth0Sub: write.auth0Sub ?? crypto.randomUUID(),
@@ -144,16 +147,38 @@ describe("attendance", () => {
     expect(attendeesInPool).toHaveLength(1)
   })
 
-  it("should not allow registration end before start when creating attendance", async () => {
-    const start = new Date("2021-01-01")
-    const end = new Date("2021-01-04")
+  // registerStart < mergeTime < registerEnd
+  it("validates dates correctly before creating new attendance", async () => {
+    const shouldFail = async (args: AttendanceWrite) => {
+      const fakeAttendance = getFakeAttendance(args)
+      await expect(async () => {
+        await core.attendanceService.create(fakeAttendance)
+      }).rejects.toThrowError(AttendanceValidationError)
+    }
 
-    await expect(async () => {
-      const fakeAttendance = getFakeAttendance({ registerStart: start, registerEnd: end })
-      const attendance = await core.attendanceService.create(fakeAttendance)
+    // registerStart > mergeTime
+    await shouldFail({
+      mergeTime: new Date("2021-01-01"),
+      registerStart: new Date("2021-01-02"),
+      registerEnd: new Date("2021-01-03"),
+      deregisterDeadline: new Date("2021-01-04"),
+    })
 
-      return attendance
-    }).rejects.toThrowError()
+    // registerEnd > registerEnd
+    await shouldFail({
+      mergeTime: new Date("2021-01-01"),
+      registerEnd: new Date("2021-01-02"),
+      registerStart: new Date("2021-01-03"),
+      deregisterDeadline: new Date("2021-01-04"),
+    })
+
+    // mergeTime > registerEnd
+    await shouldFail({
+      registerStart: new Date("2021-01-01"),
+      registerEnd: new Date("2021-01-02"),
+      mergeTime: new Date("2021-01-03"),
+      deregisterDeadline: new Date("2021-01-04"),
+    })
   })
 
   it("should not allow registrations beyond pool capacity", async () => {
@@ -168,11 +193,9 @@ describe("attendance", () => {
     await core.attendeeService.registerForEvent(users[0].id, pool.attendanceId, new Date())
 
     // attend user 2 to pool
-    try {
+    await expect(async () => {
       await core.attendeeService.registerForEvent(users[1].id, pool.attendanceId, new Date())
-    } catch (e) {
-      expect(e).toBeDefined()
-    }
+    }).rejects.toThrowError(AttendeeRegistrationError)
   })
 
   // it should not allow creating pools with over lapping year criteria
@@ -186,7 +209,7 @@ describe("attendance", () => {
         ],
         users: [],
       })
-    }).rejects.toThrowError("Year criteria overlap")
+    }).rejects.toThrowError(AttendancePoolValidationError)
   })
 
   it("should not allow deleting a pool or attendance when there is attendees", async () => {
@@ -205,11 +228,11 @@ describe("attendance", () => {
     const pool = res.pools[0]
     await expect(async () => {
       await core.attendancePoolService.delete(pool.id)
-    }).rejects.toThrowError()
+    }).rejects.toThrowError(CantDeletePoolError)
 
     await expect(async () => {
       await core.attendanceService.delete(res.attendance.id)
-    }).rejects.toThrowError()
+    }).rejects.toThrowError(CantDeleteAttendanceError)
   })
 
   it("should enforce registration and deregistration within specified start and end times", async () => {
@@ -230,20 +253,20 @@ describe("attendance", () => {
     // --- registration
     await expect(() => {
       return core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date("2021-01-01"))
-    }).rejects.toThrowError("Attendance has not started yet")
+    }).rejects.toThrowError(AttendeeRegistrationError)
 
     await expect(() => {
       return core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date("2021-01-06"))
-    }).rejects.toThrowError("Attendance has ended")
+    }).rejects.toThrowError(AttendeeRegistrationError)
 
     // --- deregistration
     const attendee = await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date("2021-01-03"))
     await expect(() => {
       return core.attendeeService.deregisterForEvent(attendee.id, new Date("2021-01-05"))
-    }).rejects.toThrowError("The deregister deadline has passed")
+    }).rejects.toThrowError(AttendeeDeregistrationError)
   })
 
-  it.skip("simulates a normal attendance with all cases", async () => {
+  it("simulates a normal attendance with all cases", async () => {
     // Step 1: Setup the attendance with multiple pools and varying year criteria
     const { users, pools, attendance } = await setupFakeFullAttendance(core, {
       attendance: {
@@ -277,30 +300,42 @@ describe("attendance", () => {
     const extraUserCreated = await core.userService.createUser(extraUser)
     await expect(
       core.attendeeService.registerForEvent(extraUserCreated.id, attendance.id, new Date("2021-01-02"))
-    ).rejects.toThrowError()
+    ).rejects.toThrowError(AttendeeRegistrationError)
 
     // Step 4: Deregister a user before the deadline and verify
     const attendeeToDeregister = await core.attendeeService.getByUserId(users[0].id, attendance.id)
     if (attendeeToDeregister === null) throw new Error("Attendee not found")
     await expect(
       core.attendeeService.deregisterForEvent(attendeeToDeregister.id, new Date("2021-01-04"))
-    ).resolves.not.toThrowError()
+    ).resolves.not.toThrowError(AttendeeDeregistrationError)
 
     // Step 5: Attempt to deregister a user after the deadline and expect failure
     const attendeeToDeregisterLate = await core.attendeeService.getByUserId(users[1].id, attendance.id)
     if (attendeeToDeregisterLate === null) throw new Error("Attendee not found")
     await expect(
       core.attendeeService.deregisterForEvent(attendeeToDeregisterLate.id, new Date("2021-01-06"))
-    ).rejects.toThrowError("The deregister deadline has passed")
+    ).rejects.toThrowError(AttendeeDeregistrationError)
 
     // Step 6: Verify pool merging logic (if applicable)
+  })
+
+  it("should correctly manage registrations for social membership pool", async () => {
+    // At this time there is no specific logic for social membership pools
+    const { pools, users } = await setupFakeFullAttendance(core, {
+      attendance: {},
+      pools: [{ limit: 1, yearCriteria: [0] }],
+      users: [{ studyYear: 0 }],
+    })
+
+    const pool = pools[0]
+    const user = users[0]
+
+    const attendee = await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date())
+
+    expect(attendee).not.toBeNull()
   })
 
   // TODO: not yet implemented in service.
   it.skip("should correctly handle pool merging at the specified merge time", async () => {})
 
-  // TODO: implement logic in service.
-  it.skip("should correctly manage registrations for social membership pool", async () => {
-    // Ensure only those with social memberships can register for the designated pool
-  })
 })
