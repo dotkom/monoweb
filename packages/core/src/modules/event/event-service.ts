@@ -3,7 +3,7 @@ import { type AttendanceRepository } from "./attendance-repository.js"
 import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
 import { type Cursor } from "../../utils/db-utils"
-import { NotFoundError } from "../../errors/errors"
+import { EventAlreadyHasWaitlistError, EventNotFoundError } from "./event-error"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -48,10 +48,15 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
+  /**
+   * Get an event by its id
+   *
+   * @throws {EventNotFoundError} if the event does not exist
+   */
   async getEventById(id: EventId): Promise<Event> {
     const event = await this.eventRepository.getById(id)
     if (!event) {
-      throw new NotFoundError(`Event with ID:${id} not found`)
+      throw new EventNotFoundError(id)
     }
     return event
   }
@@ -78,10 +83,15 @@ export class EventServiceImpl implements EventService {
     return attendance
   }
 
+  /**
+   * Create a waitlist for an event
+   *
+   * @throws {EventAlreadyHasWaitlistError} if the event already has a waitlist
+   */
   async createWaitlist(eventId: EventId): Promise<Attendance> {
     const event = await this.getEventById(eventId)
     if (event.waitlist !== null) {
-      throw new Error(`Attempted to create waitlist for event ${eventId}`)
+      throw new EventAlreadyHasWaitlistError(eventId)
     }
     const waitlist = await this.attendanceRepository.create({
       eventId,
