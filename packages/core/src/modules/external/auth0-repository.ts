@@ -5,7 +5,12 @@ export interface Auth0Repository {
   getBySubject(sub: string): Promise<OidcUser | null>
 }
 
-export const mapToOidcUser = (payload: unknown) => OidcUser.parse(payload)
+interface Payload {
+  subject: string
+  name: string
+  email: string
+}
+export const mapToOidcUser = (payload: Payload) => OidcUser.parse(payload)
 
 export class Auth0RepositoryImpl implements Auth0Repository {
   constructor(private readonly client: ManagementClient) {}
@@ -15,7 +20,11 @@ export class Auth0RepositoryImpl implements Auth0Repository {
         id: sub,
       })
 
-      return mapToOidcUser(user)
+      return mapToOidcUser({
+        subject: user.data.user_id,
+        name: user.data.name,
+        email: user.data.email,
+      })
     } catch (e) {
       if (e instanceof ManagementApiError) {
         if (e.errorCode === "inexistent_user") {
