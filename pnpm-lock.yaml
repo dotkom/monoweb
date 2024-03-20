@@ -343,6 +343,18 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  apps/shell:
+    dependencies:
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+
   apps/web:
     dependencies:
       '@dotkomonline/auth':
@@ -636,6 +648,9 @@ importers:
       vitest:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
+      vitest-mock-extended:
+        specifier: ^1.3.1
+        version: 1.3.1(typescript@5.2.2)(vitest@1.3.1)
 
   packages/db:
     dependencies:
@@ -12446,7 +12461,18 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@0.34.6(@vitest/ui@1.3.1):
+  /vitest-mock-extended@1.3.1(typescript@5.2.2)(vitest@1.3.1):
+    resolution: {integrity: sha512-OpghYjh4BDuQ/Mzs3lFMQ1QRk9D8/2O9T47MLUA5eLn7K4RWIy+MfIivYOWEyxjTENjsBnzgMihDjyNalN/K0Q==}
+    peerDependencies:
+      typescript: 3.x || 4.x || 5.x
+      vitest: '>=0.31.1'
+    dependencies:
+      ts-essentials: 9.3.2(typescript@5.2.2)
+      typescript: 5.2.2
+      vitest: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
+    dev: true
+
+  /vitest@0.34.6(@vitest/ui@0.34.6):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
     engines: {node: '>=v14.18.0'}
     hasBin: true

@@ -74,21 +74,13 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        const user = await core.userService.getUserBySubject(token.sub)
-
-        if (user === undefined) {
-          const newUser = await core.auth0SynchronizationService.createUser(token)
-
-          session.user.id = newUser.id
-          session.sub = token.sub
-          return session
-        }
-
-        await core.auth0SynchronizationService.synchronizeUser(user)
+        const user = await core.auth0SynchronizationService.handleUserSync(token.sub)
 
         session.user.id = user.id
         session.sub = token.sub
+        return session
       }
+
       return session
     },
   },
