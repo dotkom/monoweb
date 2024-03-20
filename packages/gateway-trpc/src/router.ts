@@ -1,6 +1,7 @@
 import { committeeRouter } from "./modules/committee/committee-router"
 import { companyRouter } from "./modules/company/company-router"
 import { eventRouter } from "./modules/event/event-router"
+import { attendanceRouter } from "./modules/event/attendance-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { paymentRouter } from "./modules/payment/payment-router"
 import { t } from "./trpc"
@@ -14,6 +15,7 @@ import { interestGroupRouter } from "./modules/interest-group/interest-group-rou
 export const appRouter = t.router({
   committee: committeeRouter,
   event: eventRouter,
+  attendance: attendanceRouter,
   user: userRouter,
   company: companyRouter,
   payment: paymentRouter,

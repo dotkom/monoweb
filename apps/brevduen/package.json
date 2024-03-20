@@ -1,16 +1,16 @@
 {
-  "name": "@dotkomonline/gateway-email",
+  "name": "@dotkomonline/brevduen",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "docker:dev": "docker run -p 9000:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=eu-north-1 gateway-email:latest",
+    "docker:dev": "docker run -p 9000:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=eu-north-1 brevduen:latest",
     "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json",
     "lint": "biome check . --apply",
     "lint-check": "biome check .",
-    "docker:build": "docker build --platform linux/amd64 -t gateway-email:latest -f Dockerfile ../..",
-    "docker:push:staging": "docker tag gateway-email:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest",
-    "docker:push:prod": "docker tag gateway-email:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest",
+    "docker:build": "docker build --platform linux/amd64 -t brevduen:latest -f Dockerfile ../..",
+    "docker:push:staging": "docker tag brevduen:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest",
+    "docker:push:prod": "docker tag brevduen:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest",
     "lambda:update:staging": "aws lambda update-function-code --function-name brevduen-staging --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest",
     "lambda:update:prod": "aws lambda update-function-code --function-name brevduen-prod --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-prod:latest",
     "type-check": "tsc --noEmit"

@@ -11,6 +11,7 @@ export interface EventRepository {
   create(data: EventInsert): Promise<Event>
   update(id: EventId, data: EventInsert): Promise<Event>
   getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  getAllByUserAttending(userId: string): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
 }
@@ -40,6 +41,17 @@ export class EventRepositoryImpl implements EventRepository {
     return events.map((e) => mapToEvent(e))
   }
 
+  async getAllByUserAttending(userId: string): Promise<Event[]> {
+    const eventsResult = await this.db
+      .selectFrom("attendance")
+      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
+      .innerJoin("event", "event.id", "attendance.eventId")
+      .selectAll("event")
+      .where("attendee.userId", "=", userId)
+      .execute()
+    return eventsResult.map(mapToEvent)
+  }
+
   async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
     const query = orderedQuery(
       this.db
@@ -54,6 +66,7 @@ export class EventRepositoryImpl implements EventRepository {
     const events = await query.execute()
     return events.map((e) => mapToEvent(e))
   }
+
   async getById(id: string): Promise<Event | undefined> {
     const event = await this.db.selectFrom("event").where("id", "=", id).selectAll().executeTakeFirst()
     return event === undefined ? undefined : mapToEvent(event)

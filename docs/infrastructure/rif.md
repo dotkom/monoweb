@@ -1,7 +1,7 @@
 # Report Interest Form Deployment
 
 The Report Interest Form is a simple Next.js application with an API route to submit the form. The API route makes use
-of the [gateway-email](./gateway-email.md) service to send an email to notify both the submitter and Bedkom.
+of the [brevduen](./brevduen.md) service to send an email to notify both the submitter and Bedkom.
 
 [Source Code](/apps/rif)
 
