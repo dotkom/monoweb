@@ -1,13 +1,13 @@
-import { ProblemDetails } from "./error"
+import { ProblemDetail } from "./error"
 
 const RFC_REGISTRY_BASE = "https://datatracker.ietf.org/doc/html/rfc9110#name"
 
-type ProblemDetailsTypes = {
-  BadRequest: ProblemDetails
-  NotFound: ProblemDetails
-  UnprocessableContent: ProblemDetails
-  InternalServerError: ProblemDetails
-  IllegalState: ProblemDetails
+type ProblemDetails = {
+  BadRequest: ProblemDetail
+  NotFound: ProblemDetail
+  UnprocessableContent: ProblemDetail
+  InternalServerError: ProblemDetail
+  IllegalState: ProblemDetail
 }
 
 /**
@@ -18,7 +18,7 @@ type ProblemDetailsTypes = {
  * @see https://datatracker.ietf.org/doc/html/rfc9457#name-defining-new-problem-types
  *
  */
-export const PROBLEM_DETAILS: ProblemDetailsTypes = {
+export const PROBLEM_DETAILS: ProblemDetails = {
   BadRequest: {
     status: 400,
     title: "Bad Request",

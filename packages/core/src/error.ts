@@ -9,7 +9,7 @@ import { PROBLEM_DETAILS } from "./http-problem-details"
  *
  * @see https://datatracker.ietf.org/doc/html/rfc9457#name-the-problem-details-json-ob
  */
-export type ProblemDetails = Pick<ApplicationError, "type" | "status" | "title">
+export type ProblemDetail = Pick<ApplicationError, "type" | "status" | "title">
 
 /**
  * Exception type modelled after RFC9457 Problem Details for HTTP APIs
@@ -30,7 +30,7 @@ export class ApplicationError extends Error {
   public readonly title: string
   public readonly detail?: string
 
-  constructor(problemType: ProblemDetails, detail?: string) {
+  constructor(problemType: ProblemDetail, detail?: string) {
     const { type, status, title } = problemType
 
     super(detail ?? title)
