@@ -17,44 +17,6 @@ export const getEventFixtures: (attendanceIds: string[]) => Insertable<Database[
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Hovedbygget",
-    extras: JSON.stringify([
-      {
-        id: "0",
-        name: "Hva vil du ha til mat?",
-        choices: [
-          {
-            id: "0",
-            name: "Pizza",
-          },
-          {
-            id: "1",
-            name: "Burger",
-          },
-          {
-            id: "2",
-            name: "Salad",
-          },
-        ],
-      },
-      {
-        id: "1",
-        name: "Når vil du ha mat?",
-        choices: [
-          {
-            id: "0",
-            name: "Når jeg kommer",
-          },
-          {
-            id: "1",
-            name: "Halvveis i arrangementet",
-          },
-          {
-            id: "2",
-            name: "Til slutt",
-          },
-        ],
-      },
-    ]),
   },
   {
     attendanceId: attendanceIds[1],
@@ -90,6 +52,5 @@ export const getEventFixtures: (attendanceIds: string[]) => Insertable<Database[
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
     location: "Åre, Sverige",
-    extras: null,
   },
 ]

@@ -19,7 +19,6 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
   location: null,
   subtitle: null,
   committeeIds: [],
-  extras: [],
 }
 
 interface UseEventWriteFormProps {

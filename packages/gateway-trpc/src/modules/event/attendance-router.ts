@@ -4,6 +4,7 @@ import {
   AttendanceSchema,
   AttendanceWriteSchema,
   AttendeeSchema,
+  ExtrasSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -110,4 +111,13 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.update(input.attendance, input.id)),
+
+  updateExtras: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+        extras: z.array(ExtrasSchema),
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.updateExtras(input.id, input.extras)),
 })

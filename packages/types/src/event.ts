@@ -1,19 +1,6 @@
 import { z } from "zod"
 import { AttendanceSchema } from "./attendance/attendance"
 
-const EventExtraSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  choices: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-    })
-  ),
-})
-
-export type EventExtra = z.infer<typeof EventExtraSchema>
-
 export const EventSchema = z.object({
   id: z.string().ulid(),
   createdAt: z.date(),
@@ -28,7 +15,6 @@ export const EventSchema = z.object({
   subtitle: z.string().nullable(),
   imageUrl: z.string().nullable(),
   location: z.string().nullable(),
-  extras: z.array(EventExtraSchema).nullable(),
   attendanceId: z.string().nullable(),
 })
 

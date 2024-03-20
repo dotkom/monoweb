@@ -38,7 +38,6 @@ const eventPayload: Omit<Event, "id"> = {
   updatedAt: new Date(2022, 1, 1),
   status: "PUBLIC",
   type: "COMPANY",
-  extras: null,
   attendanceId: randomUUID(),
 }
 

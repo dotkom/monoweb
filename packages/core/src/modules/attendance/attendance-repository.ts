@@ -7,6 +7,7 @@ import {
   type AttendanceWrite,
 } from "@dotkomonline/types"
 import { Selectable, type Kysely } from "kysely"
+import { withInsertJsonValue } from "../../utils/db-utils"
 
 type DatabaseAttendance = Selectable<Database["attendance"]>
 const mapToAttendance = (obj: DatabaseAttendance): Attendance => AttendanceSchema.parse(obj)
@@ -22,14 +23,18 @@ export interface AttendanceRepository {
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
   async create(obj: AttendanceWrite) {
-    const res = await this.db.insertInto("attendance").values(obj).returningAll().executeTakeFirstOrThrow()
+    const res = await this.db
+      .insertInto("attendance")
+      .values(withInsertJsonValue(obj, "extras"))
+      .returningAll()
+      .executeTakeFirstOrThrow()
     return mapToAttendance(res)
   }
 
   async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
     const res = await this.db
       .updateTable("attendance")
-      .set(obj)
+      .set(withInsertJsonValue(obj, "extras"))
       .returningAll()
       .where("id", "=", id)
       .executeTakeFirstOrThrow()

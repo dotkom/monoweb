@@ -2,7 +2,6 @@ import { AttendanceWrite, type Event, type EventId, type EventWrite } from "@dot
 import { type Cursor } from "../../utils/db-utils"
 import { AttendanceService } from "../attendance/attendance-service"
 import { EventNotFoundError } from "./event-error"
-import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
 
 export interface EventService {
@@ -29,12 +28,7 @@ export class EventServiceImpl implements EventService {
   }
 
   async createEvent(eventCreate: EventWrite): Promise<Event> {
-    const toInsert: EventInsert = {
-      ...eventCreate,
-      extras: JSON.stringify(eventCreate.extras),
-    }
-
-    const event = await this.eventRepository.create(toInsert)
+    const event = await this.eventRepository.create(eventCreate)
     return event
   }
 
@@ -67,11 +61,7 @@ export class EventServiceImpl implements EventService {
   }
 
   async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-    const toInsert: EventInsert = {
-      ...eventUpdate,
-      extras: JSON.stringify(eventUpdate.extras),
-    }
-    const event = await this.eventRepository.update(id, toInsert)
+    const event = await this.eventRepository.update(id, eventUpdate)
     return event
   }
 }
