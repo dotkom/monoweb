@@ -195,7 +195,6 @@ const useEventDetail = (user: NonNullable<Session["user"]>, eventId: string) => 
 
     unattendMutation.mutate({
       id: selfAttendee.id,
-      attendanceId: attendance.id,
     })
   }
 

@@ -1,5 +1,5 @@
 import { ApplicationError } from "../../error"
-import { PROBLEM_DETAILS } from "../../problem-details-registry"
+import { PROBLEM_DETAILS } from "../../http-problem-details"
 
 export class AttendanceValidationError extends ApplicationError {
   constructor(detail: string) {

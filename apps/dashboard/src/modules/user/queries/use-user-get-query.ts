@@ -14,7 +14,3 @@ export const useSearchUsers = (searchQuery: string) => {
   )
   return { users }
 }
-
-export const useGetUserBySub = () => {
-  return trpc.user.getByAuth0Sub.useMutation()
-}

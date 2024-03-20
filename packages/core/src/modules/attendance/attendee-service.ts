@@ -11,9 +11,8 @@ import { IllegalStateError } from "../../error"
 import { type UserService } from "../user/user-service"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError, AttendeeRegistrationError } from "./attendee-error"
+import { AttendeeDeregistrationError, AttendeeRegistrationError, UpdateAttendeeError } from "./attendee-error"
 import { AttendeeRepository } from "./attendee-repository"
-import { UpdateAttendeeError } from "../event/attendee-error"
 
 export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
