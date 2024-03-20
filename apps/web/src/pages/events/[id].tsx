@@ -208,7 +208,7 @@ const useEventDetail = (user: NonNullable<Session["user"]>, eventId: string) => 
     isAttending,
     attend,
     unAttend,
-    event
+    event,
   }
 }
 
@@ -222,25 +222,15 @@ const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (pro
   return <_EventDetailPage user={session.user} eventId={props.id} />
 }
 
-
 interface Props {
   eventId: string
   user: NonNullable<Session["user"]>
 }
-const _EventDetailPage: FC<Props> = ({eventId, user}) => {
-
-  const {
-    attendance,
-    pools,
-    statusData,
-    myGroups,
-    otherGroups,
-    isAttending,
-    attend,
-    unAttend,
-    event
-   } = useEventDetail(user, eventId)
-
+const _EventDetailPage: FC<Props> = ({ eventId, user }) => {
+  const { attendance, pools, statusData, myGroups, otherGroups, isAttending, attend, unAttend, event } = useEventDetail(
+    user,
+    eventId
+  )
 
   return (
     <div>
