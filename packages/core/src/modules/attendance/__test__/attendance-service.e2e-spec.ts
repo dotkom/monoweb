@@ -337,5 +337,4 @@ describe("attendance", () => {
 
   // TODO: not yet implemented in service.
   it.skip("should correctly handle pool merging at the specified merge time", async () => {})
-
 })
