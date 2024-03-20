@@ -10,7 +10,7 @@ import { AttendeeService } from "./attendee-service"
 import { AttendancePoolValidationError, CantDeletePoolError } from "./attendance-pool-error"
 
 export interface AttendancePoolService {
-  create(write: AttendancePoolWrite): Promise<AttendancePool>
+  create(write: AttendancePoolWrite): Promise<AttendancePoolBase>
   delete(id: AttendancePoolId): Promise<void>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolBase | null>
   getByAttendanceId(id: string): Promise<AttendancePool[]>

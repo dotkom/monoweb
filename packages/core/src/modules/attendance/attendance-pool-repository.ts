@@ -18,7 +18,7 @@ const mapToPool = (payload: DatabasePool) => AttendancePoolSchema.parse(payload)
 const mapToPoolBase = (payload: DatabasePoolBase) => AttendancePoolBaseSchema.parse(payload)
 
 export interface AttendancePoolRepository {
-  create(obj: AttendancePoolWrite): Promise<AttendancePool>
+  create(obj: AttendancePoolWrite): Promise<AttendancePoolBase>
   delete(id: AttendancePoolId): Promise<AttendancePoolBase | null>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
   update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolBase | null>
@@ -55,15 +55,11 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
   async create(obj: AttendancePoolWrite) {
     const result = await this.db
       .insertInto("attendancePool")
-      .returning("attendancePool.id")
+      .returningAll()
       .values(withInsertJsonValue(obj, "yearCriteria"))
       .executeTakeFirstOrThrow()
 
-    const res = await this.get(result.id)
-    if (res === null) {
-      throw new Error("Failed to create pool, could not find pool after creation")
-    }
-    return res
+    return mapToPoolBase(result)
   }
 
   async delete(id: AttendancePoolId) {

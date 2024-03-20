@@ -11,6 +11,7 @@ import { AttendanceRepository } from "./attendance-repository"
 import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendanceValidationError, CantDeleteAttendanceError } from "./attendance-error"
+import { NotImplementedError } from "../../error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -81,6 +82,6 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   async merge(id: AttendanceId) {
     // TODO: Implement this
-    throw new Error("Not implemented")
+    throw new NotImplementedError("Merge functionality is not yet implemented")
   }
 }
