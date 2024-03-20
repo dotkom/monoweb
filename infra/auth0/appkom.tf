@@ -18,6 +18,11 @@ resource "auth0_client" "appkom_opptak" {
   is_first_party  = true
   oidc_conformant = true
 
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
   jwt_configuration {
     alg = "RS256"
   }
@@ -35,6 +40,7 @@ resource "auth0_client" "appkom_events_app" {
     "stg" = []
     "prd" = [
       "ntnu.online.app://auth.online.ntnu.no/ios/ntnu.online.app/callback",
+      "https://auth.online.ntnu.no/android/ntnu.online.app/callback",
     ]
   }[terraform.workspace]
   allowed_origins = []
@@ -58,6 +64,11 @@ resource "auth0_client" "appkom_events_app" {
 
   jwt_configuration {
     alg = "RS256"
+  }
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
   }
 
   mobile {
