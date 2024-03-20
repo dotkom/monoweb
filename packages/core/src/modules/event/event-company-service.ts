@@ -12,12 +12,8 @@ export class EventCompanyServiceImpl implements EventCompanyService {
   constructor(private readonly eventCompanyRepository: EventCompanyRepository) {}
 
   async createCompany(id: EventId, company: CompanyId) {
-    try {
-      const companies = await this.eventCompanyRepository.createCompany(id, company)
-      return companies
-    } catch (err) {
-      throw new Error("Failed to add company to event")
-    }
+    const companies = await this.eventCompanyRepository.createCompany(id, company)
+    return companies
   }
 
   async deleteCompany(id: EventId, company: CompanyId) {

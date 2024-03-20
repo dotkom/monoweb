@@ -7,7 +7,7 @@ import { type Cursor, orderedQuery } from "../../utils/db-utils"
 const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
 
 export interface ProductRepository {
-  create(data: ProductWrite): Promise<Product | undefined>
+  create(data: ProductWrite): Promise<Product>
   update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product>
   getById(id: string): Promise<Product | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Product[]>
@@ -18,7 +18,7 @@ export interface ProductRepository {
 export class ProductRepositoryImpl implements ProductRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async create(data: ProductWrite): Promise<Product | undefined> {
+  async create(data: ProductWrite): Promise<Product> {
     const product = await this.db.insertInto("product").values(data).returningAll().executeTakeFirstOrThrow()
 
     return mapToProduct(product)

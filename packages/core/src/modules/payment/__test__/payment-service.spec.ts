@@ -10,6 +10,8 @@ import { PaymentRepositoryImpl } from "../payment-repository"
 import { PaymentServiceImpl } from "../payment-service"
 import { ProductRepositoryImpl } from "../product-repository"
 import { RefundRequestRepositoryImpl } from "../refund-request-repository"
+import { InvalidPaymentStatusError, UnrefundablePaymentError } from "../payment-error"
+import { RefundRequestNotFoundError } from "../refund-request-error"
 
 export const paymentPayload: Omit<Payment, "id"> = {
   createdAt: new Date(2022, 1, 1),
@@ -287,7 +289,7 @@ describe("PaymentService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: false })
 
     const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
-    await expect(call).rejects.toThrow("Product is not refundable")
+    await expect(call).rejects.toThrow(UnrefundablePaymentError)
   })
 
   it("fails to refund an unpaid payment", async () => {
@@ -295,7 +297,7 @@ describe("PaymentService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
 
     const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
-    await expect(call).rejects.toThrow("Payment is not in the correct state to be refunded")
+    await expect(call).rejects.toThrow(InvalidPaymentStatusError)
   })
 
   it("fails to refund an already refunded payment", async () => {
@@ -303,7 +305,7 @@ describe("PaymentService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
 
     const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
-    await expect(call).rejects.toThrow("Payment is not in the correct state to be refunded")
+    await expect(call).rejects.toThrow(InvalidPaymentStatusError)
   })
 
   it("fails to directly refund a payment that requires an approved refund request", async () => {
@@ -316,7 +318,7 @@ describe("PaymentService", () => {
     vi.spyOn(refundRequestRepository, "getByPaymentId").mockResolvedValueOnce(undefined)
 
     const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
-    await expect(call).rejects.toThrow("Product requires a refund request to be refunded")
+    await expect(call).rejects.toThrow(RefundRequestNotFoundError)
   })
 
   it("successfully directly refunds a payment", async () => {

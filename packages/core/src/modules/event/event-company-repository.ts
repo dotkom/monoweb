@@ -22,6 +22,7 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
         eventId: id,
         companyId: company,
       })
+      .onConflict((eb) => eb.columns(["eventId", "companyId"]).doNothing())
       .returningAll()
       .executeTakeFirst()
   }

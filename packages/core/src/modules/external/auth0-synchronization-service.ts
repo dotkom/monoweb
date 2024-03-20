@@ -2,6 +2,7 @@ import { User, UserWrite } from "@dotkomonline/types"
 import { UserService } from "../user/user-service"
 import { Auth0Repository } from "./auth0-repository"
 import { getLogger, Logger } from "@dotkomonline/logger"
+import { IllegalStateError } from "../../error"
 
 export interface Auth0SynchronizationService {
   /**
@@ -30,7 +31,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     const auth0User = await this.auth0Repository.getBySubject(auth0Subject)
 
     if (auth0User === null) {
-      throw new Error("User does not exist in Auth0")
+      throw new IllegalStateError("Missing user data in claims")
     }
 
     const user = await this.userService.getUserBySubject(auth0Subject)
