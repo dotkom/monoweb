@@ -1,9 +1,9 @@
 import { randomUUID } from "crypto"
 import { type Company } from "@dotkomonline/types"
 import { Kysely } from "kysely"
-import { NotFoundError } from "../../../errors/errors"
 import { CompanyRepositoryImpl } from "../company-repository"
 import { CompanyServiceImpl } from "../company-service"
+import { CompanyNotFoundError } from "../company-error"
 
 describe("CompanyService", () => {
   const db = vi.mocked(Kysely.prototype, true)
@@ -31,7 +31,7 @@ describe("CompanyService", () => {
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
     vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(undefined)
-    await expect(companyService.getCompany(unknownID)).rejects.toThrow(NotFoundError)
+    await expect(companyService.getCompany(unknownID)).rejects.toThrow(CompanyNotFoundError)
     expect(companyRepository.getById).toHaveBeenCalledWith(unknownID)
   })
 })

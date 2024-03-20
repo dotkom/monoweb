@@ -10,7 +10,7 @@ import { type ArticleRepository } from "./article-repository"
 import { type ArticleTagRepository } from "./article-tag-repository"
 import { type ArticleTagLinkRepository } from "./article-tag-link-repository"
 import { type Cursor } from "../../utils/db-utils"
-import { NotFoundError } from "../../errors/errors"
+import { ArticleNotFoundError } from "./article-error"
 
 export interface ArticleService {
   create(input: ArticleWrite): Promise<Article>
@@ -35,10 +35,15 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleRepository.create(input)
   }
 
+  /**
+   * Update an article by its id
+   *
+   * @throws {ArticleNotFoundError} if the article does not exist
+   */
   async update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
     const match = await this.articleRepository.getById(id)
     if (match === undefined) {
-      throw new NotFoundError(`Article with ID:${id} not found`)
+      throw new ArticleNotFoundError(id)
     }
     return await this.articleRepository.update(match.id, input)
   }
@@ -59,10 +64,15 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleTagRepository.getAll(take, cursor)
   }
 
+  /**
+   * Add a tag to an article
+   *
+   * @throws {ArticleNotFoundError} if the article does not exist
+   */
   async addTag(id: ArticleId, tag: ArticleTagName): Promise<void> {
     const match = await this.articleRepository.getById(id)
     if (match === undefined) {
-      throw new NotFoundError(`Article with ID:${id} not found`)
+      throw new ArticleNotFoundError(id)
     }
     let name = await this.articleTagRepository.getByName(tag)
     if (name === undefined) {
@@ -71,10 +81,15 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleTagLinkRepository.add(id, name.name)
   }
 
+  /**
+   * Remove a tag from an article
+   *
+   * @throws {ArticleNotFoundError} if the article does not exist
+   */
   async removeTag(id: ArticleId, tag: ArticleTagName): Promise<void> {
     const match = await this.articleRepository.getById(id)
     if (match === undefined) {
-      throw new NotFoundError(`Article with ID:${id} not found`)
+      throw new ArticleNotFoundError(id)
     }
     await this.articleTagLinkRepository.remove(id, tag)
     const articlesWithTag = await this.articleRepository.getByTags([tag], 1)

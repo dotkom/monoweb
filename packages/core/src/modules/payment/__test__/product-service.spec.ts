@@ -4,7 +4,7 @@ import { Kysely } from "kysely"
 import { type Product } from "@dotkomonline/types"
 import { ProductRepositoryImpl } from "./../product-repository"
 import { ProductServiceImpl } from "./../product-service"
-import { NotFoundError } from "../../../errors/errors"
+import { ProductNotFoundError } from "../product-error"
 
 export const productPayload: Omit<Product, "id"> = {
   createdAt: new Date(2022, 1, 1),
@@ -35,7 +35,7 @@ describe("ProductService", () => {
     const id = randomUUID()
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(undefined)
     const missing = productService.getProductById(id)
-    await expect(missing).rejects.toThrow(NotFoundError)
+    await expect(missing).rejects.toThrow(ProductNotFoundError)
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ id, ...productPayload })
     const real = await productService.getProductById(id)
     expect(real).toEqual({ id, ...productPayload })

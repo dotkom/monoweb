@@ -3,7 +3,7 @@ import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
 import { type MarkService } from "./mark-service"
 import { type PersonalMarkRepository } from "./personal-mark-repository"
 import { type Cursor } from "../../utils/db-utils"
-import { NotFoundError } from "../../errors/errors"
+import { PersonalMarkNotFoundError } from "./personal-mark-error"
 
 export interface PersonalMarkService {
   getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
@@ -38,17 +38,20 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   async addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
-    const personalMark = await this.personalMarkRepository.addToUserId(userId, markId)
-    if (!personalMark) {
-      throw new NotFoundError("PersonalMark could not be created")
-    }
+    const mark = await this.markService.getMark(markId)
+    const personalMark = await this.personalMarkRepository.addToUserId(userId, mark.id)
     return personalMark
   }
 
+  /**
+   * Remove a personal mark from a user
+   *
+   * @throws {PersonalMarkNotFoundError} if the personal mark does not exist
+   */
   async removePersonalMarkFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
     const personalMark = await this.personalMarkRepository.removeFromUserId(userId, markId)
     if (!personalMark) {
-      throw new NotFoundError("PersonalMark could not be removed")
+      throw new PersonalMarkNotFoundError(markId)
     }
     return personalMark
   }
