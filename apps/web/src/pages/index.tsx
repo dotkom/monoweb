@@ -20,16 +20,16 @@ export const useSession = (): Session => {
     enabled: Boolean(session?.user.id),
   })
 
-  if(!data?.studyYear || !session?.user) {
+  if (!data?.studyYear || !session?.user) {
     return {
       isLoading: dbCallLoading || status === "loading",
-      user: null
+      user: null,
     }
   }
 
   return {
     isLoading: dbCallLoading,
-    user: { studyYear: data.studyYear, ...session.user }
+    user: { studyYear: data.studyYear, ...session.user },
   }
 }
 

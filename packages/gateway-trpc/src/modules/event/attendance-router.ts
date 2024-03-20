@@ -4,6 +4,7 @@ import {
   AttendanceSchema,
   AttendanceWriteSchema,
   AttendeeSchema,
+  ExtrasSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -54,12 +55,9 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
-        attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.deregisterForEvent(input.id, input.attendanceId, new Date())
-    ),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(input.id, new Date())),
 
   registerAttendance: protectedProcedure
     .input(
@@ -113,4 +111,13 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.update(input.attendance, input.id)),
+
+  updateExtras: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+        extras: z.array(ExtrasSchema),
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.updateExtras(input.id, input.extras)),
 })

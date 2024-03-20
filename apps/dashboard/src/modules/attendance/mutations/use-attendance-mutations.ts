@@ -15,10 +15,22 @@ export const useAddAttendanceMutation = () => {
 
 export const useUpdateAttendanceMutation = () => {
   const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "create",
+    method: "update",
   })
 
   return trpc.event.attendance.updateAttendance.useMutation({
+    onError: fail,
+    onMutate: loading,
+    onSuccess: complete,
+  })
+}
+
+export const useUpdateExtrasMutation = () => {
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return trpc.event.attendance.updateExtras.useMutation({
     onError: fail,
     onMutate: loading,
     onSuccess: complete,

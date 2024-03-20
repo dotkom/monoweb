@@ -5,9 +5,15 @@ import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { createServiceLayer, type ServiceLayer } from "../../core"
-import { CantDeleteAttendanceError, AttendanceValidationError } from "../attendance-error"
+import {
+  CantDeleteAttendanceError,
+  AttendanceValidationError,
+  ExtrasUpdateAfterRegistrationStartError,
+} from "../attendance-error"
 import { AttendeeRegistrationError, AttendeeDeregistrationError } from "../attendee-error"
 import { CantDeletePoolError, AttendancePoolValidationError } from "../attendance-pool-error"
+import assert from "../../../../assert"
+import { extraInlineDeps } from "vitest/config"
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
   auth0Sub: write.auth0Sub ?? crypto.randomUUID(),
@@ -22,6 +28,7 @@ const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => 
   mergeTime: write.mergeTime ?? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now by default
   registerEnd: write.registerEnd ?? new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now by default
   registerStart: write.registerStart ?? new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday by default
+  extras: write.extras ?? [],
 })
 
 const getFakePool = (write: Partial<AttendancePoolWrite>): AttendancePoolWrite => ({
@@ -41,7 +48,6 @@ const getFakeEvent = (write: Partial<EventWrite>): EventWrite => ({
   attendanceId: write.attendanceId ?? ulid(),
   description: write.description ?? "description",
   end: write.end ?? new Date(),
-  extras: write.extras ?? [],
   imageUrl: write.imageUrl ?? "imageUrl",
   location: write.location ?? "location",
   public: write.public ?? true,
@@ -162,6 +168,7 @@ describe("attendance", () => {
       registerStart: new Date("2021-01-02"),
       registerEnd: new Date("2021-01-03"),
       deregisterDeadline: new Date("2021-01-04"),
+      extras: [],
     })
 
     // registerEnd > registerEnd
@@ -170,6 +177,7 @@ describe("attendance", () => {
       registerEnd: new Date("2021-01-02"),
       registerStart: new Date("2021-01-03"),
       deregisterDeadline: new Date("2021-01-04"),
+      extras: [],
     })
 
     // mergeTime > registerEnd
@@ -178,6 +186,7 @@ describe("attendance", () => {
       registerEnd: new Date("2021-01-02"),
       mergeTime: new Date("2021-01-03"),
       deregisterDeadline: new Date("2021-01-04"),
+      extras: [],
     })
   })
 
@@ -304,14 +313,14 @@ describe("attendance", () => {
 
     // Step 4: Deregister a user before the deadline and verify
     const attendeeToDeregister = await core.attendeeService.getByUserId(users[0].id, attendance.id)
-    if (attendeeToDeregister === null) throw new Error("Attendee not found")
+    assert(attendeeToDeregister !== null, new Error())
     await expect(
       core.attendeeService.deregisterForEvent(attendeeToDeregister.id, new Date("2021-01-04"))
     ).resolves.not.toThrowError(AttendeeDeregistrationError)
 
     // Step 5: Attempt to deregister a user after the deadline and expect failure
     const attendeeToDeregisterLate = await core.attendeeService.getByUserId(users[1].id, attendance.id)
-    if (attendeeToDeregisterLate === null) throw new Error("Attendee not found")
+    assert(attendeeToDeregisterLate !== null, new Error())
     await expect(
       core.attendeeService.deregisterForEvent(attendeeToDeregisterLate.id, new Date("2021-01-06"))
     ).rejects.toThrowError(AttendeeDeregistrationError)
@@ -335,7 +344,116 @@ describe("attendance", () => {
     expect(attendee).not.toBeNull()
   })
 
+  it("handles extras correctly", async () => {
+    const extrasToInsert = [
+      {
+        id: ulid(),
+        name: "Hvilken mat vil du ha",
+        choices: [
+          {
+            id: ulid(),
+            name: "Pizza",
+          },
+          {
+            id: ulid(),
+            name: "Pasta",
+          },
+          {
+            id: ulid(),
+            name: "Burger",
+          },
+        ],
+      },
+      {
+        id: ulid(),
+        name: "Hvilken drikke vil du ha",
+        choices: [
+          {
+            id: ulid(),
+            name: "Cola",
+          },
+          {
+            id: ulid(),
+            name: "Fanta",
+          },
+          {
+            id: ulid(),
+            name: "Sprite",
+          },
+        ],
+      },
+    ]
+
+    const registerStart = new Date("2021-01-02")
+
+    const { users, pools, attendance } = await setupFakeFullAttendance(core, {
+      attendance: {
+        extras: extrasToInsert,
+        registerStart,
+      },
+      pools: [{ limit: 1, yearCriteria: [1] }],
+      users: [{ studyYear: 1 }],
+    })
+
+    const pool = pools[0]
+    const user = users[0]
+
+    const attendee = await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date())
+
+    const extras = attendance.extras
+
+    assert(extras !== null, new Error())
+
+    const foodQuestion = extras[0]
+    const drinkQuestion = extras[1]
+
+    const pizza = foodQuestion.choices[0]
+
+    const cola = drinkQuestion.choices[0]
+    const fanta = drinkQuestion.choices[1]
+    const sprite = drinkQuestion.choices[2]
+
+    const updatedAttendee = await core.attendeeService.updateExtraChoices(attendee.id, foodQuestion.id, pizza.id)
+    expect(updatedAttendee).not.toBeNull()
+
+    const updatedAttendee2 = await core.attendeeService.updateExtraChoices(attendee.id, drinkQuestion.id, fanta.id)
+    expect(updatedAttendee2).not.toBeNull()
+
+    // Remove fanta from drinkQuestion
+    const newDrinkChoices = extrasToInsert[1].choices.filter((choice) => choice.name !== "Fanta")
+
+    const updatedExtrasToInsert = [
+      extrasToInsert[0],
+      {
+        ...extrasToInsert[1],
+        choices: newDrinkChoices,
+      },
+    ]
+
+    const beforeRegisterStart = new Date("2021-01-01")
+    const afterRegisterStart = new Date("2021-01-03")
+
+    const updatedAttendance = await core.attendanceService.updateExtras(
+      attendance.id,
+      updatedExtrasToInsert,
+      beforeRegisterStart
+    )
+
+    // check that fanta choice is not in the updated attendance
+    assert(updatedAttendance !== null, new Error())
+    const updatedExtras = updatedAttendance.extras
+    assert(updatedExtras !== null, new Error())
+    const updatedDrinkQuestion = updatedExtras[1]
+    assert(updatedDrinkQuestion !== null, new Error())
+    expect(updatedDrinkQuestion.choices[0]).toEqual(cola)
+    expect(updatedDrinkQuestion.choices[1]).not.toEqual(fanta)
+    expect(updatedDrinkQuestion.choices[1]).toEqual(sprite)
+
+    await expect(async () => {
+      return await core.attendanceService.updateExtras(attendance.id, extrasToInsert, afterRegisterStart)
+    }).rejects.toThrowError(ExtrasUpdateAfterRegistrationStartError)
+  })
+
   // TODO: not yet implemented in service.
   it.skip("should correctly handle pool merging at the specified merge time", async () => {})
-
 })

@@ -5,7 +5,7 @@ import {
   type AttendeeId,
   type AttendeeUser,
   type AttendeeWrite,
-  type UserId
+  type UserId,
 } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
 import { type UserService } from "../user/user-service"

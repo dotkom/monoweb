@@ -55,6 +55,7 @@ export interface ArticleTags {
 export interface Attendance {
   createdAt: Generated<Timestamp>
   deregisterDeadline: Timestamp
+  extras: Json | null
   id: Generated<string>
   mergeTime: Timestamp
   registerEnd: Timestamp
@@ -108,7 +109,6 @@ export interface Event {
   createdAt: Generated<Timestamp>
   description: string | null
   end: Timestamp
-  extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null
@@ -133,7 +133,7 @@ export interface EventCompany {
 
 export interface InterestGroup {
   createdAt: Generated<Timestamp>
-  description: string | null
+  description: string
   id: Generated<string>
   link: string | null
   name: string

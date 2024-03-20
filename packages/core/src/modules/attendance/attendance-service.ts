@@ -1,4 +1,5 @@
 import {
+  Extras,
   type Attendance,
   type AttendanceId,
   type AttendanceWrite,
@@ -10,13 +11,19 @@ import { AttendeeRepository } from "./attendee-repository"
 import { AttendanceRepository } from "./attendance-repository"
 import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
-import { AttendanceValidationError, CantDeleteAttendanceError } from "./attendance-error"
+import {
+  AttendanceNotFound,
+  AttendanceValidationError,
+  CantDeleteAttendanceError,
+  ExtrasUpdateAfterRegistrationStartError,
+} from "./attendance-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
+  updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
   isAttending(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
   merge(id: AttendanceId): Promise<void>
 }
@@ -38,6 +45,26 @@ export class AttendanceServiceImpl implements AttendanceService {
   async update(obj: AttendanceWrite, id: AttendanceId) {
     const attendance = await this.attendanceRepository.update(obj, id)
     return attendance
+  }
+
+  async updateExtras(id: AttendanceId, extras: Extras[], now: Date = new Date()) {
+    const attendance = await this.attendanceRepository.getById(id)
+
+    if (!attendance) {
+      throw new AttendanceNotFound(id)
+    }
+
+    if (attendance.registerStart < now) {
+      throw new ExtrasUpdateAfterRegistrationStartError()
+    }
+
+    return this.attendanceRepository.update(
+      {
+        ...attendance,
+        extras,
+      },
+      id
+    )
   }
 
   /**
