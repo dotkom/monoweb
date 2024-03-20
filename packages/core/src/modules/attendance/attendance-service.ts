@@ -1,22 +1,22 @@
 import {
-  Extras,
   type Attendance,
   type AttendanceId,
   type AttendanceWrite,
   type Attendee,
   type EventId,
+  Extras,
   type UserId,
 } from "@dotkomonline/types"
-import { AttendeeRepository } from "./attendee-repository"
-import { AttendanceRepository } from "./attendance-repository"
-import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
-import { AttendancePoolRepository } from "./attendance-pool-repository"
 import {
   AttendanceNotFound,
   AttendanceValidationError,
   CantDeleteAttendanceError,
   ExtrasUpdateAfterRegistrationStartError,
 } from "./attendance-error"
+import { AttendancePoolRepository } from "./attendance-pool-repository"
+import { AttendanceRepository } from "./attendance-repository"
+import { AttendeeRepository } from "./attendee-repository"
+import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>

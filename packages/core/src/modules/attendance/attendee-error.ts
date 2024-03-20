@@ -1,5 +1,5 @@
 import { ApplicationError } from "../../error"
-import { PROBLEM_DETAILS } from "../../problem-details-registry"
+import { PROBLEM_DETAILS } from "../../http-problem-details"
 
 export class AttendeeRegistrationError extends ApplicationError {
   constructor(detail: string) {
@@ -8,6 +8,12 @@ export class AttendeeRegistrationError extends ApplicationError {
 }
 
 export class AttendeeDeregistrationError extends ApplicationError {
+  constructor(detail: string) {
+    super(PROBLEM_DETAILS.BadRequest, detail)
+  }
+}
+
+export class UpdateAttendeeError extends ApplicationError {
   constructor(detail: string) {
     super(PROBLEM_DETAILS.BadRequest, detail)
   }

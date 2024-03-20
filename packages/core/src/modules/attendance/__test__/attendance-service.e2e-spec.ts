@@ -3,17 +3,16 @@ import { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWr
 import crypto from "crypto"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import assert from "../../../../assert"
 import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { createServiceLayer, type ServiceLayer } from "../../core"
+import { type ServiceLayer, createServiceLayer } from "../../core"
 import {
-  CantDeleteAttendanceError,
   AttendanceValidationError,
+  CantDeleteAttendanceError,
   ExtrasUpdateAfterRegistrationStartError,
 } from "../attendance-error"
-import { AttendeeRegistrationError, AttendeeDeregistrationError } from "../attendee-error"
-import { CantDeletePoolError, AttendancePoolValidationError } from "../attendance-pool-error"
-import assert from "../../../../assert"
-import { extraInlineDeps } from "vitest/config"
+import { AttendancePoolValidationError, CantDeletePoolError } from "../attendance-pool-error"
+import { AttendeeDeregistrationError, AttendeeRegistrationError } from "../attendee-error"
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
   auth0Sub: write.auth0Sub ?? crypto.randomUUID(),

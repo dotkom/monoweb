@@ -64,7 +64,6 @@ export const AllAttendeesTable = ({ users, attendanceId }: AllAttendeesTableProp
             onClick={() =>
               deregisterMut.mutate({
                 id: info.getValue().id,
-                attendanceId: attendanceId,
               })
             }
           >
@@ -73,7 +72,7 @@ export const AllAttendeesTable = ({ users, attendanceId }: AllAttendeesTableProp
         ),
       }),
     ],
-    [columnHelper, deregisterMut, attendanceId]
+    [columnHelper, deregisterMut]
   )
 
   const table = useReactTable({
