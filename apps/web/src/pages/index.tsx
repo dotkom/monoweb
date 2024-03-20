@@ -1,14 +1,16 @@
-import React from "react"
-import { useSession } from "next-auth/react"
+import React from "react";
+import { ComingEventsList } from "@/components/organisms/ComingEventsList";
 
 const Home: React.FC = () => {
-  const auth = useSession()
-  return (
-    <div>
-      <p>Homepage</p>
-      <pre>{JSON.stringify(auth, null, 2)}</pre>
-    </div>
-  )
-}
+    return (
+        <div>
+            <h1>Homepage</h1>
+            <div className="mb-32 mt-16 w-[600px]">
+                <h2 className="border-none mb-4">Arrangementer</h2>
+                <ComingEventsList />
+            </div>
+        </div>
+    );
+};
 
-export default Home
+export default Home;
