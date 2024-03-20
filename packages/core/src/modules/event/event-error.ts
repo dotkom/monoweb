@@ -1,13 +1,14 @@
 import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../http-problem-details"
 
 export class EventNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Event with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Event with ID: ${id} not found`)
   }
 }
 
 export class EventAlreadyHasWaitlistError extends ApplicationError {
   constructor(id: string) {
-    super("/problem/bad-request", 400, `Event with ID:${id} already has a waitlist`)
+    super(PROBLEM_DETAILS.BadRequest, `Event with ID:${id} already has a waitlist`)
   }
 }

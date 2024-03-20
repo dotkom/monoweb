@@ -1,19 +1,20 @@
 import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../http-problem-details"
 
 export class RefundRequestNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Refund request for payment with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Refund request for payment with ID:${id} not found`)
   }
 }
 
 export class InvalidRefundRequestStatusError extends ApplicationError {
   constructor(expected: string, actual: string) {
-    super("/problem/bad-request", 400, `The refund request status is invalid, wanted ${expected} but was ${actual}`)
+    super(PROBLEM_DETAILS.BadRequest, `The refund request status is invalid, wanted ${expected} but was ${actual}`)
   }
 }
 
 export class RefundProcessingFailureError extends ApplicationError {
   constructor(reason: string) {
-    super("/problem/internal-server-error", 500, `The refund processing failed: ${reason}`)
+    super(PROBLEM_DETAILS.InternalServerError, `The refund processing failed: ${reason}`)
   }
 }

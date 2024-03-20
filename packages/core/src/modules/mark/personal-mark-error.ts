@@ -1,7 +1,8 @@
 import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../http-problem-details"
 
 export class PersonalMarkNotFoundError extends ApplicationError {
   constructor(id: string) {
-    super("/problem/not-found", 404, `Personal mark with ID:${id} not found`)
+    super(PROBLEM_DETAILS.NotFound, `Personal mark with ID:${id} not found`)
   }
 }
