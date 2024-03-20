@@ -4,7 +4,6 @@ import {
   AttendanceWrite,
   Committee,
   type Event,
-  EventCommittee,
   type EventId,
   type EventWrite,
 } from "@dotkomonline/types"
