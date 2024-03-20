@@ -8,7 +8,7 @@ export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => MarkSc
 export interface MarkRepository {
   getById(id: MarkId): Promise<Mark | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Mark[]>
-  create(markInsert: MarkWrite): Promise<Mark | undefined>
+  create(markInsert: MarkWrite): Promise<Mark>
   update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | undefined>
   delete(id: MarkId): Promise<Mark | undefined>
 }
@@ -27,13 +27,13 @@ export class MarkRepositoryImpl implements MarkRepository {
     return marks.map(mapToMark)
   }
 
-  async create(markInsert: MarkWrite): Promise<Mark | undefined> {
+  async create(markInsert: MarkWrite): Promise<Mark> {
     const mark = await this.db
       .insertInto("mark")
       .values({ ...markInsert, createdAt: new Date() })
       .returningAll()
-      .executeTakeFirst()
-    return mark ? mapToMark(mark) : undefined
+      .executeTakeFirstOrThrow()
+    return mapToMark(mark)
   }
 
   async update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | undefined> {

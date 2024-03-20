@@ -10,6 +10,9 @@ import { RefundRequestServiceImpl } from "../refund-request-service"
 import { PaymentRepositoryImpl } from "../payment-repository"
 import { PaymentServiceImpl } from "../payment-service"
 import { EventRepositoryImpl } from "../../event/event-repository"
+import { IllegalStateError } from "../../../error"
+import { UnrefundablePaymentError } from "../payment-error"
+import { InvalidRefundRequestStatusError } from "../refund-request-error"
 
 export const refundRequestPayload: Omit<RefundRequest, "id"> = {
   createdAt: new Date(2022, 1, 1),
@@ -63,7 +66,7 @@ describe("RefundRequestService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: false })
 
     const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
-    await expect(call).rejects.toThrowError("Payment is not refundable")
+    await expect(call).rejects.toThrowError(UnrefundablePaymentError)
   })
 
   it("fails to create refund request for payment that does not require it", async () => {
@@ -75,7 +78,7 @@ describe("RefundRequestService", () => {
     })
 
     const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
-    await expect(call).rejects.toThrowError("Product does not require approval")
+    await expect(call).rejects.toThrowError(IllegalStateError)
   })
 
   it("fails to create refund request for payment that does not require it", async () => {
@@ -108,7 +111,7 @@ describe("RefundRequestService", () => {
     })
 
     const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId)
-    await expect(call).rejects.toThrowError("Refund request already approved")
+    await expect(call).rejects.toThrowError(InvalidRefundRequestStatusError)
   })
 
   it("successfully approves pending refund request", async () => {
@@ -158,7 +161,7 @@ describe("RefundRequestService", () => {
     })
 
     const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)
-    await expect(call).rejects.toThrowError("Refund request already rejected")
+    await expect(call).rejects.toThrowError(InvalidRefundRequestStatusError)
   })
 
   it("fails to reject refund request for already approved refund request", async () => {
@@ -168,6 +171,6 @@ describe("RefundRequestService", () => {
     })
 
     const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)
-    await expect(call).rejects.toThrowError("Refund request already approved")
+    await expect(call).rejects.toThrowError(InvalidRefundRequestStatusError)
   })
 })

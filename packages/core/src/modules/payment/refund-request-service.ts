@@ -10,6 +10,10 @@ import { type PaymentService } from "./payment-service"
 import { type ProductRepository } from "./product-repository"
 import { type RefundRequestRepository } from "./refund-request-repository"
 import { type Cursor } from "../../utils/db-utils"
+import { PaymentNotFoundError, UnrefundablePaymentError } from "./payment-error"
+import { ProductNotFoundError } from "./product-error"
+import { InvalidRefundRequestStatusError, RefundRequestNotFoundError } from "./refund-request-error"
+import { IllegalStateError } from "../../error"
 
 export interface RefundRequestService {
   createRefundRequest(paymentId: PaymentId, userId: UserId, reason: string): Promise<RefundRequest>
@@ -29,24 +33,32 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     private readonly paymentService: PaymentService
   ) {}
 
+  /**
+   * Create a refund request for a payment
+   *
+   * @throws {PaymentNotFoundError} if payment is not found
+   * @throws {ProductNotFoundError} if product is not found
+   * @throws {UnrefundablePaymentError} if product is not refundable
+   * @throws {IllegalStateError} if refund request is not required for this product
+   */
   async createRefundRequest(paymentId: PaymentId, userId: UserId, reason: string): Promise<RefundRequest> {
     const payment = await this.paymentRepository.getById(paymentId)
 
     if (!payment) {
-      throw new Error("Payment not found")
+      throw new PaymentNotFoundError(paymentId)
     }
 
     const product = await this.productRepository.getById(payment.productId)
     if (!product) {
-      throw new Error("Product not found")
+      throw new ProductNotFoundError(payment.productId)
     }
 
     if (!product.isRefundable) {
-      throw new Error("Payment is not refundable")
+      throw new UnrefundablePaymentError()
     }
 
     if (!product.refundRequiresApproval) {
-      throw new Error("Product does not require approval")
+      throw new IllegalStateError("Refund request not required for this product")
     }
 
     return this.refundRequestRepository.create({
@@ -74,15 +86,21 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     return this.refundRequestRepository.getAll(take, cursor)
   }
 
+  /**
+   * Approve a refund request
+   *
+   * @throws {RefundRequestNotFoundError} if refund request is not found
+   * @throws {InvalidRefundRequestStatusError} if refund request is not pending
+   */
   async approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void> {
     const refundRequest = await this.refundRequestRepository.getById(id)
 
     if (!refundRequest) {
-      throw new Error("Refund request not found")
+      throw new RefundRequestNotFoundError(id)
     }
 
     if (refundRequest.status === "APPROVED") {
-      throw new Error("Refund request already approved")
+      throw new InvalidRefundRequestStatusError("PENDING", refundRequest.status)
     }
 
     const updatedRefundRequest = await this.refundRequestRepository.update(id, {
@@ -94,18 +112,21 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     await this.paymentService.refundPaymentById(updatedRefundRequest.paymentId, false)
   }
 
+  /**
+   * Reject a refund request
+   *
+   * @throws {RefundRequestNotFoundError} if refund request is not found
+   * @throws {InvalidRefundRequestStatusError} if refund request is not pending
+   */
   async rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void> {
     const refundRequest = await this.refundRequestRepository.getById(id)
 
     if (!refundRequest) {
-      throw new Error("Refund request not found")
+      throw new RefundRequestNotFoundError(id)
     }
 
-    if (refundRequest.status === "REJECTED") {
-      throw new Error("Refund request already rejected")
-    }
-    if (refundRequest.status === "APPROVED") {
-      throw new Error("Refund request already approved")
+    if (refundRequest.status === "REJECTED" || refundRequest.status === "APPROVED") {
+      throw new InvalidRefundRequestStatusError("PENDING", refundRequest.status)
     }
 
     await this.refundRequestRepository.update(id, {
