@@ -58,6 +58,34 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
+  apps/brevduen:
+    dependencies:
+      '@aws-sdk/client-ses':
+        specifier: ^3.507.0
+        version: 3.513.0
+      '@dotkomonline/emails':
+        specifier: workspace:*
+        version: link:../../packages/emails
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.5.3
+        version: 1.5.3
+      '@types/aws-lambda':
+        specifier: ^8.10.129
+        version: 8.10.131
+      '@types/node':
+        specifier: 18.18.13
+        version: 18.18.13
+      tsup:
+        specifier: ^7.2.0
+        version: 7.2.0(ts-node@10.9.2)(typescript@5.2.2)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+
   apps/dashboard:
     dependencies:
       '@dotkomonline/auth':
@@ -342,6 +370,18 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
+
+  apps/shell:
+    dependencies:
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
 
   apps/web:
     dependencies:
