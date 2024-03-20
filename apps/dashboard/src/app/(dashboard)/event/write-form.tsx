@@ -19,7 +19,6 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   location: null,
   subtitle: null,
   committeeIds: [],
-  extras: [],
   public: false,
   status: "TBA",
   title: "",

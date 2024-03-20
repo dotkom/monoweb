@@ -1,12 +1,13 @@
 import {
+  Extras,
   type Attendance,
   type AttendanceId,
   AttendancePool,
   type AttendanceWrite,
   Attendee,
-  WaitlistAttendee
+  WaitlistAttendee,
+  UserId
 } from "@dotkomonline/types"
-import { AttendanceValidationError, CantDeleteAttendanceError, InvalidParametersError } from "./attendance-error"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendanceRepository } from "./attendance-repository"
 import { AttendeeRepository } from "./attendee-repository"
@@ -19,6 +20,13 @@ type MergeReturn = {
   waitlistAttendees: WaitlistAttendee[]
   attendees: Attendee[]
 }
+import {
+  AttendanceNotFound,
+  AttendanceValidationError,
+  CantDeleteAttendanceError,
+  ExtrasUpdateAfterRegistrationStartError,
+  InvalidParametersError,
+} from "./attendance-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -26,6 +34,7 @@ export interface AttendanceService {
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
   merge(attendanceId: AttendanceId, mergePoolTitle: string, now: Date): Promise<MergeReturn>
+  updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -39,6 +48,26 @@ export class AttendanceServiceImpl implements AttendanceService {
   async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
     const attendance = await this.attendanceRepository.update(obj, id)
     return attendance
+  }
+
+  async updateExtras(id: AttendanceId, extras: Extras[], now: Date = new Date()) {
+    const attendance = await this.attendanceRepository.getById(id)
+
+    if (!attendance) {
+      throw new AttendanceNotFound(id)
+    }
+
+    if (attendance.registerStart < now) {
+      throw new ExtrasUpdateAfterRegistrationStartError()
+    }
+
+    return this.attendanceRepository.update(
+      {
+        ...attendance,
+        extras,
+      },
+      id
+    )
   }
 
   /**

@@ -1,12 +1,16 @@
-import { type Event } from "@dotkomonline/types"
+import { Attendance } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import { type FC } from "react"
-import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
 import { ExtrasForm, type ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
+import { useUpdateExtrasMutation } from "../../attendance/mutations/use-attendance-mutations"
 
-export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = ({ context, id, innerProps }) => {
-  const editEvent = useEditEventMutation()
-  const allExtras = innerProps.event.extras || []
+export const CreateAttendanceExtrasModal: FC<ContextModalProps<{ attendance: Attendance }>> = ({
+  context,
+  id,
+  innerProps,
+}) => {
+  const edit = useUpdateExtrasMutation()
+  const allExtras = innerProps.attendance.extras || []
 
   const defaultAlternatives: ExtrasFormValues = {
     question: "",
@@ -26,12 +30,9 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = (
       },
     ]
 
-    editEvent.mutate({
-      id: innerProps.event.id,
-      event: {
-        ...innerProps.event,
-        extras: newExtras,
-      },
+    edit.mutate({
+      id: innerProps.attendance.id,
+      extras: newExtras,
     })
 
     context.closeModal(id)
@@ -40,13 +41,13 @@ export const CreateEventExtrasModal: FC<ContextModalProps<{ event: Event }>> = (
   return <ExtrasForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />
 }
 
-export const useCreateEventExtrasModal =
-  ({ event }: { event: Event }) =>
+export const useCreateAttendanceExtrasModal =
+  ({ attendance }: { attendance: Attendance }) =>
   () =>
     modals.openContextModal({
-      modal: "extras/create",
+      modal: "attendance/extras/create",
       title: "Legg til nytt deltakervalg",
       innerProps: {
-        event,
+        attendance,
       },
     })
