@@ -7,7 +7,7 @@ import { UserRepositoryImpl } from "../user-repository"
 import { UserServiceImpl } from "../user-service"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
 import { ManagementClient } from "auth0"
-import { Auth0RepositoryImpl } from "../../../lib/auth0-repository"
+import { Auth0RepositoryImpl } from "../../external/auth0-repository"
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {
   createdAt: new Date(2022, 1, 1),
@@ -44,8 +44,7 @@ describe("UserService", () => {
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    auth0Repo
+    notificationPermissionsRepository
   )
 
   const userId = randomUUID()

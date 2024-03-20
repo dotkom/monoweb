@@ -1,9 +1,9 @@
 import { AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
-import { NotFoundError } from "../../errors/errors"
 import { type Cursor } from "../../utils/db-utils"
+import { AttendanceService } from "../attendance/attendance-service"
+import { EventNotFoundError } from "./event-error"
 import { type EventInsert } from "./event-repository"
 import { type EventRepository } from "./event-repository.js"
-import { AttendanceService } from "../attendance/attendance-service"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -53,10 +53,15 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
+  /**
+   * Get an event by its id
+   *
+   * @throws {EventNotFoundError} if the event does not exist
+   */
   async getEventById(id: EventId): Promise<Event> {
     const event = await this.eventRepository.getById(id)
     if (!event) {
-      throw new NotFoundError(`Event with ID:${id} not found`)
+      throw new EventNotFoundError(id)
     }
     return event
   }

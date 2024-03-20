@@ -11,10 +11,10 @@ export interface PersonalMarkRepository {
   getByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getAllByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
   getAllMarksByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
-  addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
+  addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
   removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
   getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
-  countUsersByMarkId: ((markId: MarkId) => Promise<number>) & ((markId: MarkId) => Promise<number>)
+  countUsersByMarkId(markId: MarkId): Promise<number>
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
@@ -57,13 +57,13 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     return personalMarks.map(mapToPersonalMark)
   }
 
-  async addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined> {
+  async addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
     const personalMark = await this.db
       .insertInto("personalMark")
       .values({ userId, markId })
       .returningAll()
-      .executeTakeFirst()
-    return personalMark ? mapToPersonalMark(personalMark) : undefined
+      .executeTakeFirstOrThrow()
+    return mapToPersonalMark(personalMark)
   }
 
   async removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined> {

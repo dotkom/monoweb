@@ -56,8 +56,9 @@ export class EventRepositoryImpl implements EventRepository {
   async getAllByUserAttending(userId: string): Promise<Event[]> {
     const eventsResult = await this.db
       .selectFrom("attendance")
-      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .innerJoin("event", "event.id", "attendance.eventId")
+      .leftJoin("attendancePool", "attendancePool.attendanceId", "attendance.id")
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendee.attendancePoolId")
+      .innerJoin("event", "event.attendanceId", "attendance.id")
       .selectAll("event")
       .where("attendee.userId", "=", userId)
       .execute()

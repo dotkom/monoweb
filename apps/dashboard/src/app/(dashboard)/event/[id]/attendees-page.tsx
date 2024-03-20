@@ -4,7 +4,6 @@ import { type FC } from "react"
 import { useEventDetailsContext } from "./provider"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { AllAttendeesTable } from "../all-users-table"
-import { useGetUserBySub } from "../../../../modules/user/queries/use-user-get-query"
 import { useEventAttendeesGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
 import { useRegisterForEventMutation } from "../../../../modules/attendance/mutations/use-attendee-mutations"
 

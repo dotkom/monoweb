@@ -21,8 +21,8 @@ export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
   delete(id: AttendeeId): Promise<Attendee | null>
   getById(id: AttendeeId): Promise<Attendee | null>
-  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee>
-  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
+  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee | null>
+  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee | null>
   getByAttendanceId(id: AttendanceId): Promise<AttendeeUser[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
@@ -119,9 +119,9 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .set(withInsertJsonValue(obj, "extrasChoices"))
       .where("id", "=", id)
       .returningAll()
-      .executeTakeFirstOrThrow()
+      .executeTakeFirst()
 
-    return mapToAttendee(res)
+    return res ? mapToAttendee(res) : null
   }
 
   async updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string) {
@@ -132,8 +132,8 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       })
       .where("id", "=", id)
       .returningAll()
-      .executeTakeFirstOrThrow()
+      .executeTakeFirst()
 
-    return mapToAttendee(res)
+    return res ? mapToAttendee(res) : null
   }
 }

@@ -8,9 +8,9 @@ import { createServiceLayer, type ServiceLayer } from "../../core"
 import {
   InvalidDeadlineError,
   InvalidEndDateError,
-  InvalidLocationError,
   InvalidStartDateError,
-} from "../job-listing-service"
+  MissingLocationError,
+} from "../job-listing-error"
 
 describe("job-listings", () => {
   let core: ServiceLayer
@@ -86,7 +86,7 @@ describe("job-listings", () => {
           locations: [],
         })
       )
-    ).rejects.toThrow(InvalidLocationError)
+    ).rejects.toThrow(MissingLocationError)
   })
 
   it("should be able to update locations by diffing", async () => {

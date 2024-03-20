@@ -63,7 +63,7 @@ export const useUpdateEventAttendanceMutation = () => {
     onSuccess: (data) => {
       notification.complete({
         title: "Oppmøte oppdatert",
-        message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"} for bruker ${data.user.name}. `,
+        message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"}. `,
       })
     },
     onError: (err) => {
