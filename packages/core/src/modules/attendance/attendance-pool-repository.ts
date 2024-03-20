@@ -94,7 +94,12 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
     const insertObj = withInsertJsonValue(obj, "yearCriteria")
-    const inserted = await this.db.updateTable("attendancePool").set(insertObj).where("id", "=", id).returningAll().executeTakeFirstOrThrow()
+    const inserted = await this.db
+      .updateTable("attendancePool")
+      .set(insertObj)
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirstOrThrow()
 
     return inserted ? mapToPoolBase(inserted) : null
   }

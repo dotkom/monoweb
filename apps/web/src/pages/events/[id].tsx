@@ -118,12 +118,6 @@ const getStatusCardData = (status: StatusState, datetime: Date): StatusCardProps
 
 const useEventDetail = (user: NonNullable<Session["user"]>, eventId: string) => {
   const { data: event } = trpc.event.get.useQuery(eventId)
-  const session = useSession()
-
-  if (session.user === null) {
-    return <div>Ikke logget inn</div>
-  }
-
   const attendanceId = event?.event.attendanceId
   const { data: attendance } = trpc.event.attendance.getAttendance.useQuery({
     id: attendanceId || "",
@@ -206,7 +200,6 @@ const useEventDetail = (user: NonNullable<Session["user"]>, eventId: string) => 
   }
 
   return {
-    event,
     attendance,
     pools,
     statusData,
@@ -215,98 +208,39 @@ const useEventDetail = (user: NonNullable<Session["user"]>, eventId: string) => 
     isAttending,
     attend,
     unAttend,
+    event
   }
 }
 
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
-  const { id: eventId } = props
-  const { data: event } = trpc.event.get.useQuery(eventId)
   const session = useSession()
 
   if (session.user === null) {
     return <div>Ikke logget inn</div>
   }
 
-  const attendanceId = event?.event.attendanceId
-  const { data: attendance } = trpc.event.attendance.getAttendance.useQuery({
-    id: attendanceId || "",
-  })
-  const { data: pools } = trpc.event.attendance.getPoolsByAttendanceId.useQuery({
-    id: attendanceId || "",
-  })
+  return <_EventDetailPage user={session.user} eventId={props.id} />
+}
 
-  const utils = trpc.useUtils()
-  const unattendMutation = trpc.event.attendance.deregisterForEvent.useMutation({
-    onSuccess: () => {
-      utils.event.attendance.getPoolsByAttendanceId.invalidate({
-        id: attendanceId || "",
-      })
-      utils.event.attendance.isAttending.invalidate({
-        attendanceId: attendance?.id || "",
-        userId: session.user.id,
-      })
-    },
-  })
-  const attendMutation = trpc.event.attendance.registerForEvent.useMutation({
-    onSuccess: () => {
-      utils.event.attendance.getPoolsByAttendanceId.invalidate({ id: attendanceId || "" })
-      utils.event.attendance.isAttending.invalidate({
-        attendanceId: attendance?.id || "",
-        userId: session.user.id,
-      })
-    },
-  })
 
-  const { data: selfAttendee } = trpc.event.attendance.isAttending.useQuery({
-    attendanceId: attendance?.id || "",
-    userId: session.user.id,
-  })
+interface Props {
+  eventId: string
+  user: NonNullable<Session["user"]>
+}
+const _EventDetailPage: FC<Props> = ({eventId, user}) => {
 
-  const STATUS = "OPEN"
+  const {
+    attendance,
+    pools,
+    statusData,
+    myGroups,
+    otherGroups,
+    isAttending,
+    attend,
+    unAttend,
+    event
+   } = useEventDetail(user, eventId)
 
-  const inTenMinutes = new Date()
-  inTenMinutes.setMinutes(inTenMinutes.getMinutes() + 10)
-
-  const statusData = getStatusCardData(STATUS, inTenMinutes)
-
-  const myGroups = pools?.find((a) => a.yearCriteria.includes(session.user.studyYear))
-  const otherGroups = pools?.filter((group) => group.id !== myGroups?.id)
-
-  const isAttending = Boolean(selfAttendee)
-
-  const attend = () => {
-    if (!session.user.id) {
-      return
-    }
-
-    if (!attendance?.id) {
-      return
-    }
-
-    attendMutation.mutate({
-      attendanceId: attendance.id,
-      userId: session.user.id,
-    })
-  }
-
-  const unAttend = () => {
-    if (!session.user.id) {
-      return
-    }
-
-    if (!selfAttendee?.id) {
-      return
-    }
-
-    if (!attendance?.id) {
-      return
-    }
-
-    unattendMutation.mutate({
-      id: selfAttendee.id,
-      attendanceId: attendance.id,
-    })
-  }
 
   return (
     <div>

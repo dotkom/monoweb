@@ -1,5 +1,12 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { AttendanceWriteSchema, CompanySchema, EventCommitteeSchema, EventSchema, EventWriteSchema, UserSchema } from "@dotkomonline/types"
+import {
+  AttendanceWriteSchema,
+  CompanySchema,
+  EventCommitteeSchema,
+  EventSchema,
+  EventWriteSchema,
+  UserSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"

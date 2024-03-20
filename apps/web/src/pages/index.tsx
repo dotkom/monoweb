@@ -9,7 +9,7 @@ export interface Session {
     email: string
     name: string
     image?: string
-    studyYear: number | null
+    studyYear: number
   } | null
 }
 
@@ -20,9 +20,11 @@ export const useSession = (): Session => {
     enabled: Boolean(session?.user.id),
   })
 
-  const user = session?.user ? { studyYear: data?.studyYear ?? null, ...session.user } : null
+  let user = null;
 
-  user
+  if(data?.studyYear !== null && data?.studyYear !== undefined) {
+    user = session?.user ? { studyYear: data.studyYear, ...session.user } : null
+  }
 
   return {
     isLoading: dbCallLoading || status === "loading",
