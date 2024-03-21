@@ -10,7 +10,7 @@ export interface Session {
     name: string
     image?: string
     studyYear: number
-  } | null
+  }
 }
 
 export const useSession = (): Session => {
@@ -23,7 +23,7 @@ export const useSession = (): Session => {
   if (!data?.studyYear || !session?.user) {
     return {
       isLoading: dbCallLoading || status === "loading",
-      user: null,
+      user: {} as unknown as Session["user"],
     }
   }
 

@@ -1,9 +1,33 @@
-import { AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
+import {
+  Attendance,
+  AttendancePool,
+  AttendanceWrite,
+  Committee,
+  type Event,
+  EventCommittee,
+  type EventId,
+  type EventWrite,
+} from "@dotkomonline/types"
 import { type Cursor } from "../../utils/db-utils"
+import { AttendancePoolService } from "../attendance/attendance-pool-service"
 import { AttendanceService } from "../attendance/attendance-service"
+import { EventCommitteeService } from "./event-committee-service"
 import { EventNotFoundError } from "./event-error"
-import { type EventInsert } from "./event-repository"
-import { type EventRepository } from "./event-repository.js"
+import { EventRepository, type EventInsert } from "./event-repository"
+
+type ReturnType =
+  | {
+      hasAttendance: false
+      event: Event
+      eventCommittees: Committee[]
+    }
+  | {
+      hasAttendance: true
+      event: Event
+      eventCommittees: Committee[]
+      attendance: Attendance
+      pools: AttendancePool[]
+    }
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -13,12 +37,15 @@ export interface EventService {
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
+  getEventDetailsPageData(id: EventId): Promise<ReturnType>
 }
 
 export class EventServiceImpl implements EventService {
   constructor(
     private readonly eventRepository: EventRepository,
-    private readonly attendanceService: AttendanceService
+    private readonly attendanceService: AttendanceService,
+    private readonly attendancePoolService: AttendancePoolService,
+    private readonly eventCommitteeService: EventCommitteeService
   ) {}
 
   async addAttendance(eventId: EventId, obj: AttendanceWrite) {
@@ -73,5 +100,33 @@ export class EventServiceImpl implements EventService {
     }
     const event = await this.eventRepository.update(id, toInsert)
     return event
+  }
+
+  async getEventDetailsPageData(id: EventId): Promise<ReturnType> {
+    const event = await this.getEventById(id)
+    const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
+
+    if (event.attendanceId !== null) {
+      const attendance = await this.attendanceService.getById(event.attendanceId)
+      if (!attendance) {
+        throw new Error("Attendance not found")
+      }
+
+      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
+
+      return {
+        hasAttendance: true,
+        event,
+        eventCommittees,
+        attendance,
+        pools,
+      }
+    }
+
+    return {
+      hasAttendance: false,
+      event,
+      eventCommittees: eventCommittees,
+    }
   }
 }
