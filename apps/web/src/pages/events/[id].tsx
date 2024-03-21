@@ -13,7 +13,7 @@ import { EventInfoBox } from "./components/EventInfoBox"
 const EventDetailPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const { user, isLoading: userIsLoading } = useSession()
 
-  const { data: event, isLoading: eventIsLoading } = trpc.event.getEventDetailData.useQuery(props.id)
+  const { data: event, isLoading: eventIsLoading } = trpc.event.getWebEventDetailData.useQuery(props.id)
 
   if (eventIsLoading || userIsLoading) {
     return <div>Laster</div>

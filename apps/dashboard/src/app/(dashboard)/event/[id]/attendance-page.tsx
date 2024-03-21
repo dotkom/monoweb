@@ -39,7 +39,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
 
   return (
     <Box>
-      <Title order={5}>Ingen påmelding</Title>
+      <Title order={5}>Lag påmelding</Title>
       <AttendanceForm />
     </Box>
   )

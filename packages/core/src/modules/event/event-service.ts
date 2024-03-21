@@ -15,6 +15,14 @@ import { EventCommitteeService } from "./event-committee-service"
 import { EventNotFoundError } from "./event-error"
 import { EventRepository, type EventInsert } from "./event-repository"
 
+type ReturnType2 = {
+  event: Event
+  eventCommittees: Committee[]
+  attendance: Attendance | null
+  pools: AttendancePool[] | null
+  hasAttendance: boolean
+}
+
 type ReturnType =
   | {
       hasAttendance: false
@@ -37,7 +45,8 @@ export interface EventService {
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
-  getEventDetailsPageData(id: EventId): Promise<ReturnType>
+  getWebEventDetailsPageData(id: EventId): Promise<ReturnType>
+  getEventDetailsPageData(id: EventId): Promise<ReturnType2>
 }
 
 export class EventServiceImpl implements EventService {
@@ -102,7 +111,37 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEventDetailsPageData(id: EventId): Promise<ReturnType> {
+  async getEventDetailsPageData(id: EventId): Promise<ReturnType2> {
+    const event = await this.getEventById(id)
+    const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
+
+    if (event.attendanceId !== null) {
+      const attendance = await this.attendanceService.getById(event.attendanceId)
+      if (!attendance) {
+        throw new Error("Attendance not found")
+      }
+
+      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
+
+      return {
+        event,
+        eventCommittees,
+        attendance,
+        pools,
+        hasAttendance: true,
+      }
+    }
+
+    return {
+      event,
+      eventCommittees: eventCommittees,
+      attendance: null,
+      pools: null,
+      hasAttendance: false,
+    }
+  }
+
+  async getWebEventDetailsPageData(id: EventId): Promise<ReturnType> {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
 

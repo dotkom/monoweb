@@ -18,7 +18,6 @@ export interface AttendanceService {
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
-  isAttending(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
   merge(id: AttendanceId): Promise<void>
 }
 
@@ -30,10 +29,6 @@ export class AttendanceServiceImpl implements AttendanceService {
     private readonly attendancePoolRepository: AttendancePoolRepository
   ) {
     this.attendanceRepository = attendanceRepository
-  }
-
-  async isAttending(userId: UserId, attendanceId: EventId) {
-    return this.attendeeRepository.getByUserId(userId, attendanceId)
   }
 
   async update(obj: AttendanceWrite, id: AttendanceId) {

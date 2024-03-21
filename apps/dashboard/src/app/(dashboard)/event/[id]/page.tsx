@@ -63,6 +63,7 @@ const SIDEBAR_LINKS = [
 export default function EventDetailsPage() {
   const { event } = useEventDetailsContext()
   const router = useRouter()
+  console.log("loading")
   return (
     <Box p="md">
       <Group>

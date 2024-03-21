@@ -11,7 +11,7 @@ import {
   useFormBuilder,
 } from "../../form"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
+const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   start: new Date(),
   end: new Date(),
   description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
@@ -20,6 +20,11 @@ const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
   subtitle: null,
   committeeIds: [],
   extras: [],
+  public: false,
+  status: "TBA",
+  title: "",
+  type: "SOCIAL",
+  attendanceId: null,
 }
 
 interface UseEventWriteFormProps {

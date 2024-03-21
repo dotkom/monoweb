@@ -10,14 +10,14 @@ import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
-  isAttending: protectedProcedure
+  getAttendee: protectedProcedure
     .input(
       z.object({
         userId: UserSchema.shape.id,
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.isAttending(input.userId, input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendeeService.getByUserId(input.userId, input.attendanceId)),
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.attendancePoolService.create(input)),

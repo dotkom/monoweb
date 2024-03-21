@@ -11,7 +11,7 @@ export const AttendeesPage: FC = () => {
   const { attendance } = useEventDetailsContext()
 
   if (!attendance) {
-    return <div>Ingen påmelding</div>
+    return <div>Arrangementet har ikke påmelding</div>
   }
 
   return <Page attendance={attendance} />
