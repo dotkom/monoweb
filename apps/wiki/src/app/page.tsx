@@ -3,9 +3,40 @@ import { Tiptap } from "../components/tiptap"
 export default function Page() {
   return (
     <>
-      <h1>Hello world</h1>
-      <Tiptap />
-      <p>Listview/graphview of pages with subsequent under-pages</p>
+      <div className="p-20">
+        <Tiptap
+          access={true}
+          json={{
+            type: "doc",
+            content: [
+              {
+                type: "heading",
+                attrs: {
+                  level: 1,
+                },
+                content: [
+                  {
+                    type: "text",
+                    text: "Hello World! 🌎️",
+                  },
+                ],
+              },
+              {
+                type: "paragraph",
+                attrs: {
+                  level: 1,
+                },
+                content: [
+                  {
+                    type: "text",
+                    text: "Test",
+                  },
+                ],
+              },
+            ],
+          }}
+        />
+      </div>
     </>
   )
 }

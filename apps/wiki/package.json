@@ -19,6 +19,9 @@
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@iconify/react": "^4.1.1",
+    "@tiptap/extension-color": "^2.2.4",
+    "@tiptap/extension-list-item": "^2.2.4",
+    "@tiptap/extension-text-style": "^2.2.4",
     "@tiptap/pm": "^2.2.4",
     "@tiptap/react": "^2.2.4",
     "@tiptap/starter-kit": "^2.2.4",
@@ -31,6 +34,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
     "@dotkomonline/config": "workspace:^",
+    "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^18.18.13",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
