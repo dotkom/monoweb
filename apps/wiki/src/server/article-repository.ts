@@ -1,19 +1,7 @@
 "use server"
 
-import { z } from "zod"
 import { DynamoDBDocumentClient, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb"
-
-export type Article = z.infer<typeof ArticleSchema>
-export type ArticleId = Article["Id"]
-export const ArticleSchema = z.object({
-  Id: z.string().uuid(),
-  ParentId: z.string().uuid().or(z.literal("<root>")),
-  Slug: z.string().min(1),
-  Title: z.string().min(1),
-})
-
-export type ArticleWrite = z.infer<typeof ArticleWriteSchema>
-const ArticleWriteSchema = ArticleSchema.omit({ Id: true })
+import { Article, ArticleId, ArticleSchema, ArticleWrite } from "./types"
 
 export interface ArticleRepository {
   createArticle(input: ArticleWrite): Promise<ArticleId>

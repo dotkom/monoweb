@@ -1,5 +1,6 @@
-import { Article, ArticleId, ArticleRepository, ArticleWrite } from "./article-repository"
+import { ArticleRepository } from "./article-repository"
 import { ArticleContentRepository } from "./article-content-repository"
+import { Article, ArticleId, ArticleWrite } from "./types"
 
 export interface ArticleService {
   getArticleContentById(id: ArticleId): Promise<string>

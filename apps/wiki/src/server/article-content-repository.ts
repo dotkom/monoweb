@@ -1,5 +1,6 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
-import { ArticleId } from "./article-repository"
+
+import { ArticleId } from "./types"
 
 export interface ArticleContentRepository {
   getArticleContentById(id: ArticleId): Promise<string>
