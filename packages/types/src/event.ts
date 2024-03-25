@@ -114,3 +114,85 @@ export const AttendeeWriteSchema = AttendeeSchema.omit({
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
+
+const EventFeedbackSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  eventId: z.string(),
+  deadline: z.date(),
+})
+
+export type EventFeedbackId = EventFeedback["id"]
+export type EventFeedback = z.infer<typeof EventFeedbackSchema>
+
+export const EventFeedbackWriteSchema = EventFeedbackSchema.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
+
+export type EventFeedbackWrite = z.infer<typeof EventFeedbackWriteSchema>
+
+const EventFeedbackQuestionTypeSchema = z.enum(["text", "multiple_choice"])
+
+export type EventFeedbackQuestionType = z.infer<typeof EventFeedbackQuestionTypeSchema>
+
+const EventFeedbackQuestionSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  questionText: z.string(),
+  questionType: EventFeedbackQuestionTypeSchema,
+  feedbackId: z.string(),
+})
+
+export type EventFeedbackQuestionId = EventFeedbackQuestion["id"]
+export type EventFeedbackQuestion = z.infer<typeof EventFeedbackQuestionSchema>
+
+export const EventFeedbackQuestionWriteSchema = EventFeedbackQuestionSchema.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
+
+export type EventFeedbackQuestionWrite = z.infer<typeof EventFeedbackQuestionWriteSchema>
+
+const EventFeedbackAnswerSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  feedbackQuestionId: z.string(),
+  userId: z.string(),
+  answer: z.any(),
+})
+
+export type EventFeedbackAnswerId = EventFeedbackAnswer["id"]
+export type EventFeedbackAnswer = z.infer<typeof EventFeedbackAnswerSchema>
+
+export const EventFeedbackAnswerWriteSchema = EventFeedbackAnswerSchema.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
+
+export type EventFeedbackAnswerWrite = z.infer<typeof EventFeedbackAnswerWriteSchema>
+
+const EventFeedbackQuestionCompanySchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  questionId: z.string(),
+  companyId: z.string(),
+})
+
+export type EventFeedbackQuestionCompanyId = EventFeedbackQuestionCompany["id"]
+export type EventFeedbackQuestionCompany = z.infer<typeof EventFeedbackQuestionCompanySchema>
+
+export const EventFeedbackQuestionCompanyWriteSchema = EventFeedbackQuestionCompanySchema.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
+
+export type EventFeedbackQuestionCompanyWrite = z.infer<typeof EventFeedbackQuestionCompanyWriteSchema>

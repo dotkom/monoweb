@@ -4,6 +4,8 @@ export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA"
 
 export type EventType = "ACADEMIC" | "BEDPRES" | "COMPANY" | "SOCIAL"
 
+export type FeedbackQuestionType = "multiple_choice" | "text"
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
@@ -125,10 +127,45 @@ export interface EventCompany {
   eventId: string
 }
 
+export interface Feedback {
+  createdAt: Generated<Timestamp>
+  deadline: Timestamp
+  eventId: string | null
+  id: Generated<string>
+  updatedAt: Generated<Timestamp>
+}
+
+export interface FeedbackAnswer {
+  answer: Json
+  createdAt: Generated<Timestamp>
+  feedbackQuestionId: string | null
+  id: Generated<string>
+  updatedAt: Generated<Timestamp>
+  userId: string | null
+}
+
+export interface FeedbackQuestion {
+  createdAt: Generated<Timestamp>
+  feedbackId: string | null
+  id: Generated<string>
+  questionText: string
+  questionType: FeedbackQuestionType
+  updatedAt: Generated<Timestamp>
+}
+
+export interface FeedbackQuestionCompany {
+  companyId: string | null
+  createdAt: Generated<Timestamp>
+  id: Generated<string>
+  questionId: string | null
+  updatedAt: Generated<Timestamp>
+}
+
 export interface InterestGroup {
   createdAt: Generated<Timestamp>
-  description: string | null
+  description: string
   id: Generated<string>
+  isActive: boolean
   link: string | null
   name: string
   updatedAt: Generated<Timestamp>
@@ -278,6 +315,10 @@ export interface DB {
   event: Event
   eventCommittee: EventCommittee
   eventCompany: EventCompany
+  feedback: Feedback
+  feedbackAnswer: FeedbackAnswer
+  feedbackQuestion: FeedbackQuestion
+  feedbackQuestionCompany: FeedbackQuestionCompany
   interestGroup: InterestGroup
   jobListing: JobListing
   jobListingLocation: JobListingLocation
