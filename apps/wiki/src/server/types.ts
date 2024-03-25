@@ -8,5 +8,13 @@ export const ArticleSchema = z.object({
   Slug: z.string().min(1),
   Title: z.string().min(1),
 })
+
 export type ArticleWrite = z.infer<typeof ArticleWriteSchema>
 export const ArticleWriteSchema = ArticleSchema.omit({ Id: true })
+
+export type Attachment = z.infer<typeof AttachmentSchema>
+export const AttachmentSchema = z.object({
+  key: z.string(),
+  url: z.string().url(),
+  fields: z.record(z.string()),
+})

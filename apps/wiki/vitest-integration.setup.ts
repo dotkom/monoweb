@@ -3,11 +3,11 @@ import { createServiceLayer, ServiceLayer } from "./src/server/server"
 import { CreateBucketCommand, DeleteBucketCommand, S3Client } from "@aws-sdk/client-s3"
 import { CreateTableCommand, DeleteTableCommand, DescribeTableCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb"
 
-const s3BucketName = `wiki-test-${crypto.randomUUID()}`
-const dynamoTableName = `wiki-test-${crypto.randomUUID()}`
+export const s3BucketName = `wiki-test-${crypto.randomUUID()}`
+export const dynamoTableName = `wiki-test-${crypto.randomUUID()}`
 
-const s3Client = new S3Client({})
-const dynamoDbClient = new DynamoDBClient({})
+export const s3Client = new S3Client({})
+export const dynamoDbClient = new DynamoDBClient({})
 
 export const createServiceLayerForTesting = (): ServiceLayer =>
   createServiceLayer({
