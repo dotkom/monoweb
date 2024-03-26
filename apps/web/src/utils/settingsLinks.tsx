@@ -1,4 +1,4 @@
-export const profileItems = [
+export const settingsItems = [
   {
     title: "Min Profil",
     slug: "/settings",
@@ -28,11 +28,5 @@ export const profileItems = [
     slug: "/settings/membership",
     icon: "tabler:award",
     description: "Se ditt medlemskap",
-  },
-  {
-    title: "Prikker & Suspensjoner",
-    slug: "/settings/penalties",
-    icon: "tabler:circle-x",
-    description: "Skal fjernes",
   },
 ]

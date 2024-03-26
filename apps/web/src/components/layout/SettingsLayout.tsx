@@ -1,6 +1,6 @@
 import { type FC, type PropsWithChildren, useState } from "react"
 import { usePathname } from "next/navigation"
-import { profileItems } from "@/utils/profileLinks"
+import { settingsItems } from "@/utils/settingsLinks"
 import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer"
 import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/SettingsMenuContainer"
 import { ProfileContext } from "../views/SettingsView/context/ProfileContext"
@@ -12,7 +12,7 @@ interface PageTitleProps {
 
 const SettingsLayout: FC<PropsWithChildren> = ({ children }) => {
   const currentSlug = usePathname()
-  const currentLink = profileItems.find((item) => item.slug === currentSlug)
+  const currentLink = settingsItems.find((item) => item.slug === currentSlug)
   const [editMode, setEditMode] = useState(false)
 
   return (
