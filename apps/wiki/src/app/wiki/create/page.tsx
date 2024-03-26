@@ -5,6 +5,6 @@ type PathParams = {
 }
 
 export default function CreatePage({ params }: PathParams) {
-  const path = params.path.join("/")
+  const path = params?.path?.join("/")
   return <h1>This is the create page for {path}</h1>
 }
