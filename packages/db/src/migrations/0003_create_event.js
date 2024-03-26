@@ -13,6 +13,7 @@ export async function up(db) {
     .execute()
 
   await createTableWithDefaults("attendance_pool", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    .addColumn("title", "text", (col) => col.notNull())
     .addColumn("attendanceId", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade").notNull())
     .addColumn("yearCriteria", "json")
     .addColumn("limit", "integer", (col) => col.notNull())

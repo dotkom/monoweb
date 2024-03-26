@@ -19,7 +19,7 @@ export interface AttendanceService {
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
-  merge(id: AttendanceId, now: Date): Promise<void>
+  merge(id: AttendanceId): Promise<void>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -76,8 +76,8 @@ export class AttendanceServiceImpl implements AttendanceService {
     return this.attendanceRepository.getById(id)
   }
 
-  async merge(id: AttendanceId, now: Date): Promise<void> {
-    // Step 1: Validate the merge operation can proceed
+  async merge(id: AttendanceId): Promise<void> {
+    // Step 1: Validate the 
     const attendance = await this.attendanceRepository.getById(id)
 
     if (!attendance) {
@@ -92,6 +92,7 @@ export class AttendanceServiceImpl implements AttendanceService {
       attendanceId: id,
       limit: combinedCapacity,
       yearCriteria: combinedYearCriteria,
+      title: "Påmelding",
     })
 
     const nonTargetWaitlistAttendeePenalty = attendance.mergeTime.getTime() - attendance.registerStart.getTime()

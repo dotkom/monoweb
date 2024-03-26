@@ -16,6 +16,7 @@ export interface CreatePoolFormProps {
 export const CreatePoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   limit: z.number(),
+  title: z.string().min(1),
 })
 export type CreatePoolFormSchema = z.infer<typeof CreatePoolFormSchema>
 

@@ -10,6 +10,7 @@ export const AttendancePoolSchema = z.object({
   attendanceId: z.string().ulid(),
   yearCriteria: YearCriteriaSchema,
   numAttendees: z.number(),
+  title: z.string().min(1),
 })
 
 export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({

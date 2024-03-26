@@ -16,6 +16,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
       limit: values.limit,
       yearCriteria: values.yearCriteria,
       attendanceId: innerProps.attendanceId,
+      title: values.title
     })
   }
   return pools ? (
@@ -23,6 +24,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
       defaultValues={{
         yearCriteria: [],
         limit: 0,
+        title: "",
       }}
       onClose={onClose}
       mode="create"

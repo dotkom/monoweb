@@ -50,6 +50,7 @@ const getFakePool = (write: Partial<AttendancePoolWrite>): AttendancePoolWrite =
   attendanceId: write.attendanceId ?? ulid(),
   limit: write.limit ?? 10,
   yearCriteria: write.yearCriteria ?? [0, 1, 2],
+  title: write.title ?? "Pool title",
 })
 
 const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
@@ -410,7 +411,7 @@ describe("attendance", () => {
       expect(attendee).not.toBeNull()
     }
 
-    await core.attendanceService.merge(attendance.id, now)
+    await core.attendanceService.merge(attendance.id)
 
     const _waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
 
