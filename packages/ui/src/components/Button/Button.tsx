@@ -1,18 +1,20 @@
-import { cva } from "cva"
-import { type VariantProps } from "cva"
-import React, { forwardRef } from "react"
-import { cn } from "../../utils"
-import { Icon } from "../Icon"
+import { cva } from "cva";
+import { type VariantProps } from "cva";
+import { cn } from "../../utils";
+import { Icon } from "../Icon";
+import { ReactNode } from "react";
 
-type Color = "amber" | "blue" | "green" | "red" | "slate"
+type Color = "amber" | "blue" | "green" | "red" | "slate";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonStyles> {
-  color?: Color
-  icon?: React.ReactNode
-  loading?: boolean
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonStyles> {
+  color?: Color;
+  icon?: ReactNode;
+  loading?: boolean;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
+export const Button = (props: ButtonProps) => (
   <button
     {...props}
     disabled={props.disabled || props.loading}
@@ -21,23 +23,26 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
       props.color && getColorStyles(props.variant, props.color),
       props.color === "amber" && props.variant === "solid" && "text-slate-1",
       "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40",
-      props.className
+      props.className,
     )}
     type={props.type}
-    ref={ref}
   >
     <div className="flex items-center justify-center">
       {(props.loading || props.icon) && (
         <i className="mr-1 flex">
-          {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+          {props.loading ? (
+            <Icon width={16} icon="tabler:loader-2" className="animate-spin" />
+          ) : (
+            props.icon
+          )}
         </i>
       )}
       <span className="text-inherit">{props.children}</span>
     </div>
   </button>
-))
+);
 
-Button.displayName = "Button"
+Button.displayName = "Button";
 
 export const buttonStyles = cva(
   [
@@ -56,7 +61,8 @@ export const buttonStyles = cva(
       variant: {
         gradient: "bg-gradient-to-r from-[#0D5474] to-[#153E75] text-white ",
         brand: "bg-brand text-white hover:bg-brand-dark active:bg-brand-darker",
-        outline: "bg-transparent border-2 border-slate-11 hover:bg-slate-4 focus:ring-blue-10 text-slate-11",
+        outline:
+          "bg-transparent border-2 border-slate-11 hover:bg-slate-4 focus:ring-blue-10 text-slate-11",
         solid: "text-slate-12",
         light: "text-current",
         subtle: "bg-transparent",
@@ -67,18 +73,21 @@ export const buttonStyles = cva(
       variant: "brand",
       size: "md",
     },
-  }
-)
+  },
+);
 
-export const getColorStyles = (variant: VariantProps<typeof buttonStyles>["variant"], color: Color) => {
+export const getColorStyles = (
+  variant: VariantProps<typeof buttonStyles>["variant"],
+  color: Color,
+) => {
   switch (variant) {
     case "solid":
-      return `bg-${color}-9 hover:bg-${color}-10` as const
+      return `bg-${color}-9 hover:bg-${color}-10` as const;
     case "light":
-      return `bg-${color}-4 text-${color}-11 hover:bg-${color}-5` as const
+      return `bg-${color}-4 text-${color}-11 hover:bg-${color}-5` as const;
     case "subtle":
-      return `bg-transparent text-${color}-11 hover:bg-${color}-2` as const
+      return `bg-transparent text-${color}-11 hover:bg-${color}-2` as const;
     default:
-      return ""
+      return "";
   }
-}
+};
