@@ -104,19 +104,10 @@ export class AttendanceServiceImpl implements AttendanceService {
       throw new IllegalStateError("Expected waitlist attendees to be non-null in merge")
     }
 
-    const newWaitlist = []
-
-    // expect length to be
-
-    // ### Rules for forming the waiting list for the merge pool
-
-    // > TODO: This needs to be elaborated upon with more details.
-
     const isTargetUser = (att: WaitlistAttendee) => targetStudyYears.includes(att.studyYear)
-    const isReserveUser = (att: WaitlistAttendee) => !isTargetUser(att)
 
     const getEffectiveRegisterTime = (att: WaitlistAttendee) => {
-      if (isReserveUser(att)) return new Date(att.registeredAt.getTime() + nonTargetWaitlistAttendeePenalty)
+      if (!isTargetUser(att)) return new Date(att.registeredAt.getTime() + nonTargetWaitlistAttendeePenalty)
       return att.registeredAt
     }
 
@@ -160,8 +151,4 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     // 4. Reserve marked users
   }
-
-  // Note: This is a simplified example. Real-world logic might include additional considerations,
-  // such as handling users with special priorities, dealing with errors, and ensuring
-  // atomicity of database operations.
 }
