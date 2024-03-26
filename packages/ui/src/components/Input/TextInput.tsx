@@ -1,15 +1,17 @@
 import { Label } from "@radix-ui/react-label"
 import { cva } from "cva"
 import { forwardRef } from "react"
+import { cn } from "../../utils"
 
 export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string
   label?: string
   error?: boolean | string
+  width?: string
 }
 
-export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, error, ...props }, ref) => (
-  <div className="flex flex-col">
+export const TextInput = forwardRef<HTMLInputElement, InputProps>(({ label, error, width, ...props }, ref) => (
+  <div className={cn("flex flex-col", width)}>
     {label && (
       <Label htmlFor={props.id} className="mb-2">
         {label} {props.required && <span className="text-red-11">*</span>}

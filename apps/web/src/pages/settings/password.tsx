@@ -1,12 +1,12 @@
 import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
+import SettingsLayout from "@/components/layout/SettingsLayout"
 import { type NextPageWithLayout } from "../_app"
 
 const PasswordPage: NextPageWithLayout = () => <div>Password</div>
 
 PasswordPage.getLayout = (page) => (
   <MainLayout>
-    <ProfileLayout>{page}</ProfileLayout>
+    <SettingsLayout>{page}</SettingsLayout>
   </MainLayout>
 )
 

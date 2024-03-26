@@ -91,9 +91,9 @@ const linkGroups: LinkDetail[][] = [
     },
     {
       icon: "tabler:settings",
-      label: "Instillinger",
+      label: "Innstillinger",
       shortcut: "⌘S",
-      href: "/profile",
+      href: "/settings",
     },
   ],
   [

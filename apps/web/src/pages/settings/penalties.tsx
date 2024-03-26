@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@d
 import { DotFilledIcon } from "@radix-ui/react-icons"
 import { type FC } from "react"
 import { addMinutes, format } from "date-fns"
-import ProfileLayout from "@/components/layout/ProfileLayout"
+import SettingsLayout from "@/components/layout/SettingsLayout"
 import MainLayout from "@/components/layout/MainLayout"
 import PenaltyRules from "@/utils/penalty-rules"
 import { type NextPageWithLayout } from "../_app"
@@ -73,7 +73,7 @@ const PenaltiesPage: NextPageWithLayout = () => (
 
 PenaltiesPage.getLayout = (page) => (
   <MainLayout>
-    <ProfileLayout>{page}</ProfileLayout>
+    <SettingsLayout>{page}</SettingsLayout>
   </MainLayout>
 )
 

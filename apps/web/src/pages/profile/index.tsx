@@ -1,20 +1,15 @@
-import { type GetServerSideProps, type InferGetServerSidePropsType } from "next"
-import { getServerSession, type User } from "next-auth"
-import { authOptions } from "@dotkomonline/auth/src/web.app"
 import MainLayout from "@/components/layout/MainLayout"
-import ProfileLayout from "@/components/layout/ProfileLayout"
-import { ProfileLanding } from "@/components/views/ProfileView/components"
-import { type NextPageWithLayout } from "../_app"
+import { authOptions } from "@dotkomonline/auth/src/web.app"
+import { InferGetServerSidePropsType, GetServerSideProps } from "next"
+import { User, getServerSession } from "next-auth"
+import { NextPageWithLayout } from "../_app"
+import ProfilePoster from "@/components/views/ProfileView"
 
-const LandingPage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => (
-  <ProfileLanding user={user} />
+const ProfilePage: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ user }) => (
+  <ProfilePoster user={user} />
 )
 
-LandingPage.getLayout = (page) => (
-  <MainLayout>
-    <ProfileLayout>{page}</ProfileLayout>
-  </MainLayout>
-)
+ProfilePage.getLayout = (page) => <MainLayout>{page}</MainLayout>
 
 export const getServerSideProps: GetServerSideProps<{ user: User }> = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions)
@@ -33,4 +28,4 @@ export const getServerSideProps: GetServerSideProps<{ user: User }> = async ({ r
   }
 }
 
-export default LandingPage
+export default ProfilePage
