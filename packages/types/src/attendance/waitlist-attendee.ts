@@ -10,6 +10,14 @@ export const WaitlistAttendeeSchema = z.object({
   position: z.number(),
   isPunished: z.boolean(),
   registeredAt: z.date(),
+
+  studyYear: z.number().int(),
+
+  active: z.boolean(),
+
+  attendancePoolId: z.string().ulid(),
+
+  name: z.string(),
 })
 
 export const WaitlistAttendeeWriteSchema = WaitlistAttendeeSchema.omit({

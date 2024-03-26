@@ -1,4 +1,5 @@
 import {
+  WaitlistAttendee,
   type Attendance,
   type AttendanceId,
   type AttendanceWrite,
@@ -11,14 +12,14 @@ import { AttendanceRepository } from "./attendance-repository"
 import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendanceValidationError, CantDeleteAttendanceError } from "./attendance-error"
-import { NotImplementedError } from "../../error"
+import { IllegalStateError, NotImplementedError } from "../../error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
-  merge(id: AttendanceId): Promise<void>
+  merge(id: AttendanceId, now: Date): Promise<void>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -75,8 +76,92 @@ export class AttendanceServiceImpl implements AttendanceService {
     return this.attendanceRepository.getById(id)
   }
 
-  async merge(id: AttendanceId) {
-    // TODO: Implement this
-    throw new NotImplementedError("Merge functionality is not yet implemented")
+  async merge(id: AttendanceId, now: Date): Promise<void> {
+    // Step 1: Validate the merge operation can proceed
+    const attendance = await this.attendanceRepository.getById(id)
+
+    if (!attendance) {
+      throw new IllegalStateError("Tried to merge a non-existent attendance")
+    }
+
+    // Step 2: Create a merge pool with combined capacities and rules
+    const pools = await this.attendancePoolRepository.getByAttendanceId(id)
+    const combinedCapacity = pools.reduce((acc, pool) => acc + pool.limit, 0)
+    const combinedYearCriteria = Array.from(new Set(pools.flatMap((pool) => pool.yearCriteria)))
+    const mergePool = await this.attendancePoolRepository.create({
+      attendanceId: id,
+      limit: combinedCapacity,
+      yearCriteria: combinedYearCriteria,
+    })
+
+    const nonTargetWaitlistAttendeePenalty = attendance.mergeTime.getTime() - attendance.registerStart.getTime()
+    const targetPools = pools.filter((pool) => pool.limit > 0)
+    const targetStudyYears = targetPools.flatMap((pool) => pool.yearCriteria)
+
+    const waitlistAttendees = await this.waitlistAttendeeRepository.getByAttendanceId(id)
+
+    if (waitlistAttendees === null) {
+      throw new IllegalStateError("Expected waitlist attendees to be non-null in merge")
+    }
+
+    const newWaitlist = []
+
+    // expect length to be
+
+    // ### Rules for forming the waiting list for the merge pool
+
+    // > TODO: This needs to be elaborated upon with more details.
+
+    const isTargetUser = (att: WaitlistAttendee) => targetStudyYears.includes(att.studyYear)
+    const isReserveUser = (att: WaitlistAttendee) => !isTargetUser(att)
+
+    const getEffectiveRegisterTime = (att: WaitlistAttendee) => {
+      if (isReserveUser(att)) return new Date(att.registeredAt.getTime() + nonTargetWaitlistAttendeePenalty)
+      return att.registeredAt
+    }
+
+    const effectiveRegisterTimes = waitlistAttendees.map((att) => {
+      return {
+        att,
+        effectiveRegisterTime: getEffectiveRegisterTime(att),
+      }
+    })
+
+    const finalWaitlist = effectiveRegisterTimes
+      .sort((a, b) => a.effectiveRegisterTime.getTime() - b.effectiveRegisterTime.getTime())
+      .map((e) => e.att)
+
+    for (let i = 0; i < finalWaitlist.length; i++) {
+      const att = finalWaitlist[i]
+      // update previous waitlist attendees to be inactive
+
+      await this.waitlistAttendeeRepository.setInactive(att.id)
+
+      const inserted = await this.waitlistAttendeeRepository.create({
+        attendanceId: id,
+        userId: att.userId,
+        position: i,
+        isPunished: att.isPunished,
+        registeredAt: att.registeredAt,
+        studyYear: att.studyYear,
+        active: true,
+        attendancePoolId: mergePool.id,
+        name: att.name,
+      })
+    }
+
+    // The following are the prioritizatoin for the ordering of the waiting list for the merge pool. Users within each gruop are ordered by the time they registered on the waiting list.
+
+    // 1. Target users on the waiting list
+
+    // 2. Marked target users
+
+    // 3. Reserve users
+
+    // 4. Reserve marked users
   }
+
+  // Note: This is a simplified example. Real-world logic might include additional considerations,
+  // such as handling users with special priorities, dealing with errors, and ensuring
+  // atomicity of database operations.
 }

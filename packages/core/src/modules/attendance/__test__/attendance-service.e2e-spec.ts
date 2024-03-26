@@ -1,5 +1,12 @@
 import { createEnvironment } from "@dotkomonline/env"
-import { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
+import {
+  AttendancePoolWrite,
+  AttendanceWrite,
+  AttendeeSchema,
+  AttendeeWrite,
+  EventWrite,
+  UserWrite,
+} from "@dotkomonline/types"
 import crypto from "crypto"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
@@ -8,6 +15,21 @@ import { createServiceLayer, type ServiceLayer } from "../../core"
 import { CantDeleteAttendanceError, AttendanceValidationError } from "../attendance-error"
 import { AttendeeRegistrationError, AttendeeDeregistrationError } from "../attendee-error"
 import { CantDeletePoolError, AttendancePoolValidationError } from "../attendance-pool-error"
+import assert from "../../../../assert"
+
+type LengthArray<T, N extends number, R extends T[] = []> = number extends N
+  ? T[]
+  : R["length"] extends N
+    ? R
+    : LengthArray<T, N, [T, ...R]>
+
+const assertIsWaitlistAttendee = (attendee: unknown) => {
+  expect(attendee).toHaveProperty("isPunished")
+}
+
+const assertIsAttendee = (attendee: unknown) => {
+  expect(attendee).not.toHaveProperty("isPunished")
+}
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
   auth0Sub: write.auth0Sub ?? crypto.randomUUID(),
@@ -35,6 +57,7 @@ const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
   attendancePoolId: write.attendancePoolId ?? ulid(),
   attended: write.attended ?? false,
   extrasChoices: write.extrasChoices ?? [],
+  attendanceId: write.attendanceId ?? ulid(),
 })
 
 const getFakeEvent = (write: Partial<EventWrite>): EventWrite => ({
@@ -81,7 +104,7 @@ const setupFakeFullAttendance = async (
   for (let i = 0; i < _users.length; i++) {
     const _user = _users[i]
     const email = `user${i}@local.com`
-    const fakeUser = getFakeUser({ ..._users, studyYear: _user.studyYear, email })
+    const fakeUser = getFakeUser({ ..._user, studyYear: _user.studyYear, email })
     const user = await core.userService.createUser(fakeUser)
     users.push(user)
   }
@@ -190,12 +213,14 @@ describe("attendance", () => {
 
     const pool = pools[0]
     // attend user 1 to pool
-    await core.attendeeService.registerForEvent(users[0].id, pool.attendanceId, new Date())
+    const attendee = await core.attendeeService.registerForEvent(users[0].id, pool.attendanceId, new Date())
+
+    assertIsAttendee(attendee)
 
     // attend user 2 to pool
-    await expect(async () => {
-      await core.attendeeService.registerForEvent(users[1].id, pool.attendanceId, new Date())
-    }).rejects.toThrowError(AttendeeRegistrationError)
+    const waitlistAttendee = await core.attendeeService.registerForEvent(users[1].id, pool.attendanceId, new Date())
+
+    assertIsWaitlistAttendee(waitlistAttendee)
   })
 
   // it should not allow creating pools with over lapping year criteria
@@ -298,9 +323,13 @@ describe("attendance", () => {
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
     const extraUser = getFakeUser({ studyYear: 1 })
     const extraUserCreated = await core.userService.createUser(extraUser)
-    await expect(
-      core.attendeeService.registerForEvent(extraUserCreated.id, attendance.id, new Date("2021-01-02"))
-    ).rejects.toThrowError(AttendeeRegistrationError)
+    const waitlistAttendee = await core.attendeeService.registerForEvent(
+      extraUserCreated.id,
+      attendance.id,
+      new Date("2021-01-02")
+    )
+
+    assertIsWaitlistAttendee(waitlistAttendee)
 
     // Step 4: Deregister a user before the deadline and verify
     const attendeeToDeregister = await core.attendeeService.getByUserId(users[0].id, attendance.id)
@@ -336,5 +365,64 @@ describe("attendance", () => {
   })
 
   // TODO: not yet implemented in service.
-  it.skip("should correctly handle pool merging at the specified merge time", async () => {})
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    const now = new Date("2021-01-02 12:00:00")
+
+    const insertPools = [
+      { limit: 0, yearCriteria: [1] },
+      { limit: 1, yearCriteria: [2] },
+      { limit: 2, yearCriteria: [3, 4, 5] },
+    ]
+
+    const _attendees = [
+      { attendee: { studyYear: 3, name: "user4" }, registrationDate: new Date("2021-01-01 13:00:00") }, // gets in
+      { attendee: { studyYear: 4, name: "user5" }, registrationDate: new Date("2021-01-01 14:00:00") }, // gets in
+      { attendee: { studyYear: 2, name: "user2" }, registrationDate: new Date("2021-01-01 15:00:00") }, // gets in
+
+      // waitlist
+      { attendee: { studyYear: 1, name: "user0" }, registrationDate: new Date("2021-01-02 01:00:00") },
+      { attendee: { studyYear: 1, name: "user1" }, registrationDate: new Date("2021-01-02 02:00:00") },
+
+      { attendee: { studyYear: 2, name: "user3" }, registrationDate: new Date("2021-01-02 10:00:00") },
+
+      { attendee: { studyYear: 5, name: "user6" }, registrationDate: new Date("2021-01-02 12:00:00") },
+    ]
+
+    const expectedMergeWaitlistOrder = ["user3", "user6", "user0", "user1"]
+
+    const registerStart = new Date("2021-01-01")
+    const registerEnd = new Date("2021-01-07")
+    const deregisterDeadline = new Date("2021-01-05")
+    const mergeTime = new Date("2021-01-06")
+
+    const { users, pools, attendance } = await setupFakeFullAttendance(core, {
+      attendance: { registerStart, registerEnd, deregisterDeadline, mergeTime },
+      pools: insertPools,
+      users: _attendees.map((obj) => obj.attendee),
+    })
+
+    for (let i = 0; i < _attendees.length; i++) {
+      const user = users[i]
+      const { registrationDate } = _attendees[i]
+
+      const attendee = await core.attendeeService.registerForEvent(user.id, attendance.id, registrationDate)
+
+      expect(attendee).not.toBeNull()
+    }
+
+    await core.attendanceService.merge(attendance.id, now)
+
+    const _waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
+
+    assert(_waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
+
+    const waitlistAttendees = _waitlistAttendees.filter((attendee) => attendee.active)
+
+    expect(waitlistAttendees).toHaveLength(4)
+
+    for (let i = 0; i < waitlistAttendees.length; i++) {
+      const waitlistAttendee = waitlistAttendees[i]
+      expect(waitlistAttendee.name).toBe(expectedMergeWaitlistOrder[i])
+    }
+  })
 })

@@ -72,7 +72,8 @@ export interface AttendancePool {
 }
 
 export interface Attendee {
-  attendancePoolId: string | null
+  attendanceId: string
+  attendancePoolId: string
   attended: Generated<boolean>
   createdAt: Generated<Timestamp>
   extrasChoices: Json | null
@@ -133,7 +134,7 @@ export interface EventCompany {
 
 export interface InterestGroup {
   createdAt: Generated<Timestamp>
-  description: string | null
+  description: string
   id: Generated<string>
   link: string | null
   name: string
@@ -274,12 +275,16 @@ export interface RefundRequest {
 }
 
 export interface WaitlistAttendee {
+  active: Generated<boolean>
   attendanceId: string | null
+  attendancePoolId: string | null
   createdAt: Generated<Timestamp>
   id: Generated<string>
   isPunished: boolean | null
+  name: string
   position: number | null
   registeredAt: Timestamp | null
+  studyYear: number
   updatedAt: Generated<Timestamp>
   userId: string | null
 }

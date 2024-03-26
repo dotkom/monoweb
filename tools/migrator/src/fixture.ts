@@ -84,7 +84,7 @@ export const runFixtures = async () => {
   insertedIds.attendee = await db
     .insertInto("attendee")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendancePool))
+    .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendance, insertedIds.attendancePool))
     .returning("id")
     .execute()
     .then(mapId)

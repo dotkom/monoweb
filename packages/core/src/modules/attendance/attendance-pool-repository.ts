@@ -72,7 +72,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
     const res = await this.db
       .selectFrom("attendancePool")
       .selectAll("attendancePool")
-      .where("attendanceId", "=", id)
+      .where("attendancePool.attendanceId", "=", id)
       .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
       .select(({ fn, val, ref }) => [
         fn.count(ref("attendee.id")).as("numAttendees"),

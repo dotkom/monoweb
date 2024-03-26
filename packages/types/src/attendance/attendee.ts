@@ -12,6 +12,7 @@ export const AttendeeSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 
+  attendanceId: z.string().ulid(),
   attendancePoolId: z.string().ulid(),
   userId: z.string().ulid(),
 

@@ -160,12 +160,18 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     waitlistAttendeRepository,
     attendancePoolRepository
   )
-  const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(waitlistAttendeRepository)
+
+  const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(
+    waitlistAttendeRepository,
+    attendancePoolRepository
+  )
+
   const attendeeService: AttendeeService = new AttendeeServiceImpl(
     attendeeRepository,
     attendancePoolRepository,
     attendanceRepository,
-    userService
+    userService,
+    waitlistAttendeService
   )
   const attendancePoolService: AttendancePoolService = new AttendancePoolServiceImpl(
     attendancePoolRepository,

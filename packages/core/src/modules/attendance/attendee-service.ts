@@ -6,6 +6,7 @@ import {
   type AttendeeUser,
   type AttendeeWrite,
   type UserId,
+  WaitlistAttendee,
 } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
 import { type UserService } from "../user/user-service"
@@ -13,10 +14,11 @@ import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeRegistrationError, UpdateAttendeeError } from "./attendee-error"
 import { AttendeeRepository } from "./attendee-repository"
+import { WaitlistAttendeService } from "./waitlist-attendee-service"
 
 export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
-  registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee>
+  registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
@@ -29,7 +31,8 @@ export class AttendeeServiceImpl implements AttendeeService {
     private readonly attendeeRepository: AttendeeRepository,
     private readonly attendancePoolRepository: AttendancePoolRepository,
     private readonly attendanceRespository: AttendanceRepository,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly waitlistAttendeeService: WaitlistAttendeService
   ) {
     this.attendeeRepository = attendeeRepository
     this.userService = userService
@@ -110,7 +113,16 @@ export class AttendeeServiceImpl implements AttendeeService {
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(poolWithMatchingCriteria.id)
 
     if (numAttendees === poolWithMatchingCriteria.limit) {
-      throw new AttendeeRegistrationError("Pool is full")
+      // create waitlist attendee
+      const ins = await this.waitlistAttendeeService.create({
+        attendanceId,
+        userId,
+        isPunished: false,
+        registeredAt: new Date(),
+        studyYear: user.studyYear,
+        name: user.name,
+      })
+      return ins
     }
 
     if (numAttendees > poolWithMatchingCriteria.limit) {
@@ -122,6 +134,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       userId,
       attended: false,
       extrasChoices: null,
+      attendanceId,
     })
 
     return attendee

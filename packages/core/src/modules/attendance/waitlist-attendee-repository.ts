@@ -1,5 +1,6 @@
 import { type Database } from "@dotkomonline/db"
 import {
+  UserId,
   WaitlistAttendeeSchema,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
@@ -13,6 +14,9 @@ export interface WaitlistAttendeRepository {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
   delete(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
   getByAttendanceId(id: string): Promise<WaitlistAttendee[]>
+  getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
+  setInactive(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
+  getActiveByPoolId(poolId: string): Promise<WaitlistAttendee[]>
 }
 
 export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository {
@@ -35,6 +39,38 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
       .selectAll("waitlistAttendee")
       .where("attendanceId", "=", id)
       .execute()
+
+    return res.map(mapToWaitlistAttendee)
+  }
+
+  async getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId) {
+    const res = await this.db
+      .selectFrom("waitlistAttendee")
+      .selectAll("waitlistAttendee")
+      .where("userId", "=", userId)
+      .where("id", "=", waitlistAttendeeId)
+      .executeTakeFirst()
+    return res ? mapToWaitlistAttendee(res) : null
+  }
+
+  async setInactive(id: WaitlistAttendeeId) {
+    const res = await this.db
+      .updateTable("waitlistAttendee")
+      .set({ active: false })
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirst()
+    return res ? mapToWaitlistAttendee(res) : null
+  }
+
+  async getActiveByPoolId(poolId: string) {
+    const res = await this.db
+      .selectFrom("waitlistAttendee")
+      .selectAll("waitlistAttendee")
+      .where("attendancePoolId", "=", poolId)
+      .where("active", "=", true)
+      .execute()
+
     return res.map(mapToWaitlistAttendee)
   }
 }

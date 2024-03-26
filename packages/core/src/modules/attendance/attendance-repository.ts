@@ -53,8 +53,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const res = await this.db
       .selectFrom("attendance")
       .selectAll("attendance")
-      .leftJoin("attendancePool", "attendancePool.attendanceId", "attendance.id")
-      .leftJoin("attendee", "attendee.attendancePoolId", "attendancePool.id")
+      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
       .where("attendee.id", "=", id)
       .executeTakeFirst()
 

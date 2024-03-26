@@ -24,12 +24,20 @@ export async function up(db) {
     .addColumn("position", "integer")
     .addColumn("isPunished", "boolean")
     .addColumn("registeredAt", "timestamptz")
+    .addColumn("study_year", "integer", (col) => col.notNull())
+    .addColumn("active", "boolean", (col) => col.notNull().defaultTo(true))
+    .addColumn("attendance_pool_id", sql`ulid`, (col) => col.references("attendance_pool.id").onDelete("cascade"))
+    .addColumn("name", "text", (col) => col.notNull())
     .execute()
 
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("attendancePoolId", sql`ulid`, (col) => col.references("attendance_pool.id").onDelete("cascade"))
-    .addColumn("userId", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
-    .addColumn("extrasChoices", "json")
+    .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade").notNull())
+    .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
+    .addColumn("attendance_pool_id", sql`ulid`, (col) =>
+      col.references("attendance_pool.id").onDelete("cascade").notNull()
+    )
+    .addColumn("extras_choices", "json")
+    .addUniqueConstraint("attendee_unique", ["attendance_id", "user_id"])
     .execute()
 
   await createTableWithDefaults("event", { id: true, createdAt: true, updatedAt: true }, db.schema)
