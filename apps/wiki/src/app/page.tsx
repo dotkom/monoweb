@@ -1,4 +1,4 @@
-import { Tiptap } from "../components/tiptap"
+import { Tiptap } from "../components/tiptap";
 
 export default function Page() {
   return (
@@ -6,37 +6,13 @@ export default function Page() {
       <div className="p-20">
         <Tiptap
           access={true}
-          json={{
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: {
-                  level: 1,
-                },
-                content: [
-                  {
-                    type: "text",
-                    text: "Hello World! 🌎️",
-                  },
-                ],
-              },
-              {
-                type: "paragraph",
-                attrs: {
-                  level: 1,
-                },
-                content: [
-                  {
-                    type: "text",
-                    text: "Test",
-                  },
-                ],
-              },
-            ],
-          }}
+          json='
+          <p>This is a basic example of implementing images. Drag to re-order.</p>
+          <img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />
+          <img src="https://source.unsplash.com/K9QHL52rE2k/800x400" />
+          '
         />
       </div>
     </>
-  )
+  );
 }
