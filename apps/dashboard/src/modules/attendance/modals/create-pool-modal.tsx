@@ -1,6 +1,6 @@
 import { modals, type ContextModalProps } from "@mantine/modals"
 import { type FC } from "react"
-import { CreatePoolForm, type CreatePoolFormSchema } from "../components/PoolForm/CreatePoolForm"
+import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { usePoolsGetQuery } from "../queries/use-get-queries"
 import { useCreatePoolMutation } from "../mutations/use-pool-mutations"
 
@@ -11,16 +11,16 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
   const { mutate: createPool } = useCreatePoolMutation()
   const { pools } = usePoolsGetQuery(innerProps.attendanceId)
   const onClose = () => context.closeModal(id)
-  const onSubmit = (values: CreatePoolFormSchema) => {
+  const onSubmit = (values: PoolFormSchema) => {
     createPool({
       limit: values.limit,
       yearCriteria: values.yearCriteria,
       attendanceId: innerProps.attendanceId,
-      title: values.title
+      title: values.title,
     })
   }
   return pools ? (
-    <CreatePoolForm
+    <PoolForm
       defaultValues={{
         yearCriteria: [],
         limit: 0,

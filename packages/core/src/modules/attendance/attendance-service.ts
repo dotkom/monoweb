@@ -77,14 +77,13 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async merge(id: AttendanceId): Promise<void> {
-    // Step 1: Validate the 
     const attendance = await this.attendanceRepository.getById(id)
 
     if (!attendance) {
       throw new IllegalStateError("Tried to merge a non-existent attendance")
     }
 
-    // Step 2: Create a merge pool with combined capacities and rules
+    // Create a merge pool with combined capacities and rules
     const pools = await this.attendancePoolRepository.getByAttendanceId(id)
     const combinedCapacity = pools.reduce((acc, pool) => acc + pool.limit, 0)
     const combinedYearCriteria = Array.from(new Set(pools.flatMap((pool) => pool.yearCriteria)))

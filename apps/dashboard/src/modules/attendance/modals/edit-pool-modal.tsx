@@ -1,23 +1,26 @@
-import { modals, type ContextModalProps } from "@mantine/modals"
+import { type ContextModalProps, modals } from "@mantine/modals"
 import { type FC } from "react"
-import { usePoolsGetQuery } from "../queries/use-get-queries"
+import { PoolForm, PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { useUpdatePoolMutation } from "../mutations/use-pool-mutations"
-import { UpdatePoolForm, UpdatePoolFormSchema } from "../components/PoolForm/UpdatePoolForm"
+import { usePoolsGetQuery } from "../queries/use-get-queries"
 
 interface EditPoolModalProps {
   poolId: string
   attendanceId: string
-  defaultValues: UpdatePoolFormSchema
+  defaultValues: PoolFormSchema
 }
+
 export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({ context, id, innerProps }) => {
   const { pools } = usePoolsGetQuery(innerProps.attendanceId)
   const { mutate: updatePool } = useUpdatePoolMutation()
 
-  const onSubmit = (values: UpdatePoolFormSchema) => {
+  const onSubmit = (values: PoolFormSchema) => {
     context.closeModal(id)
     updatePool({
       input: {
         limit: values.limit,
+        title: values.title,
+        yearCriteria: values.yearCriteria,
       },
       id: innerProps.poolId,
     })
@@ -25,11 +28,16 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({ conte
 
   const onClose = () => context.closeModal(id)
   return pools ? (
-    <UpdatePoolForm
-      defaultValues={innerProps.defaultValues}
+    <PoolForm
+      defaultValues={{
+        yearCriteria: innerProps.defaultValues.yearCriteria,
+        limit: innerProps.defaultValues.limit,
+        title: innerProps.defaultValues.title,
+      }}
       onClose={onClose}
       onSubmit={onSubmit}
-      attendancePools={pools}
+      attendancePools={pools?.filter((pool) => pool.id !== innerProps.poolId)}
+      mode="update"
     />
   ) : null
 }

@@ -2,36 +2,44 @@ import { type AttendancePool } from "@dotkomonline/types"
 import { Box, Button } from "@mantine/core"
 import { type FC } from "react"
 import { z } from "zod"
-import { createLabelledCheckboxGroupInput, createNumberInput, useFormBuilder } from "../../../../app/form"
+import {
+  createLabelledCheckboxGroupInput,
+  createNumberInput,
+  createTextInput,
+  useFormBuilder,
+} from "../../../../app/form"
 import { notifyFail } from "../../../../app/notifications"
 
-export interface CreatePoolFormProps {
-  onSubmit(values: CreatePoolFormSchema): void
+export interface PoolFormProps {
+  onSubmit(values: PoolFormSchema): void
   attendancePools: AttendancePool[]
   onClose(): void
-  defaultValues: CreatePoolFormSchema
+  defaultValues: PoolFormSchema
   mode: "create" | "update"
 }
 
-export const CreatePoolFormSchema = z.object({
+export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   limit: z.number(),
   title: z.string().min(1),
 })
-export type CreatePoolFormSchema = z.infer<typeof CreatePoolFormSchema>
+export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
-export const useCreatePoolForm = (props: CreatePoolFormProps) => {
+export const usePoolForm = (props: PoolFormProps) => {
   const existingPools = [...new Set(props.attendancePools.flatMap(({ yearCriteria }) => yearCriteria))]
 
   const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse", "PHD"]
 
   const Form = useFormBuilder({
-    schema: CreatePoolFormSchema,
+    schema: PoolFormSchema,
     defaultValues: props.defaultValues,
     fields: {
       yearCriteria: createLabelledCheckboxGroupInput({
         disabledOptions: existingPools,
         labels: yearLabels,
+      }),
+      title: createTextInput({
+        label: "Tittel",
       }),
       limit: createNumberInput({
         label: "Kapasitet",
@@ -53,8 +61,8 @@ export const useCreatePoolForm = (props: CreatePoolFormProps) => {
 
   return { Form }
 }
-export const CreatePoolForm: FC<CreatePoolFormProps> = (props) => {
-  const { Form } = useCreatePoolForm(props)
+export const PoolForm: FC<PoolFormProps> = (props) => {
+  const { Form } = usePoolForm(props)
 
   return (
     <Box>
