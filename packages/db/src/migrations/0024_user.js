@@ -8,6 +8,7 @@ export async function up(db) {
     .addColumn("name", "varchar(255)")
     .addColumn("last_synced_at", "timestamptz", (col) => col.defaultTo(sql`now()`))
     .addColumn("updated_at", "timestamptz", (col) => col.defaultTo(sql`now()`))
+    .addColumn("study_year", "integer", (col) => col.notNull().defaultTo(-1))
     .execute()
 
   // populate data for new columns
@@ -41,5 +42,6 @@ export async function down(db) {
     .dropColumn("name")
     .dropColumn("last_synced_at")
     .dropColumn("updated_at")
+    .dropColumn("study_year")
     .execute()
 }

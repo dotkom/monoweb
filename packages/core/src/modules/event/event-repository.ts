@@ -14,10 +14,22 @@ export interface EventRepository {
   getAllByUserAttending(userId: string): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
+  addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
 }
 
 export class EventRepositoryImpl implements EventRepository {
   constructor(private readonly db: Kysely<Database>) {}
+
+  async addAttendance(eventId: EventId, attendanceId: string) {
+    const insert = await this.db
+      .updateTable("event")
+      .returningAll()
+      .where("id", "=", eventId)
+      .set({ attendanceId })
+      .executeTakeFirstOrThrow()
+
+    return insert ? mapToEvent(insert) : null
+  }
 
   async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
@@ -44,8 +56,9 @@ export class EventRepositoryImpl implements EventRepository {
   async getAllByUserAttending(userId: string): Promise<Event[]> {
     const eventsResult = await this.db
       .selectFrom("attendance")
-      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .innerJoin("event", "event.id", "attendance.eventId")
+      .leftJoin("attendancePool", "attendancePool.attendanceId", "attendance.id")
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendee.attendancePoolId")
+      .innerJoin("event", "event.attendanceId", "attendance.id")
       .selectAll("event")
       .where("attendee.userId", "=", userId)
       .execute()

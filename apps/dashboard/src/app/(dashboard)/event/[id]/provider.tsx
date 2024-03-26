@@ -1,12 +1,13 @@
 "use client"
 
-import { type Event, type EventCommittee } from "@dotkomonline/types"
+import { type Attendance, type Committee, type Event } from "@dotkomonline/types"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */
 export const EventDetailsContext = createContext<{
   event: Event
-  eventCommittees: EventCommittee[]
+  eventCommittees: Committee[]
+  attendance: Attendance | null
 } | null>(null)
 
 export const useEventDetailsContext = () => {

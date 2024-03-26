@@ -1,6 +1,13 @@
 import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
+export function withInsertJsonValue<T extends object>(obj: T, key: keyof T): T & { [key in keyof T]: string } {
+  return {
+    ...obj,
+    [key]: JSON.stringify(obj[key]),
+  }
+}
+
 export const CursorSchema = z.object({
   id: z.string().ulid(),
 })

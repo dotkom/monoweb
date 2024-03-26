@@ -6,6 +6,8 @@ import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-reposit
 import { UserRepositoryImpl } from "../user-repository"
 import { UserServiceImpl } from "../user-service"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
+import { ManagementClient } from "auth0"
+import { Auth0RepositoryImpl } from "../../external/auth0-repository"
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {
   createdAt: new Date(2022, 1, 1),
@@ -36,6 +38,9 @@ describe("UserService", () => {
   const userRepository = new UserRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
+
+  const auth0Client = vi.mocked(ManagementClient.prototype)
+  const auth0Repo = new Auth0RepositoryImpl(auth0Client)
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,

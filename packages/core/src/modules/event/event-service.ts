@@ -1,9 +1,41 @@
-import { type Attendance, type AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
-import { type AttendanceRepository } from "./attendance-repository.js"
-import { type EventInsert } from "./event-repository"
-import { type EventRepository } from "./event-repository.js"
+import {
+  Attendance,
+  AttendancePool,
+  AttendanceWrite,
+  Committee,
+  type Event,
+  EventCommittee,
+  type EventId,
+  type EventWrite,
+} from "@dotkomonline/types"
 import { type Cursor } from "../../utils/db-utils"
-import { EventAlreadyHasWaitlistError, EventNotFoundError } from "./event-error"
+import { AttendancePoolService } from "../attendance/attendance-pool-service"
+import { AttendanceService } from "../attendance/attendance-service"
+import { EventCommitteeService } from "./event-committee-service"
+import { EventNotFoundError } from "./event-error"
+import { EventRepository, type EventInsert } from "./event-repository"
+
+type ReturnType2 = {
+  event: Event
+  eventCommittees: Committee[]
+  attendance: Attendance | null
+  pools: AttendancePool[] | null
+  hasAttendance: boolean
+}
+
+type ReturnType =
+  | {
+      hasAttendance: false
+      event: Event
+      eventCommittees: Committee[]
+    }
+  | {
+      hasAttendance: true
+      event: Event
+      eventCommittees: Committee[]
+      attendance: Attendance
+      pools: AttendancePool[]
+    }
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -12,16 +44,25 @@ export interface EventService {
   getEvents(take: number, cursor?: Cursor): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-  createAttendance(eventId: EventId, attendanceWrite: AttendanceWrite): Promise<Attendance>
-  listAttendance(eventId: EventId): Promise<Attendance[]>
-  createWaitlist(eventId: EventId): Promise<Attendance>
+  addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
+  getWebEventDetailsPageData(id: EventId): Promise<ReturnType>
+  getEventDetailsPageData(id: EventId): Promise<ReturnType2>
 }
 
 export class EventServiceImpl implements EventService {
   constructor(
     private readonly eventRepository: EventRepository,
-    private readonly attendanceRepository: AttendanceRepository
+    private readonly attendanceService: AttendanceService,
+    private readonly attendancePoolService: AttendancePoolService,
+    private readonly eventCommitteeService: EventCommitteeService
   ) {}
+
+  async addAttendance(eventId: EventId, obj: AttendanceWrite) {
+    const attendance = await this.attendanceService.create(obj)
+    const event = this.eventRepository.addAttendance(eventId, attendance.id)
+
+    return event
+  }
 
   async createEvent(eventCreate: EventWrite): Promise<Event> {
     const toInsert: EventInsert = {
@@ -70,43 +111,61 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async createAttendance(eventId: EventId, attendanceCreate: AttendanceWrite): Promise<Attendance> {
-    const attendance = await this.attendanceRepository.create({
-      ...attendanceCreate,
-      eventId,
-    })
-    return attendance
-  }
+  async getEventDetailsPageData(id: EventId): Promise<ReturnType2> {
+    const event = await this.getEventById(id)
+    const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
 
-  async listAttendance(eventId: EventId): Promise<Attendance[]> {
-    const attendance = await this.attendanceRepository.getByEventId(eventId)
-    return attendance
-  }
+    if (event.attendanceId !== null) {
+      const attendance = await this.attendanceService.getById(event.attendanceId)
+      if (!attendance) {
+        throw new Error("Attendance not found")
+      }
 
-  /**
-   * Create a waitlist for an event
-   *
-   * @throws {EventAlreadyHasWaitlistError} if the event already has a waitlist
-   */
-  async createWaitlist(eventId: EventId): Promise<Attendance> {
-    const event = await this.getEventById(eventId)
-    if (event.waitlist !== null) {
-      throw new EventAlreadyHasWaitlistError(eventId)
+      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
+
+      return {
+        event,
+        eventCommittees,
+        attendance,
+        pools,
+        hasAttendance: true,
+      }
     }
-    const waitlist = await this.attendanceRepository.create({
-      eventId,
-      start: new Date(),
-      end: new Date(),
-      deregisterDeadline: new Date(),
-      limit: 999999,
-      min: 0,
-      max: 0,
-    })
-    await this.eventRepository.update(eventId, {
-      ...event,
-      waitlist: waitlist.id,
-      extras: JSON.stringify(event.extras),
-    })
-    return waitlist
+
+    return {
+      event,
+      eventCommittees: eventCommittees,
+      attendance: null,
+      pools: null,
+      hasAttendance: false,
+    }
+  }
+
+  async getWebEventDetailsPageData(id: EventId): Promise<ReturnType> {
+    const event = await this.getEventById(id)
+    const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
+
+    if (event.attendanceId !== null) {
+      const attendance = await this.attendanceService.getById(event.attendanceId)
+      if (!attendance) {
+        throw new Error("Attendance not found")
+      }
+
+      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
+
+      return {
+        hasAttendance: true,
+        event,
+        eventCommittees,
+        attendance,
+        pools,
+      }
+    }
+
+    return {
+      hasAttendance: false,
+      event,
+      eventCommittees: eventCommittees,
+    }
   }
 }

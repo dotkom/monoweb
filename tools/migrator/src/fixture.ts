@@ -17,6 +17,7 @@ import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
+import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { getInterestGroupFixtures } from "./fixtures/interest-group"
 
 interface WithIdentifier {
@@ -56,18 +57,26 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
-  insertedIds.event = await db //
-    .insertInto("event")
+  insertedIds.attendance = await db
+    .insertInto("attendance")
     .onConflict((eb) => eb.doNothing())
-    .values(getEventFixtures())
+    .values(getAttendanceFixtures())
     .returning("id")
     .execute()
     .then(mapId)
 
-  insertedIds.attendance = await db
-    .insertInto("attendance")
+  insertedIds.event = await db //
+    .insertInto("event")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendanceFixtures(insertedIds.event))
+    .values(getEventFixtures(insertedIds.attendance))
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.attendancePool = await db
+    .insertInto("attendancePool")
+    .onConflict((eb) => eb.doNothing())
+    .values(getPoolFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
     .then(mapId)
@@ -75,7 +84,7 @@ export const runFixtures = async () => {
   insertedIds.attendee = await db
     .insertInto("attendee")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
+    .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendance, insertedIds.attendancePool))
     .returning("id")
     .execute()
     .then(mapId)

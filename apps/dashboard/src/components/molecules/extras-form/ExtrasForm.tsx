@@ -47,6 +47,7 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
   return (
     <Box>
       <ActionSelect
+        label="Velg mal"
         buttonProps={{
           w: "100%",
         }}

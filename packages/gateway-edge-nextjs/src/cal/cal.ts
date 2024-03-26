@@ -54,7 +54,7 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const event = (await helpers.event.get.fetch(eventid)).event
+  const event = await helpers.event.get.fetch(eventid)
 
   const instance = ical()
   instance.createEvent(toICal(req, event))
