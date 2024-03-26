@@ -8,4 +8,3 @@ export const Icon = forwardRef<React.ElementRef<typeof Iconify>, IconProps>((pro
 ))
 
 Icon.displayName = "Icon"
-

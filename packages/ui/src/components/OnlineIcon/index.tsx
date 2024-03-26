@@ -1,1 +1,1 @@
-export { OnlineIcon } from "./OnlineIcon";
+export { OnlineIcon } from "./OnlineIcon"

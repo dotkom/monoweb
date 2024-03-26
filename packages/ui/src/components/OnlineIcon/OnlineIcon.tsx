@@ -55,4 +55,3 @@ export const OnlineIcon: FC<IconProps> = ({ className }) => (
     </g>
   </svg>
 )
-

@@ -4,3 +4,4 @@ export type { Session } from "next-auth"
 
 export { authOptions as dashboard } from "./src/dashboard.app"
 export { authOptions as web } from "./src/web.app"
+export { authOptions as wiki } from "./src/wiki.app"
