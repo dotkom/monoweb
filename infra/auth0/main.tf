@@ -163,6 +163,30 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
+resource "auth0_client" "wiki_frontend" {
+  app_type = "spa"
+  callbacks = {
+    "dev" = [
+      "http://localhost:3001/api/auth/callback/auth0",
+    ]
+    "stg" = [
+      "https://wiki.staging.online.ntnu.no/api/auth/callback/auth0",
+    ]
+    "prd" = [
+      "https://wiki.online.ntnu.no/api/auth/callback/auth0",
+    ]
+  }[terraform.workspace]
+  grant_types                   = ["authorization_code", "refresh_token"]
+  name                          = "Wiki${local.name_suffix[terraform.workspace]}"
+  organization_require_behavior = "no_prompt"
+  is_first_party                = true
+  oidc_conformant               = true
+}
+
+data "auth0_client" "wiki_frontend" {
+  client_id = auth0_client.wiki_frontend.client_id
+}
+
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
@@ -173,6 +197,7 @@ locals {
     vengeful-vineyard    = data.auth0_client.vengeful_vineyard_frontend
     onlineweb4           = data.auth0_client.onlineweb4
     onlineweb-frontend   = data.auth0_client.onlineweb_frontend
+    wiki                 = data.auth0_client.wiki_frontend
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
   }
