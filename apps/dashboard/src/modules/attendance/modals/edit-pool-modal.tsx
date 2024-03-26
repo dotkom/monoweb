@@ -47,7 +47,7 @@ export const openEditPoolModal =
   () =>
     modals.openContextModal({
       modal: "event/attendance/pool/update",
-      title: "Endre pulje",
+      title: "Endre påmeldingsgruppe",
       innerProps: {
         attendanceId,
         defaultValues,

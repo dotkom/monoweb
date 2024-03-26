@@ -39,7 +39,7 @@ export const openCreatePoolModal =
   () =>
     modals.openContextModal({
       modal: "event/attendance/pool/create",
-      title: "Ny pulje",
+      title: "Ny påmeldingsgruppe",
       innerProps: {
         attendanceId,
       },

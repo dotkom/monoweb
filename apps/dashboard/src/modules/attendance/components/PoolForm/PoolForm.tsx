@@ -45,7 +45,7 @@ export const usePoolForm = (props: PoolFormProps) => {
         label: "Kapasitet",
       }),
     },
-    label: props.mode === "create" ? "Opprett pulje" : "Endre pulje",
+    label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",
     onSubmit: (values, form) => {
       form.resetField("yearCriteria")
       try {

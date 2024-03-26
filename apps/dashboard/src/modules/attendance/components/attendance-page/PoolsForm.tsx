@@ -35,7 +35,7 @@ export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
             attendanceId,
           })}
         >
-          Opprett ny pulje
+          Opprett ny påmeldingsgruppe
         </Button>
         <Box>
           {pools?.map((pool) => (
@@ -70,7 +70,7 @@ export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
               </Flex>
             </Card>
           ))}
-          {pools?.length === 0 && <Text fs="italic">Ingen puljer</Text>}
+          {pools?.length === 0 && <Text fs="italic">Ingen påmeldingsgrupper</Text>}
         </Box>
       </Box>
     )
