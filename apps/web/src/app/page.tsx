@@ -1,8 +1,8 @@
-import React from "react"
 import { useSession } from "next-auth/react"
+import { getServerSession } from "next-auth"
 
-const Home: React.FC = () => {
-  const auth = useSession()
+export default async function App() {
+  const auth = await getServerSession();
   return (
     <div>
       <p>Homepage</p>
@@ -10,5 +10,3 @@ const Home: React.FC = () => {
     </div>
   )
 }
-
-export default Home

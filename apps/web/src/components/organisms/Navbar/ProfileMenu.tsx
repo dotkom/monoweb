@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Avatar,
   AvatarFallback,
@@ -19,39 +21,40 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Icon,
-} from "@dotkomonline/ui"
-import { type FC, type PropsWithChildren } from "react"
-import { useTheme } from "next-themes"
-import { signIn, signOut, useSession } from "next-auth/react"
-import Link from "next/link"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
+} from "@dotkomonline/ui";
+import type { FC, PropsWithChildren } from "react";
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { navigationMenuTriggerStyle } from "./NavigationMenu";
 
-export const ProfileMenu = () => {
-  const { status } = useSession()
+export const ProfileMenu = async () => {
+  const session = await getSession();
 
-  if (status === "loading") {
-    return <Icon icon="tabler:loader-2" className="animate-spin" />
-  }
-
-  if (status === "unauthenticated") {
+  if (!session) {
     return (
       <>
         <Button
           variant="subtle"
-          className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
+          className={cn(
+            navigationMenuTriggerStyle(),
+            "hover:translate-y-0 active:translate-y-0",
+          )}
           onClick={async () => signIn("auth0")}
         >
           Log in
         </Button>
         <Button
           variant="gradient"
-          className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
+          className={cn(
+            navigationMenuTriggerStyle(),
+            "ml-3 hover:translate-y-0 active:translate-y-0",
+          )}
           onClick={async () => signIn("auth0")}
         >
           Sign up
         </Button>
       </>
-    )
+    );
   }
 
   return (
@@ -66,14 +69,14 @@ export const ProfileMenu = () => {
         </Avatar>
       </AvatarDropdown>
     </button>
-  )
-}
+  );
+};
 
 interface LinkDetail {
-  label: string
-  icon: string
-  shortcut?: string
-  href?: string
+  label: string;
+  icon: string;
+  shortcut?: string;
+  href?: string;
 }
 const linkGroups: LinkDetail[][] = [
   [
@@ -121,7 +124,7 @@ const linkGroups: LinkDetail[][] = [
       label: "Rapporter en feil",
     },
   ],
-]
+];
 
 const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
   <DropdownMenu>
@@ -137,7 +140,9 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
                 <Link href={link.href || ""}>
                   <Icon icon={link.icon} className="mr-2 h-4 w-4" />
                   <span>{link.label}</span>
-                  {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
+                  {link.shortcut && (
+                    <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>
+                  )}
                 </Link>
               </DropdownMenuItem>
             ))}
@@ -154,11 +159,9 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
-)
+);
 
 const ThemeMenuSub = () => {
-  const { setTheme, theme } = useTheme()
-
   const items: { theme: string; icon: string }[] = [
     {
       theme: "light",
@@ -172,7 +175,7 @@ const ThemeMenuSub = () => {
       theme: "system",
       icon: "tabler:device-desktop",
     },
-  ]
+  ];
 
   return (
     <DropdownMenuSub>
@@ -182,7 +185,7 @@ const ThemeMenuSub = () => {
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
+          <DropdownMenuRadioGroup value={"light"}>
             {items.map((item) => (
               <DropdownMenuRadioItem value={item.theme} key={item.theme}>
                 <Icon icon={item.icon} className="mr-2 h-4 w-4" />
@@ -193,5 +196,5 @@ const ThemeMenuSub = () => {
         </DropdownMenuSubContent>
       </DropdownMenuPortal>
     </DropdownMenuSub>
-  )
-}
+  );
+};

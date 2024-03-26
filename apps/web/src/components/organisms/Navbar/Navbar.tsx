@@ -1,10 +1,9 @@
 import Link from "next/link"
-import React from "react"
 import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { type MenuLink } from "./types"
+import type { MenuLink } from "./types"
 
 const links: MenuLink[] = [
   {
