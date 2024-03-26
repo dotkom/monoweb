@@ -75,6 +75,11 @@ resource "auth0_client" "appkom_events_app" {
     ios {
       app_bundle_identifier = "ntnu.online.app"
     }
+
+    android {
+      app_package_name = "ntnu.online.app"
+      sha256_cert_fingerprints = ["30:A2:1D:7D:CA:56:8B:02:AC:E7:9E:D3:ED:E0:D7:6D:A1:D9:A7:FD:B3:A9:3D:8C:1D:B9:73:47:FD:D8:89:DD"]
+    }
   }
 }
 
