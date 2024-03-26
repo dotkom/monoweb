@@ -46,8 +46,8 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3
       '@types/aws-lambda':
-        specifier: ^8.10.129
-        version: 8.10.131
+        specifier: ^8.10.136
+        version: 8.10.136
       '@types/node':
         specifier: 18.18.13
         version: 18.18.13
@@ -342,18 +342,6 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
-
-  apps/shell:
-    dependencies:
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
 
   apps/web:
     dependencies:
@@ -5688,8 +5676,8 @@ packages:
       '@types/estree': 1.0.1
     dev: true
 
-  /@types/aws-lambda@8.10.131:
-    resolution: {integrity: sha512-IWmFpqnVDvskYWnNSiu/qlRn80XlIOU0Gy5rKCl/NjhnI95pV8qIHs6L5b+bpHhyzuOSzjLgBcwgFSXrC1nZWA==}
+  /@types/aws-lambda@8.10.136:
+    resolution: {integrity: sha512-cmmgqxdVGhxYK9lZMYYXYRJk6twBo53ivtXjIUEFZxfxe4TkZTZBK3RRWrY2HjJcUIix0mdifn15yjOAat5lTA==}
     dev: true
 
   /@types/babel__core@7.20.5:
