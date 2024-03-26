@@ -46,7 +46,7 @@ export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
           //styling for blockquotes
           "prose-blockquote:pl-4 prose-blockquote:border-l prose-blockquote:border-slate-5 prose-blockquote:text-slate-11",
           //styling for code blocks
-          "prose-code:pl-4 prose-code:pr-4  prose-code:text-slate-5 prose-code:rounded-lg",
+          "prose-code:text-slate-5 prose-code:rounded-lg",
           //styling for inline code
           " prose-code-inline:text-slate-5 prose-code-inline:rounded-lg",
           //styling for horizontal rules
