@@ -5,6 +5,7 @@ import { FC, useState } from "react";
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
+import Link from "@tiptap/extension-link";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import React from "react";
@@ -22,13 +23,16 @@ export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
     TextStyle.configure(),
     StarterKit.configure({}),
     Image.configure({
-        inline: true,
-        allowBase64: true,
-      })
+      inline: true,
+      allowBase64: true,
+    }),
+    Link.configure({
+      protocols: ["ftp", "mailto"],
+    }),
   ];
 
   const editor = useEditor({
-    extensions: extensions,
+    extensions: [...extensions],
     editorProps: {
       attributes: {
         class: clsx(

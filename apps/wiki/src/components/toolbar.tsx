@@ -1,56 +1,7 @@
 import { Editor } from "@tiptap/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-const Modal = ({
-  showModal,
-  setShowModal,
-}: {
-  showModal: boolean;
-  setShowModal: any;
-}) => {
-  const router = useRouter();
-  const [title, setTitle] = useState("");
-  return (
-    <div>
-      {showModal ? (
-        // Overlay with backdrop
-        <div className="fixed inset-0 bg-black bg-opacity-30 z-40 flex justify-center items-center">
-          <div className="bg-[#FFFFFF] rounded-lg shadow-xl p-5 m-4 max-w-md max-h-full overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <h1 className="text-lg font-semibold">New Page</h1>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-2 rounded-md hover:bg-gray-100"
-              >
-                Close
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="mt-4">
-              <input
-                type="text"
-                placeholder="Title"
-                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <button
-                className="mt-4 px-4 py-2 bg-blue-9 text-white rounded-md hover:bg-blue-63"
-                onClick={() => {
-                  setShowModal(false);
-                  router.push(`/wiki/${title}`);
-                }}
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-};
+import Modal from "./new-page-modal";
 
 const Toolbar = ({ editor }: { editor: Editor }) => {
   const [showModal, setShowModal] = useState(false);
@@ -215,7 +166,7 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
       <button type="button" onClick={() => setShowModal(true)}>
         New Page
       </button>
-      <Modal showModal={showModal} setShowModal={setShowModal} />
+      <Modal showModal={showModal} setShowModal={setShowModal} editor={editor}/>
     </div>
   );
 };
