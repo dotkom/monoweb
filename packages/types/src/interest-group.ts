@@ -7,6 +7,7 @@ export const InterestGroupSchema = z.object({
   name: z.string(),
   description: z.string(),
   link: z.string().nullable(), //slack link
+  isActive: z.boolean(),
 })
 
 export type InterestGroup = z.infer<typeof InterestGroupSchema>

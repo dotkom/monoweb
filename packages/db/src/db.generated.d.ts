@@ -127,8 +127,9 @@ export interface EventCompany {
 
 export interface InterestGroup {
   createdAt: Generated<Timestamp>
-  description: string | null
+  description: string
   id: Generated<string>
+  isActive: boolean
   link: string | null
   name: string
   updatedAt: Generated<Timestamp>
