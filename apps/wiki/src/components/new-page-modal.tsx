@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Modal = ({
@@ -13,6 +13,7 @@ const Modal = ({
 }) => {
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const pathname  = usePathname();
   return (
     <div>
       {showModal ? (
@@ -51,7 +52,9 @@ const Modal = ({
                 onClick={() => {
                   setShowModal(false);
                   // make new page in db and add link to current page
+                
                   editor.commands.insertContent('<a href="/wiki/' + title + '">' + title + '</a>');
+                  
                 }}
               >
                 Continue writing

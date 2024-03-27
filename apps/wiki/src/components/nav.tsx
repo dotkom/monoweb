@@ -11,7 +11,7 @@ export default function NavBar() {
   return (
     <div className="h-20 px-20 w-full flex justify-between items-center ">
       <div className="">
-        <Link href={""}>
+        <Link href={"/"}>
           <OnlineIcon className="w-28" />
         </Link>
       </div>
