@@ -1,5 +1,6 @@
-import { useSession } from "next-auth/react"
 import { Tiptap } from "src/components/tiptap"
+import { getArticle } from "src/hooks/get-article"
+import { core } from "src/server/core"
 
 type PathParams = {
   params: {
@@ -7,12 +8,13 @@ type PathParams = {
   }
 }
 
-export default function WikiPage({ params }: PathParams) {
+export default async function WikiPage({ params }: PathParams) {
   const path = params?.path?.join("/")
-
+  const article = getArticle(path)
   return <>
   <h1>This is the page for {path}</h1>
   <Tiptap access={true} json=''/>
+  {path ? article : null}
   </>
 
 }

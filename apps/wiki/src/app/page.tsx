@@ -5,6 +5,9 @@ import Link from "next/link";
 export default function Page() {
   return (
     <>
+    <div
+    // add cool background effect
+    className="bg-gradient-to-tr -top-0 -z-10 fixed from-[#FFF] from-75% to-amber-9 h-screen w-screen flex flex-col items-center justify-center">
       <div className="p-20 flex items-end gap-10">
         <h3 className="pl-20 text-2xl font-black">vår nye wiki 🔥🔥🔥</h3>
       </div>
@@ -19,6 +22,7 @@ export default function Page() {
             <p className="text-xl text-white font-bold hover:underline">open le wiki..</p>
         </Link>
       </div>
+    </div>
     </>
   );
 }

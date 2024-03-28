@@ -13,7 +13,21 @@ const Modal = ({
 }) => {
   const router = useRouter();
   const [title, setTitle] = useState("");
-  const pathname  = usePathname();
+  const pathname = usePathname();
+
+  if (pathname === null) {
+    return null;
+  }
+
+  //   export const ArticleSchema = z.object({
+  //     Id: z.string().uuid(),
+  //     ParentId: z.string().uuid().or(z.literal("<root>")),
+  //     Slug: z.string().min(1),
+  //     Title: z.string().min(1),
+  //   })
+
+  //   export type ArticleWrite = z.infer<typeof ArticleWriteSchema>
+
   return (
     <div>
       {showModal ? (
@@ -52,9 +66,9 @@ const Modal = ({
                 onClick={() => {
                   setShowModal(false);
                   // make new page in db and add link to current page
-                
-                  editor.commands.insertContent('<a href="/wiki/' + title + '">' + title + '</a>');
-                  
+                  editor.commands.insertContent(
+                    '<a href="/wiki/' + title + '">' + title + "</a>"
+                  );
                 }}
               >
                 Continue writing

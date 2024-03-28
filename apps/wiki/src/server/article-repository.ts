@@ -1,5 +1,3 @@
-"use server"
-
 import { DynamoDBDocumentClient, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb"
 import { Article, ArticleId, ArticleSchema, ArticleWrite } from "./types"
 

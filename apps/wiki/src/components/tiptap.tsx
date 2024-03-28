@@ -74,8 +74,6 @@ export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
 
   const handleSubmit = () => {
     //Add posting of data here
-
-    console.log(editor?.getJSON());
     setText(editor?.getJSON());
   };
 
@@ -86,13 +84,15 @@ export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
     <>
       {access && <Toolbar editor={editor} />}
       <EditorContent editor={editor} />
-      <button
-        type="submit"
-        className="bg-blue-9 my-3 px-6 py-2 text-white rounded-lg"
-        onClick={() => handleSubmit()}
-      >
-        Submit
-      </button>
+      {access && (
+        <button
+          type="submit"
+          className="bg-blue-10 my-3 py-5 text-white rounded-lg flex  w-full justify-center hover:bg-blue-9"
+          onClick={() => handleSubmit()}
+        >
+          Submit
+        </button>
+      )}
     </>
   );
 };

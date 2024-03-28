@@ -9,16 +9,16 @@ export default function NavBar() {
   const session = useSession()
 
   return (
-    <div className="h-20 px-20 w-full flex justify-between items-center ">
+    <div className="h-20 px-20 w-full bg-transparent flex justify-between items-center ">
       <div className="">
         <Link href={"/"}>
           <OnlineIcon className="w-28" />
         </Link>
       </div>
-      <Tabs className={"flex gap-4"}>
+      <Tabs className="">
         {session.status !== "authenticated" ? (
-          <TabsList>
-            <button type="button" onClick={() => signIn("auth0")}>
+          <TabsList className="bg-[#FFF] px-4 py-2">
+            <button type="button" onClick={() => signIn("auth0")} className="">
               Sign in
             </button>
           </TabsList>
