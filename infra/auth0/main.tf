@@ -163,6 +163,45 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
+resource "auth0_client" "wiki_frontend" {
+  app_type = "regular_web"
+  callbacks = {
+    "dev" = [
+      "http://localhost:3001/api/auth/callback/auth0",
+    ]
+    "stg" = [
+      "https://wiki.staging.online.ntnu.no/api/auth/callback/auth0",
+    ]
+    "prd" = [
+      "https://wiki.online.ntnu.no/api/auth/callback/auth0",
+    ]
+  }[terraform.workspace]
+  grant_types     = ["authorization_code", "refresh_token"]
+  name            = "Wiki${local.name_suffix[terraform.workspace]}"
+  is_first_party  = true
+  oidc_conformant = true
+
+  allowed_clients     = []
+  allowed_logout_urls = []
+  allowed_origins     = []
+  # you go here if you decline an auth grant
+  initiate_login_uri = "https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
+  organization_require_behavior = "no_prompt"
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
+data "auth0_client" "wiki_frontend" {
+  client_id = auth0_client.wiki_frontend.client_id
+}
+
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
@@ -181,6 +220,7 @@ locals {
     web       = data.auth0_client.monoweb_web
     dashboard = data.auth0_client.monoweb_dashboard
     gtx       = data.auth0_client.gtx
+    wiki      = data.auth0_client.wiki_frontend
   }
 }
 
@@ -306,6 +346,7 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
     auth0_client.monoweb_dashboard.client_id,
+    auth0_client.wiki_frontend.client_id,
     auth0_client.vengeful_vineyard_frontend.client_id,
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
