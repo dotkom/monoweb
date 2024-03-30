@@ -1,4 +1,4 @@
-import { QueryProvider } from "@/app/_trpc/QueryProvider"
+import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { PropsWithChildren } from "react"
 import { Poppins } from "next/font/google"
 import { cn } from "@dotkomonline/ui"

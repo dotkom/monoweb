@@ -1,7 +1,8 @@
-import { serverClient } from "@/app/_trpc/serverClient"
+import { getServerClient } from "@/utils/trpc/serverClient"
 import { getServerSession } from "next-auth"
 
 export default async function App() {
+  const serverClient = await getServerClient();
   const events = await serverClient.event.all();
   const auth = await getServerSession();
 
