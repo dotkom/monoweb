@@ -3,7 +3,7 @@
 import React, { type FC, type FormEvent, useState } from "react"
 import { type ProductWrite } from "@dotkomonline/types"
 import { useRouter } from "next/router"
-import { trpc } from "@/utils/trpc/client";
+import { trpc } from "@/utils/trpc/client"
 
 const PaymentTestPage: FC = () => {
   const paymentProvidersQuery = trpc.payment.getPaymentProviders.useQuery(undefined, {

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Avatar,
@@ -29,9 +29,11 @@ import Link from "next/link"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = () => {
-  return <SessionProvider>
-    <InnerProfileMenu/>
-  </SessionProvider>
+  return (
+    <SessionProvider>
+      <InnerProfileMenu />
+    </SessionProvider>
+  )
 }
 
 const InnerProfileMenu = () => {

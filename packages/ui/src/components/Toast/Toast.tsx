@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { type FC, type ReactNode } from "react"
 import { cva } from "cva"

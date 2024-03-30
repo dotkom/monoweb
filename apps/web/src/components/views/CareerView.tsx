@@ -24,7 +24,9 @@ const CareerView = ({ careers }: { careers: CareerAd[] }) => (
         <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
       </div>
       <div className="flex flex-col">
-        {careers.map(c => <CompanyAdListItem career={c} key={c.link} />)}
+        {careers.map((c) => (
+          <CompanyAdListItem career={c} key={c.link} />
+        ))}
       </div>
       <div className="h-36" />
     </div>

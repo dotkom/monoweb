@@ -7,22 +7,18 @@ import "@dotkomonline/config/tailwind.css"
 import "../styles/globals.css"
 
 export const metadata = {
-  title: 'Onlineweb 5',
-  description: 'Linjeforeningen Onlines nettsider',
+  title: "Onlineweb 5",
+  description: "Linjeforeningen Onlines nettsider",
 }
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
 
-export default function RootLayout({
-  children,
-}: PropsWithChildren) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body className={cn(poppins.variable, "h-full w-full")}>
         <QueryProvider>
-          <MainLayout>
-            {children}
-          </MainLayout>
+          <MainLayout>{children}</MainLayout>
         </QueryProvider>
       </body>
     </html>

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { Button } from "@dotkomonline/ui"
 import { trpc } from "@/utils/trpc/client"

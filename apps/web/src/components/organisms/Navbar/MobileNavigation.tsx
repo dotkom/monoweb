@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { cn, Icon } from "@dotkomonline/ui"
 import { type FC, useEffect, useState } from "react"

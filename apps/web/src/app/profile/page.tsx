@@ -1,15 +1,15 @@
-import { getServerSession } from "next-auth";
-import { ProfileLanding } from "@/components/views/ProfileView/components";
-import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth"
+import { ProfileLanding } from "@/components/views/ProfileView/components"
+import { redirect } from "next/navigation"
 
 const ProfilePage = async () => {
-  const session = await getServerSession();
+  const session = await getServerSession()
 
   if (session === null) {
-    redirect("/");
+    redirect("/")
   }
 
-  return <ProfileLanding user={session.user} />;
-};
+  return <ProfileLanding user={session.user} />
+}
 
-export default ProfilePage;
+export default ProfilePage

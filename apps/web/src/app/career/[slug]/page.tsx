@@ -8,7 +8,7 @@ interface CareerProps {
 }
 
 const CareerAdPage = async ({ params: { slug } }: CareerProps) => {
-  const careerData = await fetchCareerAd(slug);
+  const careerData = await fetchCareerAd(slug)
   if (!careerData) {
     return <div>404 - Sanity not found</div>
   }

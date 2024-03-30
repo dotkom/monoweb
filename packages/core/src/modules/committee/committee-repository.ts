@@ -36,7 +36,6 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   }
 
   async getAllIds() {
-    return (await this.db.selectFrom("committee").select("id").execute())
-      .map((row) => row.id);
+    return (await this.db.selectFrom("committee").select("id").execute()).map((row) => row.id)
   }
 }

@@ -22,7 +22,7 @@ export const createContextInner = async (opts: AuthContextProps) => {
 }
 
 export const createContext = async () => {
-  const session = await getServerSession();
+  const session = await getServerSession()
   if (session !== null) {
     return await createContextInner({
       auth: {

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { cva } from "cva"
 import * as React from "react"

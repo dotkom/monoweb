@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"

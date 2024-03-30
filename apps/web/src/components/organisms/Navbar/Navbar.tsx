@@ -55,7 +55,7 @@ export const Navbar = () => (
       </Link>
       <MainNavigation links={links} />
       <div className="flex flex-grow items-center justify-end md:flex-grow-0">
-          <ProfileMenu />
+        <ProfileMenu />
       </div>
     </div>
   </header>
