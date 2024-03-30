@@ -1,3 +1,5 @@
+"use client";
+
 import { cva } from "cva"
 import { type FC, type PropsWithChildren } from "react"
 import { cn } from "../../utils"

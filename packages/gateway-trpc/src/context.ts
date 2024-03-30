@@ -4,6 +4,7 @@ import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { getServerSession } from "next-auth"
+import { FetchCreateContextFnOptions } from "@trpc/server/dist/adapters/fetch"
 
 interface AuthContextProps {
   auth: {
@@ -19,8 +20,8 @@ export const createContextInner = async (opts: AuthContextProps) => {
   }
 }
 
-export const createContext = async (opts: CreateNextContextOptions) => {
-  const session = await getServerSession(opts.req, opts.res, authOptions)
+export const createContext = async () => {
+  const session = await getServerSession(authOptions);
   if (session !== null) {
     return createContextInner({
       auth: {

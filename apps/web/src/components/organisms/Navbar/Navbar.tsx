@@ -5,6 +5,7 @@ import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
 import { type MenuLink } from "./types"
+import { SessionProvider } from "next-auth/react"
 
 const links: MenuLink[] = [
   {
@@ -54,7 +55,7 @@ export const Navbar = () => (
       </Link>
       <MainNavigation links={links} />
       <div className="flex flex-grow items-center justify-end md:flex-grow-0">
-        <ProfileMenu />
+          <ProfileMenu />
       </div>
     </div>
   </header>

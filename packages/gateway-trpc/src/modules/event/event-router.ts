@@ -47,6 +47,8 @@ export const eventRouter = t.router({
       return event
     }),
 
+  test: publicProcedure.query(async () => "Hello, world!"),
+
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input.take, input.cursor)
     const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))

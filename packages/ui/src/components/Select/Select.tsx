@@ -1,3 +1,5 @@
+"use client";
+
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react"
 import { Icon } from "../Icon"

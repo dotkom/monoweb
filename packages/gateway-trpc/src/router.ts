@@ -4,7 +4,7 @@ import { eventRouter } from "./modules/event/event-router"
 import { attendanceRouter } from "./modules/event/attendance-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { paymentRouter } from "./modules/payment/payment-router"
-import { t } from "./trpc"
+import { publicProcedure, t } from "./trpc"
 import { userRouter } from "./modules/user/user-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
@@ -13,6 +13,7 @@ import { articleRouter } from "./modules/article/article-router"
 import { interestGroupRouter } from "./modules/interest-group/interest-group-router"
 
 export const appRouter = t.router({
+  helloworld: publicProcedure.query(() => "Hello, world!"),
   committee: committeeRouter,
   event: eventRouter,
   attendance: attendanceRouter,

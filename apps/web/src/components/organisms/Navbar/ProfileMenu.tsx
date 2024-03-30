@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Avatar,
   AvatarFallback,
@@ -22,11 +24,17 @@ import {
 } from "@dotkomonline/ui"
 import { type FC, type PropsWithChildren } from "react"
 import { useTheme } from "next-themes"
-import { signIn, signOut, useSession } from "next-auth/react"
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = () => {
+  return <SessionProvider>
+    <InnerProfileMenu/>
+  </SessionProvider>
+}
+
+const InnerProfileMenu = () => {
   const { status } = useSession()
 
   if (status === "loading") {

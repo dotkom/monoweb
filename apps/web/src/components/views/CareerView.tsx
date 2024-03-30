@@ -1,5 +1,5 @@
 import { type FC } from "react"
-import { type CareerProps } from "@/pages/career"
+import { type CareerProps } from "@/pages.old/career"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
 
 const CareerView: FC<CareerProps> = (props: CareerProps) => (

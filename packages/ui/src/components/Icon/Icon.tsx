@@ -1,3 +1,5 @@
+"use client";
+
 import { Icon as Iconify } from "@iconify-icon/react"
 import { forwardRef } from "react"
 
