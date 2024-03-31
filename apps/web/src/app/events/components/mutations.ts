@@ -1,5 +1,5 @@
 import { trpc } from "@/utils/trpc/client"
-import {Session} from "next-auth";
+import { Session } from "next-auth"
 
 interface UnregisterProps {
   attendanceId: string

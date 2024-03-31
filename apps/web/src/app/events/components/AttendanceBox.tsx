@@ -7,7 +7,7 @@ import { AttendanceGroup } from "./AttendanceGroup"
 import { useRegisterMutation, useUnregisterMutation } from "./mutations"
 import { useGetAttendee } from "./queries"
 import { StatusCard } from "./StatusCard"
-import {trpc} from "@/utils/trpc/client";
+import { trpc } from "@/utils/trpc/client"
 
 interface StatusCardProps {
   title: string
@@ -122,7 +122,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     throw new Error("AttendanceBox rendered for event without attendance")
   }
 
-  const registerMutation = useRegisterMutation({ attendanceId, user: sessionUser})
+  const registerMutation = useRegisterMutation({ attendanceId, user: sessionUser })
   const unregisterMutation = useUnregisterMutation({ attendanceId, user: sessionUser })
   const { data: attendee } = useGetAttendee({ userId: sessionUser.id, attendanceId })
 
