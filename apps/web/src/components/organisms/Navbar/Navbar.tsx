@@ -5,6 +5,9 @@ import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
 import { type MenuLink } from "./types"
+import { SessionProvider } from "next-auth/react"
+import { getServerSession } from "next-auth"
+import { session } from "next-auth/core/routes"
 
 const links: MenuLink[] = [
   {
@@ -45,17 +48,21 @@ const links: MenuLink[] = [
   },
 ]
 
-export const Navbar = () => (
-  <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
-    <div className="border-blue-12/20 flex h-16 border-b">
-      <MobileNavigation links={links} />
-      <Link href="/" className="flex items-center">
-        <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
-      </Link>
-      <MainNavigation links={links} />
-      <div className="flex flex-grow items-center justify-end md:flex-grow-0">
-        <ProfileMenu />
+export const Navbar = async () => {
+  const session = await getServerSession()
+
+  return (
+    <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
+      <div className="border-blue-12/20 flex h-16 border-b">
+        <MobileNavigation links={links} />
+        <Link href="/" className="flex items-center">
+          <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
+        </Link>
+        <MainNavigation links={links} />
+        <div className="flex flex-grow items-center justify-end md:flex-grow-0">
+          <ProfileMenu initialData={session} />
+        </div>
       </div>
-    </div>
-  </header>
-)
+    </header>
+  )
+}

@@ -1,3 +1,5 @@
+"use client"
+
 import { cva } from "cva"
 import { type VariantProps } from "cva"
 import React, { forwardRef } from "react"
