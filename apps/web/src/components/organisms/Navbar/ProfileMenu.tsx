@@ -27,6 +27,7 @@ import { useTheme } from "next-themes"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
+import {Session} from "next-auth";
 
 export const ProfileMenu = ({ initialData }: { initialData: Session | null }) => {
   return (

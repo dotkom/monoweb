@@ -6,7 +6,7 @@ const CompanyPage = async ({ params: { id } }: { params: { id: string } }) => {
   const eventsData = await serverClient.event.allByCompany({ id })
   const company = await serverClient.company.get(id)
 
-  return <CompanyView company={company} events={eventsData} isLoadingEvents={false} />
+  return <CompanyView company={company} events={eventsData} />
 }
 
 export default CompanyPage
