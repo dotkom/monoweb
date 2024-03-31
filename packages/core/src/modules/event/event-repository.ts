@@ -3,7 +3,9 @@ import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
 import { type Insertable, type Kysely, type Selectable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
-export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
+export const mapToEvent = (data: Selectable<Database["event"]>) => {
+  return EventSchema.parse(data)
+}
 
 export type EventInsert = Insertable<Database["event"]>
 
@@ -49,6 +51,11 @@ export class EventRepositoryImpl implements EventRepository {
   async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
     const query = orderedQuery(this.db.selectFrom("event").selectAll().limit(take), cursor)
     const events = await query.execute()
+    console.log("FUCK OFF:");
+    for (const event of events) {
+      console.log(event.title);
+      console.log(JSON.stringify(event));
+    }
 
     return events.map((e) => mapToEvent(e))
   }

@@ -82,6 +82,7 @@ export const eventRouter = t.router({
       ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
     ),
   getWebEventDetailData: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
+    console.log("GETTING WEB EVENTS DETAILS PAGE")
     return ctx.eventService.getWebEventDetailsPageData(input)
   }),
   getEventDetailData: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
