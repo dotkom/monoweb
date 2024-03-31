@@ -28,9 +28,9 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
-export const ProfileMenu = () => {
+export const ProfileMenu = ({ initialData }: { initialData: Session | null }) => {
   return (
-    <SessionProvider>
+    <SessionProvider session={initialData}>
       <InnerProfileMenu />
     </SessionProvider>
   )

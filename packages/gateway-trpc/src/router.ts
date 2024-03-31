@@ -13,7 +13,6 @@ import { articleRouter } from "./modules/article/article-router"
 import { interestGroupRouter } from "./modules/interest-group/interest-group-router"
 
 export const appRouter = t.router({
-  helloworld: publicProcedure.query(() => "Hello, world!"),
   committee: committeeRouter,
   event: eventRouter,
   attendance: attendanceRouter,
