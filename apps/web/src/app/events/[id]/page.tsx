@@ -85,7 +85,7 @@ const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendan
             <div className="flex w-full">
                 <EventInfoBox event={event} />
                 <div className="flex flex-1 flex-col">
-                    <AttendanceBox user={user} attendance={attendance} pools={pools} event={event} />
+                    <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
                     {committees.length && <OrganizerBox committees={committees} />}
                     {event.location && <LocationBox location={event.location} />}
                 </div>

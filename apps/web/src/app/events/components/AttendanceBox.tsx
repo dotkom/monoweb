@@ -2,11 +2,12 @@ import { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
 import { type FC } from "react"
-import { Session } from "../.."
+import { Session } from "next-auth"
 import { AttendanceGroup } from "./AttendanceGroup"
 import { useRegisterMutation, useUnregisterMutation } from "./mutations"
 import { useGetAttendee } from "./queries"
 import { StatusCard } from "./StatusCard"
+import {trpc} from "@/utils/trpc/client";
 
 interface StatusCardProps {
   title: string
@@ -104,7 +105,7 @@ const getStatusDate = (date: Date, attendance: StatusState): string => {
 }
 
 interface Props {
-  user: Session["user"]
+  sessionUser: Session["user"]
   attendance: Attendance
   pools: AttendancePool[]
   event: Event
@@ -112,16 +113,18 @@ interface Props {
 
 type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
 
-export const AttendanceBox: FC<Props> = ({ user, attendance, pools, event }) => {
+export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
   const attendanceId = event.attendanceId
+
+  const { data: user } = trpc.user.getMe.useQuery()
 
   if (!attendanceId) {
     throw new Error("AttendanceBox rendered for event without attendance")
   }
 
-  const registerMutation = useRegisterMutation({ attendanceId, user })
-  const unregisterMutation = useUnregisterMutation({ attendanceId, user })
-  const { data: attendee } = useGetAttendee({ userId: user.id, attendanceId })
+  const registerMutation = useRegisterMutation({ attendanceId, user: sessionUser})
+  const unregisterMutation = useUnregisterMutation({ attendanceId, user: sessionUser })
+  const { data: attendee } = useGetAttendee({ userId: sessionUser.id, attendanceId })
 
   const attendanceStatus = calculateStatus({
     registerStart: attendance.registerStart,
@@ -129,13 +132,13 @@ export const AttendanceBox: FC<Props> = ({ user, attendance, pools, event }) => 
     now: new Date(),
   })
   const userIsRegistered = Boolean(attendee)
-  const myGroups = pools?.find((a) => a.yearCriteria.includes(user.studyYear))
+  const myGroups = user && pools?.find((a) => a.yearCriteria.includes(user?.studyYear))
   const otherGroups = pools?.filter((group) => group.id !== myGroups?.id)
 
   const registerForAttendance = () =>
     registerMutation.mutate({
       attendanceId,
-      userId: user.id,
+      userId: sessionUser.id,
     })
 
   const unregisterForAttendance = () => {
