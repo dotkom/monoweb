@@ -17,14 +17,19 @@ export default function NavBar() {
       </div>
       <Tabs className="">
         {session.status !== "authenticated" ? (
-          <TabsList className="bg-[#FFF] px-4 py-2">
-            <button type="button" onClick={() => signIn("auth0")} className="">
-              Sign in
-            </button>
+          <TabsList
+            onClick={() => signIn("auth0")}
+            className="bg-[#FFF] border border-slate-8 hover:bg-slate-4 font-bold  px-6 py-2 cursor-pointer"
+          >
+            <div>Sign in</div>
           </TabsList>
         ) : (
           <TabsList>
-            <button type="button" onClick={() => signOut()}>
+            <button
+              type="button"
+              onClick={() => signOut()}
+              className="bg-[#FFF] border border-slate-8 hover:bg-slate-4 font-bold  px-6 py-2 cursor-pointer"
+            >
               Log out
             </button>
           </TabsList>

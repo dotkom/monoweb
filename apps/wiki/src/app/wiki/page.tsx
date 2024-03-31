@@ -1,26 +1,37 @@
-import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { Tiptap } from "src/components/tiptap";
-import { getArticle } from "src/hooks/get-article";
+import { Session } from "inspector"
+import { getServerSession } from "next-auth"
+import { Tiptap } from "src/components/tiptap"
+import { existsById } from "src/hooks/exists-by-id"
+import { getArticle } from "src/hooks/get-article"
+import { getArticleContent } from "src/hooks/get-article-content"
+import { updateArticleContent } from "src/hooks/update-article-content"
 
-type PathParams = {
-    params: {
-      path: string[]
-    }
+export default async function WikiPage() {
+  const article = await getArticle("/wiki")
+  const auth = await getServerSession()
+
+  if (!article) {
+    return (
+      <div className="flex justify-center w-full py-32">
+        <h2>Something went wrong! Quick! Do a summoning ritual!</h2>
+      </div>
+    )
   }
-  
-
-export default async function Page({ params }: PathParams) {
-    const session = await getServerSession();
+  const articleExists = await existsById(article.Id)
+  if (!articleExists) {
+    updateArticleContent(article.Id, "{}")
+  }
+  const content = await getArticleContent(article.Id)
   return (
     <>
-      <div className="p-20">
+      <div className="px-20 flex flex-col w-full gap-10">
+        <h1>{article?.Title}</h1>
         <Tiptap
-          access={session ? true : false}
-          json={{}}
+          access={auth ? true : false}
+          json={content ? JSON.parse(content) : null}
+          updateContent={{ func: updateArticleContent, id: article.Id }}
         />
       </div>
     </>
-  );
+  )
 }

@@ -12,6 +12,7 @@ export interface ArticleService {
   findArticleBySlug(id: string): Promise<Article | null>
   findArticles(): Promise<Article[]>
   findArticlesByParent(parentId: string): Promise<Article[]>
+  existsById(id: ArticleId): Promise<boolean>
 }
 
 export class ArticleServiceImpl implements ArticleService {
@@ -58,5 +59,9 @@ export class ArticleServiceImpl implements ArticleService {
 
   async createAttachment(): Promise<Attachment> {
     return await this.articleContentRepository.createAttachment()
+  }
+
+  async existsById(id: ArticleId): Promise<boolean> {
+    return await this.articleContentRepository.existsById(id)
   }
 }

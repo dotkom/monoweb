@@ -1,12 +1,18 @@
-import { Editor } from "@tiptap/react";
-import { useRef, useState } from "react";
-import Modal from "./new-page-modal";
-import { Icon } from "@iconify/react";
+import { Editor } from "@tiptap/react"
+import { useRef, useState } from "react"
+import Modal from "./new-page-modal"
+import { Icon } from "@iconify/react"
 
-const Toolbar = ({ editor }: { editor: Editor }) => {
-  const [showModal, setShowModal] = useState(false);
+const Toolbar = ({
+  editor,
+  handleSubmit,
+}: {
+  editor: Editor
+  handleSubmit: () => void
+}) => {
+  const [showModal, setShowModal] = useState(false)
   return (
-    <div className="flex gap-4 pb-8">
+    <div className="flex gap-4">
       {/* OUT OF THE BOX FEATURES */}
 
       <button
@@ -50,8 +56,8 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
         type="button"
         title="Clear Formatting"
         onClick={() => {
-          editor.chain().focus().unsetAllMarks().run(),
-            editor.chain().focus().clearNodes().run();
+          editor.chain().focus().unsetAllMarks().run()
+          editor.chain().focus().clearNodes().run()
         }}
       >
         <Icon icon="tabler:clear-formatting" width={24} />
@@ -144,18 +150,10 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
       >
         <Icon icon="tabler:blockquote" width={24} />
       </button>
-      <button
-        type="button"
-        title="Horizontal Rule"
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-      >
+      <button type="button" title="Horizontal Rule" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         <Icon icon="material-symbols:horizontal-rule" width={24} />
       </button>
-      <button
-        type="button"
-        title="Hard Break"
-        onClick={() => editor.chain().focus().setHardBreak().run()}
-      >
+      <button type="button" title="Hard Break" onClick={() => editor.chain().focus().setHardBreak().run()}>
         <Icon icon="tabler:page-break" width={24} />
       </button>
       <button
@@ -178,14 +176,10 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
         New Page
       </button>
       <div className="relative">
-        <Modal
-          showModal={showModal}
-          setShowModal={setShowModal}
-          editor={editor}
-        />
+        <Modal showModal={showModal} setShowModal={setShowModal} editor={editor} handleSubmit={handleSubmit} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Toolbar;
+export default Toolbar

@@ -1,23 +1,27 @@
-"use client";
+"use client"
 
-import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
-import { FC, useState } from "react";
-import { Color } from "@tiptap/extension-color";
-import ListItem from "@tiptap/extension-list-item";
-import TextStyle from "@tiptap/extension-text-style";
-import Link from "@tiptap/extension-link";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import React from "react";
-import clsx from "clsx";
-import Toolbar from "./toolbar";
+import { useEditor, EditorContent, JSONContent } from "@tiptap/react"
+import { FC, useState } from "react"
+import { Color } from "@tiptap/extension-color"
+import ListItem from "@tiptap/extension-list-item"
+import TextStyle from "@tiptap/extension-text-style"
+import Link from "@tiptap/extension-link"
+import StarterKit from "@tiptap/starter-kit"
+import Image from "@tiptap/extension-image"
+import React from "react"
+import clsx from "clsx"
+import Toolbar from "./toolbar"
+import { getArticle } from "src/hooks/get-article"
+import { usePathname } from "next/navigation"
+import { updateArticleContent } from "src/hooks/update-article-content"
 
 interface TiptapProps {
-  json: JSONContent | string;
-  access: boolean;
+  json: JSONContent | string
+  access: boolean
+  updateContent?: { func: typeof updateArticleContent; id: string }
 }
 
-export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
+export const Tiptap: FC<TiptapProps> = ({ json, access, updateContent }) => {
   const extensions = [
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
     TextStyle.configure(),
@@ -29,7 +33,7 @@ export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
     Link.configure({
       protocols: ["ftp", "mailto"],
     }),
-  ];
+  ]
 
   const editor = useEditor({
     extensions: [...extensions],
@@ -68,31 +72,30 @@ export const Tiptap: FC<TiptapProps> = ({ json, access }) => {
     },
     content: json,
     editable: access,
-  });
-
-  const [text, setText] = useState<JSONContent>();
+  })
 
   const handleSubmit = () => {
-    //Add posting of data here
-    setText(editor?.getJSON());
-  };
+    if (updateContent) {
+      updateContent.func(updateContent.id, JSON.stringify(editor?.getJSON()))
+    }
+  }
 
   if (!editor) {
-    return null;
+    return null
   }
   return (
-    <>
-      {access && <Toolbar editor={editor} />}
+    <div className="flex flex-col gap-3">
+      {access && <Toolbar editor={editor} handleSubmit={handleSubmit} />}
       <EditorContent editor={editor} />
       {access && (
         <button
           type="submit"
-          className="bg-blue-10 my-3 py-5 text-white rounded-lg flex  w-full justify-center hover:bg-blue-9"
+          className="bg-blue-10 my-3 py-4 text-[#FFF] rounded-lg flex  w-full justify-center hover:bg-blue-9"
           onClick={() => handleSubmit()}
         >
           Submit
         </button>
       )}
-    </>
-  );
-};
+    </div>
+  )
+}

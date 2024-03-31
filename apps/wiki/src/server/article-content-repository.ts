@@ -1,4 +1,4 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { GetObjectCommand, HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post"
 
 import { ArticleId, Attachment, AttachmentSchema } from "./types"
@@ -7,6 +7,7 @@ export interface ArticleContentRepository {
   getArticleContentById(id: ArticleId): Promise<string>
   putArticleContentById(id: ArticleId, content: string): Promise<void>
   createAttachment(): Promise<Attachment>
+  existsById(id: ArticleId): Promise<boolean>
 }
 
 export class ArticleContentRepositoryImpl implements ArticleContentRepository {
@@ -20,9 +21,30 @@ export class ArticleContentRepositoryImpl implements ArticleContentRepository {
       Bucket: this.bucketName,
       Key: id,
     })
-    const response = await this.s3Client.send(command)
-    const body = await response.Body?.transformToString("utf-8")
-    return body ?? ""
+    try {
+      const response = await this.s3Client.send(command)
+      const body = await response.Body?.transformToString("utf-8")
+      return body ?? ""
+    } catch (error) {
+      console.error(error)
+      return ""
+    }
+  }
+
+  async existsById(id: ArticleId): Promise<boolean> {
+    const command = new HeadObjectCommand({
+      Bucket: this.bucketName,
+      Key: id,
+    })
+    try {
+      await this.s3Client.send(command)
+      return true
+    } catch (error) {
+      if ((error as { name: string }).name === "NotFound") {
+        return false
+      }
+      throw error
+    }
   }
 
   async putArticleContentById(id: ArticleId, content: string): Promise<void> {
