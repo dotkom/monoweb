@@ -12,7 +12,7 @@ type PathParams = {
 
 export default async function WikiPage({ params }: PathParams) {
   const path = params?.path?.join("/")
-  const article = await getArticle("/wiki/" + path)
+  const article = await getArticle(`/wiki/${path}`)
 
   if (!article) {
     return <h1>Article not found {path}</h1>

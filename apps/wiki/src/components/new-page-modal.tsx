@@ -11,14 +11,14 @@ const Modal = ({
   handleSubmit,
 }: {
   showModal: boolean
-  setShowModal: any
+  setShowModal: (value: boolean) => void
   editor: Editor
   handleSubmit: () => void
 }) => {
   const router = useRouter()
   const [title, setTitle] = useState("")
   const pathname = usePathname()
-  const [slug, setSlug] = useState(pathname + "/")
+  const [slug, setSlug] = useState(`${pathname}/`)
   const [showSlugWarning, setShowSlugWarning] = useState(false)
 
   if (pathname === null) {
@@ -26,14 +26,14 @@ const Modal = ({
   }
 
   function parseTitleToSlug(value: string) {
-    return pathname + "/" + value.toLowerCase().replace(/ /g, "-")
+    return `${pathname}/${value.toLowerCase().replace(/ /g, "-")}`
   }
 
   function parseSlug(value: string) {
-    if (value.startsWith(pathname + "/" || "")) {
+    if (value.startsWith(`${pathname}/` || "")) {
       return value.toLowerCase().replace(/ /g, "-")
     }
-    return pathname + "/"
+    return `${pathname}/`
   }
 
   return (
@@ -44,7 +44,7 @@ const Modal = ({
           <div className="bg-[#FFFFFF] rounded-lg shadow-xl p-5 m-4 max-w-md max-h-full overflow-y-auto">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-semibold">New Page</h1>
-              <button onClick={() => setShowModal(false)} className="p-2 rounded-md hover:bg-gray-100">
+              <button type="button" onClick={() => setShowModal(false)} className="p-2 rounded-md hover:bg-gray-100">
                 Close
               </button>
             </div>
@@ -74,6 +74,7 @@ const Modal = ({
               {showSlugWarning ? <p className="text-red-10 text-sm">A page with this slug already exists</p> : null}
               <button
                 className="mt-4 px-4 py-2 bg-blue-9 text-white rounded-md hover:bg-blue-63"
+                type="submit"
                 onClick={async () => {
                   if (await getArticleBySlug(slug)) {
                     setShowSlugWarning(true)
@@ -93,6 +94,7 @@ const Modal = ({
               </button>
               <button
                 className="mt-4 px-4 py-2 bg-blue-9 text-white rounded-md hover:bg-blue-63"
+                type="submit"
                 onClick={async () => {
                   if (await getArticleBySlug(slug)) {
                     setShowSlugWarning(true)
@@ -105,7 +107,7 @@ const Modal = ({
                     ParentId: "<root>",
                   })
                   handleSubmit()
-                  editor.commands.insertContent('<a href="' + slug + '">' + title + "</a>")
+                  editor.commands.insertContent(`<a href="${slug}">${title}</a>`)
                 }}
               >
                 Continue writing
