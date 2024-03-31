@@ -1,21 +1,24 @@
-import { getServerClient } from "@/utils/trpc/serverClient"
-import { getServerSession } from "next-auth"
-import { Button } from "../../../../packages/ui"
-import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
-import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
-import Link from "next/link"
+import { getServerClient } from "@/utils/trpc/serverClient";
+import { getServerSession } from "next-auth";
+import { Button } from "../../../../packages/ui";
+import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash";
+import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent";
+import Link from "next/link";
 
 export default async function App() {
-  const serverClient = await getServerClient()
-  const session = await getServerSession()
-  const events = await serverClient.event.recommended()
+  const serverClient = await getServerClient();
+  const session = await getServerSession();
+  const events = await serverClient.event.recommended();
 
   return (
     <div>
       <CompanySplash className="hidden md:flex" />
 
       <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
-        <Link href="/events" className="hidden text-3xl font-semibold hover:underline sm:block">
+        <Link
+          href="/events"
+          className="hidden text-3xl font-semibold hover:underline sm:block"
+        >
           Arrangementer
         </Link>
         <Link href="/events" className="hidden sm:block">
@@ -38,5 +41,5 @@ export default async function App() {
       </div>
       <div className="h-screen" />
     </div>
-  )
+  );
 }
