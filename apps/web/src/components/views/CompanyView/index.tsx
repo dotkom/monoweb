@@ -7,8 +7,7 @@ import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 
 interface CompanyViewProps {
   company: Company
-  events?: Event[]
-  isLoadingEvents: boolean
+  events: Event[]
 }
 
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
@@ -53,9 +52,8 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={"Kommende arrangementer"} events={props.events} isLoading={props.isLoadingEvents} />
-        <EventList title={"Åpne jobbtilbud"} events={props.events} isLoading={props.isLoadingEvents} />{" "}
-        {/* TODO: Separate listings list later */}
+        <EventList title={"Kommende arrangementer"} events={props.events} />
+        <EventList title={"Åpne jobbtilbud"} events={props.events} /> {/* TODO: Separate listings list later */}
       </div>
     </EntryDetailLayout>
   )

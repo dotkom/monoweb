@@ -1,16 +1,13 @@
 import Link from "next/link"
-import { trpc } from "@/utils/trpc"
+import { getServerClient } from "@/utils/trpc/serverClient"
 
-const CommitteePage = () => {
-  const { data, isLoading } = trpc.committee.all.useQuery()
-
-  if (isLoading) {
-    return <p>Loading...</p>
-  }
+const CommitteePage = async () => {
+  const serverClient = await getServerClient()
+  const committees = await serverClient.committee.all()
 
   return (
     <ul className="text-blue-11 text-center text-2xl">
-      {data?.data.map((committee) => (
+      {committees.data.map((committee) => (
         <li className="text-blue-11 hover:text-blue-9 cursor-pointer" key={committee.id}>
           <Link href={`committee/${committee.id}`}>{committee.name}</Link>
         </li>

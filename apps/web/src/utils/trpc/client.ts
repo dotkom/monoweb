@@ -1,21 +1,20 @@
-import { createTRPCNext } from "@trpc/next"
-import { type CreateTRPCClientOptions, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client"
+"use client"
+
+import { createTRPCReact } from "@trpc/react-query"
+import { type CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server"
 import { type AppRouter } from "@dotkomonline/gateway-trpc"
 import superjson from "superjson"
 import { env } from "@dotkomonline/env"
 
 const getBaseUrl = () => {
-  if (typeof window !== "undefined") {
-    return ""
-  }
-  if (env.NEXT_PUBLIC_VERCEL_URL) {
-    return `https://${env.VERCEL_URL}`
+  if (env.NEXT_PUBLIC_NODE_ENV === "production") {
+    return "https://web.online.ntnu.no"
   }
   return "http://localhost:3000"
 }
 
-const config: CreateTRPCClientOptions<AppRouter> = {
+export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
   transformer: superjson,
   links: [
     loggerLink({
@@ -24,20 +23,18 @@ const config: CreateTRPCClientOptions<AppRouter> = {
     }),
     httpBatchLink({
       url: `${getBaseUrl()}/api/trpc`,
+      async fetch(url, options) {
+        return fetch(url, {
+          ...options,
+          credentials: "include",
+        })
+      },
     }),
   ],
 }
 
-// Vanilla fetch client
-export const trpcClient = createTRPCProxyClient<AppRouter>(config)
-
 // React query trpc
-export const trpc = createTRPCNext<AppRouter>({
-  config() {
-    return config
-  },
-  ssr: false,
-})
+export const trpc = createTRPCReact<AppRouter>({})
 
 /**
  * Inference helpers for input types

@@ -7,6 +7,7 @@ export interface CommitteeService {
   getCommittee(id: CommitteeId): Promise<Committee>
   getCommittees(pageable: Pageable): Promise<Collection<Committee>>
   createCommittee(payload: CommitteeWrite): Promise<Committee>
+  getAllCommitteeIds(): Promise<CommitteeId[]>
 }
 
 export class CommitteeServiceImpl implements CommitteeService {
@@ -31,5 +32,9 @@ export class CommitteeServiceImpl implements CommitteeService {
 
   async getCommittees(pageable: Pageable) {
     return this.committeeRepository.getAll(pageable)
+  }
+
+  async getAllCommitteeIds() {
+    return this.committeeRepository.getAllIds()
   }
 }
