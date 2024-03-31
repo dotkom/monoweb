@@ -7,8 +7,7 @@ import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 
 interface CommitteeViewProps {
   committee: Committee
-  events?: Event[]
-  isLoadingEvents: boolean
+  events: Event[]
 }
 
 export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
@@ -46,8 +45,8 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={"Kommende arrangementer"} events={props.events} isLoading={props.isLoadingEvents} />
-        <EventList title={"Tidligere arrangementer"} events={props.events} isLoading={props.isLoadingEvents} />{" "}
+        <EventList title={"Kommende arrangementer"} events={props.events} />
+        <EventList title={"Tidligere arrangementer"} events={props.events} />{" "}
         {/* TODO: Separate logic for earlier eventlist later */}
       </div>
     </EntryDetailLayout>

@@ -12,7 +12,7 @@ const CommitteePage = async ({ params: { id } }: { params: { id: string } }) => 
   const committee = await serverClient.committee.get(id)
   const committeeEvents = await serverClient.event.allByCommittee({ id })
 
-  return <CommitteeView committee={committee} events={committeeEvents} isLoadingEvents={false} />
+  return <CommitteeView committee={committee} events={committeeEvents} />
 }
 
 export default CommitteePage
