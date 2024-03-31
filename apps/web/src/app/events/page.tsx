@@ -4,7 +4,7 @@ import { getServerClient } from "@/utils/trpc/serverClient"
 const EventPage = async () => {
   const serverClient = await getServerClient()
   const events = await serverClient.event.all()
-  return <EventList title="Arrangementer" isLoading={false} events={events} />
+  return <EventList title="Arrangementer" events={events} />
 }
 
 export default EventPage
