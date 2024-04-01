@@ -1,41 +1,50 @@
-import { Badge } from "@dotkomonline/ui"
-import Image from "next/image"
-import React from "react"
+import { Badge } from "@dotkomonline/ui";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 interface ComingEventProps {
-  img: string
-  title: string
-  tag: string
-  attending: number
-  max_attending: number
-  date: string
-  info_link: string
+  img: string;
+  title: string;
+  tag: string;
+  attending: number;
+  max_attending: number;
+  date: string;
+  info_link: string;
 }
 
 // TODO: mye relative og absolute her.... too bad!
 export const ComingEvent: React.FC<ComingEventProps> = (props) => (
-  <div className="relative h-[100px] max-w-[400px] overflow-hidden rounded-xl shadow-md">
-    <div className="m-0 inline-block align-top">
-      <Image src={props.img} alt={props.title} width={100} height={100} className="object-cover" />
+  <Link href={props.info_link}>
+    <div className="mt-2 flex flex-col">
+      <div className="relative">
+        <Image
+          src={props.img}
+          alt={props.title}
+          width={320}
+          height={180}
+          className="rounded-xl border-2 border-slate-4 object-cover"
+        />
+        <Badge
+          color="green"
+          variant="solid"
+          className="absolute bottom-2 left-2"
+        >
+          {props.tag}
+        </Badge>
+      </div>
+      <div className="">
+        <span>
+          <span>{/* PLACEHOLDER */}</span>
+          <div>
+            <p className="m-0">{props.title}</p>
+            <p className="m-0">{props.date}</p>
+            <p className="m-0">
+              {props.attending}/{props.max_attending}
+            </p>
+          </div>
+        </span>
+      </div>
     </div>
-    <div className="m-0 inline-block p-2 align-top">
-      <span>
-        <span>{/* PLACEHOLDER */}</span>
-        <div>
-          <p className="m-0">{props.title}</p>
-          <p className="m-0">{props.date}</p>
-          <p className="m-0">
-            {props.attending}/{props.max_attending}
-          </p>
-        </div>
-      </span>
-    </div>
-
-    <Badge color="green" variant="solid" className="absolute right-3 top-3">
-      {props.tag}
-    </Badge>
-    <a href={props.info_link}>
-      <p className="absolute bottom-3 right-3 m-0">Info</p>
-    </a>
-  </div>
-)
+  </Link>
+);
