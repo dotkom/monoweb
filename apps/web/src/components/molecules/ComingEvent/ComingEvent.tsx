@@ -1,16 +1,16 @@
-import { Badge } from "@dotkomonline/ui";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import { Badge } from "@dotkomonline/ui"
+import Image from "next/image"
+import Link from "next/link"
+import React from "react"
 
 interface ComingEventProps {
-  img: string;
-  title: string;
-  tag: string;
-  attending: number;
-  max_attending: number;
-  date: string;
-  info_link: string;
+  img: string
+  title: string
+  tag: string
+  attending: number
+  max_attending: number
+  date: string
+  info_link: string
 }
 
 // TODO: mye relative og absolute her.... too bad!
@@ -25,11 +25,7 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => (
           height={180}
           className="rounded-xl border-2 border-slate-4 object-cover"
         />
-        <Badge
-          color="green"
-          variant="solid"
-          className="absolute bottom-2 left-2"
-        >
+        <Badge color="green" variant="solid" className="absolute bottom-2 left-2">
           {props.tag}
         </Badge>
       </div>
@@ -47,4 +43,4 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => (
       </div>
     </div>
   </Link>
-);
+)

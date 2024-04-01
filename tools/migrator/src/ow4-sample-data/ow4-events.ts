@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db";
-import { EventType } from "@dotkomonline/db/src/db.generated";
-import { Insertable } from "kysely";
-import { z } from "zod";
+import { Database } from "@dotkomonline/db"
+import { EventType } from "@dotkomonline/db/src/db.generated"
+import { Insertable } from "kysely"
+import { z } from "zod"
 
 const OW4APIImageSchema = z.object({
   id: z.number(),
@@ -19,7 +19,7 @@ const OW4APIImageSchema = z.object({
   photographer: z.string(),
   preset: z.string(),
   preset_display: z.string(),
-});
+})
 
 const OW4APIAttendanceEventSchema = z.object({
   id: z.number(),
@@ -34,7 +34,7 @@ const OW4APIAttendanceEventSchema = z.object({
   number_on_waitlist: z.number(),
   number_of_seats_taken: z.number(),
   extras: z.array(z.any()),
-});
+})
 
 const OW4APIEventSchema = z.object({
   absolute_url: z.string(),
@@ -53,41 +53,41 @@ const OW4APIEventSchema = z.object({
   title: z.string(),
   organizer_name: z.string(),
   organizer: z.number(),
-});
+})
 
-const eventTypeMapping: Map<number, EventType> = new Map();
-eventTypeMapping.set(1, "SOCIAL");
-eventTypeMapping.set(2, "BEDPRES");
-eventTypeMapping.set(3, "ACADEMIC");
-eventTypeMapping.set(4, "COMPANY");
+const eventTypeMapping: Map<number, EventType> = new Map()
+eventTypeMapping.set(1, "SOCIAL")
+eventTypeMapping.set(2, "BEDPRES")
+eventTypeMapping.set(3, "ACADEMIC")
+eventTypeMapping.set(4, "COMPANY")
 
 const OW4APIEventsEndpointSchema = z.object({
   count: z.number(),
   next: z.string().nullable(),
   previous: z.string().nullable(),
   results: z.array(OW4APIEventSchema),
-});
+})
 
 async function getOW4Events(): Promise<z.infer<typeof OW4APIEventSchema>[]> {
-  const url = "https://old.online.ntnu.no/api/v1/events/?format=json";
+  const url = "https://old.online.ntnu.no/api/v1/events/?format=json"
 
-  const response = await fetch(url);
-  const data = OW4APIEventsEndpointSchema.parse(await response.json());
+  const response = await fetch(url)
+  const data = OW4APIEventsEndpointSchema.parse(await response.json())
 
-  return data.results;
+  return data.results
 }
 
-type Attendance = Insertable<Database["attendance"]>;
-type Event = Insertable<Database["event"]>;
+type Attendance = Insertable<Database["attendance"]>
+type Event = Insertable<Database["event"]>
 
 export async function getEventAndAttendanceSampleData(): Promise<{
-  events: Event[];
-  attendances: (Attendance | null)[];
+  events: Event[]
+  attendances: (Attendance | null)[]
 }> {
-  const ow4Events = await getOW4Events();
+  const ow4Events = await getOW4Events()
 
-  const events: Event[] = [];
-  const attendances: (Attendance | null)[] = [];
+  const events: Event[] = []
+  const attendances: (Attendance | null)[] = []
 
   for (const ow4Event of ow4Events) {
     if (ow4Event.attendance_event) {
@@ -96,9 +96,9 @@ export async function getEventAndAttendanceSampleData(): Promise<{
         start: ow4Event.attendance_event.registration_start,
         end: ow4Event.attendance_event.registration_end,
         limit: ow4Event.attendance_event.max_capacity,
-      });
+      })
     } else {
-      attendances.push(null);
+      attendances.push(null)
     }
 
     events.push({
@@ -111,11 +111,11 @@ export async function getEventAndAttendanceSampleData(): Promise<{
       description: ow4Event.description,
       imageUrl: ow4Event.image.lg,
       location: ow4Event.location,
-    });
+    })
   }
 
   return {
     events,
     attendances,
-  };
+  }
 }

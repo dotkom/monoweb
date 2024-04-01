@@ -1,14 +1,14 @@
-import { getServerClient } from "@/utils/trpc/serverClient";
-import { getServerSession } from "next-auth";
-import { Button } from "../../../../packages/ui";
-import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash";
-import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent";
-import Link from "next/link";
+import { getServerClient } from "@/utils/trpc/serverClient"
+import { getServerSession } from "next-auth"
+import { Button } from "../../../../packages/ui"
+import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
+import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
+import Link from "next/link"
 
 export default async function App() {
-  const serverClient = await getServerClient();
-  const session = await getServerSession();
-  const events = await serverClient.event.recommended();
+  const serverClient = await getServerClient()
+  const session = await getServerSession()
+  const events = await serverClient.event.recommended()
 
   return (
     <div>
@@ -38,5 +38,5 @@ export default async function App() {
       </div>
       <div className="h-screen" />
     </div>
-  );
+  )
 }
