@@ -15,10 +15,10 @@ export default async function App() {
       <CompanySplash className="hidden md:flex" />
 
       <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
-        <Link href="/events" className="text-3xl font-semibold hover:underline">
+        <Link href="/events" className="hidden text-3xl font-semibold hover:underline sm:block">
           Arrangementer
         </Link>
-        <Link href="/events">
+        <Link href="/events" className="hidden sm:block">
           <Button>Flere arrangementer</Button>
         </Link>
       </div>
