@@ -1,37 +1,28 @@
-"use client";
+"use client"
 
-import { cn, Icon } from "@dotkomonline/ui";
-import { type FC, useEffect, useState } from "react";
-import * as Popover from "@radix-ui/react-popover";
-import Link from "next/link";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "./NavigationMenu";
-import { type MenuLink } from "./types";
+import { cn, Icon } from "@dotkomonline/ui"
+import { type FC, useEffect, useState } from "react"
+import * as Popover from "@radix-ui/react-popover"
+import Link from "next/link"
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./NavigationMenu"
+import { type MenuLink } from "./types"
 
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (open) {
-      document.body.classList.add("overflow-hidden");
+      document.body.classList.add("overflow-hidden")
     } else {
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove("overflow-hidden")
     }
-  }, [open]);
+  }, [open])
 
   return (
     <Popover.Root onOpenChange={(val) => setOpen(val)}>
       <Popover.Trigger>
         <div className={cn("mr-7 flex items-center md:hidden")}>
-          {open ? (
-            <Icon height={32} icon="tabler:x" />
-          ) : (
-            <Icon height={32} icon="tabler:menu-2" />
-          )}
+          {open ? <Icon height={32} icon="tabler:x" /> : <Icon height={32} icon="tabler:menu-2" />}
         </div>
       </Popover.Trigger>
       <Popover.Portal>
@@ -44,10 +35,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                   {"items" in link ? (
                     <>
                       {link.items.map((item) => (
-                        <MobileMenuItem
-                          link={item}
-                          key={`menu-item-${item.title}`}
-                        />
+                        <MobileMenuItem link={item} key={`menu-item-${item.title}`} />
                       ))}
                     </>
                   ) : (
@@ -61,8 +49,8 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
-  );
-};
+  )
+}
 
 const MobileMenuItem = ({ link }: { link: MenuLink }) => (
   <NavigationMenuLink asChild>
@@ -73,4 +61,4 @@ const MobileMenuItem = ({ link }: { link: MenuLink }) => (
       {link.title}
     </Link>
   </NavigationMenuLink>
-);
+)
