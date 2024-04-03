@@ -121,6 +121,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     const combinedCapacity = pools.reduce((acc, pool) => acc + pool.capacity, 0)
     const combinedCriteria = Array.from(new Set(pools.flatMap((pool) => pool.yearCriteria)))
 
+    // use repo to avoid overlapping year criteria check. 
     const insert = await this.attendancePoolRepository.create({
       attendanceId,
       capacity: combinedCapacity,
@@ -160,11 +161,17 @@ export class AttendanceServiceImpl implements AttendanceService {
       }, waitlistAttendee.id)
     }
 
+    // delete the old pools
+    for (let i = 0; i < pools.length; i++) {
+      await this.attendancePoolRepository.delete(pools[i].id)
+    }
+
     return {
       attendance: attendance,
       pool: mergePool,
       attendees: combinedAttendees,
       waitlistAttendees: combinedWaitlistAttendees,
     }
+
   }
 }

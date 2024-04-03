@@ -17,6 +17,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
       yearCriteria: values.yearCriteria,
       attendanceId: innerProps.attendanceId,
       title: values.title,
+      activeFrom: new Date()
     })
   }
   return pools ? (

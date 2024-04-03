@@ -1,17 +1,14 @@
 import {
   UserId,
-  WaitlistAttendeeSchema,
-  WaitlistAttendeeWriteSchema,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
+  WaitlistAttendeeWriteSchema
 } from "@dotkomonline/types"
-import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
-import { AttendancePoolService } from "./attendance-pool-service"
 import { z } from "zod"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
+import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 export const CreateWaitlistSchema = WaitlistAttendeeWriteSchema.omit({
-  active: true,
   attendancePoolId: true,
   position: true,
 })
@@ -49,7 +46,6 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
     return this.waitlistAttendeeRepository.create({
       ...obj,
       position,
-      active: true,
       attendancePoolId: pool.id,
     })
   }

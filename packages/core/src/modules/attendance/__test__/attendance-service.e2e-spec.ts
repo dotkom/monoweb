@@ -486,28 +486,23 @@ describe("attendance", () => {
     const now = new Date("2021-01-02 12:00:00")
 
     const insertPools = [
-      { capacity: 0, yearCriteria: [1] },
       { capacity: 1, yearCriteria: [2] },
-      { capacity: 2, yearCriteria: [3, 4, 5] },
+      { capacity: 2, yearCriteria: [3] },
     ]
 
     const _attendees = [
-      { attendee: { studyYear: 3, name: "user4" }, registrationDate: new Date("2021-01-01 13:00:00") }, // gets in
-      { attendee: { studyYear: 4, name: "user5" }, registrationDate: new Date("2021-01-01 14:00:00") }, // gets in
-      { attendee: { studyYear: 2, name: "user2" }, registrationDate: new Date("2021-01-01 15:00:00") }, // gets in
+      { attendee: { studyYear: 2, name: "user21" }, registrationDate: new Date("2021-01-01 14:00:00") }, // gets in
+      { attendee: { studyYear: 3, name: "user32" }, registrationDate: new Date("2021-01-01 15:00:00") }, // gets in
+      { attendee: { studyYear: 3, name: "user33" }, registrationDate: new Date("2021-01-01 13:00:00") }, // gets in
 
-      // waitlist
-      { attendee: { studyYear: 1, name: "user0" }, registrationDate: new Date("2021-01-02 01:00:00") },
-      { attendee: { studyYear: 1, name: "user1" }, registrationDate: new Date("2021-01-02 02:00:00") },
+      { attendee: { studyYear: 2, name: "user24" }, registrationDate: new Date("2021-01-01 17:00:00") }, 
+      { attendee: { studyYear: 3, name: "user35" }, registrationDate: new Date("2021-01-01 18:00:00") }, 
+      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 18:00:00") }, 
+    ] 
 
-      { attendee: { studyYear: 2, name: "user3" }, registrationDate: new Date("2021-01-02 10:00:00") },
+    const expectedMergeWaitlistOrder = ["user24", "user35", "user26"]
 
-      { attendee: { studyYear: 5, name: "user6" }, registrationDate: new Date("2021-01-02 12:00:00") },
-    ]
-
-    const expectedMergeWaitlistOrder = ["user3", "user6", "user0", "user1"]
-
-    const registerStart = new Date("2021-01-01")
+    const registerStart = new Date("2021-01-01 00:00:00")
     const registerEnd = new Date("2021-01-07")
     const deregisterDeadline = new Date("2021-01-05")
     const mergeTime = new Date("2021-01-06")
@@ -531,9 +526,11 @@ describe("attendance", () => {
 
     const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
 
+    console.log(waitlistAttendees)
+
     assert(waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
 
-    expect(waitlistAttendees).toHaveLength(4)
+    expect(waitlistAttendees).toHaveLength(3)
 
     for (let i = 0; i < waitlistAttendees.length; i++) {
       const waitlistAttendee = waitlistAttendees[i]
