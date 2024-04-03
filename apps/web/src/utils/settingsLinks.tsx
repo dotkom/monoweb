@@ -17,10 +17,4 @@ export const settingsItems = [
     icon: "lucide:lock",
     description: "Endre ditt passord",
   },
-  {
-    title: "Medlemskap",
-    slug: "/settings/membership",
-    icon: "tabler:award",
-    description: "Se ditt medlemskap",
-  },
 ];

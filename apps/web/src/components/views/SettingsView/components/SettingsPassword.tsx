@@ -1,4 +1,9 @@
-import React from "react"
+import { User } from "@dotkomonline/types";
+import { NextPage } from "next";
+import React from "react";
 
-const ProfilePassword = () => <div>password</div>
-export default ProfilePassword
+const SettingsPassword: NextPage<{ user: User }> = ({ user }) => (
+  <div>password</div>
+);
+
+export default SettingsPassword;

@@ -7,11 +7,11 @@ import Link from "next/link";
 
 export default async function App() {
   const serverClient = await getServerClient();
-  const events = await serverClient.event.all();
-  const auth = await getServerSession();
+  const session = await getServerSession();
+  const events = await serverClient.event.recommended();
 
   return (
-    <div>
+    <div className="mt-8">
       <CompanySplash className="hidden md:flex" />
 
       <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
