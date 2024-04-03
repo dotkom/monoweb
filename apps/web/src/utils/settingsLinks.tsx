@@ -18,15 +18,9 @@ export const settingsItems = [
     description: "Endre ditt passord",
   },
   {
-    title: "Varsler",
-    slug: "/settings/notifications",
-    icon: "tabler:bell-ringing",
-    description: "Endre dine varslingsinnstillinger",
-  },
-  {
     title: "Medlemskap",
     slug: "/settings/membership",
     icon: "tabler:award",
     description: "Se ditt medlemskap",
   },
-]
+];
