@@ -1,10 +1,8 @@
 import { type FC } from "react"
-import { type CareerProps } from "@/pages/career"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
+import { CareerAd } from "@/api/get-career-ads"
 
-const CareerView: FC<CareerProps> = (props: CareerProps) => (
-  // return <div> 404 Siden finnes ikke </div>
-
+const CareerView = ({ careers }: { careers: CareerAd[] }) => (
   <div>
     <div className="bg-amber-9 absolute left-0 top-[56px] h-[250px] w-full opacity-30" />
     <div className="absolute left-0 top-[56px] flex h-[250px] w-full flex-col justify-center">
@@ -26,10 +24,8 @@ const CareerView: FC<CareerProps> = (props: CareerProps) => (
         <p className="mb-2 w-[15%] text-xl font-medium">Søknadslink</p>
       </div>
       <div className="flex flex-col">
-        {props.careers.map((c) => (
-          <>
-            <CompanyAdListItem career={c} />
-          </>
+        {careers.map((c) => (
+          <CompanyAdListItem career={c} key={c.link} />
         ))}
       </div>
       <div className="h-36" />

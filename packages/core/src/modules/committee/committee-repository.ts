@@ -8,6 +8,7 @@ export const mapToCommittee = (payload: Selectable<Database["committee"]>): Comm
 export interface CommitteeRepository {
   getById(id: CommitteeId): Promise<Committee | undefined>
   getAll(pageable: Pageable): Promise<Collection<Committee>>
+  getAllIds(): Promise<CommitteeId[]>
   create(values: CommitteeWrite): Promise<Committee>
 }
 
@@ -32,5 +33,9 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
       // restrictions on creating committees, as name is not unique.
       .executeTakeFirstOrThrow()
     return mapToCommittee(committee)
+  }
+
+  async getAllIds() {
+    return (await this.db.selectFrom("committee").select("id").execute()).map((row) => row.id)
   }
 }

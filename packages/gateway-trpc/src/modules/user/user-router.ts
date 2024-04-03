@@ -13,6 +13,7 @@ export const userRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getUserById(input)),
+  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getUserById(ctx.auth.userId)),
   getMany: publicProcedure
     .input(z.array(UserSchema.shape.id))
     .query(async ({ input, ctx }) => ctx.userService.getUsersById(input)),
