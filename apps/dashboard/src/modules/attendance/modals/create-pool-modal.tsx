@@ -13,7 +13,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
   const onClose = () => context.closeModal(id)
   const onSubmit = (values: PoolFormSchema) => {
     createPool({
-      limit: values.limit,
+      capacity: values.capacity,
       yearCriteria: values.yearCriteria,
       attendanceId: innerProps.attendanceId,
       title: values.title,
@@ -23,7 +23,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
     <PoolForm
       defaultValues={{
         yearCriteria: [],
-        limit: 0,
+        capacity: 0,
         title: "",
       }}
       onClose={onClose}

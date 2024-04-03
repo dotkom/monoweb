@@ -20,7 +20,7 @@ export interface PoolFormProps {
 
 export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
-  limit: z.number(),
+  capacity: z.number(),
   title: z.string().min(1),
 })
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
@@ -41,7 +41,7 @@ export const usePoolForm = (props: PoolFormProps) => {
       title: createTextInput({
         label: "Tittel",
       }),
-      limit: createNumberInput({
+      capacity: createNumberInput({
         label: "Kapasitet",
       }),
     },

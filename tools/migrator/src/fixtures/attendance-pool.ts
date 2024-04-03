@@ -9,7 +9,7 @@ export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Ins
       attendanceId: attendance_ids[0],
       createdAt: new Date("2023-02-22 13:30:04.713+00"),
       updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-      limit: 10,
+      capacity: 10,
       yearCriteria: JSON.stringify([0, 1, 2]),
     },
     {
@@ -17,7 +17,7 @@ export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Ins
       attendanceId: attendance_ids[0],
       createdAt: new Date("2023-02-23 11:03:49.289+00"),
       updatedAt: new Date("2023-02-23 11:03:49.289+00"),
-      limit: 10,
+      capacity: 10,
       yearCriteria: JSON.stringify([4, 5]),
     },
     {
@@ -25,7 +25,7 @@ export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Ins
       attendanceId: attendance_ids[1],
       createdAt: new Date("2023-02-25 11:03:49.289+00"),
       updatedAt: new Date("2023-02-25 11:03:49.289+00"),
-      limit: 10,
+      capacity: 10,
       yearCriteria: JSON.stringify([1, 2, 3, 4, 5]),
     },
   ]

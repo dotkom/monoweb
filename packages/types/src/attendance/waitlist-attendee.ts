@@ -13,8 +13,6 @@ export const WaitlistAttendeeSchema = z.object({
 
   studyYear: z.number().int(),
 
-  active: z.boolean(),
-
   attendancePoolId: z.string().ulid(),
 
   name: z.string(),

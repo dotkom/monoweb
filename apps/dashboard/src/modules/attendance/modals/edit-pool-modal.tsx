@@ -18,7 +18,7 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({ conte
     context.closeModal(id)
     updatePool({
       input: {
-        limit: values.limit,
+        capacity: values.capacity,
         title: values.title,
         yearCriteria: values.yearCriteria,
       },
@@ -31,7 +31,7 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({ conte
     <PoolForm
       defaultValues={{
         yearCriteria: innerProps.defaultValues.yearCriteria,
-        limit: innerProps.defaultValues.limit,
+        capacity: innerProps.defaultValues.capacity,
         title: innerProps.defaultValues.title,
       }}
       onClose={onClose}

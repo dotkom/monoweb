@@ -44,7 +44,7 @@ export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
                 <Box>
                   <Text>{pool.title}</Text>
                   <Text>
-                    Reserverte plasser: {pool.numAttendees} / {pool.limit}
+                    Reserverte plasser: {pool.numAttendees} / {pool.capacity}
                   </Text>
                 </Box>
                 <Box>
@@ -52,7 +52,7 @@ export function usePoolsForm({ pools, attendanceId }: EventAttendanceProps) {
                     onClick={openEditPoolModal({
                       attendanceId,
                       defaultValues: {
-                        limit: pool.limit,
+                        capacity: pool.capacity,
                         title: pool.title,
                         yearCriteria: pool.yearCriteria,
                       },

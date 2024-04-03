@@ -63,10 +63,11 @@ export interface Attendance {
 }
 
 export interface AttendancePool {
+  activeFrom: Timestamp;
   attendanceId: string;
+  capacity: number;
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
-  limit: number;
   title: string;
   updatedAt: Generated<Timestamp>;
   yearCriteria: Json | null;
@@ -79,6 +80,7 @@ export interface Attendee {
   createdAt: Generated<Timestamp>;
   extrasChoices: Json | null;
   id: Generated<string>;
+  registeredAt: Timestamp;
   updatedAt: Generated<Timestamp>;
   userId: string | null;
 }
@@ -276,7 +278,6 @@ export interface RefundRequest {
 }
 
 export interface WaitlistAttendee {
-  active: Generated<boolean>;
   attendanceId: string | null;
   attendancePoolId: string | null;
   createdAt: Generated<Timestamp>;

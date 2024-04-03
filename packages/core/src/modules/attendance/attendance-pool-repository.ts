@@ -8,11 +8,12 @@ import {
   type AttendancePoolId,
   type AttendancePoolWrite,
 } from "@dotkomonline/types"
-import { Selectable, type Kysely } from "kysely"
+import { Insertable, Selectable, Updateable, type Kysely } from "kysely"
 import { withInsertJsonValue } from "../../utils/db-utils"
 
 type DatabasePool = Selectable<Database["attendancePool"]> & { numAttendees: number }
 type DatabasePoolBase = Selectable<Database["attendancePool"]>
+type DatabasePoolUpdate = Updateable<Database["attendancePool"]>
 
 const mapToPool = (payload: DatabasePool) => AttendancePoolSchema.parse(payload)
 const mapToPoolBase = (payload: DatabasePoolBase) => AttendancePoolBaseSchema.parse(payload)
@@ -59,6 +60,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       .values(withInsertJsonValue(obj, "yearCriteria"))
       .executeTakeFirstOrThrow()
 
+    // This join is really cheap, so no 
     return mapToPoolBase(result)
   }
 
@@ -90,10 +92,14 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
   }
 
   async update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId) {
-    const insertObj = withInsertJsonValue(obj, "yearCriteria")
+    const insert: DatabasePoolUpdate = {
+      ...obj,
+      yearCriteria: obj.yearCriteria ? JSON.stringify(obj.yearCriteria) : undefined,
+    }
+
     const inserted = await this.db
       .updateTable("attendancePool")
-      .set(insertObj)
+      .set(insert)
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()

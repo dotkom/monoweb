@@ -18,6 +18,7 @@ export const AttendeeSchema = z.object({
 
   attended: z.boolean(),
   extrasChoices: z.array(ExtraChoice).nullable(),
+  registeredAt: z.date(),
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.partial({

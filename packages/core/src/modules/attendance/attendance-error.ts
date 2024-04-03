@@ -12,3 +12,10 @@ export class CantDeleteAttendanceError extends ApplicationError {
     super(PROBLEM_DETAILS.UnprocessableContent, detail)
   }
 }
+
+export class InvalidParametersError extends ApplicationError {
+  constructor(detail: string) {
+    super(PROBLEM_DETAILS.UnprocessableContent, detail)
+  }
+}
+

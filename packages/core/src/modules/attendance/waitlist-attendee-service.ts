@@ -42,7 +42,7 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
       throw new Error("No pool found for the given study year")
     }
 
-    const activeWaitlistAttendees = await this.waitlistAttendeeRepository.getActiveByPoolId(pool.id)
+    const activeWaitlistAttendees = await this.waitlistAttendeeRepository.getByPoolId(pool.id)
 
     const position = activeWaitlistAttendees.length
 
@@ -67,6 +67,6 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
   }
 
   async getActiveByPoolId(poolId: string): Promise<WaitlistAttendee[]> {
-    return this.waitlistAttendeeRepository.getActiveByPoolId(poolId)
+    return this.waitlistAttendeeRepository.getByPoolId(poolId)
   }
 }

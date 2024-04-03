@@ -159,7 +159,7 @@ export const AttendanceBox: FC<Props> = ({ user, attendance, pools, event }) => 
           <AttendanceGroup
             title={myGroups.yearCriteria.reduce((acc, curr) => `${acc} ${curr}`, "")}
             numberOfPeople={myGroups.numAttendees}
-            totalSpots={myGroups.limit}
+            totalSpots={myGroups.capacity}
             isAttending={userIsRegistered}
             canAttend={attendanceStatus === "OPEN"}
           />
@@ -183,7 +183,7 @@ export const AttendanceBox: FC<Props> = ({ user, attendance, pools, event }) => 
             <AttendanceGroup
               title={"1.-5. klasse"}
               numberOfPeople={group.numAttendees}
-              totalSpots={group.limit}
+              totalSpots={group.capacity}
               key={group.id}
               className={clsx(idx === 0 ? "mr-2" : "", "mt-4 w-32")}
               isAttending={false}

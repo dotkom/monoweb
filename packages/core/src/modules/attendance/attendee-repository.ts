@@ -44,10 +44,15 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   }
 
   async create(obj: AttendeeWrite): Promise<Attendee> {
+    const ins = withInsertJsonValue(obj, "extrasChoices")
+
     return mapToAttendee(
       await this.db
         .insertInto("attendee")
-        .values(withInsertJsonValue(obj, "extrasChoices"))
+        .values({
+          ...ins,
+
+        })
         .returningAll()
         .executeTakeFirstOrThrow()
     )

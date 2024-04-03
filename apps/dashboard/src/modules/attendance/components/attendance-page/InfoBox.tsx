@@ -16,20 +16,20 @@ export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
         <Table.Thead>
           <Table.Tr>
             <Table.Td>Totalt antall plasser</Table.Td>
-            <Table.Td>{pools.reduce((acc, pool) => acc + pool.limit, 0)}</Table.Td>
+            <Table.Td>{pools.reduce((acc, pool) => acc + pool.capacity, 0)}</Table.Td>
           </Table.Tr>
           <Table.Tr>
             <Table.Td>Grupper med reserverte plasser</Table.Td>
             <Table.Td>
               {formatPoolYearCriterias(
-                pools.filter(({ limit }) => limit !== 0).map(({ yearCriteria }) => yearCriteria)
+                pools.filter(({ capacity }) => capacity !== 0).map(({ yearCriteria }) => yearCriteria)
               )}
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
             <Table.Td>Grupper som kan melde seg på etter sammenslåing</Table.Td>
             <Table.Td>
-              {formatPoolYearCriterias(pools.filter((ev) => ev.limit === 0).map(({ yearCriteria }) => yearCriteria))}
+              {formatPoolYearCriterias(pools.filter((ev) => ev.capacity === 0).map(({ yearCriteria }) => yearCriteria))}
             </Table.Td>
           </Table.Tr>
           <Table.Tr>

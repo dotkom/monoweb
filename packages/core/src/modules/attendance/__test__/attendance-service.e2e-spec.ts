@@ -17,12 +17,6 @@ import { AttendeeRegistrationError, AttendeeDeregistrationError } from "../atten
 import { CantDeletePoolError, AttendancePoolValidationError } from "../attendance-pool-error"
 import assert from "../../../../assert"
 
-type LengthArray<T, N extends number, R extends T[] = []> = number extends N
-  ? T[]
-  : R["length"] extends N
-    ? R
-    : LengthArray<T, N, [T, ...R]>
-
 const assertIsWaitlistAttendee = (attendee: unknown) => {
   expect(attendee).toHaveProperty("isPunished")
 }
@@ -48,9 +42,10 @@ const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => 
 
 const getFakePool = (write: Partial<AttendancePoolWrite>): AttendancePoolWrite => ({
   attendanceId: write.attendanceId ?? ulid(),
-  limit: write.limit ?? 10,
+  capacity: write.capacity ?? 10,
   yearCriteria: write.yearCriteria ?? [0, 1, 2],
   title: write.title ?? "Pool title",
+  activeFrom: write.activeFrom ?? new Date(),
 })
 
 const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
@@ -59,6 +54,10 @@ const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
   attended: write.attended ?? false,
   extrasChoices: write.extrasChoices ?? [],
   attendanceId: write.attendanceId ?? ulid(),
+  registeredAt: write.registeredAt ?? new Date(),
+  createdAt: write.createdAt ?? new Date(),
+  id: write.id ?? ulid(),
+  updatedAt: write.updatedAt ?? new Date(),
 })
 
 const getFakeEvent = (write: Partial<EventWrite>): EventWrite => ({
@@ -208,7 +207,7 @@ describe("attendance", () => {
   it("should not allow registrations beyond pool capacity", async () => {
     const { users, pools } = await setupFakeFullAttendance(core, {
       attendance: {},
-      pools: [{ limit: 1, yearCriteria: [1, 2] }],
+      pools: [{ capacity: 1, yearCriteria: [1, 2] }],
       users: [{ studyYear: 1 }, { studyYear: 2 }],
     })
 
@@ -230,8 +229,8 @@ describe("attendance", () => {
       await setupFakeFullAttendance(core, {
         attendance: {},
         pools: [
-          { limit: 1, yearCriteria: [1, 2] },
-          { limit: 1, yearCriteria: [2, 3] },
+          { capacity: 1, yearCriteria: [1, 2] },
+          { capacity: 1, yearCriteria: [2, 3] },
         ],
         users: [],
       })
@@ -269,7 +268,7 @@ describe("attendance", () => {
 
     const { users, pools, attendance } = await setupFakeFullAttendance(core, {
       attendance: { registerStart: start, registerEnd: end, deregisterDeadline, mergeTime },
-      pools: [{ limit: 1, yearCriteria: [1, 2] }],
+      pools: [{ capacity: 1, yearCriteria: [1, 2] }],
       users: [{ studyYear: 1 }, { studyYear: 2 }],
     })
 
@@ -302,9 +301,9 @@ describe("attendance", () => {
         mergeTime: new Date("2021-01-06"),
       },
       pools: [
-        { limit: 2, yearCriteria: [1] }, // Pool for 1st-year students
-        { limit: 2, yearCriteria: [2] }, // Pool for 2nd-year students
-        { limit: 2, yearCriteria: [3, 4] }, // Pool for 3rd and 4th-year students
+        { capacity: 2, yearCriteria: [1] }, // Pool for 1st-year students
+        { capacity: 2, yearCriteria: [2] }, // Pool for 2nd-year students
+        { capacity: 2, yearCriteria: [3, 4] }, // Pool for 3rd and 4th-year students
       ],
       users: [
         { studyYear: 1 }, // User in 1st year
@@ -353,7 +352,7 @@ describe("attendance", () => {
     // At this time there is no specific logic for social membership pools
     const { pools, users } = await setupFakeFullAttendance(core, {
       attendance: {},
-      pools: [{ limit: 1, yearCriteria: [0] }],
+      pools: [{ capacity: 1, yearCriteria: [0] }],
       users: [{ studyYear: 0 }],
     })
 
@@ -370,9 +369,9 @@ describe("attendance", () => {
     const now = new Date("2021-01-02 12:00:00")
 
     const insertPools = [
-      { limit: 0, yearCriteria: [1] },
-      { limit: 1, yearCriteria: [2] },
-      { limit: 2, yearCriteria: [3, 4, 5] },
+      { capacity: 0, yearCriteria: [1] },
+      { capacity: 1, yearCriteria: [2] },
+      { capacity: 2, yearCriteria: [3, 4, 5] },
     ]
 
     const _attendees = [
@@ -411,13 +410,11 @@ describe("attendance", () => {
       expect(attendee).not.toBeNull()
     }
 
-    await core.attendanceService.merge(attendance.id)
+    await core.attendanceService.merge(attendance.id, "Merged pool", now)
 
-    const _waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
+    const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
 
-    assert(_waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
-
-    const waitlistAttendees = _waitlistAttendees.filter((attendee) => attendee.active)
+    assert(waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
 
     expect(waitlistAttendees).toHaveLength(4)
 

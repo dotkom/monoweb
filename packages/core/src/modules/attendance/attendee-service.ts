@@ -112,7 +112,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     // is the pool full?
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(poolWithMatchingCriteria.id)
 
-    if (numAttendees === poolWithMatchingCriteria.limit) {
+    if (numAttendees === poolWithMatchingCriteria.capacity) {
       // create waitlist attendee
       const ins = await this.waitlistAttendeeService.create({
         attendanceId,
@@ -125,8 +125,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       return ins
     }
 
-    if (numAttendees > poolWithMatchingCriteria.limit) {
-      throw new IllegalStateError("Pool has more attendees than the limit")
+    if (numAttendees > poolWithMatchingCriteria.capacity) {
+      throw new IllegalStateError("Pool has more attendees than the capacity")
     }
 
     const attendee = await this.attendeeRepository.create({
@@ -135,6 +135,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attended: false,
       extrasChoices: null,
       attendanceId,
+      registeredAt: registrationTime,
     })
 
     return attendee

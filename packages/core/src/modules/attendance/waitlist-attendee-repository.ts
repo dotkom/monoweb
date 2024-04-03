@@ -12,11 +12,11 @@ const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttend
 
 export interface WaitlistAttendeRepository {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
+  update(obj: Partial<WaitlistAttendeeWrite>, id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
   delete(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
   getByAttendanceId(id: string): Promise<WaitlistAttendee[]>
   getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
-  setInactive(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
-  getActiveByPoolId(poolId: string): Promise<WaitlistAttendee[]>
+  getByPoolId(poolId: string): Promise<WaitlistAttendee[]>
 }
 
 export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository {
@@ -26,6 +26,16 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
     return mapToWaitlistAttendee(
       await this.db.insertInto("waitlistAttendee").values(obj).returningAll().executeTakeFirstOrThrow()
     )
+  }
+
+  async update(obj: Partial<WaitlistAttendeeWrite>, id: WaitlistAttendeeId) {
+    const res = await this.db
+      .updateTable("waitlistAttendee")
+      .set(obj)
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirst()
+    return res ? mapToWaitlistAttendee(res) : null
   }
 
   async delete(id: WaitlistAttendeeId) {
@@ -53,22 +63,11 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
     return res ? mapToWaitlistAttendee(res) : null
   }
 
-  async setInactive(id: WaitlistAttendeeId) {
-    const res = await this.db
-      .updateTable("waitlistAttendee")
-      .set({ active: false })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
-    return res ? mapToWaitlistAttendee(res) : null
-  }
-
-  async getActiveByPoolId(poolId: string) {
+  async getByPoolId(poolId: string) {
     const res = await this.db
       .selectFrom("waitlistAttendee")
       .selectAll("waitlistAttendee")
       .where("attendancePoolId", "=", poolId)
-      .where("active", "=", true)
       .execute()
 
     return res.map(mapToWaitlistAttendee)
