@@ -53,14 +53,14 @@ export interface ArticleTags {
 }
 
 export interface Attendance {
-  createdAt: Generated<Timestamp>
-  deregisterDeadline: Timestamp
-  extras: Json | null
-  id: Generated<string>
-  mergeTime: Timestamp
-  registerEnd: Timestamp
-  registerStart: Timestamp
-  updatedAt: Generated<Timestamp>
+  createdAt: Generated<Timestamp>;
+  deregisterDeadline: Timestamp;
+  extras: Json | null;
+  id: Generated<string>;
+  mergeTime: Timestamp;
+  registerEnd: Timestamp;
+  registerStart: Timestamp;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface AttendancePool {
@@ -109,20 +109,20 @@ export interface Company {
 }
 
 export interface Event {
-  attendanceId: string | null
-  createdAt: Generated<Timestamp>
-  description: string | null
-  end: Timestamp
-  id: Generated<string>
-  imageUrl: string | null
-  location: string | null
-  public: boolean
-  start: Timestamp
-  status: EventStatus
-  subtitle: string | null
-  title: string
-  type: EventType | null
-  updatedAt: Generated<Timestamp>
+  attendanceId: string | null;
+  createdAt: Generated<Timestamp>;
+  description: string | null;
+  end: Timestamp;
+  id: Generated<string>;
+  imageUrl: string | null;
+  location: string | null;
+  public: boolean;
+  start: Timestamp;
+  status: EventStatus;
+  subtitle: string | null;
+  title: string;
+  type: EventType | null;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface EventCommittee {
@@ -136,12 +136,12 @@ export interface EventCompany {
 }
 
 export interface InterestGroup {
-  createdAt: Generated<Timestamp>
-  description: string
-  id: Generated<string>
-  link: string | null
-  name: string
-  updatedAt: Generated<Timestamp>
+  createdAt: Generated<Timestamp>;
+  description: string;
+  id: Generated<string>;
+  link: string | null;
+  name: string;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface JobListing {
