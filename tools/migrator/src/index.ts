@@ -17,6 +17,7 @@ program
   )
   .option("-s, --with-seed", "Seed the database with fake data", false)
   .option("-f, --with-fixtures", "Add predictable data to the database", false)
+  .option("-s, --sample-data", "Import sample data from OW4")
   .action(async (name: "down-all" | "down" | "latest" | "up", option) => {
     const migrator = createMigrator(db)
     let res: MigrationResultSet
@@ -84,6 +85,15 @@ program
       await runFixtures()
       logger.info("Successfully inserted fixtures")
     }
+
+    if (option.sampleData) {
+      const { runSampleData } = await import("./sample-data")
+
+      await runSampleData()
+
+      logger.info("Successfully inserted sample data")
+    }
+
     process.exit()
   })
 
