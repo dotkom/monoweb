@@ -7,8 +7,8 @@ import Link from "next/link";
 
 export default async function App() {
   const serverClient = await getServerClient();
-  const session = await getServerSession();
-  const events = await serverClient.event.recommended();
+  const events = await serverClient.event.all();
+  const auth = await getServerSession();
 
   return (
     <div>
