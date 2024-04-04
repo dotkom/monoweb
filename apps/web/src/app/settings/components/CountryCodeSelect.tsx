@@ -40,7 +40,6 @@ export const CountryCodeSelect = () => {
                     value={country.code}
                     onClick={() => {
                       setCurrentCountry(country.code as CountryCodeProps)
-                      console.log(currentCountry)
                     }}
                   />
                   <ReactCountryFlag countryCode={country.code as CountryCodeProps} width={20} />
