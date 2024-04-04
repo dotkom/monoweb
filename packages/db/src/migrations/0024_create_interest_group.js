@@ -7,7 +7,6 @@ export async function up(db) {
     .addColumn("name", sql`text`, (col) => col.notNull())
     .addColumn("description", sql`text`, (col) => col.notNull())
     .addColumn("link", sql`text`)
-    .addColumn("isActive", sql`boolean`, (col) => col.notNull())
     .execute()
 }
 
