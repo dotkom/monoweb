@@ -35,7 +35,7 @@ export const InterestGroupEditCard: FC = () => {
   return (
     <div>
       <FormComponent />
-      <Button variant="outline" color="red" w="55px" mt="sm" onClick={open}>
+      <Button variant="outline" color="red" mt="sm" onClick={open}>
         <Icon icon="tabler:trash" />
       </Button>
     </div>
