@@ -2,7 +2,7 @@ import {
   UserId,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
-  WaitlistAttendeeWriteSchema
+  WaitlistAttendeeWriteSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { AttendancePoolRepository } from "./attendance-pool-repository"

@@ -100,10 +100,12 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     // does the user have a pool to register to?
     const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
-    const poolWithMatchingCriteria = pools.find((pool) => {
-      const year = user.studyYear
-      return pool.yearCriteria.includes(year)
-    })
+    const poolWithMatchingCriteria = pools
+      .filter((pool) => pool.active)
+      .find((pool) => {
+        const year = user.studyYear
+        return pool.yearCriteria.includes(year)
+      })
 
     if (poolWithMatchingCriteria === undefined) {
       throw new AttendeeRegistrationError("User does not match any pool")

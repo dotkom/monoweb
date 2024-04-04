@@ -39,7 +39,6 @@ const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
 
 const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => ({
   deregisterDeadline: write.deregisterDeadline ?? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now by default
-  mergeTime: write.mergeTime ?? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now by default
   registerEnd: write.registerEnd ?? new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now by default
   registerStart: write.registerStart ?? new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday by default
   extras: write.extras ?? [],
@@ -50,7 +49,8 @@ const getFakePool = (write: Partial<AttendancePoolWrite>): AttendancePoolWrite =
   capacity: write.capacity ?? 10,
   yearCriteria: write.yearCriteria ?? [0, 1, 2],
   title: write.title ?? "Pool title",
-  activeFrom: write.activeFrom ?? new Date(),
+  active: write.active ?? true,
+  type: write.type ?? "NORMAL",
 })
 
 const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
@@ -185,7 +185,6 @@ describe("attendance", () => {
 
     // registerStart > mergeTime
     await shouldFail({
-      mergeTime: new Date("2021-01-01"),
       registerStart: new Date("2021-01-02"),
       registerEnd: new Date("2021-01-03"),
       deregisterDeadline: new Date("2021-01-04"),
@@ -194,7 +193,6 @@ describe("attendance", () => {
 
     // registerEnd > registerEnd
     await shouldFail({
-      mergeTime: new Date("2021-01-01"),
       registerEnd: new Date("2021-01-02"),
       registerStart: new Date("2021-01-03"),
       deregisterDeadline: new Date("2021-01-04"),
@@ -205,7 +203,6 @@ describe("attendance", () => {
     await shouldFail({
       registerStart: new Date("2021-01-01"),
       registerEnd: new Date("2021-01-02"),
-      mergeTime: new Date("2021-01-03"),
       deregisterDeadline: new Date("2021-01-04"),
       extras: [],
     })
@@ -269,12 +266,11 @@ describe("attendance", () => {
 
   it("should enforce registration and deregistration within specified start and end times", async () => {
     const start = new Date("2021-01-02")
-    const mergeTime = new Date("2021-01-03")
     const deregisterDeadline = new Date("2021-01-04")
     const end = new Date("2021-01-05")
 
     const { users, pools, attendance } = await setupFakeFullAttendance(core, {
-      attendance: { registerStart: start, registerEnd: end, deregisterDeadline, mergeTime },
+      attendance: { registerStart: start, registerEnd: end, deregisterDeadline },
       pools: [{ capacity: 1, yearCriteria: [1, 2] }],
       users: [{ studyYear: 1 }, { studyYear: 2 }],
     })
@@ -305,7 +301,6 @@ describe("attendance", () => {
         registerStart: new Date("2021-01-01"),
         registerEnd: new Date("2021-01-07"),
         deregisterDeadline: new Date("2021-01-05"),
-        mergeTime: new Date("2021-01-06"),
       },
       pools: [
         { capacity: 2, yearCriteria: [1] }, // Pool for 1st-year students
@@ -495,20 +490,19 @@ describe("attendance", () => {
       { attendee: { studyYear: 3, name: "user32" }, registrationDate: new Date("2021-01-01 15:00:00") }, // gets in
       { attendee: { studyYear: 3, name: "user33" }, registrationDate: new Date("2021-01-01 13:00:00") }, // gets in
 
-      { attendee: { studyYear: 2, name: "user24" }, registrationDate: new Date("2021-01-01 17:00:00") }, 
-      { attendee: { studyYear: 3, name: "user35" }, registrationDate: new Date("2021-01-01 18:00:00") }, 
-      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 18:00:00") }, 
-    ] 
+      { attendee: { studyYear: 2, name: "user24" }, registrationDate: new Date("2021-01-01 17:00:00") },
+      { attendee: { studyYear: 3, name: "user35" }, registrationDate: new Date("2021-01-01 18:00:00") },
+      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 18:00:00") },
+    ]
 
     const expectedMergeWaitlistOrder = ["user24", "user35", "user26"]
 
     const registerStart = new Date("2021-01-01 00:00:00")
     const registerEnd = new Date("2021-01-07")
     const deregisterDeadline = new Date("2021-01-05")
-    const mergeTime = new Date("2021-01-06")
 
     const { users, pools, attendance } = await setupFakeFullAttendance(core, {
-      attendance: { registerStart, registerEnd, deregisterDeadline, mergeTime },
+      attendance: { registerStart, registerEnd, deregisterDeadline },
       pools: insertPools,
       users: _attendees.map((obj) => obj.attendee),
     })

@@ -11,7 +11,8 @@ export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Ins
       updatedAt: new Date("2023-02-22 13:30:04.713+00"),
       capacity: 10,
       yearCriteria: JSON.stringify([0, 1, 2]),
-      activeFrom: new Date("2023-02-22 13:30:04.713+00"),
+      active: true,
+      type: "NORMAL",
     },
     {
       title: "4. klasse + 5. klasse",
@@ -20,7 +21,8 @@ export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Ins
       updatedAt: new Date("2023-02-23 11:03:49.289+00"),
       capacity: 10,
       yearCriteria: JSON.stringify([4, 5]),
-      activeFrom: new Date("2023-02-22 13:30:04.713+00"),
+      active: true,
+      type: "NORMAL",
     },
     {
       title: "1. - 5. klasse",
@@ -29,6 +31,7 @@ export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Ins
       updatedAt: new Date("2023-02-25 11:03:49.289+00"),
       capacity: 10,
       yearCriteria: JSON.stringify([1, 2, 3, 4, 5]),
-      activeFrom: new Date("2023-02-22 13:30:04.713+00"),
+      active: true,
+      type: "NORMAL",
     },
   ]

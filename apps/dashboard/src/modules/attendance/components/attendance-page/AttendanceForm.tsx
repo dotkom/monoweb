@@ -30,9 +30,6 @@ export const useAttendanceForm = ({ onSubmit, defaultValues, label }: Attendance
       deregisterDeadline: createDateTimeInput({
         label: "Frist avmelding",
       }),
-      mergeTime: createDateTimeInput({
-        label: "Gruppemerging",
-      }),
     },
   })
 

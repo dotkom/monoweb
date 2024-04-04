@@ -11,7 +11,8 @@ export const AttendancePoolSchema = z.object({
   yearCriteria: YearCriteriaSchema,
   numAttendees: z.number(),
   title: z.string().min(1),
-  activeFrom: z.date(),
+  active: z.boolean(),
+  type: z.enum(["NORMAL", "MERGE"]),
 })
 
 export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({

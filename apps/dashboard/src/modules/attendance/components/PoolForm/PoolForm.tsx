@@ -12,7 +12,7 @@ import { notifyFail } from "../../../../app/notifications"
 
 export interface PoolFormProps {
   onSubmit(values: PoolFormSchema): void
-  attendancePools: AttendancePool[]
+  disabledYears: number[]
   onClose(): void
   defaultValues: PoolFormSchema
   mode: "create" | "update"
@@ -26,8 +26,6 @@ export const PoolFormSchema = z.object({
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
 export const usePoolForm = (props: PoolFormProps) => {
-  const existingPools = [...new Set(props.attendancePools.flatMap(({ yearCriteria }) => yearCriteria))]
-
   const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse", "PHD"]
 
   const Form = useFormBuilder({
@@ -35,7 +33,7 @@ export const usePoolForm = (props: PoolFormProps) => {
     defaultValues: props.defaultValues,
     fields: {
       yearCriteria: createLabelledCheckboxGroupInput({
-        disabledOptions: existingPools,
+        disabledOptions: props.disabledYears,
         labels: yearLabels,
       }),
       title: createTextInput({

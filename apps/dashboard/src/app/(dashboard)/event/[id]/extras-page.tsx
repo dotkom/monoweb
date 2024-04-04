@@ -28,7 +28,6 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
     defaultValues: {
       registerStart: new Date(),
       registerEnd: new Date(),
-      mergeTime: new Date(),
       deregisterDeadline: new Date(),
       extras: null,
     },

@@ -9,7 +9,6 @@ export async function up(db) {
     .addColumn("register_start", "timestamptz", (col) => col.notNull())
     .addColumn("deregister_deadline", "timestamptz", (col) => col.notNull())
     .addColumn("register_end", "timestamptz", (col) => col.notNull())
-    .addColumn("merge_time", "timestamptz", (col) => col.notNull())
     .execute()
 
   await createTableWithDefaults("attendance_pool", { id: true, createdAt: true, updatedAt: true }, db.schema)
@@ -17,7 +16,8 @@ export async function up(db) {
     .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade").notNull())
     .addColumn("year_criteria", "json")
     .addColumn("capacity", "integer", (col) => col.notNull())
-    .addColumn("active_from", "timestamptz", (col) => col.notNull())
+    .addColumn("active", "boolean", (col) => col.notNull())
+    .addColumn("type", "text", (col) => col.notNull())
     .execute()
 
   await createTableWithDefaults("waitlist_attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)

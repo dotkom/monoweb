@@ -1,5 +1,5 @@
 import { type Attendance } from "@dotkomonline/types"
-import { Box, Divider, Text, Title } from "@mantine/core"
+import { Box, Button, Divider, Text, Title } from "@mantine/core"
 import { type FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
@@ -8,8 +8,10 @@ import { usePoolsGetQuery } from "../../../../modules/attendance/queries/use-get
 import { useEventDetailsContext } from "./provider"
 import {
   useAddAttendanceMutation,
+  useMergeAttendanceMutation,
   useUpdateAttendanceMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
+import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
 
 export const AttendancePage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -28,7 +30,6 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
     defaultValues: {
       registerStart: new Date(),
       registerEnd: new Date(),
-      mergeTime: new Date(),
       deregisterDeadline: new Date(),
       extras: null,
     },
@@ -52,18 +53,17 @@ interface EventAttendanceProps {
 const _AttendancePage: FC<EventAttendanceProps> = ({ attendance }) => {
   const { pools } = usePoolsGetQuery(attendance.id)
 
-  const updateAttendance = useUpdateAttendanceMutation()
+  const updateAttendanceMut = useUpdateAttendanceMutation()
 
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,
     label: "Oppdater",
     onSubmit: (values) => {
-      updateAttendance.mutate({
+      updateAttendanceMut.mutate({
         id: attendance.id,
         attendance: {
           registerStart: values.registerStart,
           registerEnd: values.registerEnd,
-          mergeTime: values.mergeTime,
           deregisterDeadline: values.deregisterDeadline,
         },
       })
@@ -92,6 +92,7 @@ const _AttendancePage: FC<EventAttendanceProps> = ({ attendance }) => {
       </Box>
       <Box>
         <PoolsForm />
+        <PoolBox pools={pools || []} attendanceId={attendance.id} />
       </Box>
     </Box>
   )

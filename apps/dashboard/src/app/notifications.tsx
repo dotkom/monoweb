@@ -87,6 +87,11 @@ const messages = {
     fail: "Sletting feilet",
     loading: "Sletter",
   },
+  generic: {
+    success: "Utført",
+    fail: "Feil",
+    loading: "Laster",
+  },
 } as const
 
 interface Props {

@@ -3,48 +3,47 @@ import { type FC } from "react"
 import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { usePoolsGetQuery } from "../queries/use-get-queries"
 import { useCreatePoolMutation } from "../mutations/use-pool-mutations"
+import { useMergeAttendanceMutation } from "../mutations/use-attendance-mutations"
 
-interface CreatePoolModalProps {
+interface MergePoolsModalProps {
   attendanceId: string
 }
-export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ context, id, innerProps }) => {
-  const { mutate: createPool } = useCreatePoolMutation()
+export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ context, id, innerProps }) => {
   const { pools } = usePoolsGetQuery(innerProps.attendanceId)
   const onClose = () => context.closeModal(id)
+  const mergeAttendanceMut = useMergeAttendanceMutation()
+
   const onSubmit = (values: PoolFormSchema) => {
-    createPool({
-      capacity: values.capacity,
+    mergeAttendanceMut.mutate({
+      title: "Generell påmelding",
       yearCriteria: values.yearCriteria,
       attendanceId: innerProps.attendanceId,
-      title: values.title,
-      active: true,
-      type: "NORMAL",
     })
   }
 
   const disabledYears = [...new Set(pools.filter((pool) => pool.active).flatMap(({ yearCriteria }) => yearCriteria))]
 
-  return pools ? (
+  return (
     <PoolForm
       defaultValues={{
-        yearCriteria: [],
+        yearCriteria: disabledYears,
         capacity: 0,
-        title: "",
+        title: "Generell påmelding",
       }}
       onClose={onClose}
       mode="create"
       onSubmit={onSubmit}
       disabledYears={disabledYears}
     />
-  ) : null
+  )
 }
 
-export const openCreatePoolModal =
-  ({ attendanceId }: CreatePoolModalProps) =>
+export const openMergePoolsModal =
+  ({ attendanceId }: MergePoolsModalProps) =>
   () =>
     modals.openContextModal({
-      modal: "event/attendance/pool/create",
-      title: "Ny påmeldingsgruppe",
+      modal: "event/attendance/pool/merge",
+      title: "Merge",
       innerProps: {
         attendanceId,
       },

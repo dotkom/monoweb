@@ -6,7 +6,7 @@ import {
   type AttendanceWrite,
   Attendee,
   WaitlistAttendee,
-  UserId
+  UserId,
 } from "@dotkomonline/types"
 import { AttendancePoolRepository } from "./attendance-pool-repository"
 import { AttendanceRepository } from "./attendance-repository"
@@ -33,7 +33,7 @@ export interface AttendanceService {
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
-  merge(attendanceId: AttendanceId, mergePoolTitle: string, now: Date): Promise<MergeReturn>
+  merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<MergeReturn>
   updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
 }
 
@@ -73,26 +73,18 @@ export class AttendanceServiceImpl implements AttendanceService {
   /**
    * Creates a new attendance record.
    * Validates dates according to the following rules:
-   * registerStart < mergeTime < registerEnd
+   * registerStart < registerEnd
    *
    */
   async create(obj: AttendanceWrite) {
-    // registerStart < mergeTime
-    if (obj.registerStart > obj.mergeTime) {
-      throw new AttendanceValidationError("Register start must be before merge time")
-    }
-
     // registerStart < registerEnd
     if (obj.registerStart > obj.registerEnd) {
       throw new AttendanceValidationError("Register start must be before register end")
     }
 
-    // mergeTime < registerEnd
-    if (obj.mergeTime > obj.registerEnd) {
-      throw new AttendanceValidationError("Merge time must be before register end")
-    }
+    const attendance = await this.attendanceRepository.create(obj)
 
-    return this.attendanceRepository.create(obj)
+    return attendance
   }
 
   async delete(id: AttendanceId) {
@@ -109,7 +101,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     return this.attendanceRepository.getById(id)
   }
 
-  async merge(attendanceId: AttendanceId, mergePoolTitle: string, now: Date) {
+  async merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<MergeReturn> {
     const attendance = await this.attendanceRepository.getById(attendanceId)
     if (attendance === null) {
       throw new InvalidParametersError("Attendance not found")
@@ -121,19 +113,36 @@ export class AttendanceServiceImpl implements AttendanceService {
     const combinedCapacity = pools.reduce((acc, pool) => acc + pool.capacity, 0)
     const combinedCriteria = Array.from(new Set(pools.flatMap((pool) => pool.yearCriteria)))
 
-    // use repo to avoid overlapping year criteria check. 
+    // if the new pool does not contain all year criteria, throw an error
+    if (combinedCriteria.length !== 7) {
+      let invalid = false
+      for (const i of combinedCriteria) {
+        if (!yearCriteria.includes(i)) {
+          invalid = true
+          break
+        }
+      }
+
+      if (invalid) {
+        throw new InvalidParametersError(
+          `Merge pool must contain the combined year criteria of the pools being merged (${combinedCriteria.join(",")})`
+        )
+      }
+    }
+
     const insert = await this.attendancePoolRepository.create({
       attendanceId,
       capacity: combinedCapacity,
-      yearCriteria: combinedCriteria,
+      yearCriteria: yearCriteria,
       title: mergePoolTitle,
-      activeFrom: now,
+      active: true,
+      type: "MERGE",
     })
 
     // Get the number of attendees in the new pool
     const mergePool = await this.attendancePoolRepository.get(insert.id)
 
-    if(mergePool === null) {
+    if (mergePool === null) {
       throw new IllegalStateError("Pool not found after insert")
     }
 
@@ -153,17 +162,20 @@ export class AttendanceServiceImpl implements AttendanceService {
     for (let i = 0; i < combinedWaitlistAttendees.length; i++) {
       const waitlistAttendee = combinedWaitlistAttendees[i]
 
-      await this.waitlistAttendeeRepository.update({
-        attendanceId,
-        position: i,
-        attendancePoolId: mergePool.id,
-        name: waitlistAttendee.name,
-      }, waitlistAttendee.id)
+      await this.waitlistAttendeeRepository.update(
+        {
+          attendanceId,
+          position: i,
+          attendancePoolId: mergePool.id,
+          name: waitlistAttendee.name,
+        },
+        waitlistAttendee.id
+      )
     }
 
     // delete the old pools
     for (let i = 0; i < pools.length; i++) {
-      await this.attendancePoolRepository.delete(pools[i].id)
+      await this.attendancePoolRepository.update({ active: false }, pools[i].id)
     }
 
     return {
@@ -172,6 +184,5 @@ export class AttendanceServiceImpl implements AttendanceService {
       attendees: combinedAttendees,
       waitlistAttendees: combinedWaitlistAttendees,
     }
-
   }
 }

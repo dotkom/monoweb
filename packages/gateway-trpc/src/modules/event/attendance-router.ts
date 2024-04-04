@@ -111,6 +111,17 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.update(input.attendance, input.id)),
+  mergeAttendance: protectedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+        yearCriteria: z.array(z.number()),
+        title: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendanceService.merge(input.attendanceId, input.title, input.yearCriteria)
+    ),
 
   updateExtras: protectedProcedure
     .input(

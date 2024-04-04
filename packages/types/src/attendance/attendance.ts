@@ -18,7 +18,6 @@ export const AttendanceSchema = z.object({
   registerStart: z.date(),
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
-  mergeTime: z.date(),
   extras: z.array(ExtrasSchema).nullable(),
 })
 

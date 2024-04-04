@@ -60,7 +60,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       .values(withInsertJsonValue(obj, "yearCriteria"))
       .executeTakeFirstOrThrow()
 
-    // This join is really cheap, so no 
+    // This join is really cheap, so no
     return mapToPoolBase(result)
   }
 

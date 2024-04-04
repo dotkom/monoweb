@@ -12,11 +12,13 @@ import { CreateArticleModal } from "../modules/article/modals/create-article-mod
 import { CreatePoolModal } from "../modules/attendance/modals/create-pool-modal"
 import { EditPoolModal } from "../modules/attendance/modals/edit-pool-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
+import { MergePoolsModal } from "../modules/attendance/modals/merge-pools-modal"
 
 const modals = {
   "event/create": CreateEventModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
+  "event/attendance/pool/merge": MergePoolsModal,
   "jobListing/create": CreateJobListingModal,
   "company/create": CreateCompanyModal,
   "offline/create": CreateOfflineModal,
