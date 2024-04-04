@@ -7,9 +7,9 @@ software is trying to solve, and the business logic that drives the problem.
 It is a way of thinking and a set of priorities, aimed at accelerating software projects that have to deal with
 complex domains that are constantly changing.
 
-- [Principles of DDD]
-- [Hexagonal Architecture]
-- [Implemented in code]
+- [Principles of DDD](#principles-of-ddd)
+- [Hexagonal Architecture](#hexagonal-architecture)
+- [Implemented in code](#implemented-in-code)
 
 ## Principles of DDD
 
