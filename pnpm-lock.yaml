@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@fadi-ui/react-country-flag':
+        specifier: ^1.0.7
+        version: 1.0.7
     devDependencies:
       dotenv-cli:
         specifier: ^7.3.0
@@ -1886,6 +1890,7 @@ packages:
       - supports-color
     dev: true
 
+
   /@babel/generator@7.23.6:
     resolution: {integrity: sha512-qrSfCYxYQB5owCmGLbl8XRpX1ytXlpueOb0N0UmQwA073KZxejgQTzAmJezxvpwQD9uGtK2shHdi55QT+MbjIw==}
     engines: {node: '>=6.9.0'}
@@ -2260,6 +2265,7 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
 
   /@esbuild/android-arm64@0.16.4:
     resolution: {integrity: sha512-VPuTzXFm/m2fcGfN6CiwZTlLzxrKsWbPkG7ArRFpuxyaHUm/XFHQPD4xNwZT6uUmpIHhnSjcaCmcla8COzmZ5Q==}
@@ -2855,6 +2861,13 @@ packages:
     dev: true
     optional: true
 
+  /@fadi-ui/react-country-flag@1.0.7:
+    resolution: {integrity: sha512-UO+mSApJ9tKcTFo/XN8SPkko+KAWoiJRAOuY2CHAHrH0x7tBaCO8rXiTVpN70jR2sEuhDIsOn604kElRRJxRNg==}
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /@floating-ui/core@1.4.1:
     resolution: {integrity: sha512-jk3WqquEJRlcyu7997NtR5PibI+y5bi+LS3hPmguVClypenMsCY3CBa3LAQnozRCtCrYWSEtAdiskpamuJRFOQ==}
     dependencies:
@@ -2874,12 +2887,14 @@ packages:
       '@floating-ui/utils': 0.1.1
     dev: false
 
+
   /@floating-ui/dom@1.5.4:
     resolution: {integrity: sha512-jByEsHIY+eEdCjnTVu+E3ephzTOzkQ8hgUfGwos+bg7NlH33Zc5uO+QHz1mrQUOgIKKDD1RtS201P9NvAfq3XQ==}
     dependencies:
       '@floating-ui/core': 1.5.3
       '@floating-ui/utils': 0.2.1
     dev: false
+
 
   /@floating-ui/react-dom@2.0.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-rZtAmSht4Lry6gdhAJDrCp/6rKN7++JnL1/Anbr/DdeyYXQPxvg/ivrbYvJulbRf4vL8b212suwMM2lxbv+RQA==}
@@ -2902,6 +2917,7 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
+
 
   /@floating-ui/react@0.24.8(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-AuYeDoaR8jtUlUXtZ1IJ/6jtBkGnSpJXbGNzokBL87VDJ8opMq1Bgrc0szhK482ReQY6KZsMoZCVSb4xwalkBA==}
@@ -3083,6 +3099,7 @@ packages:
       - terser
       - typescript
     dev: true
+
 
   /@mantine/core@7.4.1(@mantine/hooks@7.4.1)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-crz9BemmwR8V/h6db9FgznCp0Ssp6rCUYkBBO4JprpH8NDSEblHyWcZZo43IuA1vZptp8eyrhRNJ4nfe8CAYFQ==}
@@ -7642,6 +7659,7 @@ packages:
       mkdirp: 0.5.6
       rimraf: 2.7.1
     dev: true
+
 
   /function-bind@1.1.1:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
@@ -12237,7 +12255,6 @@ packages:
     dependencies:
       react: 18.2.0
     dev: false
-
   /use-isomorphic-layout-effect@1.1.2(@types/react@18.2.48)(react@18.2.0):
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==}
     peerDependencies:

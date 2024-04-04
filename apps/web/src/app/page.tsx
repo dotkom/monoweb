@@ -11,7 +11,7 @@ export default async function App() {
   const events = await serverClient.event.recommended()
 
   return (
-    <div>
+    <div className="mt-8">
       <CompanySplash className="hidden md:flex" />
 
       <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
