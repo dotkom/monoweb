@@ -1,23 +1,23 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Icon } from "@dotkomonline/ui";
-import * as Popover from "@radix-ui/react-popover";
-import { usePathname } from "next/navigation";
-import { settingsItems } from "@/utils/settingsLinks";
-import ProfileMenuItem from "./SettingsMenuItem";
+"use client"
+import { useEffect, useState } from "react"
+import { Icon } from "@dotkomonline/ui"
+import * as Popover from "@radix-ui/react-popover"
+import { usePathname } from "next/navigation"
+import { settingsItems } from "@/utils/settingsLinks"
+import ProfileMenuItem from "./SettingsMenuItem"
 
 const MobileMenuContainer = () => {
-  const currentSlug = usePathname();
-  const currentLink = settingsItems.find((item) => item.slug === currentSlug);
-  const [open, setOpen] = useState(false);
+  const currentSlug = usePathname()
+  const currentLink = settingsItems.find((item) => item.slug === currentSlug)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (open) {
-      document.body.classList.add("overflow-hidden");
+      document.body.classList.add("overflow-hidden")
     } else {
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove("overflow-hidden")
     }
-  }, [open]);
+  }, [open])
 
   return (
     <div className="mx-auto flex items-center md:hidden">
@@ -32,10 +32,7 @@ const MobileMenuContainer = () => {
               )}
             </span>
             <p className="flex grow justify-center">
-              <Icon
-                icon={currentLink?.icon ? currentLink.icon : ""}
-                width={28}
-              />
+              <Icon icon={currentLink?.icon ? currentLink.icon : ""} width={28} />
               <span className="ml-2 mt-1 text-lg">{currentLink?.title}</span>
             </p>
           </div>
@@ -53,7 +50,7 @@ const MobileMenuContainer = () => {
         </Popover.Portal>
       </Popover.Root>
     </div>
-  );
-};
+  )
+}
 
-export default MobileMenuContainer;
+export default MobileMenuContainer

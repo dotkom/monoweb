@@ -1,26 +1,26 @@
-"use client";
-import { Icon, cn } from "@dotkomonline/ui";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+"use client"
+import { Icon, cn } from "@dotkomonline/ui"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import React, { useEffect, useState } from "react"
 
 interface SettingsMenuItemProps {
   menuItem: {
-    title: string;
-    slug: string;
-    icon: string;
-  };
+    title: string
+    slug: string
+    icon: string
+  }
 }
 
 const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
-  const path = usePathname();
-  const { title, slug, icon } = menuItem;
+  const path = usePathname()
+  const { title, slug, icon } = menuItem
 
-  const [isCurrent, setCurrent] = useState("");
+  const [isCurrent, setCurrent] = useState("")
 
   useEffect(() => {
-    setCurrent(path === slug ? "bg-slate-4" : "");
-  }, [path, slug]);
+    setCurrent(path === slug ? "bg-slate-4" : "")
+  }, [path, slug])
 
   return (
     <Link
@@ -35,7 +35,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
       </div>
       <p className="font-medium">{title}</p>
     </Link>
-  );
-};
+  )
+}
 
-export default SettingsMenuItem;
+export default SettingsMenuItem

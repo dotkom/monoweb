@@ -1,22 +1,17 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@dotkomonline/ui";
-import { DotFilledIcon } from "@radix-ui/react-icons";
-import { type FC } from "react";
-import { addMinutes, format } from "date-fns";
-import PenaltyRules from "@/utils/penalty-rules";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
+import { DotFilledIcon } from "@radix-ui/react-icons"
+import { type FC } from "react"
+import { addMinutes, format } from "date-fns"
+import PenaltyRules from "@/utils/penalty-rules"
 
 /* TODO - Set up connection to Users marks router */
 
 interface PenaltyAccordionProps {
-  title: string;
-  category: string;
-  givenAt: Date;
-  duration: number;
-  details: string;
+  title: string
+  category: string
+  givenAt: Date
+  duration: number
+  details: string
 }
 
 const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
@@ -31,8 +26,7 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
       <AccordionContent className="ml-4">
         <div className="flex flex-col space-y-4">
           <p>
-            Du har fått en prikk på grunn av {props.details} den{" "}
-            {format(props.givenAt, "dd/MM/yyyy")}
+            Du har fått en prikk på grunn av {props.details} den {format(props.givenAt, "dd/MM/yyyy")}
           </p>
           <p className="text-lg">
             <span className="font-bold">Katergori: </span>
@@ -46,7 +40,7 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
       </AccordionContent>
     </AccordionItem>
   </Accordion>
-);
+)
 
 const PenaltiesPage = () => (
   <div className="ml-3 flex flex-col space-y-12">
@@ -54,13 +48,7 @@ const PenaltiesPage = () => (
     <div className="flex flex-col">
       <p className="text-2xl font-medium">Aktive Prikker</p>
       {/* TODO - Get active marks */}
-      <PenaltyAccordion
-        title="TestPrikk"
-        category="Sosial"
-        givenAt={new Date()}
-        duration={2000}
-        details="Testing"
-      />
+      <PenaltyAccordion title="TestPrikk" category="Sosial" givenAt={new Date()} duration={2000} details="Testing" />
       <p>Ingen aktive prikker</p>
     </div>
     <div>
@@ -78,6 +66,6 @@ const PenaltiesPage = () => (
       <PenaltyRules />
     </div>
   </div>
-);
+)
 
-export default PenaltiesPage;
+export default PenaltiesPage

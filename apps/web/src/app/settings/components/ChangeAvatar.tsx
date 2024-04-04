@@ -1,13 +1,13 @@
-"use client";
-import { Avatar, AvatarImage, AvatarFallback, Icon } from "@dotkomonline/ui";
+"use client"
+import { Avatar, AvatarImage, AvatarFallback, Icon } from "@dotkomonline/ui"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { User } from "next-auth";
+} from "@radix-ui/react-dropdown-menu"
+import { User } from "next-auth"
 
 const AvatarImgChange = (user: User) => (
   <DropdownMenu>
@@ -22,15 +22,11 @@ const AvatarImgChange = (user: User) => (
     </DropdownMenuTrigger>
     <DropdownMenuPortal>
       <DropdownMenuContent>
-        <DropdownMenuItem className="hover:cursor-pointer">
-          Last opp bilde...
-        </DropdownMenuItem>
-        <DropdownMenuItem className="hover:cursor-pointer">
-          Fjern bilde
-        </DropdownMenuItem>
+        <DropdownMenuItem className="hover:cursor-pointer">Last opp bilde...</DropdownMenuItem>
+        <DropdownMenuItem className="hover:cursor-pointer">Fjern bilde</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenuPortal>
   </DropdownMenu>
-);
+)
 
-export default AvatarImgChange;
+export default AvatarImgChange

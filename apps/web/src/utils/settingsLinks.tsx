@@ -17,4 +17,4 @@ export const settingsItems = [
     icon: "lucide:lock",
     description: "Endre ditt passord",
   },
-];
+]

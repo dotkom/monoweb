@@ -1,14 +1,14 @@
-"use client";
-import { type FC, type PropsWithChildren } from "react";
-import { usePathname } from "next/navigation";
-import { settingsItems } from "@/utils/settingsLinks";
-import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer";
-import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/SettingsMenuContainer";
-import { ProfileContext } from "../views/SettingsView/context/ProfileContext";
+"use client"
+import { type FC, type PropsWithChildren } from "react"
+import { usePathname } from "next/navigation"
+import { settingsItems } from "@/utils/settingsLinks"
+import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer"
+import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/SettingsMenuContainer"
+import { ProfileContext } from "../views/SettingsView/context/ProfileContext"
 
 const SettingsLayout: FC<PropsWithChildren> = ({ children }) => {
-  const currentSlug = usePathname();
-  const currentLink = settingsItems.find((item) => item.slug === currentSlug);
+  const currentSlug = usePathname()
+  const currentLink = settingsItems.find((item) => item.slug === currentSlug)
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -24,7 +24,7 @@ const SettingsLayout: FC<PropsWithChildren> = ({ children }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SettingsLayout;
+export default SettingsLayout

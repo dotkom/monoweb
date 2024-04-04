@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import {
   Select,
   SelectContent,
@@ -12,20 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
   SelectViewport,
-} from "@dotkomonline/ui";
-import {
-  ReactCountryFlag,
-  CountryCodes as CountryCodeProps,
-} from "@fadi-ui/react-country-flag";
-import { CountryCodes } from "@/utils/countryCodes";
-import { useState } from "react";
+} from "@dotkomonline/ui"
+import { ReactCountryFlag, CountryCodes as CountryCodeProps } from "@fadi-ui/react-country-flag"
+import { CountryCodes } from "@/utils/countryCodes"
+import { useState } from "react"
 
 export const CountryCodeSelect = () => {
-  const [currentCountry, setCurrentCountry] = useState<CountryCodeProps>("NO");
+  const [currentCountry, setCurrentCountry] = useState<CountryCodeProps>("NO")
   return (
-    <Select
-      onValueChange={(value) => setCurrentCountry(value as CountryCodeProps)}
-    >
+    <Select onValueChange={(value) => setCurrentCountry(value as CountryCodeProps)}>
       <SelectTrigger className="w-fit h-full">
         <ReactCountryFlag countryCode={currentCountry} width={20} />
         <SelectValue placeholder="+47" defaultValue={"NO"} defaultChecked />
@@ -38,22 +33,17 @@ export const CountryCodeSelect = () => {
           <SelectViewport>
             <SelectGroup>
               <SelectLabel>Landskode</SelectLabel>
-              {CountryCodes.sort((a, b) =>
-                a.dial_code.localeCompare(b.dial_code)
-              ).map((country) => (
+              {CountryCodes.sort((a, b) => a.dial_code.localeCompare(b.dial_code)).map((country) => (
                 <div className="flex flex-row items-center justify-between">
                   <SelectItem
                     label={country.dial_code}
                     value={country.code}
                     onClick={() => {
-                      setCurrentCountry(country.code as CountryCodeProps);
-                      console.log(currentCountry);
+                      setCurrentCountry(country.code as CountryCodeProps)
+                      console.log(currentCountry)
                     }}
                   />
-                  <ReactCountryFlag
-                    countryCode={country.code as CountryCodeProps}
-                    width={20}
-                  />
+                  <ReactCountryFlag countryCode={country.code as CountryCodeProps} width={20} />
                 </div>
               ))}
             </SelectGroup>
@@ -62,5 +52,5 @@ export const CountryCodeSelect = () => {
         </SelectContent>
       </SelectPortal>
     </Select>
-  );
-};
+  )
+}
