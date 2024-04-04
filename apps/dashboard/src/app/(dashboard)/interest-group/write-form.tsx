@@ -36,7 +36,7 @@ export const useInterestGroupWriteForm = ({
         type: "url",
       }),
       isActive: createCheckboxInput({
-        label: "Aktiv?",
+        label: "Aktiv",
       }),
     },
   })

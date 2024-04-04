@@ -33,13 +33,11 @@ export const InterestGroupEditCard: FC = () => {
     defaultValues: interestGroup,
   })
   return (
-    <Stack gap="xs">
+    <div>
       <FormComponent />
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
-        <Button variant="outline" color="red" w="55px" mr="lg" onClick={open}>
-          <Icon icon="tabler:trash" />
-        </Button>
-      </div>
-    </Stack>
+      <Button variant="outline" color="red" w="55px" mt="sm" onClick={open}>
+        <Icon icon="tabler:trash" />
+      </Button>
+    </div>
   )
 }
