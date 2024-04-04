@@ -28,8 +28,8 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
       <FormInput title="Navn">
         <div className="w-full flex flex-wrap justify-center ">
-          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={firstName && firstName} />
-          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={lastName && lastName} />
+          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={firstName} />
+          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={lastName} />
         </div>
       </FormInput>
       <FormInput title="Epost">
