@@ -12,8 +12,7 @@
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
-    "typography.css",
-    "biome.json"
+    "typography.css"
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
