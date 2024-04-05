@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "packages/config/node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
     "ignore": [
       "**/node_modules/**",
