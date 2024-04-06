@@ -22,11 +22,11 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
     <Popover.Root onOpenChange={(val) => setOpen(val)}>
       <Popover.Trigger>
         <div className={cn("mr-7 flex items-center md:hidden")}>
-          {open ? <Icon height={32} icon="tabler:menu-2" /> : <Icon height={32} icon="tabler:x" />}
+          {open ? <Icon height={32} icon="tabler:x" /> : <Icon height={32} icon="tabler:menu-2" />}
         </div>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content className="animate-in fade-in-20 bg-indigo-1 h-screen w-screen">
+        <Popover.Content className="h-screen w-screen bg-indigo-1 animate-in fade-in-20">
           <NavigationMenu className="[&>div]:w-full">
             <NavigationMenuList className="flex-col">
               {links.map((link) => (
@@ -56,7 +56,7 @@ const MobileMenuItem = ({ link }: { link: MenuLink }) => (
   <NavigationMenuLink asChild>
     <Link
       href={"href" in link ? link.href : "#"}
-      className="border-blue-12/10 mx-8 flex h-14 w-[calc(100%-theme(space.16))] items-center border-b text-lg font-semibold"
+      className="mx-8 flex h-14 w-[calc(100%-theme(space.16))] items-center border-b border-blue-12/10 text-lg font-semibold"
     >
       {link.title}
     </Link>
