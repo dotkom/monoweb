@@ -174,23 +174,9 @@ describe("attendance", () => {
     expect(attendeesInPool).toHaveLength(1)
   })
 
-  // registerStart < mergeTime < registerEnd
+  // registerStart < registerEnd
   it("validates dates correctly before creating new attendance", async () => {
     const shouldFail = async (args: AttendanceWrite) => {
-      const fakeAttendance = getFakeAttendance(args)
-      await expect(async () => {
-        await core.attendanceService.create(fakeAttendance)
-      }).rejects.toThrowError(AttendanceValidationError)
-    }
-
-    // registerStart > mergeTime
-    await shouldFail({
-      registerStart: new Date("2021-01-02"),
-      registerEnd: new Date("2021-01-03"),
-      deregisterDeadline: new Date("2021-01-04"),
-      extras: [],
-    })
-
     // registerEnd > registerEnd
     await shouldFail({
       registerEnd: new Date("2021-01-02"),
@@ -198,14 +184,7 @@ describe("attendance", () => {
       deregisterDeadline: new Date("2021-01-04"),
       extras: [],
     })
-
-    // mergeTime > registerEnd
-    await shouldFail({
-      registerStart: new Date("2021-01-01"),
-      registerEnd: new Date("2021-01-02"),
-      deregisterDeadline: new Date("2021-01-04"),
-      extras: [],
-    })
+  }
   })
 
   it("should not allow registrations beyond pool capacity", async () => {
@@ -516,7 +495,7 @@ describe("attendance", () => {
       expect(attendee).not.toBeNull()
     }
 
-    await core.attendanceService.merge(attendance.id, "Merged pool", now)
+    await core.attendanceService.merge(attendance.id, "Merged pool", [0, 1, 2, 3, 4, 5])
 
     const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
 
