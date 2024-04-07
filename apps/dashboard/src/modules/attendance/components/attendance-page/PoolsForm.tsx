@@ -8,7 +8,7 @@ interface EventAttendanceProps {
   pools: AttendancePool[]
 }
 export function usePoolsForm({ attendanceId, pools }: EventAttendanceProps) {
-  const attendanceIsMerged = pools.filter((pool) => pool.active && pool.type === "MERGE").length === 1
+  const attendanceIsMerged = pools.filter((pool) => pool.isVisible && pool.type === "MERGE").length === 1
 
   return function Form() {
     return (

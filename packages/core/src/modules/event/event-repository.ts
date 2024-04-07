@@ -51,7 +51,6 @@ export class EventRepositoryImpl implements EventRepository {
   async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
     const query = orderedQuery(this.db.selectFrom("event").selectAll().limit(take), cursor)
     const events = await query.execute()
-    console.log("FUCK OFF:")
     for (const event of events) {
       console.log(event.title)
       console.log(JSON.stringify(event))

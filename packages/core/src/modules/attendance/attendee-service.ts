@@ -71,12 +71,18 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async registerForEvent(userId: UserId, attendanceId: AttendanceId, registrationTime: Date) {
+  async registerForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date) {
     const user = await this.userService.getUserById(userId)
+    const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
+    if (attendancePool === null) {
+      throw new AttendeeRegistrationError("Attendance pool not found")
+    }
 
     if (user === undefined) {
       throw new AttendeeRegistrationError("User not found")
     }
+
+    const attendanceId = attendancePool.attendanceId
 
     // is user already registered?
     const userAlreadyRegistered = await this.attendeeRepository.getByUserId(userId, attendanceId)
@@ -98,23 +104,23 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("Attendance has ended")
     }
 
-    // does the user have a pool to register to?
-    const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
-    const poolWithMatchingCriteria = pools
-      .filter((pool) => pool.active)
-      .find((pool) => {
-        const year = user.studyYear
-        return pool.yearCriteria.includes(year)
-      })
+    // // does the user have a pool to register to?
+    // const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
+    // const poolWithMatchingCriteria = pools
+    //   .filter((pool) => pool.isVisible)
+    //   .find((pool) => {
+    //     const year = user.studyYear
+    //     return pool.yearCriteria.includes(year)
+    //   })
 
-    if (poolWithMatchingCriteria === undefined) {
-      throw new AttendeeRegistrationError("User does not match any pool")
-    }
+    // if (poolWithMatchingCriteria === undefined) {
+    //   throw new AttendeeRegistrationError("User does not match any pool")
+    // }
 
     // is the pool full?
-    const numAttendees = await this.attendancePoolRepository.getNumAttendees(poolWithMatchingCriteria.id)
+    const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
 
-    if (numAttendees === poolWithMatchingCriteria.capacity) {
+    if (numAttendees === attendancePool.capacity) {
       // create waitlist attendee
       const ins = await this.waitlistAttendeeService.create({
         attendanceId,
@@ -127,12 +133,12 @@ export class AttendeeServiceImpl implements AttendeeService {
       return ins
     }
 
-    if (numAttendees > poolWithMatchingCriteria.capacity) {
+    if (numAttendees > attendancePool.capacity) {
       throw new IllegalStateError("Pool has more attendees than the capacity")
     }
 
     const attendee = await this.attendeeRepository.create({
-      attendancePoolId: poolWithMatchingCriteria.id,
+      attendancePoolId: attendancePool.id,
       userId,
       attended: false,
       extrasChoices: null,

@@ -18,7 +18,7 @@ interface NormalPoolBoxProps {
 
 const NormalPoolBox: FC<NormalPoolBoxProps> = ({ pool, attendanceId, deleteGroup }) => {
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder key={pool.id} mt={16} bg={pool.active ? "white" : "gray"}>
+    <Card shadow="sm" padding="lg" radius="md" withBorder key={pool.id} mt={16} bg={pool.isVisible ? "white" : "gray"}>
       <Flex justify="space-between">
         <Box>
           <Text>{pool.title}</Text>
@@ -34,16 +34,16 @@ const NormalPoolBox: FC<NormalPoolBoxProps> = ({ pool, attendanceId, deleteGroup
                 capacity: pool.capacity,
                 title: pool.title,
                 yearCriteria: pool.yearCriteria,
+                isVisible: pool.isVisible,
               },
               poolId: pool.id,
             })}
             color="yellow"
             mr={16}
-            disabled={!pool.active}
           >
             Endre
           </Button>
-          <Button onClick={() => deleteGroup(pool.id, pool.numAttendees)} color="red" disabled={!pool.active}>
+          <Button onClick={() => deleteGroup(pool.id, pool.numAttendees)} color="red">
             Slett
           </Button>
         </Box>
@@ -60,7 +60,7 @@ interface MergePoolBoxProps {
 
 const MergePoolBox: FC<MergePoolBoxProps> = ({ pool, attendanceId, deleteGroup }) => {
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder key={pool.id} mt={16} bg={pool.active ? "white" : "gray"}>
+    <Card shadow="sm" padding="lg" radius="md" withBorder key={pool.id} mt={16} bg={pool.isVisible ? "white" : "gray"}>
       <Flex justify="space-between">
         <Box>
           <Text>{pool.title}</Text>
@@ -76,16 +76,16 @@ const MergePoolBox: FC<MergePoolBoxProps> = ({ pool, attendanceId, deleteGroup }
                 capacity: pool.capacity,
                 title: pool.title,
                 yearCriteria: pool.yearCriteria,
+                isVisible: pool.isVisible,
               },
               poolId: pool.id,
             })}
             color="yellow"
             mr={16}
-            disabled={!pool.active}
           >
             Endre
           </Button>
-          <Button onClick={() => deleteGroup(pool.id, pool.numAttendees)} color="red" disabled={!pool.active}>
+          <Button onClick={() => deleteGroup(pool.id, pool.numAttendees)} color="red">
             Slett
           </Button>
         </Box>

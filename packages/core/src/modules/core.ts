@@ -237,6 +237,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     offlineService,
     articleService,
     attendanceService,
+    attendanceRepository,
     attendancePoolService,
     waitlistAttendeService,
     attendeeService,

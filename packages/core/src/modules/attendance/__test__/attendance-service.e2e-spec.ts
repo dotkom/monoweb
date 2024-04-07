@@ -49,7 +49,7 @@ const getFakePool = (write: Partial<AttendancePoolWrite>): AttendancePoolWrite =
   capacity: write.capacity ?? 10,
   yearCriteria: write.yearCriteria ?? [0, 1, 2],
   title: write.title ?? "Pool title",
-  active: write.active ?? true,
+  isVisible: write.isVisible ?? true,
   type: write.type ?? "NORMAL",
 })
 
@@ -177,14 +177,14 @@ describe("attendance", () => {
   // registerStart < registerEnd
   it("validates dates correctly before creating new attendance", async () => {
     const shouldFail = async (args: AttendanceWrite) => {
-    // registerEnd > registerEnd
-    await shouldFail({
-      registerEnd: new Date("2021-01-02"),
-      registerStart: new Date("2021-01-03"),
-      deregisterDeadline: new Date("2021-01-04"),
-      extras: [],
-    })
-  }
+      // registerEnd > registerEnd
+      await shouldFail({
+        registerEnd: new Date("2021-01-02"),
+        registerStart: new Date("2021-01-03"),
+        deregisterDeadline: new Date("2021-01-04"),
+        extras: [],
+      })
+    }
   })
 
   it("should not allow registrations beyond pool capacity", async () => {

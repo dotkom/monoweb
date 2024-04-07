@@ -76,6 +76,8 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .groupBy("attendee.id")
       .execute()
 
+    console.log(res)
+
     return res
       .map((value) => ({
         ...value,

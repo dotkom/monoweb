@@ -1,17 +1,16 @@
 import { type Attendance } from "@dotkomonline/types"
-import { Box, Button, Divider, Text, Title } from "@mantine/core"
+import { Box, Divider, Title } from "@mantine/core"
 import { type FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
+import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
 import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
-import { usePoolsGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
-import { useEventDetailsContext } from "./provider"
 import {
   useAddAttendanceMutation,
-  useMergeAttendanceMutation,
   useUpdateAttendanceMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
-import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
+import { usePoolsGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
+import { useEventDetailsContext } from "./provider"
 
 export const AttendancePage: FC = () => {
   const { attendance } = useEventDetailsContext()

@@ -18,10 +18,17 @@ export interface AttendanceRepository {
   getById(id: AttendanceId): Promise<Attendance | null>
   getByAttendeeId(id: AttendeeId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
+  getAll(): Promise<Attendance[]>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   constructor(private readonly db: Kysely<Database>) {}
+
+  async getAll() {
+    const res = await this.db.selectFrom("attendance").selectAll("attendance").execute()
+    return res.map(mapToAttendance)
+  }
+
   async create(obj: AttendanceWrite) {
     const res = await this.db
       .insertInto("attendance")

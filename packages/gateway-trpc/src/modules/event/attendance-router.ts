@@ -131,4 +131,12 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.updateExtras(input.id, input.extras)),
+
+  getWaitlist: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.waitlistAttendeService.getByAttendanceId(input.id)),
 })

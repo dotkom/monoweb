@@ -55,8 +55,8 @@ export interface ArticleTags {
 export interface Attendance {
   createdAt: Generated<Timestamp>
   deregisterDeadline: Timestamp
+  extras: Json | null
   id: Generated<string>
-  mergeTime: Timestamp
   registerEnd: Timestamp
   registerStart: Timestamp
   updatedAt: Generated<Timestamp>
@@ -64,10 +64,12 @@ export interface Attendance {
 
 export interface AttendancePool {
   attendanceId: string
+  capacity: number
   createdAt: Generated<Timestamp>
   id: Generated<string>
-  limit: number
+  isVisible: boolean
   title: string
+  type: string
   updatedAt: Generated<Timestamp>
   yearCriteria: Json | null
 }
@@ -79,6 +81,7 @@ export interface Attendee {
   createdAt: Generated<Timestamp>
   extrasChoices: Json | null
   id: Generated<string>
+  registeredAt: Timestamp
   updatedAt: Generated<Timestamp>
   userId: string | null
 }
@@ -110,7 +113,6 @@ export interface Event {
   createdAt: Generated<Timestamp>
   description: string | null
   end: Timestamp
-  extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null
@@ -277,7 +279,6 @@ export interface RefundRequest {
 }
 
 export interface WaitlistAttendee {
-  active: Generated<boolean>
   attendanceId: string | null
   attendancePoolId: string | null
   createdAt: Generated<Timestamp>

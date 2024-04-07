@@ -16,7 +16,7 @@ export async function up(db) {
     .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade").notNull())
     .addColumn("year_criteria", "json")
     .addColumn("capacity", "integer", (col) => col.notNull())
-    .addColumn("active", "boolean", (col) => col.notNull())
+    .addColumn("is_visible", "boolean", (col) => col.notNull())
     .addColumn("type", "text", (col) => col.notNull())
     .execute()
 

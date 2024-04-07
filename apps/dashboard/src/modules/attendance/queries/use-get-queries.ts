@@ -26,3 +26,10 @@ export const useEventAttendeesGetQuery = (id: AttendanceId) => {
   })
   return { attendees, ...query }
 }
+
+export const useWaitlistAttendeesGetQuery = (id: AttendanceId) => {
+  const { data: attendees = [], ...query } = trpc.attendance.getWaitlist.useQuery({
+    id,
+  })
+  return { attendees, ...query }
+}

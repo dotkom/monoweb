@@ -1,8 +1,8 @@
-import { type AttendancePool } from "@dotkomonline/types"
 import { Box, Button } from "@mantine/core"
 import { type FC } from "react"
 import { z } from "zod"
 import {
+  createCheckboxInput,
   createLabelledCheckboxGroupInput,
   createNumberInput,
   createTextInput,
@@ -22,6 +22,7 @@ export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   capacity: z.number(),
   title: z.string().min(1),
+  isVisible: z.boolean(),
 })
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
@@ -41,6 +42,9 @@ export const usePoolForm = (props: PoolFormProps) => {
       }),
       capacity: createNumberInput({
         label: "Kapasitet",
+      }),
+      isVisible: createCheckboxInput({
+        label: "Synlig på OW",
       }),
     },
     label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",

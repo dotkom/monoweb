@@ -11,7 +11,7 @@ export const AttendancePoolSchema = z.object({
   yearCriteria: YearCriteriaSchema,
   numAttendees: z.number(),
   title: z.string().min(1),
-  active: z.boolean(),
+  isVisible: z.boolean(),
   type: z.enum(["NORMAL", "MERGE"]),
 })
 

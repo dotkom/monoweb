@@ -17,12 +17,12 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
       yearCriteria: values.yearCriteria,
       attendanceId: innerProps.attendanceId,
       title: values.title,
-      active: true,
+      isVisible: values.isVisible,
       type: "NORMAL",
     })
   }
 
-  const disabledYears = [...new Set(pools.filter((pool) => pool.active).flatMap(({ yearCriteria }) => yearCriteria))]
+  const disabledYears = [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
 
   return pools ? (
     <PoolForm
@@ -30,6 +30,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
         yearCriteria: [],
         capacity: 0,
         title: "",
+        isVisible: true,
       }}
       onClose={onClose}
       mode="create"

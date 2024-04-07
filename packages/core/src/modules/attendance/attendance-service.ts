@@ -1,25 +1,13 @@
 import {
-  Extras,
   type Attendance,
   type AttendanceId,
   AttendancePool,
   type AttendanceWrite,
   Attendee,
+  Extras,
   WaitlistAttendee,
-  UserId,
 } from "@dotkomonline/types"
-import { AttendancePoolRepository } from "./attendance-pool-repository"
-import { AttendanceRepository } from "./attendance-repository"
-import { AttendeeRepository } from "./attendee-repository"
-import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 import { IllegalStateError } from "../../error"
-
-type MergeReturn = {
-  attendance: Attendance
-  pool: AttendancePool
-  waitlistAttendees: WaitlistAttendee[]
-  attendees: Attendee[]
-}
 import {
   AttendanceNotFound,
   AttendanceValidationError,
@@ -27,6 +15,17 @@ import {
   ExtrasUpdateAfterRegistrationStartError,
   InvalidParametersError,
 } from "./attendance-error"
+import { AttendancePoolRepository } from "./attendance-pool-repository"
+import { AttendanceRepository } from "./attendance-repository"
+import { AttendeeRepository } from "./attendee-repository"
+import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+
+type MergeReturn = {
+  attendance: Attendance
+  pool: AttendancePool
+  waitlistAttendees: WaitlistAttendee[]
+  attendees: Attendee[]
+}
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -135,7 +134,7 @@ export class AttendanceServiceImpl implements AttendanceService {
       capacity: combinedCapacity,
       yearCriteria: yearCriteria,
       title: mergePoolTitle,
-      active: true,
+      isVisible: true,
       type: "MERGE",
     })
 
@@ -175,7 +174,7 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     // delete the old pools
     for (let i = 0; i < pools.length; i++) {
-      await this.attendancePoolRepository.update({ active: false }, pools[i].id)
+      await this.attendancePoolRepository.update({ isVisible: false }, pools[i].id)
     }
 
     return {
