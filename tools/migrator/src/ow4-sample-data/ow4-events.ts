@@ -90,6 +90,9 @@ export async function getEventAndAttendanceSampleData(): Promise<{
   const attendances: (Attendance | null)[] = []
 
   for (const ow4Event of ow4Events) {
+    if (!eventTypeMapping.get(ow4Event.event_type)) {
+      continue
+    }
     if (ow4Event.attendance_event) {
       attendances.push({
         deregisterDeadline: ow4Event.attendance_event.unattend_deadline,
