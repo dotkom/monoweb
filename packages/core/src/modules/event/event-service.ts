@@ -12,7 +12,7 @@ import type { AttendancePoolService } from "../attendance/attendance-pool-servic
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { EventCommitteeService } from "./event-committee-service"
 import { EventNotFoundError } from "./event-error"
-import type { EventRepository } from "./event-repository"
+import type { EventRepository } from "./event-repository.js"
 
 type ReturnType2 = {
   event: Event

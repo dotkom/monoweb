@@ -1,6 +1,7 @@
 "use client"
 
-import type { Attendance, Committee, Event } from "@dotkomonline/types"
+import type { Attendance, Committee } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/types"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */

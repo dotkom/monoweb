@@ -29,7 +29,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
-      extras: null,
+      extras: [],
     },
     label: "Opprett",
     onSubmit: (values) => {

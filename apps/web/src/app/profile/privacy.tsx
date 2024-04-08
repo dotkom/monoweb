@@ -1,4 +1,4 @@
-import { ProfilePrivacy } from "@/components/views/ProfileView/components"
+import ProfilePrivacy from "../../components/views/SettingsView/components/SettingsPrivacy"
 
 const PrivacyPage = () => <ProfilePrivacy />
 

@@ -1,5 +1,4 @@
 "use client"
-
 import type { Committee, Event } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
