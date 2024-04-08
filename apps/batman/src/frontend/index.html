@@ -20,10 +20,12 @@
   </style>
   <body>
     <audio id="audioPlayer">
-      <source src="success.mp3" type="audio/mp3">
+      <source src="success.mp3" type="audio/mp3" />
       Your browser does not support the audio element.
     </audio>
-    <button id="enableAudioBtn" onclick="enableAudio()">Skru på lyd-effekter</button>
+    <button id="enableAudioBtn" onclick="enableAudio()">
+      Skru på lyd-effekter
+    </button>
     <!-- transactionstable -->
     <h2>Siste 10 transaksjoner</h2>
     <table id="transactionsTable">
@@ -219,9 +221,7 @@
         audio.play();
       }
     </script>
-    <script>
-      const SOCKET_URL =
-        "wss://y2nndako0h.execute-api.eu-north-1.amazonaws.com/$default/";
+    <!-- <script>
       const socket = new WebSocket(SOCKET_URL);
       const container = document.getElementById("container");
 
@@ -257,6 +257,76 @@
       socket.addEventListener("close", function (event) {
         console.log("socket close");
       });
+    </script> -->
+    <script>
+      //       socket.addEventListener("close", function (event) {
+      //   console.log("Socket closed. Attempting to reconnect...");
+      //   reconnectSocket();
+      // });
+
+      function reconnectSocket() {
+        // Ensure the previous socket is cleaned up before creating a new one
+        if (socket) {
+          socket.removeEventListener("open", handleSocketOpen);
+          socket.removeEventListener("message", handleSocketMessage);
+          socket.removeEventListener("error", handleSocketError);
+          socket.removeEventListener("close", handleSocketClose);
+          socket = null; // Clear the reference to encourage garbage collection
+        }
+
+        // Create a new WebSocket connection
+        socket = new WebSocket(SOCKET_URL);
+
+        // Reattach event listeners to the new socket
+        socket.addEventListener("open", handleSocketOpen);
+        socket.addEventListener("message", handleSocketMessage);
+        socket.addEventListener("error", handleSocketError);
+        socket.addEventListener("close", handleSocketClose);
+      }
+
+      // Refactored event handlers for cleanliness
+      function handleSocketOpen(event) {
+        console.log("Socket opened", event);
+        // Include your keep-alive setInterval logic here, or better, call a function that starts it
+        startKeepAlive();
+      }
+
+      function handleSocketMessage(event) {
+        const transactions = JSON.parse(event.data);
+        console.log(transactions);
+        updateTable(transactions);
+      }
+
+      function handleSocketError(event) {
+        console.log("Socket error", event);
+      }
+
+      function handleSocketClose(event) {
+        console.log("Socket closed. Attempting to reconnect...");
+        reconnectSocket();
+      }
+
+      // Example function to handle the keep-alive logic
+      function startKeepAlive() {
+        const keepAlive = setInterval(() => {
+          console.log("Pinging server");
+          try {
+            socket.send("ping");
+          } catch (error) {
+            console.log("Error sending ping", error);
+            clearInterval(keepAlive);
+          }
+        }, 3 * 60 * 1000);
+      }
+
+      const SOCKET_URL =
+        "wss://y2nndako0h.execute-api.eu-north-1.amazonaws.com/$default/";
+      // Initialize the first connection
+      let socket = new WebSocket(SOCKET_URL);
+      socket.addEventListener("open", handleSocketOpen);
+      socket.addEventListener("message", handleSocketMessage);
+      socket.addEventListener("error", handleSocketError);
+      socket.addEventListener("close", handleSocketClose);
     </script>
   </body>
 </html>
