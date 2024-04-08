@@ -4,6 +4,9 @@ import {
   AttendeeSchema,
   AttendeeUser,
   AttendeeUserSchema,
+  ExtraSchema,
+  ExtrasChoices,
+  ExtrasSchema,
   type AttendanceId,
   type Attendee,
   type AttendeeId,
@@ -71,12 +74,34 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .leftJoin("owUser", "owUser.id", "attendee.userId")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .select(sql<User[]>`COALESCE(json_agg(ow_user), '[]')`.as("user"))
       .where("attendance.id", "=", attendanceId)
       .groupBy("attendee.id")
       .execute()
 
-    console.log(res)
+    const data: AttendeeUser[] = []
+
+    for (const attendee of res) {
+      const user = attendee.user[0] // This is hacky and may not be safe.
+      const mappedUser = {
+        ...user,
+        createdAt: new Date(user.createdAt),
+        updatedAt: new Date(user.updatedAt),
+        lastSyncedAt: new Date(user.lastSyncedAt),
+      }
+
+      const extrasChoices = ExtrasChoices.parse(attendee.extrasChoices)
+
+      const mappedAttendee = {
+        ...attendee,
+        extrasChoices,
+      }
+
+      data.push({
+        ...mappedAttendee,
+        user: mappedUser,
+      })
+    }
 
     return res
       .map((value) => ({

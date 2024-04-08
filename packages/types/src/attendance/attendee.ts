@@ -7,6 +7,8 @@ export const ExtraChoice = z.object({
   choice: z.string(),
 })
 
+export const ExtrasChoices = z.array(ExtraChoice)
+
 export const AttendeeSchema = z.object({
   id: z.string().ulid(),
   createdAt: z.coerce.date(),
@@ -17,7 +19,7 @@ export const AttendeeSchema = z.object({
   userId: z.string().ulid(),
 
   attended: z.boolean(),
-  extrasChoices: z.array(ExtraChoice).nullable(),
+  extrasChoices: ExtrasChoices,
   registeredAt: z.date(),
 })
 

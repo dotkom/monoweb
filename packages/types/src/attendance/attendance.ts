@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const ExtrasSchema = z.object({
+export const ExtraSchema = z.object({
   id: z.string(),
   name: z.string(),
   choices: z.array(
@@ -11,14 +11,16 @@ export const ExtrasSchema = z.object({
   ),
 })
 
-export type Extras = z.infer<typeof ExtrasSchema>
+export const ExtrasSchema = z.array(ExtraSchema)
+
+export type Extras = z.infer<typeof ExtraSchema>
 
 export const AttendanceSchema = z.object({
   id: z.string().ulid(),
   registerStart: z.date(),
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
-  extras: z.array(ExtrasSchema).nullable(),
+  extras: ExtrasSchema,
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({

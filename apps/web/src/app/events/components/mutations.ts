@@ -1,21 +1,11 @@
 import { trpc } from "@/utils/trpc/client"
-import { Session } from "next-auth"
 
-interface UnregisterProps {
-  attendanceId: string
-  user: Session["user"]
-}
-export const useUnregisterMutation = ({ attendanceId, user }: UnregisterProps) => {
+export const useUnregisterMutation = () => {
   const utils = trpc.useUtils()
   return trpc.event.attendance.deregisterForEvent.useMutation({
     onSuccess: () => {
-      utils.event.attendance.getPoolsByAttendanceId.invalidate({
-        id: attendanceId,
-      })
-      utils.event.attendance.getAttendee.invalidate({
-        attendanceId,
-        userId: user.id,
-      })
+      utils.event.getWebEventDetailData.invalidate()
+      utils.event.attendance.getAttendee.invalidate()
     },
     onError: (error) => {
       console.error(error)
@@ -23,20 +13,13 @@ export const useUnregisterMutation = ({ attendanceId, user }: UnregisterProps) =
   })
 }
 
-interface RegisterProps {
-  attendanceId: string
-  user: Session["user"]
-}
-export const useRegisterMutation = ({ attendanceId, user }: RegisterProps) => {
+export const useRegisterMutation = () => {
   const utils = trpc.useUtils()
 
   const mutation = trpc.event.attendance.registerForEvent.useMutation({
     onSuccess: () => {
-      utils.event.attendance.getPoolsByAttendanceId.invalidate({ id: attendanceId || "" })
-      utils.event.attendance.getAttendee.invalidate({
-        attendanceId,
-        userId: user.id,
-      })
+      utils.event.getWebEventDetailData.invalidate()
+      utils.event.attendance.getAttendee.invalidate()
     },
     onError: (error) => {
       console.error(error)

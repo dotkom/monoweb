@@ -96,13 +96,12 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
     ),
-  getWebEventDetailData: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
-    console.log("GETTING WEB EVENTS DETAILS PAGE")
-    return ctx.eventService.getWebEventDetailsPageData(input)
-  }),
-  getEventDetailData: publicProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
-    return ctx.eventService.getEventDetailsPageData(input)
-  }),
+  getWebEventDetailData: publicProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.eventService.getWebEventDetailsPageData(input)),
+  getEventDetailData: publicProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.eventService.getEventDetailsPageData(input)),
   addAttendance: protectedProcedure
     .input(
       z.object({

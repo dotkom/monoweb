@@ -9,16 +9,6 @@ import { useGetAttendee } from "./queries"
 import { StatusCard } from "./StatusCard"
 import { trpc } from "@/utils/trpc/client"
 
-interface StatusCardProps {
-  title: string
-  text: string
-  background: string
-}
-
-// Biome ignores do not work in the middle of jsx so this is extracted just to igonre the rule here
-//biome-ignore lint/security/noDangerouslySetInnerHtml: <We do not pass any user input into this, so it is safe>
-const p = (text: string) => <p dangerouslySetInnerHTML={{ __html: text }} />
-
 export const calculateStatus = ({
   registerStart,
   registerEnd,
@@ -89,21 +79,6 @@ const dateToString = (attendanceOpeningDate: Date): DateString => {
   return { value, isRelative: true }
 }
 
-const getStatusDate = (date: Date, attendance: StatusState): string => {
-  const { value, isRelative } = dateToString(date)
-
-  switch (status) {
-    case "NOT_OPENED":
-      return isRelative ? `Åpner om <strong>${value}</strong>` : `Åpner <strong>${value}</strong>`
-    case "OPEN":
-      return isRelative ? `Stenger om <strong>${value}</strong>` : `Stenger <strong>${value}</strong>`
-    case "CLOSED":
-      return isRelative ? `Stengte for <strong>${value}</strong> siden` : `Stengte <strong>${value}</strong>`
-    default:
-      return "ukjent"
-  }
-}
-
 interface Props {
   sessionUser: Session["user"]
   attendance: Attendance
@@ -122,8 +97,8 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     throw new Error("AttendanceBox rendered for event without attendance")
   }
 
-  const registerMutation = useRegisterMutation({ attendanceId, user: sessionUser })
-  const unregisterMutation = useUnregisterMutation({ attendanceId, user: sessionUser })
+  const registerMutation = useRegisterMutation()
+  const unregisterMutation = useUnregisterMutation()
   const { data: attendee } = useGetAttendee({ userId: sessionUser.id, attendanceId })
 
   const attendanceStatus = calculateStatus({
@@ -133,13 +108,19 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   })
   const userIsRegistered = Boolean(attendee)
   const myGroups = user && pools?.find((a) => a.yearCriteria.includes(user?.studyYear))
-  const otherGroups = pools?.filter((group) => group.id !== myGroups?.id)
 
-  const registerForAttendance = () =>
+  const visiblePools = pools?.filter((pool) => pool.isVisible)
+
+  const registerForAttendance = () => {
+    if (!myGroups) {
+      throw new Error("Tried to register user for attendance without a group")
+    }
+
     registerMutation.mutate({
-      attendanceId,
+      attendancePoolId: myGroups?.id,
       userId: sessionUser.id,
     })
+  }
 
   const unregisterForAttendance = () => {
     if (!attendee) {
@@ -158,15 +139,6 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
         <StatusCard attendance={attendance} />
       </div>
       <div>
-        {myGroups && (
-          <AttendanceGroup
-            title={myGroups.yearCriteria.reduce((acc, curr) => `${acc} ${curr}`, "")}
-            numberOfPeople={myGroups.numAttendees}
-            totalSpots={myGroups.capacity}
-            isAttending={userIsRegistered}
-            canAttend={attendanceStatus === "OPEN"}
-          />
-        )}
         {attendanceStatus === "OPEN" &&
           (userIsRegistered ? (
             <Button className="mt-2 w-full text-white" color="red" variant="solid" onClick={unregisterForAttendance}>
@@ -179,20 +151,22 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
           ))}
       </div>
 
-      {otherGroups?.length !== 0 && (
+      {visiblePools?.length !== 0 && (
         <div className="mt-4">
-          <p>Andre grupper med reserverte plasser</p>
-          {otherGroups?.map((group, idx) => (
-            <AttendanceGroup
-              title={"1.-5. klasse"}
-              numberOfPeople={group.numAttendees}
-              totalSpots={group.capacity}
-              key={group.id}
-              className={clsx(idx === 0 ? "mr-2" : "", "mt-4 w-32")}
-              isAttending={false}
-              canAttend={false}
-            />
-          ))}
+          <p>Påmeldingsgrupper</p>
+          <div className="flex flex-wrap w-full">
+            {visiblePools?.map((group, idx) => (
+              <AttendanceGroup
+                title={group.title}
+                numberOfPeople={group.numAttendees}
+                totalSpots={group.capacity}
+                key={group.id}
+                className={clsx(idx === 0 ? "mr-2" : "", "mt-4 w-32")}
+                isAttending={false}
+                canAttend={false}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

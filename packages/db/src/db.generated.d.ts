@@ -83,7 +83,7 @@ export interface Attendee {
   id: Generated<string>
   registeredAt: Timestamp
   updatedAt: Generated<Timestamp>
-  userId: string | null
+  userId: string
 }
 
 export interface Committee {

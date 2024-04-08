@@ -4,7 +4,7 @@ import {
   AttendanceSchema,
   AttendanceWriteSchema,
   AttendeeSchema,
-  ExtrasSchema,
+  ExtraSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -135,7 +135,7 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
-        extras: z.array(ExtrasSchema),
+        extras: z.array(ExtraSchema),
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.updateExtras(input.id, input.extras)),

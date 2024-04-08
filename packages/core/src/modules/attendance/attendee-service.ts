@@ -136,7 +136,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attendancePoolId: attendancePool.id,
       userId,
       attended: false,
-      extrasChoices: null,
+      extrasChoices: [],
       attendanceId,
       registeredAt: registrationTime,
     })

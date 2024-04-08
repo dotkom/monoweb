@@ -1,7 +1,6 @@
 import { type DB } from "@dotkomonline/db/src/db.generated"
 import { db } from "./db"
 import { getAttendanceFixtures } from "./fixtures/attendance"
-import { getAttendeeFixtures } from "./fixtures/attendee"
 import { getCommitteeFixtures } from "./fixtures/committee"
 import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
@@ -77,14 +76,6 @@ export const runFixtures = async () => {
     .insertInto("attendancePool")
     .onConflict((eb) => eb.doNothing())
     .values(getPoolFixtures(insertedIds.attendance))
-    .returning("id")
-    .execute()
-    .then(mapId)
-
-  insertedIds.attendee = await db
-    .insertInto("attendee")
-    .onConflict((eb) => eb.doNothing())
-    .values(getAttendeeFixtures(insertedIds.owUser, insertedIds.attendance, insertedIds.attendancePool))
     .returning("id")
     .execute()
     .then(mapId)

@@ -33,7 +33,7 @@ export async function up(db) {
 
   await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade").notNull())
-    .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade"))
+    .addColumn("user_id", sql`ulid`, (col) => col.references("ow_user.id").onDelete("cascade").notNull())
     .addColumn("attendance_pool_id", sql`ulid`, (col) =>
       col.references("attendance_pool.id").onDelete("cascade").notNull()
     )
