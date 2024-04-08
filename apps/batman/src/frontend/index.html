@@ -23,9 +23,7 @@
       <source src="success.mp3" type="audio/mp3" />
       Your browser does not support the audio element.
     </audio>
-    <button id="enableAudioBtn" onclick="enableAudio()">
-      Skru på lyd-effekter
-    </button>
+    <button onclick="enableAudio()" id="enableAudioBtn">Skru på lyd</button>
     <!-- transactionstable -->
     <h2>Siste 10 transaksjoner</h2>
     <table id="transactionsTable">
@@ -83,91 +81,7 @@
         }
       }
 
-      function testFormatDatetime() {
-        const now = new Date("2024-04-07T10:00:00").getTime();
-
-        // Test case within the last 24 hours
-        const test1 = new Date("2024-04-07T09:00:00").getTime();
-        const expected1 = "1 timer siden, 09:00";
-        console.log(
-          "Test 1:",
-          formatDatetime(test1, now) === expected1,
-          formatDatetime(test1, now),
-          expected1
-        );
-
-        // Test case exactly 24 hours ago (edge case for "yesterday")
-        const test2 = new Date("2024-04-06T10:00:00").getTime();
-        const expected2 = "I går kl. 10:00";
-        console.log(
-          "Test 2:",
-          formatDatetime(test2, now) === expected2,
-          formatDatetime(test2, now),
-          expected2
-        );
-
-        // Test case more than 24 hours ago, but less than 48 (yesterday)
-        const test3 = new Date("2024-04-06T08:00:00").getTime();
-        const expected3 = "I går kl. 08:00";
-        console.log(
-          "Test 3:",
-          formatDatetime(test3, now) === expected3,
-          formatDatetime(test3, now),
-          expected3
-        );
-
-        // Test case at the start of yesterday
-        const test4 = new Date("2024-04-06T00:00:00").getTime();
-        const expected4 = "I går kl. 00:00";
-        console.log(
-          "Test 4:",
-          formatDatetime(test4, now) === expected4,
-          formatDatetime(test4, now),
-          expected4
-        );
-
-        // Test case for date several days in the past
-        const test5 = new Date("2024-04-01T15:45:00").getTime();
-        // Adjust expected5 based on the weekday of 2024-04-01 in your locale
-        const expected5 = "man 1. april kl. 15:45";
-        console.log(
-          "Test 5:",
-          formatDatetime(test5, now) === expected5,
-          formatDatetime(test5, now),
-          expected5
-        );
-
-        // Test case for 23:00 the day before today
-        const test6 = new Date("2024-04-06T23:00:00").getTime();
-        const expected6 = "I går kl. 23:00";
-        console.log(
-          "Test 6:",
-          formatDatetime(test6, now) === expected6,
-          formatDatetime(test6, now),
-          expected6
-        );
-      }
-
-      // const test2 = new Date('2024-04-06T23:59:59.000Z').getTime();
-      // console.log(test2.toString(), formatDatetime(test2, now));
-
-      // const test3 = new Date('2024-04-06T00:00:00.000Z').getTime();
-      // console.log(test3.toString(), formatDatetime(test3, now));
-
-      // const test4 = new Date('2024-04-05T23:59:59.000Z').getTime();
-      // console.log(test4.toString(), formatDatetime(test4, now));
-
-      // const test5 = new Date('2024-04-05T00:00:00.000Z').getTime();
-      // console.log(test5.toString(), formatDatetime(test5, now));
-
-      // const test6 = new Date('2024-04-04T23:59:59.000Z').getTime();
-      // console.log(test6.toString(), formatDatetime(test6, now));
-
-      // const test7 = new Date('2024-04-04T00:00:00.000Z').getTime();
-      // console.log(test7.toString(), formatDatetime(test7, now));
-
       function updateTable(transactions) {
-        playAudio();
         const tableBody = document
           .getElementById("transactionsTable")
           .getElementsByTagName("tbody")[0];
@@ -201,17 +115,12 @@
         console.log(JSON.stringify(json));
         return json;
       }
-    </script>
-    <script>
-      fetchTransactions().then((data) => {
-        updateTable(data.transactions);
-      });
-    </script>
-    <script>
+
       function enableAudio() {
         console.log("Audio enabled");
         document.getElementById("enableAudioBtn").hidden = true;
       }
+
       function playAudio() {
         console.log("Playing audio");
         var audio = document.getElementById("audioPlayer");
@@ -221,49 +130,16 @@
         audio.play();
       }
     </script>
-    <!-- <script>
-      const socket = new WebSocket(SOCKET_URL);
-      const container = document.getElementById("container");
-
-
-
-      socket.addEventListener("open", function (event) {
-        console.log("socket open");
-        console.log(event);
-
-      // Send every 3min to keep connection alive (AWS API Gateway has a 10min timeout)
-      const keepAlive = setInterval(() => {
-        console.log("pinging server")
-        try {
-          socket.send("ping");
-        } catch (error) {
-          console.log("error sending ping", error);
-          clearInterval(keepAlive);
-        }
-
-      }, 3 * 60 * 1000);
-      });
-
-      socket.addEventListener("message", function (event) {
-        const transactions = JSON.parse(event.data);
-        console.log(transactions);
-        updateTable(transactions);
-      });
-
-      socket.addEventListener("error", function (event) {
-        console.log(event);
-      });
-
-      socket.addEventListener("close", function (event) {
-        console.log("socket close");
-      });
-    </script> -->
     <script>
-      //       socket.addEventListener("close", function (event) {
-      //   console.log("Socket closed. Attempting to reconnect...");
-      //   reconnectSocket();
-      // });
+      let keepAliveInterval = null;
 
+      const SOCKET_URL =
+        "wss://y2nndako0h.execute-api.eu-north-1.amazonaws.com/$default/";
+      let socket = new WebSocket(SOCKET_URL);
+    </script>
+
+    <!-- Socket logic -->
+    <script>
       function reconnectSocket() {
         // Ensure the previous socket is cleaned up before creating a new one
         if (socket) {
@@ -271,58 +147,62 @@
           socket.removeEventListener("message", handleSocketMessage);
           socket.removeEventListener("error", handleSocketError);
           socket.removeEventListener("close", handleSocketClose);
+          socket.close();
           socket = null; // Clear the reference to encourage garbage collection
         }
 
-        // Create a new WebSocket connection
         socket = new WebSocket(SOCKET_URL);
-
-        // Reattach event listeners to the new socket
         socket.addEventListener("open", handleSocketOpen);
         socket.addEventListener("message", handleSocketMessage);
         socket.addEventListener("error", handleSocketError);
         socket.addEventListener("close", handleSocketClose);
       }
 
-      // Refactored event handlers for cleanliness
       function handleSocketOpen(event) {
         console.log("Socket opened", event);
-        // Include your keep-alive setInterval logic here, or better, call a function that starts it
+        console.log("Socket opened at " + new Date().toString());
         startKeepAlive();
       }
 
       function handleSocketMessage(event) {
+        console.log("Socket message at " + new Date().toString());
         const transactions = JSON.parse(event.data);
         console.log(transactions);
         updateTable(transactions);
+        playAudio();
       }
 
       function handleSocketError(event) {
         console.log("Socket error", event);
+        console.log("Error at " + new Date().toString());
       }
 
       function handleSocketClose(event) {
-        console.log("Socket closed. Attempting to reconnect...");
-        reconnectSocket();
+        console.log("Socket closed at " + new Date().toString());
+        // Reconnect after 10 seconds
+        setTimeout(reconnectSocket, 10000);
       }
 
-      // Example function to handle the keep-alive logic
       function startKeepAlive() {
-        const keepAlive = setInterval(() => {
+        if (keepAliveInterval) {
+          clearInterval(keepAliveInterval);
+        }
+        keepAliveInterval = setInterval(() => {
           console.log("Pinging server");
           try {
             socket.send("ping");
           } catch (error) {
             console.log("Error sending ping", error);
-            clearInterval(keepAlive);
+            clearInterval(keepAliveInterval);
           }
         }, 3 * 60 * 1000);
       }
-
-      const SOCKET_URL =
-        "wss://y2nndako0h.execute-api.eu-north-1.amazonaws.com/$default/";
-      // Initialize the first connection
-      let socket = new WebSocket(SOCKET_URL);
+    </script>
+    <script>
+      fetchTransactions().then((data) => {
+        updateTable(data.transactions);
+        playAudio();
+      });
       socket.addEventListener("open", handleSocketOpen);
       socket.addEventListener("message", handleSocketMessage);
       socket.addEventListener("error", handleSocketError);
