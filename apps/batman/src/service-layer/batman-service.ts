@@ -13,6 +13,13 @@ export const WebSocketRequestSchema = z.object({
   }),
 })
 
+// { "route": "gmail-watch", "type": "eventbridge" }
+
+export const EventBridgeEventSchema = z.object({
+  route: z.string(),
+  type: z.enum(["eventbridge"]),
+})
+
 type WebSocketRequest = z.infer<typeof WebSocketRequestSchema>
 
 interface HttpResponse {
@@ -36,13 +43,6 @@ export class BatmanServiceImpl implements BatmanService {
   ) {}
 
   async handleEvent(event: APIGatewayProxyEventV2): Promise<HttpResponse> {
-    if (event.requestContext.http) {
-      // HTTP request
-      const response = await this.handleHttpRequest(event)
-      console.log("response", JSON.stringify(response, null, 2))
-      return response
-    }
-
     const webSocketRequest = WebSocketRequestSchema.safeParse(event)
 
     if (webSocketRequest.success) {
@@ -51,13 +51,44 @@ export class BatmanServiceImpl implements BatmanService {
       return response
     }
 
-    console.log("Invalid event", event)
-    console.log("WebSocketRequest error", webSocketRequest.error)
+    const eventBridgeEvent = EventBridgeEventSchema.safeParse(event)
+    if (eventBridgeEvent.success) {
+      const response = await this.handleEventBridgeEvent(eventBridgeEvent.data.route)
+      console.log("response", JSON.stringify(response, null, 2))
+      return response
+    }
 
-    return { statusCode: 200, body: "see logs, got neither websocket nor http event" }
+    if (event.requestContext?.http) {
+      // HTTP request
+      const response = await this.handleHttpRequest(event)
+      console.log("response", JSON.stringify(response, null, 2))
+      return response
+    }
+
+    console.log("Invalid event!")
+    console.log("WebSocketRequest error", JSON.stringify(webSocketRequest.error, null, 2))
+    console.log("EventBridgeEvent error", JSON.stringify(eventBridgeEvent.error, null, 2))
+
+    return { statusCode: 200, body: "see logs, got neither websocket nor http event nor eventbridge event" }
   }
 
-  async handleWebSocketConnection(req: WebSocketRequest): Promise<{ statusCode: number; body?: string }> {
+  async handleEventBridgeEvent(route: string) {
+    if(route === "gmail-watch") {
+      try {
+        await this.gmailService.watch()
+        console.log("Successfully watched gmail")
+        return { statusCode: 200 }
+      } catch (error) {
+        console.log("Error watching gmail")
+        console.error(JSON.stringify(error, null, 2))
+        return { statusCode: 500, body: "Error watching gmail" }
+      }
+    }
+
+    return { statusCode: 500, body: `Routes supported: gmail-watch, got: ${route}` }
+  }
+
+  async handleWebSocketConnection(req: WebSocketRequest) {
     switch (req.requestContext.routeKey) {
       case "$connect": {
         console.log("Handling $connect")

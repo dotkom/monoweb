@@ -83,7 +83,7 @@ export class GmailServiceImpl implements GmailService {
       userId: "me",
       requestBody: {
         labelIds: [env.GMAIL_LABEL_ID],
-        topicName: `projects/${env.TF_VAR_GCLOUD_PROJECT_ID}/topics/${env.TF_VAR_GCLOUD_PUBSUB_TOPIC_NAME}`
+        topicName: `projects/${env.TF_VAR_GCLOUD_PROJECT_ID}/topics/${env.TF_VAR_GCLOUD_PUBSUB_TOPIC_NAME}`,
       },
     })
 

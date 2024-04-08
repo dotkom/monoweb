@@ -107,7 +107,6 @@ export class TransactionServiceImpl implements TransactionService {
 
     const body = email.body
 
-
     // remove all newlines from body
     const bodyNoNewlines = body.split("\r\n")
 
@@ -132,11 +131,10 @@ export class TransactionServiceImpl implements TransactionService {
         emailAddr = rest.split("/")[0].trim()
       } else if (line.startsWith("Sum ordre ink MVA kr")) {
         amount = parseFloat(line.split("kr")[1].trim())
-      } else if (line.includes("= kr")){
+      } else if (line.includes("= kr")) {
         transactions.push(line.trim())
       }
     }
-
 
     const transaction = {
       orderNumber,
