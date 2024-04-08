@@ -1,6 +1,6 @@
-import { Button, Title } from "@dotkomonline/ui"
-import { type FC } from "react"
 import PortableText, { type PortableTextProps } from "@/components/molecules/PortableText"
+import { Button, Title } from "@dotkomonline/ui"
+import type { FC } from "react"
 import CompanyInterestProcess from "./CompanyInterestProcess"
 import OurProducts from "./OurProducts"
 

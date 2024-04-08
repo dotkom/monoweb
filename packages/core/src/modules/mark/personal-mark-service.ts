@@ -1,9 +1,9 @@
-import { type Mark, type MarkId, type PersonalMark, type UserId } from "@dotkomonline/types"
+import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
-import { type MarkService } from "./mark-service"
-import { type PersonalMarkRepository } from "./personal-mark-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/db-utils"
+import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
+import type { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
   getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>

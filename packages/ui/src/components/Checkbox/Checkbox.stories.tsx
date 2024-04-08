@@ -1,5 +1,5 @@
+import type { StoryDefault } from "@ladle/react"
 import { useState } from "react"
-import { StoryDefault } from "@ladle/react"
 import { Checkbox } from "./Checkbox"
 
 export default {

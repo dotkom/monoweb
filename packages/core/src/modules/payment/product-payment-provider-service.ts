@@ -1,10 +1,10 @@
-import {
-  type PaymentProvider,
-  type ProductId,
-  type ProductPaymentProvider,
-  type ProductPaymentProviderWrite,
+import type {
+  PaymentProvider,
+  ProductId,
+  ProductPaymentProvider,
+  ProductPaymentProviderWrite,
 } from "@dotkomonline/types"
-import { type ProductPaymentProviderRepository } from "./product-payment-provider-repository"
+import type { ProductPaymentProviderRepository } from "./product-payment-provider-repository"
 
 export interface ProductPaymentProviderService {
   addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>

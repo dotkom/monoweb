@@ -47,6 +47,6 @@ export const StudyYearAliases = {
 } as StudyYears
 
 export const studyYearOptions = Object.entries(StudyYearAliases).map(([value, label]) => ({
-  value: parseInt(value),
+  value: Number.parseInt(value),
   label,
 }))

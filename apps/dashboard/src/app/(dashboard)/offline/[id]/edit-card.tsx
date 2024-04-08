@@ -1,10 +1,10 @@
-import { type FC } from "react"
-import { type OfflineWrite } from "@dotkomonline/types"
-import { useOfflineDetailsContext } from "./provider"
+import type { OfflineWrite } from "@dotkomonline/types"
+import type { FC } from "react"
+import type { File } from "../../../../../stubs/file/File"
 import { useEditOfflineMutation } from "../../../../modules/offline/mutations/use-edit-offline-mutation"
 import { useS3UploadFile } from "../../../../modules/offline/use-s3-upload-file"
 import { useOfflineWriteForm } from "../write-form"
-import { type File } from "../../../../../stubs/file/File"
+import { useOfflineDetailsContext } from "./provider"
 
 export const OfflineEditCard: FC = () => {
   const { offline } = useOfflineDetailsContext()

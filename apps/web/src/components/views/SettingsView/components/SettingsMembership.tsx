@@ -1,5 +1,4 @@
-import React from "react"
-import { Button, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@dotkomonline/ui"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button } from "@dotkomonline/ui"
 
 const ProfileMembership = () => (
   <div className="my-10">

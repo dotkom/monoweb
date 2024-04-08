@@ -1,9 +1,9 @@
+import type { CareerAd } from "@/api/get-career-ads"
+import PortableText from "@/components/molecules/PortableText"
 import { Button, Icon } from "@dotkomonline/ui"
 import Image from "next/image"
-import { type FC } from "react"
 import Link from "next/link"
-import PortableText from "@/components/molecules/PortableText"
-import { type CareerAd } from "@/api/get-career-ads"
+import type { FC } from "react"
 
 interface CareerAdViewProps {
   career: CareerAd

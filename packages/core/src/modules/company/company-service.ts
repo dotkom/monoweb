@@ -1,7 +1,7 @@
-import { type Company, type CompanyId, type CompanyWrite } from "@dotkomonline/types"
-import { type CompanyRepository } from "./company-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
+import type { Cursor } from "../../utils/db-utils"
 import { CompanyNotFoundError } from "./company-error"
+import type { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
   getCompany(id: CompanyId): Promise<Company>

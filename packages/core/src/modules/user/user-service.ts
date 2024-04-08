@@ -1,16 +1,16 @@
-import {
-  type UserId,
-  type NotificationPermissions,
-  type NotificationPermissionsWrite,
-  type PrivacyPermissions,
-  type PrivacyPermissionsWrite,
-  type User,
-  type UserWrite,
+import type {
+  NotificationPermissions,
+  NotificationPermissionsWrite,
+  PrivacyPermissions,
+  PrivacyPermissionsWrite,
+  User,
+  UserId,
+  UserWrite,
 } from "@dotkomonline/types"
-import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
-import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { type UserRepository } from "./user-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/db-utils"
+import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
+import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import type { UserRepository } from "./user-repository"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>

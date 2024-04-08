@@ -1,5 +1,4 @@
-import { type Kysely, type Selectable } from "kysely"
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import {
   type Committee,
   type CommitteeId,
@@ -7,7 +6,8 @@ import {
   EventCommitteeSchema,
   type EventId,
 } from "@dotkomonline/types"
-import { type Cursor } from "../../utils/db-utils"
+import type { Kysely, Selectable } from "kysely"
+import type { Cursor } from "../../utils/db-utils"
 import { mapToCommittee } from "../committee/committee-repository"
 
 export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"]>): EventCommittee =>

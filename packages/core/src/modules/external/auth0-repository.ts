@@ -1,5 +1,5 @@
 import { OidcUser } from "@dotkomonline/types"
-import { ManagementApiError, ManagementClient } from "auth0"
+import { ManagementApiError, type ManagementClient } from "auth0"
 
 export interface Auth0Repository {
   getBySubject(sub: string): Promise<OidcUser | null>

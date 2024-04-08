@@ -1,8 +1,8 @@
 "use client"
 
+import { Label } from "@radix-ui/react-label"
 import { cva } from "cva"
 import { forwardRef, useState } from "react"
-import { Label } from "@radix-ui/react-label"
 import { Icon } from "../Icon"
 
 export interface PasswordInputProps {

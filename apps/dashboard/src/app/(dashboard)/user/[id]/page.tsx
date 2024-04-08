@@ -3,9 +3,9 @@
 import { UserWriteSchema } from "@dotkomonline/types"
 import { Box, CloseButton, Group, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { useUserDetailsContext } from "./provider"
-import { useUserWriteForm } from "../write-form"
 import { useEditUserMutation } from "../../../../modules/user/mutations/use-edit-user-mutation"
+import { useUserWriteForm } from "../write-form"
+import { useUserDetailsContext } from "./provider"
 
 export default function UserEditCard() {
   const { user } = useUserDetailsContext()

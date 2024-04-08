@@ -1,11 +1,11 @@
-import { randomUUID } from "crypto"
-import { type Event } from "@dotkomonline/types"
-import { describe, vi } from "vitest"
+import { randomUUID } from "node:crypto"
+import type { Event } from "@dotkomonline/types"
 import { Kysely } from "kysely"
+import { describe, vi } from "vitest"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
+import { EventNotFoundError } from "../event-error"
 import { EventRepositoryImpl } from "../event-repository"
 import { EventServiceImpl } from "../event-service"
-import { EventNotFoundError } from "../event-error"
 
 export const eventPayload: Omit<Event, "id"> = {
   title: "Kotlin og spillutvikling med Bekk",

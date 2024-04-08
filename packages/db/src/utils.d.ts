@@ -1,4 +1,4 @@
-import { type CreateTableBuilder, type SchemaModule } from "kysely"
+import type { CreateTableBuilder, SchemaModule } from "kysely"
 
 interface DefaultOptions {
   id?: boolean

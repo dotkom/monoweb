@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Paper, Title } from "@mantine/core"
-import { type FC } from "react"
-import { useEventDetailsContext } from "./provider"
+import type { FC } from "react"
 import { useCreateEventExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditEventExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
 import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
+import { useEventDetailsContext } from "./provider"
 
 export const ExtrasPage: FC = () => {
   const { event } = useEventDetailsContext()

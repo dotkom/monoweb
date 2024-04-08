@@ -1,5 +1,5 @@
-import { modals, type ContextModalProps } from "@mantine/modals"
-import { type FC } from "react"
+import { type ContextModalProps, modals } from "@mantine/modals"
+import type { FC } from "react"
 import { useEventWriteForm } from "../../../app/(dashboard)/event/write-form"
 import { useCreateEventMutation } from "../mutations/use-create-event-mutation"
 

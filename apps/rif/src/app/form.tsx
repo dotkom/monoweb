@@ -1,13 +1,13 @@
 "use client"
 
-import { type FC } from "react"
-import { Checkbox, Label, Text, Textarea, TextInput, Title } from "@dotkomonline/ui"
-import { Controller, useFormContext } from "react-hook-form"
+import { Checkbox, Label, Text, TextInput, Textarea, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
-import { CustomErrorMessage } from "./custom-error-message"
-import { type FormSchema } from "./form-schema"
-import { CheckboxWithTooltip } from "./checkbox"
+import type { FC } from "react"
+import { Controller, useFormContext } from "react-hook-form"
 import { Section } from "../components/section"
+import { CheckboxWithTooltip } from "./checkbox"
+import { CustomErrorMessage } from "./custom-error-message"
+import type { FormSchema } from "./form-schema"
 
 const instagramTakeoverTooltip = (
   <Section>

@@ -1,9 +1,9 @@
+import type { Article } from "@/api/get-article"
+import PortableText from "@/components/molecules/PortableText"
 import { Badge } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
-import { type FC } from "react"
-import { type Article } from "@/api/get-article"
-import PortableText from "@/components/molecules/PortableText"
+import type { FC } from "react"
 
 interface ArticleViewProps {
   article: Article

@@ -1,7 +1,7 @@
-import { GoogleSpreadsheet } from "google-spreadsheet"
 import { JWT } from "google-auth-library"
+import { GoogleSpreadsheet } from "google-spreadsheet"
 import { z } from "zod"
-import { type FormSchema } from "./app/form-schema"
+import type { FormSchema } from "./app/form-schema"
 
 const serviceAccount = process.env.INTEREST_FORM_SERVICE_ACCOUNT ?? "__NO_SERVICE_ACCOUNT_PROVIDED__"
 const spreadsheetId = process.env.INTEREST_FORM_SPREADSHEET_ID ?? "__NO_SPREADSHEET_ID_PROVIDED__"

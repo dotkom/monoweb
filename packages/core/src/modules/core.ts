@@ -1,5 +1,9 @@
-import { type Database } from "@dotkomonline/db"
-import { type Kysely } from "kysely"
+import { S3Client } from "@aws-sdk/client-s3"
+import type { Database } from "@dotkomonline/db"
+import { env } from "@dotkomonline/env"
+import { ManagementClient } from "auth0"
+import type { Kysely } from "kysely"
+import Stripe from "stripe"
 import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article-repository"
 import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
 import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
@@ -18,6 +22,14 @@ import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
+import { type Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
+import {
+  type Auth0SynchronizationService,
+  Auth0SynchronizationServiceImpl,
+} from "./external/auth0-synchronization-service"
+import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
+import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
 import {
   type JobListingLocationLinkRepository,
   JobListingLocationLinkRepositoryImpl,
@@ -58,15 +70,6 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
-import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
-import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
-import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
-import { Auth0RepositoryImpl, Auth0Repository } from "./external/auth0-repository"
-import { ManagementClient } from "auth0"
-import { env } from "@dotkomonline/env"
-import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./external/auth0-synchronization-service"
-import { S3Client } from "@aws-sdk/client-s3"
-import Stripe from "stripe"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 

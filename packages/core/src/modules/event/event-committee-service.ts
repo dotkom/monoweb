@@ -1,5 +1,5 @@
-import { type Committee, type CommitteeId, type EventCommittee, type EventId } from "@dotkomonline/types"
-import { type EventCommitteeRepository } from "./event-committee-repository"
+import type { Committee, CommitteeId, EventCommittee, EventId } from "@dotkomonline/types"
+import type { EventCommitteeRepository } from "./event-committee-repository"
 
 export interface EventCommitteeService {
   getCommitteesForEvent(eventId: EventId): Promise<Committee[]>

@@ -1,5 +1,5 @@
 "use client"
-import { Avatar, AvatarImage, AvatarFallback, Icon } from "@dotkomonline/ui"
+import { Avatar, AvatarFallback, AvatarImage, Icon } from "@dotkomonline/ui"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,7 +7,7 @@ import {
   DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu"
-import { User } from "next-auth"
+import type { User } from "next-auth"
 
 const AvatarImgChange = (user: User) => (
   <DropdownMenu>

@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type PropsWithChildren, useState } from "react"
-import { trpcConfig, trpc } from "./client"
+import { trpc, trpcConfig } from "./client"
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const [queryClient] = useState(() => new QueryClient())

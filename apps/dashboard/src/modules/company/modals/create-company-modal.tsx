@@ -1,7 +1,7 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { type FC } from "react"
-import { useCreateCompanyMutation } from "../mutations/use-create-company-mutation"
+import type { FC } from "react"
 import { useCompanyWriteForm } from "../../../app/(dashboard)/company/write-form"
+import { useCreateCompanyMutation } from "../mutations/use-create-company-mutation"
 
 export const CreateCompanyModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)

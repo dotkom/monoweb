@@ -1,4 +1,4 @@
-import { type Company } from "@dotkomonline/types"
+import type { Company } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Group, Image } from "@mantine/core"
 import { type FC, useState } from "react"

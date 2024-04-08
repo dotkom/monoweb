@@ -1,8 +1,8 @@
 "use client"
 import { Button, Card, Group, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "src/components/GenericTable"
-import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { useCreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
+import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { useInterestGroupTable } from "src/modules/interest-group/use-interest-group-table"
 
 const InterestGroupPage = () => {

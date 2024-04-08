@@ -1,9 +1,9 @@
+import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
+import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { getServerSession } from "next-auth"
-import { Button } from "../../../../packages/ui"
-import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
-import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
 import Link from "next/link"
+import { Button } from "../../../../packages/ui"
 
 export default async function App() {
   const serverClient = await getServerClient()

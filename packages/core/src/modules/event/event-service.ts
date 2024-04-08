@@ -1,9 +1,9 @@
-import { type Attendance, type AttendanceWrite, type Event, type EventId, type EventWrite } from "@dotkomonline/types"
-import { type AttendanceRepository } from "./attendance-repository.js"
-import { type EventInsert } from "./event-repository"
-import { type EventRepository } from "./event-repository.js"
-import { type Cursor } from "../../utils/db-utils"
+import type { Attendance, AttendanceWrite, Event, EventId, EventWrite } from "@dotkomonline/types"
+import type { Cursor } from "../../utils/db-utils"
+import type { AttendanceRepository } from "./attendance-repository.js"
 import { EventAlreadyHasWaitlistError, EventNotFoundError } from "./event-error"
+import type { EventInsert } from "./event-repository"
+import type { EventRepository } from "./event-repository.js"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>

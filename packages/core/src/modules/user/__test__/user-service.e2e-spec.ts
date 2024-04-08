@@ -1,10 +1,10 @@
+import crypto from "node:crypto"
 import { createEnvironment } from "@dotkomonline/env"
-import { UserWrite } from "@dotkomonline/types"
-import crypto from "crypto"
+import type { UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { createServiceLayer, type ServiceLayer } from "../../core"
+import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
+import { type ServiceLayer, createServiceLayer } from "../../core"
 
 const fakeUser = (subject?: string): UserWrite => ({
   auth0Sub: subject ?? crypto.randomUUID(),

@@ -1,5 +1,5 @@
 import type { Story } from "@ladle/react"
-import { PasswordInput, PasswordInputProps } from "./Password"
+import { PasswordInput, type PasswordInputProps } from "./Password"
 
 export default {
   title: "PasswordInput",

@@ -1,6 +1,6 @@
-import { type Database } from "@dotkomonline/db"
-import { type JobListingId, type JobListingLocationId } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
+import type { Database } from "@dotkomonline/db"
+import type { JobListingId, JobListingLocationId } from "@dotkomonline/types"
+import type { Kysely } from "kysely"
 
 export interface JobListingLocationLinkRepository {
   add(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void>

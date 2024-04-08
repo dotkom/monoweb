@@ -1,4 +1,4 @@
-import { type MarkId } from "@dotkomonline/types"
+import type { MarkId } from "@dotkomonline/types"
 import { trpc } from "../../../utils/trpc"
 
 export const useMarkCountUsersQuery = (id: MarkId) => {

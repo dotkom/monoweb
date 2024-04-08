@@ -1,4 +1,5 @@
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
+import type { DB } from "@dotkomonline/db/src/db.generated"
 import {
   type Attendance,
   type AttendanceId,
@@ -10,7 +11,6 @@ import {
   type EventId,
 } from "@dotkomonline/types"
 import { type Kysely, sql } from "kysely"
-import { type DB } from "@dotkomonline/db/src/db.generated"
 
 export interface AttendanceRepository {
   create(attendanceWrite: AttendanceWrite): Promise<Attendance>

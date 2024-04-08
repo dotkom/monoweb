@@ -3,8 +3,8 @@
 import { Icon } from "@iconify/react"
 import { Button, ButtonGroup, Card, Group, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "../../../components/GenericTable"
-import { useOfflineAllQuery } from "../../../modules/offline/queries/use-offlines-all-query"
 import { useCreateOfflineModal } from "../../../modules/offline/modals/create-offline-modal"
+import { useOfflineAllQuery } from "../../../modules/offline/queries/use-offlines-all-query"
 import { useOfflineTable } from "../../../modules/offline/use-offline-table"
 
 export default function OfflinePage() {

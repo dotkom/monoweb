@@ -1,6 +1,6 @@
 "use client"
 
-import { type Event, type EventCommittee } from "@dotkomonline/types"
+import type { Event, EventCommittee } from "@dotkomonline/types"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */

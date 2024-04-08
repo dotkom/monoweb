@@ -1,5 +1,5 @@
-import { notifications } from "@mantine/notifications"
 import { Icon } from "@iconify/react"
+import { notifications } from "@mantine/notifications"
 import { useState } from "react"
 
 export interface NotificationProps {

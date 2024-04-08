@@ -1,16 +1,16 @@
-import { type User, type Attendee } from "@dotkomonline/types"
+import type { Attendee, User } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { Box, Checkbox, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import React, { useMemo, useState, type FC } from "react"
-import { useEventDetailsContext } from "./provider"
+import GenericSearch from "../../../../components/GenericSearch"
+import { GenericTable } from "../../../../components/GenericTable"
+import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
+import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
 import { useUpdateEventAttendanceMutation } from "../../../../modules/event/mutations/use-update-event-attendance-mutation"
 import { useEventAttendanceGetQuery } from "../../../../modules/event/queries/use-event-attendance-get-query"
 import { useUserSearchQuery } from "../../../../modules/user/queries/use-user-search-query"
-import { useRegisterForEventMutation } from "../../../../modules/event/mutations/use-register-for-event-mutation"
-import { useDeregisterForEventMutation } from "../../../../modules/event/mutations/use-deregister-for-event-mutation"
-import GenericSearch from "../../../../components/GenericSearch"
-import { GenericTable } from "../../../../components/GenericTable"
+import { useEventDetailsContext } from "./provider"
 
 interface CustomCheckboxProps {
   userId: string

@@ -1,11 +1,11 @@
-import { type FC } from "react"
+import type { OfflineWrite } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { type OfflineWrite } from "@dotkomonline/types"
-import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"
-import { type File } from "../../../../stubs/file/File"
+import type { FC } from "react"
+import type { File } from "../../../../stubs/file/File"
 import { useOfflineWriteForm } from "../../../app/(dashboard)/offline/write-form"
-import { useS3UploadFile } from "../use-s3-upload-file"
 import { useQueryNotification } from "../../../app/notifications"
+import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"
+import { useS3UploadFile } from "../use-s3-upload-file"
 
 export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)

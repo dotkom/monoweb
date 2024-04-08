@@ -1,9 +1,9 @@
-import { randomUUID } from "crypto"
-import { type Company } from "@dotkomonline/types"
+import { randomUUID } from "node:crypto"
+import type { Company } from "@dotkomonline/types"
 import { Kysely } from "kysely"
+import { CompanyNotFoundError } from "../company-error"
 import { CompanyRepositoryImpl } from "../company-repository"
 import { CompanyServiceImpl } from "../company-service"
-import { CompanyNotFoundError } from "../company-error"
 
 describe("CompanyService", () => {
   const db = vi.mocked(Kysely.prototype, true)

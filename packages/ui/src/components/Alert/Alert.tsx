@@ -1,7 +1,7 @@
 "use client"
 
 import { cva } from "cva"
-import { type FC, type PropsWithChildren } from "react"
+import type { FC, PropsWithChildren } from "react"
 import { AlertIcon } from "./AlertIcon"
 
 export interface AlertProps {

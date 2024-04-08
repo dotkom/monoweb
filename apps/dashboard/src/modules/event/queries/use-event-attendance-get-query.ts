@@ -1,4 +1,4 @@
-import { type EventId } from "@dotkomonline/types"
+import type { EventId } from "@dotkomonline/types"
 import { trpc } from "../../../utils/trpc"
 
 export const useEventAttendanceGetQuery = (eventId: EventId) => {

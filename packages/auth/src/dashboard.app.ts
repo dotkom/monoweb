@@ -1,6 +1,6 @@
-import { env } from "@dotkomonline/env"
 import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
+import { env } from "@dotkomonline/env"
 import { getAuthOptions } from "./auth-options"
 
 export const authOptions = getAuthOptions({

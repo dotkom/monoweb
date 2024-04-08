@@ -1,5 +1,5 @@
-import { type Database } from "@dotkomonline/db"
-import { type Insertable } from "kysely"
+import type { Database } from "@dotkomonline/db"
+import type { Insertable } from "kysely"
 
 // export const companies: Insertable<Database["company"]>[] = [
 export const getCompanyFixtures: () => Insertable<Database["company"]>[] = () => [

@@ -1,7 +1,7 @@
-import { Argument, program } from "commander"
-import { type MigrationResultSet } from "kysely"
 import { createMigrator } from "@dotkomonline/db/src/migrator"
 import { getLogger } from "@dotkomonline/logger"
+import { Argument, program } from "commander"
+import type { MigrationResultSet } from "kysely"
 import { db } from "./db"
 
 export const logger = getLogger("migrator")

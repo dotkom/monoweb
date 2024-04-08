@@ -1,22 +1,22 @@
-import { Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
-import { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
-import { Kysely } from "kysely"
+import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import type { Kysely } from "kysely"
 import { describe, expect, it, vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import { createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import {
-  NotificationPermissionsRepository,
+  type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
 } from "../../user/notification-permissions-repository"
 import {
-  PrivacyPermissionsRepository,
+  type PrivacyPermissionsRepository,
   PrivacyPermissionsRepositoryImpl,
 } from "../../user/privacy-permissions-repository"
-import { UserRepository, UserRepositoryImpl } from "../../user/user-repository"
-import { UserService, UserServiceImpl } from "../../user/user-service"
-import { Auth0Repository, Auth0RepositoryImpl } from "../auth0-repository"
-import { Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
+import { type UserRepository, UserRepositoryImpl } from "../../user/user-repository"
+import { type UserService, UserServiceImpl } from "../../user/user-service"
+import { type Auth0Repository, Auth0RepositoryImpl } from "../auth0-repository"
+import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 
 const fakeAuth0GetUserResponse = (subject?: string, email?: string): ApiResponse<GetUsers200ResponseOneOfInner> =>
   ({

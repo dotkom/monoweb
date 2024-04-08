@@ -1,11 +1,11 @@
-import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
-import { type FC } from "react"
-import { useFieldArray, useForm } from "react-hook-form"
-import { Icon } from "@iconify/react"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Icon } from "@iconify/react"
+import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
+import type { FC } from "react"
+import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
-import { templates } from "./templates"
 import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect"
+import { templates } from "./templates"
 
 type TemplateKey = keyof typeof templates
 

@@ -1,4 +1,5 @@
 "use client"
+import { CountryCodes } from "@/utils/countryCodes"
 import {
   Select,
   SelectContent,
@@ -13,8 +14,7 @@ import {
   SelectValue,
   SelectViewport,
 } from "@dotkomonline/ui"
-import { ReactCountryFlag, CountryCodes as CountryCodeProps } from "@fadi-ui/react-country-flag"
-import { CountryCodes } from "@/utils/countryCodes"
+import { type CountryCodes as CountryCodeProps, ReactCountryFlag } from "@fadi-ui/react-country-flag"
 import { useState } from "react"
 
 export const CountryCodeSelect = () => {

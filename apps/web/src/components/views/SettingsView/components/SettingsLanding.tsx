@@ -1,8 +1,8 @@
-import { TextInput, Textarea, cn } from "@dotkomonline/ui"
-import { type NextPage } from "next"
-import { type User } from "next-auth"
 import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
+import { TextInput, Textarea } from "@dotkomonline/ui"
+import type { NextPage } from "next"
+import type { User } from "next-auth"
 
 interface FormInputProps {
   title: string

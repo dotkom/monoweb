@@ -1,9 +1,9 @@
-import { randomUUID } from "crypto"
-import { type PaymentProvider, type Product, type ProductPaymentProvider } from "@dotkomonline/types"
+import { randomUUID } from "node:crypto"
+import type { PaymentProvider, Product, ProductPaymentProvider } from "@dotkomonline/types"
 import { Kysely } from "kysely"
-import { productPayload } from "./product-service.spec"
 import { ProductPaymentProviderRepositoryImpl } from "../product-payment-provider-repository"
 import { ProductPaymentProviderServiceImpl } from "../product-payment-provider-service"
+import { productPayload } from "./product-service.spec"
 
 export const productPaymentProvidersPayload: ProductPaymentProvider[] = [
   {

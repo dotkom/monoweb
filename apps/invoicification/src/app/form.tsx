@@ -1,12 +1,12 @@
-import React, { FC, useEffect } from "react"
-import { useFormContext } from "react-hook-form"
-import { DeliveryMethod, FormSchema, InvoiceRelation } from "./form-schema"
-import { Section } from "../components/section"
-import { Label, Textarea, TextInput, Title } from "@dotkomonline/ui"
+import { Label, TextInput, Textarea, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
-import { CustomErrorMessage } from "./custom-error-message"
-import { useOrganization } from "./use-organization"
+import { type FC, useEffect } from "react"
+import { useFormContext } from "react-hook-form"
+import { Section } from "../components/section"
 import { ControlledSelect } from "./controlled-select"
+import { CustomErrorMessage } from "./custom-error-message"
+import { DeliveryMethod, type FormSchema, InvoiceRelation } from "./form-schema"
+import { useOrganization } from "./use-organization"
 
 export const Form: FC = () => {
   const { register, control, formState, watch, setValue, setError, clearErrors } = useFormContext<FormSchema>()

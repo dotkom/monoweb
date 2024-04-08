@@ -1,6 +1,6 @@
-import * as util from "util"
+import * as util from "node:util"
 import Cors from "cors"
-import { type NextApiHandler, type NextApiRequest, type NextApiResponse } from "next"
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next"
 
 const cors = Cors({
   origin: ["http://localhost:3002", "https://dashboard.online.ntnu.no"],
