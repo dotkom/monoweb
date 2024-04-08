@@ -1,10 +1,10 @@
 import { createEnvironment } from "@dotkomonline/env"
-import { type Company } from "@dotkomonline/types"
+import type { Company } from "@dotkomonline/types"
 import { addDays, addMinutes, subDays } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { getCompanyMock, getJobListingMock } from "../../../../mock"
-import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { createServiceLayer, type ServiceLayer } from "../../core"
+import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
+import { type ServiceLayer, createServiceLayer } from "../../core"
 import {
   InvalidDeadlineError,
   InvalidEndDateError,

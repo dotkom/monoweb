@@ -1,5 +1,5 @@
 import { Toggle } from "@dotkomonline/ui"
-import { type FC, type ReactNode } from "react"
+import type { FC, ReactNode } from "react"
 
 interface PrivacyProps {
   children: ReactNode

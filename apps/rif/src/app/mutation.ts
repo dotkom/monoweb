@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import { type FormSchema } from "./form-schema"
+import type { FormSchema } from "./form-schema"
 
 export const useSubmitMutation = () => {
   const router = useRouter()

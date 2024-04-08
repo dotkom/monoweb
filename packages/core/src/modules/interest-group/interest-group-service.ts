@@ -1,6 +1,6 @@
-import { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
-import { InterestGroupRepository } from "./interest-group-repository"
-import { Collection, Pageable } from "../../utils/db-utils"
+import type { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
+import type { Collection, Pageable } from "../../utils/db-utils"
+import type { InterestGroupRepository } from "./interest-group-repository"
 
 export interface InterestGroupService {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>

@@ -10,8 +10,8 @@ import {
   SelectValue,
   SelectViewport,
 } from "@dotkomonline/ui"
-import { Control, Controller, FieldValue, FieldValues } from "react-hook-form"
-import React, { ComponentPropsWithoutRef } from "react"
+import type { ComponentPropsWithoutRef } from "react"
+import { type Control, Controller, type FieldValue, type FieldValues } from "react-hook-form"
 
 export type ControlledSelectProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>

@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { type FC } from "react"
+import type { FC } from "react"
 import { EventAttendancePage } from "./attendance-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"

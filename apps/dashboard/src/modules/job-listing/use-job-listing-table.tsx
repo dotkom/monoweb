@@ -1,12 +1,12 @@
 "use client"
 
-import { type JobListing } from "@dotkomonline/types"
+import type { JobListing } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { useCompanyAllQuery } from "../company/queries/use-company-all-query"
 import { formatRemainingTime } from "../../utils/format"
+import { useCompanyAllQuery } from "../company/queries/use-company-all-query"
 
 interface Props {
   data: JobListing[]

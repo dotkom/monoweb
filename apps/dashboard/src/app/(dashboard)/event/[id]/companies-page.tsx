@@ -1,16 +1,16 @@
-import { type FC, useMemo } from "react"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type Company, CompanySchema, EventSchema } from "@dotkomonline/types"
-import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
 import { Icon } from "@iconify/react"
+import { Box, Button, Group, Image, Text, Title } from "@mantine/core"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { type FC, useMemo } from "react"
 import { z } from "zod"
-import { useEventDetailsContext } from "./provider"
-import { createSelectInput, useFormBuilder } from "../../../form"
 import { GenericTable } from "../../../../components/GenericTable"
+import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query"
 import { useAddCompanyToEventMutation } from "../../../../modules/event/mutations/use-add-company-to-event-mutation"
 import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/mutations/use-remove-company-from-event-mutation"
-import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query"
 import { useEventCompanyGetQuery } from "../../../../modules/event/queries/use-event-company-get-query"
+import { createSelectInput, useFormBuilder } from "../../../form"
+import { useEventDetailsContext } from "./provider"
 
 export const EventCompaniesPage: FC = () => {
   const { event } = useEventDetailsContext()

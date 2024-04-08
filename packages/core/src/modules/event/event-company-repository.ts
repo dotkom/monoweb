@@ -1,9 +1,9 @@
-import { type Company, type CompanyId, type Event, type EventId } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
-import { type Database } from "@dotkomonline/db"
-import { mapToEvent } from "./event-repository"
-import { mapToCompany } from "../company/company-repository"
+import type { Database } from "@dotkomonline/db"
+import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
+import type { Kysely } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { mapToCompany } from "../company/company-repository"
+import { mapToEvent } from "./event-repository"
 
 export interface EventCompanyRepository {
   createCompany(id: EventId, company: CompanyId): Promise<void>

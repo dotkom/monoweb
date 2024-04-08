@@ -1,17 +1,17 @@
 "use client"
 
 import Link from "next/link"
-import { type FC } from "react"
+import type { FC } from "react"
 import {
   NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
   NavigationMenuContent,
+  NavigationMenuItem,
   NavigationMenuLink,
+  NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./NavigationMenu"
-import { type MenuLink } from "./types"
+import type { MenuLink } from "./types"
 
 export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => (
   <NavigationMenu className="ml-6 hidden w-min flex-1 justify-start md:flex">

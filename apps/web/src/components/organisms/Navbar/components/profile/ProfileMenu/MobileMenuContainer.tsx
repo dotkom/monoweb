@@ -1,9 +1,9 @@
 "use client"
-import { useEffect, useState } from "react"
+import { settingsItems } from "@/utils/settingsLinks"
 import { Icon } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
 import { usePathname } from "next/navigation"
-import { settingsItems } from "@/utils/settingsLinks"
+import { useEffect, useState } from "react"
 import ProfileMenuItem from "./SettingsMenuItem"
 
 const MobileMenuContainer = () => {

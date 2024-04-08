@@ -1,4 +1,4 @@
-import { type ExtrasFormValues } from "./ExtrasForm"
+import type { ExtrasFormValues } from "./ExtrasForm"
 
 export const templates: Record<string, ExtrasFormValues> = {
   "Pizza / sushi": {

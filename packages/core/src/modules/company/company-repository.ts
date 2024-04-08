@@ -1,6 +1,6 @@
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import { type Company, type CompanyId, CompanySchema, type CompanyWrite } from "@dotkomonline/types"
-import { type Kysely, type Selectable } from "kysely"
+import type { Kysely, Selectable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToCompany = (payload: Selectable<Database["company"]>): Company => CompanySchema.parse(payload)

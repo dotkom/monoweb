@@ -1,5 +1,5 @@
+import type { S3Client } from "@aws-sdk/client-s3"
 import { type PresignedPost, createPresignedPost as _createPresignedPost } from "@aws-sdk/s3-presigned-post"
-import { S3Client } from "@aws-sdk/client-s3"
 
 export interface S3Repository {
   createPresignedPost(bucket: string, filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>

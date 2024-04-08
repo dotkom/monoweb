@@ -1,6 +1,6 @@
+import type { Database } from "@dotkomonline/db"
 import { type Committee, type CommitteeId, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types"
-import { type Kysely, type Selectable } from "kysely"
-import { type Database } from "@dotkomonline/db"
+import type { Kysely, Selectable } from "kysely"
 import { type Collection, type Pageable, paginatedQuery } from "../../utils/db-utils"
 
 export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => CommitteeSchema.parse(payload)

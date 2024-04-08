@@ -1,8 +1,8 @@
-import { User, UserWrite } from "@dotkomonline/types"
-import { UserService } from "../user/user-service"
-import { Auth0Repository } from "./auth0-repository"
-import { getLogger, Logger } from "@dotkomonline/logger"
+import { type Logger, getLogger } from "@dotkomonline/logger"
+import type { User, UserWrite } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
+import type { UserService } from "../user/user-service"
+import type { Auth0Repository } from "./auth0-repository"
 
 export interface Auth0SynchronizationService {
   /**

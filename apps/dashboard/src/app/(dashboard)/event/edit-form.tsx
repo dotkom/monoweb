@@ -1,4 +1,4 @@
-import { type Committee } from "@dotkomonline/types"
+import type { Committee } from "@dotkomonline/types"
 import { z } from "zod"
 import { EventSchema } from "../../../../../../packages/types/src/event"
 import {

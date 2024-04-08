@@ -1,7 +1,7 @@
+import { type Environment, env } from "@dotkomonline/env"
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
-import { env, type Environment } from "@dotkomonline/env"
 import pg from "pg"
-import { type DB } from "./db.generated"
+import type { DB } from "./db.generated"
 
 export { createMigrator } from "./migrator"
 

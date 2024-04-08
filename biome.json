@@ -24,7 +24,13 @@
       "quoteProperties": "asNeeded"
     }
   },
-  "organizeImports": {
-    "enabled": false
+  "linter": {
+    "rules": {
+      "correctness": {
+        "noUnusedImports": {
+          "level": "error"
+      }
+      }
+    }
   }
 }

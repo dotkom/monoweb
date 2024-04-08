@@ -1,13 +1,13 @@
 "use client"
 
-import { Skeleton, Stack, Anchor } from "@mantine/core"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { StudyYearAliases, type StudyYears, type User } from "@dotkomonline/types"
-import { useMemo } from "react"
+import { Anchor, Skeleton, Stack } from "@mantine/core"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
-import { formatDate } from "../../../utils/format"
-import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
+import { useMemo } from "react"
 import { GenericTable } from "../../../components/GenericTable"
+import { useUserAllQuery } from "../../../modules/user/queries/use-user-all-query"
+import { formatDate } from "../../../utils/format"
 
 export default function UserPage() {
   const { users, isLoading: isUsersLoading } = useUserAllQuery()

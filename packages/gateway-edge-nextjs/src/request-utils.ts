@@ -1,4 +1,4 @@
-import { type NextApiRequest } from "next"
+import type { NextApiRequest } from "next"
 
 export const bufferRequest = async (req: NextApiRequest) =>
   new Promise<Buffer>((resolve, reject) => {

@@ -1,7 +1,7 @@
+import type { Story } from "@ladle/react"
 import { Icon } from "../Icon"
-import { Story } from "@ladle/react"
 
-import { Button, ButtonProps } from "./Button"
+import { Button, type ButtonProps } from "./Button"
 
 const Template: Story<ButtonProps> = (props) => <Button {...props}>{props.children}</Button>
 

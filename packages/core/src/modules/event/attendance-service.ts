@@ -1,5 +1,5 @@
-import { type AttendanceId, type Attendee, type EventId, type UserId } from "@dotkomonline/types"
-import { type AttendanceRepository } from "./attendance-repository"
+import type { AttendanceId, Attendee, EventId, UserId } from "@dotkomonline/types"
+import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeNotFoundError } from "./attendee-error"
 
 export interface AttendanceService {

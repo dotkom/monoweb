@@ -1,9 +1,9 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { type PropsWithChildren } from "react"
-import { JobListingDetailsContext } from "./provider"
+import type { PropsWithChildren } from "react"
 import { trpc } from "../../../../utils/trpc"
+import { JobListingDetailsContext } from "./provider"
 
 export default function JobListingDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
   const { data, isLoading } = trpc.jobListing.get.useQuery(params.id)

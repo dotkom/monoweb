@@ -1,9 +1,9 @@
-import { randomUUID } from "crypto"
+import { randomUUID } from "node:crypto"
+import type { Committee } from "@dotkomonline/types"
 import { Kysely } from "kysely"
-import { type Committee } from "@dotkomonline/types"
+import { CommitteeNotFoundError } from "../committee-error"
 import { CommitteeRepositoryImpl } from "../committee-repository"
 import { CommitteeServiceImpl } from "../committee-service"
-import { CommitteeNotFoundError } from "../committee-error"
 
 describe("CommitteeService", () => {
   const db = vi.mocked(Kysely.prototype)

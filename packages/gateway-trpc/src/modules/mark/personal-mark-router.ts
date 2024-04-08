@@ -1,7 +1,7 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { z } from "zod"
 import { PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
-import { t, protectedProcedure } from "../../trpc"
+import { z } from "zod"
+import { protectedProcedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: protectedProcedure

@@ -1,7 +1,7 @@
 import { Badge } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
-import React from "react"
+import type React from "react"
 
 interface ComingEventProps {
   img: string

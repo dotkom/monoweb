@@ -1,8 +1,8 @@
-import { type Event, type EventExtra } from "@dotkomonline/types"
+import type { Event, EventExtra } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { type FC } from "react"
-import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
+import type { FC } from "react"
 import { ExtrasForm, type ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
+import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
 
 export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: EventExtra; event: Event }>> = ({
   context,

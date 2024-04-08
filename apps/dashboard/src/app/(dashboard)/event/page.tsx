@@ -1,17 +1,17 @@
 "use client"
 
-import { type Event, type Committee, type EventCommittee } from "@dotkomonline/types"
+import type { Committee, Event, EventCommittee } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useMemo } from "react"
 import Link from "next/link"
+import { useMemo } from "react"
+import { GenericTable } from "../../../components/GenericTable"
+import EventCommittees from "../../../components/molecules/company-name/event-committees"
+import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { formatDate } from "../../../utils/format"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
-import EventCommittees from "../../../components/molecules/company-name/event-committees"
-import { GenericTable } from "../../../components/GenericTable"
 
 type TableColumns = Event & {
   committees: EventCommittee[]

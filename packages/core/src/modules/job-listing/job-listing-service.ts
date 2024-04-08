@@ -1,17 +1,17 @@
-import { type JobListing, type JobListingId, type JobListingWrite } from "@dotkomonline/types"
+import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 import { isAfter, isBefore } from "date-fns"
-import { type JobListingRepository } from "./job-listing-repository"
-import { type JobListingLocationRepository } from "./job-listing-location-repository"
-import { type JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
-import { type Cursor } from "../../utils/db-utils"
 import assert from "../../../assert"
+import type { Cursor } from "../../utils/db-utils"
 import {
   InvalidDeadlineError,
   InvalidEndDateError,
-  MissingLocationError,
   InvalidStartDateError,
   JobListingNotFoundError,
+  MissingLocationError,
 } from "./job-listing-error"
+import type { JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
+import type { JobListingLocationRepository } from "./job-listing-location-repository"
+import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing>

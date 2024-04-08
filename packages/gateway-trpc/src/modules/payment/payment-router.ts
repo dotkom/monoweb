@@ -1,9 +1,9 @@
-import { z } from "zod"
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { PaymentSchema, ProductSchema } from "@dotkomonline/types"
+import { z } from "zod"
+import { protectedProcedure, t } from "../../trpc"
 import { productRouter } from "./product-router"
 import { refundRequestRouter } from "./refund-request-router"
-import { t, protectedProcedure } from "../../trpc"
 
 export const paymentRouter = t.router({
   product: productRouter,

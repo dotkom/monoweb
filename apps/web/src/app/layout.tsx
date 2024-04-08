@@ -1,9 +1,9 @@
-import { QueryProvider } from "@/utils/trpc/QueryProvider"
-import { PropsWithChildren } from "react"
-import { Poppins } from "next/font/google"
-import { cn } from "@dotkomonline/ui"
 import MainLayout from "@/components/layout/MainLayout"
+import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import "@dotkomonline/config/tailwind.css"
+import { cn } from "@dotkomonline/ui"
+import { Poppins } from "next/font/google"
+import type { PropsWithChildren } from "react"
 import "../styles/globals.css"
 
 export const metadata = {

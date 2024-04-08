@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "@dotkomonline/ui"
 import { trpc } from "@/utils/trpc/client"
+import { Button } from "@dotkomonline/ui"
 
 interface EventDetailPageProps {
   params: { id: string }

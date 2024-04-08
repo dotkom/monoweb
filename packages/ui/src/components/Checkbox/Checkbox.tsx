@@ -1,10 +1,10 @@
 "use client"
 
-import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+import * as React from "react"
 import { cn } from "../../utils"
-import { Label } from "../Label"
 import { Icon } from "../Icon"
+import { Label } from "../Label"
 
 export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {
   label?: string

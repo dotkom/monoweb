@@ -1,5 +1,5 @@
 import { Button, type ButtonProps, Combobox, type ComboboxProps, useCombobox } from "@mantine/core"
-import { type FC } from "react"
+import type { FC } from "react"
 
 interface ActionSelectProps extends ComboboxProps {
   data: { value: string; label: string }[]

@@ -1,5 +1,5 @@
 import { appRouter } from "@dotkomonline/gateway-trpc"
-import { type NextApiHandler } from "next"
+import type { NextApiHandler } from "next"
 import { nextHandler } from "trpc-playground/handlers/next"
 
 const setupHandler = nextHandler({

@@ -1,5 +1,5 @@
-import { Story, StoryDefault } from "@ladle/react"
-import { Textarea, TextareaProps } from "./Textarea"
+import type { Story, StoryDefault } from "@ladle/react"
+import { Textarea, type TextareaProps } from "./Textarea"
 
 export default {
   title: "Textarea",

@@ -1,5 +1,5 @@
-import { getEventAndAttendanceSampleData } from "./ow4-sample-data/ow4-events"
 import { db } from "./db"
+import { getEventAndAttendanceSampleData } from "./ow4-sample-data/ow4-events"
 
 export async function runSampleData() {
   const { events, attendances: possibleAttendances } = await getEventAndAttendanceSampleData()

@@ -1,5 +1,5 @@
-import { type ServiceLayer } from "@dotkomonline/core"
-import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
+import type { ServiceLayer } from "@dotkomonline/core"
+import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {

@@ -1,4 +1,4 @@
-import { ProblemDetail } from "./error"
+import type { ProblemDetail } from "./error"
 
 const RFC_REGISTRY_BASE = "https://datatracker.ietf.org/doc/html/rfc9110#name"
 

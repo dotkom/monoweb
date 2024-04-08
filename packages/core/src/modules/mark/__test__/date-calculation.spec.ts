@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto"
+import { randomUUID } from "node:crypto"
+import type { Mark } from "@dotkomonline/types"
 import { Kysely } from "kysely"
-import { type Mark } from "@dotkomonline/types"
 import { MarkRepositoryImpl } from "../mark-repository"
 import { MarkServiceImpl } from "../mark-service"
 import { PersonalMarkRepositoryImpl } from "../personal-mark-repository"

@@ -5,7 +5,6 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
-  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -21,13 +20,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Icon,
+  cn,
 } from "@dotkomonline/ui"
-import { type FC, type PropsWithChildren } from "react"
-import { useTheme } from "next-themes"
+import type { Session } from "next-auth"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
+import type { FC, PropsWithChildren } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
-import { Session } from "next-auth"
 
 export const ProfileMenu = ({ initialData }: { initialData: Session | null }) => {
   return (

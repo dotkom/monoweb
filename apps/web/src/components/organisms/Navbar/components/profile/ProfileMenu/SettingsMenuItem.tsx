@@ -1,8 +1,9 @@
 "use client"
 import { Icon, cn } from "@dotkomonline/ui"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import React, { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
+import type React from "react"
+import { useEffect, useState } from "react"
 
 interface SettingsMenuItemProps {
   menuItem: {

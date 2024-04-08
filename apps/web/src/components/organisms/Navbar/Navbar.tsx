@@ -1,13 +1,10 @@
-import Link from "next/link"
-import React from "react"
 import OnlineIcon from "@/components/atoms/OnlineIcon"
+import { getServerSession } from "next-auth"
+import Link from "next/link"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { type MenuLink } from "./types"
-import { SessionProvider } from "next-auth/react"
-import { getServerSession } from "next-auth"
-import { session } from "next-auth/core/routes"
+import type { MenuLink } from "./types"
 
 const links: MenuLink[] = [
   {

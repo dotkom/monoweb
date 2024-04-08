@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { Organization } from "./brreg"
+import type { Organization } from "./brreg"
 
 export const useOrganization = (onSuccess: (data: Organization) => void) =>
   useMutation({

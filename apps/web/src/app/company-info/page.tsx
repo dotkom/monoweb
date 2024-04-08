@@ -1,5 +1,5 @@
-import { CompanyInfoView, type Content } from "@/components/views/CompanyInfoView"
 import { fetchCompanySectionData } from "@/api/get-company-page"
+import { CompanyInfoView } from "@/components/views/CompanyInfoView"
 
 const Company = async () => {
   const companyData = await fetchCompanySectionData()

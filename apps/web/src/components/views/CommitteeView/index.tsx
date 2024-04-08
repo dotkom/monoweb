@@ -1,9 +1,9 @@
-import { type Committee, type Event } from "@dotkomonline/types"
-import { type FC } from "react"
+import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
+import { EventList } from "@/components/organisms/EventList"
+import type { Committee, Event } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import Image from "next/image"
-import { EventList } from "@/components/organisms/EventList"
-import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
+import type { FC } from "react"
 
 interface CommitteeViewProps {
   committee: Committee

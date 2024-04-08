@@ -1,11 +1,11 @@
 "use client"
 
-import { cn, Icon } from "@dotkomonline/ui"
-import { type FC, useEffect, useState } from "react"
+import { Icon, cn } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
 import Link from "next/link"
+import { type FC, useEffect, useState } from "react"
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./NavigationMenu"
-import { type MenuLink } from "./types"
+import type { MenuLink } from "./types"
 
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false)

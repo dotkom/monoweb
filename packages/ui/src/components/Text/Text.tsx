@@ -1,5 +1,5 @@
-import { cva, type VariantProps } from "cva"
-import { type FC, type ReactNode } from "react"
+import { type VariantProps, cva } from "cva"
+import type { FC, ReactNode } from "react"
 import { cn } from "../../utils"
 
 export interface TextProps extends VariantProps<typeof text> {

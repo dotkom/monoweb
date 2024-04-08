@@ -5,38 +5,38 @@ import {
   Box,
   Button,
   Checkbox,
+  type CheckboxProps,
   FileInput,
+  type FileInputProps,
   Flex,
   MultiSelect,
+  type MultiSelectProps,
   NumberInput,
+  type NumberInputProps,
   Select,
+  type SelectProps,
   TagsInput,
+  type TagsInputProps,
   Text,
   TextInput,
-  Textarea,
-  type CheckboxProps,
-  type FileInputProps,
-  type MultiSelectProps,
-  type NumberInputProps,
-  type SelectProps,
-  type TagsInputProps,
   type TextInputProps,
+  Textarea,
   type TextareaProps,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
-import { type FC } from "react"
+import type { FC } from "react"
 import {
-  Controller,
-  useForm,
   type Control,
+  Controller,
   type DefaultValues,
   type FieldValue,
   type FieldValues,
   type FormState,
   type UseFormRegister,
   type UseFormReturn,
+  useForm,
 } from "react-hook-form"
-import { type z } from "zod"
+import type { z } from "zod"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
@@ -128,7 +128,7 @@ export function createIntegerSelectInput<F extends FieldValues>({
               value: item.value.toString(),
             }))}
             value={field.value?.toString() ?? ""}
-            onChange={(value) => field.onChange(value !== null ? parseInt(value) : null)}
+            onChange={(value) => field.onChange(value !== null ? Number.parseInt(value) : null)}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
           />
         )}

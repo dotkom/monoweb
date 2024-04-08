@@ -1,7 +1,7 @@
 import { Button, cn } from "@dotkomonline/ui"
-import Link from "next/link"
-import { ComponentPropsWithoutRef } from "react"
 import { cookies } from "next/headers"
+import Link from "next/link"
+import type { ComponentPropsWithoutRef } from "react"
 
 export default async (props: ComponentPropsWithoutRef<"div">) => {
   if (cookies().has("companysplashdismissed")) {
