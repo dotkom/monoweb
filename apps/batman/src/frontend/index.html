@@ -225,9 +225,23 @@
       const socket = new WebSocket(SOCKET_URL);
       const container = document.getElementById("container");
 
+
+
       socket.addEventListener("open", function (event) {
         console.log("socket open");
         console.log(event);
+
+      // Send every 3min to keep connection alive (AWS API Gateway has a 10min timeout)
+      const keepAlive = setInterval(() => {
+        console.log("pinging server")
+        try {
+          socket.send("ping");
+        } catch (error) {
+          console.log("error sending ping", error);
+          clearInterval(keepAlive);
+        }
+
+      }, 3 * 60 * 1000);
       });
 
       socket.addEventListener("message", function (event) {
