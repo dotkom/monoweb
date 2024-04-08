@@ -1,0 +1,2 @@
+POST https://batmanhttp.staging.online.ntnu.no/sync HTTP/1.1
+Content-Type: application/json

@@ -1,0 +1,35 @@
+{
+  "name": "@dotkomonline/batman",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docker:dev": "docker run -p 9000:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=eu-north-1 batman:latest",
+    "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json",
+    "lint": "biome check . --apply",
+    "lint-check": "biome check .",
+    "docker:build": "DOCKER_BUILDKIT=0 docker build --platform linux/amd64 -t batman:latest -f Dockerfile ../..",
+    "docker:push:staging": "docker tag batman:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-staging:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-staging:latest",
+    "docker:push:prod": "docker tag batman:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-prod:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-prod:latest",
+    "lambda:update:staging": "aws lambda update-function-code --function-name batman-staging --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-staging:latest",
+    "lambda:update:staging:env": "sh update-env.sh",
+    "lambda:update:prod": "aws lambda update-function-code --function-name batman-prod --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-prod:latest",
+    "frontend:update:staging": "aws s3 cp --recursive src/frontend s3://batman-state/public",
+    "type-check": "tsc --noEmit",
+    "manual-testing": "dotenv -e .env -- tsx src/testing.ts"
+  },
+  "dependencies": {
+    "zod": "^3.22.4",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.549.0",
+    "@aws-sdk/client-s3": "^3.507.0",
+    "dotenv": "^16.4.5",
+    "googleapis": "^134.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
+    "@types/aws-lambda": "^8.10.129",
+    "@types/node": "18.18.13",
+    "tsup": "^7.2.0",
+    "typescript": "5.2.2"
+  }
+}
