@@ -1,8 +1,9 @@
 import { StateService } from "./state-service"
-import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
+import { ApiGatewayManagementApiClient, DeleteConnectionCommand, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi"
 
 export interface AwsWebSockService {
   broadcastToClients(message: string): Promise<void>
+  disconnectClient(connectionId: string): Promise<void>
 }
 
 export class AwsWebSockServiceImpl implements AwsWebSockService {
@@ -31,6 +32,20 @@ export class AwsWebSockServiceImpl implements AwsWebSockService {
         console.error("Error sending message to client", connectionId, e)
         this.stateService.removeSocketConnectionId(connectionId)
       }
+    }
+  }
+
+  async disconnectClient(connectionId: string) {
+    const command = new DeleteConnectionCommand({
+      ConnectionId: connectionId,
+    });
+
+    try {
+      await this.apigtwClient.send(command);
+      console.log(`Disconnected client ${connectionId}`);
+      this.stateService.removeSocketConnectionId(connectionId);
+    } catch (e) {
+      console.error("Error disconnecting client", connectionId, e);
     }
   }
 }
