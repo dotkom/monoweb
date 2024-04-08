@@ -2,7 +2,6 @@ FROM public.ecr.aws/lambda/nodejs:18 AS builder
 
 WORKDIR /usr/app
 COPY apps ./apps
-COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
 
 RUN npm i -g pnpm@8
