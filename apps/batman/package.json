@@ -16,7 +16,7 @@
     "lambda:update:prod": "aws lambda update-function-code --function-name batman-prod --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/batman-prod:latest",
     "frontend:update:staging": "aws s3 cp --recursive src/frontend s3://batman-state/public",
     "type-check": "tsc --noEmit",
-    "manual-testing": "dotenv -e .env -- tsx src/testing.ts"
+    "repl": "dotenv -e .env -- tsx src/service-layer-repl.ts"
   },
   "dependencies": {
     "zod": "^3.22.4",
