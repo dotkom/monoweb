@@ -7,7 +7,7 @@ import {
   InvoiceFormForBedKomTemplate,
   type Template,
 } from "@dotkomonline/emails"
-import { type APIGatewayProxyEventV2, type APIGatewayProxyResultV2, type Handler } from "aws-lambda"
+import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Handler } from "aws-lambda"
 import { ZodError, z } from "zod"
 
 const ses = new SESClient()

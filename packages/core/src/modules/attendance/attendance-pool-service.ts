@@ -1,13 +1,13 @@
-import {
+import type {
+  AttendanceId,
+  AttendancePool,
   AttendancePoolBase,
-  type AttendanceId,
-  type AttendancePool,
-  type AttendancePoolId,
-  type AttendancePoolWrite,
+  AttendancePoolId,
+  AttendancePoolWrite,
 } from "@dotkomonline/types"
-import { AttendancePoolRepository } from "./attendance-pool-repository"
-import { AttendeeService } from "./attendee-service"
-import { AttendancePoolValidationError, CantDeletePoolError } from "./attendance-pool-error"
+import { CantDeletePoolError } from "./attendance-pool-error"
+import type { AttendancePoolRepository } from "./attendance-pool-repository"
+import type { AttendeeService } from "./attendee-service"
 
 export interface AttendancePoolService {
   create(write: AttendancePoolWrite): Promise<AttendancePoolBase>

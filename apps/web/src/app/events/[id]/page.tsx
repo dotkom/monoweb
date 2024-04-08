@@ -1,14 +1,14 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
-import { AttendanceBox } from "../components/AttendanceBox"
-import { OrganizerBox } from "../components/OrganizerBox"
-import { LocationBox } from "../components/LocationBox"
-import { EventInfoBox } from "../components/EventInfoBox"
-import { FC } from "react"
-import { getServerSession, Session } from "next-auth"
+import type { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
+import type { Session } from "next-auth"
 import { SessionProvider, useSession } from "next-auth/react"
+import type { FC } from "react"
+import { AttendanceBox } from "../components/AttendanceBox"
+import { EventInfoBox } from "../components/EventInfoBox"
+import { LocationBox } from "../components/LocationBox"
+import { OrganizerBox } from "../components/OrganizerBox"
 
 /*
 export const generateStaticParams = async () => {

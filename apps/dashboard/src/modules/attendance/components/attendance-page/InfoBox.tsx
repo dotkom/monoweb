@@ -1,6 +1,6 @@
-import { type AttendancePool } from "@dotkomonline/types"
+import type { AttendancePool } from "@dotkomonline/types"
 import { Box, Table } from "@mantine/core"
-import { type FC } from "react"
+import type { FC } from "react"
 import { formatPoolYearCriterias } from "./utils"
 
 export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {

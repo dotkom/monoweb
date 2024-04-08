@@ -1,6 +1,6 @@
-import { type CompanyId, type Event } from "@dotkomonline/types"
-import { type CompanyEventRepository } from "./company-event-repository" // Note: you might need to create or rename this file based on previous changes.
-import { type Cursor } from "../../utils/db-utils"
+import type { CompanyId, Event } from "@dotkomonline/types"
+import type { Cursor } from "../../utils/db-utils"
+import type { CompanyEventRepository } from "./company-event-repository" // Note: you might need to create or rename this file based on previous changes.
 
 export interface CompanyEventService {
   getEventsByCompanyId(companyId: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>

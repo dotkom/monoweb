@@ -1,5 +1,5 @@
 import { Box, Button } from "@mantine/core"
-import { type FC } from "react"
+import type { FC } from "react"
 import { z } from "zod"
 import {
   createCheckboxInput,

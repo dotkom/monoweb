@@ -1,18 +1,18 @@
-import {
+import type {
   Attendance,
   AttendancePool,
   AttendanceWrite,
   Committee,
-  type Event,
-  type EventId,
-  type EventWrite,
+  Event,
+  EventId,
+  EventWrite,
 } from "@dotkomonline/types"
-import { type Cursor } from "../../utils/db-utils"
-import { AttendancePoolService } from "../attendance/attendance-pool-service"
-import { AttendanceService } from "../attendance/attendance-service"
-import { EventCommitteeService } from "./event-committee-service"
+import type { Cursor } from "../../utils/db-utils"
+import type { AttendancePoolService } from "../attendance/attendance-pool-service"
+import type { AttendanceService } from "../attendance/attendance-service"
+import type { EventCommitteeService } from "./event-committee-service"
 import { EventNotFoundError } from "./event-error"
-import { EventRepository, type EventInsert } from "./event-repository"
+import type { EventRepository } from "./event-repository"
 
 type ReturnType2 = {
   event: Event

@@ -1,12 +1,12 @@
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import {
-  UserId,
-  WaitlistAttendeeSchema,
+  type UserId,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
+  WaitlistAttendeeSchema,
   type WaitlistAttendeeWrite,
 } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
+import type { Kysely } from "kysely"
 
 const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttendeeSchema.parse(obj)
 

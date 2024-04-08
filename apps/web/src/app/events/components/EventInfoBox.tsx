@@ -1,5 +1,5 @@
-import { Event } from "@dotkomonline/types"
-import { FC } from "react"
+import type { Event } from "@dotkomonline/types"
+import type { FC } from "react"
 
 interface Props {
   event: Event

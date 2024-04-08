@@ -1,5 +1,5 @@
-import Link from "next/link"
 import { getServerClient } from "@/utils/trpc/serverClient"
+import Link from "next/link"
 
 const CompanyPage = async () => {
   const serverClient = await getServerClient()

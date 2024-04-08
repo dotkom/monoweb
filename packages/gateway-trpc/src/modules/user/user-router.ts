@@ -1,10 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import {
-  NotificationPermissionsWriteSchema,
-  PrivacyPermissionsWriteSchema,
-  UserSchema,
-  UserWriteSchema,
-} from "@dotkomonline/types"
+import { PrivacyPermissionsWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 

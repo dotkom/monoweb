@@ -1,6 +1,6 @@
-import { Story, StoryDefault } from "@ladle/react"
+import type { Story, StoryDefault } from "@ladle/react"
+import type { LabelProps } from "@radix-ui/react-label"
 import { Label } from "./Label"
-import { LabelProps } from "@radix-ui/react-label"
 
 export default {
   title: "Label",

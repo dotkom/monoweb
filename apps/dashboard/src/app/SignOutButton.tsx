@@ -1,8 +1,8 @@
 "use client"
 
-import { type FC } from "react"
-import { signOut } from "next-auth/react"
 import { Button } from "@mantine/core"
+import { signOut } from "next-auth/react"
+import type { FC } from "react"
 
 export const SignOutButton: FC = () => (
   <Button variant="outline" onClick={async () => signOut()}>

@@ -1,20 +1,20 @@
-import {
-  type AttendanceId,
+import type {
+  AttendanceId,
   AttendancePoolId,
-  type Attendee,
-  type AttendeeId,
-  type AttendeeUser,
-  type AttendeeWrite,
-  type UserId,
+  Attendee,
+  AttendeeId,
+  AttendeeUser,
+  AttendeeWrite,
+  UserId,
   WaitlistAttendee,
 } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
-import { type UserService } from "../user/user-service"
-import { AttendancePoolRepository } from "./attendance-pool-repository"
-import { AttendanceRepository } from "./attendance-repository"
+import type { UserService } from "../user/user-service"
+import type { AttendancePoolRepository } from "./attendance-pool-repository"
+import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeRegistrationError, UpdateAttendeeError } from "./attendee-error"
-import { AttendeeRepository } from "./attendee-repository"
-import { WaitlistAttendeService } from "./waitlist-attendee-service"
+import type { AttendeeRepository } from "./attendee-repository"
+import type { WaitlistAttendeService } from "./waitlist-attendee-service"
 
 export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>

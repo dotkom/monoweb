@@ -1,7 +1,7 @@
-import { type Database } from "@dotkomonline/db"
-import { UserSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
-import { sql, type Kysely, type Selectable } from "kysely"
-import { orderedQuery, type Cursor } from "../../utils/db-utils"
+import type { Database } from "@dotkomonline/db"
+import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
+import { type Kysely, type Selectable, sql } from "kysely"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 

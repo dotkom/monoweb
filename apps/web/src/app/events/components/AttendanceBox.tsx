@@ -1,13 +1,13 @@
-import { Attendance, AttendancePool, Event } from "@dotkomonline/types"
+import { trpc } from "@/utils/trpc/client"
+import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
-import { type FC } from "react"
-import { Session } from "next-auth"
+import type { Session } from "next-auth"
+import type { FC } from "react"
 import { AttendanceGroup } from "./AttendanceGroup"
+import { StatusCard } from "./StatusCard"
 import { useRegisterMutation, useUnregisterMutation } from "./mutations"
 import { useGetAttendee } from "./queries"
-import { StatusCard } from "./StatusCard"
-import { trpc } from "@/utils/trpc/client"
 
 export const calculateStatus = ({
   registerStart,

@@ -1,9 +1,9 @@
 "use client"
 
-import { type PropsWithChildren } from "react"
 import { Loader } from "@mantine/core"
-import { UserDetailsContext } from "./provider"
+import type { PropsWithChildren } from "react"
 import { useUserGetQuery } from "../../../../modules/user/queries/use-user-get-query"
+import { UserDetailsContext } from "./provider"
 
 export default function UserDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
   const { user, isLoading } = useUserGetQuery(params.id)

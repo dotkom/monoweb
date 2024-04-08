@@ -1,7 +1,7 @@
-import { type AttendeeUser, type AttendeeId, AttendanceId } from "@dotkomonline/types"
+import type { AttendanceId, AttendeeId, AttendeeUser } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import { GenericTable } from "../../../components/GenericTable"
 import {
   useDeregisterForEventMutation,

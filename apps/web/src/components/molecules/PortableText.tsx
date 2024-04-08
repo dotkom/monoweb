@@ -1,8 +1,8 @@
-import { FC, PropsWithChildren } from "react"
 import {
   PortableText as ReactPortableText,
   type PortableTextProps as ReactPortableTextProps,
 } from "@portabletext/react"
+import type { FC, PropsWithChildren } from "react"
 
 export interface PortableTextProps {
   blocks: ReactPortableTextProps["value"]

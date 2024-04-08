@@ -1,5 +1,5 @@
-import React from "react"
 import { Autocomplete } from "@mantine/core"
+import React from "react"
 
 interface GenericSearchProps<T> {
   onSearch(query: string): void

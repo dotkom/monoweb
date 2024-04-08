@@ -1,4 +1,4 @@
-import { type NextApiRequest, type NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from "next"
 import { formSchema } from "../../app/form-schema"
 import { deliverConfirmationEmail, deliverNotificationEmail } from "../../email"
 import { createSpreadsheetRow } from "../../spreadsheet"

@@ -1,6 +1,6 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { type FC } from "react"
-import { PoolForm, PoolFormSchema } from "../components/PoolForm/PoolForm"
+import type { FC } from "react"
+import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { useUpdatePoolMutation } from "../mutations/use-pool-mutations"
 import { usePoolsGetQuery } from "../queries/use-get-queries"
 

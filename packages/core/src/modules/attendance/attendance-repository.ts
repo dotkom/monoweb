@@ -1,12 +1,12 @@
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import {
-  AttendanceSchema,
-  AttendeeId,
   type Attendance,
   type AttendanceId,
+  AttendanceSchema,
   type AttendanceWrite,
+  type AttendeeId,
 } from "@dotkomonline/types"
-import { Selectable, type Kysely } from "kysely"
+import type { Kysely, Selectable } from "kysely"
 import { withInsertJsonValue } from "../../utils/db-utils"
 
 type DatabaseAttendance = Selectable<Database["attendance"]>

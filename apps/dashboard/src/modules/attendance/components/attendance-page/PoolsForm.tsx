@@ -1,7 +1,7 @@
+import type { AttendancePool } from "@dotkomonline/types"
 import { Box, Button } from "@mantine/core"
 import { openCreatePoolModal } from "../../modals/create-pool-modal"
 import { openMergePoolsModal } from "../../modals/merge-pools-modal"
-import { AttendancePool } from "@dotkomonline/types"
 
 interface EventAttendanceProps {
   attendanceId: string

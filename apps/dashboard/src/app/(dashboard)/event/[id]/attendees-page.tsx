@@ -1,6 +1,6 @@
-import { type Attendance } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
-import { type FC } from "react"
+import type { FC } from "react"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { openCreateManualUserAttendModal } from "../../../../modules/attendance/modals/manual-user-attend-modal"
 import { useEventAttendeesGetQuery } from "../../../../modules/attendance/queries/use-get-queries"

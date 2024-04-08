@@ -1,6 +1,6 @@
-import { type Database } from "@dotkomonline/db"
-import { type CompanyId, type Event } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
+import type { Database } from "@dotkomonline/db"
+import type { CompanyId, Event } from "@dotkomonline/types"
+import type { Kysely } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 import { mapToEvent } from "../event/event-repository"
 

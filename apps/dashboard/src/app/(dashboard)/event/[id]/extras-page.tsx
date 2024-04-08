@@ -1,15 +1,15 @@
+import type { Attendance } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Paper, Title } from "@mantine/core"
-import { type FC } from "react"
-import { useEventDetailsContext } from "./provider"
-import { useCreateAttendanceExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
-import { useEditExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
+import type { FC } from "react"
+import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import {
   useAddAttendanceMutation,
   useUpdateExtrasMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
-import { Attendance } from "@dotkomonline/types"
-import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
+import { useCreateAttendanceExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
+import { useEditExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
+import { useEventDetailsContext } from "./provider"
 
 export const ExtrasPage: FC = () => {
   const { attendance } = useEventDetailsContext()

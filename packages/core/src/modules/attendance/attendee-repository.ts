@@ -1,20 +1,18 @@
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import {
-  AttendancePoolId,
-  AttendeeSchema,
-  AttendeeUser,
-  AttendeeUserSchema,
-  ExtraSchema,
-  ExtrasChoices,
-  ExtrasSchema,
   type AttendanceId,
+  type AttendancePoolId,
   type Attendee,
   type AttendeeId,
+  AttendeeSchema,
+  type AttendeeUser,
+  AttendeeUserSchema,
   type AttendeeWrite,
+  ExtrasChoices,
   type User,
   type UserId,
 } from "@dotkomonline/types"
-import { Selectable, sql, type Kysely } from "kysely"
+import { type Kysely, type Selectable, sql } from "kysely"
 import { withInsertJsonValue } from "../../utils/db-utils"
 
 const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)

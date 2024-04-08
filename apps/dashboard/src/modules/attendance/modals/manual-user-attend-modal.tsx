@@ -1,6 +1,5 @@
-import { Attendance, User } from "@dotkomonline/types"
-import { modals, type ContextModalProps } from "@mantine/modals"
-import { type FC } from "react"
+import { type ContextModalProps, modals } from "@mantine/modals"
+import type { FC } from "react"
 import { z } from "zod"
 import { createSelectInput, useFormBuilder } from "../../../app/form"
 import { notifyFail } from "../../../app/notifications"

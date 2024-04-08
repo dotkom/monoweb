@@ -1,7 +1,7 @@
-import { type Mark, type MarkId, type MarkWrite } from "@dotkomonline/types"
-import { type MarkRepository } from "./mark-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
+import type { Cursor } from "../../utils/db-utils"
 import { MarkNotFoundError } from "./mark-error"
+import type { MarkRepository } from "./mark-repository"
 
 export interface MarkService {
   getMark(id: MarkId): Promise<Mark>

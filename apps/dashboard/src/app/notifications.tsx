@@ -1,8 +1,8 @@
-import { notifications } from "@mantine/notifications"
+import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import { Icon } from "@iconify/react"
-import { ReactNode, useState } from "react"
-import { TRPCClientErrorLike } from "@trpc/client"
-import { AppRouter } from "@dotkomonline/gateway-trpc"
+import { notifications } from "@mantine/notifications"
+import type { TRPCClientErrorLike } from "@trpc/client"
+import { type ReactNode, useState } from "react"
 
 export interface NotificationProps {
   title: string

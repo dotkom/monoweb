@@ -1,10 +1,9 @@
 "use client"
-import { type FC, type PropsWithChildren } from "react"
-import { usePathname } from "next/navigation"
 import { settingsItems } from "@/utils/settingsLinks"
+import { usePathname } from "next/navigation"
+import type { FC, PropsWithChildren } from "react"
 import MobileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/MobileMenuContainer"
 import ProfileMenuContainer from "../organisms/Navbar/components/profile/ProfileMenu/SettingsMenuContainer"
-import { ProfileContext } from "../views/SettingsView/context/ProfileContext"
 
 const SettingsLayout: FC<PropsWithChildren> = ({ children }) => {
   const currentSlug = usePathname()

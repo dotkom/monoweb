@@ -1,10 +1,10 @@
-import { type NextApiRequest, type NextApiResponse } from "next"
-import ical, { type ICalEventData } from "ical-generator"
-import { type Event } from "@dotkomonline/types"
-import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
-import { getServerSession } from "next-auth"
+import type { Event } from "@dotkomonline/types"
+import { createServerSideHelpers } from "@trpc/react-query/server"
+import ical, { type ICalEventData } from "ical-generator"
 import jwt from "jsonwebtoken"
+import type { NextApiRequest, NextApiResponse } from "next"
+import { getServerSession } from "next-auth"
 import { authOptions } from "../../../auth/src/web.app"
 
 const helpers = createServerSideHelpers({

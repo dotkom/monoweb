@@ -1,6 +1,6 @@
 "use client"
 
-import { InterestGroup } from "@dotkomonline/types"
+import type { InterestGroup } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

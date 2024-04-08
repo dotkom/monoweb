@@ -1,4 +1,4 @@
-import { Story } from "@ladle/react"
+import type { Story } from "@ladle/react"
 import { TextInput } from "./TextInput"
 
 export default {

@@ -1,4 +1,4 @@
-import { type AttendanceId } from "@dotkomonline/types"
+import type { AttendanceId } from "@dotkomonline/types"
 import { trpc } from "../../../utils/trpc"
 
 export const usePoolsGetQuery = (id: AttendanceId) => {

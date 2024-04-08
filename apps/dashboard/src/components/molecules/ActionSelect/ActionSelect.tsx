@@ -1,9 +1,6 @@
 import { Icon } from "@iconify/react"
-import { Button, type ButtonProps, Combobox, type ComboboxProps, useCombobox, Box } from "@mantine/core"
-import { type FC } from "react"
-
-import React from "react"
-import type { SVGProps } from "react"
+import { Box, Button, type ButtonProps, Combobox, type ComboboxProps, useCombobox } from "@mantine/core"
+import type { FC } from "react"
 
 interface ActionSelectProps extends ComboboxProps {
   data: { value: string; label: string }[]

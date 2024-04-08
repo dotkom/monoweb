@@ -1,6 +1,6 @@
-import { type ArticleId, type ArticleTagName } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
+import type { ArticleId, ArticleTagName } from "@dotkomonline/types"
+import type { Kysely } from "kysely"
 
 export interface ArticleTagLinkRepository {
   add(article: ArticleId, tag: ArticleTagName): Promise<void>

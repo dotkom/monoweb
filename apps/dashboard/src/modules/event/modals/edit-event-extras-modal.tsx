@@ -1,6 +1,6 @@
-import { Attendance, Extras } from "@dotkomonline/types"
+import type { Attendance, Extras } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { type FC } from "react"
+import type { FC } from "react"
 import { ExtrasForm, type ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
 import { useUpdateExtrasMutation } from "../../attendance/mutations/use-attendance-mutations"
 

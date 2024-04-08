@@ -1,25 +1,14 @@
+import crypto from "node:crypto"
 import { createEnvironment } from "@dotkomonline/env"
-import {
-  AttendancePoolWrite,
-  AttendanceWrite,
-  AttendeeSchema,
-  AttendeeWrite,
-  EventWrite,
-  UserWrite,
-} from "@dotkomonline/types"
-import crypto from "crypto"
+import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { createServiceLayer, type ServiceLayer } from "../../core"
-import {
-  CantDeleteAttendanceError,
-  AttendanceValidationError,
-  ExtrasUpdateAfterRegistrationStartError,
-} from "../attendance-error"
-import { AttendeeRegistrationError, AttendeeDeregistrationError } from "../attendee-error"
-import { CantDeletePoolError, AttendancePoolValidationError } from "../attendance-pool-error"
 import assert from "../../../../assert"
+import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
+import { type ServiceLayer, createServiceLayer } from "../../core"
+import { CantDeleteAttendanceError, ExtrasUpdateAfterRegistrationStartError } from "../attendance-error"
+import { CantDeletePoolError } from "../attendance-pool-error"
+import { AttendeeDeregistrationError, AttendeeRegistrationError } from "../attendee-error"
 
 const assertIsWaitlistAttendee = (attendee: unknown) => {
   expect(attendee).toHaveProperty("isPunished")

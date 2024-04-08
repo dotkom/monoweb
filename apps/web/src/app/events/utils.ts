@@ -1,4 +1,4 @@
-import { Attendance } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/types"
 
 interface DateString {
   value: string

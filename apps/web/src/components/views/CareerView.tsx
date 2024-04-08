@@ -1,6 +1,5 @@
-import { type FC } from "react"
+import type { CareerAd } from "@/api/get-career-ads"
 import CompanyAdListItem from "../molecules/CompanyAdListItem"
-import { CareerAd } from "@/api/get-career-ads"
 
 const CareerView = ({ careers }: { careers: CareerAd[] }) => (
   <div>

@@ -1,16 +1,9 @@
-import {
-  type Article,
-  type ArticleId,
-  type ArticleSlug,
-  type ArticleTag,
-  type ArticleTagName,
-  type ArticleWrite,
-} from "@dotkomonline/types"
-import { type ArticleRepository } from "./article-repository"
-import { type ArticleTagRepository } from "./article-tag-repository"
-import { type ArticleTagLinkRepository } from "./article-tag-link-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import type { Cursor } from "../../utils/db-utils"
 import { ArticleNotFoundError } from "./article-error"
+import type { ArticleRepository } from "./article-repository"
+import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
+import type { ArticleTagRepository } from "./article-tag-repository"
 
 export interface ArticleService {
   create(input: ArticleWrite): Promise<Article>

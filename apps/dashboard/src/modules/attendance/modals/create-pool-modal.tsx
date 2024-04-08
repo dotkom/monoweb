@@ -1,8 +1,8 @@
-import { modals, type ContextModalProps } from "@mantine/modals"
-import { type FC } from "react"
+import { type ContextModalProps, modals } from "@mantine/modals"
+import type { FC } from "react"
 import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
-import { usePoolsGetQuery } from "../queries/use-get-queries"
 import { useCreatePoolMutation } from "../mutations/use-pool-mutations"
+import { usePoolsGetQuery } from "../queries/use-get-queries"
 
 interface CreatePoolModalProps {
   attendanceId: string

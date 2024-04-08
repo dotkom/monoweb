@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto"
+import { randomUUID } from "node:crypto"
+import type { Company } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
-import { type Company } from "@dotkomonline/types"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository"
 import { type EventCompanyService, EventCompanyServiceImpl } from "../event-company-service"
 

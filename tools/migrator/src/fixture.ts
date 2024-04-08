@@ -1,10 +1,12 @@
-import { type DB } from "@dotkomonline/db/src/db.generated"
+import type { DB } from "@dotkomonline/db/src/db.generated"
 import { db } from "./db"
 import { getAttendanceFixtures } from "./fixtures/attendance"
+import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { getCommitteeFixtures } from "./fixtures/committee"
 import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
 import { getEventFixtures } from "./fixtures/event"
+import { getInterestGroupFixtures } from "./fixtures/interest-group"
 import {
   getJobListingFixtures,
   getJobListingLocationFixtures,
@@ -16,8 +18,6 @@ import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 import { getUserFixtures } from "./fixtures/user"
-import { getPoolFixtures } from "./fixtures/attendance-pool"
-import { getInterestGroupFixtures } from "./fixtures/interest-group"
 
 interface WithIdentifier {
   id: string

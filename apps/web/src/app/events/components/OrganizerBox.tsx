@@ -1,5 +1,5 @@
-import { Committee } from "@dotkomonline/types"
-import { FC } from "react"
+import type { Committee } from "@dotkomonline/types"
+import type { FC } from "react"
 
 interface Props {
   committees: Committee[]

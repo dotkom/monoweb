@@ -1,6 +1,6 @@
 "use client"
 
-import { type Committee, type Event } from "@dotkomonline/types"
+import type { Committee, Event } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

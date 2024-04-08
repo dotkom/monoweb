@@ -1,6 +1,6 @@
-import { AttendancePool } from "@dotkomonline/types"
+import type { AttendancePool } from "@dotkomonline/types"
 import { Box, Button, Card, Flex, Text } from "@mantine/core"
-import { FC } from "react"
+import type { FC } from "react"
 import { notifyFail } from "../../../../app/notifications"
 import { openEditPoolModal } from "../../modals/edit-pool-modal"
 import { useDeletePoolMutation } from "../../mutations/use-pool-mutations"

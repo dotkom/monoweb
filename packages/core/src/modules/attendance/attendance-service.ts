@@ -1,8 +1,8 @@
-import {
-  type Attendance,
-  type AttendanceId,
+import type {
+  Attendance,
+  AttendanceId,
   AttendancePool,
-  type AttendanceWrite,
+  AttendanceWrite,
   Attendee,
   Extras,
   WaitlistAttendee,
@@ -15,10 +15,10 @@ import {
   ExtrasUpdateAfterRegistrationStartError,
   InvalidParametersError,
 } from "./attendance-error"
-import { AttendancePoolRepository } from "./attendance-pool-repository"
-import { AttendanceRepository } from "./attendance-repository"
-import { AttendeeRepository } from "./attendee-repository"
-import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+import type { AttendancePoolRepository } from "./attendance-pool-repository"
+import type { AttendanceRepository } from "./attendance-repository"
+import type { AttendeeRepository } from "./attendee-repository"
+import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 type MergeReturn = {
   attendance: Attendance

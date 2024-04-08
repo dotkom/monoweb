@@ -1,7 +1,7 @@
 import { db } from "./db"
-import { users } from "./fixtures/user"
-import { getEventsFixtures } from "./fixtures/event"
 import { attendances } from "./fixtures/attendance"
+import { getEventsFixtures } from "./fixtures/event"
+import { users } from "./fixtures/user"
 
 export const seed = async () => {
   await db

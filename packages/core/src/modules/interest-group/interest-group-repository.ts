@@ -1,7 +1,12 @@
-import { InterestGroup, InterestGroupId, InterestGroupSchema, InterestGroupWrite } from "@dotkomonline/types"
-import { type Kysely, type Selectable } from "kysely"
-import { type Database } from "@dotkomonline/db"
-import { type Pageable, paginatedQuery, Collection } from "../../utils/db-utils"
+import type { Database } from "@dotkomonline/db"
+import {
+  type InterestGroup,
+  type InterestGroupId,
+  InterestGroupSchema,
+  type InterestGroupWrite,
+} from "@dotkomonline/types"
+import type { Kysely, Selectable } from "kysely"
+import { type Collection, type Pageable, paginatedQuery } from "../../utils/db-utils"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>

@@ -1,12 +1,12 @@
 import {
-  UserId,
+  type UserId,
   type WaitlistAttendee,
   type WaitlistAttendeeId,
   WaitlistAttendeeWriteSchema,
 } from "@dotkomonline/types"
-import { z } from "zod"
-import { AttendancePoolRepository } from "./attendance-pool-repository"
-import { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+import type { z } from "zod"
+import type { AttendancePoolRepository } from "./attendance-pool-repository"
+import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 export const CreateWaitlistSchema = WaitlistAttendeeWriteSchema.omit({
   attendancePoolId: true,

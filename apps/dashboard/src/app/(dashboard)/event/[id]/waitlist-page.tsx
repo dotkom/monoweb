@@ -1,5 +1,5 @@
-import { type Attendance } from "@dotkomonline/types"
-import { type FC } from "react"
+import type { Attendance } from "@dotkomonline/types"
+import type { FC } from "react"
 import { useEventDetailsContext } from "./provider"
 
 export const WaitlistPage: FC = () => {

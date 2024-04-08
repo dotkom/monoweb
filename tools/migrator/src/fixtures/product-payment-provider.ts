@@ -1,5 +1,5 @@
-import { type Database } from "@dotkomonline/db"
-import { type Insertable } from "kysely"
+import type { Database } from "@dotkomonline/db"
+import type { Insertable } from "kysely"
 
 export const getProductPaymentProviderFixtures: (
   productIds: string[]

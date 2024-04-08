@@ -1,6 +1,6 @@
-import { Database } from "@dotkomonline/db"
-import { EventType } from "@dotkomonline/db/src/db.generated"
-import { Insertable } from "kysely"
+import type { Database } from "@dotkomonline/db"
+import type { EventType } from "@dotkomonline/db/src/db.generated"
+import type { Insertable } from "kysely"
 import { z } from "zod"
 
 const OW4APIImageSchema = z.object({

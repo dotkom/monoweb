@@ -1,14 +1,14 @@
 "use client"
 
+import type { Mark, MarkId } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { type Mark, type MarkId } from "@dotkomonline/types"
 import Link from "next/link"
-import { formatDate } from "../../../utils/format"
+import { GenericTable } from "../../../components/GenericTable"
 import { useMarkCountUsersQuery } from "../../../modules/punishment/queries/use-count-users-with-mark-query"
 import { usePunishmentAllQuery } from "../../../modules/punishment/queries/use-punishment-all-query"
-import { GenericTable } from "../../../components/GenericTable"
+import { formatDate } from "../../../utils/format"
 
 function MarkUserCount({ markId }: { markId: MarkId }) {
   const { data } = useMarkCountUsersQuery(markId)

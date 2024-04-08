@@ -3,14 +3,14 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { type FC } from "react"
+import type { FC } from "react"
+import { AttendancePage } from "./attendance-page"
+import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { ExtrasPage } from "./extras-page"
 import { useEventDetailsContext } from "./provider"
 import { WaitlistPage } from "./waitlist-page"
-import { AttendancePage } from "./attendance-page"
-import { AttendeesPage } from "./attendees-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 

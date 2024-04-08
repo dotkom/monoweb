@@ -1,11 +1,11 @@
-import { type Database } from "@dotkomonline/db"
-import { type Kysely } from "kysely"
+import type { Database } from "@dotkomonline/db"
 import {
   type JobListingLocation,
   type JobListingLocationId,
   JobListingLocationSchema,
   type JobListingLocationWrite,
 } from "@dotkomonline/types"
+import type { Kysely } from "kysely"
 
 export const mapToJobListingLocation = (payload: JobListingLocation): JobListingLocation =>
   JobListingLocationSchema.parse(payload)

@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
+import { Icon, cn } from "@dotkomonline/ui"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "cva"
-import { cn, Icon } from "@dotkomonline/ui"
+import * as React from "react"
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
