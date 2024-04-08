@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+  <body>
+    <audio id="audioPlayer">
+      <source src="success.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <button id="enableAudioBtn" onclick="enableAudio()">Skru på lyd-effekter</button>
+    <!-- transactionstable -->
+    <h2>Siste 10 transaksjoner</h2>
+    <table id="transactionsTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Beskrivelse</th>
+        </tr>
+      </thead>
+
+      <tbody></tbody>
+    </table>
+
+    <script>
+      function formatDatetime(datetime, now) {
+        // Ensure datetime and now are treated as Date objects
+        const datetimeObj = new Date(datetime);
+        const nowObj = new Date(now);
+
+        // Calculate the start of today and yesterday in the local timezone
+        const startOfToday = new Date(nowObj.setHours(0, 0, 0, 0));
+        const startOfYesterday = new Date(
+          startOfToday.getTime() - 24 * 60 * 60 * 1000
+        );
+
+        // Compare datetimeObj against startOfToday and startOfYesterday
+        if (datetimeObj >= startOfYesterday && datetimeObj < startOfToday) {
+          // Formatting for "yesterday"
+          const timeString = datetimeObj.toLocaleTimeString("nb-NO", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `I går kl. ${timeString}`;
+        } else if (nowObj - datetimeObj < 24 * 60 * 60 * 1000) {
+          // Formatting for "last 24 hours"
+          console.log(new Date(now).getHours(), datetimeObj.getHours());
+          const hoursAgo = new Date(now).getHours() - datetimeObj.getHours();
+          const timeString = datetimeObj.toLocaleTimeString("nb-NO", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${hoursAgo} timer siden, ${timeString}`;
+        } else {
+          // Default formatting for dates beyond the last 24 hours
+          return datetimeObj
+            .toLocaleString("nb-NO", {
+              weekday: "short", // short weekday name, e.g., "tirs"
+              day: "numeric", // numeric day
+              month: "long", // full month name, e.g., "oktober"
+              hour: "2-digit", // 2-digit hour
+              minute: "2-digit", // 2-digit minute
+            })
+            .replace(",", " kl.");
+        }
+      }
+
+      function testFormatDatetime() {
+        const now = new Date("2024-04-07T10:00:00").getTime();
+
+        // Test case within the last 24 hours
+        const test1 = new Date("2024-04-07T09:00:00").getTime();
+        const expected1 = "1 timer siden, 09:00";
+        console.log(
+          "Test 1:",
+          formatDatetime(test1, now) === expected1,
+          formatDatetime(test1, now),
+          expected1
+        );
+
+        // Test case exactly 24 hours ago (edge case for "yesterday")
+        const test2 = new Date("2024-04-06T10:00:00").getTime();
+        const expected2 = "I går kl. 10:00";
+        console.log(
+          "Test 2:",
+          formatDatetime(test2, now) === expected2,
+          formatDatetime(test2, now),
+          expected2
+        );
+
+        // Test case more than 24 hours ago, but less than 48 (yesterday)
+        const test3 = new Date("2024-04-06T08:00:00").getTime();
+        const expected3 = "I går kl. 08:00";
+        console.log(
+          "Test 3:",
+          formatDatetime(test3, now) === expected3,
+          formatDatetime(test3, now),
+          expected3
+        );
+
+        // Test case at the start of yesterday
+        const test4 = new Date("2024-04-06T00:00:00").getTime();
+        const expected4 = "I går kl. 00:00";
+        console.log(
+          "Test 4:",
+          formatDatetime(test4, now) === expected4,
+          formatDatetime(test4, now),
+          expected4
+        );
+
+        // Test case for date several days in the past
+        const test5 = new Date("2024-04-01T15:45:00").getTime();
+        // Adjust expected5 based on the weekday of 2024-04-01 in your locale
+        const expected5 = "man 1. april kl. 15:45";
+        console.log(
+          "Test 5:",
+          formatDatetime(test5, now) === expected5,
+          formatDatetime(test5, now),
+          expected5
+        );
+
+        // Test case for 23:00 the day before today
+        const test6 = new Date("2024-04-06T23:00:00").getTime();
+        const expected6 = "I går kl. 23:00";
+        console.log(
+          "Test 6:",
+          formatDatetime(test6, now) === expected6,
+          formatDatetime(test6, now),
+          expected6
+        );
+      }
+
+      // const test2 = new Date('2024-04-06T23:59:59.000Z').getTime();
+      // console.log(test2.toString(), formatDatetime(test2, now));
+
+      // const test3 = new Date('2024-04-06T00:00:00.000Z').getTime();
+      // console.log(test3.toString(), formatDatetime(test3, now));
+
+      // const test4 = new Date('2024-04-05T23:59:59.000Z').getTime();
+      // console.log(test4.toString(), formatDatetime(test4, now));
+
+      // const test5 = new Date('2024-04-05T00:00:00.000Z').getTime();
+      // console.log(test5.toString(), formatDatetime(test5, now));
+
+      // const test6 = new Date('2024-04-04T23:59:59.000Z').getTime();
+      // console.log(test6.toString(), formatDatetime(test6, now));
+
+      // const test7 = new Date('2024-04-04T00:00:00.000Z').getTime();
+      // console.log(test7.toString(), formatDatetime(test7, now));
+
+      function updateTable(transactions) {
+        playAudio();
+        const tableBody = document
+          .getElementById("transactionsTable")
+          .getElementsByTagName("tbody")[0];
+
+        // Clear the table body
+        tableBody.innerHTML = "";
+
+        // Append each transaction as a new row in the table
+        transactions.forEach((transaction) => {
+          const row = tableBody.insertRow();
+          const fields = ["datetime", "name", "transactionDescription"];
+
+          // datetime
+          const cell1 = row.insertCell();
+          console.log(transaction.datetime);
+          cell1.textContent = formatDatetime(transaction.datetime, Date.now());
+
+          // name
+          const cell2 = row.insertCell();
+          cell2.textContent = transaction.name;
+
+          // transactionDescription
+          const cell3 = row.insertCell();
+          cell3.textContent = transaction.transactionDescription;
+        });
+      }
+
+      async function fetchTransactions() {
+        const prom = await fetch("https://batmanhttp.staging.online.ntnu.no/");
+        const json = await prom.json();
+        console.log(JSON.stringify(json));
+        return json;
+      }
+    </script>
+    <script>
+      fetchTransactions().then((data) => {
+        updateTable(data.transactions);
+      });
+    </script>
+    <script>
+      function enableAudio() {
+        console.log("Audio enabled");
+        document.getElementById("enableAudioBtn").hidden = true;
+      }
+      function playAudio() {
+        console.log("Playing audio");
+        var audio = document.getElementById("audioPlayer");
+        if (audio.ended) {
+          audio.currentTime = 0; // Reset to start
+        }
+        audio.play();
+      }
+    </script>
+    <script>
+      const SOCKET_URL =
+        "wss://y2nndako0h.execute-api.eu-north-1.amazonaws.com/$default/";
+      const socket = new WebSocket(SOCKET_URL);
+      const container = document.getElementById("container");
+
+      socket.addEventListener("open", function (event) {
+        console.log("socket open");
+        console.log(event);
+      });
+
+      socket.addEventListener("message", function (event) {
+        const transactions = JSON.parse(event.data);
+        console.log(transactions);
+        updateTable(transactions);
+      });
+
+      socket.addEventListener("error", function (event) {
+        console.log(event);
+      });
+
+      socket.addEventListener("close", function (event) {
+        console.log("socket close");
+      });
+    </script>
+  </body>
+</html>
