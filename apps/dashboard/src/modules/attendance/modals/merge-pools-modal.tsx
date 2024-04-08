@@ -21,20 +21,32 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ c
     })
   }
 
-  const disabledYears = [...new Set(pools.filter((pool) => pool.active).flatMap(({ yearCriteria }) => yearCriteria))]
+  const disabledYears = [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
 
   return (
-    <PoolForm
-      defaultValues={{
-        yearCriteria: disabledYears,
-        capacity: 0,
-        title: "Generell påmelding",
-      }}
-      onClose={onClose}
-      mode="create"
-      onSubmit={onSubmit}
-      disabledYears={disabledYears}
-    />
+    <div>
+      <details>
+        <summary>Hva er sammenslåing?</summary>
+        <ul>
+          <li>Ventelisten for den nye gruppen bestemmes utifra påmeldingstidspunkt.</li>
+          <li>Per nå lagres ikke informasjon om påmeldingsgruppene som ble slått sammen.</li>
+          <li>Man kan legge til flere årskriterier for å begrense hvem som kan melde seg på.</li>
+          <li>Det er ikke mulig å sette kapasitet til mindre enn summen av de gamle gruppene.</li>
+        </ul>
+      </details>
+      <PoolForm
+        defaultValues={{
+          yearCriteria: disabledYears,
+          capacity: pools.reduce((acc, pool) => acc + pool.capacity, 0),
+          title: "Generell påmelding",
+          isVisible: true,
+        }}
+        onClose={onClose}
+        mode="create"
+        onSubmit={onSubmit}
+        disabledYears={disabledYears}
+      />
+    </div>
   )
 }
 
@@ -43,7 +55,7 @@ export const openMergePoolsModal =
   () =>
     modals.openContextModal({
       modal: "event/attendance/pool/merge",
-      title: "Merge",
+      title: "Sammenslåing",
       innerProps: {
         attendanceId,
       },

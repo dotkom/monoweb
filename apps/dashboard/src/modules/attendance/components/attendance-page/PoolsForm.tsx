@@ -8,13 +8,10 @@ interface EventAttendanceProps {
   pools: AttendancePool[]
 }
 export function usePoolsForm({ attendanceId, pools }: EventAttendanceProps) {
-  const attendanceIsMerged = pools.filter((pool) => pool.isVisible && pool.type === "MERGE").length === 1
-
   return function Form() {
     return (
       <Box>
         <Button
-          disabled={attendanceIsMerged}
           mt={16}
           onClick={openCreatePoolModal({
             attendanceId,
@@ -23,7 +20,6 @@ export function usePoolsForm({ attendanceId, pools }: EventAttendanceProps) {
           Opprett ny påmeldingsgruppe
         </Button>
         <Button
-          disabled={attendanceIsMerged}
           mt={16}
           ml={16}
           onClick={openMergePoolsModal({

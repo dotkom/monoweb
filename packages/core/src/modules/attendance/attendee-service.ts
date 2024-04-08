@@ -20,6 +20,7 @@ export interface AttendeeService {
   updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
+  adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
@@ -90,6 +91,13 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("User is already registered")
     }
 
+    // Does user match criteria for the pool?
+    if (attendancePool.yearCriteria.includes(user.studyYear) === false) {
+      throw new AttendeeRegistrationError(
+        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${user.studyYear}`
+      )
+    }
+
     // is attendance open?
     const attendance = await this.attendanceRespository.getById(attendanceId)
     if (attendance === null) {
@@ -103,19 +111,6 @@ export class AttendeeServiceImpl implements AttendeeService {
     if (registrationTime > attendance.registerEnd) {
       throw new AttendeeRegistrationError("Attendance has ended")
     }
-
-    // // does the user have a pool to register to?
-    // const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
-    // const poolWithMatchingCriteria = pools
-    //   .filter((pool) => pool.isVisible)
-    //   .find((pool) => {
-    //     const year = user.studyYear
-    //     return pool.yearCriteria.includes(year)
-    //   })
-
-    // if (poolWithMatchingCriteria === undefined) {
-    //   throw new AttendeeRegistrationError("User does not match any pool")
-    // }
 
     // is the pool full?
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
@@ -158,6 +153,16 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     if (attendance.deregisterDeadline < now) {
       throw new AttendeeDeregistrationError("The deregister deadline has passed")
+    }
+
+    await this.attendeeRepository.delete(id)
+  }
+
+  async adminDeregisterForEvent(id: AttendeeId, now: Date) {
+    const attendance = await this.attendanceRespository.getByAttendeeId(id)
+
+    if (attendance === null) {
+      throw new AttendeeDeregistrationError("Attendance not found")
     }
 
     await this.attendeeRepository.delete(id)

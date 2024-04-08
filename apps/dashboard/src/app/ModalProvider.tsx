@@ -13,9 +13,11 @@ import { CreatePoolModal } from "../modules/attendance/modals/create-pool-modal"
 import { EditPoolModal } from "../modules/attendance/modals/edit-pool-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
 import { MergePoolsModal } from "../modules/attendance/modals/merge-pools-modal"
+import { CreateManualUserAttendModal } from "../modules/attendance/modals/manual-user-attend-modal"
 
 const modals = {
   "event/create": CreateEventModal,
+  "event/attendance/attendee/create": CreateManualUserAttendModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "event/attendance/pool/merge": MergePoolsModal,

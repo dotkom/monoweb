@@ -136,11 +136,6 @@ describe("attendance", () => {
   })
 
   it("basic crud", async () => {
-    // create attendance
-    // create pool
-    // create user
-    // register user for event
-
     const fakeAttendance = getFakeAttendance({})
     const attendance = await core.attendanceService.create(fakeAttendance)
 
@@ -161,7 +156,9 @@ describe("attendance", () => {
 
     const user = await core.userService.createUser(fakeUser)
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, attendance.id, new Date())
+    const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
+    assert(matchingPool !== undefined, new Error("Pool not found"))
+    const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, new Date())
 
     expect(attendee).not.toBeNull()
 
@@ -196,28 +193,14 @@ describe("attendance", () => {
 
     const pool = pools[0]
     // attend user 1 to pool
-    const attendee = await core.attendeeService.registerForEvent(users[0].id, pool.attendanceId, new Date())
+    const attendee = await core.attendeeService.registerForEvent(users[0].id, pool.id, new Date())
 
     assertIsAttendee(attendee)
 
     // attend user 2 to pool
-    const waitlistAttendee = await core.attendeeService.registerForEvent(users[1].id, pool.attendanceId, new Date())
+    const waitlistAttendee = await core.attendeeService.registerForEvent(users[1].id, pool.id, new Date())
 
     assertIsWaitlistAttendee(waitlistAttendee)
-  })
-
-  // it should not allow creating pools with over lapping year criteria
-  it("should not allow creating pools with overlapping year criteria", async () => {
-    await expect(async () => {
-      await setupFakeFullAttendance(core, {
-        attendance: {},
-        pools: [
-          { capacity: 1, yearCriteria: [1, 2] },
-          { capacity: 1, yearCriteria: [2, 3] },
-        ],
-        users: [],
-      })
-    }).rejects.toThrowError(AttendancePoolValidationError)
   })
 
   it("should not allow deleting a pool or attendance when there is attendees", async () => {
@@ -229,7 +212,7 @@ describe("attendance", () => {
 
     const user = res.users[0]
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, res.attendance.id, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.id, res.pools[0].id, new Date())
 
     expect(attendee).not.toBeNull()
 
@@ -259,15 +242,15 @@ describe("attendance", () => {
 
     // --- registration
     await expect(() => {
-      return core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date("2021-01-01"))
+      return core.attendeeService.registerForEvent(user.id, pool.id, new Date("2021-01-01"))
     }).rejects.toThrowError(AttendeeRegistrationError)
 
     await expect(() => {
-      return core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date("2021-01-06"))
+      return core.attendeeService.registerForEvent(user.id, pool.id, new Date("2021-01-06"))
     }).rejects.toThrowError(AttendeeRegistrationError)
 
     // --- deregistration
-    const attendee = await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date("2021-01-03"))
+    const attendee = await core.attendeeService.registerForEvent(user.id, pool.id, new Date("2021-01-03"))
     await expect(() => {
       return core.attendeeService.deregisterForEvent(attendee.id, new Date("2021-01-05"))
     }).rejects.toThrowError(AttendeeDeregistrationError)
@@ -297,16 +280,21 @@ describe("attendance", () => {
     // Step 2: Register each user to the event and verify successful registration
     for (const user of users) {
       const registrationDate = new Date("2021-01-02")
-      const attendee = await core.attendeeService.registerForEvent(user.id, attendance.id, registrationDate)
+      const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
+      assert(matchingPool !== undefined, new Error("Pool not found"))
+      const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, registrationDate)
       expect(attendee).not.toBeNull()
     }
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
     const extraUser = getFakeUser({ studyYear: 1 })
     const extraUserCreated = await core.userService.createUser(extraUser)
+
+    const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
+    assert(matchingPool !== undefined, new Error("Pool not found"))
     const waitlistAttendee = await core.attendeeService.registerForEvent(
       extraUserCreated.id,
-      attendance.id,
+      matchingPool.id,
       new Date("2021-01-02")
     )
 
@@ -340,7 +328,7 @@ describe("attendance", () => {
     const pool = pools[0]
     const user = users[0]
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.id, pool.id, new Date())
 
     expect(attendee).not.toBeNull()
   })
@@ -399,7 +387,7 @@ describe("attendance", () => {
     const pool = pools[0]
     const user = users[0]
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, pool.attendanceId, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.id, pool.id, new Date())
 
     const extras = attendance.extras
 
@@ -490,7 +478,9 @@ describe("attendance", () => {
       const user = users[i]
       const { registrationDate } = _attendees[i]
 
-      const attendee = await core.attendeeService.registerForEvent(user.id, attendance.id, registrationDate)
+      const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
+      assert(matchingPool !== undefined, new Error("Pool not found"))
+      const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, registrationDate)
 
       expect(attendee).not.toBeNull()
     }
@@ -498,8 +488,6 @@ describe("attendance", () => {
     await core.attendanceService.merge(attendance.id, "Merged pool", [0, 1, 2, 3, 4, 5])
 
     const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
-
-    console.log(waitlistAttendees)
 
     assert(waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
 

@@ -1,11 +1,11 @@
-import { User, type Attendance } from "@dotkomonline/types"
+import { type Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import { type FC } from "react"
-import { useEventDetailsContext } from "./provider"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
-import { AllAttendeesTable } from "../all-users-table"
+import { openCreateManualUserAttendModal } from "../../../../modules/attendance/modals/manual-user-attend-modal"
 import { useEventAttendeesGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
-import { useRegisterForEventMutation } from "../../../../modules/attendance/mutations/use-attendee-mutations"
+import { AllAttendeesTable } from "../all-users-table"
+import { useEventDetailsContext } from "./provider"
 
 export const AttendeesPage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -23,11 +23,6 @@ interface Props {
 
 const Page: FC<Props> = ({ attendance }) => {
   const { attendees } = useEventAttendeesGetQuery(attendance.id)
-  const registerForEvent = useRegisterForEventMutation()
-
-  const handleAttendUser = async (user: User) => {
-    registerForEvent.mutate({ attendanceId: attendance.id, userId: user.id })
-  }
 
   return (
     <Box>
@@ -35,7 +30,14 @@ const Page: FC<Props> = ({ attendance }) => {
         <Title mb={10} order={3}>
           Meld på bruker
         </Title>
-        <UserSearch onSubmit={handleAttendUser} />
+        <UserSearch
+          onSubmit={(values) => {
+            openCreateManualUserAttendModal({
+              attendanceId: attendance.id,
+              userId: values.id,
+            })
+          }}
+        />
       </Box>
       <Divider my={32} />
       <Box>

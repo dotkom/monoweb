@@ -27,12 +27,6 @@ export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
-            <Table.Td>Grupper som kan melde seg på etter sammenslåing</Table.Td>
-            <Table.Td>
-              {formatPoolYearCriterias(pools.filter((ev) => ev.capacity === 0).map(({ yearCriteria }) => yearCriteria))}
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
             <Table.Td>Grupper som ikke vil få tilgang til arrangement</Table.Td>
             <Table.Td>{notIncluded(pools.map(({ yearCriteria }) => yearCriteria)).join(", ")}</Table.Td>
           </Table.Tr>

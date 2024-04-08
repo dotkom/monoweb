@@ -29,16 +29,6 @@ export class AttendancePoolServiceImpl implements AttendancePoolService {
   }
 
   async create(write: AttendancePoolWrite) {
-    const pools = await this.attendancePoolRepository.getByAttendanceId(write.attendanceId)
-
-    const existingYearCriteria = pools.filter((pool) => pool.isVisible).flatMap((pool) => pool.yearCriteria)
-
-    const overlap = write.yearCriteria.some((year) => existingYearCriteria.includes(year))
-
-    if (overlap) {
-      throw new AttendancePoolValidationError("Year criteria overlap")
-    }
-
     const res = await this.attendancePoolRepository.create(write)
     return res
   }

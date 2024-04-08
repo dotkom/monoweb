@@ -14,7 +14,7 @@ export const useRegisterForEventMutation = () => {
     onSuccess: (data) => {
       notification.complete({
         title: "Påmelding vellykket",
-        message: `Bruker ${data.userId} ble påmeldt arrangementet.`,
+        message: "Bruker ble påmeldt arrangementet.",
       })
     },
     onError: (err) => {
@@ -29,7 +29,7 @@ export const useRegisterForEventMutation = () => {
 export const useDeregisterForEventMutation = () => {
   const notification = useQueryNotification()
 
-  return trpc.event.attendance.deregisterForEvent.useMutation({
+  return trpc.event.attendance.adminDeregisterForEvent.useMutation({
     onMutate: () => {
       notification.loading({
         title: "Melder av bruker",
