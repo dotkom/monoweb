@@ -11,7 +11,7 @@ export const ExtraSchema = z.object({
   ),
 })
 
-export const ExtrasSchema = z.array(ExtraSchema)
+export const ExtrasSchema = z.array(ExtraSchema).nullable()
 
 export type Extras = z.infer<typeof ExtraSchema>
 

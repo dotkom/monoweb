@@ -343,21 +343,6 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  apps/shell:
-    dependencies:
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      kysely:
-        specifier: ^0.26.3
-        version: 0.26.3
-
   apps/web:
     dependencies:
       '@dotkomonline/auth':
@@ -381,6 +366,9 @@ importers:
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@fadi-ui/react-country-flag':
+        specifier: ^1.0.7
+        version: 1.0.7
       '@next/env':
         specifier: ^14.0.3
         version: 14.0.4
@@ -2719,6 +2707,13 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@fadi-ui/react-country-flag@1.0.7:
+    resolution: {integrity: sha512-UO+mSApJ9tKcTFo/XN8SPkko+KAWoiJRAOuY2CHAHrH0x7tBaCO8rXiTVpN70jR2sEuhDIsOn604kElRRJxRNg==}
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@floating-ui/core@1.4.1:
     resolution: {integrity: sha512-jk3WqquEJRlcyu7997NtR5PibI+y5bi+LS3hPmguVClypenMsCY3CBa3LAQnozRCtCrYWSEtAdiskpamuJRFOQ==}
