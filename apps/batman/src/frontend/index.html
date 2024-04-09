@@ -101,7 +101,12 @@
 
           // name
           const cell2 = row.insertCell();
-          cell2.textContent = transaction.name;
+          // Only show given name
+
+
+          const givenName = transaction.name.split(" ")[0];
+
+          cell2.textContent = givenName
 
           // transactionDescription
           const cell3 = row.insertCell();
