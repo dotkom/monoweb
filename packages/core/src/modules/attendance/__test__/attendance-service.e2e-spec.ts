@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import assert from "../../../../assert"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type ServiceLayer, createServiceLayer } from "../../core"
-import { CantDeleteAttendanceError, ExtrasUpdateAfterRegistrationStartError } from "../attendance-error"
+import { AttendanceDeletionError, ExtrasUpdateAfterRegistrationStartError } from "../attendance-error"
 import { CantDeletePoolError } from "../attendance-pool-error"
 import { AttendeeDeregistrationError, AttendeeRegistrationError } from "../attendee-error"
 
@@ -212,7 +212,7 @@ describe("attendance", () => {
 
     await expect(async () => {
       await core.attendanceService.delete(res.attendance.id)
-    }).rejects.toThrowError(CantDeleteAttendanceError)
+    }).rejects.toThrowError(AttendanceDeletionError)
   })
 
   it("should enforce registration and deregistration within specified start and end times", async () => {
@@ -391,11 +391,26 @@ describe("attendance", () => {
     const fanta = drinkQuestion.choices[1]
     const sprite = drinkQuestion.choices[2]
 
-    const updatedAttendee = await core.attendeeService.updateExtraChoices(attendee.id, foodQuestion.id, pizza.id)
-    expect(updatedAttendee).not.toBeNull()
+    const choice1 = {
+      questionId: foodQuestion.id,
+      choiceId: pizza.id,
+      choiceName: pizza.name,
+    }
 
-    const updatedAttendee2 = await core.attendeeService.updateExtraChoices(attendee.id, drinkQuestion.id, fanta.id)
-    expect(updatedAttendee2).not.toBeNull()
+    const choice2 = {
+      questionId: drinkQuestion.id,
+      choiceId: fanta.id,
+      choiceName: fanta.name,
+    }
+
+    const updatedAttendee1 = await core.attendeeService.updateExtraChoices(attendee.id, [choice1])
+    expect(updatedAttendee1.extrasChoices).toHaveLength(1)
+    expect(updatedAttendee1.extrasChoices[0]).toEqual(choice1)
+
+    const updatedAttendee2 = await core.attendeeService.updateExtraChoices(attendee.id, [choice1, choice2])
+    expect(updatedAttendee2.extrasChoices).toHaveLength(2)
+    expect(updatedAttendee2.extrasChoices[0]).toEqual(choice1)
+    expect(updatedAttendee2.extrasChoices[1]).toEqual(choice2)
 
     // Remove fanta from drinkQuestion
     const newDrinkChoices = extrasToInsert[1].choices.filter((choice) => choice.name !== "Fanta")
@@ -477,6 +492,7 @@ describe("attendance", () => {
     await core.attendanceService.merge(attendance.id, "Merged pool", [0, 1, 2, 3, 4, 5])
 
     const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
+    waitlistAttendees?.sort((a, b) => a.position - b.position) // sort by position in increasing order
 
     assert(waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
 

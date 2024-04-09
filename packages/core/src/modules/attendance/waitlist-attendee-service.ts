@@ -5,6 +5,7 @@ import {
   WaitlistAttendeeWriteSchema,
 } from "@dotkomonline/types"
 import type { z } from "zod"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
@@ -36,7 +37,7 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
     const pool = pools.find((pool) => pool.yearCriteria.includes(obj.studyYear))
 
     if (!pool) {
-      throw new Error("No pool found for the given study year")
+      throw new AttendancePoolNotFoundError(obj.attendanceId)
     }
 
     const activeWaitlistAttendees = await this.waitlistAttendeeRepository.getByPoolId(pool.id)

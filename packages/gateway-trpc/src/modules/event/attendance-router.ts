@@ -5,6 +5,7 @@ import {
   AttendanceWriteSchema,
   AttendeeSchema,
   ExtraSchema,
+  ExtrasChoices,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -80,12 +81,11 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
-        questionId: z.string(),
-        choiceId: z.string(),
+        choices: ExtrasChoices
       })
     )
     .mutation(
-      async ({ input, ctx }) => await ctx.attendeeService.updateExtraChoices(input.id, input.questionId, input.choiceId)
+      async ({ input, ctx }) => await ctx.attendeeService.updateExtraChoices(input.id, input.choices)
     ),
 
   getPoolsByAttendanceId: protectedProcedure

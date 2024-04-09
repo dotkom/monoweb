@@ -23,7 +23,7 @@ export interface AttendeeRepository {
   delete(id: AttendeeId): Promise<Attendee | null>
   getById(id: AttendeeId): Promise<Attendee | null>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee | null>
-  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee | null>
+  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee | null>
   getByAttendanceId(id: AttendanceId): Promise<AttendeeUser[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
@@ -77,29 +77,20 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .groupBy("attendee.id")
       .execute()
 
-    const data: AttendeeUser[] = []
-
-    for (const attendee of res) {
-      const user = attendee.user[0] // This is hacky and may not be safe.
-      const mappedUser = {
-        ...user,
-        createdAt: new Date(user.createdAt),
-        updatedAt: new Date(user.updatedAt),
-        lastSyncedAt: new Date(user.lastSyncedAt),
-      }
-
+    const data: AttendeeUser[] = res.map((attendee) => {
+      const user = attendee.user[0]
       const extrasChoices = ExtrasChoices.parse(attendee.extrasChoices)
-
-      const mappedAttendee = {
+      return {
         ...attendee,
+        user: {
+          ...user,
+          createdAt: new Date(user.createdAt),
+          updatedAt: new Date(user.updatedAt),
+          lastSyncedAt: new Date(user.lastSyncedAt),
+        },
         extrasChoices,
       }
-
-      data.push({
-        ...mappedAttendee,
-        user: mappedUser,
-      })
-    }
+    })
 
     return res
       .map((value) => ({
@@ -108,7 +99,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
           ...value.user[0],
           createdAt: new Date(value.user[0].createdAt),
           updatedAt: new Date(value.user[0].updatedAt),
-          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
+          lastSyncedAt: new Date(value.user[0].lastSyncedAt),
         },
       }))
       .map(mapToAttendeeWithUser)
@@ -149,11 +140,11 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return res ? mapToAttendee(res) : null
   }
 
-  async updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string) {
+  async updateExtraChoices(id: AttendeeId, choices: ExtrasChoices) {
     const res = await this.db
       .updateTable("attendee")
       .set({
-        extrasChoices: JSON.stringify([{ id: questionId, choice: choiceId }]),
+        extrasChoices: JSON.stringify(choices),
       })
       .where("id", "=", id)
       .returningAll()

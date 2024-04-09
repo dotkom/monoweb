@@ -98,10 +98,10 @@ export const eventRouter = t.router({
     ),
   getWebEventDetailData: publicProcedure
     .input(EventSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.eventService.getWebEventDetailsPageData(input)),
-  getEventDetailData: publicProcedure
+    .query(async ({ input, ctx }) => ctx.eventService.getWebDetail(input)),
+  getDashboardEventDetailData: publicProcedure
     .input(EventSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.eventService.getEventDetailsPageData(input)),
+    .query(async ({ input, ctx }) => ctx.eventService.getDashboardDetail(input)),
   addAttendance: protectedProcedure
     .input(
       z.object({

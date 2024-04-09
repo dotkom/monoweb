@@ -13,7 +13,7 @@ export class AttendanceValidationError extends ApplicationError {
   }
 }
 
-export class CantDeleteAttendanceError extends ApplicationError {
+export class AttendanceDeletionError extends ApplicationError {
   constructor(detail: string) {
     super(PROBLEM_DETAILS.UnprocessableContent, detail)
   }

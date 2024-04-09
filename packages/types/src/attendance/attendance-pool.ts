@@ -26,8 +26,8 @@ export type AttendancePool = z.infer<typeof AttendancePoolSchema>
 export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
 export type AttendancePoolId = AttendancePool["id"]
 
-export const AttendancePoolBaseSchema = AttendancePoolSchema.omit({
+export const AttendancePoolWithoutAttendeeCount = AttendancePoolSchema.omit({
   numAttendees: true,
 })
 
-export type AttendancePoolBase = z.infer<typeof AttendancePoolBaseSchema>
+export type AttendancePoolWithoutAttendeeCount = z.infer<typeof AttendancePoolWithoutAttendeeCount>

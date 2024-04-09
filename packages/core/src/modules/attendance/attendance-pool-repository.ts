@@ -2,10 +2,9 @@ import type { Database } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePool,
-  type AttendancePoolBase,
-  AttendancePoolBaseSchema,
   type AttendancePoolId,
   AttendancePoolSchema,
+  AttendancePoolWithoutAttendeeCount,
   type AttendancePoolWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable, Updateable } from "kysely"
@@ -16,13 +15,13 @@ type DatabasePoolBase = Selectable<Database["attendancePool"]>
 type DatabasePoolUpdate = Updateable<Database["attendancePool"]>
 
 const mapToPool = (payload: DatabasePool) => AttendancePoolSchema.parse(payload)
-const mapToPoolBase = (payload: DatabasePoolBase) => AttendancePoolBaseSchema.parse(payload)
+const mapToPoolWithoutAttendeeCount = (payload: DatabasePoolBase) => AttendancePoolWithoutAttendeeCount.parse(payload)
 
 export interface AttendancePoolRepository {
-  create(obj: AttendancePoolWrite): Promise<AttendancePoolBase>
-  delete(id: AttendancePoolId): Promise<AttendancePoolBase | null>
+  create(obj: AttendancePoolWrite): Promise<AttendancePoolWithoutAttendeeCount>
+  delete(id: AttendancePoolId): Promise<AttendancePoolWithoutAttendeeCount | null>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendancePool[]>
-  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolBase | null>
+  update(obj: Partial<AttendancePoolWrite>, id: AttendancePoolId): Promise<AttendancePoolWithoutAttendeeCount | null>
   get(id: AttendancePoolId): Promise<AttendancePool | null>
   getNumAttendees(id: AttendancePoolId): Promise<number>
 }
@@ -61,13 +60,13 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       .executeTakeFirstOrThrow()
 
     // This join is really cheap, so no
-    return mapToPoolBase(result)
+    return mapToPoolWithoutAttendeeCount(result)
   }
 
   async delete(id: AttendancePoolId) {
     const res = await this.db.deleteFrom("attendancePool").where("id", "=", id).returningAll().executeTakeFirst()
 
-    return res ? mapToPoolBase(res) : null
+    return res ? mapToPoolWithoutAttendeeCount(res) : null
   }
 
   async getByAttendanceId(id: AttendancePoolId) {
@@ -104,7 +103,7 @@ export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
       .returningAll()
       .executeTakeFirstOrThrow()
 
-    return inserted ? mapToPoolBase(inserted) : null
+    return inserted ? mapToPoolWithoutAttendeeCount(inserted) : null
   }
 
   async getNumAttendees(id: AttendancePoolId) {

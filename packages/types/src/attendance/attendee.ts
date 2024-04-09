@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/sort-type-constituents */
 import { z } from "zod"
 import { UserSchema } from "../user"
 
 export const ExtraChoice = z.object({
-  id: z.string(),
-  choice: z.string(),
+  questionId: z.string(),
+  choiceId: z.string(),
+  choiceName: z.string(),
 })
 
 export const ExtrasChoices = z.array(ExtraChoice)
@@ -29,8 +29,10 @@ export const AttendeeWriteSchema = AttendeeSchema.partial({
   updatedAt: true,
 })
 
+export const AttendeeUserSchema = AttendeeSchema.extend({ user: UserSchema })
+
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
-export const AttendeeUserSchema = AttendeeSchema.extend({ user: UserSchema })
 export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
+export type ExtrasChoices = z.infer<typeof ExtrasChoices>

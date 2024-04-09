@@ -8,13 +8,14 @@ import type {
   EventWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
+import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { EventCommitteeService } from "./event-committee-service"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository.js"
 
-type ReturnType2 = {
+type DashboardEventDetail = {
   event: Event
   eventCommittees: Committee[]
   attendance: Attendance | null
@@ -22,7 +23,7 @@ type ReturnType2 = {
   hasAttendance: boolean
 }
 
-type ReturnType =
+type WebEventDetail =
   | {
       hasAttendance: false
       event: Event
@@ -44,8 +45,8 @@ export interface EventService {
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
-  getWebEventDetailsPageData(id: EventId): Promise<ReturnType>
-  getEventDetailsPageData(id: EventId): Promise<ReturnType2>
+  getWebDetail(id: EventId): Promise<WebEventDetail>
+  getDashboardDetail(id: EventId): Promise<DashboardEventDetail>
 }
 
 export class EventServiceImpl implements EventService {
@@ -101,14 +102,14 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEventDetailsPageData(id: EventId): Promise<ReturnType2> {
+  async getDashboardDetail(id: EventId): Promise<DashboardEventDetail> {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
 
     if (event.attendanceId !== null) {
       const attendance = await this.attendanceService.getById(event.attendanceId)
       if (!attendance) {
-        throw new Error("Attendance not found")
+        throw new AttendanceNotFound(event.attendanceId)
       }
 
       const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
@@ -131,7 +132,7 @@ export class EventServiceImpl implements EventService {
     }
   }
 
-  async getWebEventDetailsPageData(id: EventId): Promise<ReturnType> {
+  async getWebDetail(id: EventId): Promise<WebEventDetail> {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
 

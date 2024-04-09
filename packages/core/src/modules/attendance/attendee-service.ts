@@ -5,19 +5,24 @@ import type {
   AttendeeId,
   AttendeeUser,
   AttendeeWrite,
+  ExtrasChoices,
   UserId,
   WaitlistAttendee,
 } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
+import { AttendeeNotFoundError } from "../event/attendee-error"
+import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
+import { AttendanceNotFound } from "./attendance-error"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError, AttendeeRegistrationError, UpdateAttendeeError } from "./attendee-error"
+import { AttendeeDeregistrationError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { WaitlistAttendeService } from "./waitlist-attendee-service"
 
 export interface AttendeeService {
-  updateExtraChoices(id: AttendeeId, questionId: string, choiceId: string): Promise<Attendee>
+  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
@@ -34,10 +39,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     private readonly attendanceRespository: AttendanceRepository,
     private readonly userService: UserService,
     private readonly waitlistAttendeeService: WaitlistAttendeService
-  ) {
-    this.attendeeRepository = attendeeRepository
-    this.userService = userService
-  }
+  ) {}
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)
@@ -56,17 +58,17 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendee = await this.attendeeRepository.update({ attended }, id)
 
     if (attendee === null) {
-      throw new UpdateAttendeeError(id)
+      throw new AttendeeNotFoundError(id)
     }
 
     return attendee
   }
 
-  async updateExtraChoices(id: AttendanceId, questionId: string, choiceId: string) {
-    const attendee = await this.attendeeRepository.updateExtraChoices(id, questionId, choiceId)
+  async updateExtraChoices(id: AttendanceId, choices: ExtrasChoices) {
+    const attendee = await this.attendeeRepository.updateExtraChoices(id, choices)
 
     if (attendee === null) {
-      throw new UpdateAttendeeError(id)
+      throw new AttendeeNotFoundError(id)
     }
 
     return attendee
@@ -76,11 +78,11 @@ export class AttendeeServiceImpl implements AttendeeService {
     const user = await this.userService.getUserById(userId)
     const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
     if (attendancePool === null) {
-      throw new AttendeeRegistrationError("Attendance pool not found")
+      throw new AttendancePoolNotFoundError(attendancePoolId)
     }
 
     if (user === undefined) {
-      throw new AttendeeRegistrationError("User not found")
+      throw new UserNotFoundError(userId)
     }
 
     const attendanceId = attendancePool.attendanceId
@@ -101,7 +103,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     // is attendance open?
     const attendance = await this.attendanceRespository.getById(attendanceId)
     if (attendance === null) {
-      throw new AttendeeRegistrationError("Attendance not found")
+      throw new AttendancePoolNotFoundError(attendanceId)
     }
 
     if (registrationTime < attendance.registerStart) {
@@ -148,7 +150,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendance = await this.attendanceRespository.getByAttendeeId(id)
 
     if (attendance === null) {
-      throw new AttendeeDeregistrationError("Attendance not found")
+      throw new AttendanceNotFound(id)
     }
 
     if (attendance.deregisterDeadline < now) {
