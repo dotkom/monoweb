@@ -81,12 +81,10 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
-        choices: ExtrasChoices
+        choices: ExtrasChoices,
       })
     )
-    .mutation(
-      async ({ input, ctx }) => await ctx.attendeeService.updateExtraChoices(input.id, input.choices)
-    ),
+    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateExtraChoices(input.id, input.choices)),
 
   getPoolsByAttendanceId: protectedProcedure
     .input(
