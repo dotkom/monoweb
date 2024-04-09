@@ -11,7 +11,7 @@ export interface UserRepository {
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
-  search(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -44,9 +44,9 @@ export class UserRepositoryImpl implements UserRepository {
       .executeTakeFirstOrThrow()
     return mapToUser(user)
   }
-  async search(searchQuery: string, take: number, cursor?: Cursor) {
+  async searchByFullName(searchQuery: string, take: number, cursor?: Cursor) {
     const query = orderedQuery(
-      this.db.selectFrom("owUser").selectAll().where(sql`id::text`, "ilike", `%${searchQuery}%`).limit(take),
+      this.db.selectFrom("owUser").selectAll().where(sql`name::text`, "ilike", `%${searchQuery}%`).limit(take),
       cursor
     )
     const users = await query.execute()

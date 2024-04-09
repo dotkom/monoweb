@@ -8,14 +8,23 @@ import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article
 import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
 import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
 import { type ArticleTagRepository, ArticleTagRepositoryImpl } from "./article/article-tag-repository"
+import { type AttendancePoolRepository, AttendancePoolRepositoryImpl } from "./attendance/attendance-pool-repository"
+import { type AttendancePoolService, AttendancePoolServiceImpl } from "./attendance/attendance-pool-service"
+import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
+import { type AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
+import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
+import { type AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
+import {
+  type WaitlistAttendeRepository,
+  WaitlistAttendeRepositoryImpl,
+} from "./attendance/waitlist-attendee-repository"
+import { type WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
 import { type CommitteeRepository, CommitteeRepositoryImpl } from "./committee/committee-repository"
 import { type CommitteeService, CommitteeServiceImpl } from "./committee/committee-service"
 import { type CompanyEventRepository, CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { type CompanyEventService, CompanyEventServiceImpl } from "./company/company-event-service"
 import { type CompanyRepository, CompanyRepositoryImpl } from "./company/company-repository"
 import { type CompanyService, CompanyServiceImpl } from "./company/company-service"
-import { type AttendanceRepository, AttendanceRepositoryImpl } from "./event/attendance-repository"
-import { type AttendanceService, AttendanceServiceImpl } from "./event/attendance-service"
 import { type EventCommitteeRepository, EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
 import { type EventCommitteeService, EventCommitteeServiceImpl } from "./event/event-committee-service"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event/event-company-repository"
@@ -114,8 +123,14 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const committeeOrganizerRepository: EventCommitteeRepository = new EventCommitteeRepositoryImpl(db)
-  const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
+
   const userRepository: UserRepository = new UserRepositoryImpl(db)
+
+  const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
+  const attendancePoolRepository: AttendancePoolRepository = new AttendancePoolRepositoryImpl(db)
+  const waitlistAttendeRepository: WaitlistAttendeRepository = new WaitlistAttendeRepositoryImpl(db)
+  const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
+
   const productRepository: ProductRepository = new ProductRepositoryImpl(db)
   const paymentRepository: PaymentRepository = new PaymentRepositoryImpl(db)
   const productPaymentProviderRepository: ProductPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(
@@ -136,14 +151,44 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     privacyPermissionsRepository,
     notificationPermissionsRepository
   )
-  const eventService: EventService = new EventServiceImpl(eventRepository, attendanceRepository)
+
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
-  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(
     jobListingRepository,
     jobListingLocationRepository,
     jobListingLocationLinkRepository
+  )
+
+  const attendanceService: AttendanceService = new AttendanceServiceImpl(
+    attendanceRepository,
+    attendeeRepository,
+    waitlistAttendeRepository,
+    attendancePoolRepository
+  )
+
+  const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(
+    waitlistAttendeRepository,
+    attendancePoolRepository
+  )
+
+  const attendeeService: AttendeeService = new AttendeeServiceImpl(
+    attendeeRepository,
+    attendancePoolRepository,
+    attendanceRepository,
+    userService,
+    waitlistAttendeService
+  )
+  const attendancePoolService: AttendancePoolService = new AttendancePoolServiceImpl(
+    attendancePoolRepository,
+    attendeeService
+  )
+
+  const eventService: EventService = new EventServiceImpl(
+    eventRepository,
+    attendanceService,
+    attendancePoolService,
+    eventCommitteeService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
@@ -185,7 +230,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     eventService,
     committeeService,
     companyService,
-    attendanceService,
     companyEventService,
     eventCompanyService,
     productService,
@@ -198,6 +242,11 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     jobListingService,
     offlineService,
     articleService,
+    attendanceService,
+    attendanceRepository,
+    attendancePoolService,
+    waitlistAttendeService,
+    attendeeService,
     interestGroupRepository,
     interestGroupService,
     auth0Repository,

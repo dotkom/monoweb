@@ -2,17 +2,28 @@
 
 import { Loader } from "@mantine/core"
 import type { PropsWithChildren } from "react"
-import { useEventGetQuery } from "../../../../modules/event/queries/use-event-get-query"
+import { useEventDetailsGetQuery } from "../../../../modules/event/queries/use-event-get-query"
 import { EventDetailsContext } from "./provider"
 
 export default function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { event, eventCommittees, isLoading } = useEventGetQuery(params.id)
+  const { data, isLoading: eventLoading } = useEventDetailsGetQuery(params.id)
+
+  console.log(eventLoading, data)
+
   return (
     <>
-      {isLoading || !event ? (
+      {eventLoading || data === undefined ? (
         <Loader />
       ) : (
-        <EventDetailsContext.Provider value={{ event, eventCommittees }}>{children}</EventDetailsContext.Provider>
+        <EventDetailsContext.Provider
+          value={{
+            event: data.event,
+            eventCommittees: data.eventCommittees,
+            attendance: data.attendance,
+          }}
+        >
+          {children}
+        </EventDetailsContext.Provider>
       )}
     </>
   )

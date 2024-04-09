@@ -1,7 +1,7 @@
 import type { DB } from "@dotkomonline/db/src/db.generated"
 import { db } from "./db"
 import { getAttendanceFixtures } from "./fixtures/attendance"
-import { getAttendeeFixtures } from "./fixtures/attendee"
+import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { getCommitteeFixtures } from "./fixtures/committee"
 import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
@@ -56,26 +56,26 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
-  insertedIds.event = await db //
-    .insertInto("event")
-    .onConflict((eb) => eb.doNothing())
-    .values(getEventFixtures())
-    .returning("id")
-    .execute()
-    .then(mapId)
-
   insertedIds.attendance = await db
     .insertInto("attendance")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendanceFixtures(insertedIds.event))
+    .values(getAttendanceFixtures())
     .returning("id")
     .execute()
     .then(mapId)
 
-  insertedIds.attendee = await db
-    .insertInto("attendee")
+  insertedIds.event = await db //
+    .insertInto("event")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
+    .values(getEventFixtures(insertedIds.attendance))
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.attendancePool = await db
+    .insertInto("attendancePool")
+    .onConflict((eb) => eb.doNothing())
+    .values(getPoolFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
     .then(mapId)

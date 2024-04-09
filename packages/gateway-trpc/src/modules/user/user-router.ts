@@ -1,10 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import {
-  NotificationPermissionsWriteSchema,
-  PrivacyPermissionsWriteSchema,
-  UserSchema,
-  UserWriteSchema,
-} from "@dotkomonline/types"
+import { PrivacyPermissionsWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
@@ -13,11 +8,10 @@ export const userRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getUserById(input)),
-  search: publicProcedure
-    .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) =>
-      ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)
-    ),
+  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getUserById(ctx.auth.userId)),
+  getMany: publicProcedure
+    .input(z.array(UserSchema.shape.id))
+    .query(async ({ input, ctx }) => ctx.userService.getUsersById(input)),
   edit: protectedProcedure
     .input(
       z.object({
@@ -37,15 +31,19 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.userService.updatePrivacyPermissionsForUserId(input.id, input.data)),
-  getNotificationPermissionssByUserId: protectedProcedure
-    .input(z.string())
-    .query(async ({ input, ctx }) => ctx.userService.getNotificationPermissionsByUserId(input)),
-  updateNotificationPermissionssForUserId: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        data: NotificationPermissionsWriteSchema.omit({ userId: true }).partial(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => ctx.userService.updateNotificationPermissionsForUserId(input.id, input.data)),
+  // not used
+  // getNotificationPermissionssByUserId: protectedProcedure
+  //   .input(z.string())
+  //   .query(async ({ input, ctx }) => ctx.userService.getNotificationPermissionsByUserId(input)),
+  // updateNotificationPermissionssForUserId: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       id: z.string(),
+  //       data: NotificationPermissionsWriteSchema.omit({ userId: true }).partial(),
+  //     })
+  //   )
+  //   .mutation(async ({ input, ctx }) => ctx.userService.updateNotificationPermissionsForUserId(input.id, input.data)),
+  searchByFullName: protectedProcedure
+    .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.userService.searchByFullName(input.searchQuery, input.paginate.take)),
 })

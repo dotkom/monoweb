@@ -1,11 +1,21 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { CompanySchema, EventCommitteeSchema, EventSchema, EventWriteSchema, UserSchema } from "@dotkomonline/types"
+import {
+  AttendanceWriteSchema,
+  CompanySchema,
+  EventCommitteeSchema,
+  EventSchema,
+  EventWriteSchema,
+  UserSchema,
+} from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 
 export const eventRouter = t.router({
+  get: protectedProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
+    return ctx.eventService.getEventById(input)
+  }),
   create: protectedProcedure
     .input(
       z.object({
@@ -86,15 +96,20 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) =>
       ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
     ),
-  get: publicProcedure.input(CompanySchema.shape.id).query(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getEventById(input)
-    const committees = await ctx.eventCommitteeService.getEventCommitteesForEvent(event.id)
-
-    return {
-      event,
-      eventCommittees: committees,
-    }
-  }),
+  getWebEventDetailData: publicProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.eventService.getWebDetail(input)),
+  getDashboardEventDetailData: publicProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) => ctx.eventService.getDashboardDetail(input)),
+  addAttendance: protectedProcedure
+    .input(
+      z.object({
+        obj: AttendanceWriteSchema.partial(),
+        eventId: EventSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.obj)),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
 })

@@ -55,24 +55,35 @@ export interface ArticleTags {
 export interface Attendance {
   createdAt: Generated<Timestamp>
   deregisterDeadline: Timestamp
-  end: Timestamp
-  eventId: string | null
+  extras: Json | null
   id: Generated<string>
-  limit: number
-  max: Generated<number>
-  min: Generated<number>
-  start: Timestamp
+  registerEnd: Timestamp
+  registerStart: Timestamp
   updatedAt: Generated<Timestamp>
 }
 
+export interface AttendancePool {
+  attendanceId: string
+  capacity: number
+  createdAt: Generated<Timestamp>
+  id: Generated<string>
+  isVisible: boolean
+  title: string
+  type: string
+  updatedAt: Generated<Timestamp>
+  yearCriteria: Json | null
+}
+
 export interface Attendee {
-  attendanceId: string | null
+  attendanceId: string
+  attendancePoolId: string
   attended: Generated<boolean>
   createdAt: Generated<Timestamp>
   extrasChoices: Json | null
   id: Generated<string>
+  registeredAt: Timestamp
   updatedAt: Generated<Timestamp>
-  userId: string | null
+  userId: string
 }
 
 export interface Committee {
@@ -98,10 +109,10 @@ export interface Company {
 }
 
 export interface Event {
+  attendanceId: string | null
   createdAt: Generated<Timestamp>
   description: string | null
   end: Timestamp
-  extras: Json | null
   id: Generated<string>
   imageUrl: string | null
   location: string | null
@@ -112,7 +123,6 @@ export interface Event {
   title: string
   type: EventType | null
   updatedAt: Generated<Timestamp>
-  waitlist: string | null
 }
 
 export interface EventCommittee {
@@ -200,7 +210,7 @@ export interface Offline {
 }
 
 export interface OwUser {
-  auth0Sub: string | null
+  auth0Sub: string
   createdAt: Generated<Timestamp>
   email: string
   id: Generated<string>
@@ -268,11 +278,26 @@ export interface RefundRequest {
   userId: string | null
 }
 
+export interface WaitlistAttendee {
+  attendanceId: string | null
+  attendancePoolId: string | null
+  createdAt: Generated<Timestamp>
+  id: Generated<string>
+  isPunished: boolean | null
+  name: string
+  position: number | null
+  registeredAt: Timestamp | null
+  studyYear: number
+  updatedAt: Generated<Timestamp>
+  userId: string | null
+}
+
 export interface DB {
   articles: Articles
   articleTagLink: ArticleTagLink
   articleTags: ArticleTags
   attendance: Attendance
+  attendancePool: AttendancePool
   attendee: Attendee
   committee: Committee
   company: Company
@@ -293,4 +318,5 @@ export interface DB {
   product: Product
   productPaymentProvider: ProductPaymentProvider
   refundRequest: RefundRequest
+  waitlistAttendee: WaitlistAttendee
 }

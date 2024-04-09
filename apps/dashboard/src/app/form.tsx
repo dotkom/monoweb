@@ -68,6 +68,59 @@ export function createMultipleSelectInput<F extends FieldValues>({
   }
 }
 
+interface CheckboxGroupsProps {
+  selected: number[]
+  setSelected(value: number[]): void
+  disabledOptions?: number[]
+  labels: string[]
+}
+
+const CheckboxGroup = ({ selected, disabledOptions, setSelected, labels }: CheckboxGroupsProps) => {
+  const onChange = (idx: number) => () => {
+    if (selected.includes(idx)) {
+      setSelected(selected.filter((val) => val !== idx))
+    } else {
+      setSelected([...selected, idx])
+    }
+  }
+
+  return (
+    <table>
+      {labels.map((label, idx) => (
+        <tbody key={label}>
+          <tr>
+            <td width="100">{label}</td>
+            <td>
+              <Checkbox
+                checked={selected.includes(idx)}
+                disabled={disabledOptions?.includes(idx)}
+                onChange={onChange(idx)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      ))}
+    </table>
+  )
+}
+
+export function createLabelledCheckboxGroupInput<F extends FieldValues>({
+  ...props
+}: Omit<CheckboxGroupsProps, "error" | "selected" | "setSelected">): InputProducerResult<F> {
+  return function LabelledCheckboxGroupInput({ name, state, control }) {
+    return (
+      <div>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => <CheckboxGroup {...props} setSelected={field.onChange} selected={field.value} />}
+        />
+      </div>
+    )
+  }
+}
+
 export function createTagInput<F extends FieldValues>({
   ...props
 }: Omit<TagsInputProps, "error">): InputProducerResult<F> {
@@ -301,12 +354,18 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     )
   })
 
+  console.log(form.formState.errors)
+
   return function Form() {
     return (
       <form
-        onSubmit={form.handleSubmit((values) => {
-          return onSubmit(values, form)
-        })}
+        onSubmit={(e) => {
+          e.preventDefault()
+          console.log(e)
+          return form.handleSubmit((values) => {
+            return onSubmit(values, form)
+          })(e)
+        }}
       >
         <Flex direction="column" gap="md">
           {components}

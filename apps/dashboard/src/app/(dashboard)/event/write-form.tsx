@@ -11,15 +11,19 @@ import {
   useFormBuilder,
 } from "../../form"
 
-const EVENT_FORM_DEFAULT_VALUES: Partial<FormValidationResult> = {
+const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   start: new Date(),
   end: new Date(),
   description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
   imageUrl: null,
   location: null,
   subtitle: null,
-  waitlist: null,
   committeeIds: [],
+  public: false,
+  status: "TBA",
+  title: "",
+  type: "SOCIAL",
+  attendanceId: null,
 }
 
 interface UseEventWriteFormProps {
@@ -32,14 +36,10 @@ export const FormValidationSchema = EventWriteSchema.extend({
   start: z.date().min(new Date(), { message: "Starttidspunkt må være i fremtiden" }),
   end: z.date().min(new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
   committeeIds: z.array(z.string()),
+}).refine((data) => data.start < data.end, {
+  message: "Sluttidspunkt må være etter starttidspunkt",
+  path: ["end"],
 })
-  .partial({
-    id: true,
-  })
-  .refine((data) => data.start < data.end, {
-    message: "Sluttidspunkt må være etter starttidspunkt",
-    path: ["end"],
-  })
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 

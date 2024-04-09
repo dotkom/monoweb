@@ -1,51 +1,99 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import { Button } from "@dotkomonline/ui"
+import type { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
+import type { Session } from "next-auth"
+import { SessionProvider, useSession } from "next-auth/react"
+import type { FC } from "react"
+import { AttendanceBox } from "../components/AttendanceBox"
+import { EventInfoBox } from "../components/EventInfoBox"
+import { LocationBox } from "../components/LocationBox"
+import { OrganizerBox } from "../components/OrganizerBox"
 
-interface EventDetailPageProps {
-  params: { id: string }
+/*
+export const generateStaticParams = async () => {
+    const serverClient = await getUnauthorizedServerClient();
+
+    const events = await serverClient.event.all();
+
+    return events.map(({ id }) => ({ id }));
+}
+ */
+
+const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
+  return (
+    <SessionProvider>
+      <EventDetailPageInner id={id} />
+    </SessionProvider>
+  )
 }
 
-const EventDetailPage = ({ params: { id } }: EventDetailPageProps) => {
-  const { data } = trpc.event.get.useQuery(id)
-  const { data: attendance } = trpc.event.attendance.get.useQuery({ eventId: id })
-  const { mutate: addAttendance } = trpc.event.attendance.create.useMutation()
-  const { mutate: attendEvent } = trpc.event.attendance.attend.useMutation()
-  const utils = trpc.useContext()
+const EventDetailPageInner = ({ id }: { id: string }) => {
+  "use client"
+
+  const session = useSession()
+
+  const { data: event, isLoading: eventIsLoading } = trpc.event.getWebEventDetailData.useQuery(id)
+
+  if (eventIsLoading) {
+    return <div>Laster</div>
+  }
+
+  if (!event || !session?.data) {
+    return <div>Kunne ikke hente data</div>
+  }
+
+  if (event.hasAttendance) {
+    return (
+      <EventDetailWithAttendancePage
+        user={session.data.user}
+        attendance={event.attendance}
+        pools={event.pools}
+        event={event.event}
+        committees={event.eventCommittees}
+      />
+    )
+  }
 
   return (
+    <EventDetailWithoutAttendancePage user={session.data.user} event={event.event} committees={event.eventCommittees} />
+  )
+}
+
+interface WithoutAttendanceProps {
+  user: NonNullable<Session["user"]>
+  event: Event
+  committees: Committee[]
+}
+const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ user, event, committees }) => {
+  return (
     <div>
-      <h1>Event</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-      <Button
-        onClick={async () => {
-          await addAttendance({
-            start: new Date(),
-            end: new Date(),
-            deregisterDeadline: new Date(),
-            eventId: id,
-            limit: 20,
-            min: 1,
-            max: 5,
-          })
-          utils.event.attendance.get.invalidate()
-        }}
-      >
-        Add attendance group
-      </Button>
-      <Button
-        onClick={async () => {
-          await attendEvent({
-            eventId: id,
-          })
-          utils.event.attendance.get.invalidate()
-        }}
-      >
-        Join random group
-      </Button>
-      <h2>Attendance</h2>
-      <pre>{JSON.stringify(attendance, null, 2)}</pre>
+      <div className="flex w-full">
+        <EventInfoBox event={event} />
+      </div>
+    </div>
+  )
+}
+
+interface WithAttendanceProps {
+  user: NonNullable<Session["user"]>
+  attendance: Attendance
+  pools: AttendancePool[]
+  event: Event
+  committees: Committee[]
+}
+
+const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
+  return (
+    <div>
+      <div className="flex w-full">
+        <EventInfoBox event={event} />
+        <div className="flex flex-1 flex-col">
+          <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
+          {committees.length && <OrganizerBox committees={committees} />}
+          {event.location && <LocationBox location={event.location} />}
+        </div>
+      </div>
     </div>
   )
 }

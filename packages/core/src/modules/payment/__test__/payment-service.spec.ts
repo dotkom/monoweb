@@ -3,7 +3,6 @@ import type { Event, Payment, Product } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import Stripe from "stripe"
 import { describe, vi } from "vitest"
-import { eventPayload } from "../../event/__test__/event-service.spec"
 import { EventRepositoryImpl } from "../../event/event-repository"
 import { InvalidPaymentStatusError, UnrefundablePaymentError } from "../payment-error"
 import { PaymentRepositoryImpl } from "../payment-repository"
@@ -23,6 +22,23 @@ export const paymentPayload: Omit<Payment, "id"> = {
   paymentProviderSessionId: randomUUID(),
   paymentProviderOrderId: randomUUID(),
   status: "UNPAID",
+}
+
+const eventPayload: Omit<Event, "id"> = {
+  title: "Kotlin og spillutvikling med Bekk",
+  subtitle: "Bekk kommer for å holde kurs i kotlin og spillutvikling!",
+  imageUrl:
+    "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fhttps://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/lg/59dec779-da56-40f1-be27-4045630c708a.png",
+  description: "Kotlin er et relativt nytt programmeringsspråk som de siste årene har blitt veldig populært",
+  location: "Verkstedteknisk: VE22",
+  public: false,
+  start: new Date(),
+  end: new Date(),
+  createdAt: new Date(2022, 1, 1),
+  updatedAt: new Date(2022, 1, 1),
+  status: "PUBLIC",
+  type: "COMPANY",
+  attendanceId: randomUUID(),
 }
 
 // from https://stripe.com/docs/api

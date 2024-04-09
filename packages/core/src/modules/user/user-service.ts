@@ -14,9 +14,9 @@ import type { UserRepository } from "./user-repository"
 
 export interface UserService {
   getUserById(id: UserId): Promise<User | undefined>
+  getUsersById(ids: UserId[]): Promise<User[] | undefined>
   getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
-  searchUsers(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
@@ -24,11 +24,7 @@ export interface UserService {
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions>
-  updateNotificationPermissionsForUserId(
-    id: string,
-    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ): Promise<NotificationPermissions>
+  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
 export class UserServiceImpl implements UserService {
@@ -37,23 +33,29 @@ export class UserServiceImpl implements UserService {
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
+
   async getAllUsers(limit: number) {
-    const users = await this.userRepository.getAll(limit)
-    return users
+    return await this.userRepository.getAll(limit)
+  }
+
+  async getUsersById(ids: UserId[]) {
+    const users = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
+    if (users.includes(undefined)) {
+      throw new Error("User from DB is undefined")
+    }
+    return users as User[]
+  }
+
+  async getUserBySubject(id: User["auth0Sub"]) {
+    return this.userRepository.getBySubject(id)
+  }
+
+  async searchByFullName(searchQuery: string, take: number) {
+    return this.userRepository.searchByFullName(searchQuery, take)
   }
 
   async getUserById(id: UserId) {
     const user = await this.userRepository.getById(id)
-    return user
-  }
-
-  async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
-    const users = await this.userRepository.search(searchQuery, take, cursor)
-    return users
-  }
-
-  async getUserBySubject(id: User["auth0Sub"]) {
-    const user = await this.userRepository.getBySubject(id)
     return user
   }
 

@@ -1,6 +1,6 @@
 import { db } from "./db"
 import { attendances } from "./fixtures/attendance"
-import { events } from "./fixtures/event"
+import { getEventsFixtures } from "./fixtures/event"
 import { users } from "./fixtures/user"
 
 export const seed = async () => {
@@ -17,7 +17,7 @@ export const seed = async () => {
 
   await db
     .insertInto("event")
-    .values(events)
+    .values(getEventsFixtures)
     .returning("id")
     .onConflict((oc) =>
       oc.column("id").doUpdateSet({
