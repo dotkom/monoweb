@@ -1,3 +1,4 @@
+"use client"
 import { Label } from "@radix-ui/react-label"
 import { cva } from "cva"
 import { forwardRef } from "react"

@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu"
+} from "@dotkomonline/ui"
 import type { User } from "next-auth"
 
 const AvatarImgChange = (user: User) => (
