@@ -91,7 +91,10 @@ export const getAuthOptions = ({
     },
     async session({ session, token }) {
       if (token.user) {
-        session.user = token.user
+        session.user = {
+          ...session.user,
+          ...token.user,
+        }
       }
 
       if (token.sub) {

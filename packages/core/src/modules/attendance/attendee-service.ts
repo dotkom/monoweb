@@ -75,13 +75,13 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async registerForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date) {
-    const user = await this.userService.getUserById(userId)
+    const user = await this.userService.getById(userId)
     const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
     if (attendancePool === null) {
       throw new AttendancePoolNotFoundError(attendancePoolId)
     }
 
-    if (user === undefined) {
+    if (user === null) {
       throw new UserNotFoundError(userId)
     }
 

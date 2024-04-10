@@ -31,7 +31,7 @@ const FAKE_USER_EXTRA_SIGNUP_DATA: UserDataStoredInAppMetadata = {
   lastSyncedAt: new Date(),
   onBoarded: true,
   phoneNumber: "12345678",
-  gender: "male"
+  gender: "male",
 }
 
 export class Auth0ServiceImpl implements Auth0Service {
@@ -61,7 +61,6 @@ export class Auth0ServiceImpl implements Auth0Service {
     return this.mapAuth0ToDomainUser(onboardedUser.data)
   }
 
-
   private mapAuth0ToDomainUser(user: GetUsers200ResponseOneOfInner): User {
     // check that created_at and updated_at are present and are both strings
     if (typeof user.created_at !== "string" || typeof user.updated_at !== "string") {
@@ -87,7 +86,7 @@ export class Auth0ServiceImpl implements Auth0Service {
       givenName: app_metadata.givenName,
       studyYear: app_metadata.studyYear,
       onBoarded: app_metadata.onBoarded,
-      gender: app_metadata.gender
+      gender: app_metadata.gender,
     }
 
     return UserSchema.parse(mapped)

@@ -7,6 +7,7 @@ import type {
   UserId,
   UserWrite,
 } from "@dotkomonline/types"
+import { IllegalStateError } from "../../error"
 import type { Cursor } from "../../utils/db-utils"
 import type { Auth0Service } from "../external/auth0-service"
 import type { Auth0SynchronizationService } from "../external/auth0-synchronization-service"
@@ -26,11 +27,8 @@ type OnboardUserWrite = {
 }
 
 export interface UserService {
-  getUserById(id: UserId): Promise<User | undefined>
-  getUsersById(ids: UserId[]): Promise<User[] | undefined>
-  getUserBySubject(id: User["id"]): Promise<User | undefined>
   onboardUser(id: UserId, data: OnboardUserWrite): Promise<User>
-  getById(id: UserId): Promise<User | undefined>
+  getById(id: UserId): Promise<User | null>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
   updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
@@ -55,16 +53,8 @@ export class UserServiceImpl implements UserService {
     return await this.userRepository.getAll(limit)
   }
 
-  async getUsersById(ids: UserId[]) {
-    const users = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
-    if (users.includes(undefined)) {
-      throw new Error("User from DB is undefined")
-    }
-    return users as User[]
-  }
-
-  async getUserBySubject(id: User["auth0Sub"]) {
-    return this.userRepository.getBySubject(id)
+  async getById(id: User["id"]) {
+    return this.userRepository.getById(id)
   }
 
   async searchByFullName(searchQuery: string, take: number) {
@@ -92,16 +82,13 @@ export class UserServiceImpl implements UserService {
     await this.auth0Repository.updateUser(id, onboardedUser)
     await this.auth0SynchronizationService.handleUserSync(id)
 
-    return this.getById(id)
-  }
-
-  async getById(id: UserId) {
-    const user = await this.userRepository.getById(id)
+    const a = await this.getById(id)
+    if (a === null) throw new IllegalStateError("User should exist after onboarding")
     return user
   }
 
   async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
-    const users = await this.userRepository.search(searchQuery, take, cursor)
+    const users = await this.userRepository.searchByFullName(searchQuery, take, cursor)
     return users
   }
 

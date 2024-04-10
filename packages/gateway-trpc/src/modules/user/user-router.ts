@@ -7,15 +7,12 @@ export const userRouter = t.router({
   all: publicProcedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.userService.getAllUsers(input.take)),
-  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getUserById(ctx.auth.userId)),
-  getMany: publicProcedure
-    .input(z.array(UserSchema.shape.id))
-    .query(async ({ input, ctx }) => ctx.userService.getUsersById(input)),
+  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.auth.userId)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
   search: publicProcedure
     .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
-      ctx.userService.searchUsers(input.searchQuery, input.paginate.take, input.paginate.cursor)
+      ctx.userService.searchByFullName(input.searchQuery, input.paginate.take, input.paginate.cursor)
     ),
   edit: protectedProcedure
     .input(

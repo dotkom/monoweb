@@ -29,7 +29,7 @@ export const NotOnboardedUserSchema = z.object({
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>
 
-export const UserWriteSchema = UserSchema.omit({ id: true, createdAt: true, updatedAt: true })
+export const UserWriteSchema = UserSchema
 
 export type UserWrite = z.infer<typeof UserWriteSchema>
 

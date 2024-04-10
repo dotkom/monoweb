@@ -7,13 +7,21 @@ import { type CleanupFunction, createServiceLayerForTesting } from "../../../../
 import { type ServiceLayer, createServiceLayer } from "../../core"
 
 const fakeUser = (subject?: string): UserWrite => ({
-  auth0Sub: subject ?? crypto.randomUUID(),
+  id: subject ?? crypto.randomUUID(),
   studyYear: 0,
   email: "testuser512312412@gmail.com",
-  // givenName: "Test",
-  // familyName: "User",
+  givenName: "Test",
+  familyName: "User",
   name: "Test User",
   lastSyncedAt: new Date(),
+  allergies: [],
+  createdAt: new Date(),
+  emailVerified: false,
+  gender: "other",
+  onBoarded: false,
+  phoneNumber: null,
+  profilePicture: null,
+  updatedAt: new Date(),
 })
 
 describe("users", () => {
@@ -60,13 +68,13 @@ describe("users", () => {
   it("can update users given their id", async () => {
     await expect(
       core.userService.updateUser(ulid(), {
-        auth0Sub: crypto.randomUUID(),
+        id: crypto.randomUUID(),
       })
     ).rejects.toThrow()
     const user = await core.userService.createUser(fakeUser())
     const updated = await core.userService.updateUser(user.id, {
-      auth0Sub: crypto.randomUUID(),
+      id: crypto.randomUUID(),
     })
-    expect(updated.auth0Sub).not.toEqual(user.auth0Sub)
+    expect(updated.id).not.toEqual(user.id)
   })
 })

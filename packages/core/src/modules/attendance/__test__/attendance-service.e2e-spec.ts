@@ -19,11 +19,21 @@ const assertIsAttendee = (attendee: unknown) => {
 }
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
-  auth0Sub: write.auth0Sub ?? crypto.randomUUID(),
+  id: write.id ?? crypto.randomUUID(),
   studyYear: write.studyYear ?? 1,
   email: write.email ?? "testuser@local.com",
   name: write.name ?? "Test User",
   lastSyncedAt: write.lastSyncedAt ?? new Date(),
+  allergies: write.allergies ?? [],
+  createdAt: write.createdAt ?? new Date(),
+  emailVerified: write.emailVerified ?? false,
+  familyName: write.familyName ?? "User",
+  gender: write.gender ?? "other",
+  givenName: write.givenName ?? "Test",
+  onBoarded: write.onBoarded ?? false,
+  phoneNumber: write.phoneNumber ?? "",
+  profilePicture: write.profilePicture ?? "",
+  updatedAt: write.updatedAt ?? new Date(),
 })
 
 const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => ({

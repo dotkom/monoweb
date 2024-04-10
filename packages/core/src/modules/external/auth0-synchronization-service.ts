@@ -1,10 +1,10 @@
 import { type Logger, getLogger } from "@dotkomonline/logger"
 import type { User, UserWrite } from "@dotkomonline/types"
-import type { UserRepository } from "../user/user-repository"
-import type { Auth0Service } from "./auth0-service"
 import { ApplicationError } from "../../error"
 import { PROBLEM_DETAILS } from "../../http-problem-details"
+import type { UserRepository } from "../user/user-repository"
 import { Auth0UserNotFoundError } from "./auth0-errors"
+import type { Auth0Service } from "./auth0-service"
 
 export interface Auth0SynchronizationService {
   /**
@@ -26,7 +26,6 @@ export interface Auth0SynchronizationService {
    */
   synchronizeUser(user: User): Promise<User>
 }
-
 
 export class SyncError extends ApplicationError {
   constructor(detail: string) {
@@ -60,6 +59,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       this.logger.log("info", "User does not exist in local db, creating user", { userId: userId })
 
       const userData: UserWrite = {
+        id: auth0User.id,
         allergies: auth0User.allergies,
         email: auth0User.email,
         familyName: auth0User.familyName,
@@ -73,6 +73,8 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
         gender: auth0User.gender,
 
         lastSyncedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
 
       return this.userRepository.create(userData)
