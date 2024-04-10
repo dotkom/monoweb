@@ -17,10 +17,6 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
 )
 
 const Landing: NextPage<{ user: User }> = ({ user }) => {
-  const uNameList = user.name.split(" ")
-  const firstName = uNameList.slice(0, -1).join(" ")
-  const lastName = uNameList.slice(-1).join(" ")
-
   return (
     <div className="flex w-full flex-col space-y-4">
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">
@@ -28,8 +24,8 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
       <FormInput title="Navn">
         <div className="w-full flex flex-wrap justify-center ">
-          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={firstName} />
-          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={lastName} />
+          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.givenName} />
+          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.familyName} />
         </div>
       </FormInput>
       <FormInput title="Epost">
