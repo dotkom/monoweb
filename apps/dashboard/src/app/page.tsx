@@ -6,6 +6,10 @@ import { SignInButton } from "./SignInButton"
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
+  console.log("SESSION!!")
+  console.log("0000000")
+  console.dir(session, { depth: null })
+  console.log("0000000")
   if (session !== null) {
     redirect("/event")
   }

@@ -8,13 +8,26 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
+import type { Auth0Service } from "../external/auth0-service"
+import type { Auth0SynchronizationService } from "../external/auth0-synchronization-service"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import { UserNotFoundError } from "./user-error"
 import type { UserRepository } from "./user-repository"
 
+type OnboardUserWrite = {
+  firstName: string
+  lastName: string
+  allergies: string[]
+
+  studyYear?: number
+  phone?: string
+  picture?: string
+}
+
 export interface UserService {
-  getUserById(id: UserId): Promise<User | undefined>
-  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
+  onboardUser(id: UserId, data: OnboardUserWrite): Promise<User>
+  getById(id: UserId): Promise<User | undefined>
   getAllUsers(limit: number): Promise<User[]>
   searchUsers(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
@@ -35,14 +48,40 @@ export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
+    private readonly auth0Repository: Auth0Service,
+    private readonly auth0SynchronizationService: Auth0SynchronizationService
   ) {}
   async getAllUsers(limit: number) {
     const users = await this.userRepository.getAll(limit)
     return users
   }
 
-  async getUserById(id: UserId) {
+  async onboardUser(id: UserId, data: OnboardUserWrite) {
+    const user = await this.userRepository.getById(id)
+    if (!user) {
+      throw new UserNotFoundError(id)
+    }
+
+    const onboardedUser: UserWrite = {
+      ...user,
+      givenName: data.firstName,
+      familyName: data.lastName,
+      name: `${data.firstName} ${data.lastName}`,
+      allergies: data.allergies,
+      studyYear: data.studyYear ?? -1,
+      phoneNumber: data.phone ?? null,
+      profilePicture: data.picture ?? null,
+      lastSyncedAt: null,
+    }
+
+    await this.auth0Repository.updateUser(id, onboardedUser)
+    await this.auth0SynchronizationService.handleUserSync(id)
+
+    return this.getById(id)
+  }
+
+  async getById(id: UserId) {
     const user = await this.userRepository.getById(id)
     return user
   }
@@ -52,19 +91,15 @@ export class UserServiceImpl implements UserService {
     return users
   }
 
-  async getUserBySubject(id: User["auth0Sub"]) {
-    const user = await this.userRepository.getBySubject(id)
-    return user
-  }
-
   async createUser(input: UserWrite) {
     const res = await this.userRepository.create(input)
     return res
   }
 
-  async updateUser(id: UserId, data: Partial<UserWrite>) {
-    const res = await this.userRepository.update(id, data)
-    return res
+  async updateUser(id: UserId, data: UserWrite) {
+    const result = await this.auth0Repository.updateUser(id, data)
+    await this.auth0SynchronizationService.synchronizeUser(result)
+    return result
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {

@@ -38,7 +38,10 @@ export const ProfileMenu = ({ initialData }: { initialData: Session | null }) =>
 }
 
 const InnerProfileMenu = () => {
-  const { status } = useSession()
+  const data = useSession()
+  const status = data.status
+
+  console.log(data)
 
   if (status === "loading") {
     return <Icon icon="tabler:loader-2" className="animate-spin" />

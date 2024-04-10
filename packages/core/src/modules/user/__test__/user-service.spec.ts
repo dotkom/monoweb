@@ -36,6 +36,7 @@ describe("UserService", () => {
   const userRepository = new UserRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
+
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,

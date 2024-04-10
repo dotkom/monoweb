@@ -17,10 +17,10 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
 )
 
 const Landing: NextPage<{ user: User }> = ({ user }) => {
-  const uNameList = user.name.split(" ")
-  const firstName = uNameList.slice(0, -1).join(" ")
-  const lastName = uNameList.slice(-1).join(" ")
+  const firstName = user.givenName
+  const lastName = user.familyName
 
+  console.log("in settings", user)
   return (
     <div className="flex w-full flex-col space-y-4">
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">
@@ -38,7 +38,7 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       <FormInput title="Telefon">
         <div className="w-full flex space-x-2">
           <CountryCodeSelect />
-          <TextInput width="w-full" maxLength={8} />
+          <TextInput width="w-full" maxLength={8} defaultValue={user.phoneNumber || ""} />
         </div>
       </FormInput>
       <FormInput title="Bio">

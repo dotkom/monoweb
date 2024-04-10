@@ -15,7 +15,7 @@ import {
 } from "../../user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "../../user/user-repository"
 import { type UserService, UserServiceImpl } from "../../user/user-service"
-import { type Auth0Repository, Auth0RepositoryImpl } from "../auth0-repository"
+import { type Auth0Service, Auth0ServiceImpl } from "../auth0-service"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 
 const fakeAuth0GetUserResponse = (subject?: string, email?: string): ApiResponse<GetUsers200ResponseOneOfInner> =>
@@ -57,20 +57,23 @@ interface ServerLayerOptions {
 }
 
 const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) => {
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0MgmtClient)
+  const auth0Repository: Auth0Service = new Auth0ServiceImpl(auth0MgmtClient)
 
   const userRepository: UserRepository = new UserRepositoryImpl(db)
   const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository: NotificationPermissionsRepository =
     new NotificationPermissionsRepositoryImpl(db)
+
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userRepository,
+    auth0Repository
+  )
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository
-  )
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
+    notificationPermissionsRepository,
+    auth0Repository,
+    auth0SynchronizationService
   )
 
   return {
@@ -98,7 +101,7 @@ describe("auth0 synchronization service", () => {
 
     // first sync down to the local db. Should create user row in the db.
     const syncedUser = await core.auth0SynchronizationService.handleUserSync(subject)
-    const dbUser = await core.userService.getUserBySubject(subject)
+    const dbUser = await core.userService.getById(subject)
     expect(dbUser).toEqual(syncedUser)
 
     // Simulate an email change in the Auth0 dashboard or something.

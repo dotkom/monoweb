@@ -3,6 +3,7 @@ import CareerView from "@/components/views/CareerView"
 
 const Career = async () => {
   const careersData = await fetchCareerAds()
+
   return <CareerView careers={careersData} />
 }
 

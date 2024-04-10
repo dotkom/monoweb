@@ -65,7 +65,7 @@ program
             .join("\n")}`
         )
       } else {
-        logger.warn(res)
+        console.dir(res.error, { depth: null })
       }
     }
 

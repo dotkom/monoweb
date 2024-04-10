@@ -10,6 +10,8 @@ export default async function App() {
   const session = await getServerSession()
   const events = await serverClient.event.recommended()
 
+  console.log(session)
+
   return (
     <div className="mt-8">
       <CompanySplash className="hidden md:flex" />
