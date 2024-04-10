@@ -1,37 +1,83 @@
-import type { CareerAd } from "@/api/get-career-ads"
-import { Badge } from "@dotkomonline/ui"
+import type { JobListing } from "@dotkomonline/types"
+import { Badge, Icon } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
 import type { FC } from "react"
-
 interface CompanyAdListItemProps {
-  career: CareerAd
+  career: JobListing
 }
-
-const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemProps) => {
-  const { company_name, image, career_type, location, deadline, slug } = props.career
-
-  const color = career_type === "Sommerjobb" ? "amber" : career_type === "Fulltid" ? "red" : "blue"
-
+function timeSinceCreated(date: Date) {
+  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 1) {
+    return "nylig lagt til"
+  }
+  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 24) {
+    const timer = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60))
+    return `${timer} timer gammel`
+  }
+  if (Date.now() - date.getTime() / (24 * 60 * 60 * 1000) < 7) {
+    const dager = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
+    return `${dager} dager gammel`
+  }
+  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24 * 7)) < 52) {
+    const uker = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24 * 7))
+    return `${uker} uker gammel`
+  }
+}
+function showLocations(locations: string[]) {
+  if (locations.length === 0) {
+    return <p>Ikke definert</p>
+  }
   return (
-    <div className="border-slate-11 flex h-16 items-center justify-between border-b">
-      <div className="flex h-10 w-1/4 items-center gap-2 overflow-hidden">
-        <Image src={image.asset.url} width={70} height={40} alt={`${company_name}'s job posting`} />
-        <p>{company_name}</p>
-      </div>
-
-      <div className="w-1/4">
-        <Badge color={color} variant="light">
-          {career_type}
-        </Badge>
-      </div>
-      <span className="w-[17.5%]">{location.concat("")}</span>
-      <span className="w-[17.5%]">{format(new Date(deadline), "dd.MM.yyyy")}</span>
-      <a className="w-[15%]" href={`/career/${slug.current}`}>
-        Les mer
-      </a>
+    <div className="flex flex-row gap-1">
+      {locations.map((location) => (
+        <p key={location}>{location}</p>
+      ))}
     </div>
   )
 }
-
+const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdListItemProps) => {
+  const color =
+    career.employment === "Sommerjobb/internship" ? "amber" : career.employment === "Fulltid" ? "red" : "blue"
+  const deadline = career.deadline ? format(career.deadline, "dd.MM.yyyy") : "Ingen frist"
+  return (
+    <a
+      href={`/career/${career.id}`}
+      className="border-slate-8 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
+    >
+      <div className="flex flex-row items-center gap-8">
+        <Image src={career.company.image || ""} width={140} height={80} alt={`${career.company.name}’s job posting`} />
+        <div>
+          <h3 className="mt-2">{career.company.name}</h3>
+          <p className="text-slate-8">{career.employment}</p>
+          <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-1">
+              <Icon width={16} icon={"tabler:map-pin"} />
+              {showLocations(career.locations)}
+            </div>
+            <div className="flex flex-row gap-1">
+              <Icon width={16} icon={"tabler:clock-hour-3"} />
+              {timeSinceCreated(career.start)}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col items-end">
+        <div className=" text-right">
+          <Badge color={color} variant="light">
+            {career.employment}
+          </Badge>
+        </div>
+        <div className="flex flex-row gap-1 text-right">
+          <Icon width={16} icon={"tabler:calendar-down"} />
+          <p>
+            <b>Frist: </b>
+            {career.deadline == null
+              ? "Ingen Frist"
+              : career.deadline.toLocaleString("no-NO", { day: "2-digit", month: "short", year: "numeric" })}
+          </p>
+        </div>
+      </div>
+    </a>
+  )
+}
 export default CompanyAdListItem
