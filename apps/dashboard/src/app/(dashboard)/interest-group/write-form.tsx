@@ -30,6 +30,10 @@ export const useInterestGroupWriteForm = ({
         withAsterisk: true,
         rows: 5,
       }),
+      image: createTextInput({
+        label: "Bilde URL",
+        type: "url",
+      }),
       link: createTextInput({
         label: "Slack Link",
         placeholder: "https://onlinentnu.slack.com/archives/C03S8TX1L",

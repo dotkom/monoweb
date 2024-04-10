@@ -6,6 +6,7 @@ export const InterestGroupSchema = z.object({
   updatedAt: z.date(),
   name: z.string(),
   description: z.string(),
+  image: z.string().nullable(),
   link: z.string().nullable(), //slack link
   isActive: z.boolean(),
 })
