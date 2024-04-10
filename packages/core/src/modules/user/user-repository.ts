@@ -1,12 +1,12 @@
 import type { Database } from "@dotkomonline/db"
-import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
+import { type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
 import { type Kysely, type Selectable, sql } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 
 export interface UserRepository {
-  getById(id: UserId): Promise<User | undefined>
+  getById(id: UserId): Promise<User | null>
   getBySubject(auth0Subject: string): Promise<User | undefined>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
@@ -17,8 +17,9 @@ export interface UserRepository {
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly db: Kysely<Database>) {}
   async getById(id: UserId) {
+    console.log(this.db)
     const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
-    return user ? mapToUser(user) : undefined
+    return user ? mapToUser(user) : null
   }
   async getBySubject(auth0Subject: string) {
     const user = await this.db.selectFrom("owUser").selectAll().where("auth0Sub", "=", auth0Subject).executeTakeFirst()
@@ -29,13 +30,22 @@ export class UserRepositoryImpl implements UserRepository {
     return users.map(mapToUser)
   }
   async create(userWrite: UserWrite) {
-    const user = await this.db.insertInto("owUser").values(userWrite).returningAll().executeTakeFirstOrThrow()
+    const ins = {
+      ...userWrite,
+      allergies: userWrite.allergies ? JSON.stringify(userWrite.allergies) : null,
+    }
+
+    const user = await this.db.insertInto("owUser").values(ins).returningAll().executeTakeFirstOrThrow()
     return mapToUser(user)
   }
   async update(id: UserId, data: Partial<UserWrite>) {
+    const ins = {
+      ...data,
+      allergies: data.allergies ? JSON.stringify(data.allergies) : null,
+    }
     const user = await this.db
       .updateTable("owUser")
-      .set(data)
+      .set(ins)
       .set({
         updatedAt: new Date(),
       })

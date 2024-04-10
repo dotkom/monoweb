@@ -41,6 +41,7 @@ describe("UserService", () => {
 
   const auth0Client = vi.mocked(ManagementClient.prototype)
   const auth0Repo = new Auth0RepositoryImpl(auth0Client)
+
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,

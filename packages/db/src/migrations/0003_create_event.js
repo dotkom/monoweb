@@ -52,7 +52,18 @@ export async function up(db) {
     .addColumn("subtitle", "varchar(255)")
     .addColumn("image_url", "varchar(255)")
     .addColumn("location", "varchar(255)")
-    .addColumn("extras", "json")
+    .execute()
+
+  await createTableWithDefaults("attendance", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    .addColumn("start", "timestamptz", (col) => col.notNull())
+    .addColumn("end", "timestamptz", (col) => col.notNull())
+    .addColumn("deregister_deadline", "timestamptz", (col) => col.notNull())
+    .addColumn("limit", "integer", (col) => col.notNull())
+    .addColumn("event_id", sql`ulid`, (col) => col.references("event.id").onDelete("cascade"))
+    .execute()
+
+  await createTableWithDefaults("attendee", { id: true, createdAt: true, updatedAt: true }, db.schema)
+    .addColumn("user_id", "varchar(255)", (col) => col.references("ow_user.id").onDelete("cascade"))
     .addColumn("attendance_id", sql`ulid`, (col) => col.references("attendance.id").onDelete("cascade"))
     .execute()
 

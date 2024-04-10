@@ -48,7 +48,7 @@ export class IllegalStateError extends ApplicationError {
   }
 }
 
-export class NotImplementedError extends ApplicationError {
+export class InternalServerError extends ApplicationError {
   constructor(detail: string) {
     super(PROBLEM_DETAILS.InternalServerError, detail)
   }

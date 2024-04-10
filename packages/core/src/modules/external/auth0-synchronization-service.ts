@@ -1,8 +1,10 @@
 import { type Logger, getLogger } from "@dotkomonline/logger"
 import type { User, UserWrite } from "@dotkomonline/types"
-import { IllegalStateError } from "../../error"
-import type { UserService } from "../user/user-service"
-import type { Auth0Repository } from "./auth0-repository"
+import type { UserRepository } from "../user/user-repository"
+import type { Auth0Service } from "./auth0-service"
+import { ApplicationError } from "../../error"
+import { PROBLEM_DETAILS } from "../../http-problem-details"
+import { Auth0UserNotFoundError } from "./auth0-errors"
 
 export interface Auth0SynchronizationService {
   /**
@@ -16,41 +18,67 @@ export interface Auth0SynchronizationService {
    * @returns The synchronized user object.
    */
   handleUserSync(sub: string): Promise<User>
+
+  /**
+   * Synchronizes a user from Auth0 to the local database
+   * @param user The user to synchronize
+   * @returns The synchronized user object.
+   */
+  synchronizeUser(user: User): Promise<User>
+}
+
+
+export class SyncError extends ApplicationError {
+  constructor(detail: string) {
+    super(PROBLEM_DETAILS.InternalServerError, detail)
+  }
 }
 
 export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationService {
   private readonly logger: Logger = getLogger(Auth0SynchronizationServiceImpl.name)
 
   constructor(
-    private readonly userService: UserService,
-    private readonly auth0Repository: Auth0Repository
+    private readonly userRepository: UserRepository,
+    private readonly auth0Service: Auth0Service
   ) {}
 
-  private async synchronizeUser(auth0Subject: string) {
-    this.logger.log("info", "Synchronizing user with Auth0", { userId: auth0Subject })
-    const auth0User = await this.auth0Repository.getBySubject(auth0Subject)
+  async synchronizeUser(user: User) {
+    const userId = user.id
+    this.logger.log("info", "Synchronizing user with Auth0", { userId: userId })
+
+    const auth0User = await this.auth0Service.getById(userId)
 
     if (auth0User === null) {
-      throw new IllegalStateError("Missing user data in claims")
+      throw new Auth0UserNotFoundError(userId)
     }
 
-    const user = await this.userService.getUserBySubject(auth0Subject)
+    if (auth0User.onBoarded === false) {
+      throw new SyncError(`Cannot sync user that is not onboarded. User id: ${userId}`)
+    }
 
-    if (user === undefined) {
-      this.logger.log("info", "User does not exist in local db, creating user", { userId: auth0Subject })
+    if (user === null) {
+      this.logger.log("info", "User does not exist in local db, creating user", { userId: userId })
 
       const userData: UserWrite = {
-        auth0Sub: auth0User.subject,
-        studyYear: -1,
+        allergies: auth0User.allergies,
         email: auth0User.email,
+        familyName: auth0User.familyName,
+        givenName: auth0User.givenName,
         name: auth0User.name,
+        phoneNumber: auth0User.phoneNumber,
+        profilePicture: auth0User.profilePicture,
+        studyYear: auth0User.studyYear,
+        onBoarded: auth0User.onBoarded,
+        emailVerified: auth0User.emailVerified,
+        gender: auth0User.gender,
+
         lastSyncedAt: new Date(),
       }
 
-      return this.userService.createUser(userData)
+      return this.userRepository.create(userData)
     }
 
-    return await this.userService.updateUser(user.id, {
+    return await this.userRepository.update(user.id, {
       email: auth0User.email,
       name: auth0User.name,
       lastSyncedAt: new Date(),
@@ -59,22 +87,30 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
 
   /**
    * Syncs down user if not synced within the last 24 hours.
-   * @param auth0Sub The Auth0 subject of the user to synchronize.
+   * @param userId The Auth0 subject of the user to synchronize.
    * @returns User
    */
-  async handleUserSync(auth0Sub: string) {
-    const user = await this.userService.getUserBySubject(auth0Sub)
+  async handleUserSync(userId: string) {
+    const user = await this.userRepository.getById(userId)
 
-    if (user === undefined) {
-      return this.synchronizeUser(auth0Sub)
+    if (!(user?.onBoarded === true)) {
+      const user = await this.auth0Service.getById(userId)
+      if (user === null) {
+        throw new SyncError(`No user found in Auth0 for id ${userId}`)
+      }
+      if (user.onBoarded === false) {
+        throw new SyncError(`Cannot sync user that is not onboarded. User id: ${userId}`)
+      }
+
+      return user
     }
 
     const oneDay = 1000 * 60 * 60 * 24
     const oneDayAgo = new Date(Date.now() - oneDay)
 
-    const userShouldBeSynced = user.lastSyncedAt < oneDayAgo
+    const userShouldBeSynced = user.lastSyncedAt === null || user.lastSyncedAt < oneDayAgo
     if (userShouldBeSynced) {
-      return this.synchronizeUser(user.auth0Sub)
+      return this.synchronizeUser(user)
     }
 
     // User was not updated from Auth0

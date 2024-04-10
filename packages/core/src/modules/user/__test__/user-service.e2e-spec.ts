@@ -51,9 +51,9 @@ describe("users", () => {
   it("will find users by their user id", async () => {
     const user = await core.userService.createUser(fakeUser())
 
-    const match = await core.userService.getUserById(user.id)
+    const match = await core.userService.getById(user.id)
     expect(match).toEqual(user)
-    const fail = await core.userService.getUserById(ulid())
+    const fail = await core.userService.getById(ulid())
     expect(fail).toBeUndefined()
   })
 
