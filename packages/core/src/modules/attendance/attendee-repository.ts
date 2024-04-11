@@ -69,7 +69,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
-      .leftJoin("owUser", "owUser.id", "attendee.userId")
+      .leftJoin("owUser", "owUser.auth0Id", "attendee.userId")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
       .select(sql<User[]>`COALESCE(json_agg(ow_user), '[]')`.as("user"))
@@ -110,9 +110,9 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
-      .leftJoin("owUser", "owUser.id", "attendee.userId")
+      .leftJoin("owUser", "owUser.auth0Id", "attendee.userId")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.auth0_id IS NOT NULL), '[]')`.as("user"))
       .where("attendancePool.id", "=", id)
       .groupBy("attendee.id")
       .execute()

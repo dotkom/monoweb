@@ -100,7 +100,7 @@ export const getAuthOptions = ({
       if (token.sub) {
         const user = await core.auth0SynchronizationService.handleUserSync(token.sub)
 
-        session.user.id = user.id
+        session.user.auth0Id = user.auth0Id
         session.sub = token.sub
       }
       return session

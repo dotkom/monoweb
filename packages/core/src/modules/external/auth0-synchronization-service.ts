@@ -41,11 +41,9 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     private readonly auth0Service: Auth0Service
   ) {}
 
-  async synchronizeUser(user: User) {
-    const userId = user.id
-    this.logger.log("info", "Synchronizing user with Auth0", { userId: userId })
-
-    const auth0User = await this.auth0Service.getById(userId)
+  async synchronizeUser(auth0User: User) {
+    const userId = auth0User.auth0Id
+    this.logger.log("info", "Synchronizing user with Auth0", { userId: auth0User.auth0Id })
 
     if (auth0User === null) {
       throw new Auth0UserNotFoundError(userId)
@@ -55,36 +53,33 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       throw new SyncError(`Cannot sync user that is not onboarded. User id: ${userId}`)
     }
 
+    const userData: UserWrite = {
+      auth0Id: auth0User.auth0Id,
+      allergies: auth0User.allergies,
+      email: auth0User.email,
+      familyName: auth0User.familyName,
+      givenName: auth0User.givenName,
+      name: auth0User.name,
+      phoneNumber: auth0User.phoneNumber,
+      profilePicture: auth0User.profilePicture,
+      studyYear: auth0User.studyYear,
+      onBoarded: auth0User.onBoarded,
+      emailVerified: auth0User.emailVerified,
+      gender: auth0User.gender,
+
+      lastSyncedAt: new Date(),
+      createdAt: auth0User.createdAt,
+      updatedAt: auth0User.updatedAt,
+    }
+
+    const user = await this.userRepository.getById(userId)
+
     if (user === null) {
       this.logger.log("info", "User does not exist in local db, creating user", { userId: userId })
-
-      const userData: UserWrite = {
-        id: auth0User.id,
-        allergies: auth0User.allergies,
-        email: auth0User.email,
-        familyName: auth0User.familyName,
-        givenName: auth0User.givenName,
-        name: auth0User.name,
-        phoneNumber: auth0User.phoneNumber,
-        profilePicture: auth0User.profilePicture,
-        studyYear: auth0User.studyYear,
-        onBoarded: auth0User.onBoarded,
-        emailVerified: auth0User.emailVerified,
-        gender: auth0User.gender,
-
-        lastSyncedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-
       return this.userRepository.create(userData)
     }
 
-    return await this.userRepository.update(user.id, {
-      email: auth0User.email,
-      name: auth0User.name,
-      lastSyncedAt: new Date(),
-    })
+    return await this.userRepository.update(user.auth0Id, userData)
   }
 
   /**
@@ -94,6 +89,14 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
    */
   async handleUserSync(userId: string) {
     const user = await this.userRepository.getById(userId)
+
+    if(user === null) {
+      const user = await this.auth0Service.getById(userId)
+      if (user === null) {
+        throw new SyncError(`No user found in Auth0 for id ${userId}`)
+      }
+      return this.synchronizeUser(user)
+    }
 
     if (!(user?.onBoarded === true)) {
       const user = await this.auth0Service.getById(userId)
@@ -112,7 +115,12 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
 
     const userShouldBeSynced = user.lastSyncedAt === null || user.lastSyncedAt < oneDayAgo
     if (userShouldBeSynced) {
-      return this.synchronizeUser(user)
+      const auth0User = await this.auth0Service.getById(userId)
+      if(auth0User === null) {
+        throw new SyncError(`No user found in Auth0 for id ${userId}`)
+      }
+
+      return this.synchronizeUser(auth0User)
     }
 
     // User was not updated from Auth0

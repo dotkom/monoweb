@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const UserSchema = z.object({
-  id: z.string(),
+  auth0Id: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   email: z.string().email(),
@@ -26,7 +26,7 @@ export const NotOnboardedUserSchema = z.object({
   email: z.string().email(),
 })
 
-export type UserId = User["id"]
+export type UserId = User["auth0Id"]
 export type User = z.infer<typeof UserSchema>
 
 export const UserWriteSchema = UserSchema

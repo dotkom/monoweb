@@ -12,14 +12,14 @@ export interface Auth0Service {
 
 export const mapToUser = (payload: User) => UserSchema.parse(payload)
 
-const UserDataStoredInAppMetadata = UserSchema.omit({
-  id: true,
+export const UserDataStoredInAppMetadata = UserSchema.omit({
+  auth0Id: true,
   createdAt: true,
   updatedAt: true,
   email: true,
   emailVerified: true,
 })
-type UserDataStoredInAppMetadata = z.infer<typeof UserDataStoredInAppMetadata>
+export type UserDataStoredInAppMetadata = z.infer<typeof UserDataStoredInAppMetadata>
 
 const FAKE_USER_EXTRA_SIGNUP_DATA: UserDataStoredInAppMetadata = {
   givenName: "firstName",
@@ -71,7 +71,7 @@ export class Auth0ServiceImpl implements Auth0Service {
     const app_metadata = user.app_metadata
 
     const mapped: User = {
-      id: user.user_id,
+      auth0Id: user.user_id,
       email: user.email,
       createdAt: new Date(user.created_at),
       updatedAt: new Date(user.updated_at),

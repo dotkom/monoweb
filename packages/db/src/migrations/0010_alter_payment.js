@@ -20,10 +20,10 @@ export async function up(db) {
 
   await createTableWithDefaults("refund_request", { id: true, createdAt: true, updatedAt: true }, db.schema)
     .addColumn("payment_id", sql`ulid`, (col) => col.unique().references("payment.id").onDelete("cascade"))
-    .addColumn("user_id", "varchar(255)", (col) => col.references("ow_user.id").onDelete("cascade"))
+    .addColumn("user_id", "varchar(255)", (col) => col.references("ow_user.auth0_id").onDelete("cascade"))
     .addColumn("reason", "text", (col) => col.notNull())
     .addColumn("status", sql`refund_request_status`, (col) => col.notNull().defaultTo("PENDING"))
-    .addColumn("handled_by", "varchar(255)", (col) => col.references("ow_user.id").onDelete("cascade"))
+    .addColumn("handled_by", "varchar(255)", (col) => col.references("ow_user.auth0_id").onDelete("cascade"))
     .execute()
 }
 

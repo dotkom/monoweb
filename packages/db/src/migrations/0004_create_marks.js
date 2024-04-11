@@ -14,7 +14,7 @@ export async function up(db) {
   await db.schema
     .createTable("personal_mark")
     .addColumn("mark_id", sql`ulid`, (col) => col.references("mark.id").onDelete("cascade"))
-    .addColumn("user_id", "varchar(255)", (col) => col.references("owUser.id").onDelete("cascade"))
+    .addColumn("user_id", "varchar(255)", (col) => col.references("ow_user.auth0_id").onDelete("cascade"))
     .addPrimaryKeyConstraint("personal_mark_pk", ["mark_id", "user_id"])
     .execute()
 }

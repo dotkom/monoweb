@@ -15,10 +15,24 @@ import {
 } from "../../user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "../../user/user-repository"
 import { type UserService, UserServiceImpl } from "../../user/user-service"
-import { type Auth0Service, Auth0ServiceImpl } from "../auth0-service"
+import { type Auth0Service, Auth0ServiceImpl, type UserDataStoredInAppMetadata } from "../auth0-service"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 
-const fakeAuth0GetUserResponse = (subject?: string, email?: string): ApiResponse<GetUsers200ResponseOneOfInner> =>
+const fakeUserMetaData = (write: Partial<UserDataStoredInAppMetadata>): UserDataStoredInAppMetadata => ({
+  onBoarded: write.onBoarded ?? true,
+  studyYear: write.studyYear ?? 1,
+  phoneNumber: write.phoneNumber ?? "",
+  allergies: write.allergies ?? [],
+  familyName: write.familyName ?? "User",
+  gender: write.gender ?? "other",
+  givenName: write.givenName ?? "Test",
+  profilePicture: write.profilePicture ?? "",
+  name: write.name ?? "Test User",
+  lastSyncedAt: write.lastSyncedAt ?? new Date(),
+})
+
+
+const fakeAuth0GetUserResponse = (write: Partial<UserDataStoredInAppMetadata>, id?: string, email?: string): ApiResponse<GetUsers200ResponseOneOfInner> =>
   ({
     data: {
       email: email ?? "user@example.com",
@@ -28,15 +42,7 @@ const fakeAuth0GetUserResponse = (subject?: string, email?: string): ApiResponse
       name: "John Doe",
       created_at: "2024-02-01T00:00:00.000Z",
       updated_at: "2024-03-17T00:00:00.000Z",
-      identities: [
-        {
-          connection: "Username-Password-Authentication",
-          provider: "auth0",
-          user_id: "00000000-0000-0000-0000-000000000000",
-          isSocial: false,
-        },
-      ],
-      user_id: subject ?? "auth0|00000000-0000-0000-0000-000000000000",
+      user_id: id ?? "auth0|00000000-0000-0000-0000-000000000000",
       picture: "https://example.com/avatar.png",
       nickname: "mockuser",
       multifactor: ["guardian"],
@@ -45,6 +51,7 @@ const fakeAuth0GetUserResponse = (subject?: string, email?: string): ApiResponse
       last_ip: "192.168.1.1",
       last_login: "2024-03-17T00:00:00.000Z",
       logins_count: 10,
+      app_metadata: fakeUserMetaData(write)
     },
     headers: {},
     status: 200,
@@ -96,7 +103,7 @@ describe("auth0 synchronization service", () => {
     const email = "starting-email@local.com"
 
     // The user has signed up thorugh Auth0 sign up page.
-    const signedUpUser = fakeAuth0GetUserResponse(subject, email)
+    const signedUpUser = fakeAuth0GetUserResponse({}, subject, email)
     auth0Mock.users.get.mockResolvedValue(signedUpUser)
 
     // first sync down to the local db. Should create user row in the db.
@@ -106,7 +113,7 @@ describe("auth0 synchronization service", () => {
 
     // Simulate an email change in the Auth0 dashboard or something.
     const updatedMail = "changed-in-dashboard@local.com"
-    const updatedAuth0User = fakeAuth0GetUserResponse(subject, updatedMail)
+    const updatedAuth0User = fakeAuth0GetUserResponse({}, subject, updatedMail)
     auth0Mock.users.get.mockResolvedValue(updatedAuth0User)
 
     // Run synchroinization again. However, since the user was just synced, the synchronization should not occur.

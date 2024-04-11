@@ -99,7 +99,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const registerMutation = useRegisterMutation()
   const unregisterMutation = useUnregisterMutation()
-  const { data: attendee } = useGetAttendee({ userId: sessionUser.id, attendanceId })
+  const { data: attendee } = useGetAttendee({ userId: sessionuser.auth0Id, attendanceId })
 
   const attendanceStatus = calculateStatus({
     registerStart: attendance.registerStart,
@@ -118,7 +118,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
     registerMutation.mutate({
       attendancePoolId: myGroups?.id,
-      userId: sessionUser.id,
+      userId: sessionuser.auth0Id,
     })
   }
 

@@ -7,27 +7,14 @@ import type {
   UserId,
   UserWrite,
 } from "@dotkomonline/types"
-import { IllegalStateError } from "../../error"
 import type { Cursor } from "../../utils/db-utils"
 import type { Auth0Service } from "../external/auth0-service"
 import type { Auth0SynchronizationService } from "../external/auth0-synchronization-service"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { UserNotFoundError } from "./user-error"
 import type { UserRepository } from "./user-repository"
 
-type OnboardUserWrite = {
-  firstName: string
-  lastName: string
-  allergies: string[]
-
-  studyYear?: number
-  phone?: string
-  picture?: string
-}
-
 export interface UserService {
-  onboardUser(id: UserId, data: OnboardUserWrite): Promise<User>
   getById(id: UserId): Promise<User | null>
   getAllUsers(limit: number): Promise<User[]>
   createUser(input: UserWrite): Promise<User>
@@ -53,38 +40,12 @@ export class UserServiceImpl implements UserService {
     return await this.userRepository.getAll(limit)
   }
 
-  async getById(id: User["id"]) {
+  async getById(id: User["auth0Id"]) {
     return this.userRepository.getById(id)
   }
 
   async searchByFullName(searchQuery: string, take: number) {
     return this.userRepository.searchByFullName(searchQuery, take)
-  }
-
-  async onboardUser(id: UserId, data: OnboardUserWrite) {
-    const user = await this.userRepository.getById(id)
-    if (!user) {
-      throw new UserNotFoundError(id)
-    }
-
-    const onboardedUser: UserWrite = {
-      ...user,
-      givenName: data.firstName,
-      familyName: data.lastName,
-      name: `${data.firstName} ${data.lastName}`,
-      allergies: data.allergies,
-      studyYear: data.studyYear ?? -1,
-      phoneNumber: data.phone ?? null,
-      profilePicture: data.picture ?? null,
-      lastSyncedAt: null,
-    }
-
-    await this.auth0Repository.updateUser(id, onboardedUser)
-    await this.auth0SynchronizationService.handleUserSync(id)
-
-    const a = await this.getById(id)
-    if (a === null) throw new IllegalStateError("User should exist after onboarding")
-    return user
   }
 
   async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {

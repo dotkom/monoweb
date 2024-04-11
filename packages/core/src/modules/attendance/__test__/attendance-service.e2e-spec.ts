@@ -19,7 +19,7 @@ const assertIsAttendee = (attendee: unknown) => {
 }
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
-  id: write.id ?? crypto.randomUUID(),
+  auth0Id: write.auth0Id ?? crypto.randomUUID(),
   studyYear: write.studyYear ?? 1,
   email: write.email ?? "testuser@local.com",
   name: write.name ?? "Test User",
@@ -157,7 +157,7 @@ describe("attendance", () => {
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
-    const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.auth0Id, matchingPool.id, new Date())
 
     expect(attendee).not.toBeNull()
 
@@ -192,12 +192,12 @@ describe("attendance", () => {
 
     const pool = pools[0]
     // attend user 1 to pool
-    const attendee = await core.attendeeService.registerForEvent(users[0].id, pool.id, new Date())
+    const attendee = await core.attendeeService.registerForEvent(users[0].auth0Id, pool.id, new Date())
 
     assertIsAttendee(attendee)
 
     // attend user 2 to pool
-    const waitlistAttendee = await core.attendeeService.registerForEvent(users[1].id, pool.id, new Date())
+    const waitlistAttendee = await core.attendeeService.registerForEvent(users[1].auth0Id, pool.id, new Date())
 
     assertIsWaitlistAttendee(waitlistAttendee)
   })
@@ -211,7 +211,7 @@ describe("attendance", () => {
 
     const user = res.users[0]
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, res.pools[0].id, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.auth0Id, res.pools[0].id, new Date())
 
     expect(attendee).not.toBeNull()
 
@@ -241,15 +241,15 @@ describe("attendance", () => {
 
     // --- registration
     await expect(() => {
-      return core.attendeeService.registerForEvent(user.id, pool.id, new Date("2021-01-01"))
+      return core.attendeeService.registerForEvent(user.auth0Id, pool.id, new Date("2021-01-01"))
     }).rejects.toThrowError(AttendeeRegistrationError)
 
     await expect(() => {
-      return core.attendeeService.registerForEvent(user.id, pool.id, new Date("2021-01-06"))
+      return core.attendeeService.registerForEvent(user.auth0Id, pool.id, new Date("2021-01-06"))
     }).rejects.toThrowError(AttendeeRegistrationError)
 
     // --- deregistration
-    const attendee = await core.attendeeService.registerForEvent(user.id, pool.id, new Date("2021-01-03"))
+    const attendee = await core.attendeeService.registerForEvent(user.auth0Id, pool.id, new Date("2021-01-03"))
     await expect(() => {
       return core.attendeeService.deregisterForEvent(attendee.id, new Date("2021-01-05"))
     }).rejects.toThrowError(AttendeeDeregistrationError)
@@ -281,7 +281,7 @@ describe("attendance", () => {
       const registrationDate = new Date("2021-01-02")
       const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
       assert(matchingPool !== undefined, new Error("Pool not found"))
-      const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, registrationDate)
+      const attendee = await core.attendeeService.registerForEvent(user.auth0Id, matchingPool.id, registrationDate)
       expect(attendee).not.toBeNull()
     }
 
@@ -292,7 +292,7 @@ describe("attendance", () => {
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
     const waitlistAttendee = await core.attendeeService.registerForEvent(
-      extraUserCreated.id,
+      extraUserCreated.auth0Id,
       matchingPool.id,
       new Date("2021-01-02")
     )
@@ -300,14 +300,14 @@ describe("attendance", () => {
     assertIsWaitlistAttendee(waitlistAttendee)
 
     // Step 4: Deregister a user before the deadline and verify
-    const attendeeToDeregister = await core.attendeeService.getByUserId(users[0].id, attendance.id)
+    const attendeeToDeregister = await core.attendeeService.getByUserId(users[0].auth0Id, attendance.id)
     assert(attendeeToDeregister !== null, new Error())
     await expect(
       core.attendeeService.deregisterForEvent(attendeeToDeregister.id, new Date("2021-01-04"))
     ).resolves.not.toThrowError(AttendeeDeregistrationError)
 
     // Step 5: Attempt to deregister a user after the deadline and expect failure
-    const attendeeToDeregisterLate = await core.attendeeService.getByUserId(users[1].id, attendance.id)
+    const attendeeToDeregisterLate = await core.attendeeService.getByUserId(users[1].auth0Id, attendance.id)
     assert(attendeeToDeregisterLate !== null, new Error())
     await expect(
       core.attendeeService.deregisterForEvent(attendeeToDeregisterLate.id, new Date("2021-01-06"))
@@ -327,7 +327,7 @@ describe("attendance", () => {
     const pool = pools[0]
     const user = users[0]
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, pool.id, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.auth0Id, pool.id, new Date())
 
     expect(attendee).not.toBeNull()
   })
@@ -386,7 +386,7 @@ describe("attendance", () => {
     const pool = pools[0]
     const user = users[0]
 
-    const attendee = await core.attendeeService.registerForEvent(user.id, pool.id, new Date())
+    const attendee = await core.attendeeService.registerForEvent(user.auth0Id, pool.id, new Date())
 
     const extras = attendance.extras
 
@@ -494,7 +494,7 @@ describe("attendance", () => {
 
       const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
       assert(matchingPool !== undefined, new Error("Pool not found"))
-      const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, registrationDate)
+      const attendee = await core.attendeeService.registerForEvent(user.auth0Id, matchingPool.id, registrationDate)
 
       expect(attendee).not.toBeNull()
     }
