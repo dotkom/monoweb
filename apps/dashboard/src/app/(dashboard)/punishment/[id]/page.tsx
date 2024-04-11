@@ -14,7 +14,7 @@ import { useMarkDetailsContext } from "./provider"
 
 const UserNameCell: FC<{ userId: string }> = ({ userId }) => {
   const { data: user } = useUserQuery(userId)
-  return <span>{user?.auth0Id || "Loading..."}</span>
+  return <span>{user?.email || "Loading..."}</span>
 }
 
 const columnHelper = createColumnHelper<PersonalMark>()
