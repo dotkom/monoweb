@@ -1,6 +1,6 @@
 import type { ServiceLayer } from "@dotkomonline/core"
 import { UserSchema } from "@dotkomonline/types"
-import type { DefaultSession, NextAuthOptions, User } from "next-auth"
+import type { DefaultSession, NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 import type { z } from "zod"
 
@@ -16,7 +16,7 @@ const IdTokenClaimsSchema = UserSchema.pick({
   profilePicture: true,
   emailVerified: true,
   phoneNumber: true,
-  id: true,
+  auth0Id: true,
 })
 
 type IdToken = z.infer<typeof IdTokenClaimsSchema>
@@ -54,9 +54,10 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile): User => {
+      profile: (profile) => {
         return {
           id: profile.id,
+          auth0Id: profile.id,
           email: profile.email,
           name: profile.name,
           givenName: profile.givenName,
@@ -100,7 +101,6 @@ export const getAuthOptions = ({
       if (token.sub) {
         const user = await core.auth0SynchronizationService.handleUserSync(token.sub)
 
-        session.user.auth0Id = user.auth0Id
         session.sub = token.sub
       }
       return session

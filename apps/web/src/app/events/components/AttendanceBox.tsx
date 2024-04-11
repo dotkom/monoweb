@@ -1,4 +1,3 @@
-import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
@@ -80,7 +79,7 @@ const dateToString = (attendanceOpeningDate: Date): DateString => {
 }
 
 interface Props {
-  sessionUser: Session["user"]
+  user: Session["user"]
   attendance: Attendance
   pools: AttendancePool[]
   event: Event
@@ -88,10 +87,8 @@ interface Props {
 
 type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
 
-export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
+export const AttendanceBox: FC<Props> = ({ user, attendance, pools, event }) => {
   const attendanceId = event.attendanceId
-
-  const { data: user } = trpc.user.getMe.useQuery()
 
   if (!attendanceId) {
     throw new Error("AttendanceBox rendered for event without attendance")
@@ -99,7 +96,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const registerMutation = useRegisterMutation()
   const unregisterMutation = useUnregisterMutation()
-  const { data: attendee } = useGetAttendee({ userId: sessionuser.auth0Id, attendanceId })
+  const { data: attendee } = useGetAttendee({ userId: user.auth0Id, attendanceId })
 
   const attendanceStatus = calculateStatus({
     registerStart: attendance.registerStart,
@@ -118,7 +115,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
     registerMutation.mutate({
       attendancePoolId: myGroups?.id,
-      userId: sessionuser.auth0Id,
+      userId: user.auth0Id,
     })
   }
 

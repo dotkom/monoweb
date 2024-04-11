@@ -4,9 +4,9 @@ import type { UserWrite } from "@dotkomonline/types"
 import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
+import assert from "../../../../assert"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type ServiceLayer, createServiceLayerForUserTests } from "./core"
-import assert from "../../../../assert"
 
 const getFakeUser = (write?: Partial<UserWrite>): UserWrite => ({
   auth0Id: write?.auth0Id ?? crypto.randomUUID(),
@@ -55,9 +55,9 @@ describe("users", () => {
 
   it("will not allow two users the same subject", async () => {
     const subject = crypto.randomUUID()
-    const first = await core.userService.createUser(getFakeUser({auth0Id: subject}))
+    const first = await core.userService.createUser(getFakeUser({ auth0Id: subject }))
     expect(first).toBeDefined()
-    await expect(core.userService.createUser(getFakeUser({auth0Id: subject}))).rejects.toThrow()
+    await expect(core.userService.createUser(getFakeUser({ auth0Id: subject }))).rejects.toThrow()
   })
 
   it("will find users by their user id", async () => {
@@ -70,12 +70,10 @@ describe("users", () => {
   })
 
   it("can update users given their id", async () => {
-    await expect(
-      core.userService.updateUser("nonexistent-id", {})
-    ).rejects.toThrow()
+    await expect(core.userService.updateUser("nonexistent-id", {})).rejects.toThrow()
 
     const intialUser = getFakeUser({
-      givenName: "Initial Name"
+      givenName: "Initial Name",
     })
 
     await core.userRepository.create(intialUser)
@@ -93,8 +91,8 @@ describe("users", () => {
         updated_at: new Date().toString(),
         app_metadata: {
           ...user,
-          givenName: "Updated Name"
-        }
+          givenName: "Updated Name",
+        },
       },
       status: 200,
       statusText: "OK",
@@ -110,6 +108,5 @@ describe("users", () => {
 
     expect(user.givenName).toEqual("Initial Name")
     expect(updated.givenName).toEqual("Updated Name")
-
   })
 })

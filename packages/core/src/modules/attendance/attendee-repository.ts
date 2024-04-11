@@ -86,7 +86,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
           ...user,
           createdAt: new Date(user.createdAt),
           updatedAt: new Date(user.updatedAt),
-          // lastSyncedAt: new Date(user.lastSyncedAt),
           lastSyncedAt: user.lastSyncedAt ? new Date(user.lastSyncedAt) : null,
         },
         extrasChoices,

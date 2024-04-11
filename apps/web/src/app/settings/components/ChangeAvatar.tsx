@@ -7,9 +7,9 @@ import {
   DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "@dotkomonline/ui"
-import type { User } from "next-auth"
+import type { Session } from "next-auth"
 
-const AvatarImgChange = (user: User) => (
+const AvatarImgChange = (user: Session["user"]) => (
   <DropdownMenu>
     <DropdownMenuTrigger className="relative border-[1px] rounded-full">
       <Avatar className="w-40 h-auto">

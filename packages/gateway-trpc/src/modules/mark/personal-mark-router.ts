@@ -5,7 +5,7 @@ import { protectedProcedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: protectedProcedure
-    .input(z.object({ id: UserSchema.shape.id, paginate: PaginateInputSchema }))
+    .input(z.object({ id: UserSchema.shape.auth0Id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
     ),
@@ -24,6 +24,6 @@ export const personalMarkRouter = t.router({
       ctx.personalMarkService.removePersonalMarkFromUserId(input.userId, input.markId)
     ),
   getExpiryDateForUser: protectedProcedure
-    .input(UserSchema.shape.id)
+    .input(UserSchema.shape.auth0Id)
     .query(async ({ input, ctx }) => ctx.personalMarkService.getExpiryDateForUserId(input)),
 })

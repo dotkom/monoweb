@@ -48,11 +48,6 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.searchByFullName(searchQuery, take)
   }
 
-  async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
-    const users = await this.userRepository.searchByFullName(searchQuery, take, cursor)
-    return users
-  }
-
   async createUser(input: UserWrite) {
     const res = await this.userRepository.create(input)
     return res

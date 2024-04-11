@@ -31,8 +31,11 @@ const fakeUserMetaData = (write: Partial<UserDataStoredInAppMetadata>): UserData
   lastSyncedAt: write.lastSyncedAt ?? new Date(),
 })
 
-
-const fakeAuth0GetUserResponse = (write: Partial<UserDataStoredInAppMetadata>, id?: string, email?: string): ApiResponse<GetUsers200ResponseOneOfInner> =>
+const fakeAuth0GetUserResponse = (
+  write: Partial<UserDataStoredInAppMetadata>,
+  id?: string,
+  email?: string
+): ApiResponse<GetUsers200ResponseOneOfInner> =>
   ({
     data: {
       email: email ?? "user@example.com",
@@ -51,7 +54,7 @@ const fakeAuth0GetUserResponse = (write: Partial<UserDataStoredInAppMetadata>, i
       last_ip: "192.168.1.1",
       last_login: "2024-03-17T00:00:00.000Z",
       logins_count: 10,
-      app_metadata: fakeUserMetaData(write)
+      app_metadata: fakeUserMetaData(write),
     },
     headers: {},
     status: 200,

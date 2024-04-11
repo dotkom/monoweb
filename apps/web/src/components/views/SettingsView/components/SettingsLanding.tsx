@@ -2,7 +2,7 @@ import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
 import { TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
+import type { Session } from "next-auth"
 
 interface FormInputProps {
   title: string
@@ -16,7 +16,7 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-const Landing: NextPage<{ user: User }> = ({ user }) => {
+const Landing: NextPage<{ user: Session["user"] }> = ({ user }) => {
   const firstName = user.givenName
   const lastName = user.familyName
 

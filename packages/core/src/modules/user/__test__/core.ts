@@ -1,18 +1,24 @@
 import type { Database } from "@dotkomonline/db"
-import type { Kysely } from "kysely"
-import { type Auth0Service, Auth0ServiceImpl } from "../../external/auth0-service"
-import { type UserRepository, UserRepositoryImpl } from "../user-repository"
-import { type AttendanceRepository, AttendanceRepositoryImpl } from "../../attendance/attendance-repository"
-import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
-import { type NotificationPermissionsRepository, NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../../external/auth0-synchronization-service"
-import { type UserService, UserServiceImpl } from "../user-service"
 import type { ManagementClient } from "auth0"
+import type { Kysely } from "kysely"
+import { type AttendanceRepository, AttendanceRepositoryImpl } from "../../attendance/attendance-repository"
+import { type Auth0Service, Auth0ServiceImpl } from "../../external/auth0-service"
+import {
+  type Auth0SynchronizationService,
+  Auth0SynchronizationServiceImpl,
+} from "../../external/auth0-synchronization-service"
+import {
+  type NotificationPermissionsRepository,
+  NotificationPermissionsRepositoryImpl,
+} from "../notification-permissions-repository"
+import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
+import { type UserRepository, UserRepositoryImpl } from "../user-repository"
+import { type UserService, UserServiceImpl } from "../user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayerForUserTests>>
 
 export interface ServerLayerOptions {
-  db: Kysely<Database>,
+  db: Kysely<Database>
   auth0MgmtClient: ManagementClient
 }
 
@@ -44,6 +50,6 @@ export const createServiceLayerForUserTests = async ({ db, auth0MgmtClient }: Se
     auth0Repository,
     auth0SynchronizationService,
     userService,
-    userRepository
+    userRepository,
   }
 }

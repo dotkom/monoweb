@@ -54,22 +54,8 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     }
 
     const userData: UserWrite = {
-      auth0Id: auth0User.auth0Id,
-      allergies: auth0User.allergies,
-      email: auth0User.email,
-      familyName: auth0User.familyName,
-      givenName: auth0User.givenName,
-      name: auth0User.name,
-      phoneNumber: auth0User.phoneNumber,
-      profilePicture: auth0User.profilePicture,
-      studyYear: auth0User.studyYear,
-      onBoarded: auth0User.onBoarded,
-      emailVerified: auth0User.emailVerified,
-      gender: auth0User.gender,
-
+      ...auth0User,
       lastSyncedAt: new Date(),
-      createdAt: auth0User.createdAt,
-      updatedAt: auth0User.updatedAt,
     }
 
     const user = await this.userRepository.getById(userId)
@@ -90,7 +76,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   async handleUserSync(userId: string) {
     const user = await this.userRepository.getById(userId)
 
-    if(user === null) {
+    if (user === null) {
       const user = await this.auth0Service.getById(userId)
       if (user === null) {
         throw new SyncError(`No user found in Auth0 for id ${userId}`)
@@ -116,7 +102,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     const userShouldBeSynced = user.lastSyncedAt === null || user.lastSyncedAt < oneDayAgo
     if (userShouldBeSynced) {
       const auth0User = await this.auth0Service.getById(userId)
-      if(auth0User === null) {
+      if (auth0User === null) {
         throw new SyncError(`No user found in Auth0 for id ${userId}`)
       }
 

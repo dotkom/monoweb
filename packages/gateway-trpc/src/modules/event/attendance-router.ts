@@ -15,7 +15,7 @@ export const attendanceRouter = t.router({
   getAttendee: protectedProcedure
     .input(
       z.object({
-        userId: UserSchema.shape.id,
+        userId: UserSchema.shape.auth0Id,
         attendanceId: AttendanceSchema.shape.id,
       })
     )
@@ -44,7 +44,7 @@ export const attendanceRouter = t.router({
   registerForEvent: protectedProcedure
     .input(
       z.object({
-        userId: UserSchema.shape.id,
+        userId: UserSchema.shape.auth0Id,
         attendancePoolId: AttendancePoolSchema.shape.id,
       })
     )

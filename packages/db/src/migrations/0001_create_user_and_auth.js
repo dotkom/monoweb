@@ -9,7 +9,6 @@ export async function up(db) {
     .addColumn("auth0_id", "varchar(255)", (col) => col.notNull().unique())
     .addColumn("created_at", "timestamptz", (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn("updated_at", "timestamptz", (col) => col.defaultTo(sql`now()`))
-
     .addColumn("email", "varchar(255)", (col) => col.unique().notNull())
     .addColumn("name", "varchar(255)", (col) => col.notNull())
     .addColumn("family_name", "varchar(255)", (col) => col.notNull())

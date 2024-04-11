@@ -1,8 +1,8 @@
 import type { Database } from "@dotkomonline/db"
+import type { OwUser } from "@dotkomonline/db/src/db.generated"
 import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
 import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
-import type { OwUser } from "@dotkomonline/db/src/db.generated"
+import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
 
@@ -16,6 +16,10 @@ export interface UserRepository {
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly db: Kysely<Database>) {}
+  private prepareInsert(data: UserWrite): Insertable<OwUser> {
+    return withInsertJsonValue(data, "allergies")
+  }
+
   async getById(id: UserId) {
     const user = await this.db.selectFrom("owUser").selectAll().where("auth0Id", "=", id).executeTakeFirst()
     return user ? mapToUser(user) : null
@@ -25,27 +29,18 @@ export class UserRepositoryImpl implements UserRepository {
     const users = await this.db.selectFrom("owUser").selectAll().limit(limit).execute()
     return users.map(mapToUser)
   }
-  async create(userWrite: UserWrite) {
-    const ins: Insertable<OwUser> = {
-      ...userWrite,
-      allergies: JSON.stringify(userWrite.allergies),
-    }
-
+  async create(data: UserWrite) {
     const user = await this.db
       .insertInto("owUser")
-      .values(ins)
+      .values(this.prepareInsert(data))
       .returningAll()
       .executeTakeFirstOrThrow()
     return mapToUser(user)
   }
   async update(id: UserId, data: UserWrite) {
-    const ins: Insertable<OwUser> = {
-      ...data,
-      allergies: JSON.stringify(data.allergies),
-    }
     const user = await this.db
       .updateTable("owUser")
-      .set(ins)
+      .set(this.prepareInsert(data))
       .where("auth0Id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()

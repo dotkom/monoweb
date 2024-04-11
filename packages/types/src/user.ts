@@ -21,16 +21,11 @@ export const UserSchema = z.object({
   onBoarded: z.boolean(),
 })
 
-export const NotOnboardedUserSchema = z.object({
-  id: z.string(),
-  email: z.string().email(),
-})
-
 export type UserId = User["auth0Id"]
 export type User = z.infer<typeof UserSchema>
 
+//
 export const UserWriteSchema = UserSchema
-
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export interface StudyYears {

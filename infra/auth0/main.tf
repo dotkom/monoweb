@@ -396,8 +396,6 @@ resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
   client_id = auth0_client.gtx.client_id
   scopes = [
     "read:users",
-    "read:user_idp_tokens",
-    "update:users"
   ]
 }
 
