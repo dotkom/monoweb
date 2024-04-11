@@ -5,7 +5,7 @@ import type {
   PrivacyPermissionsWrite,
   User,
   UserId,
-  UserWrite,
+  UserUpdate,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
 import type { Auth0Service } from "../external/auth0-service"
@@ -16,9 +16,8 @@ import type { UserRepository } from "./user-repository"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
-  getAllUsers(limit: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
+  getAll(limit: number): Promise<User[]>
+  updateUser(id: UserId, payload: Partial<UserUpdate>): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
@@ -36,7 +35,7 @@ export class UserServiceImpl implements UserService {
     private readonly auth0SynchronizationService: Auth0SynchronizationService
   ) {}
 
-  async getAllUsers(limit: number) {
+  async getAll(limit: number) {
     return await this.userRepository.getAll(limit)
   }
 
@@ -48,12 +47,7 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.searchByFullName(searchQuery, take)
   }
 
-  async createUser(input: UserWrite) {
-    const res = await this.userRepository.create(input)
-    return res
-  }
-
-  async updateUser(id: UserId, data: UserWrite) {
+  async updateUser(id: UserId, data: UserUpdate) {
     const result = await this.auth0Repository.updateUser(id, data)
     await this.auth0SynchronizationService.synchronizeUser(result)
     return result

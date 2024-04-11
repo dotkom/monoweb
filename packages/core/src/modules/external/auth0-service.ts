@@ -1,19 +1,18 @@
 import { type Logger, getLogger } from "@dotkomonline/logger"
 import { type User, UserSchema } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserUpdate } from "auth0"
-import type { z } from "zod"
 import { InternalServerError } from "../../error"
 import { GetUserServerError } from "./auth0-errors"
 
 export interface Auth0Service {
   getById(sub: string): Promise<User | null>
-  updateUser(sub: string, userData: UserDataStoredInAppMetadata): Promise<User>
+  updateUser(sub: string, userData: UserUpdate): Promise<User>
 }
 
 export const mapToUser = (payload: User) => UserSchema.parse(payload)
 
 // Until we have gather this data from the user, this fake data is used as the initial data for new users
-const FAKE_USER_EXTRA_SIGNUP_DATA: UserDataStoredInAppMetadata = {
+const FAKE_USER_EXTRA_SIGNUP_DATA: UserUpdate = {
   givenName: "firstName",
   familyName: "lastName",
   name: "firstName lastName",
@@ -26,23 +25,12 @@ const FAKE_USER_EXTRA_SIGNUP_DATA: UserDataStoredInAppMetadata = {
   gender: "male",
 }
 
-// The other fields are managed by auth0, cannot be updated
-export const UserDataStoredInAppMetadata = UserSchema.omit({
-  auth0Id: true,
-  createdAt: true,
-  updatedAt: true,
-  email: true,
-  emailVerified: true,
-}).strict()
-
-export type UserDataStoredInAppMetadata = z.infer<typeof UserDataStoredInAppMetadata>
-
 export class Auth0ServiceImpl implements Auth0Service {
   private readonly logger: Logger = getLogger(Auth0ServiceImpl.name)
   constructor(private readonly client: ManagementClient) {}
 
   // Store all user data in app_metadata
-  async updateUser(sub: string, write: UserDataStoredInAppMetadata) {
+  async updateUser(sub: string, write: UserUpdate) {
     const newUser: UserUpdate = {
       app_metadata: write,
     }

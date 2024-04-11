@@ -44,6 +44,8 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
 
     const position = activeWaitlistAttendees.length
 
+    console.log("Creating waitlist attendee for pool", pool.id, "with position", position, "for user", obj.name)
+
     return this.waitlistAttendeeRepository.create({
       ...obj,
       position,

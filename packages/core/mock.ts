@@ -1,7 +1,7 @@
-import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
+import type { CompanyWrite, JobListingWrite, UserCreate } from "@dotkomonline/types"
 import { addWeeks, addYears } from "date-fns"
 
-export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
+export const getUserMock = (defaults: Partial<UserCreate> = {}): UserCreate => ({
   auth0Id: "8697a463-46fe-49c2-b74c-f6cc98358298",
   studyYear: 0,
   email: "test-mail-that-does-not-exist6123123@gmail.com",

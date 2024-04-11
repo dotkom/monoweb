@@ -1,5 +1,6 @@
 import type { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
+import type { UserUpdate } from "@dotkomonline/types"
 import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
 import type { Kysely } from "kysely"
 import { describe, expect, it, vi } from "vitest"
@@ -15,10 +16,10 @@ import {
 } from "../../user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "../../user/user-repository"
 import { type UserService, UserServiceImpl } from "../../user/user-service"
-import { type Auth0Service, Auth0ServiceImpl, type UserDataStoredInAppMetadata } from "../auth0-service"
+import { type Auth0Service, Auth0ServiceImpl } from "../auth0-service"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 
-const fakeUserMetaData = (write: Partial<UserDataStoredInAppMetadata>): UserDataStoredInAppMetadata => ({
+const fakeUserMetaData = (write: Partial<UserUpdate>): UserUpdate => ({
   onBoarded: write.onBoarded ?? true,
   studyYear: write.studyYear ?? 1,
   phoneNumber: write.phoneNumber ?? "",
@@ -32,7 +33,7 @@ const fakeUserMetaData = (write: Partial<UserDataStoredInAppMetadata>): UserData
 })
 
 const fakeAuth0GetUserResponse = (
-  write: Partial<UserDataStoredInAppMetadata>,
+  write: Partial<UserUpdate>,
   id?: string,
   email?: string
 ): ApiResponse<GetUsers200ResponseOneOfInner> =>
