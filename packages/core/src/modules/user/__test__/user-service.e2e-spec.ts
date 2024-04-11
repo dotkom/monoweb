@@ -1,6 +1,5 @@
-import crypto from "node:crypto"
 import { createEnvironment } from "@dotkomonline/env"
-import type { UserWrite } from "@dotkomonline/types"
+import type { UserCreate } from "@dotkomonline/types"
 import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
@@ -8,22 +7,22 @@ import assert from "../../../../assert"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type ServiceLayer, createServiceLayerForUserTests } from "./core"
 
-const getFakeUser = (write?: Partial<UserWrite>): UserWrite => ({
-  auth0Id: write?.auth0Id ?? crypto.randomUUID(),
+const getFakeUser = (write?: Partial<UserCreate>): UserCreate => ({
   studyYear: write?.studyYear ?? 1,
-  email: write?.email ?? "testuser@local.com",
   name: write?.name ?? "Test User",
   lastSyncedAt: write?.lastSyncedAt ?? new Date(),
   allergies: write?.allergies ?? [],
-  createdAt: write?.createdAt ?? new Date(),
-  emailVerified: write?.emailVerified ?? false,
   familyName: write?.familyName ?? "User",
   gender: write?.gender ?? "other",
   givenName: write?.givenName ?? "Test",
   onBoarded: write?.onBoarded ?? true,
   phoneNumber: write?.phoneNumber ?? "",
   profilePicture: write?.profilePicture ?? "",
+  auth0Id: write?.auth0Id ?? "auth0|test",
+  createdAt: write?.createdAt ?? new Date(),
   updatedAt: write?.updatedAt ?? new Date(),
+  email: write?.email ?? "fake@gmail.com",
+  emailVerified: write?.emailVerified ?? true,
 })
 
 describe("users", () => {
@@ -43,25 +42,8 @@ describe("users", () => {
     await cleanup()
   })
 
-  it("can create new users", async () => {
-    const none = await core.userService.getAllUsers(100)
-    expect(none).toHaveLength(0)
-
-    const user = await core.userService.createUser(getFakeUser())
-
-    const users = await core.userService.getAllUsers(100)
-    expect(users).toContainEqual(user)
-  })
-
-  it("will not allow two users the same subject", async () => {
-    const subject = crypto.randomUUID()
-    const first = await core.userService.createUser(getFakeUser({ auth0Id: subject }))
-    expect(first).toBeDefined()
-    await expect(core.userService.createUser(getFakeUser({ auth0Id: subject }))).rejects.toThrow()
-  })
-
   it("will find users by their user id", async () => {
-    const user = await core.userService.createUser(getFakeUser())
+    const user = await core.userRepository.create(getFakeUser())
 
     const match = await core.userService.getById(user.auth0Id)
     expect(match).toEqual(user)

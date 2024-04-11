@@ -255,5 +255,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     interestGroupService,
     auth0Repository,
     auth0SynchronizationService,
+    userRepository,
   }
 }

@@ -1,5 +1,5 @@
 import { type Logger, getLogger } from "@dotkomonline/logger"
-import type { User, UserWrite } from "@dotkomonline/types"
+import type { User, UserCreate } from "@dotkomonline/types"
 import { ApplicationError } from "../../error"
 import { PROBLEM_DETAILS } from "../../http-problem-details"
 import type { UserRepository } from "../user/user-repository"
@@ -53,7 +53,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       throw new SyncError(`Cannot sync user that is not onboarded. User id: ${userId}`)
     }
 
-    const userData: UserWrite = {
+    const userData: UserCreate = {
       ...auth0User,
       lastSyncedAt: new Date(),
     }

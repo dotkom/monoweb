@@ -125,17 +125,25 @@ export class AttendanceServiceImpl implements AttendanceService {
       this.attendeeRepository.update({ attendancePoolId: mergePool.id }, attendee.id)
     )
 
+    console.log(`Moved ${attendees.length} attendees to pool ${mergePool.id}`)
+
     // move all waitlist attendees to the new pool, sort by position value
     const waitlistAttendees = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
-    const combinedWaitlistAttendees = waitlistAttendees.sort((a, b) => a.position - b.position)
+
+    const combinedWaitlistAttendees = waitlistAttendees.sort((a, b) => a.registeredAt.getDate() - b.registeredAt.getDate())
+
     const updatedWaitlistAttendees = combinedWaitlistAttendees.map((waitlistAttendee, i) =>
-      this.waitlistAttendeeRepository.update({ attendancePoolId: mergePool.id, position: i }, waitlistAttendee.id)
+      this.waitlistAttendeeRepository.update(waitlistAttendee.id, { attendancePoolId: mergePool.id, position: i })
     )
 
     const poolsToDelete = pools.map((pool) => this.attendancePoolRepository.delete(pool.id))
 
-    await Promise.all(updatedAttendees)
-    await Promise.all(poolsToDelete)
-    await Promise.all(updatedWaitlistAttendees)
+    const res = await Promise.all(updatedAttendees)
+    const res2 = await Promise.all(poolsToDelete)
+    const res3 = await Promise.all(updatedWaitlistAttendees)
+
+    console.log("Deleted pools", res2)
+    console.log("Updated attendees", res)
+    console.log("Updated waitlist attendees", res3)
   }
 }

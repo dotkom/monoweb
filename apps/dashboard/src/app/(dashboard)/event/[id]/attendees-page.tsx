@@ -34,7 +34,7 @@ const Page: FC<Props> = ({ attendance }) => {
           onSubmit={(values) => {
             openCreateManualUserAttendModal({
               attendanceId: attendance.id,
-              userId: values.id,
+              userId: values.auth0Id,
             })
           }}
         />

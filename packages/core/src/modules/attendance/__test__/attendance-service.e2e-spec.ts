@@ -1,6 +1,6 @@
 import crypto from "node:crypto"
 import { createEnvironment } from "@dotkomonline/env"
-import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
+import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserCreate } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import assert from "../../../../assert"
@@ -18,7 +18,7 @@ const assertIsAttendee = (attendee: unknown) => {
   expect(attendee).not.toHaveProperty("isPunished")
 }
 
-const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
+const getFakeUser = (write: Partial<UserCreate>): UserCreate => ({
   auth0Id: write.auth0Id ?? crypto.randomUUID(),
   studyYear: write.studyYear ?? 1,
   email: write.email ?? "testuser@local.com",
@@ -86,7 +86,7 @@ const setupFakeFullAttendance = async (
     attendance: _attendance,
   }: {
     pools: Partial<AttendancePoolWrite>[]
-    users: Partial<UserWrite>[]
+    users: Partial<UserCreate>[]
     attendance: Partial<AttendanceWrite>
   }
 ) => {
@@ -108,7 +108,7 @@ const setupFakeFullAttendance = async (
     const _user = _users[i]
     const email = `user${i}@local.com`
     const fakeUser = getFakeUser({ ..._user, studyYear: _user.studyYear, email })
-    const user = await core.userService.createUser(fakeUser)
+    const user = await core.userRepository.create(fakeUser)
     users.push(user)
   }
 
@@ -153,7 +153,7 @@ describe("attendance", () => {
 
     const fakeUser = getFakeUser({ studyYear: 1 })
 
-    const user = await core.userService.createUser(fakeUser)
+    const user = await core.userRepository.create(fakeUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
@@ -287,7 +287,7 @@ describe("attendance", () => {
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
     const extraUser = getFakeUser({ studyYear: 1 })
-    const extraUserCreated = await core.userService.createUser(extraUser)
+    const extraUserCreated = await core.userRepository.create(extraUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
@@ -457,8 +457,7 @@ describe("attendance", () => {
     }).rejects.toThrowError(ExtrasUpdateAfterRegistrationStartError)
   })
 
-  // TODO: not yet implemented in service.
-  it("should correctly handle pool merging at the specified merge time", async () => {
+  const test = async () => {
     const now = new Date("2021-01-02 12:00:00")
 
     const insertPools = [
@@ -471,9 +470,9 @@ describe("attendance", () => {
       { attendee: { studyYear: 3, name: "user32" }, registrationDate: new Date("2021-01-01 15:00:00") }, // gets in
       { attendee: { studyYear: 3, name: "user33" }, registrationDate: new Date("2021-01-01 13:00:00") }, // gets in
 
-      { attendee: { studyYear: 2, name: "user24" }, registrationDate: new Date("2021-01-01 17:00:00") },
-      { attendee: { studyYear: 3, name: "user35" }, registrationDate: new Date("2021-01-01 18:00:00") },
-      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 18:00:00") },
+      { attendee: { studyYear: 2, name: "user24" }, registrationDate: new Date("2021-01-01 17:00:00") }, // gets waitlisted
+      { attendee: { studyYear: 3, name: "user35" }, registrationDate: new Date("2021-01-01 18:00:00") }, // gets waitlisted
+      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 18:00:00") }, // gets waitlisted
     ]
 
     const expectedMergeWaitlistOrder = ["user24", "user35", "user26"]
@@ -501,16 +500,48 @@ describe("attendance", () => {
 
     await core.attendanceService.merge(attendance.id, "Merged pool", [0, 1, 2, 3, 4, 5])
 
-    const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
-    waitlistAttendees?.sort((a, b) => a.position - b.position) // sort by position in increasing order
+    const newWaitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
+    newWaitlistAttendees?.sort((a, b) => a.position - b.position) // sort by position in increasing order
 
-    assert(waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
+    assert(newWaitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
 
-    expect(waitlistAttendees).toHaveLength(3)
+    console.log("new waitlist", newWaitlistAttendees)
 
-    for (let i = 0; i < waitlistAttendees.length; i++) {
-      const waitlistAttendee = waitlistAttendees[i]
+    expect(newWaitlistAttendees).toHaveLength(3)
+
+    for (let i = 0; i < newWaitlistAttendees.length; i++) {
+      const waitlistAttendee = newWaitlistAttendees[i]
       expect(waitlistAttendee.name).toBe(expectedMergeWaitlistOrder[i])
     }
+
+  }
+
+  // TODO: not yet implemented in service.
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
+  })
+  it("should correctly handle pool merging at the specified merge time", async () => {
+    await test()
   })
 })

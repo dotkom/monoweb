@@ -24,9 +24,19 @@ export const UserSchema = z.object({
 export type UserId = User["auth0Id"]
 export type User = z.infer<typeof UserSchema>
 
-//
-export const UserWriteSchema = UserSchema
-export type UserWrite = z.infer<typeof UserWriteSchema>
+// The other fields are not stored in app_metadata in auth0. Updating them will needs to be investigated further.
+export const UserUpdateSchema = UserSchema.omit({
+  auth0Id: true,
+  createdAt: true,
+  updatedAt: true,
+  email: true,
+  emailVerified: true,
+}).strict()
+export type UserUpdate = z.infer<typeof UserUpdateSchema>
+
+// Users cannot be created from monoweb, only synced from auth0. We sync all fields down.
+export const UserCreateSchema = UserSchema
+export type UserCreate = z.infer<typeof UserCreateSchema>
 
 export interface StudyYears {
   [-1]: string
