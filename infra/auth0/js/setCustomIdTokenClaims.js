@@ -5,7 +5,6 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  api.idToken.setCustomClaim("userId", event.user.user_id)
   api.idToken.setCustomClaim("gender", event.user.user_metadata.gender)
   api.idToken.setCustomClaim("studyYear", event.user.app_metadata.studyYear)
   api.idToken.setCustomClaim("phoneNumber", event.user.app_metadata.phoneNumber)
@@ -14,10 +13,5 @@ exports.onExecutePostLogin = async (event, api) => {
   api.idToken.setCustomClaim("givenName", event.user.app_metadata.givenName)
   api.idToken.setCustomClaim("familyName", event.user.app_metadata.familyName)
   api.idToken.setCustomClaim("name", event.user.app_metadata.name)
-  api.idToken.setCustomClaim("emailVerified", event.user.app_metadata.emailVerified)
   api.idToken.setCustomClaim("onBoarded", event.user.app_metadata.onBoarded)
-
-  api.idToken.setCustomClaim("id", event.user.user_id)
-  api.idToken.setCustomClaim("user_id", event.user.user_id)
-  api.idToken.setCustomClaim("sub", event.user.user_id)
 }
