@@ -5,13 +5,18 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  api.idToken.setCustomClaim("gender", event.user.user_metadata.gender)
-  api.idToken.setCustomClaim("studyYear", event.user.app_metadata.studyYear)
-  api.idToken.setCustomClaim("phoneNumber", event.user.app_metadata.phoneNumber)
-  api.idToken.setCustomClaim("allergies", event.user.app_metadata.allergies)
-  api.idToken.setCustomClaim("profilePicture", event.user.app_metadata.profilePicture)
-  api.idToken.setCustomClaim("givenName", event.user.app_metadata.givenName)
-  api.idToken.setCustomClaim("familyName", event.user.app_metadata.familyName)
-  api.idToken.setCustomClaim("name", event.user.app_metadata.name)
-  api.idToken.setCustomClaim("onBoarded", event.user.app_metadata.onBoarded)
+  const namespace = "https://online.ntnu.no"
+  const { gender, studyYear, phoneNumber, allergies, profilePicture, givenName, familyName, name, onBoarded } =
+    event.user.app_metadata
+
+  api.idToken.setCustomClaim(`${namespace}/givenName`, givenName)
+  api.idToken.setCustomClaim(`${namespace}/familyName`, familyName)
+  api.idToken.setCustomClaim(`${namespace}/name`, name)
+  api.idToken.setCustomClaim(`${namespace}/gender`, gender)
+  api.idToken.setCustomClaim(`${namespace}/phoneNumber`, phoneNumber)
+
+  api.idToken.setCustomClaim(`${namespace}/studyYear`, studyYear)
+  api.idToken.setCustomClaim(`${namespace}/allergies`, allergies)
+  api.idToken.setCustomClaim(`${namespace}/profilePicture`, profilePicture)
+  api.idToken.setCustomClaim(`${namespace}/onBoarded`, onBoarded)
 }
