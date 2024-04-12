@@ -121,7 +121,7 @@ export interface Event {
   status: EventStatus
   subtitle: string | null
   title: string
-  type: EventType | null
+  type: EventType
   updatedAt: Generated<Timestamp>
 }
 
