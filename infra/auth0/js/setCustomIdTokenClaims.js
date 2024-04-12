@@ -6,10 +6,10 @@
  */
 exports.onExecutePostLogin = async (event, api) => {
   const namespace = "https://online.ntnu.no"
-  const { gender, studyYear, phoneNumber, allergies } = event.user.app_metadata
+  const { gender, study_year, phone, allergies } = event.user.app_metadata
 
   api.idToken.setCustomClaim(`${namespace}/gender`, gender)
-  api.idToken.setCustomClaim(`${namespace}/phone_number`, phoneNumber)
-  api.idToken.setCustomClaim(`${namespace}/study_year`, studyYear)
+  api.idToken.setCustomClaim(`${namespace}/phone`, phone)
+  api.idToken.setCustomClaim(`${namespace}/study_year`, study_year)
   api.idToken.setCustomClaim(`${namespace}/allergies`, allergies)
 }
