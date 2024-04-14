@@ -42,7 +42,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdList
   return (
     <a
       href={`/career/${career.id}`}
-      className="border-slate-8 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
+      className="border-slate-3 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
     >
       <div className="flex flex-row items-center gap-8">
         <Image src={career.company.image || ""} width={140} height={80} alt={`${career.company.name}’s job posting`} />

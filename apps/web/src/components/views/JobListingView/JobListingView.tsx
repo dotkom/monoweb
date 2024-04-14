@@ -1,6 +1,5 @@
 import type { JobListing } from "@dotkomonline/types"
 import { type FC, useState } from "react"
-import OnlineIcon from "../../atoms/OnlineIcon"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
 import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
@@ -21,21 +20,21 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
     { name: "Deltid", checked: false },
     { name: "Fulltid", checked: false },
     { name: "Sommerjobb/internship", checked: false },
+    { name: "Annet", checked: false },
   ])
   const [chosenSort, setChosenSort] = useState<string>("Frist")
 
   return (
     <div>
-      <div className="border-slate-7 left-0 z-0 w-full border-b shadow-sm">
-        <div className="flex flex-row justify-evenly gap-96 p-5">
+      <div className="border-slate-7 left-0 z-0 w-full border-b">
+        <div className="flex flex-row gap-96 py-5">
           <div className="flex flex-col">
-            <h2 className="mt-4 border-b-0">Karrieremuligheter</h2>
+            <h2 className="mt-4 text-2xl font-bold border-b-0">Karrieremuligheter</h2>
             <p className="text-slate-9 pt-2">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
           </div>
-          <OnlineIcon className="float-right h-16 w-16" />
         </div>
       </div>
-      <div className="mb-10 mt-10 flex w-screen flex-row justify-center gap-x-5">
+      <div className="mb-10 mt-10 flex flex-row justify-center gap-x-12">
         <CompanyFiltersContainer
           chosenLocation={chosenLocation}
           setChosenLocation={setChosenLocation}
@@ -46,7 +45,7 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
           chosenSort={chosenSort}
           setChosenSort={setChosenSort}
         />
-        <div className="w-1/2">
+        <div className="w-2/3">
           <div className="flex flex-col gap-6">
             {props.careers
               .filter((jobListing) =>
