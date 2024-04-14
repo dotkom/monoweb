@@ -19,7 +19,7 @@ const assertIsAttendee = (attendee: unknown) => {
 }
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
-  id: write.id ?? crypto.randomUUID(),
+  auth0Id: write.auth0Id ?? crypto.randomUUID(),
   studyYear: write.studyYear ?? 1,
   email: write.email ?? "testuser@local.com",
   name: write.name ?? "Test User",
