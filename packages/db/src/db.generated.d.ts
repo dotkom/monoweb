@@ -210,14 +210,17 @@ export interface Offline {
 }
 
 export interface OwUser {
-  auth0Sub: string
-  createdAt: Generated<Timestamp>
+  allergies: Json
   email: string
-  id: Generated<string>
-  lastSyncedAt: Generated<Timestamp>
+  familyName: string
+  gender: string | null
+  givenName: string
+  id: string
+  lastSyncedAt: Generated<Timestamp | null>
   name: string
-  studyYear: Generated<number>
-  updatedAt: Generated<Timestamp>
+  phone: string | null
+  picture: string | null
+  studyYear: number
 }
 
 export interface Payment {
