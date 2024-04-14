@@ -261,31 +261,6 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  apps/repl:
-    dependencies:
-      '@dotkomonline/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@dotkomonline/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
-      tsx:
-        specifier: ^3.14.0
-        version: 3.14.0
-      typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
-
   apps/rif:
     dependencies:
       '@dotkomonline/env':
@@ -563,9 +538,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      zod:
-        specifier: ^3.22.4
-        version: 3.22.4
     devDependencies:
       '@biomejs/biome':
         specifier: 1.6.4
