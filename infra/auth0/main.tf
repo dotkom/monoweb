@@ -175,6 +175,7 @@ locals {
     onlineweb-frontend   = data.auth0_client.onlineweb_frontend
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
+    appkom-autobank      = data.auth0_client.appkom_autobank
   }
 
   monoweb = {
