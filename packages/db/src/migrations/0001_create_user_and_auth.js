@@ -1,12 +1,12 @@
 import { sql } from "kysely"
+import { createTableWithDefaults } from "../utils"
 
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
   const query = sql`CREATE EXTENSION IF NOT EXISTS ulid;`.compile(db)
   await db.executeQuery(query)
-  await db.schema
-    .createTable("ow_user")
-    .addColumn("id", "varchar(255)", (col) => col.notNull().unique())
+  await createTableWithDefaults("ow_user", { id: true }, db.schema)
+    .addColumn("auth0_id", "varchar(255)", (col) => col.notNull().unique())
     .addColumn("email", "varchar(255)", (col) => col.unique().notNull())
     .addColumn("name", "varchar(255)", (col) => col.notNull())
     .addColumn("family_name", "varchar(255)", (col) => col.notNull())
