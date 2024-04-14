@@ -1,5 +1,4 @@
-import type { Attendance, AttendanceId, AttendanceWrite, Extras } from "@dotkomonline/types"
-import { IllegalStateError } from "../../error"
+import type { Attendance, AttendanceId, AttendanceWrite, Extras, WaitlistAttendee } from "@dotkomonline/types"
 import {
   AttendanceDeletionError,
   AttendanceNotFound,
@@ -85,6 +84,11 @@ export class AttendanceServiceImpl implements AttendanceService {
     return this.attendanceRepository.getById(id)
   }
 
+  async getAllWaitlistAttendeesOrdered(attendanceId: AttendanceId): Promise<WaitlistAttendee[]> {
+    const waitlistAttendeesUnordered = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
+    return waitlistAttendeesUnordered.sort((a, b) => a.registeredAt.getTime() - b.registeredAt.getTime())
+  }
+
   async merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
     if (attendance === null) {
@@ -93,18 +97,16 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
 
-    // Create a merge pool with combined capacities and rules
-    const combinedCapacity = pools.reduce((acc, pool) => acc + pool.capacity, 0)
+    // Check that the year criteria of the merge pool contains all of the year criteria of the pools being merged
     const combinedCriteria = Array.from(new Set(pools.flatMap((pool) => pool.yearCriteria)))
-
-    // check that yearCriteria contains all of the combined year criteria
     if (!combinedCriteria.every((criteria) => yearCriteria.includes(criteria))) {
       throw new InvalidParametersError(
-        `Merge pool must contain the combined year criteria of the pools being merged (${combinedCriteria.join(",")})`
+        `Merge pool must contain the combined year criteria of the pools being merged: (${combinedCriteria.join(",")})`
       )
     }
 
-    const insert = await this.attendancePoolRepository.create({
+    const combinedCapacity = pools.reduce((acc, pool) => acc + pool.capacity, 0)
+    const mergePool = await this.attendancePoolRepository.create({
       attendanceId,
       capacity: combinedCapacity,
       yearCriteria: yearCriteria,
@@ -113,29 +115,17 @@ export class AttendanceServiceImpl implements AttendanceService {
       type: "MERGE",
     })
 
-    // Get the number of attendees in the new pool
-    const mergePool = await this.attendancePoolRepository.get(insert.id)
-
-    if (mergePool === null) {
-      throw new IllegalStateError("Pool not found after insert")
-    }
-
     const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const updatedAttendees = attendees.map((attendee) =>
-      this.attendeeRepository.update({ attendancePoolId: mergePool.id }, attendee.id)
+    const waitlistAttendees = await this.getAllWaitlistAttendeesOrdered(attendanceId)
+
+    await Promise.all(
+      attendees.map((attendee) => this.attendeeRepository.update({ attendancePoolId: mergePool.id }, attendee.id))
     )
-
-    // move all waitlist attendees to the new pool, sort by position value
-    const waitlistAttendees = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
-    const combinedWaitlistAttendees = waitlistAttendees.sort((a, b) => a.position - b.position)
-    const updatedWaitlistAttendees = combinedWaitlistAttendees.map((waitlistAttendee, i) =>
-      this.waitlistAttendeeRepository.update({ attendancePoolId: mergePool.id, position: i }, waitlistAttendee.id)
+    await Promise.all(
+      waitlistAttendees.map((waitlistAttendee, i) =>
+        this.waitlistAttendeeRepository.update({ attendancePoolId: mergePool.id, position: i }, waitlistAttendee.id)
+      )
     )
-
-    const poolsToDelete = pools.map((pool) => this.attendancePoolRepository.delete(pool.id))
-
-    await Promise.all(updatedAttendees)
-    await Promise.all(poolsToDelete)
-    await Promise.all(updatedWaitlistAttendees)
+    await Promise.all(pools.map((pool) => this.attendancePoolRepository.delete(pool.id)))
   }
 }
