@@ -30,7 +30,7 @@ export function filterEmployment(jobListing: JobListing, chosenEmployments: Empl
     return true
   }
   return chosenEmployments.some((employment) => {
-    if (employment.checked && jobListing.employment == employment.name) {
+    if (employment.checked && jobListing.employment === employment.name) {
       return true
     }
     return false
@@ -41,13 +41,13 @@ export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chos
   if (chosenSort === "Frist") {
     if (jobListing1.deadline?.getTime() == null) {
       return -1
-    } else if (jobListing2.deadline?.getTime() == null) {
+    }if (jobListing2.deadline?.getTime() == null) {
       return 1
     }
     return jobListing1.deadline.getTime() - jobListing2.deadline.getTime()
-  } else if (chosenSort === "Påmeldingsstart") {
+  }if (chosenSort === "Påmeldingsstart") {
     return jobListing1.start.getTime() - jobListing2.start.getTime()
-  } else if (chosenSort === "Slutt") {
+  }if (chosenSort === "Slutt") {
     return jobListing1.end.getTime() - jobListing2.end.getTime()
   }
   return 0
