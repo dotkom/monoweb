@@ -32,6 +32,40 @@ data "auth0_client" "appkom_opptak" {
   client_id = auth0_client.appkom_opptak.client_id
 }
 
+resource "auth0_client" "appkom_autobank" {
+  allowed_clients = []
+  allowed_logout_urls = {
+    "dev" = ["http://localhost:3000/"]
+    "stg" = ["https://autobank-frontend.vercel.app/"]
+    "prd" = []
+  }[terraform.workspace]
+  allowed_origins = []
+  app_type        = "spa"
+  callbacks = {
+    "dev" = ["http://localhost:3000/authentication/callback"]
+    "stg" = ["https://autobank-frontend.vercel.app/authentication/callback"]
+    "prd" = []
+  }[terraform.workspace]
+  grant_types = ["authorization_code", "refresh_token"]
+  name        = "Autobank${local.name_suffix[terraform.workspace]}"
+
+  is_first_party  = true
+  oidc_conformant = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
+data "auth0_client" "appkom_autobank" {
+  client_id = auth0_client.appkom_autobank.client_id
+}
+
 resource "auth0_client" "appkom_events_app" {
   description     = "Appkom sin Online Events app"
   allowed_clients = []
