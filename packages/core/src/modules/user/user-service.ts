@@ -8,17 +8,16 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
+import type { Auth0Service } from "../external/auth0-service"
+import type { Auth0SynchronizationService } from "../external/auth0-synchronization-service"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
-  getUserById(id: UserId): Promise<User | undefined>
-  getUsersById(ids: UserId[]): Promise<User[] | undefined>
-  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
-  getAllUsers(limit: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
+  getById(id: UserId): Promise<User | null>
+  getAll(limit: number): Promise<User[]>
+  updateUser(id: UserId, payload: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
@@ -31,42 +30,27 @@ export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
+    private readonly auth0Repository: Auth0Service,
+    private readonly auth0SynchronizationService: Auth0SynchronizationService
   ) {}
 
-  async getAllUsers(limit: number) {
+  async getAll(limit: number) {
     return await this.userRepository.getAll(limit)
   }
 
-  async getUsersById(ids: UserId[]) {
-    const users = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
-    if (users.includes(undefined)) {
-      throw new Error("User from DB is undefined")
-    }
-    return users as User[]
-  }
-
-  async getUserBySubject(id: User["auth0Sub"]) {
-    return this.userRepository.getBySubject(id)
+  async getById(id: User["id"]) {
+    return this.userRepository.getById(id)
   }
 
   async searchByFullName(searchQuery: string, take: number) {
     return this.userRepository.searchByFullName(searchQuery, take)
   }
 
-  async getUserById(id: UserId) {
-    const user = await this.userRepository.getById(id)
-    return user
-  }
-
-  async createUser(input: UserWrite) {
-    const res = await this.userRepository.create(input)
-    return res
-  }
-
-  async updateUser(id: UserId, data: Partial<UserWrite>) {
-    const res = await this.userRepository.update(id, data)
-    return res
+  async updateUser(id: UserId, data: UserWrite) {
+    const result = await this.auth0Repository.updateUser(id, data)
+    await this.auth0SynchronizationService.synchronizeUser(result)
+    return result
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {

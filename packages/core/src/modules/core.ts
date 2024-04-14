@@ -31,7 +31,7 @@ import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
-import { type Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
+import { type Auth0Service, Auth0ServiceImpl } from "./external/auth0-service"
 import {
   type Auth0SynchronizationService,
   Auth0SynchronizationServiceImpl,
@@ -111,7 +111,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   }
 
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+  const auth0Repository: Auth0Service = new Auth0ServiceImpl(auth0ManagementClient)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -146,10 +146,18 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
+
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userRepository,
+    auth0Repository
+  )
+
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository
+    notificationPermissionsRepository,
+    auth0Repository,
+    auth0SynchronizationService
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -220,10 +228,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
-  )
 
   return {
     userService,
@@ -251,5 +255,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     interestGroupService,
     auth0Repository,
     auth0SynchronizationService,
+    userRepository,
   }
 }
