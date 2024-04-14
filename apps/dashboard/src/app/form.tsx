@@ -338,6 +338,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   })
 
   const components = entriesOf(fields).map(([name, fc]) => {
+    console.log(name, fc)
     if (!fc) {
       throw new Error()
     }

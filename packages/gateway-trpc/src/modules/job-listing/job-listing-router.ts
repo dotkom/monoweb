@@ -11,7 +11,7 @@ export const jobListingRouter = t.router({
     .input(
       z.object({
         id: JobListingSchema.shape.id,
-        input: JobListingWriteSchema,
+        input: JobListingWriteSchema
       })
     )
     .mutation(async ({ input: changes, ctx }) => ctx.jobListingService.updateJobListingById(changes.id, changes.input)),

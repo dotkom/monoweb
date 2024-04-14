@@ -19,10 +19,13 @@ export const JobListingSchema = z.object({
   locations: z.array(z.string()),
 })
 
-export const JobListingWriteSchema = JobListingSchema.partial({
+export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
   createdAt: true,
-})
+  company: true,
+}).extend({
+  companyId: z.string().ulid(),
+}).strict()
 
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]

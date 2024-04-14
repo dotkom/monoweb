@@ -7,15 +7,22 @@ export const JobListingEditCard: FC = () => {
   const { jobListing } = useJobListingDetailsContext()
   const edit = useEditJobListingMutation()
 
+  const defaultValues = {
+    ...jobListing,
+    companyId: jobListing.company.id,
+    company: undefined
+  }
+
   const FormComponent = useJobListingWriteForm({
-    label: "Oppdater stillingsannonse",
+    label: "Endre stillingsannonse",
     onSubmit: (data) => {
+      console.log(data)
       edit.mutate({
         id: jobListing.id,
         input: data,
       })
     },
-    defaultValues: jobListing,
+    defaultValues,
   })
   return <FormComponent />
 }

@@ -13,6 +13,19 @@ export interface EmploymentCheckbox {
   checked: boolean
 }
 
+const getLocations = (jobListings: JobListing[]) => {
+  const locations: string[] = []
+  for (const jobListing of jobListings) {
+    for(const location of jobListing.locations) {
+      if(!locations.includes(location)) {
+        locations.push(location)
+      }
+    }
+  }
+  
+  return locations
+}
+
 const JobListingView: FC<CareerProps> = (props: CareerProps) => {
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")

@@ -13,7 +13,7 @@ interface CompanyFiltersContainer {
 }
 
 const places = ["Alle", "Oslo", "Bergen", "Trondheim", "Tromsø", "Fredrikstad", "Annet"]
-const sorter = ["Frist", "Påmeldingsstart", "Opprettelse"]
+const sortCategories = ["Frist", "Påmeldingsstart", "Opprettelse"]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
   <div className="border-slate-3  h-fit w-72 rounded-lg border shadow-b-sm">
@@ -35,8 +35,8 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
       <div className="mx-4">
         <p className="mt-4 font-semibold">Jobbtyper</p>
         <div>
-          {props.chosenEmployments.map((content, index) => (
-            <div key={index} className="flex-col rounded-md py-2 ">
+          {props.chosenEmployments.map((content) => (
+            <div key={content.name} className="flex-col rounded-md py-2 ">
               <input
                 className="accent-blue-12 mr-2 align-middle"
                 type="checkbox"
@@ -44,7 +44,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
                   content.checked = e.target.checked
                   props.setChosenEmployments([...props.chosenEmployments])
                 }}
-              ></input>
+               />
               <div className=" inline-block text-base">{content.name}</div>
             </div>
           ))}
@@ -61,8 +61,8 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
           name="places"
         >
-          {places.map((place, key) => (
-            <option key={key}>{place}</option>
+          {places.map((place) => (
+            <option key={place}>{place}</option>
           ))}
         </select>
       </div>
@@ -77,8 +77,8 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
           name="kategorier"
         >
-          {sorter.map((kategori, key) => (
-            <option key={key}>{kategori}</option>
+          {sortCategories.map((category) => (
+            <option key={category}>{category}</option>
           ))}
         </select>
       </div>
