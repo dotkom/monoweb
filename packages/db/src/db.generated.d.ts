@@ -211,17 +211,19 @@ export interface Offline {
 
 export interface OwUser {
   allergies: Json;
-  auth0Id: string;
+  auth0Sub: string;
+  createdAt: Generated<Timestamp>;
   email: string;
   familyName: string;
   gender: string | null;
   givenName: string;
   id: Generated<string>;
-  lastSyncedAt: Generated<Timestamp | null>;
+  lastSyncedAt: Generated<Timestamp>;
   name: string;
   phone: string | null;
   picture: string | null;
-  studyYear: number;
+  studyYear: Generated<number>;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Payment {
