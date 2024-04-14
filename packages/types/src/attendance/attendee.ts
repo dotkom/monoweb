@@ -16,7 +16,7 @@ export const AttendeeSchema = z.object({
 
   attendanceId: z.string().ulid(),
   attendancePoolId: z.string().ulid(),
-  userId: z.string().ulid(),
+  userId: z.string(),
 
   attended: z.boolean(),
   extrasChoices: ExtrasChoices,

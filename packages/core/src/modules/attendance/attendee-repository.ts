@@ -84,9 +84,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...attendee,
         user: {
           ...user,
-          createdAt: new Date(user.createdAt),
-          updatedAt: new Date(user.updatedAt),
-          lastSyncedAt: new Date(user.lastSyncedAt),
+          lastSyncedAt: user.lastSyncedAt ? new Date(user.lastSyncedAt) : null,
         },
         extrasChoices,
       }
@@ -97,9 +95,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...value,
         user: {
           ...value.user[0],
-          createdAt: new Date(value.user[0].createdAt),
-          updatedAt: new Date(value.user[0].updatedAt),
-          lastSyncedAt: new Date(value.user[0].lastSyncedAt),
+          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
         },
       }))
       .map(mapToAttendeeWithUser)
@@ -121,8 +117,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...value,
         user: {
           ...value.user[0],
-          createdAt: new Date(value.user[0].createdAt),
-          updatedAt: new Date(value.user[0].updatedAt),
           lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
         },
       }))

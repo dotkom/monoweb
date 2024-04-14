@@ -2,26 +2,23 @@ import { z } from "zod"
 
 export const UserSchema = z.object({
   id: z.string(),
-  createdAt: z.date(),
-  auth0Sub: z.string(),
-  studyYear: z.number().int().min(-1).max(6),
-  updatedAt: z.date(),
   email: z.string().email(),
-  // givenName: z.string(),
-  // familyName: z.string(),
+  givenName: z.string(),
+  familyName: z.string(),
+  gender: z.enum(["male", "female", "other"]),
   name: z.string(),
-  lastSyncedAt: z.date(),
+  phone: z.string().nullable(),
+  studyYear: z.number().int().min(-1).max(6),
+  allergies: z.array(z.string()),
+  picture: z.string().nullable(),
+  lastSyncedAt: z.date().nullable(),
 })
 
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>
 
-export const UserWriteSchema = UserSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-})
-
+// The other fields are not stored in app_metadata in auth0. Updating them will needs to be investigated further.
+export const UserWriteSchema = UserSchema
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export interface StudyYears {

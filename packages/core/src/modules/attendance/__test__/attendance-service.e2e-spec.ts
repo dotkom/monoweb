@@ -19,11 +19,17 @@ const assertIsAttendee = (attendee: unknown) => {
 }
 
 const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
-  auth0Sub: write.auth0Sub ?? crypto.randomUUID(),
+  id: write.id ?? crypto.randomUUID(),
   studyYear: write.studyYear ?? 1,
   email: write.email ?? "testuser@local.com",
   name: write.name ?? "Test User",
   lastSyncedAt: write.lastSyncedAt ?? new Date(),
+  allergies: write.allergies ?? [],
+  familyName: write.familyName ?? "User",
+  gender: write.gender ?? "other",
+  givenName: write.givenName ?? "Test",
+  phone: write.phone ?? "",
+  picture: write.picture ?? "",
 })
 
 const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => ({
@@ -98,7 +104,7 @@ const setupFakeFullAttendance = async (
     const _user = _users[i]
     const email = `user${i}@local.com`
     const fakeUser = getFakeUser({ ..._user, studyYear: _user.studyYear, email })
-    const user = await core.userService.createUser(fakeUser)
+    const user = await core.userRepository.create(fakeUser)
     users.push(user)
   }
 
@@ -143,7 +149,7 @@ describe("attendance", () => {
 
     const fakeUser = getFakeUser({ studyYear: 1 })
 
-    const user = await core.userService.createUser(fakeUser)
+    const user = await core.userRepository.create(fakeUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
@@ -277,7 +283,7 @@ describe("attendance", () => {
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
     const extraUser = getFakeUser({ studyYear: 1 })
-    const extraUserCreated = await core.userService.createUser(extraUser)
+    const extraUserCreated = await core.userRepository.create(extraUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
