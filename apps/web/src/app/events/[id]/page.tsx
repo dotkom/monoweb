@@ -3,14 +3,12 @@
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
 import type { Session } from "next-auth"
-import { SessionProvider, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import type { FC } from "react"
 import { AttendanceBox } from "../components/AttendanceBox"
 import { EventInfoBox } from "../components/EventInfoBox"
 import { LocationBox } from "../components/LocationBox"
 import { OrganizerBox } from "../components/OrganizerBox"
-import { useGetAttendee } from "../components/queries"
-import { QRCodeSVG } from "qrcode.react"
 import TicketBox from "../components/TicketBox"
 
 /*
@@ -24,9 +22,7 @@ export const generateStaticParams = async () => {
  */
 
 const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
-  return (
-      <EventDetailPageInner id={id} />
-  )
+  return <EventDetailPageInner id={id} />
 }
 
 const EventDetailPageInner = ({ id }: { id: string }) => {
@@ -85,14 +81,13 @@ interface WithAttendanceProps {
 }
 
 const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
-    const { data: attendee } = useGetAttendee({ userId: user.id, attendanceId: attendance.id})
   return (
     <div>
       <div className="flex w-full">
         <EventInfoBox event={event} />
         <div className="flex flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
-          {attendee && <TicketBox attendee={attendee} />}
+          <TicketBox userid={user.id} />
           {committees.length && <OrganizerBox committees={committees} />}
           {event.location && <LocationBox location={event.location} />}
         </div>

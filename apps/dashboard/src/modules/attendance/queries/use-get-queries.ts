@@ -1,4 +1,5 @@
 import type { AttendanceId } from "@dotkomonline/types"
+import { useQueryNotification } from "src/app/notifications"
 import { trpc } from "../../../utils/trpc"
 
 export const usePoolsGetQuery = (id: AttendanceId) => {
@@ -32,4 +33,29 @@ export const useWaitlistAttendeesGetQuery = (id: AttendanceId) => {
     id,
   })
   return { attendees, ...query }
+}
+
+export const useHandleQrCodeRegistration = () => {
+  const notification = useQueryNotification()
+  const mutation = trpc.event.attendance.handleQrCodeRegistration.useMutation({
+    onMutate: () => {
+      notification.loading({
+        title: "Registrerer bruker",
+        message: "Brukeren blir registrert på arrangementet.",
+      })
+    },
+    onSuccess: () => {
+      notification.complete({
+        title: "Registrering vellykket",
+        message: "Bruker ble registrert på arrangementet.",
+      })
+    },
+    onError: (err) => {
+      notification.fail({
+        title: "Feil oppsto",
+        message: `En feil oppsto under registrering: ${err.toString()}.`,
+      })
+    },
+  })
+  return mutation.mutateAsync
 }
