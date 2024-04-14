@@ -1,8 +1,30 @@
 import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
+import type { GetUsers200ResponseOneOfInner } from "auth0"
 import { addWeeks, addYears } from "date-fns"
+import { ulid } from "ulid"
+
+export const getAuth0UserMock = (write?: Partial<UserWrite>): GetUsers200ResponseOneOfInner =>
+  ({
+    user_id: write?.auth0Id ?? "auth0|test",
+    email: write?.email ?? "fakeemail@gmai.com",
+    given_name: write?.givenName ?? "Ola",
+    family_name: write?.familyName ?? "Nordmann",
+    name: write?.name ?? "Ola Mellomnavn Nordmann",
+    picture: write?.picture ?? "https://example.com/image.jpg",
+    app_metadata: {
+      study_year: write?.studyYear ?? -1,
+      last_synced_at: write?.lastSyncedAt ?? new Date(),
+      ow_user_id: write?.id ?? ulid(),
+    },
+    user_metadata: {
+      allergies: write?.allergies ?? ["gluten"],
+      gender: write?.gender ?? "male",
+      phone: write?.phone ?? "004712345678",
+    },
+  }) as unknown as GetUsers200ResponseOneOfInner
 
 export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
-  id: "8697a463-46fe-49c2-b74c-f6cc98358298",
+  auth0Id: "8697a463-46fe-49c2-b74c-f6cc98358298",
   studyYear: 0,
   email: "test-mail-that-does-not-exist6123123@gmail.com",
   givenName: "Test",

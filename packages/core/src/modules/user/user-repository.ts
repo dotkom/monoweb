@@ -1,6 +1,6 @@
 import type { Database } from "@dotkomonline/db"
 import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
-import { type Kysely, type Selectable, sql } from "kysely"
+import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
 import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
@@ -33,7 +33,7 @@ export class UserRepositoryImpl implements UserRepository {
   async create(data: UserWrite) {
     const user = await this.db
       .insertInto("owUser")
-      .values(withInsertJsonValue(data, "allergies"))
+      .values(this.mapInsert(data))
       .returningAll()
       .executeTakeFirstOrThrow()
     return mapToUser(user)
@@ -41,7 +41,7 @@ export class UserRepositoryImpl implements UserRepository {
   async update(id: UserId, data: UserWrite) {
     const user = await this.db
       .updateTable("owUser")
-      .set(withInsertJsonValue(data, "allergies"))
+      .set(this.mapInsert(data))
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
@@ -55,5 +55,15 @@ export class UserRepositoryImpl implements UserRepository {
     )
     const users = await query.execute()
     return users.map(mapToUser)
+  }
+
+  private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
+    return withInsertJsonValue(
+      {
+        ...data,
+        lastSyncedAt: data.lastSyncedAt ? data.lastSyncedAt : new Date(),
+      },
+      "allergies"
+    )
   }
 }

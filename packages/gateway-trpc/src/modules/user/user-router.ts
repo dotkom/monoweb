@@ -14,7 +14,7 @@ export const userRouter = t.router({
         data: UserWriteSchema,
       })
     )
-    .mutation(async ({ input: changes, ctx }) => ctx.userService.updateUser(changes.id, changes.data)),
+    .mutation(async ({ input: changes, ctx }) => ctx.userService.updateUser(changes.data)),
   getPrivacyPermissionssByUserId: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),

@@ -30,7 +30,7 @@ const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> =
 export interface UserService {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
-  updateUser(id: UserId, payload: UserWrite): Promise<User>
+  updateUser(payload: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
@@ -88,8 +88,8 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.searchByFullName(searchQuery, take)
   }
 
-  async updateUser(id: UserId, data: UserWrite) {
-    const result = await this.auth0Repository.update(id, data)
+  async updateUser(data: UserWrite) {
+    const result = await this.auth0Repository.update(data.auth0Id, data)
     await this.auth0SynchronizationService.synchronizeUser(result)
     return result
   }

@@ -1,10 +1,11 @@
 import type { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
-import type { UserWrite } from "@dotkomonline/types"
 import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import { addHours } from "date-fns"
 import type { Kysely } from "kysely"
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
+import { getAuth0UserMock } from "../../../../mock"
 import { createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import {
   type NotificationPermissionsRepository,
@@ -19,35 +20,7 @@ import { type UserService, UserServiceImpl } from "../../user/user-service"
 import { type Auth0Service, Auth0ServiceImpl } from "../auth0-service"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 
-const getFakeAuth0User = (write?: Partial<UserWrite>): GetUsers200ResponseOneOfInner =>
-  ({
-    user_id: write?.id ?? "auth0|test",
-    email: write?.email ?? "fakeemail@gmai.com",
-    given_name: write?.givenName ?? "Ola",
-    family_name: write?.familyName ?? "Nordmann",
-    name: write?.name ?? "Ola Mellomnavn Nordmann",
-    picture: write?.picture ?? "https://example.com/image.jpg",
-    app_metadata: {
-      study_year: write?.studyYear ?? -1,
-      last_synced_at: write?.lastSyncedAt ?? new Date(),
-    },
-    user_metadata: {
-      allergies: write?.allergies ?? ["gluten"],
-      gender: write?.gender ?? "male",
-      phone: write?.phone ?? "004712345678",
-    },
-  }) as unknown as GetUsers200ResponseOneOfInner
-
 // What's saved to auth0 on sign up with only email being gathered
-const getFakeAuth0UserWithOnlyEmailAndName = (write?: Partial<UserWrite>): GetUsers200ResponseOneOfInner =>
-  ({
-    user_id: write?.id ?? "auth0|test",
-    email: write?.email ?? "fakeemail@gmai.com",
-    name: write?.name ?? "fakeemail@gmai.com",
-    app_metadata: {},
-    user_metadata: {},
-  }) as unknown as GetUsers200ResponseOneOfInner
-
 const getFakeAuth0UserResponse = (
   data: GetUsers200ResponseOneOfInner,
   status?: number,
@@ -101,40 +74,31 @@ describe("auth0 synchronization service", () => {
     const auth0Mock = mockDeep<ManagementClient>()
     const core = await createServiceLayer({ db: context.kysely, auth0MgmtClient: auth0Mock })
 
-    const id = "auth0|00000000-0000-0000-0000-000000000000"
+    const auth0Id = "auth0|00000000-0000-0000-0000-000000000000"
     const email = "starting-email@local.com"
+    const now = new Date("2021-01-01T00:00:00Z")
 
-    const initialPostSignupAuth0User = getFakeAuth0UserResponse(
-      getFakeAuth0UserWithOnlyEmailAndName({ email, id }),
-      200
-    )
-
-    const updatedWithFakeDataUser = getFakeAuth0UserResponse(getFakeAuth0User({ email, id }), 200)
-
-    // The user has signed up thorugh Auth0 sign up page.
-    auth0Mock.users.get.mockResolvedValue(initialPostSignupAuth0User)
-    auth0Mock.users.update.mockResolvedValue(updatedWithFakeDataUser)
+    const updatedWithFakeDataUser = getFakeAuth0UserResponse(getAuth0UserMock({ email, auth0Id }), 200)
+    auth0Mock.users.get.mockResolvedValue(updatedWithFakeDataUser)
 
     // first sync down to the local db. Should create user row in the db and populate with fake data.
-    const syncedUser = await core.auth0SynchronizationService.handleUserSync(id)
+    const syncedUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, now)
 
-    const dbUser = await core.userService.getById(id)
+    const dbUser = await core.userService.getById(syncedUser.id)
     expect(dbUser).toEqual(syncedUser)
 
     // Simulate an email change in the Auth0 dashboard or something.
     const updatedMail = "changed-in-dashboard@local.com"
-    auth0Mock.users.get.mockResolvedValue(getFakeAuth0UserResponse(getFakeAuth0User({ email: updatedMail }), 200))
+    auth0Mock.users.get.mockResolvedValue(getFakeAuth0UserResponse(getAuth0UserMock({ email: updatedMail }), 200))
 
-    // Run synchroinization again. However, since the user was just synced, the synchronization should not occur.
-    const updatedDbUser = await core.auth0SynchronizationService.handleUserSync(id)
+    // Run synchroinization again, simulating doing it 1hr later. However, since the user was just synced, the synchronization should not occur.
+    const oneHourLater = addHours(now, 1)
+    const updatedDbUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, oneHourLater)
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
-    // Advance the system time by 25 hours to simulate passing the 24-hour threshold.
-    const userShouldSyncAgainTime = new Date(new Date().getTime() + 25 * 60 * 60 * 1000)
-    vi.setSystemTime(userShouldSyncAgainTime)
-
-    // Attempt to sync the user again. This time, the synchronization should occur.
-    await core.auth0SynchronizationService.handleUserSync(id)
+    // Attempt to sync the user again 25 hours after first sync. This time, the synchronization should occur.
+    const twentyFiveHoursLater = addHours(now, 25)
+    await core.auth0SynchronizationService.handleUserSync(auth0Id, twentyFiveHoursLater)
 
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
