@@ -12,13 +12,13 @@ interface CompanyFiltersContainer {
   setChosenSort: Dispatch<SetStateAction<string>>
 }
 
-const places = ["Alle", "Oslo", "Bergen", "Trondheim", "Annet"]
+const places = ["Alle", "Oslo", "Bergen", "Trondheim", "Tromsø", "Fredrikstad", "Annet"]
 const sorter = ["Frist", "Påmeldingsstart", "Opprettelse"]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
-  <div className="border-slate-8  h-fit w-72 rounded-lg border-[1px] shadow-sm">
-    <div className="border-slate-8 flex flex-row justify-between border-b py-4">
-      <h4 className="mx-4 my-auto align-middle">Filter</h4>
+  <div className="border-slate-3  h-fit w-72 rounded-lg border shadow-b-sm">
+    <div className="border-slate-3 flex flex-row justify-between border-b py-4">
+      <h4 className="mx-4 my-auto  text-lg align-middle">Filter</h4>
     </div>
     <div className="mx-4">
       <p className="mt-4 font-semibold">Søk</p>
