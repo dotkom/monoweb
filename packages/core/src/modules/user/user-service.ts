@@ -14,6 +14,19 @@ import type { NotificationPermissionsRepository } from "./notification-permissio
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
 
+// Until we have gather this data from the user, this fake data is used as the initial data for new users
+const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> = {
+  givenName: "firstName",
+  familyName: "lastName",
+  name: "firstName lastName",
+  allergies: ["allergy1", "allergy2"],
+  picture: "https://example.com/image.jpg",
+  studyYear: -1,
+  lastSyncedAt: new Date(),
+  phone: "12345678",
+  gender: "male",
+}
+
 export interface UserService {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
@@ -24,6 +37,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  handlePopulateUserWithFakeData(auth0Id: string, email?: string | null): Promise<void>
 }
 
 export class UserServiceImpl implements UserService {
@@ -34,6 +48,33 @@ export class UserServiceImpl implements UserService {
     private readonly auth0Repository: Auth0Service,
     private readonly auth0SynchronizationService: Auth0SynchronizationService
   ) {}
+
+  // This function will be removed when we gather real data
+  async handlePopulateUserWithFakeData(auth0Id: string, email?: string | null) {
+    if (!email) {
+      throw new Error("Did not get email in jwt")
+    }
+
+    try {
+      await this.auth0Repository.getByAuth0UserId(auth0Id) // this fails if any attributes are missing in auth0
+    } catch (e) {
+      console.log("Received error when trying to get user from auth0", e)
+      console.log("Assuming user is missing data in auth0, populating with fake data")
+
+      const user = await this.userRepository.create({
+        ...FAKE_USER_EXTRA_SIGNUP_DATA,
+        email: email,
+        auth0Id: auth0Id,
+      })
+
+      await this.auth0Repository.update(auth0Id, {
+        ...FAKE_USER_EXTRA_SIGNUP_DATA,
+        email,
+        id: user.id,
+        auth0Id,
+      })
+    }
+  }
 
   async getAll(limit: number) {
     return await this.userRepository.getAll(limit)
@@ -48,7 +89,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async updateUser(id: UserId, data: UserWrite) {
-    const result = await this.auth0Repository.updateUser(id, data)
+    const result = await this.auth0Repository.update(id, data)
     await this.auth0SynchronizationService.synchronizeUser(result)
     return result
   }

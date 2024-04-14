@@ -5,35 +5,21 @@ import { InternalServerError } from "../../error"
 import { GetUserServerError } from "./auth0-errors"
 
 export interface Auth0Service {
-  getById(sub: string): Promise<User | null>
-  updateUser(sub: string, userData: UserWrite): Promise<User>
+  getByAuth0UserId(auth0Id: string): Promise<User | null>
+  update(auth0Id: string, data: UserWrite): Promise<User>
 }
-
-// Until we have gather this data from the user, this fake data is used as the initial data for new users
-const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id"> = {
-  givenName: "firstName",
-  familyName: "lastName",
-  name: "firstName lastName",
-  allergies: ["allergy1", "allergy2"],
-  picture: "https://example.com/image.jpg",
-  studyYear: -1,
-  lastSyncedAt: new Date(),
-  phone: "12345678",
-  gender: "male",
-}
-
-export const mapToUser = (payload: User) => UserSchema.parse(payload)
 
 export class Auth0ServiceImpl implements Auth0Service {
   private readonly logger: Logger = getLogger(Auth0ServiceImpl.name)
   constructor(private readonly client: ManagementClient) {}
 
   // Store all user data in app_metadata
-  async updateUser(sub: string, write: UserWrite) {
+  async update(sub: string, write: UserWrite) {
     const newUser: Auth0UserUpdate = {
       app_metadata: {
         study_year: write.studyYear,
         last_synced_at: write.lastSyncedAt,
+        ow_user_id: write.id,
       },
       user_metadata: {
         allergies: write.allergies,
@@ -54,16 +40,27 @@ export class Auth0ServiceImpl implements Auth0Service {
       throw new InternalServerError("An error occurred while updating user")
     }
 
-    return this.mapAuth0ToDomainUser(result.data)
+    return this.mapToUser(result.data)
   }
 
-  private mapAuth0ToDomainUser(user: GetUsers200ResponseOneOfInner): User {
+  async getByAuth0UserId(id: string): Promise<User | null> {
+    const user = await this.client.users.get({ id })
+
+    if (user.status !== 200) {
+      this.logger.error("Received non 200 status code when trying to get user from auth0", { status: user.status })
+      throw new GetUserServerError(user.statusText)
+    }
+
+    return this.mapToUser(user.data)
+  }
+
+  private mapToUser(user: GetUsers200ResponseOneOfInner): User {
     // check that created_at and updated_at are present and are both strings
     const app_metadata = user.app_metadata
     const user_metadata = user.user_metadata
 
     const mapped: User = {
-      id: user.user_id,
+      auth0Id: user.user_id,
       email: user.email,
       name: user.name,
       familyName: user.family_name,
@@ -72,6 +69,7 @@ export class Auth0ServiceImpl implements Auth0Service {
 
       studyYear: app_metadata.study_year,
       lastSyncedAt: new Date(app_metadata.last_synced_at),
+      id: app_metadata.ow_user_id,
 
       gender: user_metadata.gender,
       allergies: user_metadata.allergies,
@@ -79,37 +77,5 @@ export class Auth0ServiceImpl implements Auth0Service {
     }
 
     return UserSchema.parse(mapped)
-  }
-
-  // Email is the only thing that we gather currently
-  private async populateUserWithFakeData(id: string, email: string): Promise<User> {
-    const userWrite = {
-      id,
-      email,
-      ...FAKE_USER_EXTRA_SIGNUP_DATA,
-    }
-    const user = await this.updateUser(id, userWrite)
-    return user
-  }
-
-  async getById(sub: string): Promise<User | null> {
-    const user = await this.client.users.get({
-      id: sub,
-    })
-
-    if (user.status !== 200) {
-      console.error(user)
-      throw new GetUserServerError(user.statusText)
-    }
-
-    // An onboarded user has a study_year set (-1 if no membership), so if it is undefined it means the user has not been onboarded. Fill with fake data for now.
-    const a = user.data.app_metadata?.study_year
-    console.log(a)
-
-    if (user.data.app_metadata?.study_year === undefined) {
-      return this.populateUserWithFakeData(sub, user.data.email)
-    }
-
-    return this.mapAuth0ToDomainUser(user.data)
   }
 }
