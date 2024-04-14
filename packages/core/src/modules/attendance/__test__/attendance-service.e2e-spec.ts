@@ -447,10 +447,7 @@ describe("attendance", () => {
     }).rejects.toThrowError(ExtrasUpdateAfterRegistrationStartError)
   })
 
-  // TODO: not yet implemented in service.
   it("should correctly handle pool merging at the specified merge time", async () => {
-    const now = new Date("2021-01-02 12:00:00")
-
     const insertPools = [
       { capacity: 1, yearCriteria: [2] },
       { capacity: 2, yearCriteria: [3] },
@@ -461,12 +458,10 @@ describe("attendance", () => {
       { attendee: { studyYear: 3, name: "user32" }, registrationDate: new Date("2021-01-01 15:00:00") }, // gets in
       { attendee: { studyYear: 3, name: "user33" }, registrationDate: new Date("2021-01-01 13:00:00") }, // gets in
 
-      { attendee: { studyYear: 2, name: "user24" }, registrationDate: new Date("2021-01-01 17:00:00") },
+      { attendee: { studyYear: 3, name: "user34" }, registrationDate: new Date("2021-01-01 17:00:00") },
       { attendee: { studyYear: 3, name: "user35" }, registrationDate: new Date("2021-01-01 18:00:00") },
-      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 18:00:00") },
+      { attendee: { studyYear: 2, name: "user26" }, registrationDate: new Date("2021-01-01 19:00:00") },
     ]
-
-    const expectedMergeWaitlistOrder = ["user24", "user35", "user26"]
 
     const registerStart = new Date("2021-01-01 00:00:00")
     const registerEnd = new Date("2021-01-07")
@@ -492,15 +487,30 @@ describe("attendance", () => {
     await core.attendanceService.merge(attendance.id, "Merged pool", [0, 1, 2, 3, 4, 5])
 
     const waitlistAttendees = await core.waitlistAttendeService.getByAttendanceId(attendance.id)
-    waitlistAttendees?.sort((a, b) => a.position - b.position) // sort by position in increasing order
+
+    const expectedWaitlistPositions = [
+      {
+        name: "user34",
+        position: 0,
+      },
+      {
+        name: "user35",
+        position: 1,
+      },
+      {
+        name: "user26",
+        position: 2,
+      },
+    ]
 
     assert(waitlistAttendees !== null, Error("Expected waitlist attendees to be non-null in merge"))
-
     expect(waitlistAttendees).toHaveLength(3)
 
-    for (let i = 0; i < waitlistAttendees.length; i++) {
-      const waitlistAttendee = waitlistAttendees[i]
-      expect(waitlistAttendee.name).toBe(expectedMergeWaitlistOrder[i])
+    for (const waitlistAttendee of waitlistAttendees) {
+      const actual = waitlistAttendee.position
+      const expected = expectedWaitlistPositions.find((obj) => obj.name === waitlistAttendee.name)?.position
+
+      expect(actual).toEqual(expected)
     }
   })
 })
