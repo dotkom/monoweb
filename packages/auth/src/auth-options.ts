@@ -19,6 +19,7 @@ type StandardClaims = {
 
   name: string
   given_name: string
+  middle_name: string
   family_name: string
   nickname: string
   picture: string
@@ -73,6 +74,7 @@ export const getAuthOptions = ({
         sub: profile.sub,
         sid: profile.sid,
 
+        middle_name: profile[`${CUSTOM_CLAIM_PREFIX}/middle_name`],
         allergies: profile[`${CUSTOM_CLAIM_PREFIX}/allergies`],
         phone: profile[`${CUSTOM_CLAIM_PREFIX}/phone`],
         gender: profile[`${CUSTOM_CLAIM_PREFIX}/gender`],
