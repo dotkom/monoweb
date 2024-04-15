@@ -1,25 +1,27 @@
-import type { AttendanceId } from "@dotkomonline/types"
+import type { User, AttendanceId } from "@dotkomonline/types"
 import { Button } from "@mantine/core"
 import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
-import { useUpdateEventAttendanceMutation } from "../../mutations/use-attendee-mutations"
 import { useHandleQrCodeRegistration } from "../../queries/use-get-queries"
+import { openAttendanceRegisteredModal } from "../../modals/attendance-registered-modal"
 
 interface QrCodeScannerProps {
   attendanceId: AttendanceId
 }
 
 const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
-  const updateAttendance = useUpdateEventAttendanceMutation()
   const registerAttendance = useHandleQrCodeRegistration()
   const [scannerOpen, setScannerOpen] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
   const { ref } = useZxing({
-    onDecodeResult: (result) => {
+    onDecodeResult: async (result) => {
       const userId = result.getText()
-      registerAttendance({
-        userId,
-        attendanceId,
+      const { user } = await registerAttendance({
+          userId,
+          attendanceId,
       })
+      openAttendanceRegisteredModal({ user })()
+      setUser(user)
     },
     paused: !scannerOpen,
   })

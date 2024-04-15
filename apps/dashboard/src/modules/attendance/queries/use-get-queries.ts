@@ -51,10 +51,10 @@ export const useHandleQrCodeRegistration = () => {
       })
     },
     onError: (err) => {
-      notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under registrering: ${err.toString()}.`,
-      })
+        notification.fail({
+            title: "Feil oppsto",
+            message: `En feil oppsto under registrering: ${err.toString()}.`,
+        })
     },
   })
   return mutation.mutateAsync
