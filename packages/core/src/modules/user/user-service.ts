@@ -18,7 +18,8 @@ import type { UserRepository } from "./user-repository"
 const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> = {
   givenName: "firstName",
   familyName: "lastName",
-  name: "firstName lastName",
+  middleName: "middleName",
+  name: "firstName middleName lastName",
   allergies: ["allergy1", "allergy2"],
   picture: "https://example.com/image.jpg",
   studyYear: -1,

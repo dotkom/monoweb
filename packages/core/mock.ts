@@ -20,14 +20,16 @@ export const getAuth0UserMock = (write?: Partial<UserWrite>): GetUsers200Respons
       allergies: write?.allergies ?? ["gluten"],
       gender: write?.gender ?? "male",
       phone: write?.phone ?? "004712345678",
+      middle_name: write?.middleName ?? "Mellomnavn",
     },
   }) as unknown as GetUsers200ResponseOneOfInner
 
-export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
-  auth0Id: "8697a463-46fe-49c2-b74c-f6cc98358298",
+export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
+  auth0Id: crypto.randomUUID(),
   studyYear: 0,
   email: "test-mail-that-does-not-exist6123123@gmail.com",
   givenName: "Test",
+  middleName: "Test",
   familyName: "User",
   name: "Test User",
   lastSyncedAt: new Date(),
@@ -35,6 +37,7 @@ export const getUserMock = (defaults: Partial<UserWrite> = {}): UserWrite => ({
   gender: "other",
   phone: null,
   picture: null,
+  ...defaults,
 })
 
 export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWrite => ({

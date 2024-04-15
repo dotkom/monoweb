@@ -1,26 +1,12 @@
 import { createEnvironment } from "@dotkomonline/env"
-import type { UserWrite } from "@dotkomonline/types"
 import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
-import { getAuth0UserMock } from "../../../../mock"
+import { getAuth0UserMock, getUserMock } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type ServiceLayer, createServiceLayerForUserTests } from "./core"
 
-const getFakeUser = (write?: Partial<UserWrite>): UserWrite => ({
-  studyYear: write?.studyYear ?? 1,
-  name: write?.name ?? "Test User",
-  lastSyncedAt: write?.lastSyncedAt ?? new Date(),
-  allergies: write?.allergies ?? [],
-  familyName: write?.familyName ?? "User",
-  gender: write?.gender ?? "other",
-  givenName: write?.givenName ?? "Test",
-  phone: write?.phone ?? "",
-  picture: write?.picture ?? "",
-  auth0Id: write?.id ?? "auth0|test",
-  email: write?.email ?? "fake@gmail.com",
-})
 describe("users", () => {
   let core: ServiceLayer
   let cleanup: CleanupFunction
@@ -39,7 +25,7 @@ describe("users", () => {
   })
 
   it("will find users by their user id", async () => {
-    const user = await core.userRepository.create(getFakeUser())
+    const user = await core.userRepository.create(getUserMock())
 
     const match = await core.userService.getById(user.id)
     expect(match).toEqual(user)
@@ -51,7 +37,7 @@ describe("users", () => {
     const initialGivenName = "Test"
     const updatedGivenName = "Updated Test"
 
-    const fakeInsert = getFakeUser({
+    const fakeInsert = getUserMock({
       givenName: initialGivenName,
     })
 
