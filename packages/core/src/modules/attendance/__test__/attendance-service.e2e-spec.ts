@@ -1,9 +1,9 @@
-import crypto from "node:crypto"
 import { createEnvironment } from "@dotkomonline/env"
 import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import assert from "../../../../assert"
+import { getUserMock } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type ServiceLayer, createServiceLayer } from "../../core"
 import { AttendanceDeletionError, ExtrasUpdateAfterRegistrationStartError } from "../attendance-error"
@@ -17,21 +17,6 @@ const assertIsWaitlistAttendee = (attendee: unknown) => {
 const assertIsAttendee = (attendee: unknown) => {
   expect(attendee).not.toHaveProperty("isPunished")
 }
-
-const getFakeUser = (write: Partial<UserWrite>): UserWrite => ({
-  auth0Id: write.auth0Id ?? crypto.randomUUID(),
-  studyYear: write.studyYear ?? 1,
-  email: write.email ?? "testuser@local.com",
-  name: write.name ?? "Test User",
-  lastSyncedAt: write.lastSyncedAt ?? new Date(),
-  allergies: write.allergies ?? [],
-  familyName: write.familyName ?? "User",
-  gender: write.gender ?? "other",
-  givenName: write.givenName ?? "Test",
-  phone: write.phone ?? "",
-  picture: write.picture ?? "",
-})
-
 const getFakeAttendance = (write: Partial<AttendanceWrite>): AttendanceWrite => ({
   deregisterDeadline: write.deregisterDeadline ?? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now by default
   registerEnd: write.registerEnd ?? new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now by default
@@ -103,7 +88,7 @@ const setupFakeFullAttendance = async (
   for (let i = 0; i < _users.length; i++) {
     const _user = _users[i]
     const email = `user${i}@local.com`
-    const fakeUser = getFakeUser({ ..._user, studyYear: _user.studyYear, email })
+    const fakeUser = getUserMock({ ..._user, studyYear: _user.studyYear, email })
     const user = await core.userRepository.create(fakeUser)
     users.push(user)
   }
@@ -147,7 +132,7 @@ describe("attendance", () => {
 
     expect(pools).toHaveLength(1)
 
-    const fakeUser = getFakeUser({ studyYear: 1 })
+    const fakeUser = getUserMock({ studyYear: 1 })
 
     const user = await core.userRepository.create(fakeUser)
 
@@ -282,7 +267,7 @@ describe("attendance", () => {
     }
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
-    const extraUser = getFakeUser({ studyYear: 1 })
+    const extraUser = getUserMock({ studyYear: 1 })
     const extraUserCreated = await core.userRepository.create(extraUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
