@@ -10,8 +10,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            retry: process.env.NODE_ENV === "production" ? 3 : false,
-            refetchOnWindowFocus: process.env.NODE_ENV === "production",
+            retry: process.env.NODE_ENV === "production" ? 3 : 0,
           },
         },
       })
