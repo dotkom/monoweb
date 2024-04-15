@@ -1,5 +1,5 @@
 import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
-import { createTagInput, createTextInput, useFormBuilder } from "../../form"
+import { createNumberInput, createTagInput, createTextInput, useFormBuilder } from "../../form"
 
 interface UseUserWriteFormProps {
   onSubmit(data: UserWrite): void
@@ -41,10 +41,9 @@ export const useUserWriteForm = ({ defaultValues, onSubmit, label = "Bruker" }: 
         label: "Allergier",
         placeholder: "Gluten",
       }),
-      studyYear: createTextInput({
+      studyYear: createNumberInput({
         label: "Studieår",
         placeholder: "2",
-        type: "number",
       }),
       gender: createTextInput({
         label: "Kjønn",
