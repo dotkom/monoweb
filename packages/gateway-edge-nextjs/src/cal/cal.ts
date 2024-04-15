@@ -106,7 +106,7 @@ export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const session = await getServerSession(req, res, authOptions)
-  const authed_id = session?.user.id
+  const authed_id = session?.user.owUserId
   if (!authed_id) {
     res.status(400).json({ message: "Not signed in" })
   }
