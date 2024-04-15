@@ -6,11 +6,14 @@
  */
 exports.onExecutePostLogin = async (event, api) => {
   const namespace = "https://online.ntnu.no"
-  const { gender, phone, allergies } = event.user.app_metadata
-  const { study_year } = event.user.user_metadata
 
-  api.idToken.setCustomClaim(`${namespace}/gender`, gender)
-  api.idToken.setCustomClaim(`${namespace}/phone`, phone)
-  api.idToken.setCustomClaim(`${namespace}/study_year`, study_year)
-  api.idToken.setCustomClaim(`${namespace}/allergies`, allergies)
+  const { study_year, ow_user_id } = event.user.app_metadata
+
+  if (study_year) {
+    api.idToken.setCustomClaim(`${namespace}/study_year`, study_year)
+  }
+
+  if (ow_user_id) {
+    api.idToken.setCustomClaim(`${namespace}/ow_user_id`, ow_user_id)
+  }
 }
