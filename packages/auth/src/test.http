@@ -1,0 +1,10 @@
+# http request to 
+
+POST https://eomdgpzubji5182.m.pipedream.net HTTP/1.1
+content-type: application/json
+
+{
+    "to": "futharkEvents",
+    "messages": ["hello world"]
+}
+

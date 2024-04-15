@@ -7,13 +7,13 @@ import {
   DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "@dotkomonline/ui"
-import type { User } from "next-auth"
+import type { Session } from "next-auth"
 
-const AvatarImgChange = (user: User) => (
+const AvatarImgChange = (user: Session["user"]) => (
   <DropdownMenu>
     <DropdownMenuTrigger className="relative border-[1px] rounded-full">
       <Avatar className="w-40 h-auto">
-        <AvatarImage src={user.image} alt="UserAvatar" />
+        <AvatarImage src={user.picture} alt="UserAvatar" />
         <AvatarFallback className="w-40 h-40">{user.name}</AvatarFallback>
       </Avatar>
       <div className=" bg-slate-1 absolute top-0 w-full h-full rounded-full opacity-60 flex justify-center items-center hover:cursor-pointer">

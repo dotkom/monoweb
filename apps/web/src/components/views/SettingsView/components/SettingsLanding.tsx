@@ -2,7 +2,7 @@ import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
 import { TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
+import type { Session } from "next-auth"
 
 interface FormInputProps {
   title: string
@@ -16,7 +16,7 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-const Landing: NextPage<{ user: User }> = ({ user }) => {
+const Landing: NextPage<{ user: Session["user"] }> = ({ user }) => {
   return (
     <div className="flex w-full flex-col space-y-4">
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">
@@ -24,8 +24,8 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
       <FormInput title="Navn">
         <div className="w-full flex flex-wrap justify-center ">
-          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.givenName} />
-          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.familyName} />
+          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.given_name} />
+          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.family_name} />
         </div>
       </FormInput>
       <FormInput title="Epost">

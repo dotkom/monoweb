@@ -1,39 +1,39 @@
 import type { ServiceLayer } from "@dotkomonline/core"
-import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import type { NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
-interface Auth0IdTokenClaims {
-  given_name: string
-  family_name: string
-  nickname: string
-  name: string
-  picture: string
+const CUSTOM_CLAIM_PREFIX = "https://online.ntnu.no"
+type CustomIdTokenClaims = {
+  allergies: string[]
   gender: string
-  updated_at: string
-  email: string
-  email_verified: boolean
+  studyYear: number
+  phone: string
+  id: string
+  owUserId: string
+}
+
+// https://www.iana.org/assignments/jwt/jwt.xhtml
+type StandardClaims = {
   iss: string
   aud: string
   iat: number
   exp: number
   sub: string
   sid: string
+
+  name: string
+  given_name: string
+  family_name: string
+  nickname: string
+  picture: string
+  email: string
+  email_verified: boolean
 }
 
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: User
+  interface Session {
+    user: CustomIdTokenClaims & StandardClaims
     sub: string
-    id: string
-  }
-
-  interface User extends DefaultUser {
-    id: string
-    name: string
-    email: string
-    image?: string
-    givenName?: string
-    familyName?: string
   }
 }
 
@@ -58,13 +58,29 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => ({
+      profile: (profile) => ({
         id: profile.sub,
+
+        given_name: profile.given_name,
+        family_name: profile.family_name,
+        nickname: profile.nickname,
         name: profile.name,
+        picture: profile.picture,
+        updated_at: profile.updated_at,
         email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
+        email_verified: profile.email_verified,
+        iss: profile.iss,
+        aud: profile.aud,
+        iat: profile.iat,
+        exp: profile.exp,
+        sub: profile.sub,
+        sid: profile.sid,
+
+        allergies: profile[`${CUSTOM_CLAIM_PREFIX}/allergies`],
+        phone: profile[`${CUSTOM_CLAIM_PREFIX}/phone`],
+        gender: profile[`${CUSTOM_CLAIM_PREFIX}/gender`],
+        studyYear: profile[`${CUSTOM_CLAIM_PREFIX}/study_year`],
+        owUserId: profile[`${CUSTOM_CLAIM_PREFIX}/ow_user_id`],
       }),
     }),
   ],
@@ -72,14 +88,26 @@ export const getAuthOptions = ({
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user
+      }
+
+      return token
+    },
     async session({ session, token }) {
+      if (token.user) {
+        session.user = {
+          ...session.user,
+          ...token.user,
+        }
+      }
+
       if (token.sub) {
         await core.userService.handlePopulateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.handleUserSync(token.sub, new Date())
-
-        session.user.id = user.auth0Id
+        await core.auth0SynchronizationService.handleUserSync(token.sub, new Date())
         session.sub = token.sub
-        return session
+        session.user.id = token.sub
       }
 
       return session
