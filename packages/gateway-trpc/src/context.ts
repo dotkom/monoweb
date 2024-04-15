@@ -24,7 +24,7 @@ export const createContext = async (opts: CreateNextContextOptions) => {
   if (session !== null) {
     return createContextInner({
       auth: {
-        userId: session.user.id,
+        userId: session.user.owUserId,
       },
     })
   }
