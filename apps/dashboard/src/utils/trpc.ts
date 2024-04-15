@@ -24,10 +24,18 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
     httpBatchLink({
       url: `${getBaseUrl()}/api/trpc`,
       async fetch(url, options) {
-        return fetch(url, {
-          ...options,
-          credentials: "include",
-        })
+        try {
+          const result = await fetch(url, {
+            ...options,
+            credentials: "include",
+          })
+          return result
+        } catch (e) {
+          console.error(
+            "The fetch call to the TRPC api failed, the TRPC server may be down! Check if the TRPC server is up and running"
+          )
+          throw e
+        }
       },
     }),
   ],
