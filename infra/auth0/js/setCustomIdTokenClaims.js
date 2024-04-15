@@ -8,6 +8,7 @@ exports.onExecutePostLogin = async (event, api) => {
   const namespace = "https://online.ntnu.no"
 
   const { study_year, ow_user_id } = event.user.app_metadata
+  const { middle_name } = event.user.user_metadata
 
   if (study_year) {
     api.idToken.setCustomClaim(`${namespace}/study_year`, study_year)
@@ -15,5 +16,9 @@ exports.onExecutePostLogin = async (event, api) => {
 
   if (ow_user_id) {
     api.idToken.setCustomClaim(`${namespace}/ow_user_id`, ow_user_id)
+  }
+
+  if (middle_name) {
+    api.idToken.setCustomClaim(`${namespace}/middle_name`, middle_name)
   }
 }
