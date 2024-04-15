@@ -4,11 +4,7 @@ import Auth0Provider from "next-auth/providers/auth0"
 
 const CUSTOM_CLAIM_PREFIX = "https://online.ntnu.no"
 type CustomIdTokenClaims = {
-  allergies: string[]
-  gender: string
   studyYear: number
-  phone: string
-  id: string
   owUserId: string
 }
 
@@ -59,7 +55,7 @@ export const getAuthOptions = ({
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
       profile: (profile) => ({
-        id: profile.sub,
+        id: profile.sub, // Next auth throws an error if this is not set. User interface exposes id thorugh session.user.sub, and owUserId through session.user.owlUserId
 
         given_name: profile.given_name,
         family_name: profile.family_name,
@@ -69,6 +65,7 @@ export const getAuthOptions = ({
         updated_at: profile.updated_at,
         email: profile.email,
         email_verified: profile.email_verified,
+
         iss: profile.iss,
         aud: profile.aud,
         iat: profile.iat,
@@ -107,7 +104,6 @@ export const getAuthOptions = ({
         await core.userService.handlePopulateUserWithFakeData(token.sub, token.email) // Remove when we have real data
         await core.auth0SynchronizationService.handleUserSync(token.sub, new Date())
         session.sub = token.sub
-        session.user.id = token.sub
       }
 
       return session
