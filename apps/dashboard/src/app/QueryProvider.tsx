@@ -10,7 +10,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            retry: process.env.NODE_ENV === "production" ? 3 : 0,
+            retry: process.env.NODE_ENV === "production" ? 3 : 0
           },
         },
       })
