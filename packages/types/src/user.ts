@@ -19,7 +19,6 @@ export const UserSchema = z.object({
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>
 
-// The other fields are not stored in app_metadata in auth0. Updating them will needs to be investigated further.
 export const UserWriteSchema = UserSchema.partial({
   id: true,
 })
