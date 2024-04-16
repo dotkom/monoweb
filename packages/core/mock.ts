@@ -1,7 +1,19 @@
 import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
-import type { GetUsers200ResponseOneOfInner } from "auth0"
+import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addWeeks, addYears } from "date-fns"
 import { ulid } from "ulid"
+
+export const mockAuth0UserResponse = (
+  user: Partial<UserWrite>,
+  status?: number,
+  statusText?: string
+): ApiResponse<GetUsers200ResponseOneOfInner> =>
+  ({
+    data: getAuth0UserMock(user),
+    headers: {},
+    status: status ?? 200,
+    statusText: statusText ?? "OK",
+  }) as unknown as ApiResponse<GetUsers200ResponseOneOfInner> // to avoid having to write out headers fake data
 
 export const getAuth0UserMock = (write?: Partial<UserWrite>): GetUsers200ResponseOneOfInner =>
   ({

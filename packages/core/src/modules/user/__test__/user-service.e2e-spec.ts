@@ -1,9 +1,9 @@
 import { createEnvironment } from "@dotkomonline/env"
-import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import type { ManagementClient } from "auth0"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
-import { getAuth0UserMock, getUserMock } from "../../../../mock"
+import { getUserMock, mockAuth0UserResponse } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type ServiceLayer, createServiceLayerForUserTests } from "./core"
 
@@ -43,11 +43,11 @@ describe("users", () => {
 
     const insertedUser = await core.userRepository.create(fakeInsert)
 
-    const auth0UpdateResponse = {
-      data: getAuth0UserMock({ givenName: updatedGivenName, id: insertedUser.id, auth0Id: insertedUser.auth0Id }),
-      status: 200,
-      statusText: "OK",
-    } as unknown as ApiResponse<GetUsers200ResponseOneOfInner>
+    const auth0UpdateResponse = mockAuth0UserResponse({
+      givenName: updatedGivenName,
+      id: insertedUser.id,
+      auth0Id: insertedUser.auth0Id,
+    })
     const auth0ResponsePromise = new Promise<typeof auth0UpdateResponse>((resolve) => {
       resolve(auth0UpdateResponse)
     })

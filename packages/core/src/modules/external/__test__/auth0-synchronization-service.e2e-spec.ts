@@ -1,11 +1,10 @@
 import type { Database } from "@dotkomonline/db"
 import { createEnvironment } from "@dotkomonline/env"
-import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import type { ManagementClient } from "auth0"
 import { addHours } from "date-fns"
 import type { Kysely } from "kysely"
 import { describe, expect, it } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
-import { getAuth0UserMock } from "../../../../mock"
 import { createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import {
   type NotificationPermissionsRepository,
@@ -19,19 +18,7 @@ import { type UserRepository, UserRepositoryImpl } from "../../user/user-reposit
 import { type UserService, UserServiceImpl } from "../../user/user-service"
 import { type Auth0Service, Auth0ServiceImpl } from "../auth0-service"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
-
-// What's saved to auth0 on sign up with only email being gathered
-const getFakeAuth0UserResponse = (
-  data: GetUsers200ResponseOneOfInner,
-  status?: number,
-  statusText?: string
-): ApiResponse<GetUsers200ResponseOneOfInner> =>
-  ({
-    data,
-    headers: {},
-    status: status ?? 200,
-    statusText: statusText ?? "OK",
-  }) as unknown as ApiResponse<GetUsers200ResponseOneOfInner> // to avoid having to write out headers fake data
+import { mockAuth0UserResponse } from "../../../../mock"
 
 interface ServerLayerOptions {
   db: Kysely<Database>
@@ -78,7 +65,7 @@ describe("auth0 synchronization service", () => {
     const email = "starting-email@local.com"
     const now = new Date("2021-01-01T00:00:00Z")
 
-    const updatedWithFakeDataUser = getFakeAuth0UserResponse(getAuth0UserMock({ email, auth0Id }), 200)
+    const updatedWithFakeDataUser = mockAuth0UserResponse({ email, auth0Id }, 200)
     auth0Mock.users.get.mockResolvedValue(updatedWithFakeDataUser)
 
     // first sync down to the local db. Should create user row in the db and populate with fake data.
@@ -89,7 +76,7 @@ describe("auth0 synchronization service", () => {
 
     // Simulate an email change in the Auth0 dashboard or something.
     const updatedMail = "changed-in-dashboard@local.com"
-    auth0Mock.users.get.mockResolvedValue(getFakeAuth0UserResponse(getAuth0UserMock({ email: updatedMail }), 200))
+    auth0Mock.users.get.mockResolvedValue(mockAuth0UserResponse({ email: updatedMail }, 200))
 
     // Run synchroinization again, simulating doing it 1hr later. However, since the user was just synced, the synchronization should not occur.
     const oneHourLater = addHours(now, 1)
