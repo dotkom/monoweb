@@ -2,7 +2,7 @@ import type { Database } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import type { Kysely } from "kysely"
 import { type AttendanceRepository, AttendanceRepositoryImpl } from "../../attendance/attendance-repository"
-import { type Auth0Service, Auth0ServiceImpl } from "../../external/auth0-service"
+import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
 import {
   type Auth0SynchronizationService,
   Auth0SynchronizationServiceImpl,
@@ -23,7 +23,7 @@ export interface ServerLayerOptions {
 }
 
 export const createServiceLayerForUserTests = async ({ db, auth0MgmtClient }: ServerLayerOptions) => {
-  const auth0Repository: Auth0Service = new Auth0ServiceImpl(auth0MgmtClient)
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0MgmtClient)
 
   const userRepository: UserRepository = new UserRepositoryImpl(db)
 

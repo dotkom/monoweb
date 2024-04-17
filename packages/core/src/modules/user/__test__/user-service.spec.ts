@@ -3,7 +3,7 @@ import type { NotificationPermissions, PrivacyPermissions } from "@dotkomonline/
 import { ManagementClient } from "auth0"
 import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
-import { Auth0ServiceImpl } from "../../external/auth0-service"
+import { Auth0RepositoryImpl } from "../../external/auth0-repository"
 import { Auth0SynchronizationServiceImpl } from "../../external/auth0-synchronization-service"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
 import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
@@ -41,7 +41,7 @@ describe("UserService", () => {
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
 
   const auth0Client = vi.mocked(ManagementClient.prototype)
-  const auth0Service = new Auth0ServiceImpl(auth0Client)
+  const auth0Service = new Auth0RepositoryImpl(auth0Client)
   const auth0SynchronizationService = vi.mocked(Auth0SynchronizationServiceImpl.prototype)
 
   const userService = new UserServiceImpl(

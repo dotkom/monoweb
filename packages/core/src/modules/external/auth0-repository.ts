@@ -4,13 +4,13 @@ import type { UserUpdate as Auth0UserUpdate, GetUsers200ResponseOneOfInner, Mana
 import { InternalServerError } from "../../error"
 import { GetUserServerError } from "./auth0-errors"
 
-export interface Auth0Service {
+export interface Auth0Repository {
   getByAuth0UserId(auth0Id: string): Promise<User | null>
   update(auth0Id: string, data: UserWrite): Promise<User>
 }
 
-export class Auth0ServiceImpl implements Auth0Service {
-  private readonly logger: Logger = getLogger(Auth0ServiceImpl.name)
+export class Auth0RepositoryImpl implements Auth0Repository {
+  private readonly logger: Logger = getLogger(Auth0RepositoryImpl.name)
   constructor(private readonly client: ManagementClient) {}
 
   // Store all user data in app_metadata

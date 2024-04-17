@@ -4,7 +4,7 @@ import { addDays } from "date-fns"
 import { ApplicationError } from "../../error"
 import { PROBLEM_DETAILS } from "../../http-problem-details"
 import type { UserRepository } from "../user/user-repository"
-import type { Auth0Service } from "./auth0-service"
+import type { Auth0Repository } from "./auth0-repository"
 
 export interface Auth0SynchronizationService {
   /**
@@ -38,7 +38,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
 
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly auth0Service: Auth0Service
+    private readonly auth0Service: Auth0Repository
   ) {}
 
   async synchronizeUser(userAuth0: User) {

@@ -16,7 +16,7 @@ import {
 } from "../../user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "../../user/user-repository"
 import { type UserService, UserServiceImpl } from "../../user/user-service"
-import { type Auth0Service, Auth0ServiceImpl } from "../auth0-service"
+import { type Auth0Repository, Auth0RepositoryImpl } from "../auth0-repository"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 import { mockAuth0UserResponse } from "../../../../mock"
 
@@ -26,7 +26,7 @@ interface ServerLayerOptions {
 }
 
 const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) => {
-  const auth0Repository: Auth0Service = new Auth0ServiceImpl(auth0MgmtClient)
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0MgmtClient)
 
   const userRepository: UserRepository = new UserRepositoryImpl(db)
   const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)

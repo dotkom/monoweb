@@ -8,7 +8,7 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
-import type { Auth0Service } from "../external/auth0-service"
+import type { Auth0Repository } from "../external/auth0-repository"
 import type { Auth0SynchronizationService } from "../external/auth0-synchronization-service"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
@@ -46,7 +46,7 @@ export class UserServiceImpl implements UserService {
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
-    private readonly auth0Repository: Auth0Service,
+    private readonly auth0Repository: Auth0Repository,
     private readonly auth0SynchronizationService: Auth0SynchronizationService
   ) {}
 
