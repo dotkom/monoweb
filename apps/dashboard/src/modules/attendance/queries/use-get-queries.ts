@@ -1,8 +1,8 @@
 import type { AttendanceId } from "@dotkomonline/types"
 import { useQueryNotification } from "src/app/notifications"
 import { trpc } from "../../../utils/trpc"
-import { openAlreadyAttendedModal } from "../modals/error-attendance-registered-modal"
 import { openAttendanceRegisteredModal } from "../modals/attendance-registered-modal"
+import { openAlreadyAttendedModal } from "../modals/error-attendance-registered-modal"
 
 export const usePoolsGetQuery = (id: AttendanceId) => {
   const { data: pools = [], ...query } = trpc.event.attendance.getPoolsByAttendanceId.useQuery({
@@ -50,9 +50,9 @@ export const useHandleQrCodeRegistration = () => {
       if (data.alreadyAttended) {
         openAlreadyAttendedModal({ user: data.user })()
         notification.fail({
-            title: "Registrering feilet",
-            message: "Brukeren er allerede registrert på arrangementet.",
-          })
+          title: "Registrering feilet",
+          message: "Brukeren er allerede registrert på arrangementet.",
+        })
       } else {
         openAttendanceRegisteredModal({ user: data.user })()
         notification.complete({

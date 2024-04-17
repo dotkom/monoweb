@@ -15,8 +15,8 @@ const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
     onDecodeResult: async (result) => {
       const userId = result.getText()
       await registerAttendance({
-          userId,
-          attendanceId,
+        userId,
+        attendanceId,
       })
     },
     paused: !scannerOpen,

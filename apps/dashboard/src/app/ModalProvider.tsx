@@ -2,6 +2,8 @@
 
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
+import { AttendanceRegisteredModal } from "src/modules/attendance/modals/attendance-registered-modal"
+import { AlreadyAttendedModal } from "src/modules/attendance/modals/error-attendance-registered-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
 import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
 import { CreatePoolModal } from "../modules/attendance/modals/create-pool-modal"
@@ -14,8 +16,6 @@ import { CreateEventModal } from "../modules/event/modals/create-event-modal"
 import { UpdateAttendanceExtrasModal } from "../modules/event/modals/edit-event-extras-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "../modules/offline/modals/create-offline-modal"
-import { AttendanceRegisteredModal } from "src/modules/attendance/modals/attendance-registered-modal"
-import { AlreadyAttendedModal } from "src/modules/attendance/modals/error-attendance-registered-modal"
 
 const modals = {
   "event/create": CreateEventModal,

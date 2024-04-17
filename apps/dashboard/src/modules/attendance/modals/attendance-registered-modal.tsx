@@ -10,9 +10,9 @@ export const AttendanceRegisteredModal: FC<ContextModalProps<AttendanceRegistere
   id,
   innerProps,
 }) => {
-    setTimeout(() => {
-        modals.close(id)
-    }, 3000)
+  setTimeout(() => {
+    modals.close(id)
+  }, 3000)
   return (
     <div className="w-full">
       <h1>{innerProps.user.name}</h1>
