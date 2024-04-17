@@ -1,5 +1,4 @@
 import { SettingsPassword } from "@/components/views/SettingsView/components"
-import type { User } from "@dotkomonline/types"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 
@@ -10,7 +9,7 @@ const PasswordPage = async () => {
     redirect("/")
   }
 
-  return <SettingsPassword user={session.user as User} />
+  return <SettingsPassword />
 }
 
 export default PasswordPage
