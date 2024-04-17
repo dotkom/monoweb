@@ -15,6 +15,7 @@ import { UpdateAttendanceExtrasModal } from "../modules/event/modals/edit-event-
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "../modules/offline/modals/create-offline-modal"
 import { AttendanceRegisteredModal } from "src/modules/attendance/modals/attendance-registered-modal"
+import { AlreadyAttendedModal } from "src/modules/attendance/modals/error-attendance-registered-modal"
 
 const modals = {
   "event/create": CreateEventModal,
@@ -30,6 +31,7 @@ const modals = {
   "article/create": CreateArticleModal,
   "interestGroup/create": CreateInterestGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,
+  "event/attendance/registered-error": AlreadyAttendedModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

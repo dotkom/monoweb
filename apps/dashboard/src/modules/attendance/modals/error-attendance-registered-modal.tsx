@@ -6,27 +6,22 @@ interface AttendanceRegisteredModalProps {
   user: User
 }
 
-export const AttendanceRegisteredModal: FC<ContextModalProps<AttendanceRegisteredModalProps>> = ({
-  id,
-  innerProps,
-}) => {
-    setTimeout(() => {
-        modals.close(id)
-    }, 3000)
+export const AlreadyAttendedModal: FC<ContextModalProps<AttendanceRegisteredModalProps>> = ({ innerProps }) => {
   return (
     <div className="w-full">
-      <h1>{innerProps.user.name}</h1>
+      <h1>Bruker allerede påmeldt</h1>
+      <h2 className="text-">{innerProps.user.name}</h2>
       <p>{innerProps.user.email}</p>
     </div>
   )
 }
 
-export const openAttendanceRegisteredModal =
+export const openAlreadyAttendedModal =
   ({ user }: AttendanceRegisteredModalProps) =>
   () =>
     modals.openContextModal({
-      modal: "event/attendance/registered",
-      title: "Bruker påmeldt",
+      modal: "event/attendance/registered-error",
+      title: "Bruker Allerede påmeldt",
       innerProps: {
         user,
       },

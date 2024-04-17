@@ -30,7 +30,7 @@ export interface AttendeeService {
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
-  handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<{ attendee: Attendee; user: User }>
+  handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<{ attendee: Attendee; user: User, alreadyAttended: boolean }>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
@@ -68,19 +68,19 @@ export class AttendeeServiceImpl implements AttendeeService {
 
   async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+    const user = await this.userService.getUserById(userId)
     if (attendee === null) {
       throw new AttendeeNotFoundError("")
     }
-    if (attendee.attended === true) {
-      throw new AttendeeRegistrationError("User has already registered")
-    }
-    await this.attendeeRepository.update({ attended: true }, attendee.id)
-    const user = await this.userService.getUserById(userId)
     if (user === undefined) {
       throw new UserNotFoundError(userId)
     }
+    if (attendee.attended === true) {
+      return { attendee, user, alreadyAttended: true }
+    }
+    await this.attendeeRepository.update({ attended: true }, attendee.id)
 
-    return { attendee, user }
+    return { attendee, user, alreadyAttended: false }
   }
 
   async updateExtraChoices(id: AttendanceId, choices: ExtrasChoices) {
