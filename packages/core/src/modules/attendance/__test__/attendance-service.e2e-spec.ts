@@ -89,7 +89,7 @@ const setupFakeFullAttendance = async (
     const _user = _users[i]
     const email = `user${i}@local.com`
     const fakeUser = getUserMock({ ..._user, studyYear: _user.studyYear, email })
-    const user = await core.userRepository.create(fakeUser)
+    const user = await core.userService.create(fakeUser)
     users.push(user)
   }
 
@@ -134,7 +134,7 @@ describe("attendance", () => {
 
     const fakeUser = getUserMock({ studyYear: 1 })
 
-    const user = await core.userRepository.create(fakeUser)
+    const user = await core.userService.create(fakeUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
@@ -268,7 +268,7 @@ describe("attendance", () => {
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
     const extraUser = getUserMock({ studyYear: 1 })
-    const extraUserCreated = await core.userRepository.create(extraUser)
+    const extraUserCreated = await core.userService.create(extraUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))

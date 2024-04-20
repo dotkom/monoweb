@@ -5,20 +5,17 @@ import { addHours } from "date-fns"
 import type { Kysely } from "kysely"
 import { describe, expect, it } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
+import { mockAuth0UserResponse } from "../../../../mock"
 import { createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
-} from "../../user/notification-permissions-repository"
-import {
-  type PrivacyPermissionsRepository,
-  PrivacyPermissionsRepositoryImpl,
-} from "../../user/privacy-permissions-repository"
-import { type UserRepository, UserRepositoryImpl } from "../../user/user-repository"
-import { type UserService, UserServiceImpl } from "../../user/user-service"
-import { type Auth0Repository, Auth0RepositoryImpl } from "../auth0-repository"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
-import { mockAuth0UserResponse } from "../../../../mock"
+} from "../notification-permissions-repository"
+import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
+import { type SyncedUserService, SyncedUserServiceImpl } from "../synced-user-service"
+import { type UserRepository, UserRepositoryImpl } from "../user-repository"
+import { type UserService, UserServiceImpl } from "../user-service"
+import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
 
 interface ServerLayerOptions {
   db: Kysely<Database>
@@ -33,26 +30,22 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
   const notificationPermissionsRepository: NotificationPermissionsRepository =
     new NotificationPermissionsRepositoryImpl(db)
 
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userRepository,
-    auth0Repository
-  )
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    auth0Repository,
-    auth0SynchronizationService
+    notificationPermissionsRepository
   )
+
+  const syncedUserService: SyncedUserService = new SyncedUserServiceImpl(userService, auth0Repository)
 
   return {
     userService,
     auth0Repository,
-    auth0SynchronizationService,
+    syncedUserService,
   }
 }
 
-describe("auth0 synchronization service", () => {
+describe("synced user service", () => {
   // NOTE: Uses `setSystemTime`, this persists between tests
   it("verifies synchronization works", async () => {
     // Set up test db and  service layer with a mocked Auth0 management client.
@@ -69,7 +62,7 @@ describe("auth0 synchronization service", () => {
     auth0Mock.users.get.mockResolvedValue(updatedWithFakeDataUser)
 
     // first sync down to the local db. Should create user row in the db and populate with fake data.
-    const syncedUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, now)
+    const syncedUser = await core.syncedUserService.handleUserSync(auth0Id, now)
 
     const dbUser = await core.userService.getById(syncedUser.id)
     expect(dbUser).toEqual(syncedUser)
@@ -80,12 +73,12 @@ describe("auth0 synchronization service", () => {
 
     // Run synchroinization again, simulating doing it 1hr later. However, since the user was just synced, the synchronization should not occur.
     const oneHourLater = addHours(now, 1)
-    const updatedDbUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, oneHourLater)
+    const updatedDbUser = await core.syncedUserService.handleUserSync(auth0Id, oneHourLater)
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
     // Attempt to sync the user again 25 hours after first sync. This time, the synchronization should occur.
     const twentyFiveHoursLater = addHours(now, 25)
-    await core.auth0SynchronizationService.handleUserSync(auth0Id, twentyFiveHoursLater)
+    await core.syncedUserService.handleUserSync(auth0Id, twentyFiveHoursLater)
 
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 

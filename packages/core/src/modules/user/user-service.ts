@@ -8,73 +8,37 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
-import type { Auth0Repository } from "../external/auth0-repository"
-import type { Auth0SynchronizationService } from "../external/auth0-synchronization-service"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
 
-// Until we have gather this data from the user, this fake data is used as the initial data for new users
-const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> = {
-  givenName: "firstName",
-  familyName: "lastName",
-  middleName: "middleName",
-  name: "firstName middleName lastName",
-  allergies: ["allergy1", "allergy2"],
-  picture: "https://example.com/image.jpg",
-  studyYear: -1,
-  lastSyncedAt: new Date(),
-  phone: "12345678",
-  gender: "male",
-}
-
 export interface UserService {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
-  updateUser(payload: UserWrite): Promise<User>
+  update(payload: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  handlePopulateUserWithFakeData(auth0Id: string, email?: string | null): Promise<void>
+  create(data: UserWrite): Promise<User>
+  getByAuth0Id(auth0Id: string): Promise<User | null>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
-    private readonly auth0Repository: Auth0Repository,
-    private readonly auth0SynchronizationService: Auth0SynchronizationService
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
-  // This function will be removed when we gather real data
-  async handlePopulateUserWithFakeData(auth0Id: string, email?: string | null) {
-    if (!email) {
-      throw new Error("Did not get email in jwt")
-    }
+  async getByAuth0Id(auth0Id: string) {
+    return this.userRepository.getByAuth0Id(auth0Id)
+  }
 
-    try {
-      await this.auth0Repository.getByAuth0UserId(auth0Id) // this fails if any attributes are missing in auth0
-    } catch (e) {
-      console.log("Received error when trying to get user from auth0", e)
-      console.log("Assuming user is missing data in auth0, populating with fake data")
-
-      const user = await this.userRepository.create({
-        ...FAKE_USER_EXTRA_SIGNUP_DATA,
-        email: email,
-        auth0Id: auth0Id,
-      })
-
-      await this.auth0Repository.update(auth0Id, {
-        ...FAKE_USER_EXTRA_SIGNUP_DATA,
-        email,
-        id: user.id,
-        auth0Id,
-      })
-    }
+  async create(data: UserWrite) {
+    return this.userRepository.create(data)
   }
 
   async getAll(limit: number) {
@@ -89,10 +53,8 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.searchByFullName(searchQuery, take)
   }
 
-  async updateUser(data: UserWrite) {
-    const result = await this.auth0Repository.update(data.auth0Id, data)
-    await this.auth0SynchronizationService.synchronizeUser(result)
-    return result
+  async update(payload: User) {
+    return this.userRepository.update(payload.id, payload)
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
