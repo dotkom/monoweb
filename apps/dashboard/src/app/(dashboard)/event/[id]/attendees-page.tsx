@@ -1,6 +1,6 @@
 import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
-import type { FC} from "react"
+import type { FC } from "react"
 import QrCodeScanner from "src/modules/attendance/components/attendance-page/QrCodeScanner"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { openCreateManualUserAttendModal } from "../../../../modules/attendance/modals/manual-user-attend-modal"

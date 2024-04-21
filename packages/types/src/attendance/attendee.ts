@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { UserSchema } from "../user"
+import { type User, UserSchema } from "../user"
 
 export const ExtraChoice = z.object({
   questionId: z.string(),
@@ -36,3 +36,4 @@ export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
 export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
 export type ExtrasChoices = z.infer<typeof ExtrasChoices>
+export type QrCodeRegisterAttendee = { attendee: Attendee; user: User; alreadyAttended: boolean }
