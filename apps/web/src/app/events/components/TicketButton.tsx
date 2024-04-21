@@ -4,11 +4,11 @@ import { Cross2Icon } from "@radix-ui/react-icons"
 import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
 
-interface TicketBoxProps {
+interface TicketButtonProps {
   userid: UserId | null
 }
 
-const TicketBox = ({ userid }: TicketBoxProps) => {
+const TicketButton = ({ userid }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
   return (
     <div className="">
@@ -50,4 +50,4 @@ const TicketBox = ({ userid }: TicketBoxProps) => {
   )
 }
 
-export default TicketBox
+export default TicketButton

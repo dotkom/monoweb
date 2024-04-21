@@ -9,7 +9,8 @@ import { AttendanceBox } from "../components/AttendanceBox"
 import { EventInfoBox } from "../components/EventInfoBox"
 import { LocationBox } from "../components/LocationBox"
 import { OrganizerBox } from "../components/OrganizerBox"
-import TicketBox from "../components/TicketBox"
+import TicketButton from "../components/TicketButton"
+import { useGetAttendee } from "../components/queries"
 
 /*
 export const generateStaticParams = async () => {
@@ -81,13 +82,17 @@ interface WithAttendanceProps {
 }
 
 const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
+    const {data: attendee } = useGetAttendee({
+        attendanceId: attendance.id,
+        userId: user.id
+    })
   return (
     <div>
       <div className="flex w-full">
         <EventInfoBox event={event} />
         <div className="flex flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
-          <TicketBox userid={user.id} />
+          { attendee && <TicketButton userid={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
           {event.location && <LocationBox location={event.location} />}
         </div>

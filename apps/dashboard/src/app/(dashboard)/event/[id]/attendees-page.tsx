@@ -1,6 +1,6 @@
 import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
-import { type FC, useState } from "react"
+import type { FC} from "react"
 import QrCodeScanner from "src/modules/attendance/components/attendance-page/QrCodeScanner"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { openCreateManualUserAttendModal } from "../../../../modules/attendance/modals/manual-user-attend-modal"
@@ -22,8 +22,6 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ attendance }) => {
-  const [result, setResult] = useState("")
-
   return (
     <Box>
       <Box>
@@ -40,7 +38,6 @@ const Page: FC<Props> = ({ attendance }) => {
         />
       </Box>
       <Divider my={32} />
-      <div>{result}</div>
       <QrCodeScanner attendanceId={attendance.id} />
       <Box>
         <Title mb={10} order={3}>
