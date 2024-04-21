@@ -6,7 +6,7 @@ import type {
   AttendeeUser,
   AttendeeWrite,
   ExtrasChoices,
-  QrCodeRegisterAttendee,
+  QrCodeRegistrationAttendee,
   UserId,
   WaitlistAttendee,
 } from "@dotkomonline/types"
@@ -33,7 +33,7 @@ export interface AttendeeService {
   handleQrCodeRegistration(
     userId: UserId,
     attendanceId: AttendanceId
-  ): Promise<QrCodeRegisterAttendee>
+  ): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 

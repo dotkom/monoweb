@@ -36,4 +36,4 @@ export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
 export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
 export type ExtrasChoices = z.infer<typeof ExtrasChoices>
-export type QrCodeRegisterAttendee = { attendee: Attendee; user: User; alreadyAttended: boolean }
+export type QrCodeRegistrationAttendee = { attendee: Attendee; user: User; alreadyAttended: boolean }
