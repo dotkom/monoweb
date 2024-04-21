@@ -76,6 +76,16 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.attended, input.id)),
+  handleQrCodeRegistration: protectedProcedure
+    .input(
+      z.object({
+        userId: UserSchema.shape.id,
+        attendanceId: AttendanceSchema.shape.id,
+      })
+    )
+    .mutation(
+      async ({ input, ctx }) => await ctx.attendeeService.handleQrCodeRegistration(input.userId, input.attendanceId)
+    ),
 
   addExtraChoice: protectedProcedure
     .input(

@@ -2,6 +2,8 @@
 
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
+import { AttendanceRegisteredModal } from "src/modules/attendance/modals/attendance-registered-modal"
+import { AlreadyAttendedModal } from "src/modules/attendance/modals/error-attendance-registered-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
 import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
 import { CreatePoolModal } from "../modules/attendance/modals/create-pool-modal"
@@ -28,6 +30,8 @@ const modals = {
   "attendance/extras/update": UpdateAttendanceExtrasModal,
   "article/create": CreateArticleModal,
   "interestGroup/create": CreateInterestGroupModal,
+  "event/attendance/registered": AttendanceRegisteredModal,
+  "event/attendance/registered-error": AlreadyAttendedModal,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (
