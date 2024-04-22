@@ -2,6 +2,7 @@ import type { AttendanceId, AttendeeId, AttendeeUser } from "@dotkomonline/types
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
+import { useEventAttendeesGetQuery } from "src/modules/attendance/queries/use-get-queries"
 import { GenericTable } from "../../../components/GenericTable"
 import {
   useDeregisterForEventMutation,
@@ -23,17 +24,18 @@ const CustomCheckbox = ({ attendeeId, defaultChecked }: CustomCheckboxProps) => 
       onChange={(event) => {
         toggleAttendance(attendeeId, event.currentTarget.checked)
       }}
-      defaultChecked={defaultChecked}
+      checked={defaultChecked}
     />
   )
 }
 
 interface AllAttendeesTableProps {
-  users: AttendeeUser[]
   attendanceId: AttendanceId
 }
-export const AllAttendeesTable = ({ users, attendanceId }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
   const deregisterMut = useDeregisterForEventMutation()
+
+  const { attendees } = useEventAttendeesGetQuery(attendanceId)
 
   const columnHelper = createColumnHelper<AttendeeUser>()
   const columns = useMemo(
@@ -76,7 +78,7 @@ export const AllAttendeesTable = ({ users, attendanceId }: AllAttendeesTableProp
   )
 
   const table = useReactTable({
-    data: users,
+    data: attendees,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
