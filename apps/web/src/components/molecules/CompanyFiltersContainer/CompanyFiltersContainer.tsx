@@ -44,7 +44,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
                   content.checked = e.target.checked
                   props.setChosenEmployments([...props.chosenEmployments])
                 }}
-               />
+              />
               <div className=" inline-block text-base">{content.name}</div>
             </div>
           ))}

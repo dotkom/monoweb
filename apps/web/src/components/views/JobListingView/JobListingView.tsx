@@ -17,13 +17,13 @@ export interface EmploymentCheckbox {
 const getLocations = (jobListings: JobListing[]) => {
   const locations: string[] = []
   for (const jobListing of jobListings) {
-    for(const location of jobListing.locations) {
-      if(!locations.includes(location)) {
+    for (const location of jobListing.locations) {
+      if (!locations.includes(location)) {
         locations.push(location)
       }
     }
   }
-  
+
   return locations
 }
 

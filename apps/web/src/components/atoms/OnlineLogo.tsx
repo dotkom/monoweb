@@ -15,6 +15,7 @@ const OnlineLogo: FC<IconProps> = ({ className }) => (
     xmlnsXlink="http://www.w3.org/1999/xlink"
     xmlSpace="preserve"
   >
+    <title>Online Logo</title>
     <g transform="matrix(1,0,0,1,-2947.13,-68.8934)">
       <g transform="matrix(1,0,0,1,1956.71,0)">
         <g transform="matrix(1.33333,0,0,1.33333,886.922,-278.061)">
