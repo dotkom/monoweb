@@ -3,36 +3,21 @@ import type { FC, PropsWithChildren } from "react"
 
 export interface EntryDetailLayoutProps {
   title: string
-  type: string | null
-  color?: "AMBER" | "BLUE" | "GREEN"
+  subtitle?: string | string[]
 }
 
-export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({
-  children,
-  title,
-  type,
-  color = "BLUE",
-}) => {
-  const borderColorClass = cn({
-    "border-blue-8": color === "BLUE",
-    "border-green-8": color === "GREEN",
-    "border-amber-8": color === "AMBER",
-  })
-  const textColorClass = cn({
-    "text-blue-11": color === "BLUE",
-    "text-green-11": color === "GREEN",
-    "text-amber-11": color === "AMBER",
-  })
+export const EntryDetailLayout: FC<PropsWithChildren<EntryDetailLayoutProps>> = ({ children, title, subtitle }) => {
+  if (subtitle && Array.isArray(subtitle)) {
+    subtitle = subtitle.join(" • ")
+  }
 
   return (
-    <div className="mt-8 mb-16 mx-auto flex w-[90vw] max-w-screen-lg flex-col gap-y-16">
-      <div className="flex flex-col gap-y-7">
-        <div className={cn("flex w-full items-end justify-between gap-x-2 border-b-2 pb-2", borderColorClass)}>
-          <h1 className="text-3xl font-semibold">{title}</h1>
-          {type && <div className={cn("text-2xl", textColorClass)}>{type}</div>}
-        </div>
-        {children}
+    <div className="mb-16 mx-auto flex flex-col gap-y-8">
+      <div className="py-6 flex flex-col gap-y-3 border-b border-slate-6">
+        <h1 className="text-5xl font-bold">{title}</h1>
+        <span className="text-slate-10 rounded-lg">{subtitle}</span>
       </div>
+      {children}
     </div>
   )
 }

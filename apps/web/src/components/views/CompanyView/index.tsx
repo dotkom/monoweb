@@ -1,7 +1,7 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
 import type { Company, Event } from "@dotkomonline/types"
-import { Icon } from "@dotkomonline/ui"
+import { Card, Icon } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
@@ -14,42 +14,51 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
   const { name, description, phone, email, website, location, type, image } = props.company
 
   const icons = [
-    { icon: "material-symbols:location-on", text: location, href: null },
-    { icon: "ph:globe-bold", text: "Nettside", href: website },
-    { icon: "material-symbols:mail", text: email, href: `mailto:${email}` },
-    { icon: "material-symbols:phone-enabled", text: phone, href: `tel:${phone}` },
+    { label: "Kontorlokasjoner", icon: "lucide:building-2", text: location, href: null },
+    { label: "Nettside", icon: "lucide:globe", text: website, href: website },
+    { label: "Email", icon: "lucide:mail", text: email, href: `mailto:${email}` },
+    { label: "Telefon", icon: "lucide:smartphone", text: phone, href: `tel:${phone}` },
   ]
 
   return (
-    <EntryDetailLayout title={name} type={type} color={"BLUE"}>
-      <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
-        <div className="border-blue-7 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
+    <EntryDetailLayout title={name} subtitle={["Bedrift", type]}>
+      <div
+        className="grid gap-4 sm:grid-cols-[minmax(100px,_1fr)_18rem] md:grid-cols-[minmax(100px,_1fr)_22rem]"
+        // className="grid grid-cols-2"
+      >
+        <Card className="h-fit">
+          <h2 className="border-none pb-0 text-3xl font-semibold">Om bedriften</h2>
+          <p className="mt-4 whitespace-pre-wrap">{description}</p>
+        </Card>
+        <div className="flex flex-col gap-y-4 stretch-0">
           {image && (
-            <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
+            <Card className="w-full h-48 relative">
               <a href={website} target="_blank" rel="noreferrer">
-                <Image src={image} alt="Company logo" fill style={{ objectFit: "contain" }} className="w-full" />
+                <Image src={image} alt="Company logo" fill style={{ objectFit: "contain" }} />
               </a>
-            </div>
+            </Card>
           )}
-
-          <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
-            {icons.map(({ icon, text, href }, index) => (
+          <Card className="space-y-4">
+            {icons.map(({ label, icon, text, href }, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: icons is a static array
-              <div key={index} className="flex items-center gap-x-2">
-                <Icon icon={icon} width="28" />
-                {href === null ? (
-                  <span>{text}</span>
-                ) : (
-                  <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
-                    {text ? text : "N/A"}
-                  </a>
-                )}
+              <div key={index} className="flex items-start gap-x-3">
+                <Icon icon={icon} width="20" />
+                <div className="flex flex-col">
+                  <span className="font-semibold">{label}</span>
+                  {href === null ? (
+                    <span>{text}</span>
+                  ) : (
+                    <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
+                      {text ? text : "N/A"}
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
-          </div>
+          </Card>
         </div>
-        <p>{description}</p>
       </div>
+
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
         <EventList title={"Kommende arrangementer"} events={props.events} />
