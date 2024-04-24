@@ -16,6 +16,7 @@ const OnlineIcon: FC<IconProps> = ({ className }) => (
       fillRule: "nonzero",
     }}
   >
+    <title>Online Icon</title>
     <g transform="matrix(1,0,0,1,-1065.04,-69.01)">
       <g transform="matrix(0.470077,0,0,1,531.77,0)">
         <g transform="matrix(2.83642,0,0,1.33333,914.268,-277.944)">

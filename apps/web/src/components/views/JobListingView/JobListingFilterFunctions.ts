@@ -41,13 +41,16 @@ export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chos
   if (chosenSort === "Frist") {
     if (jobListing1.deadline?.getTime() == null) {
       return -1
-    }if (jobListing2.deadline?.getTime() == null) {
+    }
+    if (jobListing2.deadline?.getTime() == null) {
       return 1
     }
     return jobListing1.deadline.getTime() - jobListing2.deadline.getTime()
-  }if (chosenSort === "Påmeldingsstart") {
+  }
+  if (chosenSort === "Påmeldingsstart") {
     return jobListing1.start.getTime() - jobListing2.start.getTime()
-  }if (chosenSort === "Slutt") {
+  }
+  if (chosenSort === "Slutt") {
     return jobListing1.end.getTime() - jobListing2.end.getTime()
   }
   return 0
