@@ -1,13 +1,12 @@
-"use client"
-
 import JobListingView from "@/components/views/JobListingView/JobListingView"
-import { trpc } from "../../utils/trpc/client"
+import { getServerClient } from "@/utils/trpc/serverClient"
+type CareerSearchParams = {
+  [key: string]: string
+}
 
-const CareerPage = () => {
-  const { data, isLoading } = trpc.jobListing.all.useQuery()
-  if (isLoading) {
-    return <p>Loading...</p>
-  }
+const CareerPage = async () => {
+  const serverClient = await getServerClient()
+  const data = await serverClient.jobListing.all()
   return <JobListingView careers={data ?? []} />
 }
 export default CareerPage

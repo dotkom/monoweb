@@ -1,3 +1,4 @@
+"use client"
 import type { JobListing } from "@dotkomonline/types"
 import { type FC, useState } from "react"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
