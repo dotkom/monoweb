@@ -46,8 +46,10 @@ export class Auth0UserSyncService implements UserSyncService {
       })
 
       await this.update(user)
+
+      this.logger.info("info", "Populated user with fake data", { userId: user.id })
     } catch (error) {
-      // do nothing
+      // User already exists, ignore duplicate key value violates unique constraint error from postgres
     }
   }
 

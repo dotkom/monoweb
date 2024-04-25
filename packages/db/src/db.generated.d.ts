@@ -219,6 +219,7 @@ export interface OwUser {
   givenName: string
   id: Generated<string>
   lastSyncedAt: Generated<Timestamp>
+  middleName: string
   name: string
   phone: string | null
   picture: string | null
