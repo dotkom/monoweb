@@ -75,7 +75,7 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
-import { Auth0UserSyncService, type UserSyncService } from "./user/user-sync-service"
+import { Auth0SynchronizationServiceImpl, type Auth0SynchronizationService } from "./user/auth0-synchronization-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -150,7 +150,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     notificationPermissionsRepository
   )
 
-  const syncedUserService: UserSyncService = new Auth0UserSyncService(userService, auth0Repository)
+  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(userService, auth0Repository)
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)

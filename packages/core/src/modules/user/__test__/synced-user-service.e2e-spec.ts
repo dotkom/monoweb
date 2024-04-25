@@ -15,7 +15,7 @@ import {
 import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "../user-repository"
 import { type UserService, UserServiceImpl } from "../user-service"
-import { Auth0UserSyncService, type UserSyncService } from "../user-sync-service"
+import { Auth0SynchronizationServiceImpl, type Auth0SynchronizationService } from "../auth0-synchronization-service"
 
 interface ServerLayerOptions {
   db: Kysely<Database>
@@ -36,7 +36,7 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
     notificationPermissionsRepository
   )
 
-  const syncedUserService: UserSyncService = new Auth0UserSyncService(userService, auth0Repository)
+  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(userService, auth0Repository)
 
   return {
     userService,

@@ -8,7 +8,7 @@ import {
   type AttendeeUser,
   AttendeeUserSchema,
   type AttendeeWrite,
-  ExtrasChoices,
+  type ExtrasChoices,
   type User,
   type UserId,
 } from "@dotkomonline/types"
@@ -77,25 +77,12 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       .groupBy("attendee.id")
       .execute()
 
-    const data: AttendeeUser[] = res.map((attendee) => {
-      const user = attendee.user[0]
-      const extrasChoices = ExtrasChoices.parse(attendee.extrasChoices)
-      return {
-        ...attendee,
-        user: {
-          ...user,
-          lastSyncedAt: user.lastSyncedAt ? new Date(user.lastSyncedAt) : null,
-        },
-        extrasChoices,
-      }
-    })
-
     return res
       .map((value) => ({
         ...value,
         user: {
           ...value.user[0],
-          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
+          lastSyncedAt: new Date(value.user[0].lastSyncedAt)
         },
       }))
       .map(mapToAttendeeWithUser)

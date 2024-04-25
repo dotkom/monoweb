@@ -5,7 +5,7 @@ import { Auth0UserNotFoundError } from "../external/auth0-errors"
 import type { Auth0Repository } from "../external/auth0-repository"
 import type { UserService } from "./user-service"
 
-export interface UserSyncService {
+export interface Auth0SynchronizationService {
   update(payload: UserWrite): Promise<User>
   handleUserSync(sub: string, now: Date): Promise<User>
   handlePopulateUserWithFakeData(auth0Id: string, email?: string | null): Promise<void>
@@ -25,8 +25,8 @@ const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> =
   gender: "male",
 }
 
-export class Auth0UserSyncService implements UserSyncService {
-  private readonly logger: Logger = getLogger(Auth0UserSyncService.name)
+export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationService {
+  private readonly logger: Logger = getLogger(Auth0SynchronizationServiceImpl.name)
   constructor(
     private readonly userService: UserService,
     private readonly auth0Repository: Auth0Repository
@@ -39,7 +39,7 @@ export class Auth0UserSyncService implements UserSyncService {
 
     try {
       // This fails if the user already exists
-      const user = await this.create({
+      const user = await this.userService.create({
         ...FAKE_USER_EXTRA_SIGNUP_DATA,
         email: email,
         auth0Id: auth0Id,
@@ -51,10 +51,6 @@ export class Auth0UserSyncService implements UserSyncService {
     } catch (error) {
       // User already exists, ignore duplicate key value violates unique constraint error from postgres
     }
-  }
-
-  async create(data: UserWrite) {
-    return this.userService.create(data)
   }
 
   async update(data: UserWrite) {
@@ -88,13 +84,13 @@ export class Auth0UserSyncService implements UserSyncService {
    * @returns User
    */
   async handleUserSync(auth0UserId: string, now: Date) {
-    const userDB = await this.userService.getByAuth0Id(auth0UserId)
+    const user = await this.userService.getByAuth0Id(auth0UserId)
 
     const oneDayAgo = addDays(now, -1)
-    const userDoesNotNeedSync = userDB?.lastSyncedAt && oneDayAgo < userDB.lastSyncedAt
+    const userDoesNotNeedSync = user !== null && oneDayAgo < user.lastSyncedAt
 
     if (userDoesNotNeedSync) {
-      return userDB
+      return user
     }
 
     const userAuth0 = await this.auth0Repository.getByAuth0UserId(auth0UserId)

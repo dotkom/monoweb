@@ -11,6 +11,7 @@ export const getLogger = (path: string) =>
         format: format.combine(
           format.colorize(),
           format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+          format.splat(),
           format.printf((msg) => `${msg.level} [${msg.timestamp}] ${msg.message} (${path})`)
         ),
       }),

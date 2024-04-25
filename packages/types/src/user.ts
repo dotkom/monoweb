@@ -13,7 +13,7 @@ export const UserSchema = z.object({
   studyYear: z.number().int().min(-1).max(6),
   allergies: z.array(z.string()),
   picture: z.string().nullable(),
-  lastSyncedAt: z.date().nullable(),
+  lastSyncedAt: z.date(),
 })
 
 export type UserId = User["id"]

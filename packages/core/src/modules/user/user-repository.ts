@@ -58,12 +58,6 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
-    return withInsertJsonValue(
-      {
-        ...data,
-        lastSyncedAt: data.lastSyncedAt ? data.lastSyncedAt : new Date(),
-      },
-      "allergies"
-    )
+    return withInsertJsonValue(data, "allergies")
   }
 }
