@@ -12,7 +12,7 @@ import type {
 import { IllegalStateError } from "../../error"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
-import type { UserService } from "../user/user-service"
+import type { ReadOnlyUserService } from "../user/user-service"
 import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"
@@ -37,7 +37,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     private readonly attendeeRepository: AttendeeRepository,
     private readonly attendancePoolRepository: AttendancePoolRepository,
     private readonly attendanceRespository: AttendanceRepository,
-    private readonly userService: UserService,
+    private readonly userService: ReadOnlyUserService,
     private readonly waitlistAttendeeService: WaitlistAttendeService
   ) {}
 

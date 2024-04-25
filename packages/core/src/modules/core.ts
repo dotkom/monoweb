@@ -75,7 +75,7 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type SyncedUserService, SyncedUserServiceImpl } from "./user/synced-user-service"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
-import { type UserService, UserServiceImpl } from "./user/user-service"
+import { type ReadOnlyUserService, UserServiceImpl } from "./user/user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -144,7 +144,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
 
-  const userService: UserService = new UserServiceImpl(
+  const userService: ReadOnlyUserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository

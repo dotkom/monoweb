@@ -3,8 +3,9 @@ import type { PrivacyPermissionsWrite, User, UserId, UserWrite } from "@dotkomon
 import { addDays } from "date-fns"
 import { Auth0UserNotFoundError } from "../external/auth0-errors"
 import type { Auth0Repository } from "../external/auth0-repository"
-import type { UserService } from "./user-service"
+import type { ReadOnlyUserService } from "./user-service"
 import type { Cursor } from "../../utils/db-utils"
+import type { UserRepository } from "./user-repository"
 
 // Until we have gather this data from the user, this fake data is used as the initial data for new users
 const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> = {
@@ -44,10 +45,11 @@ export interface SyncedUserService {
   synchronizeUser(user: User): Promise<User>
 }
 
-export class SyncedUserServiceImpl implements SyncedUserService, UserService {
+export class SyncedUserServiceImpl implements SyncedUserService, ReadOnlyUserService {
   private readonly logger: Logger = getLogger(SyncedUserServiceImpl.name)
   constructor(
-    private readonly userService: UserService,
+    private readonly userService: ReadOnlyUserService,
+    private readonly userRepository: UserRepository,
     private readonly auth0Repository: Auth0Repository
   ) {}
 
@@ -100,11 +102,11 @@ export class SyncedUserServiceImpl implements SyncedUserService, UserService {
 
     if (userDb === null) {
       this.logger.log("info", "User does not exist in local db, creating user for user ", userAuth0.name)
-      return this.userService.create(updatedUser)
+      return this.userRepository.create(updatedUser)
     }
 
     this.logger.log("info", "Updating user in local db for user ", userAuth0.name)
-    return await this.userService.update(updatedUser)
+    return this.userRepository.update(userAuth0.id, updatedUser)
   }
 
   /**

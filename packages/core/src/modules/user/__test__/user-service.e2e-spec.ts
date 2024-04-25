@@ -16,7 +16,7 @@ import {
 import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
 import { type SyncedUserService, SyncedUserServiceImpl } from "../synced-user-service"
 import { type UserRepository, UserRepositoryImpl } from "../user-repository"
-import { type UserService, UserServiceImpl } from "../user-service"
+import { type ReadOnlyUserService, UserServiceImpl } from "../user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -33,7 +33,7 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
   const notificationPermissionsRepository: NotificationPermissionsRepository =
     new NotificationPermissionsRepositoryImpl(db)
 
-  const userService: UserService = new UserServiceImpl(
+  const userService: ReadOnlyUserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository

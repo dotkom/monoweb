@@ -12,10 +12,9 @@ import type { NotificationPermissionsRepository } from "./notification-permissio
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
 
-export interface UserService {
+export interface ReadOnlyUserService {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
-  update(payload: UserWrite): Promise<User>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
@@ -26,7 +25,7 @@ export interface UserService {
   getByAuth0Id(auth0Id: string): Promise<User | null>
 }
 
-export class UserServiceImpl implements UserService {
+export class UserServiceImpl implements ReadOnlyUserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
@@ -51,10 +50,6 @@ export class UserServiceImpl implements UserService {
 
   async searchByFullName(searchQuery: string, take: number) {
     return this.userRepository.searchByFullName(searchQuery, take)
-  }
-
-  async update(payload: User) {
-    return this.userRepository.update(payload.id, payload)
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {
