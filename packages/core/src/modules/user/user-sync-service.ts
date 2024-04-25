@@ -36,13 +36,19 @@ export class Auth0UserSyncService implements UserSyncService {
     if (!email) {
       throw new Error("Did not get email in jwt")
     }
-    const user = await this.create({
-      ...FAKE_USER_EXTRA_SIGNUP_DATA,
-      email: email,
-      auth0Id: auth0Id,
-    })
 
-    await this.update(user)
+    try {
+      // This fails if the user already exists
+      const user = await this.create({
+        ...FAKE_USER_EXTRA_SIGNUP_DATA,
+        email: email,
+        auth0Id: auth0Id,
+      })
+
+      await this.update(user)
+    } catch (error) {
+      // do nothing
+    }
   }
 
   async create(data: UserWrite) {
