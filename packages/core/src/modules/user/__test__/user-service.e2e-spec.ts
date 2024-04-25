@@ -33,14 +33,13 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
   const notificationPermissionsRepository: NotificationPermissionsRepository =
     new NotificationPermissionsRepositoryImpl(db)
 
-  const syncedUserService: UserSyncService = new Auth0UserSyncService(userRepository, auth0Repository)
-
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    syncedUserService
+    notificationPermissionsRepository
   )
+
+  const syncedUserService: UserSyncService = new Auth0UserSyncService(userService, auth0Repository)
 
   return {
     userService,

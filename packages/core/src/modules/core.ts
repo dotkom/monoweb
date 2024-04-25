@@ -144,14 +144,13 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
 
-  const syncedUserService: UserSyncService = new Auth0UserSyncService(userRepository, auth0Repository)
-
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    syncedUserService
+    notificationPermissionsRepository
   )
+
+  const syncedUserService: UserSyncService = new Auth0UserSyncService(userService, auth0Repository)
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)

@@ -74,7 +74,7 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        await core.userService.handlePopulateUserWithFakeData(token.sub, token.email) // Remove when we have real data
+        await core.syncedUserService.handlePopulateUserWithFakeData(token.sub, token.email) // Remove when we have real data
         const user = await core.syncedUserService.handleUserSync(token.sub, new Date())
 
         session.user.id = user.auth0Id

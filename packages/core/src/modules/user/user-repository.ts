@@ -10,7 +10,7 @@ export interface UserRepository {
   getByAuth0Id(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: Partial<UserWrite>): Promise<User>
+  update(id: UserId, data: UserWrite): Promise<User>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
