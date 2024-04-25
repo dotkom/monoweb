@@ -73,9 +73,9 @@ import {
   type PrivacyPermissionsRepository,
   PrivacyPermissionsRepositoryImpl,
 } from "./user/privacy-permissions-repository"
-import { type SyncedUserService, SyncedUserServiceImpl } from "./user/synced-user-service"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
-import { type ReadOnlyUserService, UserServiceImpl } from "./user/user-service"
+import { type UserService, UserServiceImpl } from "./user/user-service"
+import { Auth0UserSyncService, type UserSyncService } from "./user/user-sync-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -144,13 +144,14 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
 
-  const userService: ReadOnlyUserService = new UserServiceImpl(
+  const syncedUserService: UserSyncService = new Auth0UserSyncService(userRepository, auth0Repository)
+
+  const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository
+    notificationPermissionsRepository,
+    syncedUserService
   )
-
-  const syncedUserService: SyncedUserService = new SyncedUserServiceImpl(userService, auth0Repository)
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
@@ -245,7 +246,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    userRepository,
     syncedUserService,
   }
 }
