@@ -27,7 +27,6 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   ) {}
 
   private async synchronizeUser(auth0Subject: string) {
-    this.logger.log("info", "Synchronizing user with Auth0", { userId: auth0Subject })
     const auth0User = await this.auth0Repository.getBySubject(auth0Subject)
 
     if (auth0User === null) {
@@ -37,8 +36,6 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     const user = await this.userService.getUserBySubject(auth0Subject)
 
     if (user === undefined) {
-      this.logger.log("info", "User does not exist in local db, creating user", { userId: auth0Subject })
-
       const userData: UserWrite = {
         auth0Sub: auth0User.subject,
         studyYear: -1,
@@ -74,6 +71,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
 
     const userShouldBeSynced = user.lastSyncedAt < oneDayAgo
     if (userShouldBeSynced) {
+      this.logger.info("Syncing user from Auth0: %s", auth0Sub)
       return this.synchronizeUser(user.auth0Sub)
     }
 
