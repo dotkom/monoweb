@@ -36,17 +36,16 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
     notificationPermissionsRepository
   )
 
-  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(userService, auth0Repository)
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(userService, auth0Repository)
 
   return {
     userService,
     auth0Repository,
-    syncedUserService,
+    auth0SynchronizationService
   }
 }
 
-describe("synced user service", () => {
-  // NOTE: Uses `setSystemTime`, this persists between tests
+describe("auth0 sync service", () => {
   it("verifies synchronization works", async () => {
     // Set up test db and  service layer with a mocked Auth0 management client.
     const env = createEnvironment()
@@ -62,7 +61,7 @@ describe("synced user service", () => {
     auth0Mock.users.get.mockResolvedValue(updatedWithFakeDataUser)
 
     // first sync down to the local db. Should create user row in the db and populate with fake data.
-    const syncedUser = await core.syncedUserService.handleUserSync(auth0Id, now)
+    const syncedUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, now)
 
     const dbUser = await core.userService.getById(syncedUser.id)
     expect(dbUser).toEqual(syncedUser)
@@ -73,12 +72,12 @@ describe("synced user service", () => {
 
     // Run synchroinization again, simulating doing it 1hr later. However, since the user was just synced, the synchronization should not occur.
     const oneHourLater = addHours(now, 1)
-    const updatedDbUser = await core.syncedUserService.handleUserSync(auth0Id, oneHourLater)
+    const updatedDbUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, oneHourLater)
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
     // Attempt to sync the user again 25 hours after first sync. This time, the synchronization should occur.
     const twentyFiveHoursLater = addHours(now, 25)
-    await core.syncedUserService.handleUserSync(auth0Id, twentyFiveHoursLater)
+    await core.auth0SynchronizationService.handleUserSync(auth0Id, twentyFiveHoursLater)
 
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
