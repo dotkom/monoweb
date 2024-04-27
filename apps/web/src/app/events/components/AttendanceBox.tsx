@@ -1,13 +1,11 @@
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
-import clsx from "clsx"
 import type { Session } from "next-auth"
-import type { FC } from "react"
-import { AttendanceGroup } from "./AttendanceGroup"
-import { StatusCard } from "./StatusCard"
+import type { FC, ReactElement } from "react"
 import { useRegisterMutation, useUnregisterMutation } from "./mutations"
 import { useGetAttendee } from "./queries"
+import { AttendanceBoxPool } from "./AttendanceBoxPool"
 
 export const calculateStatus = ({
   registerStart,
@@ -107,17 +105,15 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     now: new Date(),
   })
   const userIsRegistered = Boolean(attendee)
-  const myGroups = user && pools?.find((a) => a.yearCriteria.includes(user?.studyYear))
-
-  const visiblePools = pools?.filter((pool) => pool.isVisible)
+  const attendablePool = user && pools.find((a) => a.yearCriteria.includes(user?.studyYear))
 
   const registerForAttendance = () => {
-    if (!myGroups) {
+    if (!attendablePool) {
       throw new Error("Tried to register user for attendance without a group")
     }
 
     registerMutation.mutate({
-      attendancePoolId: myGroups?.id,
+      attendancePoolId: attendablePool?.id,
       userId: sessionUser.id,
     })
   }
@@ -132,43 +128,36 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     })
   }
 
-  return (
-    <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
-      <h2>Påmelding</h2>
-      <div className="mt-2">
-        <StatusCard attendance={attendance} />
-      </div>
-      <div>
-        {attendanceStatus === "OPEN" &&
-          (userIsRegistered ? (
-            <Button className="mt-2 w-full text-white" color="red" variant="solid" onClick={unregisterForAttendance}>
-              Meld meg av
-            </Button>
-          ) : (
-            <Button className="mt-2 w-full" onClick={registerForAttendance}>
-              Meld meg på
-            </Button>
-          ))}
-      </div>
+  let changeRegisteredStateButton: ReactElement<typeof Button>
 
-      {visiblePools?.length !== 0 && (
-        <div className="mt-4">
-          <p>Påmeldingsgrupper</p>
-          <div className="flex flex-wrap w-full">
-            {visiblePools?.map((group, idx) => (
-              <AttendanceGroup
-                title={group.title}
-                numberOfPeople={group.numAttendees}
-                totalSpots={group.capacity}
-                key={group.id}
-                className={clsx(idx === 0 ? "mr-2" : "", "mt-4 w-32")}
-                isAttending={false}
-                canAttend={false}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+  if (userIsRegistered) {
+    changeRegisteredStateButton = (
+      <Button className="w-full text-white rounded-xl" color="red" variant="solid" onClick={unregisterForAttendance}>
+        Meld meg av
+      </Button>
+    )
+  } else {
+    changeRegisteredStateButton = (
+      <Button className="w-full rounded-xl" onClick={registerForAttendance}>
+        Meld meg på
+      </Button>
+    )
+  }
+
+  const viewAttendeesButton = (
+    <Button className="w-full rounded-xl" onClick={() => console.log("WIP")}>
+      Se påmeldte
+    </Button>
+  )
+
+  return (
+    <div className="flex flex-col bg-slate-2 rounded-3xl min-h-64 mb-8 px-4 py-4 gap-3">
+      <h2>Påmelding</h2>
+      {attendablePool && <AttendanceBoxPool pool={attendablePool} />}
+      <div className="flex flex-row gap-6">
+        {viewAttendeesButton}
+        {attendanceStatus === "OPEN" && changeRegisteredStateButton}
+      </div>
     </div>
   )
 }
