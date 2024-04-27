@@ -5,7 +5,12 @@ const config = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["cdn.sanity.io", "onlineweb4-prod.s3.eu-north-1.amazonaws.com", "online.ntnu.no"],
+    domains: [
+      "cdn.sanity.io",
+      "onlineweb4-prod.s3.eu-north-1.amazonaws.com",
+      "online.ntnu.no",
+      "s3.eu-north-1.amazonaws.com",
+    ],
   },
   experimental: {
     swcPlugins: [["next-superjson-plugin", {}]],

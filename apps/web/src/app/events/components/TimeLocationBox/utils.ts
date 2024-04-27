@@ -19,11 +19,11 @@ export const createGoogleCalendarLink = ({
       .replace(/[-:]/g, "")
       .replace(/\.\d{3}/, "")
 
-  const _start = gcalDateTimeFormat(start)
-  const _end = gcalDateTimeFormat(end)
+  const gcalStart = gcalDateTimeFormat(start)
+  const gcalEnd = gcalDateTimeFormat(end)
 
   return encodeURI(
-    `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${_start}/${_end}&details=${description}&location=${location}&sf=true&output=xml`
+    `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${gcalStart}/${gcalEnd}&details=${description}&location=${location}&sf=true&output=xml`
   )
 }
 

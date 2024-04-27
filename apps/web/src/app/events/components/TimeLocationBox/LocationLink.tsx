@@ -34,7 +34,6 @@ export const LocationLink: FC<LocationLinkProps> = ({ link: _link }) => {
         href={link.href}
         iconHref="https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/google_maps.png"
         label="Kart"
-        className="w-28 h-12"
       />
     )
   }
@@ -44,7 +43,6 @@ export const LocationLink: FC<LocationLinkProps> = ({ link: _link }) => {
         href={link.href}
         iconHref="https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/60018c08c5bbb7e94657a8b2_M-06.png"
         label="Mazemap"
-        className="w-28 h-12"
       />
     )
   }

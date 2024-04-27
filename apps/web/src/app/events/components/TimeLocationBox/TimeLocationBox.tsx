@@ -51,7 +51,6 @@ export const TimeLocationBox: FC<Props> = ({
               href={gcalLink}
               iconHref="https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/Google_Calendar_icon_(2020).svg.png"
               label="Kalender"
-              className="w-28 h-12"
             />
           </div>
         </div>

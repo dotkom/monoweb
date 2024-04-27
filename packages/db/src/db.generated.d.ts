@@ -117,7 +117,7 @@ export interface Event {
   imageUrl: string | null;
   locationAddress: string | null;
   locationLink: string | null;
-  locationTitle: string | null;
+  locationTitle: string;
   public: boolean;
   start: Timestamp;
   status: EventStatus;
