@@ -7,20 +7,10 @@ import { useSession } from "next-auth/react"
 import type { FC } from "react"
 import { AttendanceBox } from "../components/AttendanceBox"
 import { EventInfoBox } from "../components/EventInfoBox"
-import { LocationBox } from "../components/LocationBox"
 import { OrganizerBox } from "../components/OrganizerBox"
 import TicketButton from "../components/TicketButton"
+import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 import { useGetAttendee } from "../components/queries"
-
-/*
-export const generateStaticParams = async () => {
-    const serverClient = await getUnauthorizedServerClient();
-
-    const events = await serverClient.event.all();
-
-    return events.map(({ id }) => ({ id }));
-}
- */
 
 const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
   return <EventDetailPageInner id={id} />
@@ -86,6 +76,7 @@ const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendan
     attendanceId: attendance.id,
     userId: user.id,
   })
+
   return (
     <div>
       <div className="flex w-full">
@@ -94,7 +85,15 @@ const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendan
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
           {attendee && <TicketButton userid={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
-          {event.location && <LocationBox location={event.location} />}
+          <TimeLocationBox
+            datetimeStart={event.start}
+            datetimeEnd={event.end}
+            locationTitle={event.locationTitle}
+            locationAddress={event.locationAddress}
+            locationLink={event.locationLink}
+            eventTitle={event.title}
+            eventDescription={event.description}
+          />
         </div>
       </div>
     </div>

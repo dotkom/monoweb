@@ -1,5 +1,5 @@
 import { createEnvironment } from "@dotkomonline/env"
-import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
+import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import assert from "../../../../assert"
@@ -43,20 +43,6 @@ const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
   createdAt: write.createdAt ?? new Date(),
   id: write.id ?? ulid(),
   updatedAt: write.updatedAt ?? new Date(),
-})
-
-const getFakeEvent = (write: Partial<EventWrite>): EventWrite => ({
-  attendanceId: write.attendanceId ?? ulid(),
-  description: write.description ?? "description",
-  end: write.end ?? new Date(),
-  imageUrl: write.imageUrl ?? "imageUrl",
-  location: write.location ?? "location",
-  public: write.public ?? true,
-  start: write.start ?? new Date(),
-  status: write.status ?? "ATTENDANCE",
-  title: write.title ?? "",
-  subtitle: write.subtitle ?? "",
-  type: write.type ?? "ACADEMIC",
 })
 
 const setupFakeFullAttendance = async (
