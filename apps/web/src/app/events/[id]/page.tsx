@@ -1,11 +1,12 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Committee, Company, Event } from "@dotkomonline/types"
 import type { Session } from "next-auth"
 import { useSession } from "next-auth/react"
 import type { FC } from "react"
 import { AttendanceBox } from "../components/AttendanceBox"
+import { EventHeader } from "../components/EventHeader"
 import { EventInfoBox } from "../components/EventInfoBox"
 import { OrganizerBox } from "../components/OrganizerBox"
 import TicketButton from "../components/TicketButton"
@@ -39,45 +40,61 @@ const EventDetailPageInner = ({ id }: { id: string }) => {
         pools={event.pools}
         event={event.event}
         committees={event.eventCommittees}
+        companies={event.eventCompanies}
       />
     )
   }
 
-  return <EventDetailWithoutAttendancePage event={event.event} committees={event.eventCommittees} />
+  return (
+    <EventDetailWithoutAttendancePage
+      user={session?.data?.user}
+      event={event.event}
+      committees={event.eventCommittees}
+      companies={event.eventCompanies}
+    />
+  )
 }
 
-interface WithoutAttendanceProps {
+interface EventDetailProps {
+  user: NonNullable<Session["user"]> | undefined
   event: Event
   committees: Committee[]
+  companies: Company[]
 }
-const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ event, committees }) => {
+const EventDetailWithoutAttendancePage: FC<EventDetailProps> = ({ user, event, committees, companies }) => {
   return (
-    <div>
+    <div className="mt-8 flex flex-col gap-16">
+      <EventHeader event={event} />
       <div className="flex w-full">
-        <EventInfoBox event={event} />
+        <EventInfoBox event={event} committees={committees} companies={companies} />
       </div>
     </div>
   )
 }
 
-interface WithAttendanceProps {
-  user?: Session["user"]
+interface EventDetailWithAttendanceProps extends EventDetailProps {
   attendance: Attendance
   pools: AttendancePool[]
-  event: Event
-  committees: Committee[]
 }
 
-const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
+const EventDetailWithAttendancePage: FC<EventDetailWithAttendanceProps> = ({
+  user,
+  attendance,
+  pools,
+  event,
+  committees,
+  companies,
+}) => {
   const { data: attendee } = useGetAttendee({
     attendanceId: attendance.id,
     userId: user?.id,
   })
 
   return (
-    <div>
+    <div className="mt-8 flex flex-col gap-8">
+      <EventHeader event={event} />
       <div className="flex w-full">
-        <EventInfoBox event={event} />
+        <EventInfoBox event={event} committees={committees} companies={companies} />
         <div className="flex flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
           {attendee && user && <TicketButton userId={user.id} />}
