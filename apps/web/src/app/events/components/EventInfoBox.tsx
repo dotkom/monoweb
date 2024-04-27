@@ -20,9 +20,9 @@ export const EventInfoBox: FC<Props> = ({ event, committees, companies }) => {
   const companyList = companies.map(mapToImageAndName)
 
   return (
-    <div className="mr-10 w-[60%] flex flex-col gap-4">
-      <div className="flex flex-row gap-8 my-3">{[...committeeList, ...companyList]}</div>
-      <p className="bg-slate-2 p-5 rounded-2xl">{event.description}</p>
+    <div className="mr-10 w-[60%] flex flex-col gap-8">
+      <div className="flex flex-row gap-8">{[...committeeList, ...companyList]}</div>
+      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl">{event.description}</p>
     </div>
   )
 }
