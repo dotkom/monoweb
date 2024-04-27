@@ -2,13 +2,6 @@
 @import url(@dotkomonline/config/typography.css);
 
 @layer base {
-    h1 {
-      @apply text-4xl;
-      font-size: 20px;
-    }
-}
-
-/* @layer base {
     html {
         font-size: 14px;
     }
@@ -25,4 +18,4 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
-} */
+}
