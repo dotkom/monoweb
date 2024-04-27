@@ -65,7 +65,7 @@ program
             .join("\n")}`
         )
       } else {
-        console.dir(res.error, { depth: null })
+        logger.warn("%O", res)
       }
     }
 
@@ -77,7 +77,7 @@ program
     if (res.error) {
       console.dir(res.error, { depth: null })
       logger.warn("Error while running migrations:")
-      logger.warn(JSON.stringify(res.error))
+      logger.warn("%O", JSON.stringify(res.error))
       process.exit(1)
     }
 
