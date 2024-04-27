@@ -10,6 +10,7 @@ import {
   createTextareaInput,
   useFormBuilder,
 } from "../../form"
+import { validateEvent } from "./event-form-validation"
 
 const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   start: new Date(),
@@ -24,36 +25,32 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   title: "",
   type: "SOCIAL",
   attendanceId: null,
+  locationLink: null,
+  locationTitle: "",
 }
 
 interface UseEventWriteFormProps {
-  onSubmit(data: z.infer<typeof FormValidationSchema>): void
-  defaultValues?: Partial<FormValidationResult>
-  label?: string
+  onSubmit(data: z.infer<typeof EventWriteFormValidationSchema>): void
 }
 
-export const FormValidationSchema = EventWriteSchema.extend({
-  start: z.date().min(new Date(), { message: "Starttidspunkt må være i fremtiden" }),
-  end: z.date().min(new Date(), { message: "Sluttidspunkt må være i fremtiden" }),
+export const EventWriteFormValidationSchema = EventWriteSchema.extend({
   committeeIds: z.array(z.string()),
-}).refine((data) => data.start < data.end, {
-  message: "Sluttidspunkt må være etter starttidspunkt",
-  path: ["end"],
+}).superRefine((data, ctx) => {
+  const issues = validateEvent(data)
+  for (const issue of issues) {
+    ctx.addIssue(issue)
+  }
 })
 
-type FormValidationResult = z.infer<typeof FormValidationSchema>
+type FormValidationResult = z.infer<typeof EventWriteFormValidationSchema>
 
-export const useEventWriteForm = ({
-  onSubmit,
-  label = "Opprett arrangement",
-  defaultValues = EVENT_FORM_DEFAULT_VALUES,
-}: UseEventWriteFormProps) => {
+export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { committees } = useCommitteeAllQuery()
   return useFormBuilder({
-    schema: FormValidationSchema,
-    defaultValues,
+    schema: EventWriteFormValidationSchema,
+    defaultValues: EVENT_FORM_DEFAULT_VALUES,
     onSubmit,
-    label,
+    label: "Opprett arrangement",
     fields: {
       title: createTextInput({
         label: "Arrangementnavn",

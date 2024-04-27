@@ -1,6 +1,5 @@
-import type { Committee } from "@dotkomonline/types"
+import { type Committee, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -10,6 +9,7 @@ import {
   createTextareaInput,
   useFormBuilder,
 } from "../../form"
+import { validateEvent } from "./event-form-validation"
 
 interface UseEventEditFormProps {
   onSubmit(data: FormValidationResult): void
@@ -18,29 +18,16 @@ interface UseEventEditFormProps {
   committees: Committee[]
 }
 
-const validateLocationLink = (value: string | null) => {
-  if (value === null) {
-    return true
-  }
-  if (!value.includes("google") && !value.includes("mazemap")) {
-    return false
-  }
-  return true
-}
+type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 const FormValidationSchema = EventSchema.extend({
   committeeIds: z.array(z.string()),
-  locationLink: z.string().nullable().refine(validateLocationLink, {
-    message: "Lenken må være en gyldig Google Maps eller MazeMap-lenke",
-  }),
+}).superRefine((data, ctx) => {
+  const issues = validateEvent(data)
+  for (const issue of issues) {
+    ctx.addIssue(issue)
+  }
 })
-  .required({ id: true })
-  .refine((data) => data.start < data.end, {
-    message: "Sluttidspunkt må være etter starttidspunkt",
-    path: ["end"],
-  })
-
-type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 export const useEventEditForm = ({
   committees,
@@ -79,8 +66,6 @@ export const useEventEditForm = ({
       }),
       locationLink: createTextInput({
         label: "Lenke til kart",
-        placeholder:
-          "https://www.google.com/maps/place/Hovedbygningen+(NTNU)/@63.4194658,10.3995042,17z/data=!3m1!4b1!4m6!3m5!1s0x466d3195b7c6960b:0xf8307e00da9b2556!8m2!3d63.4194658!4d10.4020791!16s%2Fg%2F11dflf4b45?entry=ttu",
       }),
       imageUrl: createTextInput({
         label: "Bildelenke",
