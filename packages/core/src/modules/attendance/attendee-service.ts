@@ -68,11 +68,11 @@ export class AttendeeServiceImpl implements AttendeeService {
 
   async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
-    const user = await this.userService.getUserById(userId)
+    const user = await this.userService.getById(userId)
     if (attendee === null) {
       throw new AttendeeNotFoundError("")
     }
-    if (user === undefined) {
+    if (user === null) {
       throw new UserNotFoundError(userId)
     }
     if (attendee.attended === true) {
