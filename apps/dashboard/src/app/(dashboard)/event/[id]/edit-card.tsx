@@ -14,8 +14,6 @@ export const EventEditCard: FC = () => {
     committeeIds: eventCommittees.map((committee) => committee.id),
   }
 
-  console.log(defaultValues)
-
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
     committees,
