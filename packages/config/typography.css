@@ -1,23 +1,30 @@
-h1 {
-  @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
-}
 
-h2 {
-  @apply border-b-slate-7 mt-10 scroll-m-20 border-b pb-1 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-h3 {
-  @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
-}
+@layer base {
+  h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl !important;
+  }
 
-h4 {
-  @apply mt-8 scroll-m-20 text-xl font-semibold tracking-tight;
-}
+  h2 {
+    @apply border-b-slate-7 mt-10 scroll-m-20 border-b pb-1 text-3xl font-semibold tracking-tight transition-colors first:mt-0 !important;
+  }
 
-blockquote {
-  @apply border-slate-7 text-slate-1 mt-6 border-l-2 pl-6 italic;
-}
+  h3 {
+    @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight !important;
+  }
 
-code {
-  @apply bg-slate-2 text-slate-11 relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  h4 {
+    @apply mt-8 scroll-m-20 text-xl font-semibold tracking-tight !important;
+  }
+
+  blockquote {
+    @apply border-slate-7 text-slate-1 mt-6 border-l-2 pl-6 italic !important;
+  }
+
+  code {
+    @apply bg-slate-2 text-slate-11 relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold !important;
+  }
 }

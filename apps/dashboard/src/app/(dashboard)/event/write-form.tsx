@@ -16,7 +16,7 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   end: new Date(),
   description: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
   imageUrl: null,
-  location: null,
+  locationAddress: null,
   subtitle: null,
   committeeIds: [],
   public: false,
@@ -69,7 +69,7 @@ export const useEventWriteForm = ({
         label: "Beskrivelse",
         placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
       }),
-      location: createTextInput({
+      locationAddress: createTextInput({
         label: "Sted",
         placeholder: "Åre",
       }),

@@ -18,8 +18,21 @@ interface UseEventEditFormProps {
   committees: Committee[]
 }
 
+const validateLocationLink = (value: string | null) => {
+  if (value === null) {
+    return true
+  }
+  if (!value.includes("google") && !value.includes("mazemap")) {
+    return false
+  }
+  return true
+}
+
 const FormValidationSchema = EventSchema.extend({
   committeeIds: z.array(z.string()),
+  locationLink: z.string().nullable().refine(validateLocationLink, {
+    message: "Lenken må være en gyldig Google Maps eller MazeMap-lenke",
+  }),
 })
   .required({ id: true })
   .refine((data) => data.start < data.end, {
@@ -56,9 +69,18 @@ export const useEventEditForm = ({
         placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
         rows: 20,
       }),
-      location: createTextInput({
-        label: "Sted",
+      locationTitle: createTextInput({
+        label: "Tittel på lokasjon",
         placeholder: "Åre",
+      }),
+      locationAddress: createTextInput({
+        label: "Adresse",
+        placeholder: "Høgskoleringen 1, 7034 Trondheim",
+      }),
+      locationLink: createTextInput({
+        label: "Lenke til kart",
+        placeholder:
+          "https://www.google.com/maps/place/Hovedbygningen+(NTNU)/@63.4194658,10.3995042,17z/data=!3m1!4b1!4m6!3m5!1s0x466d3195b7c6960b:0xf8307e00da9b2556!8m2!3d63.4194658!4d10.4020791!16s%2Fg%2F11dflf4b45?entry=ttu",
       }),
       imageUrl: createTextInput({
         label: "Bildelenke",

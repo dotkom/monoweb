@@ -130,7 +130,7 @@ function toICal(
     end: event.end,
     summary: event.title,
     description: event.description,
-    location: event.location,
+    location: event.locationAddress,
     url: eventUrl(req, event),
   }
 }
@@ -150,7 +150,7 @@ function toRegistration(
     end: start, // 0 length
     title,
     description: event.description,
-    location,
+    locationAddress: location,
     id: event.id,
   }
 }
