@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reason for important: https://github.com/withastro/astro/issues/3844 */
 @layer base {
   h1 {
     @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl !important;
