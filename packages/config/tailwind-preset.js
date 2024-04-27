@@ -27,6 +27,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
+        fraunces: ["var(--font-fraunces, 'Fraunces')"],
         poppins: ["var(--font-poppins, 'Poppins')"],
         mono: ["Roboto Mono", "monospace"],
         sans: ['"Inter var"', "sans-serif"],
