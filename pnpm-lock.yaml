@@ -819,8 +819,8 @@ importers:
         specifier: workspace:*
         version: link:../env
       winston:
-        specifier: ^3.11.0
-        version: 3.11.0
+        specifier: ^3.13.0
+        version: 3.13.0
     devDependencies:
       '@biomejs/biome':
         specifier: 1.6.4
@@ -12411,17 +12411,17 @@ packages:
       string-width: 5.1.2
     dev: true
 
-  /winston-transport@4.5.0:
-    resolution: {integrity: sha512-YpZzcUzBedhlTAfJg6vJDlyEai/IFMIVcaEZZyl3UXIl4gmqRpU7AE89AHLkbzLUsv0NVmw7ts+iztqKxxPW1Q==}
-    engines: {node: '>= 6.4.0'}
+  /winston-transport@4.7.0:
+    resolution: {integrity: sha512-ajBj65K5I7denzer2IYW6+2bNIVqLGDHqDw3Ow8Ohh+vdW+rv4MZ6eiDvHoKhfJFZ2auyN8byXieDDJ96ViONg==}
+    engines: {node: '>= 12.0.0'}
     dependencies:
       logform: 2.5.1
       readable-stream: 3.6.2
       triple-beam: 1.4.1
     dev: false
 
-  /winston@3.11.0:
-    resolution: {integrity: sha512-L3yR6/MzZAOl0DsysUXHVjOwv8mKZ71TrA/41EIduGpOOV5LQVodqN+QdQ6BS6PJ/RdIshZhq84P/fStEZkk7g==}
+  /winston@3.13.0:
+    resolution: {integrity: sha512-rwidmA1w3SE4j0E5MuIufFhyJPBDG7Nu71RkZor1p2+qHvJSZ9GYDA81AyleQcZbh/+V6HjeBdfnTZJm9rSeQQ==}
     engines: {node: '>= 12.0.0'}
     dependencies:
       '@colors/colors': 1.6.0
@@ -12434,7 +12434,7 @@ packages:
       safe-stable-stringify: 2.4.3
       stack-trace: 0.0.10
       triple-beam: 1.4.1
-      winston-transport: 4.5.0
+      winston-transport: 4.7.0
     dev: false
 
   /wrap-ansi@6.2.0:
