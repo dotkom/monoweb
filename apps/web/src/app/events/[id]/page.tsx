@@ -93,9 +93,9 @@ const EventDetailWithAttendancePage: FC<EventDetailWithAttendanceProps> = ({
   return (
     <div className="mt-8 flex flex-col gap-8">
       <EventHeader event={event} />
-      <div className="flex w-full">
+      <div className="flex w-full flex-col md:flex-row">
         <EventInfoBox event={event} committees={committees} companies={companies} />
-        <div className="flex flex-1 flex-col">
+        <div className="flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
           {attendee && user && <TicketButton userId={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
