@@ -8,6 +8,7 @@ import { mockDeep } from "vitest-mock-extended"
 import { mockAuth0UserResponse } from "../../../../mock"
 import { createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
+import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -15,7 +16,6 @@ import {
 import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "../user-repository"
 import { type UserService, UserServiceImpl } from "../user-service"
-import { Auth0SynchronizationServiceImpl, type Auth0SynchronizationService } from "../auth0-synchronization-service"
 
 interface ServerLayerOptions {
   db: Kysely<Database>
@@ -36,12 +36,15 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
     notificationPermissionsRepository
   )
 
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(userService, auth0Repository)
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userService,
+    auth0Repository
+  )
 
   return {
     userService,
     auth0Repository,
-    auth0SynchronizationService
+    auth0SynchronizationService,
   }
 }
 
