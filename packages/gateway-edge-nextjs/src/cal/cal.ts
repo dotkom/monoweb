@@ -123,7 +123,7 @@ export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
 
 function toICal(
   req: NextApiRequest,
-  event: Pick<Event, "description" | "end" | "id" | "location" | "start" | "title">
+  event: Pick<Event, "description" | "end" | "id" | "locationAddress" | "start" | "title">
 ): ICalEventData {
   return {
     start: event.start,
@@ -137,7 +137,7 @@ function toICal(
 
 function toRegistration(
   event: Pick<Event, "description" | "id" | "start" | "title">
-): Pick<Event, "description" | "end" | "id" | "location" | "start" | "title"> {
+): Pick<Event, "description" | "end" | "id" | "locationAddress" | "start" | "title"> {
   // 5 days before
   // TODO when db has this, we can use the actual start value, this is just for testing
   const start = new Date(event.start.getTime() - 5 * 24 * 60 * 60 * 1000)
