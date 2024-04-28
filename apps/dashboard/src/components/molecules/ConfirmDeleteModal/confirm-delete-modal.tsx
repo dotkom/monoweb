@@ -1,8 +1,5 @@
-import { ContextModalProps, modals } from "@mantine/modals"
-import { FC } from "react"
-import { Box, Button, Text, Title } from "@mantine/core"
-import { useRouter } from "next/navigation"
-import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
+import { Box, Text } from "@mantine/core"
+import { modals } from "@mantine/modals"
 
 interface ConfirmDeleteModalProps {
   title: string

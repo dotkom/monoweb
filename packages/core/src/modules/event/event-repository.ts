@@ -1,9 +1,11 @@
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable } from "kysely"
+import type { Insertable, Kysely, Selectable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
-export const mapToEvent = (data: Selectable<Database["event"]>) => EventSchema.parse(data)
+export const mapToEvent = (data: Selectable<Database["event"]>) => {
+  return EventSchema.parse(data)
+}
 
 export type EventInsert = Insertable<Database["event"]>
 
@@ -14,10 +16,22 @@ export interface EventRepository {
   getAllByUserAttending(userId: string): Promise<Event[]>
   getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
   getById(id: string): Promise<Event | undefined>
+  addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
 }
 
 export class EventRepositoryImpl implements EventRepository {
   constructor(private readonly db: Kysely<Database>) {}
+
+  async addAttendance(eventId: EventId, attendanceId: string) {
+    const insert = await this.db
+      .updateTable("event")
+      .returningAll()
+      .where("id", "=", eventId)
+      .set({ attendanceId })
+      .executeTakeFirstOrThrow()
+
+    return insert ? mapToEvent(insert) : null
+  }
 
   async create(data: EventInsert): Promise<Event> {
     const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
@@ -37,15 +51,15 @@ export class EventRepositoryImpl implements EventRepository {
   async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
     const query = orderedQuery(this.db.selectFrom("event").selectAll().limit(take), cursor)
     const events = await query.execute()
-
     return events.map((e) => mapToEvent(e))
   }
 
   async getAllByUserAttending(userId: string): Promise<Event[]> {
     const eventsResult = await this.db
       .selectFrom("attendance")
-      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .innerJoin("event", "event.id", "attendance.eventId")
+      .leftJoin("attendancePool", "attendancePool.attendanceId", "attendance.id")
+      .leftJoin("attendee", "attendee.attendancePoolId", "attendee.attendancePoolId")
+      .innerJoin("event", "event.attendanceId", "attendance.id")
       .selectAll("event")
       .where("attendee.userId", "=", userId)
       .execute()

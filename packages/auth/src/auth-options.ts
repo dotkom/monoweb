@@ -1,5 +1,5 @@
-import { type ServiceLayer } from "@dotkomonline/core"
-import { type DefaultSession, type DefaultUser, type User, type NextAuthOptions } from "next-auth"
+import type { ServiceLayer } from "@dotkomonline/core"
+import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
@@ -74,9 +74,10 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        const user = await core.auth0SynchronizationService.handleUserSync(token.sub)
+        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
+        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
 
-        session.user.id = user.id
+        session.user.id = user.auth0Id
         session.sub = token.sub
         return session
       }

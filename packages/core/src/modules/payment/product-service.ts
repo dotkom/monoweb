@@ -1,7 +1,7 @@
-import { type Product, type ProductId, type ProductWrite } from "@dotkomonline/types"
-import { type ProductRepository } from "./product-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
+import type { Cursor } from "../../utils/db-utils"
 import { ProductNotFoundError } from "./product-error"
+import type { ProductRepository } from "./product-repository"
 
 export interface ProductService {
   createProduct(productCreate: ProductWrite): Promise<Product>

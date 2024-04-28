@@ -1,31 +1,22 @@
 "use client"
-
-import { type Event, type Committee, type EventCommittee } from "@dotkomonline/types"
+import type { Committee, Event } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useMemo } from "react"
 import Link from "next/link"
+import { useMemo } from "react"
+import { GenericTable } from "../../../components/GenericTable"
+import EventCommittees from "../../../components/molecules/company-name/event-committees"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 import { formatDate } from "../../../utils/format"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
-import EventCommittees from "../../../components/molecules/company-name/event-committees"
-import { GenericTable } from "../../../components/GenericTable"
 
 type TableColumns = Event & {
-  committees: EventCommittee[]
-}
-
-function fromReferenceToObj(committees: Committee[], references: EventCommittee[]): Committee[] {
-  return references
-    .map((reference) => committees.find((committee) => committee.id === reference.committeeId))
-    .filter(Boolean) as Committee[]
+  committees: Committee[]
 }
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
-  const { committees, isLoading: isCommitteesLoading } = useCommitteeAllQuery()
   const open = useCreateEventModal()
 
   const columnHelper = createColumnHelper<TableColumns>()
@@ -40,7 +31,7 @@ export default function EventPage() {
       }),
       columnHelper.accessor("committees", {
         header: () => "Arrangør",
-        cell: (info) => <EventCommittees committees={fromReferenceToObj(committees, info.getValue())} />,
+        cell: (info) => <EventCommittees committees={info.getValue()} />,
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
@@ -55,7 +46,7 @@ export default function EventPage() {
         ),
       }),
     ],
-    [committees, columnHelper]
+    [columnHelper]
   )
 
   const table = useReactTable({
@@ -65,7 +56,7 @@ export default function EventPage() {
   })
 
   return (
-    <Skeleton visible={isEventsLoading || isCommitteesLoading}>
+    <Skeleton visible={isEventsLoading}>
       <Stack>
         <GenericTable table={table} />
         <Group justify="space-between">

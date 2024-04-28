@@ -5,38 +5,38 @@ import {
   Box,
   Button,
   Checkbox,
+  type CheckboxProps,
   FileInput,
+  type FileInputProps,
   Flex,
   MultiSelect,
+  type MultiSelectProps,
   NumberInput,
+  type NumberInputProps,
   Select,
+  type SelectProps,
   TagsInput,
+  type TagsInputProps,
   Text,
   TextInput,
-  Textarea,
-  type CheckboxProps,
-  type FileInputProps,
-  type MultiSelectProps,
-  type NumberInputProps,
-  type SelectProps,
-  type TagsInputProps,
   type TextInputProps,
+  Textarea,
   type TextareaProps,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
-import { type FC } from "react"
+import type { FC } from "react"
 import {
-  Controller,
-  useForm,
   type Control,
+  Controller,
   type DefaultValues,
   type FieldValue,
   type FieldValues,
   type FormState,
   type UseFormRegister,
   type UseFormReturn,
+  useForm,
 } from "react-hook-form"
-import { type z } from "zod"
+import type { z } from "zod"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
@@ -64,6 +64,59 @@ export function createMultipleSelectInput<F extends FieldValues>({
           />
         )}
       />
+    )
+  }
+}
+
+interface CheckboxGroupsProps {
+  selected: number[]
+  setSelected(value: number[]): void
+  disabledOptions?: number[]
+  labels: string[]
+}
+
+const CheckboxGroup = ({ selected, disabledOptions, setSelected, labels }: CheckboxGroupsProps) => {
+  const onChange = (idx: number) => () => {
+    if (selected.includes(idx)) {
+      setSelected(selected.filter((val) => val !== idx))
+    } else {
+      setSelected([...selected, idx])
+    }
+  }
+
+  return (
+    <table>
+      {labels.map((label, idx) => (
+        <tbody key={label}>
+          <tr>
+            <td width="100">{label}</td>
+            <td>
+              <Checkbox
+                checked={selected.includes(idx)}
+                disabled={disabledOptions?.includes(idx)}
+                onChange={onChange(idx)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      ))}
+    </table>
+  )
+}
+
+export function createLabelledCheckboxGroupInput<F extends FieldValues>({
+  ...props
+}: Omit<CheckboxGroupsProps, "error" | "selected" | "setSelected">): InputProducerResult<F> {
+  return function LabelledCheckboxGroupInput({ name, state, control }) {
+    return (
+      <div>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => <CheckboxGroup {...props} setSelected={field.onChange} selected={field.value} />}
+        />
+      </div>
     )
   }
 }
@@ -128,7 +181,7 @@ export function createIntegerSelectInput<F extends FieldValues>({
               value: item.value.toString(),
             }))}
             value={field.value?.toString() ?? ""}
-            onChange={(value) => field.onChange(value !== null ? parseInt(value) : null)}
+            onChange={(value) => field.onChange(value !== null ? Number.parseInt(value) : null)}
             error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
           />
         )}
@@ -301,12 +354,18 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     )
   })
 
+  console.log(form.formState.errors)
+
   return function Form() {
     return (
       <form
-        onSubmit={form.handleSubmit((values) => {
-          return onSubmit(values, form)
-        })}
+        onSubmit={(e) => {
+          e.preventDefault()
+          console.log(e)
+          return form.handleSubmit((values) => {
+            return onSubmit(values, form)
+          })(e)
+        }}
       >
         <Flex direction="column" gap="md">
           {components}

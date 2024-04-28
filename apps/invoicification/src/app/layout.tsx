@@ -1,6 +1,6 @@
-import { type Metadata } from "next"
-import { type PropsWithChildren } from "react"
 import "@dotkomonline/config/tailwind.css"
+import type { Metadata } from "next"
+import type { PropsWithChildren } from "react"
 import "../root.css"
 import { QueryProvider } from "./query-provider"
 

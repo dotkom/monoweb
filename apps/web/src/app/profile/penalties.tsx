@@ -1,8 +1,8 @@
+import PenaltyRules from "@/utils/penalty-rules"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
 import { DotFilledIcon } from "@radix-ui/react-icons"
-import { type FC } from "react"
 import { addMinutes, format } from "date-fns"
-import PenaltyRules from "@/utils/penalty-rules"
+import type { FC } from "react"
 
 /* TODO - Set up connection to Users marks router */
 

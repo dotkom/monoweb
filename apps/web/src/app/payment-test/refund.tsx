@@ -1,7 +1,7 @@
-import { type Payment } from "@dotkomonline/types"
+import { trpc } from "@/utils/trpc/client"
+import type { Payment } from "@dotkomonline/types"
 import { Button, TextInput } from "@dotkomonline/ui"
 import { type FC, useEffect, useState } from "react"
-import { trpc } from "@/utils/trpc/client"
 
 const RefundPage: FC = () => {
   const [payments, setPayments] = useState<Payment[]>([])
@@ -70,7 +70,7 @@ const RefundPage: FC = () => {
 
     setState((prevState) => ({
       ...prevState,
-      [name]: type === "number" ? parseInt(value) : value,
+      [name]: type === "number" ? Number.parseInt(value) : value,
     }))
   }
 

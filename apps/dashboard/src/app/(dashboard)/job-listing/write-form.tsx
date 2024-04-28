@@ -1,5 +1,4 @@
 import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
-import { type z } from "zod"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -9,8 +8,9 @@ import {
   createTextareaInput,
   useFormBuilder,
 } from "src/app/form"
-import { useJobListingAllLocationsQuery } from "../../../modules/job-listing/queries/use-job-listing-locations-all-query"
+import type { z } from "zod"
 import { useCompanyAllQuery } from "../../../modules/company/queries/use-company-all-query"
+import { useJobListingAllLocationsQuery } from "../../../modules/job-listing/queries/use-job-listing-locations-all-query"
 
 const JOBLISTING_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {}
 

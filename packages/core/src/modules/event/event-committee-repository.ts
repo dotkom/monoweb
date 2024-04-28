@@ -1,5 +1,4 @@
-import { type Kysely, type Selectable } from "kysely"
-import { type Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import {
   type Committee,
   type CommitteeId,
@@ -7,14 +6,15 @@ import {
   EventCommitteeSchema,
   type EventId,
 } from "@dotkomonline/types"
-import { type Cursor } from "../../utils/db-utils"
+import type { Kysely, Selectable } from "kysely"
+import type { Cursor } from "../../utils/db-utils"
 import { mapToCommittee } from "../committee/committee-repository"
 
 export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"]>): EventCommittee =>
   EventCommitteeSchema.parse(payload)
 
 export interface EventCommitteeRepository {
-  getAllEventCommittees(eventId: EventId, take: number, cursor?: Cursor): Promise<EventCommittee[]>
+  getAllEventCommittees(eventId: EventId, take: number, cursor?: Cursor): Promise<Committee[]>
   getAllCommittees(eventId: EventId, take: number, cursor?: Cursor): Promise<Committee[]>
   addCommitteeToEvent(eventId: EventId, committeeId: CommitteeId): Promise<void>
   removeCommitteFromEvent(eventId: EventId, committeeId: CommitteeId): Promise<void>
@@ -23,10 +23,14 @@ export interface EventCommitteeRepository {
 export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getAllEventCommittees(eventId: EventId): Promise<EventCommittee[]> {
-    const query = this.db.selectFrom("eventCommittee").where("eventId", "=", eventId).selectAll()
+  async getAllEventCommittees(eventId: EventId): Promise<Committee[]> {
+    const query = this.db
+      .selectFrom("eventCommittee")
+      .where("eventId", "=", eventId)
+      .rightJoin("committee", "committee.id", "eventCommittee.committeeId")
+      .selectAll("committee")
     const committees = await query.execute()
-    return committees.map(mapToEventCommitee)
+    return committees.map(mapToCommittee)
   }
 
   async getAllCommittees(eventId: EventId): Promise<Committee[]> {

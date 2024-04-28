@@ -1,7 +1,7 @@
-import { type Database } from "@dotkomonline/db"
-import { OfflineSchema, type Offline, type OfflineId, type OfflineWrite } from "@dotkomonline/types"
-import { type Kysely } from "kysely"
-import { orderedQuery, type Cursor } from "../../utils/db-utils"
+import type { Database } from "@dotkomonline/db"
+import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
+import type { Kysely } from "kysely"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export interface OfflineRepository {
   getById(id: OfflineId): Promise<Offline | undefined>

@@ -1,7 +1,7 @@
 "use client"
 
-import { type FC, type ReactNode } from "react"
 import { cva } from "cva"
+import type { FC, ReactNode } from "react"
 import { AlertIcon } from "../Alert/AlertIcon"
 import { Icon } from "../Icon"
 

@@ -1,4 +1,4 @@
-import { type Kysely, type Selectable } from "kysely"
+import type { Database } from "@dotkomonline/db"
 import {
   type PaymentProvider,
   PaymentProviderSchema,
@@ -7,7 +7,7 @@ import {
   ProductPaymentProviderSchema,
   type ProductPaymentProviderWrite,
 } from "@dotkomonline/types"
-import { type Database } from "@dotkomonline/db"
+import type { Kysely, Selectable } from "kysely"
 
 const mapToProductPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) =>
   ProductPaymentProviderSchema.parse(data)

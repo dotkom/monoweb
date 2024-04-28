@@ -1,4 +1,3 @@
-import React from "react"
 import "@dotkomonline/config/tailwind.css"
 import type { GlobalProvider } from "@ladle/react"
 

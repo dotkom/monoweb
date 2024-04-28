@@ -1,5 +1,5 @@
 import { type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
-import { createTextareaInput, createTextInput, useFormBuilder } from "../../form"
+import { createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
 

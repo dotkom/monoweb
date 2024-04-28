@@ -1,5 +1,5 @@
-import { type FC } from "react"
 import { Circle } from "@dotkomonline/ui/"
+import type { FC } from "react"
 
 interface CompanyInterestProcessProps {
   steps: string[]

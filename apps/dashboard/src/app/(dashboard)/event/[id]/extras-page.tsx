@@ -1,41 +1,77 @@
+import type { Attendance } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Paper, Title } from "@mantine/core"
-import { type FC } from "react"
+import type { FC } from "react"
+import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
+import {
+  useAddAttendanceMutation,
+  useUpdateExtrasMutation,
+} from "../../../../modules/attendance/mutations/use-attendance-mutations"
+import { useCreateAttendanceExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
+import { useEditExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
 import { useEventDetailsContext } from "./provider"
-import { useCreateEventExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
-import { useEditEventExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
-import { useEditEventMutation } from "../../../../modules/event/mutations/use-edit-event-mutation"
 
 export const ExtrasPage: FC = () => {
+  const { attendance } = useEventDetailsContext()
   const { event } = useEventDetailsContext()
 
-  const openCreate = useCreateEventExtrasModal({
-    event,
+  if (!attendance) {
+    return <NoAttendanceFallback eventId={event.id} />
+  }
+
+  return <_ExtrasPage attendance={attendance} />
+}
+
+const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
+  const mutation = useAddAttendanceMutation()
+  const AttendanceForm = useAttendanceForm({
+    defaultValues: {
+      registerStart: new Date(),
+      registerEnd: new Date(),
+      deregisterDeadline: new Date(),
+      extras: [],
+    },
+    label: "Opprett",
+    onSubmit: (values) => {
+      mutation.mutate({ eventId, obj: values })
+    },
   })
 
-  const openEdit = useEditEventExtrasModal({
-    event,
+  return (
+    <Box>
+      <Title order={5}>Ingen påmelding</Title>
+      <AttendanceForm />
+    </Box>
+  )
+}
+interface Props {
+  attendance: Attendance
+}
+export const _ExtrasPage: FC<Props> = ({ attendance }) => {
+  const openCreate = useCreateAttendanceExtrasModal({
+    attendance,
   })
 
-  const edit = useEditEventMutation()
+  const openEdit = useEditExtrasModal({
+    attendance,
+  })
+
+  const edit = useUpdateExtrasMutation()
 
   const deleteAlternative = (id: string) => {
-    const newChoices = event.extras?.filter((alt) => alt.id !== id)
+    const newChoices = attendance.extras?.filter((alt) => alt.id !== id)
     edit.mutate({
-      id: event.id,
-      event: {
-        ...event,
-        extras: newChoices ?? [],
-      },
+      id: attendance.id,
+      extras: newChoices ?? [],
     })
   }
 
   return (
     <Box>
       <Title order={3}>Valg</Title>
-      {!event.extras?.length && <p>Ingen valg er lagt til</p>}
+      {!attendance.extras?.length && <p>Ingen valg er lagt til</p>}
       <Box>
-        {event.extras?.map((extra) => (
+        {attendance.extras?.map((extra) => (
           <Paper key={extra.id} withBorder p={"md"} mt={"md"}>
             <ActionIcon variant="outline" onClick={() => openEdit(extra)} mr="md">
               <Icon icon="tabler:edit" />

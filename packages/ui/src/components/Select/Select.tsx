@@ -1,9 +1,9 @@
 "use client"
 
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react"
-import { Icon } from "../Icon"
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from "react"
 import { cn } from "../../utils"
+import { Icon } from "../Icon"
 
 export const Select = SelectPrimitive.Root
 export const SelectValue = SelectPrimitive.Value
@@ -45,7 +45,7 @@ export const SelectContent = forwardRef<
   <SelectPrimitive.Content
     ref={ref}
     className={cn(
-      "overflow-hidden bg-[#ffffff] rounded-md",
+      "overflow-hidden bg-slate-3 rounded-md",
       "shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]",
       className
     )}

@@ -1,4 +1,4 @@
-import { ProfileMembership } from "@/components/views/ProfileView/components"
+import ProfileMembership from "../../components/views/SettingsView/components/SettingsMembership"
 
 const MembershipPage = () => <ProfileMembership />
 

@@ -1,72 +1,112 @@
 import { createEnvironment } from "@dotkomonline/env"
-import { UserWrite } from "@dotkomonline/types"
-import crypto from "crypto"
+import type { ManagementClient } from "auth0"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { createServiceLayer, type ServiceLayer } from "../../core"
+import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
+import { getUserMock, mockAuth0UserResponse } from "../../../../mock"
+import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 
-const fakeUser = (subject?: string): UserWrite => ({
-  auth0Sub: subject ?? crypto.randomUUID(),
-  studyYear: 0,
-  email: "testuser512312412@gmail.com",
-  // givenName: "Test",
-  // familyName: "User",
-  name: "Test User",
-  lastSyncedAt: new Date(),
-})
+import type { Database } from "@dotkomonline/db"
+import type { Kysely } from "kysely"
+import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
+import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
+import {
+  type NotificationPermissionsRepository,
+  NotificationPermissionsRepositoryImpl,
+} from "../notification-permissions-repository"
+import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
+import { type UserRepository, UserRepositoryImpl } from "../user-repository"
+import { type UserService, UserServiceImpl } from "../user-service"
+
+export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
+
+interface ServerLayerOptions {
+  db: Kysely<Database>
+  auth0MgmtClient: ManagementClient
+}
+
+const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) => {
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0MgmtClient)
+
+  const userRepository: UserRepository = new UserRepositoryImpl(db)
+  const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
+  const notificationPermissionsRepository: NotificationPermissionsRepository =
+    new NotificationPermissionsRepositoryImpl(db)
+
+  const userService: UserService = new UserServiceImpl(
+    userRepository,
+    privacyPermissionsRepository,
+    notificationPermissionsRepository
+  )
+
+  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userService,
+    auth0Repository
+  )
+
+  return {
+    userService,
+    auth0Repository,
+    syncedUserService,
+  }
+}
 
 describe("users", () => {
   let core: ServiceLayer
   let cleanup: CleanupFunction
+  let auth0Client: DeepMockProxy<ManagementClient>
 
   beforeEach(async () => {
     const env = createEnvironment()
     const context = await createServiceLayerForTesting(env, "user")
     cleanup = context.cleanup
-    core = await createServiceLayer({ db: context.kysely })
+    auth0Client = mockDeep<ManagementClient>()
+    core = await createServiceLayer({ db: context.kysely, auth0MgmtClient: auth0Client })
   })
 
   afterEach(async () => {
     await cleanup()
   })
 
-  it("can create new users", async () => {
-    const none = await core.userService.getAllUsers(100)
-    expect(none).toHaveLength(0)
-
-    const user = await core.userService.createUser(fakeUser())
-
-    const users = await core.userService.getAllUsers(100)
-    expect(users).toContainEqual(user)
-  })
-
-  it("will not allow two users the same subject", async () => {
-    const subject = crypto.randomUUID()
-    const first = await core.userService.createUser(fakeUser(subject))
-    expect(first).toBeDefined()
-    await expect(core.userService.createUser(fakeUser(subject))).rejects.toThrow()
-  })
-
   it("will find users by their user id", async () => {
-    const user = await core.userService.createUser(fakeUser())
+    const user = await core.userService.create(getUserMock())
 
-    const match = await core.userService.getUserById(user.id)
+    const match = await core.userService.getById(user.id)
     expect(match).toEqual(user)
-    const fail = await core.userService.getUserById(ulid())
-    expect(fail).toBeUndefined()
+    const fail = await core.userService.getById(ulid())
+    expect(fail).toBeNull()
   })
 
   it("can update users given their id", async () => {
-    await expect(
-      core.userService.updateUser(ulid(), {
-        auth0Sub: crypto.randomUUID(),
-      })
-    ).rejects.toThrow()
-    const user = await core.userService.createUser(fakeUser())
-    const updated = await core.userService.updateUser(user.id, {
-      auth0Sub: crypto.randomUUID(),
+    const initialGivenName = "Test"
+    const updatedGivenName = "Updated Test"
+
+    const fakeInsert = getUserMock({
+      givenName: initialGivenName,
     })
-    expect(updated.auth0Sub).not.toEqual(user.auth0Sub)
+
+    const insertedUser = await core.userService.create(fakeInsert)
+
+    const auth0UpdateResponse = mockAuth0UserResponse({
+      givenName: updatedGivenName,
+      id: insertedUser.id,
+      auth0Id: insertedUser.auth0Id,
+    })
+
+    const auth0ResponsePromise = new Promise<typeof auth0UpdateResponse>((resolve) => {
+      resolve(auth0UpdateResponse)
+    })
+
+    // Mock the auth0 update call
+    auth0Client.users.update.mockReturnValueOnce(auth0ResponsePromise)
+
+    const updatedUserWrite = {
+      ...insertedUser,
+      givenName: updatedGivenName,
+    }
+
+    const updated = await core.userService.update(updatedUserWrite)
+
+    expect(updated.givenName).toEqual(updatedGivenName)
   })
 })

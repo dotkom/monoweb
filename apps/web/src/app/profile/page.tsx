@@ -1,5 +1,5 @@
+import ProfilePoster from "@/components/views/ProfileView"
 import { getServerSession } from "next-auth"
-import { ProfileLanding } from "@/components/views/ProfileView/components"
 import { redirect } from "next/navigation"
 
 const ProfilePage = async () => {
@@ -9,7 +9,7 @@ const ProfilePage = async () => {
     redirect("/")
   }
 
-  return <ProfileLanding user={session.user} />
+  return <ProfilePoster user={session.user} />
 }
 
 export default ProfilePage

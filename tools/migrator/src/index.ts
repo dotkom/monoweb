@@ -1,7 +1,7 @@
-import { Argument, program } from "commander"
-import { type MigrationResultSet } from "kysely"
 import { createMigrator } from "@dotkomonline/db/src/migrator"
 import { getLogger } from "@dotkomonline/logger"
+import { Argument, program } from "commander"
+import type { MigrationResultSet } from "kysely"
 import { db } from "./db"
 
 export const logger = getLogger("migrator")
@@ -17,6 +17,7 @@ program
   )
   .option("-s, --with-seed", "Seed the database with fake data", false)
   .option("-f, --with-fixtures", "Add predictable data to the database", false)
+  .option("-s, --sample-data", "Import sample data from OW4")
   .action(async (name: "down-all" | "down" | "latest" | "up", option) => {
     const migrator = createMigrator(db)
     let res: MigrationResultSet
@@ -64,7 +65,7 @@ program
             .join("\n")}`
         )
       } else {
-        logger.warn(res)
+        logger.warn("%O", res)
       }
     }
 
@@ -74,8 +75,9 @@ program
     }
 
     if (res.error) {
+      console.dir(res.error, { depth: null })
       logger.warn("Error while running migrations:")
-      logger.warn(JSON.stringify(res.error))
+      logger.warn("%O", JSON.stringify(res.error))
       process.exit(1)
     }
 
@@ -84,6 +86,15 @@ program
       await runFixtures()
       logger.info("Successfully inserted fixtures")
     }
+
+    if (option.sampleData) {
+      const { runSampleData } = await import("./sample-data")
+
+      await runSampleData()
+
+      logger.info("Successfully inserted sample data")
+    }
+
     process.exit()
   })
 

@@ -1,4 +1,4 @@
-import { type Article } from "@/api/get-article"
+import type { Article } from "@/api/get-article"
 import sanityClient from "@/api/sanity"
 import { ArticleView } from "@/components/views/ArticleView"
 

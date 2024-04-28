@@ -1,4 +1,4 @@
-import { type File } from "../../../stubs/file/File"
+import type { File } from "../../../stubs/file/File"
 import { s3UploadFile } from "../../utils/s3-upload-file"
 import { trpc } from "../../utils/trpc"
 

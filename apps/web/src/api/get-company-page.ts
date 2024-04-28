@@ -1,4 +1,4 @@
-import { type PortableTextProps } from "@/components/molecules/PortableText"
+import type { PortableTextProps } from "@/components/molecules/PortableText"
 import client from "./sanity"
 
 interface CompanySectionData {

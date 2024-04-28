@@ -1,11 +1,11 @@
-import { randomUUID } from "crypto"
-import { describe, vi } from "vitest"
+import { randomUUID } from "node:crypto"
+import type { NotificationPermissions, PrivacyPermissions } from "@dotkomonline/types"
 import { Kysely } from "kysely"
-import { type NotificationPermissions, type PrivacyPermissions } from "@dotkomonline/types"
+import { describe, vi } from "vitest"
+import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
 import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
 import { UserRepositoryImpl } from "../user-repository"
 import { UserServiceImpl } from "../user-service"
-import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
 
 const privacyPermissionsPayload: Omit<PrivacyPermissions, "userId"> = {
   createdAt: new Date(2022, 1, 1),
@@ -36,6 +36,7 @@ describe("UserService", () => {
   const userRepository = new UserRepositoryImpl(db)
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
+
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,

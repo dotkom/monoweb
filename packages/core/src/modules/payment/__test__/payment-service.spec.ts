@@ -1,18 +1,17 @@
-import { randomUUID } from "crypto"
-import { type Event, type Payment, type Product } from "@dotkomonline/types"
-import { describe, vi } from "vitest"
+import { randomUUID } from "node:crypto"
+import type { Event, Payment, Product } from "@dotkomonline/types"
 import { Kysely } from "kysely"
 import Stripe from "stripe"
-import { paymentProvidersPayload } from "./product-payment-provider.spec"
-import { productPayload } from "./product-service.spec"
+import { describe, vi } from "vitest"
 import { EventRepositoryImpl } from "../../event/event-repository"
+import { InvalidPaymentStatusError, UnrefundablePaymentError } from "../payment-error"
 import { PaymentRepositoryImpl } from "../payment-repository"
 import { PaymentServiceImpl } from "../payment-service"
 import { ProductRepositoryImpl } from "../product-repository"
-import { eventPayload } from "../../event/__test__/event-service.spec"
-import { RefundRequestRepositoryImpl } from "../refund-request-repository"
-import { InvalidPaymentStatusError, UnrefundablePaymentError } from "../payment-error"
 import { RefundRequestNotFoundError } from "../refund-request-error"
+import { RefundRequestRepositoryImpl } from "../refund-request-repository"
+import { paymentProvidersPayload } from "./product-payment-provider.spec"
+import { productPayload } from "./product-service.spec"
 
 export const paymentPayload: Omit<Payment, "id"> = {
   createdAt: new Date(2022, 1, 1),
@@ -23,6 +22,25 @@ export const paymentPayload: Omit<Payment, "id"> = {
   paymentProviderSessionId: randomUUID(),
   paymentProviderOrderId: randomUUID(),
   status: "UNPAID",
+}
+
+const eventPayload: Omit<Event, "id"> = {
+  title: "Kotlin og spillutvikling med Bekk",
+  subtitle: "Bekk kommer for å holde kurs i kotlin og spillutvikling!",
+  imageUrl:
+    "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fhttps://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/lg/59dec779-da56-40f1-be27-4045630c708a.png",
+  description: "Kotlin er et relativt nytt programmeringsspråk som de siste årene har blitt veldig populært",
+  locationTitle: "Verkstedteknisk: VE22",
+  locationLink: null,
+  locationAddress: null,
+  public: false,
+  start: new Date(),
+  end: new Date(),
+  createdAt: new Date(2022, 1, 1),
+  updatedAt: new Date(2022, 1, 1),
+  status: "PUBLIC",
+  type: "COMPANY",
+  attendanceId: randomUUID(),
 }
 
 // from https://stripe.com/docs/api

@@ -1,7 +1,7 @@
-import { InterestGroupSchema, InterestGroupWriteSchema } from "@dotkomonline/types"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
 import { PaginateInputSchema } from "@dotkomonline/core"
+import { InterestGroupSchema, InterestGroupWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const interestGroupRouter = t.router({
   create: protectedProcedure

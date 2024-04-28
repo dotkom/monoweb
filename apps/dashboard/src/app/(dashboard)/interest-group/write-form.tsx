@@ -1,5 +1,5 @@
-import { InterestGroupWrite, InterestGroupWriteSchema } from "@dotkomonline/types"
-import { createTextInput, createTextareaInput, useFormBuilder } from "src/app/form"
+import { type InterestGroupWrite, InterestGroupWriteSchema } from "@dotkomonline/types"
+import { createCheckboxInput, createTextInput, createTextareaInput, useFormBuilder } from "src/app/form"
 
 const INTEREST_GROUP_FORM_DEFAULT_VALUES: Partial<InterestGroupWrite> = {}
 
@@ -34,6 +34,9 @@ export const useInterestGroupWriteForm = ({
         label: "Slack Link",
         placeholder: "https://onlinentnu.slack.com/archives/C03S8TX1L",
         type: "url",
+      }),
+      isActive: createCheckboxInput({
+        label: "Aktiv",
       }),
     },
   })

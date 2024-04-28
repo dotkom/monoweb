@@ -1,18 +1,25 @@
 "use client"
 
-import { type PropsWithChildren } from "react"
 import { Loader } from "@mantine/core"
+import type { PropsWithChildren } from "react"
+import { trpc } from "../../../../utils/trpc"
 import { UserDetailsContext } from "./provider"
-import { useUserGetQuery } from "../../../../modules/user/queries/use-user-get-query"
 
 export default function UserDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { user, isLoading } = useUserGetQuery(params.id)
+  const id = decodeURIComponent(params.id)
+  const { data, isLoading, error } = trpc.user.get.useQuery(id)
+
+  if (error) {
+    console.log(error)
+    return <div>{error.message}</div>
+  }
+
   return (
     <>
-      {isLoading || !user ? (
+      {isLoading || !data ? (
         <Loader />
       ) : (
-        <UserDetailsContext.Provider value={{ user }}>{children}</UserDetailsContext.Provider>
+        <UserDetailsContext.Provider value={{ user: data }}>{children}</UserDetailsContext.Provider>
       )}
     </>
   )

@@ -1,6 +1,6 @@
+import { PaginateInputSchema } from "@dotkomonline/core"
 import { ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { PaginateInputSchema } from "@dotkomonline/core"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({

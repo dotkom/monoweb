@@ -1,6 +1,6 @@
 "use client"
 
-import { type Offline } from "@dotkomonline/types"
+import type { Offline } from "@dotkomonline/types"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

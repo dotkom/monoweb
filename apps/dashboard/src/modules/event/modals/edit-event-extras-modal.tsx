@@ -1,17 +1,17 @@
-import { type Event, type EventExtra } from "@dotkomonline/types"
+import type { Attendance, Extras } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
-import { type FC } from "react"
-import { useEditEventMutation } from "../mutations/use-edit-event-mutation"
+import type { FC } from "react"
 import { ExtrasForm, type ExtrasFormValues } from "../../../components/molecules/extras-form/ExtrasForm"
+import { useUpdateExtrasMutation } from "../../attendance/mutations/use-attendance-mutations"
 
-export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: EventExtra; event: Event }>> = ({
+export const UpdateAttendanceExtrasModal: FC<ContextModalProps<{ existingExtra: Extras; attendance: Attendance }>> = ({
   context,
   id,
   innerProps,
 }) => {
-  const editEvent = useEditEventMutation()
+  const edit = useUpdateExtrasMutation()
 
-  const allExtras = innerProps.event.extras || []
+  const allExtras = innerProps.attendance.extras || []
   const existingExtra = innerProps.existingExtra
 
   const defaultAlternatives = {
@@ -36,12 +36,9 @@ export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: Event
       return extra
     })
 
-    editEvent.mutate({
-      id: innerProps.event.id,
-      event: {
-        ...innerProps.event,
-        extras: newExtras,
-      },
+    edit.mutate({
+      id: innerProps.attendance.id,
+      extras: newExtras,
     })
 
     context.closeModal(id)
@@ -50,14 +47,14 @@ export const UpdateEventExtrasModal: FC<ContextModalProps<{ existingExtra: Event
   return <ExtrasForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />
 }
 
-export const useEditEventExtrasModal =
-  ({ event }: { event: Event }) =>
-  (existingExtra: EventExtra) =>
+export const useEditExtrasModal =
+  ({ attendance }: { attendance: Attendance }) =>
+  (existingExtra: Extras) =>
     modals.openContextModal({
-      modal: "extras/update",
+      modal: "attendance/extras/update",
       title: "Endre extra",
       innerProps: {
-        event,
+        attendance,
         existingExtra,
       },
     })

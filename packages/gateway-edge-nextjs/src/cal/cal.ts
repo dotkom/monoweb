@@ -1,10 +1,10 @@
-import { type NextApiRequest, type NextApiResponse } from "next"
-import ical, { type ICalEventData } from "ical-generator"
-import { type Event } from "@dotkomonline/types"
-import { createServerSideHelpers } from "@trpc/react-query/server"
 import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
-import { getServerSession } from "next-auth"
+import type { Event } from "@dotkomonline/types"
+import { createServerSideHelpers } from "@trpc/react-query/server"
+import ical, { type ICalEventData } from "ical-generator"
 import jwt from "jsonwebtoken"
+import type { NextApiRequest, NextApiResponse } from "next"
+import { getServerSession } from "next-auth"
 import { authOptions } from "../../../auth/src/web.app"
 
 const helpers = createServerSideHelpers({
@@ -54,7 +54,7 @@ export async function CalendarEvent(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  const event = (await helpers.event.get.fetch(eventid)).event
+  const event = await helpers.event.get.fetch(eventid)
 
   const instance = ical()
   instance.createEvent(toICal(req, event))
@@ -123,21 +123,21 @@ export async function CalendarSign(req: NextApiRequest, res: NextApiResponse) {
 
 function toICal(
   req: NextApiRequest,
-  event: Pick<Event, "description" | "end" | "id" | "location" | "start" | "title">
+  event: Pick<Event, "description" | "end" | "id" | "locationAddress" | "start" | "title">
 ): ICalEventData {
   return {
     start: event.start,
     end: event.end,
     summary: event.title,
     description: event.description,
-    location: event.location,
+    location: event.locationAddress,
     url: eventUrl(req, event),
   }
 }
 
 function toRegistration(
   event: Pick<Event, "description" | "id" | "start" | "title">
-): Pick<Event, "description" | "end" | "id" | "location" | "start" | "title"> {
+): Pick<Event, "description" | "end" | "id" | "locationAddress" | "start" | "title"> {
   // 5 days before
   // TODO when db has this, we can use the actual start value, this is just for testing
   const start = new Date(event.start.getTime() - 5 * 24 * 60 * 60 * 1000)
@@ -150,7 +150,7 @@ function toRegistration(
     end: start, // 0 length
     title,
     description: event.description,
-    location,
+    locationAddress: location,
     id: event.id,
   }
 }

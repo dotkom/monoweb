@@ -12,7 +12,6 @@ import {
   SelectValue,
   SelectViewport,
 } from "./index"
-import React from "react"
 
 export const Default = () => (
   <Select>

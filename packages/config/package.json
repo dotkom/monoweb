@@ -12,11 +12,10 @@
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
-    "typography.css",
-    "biome.json"
+    "typography.css"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^1.5.3",
+    "@biomejs/biome": "1.6.4",
     "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
     "postcss-import": "^15.1.0",

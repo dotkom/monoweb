@@ -1,11 +1,11 @@
-import { type Kysely, type Selectable } from "kysely"
+import type { Database } from "@dotkomonline/db"
 import {
   type NotificationPermissions,
   NotificationPermissionsSchema,
   type NotificationPermissionsWrite,
   type UserId,
 } from "@dotkomonline/types"
-import { type Database } from "@dotkomonline/db"
+import type { Kysely, Selectable } from "kysely"
 
 export const mapToNotificationPermissions = (
   payload: Selectable<Database["notificationPermissions"]>

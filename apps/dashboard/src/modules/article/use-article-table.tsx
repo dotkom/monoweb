@@ -1,10 +1,10 @@
 "use client"
 
-import { type Article } from "@dotkomonline/types"
+import type { Article } from "@dotkomonline/types"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useMemo } from "react"
 import Link from "next/link"
+import { useMemo } from "react"
 
 interface Props {
   data: Article[]

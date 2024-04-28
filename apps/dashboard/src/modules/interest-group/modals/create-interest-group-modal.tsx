@@ -1,7 +1,7 @@
-import { ContextModalProps, modals } from "@mantine/modals"
-import { FC } from "react"
-import { useCreateInterestGroupMutation } from "../mutations/use-create-interest-group-mutation"
+import { type ContextModalProps, modals } from "@mantine/modals"
+import type { FC } from "react"
 import { useInterestGroupWriteForm } from "src/app/(dashboard)/interest-group/write-form"
+import { useCreateInterestGroupMutation } from "../mutations/use-create-interest-group-mutation"
 
 export const CreateInterestGroupModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)

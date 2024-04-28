@@ -1,34 +1,29 @@
-import {
-  type UserId,
-  type NotificationPermissions,
-  type NotificationPermissionsWrite,
-  type PrivacyPermissions,
-  type PrivacyPermissionsWrite,
-  type User,
-  type UserWrite,
+import type {
+  NotificationPermissions,
+  NotificationPermissionsWrite,
+  PrivacyPermissions,
+  PrivacyPermissionsWrite,
+  User,
+  UserId,
+  UserWrite,
 } from "@dotkomonline/types"
-import { type NotificationPermissionsRepository } from "./notification-permissions-repository"
-import { type PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import { type UserRepository } from "./user-repository"
-import { type Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/db-utils"
+import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
+import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import type { UserRepository } from "./user-repository"
 
 export interface UserService {
-  getUserById(id: UserId): Promise<User | undefined>
-  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
-  getAllUsers(limit: number): Promise<User[]>
-  searchUsers(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
+  getById(id: UserId): Promise<User | null>
+  getAll(limit: number): Promise<User[]>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  getNotificationPermissionsByUserId(id: string): Promise<NotificationPermissions>
-  updateNotificationPermissionsForUserId(
-    id: string,
-    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ): Promise<NotificationPermissions>
+  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  create(data: UserWrite): Promise<User>
+  update(data: User): Promise<User>
+  getByAuth0Id(auth0Id: string): Promise<User | null>
 }
 
 export class UserServiceImpl implements UserService {
@@ -37,34 +32,29 @@ export class UserServiceImpl implements UserService {
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
-  async getAllUsers(limit: number) {
-    const users = await this.userRepository.getAll(limit)
-    return users
+
+  async getByAuth0Id(auth0Id: string) {
+    return this.userRepository.getByAuth0Id(auth0Id)
   }
 
-  async getUserById(id: UserId) {
-    const user = await this.userRepository.getById(id)
-    return user
+  async create(data: UserWrite) {
+    return this.userRepository.create(data)
   }
 
-  async searchUsers(searchQuery: string, take: number, cursor?: Cursor) {
-    const users = await this.userRepository.search(searchQuery, take, cursor)
-    return users
+  async update(data: User) {
+    return this.userRepository.update(data.id, data)
   }
 
-  async getUserBySubject(id: User["auth0Sub"]) {
-    const user = await this.userRepository.getBySubject(id)
-    return user
+  async getAll(limit: number) {
+    return await this.userRepository.getAll(limit)
   }
 
-  async createUser(input: UserWrite) {
-    const res = await this.userRepository.create(input)
-    return res
+  async getById(id: User["id"]) {
+    return this.userRepository.getById(id)
   }
 
-  async updateUser(id: UserId, data: Partial<UserWrite>) {
-    const res = await this.userRepository.update(id, data)
-    return res
+  async searchByFullName(searchQuery: string, take: number) {
+    return this.userRepository.searchByFullName(searchQuery, take)
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {

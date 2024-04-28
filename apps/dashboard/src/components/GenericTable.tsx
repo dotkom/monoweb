@@ -1,5 +1,5 @@
-import { flexRender, type Table as ReactTable } from "@tanstack/react-table"
-import { Card, Table, TableThead, TableTr, TableTh, TableTd, TableTbody } from "@mantine/core"
+import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
+import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
 
 export interface GenericTableProps<T> {
   table: ReactTable<T>
@@ -19,6 +19,13 @@ export function GenericTable<T>({ table }: GenericTableProps<T>) {
           ))}
         </TableThead>
         <TableTbody>
+          {table.getRowModel().rows.length === 0 && (
+            <TableTr>
+              <TableTd colSpan={table.getAllColumns().length} align="center">
+                <Text>Ingen data</Text>
+              </TableTd>
+            </TableTr>
+          )}
           {table.getRowModel().rows.map((row) => (
             <TableTr key={row.id}>
               {row.getVisibleCells().map((cell) => (

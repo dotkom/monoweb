@@ -1,6 +1,6 @@
 "use client"
 
-import { Title, Text } from "@dotkomonline/ui"
+import { Text, Title } from "@dotkomonline/ui"
 import { Section } from "../../components/section"
 
 export default function TakkPage() {

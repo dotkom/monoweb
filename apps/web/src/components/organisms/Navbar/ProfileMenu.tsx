@@ -5,7 +5,6 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
-  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -21,15 +20,20 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Icon,
+  cn,
 } from "@dotkomonline/ui"
-import { type FC, type PropsWithChildren } from "react"
-import { useTheme } from "next-themes"
+import type { Session } from "next-auth"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
+import type { FC, PropsWithChildren } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
-import { Session } from "next-auth"
 
-export const ProfileMenu = ({ initialData }: { initialData: Session | null }) => {
+export const ProfileMenu = ({
+  initialData,
+}: {
+  initialData: Session | null
+}) => {
   return (
     <SessionProvider session={initialData}>
       <InnerProfileMenu />
@@ -102,9 +106,9 @@ const linkGroups: LinkDetail[][] = [
     },
     {
       icon: "tabler:settings",
-      label: "Instillinger",
+      label: "Innstillinger",
       shortcut: "⌘S",
-      href: "/profile",
+      href: "/settings",
     },
   ],
   [
@@ -145,7 +149,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
           <DropdownMenuGroup>
             {group.map((link) => (
               <DropdownMenuItem key={link.label}>
-                <Link href={link.href || ""}>
+                <Link className="w-full" href={link.href || ""}>
                   <Icon icon={link.icon} className="mr-2 h-4 w-4" />
                   <span>{link.label}</span>
                   {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
@@ -158,7 +162,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
       <DropdownMenuSeparator />
       <ThemeMenuSub />
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={async () => signOut()}>
+      <DropdownMenuItem className="cursor-pointer" onClick={async () => signOut()}>
         <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
         <span>Log out</span>
         <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
@@ -195,7 +199,7 @@ const ThemeMenuSub = () => {
         <DropdownMenuSubContent>
           <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
             {items.map((item) => (
-              <DropdownMenuRadioItem value={item.theme} key={item.theme}>
+              <DropdownMenuRadioItem className="cursor-pointer" value={item.theme} key={item.theme}>
                 <Icon icon={item.icon} className="mr-2 h-4 w-4" />
                 <span className="capitalize">{item.theme}</span>
               </DropdownMenuRadioItem>

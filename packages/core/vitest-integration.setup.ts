@@ -1,8 +1,8 @@
-import { Database, createKysely, createMigrator } from "@dotkomonline/db"
-import { createEnvironment, Environment } from "@dotkomonline/env"
+import { type Database, createKysely, createMigrator } from "@dotkomonline/db"
+import { type Environment, createEnvironment } from "@dotkomonline/env"
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
-import { Kysely, sql } from "kysely"
-import { beforeAll, afterAll } from "vitest"
+import { type Kysely, sql } from "kysely"
+import { afterAll, beforeAll } from "vitest"
 
 let container: StartedPostgreSqlContainer
 let host: Kysely<Database>

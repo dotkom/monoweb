@@ -1,32 +1,44 @@
 "use client"
 
-import { UserWriteSchema } from "@dotkomonline/types"
-import { Box, CloseButton, Group, Title } from "@mantine/core"
+import { Icon } from "@iconify/react"
+import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
+import { UserEditCard } from "./edit-card"
 import { useUserDetailsContext } from "./provider"
-import { useUserWriteForm } from "../write-form"
-import { useEditUserMutation } from "../../../../modules/user/mutations/use-edit-user-mutation"
 
-export default function UserEditCard() {
+const SIDEBAR_LINKS = [
+  {
+    icon: "tabler:building-warehouse",
+    label: "Info",
+    slug: "info",
+    component: UserEditCard,
+  },
+] as const
+
+export default function UserDetailsPage() {
   const { user } = useUserDetailsContext()
-  const edit = useEditUserMutation()
   const router = useRouter()
-  const FormComponent = useUserWriteForm({
-    label: "Oppdater bruker",
-    onSubmit: (data) => {
-      const result = UserWriteSchema.parse(data)
-      edit.mutate({ id: user.id, data: result })
-    },
-    defaultValues: { ...user },
-  })
   return (
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>{user.id}</Title>
+        <Title>{user.name}</Title>
       </Group>
 
-      <FormComponent />
+      <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>
+        <Tabs.List>
+          {SIDEBAR_LINKS.map(({ label, icon, slug }) => (
+            <Tabs.Tab key={slug} value={slug} leftSection={<Icon icon={icon} width={14} height={14} />}>
+              {label}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+        {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
+          <Tabs.Panel mt="md" key={slug} value={slug}>
+            <Component />
+          </Tabs.Panel>
+        ))}
+      </Tabs>
     </Box>
   )
 }

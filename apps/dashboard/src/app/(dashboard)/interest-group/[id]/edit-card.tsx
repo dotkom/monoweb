@@ -1,12 +1,12 @@
-import { type FC } from "react"
-import { useInterestGroupDetailsContext } from "./provider"
-import { useInterestGroupWriteForm } from "../write-form"
-import { useUpdateInterestGroupMutation } from "src/modules/interest-group/mutations/use-update-interest-group-mutation"
-import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
-import { Button } from "@mantine/core"
 import { Icon } from "@iconify/react"
+import { Button } from "@mantine/core"
 import { useRouter } from "next/navigation"
+import type { FC } from "react"
 import { useConfirmDeleteModal } from "src/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
+import { useDeleteInterestGroupMutation } from "src/modules/interest-group/mutations/use-delete-interest-group-mutation"
+import { useUpdateInterestGroupMutation } from "src/modules/interest-group/mutations/use-update-interest-group-mutation"
+import { useInterestGroupWriteForm } from "../write-form"
+import { useInterestGroupDetailsContext } from "./provider"
 
 export const InterestGroupEditCard: FC = () => {
   const { interestGroup } = useInterestGroupDetailsContext()
@@ -35,7 +35,7 @@ export const InterestGroupEditCard: FC = () => {
   return (
     <div>
       <FormComponent />
-      <Button variant="outline" color="red" style={{ marginTop: "1rem" }} onClick={open}>
+      <Button variant="outline" color="red" mt="sm" onClick={open}>
         <Icon icon="tabler:trash" />
       </Button>
     </div>

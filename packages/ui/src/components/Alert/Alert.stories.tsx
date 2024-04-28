@@ -1,6 +1,6 @@
-import { PropsWithChildren } from "react"
-import { Alert, AlertProps } from "./Alert"
 import type { Story, StoryDefault } from "@ladle/react"
+import type { PropsWithChildren } from "react"
+import { Alert, type AlertProps } from "./Alert"
 
 export default {
   title: "Alert",

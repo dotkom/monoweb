@@ -1,5 +1,5 @@
-import { type FC, type PropsWithChildren } from "react"
 import { cn } from "@dotkomonline/ui"
+import type { FC, PropsWithChildren } from "react"
 
 export interface EntryDetailLayoutProps {
   title: string

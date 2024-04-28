@@ -1,7 +1,7 @@
-import { type Committee, type CommitteeId, type CommitteeWrite } from "@dotkomonline/types"
-import { type CommitteeRepository } from "./committee-repository"
-import { type Collection, type Pageable } from "../../utils/db-utils"
+import type { Committee, CommitteeId, CommitteeWrite } from "@dotkomonline/types"
+import type { Collection, Pageable } from "../../utils/db-utils"
 import { CommitteeNotFoundError } from "./committee-error"
+import type { CommitteeRepository } from "./committee-repository"
 
 export interface CommitteeService {
   getCommittee(id: CommitteeId): Promise<Committee>

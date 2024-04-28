@@ -1,4 +1,4 @@
-import { type CompanyId } from "@dotkomonline/types"
+import type { CompanyId } from "@dotkomonline/types"
 import { trpc } from "../../../utils/trpc"
 
 export const useCompanyEventsAllQuery = (id: CompanyId) => {

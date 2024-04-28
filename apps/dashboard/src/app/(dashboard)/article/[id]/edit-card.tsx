@@ -1,7 +1,7 @@
-import { type FC } from "react"
-import { useArticleDetailsContext } from "./provider"
-import { useArticleWriteForm } from "../write-form"
+import type { FC } from "react"
 import { useEditArticleMutation } from "../../../../modules/article/mutations/use-edit-article-mutation"
+import { useArticleWriteForm } from "../write-form"
+import { useArticleDetailsContext } from "./provider"
 
 export const ArticleEditCard: FC = () => {
   const { article } = useArticleDetailsContext()

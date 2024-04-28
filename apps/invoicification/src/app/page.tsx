@@ -1,12 +1,12 @@
 "use client"
 
 import { Button, Text, Title } from "@dotkomonline/ui"
-import { Section } from "../components/section"
-import { FormProvider, useForm } from "react-hook-form"
-import { DeliveryMethod, formSchema, FormSchema, InvoiceRelation } from "./form-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Icon } from "@iconify/react"
+import { FormProvider, useForm } from "react-hook-form"
+import { Section } from "../components/section"
 import { Form } from "./form"
+import { DeliveryMethod, type FormSchema, InvoiceRelation, formSchema } from "./form-schema"
 import { useSubmitMutation } from "./mutation"
 
 export default function Page() {

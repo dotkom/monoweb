@@ -1,11 +1,9 @@
-import { type inferAsyncReturnType } from "@trpc/server"
+import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { createServiceLayer } from "@dotkomonline/core"
 import { kysely } from "@dotkomonline/db"
-import { authOptions } from "@dotkomonline/auth/src/web.app"
+import type { inferAsyncReturnType } from "@trpc/server"
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next"
 import { getServerSession } from "next-auth"
-import { NextRequest, NextResponse } from "next/server"
-import { CreateNextContextOptions } from "@trpc/server/dist/adapters/next"
-import { NextApiRequest, NextApiResponse } from "next"
 
 interface AuthContextProps {
   auth: {
@@ -21,10 +19,10 @@ export const createContextInner = async (opts: AuthContextProps) => {
   }
 }
 
-export const createContext = async () => {
-  const session = await getServerSession()
+export const createContext = async (opts: CreateNextContextOptions) => {
+  const session = await getServerSession(opts.req, opts.res, authOptions)
   if (session !== null) {
-    return await createContextInner({
+    return createContextInner({
       auth: {
         userId: session.user.id,
       },
@@ -32,7 +30,5 @@ export const createContext = async () => {
   }
   return createContextInner({ auth: null })
 }
-
-export const createUnauthorizedContext = async () => await createContextInner({ auth: null })
 
 export type Context = inferAsyncReturnType<typeof createContext>

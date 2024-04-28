@@ -1,7 +1,7 @@
 "use client"
 
+import type { Company } from "@dotkomonline/types"
 import { createContext, useContext } from "react"
-import { type Company } from "@dotkomonline/types"
 
 /** Context consisting of everything required to use and render the form */
 export const CompanyDetailsContext = createContext<{

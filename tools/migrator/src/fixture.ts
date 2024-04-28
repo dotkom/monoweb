@@ -1,11 +1,12 @@
-import { type DB } from "@dotkomonline/db/src/db.generated"
+import type { DB } from "@dotkomonline/db/src/db.generated"
 import { db } from "./db"
 import { getAttendanceFixtures } from "./fixtures/attendance"
-import { getAttendeeFixtures } from "./fixtures/attendee"
+import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { getCommitteeFixtures } from "./fixtures/committee"
 import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
 import { getEventFixtures } from "./fixtures/event"
+import { getInterestGroupFixtures } from "./fixtures/interest-group"
 import {
   getJobListingFixtures,
   getJobListingLocationFixtures,
@@ -13,11 +14,8 @@ import {
 } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
 import { getOfflineFixtures } from "./fixtures/offline"
-import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
-import { getUserFixtures } from "./fixtures/user"
-import { getInterestGroupFixtures } from "./fixtures/interest-group"
 
 interface WithIdentifier {
   id: string
@@ -31,14 +29,6 @@ const mapId = (results: WithIdentifier[]) => results.map((res) => res.id)
 
 export const runFixtures = async () => {
   const insertedIds = {} as InsertedIds
-
-  insertedIds.owUser = await db //
-    .insertInto("owUser")
-    .onConflict((eb) => eb.doNothing())
-    .values(getUserFixtures())
-    .returning("id")
-    .execute()
-    .then(mapId)
 
   insertedIds.company = await db
     .insertInto("company")
@@ -56,26 +46,26 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
-  insertedIds.event = await db //
-    .insertInto("event")
-    .onConflict((eb) => eb.doNothing())
-    .values(getEventFixtures())
-    .returning("id")
-    .execute()
-    .then(mapId)
-
   insertedIds.attendance = await db
     .insertInto("attendance")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendanceFixtures(insertedIds.event))
+    .values(getAttendanceFixtures())
     .returning("id")
     .execute()
     .then(mapId)
 
-  insertedIds.attendee = await db
-    .insertInto("attendee")
+  insertedIds.event = await db //
+    .insertInto("event")
     .onConflict((eb) => eb.doNothing())
-    .values(getAttendeeFixtures(insertedIds.attendance, insertedIds.owUser))
+    .values(getEventFixtures(insertedIds.attendance))
+    .returning("id")
+    .execute()
+    .then(mapId)
+
+  insertedIds.attendancePool = await db
+    .insertInto("attendancePool")
+    .onConflict((eb) => eb.doNothing())
+    .values(getPoolFixtures(insertedIds.attendance))
     .returning("id")
     .execute()
     .then(mapId)
@@ -147,11 +137,5 @@ export const runFixtures = async () => {
     .insertInto("productPaymentProvider")
     .onConflict((eb) => eb.doNothing())
     .values(getProductPaymentProviderFixtures(insertedIds.product))
-    .execute()
-
-  await db //
-    .insertInto("personalMark")
-    .onConflict((eb) => eb.doNothing())
-    .values(getPersonalMarkFixtures(insertedIds.mark, insertedIds.owUser))
     .execute()
 }

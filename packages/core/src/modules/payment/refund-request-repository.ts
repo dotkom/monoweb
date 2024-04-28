@@ -1,4 +1,4 @@
-import { type Kysely, type Selectable } from "kysely"
+import type { Database } from "@dotkomonline/db"
 import {
   type PaymentId,
   type RefundRequest,
@@ -6,7 +6,7 @@ import {
   RefundRequestSchema,
   type RefundRequestWrite,
 } from "@dotkomonline/types"
-import { type Database } from "@dotkomonline/db"
+import type { Kysely, Selectable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 const mapToRefundRequest = (data: Selectable<Database["refundRequest"]>) => RefundRequestSchema.parse(data)

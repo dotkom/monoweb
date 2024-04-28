@@ -3,9 +3,9 @@
 import { Icon } from "@iconify/react"
 import { Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "../../../components/GenericTable"
+import { useCreateArticleModal } from "../../../modules/article/modals/create-article-modal"
 import { useArticleAllQuery } from "../../../modules/article/queries/use-article-all-query"
 import { useArticleTable } from "../../../modules/article/use-article-table"
-import { useCreateArticleModal } from "../../../modules/article/modals/create-article-modal"
 
 export default function CompanyPage() {
   const { articles, isLoading: isArticlesLoading } = useArticleAllQuery()
