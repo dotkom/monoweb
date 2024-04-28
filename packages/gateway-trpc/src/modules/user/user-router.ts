@@ -10,7 +10,6 @@ export const userRouter = t.router({
   update: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
         data: UserWriteSchema,
       })
     )
