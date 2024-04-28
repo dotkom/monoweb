@@ -1,39 +1,57 @@
 import type { ServiceLayer } from "@dotkomonline/core"
-import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import type { NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
-interface Auth0IdTokenClaims {
-  given_name: string
-  family_name: string
-  nickname: string
-  name: string
-  picture: string
-  gender: string
-  updated_at: string
-  email: string
-  email_verified: boolean
+// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+type SupportedStandardIdTokenClaims = {
   iss: string
   aud: string
   iat: number
   exp: number
   sub: string
   sid: string
+
+  name: string
+  given_name: string
+  middle_name: string
+  family_name: string
+  nickname: string
+  picture: string
+  email: string
+  email_verified: boolean
+}
+
+const CUSTOM_CLAIM_PREFIX = "https://online.ntnu.no"
+type CustomIdTokenClaims = {
+  studyYear: number
+  owUserId: string
 }
 
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: User
+  interface Session {
+    user: SupportedStandardIdTokenClaims & CustomIdTokenClaims
     sub: string
-    id: string
   }
 
-  interface User extends DefaultUser {
+  interface User {
     id: string
-    name: string
+    sub: string
     email: string
-    image?: string
-    givenName?: string
-    familyName?: string
+    email_verified: boolean
+    name: string
+    given_name: string
+    family_name: string
+    nickname: string
+    picture: string
+    updated_at: string
+    iss: string
+    aud: string
+    iat: number
+    exp: number
+    sid: string
+    middle_name: string
+    allergies: string
+    phone: string
   }
 }
 
@@ -58,13 +76,31 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => ({
-        id: profile.sub,
+      profile: (profile) => ({
+        id: profile.sub, // Next auth throws an error if this is not set. User interface exposes id thorugh session.user.sub, and owUserId through session.user.owlUserId
+
+        given_name: profile.given_name,
+        family_name: profile.family_name,
+        nickname: profile.nickname,
         name: profile.name,
+        picture: profile.picture,
+        updated_at: profile.updated_at,
         email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
+        email_verified: profile.email_verified,
+
+        iss: profile.iss,
+        aud: profile.aud,
+        iat: profile.iat,
+        exp: profile.exp,
+        sub: profile.sub,
+        sid: profile.sid,
+
+        middle_name: profile[`${CUSTOM_CLAIM_PREFIX}/middle_name`],
+        allergies: profile[`${CUSTOM_CLAIM_PREFIX}/allergies`],
+        phone: profile[`${CUSTOM_CLAIM_PREFIX}/phone`],
+        gender: profile[`${CUSTOM_CLAIM_PREFIX}/gender`],
+        studyYear: profile[`${CUSTOM_CLAIM_PREFIX}/study_year`],
+        owUserId: profile[`${CUSTOM_CLAIM_PREFIX}/ow_user_id`],
       }),
     }),
   ],
@@ -72,14 +108,27 @@ export const getAuthOptions = ({
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user
+      }
+
+      return token
+    },
     async session({ session, token }) {
+      if (token.user) {
+        session.user = {
+          ...session.user,
+          ...token.user,
+        }
+      }
+
       if (token.sub) {
         await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
+        await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
 
-        session.user.id = user.auth0Id
+        session.user.id = token.sub
         session.sub = token.sub
-        return session
       }
 
       return session
