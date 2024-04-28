@@ -3,7 +3,7 @@ import type { ManagementClient } from "auth0"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
-import { getUserMock } from "../../../../mock"
+import { getUserMock, mockAuth0UserResponse } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 
 import type { Database } from "@dotkomonline/db"
@@ -37,7 +37,6 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository,
-    auth0Repository
   )
 
   const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
