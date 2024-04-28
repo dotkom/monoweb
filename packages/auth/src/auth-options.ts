@@ -2,14 +2,8 @@ import type { ServiceLayer } from "@dotkomonline/core"
 import type { NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
-const CUSTOM_CLAIM_PREFIX = "https://online.ntnu.no"
-type CustomIdTokenClaims = {
-  studyYear: number
-  owUserId: string
-}
-
 // https://www.iana.org/assignments/jwt/jwt.xhtml
-type StandardClaims = {
+type SupportedStandardIdTokenClaims = {
   iss: string
   aud: string
   iat: number
@@ -27,11 +21,39 @@ type StandardClaims = {
   email_verified: boolean
 }
 
+const CUSTOM_CLAIM_PREFIX = "https://online.ntnu.no"
+type CustomIdTokenClaims = {
+  studyYear: number
+  owUserId: string
+}
+
+
 declare module "next-auth" {
   interface Session {
-    user: CustomIdTokenClaims & StandardClaims
+    user: SupportedStandardIdTokenClaims & CustomIdTokenClaims
     sub: string
   }
+
+  interface User {
+    id: string
+    sub: string
+    email: string
+    email_verified: boolean
+    name: string
+    given_name: string
+    family_name: string
+    nickname: string
+    picture: string
+    updated_at: string
+    iss: string
+    aud: string
+    iat: number
+    exp: number
+    sid: string
+    middle_name: string
+    allergies: string
+    phone: string
+}
 }
 
 export interface AuthOptions {
@@ -103,7 +125,7 @@ export const getAuthOptions = ({
       }
 
       if (token.sub) {
-        await core.userService.handlePopulateUserWithFakeData(token.sub, token.email) // Remove when we have real data
+        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
         await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
 
         session.user.id = token.sub
