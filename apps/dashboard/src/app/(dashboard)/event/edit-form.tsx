@@ -1,6 +1,5 @@
-import type { Committee } from "@dotkomonline/types"
+import { type Committee, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { EventSchema } from "../../../../../../packages/types/src/event"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -10,6 +9,7 @@ import {
   createTextareaInput,
   useFormBuilder,
 } from "../../form"
+import { validateEvent } from "./event-form-validation"
 
 interface UseEventEditFormProps {
   onSubmit(data: FormValidationResult): void
@@ -18,16 +18,16 @@ interface UseEventEditFormProps {
   committees: Committee[]
 }
 
+type FormValidationResult = z.infer<typeof FormValidationSchema>
+
 const FormValidationSchema = EventSchema.extend({
   committeeIds: z.array(z.string()),
+}).superRefine((data, ctx) => {
+  const issues = validateEvent(data)
+  for (const issue of issues) {
+    ctx.addIssue(issue)
+  }
 })
-  .required({ id: true })
-  .refine((data) => data.start < data.end, {
-    message: "Sluttidspunkt må være etter starttidspunkt",
-    path: ["end"],
-  })
-
-type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 export const useEventEditForm = ({
   committees,
@@ -56,9 +56,16 @@ export const useEventEditForm = ({
         placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
         rows: 20,
       }),
-      location: createTextInput({
-        label: "Sted",
+      locationTitle: createTextInput({
+        label: "Tittel på lokasjon",
         placeholder: "Åre",
+      }),
+      locationAddress: createTextInput({
+        label: "Adresse",
+        placeholder: "Høgskoleringen 1, 7034 Trondheim",
+      }),
+      locationLink: createTextInput({
+        label: "Lenke til kart",
       }),
       imageUrl: createTextInput({
         label: "Bildelenke",

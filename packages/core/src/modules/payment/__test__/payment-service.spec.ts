@@ -30,7 +30,9 @@ const eventPayload: Omit<Event, "id"> = {
   imageUrl:
     "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fhttps://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/lg/59dec779-da56-40f1-be27-4045630c708a.png",
   description: "Kotlin er et relativt nytt programmeringsspråk som de siste årene har blitt veldig populært",
-  location: "Verkstedteknisk: VE22",
+  locationTitle: "Verkstedteknisk: VE22",
+  locationLink: null,
+  locationAddress: null,
   public: false,
   start: new Date(),
   end: new Date(),

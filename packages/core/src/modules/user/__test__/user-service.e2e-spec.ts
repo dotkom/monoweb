@@ -1,11 +1,56 @@
 import { createEnvironment } from "@dotkomonline/env"
-import type { ApiResponse, GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import type { ManagementClient } from "auth0"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
-import { getAuth0UserMock, getUserMock } from "../../../../mock"
+import { getUserMock } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { type ServiceLayer, createServiceLayerForUserTests } from "./core"
+
+import type { Database } from "@dotkomonline/db"
+import type { Kysely } from "kysely"
+import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
+import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
+import {
+  type NotificationPermissionsRepository,
+  NotificationPermissionsRepositoryImpl,
+} from "../notification-permissions-repository"
+import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
+import { type UserRepository, UserRepositoryImpl } from "../user-repository"
+import { type UserService, UserServiceImpl } from "../user-service"
+
+export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
+
+interface ServerLayerOptions {
+  db: Kysely<Database>
+  auth0MgmtClient: ManagementClient
+}
+
+const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) => {
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0MgmtClient)
+
+  const userRepository: UserRepository = new UserRepositoryImpl(db)
+  const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
+  const notificationPermissionsRepository: NotificationPermissionsRepository =
+    new NotificationPermissionsRepositoryImpl(db)
+
+  const userService: UserService = new UserServiceImpl(
+    userRepository,
+    privacyPermissionsRepository,
+    notificationPermissionsRepository,
+    auth0Repository
+  )
+
+  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userService,
+    auth0Repository
+  )
+
+  return {
+    userService,
+    auth0Repository,
+    syncedUserService,
+  }
+}
 
 describe("users", () => {
   let core: ServiceLayer
@@ -17,7 +62,7 @@ describe("users", () => {
     const context = await createServiceLayerForTesting(env, "user")
     cleanup = context.cleanup
     auth0Client = mockDeep<ManagementClient>()
-    core = await createServiceLayerForUserTests({ db: context.kysely, auth0MgmtClient: auth0Client })
+    core = await createServiceLayer({ db: context.kysely, auth0MgmtClient: auth0Client })
   })
 
   afterEach(async () => {
@@ -25,7 +70,7 @@ describe("users", () => {
   })
 
   it("will find users by their user id", async () => {
-    const user = await core.userRepository.create(getUserMock())
+    const user = await core.userService.create(getUserMock())
 
     const match = await core.userService.getById(user.id)
     expect(match).toEqual(user)
@@ -41,13 +86,14 @@ describe("users", () => {
       givenName: initialGivenName,
     })
 
-    const insertedUser = await core.userRepository.create(fakeInsert)
+    const insertedUser = await core.userService.create(fakeInsert)
 
-    const auth0UpdateResponse = {
-      data: getAuth0UserMock({ givenName: updatedGivenName, id: insertedUser.id, auth0Id: insertedUser.auth0Id }),
-      status: 200,
-      statusText: "OK",
-    } as unknown as ApiResponse<GetUsers200ResponseOneOfInner>
+    const auth0UpdateResponse = mockAuth0UserResponse({
+      givenName: updatedGivenName,
+      id: insertedUser.id,
+      auth0Id: insertedUser.auth0Id,
+    })
+
     const auth0ResponsePromise = new Promise<typeof auth0UpdateResponse>((resolve) => {
       resolve(auth0UpdateResponse)
     })
@@ -60,7 +106,7 @@ describe("users", () => {
       givenName: updatedGivenName,
     }
 
-    const updated = await core.userService.updateUser(updatedUserWrite)
+    const updated = await core.userService.update(updatedUserWrite)
 
     expect(updated.givenName).toEqual(updatedGivenName)
   })

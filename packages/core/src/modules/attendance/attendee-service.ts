@@ -6,6 +6,7 @@ import type {
   AttendeeUser,
   AttendeeWrite,
   ExtrasChoices,
+  QrCodeRegistrationAttendee,
   UserId,
   WaitlistAttendee,
 } from "@dotkomonline/types"
@@ -29,6 +30,7 @@ export interface AttendeeService {
   getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
+  handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
@@ -62,6 +64,23 @@ export class AttendeeServiceImpl implements AttendeeService {
     }
 
     return attendee
+  }
+
+  async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
+    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+    const user = await this.userService.getById(userId)
+    if (attendee === null) {
+      throw new AttendeeNotFoundError("")
+    }
+    if (user === null) {
+      throw new UserNotFoundError(userId)
+    }
+    if (attendee.attended === true) {
+      return { attendee, user, alreadyAttended: true }
+    }
+    await this.attendeeRepository.update({ attended: true }, attendee.id)
+
+    return { attendee, user, alreadyAttended: false }
   }
 
   async updateExtraChoices(id: AttendanceId, choices: ExtrasChoices) {

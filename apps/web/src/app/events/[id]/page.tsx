@@ -3,29 +3,17 @@
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
 import type { Session } from "next-auth"
-import { SessionProvider, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import type { FC } from "react"
 import { AttendanceBox } from "../components/AttendanceBox"
 import { EventInfoBox } from "../components/EventInfoBox"
-import { LocationBox } from "../components/LocationBox"
 import { OrganizerBox } from "../components/OrganizerBox"
-
-/*
-export const generateStaticParams = async () => {
-    const serverClient = await getUnauthorizedServerClient();
-
-    const events = await serverClient.event.all();
-
-    return events.map(({ id }) => ({ id }));
-}
- */
+import TicketButton from "../components/TicketButton"
+import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import { useGetAttendee } from "../components/queries"
 
 const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
-  return (
-    <SessionProvider>
-      <EventDetailPageInner id={id} />
-    </SessionProvider>
-  )
+  return <EventDetailPageInner id={id} />
 }
 
 const EventDetailPageInner = ({ id }: { id: string }) => {
@@ -84,14 +72,28 @@ interface WithAttendanceProps {
 }
 
 const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
+  const { data: attendee } = useGetAttendee({
+    attendanceId: attendance.id,
+    userId: user.id,
+  })
+
   return (
     <div>
       <div className="flex w-full">
         <EventInfoBox event={event} />
         <div className="flex flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
+          {attendee && <TicketButton userid={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
-          {event.location && <LocationBox location={event.location} />}
+          <TimeLocationBox
+            datetimeStart={event.start}
+            datetimeEnd={event.end}
+            locationTitle={event.locationTitle}
+            locationAddress={event.locationAddress}
+            locationLink={event.locationLink}
+            eventTitle={event.title}
+            eventDescription={event.description}
+          />
         </div>
       </div>
     </div>

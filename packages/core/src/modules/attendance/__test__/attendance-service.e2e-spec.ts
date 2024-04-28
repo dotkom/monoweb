@@ -1,5 +1,5 @@
 import { createEnvironment } from "@dotkomonline/env"
-import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, EventWrite, UserWrite } from "@dotkomonline/types"
+import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import assert from "../../../../assert"
@@ -45,20 +45,6 @@ const getFakeAttendee = (write: Partial<AttendeeWrite>): AttendeeWrite => ({
   updatedAt: write.updatedAt ?? new Date(),
 })
 
-const getFakeEvent = (write: Partial<EventWrite>): EventWrite => ({
-  attendanceId: write.attendanceId ?? ulid(),
-  description: write.description ?? "description",
-  end: write.end ?? new Date(),
-  imageUrl: write.imageUrl ?? "imageUrl",
-  location: write.location ?? "location",
-  public: write.public ?? true,
-  start: write.start ?? new Date(),
-  status: write.status ?? "ATTENDANCE",
-  title: write.title ?? "",
-  subtitle: write.subtitle ?? "",
-  type: write.type ?? "ACADEMIC",
-})
-
 const setupFakeFullAttendance = async (
   core: ServiceLayer,
   {
@@ -89,7 +75,7 @@ const setupFakeFullAttendance = async (
     const _user = _users[i]
     const email = `user${i}@local.com`
     const fakeUser = getUserMock({ ..._user, studyYear: _user.studyYear, email })
-    const user = await core.userRepository.create(fakeUser)
+    const user = await core.userService.create(fakeUser)
     users.push(user)
   }
 
@@ -134,7 +120,7 @@ describe("attendance", () => {
 
     const fakeUser = getUserMock({ studyYear: 1 })
 
-    const user = await core.userRepository.create(fakeUser)
+    const user = await core.userService.create(fakeUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
@@ -268,7 +254,7 @@ describe("attendance", () => {
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
     const extraUser = getUserMock({ studyYear: 1 })
-    const extraUserCreated = await core.userRepository.create(extraUser)
+    const extraUserCreated = await core.userService.create(extraUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
     assert(matchingPool !== undefined, new Error("Pool not found"))
