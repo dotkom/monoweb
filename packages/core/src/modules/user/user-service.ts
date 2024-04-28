@@ -13,18 +13,17 @@ import type { PrivacyPermissionsRepository } from "./privacy-permissions-reposit
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
-  getUserById(id: UserId): Promise<User | undefined>
-  getUsersById(ids: UserId[]): Promise<User[] | undefined>
-  getUserBySubject(id: User["auth0Sub"]): Promise<User | undefined>
-  getAllUsers(limit: number): Promise<User[]>
-  createUser(input: UserWrite): Promise<User>
-  updateUser(id: UserId, payload: Partial<UserWrite>): Promise<User>
+  getById(id: UserId): Promise<User | null>
+  getAll(limit: number): Promise<User[]>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  create(data: UserWrite): Promise<User>
+  update(data: User): Promise<User>
+  getByAuth0Id(auth0Id: string): Promise<User | null>
 }
 
 export class UserServiceImpl implements UserService {
@@ -34,39 +33,28 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
-  async getAllUsers(limit: number) {
+  async getByAuth0Id(auth0Id: string) {
+    return this.userRepository.getByAuth0Id(auth0Id)
+  }
+
+  async create(data: UserWrite) {
+    return this.userRepository.create(data)
+  }
+
+  async update(data: User) {
+    return this.userRepository.update(data.id, data)
+  }
+
+  async getAll(limit: number) {
     return await this.userRepository.getAll(limit)
   }
 
-  async getUsersById(ids: UserId[]) {
-    const users = await Promise.all(ids.map(async (id) => this.userRepository.getById(id)))
-    if (users.includes(undefined)) {
-      throw new Error("User from DB is undefined")
-    }
-    return users as User[]
-  }
-
-  async getUserBySubject(id: User["auth0Sub"]) {
-    return this.userRepository.getBySubject(id)
+  async getById(id: User["id"]) {
+    return this.userRepository.getById(id)
   }
 
   async searchByFullName(searchQuery: string, take: number) {
     return this.userRepository.searchByFullName(searchQuery, take)
-  }
-
-  async getUserById(id: UserId) {
-    const user = await this.userRepository.getById(id)
-    return user
-  }
-
-  async createUser(input: UserWrite) {
-    const res = await this.userRepository.create(input)
-    return res
-  }
-
-  async updateUser(id: UserId, data: Partial<UserWrite>) {
-    const res = await this.userRepository.update(id, data)
-    return res
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {

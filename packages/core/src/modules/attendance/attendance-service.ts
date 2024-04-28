@@ -123,7 +123,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     )
     await Promise.all(
       waitlistAttendees.map((waitlistAttendee, i) =>
-        this.waitlistAttendeeRepository.update({ attendancePoolId: mergePool.id, position: i }, waitlistAttendee.id)
+        this.waitlistAttendeeRepository.update(waitlistAttendee.id, { attendancePoolId: mergePool.id, position: i })
       )
     )
     await Promise.all(pools.map((pool) => this.attendancePoolRepository.delete(pool.id)))

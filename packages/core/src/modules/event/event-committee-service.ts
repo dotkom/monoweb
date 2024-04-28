@@ -33,6 +33,7 @@ export class EventCommitteeServiceImpl implements EventCommitteeService {
     const removePromises = committeesToRemove.map(async (committeeId) =>
       this.committeeOrganizerRepository.removeCommitteFromEvent(eventId, committeeId)
     )
+
     const addPromises = committeesToAdd.map(async (committeeId) =>
       this.committeeOrganizerRepository.addCommitteeToEvent(eventId, committeeId)
     )

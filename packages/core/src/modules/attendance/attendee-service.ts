@@ -68,11 +68,11 @@ export class AttendeeServiceImpl implements AttendeeService {
 
   async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
-    const user = await this.userService.getUserById(userId)
+    const user = await this.userService.getById(userId)
     if (attendee === null) {
       throw new AttendeeNotFoundError("")
     }
-    if (user === undefined) {
+    if (user === null) {
       throw new UserNotFoundError(userId)
     }
     if (attendee.attended === true) {
@@ -94,13 +94,13 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async registerForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date) {
-    const user = await this.userService.getUserById(userId)
+    const user = await this.userService.getById(userId)
     const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
     if (attendancePool === null) {
       throw new AttendancePoolNotFoundError(attendancePoolId)
     }
 
-    if (user === undefined) {
+    if (user === null) {
       throw new UserNotFoundError(userId)
     }
 
