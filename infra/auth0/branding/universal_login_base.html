@@ -3,22 +3,16 @@
   <head>
     {%- auth0:head -%}
     <style>
+      :root {
+        --page-background-color: #0D5474;
+        --page-secondary-background-color: #3b6a80;
+      }
       body._widget-auto-layout {
-        /* https://www.magicpattern.design/tools/css-backgrounds */
-        --pattern-size: 50px;
         background-color: var(--page-background-color);
-        background-image:  
-            linear-gradient(135deg, var(--primary-color) 25%, transparent 25%),
-            linear-gradient(225deg, var(--primary-color) 25%, transparent 25%),
-            linear-gradient(45deg, var(--primary-color) 25%, transparent 25%),
-            linear-gradient(315deg, var(--primary-color) 25%, transparent 25%);
-        background-position: 
-            calc(var(--pattern-size) / 2) 0,
-            calc(var(--pattern-size) / 2) 0,
-            0 0,
-            0 0;
-        background-size: var(--pattern-size) var(--pattern-size);
-        background-repeat: repeat;
+        background-image: linear-gradient(var(--page-secondary-background-color) 1px, transparent 1px),
+                          linear-gradient(to right, var(--page-secondary-background-color) 1px, var(--page-background-color) 1px);
+        background-size: 10vw 10vw;
+        height: 100vh;
     }
     </style>
     <title>{{ prompt.screen.texts.pageTitle }}</title>

@@ -104,7 +104,9 @@ export const getAuthOptions = ({
 
       if (token.sub) {
         await core.userService.handlePopulateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        await core.auth0SynchronizationService.handleUserSync(token.sub, new Date())
+        await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
+
+        session.user.id = token.sub
         session.sub = token.sub
       }
 

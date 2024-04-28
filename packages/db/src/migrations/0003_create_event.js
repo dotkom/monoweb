@@ -65,8 +65,12 @@ export async function up(db) {
 
 /** @param db {import('kysely').Kysely */
 export async function down(db) {
+  await db.schema.dropTable("event_company").execute()
+  await db.schema.dropTable("event").execute()
+  await db.schema.dropTable("attendee").execute()
+  await db.schema.dropTable("waitlist_attendee").execute()
   await db.schema.dropTable("attendance_pool").execute()
   await db.schema.dropTable("attendance").execute()
-  await db.schema.dropTable("attendee").execute()
-  await db.schema.dropTable("event").execute()
+
+  await db.schema.dropType("event_status").execute()
 }

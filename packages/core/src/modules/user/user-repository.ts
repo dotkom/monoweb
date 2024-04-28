@@ -10,7 +10,7 @@ export interface UserRepository {
   getByAuth0Id(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: Partial<UserWrite>): Promise<User>
+  update(id: UserId, data: UserWrite): Promise<User>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
@@ -58,12 +58,6 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
-    return withInsertJsonValue(
-      {
-        ...data,
-        lastSyncedAt: data.lastSyncedAt ? data.lastSyncedAt : new Date(),
-      },
-      "allergies"
-    )
+    return withInsertJsonValue(data, "allergies")
   }
 }

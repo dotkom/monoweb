@@ -13,20 +13,16 @@ export const UserSchema = z.object({
   studyYear: z.number().int().min(-1).max(6),
   allergies: z.array(z.string()),
   picture: z.string().nullable(),
-  lastSyncedAt: z.date().nullable(),
+  lastSyncedAt: z.date(),
 })
 
 export type UserId = User["id"]
 export type User = z.infer<typeof UserSchema>
 
-// The other fields are not stored in app_metadata in auth0. Updating them will needs to be investigated further.
 export const UserWriteSchema = UserSchema.partial({
   id: true,
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
-
-export const DBUserWriteSchema = UserSchema.omit({ auth0Id: true })
-export const Auth0UserWriteSchema = UserSchema.omit({ id: true })
 
 export interface StudyYears {
   [-1]: string

@@ -1,10 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type { NotificationPermissions, PrivacyPermissions } from "@dotkomonline/types"
-import { ManagementClient } from "auth0"
 import { Kysely } from "kysely"
 import { describe, vi } from "vitest"
-import { Auth0ServiceImpl } from "../../external/auth0-service"
-import { Auth0SynchronizationServiceImpl } from "../../external/auth0-synchronization-service"
 import { NotificationPermissionsRepositoryImpl } from "../notification-permissions-repository"
 import { PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
 import { UserRepositoryImpl } from "../user-repository"
@@ -40,16 +37,10 @@ describe("UserService", () => {
   const privacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
   const notificationPermissionsRepository = new NotificationPermissionsRepositoryImpl(db)
 
-  const auth0Client = vi.mocked(ManagementClient.prototype)
-  const auth0Service = new Auth0ServiceImpl(auth0Client)
-  const auth0SynchronizationService = vi.mocked(Auth0SynchronizationServiceImpl.prototype)
-
   const userService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository,
-    auth0Service,
-    auth0SynchronizationService
+    notificationPermissionsRepository
   )
 
   const userId = randomUUID()
