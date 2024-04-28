@@ -1,0 +1,16 @@
+{
+  "name": "@dotkomonline/test",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx ./src/index.ts"
+  },
+  "dependencies": {
+    "@dotkomonline/types": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "4.7.3",
+    "typescript": "^5.2.2"
+  }
+}
