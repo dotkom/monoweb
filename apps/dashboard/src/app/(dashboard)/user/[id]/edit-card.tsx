@@ -1,7 +1,7 @@
 import { UserWriteSchema } from "@dotkomonline/types"
 import type { FC } from "react"
 import { useUpdateUserMutation } from "../../../../modules/user/mutations"
-import { useUserEditForm } from "../write-form"
+import { useUserEditForm } from "../edit-form"
 import { useUserDetailsContext } from "./provider"
 
 export const UserEditCard: FC = () => {
