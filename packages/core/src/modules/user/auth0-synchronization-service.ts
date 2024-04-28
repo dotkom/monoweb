@@ -6,9 +6,11 @@ import type { Auth0Repository } from "../external/auth0-repository"
 import type { UserService } from "./user-service"
 
 export interface Auth0SynchronizationService {
-  update(payload: UserWrite): Promise<User>
-  handleUserSync(sub: string, now: Date): Promise<User>
-  handlePopulateUserWithFakeData(auth0Id: string, email?: string | null): Promise<void>
+  updateUserInAuth0AndLocalDb(payload: UserWrite): Promise<User>
+  ensureUserLocalDbIsSynced(sub: string, now: Date): Promise<User>
+  // The frontend for onboarding users with fake data is not implemented yet. This is a temporary solution for DX purposes so we can work with users with poulate data.
+  // When the onboarding is implemented, this method should be removed.
+  populateUserWithFakeData(auth0Id: string, email?: string | null): Promise<void>
 }
 
 // Until we have gather this data from the user, this fake data is used as the initial data for new users
@@ -32,7 +34,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     private readonly auth0Repository: Auth0Repository
   ) {}
 
-  async handlePopulateUserWithFakeData(auth0Id: string, email?: string | null) {
+  async populateUserWithFakeData(auth0Id: string, email?: string | null) {
     if (!email) {
       throw new Error("Did not get email in jwt")
     }
@@ -45,7 +47,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
         auth0Id: auth0Id,
       })
 
-      await this.update(user)
+      await this.updateUserInAuth0AndLocalDb(user)
 
       this.logger.info("info", "Populated user with fake data", { userId: user.id })
     } catch (error) {
@@ -53,13 +55,13 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     }
   }
 
-  async update(data: UserWrite) {
+  async updateUserInAuth0AndLocalDb(data: UserWrite) {
     const result = await this.auth0Repository.update(data.auth0Id, data)
-    await this.syncUser(result)
+    await this.synchronizeUserAuth0ToLocalDb(result)
     return result
   }
 
-  async syncUser(userAuth0: User) {
+  async synchronizeUserAuth0ToLocalDb(userAuth0: User) {
     this.logger.log("info", "Synchronizing user with Auth0 id", { userId: userAuth0.auth0Id })
 
     const updatedUser: User = {
@@ -83,7 +85,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
    * @param auth0UserId The Auth0 subject of the user to synchronize.
    * @returns User
    */
-  async handleUserSync(auth0UserId: string, now: Date) {
+  async ensureUserLocalDbIsSynced(auth0UserId: string, now: Date) {
     const user = await this.userService.getByAuth0Id(auth0UserId)
 
     const oneDayAgo = addDays(now, -1)
@@ -99,6 +101,6 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       throw new Auth0UserNotFoundError(auth0UserId)
     }
 
-    return this.syncUser(userAuth0)
+    return this.synchronizeUserAuth0ToLocalDb(userAuth0)
   }
 }

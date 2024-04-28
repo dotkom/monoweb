@@ -64,7 +64,7 @@ describe("auth0 sync service", () => {
     auth0Mock.users.get.mockResolvedValue(updatedWithFakeDataUser)
 
     // first sync down to the local db. Should create user row in the db and populate with fake data.
-    const syncedUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, now)
+    const syncedUser = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(auth0Id, now)
 
     const dbUser = await core.userService.getById(syncedUser.id)
     expect(dbUser).toEqual(syncedUser)
@@ -75,12 +75,12 @@ describe("auth0 sync service", () => {
 
     // Run synchroinization again, simulating doing it 1hr later. However, since the user was just synced, the synchronization should not occur.
     const oneHourLater = addHours(now, 1)
-    const updatedDbUser = await core.auth0SynchronizationService.handleUserSync(auth0Id, oneHourLater)
+    const updatedDbUser = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(auth0Id, oneHourLater)
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
     // Attempt to sync the user again 25 hours after first sync. This time, the synchronization should occur.
     const twentyFiveHoursLater = addHours(now, 25)
-    await core.auth0SynchronizationService.handleUserSync(auth0Id, twentyFiveHoursLater)
+    await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(auth0Id, twentyFiveHoursLater)
 
     expect(updatedDbUser).not.toHaveProperty("email", updatedMail)
 
