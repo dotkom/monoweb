@@ -27,7 +27,6 @@ type CustomIdTokenClaims = {
   owUserId: string
 }
 
-
 declare module "next-auth" {
   interface Session {
     user: SupportedStandardIdTokenClaims & CustomIdTokenClaims
@@ -53,7 +52,7 @@ declare module "next-auth" {
     middle_name: string
     allergies: string
     phone: string
-}
+  }
 }
 
 export interface AuthOptions {
