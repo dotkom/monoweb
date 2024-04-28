@@ -2,7 +2,7 @@ import type { ServiceLayer } from "@dotkomonline/core"
 import type { NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
-// https://www.iana.org/assignments/jwt/jwt.xhtml
+// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
 type SupportedStandardIdTokenClaims = {
   iss: string
   aud: string
