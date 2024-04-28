@@ -24,9 +24,6 @@ export const UserWriteSchema = UserSchema.partial({
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
-export const DBUserWriteSchema = UserSchema.omit({ auth0Id: true })
-export const Auth0UserWriteSchema = UserSchema.omit({ id: true })
-
 export interface StudyYears {
   [-1]: string
   0: string
