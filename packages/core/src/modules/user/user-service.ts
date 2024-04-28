@@ -8,24 +8,9 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
-import type { Auth0Service } from "../external/auth0-service"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
-
-// Until we have gather this data from the user, this fake data is used as the initial data for new users
-const FAKE_USER_EXTRA_SIGNUP_DATA: Omit<UserWrite, "email" | "id" | "auth0Id"> = {
-  givenName: "firstName",
-  familyName: "lastName",
-  middleName: "middleName",
-  name: "firstName middleName lastName",
-  allergies: ["allergy1", "allergy2"],
-  picture: "https://example.com/image.jpg",
-  studyYear: -1,
-  lastSyncedAt: new Date(),
-  phone: "12345678",
-  gender: "male",
-}
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
@@ -45,9 +30,7 @@ export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
-    private readonly auth0Repository: Auth0Service,
-    private readonly auth0SynchronizationService: Auth0SynchronizationService
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
   async getByAuth0Id(auth0Id: string) {
