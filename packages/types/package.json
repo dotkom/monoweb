@@ -3,6 +3,7 @@
   "main": "./src/index.ts",
   "exports": "./src/index.ts",
   "types": "./src/index.ts",
+  "type": "module",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "lint": "biome check . --apply",
