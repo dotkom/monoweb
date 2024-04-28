@@ -61,7 +61,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     return result
   }
 
-  async synchronizeUserAuth0ToLocalDb(userAuth0: User) {
+  private async synchronizeUserAuth0ToLocalDb(userAuth0: User) {
     this.logger.log("info", "Synchronizing user with Auth0 id", { userId: userAuth0.auth0Id })
 
     const updatedUser: User = {
