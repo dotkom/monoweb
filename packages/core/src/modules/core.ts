@@ -150,7 +150,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     notificationPermissionsRepository
   )
 
-  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
     userService,
     auth0Repository
   )
@@ -248,6 +248,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    syncedUserService,
+    auth0SynchronizationService,
   }
 }
