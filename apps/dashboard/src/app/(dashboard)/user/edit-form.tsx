@@ -7,7 +7,7 @@ interface UseUserWriteFormProps {
   label?: string
 }
 
-export const useUserWriteForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserWriteFormProps) =>
+export const useUserEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserWriteFormProps) =>
   useFormBuilder({
     schema: UserWriteSchema,
     onSubmit,
@@ -23,6 +23,10 @@ export const useUserWriteForm = ({ defaultValues, onSubmit, label = "Bruker" }: 
         label: "Fornavn",
         placeholder: "Kari",
         withAsterisk: true,
+      }),
+      middleName: createTextInput({
+        label: "Mellomnavn",
+        withAsterisk: false,
       }),
       familyName: createTextInput({
         label: "Etternavn",
