@@ -63,7 +63,9 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           {props.places.map((place) => (
             <option key={place}>{place}</option>
           ))}
-          <option key="Alle" value="Alle">Alle</option>
+          <option key="Alle" value="Alle">
+            Alle
+          </option>
         </select>
       </div>
     </div>
