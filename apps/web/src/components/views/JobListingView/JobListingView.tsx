@@ -58,6 +58,7 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
           setChosenEmployments={setChosenEmployments}
           chosenSort={chosenSort}
           setChosenSort={setChosenSort}
+          places={getLocations(props.careers)}
         />
         <div className="w-2/3">
           <div className="flex flex-col gap-6">
