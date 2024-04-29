@@ -21,7 +21,6 @@ export const JobListingSchema = z.object({
 
 export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
-  createdAt: true,
   company: true,
 }).extend({
   companyId: z.string().ulid(),
