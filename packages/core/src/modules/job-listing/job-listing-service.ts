@@ -66,9 +66,7 @@ export class JobListingServiceImpl implements JobListingService {
 
     this.validateWriteModel(merged)
 
-    console.log(input)
     const jobListing = await this.jobListingRepository.updateJobListingById(id, input)
-    console.log(jobListing)
     const diff = this.getLocationDiff(jobListing.locations, locations)
     await this.applyLocationDiff(diff.toRemove, diff.toAdd, jobListing)
     return {
