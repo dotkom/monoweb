@@ -1,5 +1,5 @@
 {
-  "name": "@dotkomonline/repl",
+  "name": "@dotkomonline/shell",
   "type": "module",
   "scripts": {
     "dev": "tsx ./src/index.ts",

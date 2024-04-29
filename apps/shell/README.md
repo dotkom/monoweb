@@ -1,4 +1,4 @@
-# REPL
+# Shell
 
 Interact with the service layer using the nodejs REPL.
 
