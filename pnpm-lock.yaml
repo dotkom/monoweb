@@ -346,6 +346,25 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  apps/shell:
+    dependencies:
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@dotkomonline/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 1.6.4
+        version: 1.6.4
+      tsx:
+        specifier: ^3.14.0
+        version: 3.14.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
   apps/web:
     dependencies:
       '@dotkomonline/auth':
