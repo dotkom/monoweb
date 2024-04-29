@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { SignInButton } from "./SignInButton"
 
+import { TestComp } from "./testcomp"
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
   if (session !== null) {
@@ -25,3 +27,7 @@ export default async function DashboardPage() {
     </Flex>
   )
 }
+
+// export default async function DashboardPage() {
+//   return <TestComp />
+// }

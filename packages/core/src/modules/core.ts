@@ -65,6 +65,7 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
+import { type StaticAssetRepository, StaticAssetRepositoryImpl } from "./static-asset/static-asset-repository"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
@@ -76,6 +77,7 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
+import { type StaticAssetService, StaticAssetServiceImpl } from "./static-asset/static-asset-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -225,6 +227,9 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
+  const staticAssetRepository: StaticAssetRepository = new StaticAssetRepositoryImpl(db)
+  const staticAssetService: StaticAssetService = new StaticAssetServiceImpl(staticAssetRepository, s3Client)
+
   return {
     userService,
     eventService,
@@ -250,5 +255,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     interestGroupRepository,
     interestGroupService,
     auth0SynchronizationService,
+    staticAssetService,
   }
 }
