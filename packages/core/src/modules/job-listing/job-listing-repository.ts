@@ -23,6 +23,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       .selectFrom("jobListing")
       .leftJoin("jobListingLocationLink", "jobListingLocationLink.jobListingId", "jobListing.id")
       .leftJoin("jobListingLocation", "jobListingLocation.id", "jobListingLocationLink.locationId")
+      .leftJoin("company", "company.id", "jobListing.companyId")
       .selectAll("jobListing")
       .select(
         sql<
@@ -31,7 +32,13 @@ export class JobListingRepositoryImpl implements JobListingRepository {
           "locations"
         )
       )
+      .select(
+        sql<JobListing["company"]>`json_build_object(
+          'id', company.id, 'name', company.name, 'image', company.image
+        )`.as("company")
+      )
       .groupBy("jobListing.id")
+      .groupBy("company.id")
   }
 
   async createJobListing(data: JobListingWrite): Promise<JobListing> {

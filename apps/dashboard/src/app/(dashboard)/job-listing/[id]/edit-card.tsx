@@ -8,14 +8,28 @@ export const JobListingEditCard: FC = () => {
   const edit = useEditJobListingMutation()
 
   const FormComponent = useJobListingWriteForm({
-    label: "Oppdater stillingsannonse",
+    label: "Endre stillingsannonse",
     onSubmit: (data) => {
       edit.mutate({
         id: jobListing.id,
         input: data,
       })
     },
-    defaultValues: jobListing,
+    defaultValues: {
+      applicationEmail: jobListing.applicationEmail,
+      companyId: jobListing.company.id,
+      description: jobListing.description,
+      end: jobListing.end,
+      ingress: jobListing.ingress,
+      start: jobListing.start,
+      title: jobListing.title,
+      applicationLink: jobListing.applicationLink,
+      deadline: jobListing.deadline,
+      deadlineAsap: jobListing.deadlineAsap,
+      employment: jobListing.employment,
+      featured: jobListing.featured,
+      locations: jobListing.locations,
+    },
   })
   return <FormComponent />
 }
