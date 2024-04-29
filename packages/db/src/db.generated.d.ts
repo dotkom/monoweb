@@ -203,9 +203,9 @@ export interface NotificationPermissions {
 
 export interface Offline {
   createdAt: Generated<Timestamp>;
-  fileUrl: string | null;
+  fileId: string | null;
   id: Generated<string>;
-  imageUrl: string | null;
+  imageId: string | null;
   published: Timestamp;
   title: string;
   updatedAt: Generated<Timestamp>;
@@ -287,6 +287,15 @@ export interface RefundRequest {
   userId: string | null;
 }
 
+export interface StaticAsset {
+  createdAt: Generated<Timestamp>;
+  fileName: string;
+  fileType: string;
+  id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  url: string;
+}
+
 export interface WaitlistAttendee {
   attendanceId: string | null;
   attendancePoolId: string | null;
@@ -327,5 +336,6 @@ export interface DB {
   product: Product;
   productPaymentProvider: ProductPaymentProvider;
   refundRequest: RefundRequest;
+  staticAsset: StaticAsset;
   waitlistAttendee: WaitlistAttendee;
 }

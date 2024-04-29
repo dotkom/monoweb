@@ -1,6 +1,6 @@
 import { OfflineWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { createDateTimeInput, createFileInput, createTextInput, useFormBuilder } from "../../form"
+import { createDateTimeInput, createFileInput, createImageInput, createTextInput, useFormBuilder } from "../../form"
 
 const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
   fileUrl: null,
@@ -45,10 +45,9 @@ export const useOfflineWriteForm = ({
         placeholder: "Last opp",
         existingFileUrl: defaultValues.fileUrl ?? undefined,
       }),
-      image: createFileInput({
+      image: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
-        existingFileUrl: defaultValues.imageUrl ?? undefined,
       }),
     },
   })

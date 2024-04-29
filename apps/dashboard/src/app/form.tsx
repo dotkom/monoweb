@@ -1,3 +1,4 @@
+import type { StaticAsset } from "@dotkomonline/types"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
@@ -9,12 +10,14 @@ import {
   FileInput,
   type FileInputProps,
   Flex,
+  Modal,
   MultiSelect,
   type MultiSelectProps,
   NumberInput,
   type NumberInputProps,
   Select,
   type SelectProps,
+  Table,
   TagsInput,
   type TagsInputProps,
   Text,
@@ -24,6 +27,7 @@ import {
   type TextareaProps,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
+import { useDisclosure } from "@mantine/hooks"
 import type { FC } from "react"
 import {
   type Control,
@@ -37,6 +41,7 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
+import ImageUpload from "../components/molecules/ImageUpload/ImageUpload"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
@@ -250,6 +255,81 @@ export function createTextInput<F extends FieldValues>({
         {...props}
         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
       />
+    )
+  }
+}
+
+export function createImageInput<F extends FieldValues>({
+  ...props
+}: Omit<FileInputProps, "error"> & {
+  currentFile?: StaticAsset
+  aspect?: number
+}): InputProducerResult<F> {
+  return function FormFileInput({ name, state, control }) {
+    return (
+      <Box>
+        <Text>{props.label}</Text>
+        {props.currentFile && (
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Navn</Table.Th>
+                <Table.Th>Type</Table.Th>
+                <Table.Th>Lastet opp</Table.Th>
+                <Table.Th>Handlinger</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              <Table.Tr>
+                <Table.Td>
+                  <Anchor href={props.currentFile.url} target="_blank" rel="noreferrer">
+                    {props.currentFile.fileName}
+                  </Anchor>
+                </Table.Td>
+                <Table.Td>{props.currentFile.fileType}</Table.Td>
+                <Table.Td>{props.currentFile.createdAt.toLocaleDateString()}</Table.Td>
+                <Table.Td>
+                  <Button color="red">Slett</Button>
+                </Table.Td>
+              </Table.Tr>
+            </Table.Tbody>
+          </Table>
+        )}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => {
+            const [isOpened, { open, close }] = useDisclosure(false)
+
+            return (
+              <div>
+                <Button
+                  onClick={() => {
+                    open()
+                  }}
+                >
+                  {props.currentFile ? "Bytt bilde" : "Last opp bilde"}
+                </Button>
+                <Modal title="Last opp bilde" opened={isOpened} onClose={close} size={"xl"}>
+                  {props.currentFile && (
+                    <Text mb="sm" fs="italic">
+                      Ved å laste opp et nytt bilde vil det gamle bildet bli slettet
+                    </Text>
+                  )}
+                  <ImageUpload
+                    onSubmit={(blob) => {
+                      console.log(blob)
+                      field.onChange(blob)
+                      close()
+                    }}
+                    aspect={props.aspect}
+                  />
+                </Modal>
+              </div>
+            )
+          }}
+        />
+      </Box>
     )
   }
 }

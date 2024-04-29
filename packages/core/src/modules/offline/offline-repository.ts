@@ -1,6 +1,6 @@
 import type { Database } from "@dotkomonline/db"
-import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
+import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite, type StaticAsset } from "@dotkomonline/types"
+import { type Kysely, sql } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export interface OfflineRepository {
@@ -17,26 +17,51 @@ export class OfflineRepositoryImpl implements OfflineRepository {
 
   async create(data: OfflineWrite): Promise<Offline> {
     const offline = await this.db.insertInto("offline").values(data).returningAll().executeTakeFirstOrThrow()
-    return offline
+    return this.getById(offline.id) as Promise<Offline>
   }
 
   async update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline> {
-    const result = await this.db
+    await this.db
       .updateTable("offline")
       .set({ ...data, updatedAt: new Date() })
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
-    return result
+      
+    return this.getById(id) as Promise<Offline>
+  }
+
+  private async baseQuery() {
+    return this.db
+
   }
 
   async getById(id: string): Promise<Offline | undefined> {
-    const offline = await this.db.selectFrom("offline").selectAll().where("offline.id", "=", id).executeTakeFirst()
-    return offline ? mapToOffline(offline) : undefined
+    const query = this.db
+    .selectFrom("offline")
+    .selectAll("offline")
+    .leftJoin("staticAsset", "offline.fileId", "staticAsset.id")
+    .select(sql<StaticAsset>`json_build_object('id', static_asset.id, 'url', static_asset.url)`.as("file"))
+    .leftJoin("staticAsset", "offline.imageId", "staticAsset.id")
+    .select(sql<StaticAsset>`json_build_object('id', static_asset.id, 'url', static_asset.url)`.as("image"))
+    .where("offline.id", "=", id)
+    
+    const result = query.execute()
+    
+    return result ? mapToOffline(result) : undefined
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Offline[]> {
-    const query = this.db.selectFrom("offline").selectAll().limit(take)
+    const query = this.db
+      .selectFrom("offline")
+      .selectAll("offline")
+      .leftJoin("staticAsset", "offline.fileId", "staticAsset.id")
+      .select(sql<StaticAsset>`json_build_object('id', static_asset.id, 'url', static_asset.url)`.as("file"))
+      .leftJoin("staticAsset", "offline.imageId", "staticAsset.id")
+      .select(sql<StaticAsset>`json_build_object('id', static_asset.id, 'url', static_asset.url)`.as("image"))
+      .orderBy("offline.createdAt", "desc")
+      .limit(take)
+
     const ordered = orderedQuery(query, cursor)
     const offlines = await ordered.execute()
     return offlines.map(mapToOffline)
