@@ -10,9 +10,8 @@ interface CompanyFiltersContainer {
   setChosenEmployments: Dispatch<SetStateAction<EmploymentCheckbox[]>>
   chosenSort: string
   setChosenSort: Dispatch<SetStateAction<string>>
+  places: string[]
 }
-
-const places = ["Alle", "Oslo", "Bergen", "Trondheim", "Tromsø", "Fredrikstad", "Annet"]
 const sortCategories = ["Frist", "Påmeldingsstart", "Opprettelse"]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
@@ -61,9 +60,10 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
           name="places"
         >
-          {places.map((place) => (
+          {props.places.map((place) => (
             <option key={place}>{place}</option>
           ))}
+          <option key="Alle" value="Alle">Alle</option>
         </select>
       </div>
     </div>
