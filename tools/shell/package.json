@@ -2,7 +2,7 @@
   "name": "@dotkomonline/shell",
   "type": "module",
   "scripts": {
-    "dev": "tsx ./src/index.ts",
+    "start": "tsx ./src/index.ts",
     "lint": "biome check . --apply",
     "lint-check": "biome check ."
   },
