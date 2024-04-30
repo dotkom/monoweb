@@ -13,10 +13,10 @@ importers:
         version: 7.3.0
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.2(@types/node@18.18.13)(typescript@5.2.2)
+        version: 10.9.2(@types/node@18.18.13)(typescript@5.4.5)
       tsc-watch:
         specifier: ^6.0.4
-        version: 6.0.4(typescript@5.2.2)
+        version: 6.0.4(typescript@5.4.5)
       turbo:
         specifier: ^1.10.16
         version: 1.11.3
@@ -24,8 +24,8 @@ importers:
         specifier: ^1.10.16
         version: 1.11.3
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
       vitest:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
@@ -53,10 +53,10 @@ importers:
         version: 18.18.13
       tsup:
         specifier: ^7.2.0
-        version: 7.2.0(ts-node@10.9.2)(typescript@5.2.2)
+        version: 7.2.0(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
-        specifier: 5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   apps/dashboard:
     dependencies:
@@ -191,8 +191,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   apps/invoicification:
     dependencies:
@@ -261,8 +261,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   apps/rif:
     dependencies:
@@ -343,8 +343,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   apps/web:
     dependencies:
@@ -510,13 +510,13 @@ importers:
         version: 3.3.5(ts-node@10.9.2)
       trpc-playground:
         specifier: ^1.0.4
-        version: 1.0.4(@trpc/server@10.45.0)(@types/node@18.18.13)(typescript@5.2.2)(zod@3.22.4)
+        version: 1.0.4(@trpc/server@10.45.0)(@types/node@18.18.13)(typescript@5.4.5)(zod@3.22.4)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/auth:
     dependencies:
@@ -549,8 +549,8 @@ importers:
         specifier: 1.6.4
         version: 1.6.4
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/config:
     devDependencies:
@@ -579,8 +579,8 @@ importers:
         specifier: ^2.8.0
         version: 2.8.0
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/core:
     dependencies:
@@ -640,14 +640,14 @@ importers:
         specifier: ^10.7.1
         version: 10.7.1
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
       vitest:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
       vitest-mock-extended:
         specifier: ^1.3.1
-        version: 1.3.1(typescript@5.2.2)(vitest@1.3.1)
+        version: 1.3.1(typescript@5.4.5)(vitest@1.3.1)
 
   packages/db:
     dependencies:
@@ -671,8 +671,8 @@ importers:
         specifier: ^0.11.0
         version: 0.11.0(kysely@0.26.3)(pg@8.11.3)
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/emails:
     dependencies:
@@ -702,14 +702,14 @@ importers:
         specifier: ^1.9.5
         version: 1.9.5
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/env:
     dependencies:
       '@t3-oss/env-core':
         specifier: ^0.7.1
-        version: 0.7.1(typescript@5.2.2)(zod@3.22.4)
+        version: 0.7.1(typescript@5.4.5)(zod@3.22.4)
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -718,8 +718,8 @@ importers:
         specifier: 1.6.4
         version: 1.6.4
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/gateway-edge-nextjs:
     dependencies:
@@ -764,8 +764,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1(vitest@1.3.1)
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
       vitest:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
@@ -807,8 +807,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1(vitest@1.3.1)
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
       vitest:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
@@ -838,8 +838,8 @@ importers:
         specifier: 1.6.4
         version: 1.6.4
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/ui:
     dependencies:
@@ -906,7 +906,7 @@ importers:
         version: link:../config
       '@ladle/react':
         specifier: ^4.0.2
-        version: 4.0.2(@types/node@18.18.13)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+        version: 4.0.2(@types/node@18.18.13)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
       '@types/react':
         specifier: ^18.2.38
         version: 18.2.48
@@ -920,8 +920,8 @@ importers:
         specifier: ^3.3.5
         version: 3.3.5(ts-node@10.9.2)
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
       vite:
         specifier: ^4.5.0
         version: 4.5.0(@types/node@18.18.13)
@@ -975,8 +975,8 @@ importers:
         specifier: ^3.14.0
         version: 3.14.0
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
   tools/shell:
     dependencies:
@@ -994,8 +994,8 @@ importers:
         specifier: ^3.14.0
         version: 3.14.0
       typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
+        specifier: ^5.4.5
+        version: 5.4.5
 
 packages:
 
@@ -2905,7 +2905,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: true
 
-  /@ladle/react@4.0.2(@types/node@18.18.13)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  /@ladle/react@4.0.2(@types/node@18.18.13)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5):
     resolution: {integrity: sha512-SnYniR/U7kJX1Zh199jhjxqiFa5e5eA8chuX6uYEZYAUtCCY/hQqGr7/7Grr0j6Q4FYu9iQyyV2K1NJKDdUZIw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
@@ -2938,7 +2938,7 @@ packages:
       koa: 2.14.2
       koa-connect: 2.1.0
       lodash.merge: 4.6.2
-      msw: 2.1.2(typescript@5.2.2)
+      msw: 2.1.2(typescript@5.4.5)
       open: 9.1.0
       prism-react-renderer: 2.3.1(react@18.2.0)
       prop-types: 15.8.1
@@ -2953,7 +2953,7 @@ packages:
       source-map: 0.7.4
       vfile: 6.0.1
       vite: 5.0.11(@types/node@18.18.13)
-      vite-tsconfig-paths: 4.2.1(typescript@5.2.2)(vite@5.0.11)
+      vite-tsconfig-paths: 4.2.1(typescript@5.4.5)(vite@5.0.11)
     transitivePeerDependencies:
       - '@swc/helpers'
       - '@types/node'
@@ -5535,7 +5535,7 @@ packages:
     resolution: {integrity: sha512-myfUej5naTBWnqOCc/MdVOLVjXUXtIA+NpDrDBKJtLLg2shUjBu3cZmB/85RyitKc55+lUUyl7oRfLOvkr2hsw==}
     dev: true
 
-  /@t3-oss/env-core@0.7.1(typescript@5.2.2)(zod@3.22.4):
+  /@t3-oss/env-core@0.7.1(typescript@5.4.5)(zod@3.22.4):
     resolution: {integrity: sha512-3+SQt39OlmSaRLqYVFv8uRm1BpFepM5TIiMytRqO9cjH+wB77o6BIJdeyM5h5U4qLBMEzOJWCY4MBaU/rLwbYw==}
     peerDependencies:
       typescript: '>=4.7.2'
@@ -5544,7 +5544,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      typescript: 5.2.2
+      typescript: 5.4.5
       zod: 3.22.4
     dev: false
 
@@ -5627,13 +5627,13 @@ packages:
       - terser
     dev: true
 
-  /@trpc-playground/types@1.0.0(@trpc/server@10.45.0)(typescript@5.2.2):
+  /@trpc-playground/types@1.0.0(@trpc/server@10.45.0)(typescript@5.4.5):
     resolution: {integrity: sha512-Ap5aNaVlglfM9WLkPLKF2rHDZ8CwHcqK32A8YaqTyHUuoEFTSOh6oSgVU6Cv8toxClKiTXFvbWmE4aZxIoh4Zg==}
     peerDependencies:
       '@trpc/server': ^10
     dependencies:
       '@trpc/server': 10.45.0
-      ts-essentials: 9.3.2(typescript@5.2.2)
+      ts-essentials: 9.3.2(typescript@5.4.5)
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -9519,7 +9519,7 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: false
 
-  /msw@2.1.2(typescript@5.2.2):
+  /msw@2.1.2(typescript@5.4.5):
     resolution: {integrity: sha512-7OKbeZNFQTCPFe++o+zZHMkQRIUi4D/5N1dAD3lOlaV+2Wpv3Srp3VFrFeH+2ftZJbb4jAiC0caZoW1efr80KQ==}
     engines: {node: '>=18'}
     hasBin: true
@@ -9550,7 +9550,7 @@ packages:
       path-to-regexp: 6.2.1
       strict-event-emitter: 0.5.1
       type-fest: 4.9.0
-      typescript: 5.2.2
+      typescript: 5.4.5
       yargs: 17.7.2
     dev: true
 
@@ -10196,7 +10196,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.31
-      ts-node: 10.9.2(@types/node@18.18.13)(typescript@5.2.2)
+      ts-node: 10.9.2(@types/node@18.18.13)(typescript@5.4.5)
       yaml: 2.3.1
 
   /postcss-load-config@4.0.1(postcss@8.4.33)(ts-node@10.9.2):
@@ -10213,7 +10213,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.33
-      ts-node: 10.9.2(@types/node@18.18.13)(typescript@5.2.2)
+      ts-node: 10.9.2(@types/node@18.18.13)(typescript@5.4.5)
       yaml: 2.3.1
 
   /postcss-mixins@9.0.4(postcss@8.4.31):
@@ -11691,19 +11691,19 @@ packages:
     resolution: {integrity: sha512-AqTiAOLcj85xS7vQ8QkAV41hPDIJ71XJB4RCUrzo/1GM2CQwhkJGaf9Hgr7BOugMRpgGUrqRg/DrBDl4H40+8g==}
     dev: true
 
-  /trpc-playground@1.0.4(@trpc/server@10.45.0)(@types/node@18.18.13)(typescript@5.2.2)(zod@3.22.4):
+  /trpc-playground@1.0.4(@trpc/server@10.45.0)(@types/node@18.18.13)(typescript@5.4.5)(zod@3.22.4):
     resolution: {integrity: sha512-6nVf1o2LNoo1g6oTS24yajoH7xV4CFjxGAbAH7qLXqa3yo9qB5QHsWLbrm1hNt51SyCG++P0zHJaCdVfgvEVDg==}
     peerDependencies:
       '@trpc/server': ^10
       zod: ^3
     dependencies:
       '@trpc-playground/html': 1.0.4(@types/node@18.18.13)
-      '@trpc-playground/types': 1.0.0(@trpc/server@10.45.0)(typescript@5.2.2)
+      '@trpc-playground/types': 1.0.0(@trpc/server@10.45.0)(typescript@5.4.5)
       '@trpc/server': 10.45.0
       lodash: 4.17.21
       uttp: 0.1.3
       zod: 3.22.4
-      zod-to-ts: 1.1.4(typescript@5.2.2)(zod@3.22.4)
+      zod-to-ts: 1.1.4(typescript@5.4.5)(zod@3.22.4)
     transitivePeerDependencies:
       - '@types/node'
       - express
@@ -11724,18 +11724,18 @@ packages:
     engines: {node: '>=14.0.0'}
     dev: false
 
-  /ts-essentials@9.3.2(typescript@5.2.2):
+  /ts-essentials@9.3.2(typescript@5.4.5):
     resolution: {integrity: sha512-JxKJzuWqH1MmH4ZFHtJzGEhkfN3QvVR3C3w+4BIoWeoY68UVVoA2Np/Bca9z0IPSErVCWhv439aT0We4Dks8kQ==}
     peerDependencies:
       typescript: '>=4.1.0'
     dependencies:
-      typescript: 5.2.2
+      typescript: 5.4.5
     dev: true
 
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
-  /ts-node@10.9.2(@types/node@18.18.13)(typescript@5.2.2):
+  /ts-node@10.9.2(@types/node@18.18.13)(typescript@5.4.5):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
@@ -11761,11 +11761,11 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 5.2.2
+      typescript: 5.4.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
-  /tsc-watch@6.0.4(typescript@5.2.2):
+  /tsc-watch@6.0.4(typescript@5.4.5):
     resolution: {integrity: sha512-cHvbvhjO86w2aGlaHgSCeQRl+Aqw6X6XN4sQMPZKF88GoP30O+oTuh5lRIJr5pgFWrRpF1AgXnJJ2DoFEIPHyg==}
     engines: {node: '>=12.12.0'}
     hasBin: true
@@ -11776,10 +11776,10 @@ packages:
       node-cleanup: 2.1.2
       ps-tree: 1.2.0
       string-argv: 0.3.2
-      typescript: 5.2.2
+      typescript: 5.4.5
     dev: true
 
-  /tsconfck@2.1.2(typescript@5.2.2):
+  /tsconfck@2.1.2(typescript@5.4.5):
     resolution: {integrity: sha512-ghqN1b0puy3MhhviwO2kGF8SeMDNhEbnKxjK7h6+fvY9JAxqvXi8y5NAHSQv687OVboS2uZIByzGd45/YxrRHg==}
     engines: {node: ^14.13.1 || ^16 || >=18}
     hasBin: true
@@ -11789,7 +11789,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      typescript: 5.2.2
+      typescript: 5.4.5
     dev: true
 
   /tslib@1.14.1:
@@ -11804,7 +11804,7 @@ packages:
     engines: {node: '>=0.6.x'}
     dev: true
 
-  /tsup@7.2.0(ts-node@10.9.2)(typescript@5.2.2):
+  /tsup@7.2.0(ts-node@10.9.2)(typescript@5.4.5):
     resolution: {integrity: sha512-vDHlczXbgUvY3rWvqFEbSqmC1L7woozbzngMqTtL2PGBODTtWlRwGDDawhvWzr5c1QjKe4OAKqJGfE1xeXUvtQ==}
     engines: {node: '>=16.14'}
     hasBin: true
@@ -11834,7 +11834,7 @@ packages:
       source-map: 0.8.0-beta.0
       sucrase: 3.34.0
       tree-kill: 1.2.2
-      typescript: 5.2.2
+      typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -11975,8 +11975,8 @@ packages:
       mime-types: 2.1.35
     dev: true
 
-  /typescript@5.2.2:
-    resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
+  /typescript@5.4.5:
+    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -12323,7 +12323,7 @@ packages:
       - terser
     dev: true
 
-  /vite-tsconfig-paths@4.2.1(typescript@5.2.2)(vite@5.0.11):
+  /vite-tsconfig-paths@4.2.1(typescript@5.4.5)(vite@5.0.11):
     resolution: {integrity: sha512-GNUI6ZgPqT3oervkvzU+qtys83+75N/OuDaQl7HmOqFTb0pjZsuARrRipsyJhJ3enqV8beI1xhGbToR4o78nSQ==}
     peerDependencies:
       vite: '*'
@@ -12333,7 +12333,7 @@ packages:
     dependencies:
       debug: 4.3.4
       globrex: 0.1.2
-      tsconfck: 2.1.2(typescript@5.2.2)
+      tsconfck: 2.1.2(typescript@5.4.5)
       vite: 5.0.11(@types/node@18.18.13)
     transitivePeerDependencies:
       - supports-color
@@ -12412,14 +12412,14 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest-mock-extended@1.3.1(typescript@5.2.2)(vitest@1.3.1):
+  /vitest-mock-extended@1.3.1(typescript@5.4.5)(vitest@1.3.1):
     resolution: {integrity: sha512-OpghYjh4BDuQ/Mzs3lFMQ1QRk9D8/2O9T47MLUA5eLn7K4RWIy+MfIivYOWEyxjTENjsBnzgMihDjyNalN/K0Q==}
     peerDependencies:
       typescript: 3.x || 4.x || 5.x
       vitest: '>=0.31.1'
     dependencies:
-      ts-essentials: 9.3.2(typescript@5.2.2)
-      typescript: 5.2.2
+      ts-essentials: 9.3.2(typescript@5.4.5)
+      typescript: 5.4.5
       vitest: 1.3.1(@types/node@18.18.13)(@vitest/ui@1.3.1)
     dev: true
 
@@ -12723,13 +12723,13 @@ packages:
       readable-stream: 3.6.2
     dev: true
 
-  /zod-to-ts@1.1.4(typescript@5.2.2)(zod@3.22.4):
+  /zod-to-ts@1.1.4(typescript@5.4.5)(zod@3.22.4):
     resolution: {integrity: sha512-jsCg+pTNxLAdJOfW4ul+SpechdGYEJPPnssSbqWdR2LSIkotT22k+UvqPb1nEHwe/YbEcbUOlZUfGM0npgR+Jg==}
     peerDependencies:
       typescript: ^4.9.4 || ^5.0.2
       zod: ^3
     dependencies:
-      typescript: 5.2.2
+      typescript: 5.4.5
       zod: 3.22.4
     dev: true
 

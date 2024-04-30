@@ -27,14 +27,14 @@ const EventDetailPageInner = ({ id }: { id: string }) => {
     return <div>Laster</div>
   }
 
-  if (!event || !session?.data) {
+  if (!event) {
     return <div>Kunne ikke hente data</div>
   }
 
   if (event.hasAttendance) {
     return (
       <EventDetailWithAttendancePage
-        user={session.data.user}
+        user={session.data?.user}
         attendance={event.attendance}
         pools={event.pools}
         event={event.event}
@@ -43,17 +43,14 @@ const EventDetailPageInner = ({ id }: { id: string }) => {
     )
   }
 
-  return (
-    <EventDetailWithoutAttendancePage user={session.data.user} event={event.event} committees={event.eventCommittees} />
-  )
+  return <EventDetailWithoutAttendancePage event={event.event} committees={event.eventCommittees} />
 }
 
 interface WithoutAttendanceProps {
-  user: NonNullable<Session["user"]>
   event: Event
   committees: Committee[]
 }
-const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ user, event, committees }) => {
+const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ event, committees }) => {
   return (
     <div>
       <div className="flex w-full">
@@ -64,7 +61,7 @@ const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ user, ev
 }
 
 interface WithAttendanceProps {
-  user: NonNullable<Session["user"]>
+  user?: Session["user"]
   attendance: Attendance
   pools: AttendancePool[]
   event: Event
@@ -74,7 +71,7 @@ interface WithAttendanceProps {
 const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
   const { data: attendee } = useGetAttendee({
     attendanceId: attendance.id,
-    userId: user.id,
+    userId: user?.id,
   })
 
   return (
@@ -83,7 +80,7 @@ const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendan
         <EventInfoBox event={event} />
         <div className="flex flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
-          {attendee && <TicketButton userid={user.id} />}
+          {attendee && user && <TicketButton userId={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
           <TimeLocationBox
             datetimeStart={event.start}
