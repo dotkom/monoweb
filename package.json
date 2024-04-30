@@ -1,7 +1,7 @@
 {
   "name": "monorepo",
   "version": "1.0.0",
-  "description": "A monorepo for Node apps",
+  "description": "A monorepo for Node apps!",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "license": "MIT",
   "private": true,
