@@ -43,17 +43,14 @@ const EventDetailPageInner = ({ id }: { id: string }) => {
     )
   }
 
-  return (
-    <EventDetailWithoutAttendancePage user={session.data.user} event={event.event} committees={event.eventCommittees} />
-  )
+  return <EventDetailWithoutAttendancePage event={event.event} committees={event.eventCommittees} />
 }
 
 interface WithoutAttendanceProps {
-  user: NonNullable<Session["user"]>
   event: Event
   committees: Committee[]
 }
-const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ user, event, committees }) => {
+const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ event, committees }) => {
   return (
     <div>
       <div className="flex w-full">
@@ -83,7 +80,7 @@ const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendan
         <EventInfoBox event={event} />
         <div className="flex flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
-          {attendee && <TicketButton userid={user.id} />}
+          {attendee && user && <TicketButton userId={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
           <TimeLocationBox
             datetimeStart={event.start}
