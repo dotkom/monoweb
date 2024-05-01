@@ -30,9 +30,9 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
               <div key={icon} className="flex items-center gap-x-2">
                 <Icon icon={icon} width="28" />
 
-                  <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
-                    {text ? text : "N/A"}
-                  </a>
+                <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
+                  {text ? text : "N/A"}
+                </a>
               </div>
             ))}
           </div>

@@ -1,12 +1,15 @@
 "use client"
 
 import {
-  Avatar, AvatarFallback, AvatarImage, Icon,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuTrigger,
+  Icon,
 } from "@dotkomonline/ui"
 import type { User } from "next-auth"
 

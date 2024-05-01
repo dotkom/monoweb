@@ -1,5 +1,5 @@
 import { cn } from "@dotkomonline/ui"
-import { FC } from "react";
+import type { FC } from "react"
 
 interface IStudentProgressComponent {
   year: number
@@ -42,30 +42,30 @@ const HorizontalLine: FC<IStudentProgressComponent> = ({ year, id }) => (
       "m-[-1px] h-[4px] w-[30px] self-center max-sm:w-[20px]"
     )}
   />
-);
+)
 
 const VerticalLine: FC<IStudentProgressComponent> = ({ year, id }) => (
   <div
     className={cn(year <= id ? "bg-[#153e75]" : "bg-[#36b37e]", "z-10 h-10 w-1 self-center sm:h-[50px] sm:w-[4px]")}
   />
-);
+)
 
 const StudentProgress: FC<IStudentProgress> = ({ year }) => (
-    <div className="justify-evenl flex items-center">
-      <div className="relative flex flex-row items-center">
-        <ProgressCircle year={year} id={1} />
-        <HorizontalLine year={year} id={1} />
-        <ProgressCircle year={year} id={2} />
-        <HorizontalLine year={year} id={2} />
-        <ProgressCircle year={year} id={3} />
-        <HorizontalLine year={year} id={3} />
-        <VerticalLine year={year} id={3} />
-        <HorizontalLine year={year} id={4} />
-        <ProgressCircle year={year} id={4} />
-        <HorizontalLine year={year} id={5} />
-        <ProgressCircle year={year} id={5} />
-      </div>
+  <div className="justify-evenl flex items-center">
+    <div className="relative flex flex-row items-center">
+      <ProgressCircle year={year} id={1} />
+      <HorizontalLine year={year} id={1} />
+      <ProgressCircle year={year} id={2} />
+      <HorizontalLine year={year} id={2} />
+      <ProgressCircle year={year} id={3} />
+      <HorizontalLine year={year} id={3} />
+      <VerticalLine year={year} id={3} />
+      <HorizontalLine year={year} id={4} />
+      <ProgressCircle year={year} id={4} />
+      <HorizontalLine year={year} id={5} />
+      <ProgressCircle year={year} id={5} />
     </div>
+  </div>
 )
 
 export default StudentProgress

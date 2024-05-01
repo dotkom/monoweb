@@ -55,11 +55,7 @@ export default function Page() {
           <Form />
 
           <Button type="submit" disabled={dispatch.isLoading}>
-            {dispatch.isLoading ? (
-                <Icon className="animate-spin" icon="tabler:loader-2" />
-            ) : (
-              "Meld interesse"
-            )}
+            {dispatch.isLoading ? <Icon className="animate-spin" icon="tabler:loader-2" /> : "Meld interesse"}
           </Button>
         </Section>
       </FormProvider>

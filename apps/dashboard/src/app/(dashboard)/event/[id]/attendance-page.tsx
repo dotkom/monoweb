@@ -1,5 +1,5 @@
 import type { Attendance } from "@dotkomonline/types"
-import { Divider, Box, Title } from "@mantine/core"
+import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"

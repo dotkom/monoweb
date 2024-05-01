@@ -1,8 +1,8 @@
 import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
 import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
 import { getServerClient } from "@/utils/trpc/serverClient"
-import Link from "next/link"
 import { Button } from "@dotkomonline/ui"
+import Link from "next/link"
 
 export default async function App() {
   const serverClient = await getServerClient()

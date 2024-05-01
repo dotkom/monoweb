@@ -19,7 +19,10 @@ export const CompanyInfoView: FC<CompanyInfoViewProps> = (props: CompanyInfoView
       <div className="bg-amber-2 w-full rounded-lg">
         <div className="mx-auto flex h-[520px] max-w-[768px] flex-col items-center p-4 md:h-[300px] lg:h-[220px]">
           <Title className="text-slate-1 mb-4 mt-5 text-4xl leading-[1.4]">
-            Er din bedrift på jakt etter skarpe IT&ndash;<span style={{ backgroundPosition: "50% 88%" }} className="bg-[url(/for-company-text-decor.svg)]">studenter?</span>
+            Er din bedrift på jakt etter skarpe IT&ndash;
+            <span style={{ backgroundPosition: "50% 88%" }} className="bg-[url(/for-company-text-decor.svg)]">
+              studenter?
+            </span>
           </Title>
           <PortableText className="prose text-center" blocks={header.content} />
         </div>
