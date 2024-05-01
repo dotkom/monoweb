@@ -1,4 +1,5 @@
 "use client"
+
 import { settingsItems } from "@/utils/settingsLinks"
 import { usePathname } from "next/navigation"
 import type { FC, PropsWithChildren } from "react"

@@ -33,15 +33,14 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
           )}
 
           <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
-            {icons.map(({ icon, text, href }, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: icons is a static array
-              <div key={index} className="flex items-center gap-x-2">
+            {icons.map(({ icon, text, href }) => (
+              <div key={icon} className="flex items-center gap-x-2">
                 <Icon icon={icon} width="28" />
                 {href === null ? (
                   <span>{text}</span>
                 ) : (
                   <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
-                    {text ? text : "N/A"}
+                    {text}
                   </a>
                 )}
               </div>

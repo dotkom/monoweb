@@ -25,7 +25,7 @@ interface NotificationConfig {
 const createNotificationMethod =
   (config: NotificationConfig) =>
   ({ title, message, id, method: _method, autoClose }: NotificationProps) => {
-    const method = _method || "show"
+    const method = _method ?? "show"
 
     return notifications[method]({
       ...config,
@@ -132,19 +132,19 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
 }
 
 export const notifyLoading = (props: NotificationProps) =>
-  notifications[props.method || "show"]({
+  notifications[props.method ?? "show"]({
     ...props,
     ...notificationConfigs.loading,
   })
 
 export const notifyComplete = (props: NotificationProps) =>
-  notifications[props.method || "show"]({
+  notifications[props.method ?? "show"]({
     ...props,
     ...notificationConfigs.complete,
   })
 
 export const notifyFail = (props: NotificationProps) =>
-  notifications[props.method || "show"]({
+  notifications[props.method ?? "show"]({
     ...props,
     ...notificationConfigs.fail,
   })

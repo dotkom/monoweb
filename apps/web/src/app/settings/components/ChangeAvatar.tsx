@@ -1,6 +1,7 @@
 "use client"
-import { Avatar, AvatarFallback, AvatarImage, Icon } from "@dotkomonline/ui"
+
 import {
+  Avatar, AvatarFallback, AvatarImage, Icon,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,

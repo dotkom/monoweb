@@ -9,9 +9,7 @@ interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
 }
 
 export const AlertIcon: FC<AlertIconProps> = ({ status, className, size = 24 }) => (
-  <>
     <Icon icon={iconKey(status)} width={size} className={cn(iconVariant({ status }), className)} />
-  </>
 )
 
 const iconKey = (status: AlertIconProps["status"]) => {

@@ -1,30 +1,21 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import type { PropsWithChildren } from "react"
+import { PropsWithChildren, useMemo } from "react";
 import { useEventDetailsGetQuery } from "../../../../modules/event/queries/use-event-get-query"
 import { EventDetailsContext } from "./provider"
 
 export default function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading: eventLoading } = useEventDetailsGetQuery(params.id)
+  const { data, isLoading } = useEventDetailsGetQuery(params.id)
+  const value = useMemo(() => (data === undefined || isLoading) ? null : ({
+    event: data.event,
+    eventCommittees: data.eventCommittees,
+    attendance: data.attendance,
+  }), [data, isLoading])
 
-  console.log(eventLoading, data)
+  if (value === null) {
+    return <Loader />
+  }
 
-  return (
-    <>
-      {eventLoading || data === undefined ? (
-        <Loader />
-      ) : (
-        <EventDetailsContext.Provider
-          value={{
-            event: data.event,
-            eventCommittees: data.eventCommittees,
-            attendance: data.attendance,
-          }}
-        >
-          {children}
-        </EventDetailsContext.Provider>
-      )}
-    </>
-  )
+  return <EventDetailsContext.Provider value={value}>{children}</EventDetailsContext.Provider>
 }

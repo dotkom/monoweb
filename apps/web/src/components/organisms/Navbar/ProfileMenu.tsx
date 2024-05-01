@@ -149,7 +149,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
           <DropdownMenuGroup>
             {group.map((link) => (
               <DropdownMenuItem key={link.label}>
-                <Link className="w-full" href={link.href || ""}>
+                <Link className="w-full" href={link.href ?? "#"}>
                   <Icon icon={link.icon} className="mr-2 h-4 w-4" />
                   <span>{link.label}</span>
                   {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}

@@ -16,7 +16,7 @@ export interface PasswordInputProps {
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps & React.HTMLProps<HTMLInputElement>>(
   ({ label, withAsterisk, error, inputInfo, eyeColor, ...props }, ref) => {
-    const [visible, setVisibility] = useState(false)
+    const [visible, setVisible] = useState(false)
     const InputType = visible ? "text" : "password"
 
     return (
@@ -34,7 +34,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps & R
               <Icon
                 width={24}
                 icon={visible ? "tabler:eye-check" : "tabler:eye-off"}
-                onClick={() => setVisibility((visibility) => !visibility)}
+                onClick={() => setVisible((visibility) => !visibility)}
               />
             </span>
           </div>

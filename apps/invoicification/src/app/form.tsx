@@ -31,7 +31,6 @@ export const Form: FC = () => {
   }, [organizationNumber, brreg.mutate])
 
   return (
-    <>
       <Section as="fieldset">
         <legend>
           <Title element="h3">Bedriftsinformasjon</Title>
@@ -132,6 +131,5 @@ export const Form: FC = () => {
           <ErrorMessage name="comment" errors={formState.errors} render={CustomErrorMessage} />
         </Label>
       </Section>
-    </>
   )
 }
