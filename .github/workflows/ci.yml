@@ -56,7 +56,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 20.12.2
+          node-version: 20.12.7
           cache: 'pnpm'
  
       - name: Install dependencies
