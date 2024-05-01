@@ -42,7 +42,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdList
   const deadline = career.deadline ? format(career.deadline, "dd.MM.yyyy") : "Ingen frist"
   return (
     <Link
-    href={`/career/${career.applicationLink}`}
+    href={`/career/${career.id}`}
       className="border-slate-3 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
     >
       <div className="flex flex-row items-center gap-8">
