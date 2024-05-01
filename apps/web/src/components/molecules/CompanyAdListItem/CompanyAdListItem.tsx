@@ -7,6 +7,7 @@ interface CompanyAdListItemProps {
   career: JobListing
 }
 function timeSinceCreated(date: Date) {
+  console.log((Date.now() - date.getTime()) / (24 * 60 * 60))
   if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 1) {
     return "nylig lagt til"
   }
@@ -56,7 +57,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdList
             </div>
             <div className="flex flex-row gap-1">
               <Icon width={16} icon={"tabler:clock-hour-3"} />
-              {timeSinceCreated(career.start)}
+              {timeSinceCreated(career.createdAt)}
             </div>
           </div>
         </div>

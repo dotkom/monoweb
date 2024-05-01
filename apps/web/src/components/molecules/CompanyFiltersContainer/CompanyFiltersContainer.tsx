@@ -12,7 +12,8 @@ interface CompanyFiltersContainer {
   setChosenSort: Dispatch<SetStateAction<string>>
   places: string[]
 }
-const sortCategories = ["Frist", "Påmeldingsstart", "Opprettelse"]
+export type SortOptions = "Frist" | "Påmeldingsstart" | "Opprettet"
+const sortOptions: SortOptions[] = ["Frist", "Påmeldingsstart", "Opprettet"]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
   <div className="border-slate-3  h-fit w-72 rounded-lg border shadow-b-sm">
@@ -79,7 +80,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
           name="kategorier"
         >
-          {sortCategories.map((category) => (
+          {sortOptions.map((category) => (
             <option key={category}>{category}</option>
           ))}
         </select>

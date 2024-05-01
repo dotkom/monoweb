@@ -1,11 +1,12 @@
 import type { JobListing } from "@dotkomonline/types"
 import type { EmploymentCheckbox } from "./JobListingView"
+import { SortOptions } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 export function filterJobListings(
   jobListing: JobListing,
   chosenLocation: string,
   chosenEmployments: EmploymentCheckbox[],
   searchName: string,
-  chosenSort: string
+  chosenSort: SortOptions
 ) {
   return (
     filterLocation(jobListing, chosenLocation) &&
@@ -37,7 +38,7 @@ export function filterEmployment(jobListing: JobListing, chosenEmployments: Empl
   })
 }
 
-export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chosenSort: string) {
+export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chosenSort: SortOptions) {
   if (chosenSort === "Frist") {
     if (jobListing1.deadline?.getTime() == null) {
       return -1
@@ -50,8 +51,8 @@ export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chos
   if (chosenSort === "Påmeldingsstart") {
     return jobListing1.start.getTime() - jobListing2.start.getTime()
   }
-  if (chosenSort === "Slutt") {
-    return jobListing1.end.getTime() - jobListing2.end.getTime()
+  if (chosenSort === "Opprettet") {
+    return jobListing1.createdAt.getTime() - jobListing2.createdAt.getTime()
   }
   return 0
 }
