@@ -1,8 +1,15 @@
 {
   "name": "monorepo",
   "version": "1.0.0",
-  "description": "A monorepo for Node apps!",
+  "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
+  "keywords": ["online", "ntnu", "student-association"],
+  "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
+  "bugs": {
+    "email": "dotkom+bugs@online.ntnu.no",
+    "url": "https://github.com/dotkom/monoweb/issues"
+  },
+  "repository": "github:dotkom/monoweb",
   "license": "MIT",
   "private": true,
   "scripts": {
