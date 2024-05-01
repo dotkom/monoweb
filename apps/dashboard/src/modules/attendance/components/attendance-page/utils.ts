@@ -6,5 +6,6 @@
  */
 export const formatPoolYearCriterias = (yearCriterias: number[][]): string => {
   const flat = yearCriterias.flat()
-  return flat.sort((a, b) => a - b).join(", ")
+  flat.sort((a, b) => a - b)
+  return flat.join(", ")
 }

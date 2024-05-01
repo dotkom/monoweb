@@ -35,12 +35,10 @@ export async function runSampleData() {
     attendances.push(attendance)
   }
 
-  const attendanceIds = (
-    await db
-      .insertInto("attendance")
-      .onConflict((eb) => eb.doNothing())
-      .values(attendances)
-      .returning("attendance.id")
-      .execute()
-  ).map((a) => a.id)
+  await db
+    .insertInto("attendance")
+    .onConflict((eb) => eb.doNothing())
+    .values(attendances)
+    .returning("attendance.id")
+    .execute()
 }

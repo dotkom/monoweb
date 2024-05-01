@@ -93,9 +93,7 @@ describe("users", () => {
       auth0Id: insertedUser.auth0Id,
     })
 
-    const auth0ResponsePromise = new Promise<typeof auth0UpdateResponse>((resolve) => {
-      resolve(auth0UpdateResponse)
-    })
+    const auth0ResponsePromise = Promise.resolve(auth0UpdateResponse)
 
     // Mock the auth0 update call
     auth0Client.users.update.mockReturnValueOnce(auth0ResponsePromise)

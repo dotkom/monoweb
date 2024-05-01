@@ -1,5 +1,6 @@
 import type { CareerAd } from "@/api/get-career-ads"
 import { Badge } from "@dotkomonline/ui"
+import type { BadgeProps } from "@dotkomonline/ui/src/components/Badge/Badge"
 import { format } from "date-fns"
 import Image from "next/image"
 import type { FC } from "react"
@@ -11,7 +12,13 @@ interface CompanyAdListItemProps {
 const CompanyAdListItem: FC<CompanyAdListItemProps> = (props: CompanyAdListItemProps) => {
   const { company_name, image, career_type, location, deadline, slug } = props.career
 
-  const color = career_type === "Sommerjobb" ? "amber" : career_type === "Fulltid" ? "red" : "blue"
+  const color: BadgeProps["color"] =
+    (
+      {
+        Sommerjobb: "amber",
+        Fulltid: "red",
+      } as const
+    )[career_type] ?? ("blue" as const)
 
   return (
     <div className="border-slate-11 flex h-16 items-center justify-between border-b">

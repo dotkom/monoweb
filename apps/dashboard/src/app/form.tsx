@@ -354,8 +354,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     )
   })
 
-  console.log(form.formState.errors)
-
   return function Form() {
     return (
       <form

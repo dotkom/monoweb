@@ -100,9 +100,9 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   calculateExpiryDate(marks: { createdAt: Date; duration: number }[]): Date | null {
     const currentTime = new Date()
     let endDate: Date | null = null
-    const orderedMarks = marks.sort((a, b) => compareAsc(a.createdAt, b.createdAt))
+    marks.sort((a, b) => compareAsc(a.createdAt, b.createdAt))
 
-    for (const mark of orderedMarks) {
+    for (const mark of marks) {
       const date =
         endDate && isBefore(mark.createdAt, endDate)
           ? new Date(this.adjustDateIfStartingInHoliday(endDate).getTime())
