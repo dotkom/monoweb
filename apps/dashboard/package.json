@@ -17,7 +17,7 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@hookform/error-message": "^2.0.1",
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^3.3.2",
     "@iconify/react": "^4.1.1",
     "@mantine/core": "^7.2.2",
     "@mantine/dates": "^7.2.2",
