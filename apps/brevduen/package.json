@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
-    "@types/aws-lambda": "^8.10.129",
+    "@types/aws-lambda": "^8.10.137",
     "@types/node": "^20.12.7",
     "tsup": "^7.2.0",
     "typescript": "^5.4.5"
