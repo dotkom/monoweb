@@ -23,7 +23,7 @@
     "@dotkomonline/ui": "workspace:*",
     "@fadi-ui/react-country-flag": "^1.0.7",
     "@next/env": "^14.0.3",
-    "@portabletext/react": "^3.0.11",
+    "@portabletext/react": "^3.0.18",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
