@@ -1,13 +1,13 @@
 "use client"
 import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 import type { JobListing } from "@dotkomonline/types"
-import { type FC, useState } from "react"
+import { type FC, useMemo, useState } from "react"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
 import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
 
-interface CareerProps {
-  careers: JobListing[]
+interface JoblistingProps {
+  jobListings: JobListing[]
 }
 
 const employmentType = ["Deltid", "Fulltid", "Sommerjobb/internship", "Annet"] as const
@@ -18,19 +18,17 @@ export interface EmploymentCheckbox {
 }
 
 const getLocations = (jobListings: JobListing[]) => {
-  const locations: string[] = []
+  const locations = new Set<string>()
   for (const jobListing of jobListings) {
     for (const location of jobListing.locations) {
-      if (!locations.includes(location)) {
-        locations.push(location)
-      }
+      locations.add(location)
     }
   }
 
-  return locations
+  return Array.from(locations)
 }
 
-const JobListingView: FC<CareerProps> = (props: CareerProps) => {
+const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")
   const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
@@ -40,6 +38,16 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
     { name: "Annet", checked: false },
   ])
   const [chosenSort, setChosenSort] = useState<SortOption>("Frist")
+
+  const filteredJobListings = useMemo(
+    () =>
+      props.jobListings
+        .filter((jobListing) =>
+          filterJobListings(jobListing, chosenLocation, chosenEmployments, searchName, chosenSort)
+        )
+        .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2, chosenSort)),
+    [props.jobListings, chosenLocation, chosenEmployments, searchName, chosenSort]
+  )
 
   return (
     <div>
@@ -51,7 +59,7 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
           </div>
         </div>
       </div>
-      <div className="mb-10 mt-10 flex flex-row justify-center gap-x-12">
+      <div className="mb-10 mt-10 flex flex-row gap-x-12">
         <CompanyFiltersContainer
           chosenLocation={chosenLocation}
           setChosenLocation={setChosenLocation}
@@ -61,20 +69,15 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
           setChosenEmployments={setChosenEmployments}
           chosenSort={chosenSort}
           setChosenSort={setChosenSort}
-          places={getLocations(props.careers)}
+          places={getLocations(props.jobListings)}
         />
-        <div className="w-2/3">
+        <div className="flex-1">
           <div className="flex flex-col gap-6">
-            {props.careers
-              .filter((jobListing) =>
-                filterJobListings(jobListing, chosenLocation, chosenEmployments, searchName, chosenSort)
-              )
-              .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2, chosenSort))
-              .map((c) => (
-                <div key={c.id}>
-                  <CompanyAdListItem career={c} />
-                </div>
-              ))}
+            {filteredJobListings.map((c) => (
+              <div key={c.id}>
+                <CompanyAdListItem jobListing={c} />
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -19,7 +19,7 @@ export const JobListingSchema = z.object({
   locations: z.array(z.string()),
 })
 
-export const JobListingWriteSchema = JobListingSchema.omit({
+export const JobListingWriteSchema = JobListingSchema.partial({
   id: true,
   company: true,
 })

@@ -5,11 +5,11 @@ import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
-interface CareerAdViewProps {
-  career: JobListing
+interface JobListingViewProps {
+  jobListing: JobListing
 }
 
-export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) => {
+export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewProps) => {
   const {
     title,
     applicationEmail,
@@ -26,7 +26,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
     locations,
     start,
     deadline,
-  } = props.career
+  } = props.jobListing
 
   return (
     <div className="mx-auto mt-10 flex w-10/12 justify-between">

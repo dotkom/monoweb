@@ -1,19 +1,20 @@
-import { CareerAdView } from "@/components/views/CareerAdView"
 import { getServerClient } from "@/utils/trpc/serverClient"
+import { notFound } from "next/navigation"
+import { JobListingView } from "../../../components/views/JobListingView"
 
-interface CareerProps {
+interface JobListingProps {
   params: {
     id: string
   }
 }
 
-const CareerAdPage = async ({ params: { id } }: CareerProps) => {
+const JobListingPage = async ({ params: { id } }: JobListingProps) => {
   const serverClient = await getServerClient()
   const data = await serverClient.jobListing.get(id)
   if (!data) {
-    return <div>404 - not find</div>
+    return notFound()
   }
-  return <CareerAdView career={data} />
+  return <JobListingView jobListing={data} />
 }
 
-export default CareerAdPage
+export default JobListingPage

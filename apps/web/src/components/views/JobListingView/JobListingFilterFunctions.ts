@@ -30,12 +30,7 @@ export function filterEmployment(jobListing: JobListing, chosenEmployments: Empl
   if (chosenEmployments.every((employment) => !employment.checked)) {
     return true
   }
-  return chosenEmployments.some((employment) => {
-    if (employment.checked && jobListing.employment === employment.name) {
-      return true
-    }
-    return false
-  })
+  return chosenEmployments.some((employment) => employment.checked && jobListing.employment === employment.name)
 }
 
 export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chosenSort: SortOption) {

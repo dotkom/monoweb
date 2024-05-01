@@ -4,6 +4,6 @@ import { getServerClient } from "@/utils/trpc/serverClient"
 const CareerPage = async () => {
   const serverClient = await getServerClient()
   const data = await serverClient.jobListing.all()
-  return <JobListingView careers={data ?? []} />
+  return <JobListingView jobListings={data ?? []} />
 }
 export default CareerPage
