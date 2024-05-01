@@ -1,22 +1,21 @@
 "use client"
+import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 import type { JobListing } from "@dotkomonline/types"
 import { type FC, useState } from "react"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
 import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
-import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 
 interface CareerProps {
   careers: JobListing[]
 }
 
 const employmentType = ["Deltid", "Fulltid", "Sommerjobb/internship", "Annet"] as const
-export type EmploymentType = typeof employmentType[number]
+export type EmploymentType = (typeof employmentType)[number]
 export interface EmploymentCheckbox {
   name: EmploymentType
   checked: boolean
 }
-
 
 const getLocations = (jobListings: JobListing[]) => {
   const locations: string[] = []

@@ -25,8 +25,7 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
     ingress,
     locations,
     start,
-    deadline
-
+    deadline,
   } = props.career
 
   return (
@@ -55,7 +54,11 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <div className="text-blue-9 mb-[-3px] inline">
             <Icon icon="mdi:clock-outline" className="text-blue-9" width={20} height={20} />
           </div>
-          {deadline ? <p className="m-0 pl-2">{format(deadline, "dd.mm.yyyy")}</p> : <p className="m-0 pl-2">Ingen frist</p>}
+          {deadline ? (
+            <p className="m-0 pl-2">{format(deadline, "dd.mm.yyyy")}</p>
+          ) : (
+            <p className="m-0 pl-2">Ingen frist</p>
+          )}
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">
@@ -72,9 +75,13 @@ export const CareerAdView: FC<CareerAdViewProps> = (props: CareerAdViewProps) =>
           <p className="m-0 pl-2">{employment}</p>
         </div>
         <div className="bg-slate-9 mb-3 mt-7 h-[0.5px] w-full" />
-        {applicationLink ? <Link href={applicationLink}>
-          <Button className="bg-blue-8 mt-3 w-20">Søk</Button>
-        </Link> : <div>ingen link</div>}
+        {applicationLink ? (
+          <Link href={applicationLink}>
+            <Button className="bg-blue-8 mt-3 w-20">Søk</Button>
+          </Link>
+        ) : (
+          <div>ingen link</div>
+        )}
       </div>
       <div className="w-2/3">
         <div className="border-amber-9 ml-8 mt-2 border-l-[1px] pl-4">

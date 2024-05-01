@@ -31,7 +31,8 @@ export class JobListingRepositoryImpl implements JobListingRepository {
         >`COALESCE(json_agg(job_listing_location.name) FILTER (WHERE job_listing_location.name IS NOT NULL), '[]')`.as(
           "locations"
         )
-      ).select(
+      )
+      .select(
         sql<JobListing["company"]>`json_build_object(
           'id', company.id, 'name', company.name, 'image', company.image
         )`.as("company")

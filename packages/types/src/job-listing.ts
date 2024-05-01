@@ -22,9 +22,11 @@ export const JobListingSchema = z.object({
 export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
   company: true,
-}).extend({
-  companyId: z.string().ulid(),
-}).strict()
+})
+  .extend({
+    companyId: z.string().ulid(),
+  })
+  .strict()
 
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]

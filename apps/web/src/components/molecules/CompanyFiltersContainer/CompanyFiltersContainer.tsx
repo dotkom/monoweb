@@ -13,7 +13,7 @@ interface CompanyFiltersContainer {
   places: string[]
 }
 const sortOption = ["Frist", "Opprettet"] as const
-export type SortOption = typeof sortOption[number]
+export type SortOption = (typeof sortOption)[number]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
   <div className="border-slate-3  h-fit w-72 rounded-lg border shadow-b-sm">
