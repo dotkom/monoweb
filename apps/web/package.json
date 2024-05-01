@@ -67,7 +67,7 @@
     "autoprefixer": "^10.4.16",
     "cva": "npm:class-variance-authority@^0.7.0",
     "jsdom": "^22.1.0",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.38",
     "tailwindcss": "^3.3.5",
     "trpc-playground": "^1.0.4",
     "tslib": "^2.6.2",
