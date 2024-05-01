@@ -6,7 +6,7 @@ interface GenericSearchProps<T> {
   onSubmit(item: T): void
   items: T[]
   dataMapper(item: T): string
-  placeholder?: string | null | undefined
+  placeholder?: string | null
   resetOnClick?: boolean
 }
 
@@ -33,7 +33,7 @@ const GenericSearch = <T,>({
     }
   }
 
-  const placeholderText = placeholder !== null ? placeholder || "Search..." : undefined
+  const placeholderText = placeholder !== null ? placeholder ?? "Search..." : undefined
 
   const data = items.map(dataMapper)
 
@@ -42,7 +42,7 @@ const GenericSearch = <T,>({
   const duplicateMap = new Map<string, number>()
 
   const dataWithDuplicates = data.map((item) => {
-    const count = duplicateMap.get(item) || 0
+    const count = duplicateMap.get(item) ?? 0
     duplicateMap.set(item, count + 1)
 
     if (count === 0) {

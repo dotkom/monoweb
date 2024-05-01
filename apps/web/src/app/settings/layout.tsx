@@ -1,5 +1,6 @@
 import SettingsLayout from "@/components/layout/SettingsLayout"
+import type { PropsWithChildren } from "react"
 
-export default function SLayout({ children }: { children: React.ReactNode }) {
+export default function SettingsPageLayout({ children }: PropsWithChildren) {
   return <SettingsLayout>{children}</SettingsLayout>
 }

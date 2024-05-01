@@ -61,7 +61,7 @@
     "@dotkomonline/logger": "workspace:*",
     "@types/cors": "^2.8.17",
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^18.18.13",
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
@@ -71,6 +71,6 @@
     "tailwindcss": "^3.3.5",
     "trpc-playground": "^1.0.4",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

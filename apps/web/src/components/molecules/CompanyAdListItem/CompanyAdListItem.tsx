@@ -40,6 +40,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdList
   const color =
     career.employment === "Sommerjobb/internship" ? "amber" : career.employment === "Fulltid" ? "red" : "blue"
   const deadline = career.deadline ? format(career.deadline, "dd.MM.yyyy") : "Ingen frist"
+
   return (
     <Link
       href={`/career/${career.id}`}
