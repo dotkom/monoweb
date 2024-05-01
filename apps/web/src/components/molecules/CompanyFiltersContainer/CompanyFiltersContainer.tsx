@@ -9,7 +9,7 @@ interface CompanyFiltersContainer {
   chosenEmployments: EmploymentCheckbox[]
   setChosenEmployments: Dispatch<SetStateAction<EmploymentCheckbox[]>>
   chosenSort: string
-  setChosenSort: Dispatch<SetStateAction<string>>
+  setChosenSort: Dispatch<SetStateAction<SortOptions>>
   places: string[]
 }
 export type SortOptions = "Frist" | "Påmeldingsstart" | "Opprettet"
@@ -75,7 +75,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
         <p className="mt-4 font-semibold">Sorter</p>
         <select
           onChange={(e) => {
-            props.setChosenSort(e.target.value)
+            props.setChosenSort(e.target.value as SortOptions)
           }}
           className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
           name="kategorier"

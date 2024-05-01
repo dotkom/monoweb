@@ -4,6 +4,7 @@ import { type FC, useState } from "react"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
 import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
+import type { SortOptions } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 
 interface CareerProps {
   careers: JobListing[]
@@ -36,7 +37,7 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
     { name: "Sommerjobb/internship", checked: false },
     { name: "Annet", checked: false },
   ])
-  const [chosenSort, setChosenSort] = useState<string>("Frist")
+  const [chosenSort, setChosenSort] = useState<SortOptions>("Frist")
 
   return (
     <div>

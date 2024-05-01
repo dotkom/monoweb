@@ -2,12 +2,12 @@ import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon } from "@dotkomonline/ui"
 import { format } from "date-fns"
 import Image from "next/image"
+import Link from "next/link"
 import type { FC } from "react"
 interface CompanyAdListItemProps {
   career: JobListing
 }
 function timeSinceCreated(date: Date) {
-  console.log((Date.now() - date.getTime()) / (24 * 60 * 60))
   if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 1) {
     return "nylig lagt til"
   }
@@ -15,7 +15,7 @@ function timeSinceCreated(date: Date) {
     const timer = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60))
     return `${timer} timer gammel`
   }
-  if (Date.now() - date.getTime() / (24 * 60 * 60 * 1000) < 7) {
+  if ((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000) < 7) {
     const dager = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
     return `${dager} dager gammel`
   }
@@ -41,8 +41,8 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdList
     career.employment === "Sommerjobb/internship" ? "amber" : career.employment === "Fulltid" ? "red" : "blue"
   const deadline = career.deadline ? format(career.deadline, "dd.MM.yyyy") : "Ingen frist"
   return (
-    <a
-      href={`/career/${career.id}`}
+    <Link
+    href={`/career/${career.applicationLink}`}
       className="border-slate-3 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
     >
       <div className="flex flex-row items-center gap-8">
@@ -78,7 +78,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ career }: CompanyAdList
           </p>
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
 export default CompanyAdListItem
