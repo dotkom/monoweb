@@ -9,11 +9,11 @@ interface CompanyFiltersContainer {
   chosenEmployments: EmploymentCheckbox[]
   setChosenEmployments: Dispatch<SetStateAction<EmploymentCheckbox[]>>
   chosenSort: string
-  setChosenSort: Dispatch<SetStateAction<SortOptions>>
+  setChosenSort: Dispatch<SetStateAction<SortOption>>
   places: string[]
 }
-export type SortOptions = "Frist" | "Påmeldingsstart" | "Opprettet"
-const sortOptions: SortOptions[] = ["Frist", "Påmeldingsstart", "Opprettet"]
+const sortOption = ["Frist", "Opprettet"] as const
+export type SortOption = typeof sortOption[number]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
   <div className="border-slate-3  h-fit w-72 rounded-lg border shadow-b-sm">
@@ -75,12 +75,12 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
         <p className="mt-4 font-semibold">Sorter</p>
         <select
           onChange={(e) => {
-            props.setChosenSort(e.target.value as SortOptions)
+            props.setChosenSort(e.target.value as SortOption)
           }}
           className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
           name="kategorier"
         >
-          {sortOptions.map((category) => (
+          {sortOption.map((category) => (
             <option key={category}>{category}</option>
           ))}
         </select>

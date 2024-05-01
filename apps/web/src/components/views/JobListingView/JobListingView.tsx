@@ -4,16 +4,19 @@ import { type FC, useState } from "react"
 import CompanyAdListItem from "../../molecules/CompanyAdListItem"
 import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
 import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
-import type { SortOptions } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
+import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 
 interface CareerProps {
   careers: JobListing[]
 }
 
+const employmentType = ["Deltid", "Fulltid", "Sommerjobb/internship", "Annet"] as const
+export type EmploymentType = typeof employmentType[number]
 export interface EmploymentCheckbox {
-  name: string
+  name: EmploymentType
   checked: boolean
 }
+
 
 const getLocations = (jobListings: JobListing[]) => {
   const locations: string[] = []
@@ -37,14 +40,14 @@ const JobListingView: FC<CareerProps> = (props: CareerProps) => {
     { name: "Sommerjobb/internship", checked: false },
     { name: "Annet", checked: false },
   ])
-  const [chosenSort, setChosenSort] = useState<SortOptions>("Frist")
+  const [chosenSort, setChosenSort] = useState<SortOption>("Frist")
 
   return (
     <div>
       <div className="border-slate-7 left-0 z-0 w-full border-b">
         <div className="flex flex-row gap-96 py-5">
           <div className="flex flex-col">
-            <h2 className="mt-4 text-2xl font-bold border-b-0">Karrieremuligheter</h2>
+            <p className="mt-4 text-3xl font-bold border-b-0">Karrieremuligheter</p>
             <p className="text-slate-9 pt-2">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
           </div>
         </div>
