@@ -1,8 +1,7 @@
-import type { StaticAssetWrite } from "@dotkomonline/types"
 import type { File } from "../../stubs/file/File"
 
 // Expected response: 204 No Content. Returns resource URL if successful.
-export async function s3UploadFile(file: File, fields: Record<string, string>, url: string): Promise<StaticAssetWrite> {
+export async function s3UploadFile(file: File, fields: Record<string, string>, url: string) {
   try {
     const formData = new FormData()
     for (const [key, value] of Object.entries(fields)) {
@@ -22,16 +21,7 @@ export async function s3UploadFile(file: File, fields: Record<string, string>, u
       throw new Error(`File upload failed: ${response.statusText}`)
     }
 
-    const resourceURL = response.headers.get("Location")
-
-    if (resourceURL === null) {
-      console.error("Full response headers:", [...response.headers.entries()])
-      throw new Error("File upload failed: No resource URL returned")
-    }
-
     return {
-      url: resourceURL,
-      createdAt: new Date(),
       fileName: file.name,
       fileType: file.type,
     }

@@ -1,16 +1,14 @@
 import type { Database } from "@dotkomonline/db"
-import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite, type StaticAsset } from "@dotkomonline/types"
+import { OfflineSchema, type Offline, type OfflineId, type OfflineWrite, type StaticAsset } from "@dotkomonline/types"
 import { type Kysely, sql } from "kysely"
-import { type Cursor, jsonBuildObject, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 export interface OfflineRepository {
-  getById(id: OfflineId): Promise<Offline | undefined>
+  getById(id: OfflineId): Promise<Offline | null>
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(values: OfflineWrite): Promise<Offline>
   update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
 }
-
-const mapToOffline = (offline: unknown): Offline => OfflineSchema.parse(offline)
 
 export class OfflineRepositoryImpl implements OfflineRepository {
   constructor(private readonly db: Kysely<Database>) {}
@@ -36,61 +34,80 @@ export class OfflineRepositoryImpl implements OfflineRepository {
 
   }
 
-  async getById(id: string): Promise<Offline | undefined> {
+  async getById(id: string) {
     const query = this.db
     .selectFrom("offline")
-    .selectAll("offline")
+    .select([
+      "offline.id",
+      "offline.title",
+      "offline.createdAt",
+      "offline.updatedAt",
+      "offline.published",
+    ])
     .leftJoin("staticAsset as file", "offline.fileId", "file.id")
-    .select(sql<StaticAsset>`${jsonBuildObject<StaticAsset>({
-      id: "file.id",
-      url: "file.url",
-      fileName: "file.fileName",
-      createdAt: "file.createdAt",
-      fileType: "file.fileType",
-    })}`.as("file"))
+    .select(sql<StaticAsset>`json_build_object(
+      'fileType', file.file_type,
+      'fileName', file.file_name,
+      'id', file.id,
+      'updatedAt', file.updated_at,
+      'url', file.url
+      )`.as("file"))
     .leftJoin("staticAsset as image", "offline.imageId", "image.id")
-    .select(sql<StaticAsset>`${jsonBuildObject<StaticAsset>({
-      id: "image.id",
-      url: "image.url",
-      fileName: "image.fileName",
-      createdAt: "image.createdAt",
-      fileType: "image.fileType",
-    })}`.as("image"))
+    .select(sql<StaticAsset>`json_build_object(
+      'fileType', image.file_type,
+      'fileName', image.file_name,
+      'id', image.id,
+      'updatedAt', image.updated_at,
+      'url', image.url
+      )`.as("image"))
     .where("offline.id", "=", id)
+
     
-    const result = query.execute()
+    const result = await query.executeTakeFirst()
+
+    if(!result) {
+      return null
+    }
     
-    return result ? mapToOffline(result) : undefined
+    return OfflineSchema.parse({
+      ...result,
+      file: result.file.id ? result.file : null,
+      image: result.image.id ? result.image : null,
+    })
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Offline[]> {
-    const getStaticAssetJsonQuery = (alias: string) => {
-      
-      const res =  sql<StaticAsset>`${jsonBuildObject<StaticAsset>({
-      id: `${alias}.id`,
-      url: `${alias}.url`,
-      fileName: `${alias}.fileName`,
-      createdAt: `${alias}.createdAt`,
-      fileType: `${alias}.fileType`,
-    })}`.as(alias)
-    console.log(res)
-    return res
-  }
-
     const query = this.db
       .selectFrom("offline")
       .selectAll("offline")
       .leftJoin("staticAsset as file", "offline.fileId", "file.id")
-      .select(getStaticAssetJsonQuery("file"))
+      .select(sql<StaticAsset>`json_build_object(
+        'createdAt', file.created_at,
+        'fileType', file.file_type,
+        'fileName', file.file_name,
+        'id', file.id,
+        'updatedAt', file.updated_at,
+        'url', file.url
+        )`.as("file"))
       .leftJoin("staticAsset as image", "offline.imageId", "image.id")
-      .select(getStaticAssetJsonQuery("image"))
+      .select(sql<StaticAsset>`json_build_object(
+        'createdAt', image.created_at,
+        'fileType', image.file_type,
+        'fileName', image.file_name,
+        'id', image.id,
+        'updatedAt', image.updated_at,
+        'url', image.url
+        )`.as("image"))
       .orderBy("offline.createdAt", "desc")
       .limit(take)
 
 
     const ordered = orderedQuery(query, cursor)
     const offlines = await ordered.execute()
-    console.log(offlines)
-    return offlines.map(mapToOffline)
+    return offlines.map(offline => OfflineSchema.parse({
+      ...offline,
+      file: offline.file.id ? offline.file : null,
+      image: offline.image.id ? offline.image : null,
+    }))
   }
 }

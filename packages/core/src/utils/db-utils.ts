@@ -1,13 +1,6 @@
 import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
-// Helper function that provides typing to the `json_build_object` Postgres function.
-export function jsonBuildObject<T extends object>(object: Record<keyof T, string>): string {
-  const entries = Object.entries(object)
-  const entriesString = entries.map(([key, value]) => `'${key}', ${value}`).join(", ")
-  return `json_build_object(${entriesString})`
-}
-
 type ObjectWithKey<T> = T extends object ? T : never
 type ObjectWithStringifiedProperty<T extends object, K extends keyof T> = T & { [Property in K]: string }
 

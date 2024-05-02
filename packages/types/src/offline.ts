@@ -5,8 +5,8 @@ export const OfflineSchema = z.object({
   id: z.string().ulid(),
   title: z.string().max(1000).min(1),
   published: z.date(),
-  file: StaticAssetSchema,
-  image: StaticAssetSchema,
+  file: StaticAssetSchema.nullable(),
+  image: StaticAssetSchema.nullable(),
 })
 
 export const OfflineWriteSchema = OfflineSchema.omit({

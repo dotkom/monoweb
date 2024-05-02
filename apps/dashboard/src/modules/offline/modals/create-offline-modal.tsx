@@ -13,13 +13,21 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const saveStaticAsset = useStaticAssetCreate()
   const notification = useQueryNotification()
 
-  const handleUpload = async (file?: File) => {
-    if (!file?.name) {
-      return null
-    }
+  const handleUpload = async (file: File) => {
+    // if (!file?.name) {
+    //   return null
+    // }
 
+    console.log("Uploading file: ", file)
     const result = await upload(file)
-    const inserted = await saveStaticAsset(result)
+    console.log("Uploaded file: ", result)
+    const resourceUrl = `https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/offlines/${result.fileName}`
+    const inserted = await saveStaticAsset({
+      url: resourceUrl,
+      fileName: result.fileName,
+      fileType: result.fileType,
+    })
+    console.log("Inserted file: ", inserted)
 
     return inserted
   }
@@ -29,8 +37,12 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
       let fileId: string | undefined = undefined
       let imageId: string | undefined = undefined
 
+      console.log("Trying to upload data: ", data)
+
       try {
+        console.log("Uploading file: ", data.file)
         const uploadedFile = await handleUpload(data.file)
+        console.log("Uploaded file: ", uploadedFile)
         if (!uploadedFile) {
           notification.fail({
             title: "Feil",
@@ -40,6 +52,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         }
         fileId = uploadedFile.id
       } catch (e) {
+        console.error("Failed to upload file: ", e)
         notification.fail({
           title: "Feil",
           message: "Kunne ikke laste opp pdf. ",
@@ -47,7 +60,9 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
       }
 
       try {
+        console.log("Uploading image: ", data.image)
         const image = await handleUpload(data.image)
+        console.log("Uploaded image: ", image)
         if (!image) {
           notification.fail({
             title: "Feil",
@@ -57,6 +72,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         }
         imageId = image.id
       } catch (e) {
+        console.error("Failed to upload image: ", e)
         notification.fail({
           message: "Kunne ikke laste opp bilde",
           title: "Feil",
@@ -68,12 +84,14 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         return
       }
 
+      console.log("Creating offline with fileId: ", fileId, " and imageId: ", imageId)
       createOffline.mutate({
         fileId,
         imageId,
         title: data.title,
         published: data.published,
       })
+      console.log("Created offline")
       close()
     },
   })

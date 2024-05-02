@@ -5,7 +5,6 @@ export const StaticAssetSchema = z.object({
   fileName: z.string(),
   url: z.string(),
   fileType: z.string(),
-  createdAt: z.date(),
 })
 
 export const StaticAssetWriteSchema = StaticAssetSchema.partial({
