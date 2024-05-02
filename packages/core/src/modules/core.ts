@@ -187,15 +187,16 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService
   )
 
+  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
   const eventService: EventService = new EventServiceImpl(
     eventRepository,
     attendanceService,
     attendancePoolService,
-    eventCommitteeService
+    eventCommitteeService,
+    eventCompanyService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
-  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
   const productService: ProductService = new ProductServiceImpl(productRepository)
   const paymentService: PaymentService = new PaymentServiceImpl(
     paymentRepository,

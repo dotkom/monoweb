@@ -4,6 +4,7 @@ node_modules/
 .next
 # environment variables
 .env
+.envrc
 .env.production
 .envrc
 !.env.example
