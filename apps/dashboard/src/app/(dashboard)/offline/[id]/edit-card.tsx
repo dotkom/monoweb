@@ -8,6 +8,7 @@ import { useOfflineDetailsContext } from "./provider"
 
 export const OfflineEditCard: FC = () => {
   const { offline } = useOfflineDetailsContext()
+  console.log(offline)
   const edit = useEditOfflineMutation()
   const upload = useS3UploadFile()
 

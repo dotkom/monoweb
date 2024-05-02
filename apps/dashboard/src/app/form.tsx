@@ -10,7 +10,6 @@ import {
   FileInput,
   type FileInputProps,
   Flex,
-  Modal,
   MultiSelect,
   type MultiSelectProps,
   NumberInput,
@@ -259,6 +258,41 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
+interface FileTableProps {
+  files: StaticAsset[]
+  onDelete(file: StaticAsset): void
+}
+const FileTable = ({ files, onDelete }: FileTableProps) => {
+  return (
+    <Table striped>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Navn</Table.Th>
+          <Table.Th w={200}>Type</Table.Th>
+          <Table.Th w={200}>Handlinger</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
+        {files.map((file) => (
+          <Table.Tr key={file.id}>
+            <Table.Td>
+              <Anchor href={file.url} target="_blank" rel="noreferrer">
+                {file.fileName}
+              </Anchor>
+            </Table.Td>
+            <Table.Td>{file.fileType}</Table.Td>
+            <Table.Td>
+              <Button color="red" onClick={() => onDelete(file)}>
+                Slett
+              </Button>
+            </Table.Td>
+          </Table.Tr>
+        ))}
+      </Table.Tbody>
+    </Table>
+  )
+}
+
 export function createImageInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
@@ -270,48 +304,22 @@ export function createImageInput<F extends FieldValues>({
       <Box>
         <Text>{props.label}</Text>
         {props.currentFile && (
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Navn</Table.Th>
-                <Table.Th>Type</Table.Th>
-                <Table.Th>Lastet opp</Table.Th>
-                <Table.Th>Handlinger</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              <Table.Tr>
-                <Table.Td>
-                  <Anchor href={props.currentFile.url} target="_blank" rel="noreferrer">
-                    {props.currentFile.fileName}
-                  </Anchor>
-                </Table.Td>
-                <Table.Td>{props.currentFile.fileType}</Table.Td>
-                <Table.Td>{props.currentFile.createdAt.toLocaleDateString()}</Table.Td>
-                <Table.Td>
-                  <Button color="red">Slett</Button>
-                </Table.Td>
-              </Table.Tr>
-            </Table.Tbody>
-          </Table>
+          <FileTable
+            files={[props.currentFile]}
+            onDelete={() => {
+              console.log("Delete")
+            }}
+          />
         )}
         <Controller
           control={control}
           name={name}
           render={({ field }) => {
-            const [isOpened, { open, close }] = useDisclosure(false)
+            const [isOpened, { toggle }] = useDisclosure(false)
 
             return (
               <div>
-                <Button
-                  onClick={() => {
-                    open()
-                  }}
-                >
-                  {props.currentFile ? "Bytt bilde" : "Last opp bilde"}
-                </Button>
-                <Modal title="Last opp bilde" opened={isOpened} onClose={close} size={"xl"}>
-                  {props.currentFile && (
+                {props.currentFile && (
                     <Text mb="sm" fs="italic">
                       Ved å laste opp et nytt bilde vil det gamle bildet bli slettet
                     </Text>
@@ -324,7 +332,6 @@ export function createImageInput<F extends FieldValues>({
                     }}
                     aspect={props.aspect}
                   />
-                </Modal>
               </div>
             )
           }}
@@ -337,16 +344,19 @@ export function createImageInput<F extends FieldValues>({
 export function createFileInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
-  existingFileUrl?: string
+  file?: StaticAsset
 }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
         <Text>{props.label}</Text>
-        {props.existingFileUrl ? (
-          <Anchor href={props.existingFileUrl} mb="sm" display="block">
-            Link til ressurs
-          </Anchor>
+        {props.file ? (
+          <FileTable
+            files={[props.file]}
+            onDelete={() => {
+              console.log("Delete")
+            }}
+          />
         ) : (
           <Text mb="sm" fs="italic">
             Ingen fil lastet opp
@@ -356,13 +366,7 @@ export function createFileInput<F extends FieldValues>({
           control={control}
           name={name}
           render={({ field }) => (
-            <FileInput
-              {...props}
-              value={field.value}
-              onChange={(value) => field.onChange({ target: { value } })}
-              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-              label=""
-            />
+            <input type="file" onChange={(e) => field.onChange(e.target.files?.[0])} />
           )}
         />
       </Box>
@@ -440,9 +444,11 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         onSubmit={(e) => {
           e.preventDefault()
           console.log(e)
-          return form.handleSubmit((values) => {
+          form.handleSubmit((values) => {
             return onSubmit(values, form)
           })(e)
+
+          console.log(form.formState.errors)
         }}
       >
         <Flex direction="column" gap="md">

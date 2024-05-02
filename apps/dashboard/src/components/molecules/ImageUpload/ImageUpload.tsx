@@ -29,7 +29,7 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 
 interface Props {
-  onSubmit: (blob: Blob) => void
+  onSubmit: (file: File) => void
   aspect?: number | undefined
 }
 
@@ -42,6 +42,10 @@ export default function ImageUpload({ onSubmit, aspect }: Props) {
   const [crop, setCrop] = useState<Crop>()
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
   const [scale, setScale] = useState(1)
+  const [fileInfo, setFileInfo] = useState({
+    name: "",
+    type: "",
+  })
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -49,6 +53,13 @@ export default function ImageUpload({ onSubmit, aspect }: Props) {
       const reader = new FileReader()
       reader.addEventListener("load", () => setImgSrc(reader.result?.toString() || ""))
       reader.readAsDataURL(e.target.files[0])
+
+      if (e.target.files[0].name) {
+        setFileInfo({
+          name: e.target.files[0].name,
+          type: e.target.files[0].type,
+        })
+      }
     }
   }
 
@@ -61,7 +72,8 @@ export default function ImageUpload({ onSubmit, aspect }: Props) {
 
   async function onUploadClick() {
     const blob = await getBlob()
-    onSubmit(blob)
+    const file = new File([blob], fileInfo.name, { type: fileInfo.type })
+    onSubmit(file)
   }
 
   async function onDownloadClick() {

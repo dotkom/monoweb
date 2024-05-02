@@ -18,6 +18,9 @@ export const FormValidationSchema = OfflineWriteSchema.extend({
   image: z.any().optional(),
   fileUrl: z.string().nullable(),
   imageUrl: z.string().nullable(),
+}).omit({
+  fileId: true,
+  imageId: true,
 })
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
@@ -43,11 +46,12 @@ export const useOfflineWriteForm = ({
       file: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
-        existingFileUrl: defaultValues.fileUrl ?? undefined,
+        file: defaultValues.file ?? undefined,
       }),
       image: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
+        currentFile: defaultValues.image ?? undefined,
       }),
     },
   })
