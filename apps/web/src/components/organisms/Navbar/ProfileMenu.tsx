@@ -26,7 +26,7 @@ import type { Session } from "next-auth"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import type { FC, PropsWithChildren } from "react"
+import { type FC, Fragment, type PropsWithChildren } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = ({
@@ -143,8 +143,9 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
     <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
     <DropdownMenuContent className="w-60">
       <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
-      {linkGroups.map((group) => (
-        <>
+      {linkGroups.map((group, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: The order does not change, i.e. using the index is fine
+        <Fragment key={i}>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {group.map((link) => (
@@ -157,7 +158,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
-        </>
+        </Fragment>
       ))}
       <DropdownMenuSeparator />
       <ThemeMenuSub />

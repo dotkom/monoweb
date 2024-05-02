@@ -41,10 +41,10 @@
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@9.0.6",
   "engines": {
     "node": ">=20.12.2",
-    "pnpm": ">=9"
+    "pnpm": ">=9.0.0"
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",

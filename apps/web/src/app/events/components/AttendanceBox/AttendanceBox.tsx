@@ -1,13 +1,13 @@
 import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import clsx from "clsx"
 import type { Session } from "next-auth"
-import type { FC } from "react"
-import { AttendanceGroup } from "./AttendanceGroup"
-import { StatusCard } from "./StatusCard"
-import { useRegisterMutation, useUnregisterMutation } from "./mutations"
-import { useGetAttendee } from "./queries"
+import { type FC, useState } from "react"
+import { AttendanceGroup } from "../AttendanceGroup"
+import { StatusCard } from "../StatusCard"
+import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
+import { ChooseExtrasDialog } from "./ChooseExtrasDialog"
 
 export const calculateStatus = ({
   registerStart,
@@ -84,12 +84,15 @@ interface Props {
   attendance: Attendance
   pools: AttendancePool[]
   event: Event
+  attendee: Attendee | null
 }
 
 type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
 
-export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
+export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event, attendee }) => {
   const attendanceId = event.attendanceId
+  const [extraDialogOpen, setExtraDialogOpen] = useState(false)
+  const setExtrasChoices = useSetExtrasChoicesMutation()
 
   const { data: user } = trpc.user.getMe.useQuery()
 
@@ -97,10 +100,14 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     throw new Error("AttendanceBox rendered for event without attendance")
   }
 
-  const registerMutation = useRegisterMutation()
-  const unregisterMutation = useUnregisterMutation()
-  const { data: attendee } = useGetAttendee({ userId: sessionUser?.id, attendanceId })
+  const handleGatherExtrasChoices = () => {
+    if (attendance.extras !== null) {
+      setExtraDialogOpen(true)
+    }
+  }
 
+  const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
+  const unregisterMutation = useUnregisterMutation()
   const attendanceStatus = calculateStatus({
     registerStart: attendance.registerStart,
     registerEnd: attendance.registerEnd,
@@ -122,7 +129,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
     registerMutation.mutate({
       attendancePoolId: myGroups?.id,
-      userId: sessionUser?.id,
+      userId: user?.id,
     })
   }
 
@@ -139,9 +146,33 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   return (
     <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
       <h2>Påmelding</h2>
+      <div>
+        {attendance.extras && (
+          <ChooseExtrasDialog
+            choices={attendee?.extrasChoices ?? null}
+            setOpen={setExtraDialogOpen}
+            open={extraDialogOpen}
+            extras={attendance.extras}
+            onSubmit={(values) => {
+              if (!attendee) {
+                throw new Error("Tried to set extras for a non-registered user")
+              }
+              setExtrasChoices.mutate({ id: attendee.id, choices: values })
+              setExtraDialogOpen(false)
+            }}
+          />
+        )}
+      </div>
       <div className="mt-2">
         <StatusCard attendance={attendance} />
       </div>
+
+      {userIsRegistered && attendance.extras && (
+        <Button className="mt-2 w-full" onClick={handleGatherExtrasChoices}>
+          Endre valg
+        </Button>
+      )}
+
       <div>
         {attendanceStatus === "OPEN" &&
           (userIsRegistered ? (
