@@ -135,6 +135,9 @@ importers:
       react-hook-form:
         specifier: ^7.48.2
         version: 7.49.3(react@18.2.0)
+      react-image-crop:
+        specifier: ^11.0.5
+        version: 11.0.5(react@18.2.0)
       react-zxing:
         specifier: ^2.0.0
         version: 2.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -818,6 +821,28 @@ importers:
         version: 1.6.4
 
   packages/pgx-ulid: {}
+
+  packages/static-assets:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.507.0
+        version: 3.513.0
+      '@aws-sdk/s3-presigned-post':
+        specifier: ^3.507.0
+        version: 3.513.0
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../core
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 1.6.4
+        version: 1.6.4
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
 
   packages/types:
     dependencies:
@@ -6006,6 +6031,11 @@ packages:
     resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
     peerDependencies:
       react: '*'
+
+  react-image-crop@11.0.5:
+    resolution: {integrity: sha512-A/Y/kspOzki1zDL/bSgwWIY1X3CQ9F1QwpdnncWLBVAktnKfAZDIQnWmjXzuzEjZHDMsBlArytIcPBVi6DNklg==}
+    peerDependencies:
+      react: '>=16.13.1'
 
   react-inspector@6.0.2:
     resolution: {integrity: sha512-x+b7LxhmHXjHoU/VrFAzw5iutsILRoYyDq97EDYdFpPLcvqtEzk4ZSZSQjnFPbr5T57tLXnHcqFYoN1pI6u8uQ==}
@@ -13139,6 +13169,10 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
 
   react-icons@4.12.0(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+
+  react-image-crop@11.0.5(react@18.2.0):
     dependencies:
       react: 18.2.0
 
