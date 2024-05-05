@@ -52,6 +52,14 @@ export interface ArticleTags {
   name: string;
 }
 
+export interface Asset {
+  createdAt: Generated<Timestamp>;
+  id: string;
+  metadata: Json | null;
+  originalFilename: string;
+  size: number;
+}
+
 export interface Attendance {
   createdAt: Generated<Timestamp>;
   deregisterDeadline: Timestamp;
@@ -137,6 +145,14 @@ export interface EventCompany {
   eventId: string;
 }
 
+export interface Image {
+  altText: string;
+  assetId: string;
+  createdAt: Generated<Timestamp>;
+  crop: Json | null;
+  id: Generated<string>;
+}
+
 export interface InterestGroup {
   createdAt: Generated<Timestamp>;
   description: string;
@@ -203,9 +219,9 @@ export interface NotificationPermissions {
 
 export interface Offline {
   createdAt: Generated<Timestamp>;
-  fileId: string | null;
+  fileId: string;
   id: Generated<string>;
-  imageId: string | null;
+  imageId: string;
   published: Timestamp;
   title: string;
   updatedAt: Generated<Timestamp>;
@@ -287,15 +303,6 @@ export interface RefundRequest {
   userId: string | null;
 }
 
-export interface StaticAsset {
-  createdAt: Generated<Timestamp>;
-  fileName: string;
-  fileType: string;
-  id: Generated<string>;
-  updatedAt: Generated<Timestamp>;
-  url: string;
-}
-
 export interface WaitlistAttendee {
   attendanceId: string | null;
   attendancePoolId: string | null;
@@ -314,6 +321,7 @@ export interface DB {
   articles: Articles;
   articleTagLink: ArticleTagLink;
   articleTags: ArticleTags;
+  asset: Asset;
   attendance: Attendance;
   attendancePool: AttendancePool;
   attendee: Attendee;
@@ -322,6 +330,7 @@ export interface DB {
   event: Event;
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
+  image: Image;
   interestGroup: InterestGroup;
   jobListing: JobListing;
   jobListingLocation: JobListingLocation;
@@ -336,6 +345,5 @@ export interface DB {
   product: Product;
   productPaymentProvider: ProductPaymentProvider;
   refundRequest: RefundRequest;
-  staticAsset: StaticAsset;
   waitlistAttendee: WaitlistAttendee;
 }

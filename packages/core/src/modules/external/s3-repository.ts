@@ -14,6 +14,7 @@ export class S3RepositoryImpl implements S3Repository {
     mimeType: string,
     maxSizeMB: number
   ): Promise<PresignedPost> {
+    console.log("Creating presigned post for", bucket, filepath, mimeType, maxSizeMB)
     return await _createPresignedPost(this.s3Client, {
       Bucket: bucket,
       Key: filepath,

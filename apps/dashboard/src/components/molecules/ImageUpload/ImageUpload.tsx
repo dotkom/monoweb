@@ -8,7 +8,45 @@ import ReactCrop, { centerCrop, makeAspectCrop, type Crop, type PixelCrop } from
 import { canvasPreview } from "./canvasPreview"
 import { useDebounceEffect } from "./useDebounceEffect"
 
+import type { Image } from "@dotkomonline/types"
 import "react-image-crop/dist/ReactCrop.css"
+import { useCreateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
+import { buildAssetUrl } from "../../../utils/s3"
+import { useEffect } from "react"
+import { useDisclosure } from "@mantine/hooks"
+
+interface CropProps {
+  imgSrc: string
+  cropDefault?: Crop
+  setCompletedCrop: (crop: PixelCrop) => void
+  aspect?: number
+  scale: number
+}
+
+function CropComponent({ imgSrc, cropDefault, setCompletedCrop, aspect, scale }: CropProps) {
+  const [crop, setCrop] = useState<Crop | undefined>(cropDefault ?? undefined)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  // function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
+  //   if (aspect) {
+  //     const { width, height } = e.currentTarget
+  //     setCrop(centerAspectCrop(width, height, aspect))
+  //   }
+  // }
+
+  return (
+    <ReactCrop
+      crop={crop}
+      onChange={(_, percentCrop) => setCrop(percentCrop)}
+      onComplete={(c) => setCompletedCrop(c)}
+      aspect={aspect}
+      minHeight={100}
+    >
+      {/* <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ transform: `scale(${scale})` }} onLoad={onImageLoad} /> */}
+      <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ transform: `scale(${scale})` }} />
+    </ReactCrop>
+  )
+}
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
@@ -29,51 +67,108 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 
 interface Props {
-  onSubmit: (file: File) => void
+  onSubmit: (image: Image | undefined) => void
   aspect?: number | undefined
+  defaultValues?: Image
 }
 
-export default function ImageUpload({ onSubmit, aspect }: Props) {
+export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) {
+  const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
   const [imgSrc, setImgSrc] = useState("")
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
   const blobUrlRef = useRef("")
-  const [crop, setCrop] = useState<Crop>()
+
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
   const [scale, setScale] = useState(1)
-  const [fileInfo, setFileInfo] = useState({
-    name: "",
-    type: "",
-  })
+  const [assetUri, setAssetId] = useState("")
 
-  function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files && e.target.files.length > 0) {
-      setCrop(undefined) // Makes crop preview update between images.
-      const reader = new FileReader()
-      reader.addEventListener("load", () => setImgSrc(reader.result?.toString() || ""))
-      reader.readAsDataURL(e.target.files[0])
+  const uploadToS3 = useUploadAssetToS3()
+  const createImage = useCreateImageMutation()
 
-      if (e.target.files[0].name) {
-        setFileInfo({
-          name: e.target.files[0].name,
-          type: e.target.files[0].type,
-        })
+  useEffect(() => {
+    async function fetchDefaultImage() {
+      console.log("defaultValues", defaultValues)
+      if (defaultValues) {
+        setAssetId(defaultValues.assetId)
+        if (defaultValues.crop) {
+          console.log("setting crop", defaultValues.crop)
+          setCompletedCrop({
+            x: defaultValues.crop.left,
+            y: defaultValues.crop.top,
+            width: defaultValues.crop.width,
+            height: defaultValues.crop.height,
+            unit: "px",
+          })
+        }
+
+        const url = buildAssetUrl(defaultValues.assetId)
+        const file = await getFileFromUrl(url)
+        await loadFile(file)
       }
+    }
+
+    fetchDefaultImage()
+  }, [defaultValues])
+
+  async function loadFile(file: File) {
+    // setCrop(undefined)
+    const reader = new FileReader()
+    reader.addEventListener("load", () => setImgSrc(reader.result?.toString() || ""))
+    reader.readAsDataURL(file)
+  }
+
+  async function getFileFromUrl(url: string): Promise<File> {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    return new File([blob], "image.png", { type: "image/png" })
+  }
+
+  async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files.length > 0) {
+      const result = await uploadToS3(e.target.files[0])
+      setAssetId(result.id)
+      const url = buildAssetUrl(result.id)
+      const file = await getFileFromUrl(url)
+      await loadFile(file)
     }
   }
 
-  function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-    if (aspect) {
-      const { width, height } = e.currentTarget
-      setCrop(centerAspectCrop(width, height, aspect))
+  function getScaledCrop() {
+    if (!completedCrop || !imgRef.current) {
+      return null
     }
+
+    const scaleX = imgRef.current.naturalWidth / imgRef.current.width
+    const scaleY = imgRef.current.naturalHeight / imgRef.current.height
+
+    return {
+      left: completedCrop.x * scaleX,
+      top: completedCrop.y * scaleY,
+      width: completedCrop.width * scaleX,
+      height: completedCrop.height * scaleY,
+    }
+  }
+
+  async function onSetCrop() {
+    toggleShowCrop()
+  }
+
+  async function changeImage() {
+    onSubmit(undefined)
+    setImgSrc("")
+    setAssetId("")
   }
 
   async function onUploadClick() {
-    const blob = await getBlob()
-    const file = new File([blob], fileInfo.name, { type: fileInfo.type })
-    onSubmit(file)
+    const result = await createImage.mutateAsync({
+      assetId: assetUri,
+      crop: getScaledCrop(),
+      altText: "Uploaded image",
+    })
+
+    onSubmit(result)
   }
 
   async function onDownloadClick() {
@@ -99,10 +194,11 @@ export default function ImageUpload({ onSubmit, aspect }: Props) {
     // This will size relative to the uploaded image
     // size. If you want to size according to what they
     // are looking at on screen, remove scaleX + scaleY
-    const scaleX = image.naturalWidth / image.width
-    const scaleY = image.naturalHeight / image.height
+    // const scaleX = image.naturalWidth / image.width
+    // const scaleY = image.naturalHeight / image.height
 
-    const offscreen = new OffscreenCanvas(completedCrop.width * scaleX, completedCrop.height * scaleY)
+    // const offscreen = new OffscreenCanvas(completedCrop.width * scaleX, completedCrop.height * scaleY)
+    const offscreen = new OffscreenCanvas(completedCrop.width, completedCrop.height)
     const ctx = offscreen.getContext("2d")
     if (!ctx) {
       throw new Error("No 2d context")
@@ -141,50 +237,33 @@ export default function ImageUpload({ onSubmit, aspect }: Props) {
 
   return (
     <div className="App">
-      <div className="Crop-Controls">
-        <input type="file" accept="image/*" onChange={onSelectFile} />
+      <div className="Crop-Controls">{!imgSrc && <input type="file" accept="image/*" onChange={onSelectFile} />}</div>
+      {!!cropOpen && (
         <div>
-          <label htmlFor="scale-input">Scale: </label>
-          <input
-            id="scale-input"
-            type="number"
-            step="0.1"
-            value={scale}
-            disabled={!imgSrc}
-            onChange={(e) => setScale(Number(e.target.value))}
-          />
-        </div>
-      </div>
-      {!!imgSrc && (
-        <ReactCrop
-          crop={crop}
-          onChange={(_, percentCrop) => setCrop(percentCrop)}
-          onComplete={(c) => setCompletedCrop(c)}
-          aspect={aspect}
-          minHeight={100}
-        >
-          <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ transform: `scale(${scale})` }} onLoad={onImageLoad} />
-        </ReactCrop>
-      )}
-      {!!completedCrop && (
-        <>
           <div>
-            <canvas
-              ref={previewCanvasRef}
-              style={{
-                border: "1px solid black",
-                objectFit: "contain",
-                width: completedCrop.width,
-                height: completedCrop.height,
-              }}
+            <label htmlFor="scale-input">Scale: </label>
+            <input
+              id="scale-input"
+              type="number"
+              step="0.1"
+              value={scale}
+              disabled={!imgSrc}
+              onChange={(e) => setScale(Number(e.target.value))}
             />
           </div>
+          <CropComponent
+            imgSrc={imgSrc}
+            cropDefault={completedCrop}
+            setCompletedCrop={setCompletedCrop}
+            aspect={aspect}
+            scale={scale}
+          />
           <div>
-            <button type="button" onClick={onUploadClick}>
-              Upload
+            <button type="button" onClick={onSetCrop}>
+              Sett crop
             </button>
             <button type="button" onClick={onDownloadClick}>
-              Download Crop
+              Last ned
             </button>
             <div style={{ fontSize: 12, color: "#666" }}>
               If you get a security error when downloading try opening the Preview in a new tab (icon near top right).
@@ -202,6 +281,33 @@ export default function ImageUpload({ onSubmit, aspect }: Props) {
               Hidden download
             </a>
           </div>
+        </div>
+      )}
+      {!cropOpen && imgSrc && (
+        <div>
+          <button onClick={toggleShowCrop} type="button">
+            Endre crop
+          </button>
+          <button onClick={changeImage} type="button">
+            Endre bilde
+          </button>
+        </div>
+      )}
+      {!!completedCrop && (
+        <>
+          <div>
+            <img src={imgSrc} alt="Crop" style={{ display: "none" }} ref={imgRef} />
+            <canvas
+              ref={previewCanvasRef}
+              style={{
+                border: "1px solid black",
+                objectFit: "contain",
+                width: completedCrop.width,
+                height: completedCrop.height,
+              }}
+            />
+          </div>
+          <button onClick={onUploadClick} type="button">Ferdig</button>
         </>
       )}
     </div>

@@ -1,6 +1,10 @@
 import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
+export type Keys<T> = {
+  [K in keyof T]: unknown
+}
+
 type ObjectWithKey<T> = T extends object ? T : never
 type ObjectWithStringifiedProperty<T extends object, K extends keyof T> = T & { [Property in K]: string }
 
