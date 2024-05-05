@@ -12,9 +12,11 @@ export interface PresignedPost {
 
 export interface AssetService {
   get(id: AssetId): Promise<Asset>
+  getImage(id: string): Promise<Image>
   create(payload: AssetWrite): Promise<Asset>
   createPresignedPost(bucket: string, filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
   createImage(payload: ImageWrite): Promise<Image>
+  updateImage(id: string, payload: ImageWrite): Promise<Image>
 }
 
 export class AssetServiceImpl implements AssetService {
@@ -22,6 +24,14 @@ export class AssetServiceImpl implements AssetService {
     private readonly assetRepository: AssetRepository,
     private readonly s3Client: S3Client
   ) {}
+
+  async getImage(id: string): Promise<Image> {
+    return this.assetRepository.getImage(id)
+  }
+
+  async updateImage(id: string, payload: ImageWrite) {
+    return this.assetRepository.updateImage(id, payload)
+  }
 
   async createImage(payload: ImageWrite) {
     return this.assetRepository.createImage(payload)

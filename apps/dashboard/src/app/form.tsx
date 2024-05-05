@@ -266,7 +266,9 @@ export function createImageInput<F extends FieldValues>({
         <Controller
           control={control}
           name={name}
-          render={({ field }) => (
+          render={({ field }) => {
+            console.log("I FORM", field.value)
+            return(
             <ImageUpload
               onSubmit={(data) => {
                 field.onChange(data ? {
@@ -277,7 +279,7 @@ export function createImageInput<F extends FieldValues>({
               defaultValues={field.value}
               aspect={props.aspect}
             />
-          )}
+          )}}
         />
       </Box>
     )

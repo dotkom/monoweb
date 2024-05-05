@@ -32,6 +32,14 @@ export const useCreateImageMutation = () => {
   })
 }
 
+export const useUpdateImageMutation = () => {
+  return trpc.asset.updateImage.useMutation({
+    onSuccess(data, variables, context) {
+      console.log("created image", data)
+    },
+  })
+}
+
 export const useCreateFileMutation = () => {
   return trpc.asset.createFile.useMutation()
 }
