@@ -3,7 +3,10 @@ resource "auth0_client" "appkom_opptak" {
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
     "stg" = []
-    "prd" = ["https://online-opptak.vercel.app", "http://localhost:3000"]
+    "prd" = [
+      "https://online-opptak.vercel.app", 
+      "http://localhost:3000",
+    ]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "spa"
