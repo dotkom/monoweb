@@ -1,8 +1,14 @@
-import { StaticAssetWriteSchema } from "@dotkomonline/types"
+import { AssetWriteSchema, ImageWriteSchema } from "@dotkomonline/types"
 import { protectedProcedure, t } from "../../trpc"
 
-export const staticAssetRouter = t.router({
+export const assetRouter = t.router({
   create: protectedProcedure
-    .input(StaticAssetWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.staticAssetService.create(input)),
+    .input(AssetWriteSchema)
+    .mutation(async ({ input, ctx }) => await ctx.assetService.create(input)),
+  createImage: protectedProcedure
+    .input(ImageWriteSchema)
+    .mutation(async ({ input, ctx }) => await ctx.assetService.createImage(input)),
+  createFile: protectedProcedure
+    .input(AssetWriteSchema)
+    .mutation(async ({ input, ctx }) => await ctx.assetService.create(input)),
 })

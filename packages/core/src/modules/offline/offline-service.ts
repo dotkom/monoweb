@@ -17,7 +17,13 @@ export interface OfflineService {
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
   update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline>
-  createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
+  createPresignedPost(
+    filename: string,
+    mimeType: string
+  ): Promise<{
+    presignedUrl: PresignedPost
+    s3Key: string
+  }>
 }
 
 export class OfflineServiceImpl implements OfflineService {
@@ -26,14 +32,9 @@ export class OfflineServiceImpl implements OfflineService {
     private readonly s3Repository: S3Repository
   ) {}
 
-  /**
-   * Get an offline by its id
-   *
-   * @throws {OfflineNotFoundError} if the offline does not exist
-   */
-  async get(id: OfflineId): Promise<Offline> {
+  async get(id: OfflineId) {
     const offline = await this.offlineRepository.getById(id)
-    if (offline === undefined) {
+    if (offline === null) {
       throw new OfflineNotFoundError(id)
     }
     return offline
@@ -54,7 +55,18 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    return this.s3Repository.createPresignedPost(env.S3_BUCKET_MONOWEB, `offlines/${filename}`, mimeType, 60) // 60 MB file limit
+  async createPresignedPost(filename: string, mimeType: string) {
+    const s3Key = crypto.randomUUID() + filename
+    const presignedUrl = await this.s3Repository.createPresignedPost(
+      env.S3_BUCKET_MONOWEB,
+      `testing/${s3Key}`,
+      mimeType,
+      60
+    ) // 60 MB file limit
+
+    return {
+      presignedUrl,
+      s3Key,
+    }
   }
 }

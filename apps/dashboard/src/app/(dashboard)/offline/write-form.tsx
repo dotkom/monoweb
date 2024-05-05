@@ -1,35 +1,18 @@
-import { OfflineWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
+import { type Offline, OfflineWriteSchema } from "@dotkomonline/types"
+import type { z } from "zod"
 import { createDateTimeInput, createFileInput, createImageInput, createTextInput, useFormBuilder } from "../../form"
-
-const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
-  fileUrl: null,
-  imageUrl: null,
-}
 
 interface UseOfflineWriteFormProps {
   onSubmit(data: FormValidationSchema): Promise<void>
-  defaultValues?: Partial<FormValidationSchema>
+  defaultValues?: Partial<Offline>
   label?: string
 }
 
-export const FormValidationSchema = OfflineWriteSchema.extend({
-  file: z.any().optional(),
-  image: z.any().optional(),
-  fileUrl: z.string().nullable(),
-  imageUrl: z.string().nullable(),
-}).omit({
-  fileId: true,
-  imageId: true,
-})
+export const FormValidationSchema = OfflineWriteSchema
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
-export const useOfflineWriteForm = ({
-  onSubmit,
-  label = "Registrer",
-  defaultValues = OFFLINE_FORM_DEFAULT_VALUES,
-}: UseOfflineWriteFormProps) =>
-  useFormBuilder({
+export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValues }: UseOfflineWriteFormProps) => {
+  return useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,
@@ -43,15 +26,14 @@ export const useOfflineWriteForm = ({
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),
-      file: createFileInput({
+      fileId: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
-        file: defaultValues.file ?? undefined,
       }),
-      image: createImageInput({
+      imageId: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
-        currentFile: defaultValues.image ?? undefined,
       }),
     },
   })
+}

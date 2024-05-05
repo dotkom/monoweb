@@ -1,20 +1,18 @@
 import { z } from "zod"
-import { StaticAssetSchema } from "./static-asset"
+import { ImageSchema } from "./asset"
 
 export const OfflineSchema = z.object({
   id: z.string().ulid(),
   title: z.string().max(1000).min(1),
   published: z.date(),
-  file: StaticAssetSchema.nullable(),
-  image: StaticAssetSchema.nullable(),
+  fileId: z.string(),
+  image: ImageSchema,
 })
 
 export const OfflineWriteSchema = OfflineSchema.omit({
   id: true,
-  file: true,
   image: true,
 }).extend({
-  fileId: z.string().ulid(),
   imageId: z.string().ulid(),
 })
 

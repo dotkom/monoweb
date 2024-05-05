@@ -1,13 +1,10 @@
-import type { StaticAsset } from "@dotkomonline/types"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  Anchor,
   Box,
   Button,
   Checkbox,
   type CheckboxProps,
-  FileInput,
   type FileInputProps,
   Flex,
   MultiSelect,
@@ -16,7 +13,6 @@ import {
   type NumberInputProps,
   Select,
   type SelectProps,
-  Table,
   TagsInput,
   type TagsInputProps,
   Text,
@@ -26,7 +22,6 @@ import {
   type TextareaProps,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
-import { useDisclosure } from "@mantine/hooks"
 import type { FC } from "react"
 import {
   type Control,
@@ -40,6 +35,7 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
+import FileUpload from "../components/molecules/FileUpload/FileUpload"
 import ImageUpload from "../components/molecules/ImageUpload/ImageUpload"
 
 interface InputFieldContext<T extends FieldValues> {
@@ -258,83 +254,30 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
-interface FileTableProps {
-  files: StaticAsset[]
-  onDelete(file: StaticAsset): void
-}
-const FileTable = ({ files, onDelete }: FileTableProps) => {
-  return (
-    <Table striped>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Navn</Table.Th>
-          <Table.Th w={200}>Type</Table.Th>
-          <Table.Th w={200}>Handlinger</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {files.map((file) => (
-          <Table.Tr key={file.id}>
-            <Table.Td>
-              <Anchor href={file.url} target="_blank" rel="noreferrer">
-                {file.fileName}
-              </Anchor>
-            </Table.Td>
-            <Table.Td>{file.fileType}</Table.Td>
-            <Table.Td>
-              <Button color="red" onClick={() => onDelete(file)}>
-                Slett
-              </Button>
-            </Table.Td>
-          </Table.Tr>
-        ))}
-      </Table.Tbody>
-    </Table>
-  )
-}
-
 export function createImageInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
-  currentFile?: StaticAsset
   aspect?: number
 }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
         <Text>{props.label}</Text>
-        {props.currentFile && (
-          <FileTable
-            files={[props.currentFile]}
-            onDelete={() => {
-              console.log("Delete")
-            }}
-          />
-        )}
         <Controller
           control={control}
           name={name}
-          render={({ field }) => {
-            const [isOpened, { toggle }] = useDisclosure(false)
-
-            return (
-              <div>
-                {props.currentFile && (
-                    <Text mb="sm" fs="italic">
-                      Ved å laste opp et nytt bilde vil det gamle bildet bli slettet
-                    </Text>
-                  )}
-                  <ImageUpload
-                    onSubmit={(blob) => {
-                      console.log(blob)
-                      field.onChange(blob)
-                      close()
-                    }}
-                    aspect={props.aspect}
-                  />
-              </div>
-            )
-          }}
+          render={({ field }) => (
+            <ImageUpload
+              onSubmit={(data) => {
+                field.onChange(data ? {
+                  crop: data.crop,
+                  assetId: data.assetId,
+                } : null)
+              }}
+              defaultValues={field.value}
+              aspect={props.aspect}
+            />
+          )}
         />
       </Box>
     )
@@ -343,31 +286,15 @@ export function createImageInput<F extends FieldValues>({
 
 export function createFileInput<F extends FieldValues>({
   ...props
-}: Omit<FileInputProps, "error"> & {
-  file?: StaticAsset
-}): InputProducerResult<F> {
+}: Omit<FileInputProps, "error">): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
         <Text>{props.label}</Text>
-        {props.file ? (
-          <FileTable
-            files={[props.file]}
-            onDelete={() => {
-              console.log("Delete")
-            }}
-          />
-        ) : (
-          <Text mb="sm" fs="italic">
-            Ingen fil lastet opp
-          </Text>
-        )}
         <Controller
           control={control}
           name={name}
-          render={({ field }) => (
-            <input type="file" onChange={(e) => field.onChange(e.target.files?.[0])} />
-          )}
+          render={({ field }) => <FileUpload value={field.value} onChange={field.onChange} />}
         />
       </Box>
     )

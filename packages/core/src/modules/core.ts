@@ -8,6 +8,8 @@ import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article
 import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
 import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
 import { type ArticleTagRepository, ArticleTagRepositoryImpl } from "./article/article-tag-repository"
+import { type AssetRepository, AssetRepositoryImpl } from "./asset/asset-repository"
+import { type AssetService, AssetServiceImpl } from "./asset/asset-service"
 import { type AttendancePoolRepository, AttendancePoolRepositoryImpl } from "./attendance/attendance-pool-repository"
 import { type AttendancePoolService, AttendancePoolServiceImpl } from "./attendance/attendance-pool-service"
 import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
@@ -65,7 +67,6 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { type StaticAssetRepository, StaticAssetRepositoryImpl } from "./static-asset/static-asset-repository"
 import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
@@ -77,7 +78,6 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
-import { type StaticAssetService, StaticAssetServiceImpl } from "./static-asset/static-asset-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -227,8 +227,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
-  const staticAssetRepository: StaticAssetRepository = new StaticAssetRepositoryImpl(db)
-  const staticAssetService: StaticAssetService = new StaticAssetServiceImpl(staticAssetRepository, s3Client)
+  const assetRepository: AssetRepository = new AssetRepositoryImpl(db)
+  const assetService: AssetService = new AssetServiceImpl(assetRepository, s3Client)
 
   return {
     userService,
@@ -255,6 +255,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     interestGroupRepository,
     interestGroupService,
     auth0SynchronizationService,
-    staticAssetService,
+    assetService,
   }
 }

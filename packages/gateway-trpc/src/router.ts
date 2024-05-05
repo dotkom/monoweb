@@ -9,7 +9,7 @@ import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { offlineRouter } from "./modules/offline/offline-router"
 import { paymentRouter } from "./modules/payment/payment-router"
-import { staticAssetRouter } from "./modules/static-asset/static-asset-router"
+import { assetRouter } from "./modules/static-asset/static-asset-router"
 import { userRouter } from "./modules/user/user-router"
 import { t } from "./trpc"
 
@@ -24,7 +24,7 @@ export const appRouter = t.router({
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,
   offline: offlineRouter,
-  staticAsset: staticAssetRouter,
+  asset: assetRouter,
   article: articleRouter,
   interestGroup: interestGroupRouter,
 })

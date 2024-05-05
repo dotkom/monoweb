@@ -6,6 +6,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import Link from "next/link"
 import { useMemo } from "react"
 import { formatDate } from "../../utils/format"
+import { buildAssetUrl } from "../../utils/s3"
 
 interface Props {
   data: Offline[]
@@ -23,7 +24,7 @@ export const useOfflineTable = ({ data }: Props) => {
         header: () => "Utgivelsesdato",
         cell: (info) => <Text>{formatDate(info.getValue())}</Text>,
       }),
-      columnHelper.accessor("fileUrl", {
+      columnHelper.accessor("fileId", {
         header: () => "Fil",
         cell: (info) => {
           const val = info.getValue()
@@ -31,7 +32,21 @@ export const useOfflineTable = ({ data }: Props) => {
             return "Ingen fil"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopenere">
+            <Anchor target="_blank" href={buildAssetUrl(val)} rel="noopenere">
+              Link
+            </Anchor>
+          )
+        },
+      }),
+      columnHelper.accessor("image", {
+        header: () => "Bilde",
+        cell: (info) => {
+          const val = info.getValue()
+          if (val === null) {
+            return "Ingen bilde"
+          }
+          return (
+            <Anchor target="_blank" href={buildAssetUrl(val.assetId)} rel="noopenere">
               Link
             </Anchor>
           )
