@@ -10,7 +10,7 @@ import { useDebounceEffect } from "./useDebounceEffect"
 
 import type { Image } from "@dotkomonline/types"
 import "react-image-crop/dist/ReactCrop.css"
-import { useCreateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
+import { useCreateImageMutation, useUpdateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 import { useEffect } from "react"
 import { useDisclosure } from "@mantine/hooks"
@@ -45,6 +45,40 @@ function CropComponent({ imgSrc, cropDefault, setCompletedCrop, aspect, scale }:
       {/* <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ transform: `scale(${scale})` }} onLoad={onImageLoad} /> */}
       <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ transform: `scale(${scale})` }} />
     </ReactCrop>
+  )
+}
+
+interface ShowPreviewProps {
+  imgSrc: string
+  completedCrop: PixelCrop
+  imgRef: React.RefObject<HTMLImageElement>
+  scale: number
+}
+function ShowPreview({ imgSrc, completedCrop, imgRef, scale }: ShowPreviewProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    ;(async () => {
+      if (completedCrop?.width && completedCrop?.height && imgRef.current && canvasRef.current) {
+        // We use canvasPreview as it's much faster than imgPreview.
+        canvasPreview(imgRef.current, canvasRef.current, completedCrop, scale)
+      }
+    })()
+  }, [completedCrop, scale, imgRef.current])
+  return (
+    <div>
+      <img src={imgSrc} alt="Crop" style={{ display: "none" }} ref={imgRef} />
+      <canvas
+        ref={canvasRef}
+        style={{
+          border: "1px solid black",
+          objectFit: "contain",
+          // width: completedCrop.width,
+          width: 200,
+          // height: completedCrop.height,
+        }}
+      />
+    </div>
   )
 }
 
@@ -86,10 +120,10 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
 
   const uploadToS3 = useUploadAssetToS3()
   const createImage = useCreateImageMutation()
+  const updateImage = useUpdateImageMutation()
 
   useEffect(() => {
     async function fetchDefaultImage() {
-      console.log("defaultValues", defaultValues)
       if (defaultValues) {
         setAssetId(defaultValues.assetId)
         if (defaultValues.crop) {
@@ -132,6 +166,26 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
       const url = buildAssetUrl(result.id)
       const file = await getFileFromUrl(url)
       await loadFile(file)
+
+      let imgResult: Image
+      const image = {
+        assetId: assetUri,
+        crop: getScaledCrop(),
+        altText: "Uploaded image",
+      }
+
+        console.log("updating image", image)
+
+      if (defaultValues?.id) {
+        imgResult = await updateImage.mutateAsync({
+          id: defaultValues.id,
+          image,
+        })
+      } else {
+        imgResult = await createImage.mutateAsync(image)
+      }
+
+      onSubmit(imgResult)
     }
   }
 
@@ -153,22 +207,31 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
 
   async function onSetCrop() {
     toggleShowCrop()
+
+    let result: Image
+    if (defaultValues?.id) {
+      result = await updateImage.mutateAsync({
+        id: defaultValues.id,
+        image: {
+          assetId: assetUri,
+          crop: getScaledCrop(),
+          altText: "Uploaded image",
+        },
+      })
+    } else {
+      result = await createImage.mutateAsync({
+        assetId: assetUri,
+        crop: getScaledCrop(),
+        altText: "Uploaded image",
+      })
+    }
+
+    onSubmit(result)
   }
 
   async function changeImage() {
-    onSubmit(undefined)
     setImgSrc("")
     setAssetId("")
-  }
-
-  async function onUploadClick() {
-    const result = await createImage.mutateAsync({
-      assetId: assetUri,
-      crop: getScaledCrop(),
-      altText: "Uploaded image",
-    })
-
-    onSubmit(result)
   }
 
   async function onDownloadClick() {
@@ -235,6 +298,14 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
     [completedCrop, scale]
   )
 
+  // if (!editOpen) {
+  //   return (
+  //     <button onClick={startEdit} type="button">
+  //       Last opp bilde
+  //     </button>
+  //   )
+  // }
+
   return (
     <div className="App">
       <div className="Crop-Controls">{!imgSrc && <input type="file" accept="image/*" onChange={onSelectFile} />}</div>
@@ -260,7 +331,7 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
           />
           <div>
             <button type="button" onClick={onSetCrop}>
-              Sett crop
+              Lagre
             </button>
             <button type="button" onClick={onDownloadClick}>
               Last ned
@@ -302,12 +373,12 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
               style={{
                 border: "1px solid black",
                 objectFit: "contain",
-                width: completedCrop.width,
-                height: completedCrop.height,
+                // width: completedCrop.width,
+                width: 200,
+                // height: completedCrop.height,
               }}
             />
           </div>
-          <button onClick={onUploadClick} type="button">Ferdig</button>
         </>
       )}
     </div>
