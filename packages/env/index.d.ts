@@ -13,6 +13,7 @@ export declare type EnvironmentKeys =
   | "GTX_AUTH0_ISSUER"
   | "NEXT_PUBLIC_NODE_ENV"
   | "NEXT_PUBLIC_VERCEL_URL"
+  | "NEXT_PUBLIC_S3_BUCKET_MONOWEB"
   | "NEXTAUTH_SECRET"
   | "NODE_ENV"
   | "S3_BUCKET_MONOWEB"
