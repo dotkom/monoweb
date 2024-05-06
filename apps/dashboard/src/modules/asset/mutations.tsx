@@ -10,9 +10,7 @@ export const useUploadAssetToS3 = () => {
   const createAsset = useCreateAssetMutation()
 
   return async (file: File) => {
-    console.log("trying to upload file to s3", file)
     const result = await upload(file)
-    console.log("uploaded file to s3", result)
     const inserted = await createAsset.mutateAsync({
       metadata: null,
       originalFilename: result.originalFilename,
@@ -27,7 +25,6 @@ export const useUploadAssetToS3 = () => {
 export const useCreateImageMutation = () => {
   return trpc.asset.createImage.useMutation({
     onSuccess(data, variables, context) {
-      console.log("created image", data)
     },
   })
 }

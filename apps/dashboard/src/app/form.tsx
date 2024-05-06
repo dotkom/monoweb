@@ -268,7 +268,6 @@ export function createImageInput<F extends FieldValues>({
           control={control}
           name={name}
           render={({ field }) => {
-            console.log("I FORM", field.value)
             return (
               <ImageUpload
                 onSubmit={(data) => {
@@ -372,12 +371,10 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          console.log(e)
           form.handleSubmit((values) => {
             return onSubmit(values, form)
           })(e)
 
-          console.log(form.formState.errors)
         }}
       >
         <Flex direction="column" gap="md">

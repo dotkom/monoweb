@@ -15,7 +15,6 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         title: data.title,
         published: data.published,
       })
-      console.log("Created offline")
       close()
     },
   })

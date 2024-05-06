@@ -25,7 +25,6 @@ interface Props {
 }
 
 export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) {
-  console.log("defaultValues", defaultValues)
   const [imgSrc, setImgSrc] = useState("")
   const [assetKey, setAssetKey] = useState("")
   const [scale, setScale] = useState(1)
@@ -78,12 +77,10 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
       const uploadedAsset = await uploadToS3(e.target.files[0])
-      console.log("uploadedAsset", uploadedAsset)
       setAssetKey(uploadedAsset.key)
 
       const url = buildAssetUrl(uploadedAsset.key)
 
-      console.log("url", url)
 
       const file = await getFileFromUrl(url)
       await loadFile(file)
@@ -101,7 +98,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
         }
 
         // Default values are set meaning we are updating an existing image
-        console.log("toInsert", toInsert)
         const res = await updateImage.mutateAsync(toInsert)
         onSubmit(res)
         return
@@ -131,7 +127,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
   async function onSetCrop() {
     toggleShowCrop()
 
-    console.log("completedCrop", calculateRealCropValues())
 
     let result: Image
     if (defaultValues?.id) {
@@ -144,7 +139,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
         },
       })
 
-      console.log("result after update", result)
     } else {
       result = await createImage.mutateAsync({
         assetKey: assetKey,
@@ -152,7 +146,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
         altText: "Uploaded image",
       })
 
-      console.log("result after create", result)
     }
 
     onSubmit(result)
