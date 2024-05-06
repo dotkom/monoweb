@@ -263,23 +263,24 @@ export function createImageInput<F extends FieldValues>({
     return (
       <Box>
         <Text>{props.label}</Text>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} /> }
         <Controller
           control={control}
           name={name}
           render={({ field }) => {
             console.log("I FORM", field.value)
-            return(
-            <ImageUpload
-              onSubmit={(data) => {
-                field.onChange(data ? {
-                  crop: data.crop,
-                  assetId: data.assetId,
-                } : null)
-              }}
-              defaultValues={field.value}
-              aspect={props.aspect}
-            />
-          )}}
+            return (
+              <ImageUpload
+                onSubmit={(data) => {
+                  field.onChange(
+                    data
+                  )
+                }}
+                defaultValues={field.value}
+                aspect={props.aspect}
+              />
+            )
+          }}
         />
       </Box>
     )
@@ -293,6 +294,7 @@ export function createFileInput<F extends FieldValues>({
     return (
       <Box>
         <Text>{props.label}</Text>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} /> }
         <Controller
           control={control}
           name={name}

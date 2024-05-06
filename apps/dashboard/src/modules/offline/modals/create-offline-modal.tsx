@@ -11,7 +11,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
     onSubmit: async (data) => {
       createOffline.mutate({
         fileId: data.fileId,
-        imageId: data.imageId,
+        imageId: data.image.id,
         title: data.title,
         published: data.published,
       })

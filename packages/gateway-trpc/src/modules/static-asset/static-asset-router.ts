@@ -1,6 +1,6 @@
 import { AssetWriteSchema, ImageWriteSchema } from "@dotkomonline/types"
-import { protectedProcedure, t } from "../../trpc"
 import { z } from "zod"
+import { protectedProcedure, t } from "../../trpc"
 
 export const assetRouter = t.router({
   create: protectedProcedure
@@ -10,10 +10,12 @@ export const assetRouter = t.router({
     .input(ImageWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.assetService.createImage(input)),
   updateImage: protectedProcedure
-    .input(z.object({
-      id: z.string(),
-      image: ImageWriteSchema,
-    }))
+    .input(
+      z.object({
+        id: z.string(),
+        image: ImageWriteSchema,
+      })
+    )
     .mutation(async ({ input, ctx }) => await ctx.assetService.updateImage(input.id, input.image)),
   createFile: protectedProcedure
     .input(AssetWriteSchema)

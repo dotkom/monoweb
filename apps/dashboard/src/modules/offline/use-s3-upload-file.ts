@@ -6,9 +6,8 @@ export const useS3UploadFile = () => {
   const presignedPostMut = trpc.offline.createPresignedPost.useMutation()
 
   return async (file: File) => {
-    const imageName = encodeURIComponent(file.name + crypto.randomUUID())
     const res = await presignedPostMut.mutateAsync({
-      filename: imageName,
+      filename: file.name,
       mimeType: file.type,
     })
 

@@ -34,6 +34,7 @@ export class AssetServiceImpl implements AssetService {
   }
 
   async createImage(payload: ImageWrite) {
+    console.log("createImage", payload)
     return this.assetRepository.createImage(payload)
   }
 

@@ -1,4 +1,4 @@
-import { type Offline, OfflineWriteSchema } from "@dotkomonline/types"
+import { ImageSchema, type Offline, OfflineWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 import { createDateTimeInput, createFileInput, createImageInput, createTextInput, useFormBuilder } from "../../form"
 
@@ -8,7 +8,11 @@ interface UseOfflineWriteFormProps {
   label?: string
 }
 
-export const FormValidationSchema = OfflineWriteSchema
+export const FormValidationSchema = OfflineWriteSchema.omit({
+  imageId: true
+}).extend({
+  image: ImageSchema
+})
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
 export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValues }: UseOfflineWriteFormProps) => {
@@ -30,7 +34,7 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
         label: "Fil",
         placeholder: "Last opp",
       }),
-      imageId: createImageInput({
+      image: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
       }),

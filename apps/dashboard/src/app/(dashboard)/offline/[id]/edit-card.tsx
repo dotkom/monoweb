@@ -11,6 +11,10 @@ export const OfflineEditCard: FC = () => {
     label: "Oppdater",
     onSubmit: async (data) => {
       // TODO: Handle offline edit
+      edit.mutate({
+        id: offline.id,
+        input: data,
+      })
     },
     defaultValues: offline,
   })

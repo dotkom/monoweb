@@ -110,14 +110,6 @@ export const runFixtures = async () => {
     .execute()
     .then(mapId)
 
-  insertedIds.offline = await db
-    .insertInto("offline")
-    .onConflict((eb) => eb.doNothing())
-    .values(getOfflineFixtures())
-    .returning("id")
-    .execute()
-    .then(mapId)
-
   insertedIds.interestGroup = await db
     .insertInto("interestGroup")
     .onConflict((eb) => eb.doNothing())
