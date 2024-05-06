@@ -1,4 +1,3 @@
-import type { Image } from "@dotkomonline/types"
 import type { File } from "../../stubs/file/File"
 
 // Expected response: 204 No Content. Returns resource URL if successful.
