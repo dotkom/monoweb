@@ -9,9 +9,9 @@ interface UseOfflineWriteFormProps {
 }
 
 export const FormValidationSchema = OfflineWriteSchema.omit({
-  imageId: true
+  imageId: true,
 }).extend({
-  image: ImageSchema
+  image: ImageSchema,
 })
 type FormValidationSchema = z.infer<typeof FormValidationSchema>
 

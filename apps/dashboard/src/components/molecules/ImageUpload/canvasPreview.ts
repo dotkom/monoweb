@@ -9,7 +9,7 @@ export async function canvasPreview(image: HTMLImageElement, canvas: HTMLCanvasE
     naturalWidth: image.naturalWidth,
     naturalHeight: image.naturalHeight,
     crop,
-    image
+    image,
   })
   const ctx = canvas.getContext("2d")
 

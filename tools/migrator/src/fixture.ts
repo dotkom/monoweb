@@ -13,7 +13,6 @@ import {
   getJobListingLocationLinkFixtures,
 } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
-import { getOfflineFixtures } from "./fixtures/offline"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 

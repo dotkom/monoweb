@@ -20,17 +20,19 @@ export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: Sh
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   function renderCanvasPreview() {
-    if(!imgRef.current) {
+    if (!imgRef.current) {
       console.error("Tried to render canvas preview before image was loaded")
       return
     }
 
-      const crop: PixelCrop = completedCrop ? completedCrop : { x: 0, y: 0, width: imgRef.current?.width, height: imgRef.current.height , unit: "px" }
-      if (imgRef.current && canvasRef.current) {
-        // We use canvasPreview as it's much faster than imgPreview.
-        console.log("canvasPreview")
-        canvasPreview(imgRef.current, canvasRef.current, crop, scale)
-      }
+    const crop: PixelCrop = completedCrop
+      ? completedCrop
+      : { x: 0, y: 0, width: imgRef.current?.width, height: imgRef.current.height, unit: "px" }
+    if (imgRef.current && canvasRef.current) {
+      // We use canvasPreview as it's much faster than imgPreview.
+      console.log("canvasPreview")
+      canvasPreview(imgRef.current, canvasRef.current, crop, scale)
+    }
   }
 
   return (

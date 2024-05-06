@@ -14,23 +14,23 @@ export interface PresignedPost {
 
 function encodeS3URI(filename: string): string {
   // Define characters that are generally safe for use in key names
-  const safeCharacters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-_.*\'()';
+  const safeCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-_.*'()"
 
   // Replace unsafe characters with safe ones
   const safeFilename = filename.replace(/[^a-zA-Z0-9!-_.*'()]/g, (match) => {
-      // Replace unsafe characters with underscore
-      if (!safeCharacters.includes(match)) {
-          return '_';
-      }
-      return match;
-  });
+    // Replace unsafe characters with underscore
+    if (!safeCharacters.includes(match)) {
+      return "_"
+    }
+    return match
+  })
 
   // Ensure the key name is not empty
-  if (safeFilename.trim() === '') {
-      throw new Error('Filename results in an empty key name.');
+  if (safeFilename.trim() === "") {
+    throw new Error("Filename results in an empty key name.")
   }
 
-  return safeFilename;
+  return safeFilename
 }
 
 export interface OfflineService {
@@ -77,7 +77,7 @@ export class OfflineServiceImpl implements OfflineService {
   }
 
   async createPresignedPost(filename: string, mimeType: string) {
-    const generatedKey  = crypto.randomUUID() + filename
+    const generatedKey = crypto.randomUUID() + filename
     const encodedKey = encodeS3URI(generatedKey)
     console.log("Generated asset key", encodedKey)
     const presignedUrl = await this.s3Repository.createPresignedPost(
