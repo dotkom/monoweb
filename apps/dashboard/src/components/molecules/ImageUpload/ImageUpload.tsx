@@ -11,7 +11,6 @@ import { useDebounceEffect } from "./useDebounceEffect"
 import type { Image } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
-import "react-image-crop/dist/ReactCrop.css"
 import { useCreateImageMutation, useUpdateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
@@ -20,11 +19,11 @@ import { getFileFromUrl } from "./utils"
 
 interface Props {
   onSubmit: (image: Image | undefined) => void
-  aspect?: number | undefined
+  cropAspectLock?: number | undefined
   defaultValues?: Image
 }
 
-export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) {
+export default function ImageUpload({ onSubmit, cropAspectLock: aspect, defaultValues }: Props) {
   const [imgSrc, setImgSrc] = useState("")
   const [assetKey, setAssetKey] = useState("")
   const [scale, setScale] = useState(1)
@@ -159,11 +158,10 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
   )
 
   return (
-    <div className="App">
-      <div className="Crop-Controls">{!imgSrc && <input type="file" accept="image/*" onChange={onSelectFile} />}</div>
+    <div>
+      {!imgSrc && <input type="file" accept="image/*" onChange={onSelectFile} />}
       {!!cropOpen && (
         <div>
-          <div>
             <label htmlFor="scale-input">Scale: </label>
             <input
               id="scale-input"
@@ -173,7 +171,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
               disabled={!imgSrc}
               onChange={(e) => setScale(Number(e.target.value))}
             />
-          </div>
           <CropComponent
             imgSrc={imgSrc}
             cropDefault={completedCrop}

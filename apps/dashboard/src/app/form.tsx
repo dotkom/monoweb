@@ -257,7 +257,7 @@ export function createTextInput<F extends FieldValues>({
 export function createImageInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
-  aspect?: number
+  cropAspectLock?: number
 }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
@@ -267,17 +267,9 @@ export function createImageInput<F extends FieldValues>({
         <Controller
           control={control}
           name={name}
-          render={({ field }) => {
-            return (
-              <ImageUpload
-                onSubmit={(data) => {
-                  field.onChange(data)
-                }}
-                defaultValues={field.value}
-                aspect={props.aspect}
-              />
-            )
-          }}
+          render={({ field }) => (
+            <ImageUpload onSubmit={field.onChange} defaultValues={field.value} cropAspectLock={props.cropAspectLock} />
+          )}
         />
       </Box>
     )
@@ -295,7 +287,7 @@ export function createFileInput<F extends FieldValues>({
         <Controller
           control={control}
           name={name}
-          render={({ field }) => <FileUpload value={field.value} onChange={field.onChange} />}
+          render={({ field }) => <FileUpload value={field.value} onFileLoad={field.onChange} />}
         />
       </Box>
     )

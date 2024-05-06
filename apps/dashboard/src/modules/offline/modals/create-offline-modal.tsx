@@ -8,6 +8,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const createOffline = useCreateOfflineMutation()
 
   const FormComponent = useOfflineWriteForm({
+    label: "Opprett ny Offline",
     onSubmit: async (data) => {
       createOffline.mutate({
         fileAssetKey: data.fileAssetKey,
