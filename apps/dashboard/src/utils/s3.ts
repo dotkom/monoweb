@@ -6,7 +6,6 @@ export async function s3UploadFile(file: File, fields: Record<string, string>, u
   try {
     const formData = new FormData()
     for (const [key, value] of Object.entries(fields)) {
-      console.log(key, value)
       formData.append(key, value)
     }
 
