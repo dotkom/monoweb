@@ -12,7 +12,10 @@ export const OfflineEditCard: FC = () => {
     onSubmit: async (data) => {
       edit.mutate({
         id: offline.id,
-        input: data,
+        input: {
+          ...data,
+          imageId: data.image.id,
+        },
       })
     },
     defaultValues: offline,

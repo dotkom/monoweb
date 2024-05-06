@@ -268,7 +268,7 @@ export function createImageInput<F extends FieldValues>({
           control={control}
           name={name}
           render={({ field }) => (
-            <ImageUpload onSubmit={field.onChange} defaultValues={field.value} cropAspectLock={props.cropAspectLock} />
+            <ImageUpload setImage={field.onChange} image={field.value} cropAspectLock={props.cropAspectLock} />
           )}
         />
       </Box>
