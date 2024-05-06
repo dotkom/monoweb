@@ -17,7 +17,7 @@ export const useUploadAssetToS3 = () => {
       metadata: null,
       originalFilename: result.originalFilename,
       size: result.size,
-      id: result.s3FileName,
+      key: result.s3FileName,
     })
 
     return inserted

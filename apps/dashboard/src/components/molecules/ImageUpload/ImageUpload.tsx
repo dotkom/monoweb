@@ -27,7 +27,7 @@ interface Props {
 export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) {
   console.log("defaultValues", defaultValues)
   const [imgSrc, setImgSrc] = useState("")
-  const [assetId, setAssetId] = useState("")
+  const [assetKey, setAssetKey] = useState("")
   const [scale, setScale] = useState(1)
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
@@ -43,11 +43,11 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
 
   async function reset() {
     setImgSrc("")
-    setAssetId("")
+    setAssetKey("")
   }
 
   async function setImageFromDefaultValues(image: Image) {
-    setAssetId(image.assetId)
+    setAssetKey(image.assetKey)
     if (image.crop) {
       setCompletedCrop({
         x: image.crop.left,
@@ -58,7 +58,7 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
       })
     }
 
-    const url = buildAssetUrl(image.assetId)
+    const url = buildAssetUrl(image.assetKey)
     const file = await getFileFromUrl(url)
     await loadFile(file)
   }
@@ -79,9 +79,9 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
     if (e.target.files && e.target.files.length > 0) {
       const uploadedAsset = await uploadToS3(e.target.files[0])
       console.log("uploadedAsset", uploadedAsset)
-      setAssetId(uploadedAsset.id)
+      setAssetKey(uploadedAsset.key)
 
-      const url = buildAssetUrl(uploadedAsset.id)
+      const url = buildAssetUrl(uploadedAsset.key)
 
       console.log("url", url)
 
@@ -89,7 +89,7 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
       await loadFile(file)
 
       const image = {
-        assetId: uploadedAsset.id,
+        assetKey: uploadedAsset.key,
         crop: null,
         altText: "Uploaded image",
       }
@@ -138,7 +138,7 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
       result = await updateImage.mutateAsync({
         id: defaultValues.id,
         image: {
-          assetId: assetId,
+          assetKey: assetKey,
           crop: calculateRealCropValues(),
           altText: "Uploaded image",
         },
@@ -147,7 +147,7 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
       console.log("result after update", result)
     } else {
       result = await createImage.mutateAsync({
-        assetId: assetId,
+        assetKey: assetKey,
         crop: calculateRealCropValues(),
         altText: "Uploaded image",
       })

@@ -10,7 +10,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const FormComponent = useOfflineWriteForm({
     onSubmit: async (data) => {
       createOffline.mutate({
-        fileId: data.fileId,
+        fileAssetKey: data.fileAssetKey,
         imageId: data.image.id,
         title: data.title,
         published: data.published,

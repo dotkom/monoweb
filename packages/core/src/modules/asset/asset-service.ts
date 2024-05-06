@@ -1,20 +1,42 @@
-import type { S3Client } from "@aws-sdk/client-s3"
-import { createPresignedPost as _createPresignedPost } from "@aws-sdk/s3-presigned-post"
-import type { Asset, AssetId, AssetWrite, Image, ImageWrite } from "@dotkomonline/types"
+import { env } from "@dotkomonline/env"
+import type { Asset, AssetKey, AssetWrite, Image, ImageWrite } from "@dotkomonline/types"
+import type { S3Repository } from "../external/s3-repository"
 import type { AssetRepository } from "./asset-repository"
 
 type Fields = Record<string, string>
 
+function encodeS3URI(filename: string): string {
+  // Define characters that are generally safe for use in key names
+  const safeCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-_.*'()"
+
+  // Replace unsafe characters with safe ones
+  const safeFilename = filename.replace(/[^a-zA-Z0-9!-_.*'()]/g, (match) => {
+    // Replace unsafe characters with underscore
+    if (!safeCharacters.includes(match)) {
+      return "_"
+    }
+    return match
+  })
+
+  // Ensure the key name is not empty
+  if (safeFilename.trim() === "") {
+    throw new Error("Filename results in an empty key name.")
+  }
+
+  return safeFilename
+}
+
 export interface PresignedPost {
   url: string
   fields: Fields
+  assetKey: string
 }
 
 export interface AssetService {
-  get(id: AssetId): Promise<Asset>
+  get(key: AssetKey): Promise<Asset>
   getImage(id: string): Promise<Image>
   create(payload: AssetWrite): Promise<Asset>
-  createPresignedPost(bucket: string, filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
+  createPresignedPost(filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
   createImage(payload: ImageWrite): Promise<Image>
   updateImage(id: string, payload: ImageWrite): Promise<Image>
 }
@@ -22,7 +44,7 @@ export interface AssetService {
 export class AssetServiceImpl implements AssetService {
   constructor(
     private readonly assetRepository: AssetRepository,
-    private readonly s3Client: S3Client
+    private readonly s3Repository: S3Repository
   ) {}
 
   async getImage(id: string): Promise<Image> {
@@ -34,24 +56,23 @@ export class AssetServiceImpl implements AssetService {
   }
 
   async createImage(payload: ImageWrite) {
-    console.log("createImage", payload)
     return this.assetRepository.createImage(payload)
   }
 
-  async createPresignedPost(
-    bucket: string,
-    filepath: string,
-    mimeType: string,
-    maxSizeMB: number
-  ): Promise<PresignedPost> {
-    return await _createPresignedPost(this.s3Client, {
-      Bucket: bucket,
-      Key: filepath,
-      Fields: {
-        "content-type": mimeType,
-      },
-      Conditions: [["content-length-range", 0, maxSizeMB * 1024 * 1024]],
-    })
+  async createPresignedPost(filename: string, mimeType: string, maxSizeMB: number) {
+    const generatedKey = crypto.randomUUID() + filename
+    const encodedKey = encodeS3URI(generatedKey)
+    const presignedUrl = await this.s3Repository.createPresignedPost(
+      env.S3_BUCKET_MONOWEB,
+      `testing/${encodedKey}`,
+      mimeType,
+      maxSizeMB
+    )
+
+    return {
+      ...presignedUrl,
+      assetKey: encodedKey,
+    }
   }
 
   async handlePresignedPostSuccess(write: AssetWrite): Promise<Asset> {
@@ -63,7 +84,7 @@ export class AssetServiceImpl implements AssetService {
     return staticAsset
   }
 
-  async get(id: AssetId): Promise<Asset> {
-    return this.assetRepository.get(id)
+  async get(key: AssetKey): Promise<Asset> {
+    return this.assetRepository.get(key)
   }
 }

@@ -11,10 +11,10 @@ export const useS3UploadFile = () => {
       mimeType: file.type,
     })
 
-    await s3UploadFile(file, res.presignedUrl.fields, res.presignedUrl.url)
+    await s3UploadFile(file, res.fields, res.url)
 
     return {
-      s3FileName: res.s3Key,
+      s3FileName: res.assetKey,
       originalFilename: file.name,
       size: file.size,
     }

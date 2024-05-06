@@ -54,7 +54,7 @@ export interface ArticleTags {
 
 export interface Asset {
   createdAt: Generated<Timestamp>;
-  id: string;
+  key: string;
   metadata: Json | null;
   originalFilename: string;
   size: number;
@@ -147,7 +147,7 @@ export interface EventCompany {
 
 export interface Image {
   altText: string;
-  assetId: string;
+  assetKey: string;
   createdAt: Generated<Timestamp>;
   crop: Json | null;
   id: Generated<string>;
@@ -219,7 +219,7 @@ export interface NotificationPermissions {
 
 export interface Offline {
   createdAt: Generated<Timestamp>;
-  fileId: string;
+  fileAssetKey: string;
   id: Generated<string>;
   imageId: string;
   published: Timestamp;

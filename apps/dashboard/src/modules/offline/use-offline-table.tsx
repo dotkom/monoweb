@@ -24,15 +24,15 @@ export const useOfflineTable = ({ data }: Props) => {
         header: () => "Utgivelsesdato",
         cell: (info) => <Text>{formatDate(info.getValue())}</Text>,
       }),
-      columnHelper.accessor("fileId", {
+      columnHelper.accessor("fileAssetKey", {
         header: () => "Fil",
         cell: (info) => {
-          const val = info.getValue()
-          if (val === null) {
+          const assetKey = info.getValue()
+          if (assetKey === null) {
             return "Ingen fil"
           }
           return (
-            <Anchor target="_blank" href={buildAssetUrl(val)} rel="noopenere">
+            <Anchor target="_blank" href={buildAssetUrl(assetKey)} rel="noopenere">
               Link
             </Anchor>
           )
@@ -41,12 +41,12 @@ export const useOfflineTable = ({ data }: Props) => {
       columnHelper.accessor("image", {
         header: () => "Bilde",
         cell: (info) => {
-          const val = info.getValue()
-          if (val === null) {
+          const image = info.getValue()
+          if (image === null) {
             return "Ingen bilde"
           }
           return (
-            <Anchor target="_blank" href={buildImgUrl(val)} rel="noopenere">
+            <Anchor target="_blank" href={buildImgUrl(image)} rel="noopenere">
               Link
             </Anchor>
           )

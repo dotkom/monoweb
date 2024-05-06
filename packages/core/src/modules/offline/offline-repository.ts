@@ -39,10 +39,10 @@ export class OfflineRepositoryImpl implements OfflineRepository {
         "offline.updatedAt",
         "offline.published",
         "offline.imageId",
-        "offline.fileId",
+        "offline.fileAssetKey",
       ])
       .leftJoin("image", "offline.imageId", "image.id")
-      .select(["image.assetId as imageAssetId", "image.crop as imageCrop", "image.altText as imageAltText"])
+      .select(["image.assetKey as imageAssetKey", "image.crop as imageCrop", "image.altText as imageAltText"])
       .where("offline.id", "=", id)
 
     const result = await query.executeTakeFirst()
@@ -53,14 +53,14 @@ export class OfflineRepositoryImpl implements OfflineRepository {
 
     const image: Keys<Image> = {
       id: result.imageId,
-      assetId: result.imageAssetId,
+      assetKey: result.imageAssetKey,
       crop: result.imageCrop,
       altText: result.imageAltText,
     }
 
     const parsed: Keys<Offline> = {
       ...result,
-      fileId: result.fileId,
+      fileAssetKey: result.fileAssetKey,
       image,
     }
 
@@ -72,7 +72,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       .selectFrom("offline")
       .selectAll("offline")
       .leftJoin("image", "offline.imageId", "image.id")
-      .select(["image.assetId as imageAssetId", "image.crop as imageCrop", "image.altText as imageAltText"])
+      .select(["image.assetKey as imageAssetKey", "image.crop as imageCrop", "image.altText as imageAltText"])
       .orderBy("offline.createdAt", "desc")
       .limit(take)
 
@@ -84,14 +84,14 @@ export class OfflineRepositoryImpl implements OfflineRepository {
     for (const offline of offlines) {
       const image: Keys<Image> = {
         id: offline.imageId,
-        assetId: offline.imageAssetId,
+        assetKey: offline.imageAssetKey,
         crop: offline.imageCrop,
         altText: offline.imageAltText,
       }
 
       const parsed: Keys<Offline> = {
         ...offline,
-        fileId: offline.fileId,
+        fileAssetKey: offline.fileAssetKey,
         image,
       }
 
