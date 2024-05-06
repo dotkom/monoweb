@@ -7,8 +7,6 @@ import { useRef } from "react"
 import type { PixelCrop } from "react-image-crop"
 import { canvasPreview } from "./canvasPreview"
 
-import "react-image-crop/dist/ReactCrop.css"
-
 interface ShowPreviewProps {
   imgSrc: string
   completedCrop: PixelCrop | undefined
@@ -36,7 +34,7 @@ export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: Sh
 
   return (
     <div style={{ display: hidden ? "none" : "block" }}>
-      <img src={imgSrc} alt="Crop" style={{ display: "none" }} ref={imgRef} onLoad={renderCanvasPreview} />
+      <img src={imgSrc} alt="Crop" style={{ display: "none", maxWidth: "100%" }} ref={imgRef} onLoad={renderCanvasPreview} />
       <canvas
         ref={canvasRef}
         style={{
