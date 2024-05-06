@@ -31,6 +31,7 @@ export function buildAssetUrl(key: string) {
 }
 
 function buildFinalCloudflareUrl(options: string, assetUrl: string) {
+
   const cloudflareImagesBaseUrl = "https://onli.no/cdn-cgi/image"
 
   return `${cloudflareImagesBaseUrl}/${options}/${assetUrl}`
