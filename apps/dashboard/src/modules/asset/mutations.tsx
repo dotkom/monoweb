@@ -24,8 +24,7 @@ export const useUploadAssetToS3 = () => {
 
 export const useCreateImageMutation = () => {
   return trpc.asset.createImage.useMutation({
-    onSuccess(data, variables, context) {
-    },
+    onSuccess(data, variables, context) {},
   })
 }
 

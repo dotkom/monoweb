@@ -374,7 +374,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
           form.handleSubmit((values) => {
             return onSubmit(values, form)
           })(e)
-
         }}
       >
         <Flex direction="column" gap="md">
