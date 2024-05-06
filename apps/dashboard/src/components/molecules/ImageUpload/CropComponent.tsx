@@ -6,6 +6,8 @@ import { useRef, useState } from "react"
 
 import ReactCrop, { centerCrop, makeAspectCrop, type Crop, type PixelCrop } from "react-image-crop"
 
+import "react-image-crop/dist/ReactCrop.css"
+
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
