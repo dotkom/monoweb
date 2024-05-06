@@ -1,3 +1,4 @@
+import { env } from "@dotkomonline/env"
 import type { File } from "../../stubs/file/File"
 
 // Expected response: 204 No Content. Returns resource URL if successful.
@@ -26,5 +27,5 @@ export async function s3UploadFile(file: File, fields: Record<string, string>, u
 }
 
 export function buildAssetUrl(key: string) {
-  return `https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/testing/${key}`
+  return `${env.NEXT_PUBLIC_S3_BUCKET_MONOWEB}/${key}`
 }
