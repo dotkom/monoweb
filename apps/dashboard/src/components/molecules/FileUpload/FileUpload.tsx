@@ -10,14 +10,12 @@ interface Props {
 }
 
 export default function FileUpload({ onChange, value }: Props) {
-  console.log(value)
   const uploadToS3 = useUploadAssetToS3()
 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log("onSelectFile, e.target.files", e.target.files)
     if (e.target.files && e.target.files.length > 0) {
       const result = await uploadToS3(e.target.files[0])
-      onChange(result.id)
+      onChange(result.key)
     }
   }
 

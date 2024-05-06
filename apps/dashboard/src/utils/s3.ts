@@ -39,7 +39,7 @@ function buildFinalCloudflareUrl(options: string, assetUrl: string) {
 
 type Size = { w?: number; h?: number }
 export function buildImgUrl(image: Image, size?: Size) {
-  const assetUrl = buildAssetUrl(image.assetId)
+  const assetUrl = buildAssetUrl(image.assetKey)
 
   const options: string[] = []
 

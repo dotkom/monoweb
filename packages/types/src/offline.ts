@@ -5,7 +5,7 @@ export const OfflineSchema = z.object({
   id: z.string().ulid(),
   title: z.string().max(1000).min(1),
   published: z.date(),
-  fileId: z.string(),
+  fileAssetKey: z.string(),
   image: ImageSchema,
 })
 

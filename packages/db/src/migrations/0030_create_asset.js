@@ -7,14 +7,14 @@ import { createTableWithDefaults } from "../utils.js"
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
   await createTableWithDefaults("asset", { createdAt: true }, db.schema)
-    .addColumn("id", "text", (col) => col.notNull().primaryKey())
+    .addColumn("key", "text", (col) => col.notNull().primaryKey())
     .addColumn("original_filename", "text", (col) => col.notNull())
     .addColumn("size", "integer", (col) => col.notNull())
     .addColumn("metadata", "jsonb")
     .execute()
 
   await createTableWithDefaults("image", { id: true, createdAt: true, updatedAt: false }, db.schema)
-    .addColumn("asset_id", "text", (col) => col.references("asset.id").notNull())
+    .addColumn("asset_key", "text", (col) => col.references("asset.key").notNull())
     .addColumn("alt_text", "text", (col) => col.notNull())
     .addColumn("crop", "jsonb")
     .execute()
@@ -23,7 +23,7 @@ export async function up(db) {
     .alterTable("offline")
     .dropColumn("file_url")
     .dropColumn("image_url")
-    .addColumn("file_id", "text", (col) => col.references("asset.id").notNull())
+    .addColumn("file_asset_key", "text", (col) => col.references("asset.key").notNull())
     .addColumn("image_id", sql`ulid`, (col) => col.references("image.id").notNull())
     .execute()
 }

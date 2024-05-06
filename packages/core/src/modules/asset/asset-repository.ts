@@ -1,7 +1,7 @@
 import type { Database } from "@dotkomonline/db"
 import {
   type Asset,
-  type AssetId,
+  type AssetKey,
   AssetMedatadaSchema,
   type AssetWrite,
   type Image,
@@ -67,8 +67,8 @@ export class AssetRepositoryImpl implements AssetRepository {
     }
   }
 
-  async get(id: AssetId): Promise<Asset> {
-    const asset = await this.db.selectFrom("asset").selectAll().where("id", "=", id).executeTakeFirstOrThrow()
+  async get(key: AssetKey): Promise<Asset> {
+    const asset = await this.db.selectFrom("asset").selectAll().where("key", "=", key).executeTakeFirstOrThrow()
 
     return {
       ...asset,

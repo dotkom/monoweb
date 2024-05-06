@@ -1,4 +1,5 @@
 import { articleRouter } from "./modules/article/article-router"
+import { assetRouter } from "./modules/asset/asset-router"
 import { committeeRouter } from "./modules/committee/committee-router"
 import { companyRouter } from "./modules/company/company-router"
 import { attendanceRouter } from "./modules/event/attendance-router"
@@ -9,7 +10,6 @@ import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { offlineRouter } from "./modules/offline/offline-router"
 import { paymentRouter } from "./modules/payment/payment-router"
-import { assetRouter } from "./modules/static-asset/static-asset-router"
 import { userRouter } from "./modules/user/user-router"
 import { t } from "./trpc"
 

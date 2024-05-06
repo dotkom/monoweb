@@ -30,7 +30,7 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),
-      fileId: createFileInput({
+      fileAssetKey: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
       }),

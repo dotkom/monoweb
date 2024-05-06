@@ -218,7 +218,11 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
+
+  const assetRepository: AssetRepository = new AssetRepositoryImpl(db)
+  const assetService: AssetService = new AssetServiceImpl(assetRepository, s3Repository)
+
+  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, assetService)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,
@@ -226,9 +230,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
-
-  const assetRepository: AssetRepository = new AssetRepositoryImpl(db)
-  const assetService: AssetService = new AssetServiceImpl(assetRepository, s3Client)
 
   return {
     userService,
