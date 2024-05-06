@@ -37,7 +37,6 @@ function buildFinalCloudflareUrl(options: string, assetUrl: string) {
   return `${cloudflareImagesBaseUrl}/${options}/${assetUrl}`
 }
 
-
 type Size = { w?: number; h?: number }
 export function buildImgUrl(image: Image, size?: Size) {
   const assetUrl = buildAssetUrl(image.assetId)
@@ -68,7 +67,6 @@ export function buildImgUrl(image: Image, size?: Size) {
   }
 
   const optionsString = options.join(",")
-
 
   return buildFinalCloudflareUrl(optionsString, assetUrl)
 }

@@ -102,8 +102,8 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
 
         // Default values are set meaning we are updating an existing image
         console.log("toInsert", toInsert)
-          const res = await updateImage.mutateAsync(toInsert)
-          onSubmit(res)
+        const res = await updateImage.mutateAsync(toInsert)
+        onSubmit(res)
         return
       }
 
@@ -207,7 +207,13 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
           </button>
         </div>
       )}
-      <CropPreview imgSrc={imgSrc} completedCrop={completedCrop} imgRef={imgRef} scale={scale} hidden={cropOpen || !imgSrc}/>
+      <CropPreview
+        imgSrc={imgSrc}
+        completedCrop={completedCrop}
+        imgRef={imgRef}
+        scale={scale}
+        hidden={cropOpen || !imgSrc}
+      />
     </div>
   )
 }

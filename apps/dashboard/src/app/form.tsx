@@ -263,7 +263,7 @@ export function createImageInput<F extends FieldValues>({
     return (
       <Box>
         <Text>{props.label}</Text>
-        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} /> }
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
         <Controller
           control={control}
           name={name}
@@ -272,9 +272,7 @@ export function createImageInput<F extends FieldValues>({
             return (
               <ImageUpload
                 onSubmit={(data) => {
-                  field.onChange(
-                    data
-                  )
+                  field.onChange(data)
                 }}
                 defaultValues={field.value}
                 aspect={props.aspect}
@@ -294,7 +292,7 @@ export function createFileInput<F extends FieldValues>({
     return (
       <Box>
         <Text>{props.label}</Text>
-        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} /> }
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
         <Controller
           control={control}
           name={name}

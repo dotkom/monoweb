@@ -1,7 +1,7 @@
 "use client"
+import { Anchor } from "@mantine/core"
 import type React from "react"
 import { useUploadAssetToS3 } from "../../../modules/asset/mutations"
-import { Anchor } from "@mantine/core"
 import { buildAssetUrl } from "../../../utils/s3"
 
 interface Props {
