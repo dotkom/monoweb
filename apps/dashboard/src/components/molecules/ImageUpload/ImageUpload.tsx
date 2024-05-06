@@ -81,7 +81,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
 
       const url = buildAssetUrl(uploadedAsset.key)
 
-
       const file = await getFileFromUrl(url)
       await loadFile(file)
 
@@ -127,7 +126,6 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
   async function onSetCrop() {
     toggleShowCrop()
 
-
     let result: Image
     if (defaultValues?.id) {
       result = await updateImage.mutateAsync({
@@ -138,14 +136,12 @@ export default function ImageUpload({ onSubmit, aspect, defaultValues }: Props) 
           altText: "Uploaded image",
         },
       })
-
     } else {
       result = await createImage.mutateAsync({
         assetKey: assetKey,
         crop: calculateRealCropValues(),
         altText: "Uploaded image",
       })
-
     }
 
     onSubmit(result)
