@@ -21,70 +21,6 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
-  apps/assets-frontend:
-    dependencies:
-      '@dotkomonline/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@dotkomonline/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@tailwindcss/typography':
-        specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)))
-      '@tanstack/react-query':
-        specifier: ^5.34.1
-        version: 5.34.1(react@18.2.0)
-      '@trpc/client':
-        specifier: 11.0.0-rc.364
-        version: 11.0.0-rc.364(@trpc/server@11.0.0-rc.364)
-      '@trpc/react-query':
-        specifier: 11.0.0-rc.364
-        version: 11.0.0-rc.364(@tanstack/react-query@5.34.1(react@18.2.0))(@trpc/client@11.0.0-rc.364(@trpc/server@11.0.0-rc.364))(@trpc/server@11.0.0-rc.364)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@trpc/server':
-        specifier: 11.0.0-rc.364
-        version: 11.0.0-rc.364
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-image-crop:
-        specifier: ^11.0.5
-        version: 11.0.5(react@18.2.0)
-      superjson:
-        specifier: ^1.13.3
-        version: 1.13.3
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
-      '@dotkomonline/config':
-        specifier: workspace:^
-        version: link:../../packages/config
-      '@types/react':
-        specifier: ^18.2.66
-        version: 18.3.1
-      '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.3.0
-      '@vitejs/plugin-react':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.38)))
-      tailwindcss:
-        specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
-      typescript:
-        specifier: ^5.2.2
-        version: 5.4.5
-      vite:
-        specifier: ^5.2.0
-        version: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.38))
-
   apps/brevduen:
     dependencies:
       '@aws-sdk/client-ses':
@@ -814,7 +750,7 @@ importers:
         version: link:../types
       '@trpc/react-query':
         specifier: ^10.45.0
-        version: 10.45.0(@tanstack/react-query@5.34.1(react@18.2.0))(@trpc/client@11.0.0-rc.364(@trpc/server@11.0.0-rc.364))(@trpc/server@11.0.0-rc.364)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 10.45.0(@tanstack/react-query@5.34.1(react@18.2.0))(@trpc/client@10.45.0(@trpc/server@10.45.0))(@trpc/server@10.45.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       ical-generator:
         specifier: ^5.0.1
         version: 5.0.1(@types/node@20.12.7)(dayjs@1.11.10)
@@ -3316,11 +3252,6 @@ packages:
     peerDependencies:
       '@trpc/server': 10.45.0
 
-  '@trpc/client@11.0.0-rc.364':
-    resolution: {integrity: sha512-k9ZH7I0OOBFME9fZJ1JI0ZjvPEV64bvoT20kWHkFeMH5trJmK1tzcc/q7c7cLBY4pziLPqBDPFw2qax09vyRTg==}
-    peerDependencies:
-      '@trpc/server': 11.0.0-rc.364+d95fb467b
-
   '@trpc/next@10.45.0':
     resolution: {integrity: sha512-saXajAb5GBpos9BNEtq/BeTOxmM4oCP3kyuGlMopNtHoacr71xHCItFnLsPWffM4DVW88uOXCFWaOtpOs5ThBw==}
     peerDependencies:
@@ -3341,20 +3272,8 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@trpc/react-query@11.0.0-rc.364':
-    resolution: {integrity: sha512-updB1uOVHS/1NK+hclt8OK/Im0GYD8mIRTxs96hZhfaT6tqUhij/wWWG0U6OofxPGC/MZs75ojQeq8Uag9Tr5g==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.25.0
-      '@trpc/client': 11.0.0-rc.364+d95fb467b
-      '@trpc/server': 11.0.0-rc.364+d95fb467b
-      react: '>=18.2.0'
-      react-dom: '>=18.2.0'
-
   '@trpc/server@10.45.0':
     resolution: {integrity: sha512-2Fwzv6nqpE0Ie/G7PeS0EVR89zLm+c1Mw7T+RAGtU807j4oaUx0zGkBXTu5u9AI+j+BYNN2GZxJcuDTAecbr1A==}
-
-  '@trpc/server@11.0.0-rc.364':
-    resolution: {integrity: sha512-sGlrb2jSCiU74TrJ+N+WxIcJIUDyo0WOy0y30vIArw6oHFXjeithgxjvIu+PbN+VWt/Gt4ee8kVhnmxCW4X/Qw==}
 
   '@tsconfig/node10@1.0.9':
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -10085,10 +10004,6 @@ snapshots:
     dependencies:
       '@trpc/server': 10.45.0
 
-  '@trpc/client@11.0.0-rc.364(@trpc/server@11.0.0-rc.364)':
-    dependencies:
-      '@trpc/server': 11.0.0-rc.364
-
   '@trpc/next@10.45.0(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@trpc/client@10.45.0(@trpc/server@10.45.0))(@trpc/react-query@10.45.0(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@trpc/client@10.45.0(@trpc/server@10.45.0))(@trpc/server@10.45.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@trpc/server@10.45.0)(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/react-query': 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -10107,25 +10022,15 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@trpc/react-query@10.45.0(@tanstack/react-query@5.34.1(react@18.2.0))(@trpc/client@11.0.0-rc.364(@trpc/server@11.0.0-rc.364))(@trpc/server@11.0.0-rc.364)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@trpc/react-query@10.45.0(@tanstack/react-query@5.34.1(react@18.2.0))(@trpc/client@10.45.0(@trpc/server@10.45.0))(@trpc/server@10.45.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/react-query': 5.34.1(react@18.2.0)
-      '@trpc/client': 11.0.0-rc.364(@trpc/server@11.0.0-rc.364)
-      '@trpc/server': 11.0.0-rc.364
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
-  '@trpc/react-query@11.0.0-rc.364(@tanstack/react-query@5.34.1(react@18.2.0))(@trpc/client@11.0.0-rc.364(@trpc/server@11.0.0-rc.364))(@trpc/server@11.0.0-rc.364)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/react-query': 5.34.1(react@18.2.0)
-      '@trpc/client': 11.0.0-rc.364(@trpc/server@11.0.0-rc.364)
-      '@trpc/server': 11.0.0-rc.364
+      '@trpc/client': 10.45.0(@trpc/server@10.45.0)
+      '@trpc/server': 10.45.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
   '@trpc/server@10.45.0': {}
-
-  '@trpc/server@11.0.0-rc.364': {}
 
   '@tsconfig/node10@1.0.9':
     optional: true
@@ -10251,6 +10156,7 @@ snapshots:
   '@types/react-dom@18.3.0':
     dependencies:
       '@types/react': 18.3.1
+    optional: true
 
   '@types/react@18.2.48':
     dependencies:
@@ -10309,17 +10215,6 @@ snapshots:
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
       vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31))
-    transitivePeerDependencies:
-      - supports-color
-
-  '@vitejs/plugin-react@4.2.1(vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.38)))':
-    dependencies:
-      '@babel/core': 7.24.5
-      '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.24.5)
-      '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.24.5)
-      '@types/babel__core': 7.20.5
-      react-refresh: 0.14.0
-      vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.38))
     transitivePeerDependencies:
       - supports-color
 

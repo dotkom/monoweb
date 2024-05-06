@@ -27,5 +27,5 @@ export async function s3UploadFile(file: File, fields: Record<string, string>, u
 }
 
 export function buildAssetUrl(key: string) {
-  return `${env.NEXT_PUBLIC_S3_BUCKET_MONOWEB}/${key}`
+  return `https://s3.eu-north-1.amazonaws.com/${env.NEXT_PUBLIC_STATIC_ASSETS_BUCKET}/testing/${key}`
 }
