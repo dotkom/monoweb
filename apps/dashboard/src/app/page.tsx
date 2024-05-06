@@ -1,43 +1,49 @@
 "use client"
-import { z } from "zod"
+import { Loader } from "@mantine/core"
+import { useMemo } from "react"
+import { useCreateOfflineMutation } from "../modules/offline/mutations/use-create-offline-mutation"
 import { trpc } from "../utils/trpc"
-import { createImageInput, useFormBuilder } from "./form"
-import { type Image, ImageSchema } from "@dotkomonline/types"
+import { OfflineEditCard } from "./(dashboard)/offline/[id]/edit-card"
+import { OfflineDetailsContext } from "./(dashboard)/offline/[id]/provider"
+import { useOfflineWriteForm } from "./(dashboard)/offline/write-form"
 
-const FormValidationSchema = z.object({
-  image: ImageSchema,
-  fileId: z.string(),
-})
-type FormValidationSchema = z.infer<typeof FormValidationSchema>
+export default function DashboardPage() {
+  const { data, isLoading } = trpc.offline.all.useQuery()
+  console.log(data)
 
-interface FormProps {
-  image: Image
-}
-function Form2({ image }: FormProps) {
-  const Form = useFormBuilder({
-    schema: FormValidationSchema,
-    label: "Last opp bilde",
-    defaultValues: {
-      image: image,
-    },
-    fields: {
-      image: createImageInput({
-        label: "Bilde",
-        placeholder: "Last opp",
-      }),
-    },
+  const value = useMemo(
+    () =>
+      data === undefined || isLoading
+        ? null
+        : {
+            offline: data[0],
+          },
+    [data, isLoading]
+  )
+
+  const createOffline = useCreateOfflineMutation()
+
+  const FormComponent = useOfflineWriteForm({
     onSubmit: async (data) => {
-      console.log("submitting form", data)
+      console.log("onSubmit", data)
+      createOffline.mutate({
+        fileId: data.fileId,
+        imageId: data.image.id,
+        title: data.title,
+        published: data.published,
+      })
+      console.log("Created offline")
     },
   })
 
-  return <Form />
-}
+  if (value === null) {
+    return <Loader />
+  }
 
-export default function DashboardPage() {
-  const { data: image, isLoading } = trpc.asset.getImage.useQuery("01HX4R9550BMMCRZ9SPK3416CP")
-
-  if(!image) return <p>Loading!</p>
-
-  return isLoading ? <p>Loading...</p> : <Form2 image={image} />
+  return (
+    <OfflineDetailsContext.Provider value={value}>
+      <OfflineEditCard />
+      <FormComponent />
+    </OfflineDetailsContext.Provider>
+  )
 }

@@ -24,11 +24,7 @@ export class AssetRepositoryImpl implements AssetRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
   async getImage(id: string) {
-    const asset = await this.db
-      .selectFrom("image")
-      .selectAll()
-      .where("id", "=", id)
-      .executeTakeFirstOrThrow()
+    const asset = await this.db.selectFrom("image").selectAll().where("id", "=", id).executeTakeFirstOrThrow()
     return ImageSchema.parse(asset)
   }
 
@@ -41,7 +37,7 @@ export class AssetRepositoryImpl implements AssetRepository {
       .executeTakeFirstOrThrow()
     const image: Image = {
       ...updated,
-      crop: ImageCropSchema.parse(updated.crop),
+      crop: ImageCropSchema.nullable().parse(updated.crop),
     }
     return image
   }
@@ -54,7 +50,7 @@ export class AssetRepositoryImpl implements AssetRepository {
       .executeTakeFirstOrThrow()
     const image: Image = {
       ...inserted,
-      crop: ImageCropSchema.parse(inserted.crop),
+      crop: ImageCropSchema.nullable().parse(inserted.crop),
     }
     return image
   }

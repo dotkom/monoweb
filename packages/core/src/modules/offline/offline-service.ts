@@ -12,6 +12,27 @@ export interface PresignedPost {
   fields: Fields
 }
 
+function encodeS3URI(filename: string): string {
+  // Define characters that are generally safe for use in key names
+  const safeCharacters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-_.*\'()';
+
+  // Replace unsafe characters with safe ones
+  const safeFilename = filename.replace(/[^a-zA-Z0-9!-_.*'()]/g, (match) => {
+      // Replace unsafe characters with underscore
+      if (!safeCharacters.includes(match)) {
+          return '_';
+      }
+      return match;
+  });
+
+  // Ensure the key name is not empty
+  if (safeFilename.trim() === '') {
+      throw new Error('Filename results in an empty key name.');
+  }
+
+  return safeFilename;
+}
+
 export interface OfflineService {
   get(id: OfflineId): Promise<Offline>
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
@@ -56,17 +77,19 @@ export class OfflineServiceImpl implements OfflineService {
   }
 
   async createPresignedPost(filename: string, mimeType: string) {
-    const s3Key = crypto.randomUUID() + filename
+    const generatedKey  = crypto.randomUUID() + filename
+    const encodedKey = encodeS3URI(generatedKey)
+    console.log("Generated asset key", encodedKey)
     const presignedUrl = await this.s3Repository.createPresignedPost(
       env.S3_BUCKET_MONOWEB,
-      `testing/${s3Key}`,
+      `testing/${encodedKey}`,
       mimeType,
       60
     ) // 60 MB file limit
 
     return {
       presignedUrl,
-      s3Key,
+      s3Key: encodedKey,
     }
   }
 }

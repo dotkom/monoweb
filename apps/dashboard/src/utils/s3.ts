@@ -31,36 +31,44 @@ export function buildAssetUrl(key: string) {
   return `https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/testing/${key}`
 }
 
-type Size = { w?: number; h?: number }
-export function buildImgUrl(image: Image, size?: Size) {
-  // https://onli.no/cdn-cgi/image/trim.width=669,trim.height=373,trim.left=66,trim.top=495/https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/testing/7e088b60-8f42-4958-a42d-077102a6eee0hei.pngdfaa2eea-63a4-4858-9b5b-326c4f4bf50b
+function buildFinalCloudflareUrl(options: string, assetUrl: string) {
   const cloudflareImagesBaseUrl = "https://onli.no/cdn-cgi/image"
 
-  let options = ""
+  return `${cloudflareImagesBaseUrl}/${options}/${assetUrl}`
+}
 
-  const addOpt = (acc: string, key: string, value: string) => `${acc},${key}=${value}`
 
-  addOpt(options, "scale", "fit-down") // https://developers.cloudflare.com/images/transform-images/transform-via-url/#recommended-image-sizes
+type Size = { w?: number; h?: number }
+export function buildImgUrl(image: Image, size?: Size) {
+  const assetUrl = buildAssetUrl(image.assetId)
 
-  if (!size?.h && !size?.w) {
-    return addOpt(options, "width", "1920")
+  const options: string[] = []
+
+  const addOpt = (key: string, value: string) => options.push(`${key}=${value}`)
+
+  addOpt("scale", "fit-down") // https://developers.cloudflare.com/images/transform-images/transform-via-url/#recommended-image-sizes
+
+  if (image.crop) {
+    addOpt("trim.width", image.crop.width.toString())
+    addOpt("trim.height", image.crop.height.toString())
+    addOpt("trim.left", image.crop.left.toString())
+    addOpt("trim.top", image.crop.top.toString())
   }
 
   if (size?.w) {
-    options = addOpt(options, "width", size.w.toString())
+    addOpt("width", size.w.toString())
   }
 
   if (size?.h) {
-    options = addOpt(options, "height", size.h.toString())
+    addOpt("height", size.h.toString())
   }
 
-  if (image.crop) {
-    options = addOpt(options, "trim.width", image.crop.width.toString())
-    options = addOpt(options, "trim.height", image.crop.height.toString())
-    options = addOpt(options, "trim.left", image.crop.left.toString())
-    options = addOpt(options, "trim.top", image.crop.top.toString())
+  if (!size?.h && !size?.w) {
+    addOpt("width", "1920")
   }
 
-  const assetUrl = buildAssetUrl(image.id)
-  return `${cloudflareImagesBaseUrl}/${options}/${assetUrl}`
+  const optionsString = options.join(",")
+
+
+  return buildFinalCloudflareUrl(optionsString, assetUrl)
 }
