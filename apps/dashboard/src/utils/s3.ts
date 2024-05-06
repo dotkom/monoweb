@@ -1,4 +1,3 @@
-import type { Image } from "@dotkomonline/types"
 import type { File } from "../../stubs/file/File"
 
 // Expected response: 204 No Content. Returns resource URL if successful.
@@ -28,44 +27,4 @@ export async function s3UploadFile(file: File, fields: Record<string, string>, u
 
 export function buildAssetUrl(key: string) {
   return `https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/testing/${key}`
-}
-
-function buildFinalCloudflareUrl(options: string, assetUrl: string) {
-  const cloudflareImagesBaseUrl = "https://onli.no/cdn-cgi/image"
-
-  return `${cloudflareImagesBaseUrl}/${options}/${assetUrl}`
-}
-
-type Size = { w?: number; h?: number }
-export function buildImgUrl(image: Image, size?: Size) {
-  const assetUrl = buildAssetUrl(image.assetKey)
-
-  const options: string[] = []
-
-  const addOpt = (key: string, value: string) => options.push(`${key}=${value}`)
-
-  addOpt("scale", "fit-down") // https://developers.cloudflare.com/images/transform-images/transform-via-url/#recommended-image-sizes
-
-  if (image.crop) {
-    addOpt("trim.width", image.crop.width.toString())
-    addOpt("trim.height", image.crop.height.toString())
-    addOpt("trim.left", image.crop.left.toString())
-    addOpt("trim.top", image.crop.top.toString())
-  }
-
-  if (size?.w) {
-    addOpt("width", size.w.toString())
-  }
-
-  if (size?.h) {
-    addOpt("height", size.h.toString())
-  }
-
-  if (!size?.h && !size?.w) {
-    addOpt("width", "1920")
-  }
-
-  const optionsString = options.join(",")
-
-  return buildFinalCloudflareUrl(optionsString, assetUrl)
 }
