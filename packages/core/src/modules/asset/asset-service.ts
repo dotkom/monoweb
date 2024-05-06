@@ -63,8 +63,8 @@ export class AssetServiceImpl implements AssetService {
     const generatedKey = crypto.randomUUID() + filename
     const encodedKey = encodeS3URI(generatedKey)
     const presignedUrl = await this.s3Repository.createPresignedPost(
-      env.S3_BUCKET_MONOWEB,
-      `testing/${encodedKey}`,
+      env.STATIC_ASSETS_BUCKET,
+      `${encodedKey}`,
       mimeType,
       maxSizeMB
     )

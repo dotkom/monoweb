@@ -16,7 +16,7 @@ export class S3RepositoryImpl implements S3Repository {
   ): Promise<PresignedPost> {
     return await _createPresignedPost(this.s3Client, {
       Bucket: bucket,
-      Key: filepath,
+      Key: `testing/${filepath}`,
       Fields: {
         "content-type": mimeType,
       },

@@ -27,5 +27,5 @@ export const useCreateOfflineModal = () => () =>
     modal: "offline/create",
     title: "Opprett ny Offline",
     innerProps: {},
-    size: "lg",
+    size: "xl",
   })
