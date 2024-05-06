@@ -27,18 +27,18 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 interface CropProps {
   imgSrc: string
-  cropDefault?: Crop
+  completedCrop?: Crop
   setCompletedCrop: (crop: PixelCrop) => void
   aspect?: number
   scale: number
 }
 
-export function CropComponent({ imgSrc, cropDefault, setCompletedCrop, aspect, scale }: CropProps) {
-  const [crop, setCrop] = useState<Crop | undefined>(cropDefault ?? undefined)
+export function CropComponent({ imgSrc, completedCrop, setCompletedCrop, aspect, scale }: CropProps) {
+  const [crop, setCrop] = useState<Crop | undefined>(completedCrop ?? undefined)
   const imgRef = useRef<HTMLImageElement>(null)
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-    if (aspect && !cropDefault) {
+    if (aspect && !completedCrop) {
       const { width, height } = e.currentTarget
       setCrop(centerAspectCrop(width, height, aspect))
     }
@@ -52,7 +52,13 @@ export function CropComponent({ imgSrc, cropDefault, setCompletedCrop, aspect, s
       aspect={aspect}
       minHeight={100}
     >
-      <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ transform: `scale(${scale})`, maxWidth: "100%" }} onLoad={onImageLoad} />
+      <img
+        ref={imgRef}
+        alt="Crop me"
+        src={imgSrc}
+        style={{ transform: `scale(${scale})`, maxWidth: "100%" }}
+        onLoad={onImageLoad}
+      />
     </ReactCrop>
   )
 }

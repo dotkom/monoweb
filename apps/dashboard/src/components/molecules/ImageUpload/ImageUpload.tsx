@@ -4,13 +4,10 @@
 import type React from "react"
 import { useRef, useState } from "react"
 
-import type { PixelCrop } from "react-image-crop"
-import { canvasPreview } from "./canvasPreview"
-import { useDebounceEffect } from "./useDebounceEffect"
-
 import type { Image } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
+import type { PixelCrop } from "react-image-crop"
 import { useCreateImageMutation, useUpdateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
@@ -18,56 +15,47 @@ import { CropPreview } from "./CropPreview"
 import { getFileFromUrl } from "./utils"
 
 interface Props {
-  onSubmit: (image: Image | undefined) => void
+  setImage: (image: Image | null) => void
+  image: Image | null
   cropAspectLock?: number | undefined
-  defaultValues?: Image
 }
 
-export default function ImageUpload({ onSubmit, cropAspectLock: aspect, defaultValues }: Props) {
+const mapCropToFrontend = (crop: Image["crop"]): PixelCrop | undefined =>
+  crop === null
+    ? undefined
+    : {
+        x: crop.left,
+        y: crop.top,
+        width: crop.width,
+        height: crop.height,
+        unit: "px",
+      }
+
+export default function ImageUpload({ setImage, cropAspectLock: aspect, image }: Props) {
   const [imgSrc, setImgSrc] = useState("")
-  const [assetKey, setAssetKey] = useState("")
   const [scale, setScale] = useState(1)
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop | undefined>(mapCropToFrontend(image?.crop ?? null))
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
-
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
-
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
 
   const uploadToS3 = useUploadAssetToS3()
   const createImage = useCreateImageMutation()
   const updateImage = useUpdateImageMutation()
 
   async function reset() {
-    setImgSrc("")
-    setAssetKey("")
-  }
-
-  async function setImageFromDefaultValues(image: Image) {
-    setAssetKey(image.assetKey)
-    if (image.crop) {
-      setCompletedCrop({
-        x: image.crop.left,
-        y: image.crop.top,
-        width: image.crop.width,
-        height: image.crop.height,
-        unit: "px",
-      })
-    }
-
-    const url = buildAssetUrl(image.assetKey)
-    const file = await getFileFromUrl(url)
-    await loadFile(file)
+    setImage(null)
   }
 
   useEffect(() => {
-    if (defaultValues) {
-      setImageFromDefaultValues(defaultValues)
+    if (image) {
+      loadFileFromAssetKey(image.assetKey)
     }
-  }, [defaultValues])
+  }, [image])
 
-  async function loadFile(file: File) {
+  async function loadFileFromAssetKey(assetKey: string) {
+    const url = buildAssetUrl(assetKey)
+    const file = await getFileFromUrl(url)
     const reader = new FileReader()
     reader.addEventListener("load", () => setImgSrc(reader.result?.toString() || ""))
     reader.readAsDataURL(file)
@@ -75,38 +63,30 @@ export default function ImageUpload({ onSubmit, cropAspectLock: aspect, defaultV
 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
-      const uploadedAsset = await uploadToS3(e.target.files[0])
-      setAssetKey(uploadedAsset.key)
+      const uploadedRawAsset = await uploadToS3(e.target.files[0])
+      await loadFileFromAssetKey(uploadedRawAsset.key)
 
-      const url = buildAssetUrl(uploadedAsset.key)
-
-      const file = await getFileFromUrl(url)
-      await loadFile(file)
-
-      const image = {
-        assetKey: uploadedAsset.key,
+      const newImage = {
+        assetKey: uploadedRawAsset.key,
         crop: null,
         altText: "Uploaded image",
       }
 
-      if (defaultValues) {
-        const toInsert = {
-          id: defaultValues.id,
-          image,
-        }
-
-        // Default values are set meaning we are updating an existing image
-        const res = await updateImage.mutateAsync(toInsert)
-        onSubmit(res)
+      if (!image) {
+        // Create new image
+        const res = await createImage.mutateAsync(newImage)
+        setImage(res)
         return
       }
 
-      const res = await createImage.mutateAsync(image)
-      onSubmit(res)
+      // Update existing image
+      const res = await updateImage.mutateAsync({ id: image.id, image: newImage })
+      setImage(res)
+      return
     }
   }
 
-  function calculateRealCropValues() {
+  function getRealSizeCropValues() {
     if (!completedCrop || !imgRef.current) {
       return null
     }
@@ -123,83 +103,72 @@ export default function ImageUpload({ onSubmit, cropAspectLock: aspect, defaultV
   }
 
   async function onSetCrop() {
-    toggleShowCrop()
-
-    let result: Image
-    if (defaultValues?.id) {
-      result = await updateImage.mutateAsync({
-        id: defaultValues.id,
-        image: {
-          assetKey: assetKey,
-          crop: calculateRealCropValues(),
-          altText: "Uploaded image",
-        },
-      })
-    } else {
-      result = await createImage.mutateAsync({
-        assetKey: assetKey,
-        crop: calculateRealCropValues(),
-        altText: "Uploaded image",
-      })
+    if (!image) {
+      throw new Error("Invalid state. Image value not set at crop time")
     }
 
-    onSubmit(result)
-  }
+    const result = await updateImage.mutateAsync({
+      id: image.id,
+      image: {
+        assetKey: image.assetKey,
+        crop: getRealSizeCropValues(),
+        altText: "Uploaded image",
+      },
+    })
 
-  useDebounceEffect(
-    async () => {
-      if (completedCrop?.width && completedCrop?.height && imgRef.current && previewCanvasRef.current) {
-        // We use canvasPreview as it's much faster than imgPreview.
-        canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale)
-      }
-    },
-    100,
-    [completedCrop, scale]
-  )
+    toggleShowCrop()
+    setImage(result)
+  }
 
   return (
     <div>
-      {!imgSrc && <input type="file" accept="image/*" onChange={onSelectFile} />}
-      {!!cropOpen && (
-        <div>
-            <label htmlFor="scale-input">Scale: </label>
-            <input
-              id="scale-input"
-              type="number"
-              step="0.1"
-              value={scale}
-              disabled={!imgSrc}
-              onChange={(e) => setScale(Number(e.target.value))}
+      {!image && <input type="file" accept="image/*" onChange={onSelectFile} />}
+      <div>
+        {!!image && (
+          <>
+            {cropOpen && (
+              <div>
+                <label htmlFor="scale-input">Scale: </label>
+                <input
+                  id="scale-input"
+                  type="number"
+                  step="0.1"
+                  value={scale}
+                  disabled={!imgSrc}
+                  onChange={(e) => setScale(Number(e.target.value))}
+                />
+                <CropComponent
+                  imgSrc={imgSrc}
+                  completedCrop={completedCrop}
+                  setCompletedCrop={setCompletedCrop}
+                  aspect={aspect}
+                  scale={scale}
+                />
+                <button type="button" onClick={onSetCrop}>
+                  Lagre
+                </button>
+              </div>
+            )}
+            {!cropOpen && !!image && (
+              <div>
+                <button onClick={toggleShowCrop} type="button">
+                  Endre crop
+                </button>
+                <button onClick={reset} type="button">
+                  Endre bilde
+                </button>
+              </div>
+            )}
+            <CropPreview
+              imgSrc={imgSrc}
+              completedCrop={completedCrop}
+              imgRef={imgRef}
+              scale={scale}
+              hidden={cropOpen || !imgSrc}
             />
-          <CropComponent
-            imgSrc={imgSrc}
-            cropDefault={completedCrop}
-            setCompletedCrop={setCompletedCrop}
-            aspect={aspect}
-            scale={scale}
-          />
-          <button type="button" onClick={onSetCrop}>
-            Lagre
-          </button>
-        </div>
-      )}
-      {!cropOpen && !!imgSrc && (
-        <div>
-          <button onClick={toggleShowCrop} type="button">
-            Endre crop
-          </button>
-          <button onClick={reset} type="button">
-            Endre bilde
-          </button>
-        </div>
-      )}
-      <CropPreview
-        imgSrc={imgSrc}
-        completedCrop={completedCrop}
-        imgRef={imgRef}
-        scale={scale}
-        hidden={cropOpen || !imgSrc}
-      />
+          </>
+        )}
+      </div>
     </div>
   )
 }

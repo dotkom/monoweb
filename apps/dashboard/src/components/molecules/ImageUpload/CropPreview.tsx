@@ -5,7 +5,7 @@ import type React from "react"
 import { useRef } from "react"
 
 import type { PixelCrop } from "react-image-crop"
-import { canvasPreview } from "./canvasPreview"
+import { canvasPreview } from "./utils"
 
 interface ShowPreviewProps {
   imgSrc: string
@@ -18,23 +18,24 @@ export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: Sh
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   function renderCanvasPreview() {
-    if (!imgRef.current) {
-      console.error("Tried to render canvas preview before image was loaded")
+    if (!imgRef.current || !canvasRef.current) {
       return
     }
 
-    const crop: PixelCrop = completedCrop
-      ? completedCrop
-      : { x: 0, y: 0, width: imgRef.current?.width, height: imgRef.current.height, unit: "px" }
-    if (imgRef.current && canvasRef.current) {
-      // We use canvasPreview as it's much faster than imgPreview.
-      canvasPreview(imgRef.current, canvasRef.current, crop, scale)
+    const crop: PixelCrop = completedCrop || {
+      x: 0,
+      y: 0,
+      width: imgRef.current?.width,
+      height: imgRef.current.height,
+      unit: "px",
     }
+
+    canvasPreview(imgRef.current, canvasRef.current, crop, scale)
   }
 
   return (
     <div style={{ display: hidden ? "none" : "block" }}>
-      <img src={imgSrc} alt="Crop" style={{ display: "none", maxWidth: "100%" }} ref={imgRef} onLoad={renderCanvasPreview} />
+      <img src={imgSrc} alt="Crop" style={{ display: "none" }} ref={imgRef} onLoad={renderCanvasPreview} />
       <canvas
         ref={canvasRef}
         style={{
