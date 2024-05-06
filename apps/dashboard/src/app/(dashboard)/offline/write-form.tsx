@@ -11,7 +11,7 @@ type FormSchema = z.infer<typeof FormSchema>
 
 interface UseOfflineWriteFormProps {
   onSubmit(data: FormSchema): Promise<void>
-  defaultValues?: FormSchema
+  defaultValues?: Partial<FormSchema>
   label: string
 }
 export const useOfflineWriteForm = ({ onSubmit, label, defaultValues }: UseOfflineWriteFormProps) => {
