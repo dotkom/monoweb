@@ -1,6 +1,6 @@
-import type { PixelCrop } from "react-image-crop"
+import type { PercentCrop } from "react-image-crop"
 
-export async function canvasPreview(image: HTMLImageElement, canvas: HTMLCanvasElement, crop: PixelCrop, scale = 1) {
+export async function canvasPreview(image: HTMLImageElement, canvas: HTMLCanvasElement, crop: PercentCrop, scale = 1) {
   const ctx = canvas.getContext("2d")
 
   if (!ctx) {
@@ -16,14 +16,23 @@ export async function canvasPreview(image: HTMLImageElement, canvas: HTMLCanvasE
   const pixelRatio = window.devicePixelRatio
   // const pixelRatio = 1
 
-  canvas.width = Math.floor(crop.width * scaleX * pixelRatio)
-  canvas.height = Math.floor(crop.height * scaleY * pixelRatio)
+  const pixelCrop = {
+    x: (crop.x / 100) * image.width,
+    y: (crop.y / 100) * image.height,
+    width: (crop.width / 100) * image.width,
+    height: (crop.height / 100) * image.height,
+  }
+
+  console.log("pixelCrop in canvaspreview", pixelCrop)
+
+  canvas.width = Math.floor(pixelCrop.width * scaleX * pixelRatio)
+  canvas.height = Math.floor(pixelCrop.height * scaleY * pixelRatio)
 
   ctx.scale(pixelRatio, pixelRatio)
   ctx.imageSmoothingQuality = "high"
 
-  const cropX = crop.x * scaleX
-  const cropY = crop.y * scaleY
+  const cropX = pixelCrop.x * scaleX
+  const cropY = pixelCrop.y * scaleY
 
   const centerX = image.naturalWidth / 2
   const centerY = image.naturalHeight / 2
