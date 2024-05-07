@@ -63,13 +63,12 @@ export async function getFileFromUrl(url: string): Promise<File> {
   return new File([blob], "image.png", { type: "image/png" })
 }
 
-
 export async function getImageDimensions(file: File) {
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  await img.decode();
+  const img = new Image()
+  img.src = URL.createObjectURL(file)
+  await img.decode()
   return {
-      width: img.width,
-      height: img.height
+    width: img.width,
+    height: img.height,
   }
 }
