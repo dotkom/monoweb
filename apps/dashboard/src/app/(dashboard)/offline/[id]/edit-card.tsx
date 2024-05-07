@@ -14,7 +14,7 @@ export const OfflineEditCard: FC = () => {
         id: offline.id,
         input: {
           ...data,
-          imageId: data.image.id,
+          imageVariantId: data.image.id,
         },
       })
     },

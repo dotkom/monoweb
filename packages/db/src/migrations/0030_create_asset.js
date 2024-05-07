@@ -16,7 +16,7 @@ export async function up(db) {
     .addColumn("alt_text", "text") // will be null for non image assets
     .execute()
 
-  await createTableWithDefaults("image_variation", { id: true, createdAt: true, updatedAt: false }, db.schema)
+  await createTableWithDefaults("image_variant", { id: true, createdAt: true, updatedAt: false }, db.schema)
     .addColumn("asset_key", "text", (col) => col.references("asset.key").notNull())
     .addColumn("crop", "jsonb")
     .execute()
@@ -26,19 +26,19 @@ export async function up(db) {
     .dropColumn("file_url")
     .dropColumn("image_url")
     .addColumn("pdf_asset_key", "text", (col) => col.references("asset.key"))
-    .addColumn("image_variation_id", sql`ulid`, (col) => col.references("image_variation.id"))
+    .addColumn("image_variant_id", sql`ulid`, (col) => col.references("image_variant.id"))
     .execute()
 }
 
 /** @param db {import('kysely').Kysely} */
 export async function down(db) {
   await db.schema.dropTable("asset").execute()
-  await db.schema.dropTable("image_variation").execute()
+  await db.schema.dropTable("image_variant").execute()
 
   await db.schema
     .alterTable("offline")
     .dropColumn("pdf_asset_key")
-    .dropColumn("image_variation_id")
+    .dropColumn("image_variant_id")
     .addColumn("file_url", "text")
     .addColumn("image_url", "text")
     .execute()

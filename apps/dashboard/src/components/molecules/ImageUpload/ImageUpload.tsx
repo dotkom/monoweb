@@ -4,7 +4,7 @@
 import type React from "react"
 import { useRef, useState } from "react"
 
-import type { ImageVariation } from "@dotkomonline/types"
+import type { ImageVariant } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
 import type { PercentCrop } from "react-image-crop"
@@ -19,12 +19,12 @@ import { CropPreview } from "./CropPreview"
 import { getFileFromUrl, getImageDimensions, percentToPixelCrop } from "./utils"
 
 interface Props {
-  setImage: (image: ImageVariation | null) => void
-  image: ImageVariation | null
+  setImage: (image: ImageVariant | null) => void
+  image: ImageVariant | null
   cropAspectLock?: number | undefined
 }
 
-const mapCropToFrontend = (crop: ImageVariation["crop"]): PercentCrop | undefined =>
+const mapCropToFrontend = (crop: ImageVariant["crop"]): PercentCrop | undefined =>
   crop === null
     ? undefined
     : {
@@ -119,7 +119,7 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
 
   async function onSetCrop() {
     if (!image) {
-      throw new Error("Invalid state. ImageVariation value not set at crop time")
+      throw new Error("Invalid state. ImageVariant value not set at crop time")
     }
 
     const result = await updateImage.mutateAsync({
@@ -127,7 +127,6 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
       image: {
         assetKey: image.asset.key,
         crop: getRealSizeCropValues(),
-        altText: "Uploaded image",
       },
     })
 

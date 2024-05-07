@@ -7,9 +7,9 @@ import {
   type ImageAsset,
   ImageAssetSchema,
   type ImageAssetWrite,
-  type ImageVariation,
-  ImageVariationSchema,
-  type ImageVariationWrite,
+  type ImageVariant,
+  ImageVariantSchema,
+  type ImageVariantWrite,
 } from "@dotkomonline/types"
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
@@ -22,9 +22,9 @@ export interface AssetRepository {
 
   createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
 
-  createImageVariation(values: ImageVariationWrite): Promise<ImageVariation>
-  getImageVariation(id: string): Promise<ImageVariation>
-  updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation>
+  createImageVariation(values: ImageVariantWrite): Promise<ImageVariant>
+  getImageVariation(id: string): Promise<ImageVariant>
+  updateImageVariation(id: string, values: ImageVariantWrite): Promise<ImageVariant>
 }
 
 export class AssetRepositoryImpl implements AssetRepository {
@@ -56,43 +56,43 @@ export class AssetRepositoryImpl implements AssetRepository {
     return ImageAssetSchema.parse(asset)
   }
 
-  async getImageVariation(id: string): Promise<ImageVariation> {
+  async getImageVariation(id: string): Promise<ImageVariant> {
     const imageVariation_ = await this.db
-      .selectFrom("imageVariation")
+      .selectFrom("imageVariant")
       .select(["id", "crop"])
       .select((eb) => [this.assetQuery("assetKey")(eb).as("asset")])
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
 
-    const imageVariation: Keys<ImageVariation> = {
+    const imageVariant: Keys<ImageVariant> = {
       crop: imageVariation_.crop,
       asset: imageVariation_.asset,
       id: imageVariation_.id,
     }
-    return ImageVariationSchema.parse(imageVariation)
+    return ImageVariantSchema.parse(imageVariant)
   }
 
-  async createImageVariation(values: ImageVariationWrite): Promise<ImageVariation> {
+  async createImageVariation(values: ImageVariantWrite): Promise<ImageVariant> {
     const { id } = await this.db
-      .insertInto("imageVariation")
+      .insertInto("imageVariant")
       .values(withInsertJsonValue(values, "crop"))
       .returning("id")
       .executeTakeFirstOrThrow()
     return this.getImageVariation(id)
   }
 
-  async updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation> {
-    await this.db.updateTable("imageVariation").set(withInsertJsonValue(values, "crop")).where("id", "=", id).execute()
+  async updateImageVariation(id: string, values: ImageVariantWrite): Promise<ImageVariant> {
+    await this.db.updateTable("imageVariant").set(withInsertJsonValue(values, "crop")).where("id", "=", id).execute()
     return this.getImageVariation(id)
   }
 
-  private assetQuery(col: keyof DB["imageVariation"]) {
-    return (eb: ExpressionBuilder<DB, "imageVariation">) =>
+  private assetQuery(col: keyof DB["imageVariant"]) {
+    return (eb: ExpressionBuilder<DB, "imageVariant">) =>
       jsonObjectFrom(
         eb
           .selectFrom("asset")
           .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
-          .whereRef(`imageVariation.${col}`, "=", "asset.key")
+          .whereRef(`imageVariant.${col}`, "=", "asset.key")
       )
   }
 }
