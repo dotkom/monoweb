@@ -1,78 +1,104 @@
 import type { Database } from "@dotkomonline/db"
-import {
-  type Asset,
-  type AssetKey,
-  AssetMedatadaSchema,
-  type AssetWrite,
-  type Image,
-  ImageCropSchema,
-  ImageSchema,
-  type ImageWrite,
-} from "@dotkomonline/types"
+import { jsonObjectFrom } from 'kysely/helpers/postgres'
 import type { Kysely } from "kysely"
-import { withInsertJsonValue } from "../../utils/db-utils"
+import { type Keys, withInsertJsonValue } from "../../utils/db-utils"
+import {
+  FileAssetSchema,
+  ImageAssetSchema,
+  ImageVariationSchema,
+  type FileAsset,
+  type FileAssetWrite,
+  type ImageAsset,
+  type ImageAssetWrite,
+  type ImageVariation,
+  type ImageVariationWrite,
+} from "@dotkomonline/types"
+
+export const assetCols = [
+  "asset.key as key",
+  "asset.originalFilename",
+  "asset.mimeType",
+  "asset.size",
+  "asset.width",
+  "asset.height",
+  "asset.altText",
+] as const
 
 export interface AssetRepository {
-  create(values: AssetWrite): Promise<Asset>
-  createImage(values: ImageWrite): Promise<Image>
-  updateImage(id: string, values: ImageWrite): Promise<Image>
-  get(id: string): Promise<Asset>
-  getImage(id: string): Promise<Image>
+  getFileAsset(key: string): Promise<FileAsset>
+
+  createFileAsset(values: FileAssetWrite): Promise<FileAsset>
+
+  createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
+
+  createImageVariation(values: ImageVariationWrite): Promise<ImageVariation>
+  getImageVariation(id: string): Promise<ImageVariation>
+  updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation>
 }
 
 export class AssetRepositoryImpl implements AssetRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getImage(id: string) {
-    const asset = await this.db.selectFrom("image").selectAll().where("id", "=", id).executeTakeFirstOrThrow()
-    return ImageSchema.parse(asset)
-  }
-
-  async updateImage(id: string, data: ImageWrite) {
-    const updated = await this.db
-      .updateTable("image")
-      .set(withInsertJsonValue(data, "crop"))
-      .where("id", "=", id)
-      .returningAll()
+  async getFileAsset(key: string): Promise<FileAsset> {
+    const asset_ = await this.db
+      .selectFrom("asset")
+      .select(["key", "originalFilename", "mimeType", "size"])
+      .where("key", "=", key)
       .executeTakeFirstOrThrow()
-    const image: Image = {
-      ...updated,
-      crop: ImageCropSchema.nullable().parse(updated.crop),
-    }
-    return image
+    const asset: Keys<FileAsset> = asset_
+    return FileAssetSchema.parse(asset)
   }
 
-  async createImage(data: ImageWrite) {
-    const inserted = await this.db
-      .insertInto("image")
-      .values(withInsertJsonValue(data, "crop"))
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    const image: Image = {
-      ...inserted,
-      crop: ImageCropSchema.nullable().parse(inserted.crop),
-    }
-    return image
+  async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
+    const asset_ = await this.db.insertInto("asset").values(values).returningAll().executeTakeFirstOrThrow()
+    const asset: Keys<FileAsset> = asset_
+    return FileAssetSchema.parse(asset)
   }
 
-  async create(data: AssetWrite): Promise<Asset> {
-    const asset = await this.db
+  async createImageAsset(values: ImageAssetWrite): Promise<ImageAsset> {
+    const asset_ = await this.db
       .insertInto("asset")
-      .values(withInsertJsonValue(data, "metadata"))
-      .returningAll()
+      .values(values)
+      .returning(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
       .executeTakeFirstOrThrow()
-    return {
-      ...asset,
-      metadata: AssetMedatadaSchema.nullable().parse(asset.metadata),
-    }
+    const asset: Keys<ImageAsset> = asset_
+    return ImageAssetSchema.parse(asset)
   }
 
-  async get(key: AssetKey): Promise<Asset> {
-    const asset = await this.db.selectFrom("asset").selectAll().where("key", "=", key).executeTakeFirstOrThrow()
+  async getImageVariation(id: string): Promise<ImageVariation> {
+    const imageVariation_ = await this.db
+      .selectFrom("imageVariation")
+      .select(["id", "crop"])
+      .select((eb) => [
+        jsonObjectFrom(
+          eb.
+          selectFrom("asset").
+          select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"]).
+          whereRef("imageVariation.assetKey", "=", "asset.key")
+        ).as("asset")
+      ])
+      .where("id", "=", id)
+      .executeTakeFirstOrThrow()
 
-    return {
-      ...asset,
-      metadata: AssetMedatadaSchema.nullable().parse(asset.metadata),
+    const imageVariation: Keys<ImageVariation> = {
+      crop: imageVariation_.crop,
+      asset: imageVariation_.asset,
+      id: imageVariation_.id,
     }
+    return ImageVariationSchema.parse(imageVariation)
+  }
+
+  async createImageVariation(values: ImageVariationWrite): Promise<ImageVariation> {
+    const { id } = await this.db
+      .insertInto("imageVariation")
+      .values(withInsertJsonValue(values, "crop"))
+      .returning("id")
+      .executeTakeFirstOrThrow()
+    return this.getImageVariation(id)
+  }
+
+  async updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation> {
+    await this.db.updateTable("imageVariation").set(withInsertJsonValue(values, "crop")).where("id", "=", id).execute()
+    return this.getImageVariation(id)
   }
 }

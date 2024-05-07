@@ -1,26 +1,23 @@
-import { AssetWriteSchema, ImageWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
+import { FileAssetSchema, ImageAssetSchema, ImageVariationWriteSchema } from "@dotkomonline/types"
 
 export const assetRouter = t.router({
-  create: protectedProcedure
-    .input(AssetWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.assetService.create(input)),
-  createImage: protectedProcedure
-    .input(ImageWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.assetService.createImage(input)),
-  updateImage: protectedProcedure
+  createFileAsset: protectedProcedure
+    .input(FileAssetSchema)
+    .mutation(async ({ input, ctx }) => await ctx.assetService.createFileAsset(input)),
+  createImageAsset: protectedProcedure
+    .input(ImageAssetSchema)
+    .mutation(async ({ input, ctx }) => await ctx.assetService.createImageAsset(input)),
+  createImageVariation: protectedProcedure
+    .input(ImageVariationWriteSchema)
+    .mutation(async ({ input, ctx }) => await ctx.assetService.createImageVariation(input)),
+  updateImageVariation: protectedProcedure
     .input(
       z.object({
         id: z.string(),
-        image: ImageWriteSchema,
+        image: ImageVariationWriteSchema,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.assetService.updateImage(input.id, input.image)),
-  createFile: protectedProcedure
-    .input(AssetWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.assetService.create(input)),
-  getImage: protectedProcedure
-    .input(z.string())
-    .query(async ({ input, ctx }) => await ctx.assetService.getImage(input)),
+    .mutation(async ({ input, ctx }) => await ctx.assetService.updateImageVariation(input.id, input.image)),
 })

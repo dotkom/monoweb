@@ -1,13 +1,81 @@
 import type { Database } from "@dotkomonline/db"
-import { type Image, type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
+import type { DB } from "@dotkomonline/db/src/db.generated"
+import {
+  type Offline,
+  type OfflineId,
+  OfflineSchema,
+  type OfflineWithoutAssets,
+  type OfflineWrite,
+} from "@dotkomonline/types"
+import type { ExpressionBuilder, Kysely } from "kysely"
 import { type Cursor, type Keys, orderedQuery } from "../../utils/db-utils"
+import { z } from "zod"
+import { jsonObjectFrom } from "kysely/helpers/postgres"
+
+export const OfflineRepositorySchemas = {
+  get: z.object({
+    id: z.string().ulid(),
+    title: z.string().max(1000).min(1),
+    published: z.date(),
+    file_asset_key: z.string(),
+    image_id: z.string(),
+  }),
+}
 
 export interface OfflineRepository {
-  getById(id: OfflineId): Promise<Offline | null>
+  getById(id: OfflineId): Promise<OfflineWithoutAssets | null>
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(values: OfflineWrite): Promise<Offline>
   update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
+}
+
+function imgQuery(col: keyof DB["offline"]) {
+  return (eb: ExpressionBuilder<DB, "offline">) =>
+    jsonObjectFrom(
+      eb
+        .selectFrom("imageVariation")
+        .select(["crop", "assetKey", "id"])
+        .whereRef(`offline.${col}`, "=", "id")
+        // .select((eb2) => [assetQuery("pdfAssetKey")(eb2).as("asset")])
+        .select((eb2) => [
+          genericAssetQuery("assetKey")(eb2).as("asset"),
+        ])
+    )
+}
+
+function assetQuery(col: keyof DB["offline"]) {
+  return (eb: ExpressionBuilder<DB, "offline">) =>
+    jsonObjectFrom(
+      eb
+        .selectFrom("asset")
+        .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
+        .whereRef(`offline.${col}`, "=", "asset.key")
+    )
+}
+
+function genericAssetQuery(col: string) {
+  // biome-ignore lint/suspicious/noExplicitAny: I'm not sure if this can be typed properly.
+  return (eb: ExpressionBuilder<DB, any>) =>
+    jsonObjectFrom(
+      eb
+        .selectFrom("asset")
+        .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
+        .where("key", "=", col)
+    )
+}
+
+function genericImgQuery(col: string) {
+  // biome-ignore lint/suspicious/noExplicitAny: I'm not sure if this can be typed properly.
+  return (eb: ExpressionBuilder<DB, any>) =>
+    jsonObjectFrom(
+      eb
+        .selectFrom("imageVariation")
+        .select(["crop", "assetKey", "id"])
+        .where("id", "=", col)
+        .select((eb2) => [
+          genericAssetQuery("assetKey")(eb2).as("asset"),
+        ])
+    )
 }
 
 export class OfflineRepositoryImpl implements OfflineRepository {
@@ -30,49 +98,39 @@ export class OfflineRepositoryImpl implements OfflineRepository {
   }
 
   async getById(id: string) {
-    const query = this.db
+    const query = await this.db
       .selectFrom("offline")
-      .select([
-        "offline.id",
-        "offline.title",
-        "offline.createdAt",
-        "offline.updatedAt",
-        "offline.published",
-        "offline.imageId",
-        "offline.fileAssetKey",
+      .select(["id", "title", "published"])
+      .select((eb) => [
+        assetQuery("pdfAssetKey")(eb).as("pdfAsset"),
+        genericImgQuery("imageVariationId")(eb).as("imageVariation"),
       ])
-      .leftJoin("image", "offline.imageId", "image.id")
-      .select(["image.assetKey as imageAssetKey", "image.crop as imageCrop", "image.altText as imageAltText"])
-      .where("offline.id", "=", id)
+      .where("id", "=", id)
+      .executeTakeFirstOrThrow()
 
-    const result = await query.executeTakeFirst()
+    const offline: Keys<Offline> = {
+      id: query.id,
+      title: query.title,
+      published: query.published,
+      image: query.imageVariation,
+      fileAsset: query.pdfAsset,
+    }
 
-    if (!result) {
+    if (!offline) {
       return null
     }
 
-    const image: Keys<Image> = {
-      id: result.imageId,
-      assetKey: result.imageAssetKey,
-      crop: result.imageCrop,
-      altText: result.imageAltText,
-    }
-
-    const parsed: Keys<Offline> = {
-      ...result,
-      fileAssetKey: result.fileAssetKey,
-      image,
-    }
-
-    return OfflineSchema.parse(parsed)
+    return OfflineSchema.parse(offline)
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<Offline[]> {
     const query = this.db
       .selectFrom("offline")
       .selectAll("offline")
-      .leftJoin("image", "offline.imageId", "image.id")
-      .select(["image.assetKey as imageAssetKey", "image.crop as imageCrop", "image.altText as imageAltText"])
+      .select((eb) => [
+        assetQuery("pdfAssetKey")(eb).as("pdfAsset"),
+        imgQuery("imageVariationId")(eb).as("imageVariation"),
+      ])
       .orderBy("offline.createdAt", "desc")
       .limit(take)
 
@@ -82,17 +140,12 @@ export class OfflineRepositoryImpl implements OfflineRepository {
     const result: Offline[] = []
 
     for (const offline of offlines) {
-      const image: Keys<Image> = {
-        id: offline.imageId,
-        assetKey: offline.imageAssetKey,
-        crop: offline.imageCrop,
-        altText: offline.imageAltText,
-      }
-
       const parsed: Keys<Offline> = {
-        ...offline,
-        fileAssetKey: offline.fileAssetKey,
-        image,
+        id: offline.id,
+        title: offline.title,
+        published: offline.published,
+        image: offline.imageVariation,
+        fileAsset: offline.pdfAsset,
       }
 
       result.push(OfflineSchema.parse(parsed))

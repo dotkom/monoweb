@@ -1,11 +1,11 @@
-import { ImageSchema, OfflineWriteSchema } from "@dotkomonline/types"
+import { ImageVariationSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 import { createDateTimeInput, createFileInput, createImageInput, createTextInput, useFormBuilder } from "../../form"
 
 const FormSchema = OfflineWriteSchema.omit({
   imageId: true,
 }).extend({
-  image: ImageSchema,
+  image: ImageVariationSchema,
 })
 type FormSchema = z.infer<typeof FormSchema>
 

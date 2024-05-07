@@ -53,11 +53,14 @@ export interface ArticleTags {
 }
 
 export interface Asset {
+  altText: string | null;
   createdAt: Generated<Timestamp>;
+  height: number | null;
   key: string;
-  metadata: Json | null;
+  mimeType: string;
   originalFilename: string;
   size: number;
+  width: number | null;
 }
 
 export interface Attendance {
@@ -145,8 +148,7 @@ export interface EventCompany {
   eventId: string;
 }
 
-export interface Image {
-  altText: string;
+export interface ImageVariation {
   assetKey: string;
   createdAt: Generated<Timestamp>;
   crop: Json | null;
@@ -219,9 +221,9 @@ export interface NotificationPermissions {
 
 export interface Offline {
   createdAt: Generated<Timestamp>;
-  fileAssetKey: string;
   id: Generated<string>;
-  imageId: string;
+  imageVariationId: string | null;
+  pdfAssetKey: string | null;
   published: Timestamp;
   title: string;
   updatedAt: Generated<Timestamp>;
@@ -330,7 +332,7 @@ export interface DB {
   event: Event;
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
-  image: Image;
+  imageVariation: ImageVariation;
   interestGroup: InterestGroup;
   jobListing: JobListing;
   jobListingLocation: JobListingLocation;

@@ -1,7 +1,7 @@
 import { env } from "@dotkomonline/env"
-import type { Asset, AssetKey, AssetWrite, Image, ImageWrite } from "@dotkomonline/types"
 import type { S3Repository } from "../external/s3-repository"
 import type { AssetRepository } from "./asset-repository"
+import type { FileAsset, FileAssetWrite, ImageAssetWrite, ImageAsset, ImageVariationWrite, ImageVariation } from "@dotkomonline/types"
 
 type Fields = Record<string, string>
 
@@ -33,12 +33,17 @@ export interface PresignedPost {
 }
 
 export interface AssetService {
-  get(key: AssetKey): Promise<Asset>
-  getImage(id: string): Promise<Image>
-  create(payload: AssetWrite): Promise<Asset>
+  getFileAsset(key: string): Promise<FileAsset>
+
+  createFileAsset(values: FileAssetWrite): Promise<FileAsset>
+
+  createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
+
+  createImageVariation(values: ImageVariationWrite): Promise<ImageVariation>
+  getImageVariation(id: string): Promise<ImageVariation>
+  updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation>
+
   createPresignedPost(filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
-  createImage(payload: ImageWrite): Promise<Image>
-  updateImage(id: string, payload: ImageWrite): Promise<Image>
 }
 
 export class AssetServiceImpl implements AssetService {
@@ -47,16 +52,28 @@ export class AssetServiceImpl implements AssetService {
     private readonly s3Repository: S3Repository
   ) {}
 
-  async getImage(id: string): Promise<Image> {
-    return this.assetRepository.getImage(id)
+  async getFileAsset(key: string): Promise<FileAsset> {
+    return this.assetRepository.getFileAsset(key)
   }
 
-  async updateImage(id: string, payload: ImageWrite) {
-    return this.assetRepository.updateImage(id, payload)
+  async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
+    return this.assetRepository.createFileAsset(values)
   }
 
-  async createImage(payload: ImageWrite) {
-    return this.assetRepository.createImage(payload)
+  async createImageAsset(values: ImageAssetWrite): Promise<ImageAsset> {
+    return this.assetRepository.createImageAsset(values)
+  }
+
+  async createImageVariation(values: ImageVariationWrite): Promise<ImageVariation> {
+    return this.assetRepository.createImageVariation(values)
+  }
+
+  async getImageVariation(id: string): Promise<ImageVariation> {
+    return this.assetRepository.getImageVariation(id)
+  }
+
+  async updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation> {
+    return this.assetRepository.updateImageVariation(id, values)
   }
 
   async createPresignedPost(filename: string, mimeType: string, maxSizeMB: number) {
@@ -73,18 +90,5 @@ export class AssetServiceImpl implements AssetService {
       ...presignedUrl,
       assetKey: encodedKey,
     }
-  }
-
-  async handlePresignedPostSuccess(write: AssetWrite): Promise<Asset> {
-    return this.assetRepository.create(write)
-  }
-
-  async create(payload: AssetWrite): Promise<Asset> {
-    const staticAsset = await this.assetRepository.create(payload)
-    return staticAsset
-  }
-
-  async get(key: AssetKey): Promise<Asset> {
-    return this.assetRepository.get(key)
   }
 }

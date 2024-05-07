@@ -10,12 +10,14 @@ export async function up(db) {
     .addColumn("key", "text", (col) => col.notNull().primaryKey())
     .addColumn("original_filename", "text", (col) => col.notNull())
     .addColumn("size", "integer", (col) => col.notNull())
-    .addColumn("metadata", "jsonb")
+    .addColumn("mime_type", "text", (col) => col.notNull())
+    .addColumn("width", "integer") // will be null for non image assets
+    .addColumn("height", "integer") // will be null for non image assets
+    .addColumn("alt_text", "text") // will be null for non image assets
     .execute()
 
-  await createTableWithDefaults("image", { id: true, createdAt: true, updatedAt: false }, db.schema)
+  await createTableWithDefaults("image_variation", { id: true, createdAt: true, updatedAt: false }, db.schema)
     .addColumn("asset_key", "text", (col) => col.references("asset.key").notNull())
-    .addColumn("alt_text", "text", (col) => col.notNull())
     .addColumn("crop", "jsonb")
     .execute()
 
@@ -23,21 +25,20 @@ export async function up(db) {
     .alterTable("offline")
     .dropColumn("file_url")
     .dropColumn("image_url")
-    .addColumn("file_asset_key", "text", (col) => col.references("asset.key").notNull())
-    .addColumn("image_id", sql`ulid`, (col) => col.references("image.id").notNull())
+    .addColumn("pdf_asset_key", "text", (col) => col.references("asset.key"))
+    .addColumn("image_variation_id", sql`ulid`, (col) => col.references("image_variation.id"))
     .execute()
 }
 
 /** @param db {import('kysely').Kysely} */
 export async function down(db) {
-  await db.schema.dropTable("image").execute()
-  await db.schema.dropTable("file").execute()
   await db.schema.dropTable("asset").execute()
+  await db.schema.dropTable("image_variation").execute()
 
   await db.schema
     .alterTable("offline")
-    .dropColumn("file_id")
-    .dropColumn("image_id")
+    .dropColumn("pdf_asset_key")
+    .dropColumn("image_variation_id")
     .addColumn("file_url", "text")
     .addColumn("image_url", "text")
     .execute()
