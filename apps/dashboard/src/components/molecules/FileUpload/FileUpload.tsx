@@ -1,7 +1,7 @@
 "use client"
 import { Anchor, Box } from "@mantine/core"
 import type React from "react"
-import { useUploadAssetToS3 } from "../../../modules/asset/mutations"
+import { useUploadFileAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function FileUpload({ onFileLoad, value }: Props) {
-  const uploadToS3 = useUploadAssetToS3()
+  const uploadToS3 = useUploadFileAssetToS3()
 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
