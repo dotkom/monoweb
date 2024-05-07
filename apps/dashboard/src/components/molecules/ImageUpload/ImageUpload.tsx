@@ -4,6 +4,7 @@
 import type React from "react"
 import { useRef, useState } from "react"
 
+import type { ImageVariation } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
 import type { PercentCrop } from "react-image-crop"
@@ -12,7 +13,6 @@ import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
 import { CropPreview } from "./CropPreview"
 import { getFileFromUrl, getImageDimensions, percentToPixelCrop } from "./utils"
-import type { ImageVariation } from "@dotkomonline/types"
 
 interface Props {
   setImage: (image: ImageVariation | null) => void

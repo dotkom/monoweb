@@ -1,7 +1,14 @@
 import { env } from "@dotkomonline/env"
+import type {
+  FileAsset,
+  FileAssetWrite,
+  ImageAsset,
+  ImageAssetWrite,
+  ImageVariation,
+  ImageVariationWrite,
+} from "@dotkomonline/types"
 import type { S3Repository } from "../external/s3-repository"
 import type { AssetRepository } from "./asset-repository"
-import type { FileAsset, FileAssetWrite, ImageAssetWrite, ImageAsset, ImageVariationWrite, ImageVariation } from "@dotkomonline/types"
 
 type Fields = Record<string, string>
 
@@ -33,14 +40,10 @@ export interface PresignedPost {
 }
 
 export interface AssetService {
-  getFileAsset(key: string): Promise<FileAsset>
-
   createFileAsset(values: FileAssetWrite): Promise<FileAsset>
-
   createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
 
   createImageVariation(values: ImageVariationWrite): Promise<ImageVariation>
-  getImageVariation(id: string): Promise<ImageVariation>
   updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation>
 
   createPresignedPost(filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
@@ -52,10 +55,6 @@ export class AssetServiceImpl implements AssetService {
     private readonly s3Repository: S3Repository
   ) {}
 
-  async getFileAsset(key: string): Promise<FileAsset> {
-    return this.assetRepository.getFileAsset(key)
-  }
-
   async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
     return this.assetRepository.createFileAsset(values)
   }
@@ -66,10 +65,6 @@ export class AssetServiceImpl implements AssetService {
 
   async createImageVariation(values: ImageVariationWrite): Promise<ImageVariation> {
     return this.assetRepository.createImageVariation(values)
-  }
-
-  async getImageVariation(id: string): Promise<ImageVariation> {
-    return this.assetRepository.getImageVariation(id)
   }
 
   async updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation> {

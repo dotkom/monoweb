@@ -1,6 +1,6 @@
+import { FileAssetSchema, ImageAssetSchema, ImageVariationWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
-import { FileAssetSchema, ImageAssetSchema, ImageVariationWriteSchema } from "@dotkomonline/types"
 
 export const assetRouter = t.router({
   createFileAsset: protectedProcedure

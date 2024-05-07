@@ -1,28 +1,19 @@
 import type { Database } from "@dotkomonline/db"
-import { jsonObjectFrom } from 'kysely/helpers/postgres'
-import type { Kysely } from "kysely"
-import { type Keys, withInsertJsonValue } from "../../utils/db-utils"
+import type { DB } from "@dotkomonline/db/src/db.generated"
 import {
-  FileAssetSchema,
-  ImageAssetSchema,
-  ImageVariationSchema,
   type FileAsset,
+  FileAssetSchema,
   type FileAssetWrite,
   type ImageAsset,
+  ImageAssetSchema,
   type ImageAssetWrite,
   type ImageVariation,
+  ImageVariationSchema,
   type ImageVariationWrite,
 } from "@dotkomonline/types"
-
-export const assetCols = [
-  "asset.key as key",
-  "asset.originalFilename",
-  "asset.mimeType",
-  "asset.size",
-  "asset.width",
-  "asset.height",
-  "asset.altText",
-] as const
+import type { ExpressionBuilder, Kysely } from "kysely"
+import { jsonObjectFrom } from "kysely/helpers/postgres"
+import { type Keys, withInsertJsonValue } from "../../utils/db-utils"
 
 export interface AssetRepository {
   getFileAsset(key: string): Promise<FileAsset>
@@ -69,14 +60,7 @@ export class AssetRepositoryImpl implements AssetRepository {
     const imageVariation_ = await this.db
       .selectFrom("imageVariation")
       .select(["id", "crop"])
-      .select((eb) => [
-        jsonObjectFrom(
-          eb.
-          selectFrom("asset").
-          select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"]).
-          whereRef("imageVariation.assetKey", "=", "asset.key")
-        ).as("asset")
-      ])
+      .select((eb) => [this.assetQuery("assetKey")(eb).as("asset")])
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
 
@@ -100,5 +84,15 @@ export class AssetRepositoryImpl implements AssetRepository {
   async updateImageVariation(id: string, values: ImageVariationWrite): Promise<ImageVariation> {
     await this.db.updateTable("imageVariation").set(withInsertJsonValue(values, "crop")).where("id", "=", id).execute()
     return this.getImageVariation(id)
+  }
+
+  private assetQuery(col: keyof DB["imageVariation"]) {
+    return (eb: ExpressionBuilder<DB, "imageVariation">) =>
+      jsonObjectFrom(
+        eb
+          .selectFrom("asset")
+          .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
+          .whereRef(`imageVariation.${col}`, "=", "asset.key")
+      )
   }
 }

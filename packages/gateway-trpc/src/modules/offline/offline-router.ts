@@ -16,7 +16,9 @@ export const offlineRouter = t.router({
   all: t.procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.offlineService.getAll(input.take, input.cursor)),
-  get: t.procedure.input(OfflineSchemaWithoutAssets.shape.id).query(async ({ input, ctx }) => ctx.offlineService.get(input)),
+  get: t.procedure
+    .input(OfflineSchemaWithoutAssets.shape.id)
+    .query(async ({ input, ctx }) => ctx.offlineService.get(input)),
   createPresignedPost: protectedProcedure
     .input(
       z.object({
