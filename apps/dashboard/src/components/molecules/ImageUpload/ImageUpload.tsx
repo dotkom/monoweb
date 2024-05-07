@@ -24,21 +24,33 @@ interface Props {
   cropAspectLock?: number | undefined
 }
 
-const mapCropToFrontend = (crop: ImageVariant["crop"]): PercentCrop | undefined =>
-  crop === null
-    ? undefined
-    : {
-        x: crop.left,
-        y: crop.top,
-        width: crop.width,
-        height: crop.height,
-        unit: "%",
-      }
+const mapCropToFrontend = (image: ImageVariant | null): PercentCrop | undefined => {
+  if (!image || !image.crop) {
+    return undefined
+  }
+
+  // This is stored in pixels
+  const crop = image.crop
+
+  console.log("stored data", image)
+
+  const percentCrop: PercentCrop = {
+    x: (crop.left / image.asset.width) * 100,
+    y: (crop.top / image.asset.height) * 100,
+    width: (crop.width / image.asset.width) * 100,
+    height: (crop.height / image.asset.height) * 100,
+    unit: "%",
+  }
+
+  console.log("calcualted crop", percentCrop)
+
+  return percentCrop
+}
 
 export default function ImageUpload({ setImage, cropAspectLock: aspect, image }: Props) {
   const [imgSrc, setImgSrc] = useState("")
   const [scale, setScale] = useState(1)
-  const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(image?.crop ?? null))
+  const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(image))
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
   const imgRef = useRef<HTMLImageElement>(null)

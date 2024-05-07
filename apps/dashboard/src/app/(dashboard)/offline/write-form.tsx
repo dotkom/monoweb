@@ -29,7 +29,7 @@ export const useOfflineWriteForm = ({ onSubmit, label, defaultValues }: UseOffli
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),
-      fileAssetKey: createFileInput({
+      pdfAssetKey: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
       }),

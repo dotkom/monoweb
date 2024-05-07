@@ -9,18 +9,7 @@ import {
 } from "@dotkomonline/types"
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
-import { z } from "zod"
 import { type Cursor, type Keys, orderedQuery } from "../../utils/db-utils"
-
-export const OfflineRepositorySchemas = {
-  get: z.object({
-    id: z.string().ulid(),
-    title: z.string().max(1000).min(1),
-    published: z.date(),
-    file_asset_key: z.string(),
-    image_id: z.string(),
-  }),
-}
 
 export interface OfflineRepository {
   getById(id: OfflineId): Promise<OfflineWithoutAssets | null>
@@ -90,6 +79,8 @@ export class OfflineRepositoryImpl implements OfflineRepository {
 
     const result: Offline[] = []
 
+    console.log(JSON.stringify(offlines, null, 2))
+
     for (const offline of offlines) {
       const parsed: Keys<Offline> = {
         id: offline.id,
@@ -111,7 +102,14 @@ export class OfflineRepositoryImpl implements OfflineRepository {
           .selectFrom("imageVariant")
           .select(["crop", "assetKey", "id"])
           .whereRef(`offline.${col}`, "=", "id")
-          .select((eb2) => [this.assetQuery("pdfAssetKey")(eb2).as("asset")])
+          .select((eb2) => [
+            jsonObjectFrom(
+              eb2
+                .selectFrom("asset")
+                .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
+                .whereRef("imageVariant.assetKey", "=", "asset.key")
+            ).as("asset"),
+          ])
       )
   }
 

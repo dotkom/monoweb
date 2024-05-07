@@ -23,7 +23,7 @@ export const OfflineWriteSchema = OfflineSchema.omit({
   fileAsset: true,
 }).extend({
   imageVariantId: z.string(),
-  fileAssetKey: z.string(),
+  pdfAssetKey: z.string(),
 })
 
 export type Offline = z.infer<typeof OfflineSchema>
