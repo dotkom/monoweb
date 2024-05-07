@@ -8,7 +8,11 @@ import type { ImageVariation } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
 import type { PercentCrop } from "react-image-crop"
-import { useCreateImageMutation, useUpdateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
+import {
+  useCreateImageMutation,
+  useUpdateImageMutation,
+  useUploadImageAssetToS3,
+} from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
 import { CropPreview } from "./CropPreview"
@@ -39,7 +43,7 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
   const imgRef = useRef<HTMLImageElement>(null)
 
-  const uploadToS3 = useUploadAssetToS3()
+  const uploadToS3 = useUploadImageAssetToS3()
   const createImage = useCreateImageMutation()
   const updateImage = useUpdateImageMutation()
 
@@ -67,7 +71,6 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
       const dimensions = await getImageDimensions(e.target.files[0])
       console.log(dimensions)
       const uploadedRawAsset = await uploadToS3(e.target.files[0], {
-        type: "image",
         width: dimensions.width,
         height: dimensions.height,
         altText: "Uploaded image",

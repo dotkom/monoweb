@@ -20,8 +20,10 @@ export const OfflineSchema = z.object({
 export const OfflineWriteSchema = OfflineSchema.omit({
   id: true,
   image: true,
+  fileAsset: true,
 }).extend({
   imageId: z.string(),
+  fileAssetKey: z.string(),
 })
 
 export type Offline = z.infer<typeof OfflineSchema>
