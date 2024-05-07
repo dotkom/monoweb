@@ -7,7 +7,7 @@ import { useRef, useState } from "react"
 import type { Image } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
-import type { PixelCrop } from "react-image-crop"
+import type { PercentCrop } from "react-image-crop"
 import { useCreateImageMutation, useUpdateImageMutation, useUploadAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
@@ -20,7 +20,7 @@ interface Props {
   cropAspectLock?: number | undefined
 }
 
-const mapCropToFrontend = (crop: Image["crop"]): PixelCrop | undefined =>
+const mapCropToFrontend = (crop: Image["crop"]): PercentCrop | undefined =>
   crop === null
     ? undefined
     : {
@@ -28,13 +28,13 @@ const mapCropToFrontend = (crop: Image["crop"]): PixelCrop | undefined =>
         y: crop.top,
         width: crop.width,
         height: crop.height,
-        unit: "px",
+        unit: "%",
       }
 
 export default function ImageUpload({ setImage, cropAspectLock: aspect, image }: Props) {
   const [imgSrc, setImgSrc] = useState("")
   const [scale, setScale] = useState(1)
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop | undefined>(mapCropToFrontend(image?.crop ?? null))
+  const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(image?.crop ?? null))
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
   const imgRef = useRef<HTMLImageElement>(null)

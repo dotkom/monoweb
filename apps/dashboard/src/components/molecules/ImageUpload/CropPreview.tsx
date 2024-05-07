@@ -5,12 +5,12 @@ import type React from "react"
 import { useRef } from "react"
 
 import { useEffect } from "react"
-import type { PixelCrop } from "react-image-crop"
+import type { PercentCrop } from "react-image-crop"
 import { canvasPreview } from "./utils"
 
 interface ShowPreviewProps {
   imgSrc: string
-  completedCrop: PixelCrop | undefined
+  completedCrop: PercentCrop | undefined
   imgRef: React.RefObject<HTMLImageElement>
   scale: number
   hidden?: boolean
@@ -23,12 +23,12 @@ export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: Sh
     }
 
     // If crop is null, set crop to the entire image
-    const crop: PixelCrop = completedCrop || {
+    const crop: PercentCrop = completedCrop || {
       x: 0,
       y: 0,
       width: imgRef.current?.width,
       height: imgRef.current.height,
-      unit: "px",
+      unit: "%",
     }
 
     canvasPreview(imgRef.current, canvasRef.current, crop, scale)

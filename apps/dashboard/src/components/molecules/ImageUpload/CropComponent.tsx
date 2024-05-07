@@ -4,7 +4,7 @@
 import type React from "react"
 import { useRef, useState } from "react"
 
-import ReactCrop, { centerCrop, makeAspectCrop, type Crop, type PixelCrop } from "react-image-crop"
+import ReactCrop, { centerCrop, makeAspectCrop, type PercentCrop, type Crop } from "react-image-crop"
 
 import "react-image-crop/dist/ReactCrop.css"
 
@@ -28,7 +28,7 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 interface CropProps {
   imgSrc: string
   completedCrop?: Crop
-  setCompletedCrop: (crop: PixelCrop) => void
+  setCompletedCrop: (crop: PercentCrop) => void
   aspect?: number
   scale: number
 }
@@ -47,8 +47,13 @@ export function CropComponent({ imgSrc, completedCrop, setCompletedCrop, aspect,
   return (
     <ReactCrop
       crop={crop}
-      onChange={(_, percentCrop) => setCrop(percentCrop)}
-      onComplete={(c) => setCompletedCrop(c)}
+      onChange={(pixelCrop, percentCrop) => {
+        console.log(pixelCrop, percentCrop)
+        setCrop(percentCrop)}}
+      onComplete={(c, p) => {
+        console.log(p, c)
+        setCompletedCrop(p)
+      }}
       aspect={aspect}
       minHeight={100}
     >
