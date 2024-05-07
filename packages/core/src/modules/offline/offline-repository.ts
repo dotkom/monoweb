@@ -54,7 +54,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       .select(["id", "title", "published"])
       .select((eb) => [
         this.assetQuery("pdfAssetKey")(eb).as("pdfAsset"),
-        this.imgQuery("imageVariationId")(eb).as("imageVariation"),
+        this.imgQuery("imageVariantId")(eb).as("imageVariant"),
       ])
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
@@ -63,7 +63,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       id: query.id,
       title: query.title,
       published: query.published,
-      image: query.imageVariation,
+      image: query.imageVariant,
       fileAsset: query.pdfAsset,
     }
 
@@ -80,7 +80,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       .selectAll("offline")
       .select((eb) => [
         this.assetQuery("pdfAssetKey")(eb).as("pdfAsset"),
-        this.imgQuery("imageVariationId")(eb).as("imageVariation"),
+        this.imgQuery("imageVariantId")(eb).as("imageVariant"),
       ])
       .orderBy("offline.createdAt", "desc")
       .limit(take)
@@ -95,7 +95,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
         id: offline.id,
         title: offline.title,
         published: offline.published,
-        image: offline.imageVariation,
+        image: offline.imageVariant,
         fileAsset: offline.pdfAsset,
       }
 
@@ -108,7 +108,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
     return (eb: ExpressionBuilder<DB, "offline">) =>
       jsonObjectFrom(
         eb
-          .selectFrom("imageVariation")
+          .selectFrom("imageVariant")
           .select(["crop", "assetKey", "id"])
           .whereRef(`offline.${col}`, "=", "id")
           .select((eb2) => [this.assetQuery("pdfAssetKey")(eb2).as("asset")])

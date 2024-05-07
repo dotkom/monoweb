@@ -1,12 +1,12 @@
 import { z } from "zod"
-import { FileAssetSchema, ImageVariationSchema } from "./asset"
+import { FileAssetSchema, ImageVariantSchema } from "./asset"
 
 export const OfflineSchemaWithoutAssets = z.object({
   id: z.string().ulid(),
   title: z.string().max(1000).min(1),
   published: z.date(),
   fileAsset: FileAssetSchema, // joining with asset is cheap and file name may be used
-  image: ImageVariationSchema,
+  image: ImageVariantSchema,
 })
 
 export const OfflineSchema = z.object({
@@ -14,7 +14,7 @@ export const OfflineSchema = z.object({
   title: z.string().max(1000).min(1),
   published: z.date(),
   fileAsset: FileAssetSchema, // joining with asset is cheap and file name may be used
-  image: ImageVariationSchema,
+  image: ImageVariantSchema,
 })
 
 export const OfflineWriteSchema = OfflineSchema.omit({
@@ -22,7 +22,7 @@ export const OfflineWriteSchema = OfflineSchema.omit({
   image: true,
   fileAsset: true,
 }).extend({
-  imageId: z.string(),
+  imageVariantId: z.string(),
   fileAssetKey: z.string(),
 })
 

@@ -148,7 +148,7 @@ export interface EventCompany {
   eventId: string;
 }
 
-export interface ImageVariation {
+export interface ImageVariant {
   assetKey: string;
   createdAt: Generated<Timestamp>;
   crop: Json | null;
@@ -222,7 +222,7 @@ export interface NotificationPermissions {
 export interface Offline {
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
-  imageVariationId: string | null;
+  imageVariantId: string | null;
   pdfAssetKey: string | null;
   published: Timestamp;
   title: string;
@@ -332,7 +332,7 @@ export interface DB {
   event: Event;
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
-  imageVariation: ImageVariation;
+  imageVariant: ImageVariant;
   interestGroup: InterestGroup;
   jobListing: JobListing;
   jobListingLocation: JobListingLocation;
