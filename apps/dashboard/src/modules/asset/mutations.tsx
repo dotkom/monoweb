@@ -1,37 +1,50 @@
 import { trpc } from "../../utils/trpc"
 import { useS3UploadFile } from "../offline/use-s3-upload-file"
 
-export const useCreateAssetMutation = () => {
-  return trpc.asset.create.useMutation()
-}
+type UploadArgs =
+  | {
+      type: "image"
+      width: number
+      height: number
+      altText: string
+    }
+  | {
+      type: "other"
+    }
 
 export const useUploadAssetToS3 = () => {
   const upload = useS3UploadFile()
-  const createAsset = useCreateAssetMutation()
+  const createFileAsset = trpc.asset.createFileAsset.useMutation()
+  const createImageAsset = trpc.asset.createImageAsset.useMutation()
 
-  return async (file: File) => {
+  return async (file: File, arg: UploadArgs) => {
     const result = await upload(file)
-    const inserted = await createAsset.mutateAsync({
-      metadata: null,
+
+    if (arg.type === "image") {
+      return createImageAsset.mutateAsync({
+        originalFilename: result.originalFilename,
+        size: result.size,
+        key: result.s3FileName,
+        width: arg.width,
+        height: arg.height,
+        altText: arg.altText,
+        mimeType: result.mimeType,
+      })
+    }
+
+    return createFileAsset.mutateAsync({
       originalFilename: result.originalFilename,
       size: result.size,
       key: result.s3FileName,
+      mimeType: result.mimeType,
     })
-
-    return inserted
   }
 }
 
 export const useCreateImageMutation = () => {
-  return trpc.asset.createImage.useMutation({
-    onSuccess(data, variables, context) {},
-  })
+  return trpc.asset.createImageVariation.useMutation()
 }
 
 export const useUpdateImageMutation = () => {
-  return trpc.asset.updateImage.useMutation()
-}
-
-export const useCreateFileMutation = () => {
-  return trpc.asset.createFile.useMutation()
+  return trpc.asset.updateImageVariation.useMutation()
 }

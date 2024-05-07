@@ -4,7 +4,6 @@
 import type React from "react"
 import { useRef, useState } from "react"
 
-import type { Image } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
 import type { PercentCrop } from "react-image-crop"
@@ -12,15 +11,16 @@ import { useCreateImageMutation, useUpdateImageMutation, useUploadAssetToS3 } fr
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
 import { CropPreview } from "./CropPreview"
-import { getFileFromUrl } from "./utils"
+import { getFileFromUrl, getImageDimensions, percentToPixelCrop } from "./utils"
+import type { ImageVariation } from "@dotkomonline/types"
 
 interface Props {
-  setImage: (image: Image | null) => void
-  image: Image | null
+  setImage: (image: ImageVariation | null) => void
+  image: ImageVariation | null
   cropAspectLock?: number | undefined
 }
 
-const mapCropToFrontend = (crop: Image["crop"]): PercentCrop | undefined =>
+const mapCropToFrontend = (crop: ImageVariation["crop"]): PercentCrop | undefined =>
   crop === null
     ? undefined
     : {
@@ -49,7 +49,7 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
 
   useEffect(() => {
     if (image) {
-      loadFileFromAssetKey(image.assetKey)
+      loadFileFromAssetKey(image.asset.key)
     }
   }, [image])
 
@@ -63,7 +63,15 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
-      const uploadedRawAsset = await uploadToS3(e.target.files[0])
+      setCompletedCrop(undefined)
+      const dimensions = await getImageDimensions(e.target.files[0])
+      console.log(dimensions)
+      const uploadedRawAsset = await uploadToS3(e.target.files[0], {
+        type: "image",
+        width: dimensions.width,
+        height: dimensions.height,
+        altText: "Uploaded image",
+      })
       await loadFileFromAssetKey(uploadedRawAsset.key)
 
       const newImage = {
@@ -91,26 +99,30 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
       return null
     }
 
+    const pixelCrop = percentToPixelCrop(completedCrop, imgRef.current)
+
     const scaleX = imgRef.current.naturalWidth / imgRef.current.width
     const scaleY = imgRef.current.naturalHeight / imgRef.current.height
 
+    console.log(pixelCrop, scaleX, scaleY)
+
     return {
-      left: completedCrop.x * scaleX,
-      top: completedCrop.y * scaleY,
-      width: completedCrop.width * scaleX,
-      height: completedCrop.height * scaleY,
+      left: pixelCrop.x * scaleX,
+      top: pixelCrop.y * scaleY,
+      width: pixelCrop.width * scaleX,
+      height: pixelCrop.height * scaleY,
     }
   }
 
   async function onSetCrop() {
     if (!image) {
-      throw new Error("Invalid state. Image value not set at crop time")
+      throw new Error("Invalid state. ImageVariation value not set at crop time")
     }
 
     const result = await updateImage.mutateAsync({
       id: image.id,
       image: {
-        assetKey: image.assetKey,
+        assetKey: image.asset.key,
         crop: getRealSizeCropValues(),
         altText: "Uploaded image",
       },

@@ -17,6 +17,7 @@ export const useS3UploadFile = () => {
       s3FileName: res.assetKey,
       originalFilename: file.name,
       size: file.size,
+      mimeType: file.type,
     }
   }
 }

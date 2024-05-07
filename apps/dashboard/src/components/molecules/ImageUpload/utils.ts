@@ -1,5 +1,14 @@
 import type { PercentCrop } from "react-image-crop"
 
+export function percentToPixelCrop(crop: PercentCrop, image: HTMLImageElement) {
+  return {
+    x: (crop.x / 100) * image.width,
+    y: (crop.y / 100) * image.height,
+    width: (crop.width / 100) * image.width,
+    height: (crop.height / 100) * image.height,
+  }
+}
+
 export async function canvasPreview(image: HTMLImageElement, canvas: HTMLCanvasElement, crop: PercentCrop, scale = 1) {
   const ctx = canvas.getContext("2d")
 
@@ -16,12 +25,7 @@ export async function canvasPreview(image: HTMLImageElement, canvas: HTMLCanvasE
   const pixelRatio = window.devicePixelRatio
   // const pixelRatio = 1
 
-  const pixelCrop = {
-    x: (crop.x / 100) * image.width,
-    y: (crop.y / 100) * image.height,
-    width: (crop.width / 100) * image.width,
-    height: (crop.height / 100) * image.height,
-  }
+  const pixelCrop = percentToPixelCrop(crop, image)
 
   console.log("pixelCrop in canvaspreview", pixelCrop)
 
@@ -57,4 +61,15 @@ export async function getFileFromUrl(url: string): Promise<File> {
   const response = await fetch(url)
   const blob = await response.blob()
   return new File([blob], "image.png", { type: "image/png" })
+}
+
+
+export async function getImageDimensions(file: File) {
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  await img.decode();
+  return {
+      width: img.width,
+      height: img.height
+  }
 }

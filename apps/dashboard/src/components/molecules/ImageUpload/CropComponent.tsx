@@ -47,11 +47,9 @@ export function CropComponent({ imgSrc, completedCrop, setCompletedCrop, aspect,
   return (
     <ReactCrop
       crop={crop}
-      onChange={(pixelCrop, percentCrop) => {
-        console.log(pixelCrop, percentCrop)
+      onChange={(_, percentCrop) => {
         setCrop(percentCrop)}}
-      onComplete={(c, p) => {
-        console.log(p, c)
+      onComplete={(_, p) => {
         setCompletedCrop(p)
       }}
       aspect={aspect}
