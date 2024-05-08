@@ -69,7 +69,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
       lastSyncedAt: new Date(),
     }
 
-    const userDb = await this.userService.getById(userAuth0.id)
+    const userDb = await this.userService.getByEmail(userAuth0.email)
 
     if (userDb === null) {
       this.logger.log("info", "User does not exist in local db, creating user for user ", userAuth0.name)
