@@ -268,7 +268,12 @@ export function createImageInput<F extends FieldValues>({
           control={control}
           name={name}
           render={({ field }) => (
-            <ImageUpload setImage={field.onChange} image={field.value} cropAspectLock={props.cropAspectLock} />
+            <ImageUpload
+              setImage={field.onChange}
+              image={field.value}
+              cropAspectLock={props.cropAspectLock}
+              error={state.errors[name]}
+            />
           )}
         />
       </Box>
@@ -287,7 +292,9 @@ export function createFileInput<F extends FieldValues>({
         <Controller
           control={control}
           name={name}
-          render={({ field }) => <FileUpload value={field.value} onFileLoad={field.onChange} />}
+          render={({ field }) => (
+            <FileUpload value={field.value} onFileLoad={field.onChange} error={state.errors[name]} />
+          )}
         />
       </Box>
     )

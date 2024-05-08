@@ -1,3 +1,4 @@
+import type { ImageVariant } from "@dotkomonline/types"
 import type { PercentCrop } from "react-image-crop"
 
 export function percentToPixelCrop(crop: PercentCrop, image: HTMLImageElement) {
@@ -71,4 +72,23 @@ export async function getImageDimensions(file: File) {
     width: img.width,
     height: img.height,
   }
+}
+
+export const mapCropToFrontend = (image: ImageVariant | null): PercentCrop | undefined => {
+  if (!image || !image.crop) {
+    return undefined
+  }
+
+  // This is stored in pixels
+  const crop = image.crop
+
+  const percentCrop: PercentCrop = {
+    x: (crop.left / image.asset.width) * 100,
+    y: (crop.top / image.asset.height) * 100,
+    width: (crop.width / image.asset.width) * 100,
+    height: (crop.height / image.asset.height) * 100,
+    unit: "%",
+  }
+
+  return percentCrop
 }
