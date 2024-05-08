@@ -26,8 +26,8 @@ export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: Sh
     const crop: PercentCrop = completedCrop || {
       x: 0,
       y: 0,
-      width: imgRef.current?.width,
-      height: imgRef.current.height,
+      width: 100,
+      height: 100,
       unit: "%",
     }
 

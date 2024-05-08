@@ -11,7 +11,7 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
     label: "Opprett ny Offline",
     onSubmit: async (data) => {
       createOffline.mutate({
-        pdfAssetKey: data.pdfAssetKey,
+        pdfAssetKey: data.pdf.key,
         imageVariantId: data.image.id,
         title: data.title,
         published: data.published,

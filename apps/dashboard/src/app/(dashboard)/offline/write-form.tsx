@@ -1,11 +1,13 @@
-import { ImageVariantSchema, OfflineWriteSchema } from "@dotkomonline/types"
+import { FileAssetSchema, ImageVariantSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 import { createDateTimeInput, createFileInput, createImageInput, createTextInput, useFormBuilder } from "../../form"
 
 const FormSchema = OfflineWriteSchema.omit({
   imageVariantId: true,
+  pdfAssetKey: true,
 }).extend({
   image: ImageVariantSchema,
+  pdf: FileAssetSchema,
 })
 type FormSchema = z.infer<typeof FormSchema>
 
@@ -29,7 +31,7 @@ export const useOfflineWriteForm = ({ onSubmit, label, defaultValues }: UseOffli
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),
-      pdfAssetKey: createFileInput({
+      pdf: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
       }),
