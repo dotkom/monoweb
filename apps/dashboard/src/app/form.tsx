@@ -269,8 +269,8 @@ export function createImageInput<F extends FieldValues>({
           name={name}
           render={({ field }) => (
             <ImageUpload
-              setImage={field.onChange}
-              image={field.value}
+              setImageVariant={field.onChange}
+              imageVariant={field.value}
               cropAspectLock={props.cropAspectLock}
               error={state.errors[name]}
             />

@@ -1,18 +1,12 @@
 import type { Database } from "@dotkomonline/db"
 import type { DB } from "@dotkomonline/db/src/db.generated"
-import {
-  type Offline,
-  type OfflineId,
-  OfflineSchema,
-  type OfflineWithoutAssets,
-  type OfflineWrite,
-} from "@dotkomonline/types"
+import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { type Cursor, type Keys, orderedQuery } from "../../utils/db-utils"
 
 export interface OfflineRepository {
-  getById(id: OfflineId): Promise<OfflineWithoutAssets | null>
+  getById(id: OfflineId): Promise<Offline | null>
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(values: OfflineWrite): Promise<Offline>
   update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
@@ -53,7 +47,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       title: query.title,
       published: query.published,
       image: query.imageVariant,
-      fileAsset: query.pdfAsset,
+      pdf: query.pdfAsset,
     }
 
     if (!offline) {
@@ -87,7 +81,7 @@ export class OfflineRepositoryImpl implements OfflineRepository {
         title: offline.title,
         published: offline.published,
         image: offline.imageVariant,
-        fileAsset: offline.pdfAsset,
+        pdf: offline.pdfAsset,
       }
 
       result.push(OfflineSchema.parse(parsed))

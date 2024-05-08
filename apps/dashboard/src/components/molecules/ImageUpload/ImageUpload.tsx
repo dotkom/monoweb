@@ -10,8 +10,8 @@ import { useEffect } from "react"
 import type { ReactNode } from "react"
 import type { PercentCrop } from "react-image-crop"
 import {
-  useCreateImageMutation,
-  useUpdateImageMutation,
+  useCreateImageVariantMutation,
+  useUpdateImageVariantMutation,
   useUploadImageAssetToS3,
 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
@@ -21,33 +21,33 @@ import { imageUploadNotifications } from "./notifications"
 import { getFileFromUrl, getImageDimensions, mapCropToFrontend, percentToPixelCrop } from "./utils"
 
 interface Props {
-  setImage: (image: ImageVariant | null) => void
-  image: ImageVariant | null
+  setImageVariant: (image: ImageVariant | null) => void
+  imageVariant: ImageVariant | null
   cropAspectLock?: number | undefined
   error?: ReactNode
 }
 
-export default function ImageUpload({ setImage, cropAspectLock, image, error }: Props) {
+export default function ImageUpload({ setImageVariant, cropAspectLock, imageVariant, error }: Props) {
   const [imgSrc, setImgSrc] = useState("")
   const [scale, setScale] = useState(1)
-  const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(image))
+  const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(imageVariant))
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
   const imgRef = useRef<HTMLImageElement>(null)
 
   const uploadToS3 = useUploadImageAssetToS3()
-  const createImage = useCreateImageMutation()
-  const updateImage = useUpdateImageMutation()
+  const createImageVariant = useCreateImageVariantMutation()
+  const updateImageVariant = useUpdateImageVariantMutation()
 
   async function reset() {
-    setImage(null)
+    setImageVariant(null)
   }
 
   useEffect(() => {
-    if (image) {
-      loadFileFromAssetKey(image.asset.key)
+    if (imageVariant) {
+      loadFileFromAssetKey(imageVariant.asset.key)
     }
-  }, [image])
+  }, [imageVariant])
 
   async function loadFileFromAssetKey(assetKey: string) {
     const url = buildAssetUrl(assetKey)
@@ -76,23 +76,23 @@ export default function ImageUpload({ setImage, cropAspectLock, image, error }: 
     notify.syncBackend()
     await loadFileFromAssetKey(uploadedRawAsset.key)
 
-    const newImage = {
+    const newImageVariant = {
       assetKey: uploadedRawAsset.key,
       crop: null,
       altText: "Uploaded image",
     }
 
-    if (!image) {
+    if (!imageVariant) {
       // Create new image
-      const res = await createImage.mutateAsync(newImage)
-      setImage(res)
+      const res = await createImageVariant.mutateAsync(newImageVariant)
+      setImageVariant(res)
       notify.complete()
       return
     }
 
     // Update existing image
-    const res = await updateImage.mutateAsync({ id: image.id, image: newImage })
-    setImage(res)
+    const res = await updateImageVariant.mutateAsync({ id: imageVariant.id, image: newImageVariant })
+    setImageVariant(res)
 
     notify.complete()
   }
@@ -118,28 +118,28 @@ export default function ImageUpload({ setImage, cropAspectLock, image, error }: 
   }
 
   async function onSetCrop() {
-    if (!image) {
+    if (!imageVariant) {
       throw new Error("Invalid state. ImageVariant value not set at crop time")
     }
 
-    const result = await updateImage.mutateAsync({
-      id: image.id,
+    const result = await updateImageVariant.mutateAsync({
+      id: imageVariant.id,
       image: {
-        assetKey: image.asset.key,
+        assetKey: imageVariant.asset.key,
         crop: getRealSizeCropValues(),
       },
     })
 
     toggleShowCrop()
-    setImage(result)
+    setImageVariant(result)
   }
 
   return (
     <div>
       {error && <div style={{ color: "red" }}>{error}</div>}
-      {!image && <input type="file" accept="image/*" onChange={onSelectFile} />}
+      {!imageVariant && <input type="file" accept="image/*" onChange={onSelectFile} />}
       <div>
-        {!!image && (
+        {!!imageVariant && (
           <>
             {cropOpen && (
               <div>
@@ -164,7 +164,7 @@ export default function ImageUpload({ setImage, cropAspectLock, image, error }: 
                 </button>
               </div>
             )}
-            {!cropOpen && !!image && (
+            {!cropOpen && !!imageVariant && (
               <div>
                 <button onClick={toggleShowCrop} type="button">
                   Endre crop

@@ -1,4 +1,5 @@
 "use client"
+import type { FileAsset } from "@dotkomonline/types"
 import { Anchor, Box, Text } from "@mantine/core"
 import type React from "react"
 import type { ReactNode } from "react"
@@ -7,7 +8,7 @@ import { buildAssetUrl } from "../../../utils/s3"
 
 interface Props {
   onFileLoad: (image: string) => void
-  value?: string
+  value: FileAsset
   error?: ReactNode
 }
 
@@ -32,8 +33,8 @@ export default function FileUpload({ onFileLoad, value, error }: Props) {
         )}
       </Box>
       {!!value && (
-        <Anchor href={buildAssetUrl(value)} target="_blank">
-          {value}
+        <Anchor href={buildAssetUrl(value.key)} target="_blank">
+          {value.originalFilename}
         </Anchor>
       )}
     </div>

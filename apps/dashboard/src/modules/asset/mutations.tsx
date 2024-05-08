@@ -41,10 +41,10 @@ export const useUploadImageAssetToS3 = () => {
   }
 }
 
-export const useCreateImageMutation = () => {
+export const useCreateImageVariantMutation = () => {
   return trpc.asset.createImageVariation.useMutation()
 }
 
-export const useUpdateImageMutation = () => {
+export const useUpdateImageVariantMutation = () => {
   return trpc.asset.updateImageVariation.useMutation()
 }

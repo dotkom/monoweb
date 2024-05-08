@@ -24,7 +24,7 @@ export const useOfflineTable = ({ data }: Props) => {
         header: () => "Utgivelsesdato",
         cell: (info) => <Text>{formatDate(info.getValue())}</Text>,
       }),
-      columnHelper.accessor("fileAsset", {
+      columnHelper.accessor("pdf", {
         header: () => "Fil",
         cell: (info) => {
           const asset = info.getValue()
