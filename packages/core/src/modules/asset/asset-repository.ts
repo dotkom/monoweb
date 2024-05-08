@@ -30,8 +30,8 @@ export interface AssetRepository {
   getAllImageAssets(): Promise<ImageAsset[]>
 }
 
-const imageAssetCols = ["key", "originalFilename", "mimeType", "size", "width", "height", "altText"] as const
-const fileAssetCols = ["key", "originalFilename", "mimeType", "size"] as const
+const fileAssetCols = ["key", "originalFilename", "mimeType", "size", "createdAt", "title", "tags"] as const
+const imageAssetCols = [...fileAssetCols, "width", "height", "altText"] as const
 
 export class AssetRepositoryImpl implements AssetRepository {
   constructor(private readonly db: Kysely<Database>) {}
@@ -67,10 +67,10 @@ export class AssetRepositoryImpl implements AssetRepository {
   }
 
   async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
-    const asset_ = await this.db.insertInto("asset").values({
+    const asset_ = await this.db.insertInto("asset").values(withInsertJsonValue({
       ...values,
       isImage: false,
-    }).returningAll().executeTakeFirstOrThrow()
+    }, "tags")).returningAll().executeTakeFirstOrThrow()
     const asset: Keys<FileAsset> = asset_
     return FileAssetSchema.parse(asset)
   }
@@ -78,10 +78,10 @@ export class AssetRepositoryImpl implements AssetRepository {
   async createImageAsset(values: ImageAssetWrite): Promise<ImageAsset> {
     const asset_ = await this.db
       .insertInto("asset")
-      .values({
+      .values(withInsertJsonValue({
         ...values,
         isImage: true,
-      })
+      }, "tags"))
       .returning(imageAssetCols)
       .executeTakeFirstOrThrow()
     const asset: Keys<ImageAsset> = asset_
@@ -91,7 +91,7 @@ export class AssetRepositoryImpl implements AssetRepository {
   async getImageVariation(id: string): Promise<ImageVariant> {
     const imageVariation_ = await this.db
       .selectFrom("imageVariant")
-      .select(["id", "crop"])
+      .select(["id", "crop", "createdAt"])
       .select((eb) => [this.assetQuery("assetKey")(eb).as("asset")])
       .where("id", "=", id)
       .executeTakeFirstOrThrow()
@@ -100,6 +100,7 @@ export class AssetRepositoryImpl implements AssetRepository {
       crop: imageVariation_.crop,
       asset: imageVariation_.asset,
       id: imageVariation_.id,
+      createdAt: imageVariation_.createdAt,
     }
     return ImageVariantSchema.parse(imageVariant)
   }
@@ -107,7 +108,9 @@ export class AssetRepositoryImpl implements AssetRepository {
   async createImageVariation(values: ImageVariantWrite): Promise<ImageVariant> {
     const { id } = await this.db
       .insertInto("imageVariant")
-      .values(withInsertJsonValue(values, "crop"))
+      .values({
+        ...withInsertJsonValue(values, "crop"),
+      })
       .returning("id")
       .executeTakeFirstOrThrow()
     return this.getImageVariation(id)

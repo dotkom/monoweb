@@ -7,8 +7,8 @@ import { useUploadFileAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 
 interface Props {
-  onFileLoad: (image: string) => void
-  value: FileAsset
+  onFileLoad: (image: FileAsset) => void
+  value: FileAsset | null
   error?: ReactNode
 }
 
@@ -18,7 +18,7 @@ export default function FileUpload({ onFileLoad, value, error }: Props) {
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
       const result = await uploadToS3(e.target.files[0])
-      onFileLoad(result.key)
+      onFileLoad(result)
     }
   }
 

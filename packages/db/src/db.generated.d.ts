@@ -61,6 +61,8 @@ export interface Asset {
   mimeType: string;
   originalFilename: string;
   size: number;
+  tags: Json | null;
+  title: string | null;
   width: number | null;
 }
 
