@@ -16,7 +16,6 @@ export interface UserRepository {
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly db: Kysely<Database>) {}
-
   async getById(id: UserId) {
     const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
     return user ? mapToUser(user) : null
