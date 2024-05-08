@@ -14,6 +14,7 @@ export async function up(db) {
     .addColumn("width", "integer") // will be null for non image assets
     .addColumn("height", "integer") // will be null for non image assets
     .addColumn("alt_text", "text") // will be null for non image assets
+    .addColumn("is_image", "boolean", (col) => col.notNull())
     .execute()
 
   await createTableWithDefaults("image_variant", { id: true, createdAt: true, updatedAt: false }, db.schema)

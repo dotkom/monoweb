@@ -47,6 +47,9 @@ export interface AssetService {
   updateImageVariation(id: string, values: ImageVariantWrite): Promise<ImageVariant>
 
   createPresignedPost(filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
+
+  getAllFileAssets(): Promise<FileAsset[]>
+  getAllImageAssets(): Promise<ImageAsset[]>
 }
 
 export class AssetServiceImpl implements AssetService {
@@ -54,6 +57,14 @@ export class AssetServiceImpl implements AssetService {
     private readonly assetRepository: AssetRepository,
     private readonly s3Repository: S3Repository
   ) {}
+
+  async getAllFileAssets(): Promise<FileAsset[]> {
+    return this.assetRepository.getAllFileAssets()
+  }
+
+  async getAllImageAssets(): Promise<ImageAsset[]> {
+    return this.assetRepository.getAllImageAssets()
+  }
 
   async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
     return this.assetRepository.createFileAsset(values)

@@ -52,6 +52,7 @@ const navigations = [
     children: [
       { label: "Artikler", href: "/article" },
       { label: "Offline", href: "/offline" },
+      { label: "Media", href: "/asset" },
     ],
   },
   {

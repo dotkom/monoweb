@@ -56,6 +56,7 @@ export interface Asset {
   altText: string | null;
   createdAt: Generated<Timestamp>;
   height: number | null;
+  isImage: boolean;
   key: string;
   mimeType: string;
   originalFilename: string;
