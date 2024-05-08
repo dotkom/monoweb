@@ -1,15 +1,17 @@
 "use client"
-import { Anchor, Box } from "@mantine/core"
+import { Anchor, Box, Text } from "@mantine/core"
 import type React from "react"
+import type { ReactNode } from "react"
 import { useUploadFileAssetToS3 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 
 interface Props {
   onFileLoad: (image: string) => void
   value?: string
+  error?: ReactNode
 }
 
-export default function FileUpload({ onFileLoad, value }: Props) {
+export default function FileUpload({ onFileLoad, value, error }: Props) {
   const uploadToS3 = useUploadFileAssetToS3()
 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -23,6 +25,11 @@ export default function FileUpload({ onFileLoad, value }: Props) {
     <div className="App">
       <Box mb={"sm"}>
         <input type="file" onChange={onSelectFile} />
+        {error && (
+          <Text c="red" mt="sm">
+            {error}
+          </Text>
+        )}
       </Box>
       {!!value && (
         <Anchor href={buildAssetUrl(value)} target="_blank">

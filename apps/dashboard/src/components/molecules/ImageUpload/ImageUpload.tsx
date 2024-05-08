@@ -7,6 +7,7 @@ import { useRef, useState } from "react"
 import type { ImageVariant } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
 import { useEffect } from "react"
+import type { ReactNode } from "react"
 import type { PercentCrop } from "react-image-crop"
 import {
   useCreateImageMutation,
@@ -16,38 +17,17 @@ import {
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
 import { CropPreview } from "./CropPreview"
-import { getFileFromUrl, getImageDimensions, percentToPixelCrop } from "./utils"
+import { imageUploadNotifications } from "./notifications"
+import { getFileFromUrl, getImageDimensions, mapCropToFrontend, percentToPixelCrop } from "./utils"
 
 interface Props {
   setImage: (image: ImageVariant | null) => void
   image: ImageVariant | null
   cropAspectLock?: number | undefined
+  error?: ReactNode
 }
 
-const mapCropToFrontend = (image: ImageVariant | null): PercentCrop | undefined => {
-  if (!image || !image.crop) {
-    return undefined
-  }
-
-  // This is stored in pixels
-  const crop = image.crop
-
-  console.log("stored data", image)
-
-  const percentCrop: PercentCrop = {
-    x: (crop.left / image.asset.width) * 100,
-    y: (crop.top / image.asset.height) * 100,
-    width: (crop.width / image.asset.width) * 100,
-    height: (crop.height / image.asset.height) * 100,
-    unit: "%",
-  }
-
-  console.log("calcualted crop", percentCrop)
-
-  return percentCrop
-}
-
-export default function ImageUpload({ setImage, cropAspectLock: aspect, image }: Props) {
+export default function ImageUpload({ setImage, cropAspectLock, image, error }: Props) {
   const [imgSrc, setImgSrc] = useState("")
   const [scale, setScale] = useState(1)
   const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(image))
@@ -78,35 +58,43 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
   }
 
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files && e.target.files.length > 0) {
-      setCompletedCrop(undefined)
-      const dimensions = await getImageDimensions(e.target.files[0])
-      console.log(dimensions)
-      const uploadedRawAsset = await uploadToS3(e.target.files[0], {
-        width: dimensions.width,
-        height: dimensions.height,
-        altText: "Uploaded image",
-      })
-      await loadFileFromAssetKey(uploadedRawAsset.key)
-
-      const newImage = {
-        assetKey: uploadedRawAsset.key,
-        crop: null,
-        altText: "Uploaded image",
-      }
-
-      if (!image) {
-        // Create new image
-        const res = await createImage.mutateAsync(newImage)
-        setImage(res)
-        return
-      }
-
-      // Update existing image
-      const res = await updateImage.mutateAsync({ id: image.id, image: newImage })
-      setImage(res)
+    if (!e.target.files || e.target.files.length === 0) {
       return
     }
+
+    const notify = imageUploadNotifications.fileUpload
+
+    setCompletedCrop(undefined)
+    notify.uploadS3()
+
+    const dimensions = await getImageDimensions(e.target.files[0])
+    const uploadedRawAsset = await uploadToS3(e.target.files[0], {
+      width: dimensions.width,
+      height: dimensions.height,
+      altText: "Uploaded image",
+    })
+    notify.syncBackend()
+    await loadFileFromAssetKey(uploadedRawAsset.key)
+
+    const newImage = {
+      assetKey: uploadedRawAsset.key,
+      crop: null,
+      altText: "Uploaded image",
+    }
+
+    if (!image) {
+      // Create new image
+      const res = await createImage.mutateAsync(newImage)
+      setImage(res)
+      notify.complete()
+      return
+    }
+
+    // Update existing image
+    const res = await updateImage.mutateAsync({ id: image.id, image: newImage })
+    setImage(res)
+
+    notify.complete()
   }
 
   function getRealSizeCropValues() {
@@ -148,6 +136,7 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
 
   return (
     <div>
+      {error && <div style={{ color: "red" }}>{error}</div>}
       {!image && <input type="file" accept="image/*" onChange={onSelectFile} />}
       <div>
         {!!image && (
@@ -167,7 +156,7 @@ export default function ImageUpload({ setImage, cropAspectLock: aspect, image }:
                   imgSrc={imgSrc}
                   completedCrop={completedCrop}
                   setCompletedCrop={setCompletedCrop}
-                  aspect={aspect}
+                  aspect={cropAspectLock}
                   scale={scale}
                 />
                 <button type="button" onClick={onSetCrop}>
