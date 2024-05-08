@@ -14,6 +14,7 @@ import type { UserRepository } from "./user-repository"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
+  getByEmail(email: string): Promise<User | null>
   getAll(limit: number): Promise<User[]>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
@@ -32,6 +33,10 @@ export class UserServiceImpl implements UserService {
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
+
+  async getByEmail(email: string) {
+    return this.userRepository.getByEmail(email)
+  }
 
   async getByAuth0Id(auth0Id: string) {
     return this.userRepository.getByAuth0Id(auth0Id)
