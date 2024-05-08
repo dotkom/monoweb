@@ -7,7 +7,6 @@ export const mapToUser = (payload: Selectable<Database["owUser"]>): User => User
 
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
-  getByEmail(email: string): Promise<User | null>
   getByAuth0Id(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
@@ -17,11 +16,6 @@ export interface UserRepository {
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly db: Kysely<Database>) {}
-
-  async getByEmail(email: string) {
-    const user = await this.db.selectFrom("owUser").selectAll().where("email", "=", email).executeTakeFirst()
-    return user ? mapToUser(user) : null
-  }
 
   async getById(id: UserId) {
     const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
