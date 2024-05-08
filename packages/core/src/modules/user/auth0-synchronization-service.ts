@@ -62,7 +62,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
   }
 
   private async synchronizeUserAuth0ToLocalDb(userAuth0: User) {
-    this.logger.log("info", "Synchronizing user with Auth0 id", { userId: userAuth0.auth0Id })
+    this.logger.info("Synchronizing user with Auth0 id %O", { userId: userAuth0.auth0Id })
 
     const updatedUser: User = {
       ...userAuth0,
@@ -72,11 +72,11 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     const userDb = await this.userService.getByEmail(userAuth0.email)
 
     if (userDb === null) {
-      this.logger.log("info", "User does not exist in local db, creating user for user ", userAuth0.name)
+      this.logger.info("User does not exist in local db, creating user for user %O", userAuth0.name)
       return this.userService.create(updatedUser)
     }
 
-    this.logger.log("info", "Updating user in local db for user ", userAuth0.name)
+    this.logger.info("Updating user in local db for user %O", userAuth0.name)
     return this.userService.update(updatedUser)
   }
 
