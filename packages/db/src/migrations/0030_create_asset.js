@@ -9,12 +9,17 @@ export async function up(db) {
   await createTableWithDefaults("asset", { createdAt: true }, db.schema)
     .addColumn("key", "text", (col) => col.notNull().primaryKey())
     .addColumn("original_filename", "text", (col) => col.notNull())
+    .addColumn("title", "text", (col) => col.notNull())
     .addColumn("size", "integer", (col) => col.notNull())
     .addColumn("mime_type", "text", (col) => col.notNull())
+    .addColumn("tags", "jsonb")
+
+    .addColumn("is_image", "boolean", (col) => col.notNull())
+
     .addColumn("width", "integer") // will be null for non image assets
     .addColumn("height", "integer") // will be null for non image assets
     .addColumn("alt_text", "text") // will be null for non image assets
-    .addColumn("is_image", "boolean", (col) => col.notNull())
+    .addColumn("photographer", "text") // will be null for non image assets
     .execute()
 
   await createTableWithDefaults("image_variant", { id: true, createdAt: true, updatedAt: false }, db.schema)

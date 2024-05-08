@@ -1,4 +1,4 @@
-import { FileAssetSchema, ImageAssetSchema, ImageVariantWriteSchema } from "@dotkomonline/types"
+import { FileAssetWriteSchema, ImageAssetWriteSchema, ImageVariantWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
@@ -6,10 +6,10 @@ export const assetRouter = t.router({
   getAllFileAssets: protectedProcedure.query(async ({ ctx }) => await ctx.assetService.getAllFileAssets()),
   getAllImageAssets: protectedProcedure.query(async ({ ctx }) => await ctx.assetService.getAllImageAssets()),
   createFileAsset: protectedProcedure
-    .input(FileAssetSchema)
+    .input(FileAssetWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.assetService.createFileAsset(input)),
   createImageAsset: protectedProcedure
-    .input(ImageAssetSchema)
+    .input(ImageAssetWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.assetService.createImageAsset(input)),
   createImageVariation: protectedProcedure
     .input(ImageVariantWriteSchema)
