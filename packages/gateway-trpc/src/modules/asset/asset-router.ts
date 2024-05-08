@@ -3,6 +3,8 @@ import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const assetRouter = t.router({
+  getAllFileAssets: protectedProcedure.query(async ({ ctx }) => await ctx.assetService.getAllFileAssets()),
+  getAllImageAssets: protectedProcedure.query(async ({ ctx }) => await ctx.assetService.getAllImageAssets()),
   createFileAsset: protectedProcedure
     .input(FileAssetSchema)
     .mutation(async ({ input, ctx }) => await ctx.assetService.createFileAsset(input)),

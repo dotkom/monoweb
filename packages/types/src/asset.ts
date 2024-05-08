@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const AssetMedatadaSchema = z.record(z.unknown())
 
-const BaseAssetSchema = z.object({
+export const BaseAssetSchema = z.object({
   key: z.string(),
   originalFilename: z.string(),
   size: z.number(),
