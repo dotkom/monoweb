@@ -16,6 +16,7 @@ import { CreateEventModal } from "../modules/event/modals/create-event-modal"
 import { UpdateAttendanceExtrasModal } from "../modules/event/modals/edit-event-extras-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "../modules/offline/modals/create-offline-modal"
+import { assetModals } from "../modules/asset/modals"
 
 const modals = {
   "event/create": CreateEventModal,
@@ -32,6 +33,7 @@ const modals = {
   "interestGroup/create": CreateInterestGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
+  ...assetModals
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

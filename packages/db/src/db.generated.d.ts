@@ -60,9 +60,10 @@ export interface Asset {
   key: string;
   mimeType: string;
   originalFilename: string;
+  photographer: string | null;
   size: number;
   tags: Json | null;
-  title: string | null;
+  title: string;
   width: number | null;
 }
 

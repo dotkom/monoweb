@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const AssetTags = [
+export const ASSET_TAGS = [
   "Artikkel",
   "Bedriftslogo",
   "Arrangement",
@@ -9,7 +9,7 @@ export const AssetTags = [
   "Produktbilde",
   "Ressurs",
   "Gruppe",
-] as const
+]
 
 export const AssetMedatadaSchema = z.record(z.unknown())
 
@@ -20,7 +20,7 @@ export const BaseAssetSchema = z.object({
   mimeType: z.string(),
   createdAt: z.date(),
   title: z.string(),
-  tags: z.array(z.enum(AssetTags)),
+  tags: z.array(z.string()).refine((tags) => tags.every((tag) => ASSET_TAGS.includes(tag)))
 })
 
 export const FileAssetSchema = BaseAssetSchema
@@ -32,7 +32,18 @@ export const ImageAssetSchema = BaseAssetSchema.extend({
 })
 
 export const FileAssetWriteSchema = FileAssetSchema.omit({ createdAt: true })
+export const FileAssetUpdateSchema = FileAssetSchema.pick({
+  tags: true,
+  title: true,
+})
+
 export const ImageAssetWriteSchema = ImageAssetSchema.omit({ createdAt: true })
+export const ImageAssetUpdateSchema = ImageAssetSchema.pick({
+  tags: true,
+  title: true,
+  altText: true,
+  photographer: true,
+})
 
 // Unit is always px
 export const ImageCropSchema = z.object({
@@ -56,7 +67,9 @@ export const ImageVariantWriteSchema = ImageVariantSchema.omit({ id: true, creat
 export type FileAsset = z.infer<typeof FileAssetSchema>
 export type ImageAsset = z.infer<typeof ImageAssetSchema>
 export type FileAssetWrite = z.infer<typeof FileAssetWriteSchema>
+export type FileAssetUpdate = z.infer<typeof FileAssetUpdateSchema>
 export type ImageAssetWrite = z.infer<typeof ImageAssetWriteSchema>
+export type ImageAssetUpdate = z.infer<typeof ImageAssetUpdateSchema>
 export type ImageCrop = z.infer<typeof ImageCropSchema>
 export type ImageVariant = z.infer<typeof ImageVariantSchema>
 export type ImageVariantWrite = z.infer<typeof ImageVariantWriteSchema>

@@ -12,7 +12,6 @@ import type { PercentCrop } from "react-image-crop"
 import {
   useCreateImageVariantMutation,
   useUpdateImageVariantMutation,
-  useUploadImageAssetToS3,
 } from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
 import { CropComponent } from "./CropComponent"
@@ -27,7 +26,7 @@ interface Props {
   error?: ReactNode
 }
 
-export default function ImageUpload({ setImageVariant, cropAspectLock, imageVariant, error }: Props) {
+export default function ImageVariantInput({ setImageVariant, cropAspectLock, imageVariant, error }: Props) {
   const [imgSrc, setImgSrc] = useState("")
   const [scale, setScale] = useState(1)
   const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(imageVariant))

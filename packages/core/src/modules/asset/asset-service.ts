@@ -1,8 +1,10 @@
 import { env } from "@dotkomonline/env"
 import type {
   FileAsset,
+  FileAssetUpdate,
   FileAssetWrite,
   ImageAsset,
+  ImageAssetUpdate,
   ImageAssetWrite,
   ImageVariant,
   ImageVariantWrite,
@@ -41,7 +43,10 @@ export interface PresignedPost {
 
 export interface AssetService {
   createFileAsset(values: FileAssetWrite): Promise<FileAsset>
+  updateFileAsset(id: string, values: FileAssetUpdate): Promise<FileAsset>
+
   createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
+  updateImageAsset(id: string, values: ImageAssetUpdate): Promise<ImageAsset>
 
   createImageVariation(values: ImageVariantWrite): Promise<ImageVariant>
   updateImageVariation(id: string, values: ImageVariantWrite): Promise<ImageVariant>
@@ -70,8 +75,16 @@ export class AssetServiceImpl implements AssetService {
     return this.assetRepository.createFileAsset(values)
   }
 
+  async updateFileAsset(id: string, values: FileAssetUpdate): Promise<FileAsset> {
+    return this.assetRepository.updateFileAsset(id, values)
+  }
+
   async createImageAsset(values: ImageAssetWrite): Promise<ImageAsset> {
     return this.assetRepository.createImageAsset(values)
+  }
+
+  async updateImageAsset(id: string, values: ImageAssetUpdate): Promise<ImageAsset> {
+    return this.assetRepository.updateImageAsset(id, values)
   }
 
   async createImageVariation(values: ImageVariantWrite): Promise<ImageVariant> {
