@@ -23,7 +23,6 @@ coverage/
 .vscode
 .DS_Store
 
-
 storybook-static/
 .react-email
 
