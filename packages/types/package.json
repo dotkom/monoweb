@@ -3,6 +3,7 @@
   "main": "./src/index.ts",
   "exports": "./src/index.ts",
   "types": "./src/index.ts",
+  "type": "module",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "lint": "biome check . --apply",
@@ -14,6 +15,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

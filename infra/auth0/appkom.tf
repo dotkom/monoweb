@@ -3,14 +3,20 @@ resource "auth0_client" "appkom_opptak" {
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
     "stg" = []
-    "prd" = ["https://online-opptak.vercel.app"]
+    "prd" = [
+      "https://online-opptak.vercel.app", 
+      "http://localhost:3000",
+    ]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "spa"
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
     "stg" = []
-    "prd" = ["https://online-opptak.vercel.app/api/auth/callback/auth0"]
+    "prd" = [
+      "https://online-opptak.vercel.app/api/auth/callback/auth0", 
+      "http://localhost:3000/api/auth/callback/auth0",
+    ]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
   name        = "Online Komitéopptak${local.name_suffix[terraform.workspace]}"

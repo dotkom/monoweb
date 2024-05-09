@@ -78,7 +78,7 @@ const dateToString = (attendanceOpeningDate: Date): DateString => {
 }
 
 interface Props {
-  sessionUser: Session["user"]
+  sessionUser?: Session["user"]
   attendance: Attendance
   pools: AttendancePool[]
   event: Event
@@ -97,7 +97,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const registerMutation = useRegisterMutation()
   const unregisterMutation = useUnregisterMutation()
-  const { data: attendee } = useGetAttendee({ userId: sessionUser.id, attendanceId })
+  const { data: attendee } = useGetAttendee({ userId: sessionUser?.id, attendanceId })
 
   const attendanceStatus = calculateStatus({
     registerStart: attendance.registerStart,
@@ -110,6 +110,10 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   const registerForAttendance = () => {
     if (!attendablePool) {
       throw new Error("Tried to register user for attendance without a group")
+    }
+
+    if (!sessionUser) {
+      throw new Error("Tried to register user without session")
     }
 
     registerMutation.mutate({

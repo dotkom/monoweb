@@ -54,11 +54,6 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendanceId, delete
 
 export const PoolBox: FC<PoolsBoxProps> = ({ pools, attendanceId }) => {
   const deleteGroupMut = useDeletePoolMutation()
-
-  const Pool: FC<{ pool: AttendancePool }> = ({ pool }) => {
-    return <AttendancePoolCard key={pool.id} pool={pool} deleteGroup={deleteGroup} attendanceId={attendanceId} />
-  }
-
   const deleteGroup = (id: string, numAttendees: number) => {
     if (numAttendees > 0) {
       notifyFail({
@@ -76,7 +71,7 @@ export const PoolBox: FC<PoolsBoxProps> = ({ pools, attendanceId }) => {
   return (
     <Box>
       {pools?.map((pool) => (
-        <Pool key={pool.id} pool={pool} />
+        <AttendancePoolCard key={pool.id} pool={pool} deleteGroup={deleteGroup} attendanceId={attendanceId} />
       ))}
       {pools?.length === 0 && <Text fs="italic">Ingen påmeldingsgrupper</Text>}
     </Box>

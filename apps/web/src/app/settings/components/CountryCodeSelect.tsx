@@ -1,4 +1,5 @@
 "use client"
+
 import { CountryCodes } from "@/utils/countryCodes"
 import {
   Select,
@@ -34,7 +35,7 @@ export const CountryCodeSelect = () => {
             <SelectGroup>
               <SelectLabel>Landskode</SelectLabel>
               {CountryCodes.sort((a, b) => a.dial_code.localeCompare(b.dial_code)).map((country) => (
-                <div className="flex flex-row items-center justify-between">
+                <div key={country.code} className="flex flex-row items-center justify-between">
                   <SelectItem
                     label={country.dial_code}
                     value={country.code}

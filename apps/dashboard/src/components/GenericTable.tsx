@@ -2,7 +2,7 @@ import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } 
 import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
 
 export interface GenericTableProps<T> {
-  table: ReactTable<T>
+  readonly table: ReactTable<T>
 }
 
 export function GenericTable<T>({ table }: GenericTableProps<T>) {

@@ -14,7 +14,7 @@
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@hookform/error-message": "^2.0.1",
-    "@hookform/resolvers": "^3.3.2",
+    "@hookform/resolvers": "^3.3.4",
     "@iconify/react": "^4.1.1",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@radix-ui/react-toast": "^1.1.5",
@@ -31,13 +31,13 @@
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "@dotkomonline/config": "workspace:^",
-    "@types/node": "^18.18.13",
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

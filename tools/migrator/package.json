@@ -23,6 +23,6 @@
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.3.0",
     "tsx": "^3.14.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

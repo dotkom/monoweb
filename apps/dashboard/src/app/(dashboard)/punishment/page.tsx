@@ -10,7 +10,7 @@ import { useMarkCountUsersQuery } from "../../../modules/punishment/queries/use-
 import { usePunishmentAllQuery } from "../../../modules/punishment/queries/use-punishment-all-query"
 import { formatDate } from "../../../utils/format"
 
-function MarkUserCount({ markId }: { markId: MarkId }) {
+function MarkUserCount({ markId }: Readonly<{ markId: MarkId }>) {
   const { data } = useMarkCountUsersQuery(markId)
   return <>{data ?? 0}</>
 }

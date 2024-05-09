@@ -5,10 +5,10 @@ import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
 
 interface TicketButtonProps {
-  userid: UserId | null
+  userId: UserId | null
 }
 
-const TicketButton = ({ userid }: TicketButtonProps) => {
+const TicketButton = ({ userId }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
   return (
     <div className="">
@@ -29,9 +29,9 @@ const TicketButton = ({ userid }: TicketButtonProps) => {
             <p className="text-lg">Dette er din billett til arrangementet</p>
           </div>
           <div className="flex flex-col items-center pt-10">
-            {userid && (
+            {userId && (
               <QRCodeSVG
-                value={userid}
+                value={userId}
                 size={256}
                 imageSettings={{
                   src: "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/680/",

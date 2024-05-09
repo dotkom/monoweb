@@ -1,6 +1,5 @@
 import type { Attendance } from "@dotkomonline/types"
-import { Divider } from "@mantine/core"
-import { Box, Title } from "@mantine/core"
+import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
@@ -21,7 +20,7 @@ export const AttendancePage: FC = () => {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <_AttendancePage attendance={attendance} />
+  return <AttendancePageDetail attendance={attendance} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
@@ -50,7 +49,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
 interface EventAttendanceProps {
   attendance: Attendance
 }
-const _AttendancePage: FC<EventAttendanceProps> = ({ attendance }) => {
+const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
   const { pools } = usePoolsGetQuery(attendance.id)
 
   const updateAttendanceMut = useUpdateAttendanceMutation()

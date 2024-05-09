@@ -62,15 +62,12 @@ const setupFakeFullAttendance = async (
 
   const fakePools = _pools.map((group) => getFakePool({ ...group, attendanceId: attendance.id }))
   const pools = []
-
-  for (let i = 0; i < fakePools.length; i++) {
-    const fakePool = fakePools[i]
+  for (const fakePool of fakePools) {
     const insertedPool = await core.attendancePoolService.create(fakePool)
     pools.push(insertedPool)
   }
 
   const users = []
-
   for (let i = 0; i < _users.length; i++) {
     const _user = _users[i]
     const email = `user${i}@local.com`
@@ -197,7 +194,7 @@ describe("attendance", () => {
     const deregisterDeadline = new Date("2021-01-04")
     const end = new Date("2021-01-05")
 
-    const { users, pools, attendance } = await setupFakeFullAttendance(core, {
+    const { users, pools } = await setupFakeFullAttendance(core, {
       attendance: { registerStart: start, registerEnd: end, deregisterDeadline },
       pools: [{ capacity: 1, yearCriteria: [1, 2] }],
       users: [{ studyYear: 1 }, { studyYear: 2 }],

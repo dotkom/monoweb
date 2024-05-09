@@ -14,10 +14,10 @@ import type { ComponentPropsWithoutRef } from "react"
 import { type Control, Controller, type FieldValue, type FieldValues } from "react-hook-form"
 
 export type ControlledSelectProps<TFieldValues extends FieldValues> = {
-  control: Control<TFieldValues>
-  name: FieldValue<TFieldValues>
+  readonly control: Control<TFieldValues>
+  readonly name: FieldValue<TFieldValues>
   placeholder: string
-  options: ComponentPropsWithoutRef<typeof SelectItem>[]
+  readonly options: ComponentPropsWithoutRef<typeof SelectItem>[]
 }
 
 export function ControlledSelect<TFieldValues extends FieldValues>({
