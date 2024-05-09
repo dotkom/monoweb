@@ -25,8 +25,6 @@ export const AttendanceSchema = z.object({
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>

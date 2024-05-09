@@ -53,3 +53,9 @@ export class NotImplementedError extends ApplicationError {
     super(PROBLEM_DETAILS.InternalServerError, detail)
   }
 }
+
+export class InternalServerError extends ApplicationError {
+  constructor(detail: string) {
+    super(PROBLEM_DETAILS.InternalServerError, detail)
+  }
+}

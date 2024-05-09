@@ -1,9 +1,9 @@
-import { fetchCareerAds } from "@/api/get-career-ads"
-import CareerView from "@/components/views/CareerView"
+import JobListingView from "@/components/views/JobListingView/JobListingView"
+import { getServerClient } from "@/utils/trpc/serverClient"
 
-const Career = async () => {
-  const careersData = await fetchCareerAds()
-  return <CareerView careers={careersData} />
+const CareerPage = async () => {
+  const serverClient = await getServerClient()
+  const data = await serverClient.jobListing.all()
+  return <JobListingView jobListings={data ?? []} />
 }
-
-export default Career
+export default CareerPage

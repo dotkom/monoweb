@@ -10,7 +10,6 @@ export const OfflineSchema = z.object({
 
 export const OfflineWriteSchema = OfflineSchema.partial({
   id: true,
-  createdAt: true,
 })
 
 export type Offline = z.infer<typeof OfflineSchema>

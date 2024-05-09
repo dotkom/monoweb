@@ -175,6 +175,7 @@ locals {
     onlineweb-frontend   = data.auth0_client.onlineweb_frontend
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
+    appkom-autobank      = data.auth0_client.appkom_autobank
   }
 
   monoweb = {
@@ -396,7 +397,7 @@ resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
   client_id = auth0_client.gtx.client_id
   scopes = [
     "read:users",
-    "read:user_idp_tokens"
+    "update:users",
   ]
 }
 

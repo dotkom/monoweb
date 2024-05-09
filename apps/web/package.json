@@ -21,6 +21,7 @@
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
+    "@fadi-ui/react-country-flag": "^1.0.7",
     "@next/env": "^14.0.3",
     "@portabletext/react": "^3.0.11",
     "@radix-ui/colors": "^3.0.0",
@@ -46,13 +47,13 @@
     "next-superjson-plugin": "^0.5.10",
     "next-themes": "^0.2.1",
     "pg": "^8.11.3",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",
     "react-icons": "^4.12.0",
     "superjson": "^1.13.3",
-    "zod": "^3.22.4",
-    "@fadi-ui/react-country-flag": "^1.0.7"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
@@ -60,7 +61,7 @@
     "@dotkomonline/logger": "workspace:*",
     "@types/cors": "^2.8.17",
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^18.18.13",
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
@@ -70,6 +71,6 @@
     "tailwindcss": "^3.3.5",
     "trpc-playground": "^1.0.4",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

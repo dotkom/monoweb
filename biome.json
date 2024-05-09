@@ -8,7 +8,8 @@
       "**/out/**",
       "**/.next/**",
       "**/.react-email/**",
-      "**/.turbo/**"
+      "**/.turbo/**",
+      "**/db.generated.d.ts"
     ]
   },
   "formatter": {

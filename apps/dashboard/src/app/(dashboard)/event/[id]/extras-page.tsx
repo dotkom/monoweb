@@ -19,7 +19,7 @@ export const ExtrasPage: FC = () => {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <_ExtrasPage attendance={attendance} />
+  return <ExtrasPageDetail attendance={attendance} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
@@ -47,7 +47,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
 interface Props {
   attendance: Attendance
 }
-export const _ExtrasPage: FC<Props> = ({ attendance }) => {
+export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
   const openCreate = useCreateAttendanceExtrasModal({
     attendance,
   })

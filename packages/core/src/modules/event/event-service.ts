@@ -3,6 +3,7 @@ import type {
   AttendancePool,
   AttendanceWrite,
   Committee,
+  Company,
   Event,
   EventId,
   EventWrite,
@@ -12,6 +13,7 @@ import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { EventCommitteeService } from "./event-committee-service"
+import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository.js"
 
@@ -28,6 +30,7 @@ type WebEventDetail =
       hasAttendance: false
       event: Event
       eventCommittees: Committee[]
+      eventCompanies: Company[]
     }
   | {
       hasAttendance: true
@@ -35,6 +38,7 @@ type WebEventDetail =
       eventCommittees: Committee[]
       attendance: Attendance
       pools: AttendancePool[]
+      eventCompanies: Company[]
     }
 
 export interface EventService {
@@ -54,7 +58,8 @@ export class EventServiceImpl implements EventService {
     private readonly eventRepository: EventRepository,
     private readonly attendanceService: AttendanceService,
     private readonly attendancePoolService: AttendancePoolService,
-    private readonly eventCommitteeService: EventCommitteeService
+    private readonly eventCommitteeService: EventCommitteeService,
+    private readonly eventCompanyService: EventCompanyService
   ) {}
 
   async addAttendance(eventId: EventId, obj: AttendanceWrite) {
@@ -135,28 +140,31 @@ export class EventServiceImpl implements EventService {
   async getWebDetail(id: EventId): Promise<WebEventDetail> {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
+    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id, 999)
 
-    if (event.attendanceId !== null) {
-      const attendance = await this.attendanceService.getById(event.attendanceId)
-      if (!attendance) {
-        throw new Error("Attendance not found")
-      }
-
-      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
-
+    if (!event.attendanceId) {
       return {
-        hasAttendance: true,
+        hasAttendance: false,
         event,
-        eventCommittees,
-        attendance,
-        pools,
+        eventCommittees: eventCommittees,
+        eventCompanies,
       }
     }
 
+    const attendance = await this.attendanceService.getById(event.attendanceId)
+    if (!attendance) {
+      throw new Error("Attendance not found")
+    }
+
+    const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
+
     return {
-      hasAttendance: false,
+      hasAttendance: true,
       event,
-      eventCommittees: eventCommittees,
+      eventCommittees,
+      attendance,
+      pools,
+      eventCompanies,
     }
   }
 }

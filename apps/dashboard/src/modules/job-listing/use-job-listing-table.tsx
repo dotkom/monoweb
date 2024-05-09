@@ -6,7 +6,6 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import Link from "next/link"
 import { useMemo } from "react"
 import { formatRemainingTime } from "../../utils/format"
-import { useCompanyAllQuery } from "../company/queries/use-company-all-query"
 
 interface Props {
   data: JobListing[]
@@ -14,12 +13,11 @@ interface Props {
 
 export const useJobListingTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<JobListing>()
-  const { companies } = useCompanyAllQuery()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("companyId", {
+      columnHelper.accessor("company", {
         header: () => "Bedrift",
-        cell: (info) => companies.find((company) => company.id === info.row.original.companyId)?.name ?? "Ukjent",
+        cell: (info) => info.getValue().name,
       }),
       columnHelper.accessor("title", {
         header: () => "Tittel",
@@ -42,7 +40,7 @@ export const useJobListingTable = ({ data }: Props) => {
         ),
       }),
     ],
-    [columnHelper, companies]
+    [columnHelper]
   )
 
   return useReactTable({

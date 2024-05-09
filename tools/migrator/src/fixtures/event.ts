@@ -16,7 +16,10 @@ export const getEventFixtures: (attendanceIds: string[]) => Insertable<Database[
     subtitle: "Kurs i fixtures",
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
-    location: "Hovedbygget",
+    locationAddress: "Høgskoleringen 1, 7034 Trondheim",
+    locationTitle: "Hovedbygget",
+    locationLink:
+      "https://www.google.com/maps/place/Hovedbygningen+(NTNU)/@63.4194658,10.3995042,17z/data=!3m1!4b1!4m6!3m5!1s0x466d3195b7c6960b:0xf8307e00da9b2556!8m2!3d63.4194658!4d10.4020791!16s%2Fg%2F11dflf4b45?entry=ttu",
   },
   {
     attendanceId: attendanceIds[1],
@@ -51,6 +54,8 @@ export const getEventFixtures: (attendanceIds: string[]) => Insertable<Database[
       "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!! Datoene for ÅREts tur blir 11. - 14. januar! 🏂🏂",
     imageUrl:
       "https://online.ntnu.no/_next/image?url=https%3A%2F%2Fonlineweb4-prod.s3.eu-north-1.amazonaws.com%2Fmedia%2Fimages%2Fresponsive%2Flg%2Fdf32b932-f4c4-4a49-9129-a8ab528b1e33.jpeg&w=1200&q=75",
-    location: "Åre, Sverige",
+    locationTitle: "Åre",
+    locationAddress: undefined,
+    locationLink: undefined,
   },
 ]

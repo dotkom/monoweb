@@ -8,12 +8,12 @@ import type { FC } from "react"
 import { GenericTable } from "../../../../components/GenericTable"
 import { useEditMarkMutation } from "../../../../modules/punishment/mutations/use-edit-mark-mutation"
 import { usePersonalMarkGetByMarkId } from "../../../../modules/punishment/queries/use-personal-mark-get-by-mark-id"
-import { useUserGetQuery } from "../../../../modules/user/queries/use-user-get-query"
+import { useUserQuery } from "../../../../modules/user/queries"
 import { useMarkWriteForm } from "../write-form"
 import { useMarkDetailsContext } from "./provider"
 
 const UserNameCell: FC<{ userId: string }> = ({ userId }) => {
-  const { user } = useUserGetQuery(userId)
+  const { data: user } = useUserQuery(userId)
   return <span>{user?.id || "Loading..."}</span>
 }
 

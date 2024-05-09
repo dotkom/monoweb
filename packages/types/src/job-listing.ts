@@ -1,9 +1,10 @@
 import { z } from "zod"
+import { CompanySchema } from "./company"
 
 export const JobListingSchema = z.object({
   id: z.string().ulid(),
   createdAt: z.date(),
-  companyId: z.string().nullable(),
+  company: CompanySchema.pick({ id: true, name: true, image: true }),
   title: z.string().max(1000).min(1),
   ingress: z.string().min(1),
   description: z.string().min(1),
@@ -20,8 +21,12 @@ export const JobListingSchema = z.object({
 
 export const JobListingWriteSchema = JobListingSchema.partial({
   id: true,
-  createdAt: true,
+  company: true,
 })
+  .extend({
+    companyId: z.string().ulid(),
+  })
+  .strict()
 
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]

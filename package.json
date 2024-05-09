@@ -1,8 +1,15 @@
 {
   "name": "monorepo",
   "version": "1.0.0",
-  "description": "A monorepo for Node apps",
+  "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
+  "keywords": ["online", "ntnu", "student-association"],
+  "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
+  "bugs": {
+    "email": "dotkom+bugs@online.ntnu.no",
+    "url": "https://github.com/dotkom/monoweb/issues"
+  },
+  "repository": "github:dotkom/monoweb",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -28,23 +35,21 @@
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
     "docker:login:public": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws",
-    "ship": "pnpm --filter=@dotkomonline/ship ship"
+    "shell": "pnpm --filter=@dotkomonline/shell start"
   },
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
+  "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=18.18.0",
-    "pnpm": ">=8.7.6"
+    "node": ">=20.12.2",
+    "pnpm": ">=9"
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "ts-node": "^10.9.1",
-    "tsc-watch": "^6.0.4",
     "turbo": "^1.10.16",
     "turbo-ignore": "^1.10.16",
-    "typescript": "^5.2.2",
-    "vitest": "^1.3.1"
+    "typescript": "^5.4.5"
   }
 }

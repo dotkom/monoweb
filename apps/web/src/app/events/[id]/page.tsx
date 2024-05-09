@@ -1,31 +1,20 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendancePool, Committee, Event } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Committee, Company, Event } from "@dotkomonline/types"
 import type { Session } from "next-auth"
-import { SessionProvider, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import type { FC } from "react"
 import { AttendanceBox } from "../components/AttendanceBox"
+import { EventHeader } from "../components/EventHeader"
 import { EventInfoBox } from "../components/EventInfoBox"
-import { LocationBox } from "../components/LocationBox"
 import { OrganizerBox } from "../components/OrganizerBox"
-
-/*
-export const generateStaticParams = async () => {
-    const serverClient = await getUnauthorizedServerClient();
-
-    const events = await serverClient.event.all();
-
-    return events.map(({ id }) => ({ id }));
-}
- */
+import TicketButton from "../components/TicketButton"
+import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import { useGetAttendee } from "../components/queries"
 
 const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
-  return (
-    <SessionProvider>
-      <EventDetailPageInner id={id} />
-    </SessionProvider>
-  )
+  return <EventDetailPageInner id={id} />
 }
 
 const EventDetailPageInner = ({ id }: { id: string }) => {
@@ -39,59 +28,86 @@ const EventDetailPageInner = ({ id }: { id: string }) => {
     return <div>Laster</div>
   }
 
-  if (!event || !session?.data) {
+  if (!event) {
     return <div>Kunne ikke hente data</div>
   }
 
   if (event.hasAttendance) {
     return (
       <EventDetailWithAttendancePage
-        user={session.data.user}
+        user={session.data?.user}
         attendance={event.attendance}
         pools={event.pools}
         event={event.event}
         committees={event.eventCommittees}
+        companies={event.eventCompanies}
       />
     )
   }
 
   return (
-    <EventDetailWithoutAttendancePage user={session.data.user} event={event.event} committees={event.eventCommittees} />
+    <EventDetailWithoutAttendancePage
+      user={session?.data?.user}
+      event={event.event}
+      committees={event.eventCommittees}
+      companies={event.eventCompanies}
+    />
   )
 }
 
-interface WithoutAttendanceProps {
-  user: NonNullable<Session["user"]>
+interface EventDetailProps {
+  user: NonNullable<Session["user"]> | undefined
   event: Event
   committees: Committee[]
+  companies: Company[]
 }
-const EventDetailWithoutAttendancePage: FC<WithoutAttendanceProps> = ({ user, event, committees }) => {
+const EventDetailWithoutAttendancePage: FC<EventDetailProps> = ({ user, event, committees, companies }) => {
   return (
-    <div>
+    <div className="mt-8 flex flex-col gap-16">
+      <EventHeader event={event} />
       <div className="flex w-full">
-        <EventInfoBox event={event} />
+        <EventInfoBox event={event} committees={committees} companies={companies} />
       </div>
     </div>
   )
 }
 
-interface WithAttendanceProps {
-  user: NonNullable<Session["user"]>
+interface EventDetailWithAttendanceProps extends EventDetailProps {
   attendance: Attendance
   pools: AttendancePool[]
-  event: Event
-  committees: Committee[]
 }
 
-const EventDetailWithAttendancePage: FC<WithAttendanceProps> = ({ user, attendance, pools, event, committees }) => {
+const EventDetailWithAttendancePage: FC<EventDetailWithAttendanceProps> = ({
+  user,
+  attendance,
+  pools,
+  event,
+  committees,
+  companies,
+}) => {
+  const { data: attendee } = useGetAttendee({
+    attendanceId: attendance.id,
+    userId: user?.id,
+  })
+
   return (
-    <div>
-      <div className="flex w-full">
-        <EventInfoBox event={event} />
-        <div className="flex flex-1 flex-col">
+    <div className="mt-8 flex flex-col gap-8">
+      <EventHeader event={event} />
+      <div className="flex w-full flex-col md:flex-row">
+        <EventInfoBox event={event} committees={committees} companies={companies} />
+        <div className="flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
+          {attendee && user && <TicketButton userId={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
-          {event.location && <LocationBox location={event.location} />}
+          <TimeLocationBox
+            datetimeStart={event.start}
+            datetimeEnd={event.end}
+            locationTitle={event.locationTitle}
+            locationAddress={event.locationAddress}
+            locationLink={event.locationLink}
+            eventTitle={event.title}
+            eventDescription={event.description}
+          />
         </div>
       </div>
     </div>

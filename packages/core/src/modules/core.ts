@@ -32,10 +32,6 @@ import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
-import {
-  type Auth0SynchronizationService,
-  Auth0SynchronizationServiceImpl,
-} from "./external/auth0-synchronization-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
@@ -69,6 +65,7 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
+import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -146,10 +143,16 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const articleRepository: ArticleRepository = new ArticleRepositoryImpl(db)
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
+
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository
+  )
+
+  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
+    userService,
+    auth0Repository
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -184,15 +187,16 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService
   )
 
+  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
   const eventService: EventService = new EventServiceImpl(
     eventRepository,
     attendanceService,
     attendancePoolService,
-    eventCommitteeService
+    eventCommitteeService,
+    eventCompanyService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
-  const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
   const productService: ProductService = new ProductServiceImpl(productRepository)
   const paymentService: PaymentService = new PaymentServiceImpl(
     paymentRepository,
@@ -220,10 +224,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
-  )
 
   return {
     userService,
@@ -249,7 +249,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    auth0Repository,
     auth0SynchronizationService,
   }
 }

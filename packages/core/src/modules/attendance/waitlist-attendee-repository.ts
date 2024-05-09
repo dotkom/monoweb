@@ -12,7 +12,7 @@ const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttend
 
 export interface WaitlistAttendeRepository {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
-  update(obj: Partial<WaitlistAttendeeWrite>, id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
+  update(id: WaitlistAttendeeId, obj: Partial<WaitlistAttendeeWrite>): Promise<WaitlistAttendee | null>
   delete(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
   getByAttendanceId(id: string): Promise<WaitlistAttendee[]>
   getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
@@ -28,13 +28,14 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
     )
   }
 
-  async update(obj: Partial<WaitlistAttendeeWrite>, id: WaitlistAttendeeId) {
+  async update(id: WaitlistAttendeeId, obj: Partial<WaitlistAttendeeWrite>) {
     const res = await this.db
       .updateTable("waitlistAttendee")
       .set(obj)
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirst()
+
     return res ? mapToWaitlistAttendee(res) : null
   }
 
