@@ -3,19 +3,23 @@
 // https://codesandbox.io/p/sandbox/react-image-crop-demo-with-react-hooks-y831o?file=%2Fsrc%2FApp.tsx%3A183%2C1-185%2C1
 import { useRef, useState } from "react"
 
-import type { ImageVariant } from "@dotkomonline/types"
+import type { ImageAsset, ImageVariant } from "@dotkomonline/types"
 import { useDisclosure } from "@mantine/hooks"
-import { useEffect } from "react"
 import type { ReactNode } from "react"
+import { useEffect } from "react"
 import type { PercentCrop } from "react-image-crop"
-import { useCreateImageAssetMutation, useCreateImageVariantMutation, useUpdateImageVariantMutation } from "../../../modules/asset/mutations"
+import { ImageAssetFromGalleryInput } from "../../../modules/asset/modals"
+import {
+  useCreateImageAssetMutation,
+  useCreateImageVariantMutation,
+  useUpdateImageVariantMutation,
+} from "../../../modules/asset/mutations"
 import { buildAssetUrl } from "../../../utils/s3"
+import { useImageAssetCreateForm } from "../FileForm/image-asset-create-form"
 import { CropComponent } from "./CropComponent"
 import { CropPreview } from "./CropPreview"
 import { imageUploadNotifications } from "./notifications"
 import { getFileFromUrl, mapCropToFrontend, percentToPixelCrop } from "./utils"
-import { useImageAssetCreateForm } from "../FileForm/image-asset-create-form"
-import { usePickImageAssetModal } from "../../../modules/asset/modals"
 
 interface Props {
   setImageVariant: (image: ImageVariant | null) => void
@@ -30,14 +34,14 @@ export default function ImageUploadInput({ setImageVariant, cropAspectLock, imag
   const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(imageVariant))
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
-  const [imageFileFormOpen, {open: openImageFileForm, close:  closeImageFileForm}] = useDisclosure()
+  const [imageFileFormOpen, { open: openImageFileForm, close: closeImageFileForm }] = useDisclosure()
   const imgRef = useRef<HTMLImageElement>(null)
 
   const createImageAsset = useCreateImageAssetMutation()
   const createImageVariant = useCreateImageVariantMutation()
   const updateImageVariant = useUpdateImageVariantMutation()
 
-  const openPickImageAsset = usePickImageAssetModal()
+  const [showImageAssetGalleryPicker, { toggle: toggleShowImageAssetGalleryPicker }] = useDisclosure()
 
   const ImageFileForm = useImageAssetCreateForm({
     onSubmit: async (values) => {
@@ -68,6 +72,19 @@ export default function ImageUploadInput({ setImageVariant, cropAspectLock, imag
       closeImageFileForm()
     },
   })
+
+  const onImageAssetSelected = async (image: ImageAsset) => {
+    setCompletedCrop(undefined)
+    await loadFileFromAssetKey(image.key)
+
+    const defaultImageVariant = await createImageVariant.mutateAsync({
+      assetKey: image.key,
+      crop: null,
+    })
+
+    setImageVariant(defaultImageVariant)
+    toggleShowImageAssetGalleryPicker()
+  }
 
   async function reset() {
     setImageVariant(null)
@@ -130,13 +147,14 @@ export default function ImageUploadInput({ setImageVariant, cropAspectLock, imag
           <button onClick={openImageFileForm} type="button">
             Last opp ny fil
           </button>
-          <button onClick={openPickImageAsset} type="button">
+          <button onClick={toggleShowImageAssetGalleryPicker} type="button">
             Velg fra galleri
           </button>
         </div>
       )}
 
-      { imageFileFormOpen && ( <ImageFileForm />) }
+      {imageFileFormOpen && <ImageFileForm />}
+      {showImageAssetGalleryPicker && <ImageAssetFromGalleryInput onSelect={onImageAssetSelected} />}
 
       <div>
         {!!imageVariant && (

@@ -13,10 +13,10 @@ import {
   ImageVariantSchema,
   type ImageVariantWrite,
 } from "@dotkomonline/types"
-import type { ExpressionBuilder, Kysely, Selectable } from "kysely"
+import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
-import { type Keys, withInsertJsonValue } from "../../utils/db-utils"
 import { IllegalStateError } from "../../error"
+import { type Keys, withInsertJsonValue } from "../../utils/db-utils"
 
 export interface AssetRepository {
   getFileAsset(key: string): Promise<FileAsset>
@@ -36,30 +36,37 @@ export interface AssetRepository {
   getAllImageAssets(): Promise<ImageAsset[]>
 }
 
-const fileAssetCols = ["key", "originalFilename", "mimeType", "size", "createdAt", "title", "tags", "isImage"] as const
-const imageAssetCols= [...fileAssetCols, "width", "height", "altText", "photographer"] as const
+export const fileAssetCols = [
+  "key",
+  "originalFilename",
+  "mimeType",
+  "size",
+  "createdAt",
+  "title",
+  "tags",
+  "isImage",
+] as const
+export const imageAssetCols = [...fileAssetCols, "width", "height", "altText", "photographer"] as const
+
+export const mapNestedAssetResult = <T>(asset: (T & { createdAt: string | Date }) | null | undefined) =>
+  asset && {
+    ...asset,
+    createdAt: new Date(asset.createdAt as string),
+  }
 
 export class AssetRepositoryImpl implements AssetRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
   async getAllFileAssets(): Promise<FileAsset[]> {
-    const assets_ = await this.db
-      .selectFrom("asset")
-      .select(fileAssetCols)
-      .where("isImage", "=", false)
-      .execute()
+    const assets_ = await this.db.selectFrom("asset").select(fileAssetCols).where("isImage", "=", false).execute()
     const assets: Keys<FileAsset>[] = assets_
-    return assets.map(val => FileAssetSchema.parse(val))
+    return assets.map((val) => FileAssetSchema.parse(val))
   }
 
   async getAllImageAssets(): Promise<ImageAsset[]> {
-    const assets_ = await this.db
-      .selectFrom("asset")
-      .select(imageAssetCols)
-      .where("isImage", "=", true)
-      .execute()
+    const assets_ = await this.db.selectFrom("asset").select(imageAssetCols).where("isImage", "=", true).execute()
     const assets: Keys<ImageAsset>[] = assets_
-    return assets.map(val => ImageAssetSchema.parse(val))
+    return assets.map((val) => ImageAssetSchema.parse(val))
   }
 
   async getFileAsset(key: string): Promise<FileAsset> {
@@ -83,10 +90,19 @@ export class AssetRepositoryImpl implements AssetRepository {
   }
 
   async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
-    const asset_ = await this.db.insertInto("asset").values(withInsertJsonValue({
-      ...values,
-      isImage: false,
-    }, "tags")).returningAll().executeTakeFirstOrThrow()
+    const asset_ = await this.db
+      .insertInto("asset")
+      .values(
+        withInsertJsonValue(
+          {
+            ...values,
+            isImage: false,
+          },
+          "tags"
+        )
+      )
+      .returningAll()
+      .executeTakeFirstOrThrow()
     const asset: Keys<FileAsset> = asset_
     return FileAssetSchema.parse(asset)
   }
@@ -99,10 +115,15 @@ export class AssetRepositoryImpl implements AssetRepository {
   async createImageAsset(values: ImageAssetWrite): Promise<ImageAsset> {
     const asset_ = await this.db
       .insertInto("asset")
-      .values(withInsertJsonValue({
-        ...values,
-        isImage: true,
-      }, "tags"))
+      .values(
+        withInsertJsonValue(
+          {
+            ...values,
+            isImage: true,
+          },
+          "tags"
+        )
+      )
       .returning(imageAssetCols)
       .executeTakeFirstOrThrow()
     const asset: Keys<ImageAsset> = asset_
@@ -128,7 +149,7 @@ export class AssetRepositoryImpl implements AssetRepository {
 
     const imageVariant: Keys<ImageVariant> = {
       crop: imgVariant.crop,
-      asset: this.mapNestedAssetResult(imgVariant.asset),
+      asset: mapNestedAssetResult(imgVariant.asset),
       id: imgVariant.id,
       createdAt: imgVariant.createdAt,
     }
@@ -153,18 +174,6 @@ export class AssetRepositoryImpl implements AssetRepository {
 
   private assetQuery(col: keyof DB["imageVariant"]) {
     return (eb: ExpressionBuilder<DB, "imageVariant">) =>
-      jsonObjectFrom(
-        eb
-          .selectFrom("asset")
-          .select(imageAssetCols)
-          .whereRef(`imageVariant.${col}`, "=", "asset.key")
-      )
-  }
-
-  private mapNestedAssetResult(asset: Keys<Selectable<DB["asset"]>>) {
-    return {
-      ...asset,
-      createdAt: new Date(asset.createdAt as string),
-    }
+      jsonObjectFrom(eb.selectFrom("asset").select(imageAssetCols).whereRef(`imageVariant.${col}`, "=", "asset.key"))
   }
 }

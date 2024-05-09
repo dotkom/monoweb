@@ -1,7 +1,12 @@
 "use client"
 
 import { Anchor, Box, Button, Table, Title } from "@mantine/core"
-import { useCreateFileAssetModal, useCreateImageAssetModal, useUpdateFileAssetModal, useUpdateImageAssetModal } from "../../../modules/asset/modals"
+import {
+  useCreateFileAssetModal,
+  useCreateImageAssetModal,
+  useUpdateFileAssetModal,
+  useUpdateImageAssetModal,
+} from "../../../modules/asset/modals"
 import { useFileAssetsAllQuery, useImageAssetsAllQuery } from "../../../modules/asset/queries"
 import { buildAssetUrl } from "../../../utils/s3"
 
@@ -12,7 +17,6 @@ export default function AssetPage() {
   const openUpdateFileModal = useUpdateFileAssetModal()
   const openImageUploadModal = useCreateImageAssetModal()
   const openUpdateImageModal = useUpdateImageAssetModal()
-
 
   return (
     <div>
@@ -41,7 +45,9 @@ export default function AssetPage() {
                 </Table.Td>
                 <Table.Td>{fileAsset.size / 1000} kB</Table.Td>
                 <Table.Td>
-                  <Button size="xs" onClick={() => openUpdateImageModal(fileAsset)}>Rediger</Button>
+                  <Button size="xs" onClick={() => openUpdateImageModal(fileAsset)}>
+                    Rediger
+                  </Button>
                 </Table.Td>
               </Table.Tr>
             ))}
