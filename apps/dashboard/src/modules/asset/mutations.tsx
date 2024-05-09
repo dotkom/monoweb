@@ -1,50 +1,26 @@
+import { baseCreateMutationOpts, baseUpdateMutationOpts } from "../../utils/helpers"
 import { trpc } from "../../utils/trpc"
-import { useS3UploadFile } from "../offline/use-s3-upload-file"
 
-export const useUploadFileAssetToS3 = () => {
-  const upload = useS3UploadFile()
-  const createFileAsset = trpc.asset.createFileAsset.useMutation()
-
-  return async (file: File) => {
-    const result = await upload(file)
-
-    return createFileAsset.mutateAsync({
-      originalFilename: result.originalFilename,
-      size: result.size,
-      key: result.s3FileName,
-      mimeType: result.mimeType,
-    })
-  }
+export const useCreateImageAssetMutation = () => {
+  return trpc.asset.createImageAsset.useMutation(baseCreateMutationOpts())
 }
 
-interface ImageArgs {
-  width: number
-  height: number
-  altText: string
+export const useCreateFileAssetMutation = () => {
+  return trpc.asset.createFileAsset.useMutation(baseCreateMutationOpts())
 }
-export const useUploadImageAssetToS3 = () => {
-  const upload = useS3UploadFile()
-  const createImageAsset = trpc.asset.createImageAsset.useMutation()
 
-  return async (file: File, imageArgs: ImageArgs) => {
-    const result = await upload(file)
+export const useUpdateImageAssetMutation = () => {
+  return trpc.asset.updateImageAsset.useMutation(baseUpdateMutationOpts())
+}
 
-    return createImageAsset.mutateAsync({
-      originalFilename: result.originalFilename,
-      size: result.size,
-      key: result.s3FileName,
-      width: imageArgs.width,
-      height: imageArgs.height,
-      altText: imageArgs.altText,
-      mimeType: result.mimeType,
-    })
-  }
+export const useUpdateFileAssetMutation = () => {
+  return trpc.asset.updateFileAsset.useMutation(baseUpdateMutationOpts())
 }
 
 export const useCreateImageVariantMutation = () => {
-  return trpc.asset.createImageVariation.useMutation()
+  return trpc.asset.createImageVariation.useMutation(baseCreateMutationOpts())
 }
 
 export const useUpdateImageVariantMutation = () => {
-  return trpc.asset.updateImageVariation.useMutation()
+  return trpc.asset.updateImageVariation.useMutation(baseUpdateMutationOpts())
 }

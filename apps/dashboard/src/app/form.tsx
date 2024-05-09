@@ -35,17 +35,17 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
-import FileUpload from "../components/molecules/FileUpload/FileUpload"
-import ImageUpload from "../components/molecules/ImageUpload/ImageUpload"
+// import FileUpload from "../components/molecules/FileUpload/FileUpload"
+import ImageVariantInput from "../components/molecules/ImageUpload/ImageVariantInput"
 
-interface InputFieldContext<T extends FieldValues> {
+export interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
   control: Control<T>
   state: FormState<T>
   defaultValue: FieldValue<T>
 }
-type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
+export type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 
 export function createMultipleSelectInput<F extends FieldValues>({
   ...props
@@ -268,7 +268,7 @@ export function createImageInput<F extends FieldValues>({
           control={control}
           name={name}
           render={({ field }) => (
-            <ImageUpload
+            <ImageVariantInput
               setImageVariant={field.onChange}
               imageVariant={field.value}
               cropAspectLock={props.cropAspectLock}
@@ -281,25 +281,25 @@ export function createImageInput<F extends FieldValues>({
   }
 }
 
-export function createFileInput<F extends FieldValues>({
-  ...props
-}: Omit<FileInputProps, "error">): InputProducerResult<F> {
-  return function FormFileInput({ name, state, control }) {
-    return (
-      <Box>
-        <Text>{props.label}</Text>
-        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-        <Controller
-          control={control}
-          name={name}
-          render={({ field }) => (
-            <FileUpload value={field.value} onFileLoad={field.onChange} error={state.errors[name]} />
-          )}
-        />
-      </Box>
-    )
-  }
-}
+// export function createFileInput<F extends FieldValues>({
+//   ...props
+// }: Omit<FileInputProps, "error">): InputProducerResult<F> {
+//   return function FormFileInput({ name, state, control }) {
+//     return (
+//       <Box>
+//         <Text>{props.label}</Text>
+//         {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+//         <Controller
+//           control={control}
+//           name={name}
+//           render={({ field }) => (
+//             <FileUpload value={field.value} onFileLoad={field.onChange} error={state.errors[name]} />
+//           )}
+//         />
+//       </Box>
+//     )
+//   }
+// }
 
 export function createNumberInput<F extends FieldValues>({
   ...props
