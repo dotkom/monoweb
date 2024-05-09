@@ -18,9 +18,9 @@ export const useUpdateFileAssetMutation = () => {
 }
 
 export const useCreateImageVariantMutation = () => {
-  return trpc.asset.createImageVariation.useMutation(baseCreateMutationOpts())
+  return trpc.asset.createImageVariation.useMutation()
 }
 
 export const useUpdateImageVariantMutation = () => {
-  return trpc.asset.updateImageVariation.useMutation(baseUpdateMutationOpts())
+  return trpc.asset.updateImageVariation.useMutation()
 }

@@ -1,10 +1,10 @@
+import type { FileAsset, ImageAsset } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useFileAssetCreateForm } from "../../components/molecules/FileForm/file-asset-create-form"
-import { useImageAssetCreateForm } from "../../components/molecules/FileForm/image-asset-create-form"
-import type { FileAsset, ImageAsset } from "@dotkomonline/types"
-import { useImageAssetUpdateForm } from "../../components/molecules/FileForm/image-asset-update-form"
 import { useFileAssetUpdateForm } from "../../components/molecules/FileForm/file-asset-update-form"
+import { useImageAssetCreateForm } from "../../components/molecules/FileForm/image-asset-create-form"
+import { useImageAssetUpdateForm } from "../../components/molecules/FileForm/image-asset-update-form"
 import {
   useCreateFileAssetMutation,
   useCreateImageAssetMutation,
@@ -16,13 +16,8 @@ import { useFileAssetsAllQuery, useImageAssetsAllQuery } from "./queries"
 interface PickImageAssetProps {
   onSelect: (image: ImageAsset) => void
 }
-export const CreatePickImageAssetModal: FC<ContextModalProps<PickImageAssetProps>> = ({ context, id, innerProps }) => {
+export const ImageAssetFromGalleryInput = ({ onSelect }: PickImageAssetProps) => {
   const { imageAssets, isLoading } = useImageAssetsAllQuery()
-
-  const onClick = (image: ImageAsset) => {
-    innerProps.onSelect(image)
-    context.closeModal(id)
-  }
   return isLoading ? (
     <div>Laster...</div>
   ) : (
@@ -31,22 +26,20 @@ export const CreatePickImageAssetModal: FC<ContextModalProps<PickImageAssetProps
         <div key={image.key}>
           <div>{image.title}</div>
           <div>{image.originalFilename}</div>
-          <button type="button" onClick={() => onClick(image)}>Velg</button>{" "}
+          <button type="button" onClick={() => onSelect(image)}>
+            Velg
+          </button>{" "}
         </div>
       ))}
     </div>
   )
 }
 interface PickFileAssetProps {
-  onSelect: (image: FileAsset) => void
+  onSelect: (file: FileAsset) => void
 }
-export const CreatePickFileAssetModal: FC<ContextModalProps<PickFileAssetProps>> = ({ context, id, innerProps }) => {
+export const FileAssetFromGalleryInput = ({ onSelect }: PickFileAssetProps) => {
   const { fileAssets, isLoading } = useFileAssetsAllQuery()
 
-  const onClick = (file: FileAsset) => {
-    innerProps.onSelect(file)
-    context.closeModal(id)
-  }
   return isLoading ? (
     <div>Laster...</div>
   ) : (
@@ -55,7 +48,9 @@ export const CreatePickFileAssetModal: FC<ContextModalProps<PickFileAssetProps>>
         <div key={file.key}>
           <div>{file.title}</div>
           <div>{file.originalFilename}</div>
-          <button type="button" onClick={() => onClick(file)}>Velg</button>{" "}
+          <button type="button" onClick={() => onSelect(file)}>
+            Velg
+          </button>{" "}
         </div>
       ))}{" "}
     </div>
@@ -163,29 +158,11 @@ export const FileAssetUpdateModal: FC<ContextModalProps<{ defaultValues: FileAss
 }
 
 export const assetModals = {
-  "asset/images/list": CreatePickImageAssetModal,
-  "asset/files/list": CreatePickFileAssetModal,
   "asset/images/create": ImageAssetCreateModal,
   "asset/images/update": ImageAssetUpdateModal,
   "asset/files/create": FileAssetCreateModal,
   "asset/files/update": FileAssetUpdateModal,
 } as const
-
-export const usePickFileAssetModal = () => (onSelect: (file: FileAsset) => void) =>
-  modals.openContextModal({
-    modal: "asset/files/list",
-    title: "Velg fil",
-    innerProps: {
-      onSelect,
-    },
-  })
-
-export const usePickImageAssetModal = () => () =>
-  modals.openContextModal({
-    modal: "asset/images/list",
-    title: "Bruk bilde fra galleri",
-    innerProps: {},
-  })
 
 export const useCreateImageAssetModal = () => () =>
   modals.openContextModal({

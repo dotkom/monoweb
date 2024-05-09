@@ -46,7 +46,7 @@ export function useImageAssetUpdateForm({ onSubmit, defaultValues }: Props) {
         label: "Tags",
         placeholder: "Tags",
         required: false,
-        data: ASSET_TAGS
+        data: ASSET_TAGS,
       }),
     },
   })

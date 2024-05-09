@@ -20,7 +20,7 @@ export const BaseAssetSchema = z.object({
   mimeType: z.string(),
   createdAt: z.date(),
   title: z.string(),
-  tags: z.array(z.string()).refine((tags) => tags.every((tag) => ASSET_TAGS.includes(tag)))
+  tags: z.array(z.string()).refine((tags) => tags.every((tag) => ASSET_TAGS.includes(tag))),
 })
 
 export const FileAssetSchema = BaseAssetSchema

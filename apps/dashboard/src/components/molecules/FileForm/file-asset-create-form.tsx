@@ -1,7 +1,7 @@
+import { ASSET_TAGS } from "@dotkomonline/types"
 import { z } from "zod"
 import { createMultipleSelectInput, createTextInput, useFormBuilder } from "../../../app/form"
 import { AssetFormFileSchema, createAssetFormFileInput } from "./FileUpload"
-import { ASSET_TAGS } from "@dotkomonline/types"
 
 interface Props {
   onSubmit: (values: Schema) => void
@@ -35,7 +35,7 @@ export function useFileAssetCreateForm({ onSubmit }: Props) {
         label: "Tags",
         placeholder: "Tags",
         required: false,
-        data: ASSET_TAGS
+        data: ASSET_TAGS,
       }),
     },
   })

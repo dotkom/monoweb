@@ -1,7 +1,7 @@
 import { ErrorMessage } from "@hookform/error-message"
-import { Box, Anchor, type FileInputProps, Text } from "@mantine/core"
+import { Anchor, Box, type FileInputProps, Text } from "@mantine/core"
 import type { ReactNode } from "react"
-import { type FieldValues, Controller } from "react-hook-form"
+import { Controller, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 import type { InputProducerResult } from "../../../app/form"
 import { useS3UploadFile } from "../../../modules/offline/use-s3-upload-file"
@@ -35,20 +35,22 @@ export function FileUpload({ onFileLoad, value, error, isImageType }: Props) {
   async function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     console.log("onSelectFile", e.target.files)
     if (e.target.files && e.target.files.length > 0) {
-    let width = undefined;
-    let height = undefined;
+      let width = undefined
+      let height = undefined
 
-    if(isImageType) {
+      if (isImageType) {
         try {
-            const dimensions = await getImageDimensions(e.target.files[0])
-            width = dimensions.width
-            height = dimensions.height
+          const dimensions = await getImageDimensions(e.target.files[0])
+          width = dimensions.width
+          height = dimensions.height
         } catch (e) {
-            console.error(e)
-            // TODO: Should use something else than alert
-            alert("Greide ikke hente ut dimensjoner fra bildet. Send en melding i #support i Online-slacken! Ellers kan du se på feilmeldingen i konsollen for å se om du kan løse det selv.")
+          console.error(e)
+          // TODO: Should use something else than alert
+          alert(
+            "Greide ikke hente ut dimensjoner fra bildet. Send en melding i #support i Online-slacken! Ellers kan du se på feilmeldingen i konsollen for å se om du kan løse det selv."
+          )
         }
-    }
+      }
 
       const result = await upload(e.target.files[0])
       console.log("onSelectFile", result)
@@ -57,17 +59,16 @@ export function FileUpload({ onFileLoad, value, error, isImageType }: Props) {
         originalFilename: result.originalFilename,
         size: result.size,
         mimeType: result.mimeType,
-        width, height
-        
+        width,
+        height,
       })
     }
   }
 
-
   return (
     <div className="App">
       <Box mb={"sm"}>
-        <input type="file" onChange={onSelectFile}  />
+        <input type="file" onChange={onSelectFile} />
         {error && (
           <Text c="red" mt="sm">
             {error}
@@ -83,24 +84,24 @@ export function FileUpload({ onFileLoad, value, error, isImageType }: Props) {
   )
 }
 
-export function createAssetFormFileInput<F extends FieldValues>({ 
-  ...props 
+export function createAssetFormFileInput<F extends FieldValues>({
+  ...props
 }: FileInputProps & {
   isImageType: boolean
 }): InputProducerResult<F> {
-return function FormFileInput({ name, state, control }) {
-  return (
-    <Box>
-      <Text>{props.label}</Text>
-      {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <FileUpload value={field.value} onFileLoad={field.onChange} isImageType={props.isImageType} />
-        )}
-      />
-    </Box>
-  )
-}
+  return function FormFileInput({ name, state, control }) {
+    return (
+      <Box>
+        <Text>{props.label}</Text>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <FileUpload value={field.value} onFileLoad={field.onChange} isImageType={props.isImageType} />
+          )}
+        />
+      </Box>
+    )
+  }
 }

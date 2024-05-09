@@ -4,6 +4,7 @@ import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { type Cursor, type Keys, orderedQuery } from "../../utils/db-utils"
+import { fileAssetCols, imageAssetCols, mapNestedAssetResult } from "../asset/asset-repository"
 
 export interface OfflineRepository {
   getById(id: OfflineId): Promise<Offline | null>
@@ -46,8 +47,11 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       id: query.id,
       title: query.title,
       published: query.published,
-      image: query.imageVariant,
-      pdf: query.pdfAsset,
+      image: {
+        ...mapNestedAssetResult(query?.imageVariant),
+        asset: mapNestedAssetResult(query?.imageVariant?.asset),
+      },
+      pdf: mapNestedAssetResult(query.pdfAsset),
     }
 
     if (!offline) {
@@ -80,8 +84,11 @@ export class OfflineRepositoryImpl implements OfflineRepository {
         id: offline.id,
         title: offline.title,
         published: offline.published,
-        image: offline.imageVariant,
-        pdf: offline.pdfAsset,
+        image: {
+          ...mapNestedAssetResult(offline?.imageVariant),
+          asset: mapNestedAssetResult(offline?.imageVariant?.asset),
+        },
+        pdf: mapNestedAssetResult(offline.pdfAsset),
       }
 
       result.push(OfflineSchema.parse(parsed))
@@ -94,14 +101,11 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       jsonObjectFrom(
         eb
           .selectFrom("imageVariant")
-          .select(["crop", "assetKey", "id"])
+          .select(["crop", "assetKey", "id", "createdAt"])
           .whereRef(`offline.${col}`, "=", "id")
           .select((eb2) => [
             jsonObjectFrom(
-              eb2
-                .selectFrom("asset")
-                .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
-                .whereRef("imageVariant.assetKey", "=", "asset.key")
+              eb2.selectFrom("asset").select(imageAssetCols).whereRef("imageVariant.assetKey", "=", "asset.key")
             ).as("asset"),
           ])
       )
@@ -109,11 +113,6 @@ export class OfflineRepositoryImpl implements OfflineRepository {
 
   private assetQuery(col: keyof DB["offline"]) {
     return (eb: ExpressionBuilder<DB, "offline">) =>
-      jsonObjectFrom(
-        eb
-          .selectFrom("asset")
-          .select(["key", "originalFilename", "mimeType", "size", "width", "height", "altText"])
-          .whereRef(`offline.${col}`, "=", "asset.key")
-      )
+      jsonObjectFrom(eb.selectFrom("asset").select(fileAssetCols).whereRef(`offline.${col}`, "=", "asset.key"))
   }
 }
