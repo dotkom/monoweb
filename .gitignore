@@ -20,6 +20,9 @@ build/
 coverage/
 .vscode
 .DS_Store
+.pnpm
+.pnpm-store
+.pnpm-store-lock.json
 
 storybook-static/
 .react-email
