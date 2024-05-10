@@ -30,7 +30,6 @@ interface Props {
 
 export default function ImageUploadInput({ setImageVariant, cropAspectLock, imageVariant, error }: Props) {
   const [imgSrc, setImgSrc] = useState("")
-  const [scale, setScale] = useState(1)
   const [completedCrop, setCompletedCrop] = useState<PercentCrop | undefined>(mapCropToFrontend(imageVariant))
 
   const [cropOpen, { toggle: toggleShowCrop }] = useDisclosure()
@@ -161,21 +160,11 @@ export default function ImageUploadInput({ setImageVariant, cropAspectLock, imag
           <>
             {cropOpen && (
               <div>
-                <label htmlFor="scale-input">Scale: </label>
-                <input
-                  id="scale-input"
-                  type="number"
-                  step="0.1"
-                  value={scale}
-                  disabled={!imgSrc}
-                  onChange={(e) => setScale(Number(e.target.value))}
-                />
                 <CropComponent
                   imgSrc={imgSrc}
                   completedCrop={completedCrop}
                   setCompletedCrop={setCompletedCrop}
                   aspect={cropAspectLock}
-                  scale={scale}
                 />
                 <button type="button" onClick={onSetCrop}>
                   Lagre
@@ -192,13 +181,7 @@ export default function ImageUploadInput({ setImageVariant, cropAspectLock, imag
                 </button>
               </div>
             )}
-            <CropPreview
-              imgSrc={imgSrc}
-              completedCrop={completedCrop}
-              imgRef={imgRef}
-              scale={scale}
-              hidden={cropOpen || !imgSrc}
-            />
+            <CropPreview imgSrc={imgSrc} completedCrop={completedCrop} imgRef={imgRef} hidden={cropOpen || !imgSrc} />
           </>
         )}
       </div>

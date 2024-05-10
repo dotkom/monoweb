@@ -30,10 +30,9 @@ interface CropProps {
   completedCrop?: Crop
   setCompletedCrop: (crop: PercentCrop) => void
   aspect?: number
-  scale: number
 }
 
-export function CropComponent({ imgSrc, completedCrop, setCompletedCrop, aspect, scale }: CropProps) {
+export function CropComponent({ imgSrc, completedCrop, setCompletedCrop, aspect }: CropProps) {
   const [crop, setCrop] = useState<Crop | undefined>(completedCrop ?? undefined)
   const imgRef = useRef<HTMLImageElement>(null)
 
@@ -56,13 +55,7 @@ export function CropComponent({ imgSrc, completedCrop, setCompletedCrop, aspect,
       aspect={aspect}
       minHeight={100}
     >
-      <img
-        ref={imgRef}
-        alt="Crop me"
-        src={imgSrc}
-        style={{ transform: `scale(${scale})`, maxWidth: "100%" }}
-        onLoad={onImageLoad}
-      />
+      <img ref={imgRef} alt="Crop me" src={imgSrc} style={{ maxWidth: "100%" }} onLoad={onImageLoad} />
     </ReactCrop>
   )
 }
