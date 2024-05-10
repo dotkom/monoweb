@@ -3,7 +3,7 @@ import type { DB } from "@dotkomonline/db/src/db.generated"
 import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
-import { type Cursor, fixJsonDatesStandardCols, type Keys, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, type Keys, fixJsonDatesStandardCols, orderedQuery } from "../../utils/db-utils"
 import { fileAssetCols, imageAssetCols } from "../asset/asset-repository"
 
 export interface OfflineRepository {

@@ -22,38 +22,37 @@ export function withInsertJsonValue<T extends object, K extends keyof T>(
 
 // https://node-postgres.com/features/types#date--timestamp--timestamptz deserialized datetime fields automatically, but when using json_build_object, the createdAt field is returned as a string instead of being parsed as a Date.
 // This function deserializes datetime fields to js Date objects if they are present in the result.
-export const fixJsonDatesStandardCols = <T extends { createdAt?: string | Date, updatedAt?: string | Date }>(obj?: T | null | undefined) : T =>{
-  let final = {
-
-  }
-  if(obj?.createdAt instanceof Date) {
+export const fixJsonDatesStandardCols = <T extends { createdAt?: string | Date; updatedAt?: string | Date }>(
+  obj?: T | null | undefined
+): T => {
+  let final = {}
+  if (obj?.createdAt instanceof Date) {
     final = {
-      createdAt: new Date(obj.createdAt)
+      createdAt: new Date(obj.createdAt),
     }
   }
 
-  if(obj?.updatedAt instanceof Date) {
+  if (obj?.updatedAt instanceof Date) {
     final = {
       ...final,
-      updatedAt: new Date(obj.updatedAt)
+      updatedAt: new Date(obj.updatedAt),
     }
   }
 
-  if(!obj) return {} as T
+  if (!obj) return {} as T
 
   return {
     ...obj,
-    ...final
+    ...final,
   }
 }
 
 export const fixDate = <T>(obj: T, prop: keyof T) => {
   return {
     ...obj,
-    [prop]: new Date(obj[prop] as string)
+    [prop]: new Date(obj[prop] as string),
   }
 }
-
 
 export const CursorSchema = z.object({
   id: z.string().ulid(),
