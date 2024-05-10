@@ -12,10 +12,9 @@ interface ShowPreviewProps {
   imgSrc: string
   completedCrop: PercentCrop | undefined
   imgRef: React.RefObject<HTMLImageElement>
-  scale: number
   hidden?: boolean
 }
-export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: ShowPreviewProps) {
+export function CropPreview({ imgSrc, completedCrop, imgRef, hidden }: ShowPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   function renderCanvasPreview() {
     if (!imgRef.current || !canvasRef.current) {
@@ -31,13 +30,13 @@ export function CropPreview({ imgSrc, completedCrop, imgRef, scale, hidden }: Sh
       unit: "%",
     }
 
-    canvasPreview(imgRef.current, canvasRef.current, crop, scale)
+    canvasPreview(imgRef.current, canvasRef.current, crop)
   }
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Does not take into account variables used in the renderCanvasPreview function
   useEffect(() => {
     renderCanvasPreview()
-  }, [completedCrop, scale, imgSrc])
+  }, [completedCrop, imgSrc])
 
   return (
     <div style={{ display: hidden ? "none" : "block" }}>

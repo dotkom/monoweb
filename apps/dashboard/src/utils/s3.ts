@@ -1,6 +1,6 @@
 import { env } from "@dotkomonline/env"
-import type { File } from "../../stubs/file/File"
 import type { ImageVariant } from "@dotkomonline/types"
+import type { File } from "../../stubs/file/File"
 
 // Expected response: 204 No Content. Returns resource URL if successful.
 export async function s3UploadFile(file: File, fields: Record<string, string>, url: string) {
@@ -32,7 +32,6 @@ export function buildAssetUrl(key: string) {
 }
 
 function buildFinalCloudflareUrl(options: string, assetUrl: string) {
-
   const cloudflareImagesBaseUrl = "https://onli.no/cdn-cgi/image"
 
   return `${cloudflareImagesBaseUrl}/${options}/${assetUrl}`
