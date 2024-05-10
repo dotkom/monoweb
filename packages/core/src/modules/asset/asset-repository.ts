@@ -16,7 +16,13 @@ import {
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { IllegalStateError } from "../../error"
-import { type Cursor, fixJsonDatesStandardCols, type Keys, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
+import {
+  type Cursor,
+  type Keys,
+  fixJsonDatesStandardCols,
+  orderedQuery,
+  withInsertJsonValue,
+} from "../../utils/db-utils"
 
 export interface AssetRepository {
   getFileAsset(key: string): Promise<FileAsset>
