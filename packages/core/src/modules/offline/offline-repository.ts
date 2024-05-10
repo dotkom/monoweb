@@ -3,8 +3,8 @@ import type { DB } from "@dotkomonline/db/src/db.generated"
 import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
-import { type Cursor, type Keys, orderedQuery } from "../../utils/db-utils"
-import { fileAssetCols, imageAssetCols, mapNestedAssetResult } from "../asset/asset-repository"
+import { type Cursor, fixJsonDatesStandardCols, type Keys, orderedQuery } from "../../utils/db-utils"
+import { fileAssetCols, imageAssetCols } from "../asset/asset-repository"
 
 export interface OfflineRepository {
   getById(id: OfflineId): Promise<Offline | null>
@@ -48,10 +48,10 @@ export class OfflineRepositoryImpl implements OfflineRepository {
       title: query.title,
       published: query.published,
       image: {
-        ...mapNestedAssetResult(query?.imageVariant),
-        asset: mapNestedAssetResult(query?.imageVariant?.asset),
+        ...fixJsonDatesStandardCols(query?.imageVariant),
+        asset: fixJsonDatesStandardCols(query?.imageVariant?.asset),
       },
-      pdf: mapNestedAssetResult(query.pdfAsset),
+      pdf: fixJsonDatesStandardCols(query.pdfAsset),
     }
 
     if (!offline) {
@@ -77,18 +77,16 @@ export class OfflineRepositoryImpl implements OfflineRepository {
 
     const result: Offline[] = []
 
-    console.log(JSON.stringify(offlines, null, 2))
-
     for (const offline of offlines) {
       const parsed: Keys<Offline> = {
         id: offline.id,
         title: offline.title,
         published: offline.published,
         image: {
-          ...mapNestedAssetResult(offline?.imageVariant),
-          asset: mapNestedAssetResult(offline?.imageVariant?.asset),
+          ...fixJsonDatesStandardCols(offline?.imageVariant),
+          asset: fixJsonDatesStandardCols(offline?.imageVariant?.asset),
         },
-        pdf: mapNestedAssetResult(offline.pdfAsset),
+        pdf: fixJsonDatesStandardCols(offline.pdfAsset),
       }
 
       result.push(OfflineSchema.parse(parsed))

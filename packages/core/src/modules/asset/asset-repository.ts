@@ -16,7 +16,7 @@ import {
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { IllegalStateError } from "../../error"
-import { type Keys, withInsertJsonValue } from "../../utils/db-utils"
+import { type Cursor, fixJsonDatesStandardCols, type Keys, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
 
 export interface AssetRepository {
   getFileAsset(key: string): Promise<FileAsset>
@@ -32,8 +32,8 @@ export interface AssetRepository {
   getImageVariation(id: string): Promise<ImageVariant>
   updateImageVariation(id: string, values: ImageVariantWrite): Promise<ImageVariant>
 
-  getAllFileAssets(): Promise<FileAsset[]>
-  getAllImageAssets(): Promise<ImageAsset[]>
+  getAllFileAssets(take: number, cursor?: Cursor): Promise<FileAsset[]>
+  getAllImageAssets(take: number, cursor?: Cursor): Promise<ImageAsset[]>
 }
 
 export const fileAssetCols = [
@@ -48,35 +48,38 @@ export const fileAssetCols = [
 ] as const
 export const imageAssetCols = [...fileAssetCols, "width", "height", "altText", "photographer"] as const
 
-export const mapNestedAssetResult = <T>(asset: (T & { createdAt: string | Date }) | null | undefined) =>
-  asset && {
-    ...asset,
-    createdAt: new Date(asset.createdAt as string),
-  }
-
 export class AssetRepositoryImpl implements AssetRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getAllFileAssets(): Promise<FileAsset[]> {
-    const assets_ = await this.db.selectFrom("asset").select(fileAssetCols).where("isImage", "=", false).execute()
-    const assets: Keys<FileAsset>[] = assets_
-    return assets.map((val) => FileAssetSchema.parse(val))
+  async getAllFileAssets(take: number, cursor?: Cursor): Promise<FileAsset[]> {
+    const dbResult = await orderedQuery(
+      this.db.selectFrom("asset").select(fileAssetCols).where("isImage", "=", false).limit(take),
+      cursor
+    ).execute()
+
+    const mappedToDomain: Keys<FileAsset>[] = dbResult
+    return mappedToDomain.map((val) => FileAssetSchema.parse(val))
   }
 
-  async getAllImageAssets(): Promise<ImageAsset[]> {
-    const assets_ = await this.db.selectFrom("asset").select(imageAssetCols).where("isImage", "=", true).execute()
-    const assets: Keys<ImageAsset>[] = assets_
-    return assets.map((val) => ImageAssetSchema.parse(val))
+  async getAllImageAssets(take: number, cursor?: Cursor): Promise<ImageAsset[]> {
+    const dbResult = await orderedQuery(
+      this.db.selectFrom("asset").select(imageAssetCols).where("isImage", "=", true).limit(take),
+      cursor
+    ).execute()
+
+    const mappedToDomain: Keys<ImageAsset>[] = dbResult
+    return mappedToDomain.map((val) => ImageAssetSchema.parse(val))
   }
 
   async getFileAsset(key: string): Promise<FileAsset> {
-    const asset_ = await this.db
+    const dbResult = await this.db
       .selectFrom("asset")
       .select(fileAssetCols)
       .where("key", "=", key)
       .executeTakeFirstOrThrow()
-    const asset: Keys<FileAsset> = asset_
-    return FileAssetSchema.parse(asset)
+
+    const mappedToDomain: Keys<FileAsset> = dbResult
+    return FileAssetSchema.parse(mappedToDomain)
   }
 
   async getImageAsset(key: string): Promise<ImageAsset> {
@@ -85,8 +88,8 @@ export class AssetRepositoryImpl implements AssetRepository {
       .select(imageAssetCols)
       .where("key", "=", key)
       .executeTakeFirstOrThrow()
-    const asset: Keys<ImageAsset> = asset_
-    return ImageAssetSchema.parse(asset)
+    const mappedToDomain: Keys<ImageAsset> = asset_
+    return ImageAssetSchema.parse(mappedToDomain)
   }
 
   async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {
@@ -103,8 +106,8 @@ export class AssetRepositoryImpl implements AssetRepository {
       )
       .returningAll()
       .executeTakeFirstOrThrow()
-    const asset: Keys<FileAsset> = asset_
-    return FileAssetSchema.parse(asset)
+    const mappedToDomain: Keys<FileAsset> = asset_
+    return FileAssetSchema.parse(mappedToDomain)
   }
 
   async updateFileAsset(id: string, values: FileAssetUpdate): Promise<FileAsset> {
@@ -126,8 +129,8 @@ export class AssetRepositoryImpl implements AssetRepository {
       )
       .returning(imageAssetCols)
       .executeTakeFirstOrThrow()
-    const asset: Keys<ImageAsset> = asset_
-    return ImageAssetSchema.parse(asset)
+    const mappedToDomain: Keys<ImageAsset> = asset_
+    return ImageAssetSchema.parse(mappedToDomain)
   }
 
   async updateImageAsset(id: string, values: ImageAssetUpdate): Promise<ImageAsset> {
@@ -148,10 +151,8 @@ export class AssetRepositoryImpl implements AssetRepository {
     }
 
     const imageVariant: Keys<ImageVariant> = {
-      crop: imgVariant.crop,
-      asset: mapNestedAssetResult(imgVariant.asset),
-      id: imgVariant.id,
-      createdAt: imgVariant.createdAt,
+      ...imgVariant,
+      asset: fixJsonDatesStandardCols(imgVariant.asset),
     }
     return ImageVariantSchema.parse(imageVariant)
   }

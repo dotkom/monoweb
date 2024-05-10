@@ -30,7 +30,7 @@ export const createKysely = (env: Environment) =>
 
 // @ts-expect-error: does not like re-declaring global
 // biome-ignore lint/suspicious/noRedeclare: error
-export const kysely = global.kysely || createKysely(env)
+export const kysely: Kysely<Database> = global.kysely || createKysely(env)
 
 if (env.NODE_ENV !== "production") {
   // @ts-expect-error: does not like re-declaring global

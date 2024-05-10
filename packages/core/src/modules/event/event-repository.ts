@@ -83,6 +83,7 @@ export class EventRepositoryImpl implements EventRepository {
 
   async getById(id: string): Promise<Event | undefined> {
     const event = await this.db.selectFrom("event").where("id", "=", id).selectAll().executeTakeFirst()
+    console.log("EVENT", event)
     return event === undefined ? undefined : mapToEvent(event)
   }
 }

@@ -11,3 +11,4 @@ const replServer = repl.start({
 
 // Make services available in the REPL
 replServer.context.core = core
+replServer.context.db = kysely
