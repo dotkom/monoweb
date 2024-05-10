@@ -6,7 +6,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import Link from "next/link"
 import { useMemo } from "react"
 import { formatDate } from "../../utils/format"
-import { buildAssetUrl } from "../../utils/s3"
+import { buildAssetUrl, buildImgUrl } from "../../utils/s3"
 
 interface Props {
   data: Offline[]
@@ -46,7 +46,7 @@ export const useOfflineTable = ({ data }: Props) => {
             return "Ingen bilde"
           }
           return (
-            <Anchor target="_blank" href={buildAssetUrl(image.asset.key)} rel="noopenere">
+            <Anchor target="_blank" href={buildImgUrl(image)} rel="noopenere">
               Link
             </Anchor>
           )
