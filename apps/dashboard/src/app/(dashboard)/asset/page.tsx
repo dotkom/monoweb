@@ -4,7 +4,6 @@ import { Anchor, Box, Button, Table, Title } from "@mantine/core"
 import {
   useCreateFileAssetModal,
   useCreateImageAssetModal,
-  useUpdateFileAssetModal,
   useUpdateImageAssetModal,
 } from "../../../modules/asset/modals"
 import { useFileAssetsAllQuery, useImageAssetsAllQuery } from "../../../modules/asset/queries"
@@ -14,7 +13,6 @@ export default function AssetPage() {
   const { fileAssets, isLoading: isFileAssetsLoading } = useFileAssetsAllQuery()
   const { imageAssets, isLoading: isImageAssetsLoading } = useImageAssetsAllQuery()
   const openFileUploadModal = useCreateFileAssetModal()
-  const openUpdateFileModal = useUpdateFileAssetModal()
   const openImageUploadModal = useCreateImageAssetModal()
   const openUpdateImageModal = useUpdateImageAssetModal()
 
