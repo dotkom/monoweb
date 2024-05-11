@@ -26,13 +26,13 @@ export const fixJsonDatesStandardCols = <T extends { createdAt?: string | Date; 
   obj?: T | null | undefined
 ): T => {
   let final = {}
-  if (obj?.createdAt instanceof Date) {
+  if (typeof obj?.createdAt === "string") {
     final = {
       createdAt: new Date(obj.createdAt),
     }
   }
 
-  if (obj?.updatedAt instanceof Date) {
+  if (typeof obj?.updatedAt === "string") {
     final = {
       ...final,
       updatedAt: new Date(obj.updatedAt),
