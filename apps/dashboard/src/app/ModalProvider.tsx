@@ -6,6 +6,7 @@ import { AttendanceRegisteredModal } from "src/modules/attendance/modals/attenda
 import { AlreadyAttendedModal } from "src/modules/attendance/modals/error-attendance-registered-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
 import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
+import { assetModals } from "../modules/asset/modals"
 import { CreatePoolModal } from "../modules/attendance/modals/create-pool-modal"
 import { EditPoolModal } from "../modules/attendance/modals/edit-pool-modal"
 import { CreateManualUserAttendModal } from "../modules/attendance/modals/manual-user-attend-modal"
@@ -32,6 +33,7 @@ const modals = {
   "interestGroup/create": CreateInterestGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
+  ...assetModals,
 } as const
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (

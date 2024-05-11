@@ -1,16 +1,23 @@
 import type { File } from "../../../stubs/file/File"
-import { s3UploadFile } from "../../utils/s3-upload-file"
+import { s3UploadFile } from "../../utils/s3"
 import { trpc } from "../../utils/trpc"
 
 export const useS3UploadFile = () => {
   const presignedPostMut = trpc.offline.createPresignedPost.useMutation()
 
   return async (file: File) => {
-    const presignedPost = await presignedPostMut.mutateAsync({
-      filename: `${file.name}`,
+    const res = await presignedPostMut.mutateAsync({
+      filename: file.name,
       mimeType: file.type,
     })
-    const fileToStore = await s3UploadFile(file, presignedPost.fields, presignedPost.url)
-    return fileToStore
+
+    await s3UploadFile(file, res.fields, res.url)
+
+    return {
+      s3FileName: res.assetKey,
+      originalFilename: file.name,
+      size: file.size,
+      mimeType: file.type,
+    }
   }
 }

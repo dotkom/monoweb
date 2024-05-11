@@ -1,6 +1,10 @@
 import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
+export type Keys<T> = {
+  [K in keyof T]: unknown
+}
+
 type ObjectWithKey<T> = T extends object ? T : never
 type ObjectWithStringifiedProperty<T extends object, K extends keyof T> = T & { [Property in K]: string }
 
@@ -13,6 +17,40 @@ export function withInsertJsonValue<T extends object, K extends keyof T>(
   return {
     ...originalObject,
     [propertyToConvert]: stringifiedPropertyValue,
+  }
+}
+
+// https://node-postgres.com/features/types#date--timestamp--timestamptz deserialized datetime fields automatically, but when using json_build_object, the createdAt field is returned as a string instead of being parsed as a Date.
+// This function deserializes datetime fields to js Date objects if they are present in the result.
+export const fixJsonDatesStandardCols = <T extends { createdAt?: string | Date; updatedAt?: string | Date }>(
+  obj?: T | null | undefined
+): T => {
+  let final = {}
+  if (typeof obj?.createdAt === "string") {
+    final = {
+      createdAt: new Date(obj.createdAt),
+    }
+  }
+
+  if (typeof obj?.updatedAt === "string") {
+    final = {
+      ...final,
+      updatedAt: new Date(obj.updatedAt),
+    }
+  }
+
+  if (!obj) return {} as T
+
+  return {
+    ...obj,
+    ...final,
+  }
+}
+
+export const fixDate = <T>(obj: T, prop: keyof T) => {
+  return {
+    ...obj,
+    [prop]: new Date(obj[prop] as string),
   }
 }
 

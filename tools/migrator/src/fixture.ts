@@ -13,7 +13,6 @@ import {
   getJobListingLocationLinkFixtures,
 } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
-import { getOfflineFixtures } from "./fixtures/offline"
 import { getProductFixtures } from "./fixtures/product"
 import { getProductPaymentProviderFixtures } from "./fixtures/product-payment-provider"
 
@@ -106,14 +105,6 @@ export const runFixtures = async () => {
     .insertInto("jobListingLocationLink")
     .onConflict((eb) => eb.doNothing())
     .values(getJobListingLocationLinkFixtures(insertedIds.jobListing, insertedIds.jobListingLocation))
-    .returning("id")
-    .execute()
-    .then(mapId)
-
-  insertedIds.offline = await db
-    .insertInto("offline")
-    .onConflict((eb) => eb.doNothing())
-    .values(getOfflineFixtures())
     .returning("id")
     .execute()
     .then(mapId)

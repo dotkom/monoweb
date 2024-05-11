@@ -8,6 +8,8 @@ import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article
 import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
 import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
 import { type ArticleTagRepository, ArticleTagRepositoryImpl } from "./article/article-tag-repository"
+import { type AssetRepository, AssetRepositoryImpl } from "./asset/asset-repository"
+import { type AssetService, AssetServiceImpl } from "./asset/asset-service"
 import { type AttendancePoolRepository, AttendancePoolRepositoryImpl } from "./attendance/attendance-pool-repository"
 import { type AttendancePoolService, AttendancePoolServiceImpl } from "./attendance/attendance-pool-service"
 import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendance/attendance-repository"
@@ -216,7 +218,11 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
+
+  const assetRepository: AssetRepository = new AssetRepositoryImpl(db)
+  const assetService: AssetService = new AssetServiceImpl(assetRepository, s3Repository)
+
+  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, assetService)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,
@@ -250,5 +256,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     interestGroupRepository,
     interestGroupService,
     auth0SynchronizationService,
+    assetService,
   }
 }

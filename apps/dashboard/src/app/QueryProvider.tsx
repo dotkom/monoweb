@@ -11,6 +11,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         defaultOptions: {
           queries: {
             retry: process.env.NODE_ENV === "production" ? 3 : 0,
+            refetchOnWindowFocus: false,
           },
         },
       })

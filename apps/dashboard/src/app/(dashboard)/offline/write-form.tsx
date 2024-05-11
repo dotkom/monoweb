@@ -1,33 +1,24 @@
-import { OfflineWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
-import { createDateTimeInput, createFileInput, createTextInput, useFormBuilder } from "../../form"
+import { FileAssetSchema, ImageVariantSchema, OfflineWriteSchema } from "@dotkomonline/types"
+import type { z } from "zod"
+import { createDateTimeInput, createFileInput, createImageInput, createTextInput, useFormBuilder } from "../../form"
 
-const OFFLINE_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
-  fileUrl: null,
-  imageUrl: null,
-}
+const FormSchema = OfflineWriteSchema.omit({
+  imageVariantId: true,
+  pdfAssetKey: true,
+}).extend({
+  image: ImageVariantSchema,
+  pdf: FileAssetSchema,
+})
+type FormSchema = z.infer<typeof FormSchema>
 
 interface UseOfflineWriteFormProps {
-  onSubmit(data: FormValidationSchema): Promise<void>
-  defaultValues?: Partial<FormValidationSchema>
-  label?: string
+  onSubmit(data: FormSchema): Promise<void>
+  defaultValues?: Partial<FormSchema>
+  label: string
 }
-
-export const FormValidationSchema = OfflineWriteSchema.extend({
-  file: z.any().optional(),
-  image: z.any().optional(),
-  fileUrl: z.string().nullable(),
-  imageUrl: z.string().nullable(),
-})
-type FormValidationSchema = z.infer<typeof FormValidationSchema>
-
-export const useOfflineWriteForm = ({
-  onSubmit,
-  label = "Registrer",
-  defaultValues = OFFLINE_FORM_DEFAULT_VALUES,
-}: UseOfflineWriteFormProps) =>
-  useFormBuilder({
-    schema: FormValidationSchema,
+export const useOfflineWriteForm = ({ onSubmit, label, defaultValues }: UseOfflineWriteFormProps) => {
+  return useFormBuilder({
+    schema: FormSchema,
     defaultValues,
     onSubmit,
     label,
@@ -40,15 +31,14 @@ export const useOfflineWriteForm = ({
         label: "Utgivelsesdato",
         placeholder: "2023-10-05",
       }),
-      file: createFileInput({
+      pdf: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
-        existingFileUrl: defaultValues.fileUrl ?? undefined,
       }),
-      image: createFileInput({
+      image: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
-        existingFileUrl: defaultValues.imageUrl ?? undefined,
       }),
     },
   })
+}

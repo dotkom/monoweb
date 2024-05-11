@@ -1,4 +1,5 @@
 import { articleRouter } from "./modules/article/article-router"
+import { assetRouter } from "./modules/asset/asset-router"
 import { committeeRouter } from "./modules/committee/committee-router"
 import { companyRouter } from "./modules/company/company-router"
 import { attendanceRouter } from "./modules/event/attendance-router"
@@ -23,6 +24,7 @@ export const appRouter = t.router({
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,
   offline: offlineRouter,
+  asset: assetRouter,
   article: articleRouter,
   interestGroup: interestGroupRouter,
 })

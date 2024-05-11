@@ -52,6 +52,21 @@ export interface ArticleTags {
   name: string;
 }
 
+export interface Asset {
+  altText: string | null;
+  createdAt: Generated<Timestamp>;
+  height: number | null;
+  isImage: boolean;
+  key: string;
+  mimeType: string;
+  originalFilename: string;
+  photographer: string | null;
+  size: number;
+  tags: Json | null;
+  title: string;
+  width: number | null;
+}
+
 export interface Attendance {
   createdAt: Generated<Timestamp>;
   deregisterDeadline: Timestamp;
@@ -137,6 +152,13 @@ export interface EventCompany {
   eventId: string;
 }
 
+export interface ImageVariant {
+  assetKey: string;
+  createdAt: Generated<Timestamp>;
+  crop: Json | null;
+  id: Generated<string>;
+}
+
 export interface InterestGroup {
   createdAt: Generated<Timestamp>;
   description: string;
@@ -203,30 +225,30 @@ export interface NotificationPermissions {
 
 export interface Offline {
   createdAt: Generated<Timestamp>;
-  fileUrl: string | null;
   id: Generated<string>;
-  imageUrl: string | null;
+  imageVariantId: string | null;
+  pdfAssetKey: string | null;
   published: Timestamp;
   title: string;
   updatedAt: Generated<Timestamp>;
 }
 
 export interface OwUser {
-  allergies: Json
-  auth0Id: string
-  createdAt: Generated<Timestamp>
-  email: string
-  familyName: string
-  gender: string | null
-  givenName: string
-  id: Generated<string>
-  lastSyncedAt: Generated<Timestamp>
-  middleName: string
-  name: string
-  phone: string | null
-  picture: string | null
-  studyYear: Generated<number>
-  updatedAt: Generated<Timestamp>
+  allergies: Json;
+  auth0Id: string;
+  createdAt: Generated<Timestamp>;
+  email: string;
+  familyName: string;
+  gender: string | null;
+  givenName: string;
+  id: Generated<string>;
+  lastSyncedAt: Generated<Timestamp>;
+  middleName: string;
+  name: string;
+  phone: string | null;
+  picture: string | null;
+  studyYear: Generated<number>;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Payment {
@@ -305,6 +327,7 @@ export interface DB {
   articles: Articles;
   articleTagLink: ArticleTagLink;
   articleTags: ArticleTags;
+  asset: Asset;
   attendance: Attendance;
   attendancePool: AttendancePool;
   attendee: Attendee;
@@ -313,6 +336,7 @@ export interface DB {
   event: Event;
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
+  imageVariant: ImageVariant;
   interestGroup: InterestGroup;
   jobListing: JobListing;
   jobListingLocation: JobListingLocation;

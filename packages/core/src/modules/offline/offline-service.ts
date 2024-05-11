@@ -1,16 +1,8 @@
-import { env } from "@dotkomonline/env"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
-import type { S3Repository } from "../external/s3-repository"
+import type { AssetService, PresignedPost } from "../asset/asset-service"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"
-
-type Fields = Record<string, string>
-
-export interface PresignedPost {
-  url: string
-  fields: Fields
-}
 
 export interface OfflineService {
   get(id: OfflineId): Promise<Offline>
@@ -23,17 +15,12 @@ export interface OfflineService {
 export class OfflineServiceImpl implements OfflineService {
   constructor(
     private readonly offlineRepository: OfflineRepository,
-    private readonly s3Repository: S3Repository
+    private readonly assetService: AssetService
   ) {}
 
-  /**
-   * Get an offline by its id
-   *
-   * @throws {OfflineNotFoundError} if the offline does not exist
-   */
-  async get(id: OfflineId): Promise<Offline> {
+  async get(id: OfflineId) {
     const offline = await this.offlineRepository.getById(id)
-    if (offline === undefined) {
+    if (offline === null) {
       throw new OfflineNotFoundError(id)
     }
     return offline
@@ -54,7 +41,7 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    return this.s3Repository.createPresignedPost(env.S3_BUCKET_MONOWEB, `offlines/${filename}`, mimeType, 60) // 60 MB file limit
+  async createPresignedPost(filename: string, mimeType: string) {
+    return this.assetService.createPresignedPost(filename, mimeType, 50)
   }
 }
