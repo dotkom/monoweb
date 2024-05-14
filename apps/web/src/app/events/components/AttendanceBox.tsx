@@ -3,9 +3,9 @@ import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import type { FC, ReactElement } from "react"
+import { AttendanceBoxPool } from "./AttendanceBoxPool"
 import { useRegisterMutation, useUnregisterMutation } from "./mutations"
 import { useGetAttendee } from "./queries"
-import { AttendanceBoxPool } from "./AttendanceBoxPool"
 
 export const calculateStatus = ({
   registerStart,
