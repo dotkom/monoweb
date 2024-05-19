@@ -6,7 +6,9 @@ import {
   type InterestGroupWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Collection, type Pageable, paginatedQuery } from "../../utils/db-utils"
+import { decodeUlidIdCursor } from "../../utils/cursor-pagination/common-cursor-utils"
+import { getNextCursor, paginatedQuery } from "../../utils/cursor-pagination/helpers"
+import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>
@@ -28,9 +30,23 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
     return interestGroup ? mapToInterestGroup(interestGroup) : undefined
   }
 
-  async getAll(pageable: Pageable): Promise<Collection<InterestGroup>> {
-    const res = paginatedQuery(this.db.selectFrom("interestGroup").selectAll(), pageable, mapToInterestGroup)
-    return res
+  async getAll(pageable: Pageable) {
+    const query = this.db.selectFrom("interestGroup").selectAll()
+
+    const records = await paginatedQuery(query, {
+      pageable,
+      decodeCursor: decodeUlidIdCursor,
+    }).execute()
+
+    const cursor = getNextCursor(records, {
+      pageable,
+      buildCursor: (record) => record.createdAt.toISOString(),
+    })
+
+    return {
+      next: cursor,
+      data: records,
+    }
   }
 
   async create(values: InterestGroupWrite): Promise<InterestGroup> {
