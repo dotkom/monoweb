@@ -37,7 +37,7 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
 
     return {
       next: cursor,
-      data: records,
+      data: records.map(mapToCommittee),
     }
   }
 

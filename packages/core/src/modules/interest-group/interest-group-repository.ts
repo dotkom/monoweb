@@ -45,7 +45,7 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
 
     return {
       next: cursor,
-      data: records,
+      data: records.map(mapToInterestGroup),
     }
   }
 
