@@ -19,6 +19,10 @@ export const createKysely = (env: Environment) =>
       }),
     }),
     plugins: [new CamelCasePlugin()],
+    // log(event) {
+    //   console.log(event.query.sql)
+    //   console.log(event.query.parameters)
+    // }
   })
 
 // @ts-expect-error: does not like re-declaring global

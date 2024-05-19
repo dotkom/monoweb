@@ -1,4 +1,4 @@
-import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
+import type { CommitteeWrite, CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addWeeks, addYears } from "date-fns"
 import { ulid } from "ulid"
@@ -35,6 +35,14 @@ export const getAuth0UserMock = (write?: Partial<UserWrite>): GetUsers200Respons
       middle_name: write?.middleName ?? "Mellomnavn",
     },
   }) as unknown as GetUsers200ResponseOneOfInner
+
+export const getCommitteeMock = (defaults?: Partial<CommitteeWrite>): CommitteeWrite => ({
+  name: "Test Committee",
+  description: "This is a test committee",
+  email: "test-mail-that-does-not-exist6123123@gmail.com",
+  image: "https://example.com/logo.png",
+  ...defaults,
+})
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   auth0Id: crypto.randomUUID(),

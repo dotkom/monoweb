@@ -2,7 +2,7 @@ import type { Database } from "@dotkomonline/db"
 import { type Committee, type CommitteeId, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
 import { buildUlidIdCursor, decodeUlidIdCursor } from "../../utils/cursor-pagination/common-cursor-utils"
-import { getNextCursor, paginatedQuery } from "../../utils/cursor-pagination/helpers"
+import { singleColPaginatedQuery } from "../../utils/cursor-pagination/helpers"
 import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
 
 export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => CommitteeSchema.parse(payload)
@@ -25,19 +25,17 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   async getAll(pageable: Pageable) {
     const query = this.db.selectFrom("committee").selectAll()
 
-    const records = await paginatedQuery(query, {
+    const result = await singleColPaginatedQuery(query, {
       pageable,
       decodeCursor: decodeUlidIdCursor,
-    }).execute()
-
-    const cursor = getNextCursor(records, {
-      pageable,
       buildCursor: buildUlidIdCursor,
+      column: "id",
+      order: "desc",
     })
 
     return {
-      next: cursor,
-      data: records.map(mapToCommittee),
+      next: result.next,
+      data: result.data.map(mapToCommittee),
     }
   }
 
