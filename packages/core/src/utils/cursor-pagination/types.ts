@@ -5,7 +5,7 @@ export interface Collection<T> {
   next: Cursor | null
 }
 
-// Cursors should be opaque!
+// Cursors are opaque strings that are parsed in the individual repositories
 export const CursorSchema = z.string()
 
 export const PaginateInputSchema = z
