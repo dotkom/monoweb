@@ -7,7 +7,8 @@ import {
   type RefundRequestWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
+import { orderedQuery } from "../../utils/cursor-pagination/deprecated-pagination"
 
 const mapToRefundRequest = (data: Selectable<Database["refundRequest"]>) => RefundRequestSchema.parse(data)
 

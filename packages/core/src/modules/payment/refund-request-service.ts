@@ -1,6 +1,6 @@
 import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite, UserId } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
 import { PaymentNotFoundError, UnrefundablePaymentError } from "./payment-error"
 import type { PaymentRepository } from "./payment-repository"
 import type { PaymentService } from "./payment-service"

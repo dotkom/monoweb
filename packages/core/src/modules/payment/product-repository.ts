@@ -2,7 +2,8 @@ import type { Database } from "@dotkomonline/db"
 import type { DB } from "@dotkomonline/db/src/db.generated"
 import { type Product, type ProductId, ProductSchema, type ProductWrite } from "@dotkomonline/types"
 import { type Kysely, type Selectable, sql } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
+import { orderedQuery } from "../../utils/cursor-pagination/deprecated-pagination"
 
 const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
 

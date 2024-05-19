@@ -1,6 +1,6 @@
 import { env } from "@dotkomonline/env"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
 import type { S3Repository } from "../external/s3-repository"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"

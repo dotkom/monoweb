@@ -7,7 +7,7 @@ import {
   type EventId,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
 import { mapToCommittee } from "../committee/committee-repository"
 
 export const mapToEventCommitee = (payload: Selectable<Database["eventCommittee"]>): EventCommittee =>

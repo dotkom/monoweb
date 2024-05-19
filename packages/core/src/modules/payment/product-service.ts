@@ -1,5 +1,5 @@
 import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
 import { ProductNotFoundError } from "./product-error"
 import type { ProductRepository } from "./product-repository"
 

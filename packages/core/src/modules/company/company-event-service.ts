@@ -1,5 +1,5 @@
 import type { CompanyId, Event } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
 import type { CompanyEventRepository } from "./company-event-repository" // Note: you might need to create or rename this file based on previous changes.
 
 export interface CompanyEventService {

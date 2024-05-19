@@ -1,7 +1,8 @@
 import type { Database } from "@dotkomonline/db"
 import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "./../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
+import { orderedQuery } from "../../utils/cursor-pagination/deprecated-pagination"
 
 export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => MarkSchema.parse(payload)
 

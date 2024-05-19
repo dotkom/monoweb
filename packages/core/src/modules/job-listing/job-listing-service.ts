@@ -1,7 +1,7 @@
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 import { isAfter, isBefore } from "date-fns"
 import assert from "../../../assert"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
 import {
   InvalidDeadlineError,
   InvalidEndDateError,

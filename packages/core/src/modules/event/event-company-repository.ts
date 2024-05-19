@@ -1,7 +1,8 @@
 import type { Database } from "@dotkomonline/db"
 import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
 import type { Kysely } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import type { Cursor } from "../../utils/cursor-pagination/deprecated-pagination"
+import { orderedQuery } from "../../utils/cursor-pagination/deprecated-pagination"
 import { mapToCompany } from "../company/company-repository"
 import { mapToEvent } from "./event-repository"
 

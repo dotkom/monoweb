@@ -1,5 +1,6 @@
 export * from "./error"
 export * from "./utils/db-utils"
+export * from "./utils/cursor-pagination/deprecated-pagination"
 export * as CursorPagination from "./utils/cursor-pagination/types"
 export * from "./modules/core"
 
