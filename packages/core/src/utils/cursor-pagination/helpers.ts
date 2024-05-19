@@ -13,7 +13,8 @@ export function getNextCursor<T>(records: T[], options: GetNextCursorOptions<T>)
     return null
   }
 
-  return options.buildCursor(records[records.length - 1])
+  // biome-ignore lint/style/noNonNullAssertion: We know there is a record at -1 from the check above.
+  return options.buildCursor(records.at(-1)!)
 }
 
 type PaginatedQueryOptions = {
