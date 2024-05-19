@@ -19,6 +19,7 @@ export const createKysely = (env: Environment) =>
       }),
     }),
     plugins: [new CamelCasePlugin()],
+    // Uncomment this to log all queries, useful for debugging
     // log(event) {
     //   console.log(event.query.sql)
     //   console.log(event.query.parameters)
