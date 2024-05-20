@@ -1,5 +1,5 @@
 import type { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
-import type { Pageable, PaginatedResult } from "../../utils/cursor-pagination/types"
+import type { Pageable, PaginatedResult } from "../../utils/cursor"
 import type { InterestGroupRepository } from "./interest-group-repository"
 
 export interface InterestGroupService {

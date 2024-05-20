@@ -1,5 +1,5 @@
 import type { Committee, CommitteeId, CommitteeWrite } from "@dotkomonline/types"
-import type { Pageable, PaginatedResult } from "../../utils/cursor-pagination/types"
+import type { Pageable, PaginatedResult } from "../../utils/cursor"
 import { CommitteeNotFoundError } from "./committee-error"
 import type { CommitteeRepository } from "./committee-repository"
 
