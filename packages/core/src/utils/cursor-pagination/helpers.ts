@@ -61,7 +61,7 @@ export async function singleColPaginatedQuery<
   pagedQuery = pagedQuery.orderBy(options.column, order)
   if (cursor !== undefined) {
     const decodedCursor = decodeCursor(cursor)
-    pagedQuery = pagedQuery.where(options.column, order === "asc" ? ">" : "<", decodedCursor)
+    pagedQuery = pagedQuery.where(options.column, order === "asc" ? ">=" : "<=", decodedCursor)
   }
 
   // Perform the query and build the output
