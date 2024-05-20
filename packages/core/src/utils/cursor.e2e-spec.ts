@@ -8,7 +8,7 @@ import { getCommitteeMock } from "../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../vitest-integration.setup"
 import { type CommitteeRepository, CommitteeRepositoryImpl } from "../modules/committee/committee-repository"
 import { type CommitteeService, CommitteeServiceImpl } from "../modules/committee/committee-service"
-import { base64Decode, base64Encode, buildUlidIdCursor, decodeUlidIdCursor, singleColPaginatedQuery } from "./cursor"
+import { singleColPaginatedQuery } from "./cursor"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -41,36 +41,12 @@ describe("cursor pagination", () => {
     await cleanup()
   })
 
-  it("works", async () => {
-    const testData = [{ name: "test1" }, { name: "test2" }, { name: "test3" }, { name: "test4" }, { name: "test5" }]
-
-    // Create committees
-    for (const data of testData) {
-      await core.committeeService.createCommittee(getCommitteeMock(data))
-    }
-
-    const query = db.selectFrom("committee").selectAll()
-    const result = await singleColPaginatedQuery(query, {
-      buildCursor: buildUlidIdCursor,
-      decodeCursor: decodeUlidIdCursor,
-      column: ["id"],
-      order: "desc",
-      pageable: {
-        cursor: undefined,
-        take: 3,
-      },
-    })
-
-    expect(result.data.length).toEqual(3)
-    const expected = ["test5", "test4", "test3"]
-    expected.forEach((name: string, i: number) => {
-      expect(result.data[i].name).toEqual(name)
-    })
-  })
-
   it("works to sort on multiple columns", async () => {
     const testData: Partial<CommitteeWrite>[] = [
-      { name: "test1", email: "a" },
+      { name: "test2", email: "b" },
+      { name: "test2", email: "a" },
+
+      { name: "test1", email: "d" },
       { name: "test1", email: "c" },
       { name: "test1", email: "b" },
     ]
@@ -81,26 +57,58 @@ describe("cursor pagination", () => {
     }
 
     const query = db.selectFrom("committee").selectAll()
-    const result = await singleColPaginatedQuery(query, {
-      buildCursor: (row) => base64Encode(`${row.createdAt.toISOString()}|${row.name}`), // TODO: find safer way to encode, now any pipes in name will break decoding
-      decodeCursor: (cursor) => {
-        const raw = base64Decode(cursor)
-        const [name, email] = raw.split("|")
-
-        return [name, email]
-      },
-      column: ["name", "email"],
-      order: "desc",
+    const firstResult = await singleColPaginatedQuery(query, {
+      columns: ["name", "email"],
+      order: "asc",
       pageable: {
         cursor: undefined,
         take: 3,
       },
     })
 
-    expect(result.data.length).toEqual(3)
-    const expected = ["c", "b", "a"]
-    expected.forEach((email: string, i: number) => {
-      expect(result.data[i].email).toEqual(email)
+    expect(firstResult.data.length).toEqual(3)
+    expect(firstResult.next).not.toEqual(null)
+    expect(firstResult.data[0].email).toEqual("b")
+    expect(firstResult.data[0].name).toEqual("test1")
+
+    expect(firstResult.data[1].email).toEqual("c")
+    expect(firstResult.data[1].name).toEqual("test1")
+
+    expect(firstResult.data[2].email).toEqual("d")
+    expect(firstResult.data[2].name).toEqual("test1")
+
+    const secondResult = await singleColPaginatedQuery(query, {
+      columns: ["name", "email"],
+      order: "asc",
+      pageable: {
+        cursor: firstResult.next,
+        take: 1,
+      },
     })
+
+    // try grabbing only the next item
+    expect(secondResult.data.length).toEqual(1)
+    expect(secondResult.next).not.toEqual(null)
+    expect(secondResult.data[0].email).toEqual("a")
+    expect(secondResult.data[0].name).toEqual("test2")
+
+    // Try grabbing the final two items after the first three
+    const thirdResult = await singleColPaginatedQuery(query, {
+      columns: ["name", "email"],
+      order: "asc",
+      pageable: {
+        cursor: firstResult.next,
+        take: 2,
+      },
+    })
+
+    expect(thirdResult.data.length).toEqual(2)
+    expect(thirdResult.next).toEqual(null)
+
+    expect(thirdResult.data[0].email).toEqual("a")
+    expect(thirdResult.data[0].name).toEqual("test2")
+
+    expect(thirdResult.data[1].email).toEqual("b")
+    expect(thirdResult.data[1].name).toEqual("test2")
   })
 })

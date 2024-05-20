@@ -33,7 +33,7 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
 
     const result = await singleColPaginatedQuery(query, {
       pageable,
-      column: ["id"],
+      columns: ["id"],
       order: "desc",
     })
 

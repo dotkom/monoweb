@@ -28,27 +28,15 @@ export type Cursor = z.infer<typeof CursorSchema>
 
 type GetNextCursorOptions<T> = {
   pageable: Pageable
-  buildCursor: (record: T) => Cursor
-}
-
-function getNextCursor<T>(records: T[], options: GetNextCursorOptions<T>): Cursor | null {
-  // We fetched take+1 records to determine if there is a record behind `take`.
-  // If we got exactly `take+1` records, there is a next page.
-  const hasNextPage = records.length === options.pageable.take + 1
-  if (!hasNextPage) {
-    return null
-  }
-
-  // biome-ignore lint/style/noNonNullAssertion: We know there is a record at -1 from the check above.
-  return options.buildCursor(records.at(-1)!)
+  buildCursor: (values: unknown[]) => Cursor
 }
 
 type PaginatedQueryOptions<DB, TB extends keyof DB, C extends AnyColumn<DB, TB> | AnyColumnWithTable<DB, TB>, O> = {
   pageable: Pageable
   order: "asc" | "desc"
-  decodeCursor?: (cursor: Cursor) => OperandValueExpression<DB, TB, C>[]
-  buildCursor?: (record: O) => Cursor
-  column: C[]
+  decodeCursorOverride?: (cursor: Cursor) => OperandValueExpression<DB, TB, C>[]
+  buildCursorOverride?: (record: O) => Cursor
+  columns: C[]
 }
 
 /**
@@ -67,6 +55,7 @@ export async function singleColPaginatedQuery<
   O,
   C extends AnyColumn<DB, TB> | AnyColumnWithTable<DB, TB>,
 >(query: SelectQueryBuilder<DB, TB, O>, options: PaginatedQueryOptions<DB, TB, C, O>) {
+  // Validate args
   const {
     pageable: { cursor, take },
     order,
@@ -79,77 +68,82 @@ export async function singleColPaginatedQuery<
     }
   }
 
-  let decodeCursor = options.decodeCursor
-  let buildCursor = options.buildCursor
-
-  const defaultSorting = options.column.length === 1 && options.column.includes("id" as C)
-
-  if (defaultSorting) {
-    decodeCursor = decodeUlidIdCursor as (cursor: Cursor) => OperandValueExpression<DB, TB, C>[]
-    buildCursor = buildUlidIdCursor as (record: O) => Cursor
-  }
-
-  if (!defaultSorting && (decodeCursor === undefined || buildCursor === undefined)) {
-    throw new Error("decodeCursor and buildCursor must be provided when column is not 'id'")
-  }
-
-  const _columns = sql`(${sql.raw(options.column.map((col) => `"${col}"`).join(","))})`
-
+  const decodeCursor = options.decodeCursorOverride ?? defaultDecodeCursor
   // Take N+1 to determine if there is a record behind `take`.
-  const pageWithNextLength = take + 1
-  let pagedQuery = query.limit(pageWithNextLength)
+  let pagedQuery = query.limit(take + 1)
 
-  pagedQuery = pagedQuery.orderBy(_columns, order)
+  const columnSql = sql`(${sql.raw(options.columns.map((col) => `"${col}"`).join(","))})`
+  pagedQuery = pagedQuery.orderBy(columnSql, order)
 
   if (cursor !== undefined) {
     // biome-ignore lint/style/noNonNullAssertion: see id default vals logic above
     const decodedCursor = decodeCursor!(cursor)
     // pagedQuery = pagedQuery.where(options.column[0], order === "asc" ? ">=" : "<=", decodedCursor[0])
-    const _columns = sql`(${sql.raw(options.column.map((col) => `"${col}"`).join(","))})`
+    const _columns = sql`(${sql.raw(options.columns.map((col) => `"${col}"`).join(","))})`
     const _values = sql`(${sql.join(decodedCursor)})`
 
     pagedQuery = pagedQuery.where(_columns, order === "asc" ? ">=" : "<=", _values)
   }
 
-  //   select * from "committee" where $1 <= $2 order by "id" desc limit $3
-  // [ 'id', '01HYB2Q3BFGB9EQ7M0D05HHFDE', 3 ]
-
-  // select * from "committee" where "id" <= $1 order by "id" desc limit $2
-  // [ '01HYB2R5CA8HS8NXKC0FCCWG4B', 3 ]
-
   // Perform the query and build the output
   const records = await pagedQuery.execute()
 
-  const nextCursor = getNextCursor(records, {
-    pageable: {
-      cursor,
-      take,
-    },
-    // biome-ignore lint/style/noNonNullAssertion: see id default logic logic above
-    buildCursor: buildCursor!,
-  })
+  let nextCursor: Cursor | null
+  const nextPageRecord = records.at(options.pageable.take) as O | undefined
+  if (!nextPageRecord) {
+    nextCursor = null
+  } else {
+    if (options.buildCursorOverride) {
+      nextCursor = options.buildCursorOverride(nextPageRecord)
+    } else {
+      const values = options.columns.map((col) => nextPageRecord[col as keyof O])
+      nextCursor = defaultEncodeCursor(values)
+    }
+  }
 
   return {
     next: nextCursor,
-    data: records.slice(0, take), // Don't include take+1 record used for determining next page
+    data: records.slice(0, take), // Slice away the extra record if it exists
   }
 }
 
 export const base64Encode = (value: string) => Buffer.from(value).toString("base64")
 export const base64Decode = (value: string) => Buffer.from(value, "base64").toString("ascii")
 
-type RecordWithUlidId = { id: string }
-export function buildUlidIdCursor<O extends RecordWithUlidId>(record: O): Cursor {
-  return base64Encode(record.id)
-}
-export function decodeUlidIdCursor(cursor: Cursor) {
-  return [base64Decode(cursor)]
+// Inspiration: https://github.com/charlie-hadden/kysely-paginate/blob/main/src/cursor.ts
+export function defaultEncodeCursor(values: unknown[]): Cursor {
+  const result: string[] = []
+
+  for (const value of values) {
+    switch (typeof value) {
+      case "string":
+        result.push(value)
+        break
+
+      case "number":
+        result.push(value.toString(10))
+        break
+
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
+      case "object": {
+        if (value instanceof Date) {
+          result.push(value.toISOString())
+          break
+        }
+      }
+
+      default:
+        throw new Error(`Unable to encode '${value}'`)
+    }
+  }
+
+  return Buffer.from(JSON.stringify(values)).toString("base64url")
 }
 
-type RecordWithCreatedAt = { createdAt: string }
-export function buildCreatedAtCursor<O extends RecordWithCreatedAt>(record: O): Cursor {
-  return base64Encode(record.createdAt)
-}
-export function decodeCreatedAtCursor(cursor: Cursor) {
-  return [base64Decode(cursor)]
+export function defaultDecodeCursor(cursor: string) {
+  try {
+    return JSON.parse(Buffer.from(cursor, "base64url").toString("utf8"))
+  } catch (error) {
+    throw new Error("Unparsable cursor")
+  }
 }
