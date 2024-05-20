@@ -40,7 +40,7 @@ type PaginatedQueryOptions<DB, TB extends keyof DB, C extends AnyColumn<DB, TB> 
 }
 
 /**
- * Add cursor based pagination to a query based on ordering by a single column, e.g. created_at.
+ * Add cursor based pagination to a query
  *
  * Cursors are opaque strings that represent the next record that will be fetched in the ordered set of records based on the given column.
  * A cursor value of `null` will return no records, and is returned when there are no extra records to fetch.
@@ -49,7 +49,7 @@ type PaginatedQueryOptions<DB, TB extends keyof DB, C extends AnyColumn<DB, TB> 
  * For more complex queries that require ordering by multiple columns, manual implementation
  * is needed.
  */
-export async function singleColPaginatedQuery<
+export async function paginatedQuery<
   DB,
   TB extends keyof DB,
   O,

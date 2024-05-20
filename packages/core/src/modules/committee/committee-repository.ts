@@ -1,7 +1,7 @@
 import type { Database } from "@dotkomonline/db"
 import { type Committee, type CommitteeId, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Pageable, type PaginatedResult, singleColPaginatedQuery } from "../../utils/cursor"
+import { type Pageable, type PaginatedResult, paginatedQuery } from "../../utils/cursor"
 
 export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => CommitteeSchema.parse(payload)
 
@@ -23,7 +23,7 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   async getAll(pageable: Pageable) {
     const query = this.db.selectFrom("committee").selectAll()
 
-    const result = await singleColPaginatedQuery(query, {
+    const result = await paginatedQuery(query, {
       pageable,
       columns: ["id"],
       order: "desc",

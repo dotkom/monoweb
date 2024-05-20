@@ -8,7 +8,7 @@ import { getCommitteeMock } from "../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../vitest-integration.setup"
 import { type CommitteeRepository, CommitteeRepositoryImpl } from "../modules/committee/committee-repository"
 import { type CommitteeService, CommitteeServiceImpl } from "../modules/committee/committee-service"
-import { singleColPaginatedQuery } from "./cursor"
+import { paginatedQuery } from "./cursor"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -57,7 +57,7 @@ describe("cursor pagination", () => {
     }
 
     const query = db.selectFrom("committee").selectAll()
-    const firstResult = await singleColPaginatedQuery(query, {
+    const firstResult = await paginatedQuery(query, {
       columns: ["name", "email"],
       order: "asc",
       pageable: {
@@ -77,7 +77,7 @@ describe("cursor pagination", () => {
     expect(firstResult.data[2].email).toEqual("d")
     expect(firstResult.data[2].name).toEqual("test1")
 
-    const secondResult = await singleColPaginatedQuery(query, {
+    const secondResult = await paginatedQuery(query, {
       columns: ["name", "email"],
       order: "asc",
       pageable: {
@@ -93,7 +93,7 @@ describe("cursor pagination", () => {
     expect(secondResult.data[0].name).toEqual("test2")
 
     // Try grabbing the final two items after the first three
-    const thirdResult = await singleColPaginatedQuery(query, {
+    const thirdResult = await paginatedQuery(query, {
       columns: ["name", "email"],
       order: "asc",
       pageable: {

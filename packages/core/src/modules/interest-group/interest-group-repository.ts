@@ -6,7 +6,7 @@ import {
   type InterestGroupWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Pageable, type PaginatedResult, singleColPaginatedQuery } from "../../utils/cursor"
+import { type Pageable, type PaginatedResult, paginatedQuery } from "../../utils/cursor"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>
@@ -31,7 +31,7 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
   async getAll(pageable: Pageable) {
     const query = this.db.selectFrom("interestGroup").selectAll()
 
-    const result = await singleColPaginatedQuery(query, {
+    const result = await paginatedQuery(query, {
       pageable,
       columns: ["id"],
       order: "desc",
