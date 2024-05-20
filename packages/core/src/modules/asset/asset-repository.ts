@@ -16,22 +16,20 @@ import {
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { IllegalStateError } from "../../error"
-import { buildCreatedAtCursor, decodeCreatedAtCursor } from "../../utils/cursor-pagination/common-cursor-utils"
-import { singleColPaginatedQuery } from "../../utils/cursor-pagination/helpers"
-import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
 import {
   type Keys,
   fixJsonDatesStandardCols,
   withInsertJsonValue
 } from "../../utils/db-utils"
+import { singleColPaginatedQuery, type Pageable, type PaginatedResult } from "../../utils/cursor"
 
 export interface AssetRepository {
-  getAllFileAssets(pageable: Pageable): Promise<Collection<FileAsset>>
+  getAllFileAssets(pageable: Pageable): Promise<PaginatedResult<FileAsset>>
   getFileAsset(key: string): Promise<FileAsset>
   createFileAsset(values: FileAssetWrite): Promise<FileAsset>
   updateFileAsset(id: string, values: FileAssetUpdate): Promise<FileAsset>
 
-  getAllImageAssets(pageable: Pageable): Promise<Collection<ImageAsset>>
+  getAllImageAssets(pageable: Pageable): Promise<PaginatedResult<ImageAsset>>
   getImageAsset(key: string): Promise<ImageAsset>
   createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
   updateImageAsset(id: string, values: ImageAssetUpdate): Promise<ImageAsset>
