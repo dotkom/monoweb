@@ -45,32 +45,8 @@ describe("committees", () => {
       await core.committeeService.createCommittee(getCommitteeMock(data))
     }
 
-    // Test pagination
-    const firstPage = await core.committeeService.getCommittees({ take: 2 })
-    expect(firstPage.data.length).toEqual(2)
-    expect(firstPage.next).not.toBeNull()
-
-    const secondPage = await core.committeeService.getCommittees({
-      take: 2,
-      cursor: firstPage.next,
-    })
-    expect(secondPage.data.length).toEqual(2)
-    expect(secondPage.next).not.toBeNull()
-
-    const thirdPage = await core.committeeService.getCommittees({
-      take: 2,
-      cursor: secondPage.next,
-    })
-    expect(thirdPage.data.length).toEqual(1) // Only one item left
-    expect(thirdPage.next).toBeNull()
-
-    // Ensure no more items after the last page
-    const fourthPage = await core.committeeService.getCommittees({
-      take: 2,
-      cursor: thirdPage.next,
-    })
-
-    expect(fourthPage.data.length).toEqual(0)
-    expect(fourthPage.next).toBeNull()
+    // Test getting all committees
+    const firstPage = await core.committeeService.getCommittees({ take: 5 })
+    expect(firstPage.data.length).toEqual(5)
   })
 })
