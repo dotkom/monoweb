@@ -1,10 +1,10 @@
 import type { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
-import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
+import type { Pageable, PaginatedResult } from "../../utils/cursor-pagination/types"
 import type { InterestGroupRepository } from "./interest-group-repository"
 
 export interface InterestGroupService {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>
-  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>
+  getAll(pageable: Pageable): Promise<PaginatedResult<InterestGroup>>
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: InterestGroupWrite): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
@@ -17,7 +17,7 @@ export class InterestGroupServiceImpl implements InterestGroupService {
     return this.interestGroupRepository.getById(id)
   }
 
-  async getAll(pageable: Pageable): Promise<Collection<InterestGroup>> {
+  async getAll(pageable: Pageable): Promise<PaginatedResult<InterestGroup>> {
     return this.interestGroupRepository.getAll(pageable)
   }
 

@@ -6,13 +6,11 @@ import {
   type InterestGroupWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { buildUlidIdCursor, decodeUlidIdCursor } from "../../utils/cursor-pagination/common-cursor-utils"
-import { singleColPaginatedQuery } from "../../utils/cursor-pagination/helpers"
-import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
+import { type Pageable, type PaginatedResult, singleColPaginatedQuery } from "../../utils/cursor"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>
-  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>
+  getAll(pageable: Pageable): Promise<PaginatedResult<InterestGroup>>
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
@@ -35,8 +33,6 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
 
     const result = await singleColPaginatedQuery(query, {
       pageable,
-      decodeCursor: decodeUlidIdCursor,
-      buildCursor: buildUlidIdCursor,
       column: "id",
       order: "desc",
     })

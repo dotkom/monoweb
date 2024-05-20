@@ -1,6 +1,6 @@
 export * from "./error"
 export * from "./utils/db-utils"
-export * as CursorPagination from "./utils/cursor-pagination/types"
+export * as CursorPagination from "./utils/cursor"
 export * from "./modules/core"
 
 export * from "./modules/article/article-error"
