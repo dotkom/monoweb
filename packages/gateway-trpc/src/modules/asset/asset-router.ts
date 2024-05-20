@@ -7,10 +7,15 @@ import {
 } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
+import { CursorPagination } from "@dotkomonline/core"
 
 export const assetRouter = t.router({
-  getAllFileAssets: protectedProcedure.query(async ({ ctx }) => await ctx.assetService.getAllFileAssets()),
-  getAllImageAssets: protectedProcedure.query(async ({ ctx }) => await ctx.assetService.getAllImageAssets()),
+  getAllFileAssets: protectedProcedure
+    .input(CursorPagination.PaginateInputSchema)
+    .query(async ({ input, ctx }) => await ctx.assetService.getAllFileAssets(input)),
+  getAllImageAssets: protectedProcedure
+    .input(CursorPagination.PaginateInputSchema)
+    .query(async ({ input, ctx }) => await ctx.assetService.getAllImageAssets(input)),
   createFileAsset: protectedProcedure
     .input(FileAssetWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.assetService.createFileAsset(input)),

@@ -11,6 +11,7 @@ import type {
 } from "@dotkomonline/types"
 import type { S3Repository } from "../external/s3-repository"
 import type { AssetRepository } from "./asset-repository"
+import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
 
 type Fields = Record<string, string>
 
@@ -53,8 +54,8 @@ export interface AssetService {
 
   createPresignedPost(filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
 
-  getAllFileAssets(): Promise<FileAsset[]>
-  getAllImageAssets(): Promise<ImageAsset[]>
+  getAllFileAssets(pageable: Pageable): Promise<Collection<FileAsset>>
+  getAllImageAssets(pageable: Pageable): Promise<Collection<ImageAsset>>
 }
 
 export class AssetServiceImpl implements AssetService {
@@ -63,12 +64,12 @@ export class AssetServiceImpl implements AssetService {
     private readonly s3Repository: S3Repository
   ) {}
 
-  async getAllFileAssets(): Promise<FileAsset[]> {
-    return this.assetRepository.getAllFileAssets()
+  async getAllFileAssets(pageable: Pageable) {
+    return this.assetRepository.getAllFileAssets(pageable)
   }
 
-  async getAllImageAssets(): Promise<ImageAsset[]> {
-    return this.assetRepository.getAllImageAssets()
+  async getAllImageAssets(pageable: Pageable) {
+    return this.assetRepository.getAllImageAssets(pageable)
   }
 
   async createFileAsset(values: FileAssetWrite): Promise<FileAsset> {

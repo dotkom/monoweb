@@ -10,8 +10,8 @@ import { useFileAssetsAllQuery, useImageAssetsAllQuery } from "../../../modules/
 import { buildAssetUrl } from "../../../utils/s3"
 
 export default function AssetPage() {
-  const { fileAssets, isLoading: isFileAssetsLoading } = useFileAssetsAllQuery()
-  const { imageAssets, isLoading: isImageAssetsLoading } = useImageAssetsAllQuery()
+  const { data: fileAssets, next: fileAssetsNext, isLoading: isFileAssetsLoading } = useFileAssetsAllQuery()
+  const { data: imageAssets, next: imageAssetsNext, isLoading: isImageAssetsLoading } = useImageAssetsAllQuery()
   const openFileUploadModal = useCreateFileAssetModal()
   const openImageUploadModal = useCreateImageAssetModal()
   const openUpdateImageModal = useUpdateImageAssetModal()

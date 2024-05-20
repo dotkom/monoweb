@@ -16,30 +16,29 @@ import {
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { IllegalStateError } from "../../error"
+import { buildCreatedAtCursor, decodeCreatedAtCursor } from "../../utils/cursor-pagination/common-cursor-utils"
+import { singleColPaginatedQuery } from "../../utils/cursor-pagination/helpers"
+import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
 import {
-  type Cursor,
   type Keys,
   fixJsonDatesStandardCols,
-  orderedQuery,
-  withInsertJsonValue,
+  withInsertJsonValue
 } from "../../utils/db-utils"
 
 export interface AssetRepository {
+  getAllFileAssets(pageable: Pageable): Promise<Collection<FileAsset>>
   getFileAsset(key: string): Promise<FileAsset>
-  getImageAsset(key: string): Promise<ImageAsset>
-
   createFileAsset(values: FileAssetWrite): Promise<FileAsset>
   updateFileAsset(id: string, values: FileAssetUpdate): Promise<FileAsset>
 
+  getAllImageAssets(pageable: Pageable): Promise<Collection<ImageAsset>>
+  getImageAsset(key: string): Promise<ImageAsset>
   createImageAsset(values: ImageAssetWrite): Promise<ImageAsset>
   updateImageAsset(id: string, values: ImageAssetUpdate): Promise<ImageAsset>
 
   createImageVariation(values: ImageVariantWrite): Promise<ImageVariant>
   getImageVariation(id: string): Promise<ImageVariant>
   updateImageVariation(id: string, values: ImageVariantWrite): Promise<ImageVariant>
-
-  getAllFileAssets(take: number, cursor?: Cursor): Promise<FileAsset[]>
-  getAllImageAssets(take: number, cursor?: Cursor): Promise<ImageAsset[]>
 }
 
 export const fileAssetCols = [
@@ -57,24 +56,42 @@ export const imageAssetCols = [...fileAssetCols, "width", "height", "altText", "
 export class AssetRepositoryImpl implements AssetRepository {
   constructor(private readonly db: Kysely<Database>) {}
 
-  async getAllFileAssets(take: number, cursor?: Cursor): Promise<FileAsset[]> {
-    const dbResult = await orderedQuery(
-      this.db.selectFrom("asset").select(fileAssetCols).where("isImage", "=", false).limit(take),
-      cursor
-    ).execute()
+  async getAllFileAssets(pageable: Pageable) {
+    const query = this.db.selectFrom("asset").select(fileAssetCols).where("isImage", "=", false)
 
-    const mappedToDomain: Keys<FileAsset>[] = dbResult
-    return mappedToDomain.map((val) => FileAssetSchema.parse(val))
+    const result = await singleColPaginatedQuery(query, {
+      pageable,
+      decodeCursor: decodeCreatedAtCursor,
+      buildCursor: buildCreatedAtCursor,
+      column: "created_at",
+      order: "desc",
+    })
+
+    const mappedData: Keys<FileAsset>[] = result.data
+
+    return {
+      next: result.next,
+      data: mappedData.map((val) => FileAssetSchema.parse(val)),
+    }
   }
 
-  async getAllImageAssets(take: number, cursor?: Cursor): Promise<ImageAsset[]> {
-    const dbResult = await orderedQuery(
-      this.db.selectFrom("asset").select(imageAssetCols).where("isImage", "=", true).limit(take),
-      cursor
-    ).execute()
+  async getAllImageAssets(pageable: Pageable) {
+    const query = this.db.selectFrom("asset").select(imageAssetCols).where("isImage", "=", true)
 
-    const mappedToDomain: Keys<ImageAsset>[] = dbResult
-    return mappedToDomain.map((val) => ImageAssetSchema.parse(val))
+    const result = await singleColPaginatedQuery(query, {
+      pageable,
+      decodeCursor: decodeCreatedAtCursor,
+      buildCursor: buildCreatedAtCursor,
+      column: "created_at",
+      order: "desc",
+    })
+
+    const mappedData: Keys<ImageAsset>[] = result.data
+
+    return {
+      next: result.next,
+      data: mappedData.map((val) => ImageAssetSchema.parse(val)),
+    }
   }
 
   async getFileAsset(key: string): Promise<FileAsset> {
