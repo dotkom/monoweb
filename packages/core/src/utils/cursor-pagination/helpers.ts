@@ -1,4 +1,4 @@
-import { type SelectQueryBuilder, sql } from "kysely"
+import type { AnyColumn, AnyColumnWithTable, OperandValueExpression, SelectQueryBuilder } from "kysely"
 import type { Cursor, Pageable } from "./types"
 
 type GetNextCursorOptions<T> = {
@@ -18,11 +18,11 @@ function getNextCursor<T>(records: T[], options: GetNextCursorOptions<T>): Curso
   return options.buildCursor(records.at(-1)!)
 }
 
-type PaginatedQueryOptions<T> = {
+type PaginatedQueryOptions<DB, TB extends keyof DB, C extends AnyColumn<DB, TB> | AnyColumnWithTable<DB, TB>, O> = {
   pageable: Pageable
-  decodeCursor: (cursor: Cursor) => string
-  buildCursor: (record: T) => Cursor
-  column: string
+  decodeCursor: (cursor: Cursor) => OperandValueExpression<DB, TB, C>
+  buildCursor: (record: O) => Cursor
+  column: C
   order: "asc" | "desc"
 }
 
@@ -36,10 +36,12 @@ type PaginatedQueryOptions<T> = {
  * For more complex queries that require ordering by multiple columns, manual implementation
  * is needed.
  */
-export async function singleColPaginatedQuery<DB, TB extends keyof DB, T>(
-  query: SelectQueryBuilder<DB, TB, T>,
-  options: PaginatedQueryOptions<T>
-) {
+export async function singleColPaginatedQuery<
+  DB,
+  TB extends keyof DB,
+  O,
+  C extends AnyColumn<DB, TB> | AnyColumnWithTable<DB, TB>,
+>(query: SelectQueryBuilder<DB, TB, O>, options: PaginatedQueryOptions<DB, TB, C, O>) {
   const {
     pageable: { cursor, take },
     decodeCursor,
@@ -55,13 +57,11 @@ export async function singleColPaginatedQuery<DB, TB extends keyof DB, T>(
 
   // Take N+1 to determine if there is a record behind `take`.
   const pageWithNextLength = take + 1
-  let pagedQuery = query
-
-  pagedQuery = query.limit(pageWithNextLength)
-  pagedQuery = pagedQuery.orderBy(sql.raw(`${options.column} ${order}`))
+  let pagedQuery = query.limit(pageWithNextLength)
+  pagedQuery = pagedQuery.orderBy(options.column, order)
   if (cursor !== undefined) {
     const decodedCursor = decodeCursor(cursor)
-    pagedQuery = pagedQuery.where(sql.raw(`${options.column} <= '${decodedCursor}'`))
+    pagedQuery = pagedQuery.where(options.column, order === "asc" ? ">" : "<", decodedCursor)
   }
 
   // Perform the query and build the output
