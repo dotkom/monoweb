@@ -116,7 +116,7 @@ export function defaultEncodeCursor(values: unknown[]): Cursor {
       case "string":
         result.push(value)
         break
-
+      case "bigint":
       case "number":
         result.push(value.toString(10))
         break
