@@ -107,10 +107,7 @@ export async function singleColPaginatedQuery<
   }
 }
 
-export const base64Encode = (value: string) => Buffer.from(value).toString("base64")
-export const base64Decode = (value: string) => Buffer.from(value, "base64").toString("ascii")
-
-// Inspiration: https://github.com/charlie-hadden/kysely-paginate/blob/main/src/cursor.ts
+// Inspiration/kok: https://github.com/charlie-hadden/kysely-paginate/blob/main/src/cursor.ts
 export function defaultEncodeCursor(values: unknown[]): Cursor {
   const result: string[] = []
 
