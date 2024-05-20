@@ -73,15 +73,15 @@ export async function singleColPaginatedQuery<
     }
   }
 
+  let decodeCursor = options.decodeCursor
+  let buildCursor = options.buildCursor
+
   if (options.column === "id") {
-    return singleColPaginatedQuery(query, {
-      ...options,
-      decodeCursor: decodeUlidIdCursor as (cursor: Cursor) => OperandValueExpression<DB, TB, C>,
-      buildCursor: buildUlidIdCursor as (record: O) => Cursor,
-    })
+    decodeCursor = decodeUlidIdCursor as (cursor: Cursor) => OperandValueExpression<DB, TB, C>
+    buildCursor = buildUlidIdCursor as (record: O) => Cursor
   }
 
-  if (options.decodeCursor === undefined || options.buildCursor === undefined) {
+  if (options.column !== "id" && (decodeCursor === undefined || buildCursor === undefined)) {
     throw new Error("decodeCursor and buildCursor must be provided when column is not 'id'")
   }
 
@@ -90,7 +90,8 @@ export async function singleColPaginatedQuery<
   let pagedQuery = query.limit(pageWithNextLength)
   pagedQuery = pagedQuery.orderBy(options.column, order)
   if (cursor !== undefined) {
-    const decodedCursor = options.decodeCursor(cursor)
+    // biome-ignore lint/style/noNonNullAssertion: see id default vals logic above
+    const decodedCursor = decodeCursor!(cursor)
     pagedQuery = pagedQuery.where(options.column, order === "asc" ? ">=" : "<=", decodedCursor)
   }
 
@@ -102,7 +103,8 @@ export async function singleColPaginatedQuery<
       cursor,
       take,
     },
-    buildCursor: options.buildCursor,
+    // biome-ignore lint/style/noNonNullAssertion: see id default logic logic above
+    buildCursor: buildCursor!,
   })
 
   return {
