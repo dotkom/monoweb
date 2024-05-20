@@ -19,11 +19,13 @@ export const createKysely = (env: Environment) =>
       }),
     }),
     plugins: [new CamelCasePlugin()],
-    // Uncomment this to log all queries, useful for debugging
-    // log(event) {
-    //   console.log(event.query.sql)
-    //   console.log(event.query.parameters)
-    // }
+
+    log(event) {
+      if (process.env.LOG_SQL === "true") {
+        console.log(event.query.sql)
+        console.log(event.query.parameters)
+      }
+    },
   })
 
 // @ts-expect-error: does not like re-declaring global
