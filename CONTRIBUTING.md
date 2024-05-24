@@ -15,6 +15,8 @@ architecture, the tools used, and the local development process.
     - [What runs where?](#what-runs-where)
   - [Testing](#testing)
     - [Integration tests](#integration-tests)
+      - [Prerequisites](#prerequisites)
+      - [How to run](#how-to-run)
 
 ## Architecture
 
@@ -165,24 +167,27 @@ The following applications run on the following ports:
 Config file: `packages/core/vitest-integration.config.ts`
 Setup functions: `packages/core/vitest-integration.setup.ts`
 
-**Prerequisites**
+#### Prerequisites
 
 - Docker
 
 Monoweb uses test containers to run a PostgreSQL database in Docker for testing. The tests are setup to use a custom postgres image with ulid extension (see setup file). By running the tests, this image should be downloaded. When the image is downloaded, you should be able to run the tests. It might take a while to download the image the first time.
 
-**Run the tests locally**
+#### How to run
 
 ```bash
 cd packages/core
 doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts
 ```
 
-**Test filtering**
+**Note:** The `DATABASE_URL` environment variable is overwritten in the setup file to use the test container database.
+
+**Filtering**
 
 For filtering test you can use the normal vitest filtering, see [Vitest documentation](https://vitest.dev/guide/filtering).
 
-Example that only runs the spesific test "can update users given their id" in `packages/core/src/modules/user/__test__/user-service.e2e-spec.ts`
+*Example: run a spesific test*
+
 ```bash
 cd packages/core
 doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts user -t "can update users given their id"
