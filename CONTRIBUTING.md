@@ -5,11 +5,16 @@ architecture, the tools used, and the local development process.
 
 ## Table of Contents
 
-- [Architecture](#architecture)
-- [Tools](#tools)
-- [Local Development](#local-development)
+- [Monoweb Developer Guide](#monoweb-developer-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Architecture](#architecture)
+  - [Tools](#tools)
+  - [Local Development](#local-development)
     - [Required Environment Variables](#required-environment-variables)
     - [Running with your own PostgreSQL database](#running-with-your-own-postgresql-database)
+    - [What runs where?](#what-runs-where)
+  - [Testing](#testing)
+    - [Integration tests](#integration-tests)
 
 ## Architecture
 
@@ -152,3 +157,33 @@ The following applications run on the following ports:
 - `/apps/invoicing`: 3004
 - `/apps/brevduen`: AWS Lambda only
 - `/packages/ui`: 61000 (ladle)
+
+## Testing
+
+### Integration tests
+
+Config file: `packages/core/vitest-integration.config.ts`
+Setup functions: `packages/core/vitest-integration.setup.ts`
+
+**Prerequisites**
+
+- Docker
+
+Monoweb uses test containers to run a PostgreSQL database in Docker for testing. The tests are setup to use a custom postgres image with ulid extension (see setup file). By running the tests, this image should be downloaded. When the image is downloaded, you should be able to run the tests. It might take a while to download the image the first time.
+
+**Run the tests locally**
+
+```bash
+cd packages/core
+doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts
+```
+
+**Test filtering**
+
+For filtering test you can use the normal vitest filtering, see [Vitest documentation](https://vitest.dev/guide/filtering).
+
+Example that only runs the spesific test "can update users given their id" in `packages/core/src/modules/user/__test__/user-service.e2e-spec.ts`
+```bash
+cd packages/core
+doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts user -t "can update users given their id"
+```
