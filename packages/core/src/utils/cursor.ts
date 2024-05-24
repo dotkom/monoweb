@@ -108,39 +108,30 @@ export async function paginatedQuery<
 }
 
 // Inspiration/kok: https://github.com/charlie-hadden/kysely-paginate/blob/main/src/cursor.ts
-export function defaultEncodeCursor(values: unknown[]): Cursor {
-  const result: string[] = []
-
-  for (const value of values) {
-    switch (typeof value) {
-      case "string":
-        result.push(value)
-        break
-      case "bigint":
-      case "number":
-        result.push(value.toString(10))
-        break
-
-      // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
-      case "object": {
-        if (value instanceof Date) {
-          result.push(value.toISOString())
-          break
-        }
-      }
-
-      default:
-        throw new Error(`Unable to encode '${value}'`)
-    }
-  }
-
+function defaultEncodeCursor(values: unknown[]): Cursor {
   return Buffer.from(JSON.stringify(values)).toString("base64url")
 }
 
-export function defaultDecodeCursor(cursor: string) {
+function defaultDecodeCursor(cursor: string) {
   try {
     return JSON.parse(Buffer.from(cursor, "base64url").toString("utf8"))
   } catch (error) {
-    throw new Error("Unparsable cursor")
+    throw new CursorDecodeError()
+  }
+}
+
+
+import { PROBLEM_DETAILS } from "../http-problem-details"
+import { ApplicationError } from "../error"
+
+export class CursorDecodeError extends ApplicationError {
+  constructor(detail?: string) {
+    super(PROBLEM_DETAILS.BadRequest, detail)
+  }
+}
+
+export class CursorEncodeError extends ApplicationError {
+  constructor(detail?: string) {
+    super(PROBLEM_DETAILS.InternalServerError, detail)
   }
 }
