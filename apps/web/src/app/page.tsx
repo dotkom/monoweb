@@ -11,7 +11,6 @@ export default async function App() {
   return (
     <div className="mt-8">
       <CompanySplash className="hidden md:flex" />
-
       <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
         <Link href="/events" className="hidden text-3xl font-semibold hover:underline sm:block">
           Arrangementer
