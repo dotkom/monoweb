@@ -19,6 +19,7 @@
     "@dotkomonline/env": "workspace:*",
     "@dotkomonline/gateway-edge-nextjs": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
+    "@dotkomonline/proxy-nextjs": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@fadi-ui/react-country-flag": "^1.0.7",
@@ -37,7 +38,6 @@
     "@trpc/client": "^10.45.0",
     "@trpc/next": "^10.45.0",
     "@trpc/react-query": "^10.45.0",
-    "@trpc/server": "^10.45.0",
     "axios": "1.6.2",
     "clsx": "^2.0.0",
     "cors": "^2.8.5",
@@ -69,7 +69,6 @@
     "jsdom": "^22.1.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
-    "trpc-playground": "^1.0.4",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5"
   }
