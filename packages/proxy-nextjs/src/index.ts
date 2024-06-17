@@ -11,9 +11,12 @@ export function createProxyRoute(opts: ProxyOptions): (request: NextRequest) => 
   const logger = getLogger(`proxy-nextjs (${opts.mountPath})`)
 
   return async function route(request: NextRequest): Promise<Response> {
-    const uri = new URL(request.url).pathname
-    const pathFromRoot = uri.replace(new RegExp(`^\/${opts.mountPath}`), "/")
+    const url = new URL(request.url)
+    const pathFromRoot = url.pathname.replace(new RegExp(`^\/${opts.mountPath}`), "/")
     const endpoint = new URL(pathFromRoot, opts.apiEndpoint)
+    for (const [key, value] of url.searchParams) {
+      endpoint.searchParams.append(key, value)
+    }
 
     const token = await getToken({ req: request })
     const headers = new Headers(request.headers)
@@ -25,6 +28,8 @@ export function createProxyRoute(opts: ProxyOptions): (request: NextRequest) => 
       headers,
       method: request.method,
       body: request.method === "GET" ? undefined : request.body,
+      // @ts-expect-error
+      duplex: request.method !== "GET" ? "half" : undefined,
     })
 
     logger.info("proxying endpoint request: %s %s", req.method, req.url)
