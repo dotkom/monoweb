@@ -10,13 +10,13 @@ export const t = initTRPC.context<Context>().create({
 })
 
 const isAuthed = t.middleware(async ({ ctx, next }) => {
-  const auth = ctx.principal
+  const principal = ctx.principal
 
-  if (auth === null) {
+  if (principal === null) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" })
   }
 
-  return next({ ctx: { auth } })
+  return next({ ctx: { principal } })
 })
 
 export const router = t.router
