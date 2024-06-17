@@ -27,7 +27,7 @@ export const paymentRouter = t.router({
         input.stripePublicKey,
         input.successRedirectUrl,
         input.cancelRedirectUrl,
-        ctx.principal,
+        ctx.principal
       )
     ),
   refundPayment: protectedProcedure
