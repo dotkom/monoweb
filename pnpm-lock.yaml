@@ -766,9 +766,6 @@ importers:
 
   packages/gateway-trpc:
     dependencies:
-      '@dotkomonline/auth':
-        specifier: workspace:*
-        version: link:../auth
       '@dotkomonline/core':
         specifier: workspace:*
         version: link:../core
@@ -778,12 +775,9 @@ importers:
       '@trpc/server':
         specifier: ^10.45.0
         version: 10.45.0
-      next:
-        specifier: ^14.0.3
-        version: 14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      next-auth:
-        specifier: ^4.24.5
-        version: 4.24.5(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      jose:
+        specifier: ^5.4.0
+        version: 5.4.0
       superjson:
         specifier: ^1.13.3
         version: 1.13.3
@@ -4992,6 +4986,9 @@ packages:
 
   jose@4.14.4:
     resolution: {integrity: sha512-j8GhLiKmUAh+dsFXlX1aJCbt5KMibuKb+d7j1JaOJG6s2UjX1PQlW+OKB/sD4a/5ZYF4RcmYmLSndOoU3Lt/3g==}
+
+  jose@5.4.0:
+    resolution: {integrity: sha512-6rpxTHPAQyWMb9A35BroFl1Sp0ST3DpPcm5EVIxZxdH+e0Hv9fwhyB3XLKFUcHNpdSDnETmBfuPPTTlYz5+USw==}
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -11799,6 +11796,8 @@ snapshots:
   jju@1.4.0: {}
 
   jose@4.14.4: {}
+
+  jose@5.4.0: {}
 
   joycon@3.1.1: {}
 

@@ -1,4 +1,4 @@
-import { appRouter, createContextInner, transformer } from "@dotkomonline/gateway-trpc"
+import { appRouter, createContext, transformer } from "@dotkomonline/gateway-trpc"
 import type { Event } from "@dotkomonline/types"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import ical, { type ICalEventData } from "ical-generator"
@@ -9,8 +9,8 @@ import { authOptions } from "../../../auth/src/web.app"
 
 const helpers = createServerSideHelpers({
   router: appRouter,
-  ctx: await createContextInner({
-    auth: null,
+  ctx: await createContext({
+    principal: null,
   }),
   transformer, // optional - adds superjson serialization
 })

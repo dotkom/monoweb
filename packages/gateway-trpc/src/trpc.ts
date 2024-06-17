@@ -10,7 +10,7 @@ export const t = initTRPC.context<Context>().create({
 })
 
 const isAuthed = t.middleware(async ({ ctx, next }) => {
-  const auth = ctx.auth
+  const auth = ctx.principal
 
   if (auth === null) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" })
