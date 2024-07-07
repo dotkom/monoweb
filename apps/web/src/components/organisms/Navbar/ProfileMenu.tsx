@@ -28,6 +28,7 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC, PropsWithChildren } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
+import React from "react"
 
 export const ProfileMenu = ({
   initialData,
@@ -143,8 +144,9 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
     <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
     <DropdownMenuContent className="w-60">
       <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
-      {linkGroups.map((group) => (
-        <>
+      {linkGroups.map((group, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
+        <React.Fragment key={i}>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {group.map((link) => (
@@ -157,7 +159,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
-        </>
+        </React.Fragment>
       ))}
       <DropdownMenuSeparator />
       <ThemeMenuSub />
