@@ -15,7 +15,7 @@ resource "auth0_client" "appkom_opptak" {
     "stg" = []
     "prd" = [
       "https://online-opptak.vercel.app/api/auth/callback/auth0", 
-      "http://localhost:3000/api/auth/callback/auth0,
+      "http://localhost:3000/api/auth/callback/auth0",
     ]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
