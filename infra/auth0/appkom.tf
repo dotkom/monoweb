@@ -2,7 +2,7 @@ resource "auth0_client" "appkom_opptak" {
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
-    "stg" = []
+    "stg" = ["http://localhost:3000"]
     "prd" = [
       "https://opptak.online.ntnu.no",
       "https://online-opptak.vercel.app",
@@ -13,7 +13,7 @@ resource "auth0_client" "appkom_opptak" {
   app_type        = "spa"
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = []
+    "stg" = ["http://localhost:3000/api/auth/callback/auth0"]
     "prd" = [
       "https://online-opptak.vercel.app/api/auth/callback/auth0", 
       "https://opptak.online.ntnu.no/api/auth/callback/auth0",
