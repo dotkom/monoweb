@@ -71,8 +71,10 @@ export const eventRouter = t.router({
   }),
 
   // TODO: N+1 query, eventCommitteeService and eventService should probably be merged
-  recommended: publicProcedure.query(async ({ ctx }) => {
-    const events = await ctx.eventService.getEvents(4)
+  recommended: publicProcedure
+    .input(z.object({ limit: z.number().min(1).max(10).default(4) }).optional())
+    .query(async ({ ctx, input }) => {
+    const events = await ctx.eventService.getEvents(input?.limit ?? 4)
     const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
 
     const results = await Promise.all(committees)

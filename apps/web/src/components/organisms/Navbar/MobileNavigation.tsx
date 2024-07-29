@@ -21,7 +21,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   return (
     <Popover.Root onOpenChange={(val) => setOpen(val)}>
       <Popover.Trigger>
-        <div className={cn("mr-7 flex items-center md:hidden")}>
+        <div className={cn("mr-3 flex items-center md:hidden")}>
           {open ? <Icon height={32} icon="tabler:x" /> : <Icon height={32} icon="tabler:menu-2" />}
         </div>
       </Popover.Trigger>

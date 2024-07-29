@@ -5,6 +5,7 @@ import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
 import type { MenuLink } from "./types"
+import OnlineLogo from "@/components/atoms/OnlineLogo";
 
 const links: MenuLink[] = [
   {
@@ -53,7 +54,8 @@ export const Navbar = async () => {
       <div className="border-blue-12/20 flex h-16 border-b">
         <MobileNavigation links={links} />
         <Link href="/" className="flex items-center">
-          <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
+          <OnlineIcon className="fill-brand h-[24px] dark:fill-white hidden sm:block" />
+          <OnlineLogo className="fill-brand h-[24px] dark:fill-white sm:hidden" />
         </Link>
         <MainNavigation links={links} />
         <div className="flex flex-grow items-center justify-end md:flex-grow-0">

@@ -43,7 +43,7 @@ export async function runSampleData() {
     start: new Date(event.event_start),
     end: new Date(event.event_end),
     description: event.description,
-    imageUrl: event.image?.lg ?? null,
+    imageUrl: event.image?.original ?? null,
     locationTitle: event.location,
     attendanceId: attendanceIds[index],
     subtitle: null,

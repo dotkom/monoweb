@@ -3,43 +3,38 @@ import Image from "next/image"
 import Link from "next/link"
 import type React from "react"
 import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
+import type { Event } from "@dotkomonline/types"
 
 interface ComingEventProps {
-  img: string | null
-  title: string
-  tag: string
-  attending: number
-  max_attending: number
-  date: string
-  info_link: string
+  event: Event
 }
 
 // TODO: mye relative og absolute her.... too bad!
-export const ComingEvent: React.FC<ComingEventProps> = (props) => (
-  <Link href={props.info_link}>
+export const ComingEvent: React.FC<ComingEventProps> = ({ event }) => (
+  <Link href={`events/${event.id}`}>
     <div className="mt-2 flex flex-col">
-      <div className="relative">
+      <div className="relative flex flex-col items-center">
         <Image
-          src={props.img ? props.img : EventImagePlaceholder}
-          alt={props.title}
+          src={event.imageUrl || EventImagePlaceholder}
+          alt={event.title}
           width={320}
           height={180}
           style={{ width: 320, height: 180 }}
           // downscale image 50% to fit in the space
           className="rounded-xl border-2 border-slate-4 object-cover w-full h-full"
         />
-        <Badge color="green" variant="solid" className="absolute bottom-2 left-2">
-          {props.tag}
+        <Badge color="green" variant="solid" className="absolute bottom-[-1px] left-[-8px]">
+          {event.type}
         </Badge>
       </div>
       <div className="">
         <span>
           <span>{/* PLACEHOLDER */}</span>
           <div>
-            <p className="m-0">{props.title}</p>
-            <p className="m-0">{props.date}</p>
+            <p className="m-0">{event.title}</p>
+            <p className="m-0">{event.start.toString()}</p>
             <p className="m-0">
-              {props.attending}/{props.max_attending}
+              {10}/{20}
             </p>
           </div>
         </span>
