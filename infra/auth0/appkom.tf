@@ -4,7 +4,8 @@ resource "auth0_client" "appkom_opptak" {
     "dev" = ["http://localhost:3000"]
     "stg" = []
     "prd" = [
-      "https://online-opptak.vercel.app", 
+      "https://opptak.online.ntnu.no",
+      "https://online-opptak.vercel.app",
       "http://localhost:3000",
     ]
   }[terraform.workspace]
@@ -15,6 +16,7 @@ resource "auth0_client" "appkom_opptak" {
     "stg" = []
     "prd" = [
       "https://online-opptak.vercel.app/api/auth/callback/auth0", 
+      "https://opptak.online.ntnu.no/api/auth/callback/auth0",
       "http://localhost:3000/api/auth/callback/auth0",
     ]
   }[terraform.workspace]
