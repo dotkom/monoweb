@@ -1,5 +1,5 @@
 import type { Attendance } from "@dotkomonline/types"
-import type { FC } from "react"
+import type { FC, ReactElement } from "react"
 import { dateToString, getStructuredDateInfo } from "../utils"
 
 interface StatusCardProps {
@@ -35,22 +35,38 @@ export const StatusCard: FC<StatusCardProps> = ({ attendance }) => {
 
   const { title } = STATUS_TEXTS[status]
 
-  let text = ""
+  let eventAttendanceStatusText: ReactElement<typeof p>
 
   switch (structuredDateInfo.status) {
     case "NOT_OPENED": {
       const { value, isRelative } = dateToString(structuredDateInfo.timeUtilOpen)
-      text = isRelative ? `Åpner om <strong>${value}</strong>` : `Åpner <strong>${value}</strong>`
+      eventAttendanceStatusText = (
+        <p>
+          Åpner {isRelative && "om "}
+          <strong>{value}</strong>
+        </p>
+      )
       break
     }
     case "OPEN": {
       const { value, isRelative } = dateToString(structuredDateInfo.timeUntilClose)
-      text = isRelative ? `Stenger om <strong>${value}</strong>` : `Stenger <strong>${value}</strong>`
+      eventAttendanceStatusText = (
+        <p>
+          Stenger {isRelative && "om "}
+          <strong>{value}</strong>
+        </p>
+      )
       break
     }
     case "CLOSED": {
       const { value, isRelative } = dateToString(structuredDateInfo.timeElapsedSinceClose)
-      text = isRelative ? `Stengte for <strong>${value}</strong> siden` : `Stengte <strong>${value}</strong>`
+      eventAttendanceStatusText = (
+        <p>
+          Stengte {isRelative && "for "}
+          <strong>{value}</strong>
+          {isRelative && "siden"}
+        </p>
+      )
       break
     }
     default:
@@ -63,7 +79,7 @@ export const StatusCard: FC<StatusCardProps> = ({ attendance }) => {
     <div className="mb-4">
       <div className={`block rounded-lg ${background} p-4 shadow-lg`}>
         <p className="text-lg font-bold">{title}</p>
-        {p(text)}
+        {eventAttendanceStatusText}
       </div>
     </div>
   )
