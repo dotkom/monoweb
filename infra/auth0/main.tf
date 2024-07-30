@@ -126,6 +126,28 @@ resource "auth0_resource_server" "online" {
 #   }
 # }
 
+resource "auth0_action" "id_token_user_claims" {
+  name   = "Add user data claims to id token"
+  code   = file("js/setCustomIdTokenClaims.js")
+  deploy = true
+
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+}
+
+resource "auth0_trigger_actions" "login_flow" {
+  trigger = "post-login"
+
+  actions {
+    id           = auth0_action.id_token_user_claims.id
+    display_name = auth0_action.id_token_user_claims.name
+  }
+
+  # more actions here
+}
+
 resource "auth0_client" "vengeful_vineyard_frontend" {
   app_type = "spa"
   callbacks = {
