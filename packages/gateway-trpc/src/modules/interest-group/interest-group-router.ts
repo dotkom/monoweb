@@ -1,4 +1,4 @@
-import { PaginateInputSchema } from "@dotkomonline/core"
+import { CursorPagination } from "@dotkomonline/core"
 import { InterestGroupSchema, InterestGroupWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
@@ -8,7 +8,7 @@ export const interestGroupRouter = t.router({
     .input(InterestGroupWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.create(input)),
   all: publicProcedure
-    .input(PaginateInputSchema)
+    .input(CursorPagination.PaginateInputSchema)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getAll(input)),
   get: publicProcedure
     .input(InterestGroupSchema.shape.id)
