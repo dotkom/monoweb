@@ -8,12 +8,12 @@ export const CompanyInfoView = () => {
       <div className="bg-amber-2 w-full rounded-lg">
         <div className="mx-auto flex max-w-[768px] flex-col text-center items-center p-4 pb-9">
           <div className="font-fraunces font-extrabold mb-8 mt-5 text-4xl/relaxed lg:text-5xl/tight">
-            Er din bedrift på jakt etter skarpe <br /> IT&ndash;
+            Er din bedrift på jakt etter skarpe <br />
             <span
               style={{ backgroundPosition: "50% 88%" }}
               className="bg-[url(/for-company-text-decor.svg)]"
             >
-              studenter?
+              IT&ndash;studenter?
             </span>
           </div>
           <p>
