@@ -8,13 +8,15 @@ export interface PortableTextProps {
   blocks: ReactPortableTextProps["value"]
   className?: string
 }
-const PortableText: FC<PortableTextProps> = ({ blocks }) => (
-  <ReactPortableText
-    value={blocks}
-    components={{
-      listItem: ({ children }: PropsWithChildren) => <li className="marker:text-amber-12 ml-4">{children}</li>,
-    }}
-  />
+const PortableText: FC<PortableTextProps> = ({ blocks, className }) => (
+  <div className={className}>
+    <ReactPortableText
+      value={blocks}
+      components={{
+        listItem: ({ children }: PropsWithChildren) => <li className={"marker:text-amber-12 ml-4"}>{children}</li>,
+      }}
+    />
+  </div>
 )
 
 export default PortableText
