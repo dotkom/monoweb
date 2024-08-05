@@ -2,7 +2,7 @@ import type { SVGProps } from "react"
 
 const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 256 256"
+    viewBox="0 -15 270 300"
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
     style={{
@@ -11,7 +11,7 @@ const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
-    width="1em"
+    
     height="1em"
     {...props}
   >
