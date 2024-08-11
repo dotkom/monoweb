@@ -26,9 +26,9 @@ export const TimeLocationBox: FC<Props> = ({
   eventDescription,
   locationLink,
 }) => {
-  const weekday = Intl.DateTimeFormat("nb-NO", IntlFormats.Weekday).format(datetimeStart)
-  const date = Intl.DateTimeFormat("nb-NO", IntlFormats.Date).format(datetimeStart)
-  const time = Intl.DateTimeFormat("nb-NO", IntlFormats.Time).format(datetimeStart)
+  const weekday = new Intl.DateTimeFormat("nb-NO", IntlFormats.Weekday).format(datetimeStart)
+  const date = new Intl.DateTimeFormat("nb-NO", IntlFormats.Date).format(datetimeStart)
+  const time = new Intl.DateTimeFormat("nb-NO", IntlFormats.Time).format(datetimeStart)
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
