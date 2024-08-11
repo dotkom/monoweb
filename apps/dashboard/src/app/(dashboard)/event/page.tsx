@@ -27,7 +27,7 @@ export default function EventPage() {
       }),
       columnHelper.accessor("start", {
         header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue(), { forceAbsolute: false, includeWeekday: true }),
+        cell: (info) => formatDate(info.getValue()),
       }),
       columnHelper.accessor("committees", {
         header: () => "Arrangør",

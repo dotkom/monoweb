@@ -1,15 +1,8 @@
-import { differenceInDays, formatDistanceToNowStrict, type Locale } from "date-fns"
-import { nb, enUS } from "date-fns/locale"
+import { differenceInDays } from "date-fns"
+import { formatRemainingTime } from "./formatRemainingTime"
 
 const DEFAULT_DAYS_RELATIVE_THRESHOLD = 3
 const DEFAULT_LOCALE = "nb-NO"
-
-const DateFnsLocaleMap = {
-  "nb-NO": nb,
-  "en-US": enUS,
-} satisfies Record<string, Locale>
-
-type SupportedLocales = keyof typeof DateFnsLocaleMap
 
 const DEFAULT_INTL_DATE_FORMAT_OPTIONS = {
   day: "2-digit",
@@ -47,7 +40,7 @@ export const IntlFormats = {
  * @param options.forceAbsolute - Whether the date will always be formatted as an absolute date.
  * @param options.includeTime - Whether to include the time in the formatted date.
  * @param options.includeWeekday - Whether to include the weekday in the formatted date.
- * @param options.locale - The locale to use for formatting. Defaults to `nb`.
+ * @param options.locale - The locale to use for formatting. Defaults to `nb-NO`.
  * @param options.relativeDateThresholdDays - The number of days to use as a threshold for relative date formatting. Defaults to `3`.
  * @returns The formatted date string.
  */
@@ -57,7 +50,7 @@ export const formatDate = (
     forceAbsolute?: boolean
     includeTime?: boolean
     includeWeekday?: boolean
-    locale?: SupportedLocales
+    locale?: Intl.LocalesArgument
     relativeDateThresholdDays?: number
   }
 ): string => {
@@ -77,17 +70,3 @@ export const formatDate = (
 
   return new Intl.DateTimeFormat(locale, format).format(date)
 }
-
-/**
- * Formats the remaining time from the given date.
- *
- * @param date - The date to format.
- * @param options - Optional formatting options.
- * @param options.locale - The locale to use for formatting. Defaults to `nb`.
- * @returns The formatted remaining time.
- */
-export const formatRemainingTime = (date: Date, options?: { locale?: SupportedLocales }) =>
-  formatDistanceToNowStrict(date, {
-    addSuffix: true,
-    locale: options?.locale && DateFnsLocaleMap[options.locale],
-  })
