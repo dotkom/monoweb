@@ -1,4 +1,4 @@
-import { differenceInDays, formatDistanceToNowStrict } from "date-fns"
+import { differenceInDays, formatDistanceToNowStrict, type Locale } from "date-fns"
 import { nb, enUS } from "date-fns/locale"
 
 const DEFAULT_DAYS_RELATIVE_THRESHOLD = 3
@@ -7,7 +7,7 @@ const DEFAULT_LOCALE = "nb-NO"
 const DateFnsLocaleMap = {
   "nb-NO": nb,
   "en-US": enUS,
-} as const satisfies { [key: string]: Locale }
+} satisfies Record<string, Locale>
 
 type SupportedLocales = keyof typeof DateFnsLocaleMap
 
@@ -15,16 +15,16 @@ const DEFAULT_INTL_DATE_FORMAT_OPTIONS = {
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
-} as const satisfies Intl.DateTimeFormatOptions
+} satisfies Intl.DateTimeFormatOptions
 
 const DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS = {
   weekday: "long",
-} as const satisfies Intl.DateTimeFormatOptions
+} satisfies Intl.DateTimeFormatOptions
 
 const DEFAULT_INTL_TIME_FORMAT_OPTIONS = {
   hour: "2-digit",
   minute: "2-digit",
-} as const satisfies Intl.DateTimeFormatOptions
+} satisfies Intl.DateTimeFormatOptions
 
 export const IntlFormats = {
   Date: DEFAULT_INTL_DATE_FORMAT_OPTIONS,
@@ -37,7 +37,7 @@ export const IntlFormats = {
     ...DEFAULT_INTL_TIME_FORMAT_OPTIONS,
     ...DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS,
   },
-} as const satisfies { [key: string]: Intl.DateTimeFormatOptions }
+} satisfies Record<string, Intl.DateTimeFormatOptions>
 
 /**
  * Formats a date into a string representation. If the date is within the date threshold, the date will be formatted as a relative date.
