@@ -66,6 +66,9 @@ importers:
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@hookform/error-message':
         specifier: ^2.0.1
         version: 2.0.1(react-dom@18.2.0(react@18.2.0))(react-hook-form@7.49.3(react@18.2.0))(react@18.2.0)
@@ -360,6 +363,9 @@ importers:
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@fadi-ui/react-country-flag':
         specifier: ^1.0.7
         version: 1.0.7
