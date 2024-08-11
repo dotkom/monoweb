@@ -3,7 +3,7 @@ import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { LocationLink } from "./LocationLink"
 import { createGoogleCalendarLink } from "./utils"
-import { formatDate } from "@dotkomonline/utils"
+import { IntlFormats } from "@dotkomonline/utils"
 
 interface Props {
   locationTitle: string
@@ -26,13 +26,9 @@ export const TimeLocationBox: FC<Props> = ({
   eventDescription,
   locationLink,
 }) => {
-  const [weekday, date, time] = formatDate(datetimeStart, {
-    forceAbsolute: true,
-    includeWeekday: true,
-    includeTime: true,
-  })
-    .replace(",", "")
-    .split(" ")
+  const weekday = Intl.DateTimeFormat("nb-NO", IntlFormats.Weekday).format(datetimeStart)
+  const date = Intl.DateTimeFormat("nb-NO", IntlFormats.Date).format(datetimeStart)
+  const time = Intl.DateTimeFormat("nb-NO", IntlFormats.Time).format(datetimeStart)
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,

@@ -4,26 +4,40 @@ import { nb, enUS } from "date-fns/locale"
 const DEFAULT_DAYS_RELATIVE_THRESHOLD = 3
 const DEFAULT_LOCALE = "nb-NO"
 
-const dateFNSLocaleFromIntlLocale = {
+const DateFnsLocaleMap = {
   "nb-NO": nb,
   "en-US": enUS,
 } as const
 
-type SupportedLocales = keyof typeof dateFNSLocaleFromIntlLocale
+type SupportedLocales = keyof typeof DateFnsLocaleMap
+
+const DEFAULT_INTL_DATE_FORMAT_OPTIONS = { day: "2-digit", month: "2-digit", year: "numeric" } as const
+const DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS = { weekday: "long" } as const
+const DEFAULT_INTL_TIME_FORMAT_OPTIONS = { hour: "2-digit", minute: "2-digit" } as const
+
+export const IntlFormats = {
+  Date: DEFAULT_INTL_DATE_FORMAT_OPTIONS,
+  Time: DEFAULT_INTL_TIME_FORMAT_OPTIONS,
+  Weekday: DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS,
+  DateTime: { ...DEFAULT_INTL_DATE_FORMAT_OPTIONS, ...DEFAULT_INTL_TIME_FORMAT_OPTIONS },
+  DateWeekday: { ...DEFAULT_INTL_DATE_FORMAT_OPTIONS, ...DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS },
+  DateTimeWeekday: {
+    ...DEFAULT_INTL_DATE_FORMAT_OPTIONS,
+    ...DEFAULT_INTL_TIME_FORMAT_OPTIONS,
+    ...DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS,
+  },
+} as const
 
 /**
  * Formats a date into a string representation. If the date is within the date threshold, the date will be formatted as a relative date.
  *
  * @param date - The date to format.
  * @param options - Optional formatting options.
- * @param options.forceAbsolute - If set to true, the date will always be formatted using the `formatRemainingTime` function.
- * @param options.includeTime - If set to true, the time will be included in the formatted date.
- * @param options.includeWeekday - If set to true, the weekday will be included in the formatted date.
+ * @param options.forceAbsolute - Whether the date will always be formatted as an absolute date.
+ * @param options.includeTime - Whether to include the time in the formatted date.
+ * @param options.includeWeekday - Whether to include the weekday in the formatted date.
  * @param options.locale - The locale to use for formatting. Defaults to `nb`.
- * @param options.relativeDateThresholdDays -
- *        The number of days to use as a threshold for relative date formatting. Defaults to `3`.
- *        If the difference between the current date and the provided date is greater than this threshold,
- *        the date will be formatted using the `formatRemainingTime` function.
+ * @param options.relativeDateThresholdDays - The number of days to use as a threshold for relative date formatting. Defaults to `3`.
  * @returns The formatted date string.
  */
 export const formatDate = (
@@ -44,15 +58,13 @@ export const formatDate = (
     return formatRemainingTime(date, { locale })
   }
 
-  const formatOptions: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    ...(options?.includeWeekday && { weekday: "long" }),
-    ...(options?.includeTime && { hour: "2-digit", minute: "2-digit" }),
+  const format = {
+    ...DEFAULT_INTL_DATE_FORMAT_OPTIONS,
+    ...(options?.includeWeekday && DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS),
+    ...(options?.includeTime && DEFAULT_INTL_TIME_FORMAT_OPTIONS),
   }
 
-  return new Intl.DateTimeFormat(locale, formatOptions).format(date)
+  return new Intl.DateTimeFormat(locale, format).format(date)
 }
 
 /**
@@ -66,5 +78,5 @@ export const formatDate = (
 export const formatRemainingTime = (date: Date, options?: { locale?: SupportedLocales }) =>
   formatDistanceToNowStrict(date, {
     addSuffix: true,
-    locale: options?.locale && dateFNSLocaleFromIntlLocale[options.locale],
+    locale: options?.locale && DateFnsLocaleMap[options.locale],
   })
