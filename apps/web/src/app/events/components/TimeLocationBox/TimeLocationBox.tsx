@@ -2,7 +2,8 @@ import { Icon } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { LocationLink } from "./LocationLink"
-import { createGoogleCalendarLink, getDisplayDate } from "./utils"
+import { createGoogleCalendarLink } from "./utils"
+import { formatDate } from "@dotkomonline/utils"
 
 interface Props {
   locationTitle: string
@@ -14,6 +15,8 @@ interface Props {
   locationLink: string | null
 }
 
+const capitalize = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+
 export const TimeLocationBox: FC<Props> = ({
   locationTitle,
   locationAddress,
@@ -23,7 +26,12 @@ export const TimeLocationBox: FC<Props> = ({
   eventDescription,
   locationLink,
 }) => {
-  const displayStart = getDisplayDate(datetimeStart)
+  const [weekday, date, time] = formatDate(datetimeStart, {
+    forceAbsolute: true,
+    includeWeekday: true,
+    includeTime: true,
+  }).split(" ")
+
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
     location: locationAddress ?? "",
@@ -42,9 +50,9 @@ export const TimeLocationBox: FC<Props> = ({
             <Icon icon="tabler:clock" width={24} height={24} />
           </div>
           <div className="flex flex-1 flex-col">
-            <span className="text-lg">{displayStart.weekDay}</span>
-            <span>{displayStart.date}</span>
-            <span>{displayStart.time}</span>
+            <span className="text-lg">{capitalize(weekday)}</span>
+            <span>{date}</span>
+            <span>{time}</span>
           </div>
           <div className="flex items-center">
             <ActionLink

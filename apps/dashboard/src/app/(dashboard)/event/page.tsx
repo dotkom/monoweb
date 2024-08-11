@@ -9,7 +9,7 @@ import { GenericTable } from "../../../components/GenericTable"
 import EventCommittees from "../../../components/molecules/company-name/event-committees"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
-import { formatDate } from "../../../utils/format"
+import { formatDate } from "@dotkomonline/utils"
 
 type TableColumns = Event & {
   committees: Committee[]
@@ -27,7 +27,7 @@ export default function EventPage() {
       }),
       columnHelper.accessor("start", {
         header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue()),
+        cell: (info) => formatDate(info.getValue(), { forceAbsolute: false, includeWeekday: true }),
       }),
       columnHelper.accessor("committees", {
         header: () => "Arrangør",

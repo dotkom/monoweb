@@ -8,7 +8,7 @@ import Link from "next/link"
 import { GenericTable } from "../../../components/GenericTable"
 import { useMarkCountUsersQuery } from "../../../modules/punishment/queries/use-count-users-with-mark-query"
 import { usePunishmentAllQuery } from "../../../modules/punishment/queries/use-punishment-all-query"
-import { formatDate } from "../../../utils/format"
+import { formatDate } from "@dotkomonline/utils"
 
 function MarkUserCount({ markId }: Readonly<{ markId: MarkId }>) {
   const { data } = useMarkCountUsersQuery(markId)
