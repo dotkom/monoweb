@@ -29,6 +29,7 @@ export const TimeLocationBox: FC<Props> = ({
   const [weekday, date, time] = formatDate(datetimeStart, {
     forceAbsolute: true,
     includeWeekday: true,
+    includeTime: true,
   }).split(" ")
 
   const gcalLink = createGoogleCalendarLink({

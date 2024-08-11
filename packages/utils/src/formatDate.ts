@@ -18,7 +18,7 @@ const getFormat = (options?: { includeTime?: boolean; includeWeekday?: boolean }
  * @param date - The date to format.
  * @param options - Optional formatting options.
  * @param options.forceAbsolute - If set to true, the date will always be formatted using the `formatRemainingTime` function.
- * @param options.includeSeconds - If set to true, and if the date is within the date threshold, the formatted time will include seconds near 1 minute.
+ * @param options.includeTime - If set to true, the time will be included in the formatted date.
  * @param options.includeWeekday - If set to true, the weekday will be included in the formatted date.
  * @param options.locale - The locale to use for formatting. Defaults to `nb`.
  * @param options.relativeDateThresholdDays -
@@ -31,7 +31,7 @@ export const formatDate = (
   date: Date,
   options?: {
     forceAbsolute?: boolean
-    includeSeconds?: boolean
+    includeTime?: boolean
     includeWeekday?: boolean
     locale?: Locale
     relativeDateThresholdDays?: number
