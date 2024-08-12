@@ -1,6 +1,6 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon } from "@dotkomonline/ui"
-import { formatRemainingTime } from "@dotkomonline/utils"
+import { formatRelativeTime } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -46,7 +46,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
             </div>
             <div className="flex flex-row gap-1">
               <Icon width={16} icon={"tabler:clock-hour-3"} />
-              {formatRemainingTime(jobListing.createdAt)}
+              {formatRelativeTime(jobListing.createdAt)}
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ const getRelativeTimeValueAndUnit = (value: number): [number, Intl.RelativeTimeF
  * @param options.locale - The locale to use for formatting. Defaults to `nb-NO`.
  * @returns The formatted remaining time.
  */
-export const formatRemainingTime = (date: Date, options?: { locale?: Intl.LocalesArgument }) => {
+export const formatRelativeTime = (date: Date, options?: { locale?: Intl.LocalesArgument }) => {
   const [value, unit] = getRelativeTimeValueAndUnit(date.getTime() - Date.now())
   const locale = options?.locale ?? DEFAULT_LOCALE
   return new Intl.RelativeTimeFormat(locale, { numeric: "always", style: "long" }).format(value, unit)
