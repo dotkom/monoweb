@@ -34,7 +34,7 @@ const getRelativeTimeValueAndUnit = (value: number): [number, Intl.RelativeTimeF
 }
 
 /**
- * Formats the remaining time from the given date.
+ * Formats the relative time between now and the given date.
  *
  * @param date - The date to format.
  * @param options - Optional formatting options.
