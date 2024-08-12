@@ -1,8 +1,8 @@
-import { differenceInDays } from "date-fns"
-import { formatRemainingTime } from "./formatRemainingTime"
+import { formatRelativeTime } from "./formatRelativeTime"
 
 const DEFAULT_DAYS_RELATIVE_THRESHOLD = 3
 const DEFAULT_LOCALE = "nb-NO"
+const ONE_DAY_MS = 86_400_000
 
 const DEFAULT_INTL_DATE_FORMAT_OPTIONS = {
   day: "2-digit",
@@ -54,12 +54,12 @@ export const formatDate = (
     relativeDateThresholdDays?: number
   }
 ): string => {
-  const daysDifference = differenceInDays(new Date(), date)
+  const daysDifference = Math.floor((date.getTime() - Date.now()) / ONE_DAY_MS)
   const daysThreshold = options?.relativeDateThresholdDays ?? DEFAULT_DAYS_RELATIVE_THRESHOLD
   const locale = options?.locale ?? DEFAULT_LOCALE
 
   if (options?.forceAbsolute !== true && daysThreshold > Math.abs(daysDifference)) {
-    return formatRemainingTime(date, { locale })
+    return formatRelativeTime(date, { locale })
   }
 
   const format = {
