@@ -10,9 +10,6 @@
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {
-    "date-fns": "^2.30.0"
-  },
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "typescript": "^5.4.5"
