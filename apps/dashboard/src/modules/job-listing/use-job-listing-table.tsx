@@ -5,7 +5,7 @@ import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { formatRemainingTime } from "../../utils/format"
+import { formatRelativeTime } from "@dotkomonline/utils"
 
 interface Props {
   data: JobListing[]
@@ -26,8 +26,7 @@ export const useJobListingTable = ({ data }: Props) => {
       columnHelper.accessor("end", {
         header: () => "Aktiv til",
         cell: (info) => {
-          const timeString = formatRemainingTime(info.getValue())
-          return <Text>{timeString}</Text>
+          return <Text>{formatRelativeTime(info.getValue())}</Text>
         },
       }),
       columnHelper.accessor((evt) => evt, {

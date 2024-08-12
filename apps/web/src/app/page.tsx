@@ -1,5 +1,6 @@
 import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
 import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
+import { formatDate } from "@dotkomonline/utils"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { Button } from "@dotkomonline/ui"
 import Link from "next/link"
@@ -28,7 +29,7 @@ export default async function App() {
             tag={event.type}
             max_attending={10}
             attending={5}
-            date={event.start.toString()}
+            date={formatDate(event.start, { relativeDateThresholdDays: 7 })}
             info_link={`/events/${event.id}`}
             key={event.id}
           />
