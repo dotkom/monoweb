@@ -15,10 +15,10 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ loading, icon, ...props }, ref) => (
   <button
     {...props}
-    disabled={props.disabled || props.loading}
+    disabled={props.disabled || loading}
     className={cn(
       buttonStyles({ variant: props.variant, size: props.size }),
       props.color && getColorStyles(props.variant, props.color),
@@ -30,9 +30,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
     ref={ref}
   >
     <div className="flex items-center justify-center">
-      {(props.loading || props.icon) && (
+      {(loading || icon) && (
         <i className="mr-1 flex">
-          {props.loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
+          {loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : icon}
         </i>
       )}
       <span className="text-inherit">{props.children}</span>
