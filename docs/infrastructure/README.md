@@ -3,7 +3,7 @@
 Evergreen is our container service that should be used to run all Monoweb applications in all environments, including
 production and staging. Evergreen is based on Docker containers, and we use Docker Compose as the orchestrator.
 
-At its core, Evergreen is a single Traefik load balancer, and a set of Docker containers running the various apps that
+At its core, Evergreen is a single Traefik reverse proxy, and a set of Docker containers running the various apps that
 are part of Monoweb. To keep simplicity low, Evergreen is hosted on a single AWS EC2 instance. Because of this, the
 services are not intended to be highly scalable, and should likely be used for smaller applications that we don't mind
 small downtimes for.
@@ -33,6 +33,21 @@ The entire application fleet is hosted on a single AWS EC2 (t4g.medium as of wri
 available to the public internet through a VPC, but all traffic should be routed from CloudFront to Traefik. Traefik is
 responsible for load balancing and routing across the various applications.
 
+![Evergreen Architecture](../img/evergreen-architecture.png)
+
+<details>
+<summary>Why use CloudFront? Can't we just route to EC2?</summary>
+We use CloudFront for two primary reasons: CloudFront comes very cheap, and it can be configured to cache and respect
+cache headers coming from the applications. This reduces load and bandwidth on the Evergreen instance.
+
+Secondly, you cannot attach AWS ACM Certificates directly to AWS EC2 instances. This means that traditionally, you would
+require an ELB to be attached to the EC2 instance, and attach the ACM certificate to the ELB. An ELB comes at a flat
+rate of $18/month, and it provides no features that we are interested that are not already available with Traefik.
+
+Because of this, we use CloudFront as an alias to the Evergreen instance, and attach the ACM certificate to CloudFront,
+effectively saving us $18/month.
+</details>
+
 Each application is packaged as a Docker container that is pushed to AWS ECR. GitHub Actions dispatches from push or
 tag release events, and pulls the latest Docker image from ECR, and restarts the relevant containers.
 
@@ -40,18 +55,23 @@ Environment variables are pulled from Doppler and injected into the container th
 Evergreen instance.
 
 To allow fair share of the instance resources, each container is limited to a subset of the vCPU and memory available on
-the instance. This is configured in the compose configuration file.
+the instance. This is configured in the Docker compose configuration file. The total amount of vCPU and memory allocated
+to instances should not exceed the total amount of vCPU and memory available on the Evergreen instance. If it does,
+consider downscaling some services, or upgrading the Evergreen EC2 instance type.
 
 The EC2 instance is an Amazon Linux 2023 AMI, and is built with Packer through the terraform monorepo.
 
-In order to allow for instances to be re-deployed or scaled, the Evergreen service is configured behind CloudFront. Each
-time a new Evergreen instance is deployed, the routing table for CloudFront is updated to point to the new instance,
-and the entire CloudFront distribution is invalidated.
+If there is ever a need to scale Evergreen (vertically only), we can do so by re-deploying a new Evergreen instance with
+a different instance type. In this case, the CloudFront distribution is updated to alias to the new instance, and the
+entire CloudFront distribution is invalidated.
+
+> There is no horizontal scaling of Evergreen, and there is currently no plans to implement it. If it ever becomes a
+> requirement in the future, an option is to autoscale Evergreen across an ELB.
 
 **Traefik**
 
 We use Traefik as the routing layer for Evergreen. Traefik is configured with the Docker provider, and uses labels
-available from the Docker socket to automatically discover and load balance containers. Adding new services to Evergreen
+available from the Docker socket to automatically discover and route containers. Adding new services to Evergreen
 is a matter of adding new containers to the docker-compose.yml file, and adding the appropriate labels to the
 docker-compose.yml file.
 
@@ -61,7 +81,7 @@ all containers must be configured to use the same Docker network that Traefik is
 ```yaml
 services:
   gradestatsweb-prod:
-    image: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gradestats-web-prd:0.1.2
+    image: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/gradestats-web-prd:latest
     container_name: gradestatsweb-prod
     env_file:
       - files/grades-prod.env
