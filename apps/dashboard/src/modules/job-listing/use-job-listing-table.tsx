@@ -1,11 +1,11 @@
 "use client"
 
 import type { JobListing } from "@dotkomonline/types"
+import { formatRelativeTime } from "@dotkomonline/utils"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { formatRelativeTime } from "@dotkomonline/utils"
 
 interface Props {
   data: JobListing[]

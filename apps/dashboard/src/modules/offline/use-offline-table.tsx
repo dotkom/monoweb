@@ -1,11 +1,11 @@
 "use client"
 
 import type { Offline } from "@dotkomonline/types"
+import { formatDate } from "@dotkomonline/utils"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { formatDate } from "@dotkomonline/utils"
 
 interface Props {
   data: Offline[]
