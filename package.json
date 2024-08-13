@@ -30,6 +30,7 @@
     "migrate-down-all": "dotenv -e .env -- turbo run migrate -- down-all && cd packages/db && pnpm generate-types",
     "migrate-dev": "dotenv -e .env.local -- turbo run migrate -- latest --with-seed && cd packages/db && pnpm generate-types",
     "migrate-with-fixtures": "dotenv -e .env -- turbo run migrate -- latest --with-fixtures && cd packages/db && pnpm generate-types",
+    "migrate-with-sample-data": "dotenv -e .env -- turbo run migrate -- latest --sample-data && cd packages/db && pnpm generate-types",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
@@ -41,7 +42,7 @@
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@9.0.4",
   "engines": {
     "node": ">=20.12.2",
     "pnpm": ">=9"
