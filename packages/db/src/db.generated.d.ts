@@ -221,7 +221,7 @@ export interface OwUser {
   givenName: string
   id: Generated<string>
   lastSyncedAt: Generated<Timestamp>
-  middleName: string
+  middleName: string | null
   name: string
   phone: string | null
   picture: string | null
