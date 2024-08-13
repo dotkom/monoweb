@@ -1,8 +1,8 @@
 import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
 import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
-import { formatDate } from "@dotkomonline/utils"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { Button } from "@dotkomonline/ui"
+import { formatDate } from "@dotkomonline/utils"
 import Link from "next/link"
 
 export default async function App() {

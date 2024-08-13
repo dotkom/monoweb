@@ -27,8 +27,8 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC, PropsWithChildren } from "react"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
 import React from "react"
+import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = ({
   initialData,

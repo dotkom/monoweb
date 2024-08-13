@@ -1,9 +1,9 @@
 import { Icon } from "@dotkomonline/ui"
+import { IntlFormats } from "@dotkomonline/utils"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { LocationLink } from "./LocationLink"
 import { createGoogleCalendarLink } from "./utils"
-import { IntlFormats } from "@dotkomonline/utils"
 
 interface Props {
   locationTitle: string

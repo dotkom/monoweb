@@ -1,6 +1,6 @@
 import type { Attendance } from "@dotkomonline/types"
-import type { FC } from "react"
 import { formatDate } from "@dotkomonline/utils"
+import type { FC } from "react"
 import { getStructuredDateInfo } from "../utils"
 
 interface StatusCardProps {
