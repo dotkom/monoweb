@@ -1,7 +1,7 @@
 import type { Article } from "@/api/get-article"
 import PortableText from "@/components/molecules/PortableText"
 import { Badge } from "@dotkomonline/ui"
-import { format } from "date-fns"
+import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import type { FC } from "react"
 
@@ -31,7 +31,7 @@ export const ArticleView: FC<ArticleViewProps> = (props: ArticleViewProps) => {
             </li>
             <li>
               <span>Publisert&nbsp;</span>
-              {format(date, "dd MMM yyyy")}
+              {formatDate(date, { forceAbsolute: true })}
             </li>
             <li>
               <span>{estimatedReadingTime} minutter&nbsp;</span> for å lese
