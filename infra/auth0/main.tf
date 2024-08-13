@@ -126,15 +126,30 @@ resource "auth0_resource_server" "online" {
 #   }
 # }
 
-resource "auth0_client" "vengeful_vineyard_frontend" {
+resource "auth0_client" "vengeful_vineyard_frontend_staging" {
+  app_type = "spa"
+  callbacks = [
+"https://staging.vinstraff.no", "https://api.staging.vinstraff.no/docs/oauth2-redirect"    ]
+  grant_types                   = ["authorization_code", "refresh_token"]
+  name                          = "Vengeful Vineyard Staging"
+  organization_require_behavior = "no_prompt"
+  is_first_party                = true
+  oidc_conformant               = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+
+}
+
+resource "auth0_client" "vengeful_vineyard_frontend_prod" {
   app_type = "spa"
   callbacks = {
-    "dev" = [
-      "http://localhost:3000",
-      "http://localhost:8000",
-      "http://localhost:3000/docs/oauth2-redirect",
-      "http://localhost:8000/docs/oauth2-redirect",
-    ]
     "stg" = [
       "https://staging.vinstraff.no",
       "https://staging.vinstraff.no/docs/oauth2-redirect",
@@ -148,7 +163,7 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Vengeful Vineyard${local.name_suffix[terraform.workspace]}"
+  name                          = "Vengeful Vineyard"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
   oidc_conformant               = true
@@ -161,7 +176,9 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   jwt_configuration {
     alg = "RS256"
   }
+
 }
+
 
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
@@ -171,6 +188,7 @@ locals {
   projects = {
     # key here must be project name
     vengeful-vineyard    = data.auth0_client.vengeful_vineyard_frontend
+    vengeful-vineyard-stg = data.auth0_client.vengeful_vineyard_frontend_staging
     onlineweb4           = data.auth0_client.onlineweb4
     onlineweb-frontend   = data.auth0_client.onlineweb_frontend
     appkom-opptakssystem = data.auth0_client.appkom_opptak
@@ -425,6 +443,31 @@ resource "auth0_client" "onlineweb4" {
     rotation_type   = "rotating"
     expiration_type = "expiring"
   }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
+resource "auth0_client" "bramster" {
+  allowed_clients = []
+  logo_uri = "https://utfs.io/f/9ccab392-f62c-47ff-af68-6e8e736e09b5-fdw3a.webp"
+  allowed_logout_urls = {
+    "prd" = ["http://localhost:3000"]
+  }[terraform.workspace]
+  allowed_origins = []
+  app_type        = "regular_web"
+  callbacks = {
+    "prd" = ["http://localhost:3000/api/auth/callback/auth0", "https://bramster.vercel.app/api/auth/callback/auth0"]
+  }[terraform.workspace]
+  grant_types = ["authorization_code", "client_credentials", "refresh_token"]
+  name        = "Bramster"
+  client_metadata = {
+    Terraform = true
+  }
+
+  is_first_party  = true
+  oidc_conformant = true
 
   jwt_configuration {
     alg = "RS256"

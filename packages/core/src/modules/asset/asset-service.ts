@@ -11,7 +11,7 @@ import type {
 } from "@dotkomonline/types"
 import type { S3Repository } from "../external/s3-repository"
 import type { AssetRepository } from "./asset-repository"
-import type { Collection, Pageable } from "../../utils/cursor-pagination/types"
+import type { Pageable, PaginatedResult } from "../../utils/cursor"
 
 type Fields = Record<string, string>
 
@@ -54,8 +54,8 @@ export interface AssetService {
 
   createPresignedPost(filename: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost>
 
-  getAllFileAssets(pageable: Pageable): Promise<Collection<FileAsset>>
-  getAllImageAssets(pageable: Pageable): Promise<Collection<ImageAsset>>
+  getAllFileAssets(pageable: Pageable): Promise<PaginatedResult<FileAsset>>
+  getAllImageAssets(pageable: Pageable): Promise<PaginatedResult<ImageAsset>>
 }
 
 export class AssetServiceImpl implements AssetService {

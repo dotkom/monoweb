@@ -68,21 +68,28 @@ export async function paginatedQuery<
     }
   }
 
+  function camelToUnderscore(key: string) {
+    const result = key.replace( /([A-Z])/g, " $1" );
+    return result.split(' ').join('_').toLowerCase();
+ }
+
   const decodeCursor = options.decodeCursorOverride ?? defaultDecodeCursor
   // Take N+1 to determine if there is a record behind `take`.
   let pagedQuery = query.limit(take + 1)
 
-  const columnSql = sql`(${sql.raw(options.columns.map((col) => `"${col}"`).join(","))})`
+  const snake = options.columns.map(camelToUnderscore)
+  const columnSql = sql`(${sql.raw(snake.map((col) => `"${col}"`).join(","))})`
+  console.log(snake)
+
   pagedQuery = pagedQuery.orderBy(columnSql, order)
 
   if (cursor !== undefined) {
     // biome-ignore lint/style/noNonNullAssertion: see id default vals logic above
     const decodedCursor = decodeCursor!(cursor)
     // pagedQuery = pagedQuery.where(options.column[0], order === "asc" ? ">=" : "<=", decodedCursor[0])
-    const _columns = sql`(${sql.raw(options.columns.map((col) => `"${col}"`).join(","))})`
     const _values = sql`(${sql.join(decodedCursor)})`
 
-    pagedQuery = pagedQuery.where(_columns, order === "asc" ? ">=" : "<=", _values)
+    pagedQuery = pagedQuery.where(columnSql, order === "asc" ? ">=" : "<=", _values)
   }
 
   // Perform the query and build the output

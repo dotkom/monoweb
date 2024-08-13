@@ -16,12 +16,12 @@ import {
 import type { ExpressionBuilder, Kysely } from "kysely"
 import { jsonObjectFrom } from "kysely/helpers/postgres"
 import { IllegalStateError } from "../../error"
+import { type Pageable, type PaginatedResult, paginatedQuery } from "../../utils/cursor"
 import {
   type Keys,
   fixJsonDatesStandardCols,
   withInsertJsonValue
 } from "../../utils/db-utils"
-import { singleColPaginatedQuery, type Pageable, type PaginatedResult } from "../../utils/cursor"
 
 export interface AssetRepository {
   getAllFileAssets(pageable: Pageable): Promise<PaginatedResult<FileAsset>>
@@ -57,11 +57,9 @@ export class AssetRepositoryImpl implements AssetRepository {
   async getAllFileAssets(pageable: Pageable) {
     const query = this.db.selectFrom("asset").select(fileAssetCols).where("isImage", "=", false)
 
-    const result = await singleColPaginatedQuery(query, {
+    const result = await paginatedQuery(query, {
       pageable,
-      decodeCursor: decodeCreatedAtCursor,
-      buildCursor: buildCreatedAtCursor,
-      column: "created_at",
+      columns: ["createdAt", "key"],
       order: "desc",
     })
 
@@ -76,11 +74,9 @@ export class AssetRepositoryImpl implements AssetRepository {
   async getAllImageAssets(pageable: Pageable) {
     const query = this.db.selectFrom("asset").select(imageAssetCols).where("isImage", "=", true)
 
-    const result = await singleColPaginatedQuery(query, {
+    const result = await paginatedQuery(query, {
       pageable,
-      decodeCursor: decodeCreatedAtCursor,
-      buildCursor: buildCreatedAtCursor,
-      column: "created_at",
+      columns: ["createdAt", "key"],
       order: "desc",
     })
 

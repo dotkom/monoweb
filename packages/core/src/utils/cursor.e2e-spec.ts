@@ -41,6 +41,48 @@ describe("cursor pagination", () => {
     await cleanup()
   })
 
+  it("works with only two items", async () => {
+    const testData: Partial<CommitteeWrite>[] = [
+      { name: "test2", email: "b" },
+      { name: "test2", email: "a" },
+    ]
+
+    // Create committees
+    for (const data of testData) {
+      await core.committeeService.createCommittee(getCommitteeMock(data))
+    }
+
+    const query = db.selectFrom("committee").selectAll()
+
+    const firstResult = await paginatedQuery(query, {
+      columns: ["name", "email"],
+      order: "asc",
+      pageable: {
+        cursor: undefined,
+        take: 1,
+      },
+    })
+
+    expect(firstResult.data.length).toEqual(1)
+    expect(firstResult.next).not.toEqual(null)
+    expect(firstResult.data[0].email).toEqual("a")
+    expect(firstResult.data[0].name).toEqual("test2")
+
+    const secondResult = await paginatedQuery(query, {
+      columns: ["name", "email"],
+      order: "asc",
+      pageable: {
+        cursor: firstResult.next,
+        take: 1,
+      },
+    })
+
+    expect(secondResult.data.length).toEqual(1)
+    expect(secondResult.next).toEqual(null)
+    expect(secondResult.data[0].email).toEqual("b")
+    expect(secondResult.data[0].name).toEqual("test2")
+  })
+
   it("works to sort on multiple columns", async () => {
     const testData: Partial<CommitteeWrite>[] = [
       { name: "test2", email: "b" },

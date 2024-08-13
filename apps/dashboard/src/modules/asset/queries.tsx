@@ -3,17 +3,22 @@ import type { CursorPagination } from "../../../../../packages/core/src"
 import { trpc } from "../../utils/trpc"
 
 export const useFileAssetsAllQuery = () => {
-  const [cursor, setCursor] = useState<CursorPagination.Cursor | undefined>(undefined)
-  const [nextCursor, setNextCursor] = useState<CursorPagination.Cursor | undefined>(undefined)
+  const [currentCursor, setCurrentCursor] = useState<CursorPagination.Cursor | undefined | null>(undefined)
+  // TODO: const [prevCursor, setPrevCursor] = useState<CursorPagination.Cursor | undefined | null>(null)
 
   const { data, ...query } = trpc.asset.getAllFileAssets.useQuery({
-    take: 10,
-    cursor,
+    take: 1,
+    cursor: currentCursor,
   })
+
+  const nextPage = () => {
+    setCurrentCursor(data?.next)
+  }
 
   return {
     data: data?.data ?? [],
-    hasMore: data?.next !== null,
+    hasNextPage: data?.next !== null,
+    nextPage,
     ...query,
   }
 }
