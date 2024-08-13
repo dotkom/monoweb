@@ -1,6 +1,7 @@
 "use client"
 
 import type { Mark, MarkId } from "@dotkomonline/types"
+import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -8,7 +9,6 @@ import Link from "next/link"
 import { GenericTable } from "../../../components/GenericTable"
 import { useMarkCountUsersQuery } from "../../../modules/punishment/queries/use-count-users-with-mark-query"
 import { usePunishmentAllQuery } from "../../../modules/punishment/queries/use-punishment-all-query"
-import { formatDate } from "../../../utils/format"
 
 function MarkUserCount({ markId }: Readonly<{ markId: MarkId }>) {
   const { data } = useMarkCountUsersQuery(markId)
