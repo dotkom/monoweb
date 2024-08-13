@@ -23,6 +23,8 @@ export declare type EnvironmentKeys =
   | "WEB_AUTH0_CLIENT_ID"
   | "WEB_AUTH0_CLIENT_SECRET"
   | "WEB_AUTH0_ISSUER"
+  | "RPC_HOST"
+  | "RPC_ALLOWED_ORIGINS"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 

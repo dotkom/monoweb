@@ -11,6 +11,8 @@ const jwtService = new JwtService(env.WEB_AUTH0_ISSUER, [
   env.GTX_AUTH0_CLIENT_ID,
 ])
 
+const allowedOrigins = env.RPC_ALLOWED_ORIGINS.split(",")
+
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
   if (bearer !== undefined) {
@@ -28,7 +30,7 @@ const server = fastify({
   maxParamLength: 5000,
 })
 server.register(fastifyCors, {
-  origin: ["http://localhost:3000", "http://localhost:3002"],
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
