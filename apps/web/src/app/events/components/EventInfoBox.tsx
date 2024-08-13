@@ -1,7 +1,7 @@
 import type { Committee, Company, Event } from "@dotkomonline/types"
 import Image from "next/image"
 import type { FC } from "react"
-import { formatDate } from "../utils"
+import { formatDate } from "@dotkomonline/utils"
 
 interface Props {
   event: Event
@@ -19,29 +19,23 @@ const mapToImageAndName = (item: Committee | Company) => (
 export const EventInfoBox: FC<Props> = ({ event, committees, companies }) => {
   const committeeList = committees.map(mapToImageAndName)
   const companyList = companies.map(mapToImageAndName)
+  // TODO - implement event organizers
+  const eventOrganizers = ["Ola", "Kari"]
 
-  const dateString = formatDate(event.createdAt, {
-    absolute: {
-      capitalize: true,
-    },
-    relative: {
-      capitalize: true,
-    },
-  })
-
-  const date = dateString.isRelative && dateString.inPast ? `${dateString.value} siden` : dateString.value
+  const listFormat = new Intl.ListFormat("no-NB", { type: "conjunction" })
 
   return (
-    <div className="mr-10 w-full flex flex-col space-y-8 md:w-[60%]">
-      <div className="flex flex-row space-x-8">
+    <section className="mr-10 w-full flex flex-col space-y-8 md:w-[60%]">
+      <section className="flex flex-row space-x-8">
         <div className="flex flex-row space-x-4">{[...committeeList, ...companyList]}</div>
         <div className="flex flex-row space-x-4 text-slate-9 items-center">
-          <p>{date}</p>
-          {/* TODO - implement name */}
-          <p>Lagt ut av Navn</p>
+          <span>Lagt ut {formatDate(event.createdAt)}</span>
+          <span>Organisert av {listFormat.format(eventOrganizers)}</span>
         </div>
+      </section>
+      <div className="bg-slate-2 p-5 text-[18px] rounded-2xl">
+        <p>{event.description}</p>
       </div>
-      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl">{event.description}</p>
-    </div>
+    </section>
   )
 }
