@@ -1,7 +1,7 @@
 import type { Committee, Company, Event } from "@dotkomonline/types"
+import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import type { FC } from "react"
-import { formatDate } from "@dotkomonline/utils"
 
 interface Props {
   event: Event
