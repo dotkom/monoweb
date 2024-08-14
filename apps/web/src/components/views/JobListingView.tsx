@@ -1,6 +1,6 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
-import { format } from "date-fns"
+import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -54,11 +54,7 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <div className="text-blue-9 mb-[-3px] inline">
             <Icon icon="mdi:clock-outline" className="text-blue-9" width={20} height={20} />
           </div>
-          {deadline ? (
-            <p className="m-0 pl-2">{format(deadline, "dd.mm.yyyy")}</p>
-          ) : (
-            <p className="m-0 pl-2">Ingen frist</p>
-          )}
+          {deadline ? <p className="m-0 pl-2">{formatDate(deadline)}</p> : <p className="m-0 pl-2">Ingen frist</p>}
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">

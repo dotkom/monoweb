@@ -24,9 +24,8 @@ import {
 } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
-import { useTheme } from "next-themes"
 import Link from "next/link"
-import { type FC, Fragment, type PropsWithChildren } from "react"
+import type { FC, Fragment, PropsWithChildren } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = ({
@@ -144,21 +143,21 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
     <DropdownMenuContent className="w-60">
       <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
       {linkGroups.map((group, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: The order does not change, i.e. using the index is fine
-        <Fragment key={i}>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {group.map((link) => (
-              <DropdownMenuItem key={link.label}>
-                <Link className="w-full" href={link.href ?? "#"}>
-                  <Icon icon={link.icon} className="mr-2 h-4 w-4" />
-                  <span>{link.label}</span>
-                  {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </Fragment>
+        // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
+        <React.Fragment key={i}>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {group.map((link) => (
+                <DropdownMenuItem key={link.label}>
+                  <Link className="w-full" href={link.href ?? "#"}>
+                    <Icon icon={link.icon} className="mr-2 h-4 w-4" />
+                    <span>{link.label}</span>
+                    {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+        </React.Fragment>
       ))}
       <DropdownMenuSeparator />
       <ThemeMenuSub />
@@ -168,8 +167,8 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
         <span>Log out</span>
         <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
       </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
+    </DropdownMenuContent >
+  </DropdownMenu >
 )
 
 const ThemeMenuSub = () => {

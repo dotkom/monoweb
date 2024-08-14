@@ -1,10 +1,11 @@
+import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
 import { Badge } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import type React from "react"
 
 interface ComingEventProps {
-  img: string
+  img: string | null
   title: string
   tag: string
   attending: number
@@ -19,11 +20,13 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => (
     <div className="mt-2 flex flex-col">
       <div className="relative">
         <Image
-          src={props.img}
+          src={props.img ? props.img : EventImagePlaceholder}
           alt={props.title}
           width={320}
           height={180}
-          className="rounded-xl border-2 border-slate-4 object-cover"
+          style={{ width: 320, height: 180 }}
+          // downscale image 50% to fit in the space
+          className="rounded-xl border-2 border-slate-4 object-cover w-full h-full"
         />
         <Badge color="green" variant="solid" className="absolute bottom-2 left-2">
           {props.tag}

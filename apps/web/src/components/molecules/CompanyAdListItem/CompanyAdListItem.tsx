@@ -1,27 +1,12 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon } from "@dotkomonline/ui"
+import { formatRelativeTime } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+
 interface CompanyAdListItemProps {
   jobListing: JobListing
-}
-function timeSinceCreated(date: Date) {
-  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 1) {
-    return "nylig lagt til"
-  }
-  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 24) {
-    const timer = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60))
-    return timer === 1 ? "1 time gammel" : `${timer} timer gammel`
-  }
-  if ((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000) < 7) {
-    const dager = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
-    return `${dager} dager gammel`
-  }
-  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24 * 7)) < 52) {
-    const uker = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24 * 7))
-    return `${uker} uker gammel`
-  }
 }
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
@@ -61,7 +46,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
             </div>
             <div className="flex flex-row gap-1">
               <Icon width={16} icon={"tabler:clock-hour-3"} />
-              {timeSinceCreated(jobListing.createdAt)}
+              {formatRelativeTime(jobListing.createdAt)}
             </div>
           </div>
         </div>
