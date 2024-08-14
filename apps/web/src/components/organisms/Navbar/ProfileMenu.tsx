@@ -24,11 +24,11 @@ import {
 } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC, PropsWithChildren } from "react"
 import { Fragment } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
-import { useTheme } from "next-themes"
 
 export const ProfileMenu = ({
   initialData,
