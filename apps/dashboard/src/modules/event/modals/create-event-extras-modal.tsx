@@ -21,7 +21,7 @@ export const CreateAttendanceExtrasModal: FC<ContextModalProps<{ attendance: Att
     const newExtras = [
       ...allExtras,
       {
-        id: `${allExtras.length - 1}`,
+        id: `${allExtras.length}`,
         name: data.question,
         choices: data.alternatives.map((alternative, i) => ({
           id: `${i}`,
