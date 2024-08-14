@@ -32,7 +32,7 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
       )}
     >
       <div className={cn("mr-4 h-7 w-7")}>
-        <Icon icon={icon} width="w-7" />
+        <Icon icon={icon} width={24} />
       </div>
       <p className="font-medium">{title}</p>
     </Link>
