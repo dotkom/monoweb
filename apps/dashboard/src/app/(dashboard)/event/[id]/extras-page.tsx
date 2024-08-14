@@ -71,6 +71,14 @@ export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
     })
   }
 
+  const extrasResults = resultsIsLoading ? (
+    <p>Laster...</p>
+  ) : results === null ? (
+    <div>Ingen valg</div>
+  ) : (
+    <AttendanceExtrasTable results={results} />
+  )
+
   return (
     <Box>
       <Box>
@@ -102,13 +110,7 @@ export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
       <Divider mt="xl" mb="xl" />
       <Box>
         <Title order={3}> Resultater</Title>
-        {resultsIsLoading ? (
-          <p>Laster...</p>
-        ) : results === null ? (
-          <div>Ingen valg</div>
-        ) : (
-          <AttendanceExtrasTable results={results} />
-        )}
+        {extrasResults}
       </Box>
     </Box>
   )

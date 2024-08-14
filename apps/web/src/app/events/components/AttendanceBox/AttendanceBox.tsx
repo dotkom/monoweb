@@ -9,15 +9,8 @@ import { StatusCard } from "../StatusCard"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import { ChooseExtrasDialog } from "./ChooseExtrasDialog"
 
-export const calculateStatus = ({
-  registerStart,
-  registerEnd,
-  now,
-}: {
-  registerStart: Date
-  registerEnd: Date
-  now: Date
-}): StatusState => {
+type EventRegistrationStatus = "CLOSED" | "NOT_OPENED" | "OPEN"
+const getEventRegistrationStatus = (registerStart: Date, registerEnd: Date, now: Date): EventRegistrationStatus => {
   if (now < registerStart) {
     return "NOT_OPENED"
   }
@@ -36,8 +29,6 @@ interface Props {
   event: Event
   attendee: Attendee | null
 }
-
-type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
 
 export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event, attendee }) => {
   const attendanceId = event.attendanceId
@@ -58,11 +49,11 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
   const unregisterMutation = useUnregisterMutation()
-  const attendanceStatus = calculateStatus({
-    registerStart: attendance.registerStart,
-    registerEnd: attendance.registerEnd,
-    now: new Date(),
-  })
+  const eventRegistrationStatus = getEventRegistrationStatus(
+    attendance.registerStart,
+    attendance.registerEnd,
+    new Date()
+  )
   const userIsRegistered = Boolean(attendee)
   const myGroups = user && pools?.find((a) => a.yearCriteria.includes(user?.studyYear))
 
@@ -96,35 +87,12 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   return (
     <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
       <h2>Påmelding</h2>
-      <div>
-        {attendance.extras && (
-          <ChooseExtrasDialog
-            choices={attendee?.extrasChoices ?? null}
-            setOpen={setExtraDialogOpen}
-            open={extraDialogOpen}
-            extras={attendance.extras}
-            onSubmit={(values) => {
-              if (!attendee) {
-                throw new Error("Tried to set extras for a non-registered user")
-              }
-              setExtrasChoices.mutate({ id: attendee.id, choices: values })
-              setExtraDialogOpen(false)
-            }}
-          />
-        )}
-      </div>
       <div className="mt-2">
         <StatusCard attendance={attendance} />
       </div>
 
-      {userIsRegistered && attendance.extras && (
-        <Button className="mt-2 w-full" onClick={handleGatherExtrasChoices}>
-          Endre valg
-        </Button>
-      )}
-
       <div>
-        {attendanceStatus === "OPEN" &&
+        {eventRegistrationStatus === "OPEN" &&
           (userIsRegistered ? (
             <Button className="mt-2 w-full text-white" color="red" variant="solid" onClick={unregisterForAttendance}>
               Meld meg av
@@ -138,7 +106,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
       {visiblePools?.length !== 0 && (
         <div className="mt-4">
-          <p>Påmeldingsgrupper</p>
+          <h4 className="text-md font-bold">Påmeldingsgrupper</h4>
           <div className="flex flex-wrap w-full">
             {visiblePools?.map((group, idx) => (
               <AttendanceGroup
@@ -154,6 +122,45 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
           </div>
         </div>
       )}
+
+      {userIsRegistered && attendance.extras && (
+        <div className="mt-4">
+          <h4 className="text-md font-bold">Dine valg</h4>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="text-left">Spørsmål</th>
+                <th className="text-left">Valg</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendee?.extrasChoices?.map((choice) => (
+                <tr key={choice.questionId}>
+                  <td className="text-left">{choice.questionName}</td>
+                  <td className="text-left">{choice.choiceName}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Button className="mt-2 w-32" variant={"outline"} onClick={handleGatherExtrasChoices}>
+            Endre
+          </Button>
+        </div>
+      )}
+
+      <ChooseExtrasDialog
+        defaultValues={attendee?.extrasChoices ?? null}
+        setOpen={setExtraDialogOpen}
+        open={extraDialogOpen}
+        extras={attendance.extras ?? []}
+        onSubmit={(values) => {
+          if (!attendee) {
+            throw new Error("Tried to set extras for a non-registered user")
+          }
+          setExtrasChoices.mutate({ id: attendee.id, choices: values })
+          setExtraDialogOpen(false)
+        }}
+      />
     </div>
   )
 }
