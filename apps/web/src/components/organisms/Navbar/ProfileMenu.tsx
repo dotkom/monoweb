@@ -25,8 +25,10 @@ import {
 import type { Session } from "next-auth"
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
-import type { FC, Fragment, PropsWithChildren } from "react"
+import type { FC, PropsWithChildren } from "react"
+import { Fragment } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
+import { useTheme } from "next-themes"
 
 export const ProfileMenu = ({
   initialData,
@@ -144,20 +146,20 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
       <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
       {linkGroups.map((group, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
-        <React.Fragment key={i}>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {group.map((link) => (
-                <DropdownMenuItem key={link.label}>
-                  <Link className="w-full" href={link.href ?? "#"}>
-                    <Icon icon={link.icon} className="mr-2 h-4 w-4" />
-                    <span>{link.label}</span>
-                    {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-        </React.Fragment>
+        <Fragment key={i}>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            {group.map((link) => (
+              <DropdownMenuItem key={link.label}>
+                <Link className="w-full" href={link.href ?? "#"}>
+                  <Icon icon={link.icon} className="mr-2 h-4 w-4" />
+                  <span>{link.label}</span>
+                  {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+        </Fragment>
       ))}
       <DropdownMenuSeparator />
       <ThemeMenuSub />
@@ -167,8 +169,8 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
         <span>Log out</span>
         <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
       </DropdownMenuItem>
-    </DropdownMenuContent >
-  </DropdownMenu >
+    </DropdownMenuContent>
+  </DropdownMenu>
 )
 
 const ThemeMenuSub = () => {
