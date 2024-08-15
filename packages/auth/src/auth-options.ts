@@ -1,15 +1,17 @@
 import type { ServiceLayer } from "@dotkomonline/core"
 import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import type { User as Auth0User } from "@dotkomonline/types"
 import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
   given_name: string
+  middle_name: string
   family_name: string
-  nickname: string
   name: string
+  nickname: string
+
   picture: string
-  gender: string
-  updated_at: string
+  gender: "male" | "female" | "other"
   email: string
   email_verified: boolean
   updated_at: string
@@ -18,6 +20,7 @@ interface Auth0IdTokenClaims {
   allergies: string[]
   phone: string
   lastSyncedAt: Date
+
 
   iss: string
   aud: string
@@ -34,7 +37,7 @@ declare module "next-auth" {
     id: string
   }
 
-  interface User extends DefaultUser {
+  interface User extends Auth0User, DefaultUser {
     id: string
     name: string
     email: string
@@ -69,9 +72,16 @@ export const getAuthOptions = ({
         id: profile.sub,
         name: profile.name,
         email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
+        picture: profile.picture ?? undefined,
+        givenName: profile.given_name,
+        familyName: profile.family_name,
+        auth0Id: profile.sub,
+        middleName: profile.middle_name,
+        allergies: profile.allergies,
+        phone: profile.phone,
+        studyYear: profile.studyYear,
+        gender: profile.gender,
+        lastSyncedAt: profile.lastSyncedAt,
       }),
     }),
   ],
