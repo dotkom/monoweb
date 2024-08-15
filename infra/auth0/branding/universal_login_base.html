@@ -13,11 +13,12 @@
                           linear-gradient(to right, var(--page-secondary-background-color) 1px, var(--page-background-color) 1px);
         background-size: 10vw 10vw;
         height: 100vh;
-    }
-    </style>
+      }
+      </style>
     <title>{{ prompt.screen.texts.pageTitle }}</title>
   </head>
   <body class="_widget-auto-layout">
+    ${ENV_SPECIFIC}
     {%- auth0:widget -%}
   </body>
 </html>

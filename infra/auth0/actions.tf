@@ -8,9 +8,12 @@ resource "auth0_action" "disallow_ntnu_mail" {
     id      = "pre-user-registration"
     version = "v2"
   }
+
+  count = terraform.workspace == "prd" ? 1 : 0
 }
 
 resource "auth0_trigger_action" "disallow_ntnu_mail" {
   trigger   = "pre-user-registration"
-  action_id = auth0_action.disallow_ntnu_mail.id
+  action_id = auth0_action.disallow_ntnu_mail[0].id
+  count = terraform.workspace == "prd" ? 1 : 0
 }
