@@ -1,14 +1,14 @@
 "use client"
-import { Component, FC, forwardRef, LegacyRef } from "react"
-import PhoneInputWithCountry, {
-  DefaultInputComponentProps,
-  Props,
-  isValidPhoneNumber as isValidPhoneNumberOrigin,
-} from "react-phone-number-input"
-import { cn } from "../../utils"
-import "react-phone-number-input/style.css"
 import { Label } from "@radix-ui/react-label"
 import { cva } from "cva"
+import { forwardRef } from "react"
+import PhoneInputWithCountry, {
+  type DefaultInputComponentProps,
+  type Props,
+  isValidPhoneNumber as isValidPhoneNumberOrigin,
+} from "react-phone-number-input"
+import "react-phone-number-input/style.css"
+import { cn } from "../../utils"
 
 export interface CustomPhoneInputProps extends Props<DefaultInputComponentProps> {
   defaultValue?: string

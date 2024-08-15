@@ -2,14 +2,13 @@
 import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { trpc } from "@/utils/trpc/client"
 import type { UserWrite } from "@dotkomonline/types"
-import { User } from "next-auth"
 import { Button, PhoneInput, TextInput, Textarea, isValidPhoneNumber } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { NextPage } from "next"
+import type { User } from "next-auth"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { revalidatePath } from "next/cache"
 
 const nameSchema = z
   .string()
@@ -65,22 +64,22 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
   const onSubmit = async (data: UserWrite) => {
     const [firstName, ...rest] = data.givenName.split(" ")
     const middleName = rest.join(" ") || null
-    data = {
+    const fakePopulatedData = {
       ...data,
       givenName: firstName,
       middleName: middleName,
-      name: data.givenName + " " + data.familyName,
+      name: `${data.givenName} ${data.familyName}`,
 
       /* Add fake data as the session token does not currently give a full user */
       phone: data.phone || null,
       auth0Id: "auth0|c75f2ffa-4b07-41c2-b173-273a2b443c6d",
-      gender: "male",
+      gender: "male" as const,
       studyYear: 2,
       picture: "https://example.com/image.jpg",
       lastSyncedAt: new Date(),
     }
     await updateUser.mutateAsync(
-      { data },
+      { data: fakePopulatedData },
       {
         onSuccess: (data) => {
           // change to toast when toast-functionality is implemented and remove console.log and alert
@@ -109,14 +108,14 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
               placeholder="Fornavn"
               defaultValue={user.givenName}
               {...register("givenName")}
-              error={errors.givenName && errors.givenName.message}
+              error={errors.givenName?.message}
             />
             <TextInput
               width="flex-1 mx-1"
               placeholder="Etternavn"
               defaultValue={user.familyName}
               {...register("familyName")}
-              error={errors.familyName && errors.familyName.message}
+              error={errors.familyName?.message}
             />
           </div>
         </FormInputContainer>
@@ -126,7 +125,7 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
             placeholder="Epost"
             defaultValue={user.email}
             {...register("email")}
-            error={errors.email && errors.email.message}
+            error={errors.email?.message}
           />
         </FormInputContainer>
         <FormInputContainer title="Telefon">
@@ -135,9 +134,10 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
             placeholder="Telefonnummer"
             defaultValue={user.phone || undefined}
             onChange={(value: string) => {
-              setValue("phone", value, { shouldDirty: true }), trigger("phone")
+              setValue("phone", value, { shouldDirty: true })
+              trigger("phone")
             }}
-            error={errors.phone && errors.phone.message}
+            error={errors.phone?.message}
           />
         </FormInputContainer>
         <FormInputContainer title="Allergier">

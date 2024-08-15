@@ -12,6 +12,13 @@ interface Auth0IdTokenClaims {
   updated_at: string
   email: string
   email_verified: boolean
+  updated_at: string
+
+  studyYear: number
+  allergies: string[]
+  phone: string
+  lastSyncedAt: Date
+
   iss: string
   aud: string
   iat: number
