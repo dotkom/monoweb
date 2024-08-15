@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@types/node':
+        specifier: ^20.12.7
+        version: 20.12.7
+      postcss:
+        specifier: ^8.3.3
+        version: 8.4.38
     devDependencies:
       dotenv-cli:
         specifier: ^7.3.0
@@ -44,7 +51,7 @@ importers:
         version: 20.12.7
       tsup:
         specifier: ^7.2.0
-        version: 7.2.0(@swc/core@1.4.17(@swc/helpers@0.5.2))(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5)
+        version: 7.2.0(@swc/core@1.4.17)(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5)
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -177,7 +184,7 @@ importers:
         version: 7.0.1(postcss@8.4.31)
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -247,7 +254,7 @@ importers:
         version: 8.4.33
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -329,7 +336,7 @@ importers:
         version: 8.4.31
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -363,6 +370,9 @@ importers:
       '@fadi-ui/react-country-flag':
         specifier: ^1.0.7
         version: 1.0.7
+      '@hookform/resolvers':
+        specifier: ^3.3.4
+        version: 3.3.4(react-hook-form@7.49.3(react@18.2.0))
       '@next/env':
         specifier: ^14.0.3
         version: 14.0.4
@@ -395,7 +405,7 @@ importers:
         version: 6.11.1
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)))
+        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)))
       '@tanstack/react-query':
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -498,7 +508,7 @@ importers:
         version: 8.4.31
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       trpc-playground:
         specifier: ^1.0.4
         version: 1.0.4(@trpc/server@10.45.0)(@types/node@20.12.7)(koa@2.15.3)(sugarss@4.0.1(postcss@8.4.31))(typescript@5.4.5)(zod@3.22.4)
@@ -553,7 +563,7 @@ importers:
         version: 3.0.0
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)))
+        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)))
       postcss:
         specifier: ^8.4.31
         version: 8.4.31
@@ -562,10 +572,10 @@ importers:
         version: 15.1.0(postcss@8.4.31)
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)))
+        version: 1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)))
       tailwindcss-radix:
         specifier: ^2.8.0
         version: 2.8.0
@@ -669,13 +679,13 @@ importers:
     dependencies:
       '@react-email/components':
         specifier: ^0.0.11
-        version: 0.0.11(@types/react@18.2.48)(react@18.2.0)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 0.0.11(@types/react@18.2.48)(react@18.2.0)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       '@react-email/render':
         specifier: ^0.0.9
         version: 0.0.9
       '@react-email/tailwind':
         specifier: ^0.0.12
-        version: 0.0.12(react@18.2.0)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 0.0.12(react@18.2.0)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -885,6 +895,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-phone-number-input:
+        specifier: ^3.4.5
+        version: 3.4.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.2.0
@@ -909,7 +922,7 @@ importers:
         version: 8.4.31
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -4098,6 +4111,9 @@ packages:
     resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
     engines: {node: '>= 0.10'}
 
+  country-flag-icons@1.5.13:
+    resolution: {integrity: sha512-4JwHNqaKZ19doQoNcBjsoYA+I7NqCH/mC/6f5cBWvdKzcK5TMmzLpq3Z/syVHMHJuDGFwJ+rPpGizvrqJybJow==}
+
   cpu-features@0.0.9:
     resolution: {integrity: sha512-AKjgn2rP2yJyfbepsmLfiYcmtNn/2eUvocUyM/09yB0YDiz39HteK/5/T4Onf0pmdYDMgkBoGvRLvEguzyL7wQ==}
     engines: {node: '>=10.0.0'}
@@ -4529,6 +4545,7 @@ packages:
   fstream@1.0.12:
     resolution: {integrity: sha512-WvJ193OHa0GHPEL+AycEJgxvBEwyfRkN1vhjca23OaPVMCaLCXTd5qAu82AjTcgP1UJmytkOKb63Ypde7raDIg==}
     engines: {node: '>=0.6'}
+    deprecated: This package is no longer supported.
 
   function-bind@1.1.1:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
@@ -4602,17 +4619,21 @@ packages:
 
   glob@7.1.6:
     resolution: {integrity: sha512-LwaxwyZ72Lk7vZINtNNrywX0ZuLyStrdDtabefZKAY5ZGJhVtgdznluResxNmPitE0SAO+O26sWTHeKSI2wMBA==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@8.0.3:
     resolution: {integrity: sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==}
     engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -4819,6 +4840,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -4831,6 +4853,9 @@ packages:
 
   inline-style-parser@0.2.2:
     resolution: {integrity: sha512-EcKzdTHVe8wFVOGEYXiW9WmJXPjqi1T+234YpJr98RiFYKHV3cdy1+3mkTE+KHTHxFFLH51SfaGOoUdW+v7ViQ==}
+
+  input-format@0.3.10:
+    resolution: {integrity: sha512-5cFv/kOZD7Ch0viprVkuYPDkAU7HBZYBx8QrIpQ6yXUWbAQ0+RQ8IIojDJOf/RO6FDJLL099HDSK2KoVZ2zevg==}
 
   interpret@1.4.0:
     resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
@@ -5097,6 +5122,9 @@ packages:
 
   leac@0.6.0:
     resolution: {integrity: sha512-y+SqErxb8h7nE/fiEX07jsbuhrpO9lL8eca7/Y1nuWV2moNlXhyd59iDGcRf6moVyDMbmTNzL40SUyrFU/yDpg==}
+
+  libphonenumber-js@1.11.7:
+    resolution: {integrity: sha512-x2xON4/Qg2bRIS11KIN9yCNYUjhtiEjNyptjX0mX+pyKHecxuJVLIpfX1lq9ZD6CrC/rB+y4GBi18c6CEcUR+A==}
 
   lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
@@ -6024,6 +6052,12 @@ packages:
       react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
       react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
 
+  react-phone-number-input@3.4.5:
+    resolution: {integrity: sha512-IlLTG0F/2P+72drqGNiYaguV3KOD4EVxQWGJ7YSofbOb6vyCWWLJqQIQsFFNpfrMrXzYtB3G+aHL9tprGfisFw==}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
   react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
@@ -6183,10 +6217,12 @@ packages:
 
   rimraf@2.7.1:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rollup@3.29.2:
@@ -9396,7 +9432,7 @@ snapshots:
     dependencies:
       react: 18.2.0
 
-  '@react-email/components@0.0.11(@types/react@18.2.48)(react@18.2.0)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))':
+  '@react-email/components@0.0.11(@types/react@18.2.48)(react@18.2.0)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))':
     dependencies:
       '@react-email/body': 0.0.4(react@18.2.0)
       '@react-email/button': 0.0.11(react@18.2.0)
@@ -9413,7 +9449,7 @@ snapshots:
       '@react-email/render': 0.0.9
       '@react-email/row': 0.0.6(react@18.2.0)
       '@react-email/section': 0.0.10(react@18.2.0)
-      '@react-email/tailwind': 0.0.12(react@18.2.0)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+      '@react-email/tailwind': 0.0.12(react@18.2.0)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       '@react-email/text': 0.0.6(react@18.2.0)
       react: 18.2.0
     transitivePeerDependencies:
@@ -9481,11 +9517,11 @@ snapshots:
     dependencies:
       react: 18.2.0
 
-  '@react-email/tailwind@0.0.12(react@18.2.0)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))':
+  '@react-email/tailwind@0.0.12(react@18.2.0)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tw-to-css: 0.0.12(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+      tw-to-css: 0.0.12(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
     transitivePeerDependencies:
       - ts-node
 
@@ -9985,13 +10021,13 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)))':
+  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)))':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+      tailwindcss: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
 
   '@tanstack/query-core@4.36.1': {}
 
@@ -10271,7 +10307,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.0
       sirv: 2.0.4
-      vitest: 1.3.1(@types/node@20.12.7)(@vitest/ui@1.3.1)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.4.38))
+      vitest: 1.3.1(@types/node@20.12.7)(@vitest/ui@1.3.1)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.4.31))
 
   '@vitest/utils@1.3.1':
     dependencies:
@@ -10761,6 +10797,8 @@ snapshots:
     dependencies:
       object-assign: 4.1.1
       vary: 1.1.2
+
+  country-flag-icons@1.5.13: {}
 
   cpu-features@0.0.9:
     dependencies:
@@ -11681,6 +11719,10 @@ snapshots:
 
   inline-style-parser@0.2.2: {}
 
+  input-format@0.3.10:
+    dependencies:
+      prop-types: 15.8.1
+
   interpret@1.4.0: {}
 
   into-stream@6.0.0:
@@ -11951,6 +11993,8 @@ snapshots:
       readable-stream: 2.3.8
 
   leac@0.6.0: {}
+
+  libphonenumber-js@1.11.7: {}
 
   lilconfig@2.1.0: {}
 
@@ -12894,9 +12938,9 @@ snapshots:
       read-cache: 1.0.0
       resolve: 1.22.2
 
-  postcss-import@15.1.0(postcss@8.4.33):
+  postcss-import@15.1.0(postcss@8.4.38):
     dependencies:
-      postcss: 8.4.33
+      postcss: 8.4.38
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.2
@@ -12906,34 +12950,18 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.4.31
 
-  postcss-js@4.0.1(postcss@8.4.33):
+  postcss-js@4.0.1(postcss@8.4.38):
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.4.33
+      postcss: 8.4.38
 
-  postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)):
-    dependencies:
-      lilconfig: 2.1.0
-      yaml: 2.3.1
-    optionalDependencies:
-      postcss: 8.4.31
-      ts-node: 10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)
-
-  postcss-load-config@4.0.1(postcss@8.4.33)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)):
-    dependencies:
-      lilconfig: 2.1.0
-      yaml: 2.3.1
-    optionalDependencies:
-      postcss: 8.4.33
-      ts-node: 10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)
-
-  postcss-load-config@4.0.1(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)):
+  postcss-load-config@4.0.1(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
       yaml: 2.3.1
     optionalDependencies:
       postcss: 8.4.38
-      ts-node: 10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)
+      ts-node: 10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5)
 
   postcss-mixins@9.0.4(postcss@8.4.31):
     dependencies:
@@ -12948,9 +12976,9 @@ snapshots:
       postcss: 8.4.31
       postcss-selector-parser: 6.0.13
 
-  postcss-nested@6.0.1(postcss@8.4.33):
+  postcss-nested@6.0.1(postcss@8.4.38):
     dependencies:
-      postcss: 8.4.33
+      postcss: 8.4.38
       postcss-selector-parser: 6.0.13
 
   postcss-preset-mantine@1.12.3(postcss@8.4.31):
@@ -13152,6 +13180,16 @@ snapshots:
 
   react-number-format@5.3.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
+  react-phone-number-input@3.4.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      classnames: 2.5.1
+      country-flag-icons: 1.5.13
+      input-format: 0.3.10
+      libphonenumber-js: 1.11.7
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -13678,13 +13716,13 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.23.8
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))):
+  tailwindcss-animate@1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))):
     dependencies:
-      tailwindcss: 3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+      tailwindcss: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
 
   tailwindcss-radix@2.8.0: {}
 
-  tailwindcss@3.3.2(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)):
+  tailwindcss@3.3.2(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -13700,11 +13738,11 @@ snapshots:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
-      postcss: 8.4.33
-      postcss-import: 15.1.0(postcss@8.4.33)
-      postcss-js: 4.0.1(postcss@8.4.33)
-      postcss-load-config: 4.0.1(postcss@8.4.33)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
-      postcss-nested: 6.0.1(postcss@8.4.33)
+      postcss: 8.4.38
+      postcss-import: 15.1.0(postcss@8.4.38)
+      postcss-js: 4.0.1(postcss@8.4.38)
+      postcss-load-config: 4.0.1(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5))
+      postcss-nested: 6.0.1(postcss@8.4.38)
       postcss-selector-parser: 6.0.13
       postcss-value-parser: 4.2.0
       resolve: 1.22.3
@@ -13712,7 +13750,7 @@ snapshots:
     transitivePeerDependencies:
       - ts-node
 
-  tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)):
+  tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -13728,11 +13766,11 @@ snapshots:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
-      postcss: 8.4.31
-      postcss-import: 15.1.0(postcss@8.4.31)
-      postcss-js: 4.0.1(postcss@8.4.31)
-      postcss-load-config: 4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
-      postcss-nested: 6.0.1(postcss@8.4.31)
+      postcss: 8.4.38
+      postcss-import: 15.1.0(postcss@8.4.38)
+      postcss-js: 4.0.1(postcss@8.4.38)
+      postcss-load-config: 4.0.1(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5))
+      postcss-nested: 6.0.1(postcss@8.4.38)
       postcss-selector-parser: 6.0.13
       resolve: 1.22.3
       sucrase: 3.34.0
@@ -13886,7 +13924,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5):
+  ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.9
@@ -13917,7 +13955,7 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
-  tsup@7.2.0(@swc/core@1.4.17(@swc/helpers@0.5.2))(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5):
+  tsup@7.2.0(@swc/core@1.4.17)(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5):
     dependencies:
       bundle-require: 4.0.2(esbuild@0.18.20)
       cac: 6.7.14
@@ -13927,7 +13965,7 @@ snapshots:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.1(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+      postcss-load-config: 4.0.1(postcss@8.4.38)(ts-node@10.9.2(@swc/core@1.4.17)(@types/node@20.12.7)(typescript@5.4.5))
       resolve-from: 5.0.0
       rollup: 3.29.2
       source-map: 0.8.0-beta.0
@@ -13982,11 +14020,11 @@ snapshots:
       turbo-windows-64: 1.11.3
       turbo-windows-arm64: 1.11.3
 
-  tw-to-css@0.0.12(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5)):
+  tw-to-css@0.0.12(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       postcss: 8.4.31
       postcss-css-variables: 0.18.0(postcss@8.4.31)
-      tailwindcss: 3.3.2(ts-node@10.9.2(@swc/core@1.4.17(@swc/helpers@0.5.2))(@types/node@20.12.7)(typescript@5.4.5))
+      tailwindcss: 3.3.2(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
     transitivePeerDependencies:
       - ts-node
 
@@ -14247,7 +14285,7 @@ snapshots:
   vite@4.5.0(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)):
     dependencies:
       esbuild: 0.18.20
-      postcss: 8.4.33
+      postcss: 8.4.38
       rollup: 3.29.2
     optionalDependencies:
       '@types/node': 20.12.7
@@ -14257,7 +14295,7 @@ snapshots:
   vite@5.0.11(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.31)):
     dependencies:
       esbuild: 0.19.11
-      postcss: 8.4.33
+      postcss: 8.4.38
       rollup: 4.9.5
     optionalDependencies:
       '@types/node': 20.12.7
@@ -14267,7 +14305,7 @@ snapshots:
   vite@5.0.11(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.38)):
     dependencies:
       esbuild: 0.19.11
-      postcss: 8.4.33
+      postcss: 8.4.38
       rollup: 4.9.5
     optionalDependencies:
       '@types/node': 20.12.7
