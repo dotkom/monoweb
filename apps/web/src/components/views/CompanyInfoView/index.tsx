@@ -9,10 +9,7 @@ export const CompanyInfoView = () => {
         <div className="mx-auto flex max-w-[768px] flex-col text-center items-center p-4 pb-9">
           <div className="font-fraunces font-extrabold mb-8 mt-5 text-4xl/relaxed lg:text-5xl/tight">
             Er din bedrift på jakt etter skarpe <br />
-            <span
-              style={{ backgroundPosition: "50% 88%" }}
-              className="bg-[url(/for-company-text-decor.svg)]"
-            >
+            <span className="relative after:content-[''] after:bg-[#FCD49B] after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
               IT&ndash;studenter?
             </span>
           </div>
@@ -28,7 +25,9 @@ export const CompanyInfoView = () => {
       </div>
 
       <div className="mt-5 flex flex-col items-center px-3 text-center ">
-        <h2 className="mb-4">Bruk Onlines interesseskjema for å melde interesse</h2>
+        <h2 className="mb-4">
+          Bruk Onlines interesseskjema for å melde interesse
+        </h2>
         <p className="text-sm">
           Bedriftens svar vil bli sendt til Onlines bedriftskomite og
           etterstrebes å bli svart på innen to virkedager.
@@ -73,10 +72,13 @@ export const CompanyInfoView = () => {
       <div className="max-w-4xl">
         <h2 className="mb-4">Stillingsutlysning</h2>
         <p>
-          Vi har en <a href="/career" className="underline">karriereside</a> på våre nettsider der vi legger ut
-          stillingsannonser for bedrifter som ønsker det. Send en mail til
-          bedriftskontakt@online.ntnu.no eller fyll ut interesseskjema om en
-          annonse skulle være av interesse.
+          Vi har en{" "}
+          <a href="/career" className="underline">
+            karriereside
+          </a>{" "}
+          på våre nettsider der vi legger ut stillingsannonser for bedrifter som
+          ønsker det. Send en mail til bedriftskontakt@online.ntnu.no eller fyll
+          ut interesseskjema om en annonse skulle være av interesse.
         </p>
       </div>
 
