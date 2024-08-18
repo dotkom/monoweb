@@ -1,6 +1,7 @@
 import type { Attendance } from "@dotkomonline/types"
+import { formatDate } from "@dotkomonline/utils"
 import type { FC } from "react"
-import { dateToString, getStructuredDateInfo } from "../utils"
+import { getStructuredDateInfo } from "../utils"
 
 interface StatusCardProps {
   attendance: Attendance
@@ -39,18 +40,15 @@ export const StatusCard: FC<StatusCardProps> = ({ attendance }) => {
 
   switch (structuredDateInfo.status) {
     case "NOT_OPENED": {
-      const { value, isRelative } = dateToString(structuredDateInfo.timeUtilOpen)
-      text = isRelative ? `Åpner om <strong>${value}</strong>` : `Åpner <strong>${value}</strong>`
+      text = formatDate(structuredDateInfo.timeUtilOpen)
       break
     }
     case "OPEN": {
-      const { value, isRelative } = dateToString(structuredDateInfo.timeUntilClose)
-      text = isRelative ? `Stenger om <strong>${value}</strong>` : `Stenger <strong>${value}</strong>`
+      text = formatDate(structuredDateInfo.timeUntilClose)
       break
     }
     case "CLOSED": {
-      const { value, isRelative } = dateToString(structuredDateInfo.timeElapsedSinceClose)
-      text = isRelative ? `Stengte for <strong>${value}</strong> siden` : `Stengte <strong>${value}</strong>`
+      text = formatDate(structuredDateInfo.timeElapsedSinceClose)
       break
     }
     default:
