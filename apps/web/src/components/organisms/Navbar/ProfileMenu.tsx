@@ -27,7 +27,7 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import type { FC, PropsWithChildren } from "react"
-import React from "react"
+import { Fragment } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
 export const ProfileMenu = ({
@@ -146,7 +146,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
       <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
       {linkGroups.map((group, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
-        <React.Fragment key={i}>
+        <Fragment key={i}>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {group.map((link) => (
@@ -159,7 +159,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
-        </React.Fragment>
+        </Fragment>
       ))}
       <DropdownMenuSeparator />
       <ThemeMenuSub />

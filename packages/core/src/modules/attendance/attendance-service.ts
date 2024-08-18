@@ -1,4 +1,11 @@
-import type { Attendance, AttendanceId, AttendanceWrite, Extras, WaitlistAttendee } from "@dotkomonline/types"
+import type {
+  Attendance,
+  AttendanceId,
+  AttendanceWrite,
+  ExtraResults,
+  Extras,
+  WaitlistAttendee,
+} from "@dotkomonline/types"
 import {
   AttendanceDeletionError,
   AttendanceNotFound,
@@ -18,6 +25,7 @@ export interface AttendanceService {
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
   merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
   updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
+  getExtrasResults(attendanceId: AttendanceId): Promise<ExtraResults[] | null>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -27,6 +35,58 @@ export class AttendanceServiceImpl implements AttendanceService {
     private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
     private readonly attendancePoolRepository: AttendancePoolRepository
   ) {}
+
+  async getExtrasResults(attendanceId: AttendanceId) {
+    const attendance = await this.attendanceRepository.getById(attendanceId)
+    if (!attendance) {
+      throw new AttendanceNotFound(attendanceId)
+    }
+
+    if (attendance.extras === null) {
+      return null
+    }
+
+    const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
+    const extrasResults: ExtraResults[] = []
+
+    for (const extra of attendance.extras) {
+      const totalCount = attendees.filter((attendee) =>
+        attendee.extrasChoices.some((choice) => choice.questionId === extra.id)
+      ).length
+
+      extrasResults.push({
+        id: extra.id,
+        name: extra.name,
+        totalCount,
+        choices: extra.choices.map((choice) => ({
+          id: choice.id,
+          name: choice.name,
+          count: attendees.filter((attendee) =>
+            attendee.extrasChoices.some(
+              (extraChoice) => extraChoice.questionId === extra.id && extraChoice.choiceId === choice.id
+            )
+          ).length,
+        })),
+      })
+    }
+
+    for (const attendee of attendees) {
+      for (const extraChoice of attendee.extrasChoices) {
+        const extraIndex = extrasResults.findIndex((extra) => extra.name === extraChoice.questionId)
+        if (extraIndex >= 0) {
+          const choiceIndex = extrasResults[extraIndex].choices.findIndex(
+            (choice) => choice.id === extraChoice.choiceId
+          )
+          if (choiceIndex >= 0) {
+            extrasResults[extraIndex].totalCount++
+            extrasResults[extraIndex].choices[choiceIndex].count++
+          }
+        }
+      }
+    }
+
+    return extrasResults
+  }
 
   async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
     const attendance = await this.attendanceRepository.update(obj, id)
