@@ -1,15 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "configMigration": true,
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@dotkomonline/"],
-      "enabled": false
+      "enabled": false,
+      "matchPackageNames": [
+        "/^@dotkomonline//"
+      ]
     },
     {
       "description": "Ignore nodejs and pnpm",
-      "matchPackageNames": ["node", "pnpm"],
+      "matchPackageNames": [
+        "node",
+        "pnpm"
+      ],
       "enabled": false
     }
   ],
