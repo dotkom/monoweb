@@ -1,12 +1,12 @@
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
-import type { Session } from "next-auth"
-import { useState, type FC, type ReactElement } from "react"
-import { AttendanceBoxPool } from "../AttendanceBoxPool"
-import { getStructuredDateInfo } from "../../utils"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
+import type { Session } from "next-auth"
+import { type FC, type ReactElement, useState } from "react"
+import { getStructuredDateInfo } from "../../utils"
+import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
 
@@ -16,19 +16,6 @@ interface Props {
   pools: AttendancePool[]
   event: Event
   attendee: Attendee | null
-}
-
-type EventRegistrationStatus = "CLOSED" | "NOT_OPENED" | "OPEN"
-const getEventRegistrationStatus = (registerStart: Date, registerEnd: Date, now: Date): EventRegistrationStatus => {
-  if (now < registerStart) {
-    return "NOT_OPENED"
-  }
-
-  if (now > registerEnd) {
-    return "CLOSED"
-  }
-
-  return "OPEN"
 }
 
 // Biome ignores do not work in the middle of jsx so this is extracted just to igonre the rule here
