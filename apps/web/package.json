@@ -42,7 +42,7 @@
     "axios": "1.7.4",
     "clsx": "^2.0.0",
     "cors": "^2.8.5",
-    "date-fns": "^2.30.0",
+    "date-fns": "^3.0.0",
     "next": "^14.0.3",
     "next-auth": "^4.24.5",
     "next-superjson-plugin": "^0.6.0",
