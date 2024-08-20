@@ -436,8 +436,8 @@ importers:
         specifier: ^4.24.5
         version: 4.24.5(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       next-superjson-plugin:
-        specifier: ^0.5.10
-        version: 0.5.10(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(superjson@1.13.3)
+        specifier: ^0.6.0
+        version: 0.6.3(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(superjson@1.13.3)
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -5607,11 +5607,11 @@ packages:
       nodemailer:
         optional: true
 
-  next-superjson-plugin@0.5.10:
-    resolution: {integrity: sha512-y3vAKlZfZP6iEDb0R+XQ6UQ7YYDxbsZ0iZlV50/Hvw0Fzl+ScQJj+CbXdcl+ETugK9JbhCS7G7hMCGIjiGkgXQ==}
+  next-superjson-plugin@0.6.3:
+    resolution: {integrity: sha512-gipGROzbbn1Koq84AZQodIvBdORp9dytIDv07SguwXdxnJb6v05KCmHVNU9L6AWqxjP14qNIWCNdKRDhnGRZrg==}
     peerDependencies:
       next: ^13.0 || ^14.0
-      superjson: ^1
+      superjson: ^1 || ^2
 
   next-themes@0.2.1:
     resolution: {integrity: sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==}
@@ -12834,7 +12834,7 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       uuid: 8.3.2
 
-  next-superjson-plugin@0.5.10(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(superjson@1.13.3):
+  next-superjson-plugin@0.6.3(next@14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(superjson@1.13.3):
     dependencies:
       hoist-non-react-statics: 3.3.2
       next: 14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
