@@ -2,12 +2,12 @@ import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
-import clsx from "clsx"
 import type { Session } from "next-auth"
 import { type FC, type ReactElement, useState } from "react"
 import { getStructuredDateInfo } from "../../utils"
-import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
+import clsx from "clsx"
+import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
 
 interface Props {
@@ -79,15 +79,15 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   switch (structuredDateInfo.status) {
     case "NOT_OPENED": {
-      eventAttendanceStatusText = `Åpner ${formatDate(structuredDateInfo.timeUtilOpen)}`
+      eventAttendanceStatusText = `Åpner ${formatDate(new Date(Date.now() + structuredDateInfo.timeUtilOpen.getTime()))}`
       break
     }
     case "OPEN": {
-      eventAttendanceStatusText = `Stenger ${formatDate(structuredDateInfo.timeUntilClose)}`
+      eventAttendanceStatusText = `Stenger ${formatDate(new Date(Date.now() + structuredDateInfo.timeUntilClose.getTime()))}`
       break
     }
     case "CLOSED": {
-      eventAttendanceStatusText = `Stengte ${formatDate(structuredDateInfo.timeElapsedSinceClose)}`
+      eventAttendanceStatusText = `Stengte ${formatDate(new Date(Date.now() + structuredDateInfo.timeElapsedSinceClose.getTime()))}`
       break
     }
     default:
@@ -126,30 +126,6 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
       <h2 className="border-none">Påmelding</h2>
       {<AttendanceBoxPool pool={attendablePoolOrNullish} />}
-      {userIsRegistered && attendance.extras && (
-        <div className="mt-4">
-          <h4 className="text-md font-bold">Dine valg</h4>
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th className="text-left">Spørsmål</th>
-                <th className="text-left">Valg</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attendee?.extrasChoices?.map((choice) => (
-                <tr key={choice.questionId}>
-                  <td className="text-left">{choice.questionName}</td>
-                  <td className="text-left">{choice.choiceName}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Button className="mt-2 w-32" variant={"outline"} onClick={handleGatherExtrasChoices}>
-            Endre
-          </Button>
-        </div>
-      )}
 
       {userIsRegistered && attendance.extras && (
         <section>
