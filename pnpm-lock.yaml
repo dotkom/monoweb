@@ -603,8 +603,8 @@ importers:
         specifier: ^2.30.0
         version: 2.30.0
       kysely:
-        specifier: ^0.26.3
-        version: 0.26.3
+        specifier: ^0.27.0
+        version: 0.27.4
       next:
         specifier: ^14.0.3
         version: 14.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -652,8 +652,8 @@ importers:
         specifier: workspace:*
         version: link:../env
       kysely:
-        specifier: ^0.26.3
-        version: 0.26.3
+        specifier: ^0.27.0
+        version: 0.27.4
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -666,7 +666,7 @@ importers:
         version: 8.10.9
       kysely-codegen:
         specifier: ^0.11.0
-        version: 0.11.0(kysely@0.26.3)(pg@8.11.3)
+        version: 0.11.0(kysely@0.27.4)(pg@8.11.3)
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -953,8 +953,8 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
       kysely:
-        specifier: ^0.26.3
-        version: 0.26.3
+        specifier: ^0.27.0
+        version: 0.27.4
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -5213,8 +5213,8 @@ packages:
       pg:
         optional: true
 
-  kysely@0.26.3:
-    resolution: {integrity: sha512-yWSgGi9bY13b/W06DD2OCDDHQmq1kwTGYlQ4wpZkMOJqMGCstVCFIvxCCVG4KfY1/3G0MhDAcZsip/Lw8/vJWw==}
+  kysely@0.27.4:
+    resolution: {integrity: sha512-dyNKv2KRvYOQPLCAOCjjQuCk4YFd33BvGdf/o5bC7FiW+BB6snA81Zt+2wT9QDFzKqxKa5rrOmvlK/anehCcgA==}
     engines: {node: '>=14.0.0'}
 
   lazystream@1.0.1:
@@ -12187,18 +12187,18 @@ snapshots:
 
   kuler@2.0.0: {}
 
-  kysely-codegen@0.11.0(kysely@0.26.3)(pg@8.11.3):
+  kysely-codegen@0.11.0(kysely@0.27.4)(pg@8.11.3):
     dependencies:
       chalk: 4.1.2
       dotenv: 16.3.1
       git-diff: 2.0.6
-      kysely: 0.26.3
+      kysely: 0.27.4
       micromatch: 4.0.5
       minimist: 1.2.8
     optionalDependencies:
       pg: 8.11.3
 
-  kysely@0.26.3: {}
+  kysely@0.27.4: {}
 
   lazystream@1.0.1:
     dependencies:
