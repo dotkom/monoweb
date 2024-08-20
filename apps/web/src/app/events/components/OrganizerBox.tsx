@@ -7,7 +7,7 @@ interface Props {
 
 export const OrganizerBox: FC<Props> = ({ committees }) => {
   return (
-    <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
+    <section className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
       <h2>Arrangør</h2>
       <table className="mx-auto mt-4">
         <tbody>
@@ -21,6 +21,6 @@ export const OrganizerBox: FC<Props> = ({ committees }) => {
           </tr>
         </tbody>
       </table>
-    </div>
+    </section>
   )
 }

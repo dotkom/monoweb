@@ -100,7 +100,7 @@ const EventDetailWithAttendancePage: FC<EventDetailWithAttendanceProps> = ({
         <div className="flex-1 flex-col">
           <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} attendee={attendee} />
           {attendee && user && <TicketButton userId={user.id} />}
-          {committees.length && <OrganizerBox committees={committees} />}
+          {committees.length ? <OrganizerBox committees={committees} /> : null}
           <TimeLocationBox
             datetimeStart={event.start}
             datetimeEnd={event.end}

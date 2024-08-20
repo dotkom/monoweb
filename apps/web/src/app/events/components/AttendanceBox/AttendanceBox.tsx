@@ -1,14 +1,13 @@
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
-import clsx from "clsx"
 import type { Session } from "next-auth"
-import { type FC, type ReactElement, useState } from "react"
-import { getStructuredDateInfo } from "../../utils"
+import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
+import { RegisterMeButton } from "./RegisterMeButton"
+import { getStructuredDateInfo } from "../../utils"
 
 interface Props {
   sessionUser?: Session["user"]
@@ -33,8 +32,6 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     throw new Error("AttendanceBox rendered for event without attendance")
   }
 
-  const structuredDateInfo = getStructuredDateInfo(attendance, new Date())
-
   const handleGatherExtrasChoices = () => {
     if (attendance.extras !== null) {
       setExtraDialogOpen(true)
@@ -46,11 +43,12 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const userIsRegistered = Boolean(attendee)
 
-  const attendablePoolOrNullish = user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))
-  const canAttend = Boolean(attendablePoolOrNullish) && structuredDateInfo.status === "OPEN"
+  const attendablePool = user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))
+  const { status: attendanceStatus } = getStructuredDateInfo(attendance, new Date())
+  const canAttend = Boolean(attendablePool) && attendanceStatus === "OPEN"
 
   const registerForAttendance = () => {
-    if (!attendablePoolOrNullish) {
+    if (!attendablePool) {
       throw new Error("Tried to register user for attendance without a group")
     }
 
@@ -59,7 +57,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     }
 
     registerMutation.mutate({
-      attendancePoolId: attendablePoolOrNullish?.id,
+      attendancePoolId: attendablePool?.id,
       userId: user?.id,
     })
   }
@@ -74,54 +72,6 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     })
   }
 
-  let changeRegisteredStateButton: ReactElement<typeof Button>
-  let eventAttendanceStatusText: string
-
-  switch (structuredDateInfo.status) {
-    case "NOT_OPENED": {
-      eventAttendanceStatusText = `Åpner ${formatDate(
-        new Date(Date.now() + structuredDateInfo.timeUtilOpen.getTime())
-      )}`
-      break
-    }
-    case "OPEN": {
-      eventAttendanceStatusText = `Stenger ${formatDate(
-        new Date(Date.now() + structuredDateInfo.timeUntilClose.getTime())
-      )}`
-      break
-    }
-    case "CLOSED": {
-      eventAttendanceStatusText = `Stengte ${formatDate(
-        new Date(Date.now() + structuredDateInfo.timeElapsedSinceClose.getTime())
-      )}`
-      break
-    }
-    default:
-      throw new Error("Unknown status")
-  }
-
-  if (userIsRegistered) {
-    changeRegisteredStateButton = (
-      <Button className="w-full text-white rounded-lg" color="red" variant="solid" onClick={unregisterForAttendance}>
-        Meld meg av
-      </Button>
-    )
-  } else {
-    changeRegisteredStateButton = (
-      <Button
-        className={clsx(
-          "w-full rounded-lg uppercase flex flex-col gap-3 items-center h-fit p-2",
-          canAttend ? "bg-green-10" : "bg-slate-10"
-        )}
-        onClick={registerForAttendance}
-        disabled={!canAttend}
-      >
-        <span className="block">Meld meg på</span>
-        <span className="block text-sm">{eventAttendanceStatusText}</span>
-      </Button>
-    )
-  }
-
   const viewAttendeesButton = (
     <Button className="w-full rounded-lg uppercase bg-blue-10 h-100" onClick={() => console.log("WIP")}>
       Vis påmeldte
@@ -131,33 +81,10 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
       <h2 className="border-none">Påmelding</h2>
-      {<AttendanceBoxPool pool={attendablePoolOrNullish} />}
+      {<AttendanceBoxPool pool={attendablePool} />}
 
       {userIsRegistered && attendance.extras && (
         <section>
-          <div className="mt-4">
-            <h4 className="text-md font-bold">Dine valg</h4>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="text-left">Spørsmål</th>
-                  <th className="text-left">Valg</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attendee?.extrasChoices?.map((choice) => (
-                  <tr key={choice.questionId}>
-                    <td className="text-left">{choice.questionName}</td>
-                    <td className="text-left">{choice.choiceName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <Button className="mt-2 w-32" variant={"outline"} onClick={handleGatherExtrasChoices}>
-              Endre
-            </Button>
-          </div>
-
           <ChooseExtrasDialog
             defaultValues={attendee?.extrasChoices && { choices: attendee?.extrasChoices }}
             /*setOpen={setExtraDialogOpen}*/
@@ -176,7 +103,13 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
       <div className="flex flex-row gap-3">
         {viewAttendeesButton}
-        {changeRegisteredStateButton}
+        <RegisterMeButton
+          attendee={attendee}
+          attendance={attendance}
+          hasAttendancePool={canAttend}
+          registerForAttendance={registerForAttendance}
+          unregisterForAttendance={unregisterForAttendance}
+        />
       </div>
     </section>
   )
