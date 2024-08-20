@@ -5,7 +5,7 @@ terraform {
     region = "eu-north-1"
   }
 
-  required_version = "~> 1.7.0"
+  required_version = "~> 1.9.0"
 
   required_providers {
     aws = {
@@ -14,11 +14,11 @@ terraform {
     }
     doppler = {
       source  = "DopplerHQ/doppler"
-      version = "~> 1.3.0"
+      version = "~> 1.9.0"
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "~> 1.2.0"
+      version = "~> 1.4.0"
     }
   }
 }
