@@ -12,7 +12,7 @@
     "@dotkomonline/types": "workspace:*",
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
-    "kysely": "^0.26.3",
+    "kysely": "^0.27.0",
     "pg": "^8.11.3",
     "zod": "^3.22.4"
   },
