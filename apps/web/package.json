@@ -39,7 +39,7 @@
     "@trpc/next": "^10.45.0",
     "@trpc/react-query": "^10.45.0",
     "@trpc/server": "^10.45.0",
-    "axios": "1.6.2",
+    "axios": "1.7.4",
     "clsx": "^2.0.0",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",

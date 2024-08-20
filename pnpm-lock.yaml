@@ -418,8 +418,8 @@ importers:
         specifier: ^10.45.0
         version: 10.45.2
       axios:
-        specifier: 1.6.2
-        version: 1.6.2
+        specifier: 1.7.4
+        version: 1.7.4
       clsx:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3855,6 +3855,9 @@ packages:
   axios@1.6.2:
     resolution: {integrity: sha512-7i24Ri4pmDRfJTR7LDBhsOTtcm+9kjX5WiY1X3wIisx6G9So3pfMkEiU7emUBe46oceVImccTEM3k6C5dbVW8A==}
 
+  axios@1.7.4:
+    resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
+
   b4a@1.6.4:
     resolution: {integrity: sha512-fpWrvyVHEKyeEvbKZTVOeZF3VSKKWtJxFIxX/jaVPf+cLbGUSitjb49pHLqPV2BUNNZ0LcoeEGfE/YCpyDYHIw==}
 
@@ -4584,6 +4587,15 @@ packages:
 
   follow-redirects@1.15.5:
     resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
+  follow-redirects@1.15.6:
+    resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -10651,6 +10663,14 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  axios@1.7.4:
+    dependencies:
+      follow-redirects: 1.15.6
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
   b4a@1.6.4: {}
 
   bail@2.0.2: {}
@@ -11431,6 +11451,8 @@ snapshots:
   follow-redirects@1.15.5(debug@4.3.4):
     optionalDependencies:
       debug: 4.3.4
+
+  follow-redirects@1.15.6: {}
 
   foreground-child@3.3.0:
     dependencies:
