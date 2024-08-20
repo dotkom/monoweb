@@ -40,30 +40,15 @@ export const StatusCard: FC<StatusCardProps> = ({ attendance }) => {
 
   switch (structuredDateInfo.status) {
     case "NOT_OPENED": {
-      eventAttendanceStatusText = (
-        <p>
-          Åpner
-          <strong>{formatDate(structuredDateInfo.timeUtilOpen)}</strong>
-        </p>
-      )
+      eventAttendanceStatusText = <p>Åpner {formatDate(structuredDateInfo.timeUtilOpen)}</p>
       break
     }
     case "OPEN": {
-      eventAttendanceStatusText = (
-        <p>
-          Stenger
-          <strong>{formatDate(structuredDateInfo.timeUntilClose)}</strong>
-        </p>
-      )
+      eventAttendanceStatusText = <p>Stenger {formatDate(structuredDateInfo.timeUntilClose)}</p>
       break
     }
     case "CLOSED": {
-      eventAttendanceStatusText = (
-        <p>
-          Stengte
-          <strong>{formatDate(structuredDateInfo.timeElapsedSinceClose)}</strong>
-        </p>
-      )
+      eventAttendanceStatusText = <p>Stengte {formatDate(structuredDateInfo.timeElapsedSinceClose)}</p>
       break
     }
     default:
@@ -73,11 +58,9 @@ export const StatusCard: FC<StatusCardProps> = ({ attendance }) => {
   const background = STATUS_STATE_COLOR[status]
 
   return (
-    <div className="mb-4">
-      <div className={`block rounded-lg ${background} p-4 shadow-lg`}>
-        <p className="text-lg font-bold">{title}</p>
-        {eventAttendanceStatusText}
-      </div>
+    <div className={`block rounded-lg ${background} p-4 mb-4`}>
+      <p className="text-lg font-bold">{title}</p>
+      {eventAttendanceStatusText}
     </div>
   )
 }

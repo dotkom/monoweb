@@ -6,6 +6,18 @@ import type { FC, ReactElement } from "react"
 import { AttendanceBoxPool } from "./AttendanceBoxPool"
 import { useRegisterMutation, useUnregisterMutation } from "./mutations"
 import { useGetAttendee } from "./queries"
+import { getStructuredDateInfo } from "../utils"
+import { formatDate } from "@dotkomonline/utils"
+import clsx from "clsx"
+
+interface Props {
+  sessionUser?: Session["user"]
+  attendance: Attendance
+  pools: AttendancePool[]
+  event: Event
+}
+
+type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
 
 export const calculateStatus = ({
   registerStart,
@@ -27,14 +39,9 @@ export const calculateStatus = ({
   return "OPEN"
 }
 
-interface Props {
-  sessionUser?: Session["user"]
-  attendance: Attendance
-  pools: AttendancePool[]
-  event: Event
-}
-
-type StatusState = "CLOSED" | "NOT_OPENED" | "OPEN"
+// Biome ignores do not work in the middle of jsx so this is extracted just to igonre the rule here
+// biome-ignore lint/security/noDangerouslySetInnerHtml: We do not pass any user input into this, so it is safe
+const span = (text: string) => <span dangerouslySetInnerHTML={{ __html: text }} />
 
 export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
   const attendanceId = event.attendanceId
@@ -47,18 +54,21 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const registerMutation = useRegisterMutation()
   const unregisterMutation = useUnregisterMutation()
+
   const { data: attendee } = useGetAttendee({ userId: sessionUser?.id, attendanceId })
+  const userIsRegistered = Boolean(attendee)
 
   const attendanceStatus = calculateStatus({
     registerStart: attendance.registerStart,
     registerEnd: attendance.registerEnd,
     now: new Date(),
   })
-  const userIsRegistered = Boolean(attendee)
-  const attendablePool = user && pools.find((a) => a.yearCriteria.includes(user?.studyYear))
+
+  const attendablePoolOrNullish = user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))
+  const canAttend = Boolean(attendablePoolOrNullish) && attendanceStatus === "OPEN"
 
   const registerForAttendance = () => {
-    if (!attendablePool) {
+    if (!attendablePoolOrNullish) {
       throw new Error("Tried to register user for attendance without a group")
     }
 
@@ -67,7 +77,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     }
 
     registerMutation.mutate({
-      attendancePoolId: attendablePool?.id,
+      attendancePoolId: attendablePoolOrNullish?.id,
       userId: sessionUser.id,
     })
   }
@@ -82,36 +92,64 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     })
   }
 
+  const structuredDateInfo = getStructuredDateInfo(attendance, new Date())
+
   let changeRegisteredStateButton: ReactElement<typeof Button>
+  let eventAttendanceStatusText: string
+
+  switch (structuredDateInfo.status) {
+    case "NOT_OPENED": {
+      eventAttendanceStatusText = `Åpner ${formatDate(structuredDateInfo.timeUtilOpen)}`
+      break
+    }
+    case "OPEN": {
+      eventAttendanceStatusText = `Stenger ${formatDate(structuredDateInfo.timeUntilClose)}`
+      break
+    }
+    case "CLOSED": {
+      eventAttendanceStatusText = `Stengte ${formatDate(structuredDateInfo.timeElapsedSinceClose)}`
+      break
+    }
+    default:
+      throw new Error("Unknown status")
+  }
 
   if (userIsRegistered) {
     changeRegisteredStateButton = (
-      <Button className="w-full text-white rounded-xl" color="red" variant="solid" onClick={unregisterForAttendance}>
+      <Button className="w-full text-white rounded-lg" color="red" variant="solid" onClick={unregisterForAttendance}>
         Meld meg av
       </Button>
     )
   } else {
     changeRegisteredStateButton = (
-      <Button className="w-full rounded-xl" onClick={registerForAttendance}>
-        Meld meg på
+      <Button
+        className={clsx(
+          "w-full rounded-lg uppercase flex flex-col gap-3 items-center h-fit p-2",
+          canAttend ? "bg-green-10" : "bg-slate-10"
+        )}
+        onClick={registerForAttendance}
+        disabled={!canAttend}
+      >
+        <span className="block">Meld meg på</span>
+        <span className="block text-sm">{eventAttendanceStatusText}</span>
       </Button>
     )
   }
 
   const viewAttendeesButton = (
-    <Button className="w-full rounded-xl" onClick={() => console.log("WIP")}>
+    <Button className="w-full rounded-lg uppercase bg-blue-10 h-100" onClick={() => console.log("WIP")}>
       Se påmeldte
     </Button>
   )
 
   return (
-    <div className="flex flex-col bg-slate-2 rounded-3xl min-h-64 mb-8 px-4 py-4 gap-3">
-      <h2>Påmelding</h2>
-      {attendablePool && <AttendanceBoxPool pool={attendablePool} />}
-      <div className="flex flex-row gap-6">
+    <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
+      <h2 className="border-none">Påmelding</h2>
+      {<AttendanceBoxPool pool={attendablePoolOrNullish} />}
+      <div className="flex flex-row gap-3">
         {viewAttendeesButton}
-        {attendanceStatus === "OPEN" && changeRegisteredStateButton}
+        {changeRegisteredStateButton}
       </div>
-    </div>
+    </section>
   )
 }
