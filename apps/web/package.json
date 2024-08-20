@@ -22,7 +22,7 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
-    "@fadi-ui/react-country-flag": "^1.0.7",
+    "@fadi-ui/react-country-flag": "^2.0.0",
     "@next/env": "^14.0.3",
     "@portabletext/react": "^3.0.11",
     "@radix-ui/colors": "^3.0.0",

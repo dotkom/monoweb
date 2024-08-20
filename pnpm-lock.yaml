@@ -367,8 +367,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       '@fadi-ui/react-country-flag':
-        specifier: ^1.0.7
-        version: 1.0.7
+        specifier: ^2.0.0
+        version: 2.0.1
       '@next/env':
         specifier: ^14.0.3
         version: 14.0.4
@@ -1937,8 +1937,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@fadi-ui/react-country-flag@1.0.7':
-    resolution: {integrity: sha512-UO+mSApJ9tKcTFo/XN8SPkko+KAWoiJRAOuY2CHAHrH0x7tBaCO8rXiTVpN70jR2sEuhDIsOn604kElRRJxRNg==}
+  '@fadi-ui/react-country-flag@2.0.1':
+    resolution: {integrity: sha512-AOXzmxWK3CR7FgZxmMg7SutEWF5XsS96hTRR9eLDqrp/+ZhArzPC0x2WV5P+dkdTdJB7U9QBh7pDHMUp+zaHiQ==}
 
   '@floating-ui/core@1.4.1':
     resolution: {integrity: sha512-jk3WqquEJRlcyu7997NtR5PibI+y5bi+LS3hPmguVClypenMsCY3CBa3LAQnozRCtCrYWSEtAdiskpamuJRFOQ==}
@@ -8652,7 +8652,7 @@ snapshots:
   '@esbuild/win32-x64@0.20.2':
     optional: true
 
-  '@fadi-ui/react-country-flag@1.0.7':
+  '@fadi-ui/react-country-flag@2.0.1':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
