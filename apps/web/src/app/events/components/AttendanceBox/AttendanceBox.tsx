@@ -2,12 +2,12 @@ import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
+import clsx from "clsx"
 import type { Session } from "next-auth"
 import { type FC, type ReactElement, useState } from "react"
 import { getStructuredDateInfo } from "../../utils"
-import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
-import clsx from "clsx"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
+import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
 
 interface Props {
@@ -79,15 +79,21 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   switch (structuredDateInfo.status) {
     case "NOT_OPENED": {
-      eventAttendanceStatusText = `Åpner ${formatDate(new Date(Date.now() + structuredDateInfo.timeUtilOpen.getTime()))}`
+      eventAttendanceStatusText = `Åpner ${formatDate(
+        new Date(Date.now() + structuredDateInfo.timeUtilOpen.getTime())
+      )}`
       break
     }
     case "OPEN": {
-      eventAttendanceStatusText = `Stenger ${formatDate(new Date(Date.now() + structuredDateInfo.timeUntilClose.getTime()))}`
+      eventAttendanceStatusText = `Stenger ${formatDate(
+        new Date(Date.now() + structuredDateInfo.timeUntilClose.getTime())
+      )}`
       break
     }
     case "CLOSED": {
-      eventAttendanceStatusText = `Stengte ${formatDate(new Date(Date.now() + structuredDateInfo.timeElapsedSinceClose.getTime()))}`
+      eventAttendanceStatusText = `Stengte ${formatDate(
+        new Date(Date.now() + structuredDateInfo.timeElapsedSinceClose.getTime())
+      )}`
       break
     }
     default:
@@ -118,7 +124,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const viewAttendeesButton = (
     <Button className="w-full rounded-lg uppercase bg-blue-10 h-100" onClick={() => console.log("WIP")}>
-      Se påmeldte
+      Vis påmeldte
     </Button>
   )
 
