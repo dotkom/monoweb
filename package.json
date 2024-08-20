@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "turbo": "^1.10.16",
+    "turbo": "^2.0.0",
     "turbo-ignore": "^2.0.0",
     "typescript": "^5.4.5"
   }
