@@ -665,8 +665,8 @@ importers:
         specifier: ^8.10.9
         version: 8.10.9
       kysely-codegen:
-        specifier: ^0.11.0
-        version: 0.11.0(kysely@0.27.4)(pg@8.11.3)
+        specifier: ^0.15.0
+        version: 0.15.0(kysely@0.27.4)(pg@8.11.3)
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -4573,8 +4573,16 @@ packages:
     resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
     engines: {node: '>=12'}
 
+  dotenv-expand@11.0.6:
+    resolution: {integrity: sha512-8NHi73otpWsZGBSZwwknTXS5pqMOrk9+Ssrna8xCaxkzEpU9OTf9R5ArQGVw03//Zmk9MOwLPng9WwndvpAJ5g==}
+    engines: {node: '>=12'}
+
   dotenv@16.3.1:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+    engines: {node: '>=12'}
+
+  dotenv@16.4.5:
+    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
 
   duplexer2@0.1.4:
@@ -5370,23 +5378,35 @@ packages:
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
 
-  kysely-codegen@0.11.0:
-    resolution: {integrity: sha512-8aklzXygjANshk5BoGSQ0BWukKIoPL4/k1iFWyteGUQ/VtB1GlyrELBZv1GglydjLGECSSVDpsOgEXyWQmuksg==}
+  kysely-codegen@0.15.0:
+    resolution: {integrity: sha512-LPta2nQOyoEPDQ3w/Gsplc+2iyZPAsGvtWoS21VzOB0NDQ0B38Xy1gS8WlbGef542Zdw2eLJHxekud9DzVdNRw==}
     hasBin: true
     peerDependencies:
       '@libsql/kysely-libsql': ^0.3.0
+      '@tediousjs/connection-string': ^0.5.0
       better-sqlite3: '>=7.6.2'
-      kysely: '>=0.19.12'
+      kysely: ^0.27.0
+      kysely-bun-worker: ^0.5.3
       mysql2: ^2.3.3 || ^3.0.0
       pg: ^8.8.0
+      tarn: ^3.0.0
+      tedious: ^16.6.0 || ^17.0.0
     peerDependenciesMeta:
       '@libsql/kysely-libsql':
         optional: true
+      '@tediousjs/connection-string':
+        optional: true
       better-sqlite3:
+        optional: true
+      kysely-bun-worker:
         optional: true
       mysql2:
         optional: true
       pg:
+        optional: true
+      tarn:
+        optional: true
+      tedious:
         optional: true
 
   kysely@0.27.4:
@@ -11488,7 +11508,13 @@ snapshots:
 
   dotenv-expand@10.0.0: {}
 
+  dotenv-expand@11.0.6:
+    dependencies:
+      dotenv: 16.4.5
+
   dotenv@16.3.1: {}
+
+  dotenv@16.4.5: {}
 
   duplexer2@0.1.4:
     dependencies:
@@ -12497,10 +12523,11 @@ snapshots:
 
   kuler@2.0.0: {}
 
-  kysely-codegen@0.11.0(kysely@0.27.4)(pg@8.11.3):
+  kysely-codegen@0.15.0(kysely@0.27.4)(pg@8.11.3):
     dependencies:
       chalk: 4.1.2
-      dotenv: 16.3.1
+      dotenv: 16.4.5
+      dotenv-expand: 11.0.6
       git-diff: 2.0.6
       kysely: 0.27.4
       micromatch: 4.0.5
