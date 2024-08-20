@@ -10,18 +10,6 @@
       "matchPackageNames": [
         "/^@dotkomonline//"
       ]
-    },
-    {
-      "description": "Ignore nodejs and pnpm",
-      "matchPackageNames": [
-        "node",
-        "pnpm"
-      ],
-      "enabled": false
     }
-  ],
-  "updateInternalDeps": true,
-  "rangeStrategy": "bump",
-  "automerge": true,
-  "automergeType": "branch"
+  ]
 }
