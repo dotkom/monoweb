@@ -1,5 +1,5 @@
 import { type InterestGroupWrite, InterestGroupWriteSchema } from "@dotkomonline/types"
-import { createCheckboxInput, createTextInput, createTextareaInput, useFormBuilder } from "src/app/form"
+import { createCheckboxInput, createTextInput, createTextareaInput, useFormBuilder } from "../../../app/form"
 
 const INTEREST_GROUP_FORM_DEFAULT_VALUES: Partial<InterestGroupWrite> = {}
 

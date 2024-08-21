@@ -1,5 +1,5 @@
-import { useQueryNotification } from "src/app/notifications"
-import { trpc } from "src/utils/trpc"
+import { useQueryNotification } from "../../../app/notifications"
+import { trpc } from "../../../utils/trpc"
 
 export const useUpdateInterestGroupMutation = () => {
   const notification = useQueryNotification()

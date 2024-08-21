@@ -1,4 +1,5 @@
 import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
+import type { z } from "zod"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -7,8 +8,7 @@ import {
   createTextInput,
   createTextareaInput,
   useFormBuilder,
-} from "src/app/form"
-import type { z } from "zod"
+} from "../../../app/form"
 import { useCompanyAllQuery } from "../../../modules/company/queries/use-company-all-query"
 import { useJobListingAllLocationsQuery } from "../../../modules/job-listing/queries/use-job-listing-locations-all-query"
 
