@@ -21,7 +21,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "@types/react": "^18.2.38",
-    "react-email": "^1.9.5",
+    "react-email": "^2.0.0",
     "typescript": "^5.4.5"
   }
 }
