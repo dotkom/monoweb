@@ -5,7 +5,7 @@ import type { Attendance, AttendancePool, Committee, Company, Event } from "@dot
 import type { Session } from "next-auth"
 import { useSession } from "next-auth/react"
 import type { FC } from "react"
-import { AttendanceBox } from "../components/AttendanceBox"
+import { AttendanceBox } from "../components/AttendanceBox/AttendanceBox"
 import { EventHeader } from "../components/EventHeader"
 import { EventInfoBox } from "../components/EventInfoBox"
 import { OrganizerBox } from "../components/OrganizerBox"
@@ -18,8 +18,6 @@ const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
 }
 
 const EventDetailPageInner = ({ id }: { id: string }) => {
-  "use client"
-
   const session = useSession()
 
   const { data: event, isLoading: eventIsLoading } = trpc.event.getWebEventDetailData.useQuery(id)
@@ -90,13 +88,17 @@ const EventDetailWithAttendancePage: FC<EventDetailWithAttendanceProps> = ({
     userId: user?.id,
   })
 
+  if (attendee === undefined) {
+    return <div>Laster</div>
+  }
+
   return (
     <div className="mt-8 flex flex-col gap-8">
       <EventHeader event={event} />
       <div className="flex w-full flex-col md:flex-row">
         <EventInfoBox event={event} committees={committees} companies={companies} />
         <div className="flex-1 flex-col">
-          <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} />
+          <AttendanceBox sessionUser={user} attendance={attendance} pools={pools} event={event} attendee={attendee} />
           {attendee && user && <TicketButton userId={user.id} />}
           {committees.length && <OrganizerBox committees={committees} />}
           <TimeLocationBox
