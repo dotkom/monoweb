@@ -19,7 +19,7 @@
     "@dotkomonline/gateway-trpc": "workspace:^",
     "@dotkomonline/types": "workspace:^",
     "@trpc/react-query": "^10.45.0",
-    "ical-generator": "^5.0.1",
+    "ical-generator": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "next-auth": "^4.24.5",
     "stripe": "^13.11.0"
