@@ -1,49 +1,5 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["**/dist"]
-    },
-    "build:prod": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**"]
-    },
-    "build:storybook": {
-      "outputs": ["storybook-static/**"]
-    },
-    "type-check": {
-      "outputs": []
-    },
-    "test": {
-      "dependsOn": ["lint", "type-check"],
-      "outputs": []
-    },
-    "test:it": {
-      "outputs": []
-    },
-    "lint": {
-      "outputs": []
-    },
-    "lint-check": {
-      "outputs": []
-    },
-    "dev": {
-      "cache": false
-    },
-    "migrate": {
-      "env": ["DATABASE_URL"],
-      "cache": false,
-      "dependsOn": []
-    },
-    "clean": {
-      "cache": false
-    },
-    "storybook": {
-      "outputs": [],
-      "cache": false
-    }
-  },
   "globalEnv": [
     "S3_BUCKET_MONOWEB",
     "NODE_ENV",
@@ -73,5 +29,64 @@
     "GTX_AUTH0_CLIENT_ID",
     "GTX_AUTH0_CLIENT_SECRET",
     "GTX_AUTH0_ISSUER"
-  ]
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "**/dist"
+      ]
+    },
+    "build:prod": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**"
+      ]
+    },
+    "build:storybook": {
+      "outputs": [
+        "storybook-static/**"
+      ]
+    },
+    "type-check": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": [
+        "lint",
+        "type-check"
+      ],
+      "outputs": []
+    },
+    "test:it": {
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "lint-check": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false
+    },
+    "migrate": {
+      "env": [
+        "DATABASE_URL"
+      ],
+      "cache": false,
+      "dependsOn": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "storybook": {
+      "outputs": [],
+      "cache": false
+    }
+  }
 }
