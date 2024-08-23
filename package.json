@@ -2,7 +2,11 @@
   "name": "monorepo",
   "version": "1.0.0",
   "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
-  "keywords": ["online", "ntnu", "student-association"],
+  "keywords": [
+    "online",
+    "ntnu",
+    "student-association"
+  ],
   "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "bugs": {
@@ -49,7 +53,7 @@
   },
   "devDependencies": {
     "dotenv-cli": "^7.3.0",
-    "turbo": "^1.10.16",
+    "turbo": "^2.0.14",
     "turbo-ignore": "^2.0.0",
     "typescript": "^5.4.5"
   }
