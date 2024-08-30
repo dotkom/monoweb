@@ -3,11 +3,11 @@ import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/
 import { Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
+import { getStructuredDateInfo } from "../../utils"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
 import { RegisterMeButton } from "./RegisterMeButton"
-import { getStructuredDateInfo } from "../../utils"
 
 interface Props {
   sessionUser?: Session["user"]
