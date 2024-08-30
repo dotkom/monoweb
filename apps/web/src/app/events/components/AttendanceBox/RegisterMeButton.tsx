@@ -62,11 +62,11 @@ export const RegisterMeButton: FC<Props> = ({
         className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100", background)}
         onClick={registerForAttendance}
         disabled={!hasAttendancePool}
-        icon={<Icon icon="tabler:plus" className="text-4xl" />}
+        icon={<Icon icon="tabler:plus" className="text-3xl" />}
       >
-        <span className="flex flex-col gap-3 items-center w-max">
-          <span className="block uppercase text-lg">Meld meg på</span>
-          <span className="block font-medium text-sm">{eventAttendanceStatusText}</span>
+        <span className="flex flex-col items-center w-max">
+          <span className="block uppercase">Meld meg på</span>
+          <span className="block font-medium text-xs">{eventAttendanceStatusText}</span>
         </span>
       </Button>
     )
