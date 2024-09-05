@@ -21,7 +21,6 @@ export default function Page() {
   const dispatch = useSubmitMutation()
   const onSubmit = (data: FormSchema) => {
     dispatch.mutate(data)
-    form.reset()
   }
 
   return (
