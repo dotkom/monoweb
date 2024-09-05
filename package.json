@@ -19,7 +19,7 @@
   "scripts": {
     "build": "turbo run build --filter=@dotkomonline/* --cache-dir=.turbo",
     "build:api": "turbo run build --filter=ow-api",
-    "build:web": "dotenv -e .env -- turbo run build:prod --filter=web",
+    "build:web": "dotenv -e .env -- turbo run build:prod --filter=@dotkomonline/web",
     "build:dashboard": "turbo run build --filter=@dotkomonline/dashboard",
     "build:brevduen": "turbo run build --filter=@dotkomonline/brevduen",
     "build:rif": "turbo run build --filter=@dotkomonline/rif",
