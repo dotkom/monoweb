@@ -19,7 +19,7 @@ export default function Page() {
     },
   })
   const dispatch = useSubmitMutation()
-  const onSubmit = async (data: FormSchema) => {
+  const onSubmit = (data: FormSchema) => {
     dispatch.mutate(data)
   }
 
