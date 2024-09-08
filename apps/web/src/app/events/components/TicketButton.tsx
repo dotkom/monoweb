@@ -1,3 +1,5 @@
+"use client";
+
 import type { UserId } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import { Cross2Icon } from "@radix-ui/react-icons"
