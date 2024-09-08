@@ -14,10 +14,6 @@ import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 import { useGetAttendee } from "../components/queries"
 
 const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
-  return <EventDetailPageInner id={id} />
-}
-
-const EventDetailPageInner = ({ id }: { id: string }) => {
   const session = useSession()
 
   const { data: event, isLoading: eventIsLoading } = trpc.event.getWebEventDetailData.useQuery(id)
