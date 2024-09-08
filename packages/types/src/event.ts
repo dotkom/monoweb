@@ -1,9 +1,5 @@
 import { z } from "zod"
 import { AttendanceSchema } from "./attendance/attendance"
-import { Committee } from "./committee"
-import { Company } from "./company"
-import { Attendance } from "./attendance/attendance"
-import { AttendancePool } from "./attendance/attendance-pool"
 
 export const EventSchema = z.object({
   id: z.string().ulid(),
