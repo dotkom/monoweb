@@ -22,12 +22,6 @@ const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) =
     hasAttendance
   } = eventDetail;
 
-  /*
-  const attendee = hasAttendance && session ? await client.event.attendance.getAttendee(
-    { attendanceId: eventDetail.attendance?.id, userId: session?.user.id }
-  ) : null
-  */
-
   return (
     <div className="mt-8 flex flex-col gap-8">
       <EventHeader event={eventDetail.event} />
