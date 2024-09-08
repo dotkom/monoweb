@@ -1,3 +1,5 @@
+"use client"
+
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
@@ -14,14 +16,17 @@ interface Props {
   attendance: Attendance
   pools: AttendancePool[]
   event: Event
-  attendee: Attendee | null
 }
 
 // Biome ignores do not work in the middle of jsx so this is extracted just to igonre the rule here
 // biome-ignore lint/security/noDangerouslySetInnerHtml: We do not pass any user input into this, so it is safe
 const span = (text: string) => <span dangerouslySetInnerHTML={{ __html: text }} />
 
-export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event, attendee }) => {
+export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
+  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
+    attendanceId: attendance.id,
+    userId: sessionUser?.id ?? ""
+  });
   const attendanceId = event.attendanceId
   const [extraDialogOpen, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
@@ -77,6 +82,10 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
       Vis påmeldte
     </Button>
   )
+
+  if (attendee === undefined) {
+    return <div>Loading</div>
+  }
 
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
