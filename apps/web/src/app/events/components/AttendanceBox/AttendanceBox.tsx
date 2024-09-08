@@ -1,3 +1,5 @@
+"use client"
+
 import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"

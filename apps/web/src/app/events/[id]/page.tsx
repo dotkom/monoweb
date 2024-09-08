@@ -1,9 +1,4 @@
-"use client"
-
-import { trpc } from "@/utils/trpc/client"
 import type { Attendance, AttendancePool, Committee, Company, Event } from "@dotkomonline/types"
-import type { Session } from "next-auth"
-import { useSession } from "next-auth/react"
 import type { FC } from "react"
 import { AttendanceBox } from "../components/AttendanceBox/AttendanceBox"
 import { EventHeader } from "../components/EventHeader"
@@ -12,24 +7,19 @@ import { OrganizerBox } from "../components/OrganizerBox"
 import TicketButton from "../components/TicketButton"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 import { useGetAttendee } from "../components/queries"
+import {getServerSession, type Session} from "next-auth"
+import {getServerClient} from "@/utils/trpc/serverClient";
 
-const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
-  const session = useSession()
+const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) => {
+  const session = await getServerSession()
+  const client = await getServerClient()
 
-  const { data: event, isLoading: eventIsLoading } = trpc.event.getWebEventDetailData.useQuery(id)
-
-  if (eventIsLoading) {
-    return <div>Laster</div>
-  }
-
-  if (!event) {
-    return <div>Kunne ikke hente data</div>
-  }
+  const event = await client.event.getWebEventDetailData(id);
 
   if (event.hasAttendance) {
     return (
       <EventDetailWithAttendancePage
-        user={session.data?.user}
+        user={session?.user}
         attendance={event.attendance}
         pools={event.pools}
         event={event.event}
@@ -41,7 +31,7 @@ const EventDetailPage = ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <EventDetailWithoutAttendancePage
-      user={session?.data?.user}
+      user={session?.user}
       event={event.event}
       committees={event.eventCommittees}
       companies={event.eventCompanies}
