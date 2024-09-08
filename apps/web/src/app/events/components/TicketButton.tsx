@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import type { UserId } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"

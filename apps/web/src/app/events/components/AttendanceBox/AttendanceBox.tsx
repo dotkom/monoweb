@@ -1,7 +1,7 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendancePool, Attendee, Event } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
@@ -25,8 +25,8 @@ const span = (text: string) => <span dangerouslySetInnerHTML={{ __html: text }} 
 export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
     attendanceId: attendance.id,
-    userId: sessionUser?.id ?? ""
-  });
+    userId: sessionUser?.id ?? "",
+  })
   const attendanceId = event.attendanceId
   const [extraDialogOpen, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
