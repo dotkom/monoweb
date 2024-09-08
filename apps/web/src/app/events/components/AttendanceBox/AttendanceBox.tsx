@@ -18,10 +18,6 @@ interface Props {
   event: Event
 }
 
-// Biome ignores do not work in the middle of jsx so this is extracted just to igonre the rule here
-// biome-ignore lint/security/noDangerouslySetInnerHtml: We do not pass any user input into this, so it is safe
-const span = (text: string) => <span dangerouslySetInnerHTML={{ __html: text }} />
-
 export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
     attendanceId: attendance.id,
@@ -48,16 +44,15 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
   const userIsRegistered = Boolean(attendee)
 
-  const attendablePool = user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))
+  const attendablePool = (user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))) ?? null
   const { status: attendanceStatus } = getStructuredDateInfo(attendance, new Date())
-  const canAttend = Boolean(attendablePool) && attendanceStatus === "OPEN"
 
   const registerForAttendance = () => {
     if (!attendablePool) {
       throw new Error("Tried to register user for attendance without a group")
     }
 
-    if (!sessionUser) {
+    if (!sessionUser || !user) {
       throw new Error("Tried to register user without session")
     }
 
@@ -115,7 +110,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
         <RegisterMeButton
           attendee={attendee}
           attendance={attendance}
-          hasAttendancePool={canAttend}
+          attendancePool={attendablePool}
           registerForAttendance={registerForAttendance}
           unregisterForAttendance={unregisterForAttendance}
         />

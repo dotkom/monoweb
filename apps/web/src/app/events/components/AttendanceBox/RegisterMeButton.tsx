@@ -1,4 +1,4 @@
-import type { Attendance, Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
@@ -8,7 +8,7 @@ import { getStructuredDateInfo } from "../../utils"
 interface Props {
   attendee: Attendee | null
   attendance: Attendance
-  hasAttendancePool: boolean
+  attendancePool: AttendancePool | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
 }
@@ -16,7 +16,7 @@ interface Props {
 export const RegisterMeButton: FC<Props> = ({
   attendee,
   attendance,
-  hasAttendancePool,
+  attendancePool,
   registerForAttendance,
   unregisterForAttendance,
 }) => {
@@ -48,7 +48,7 @@ export const RegisterMeButton: FC<Props> = ({
       throw new Error("Unknown status")
   }
 
-  const background = hasAttendancePool ? "bg-green-9" : "bg-slate-8"
+  const background = attendancePool ? "bg-green-9" : "bg-slate-8"
 
   if (attendee) {
     changeRegisteredStateButton = (
@@ -61,7 +61,7 @@ export const RegisterMeButton: FC<Props> = ({
       <Button
         className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100", background)}
         onClick={registerForAttendance}
-        disabled={!hasAttendancePool}
+        disabled={structuredDateInfo.status !== "OPEN" || !attendancePool}
         icon={<Icon icon="tabler:plus" className="text-3xl" />}
       >
         <span className="flex flex-col items-center w-max">
