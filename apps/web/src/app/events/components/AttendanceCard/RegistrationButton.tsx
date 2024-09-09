@@ -13,6 +13,8 @@ interface Props {
   unregisterForAttendance: () => void
 }
 
+const nowWithOffset = (offset: number) => new Date(Date.now() + offset)
+
 export const RegistrationButton: FC<Props> = ({
   attendee,
   attendance,
@@ -20,25 +22,22 @@ export const RegistrationButton: FC<Props> = ({
   registerForAttendance,
   unregisterForAttendance,
 }) => {
-  const attendanceStatus = getAttendanceStatus(attendance, new Date())
+  const attendanceStatus = getAttendanceStatus(attendance)
 
   let changeRegisteredStateButton: ReactElement<typeof Button>
   let eventAttendanceStatusText: string
 
   switch (attendanceStatus.status) {
     case "NOT_OPENED": {
-      const date = new Date(Date.now() + attendanceStatus.timeUntilOpen)
-      eventAttendanceStatusText = `Åpner ${formatDate(date)}`
+      eventAttendanceStatusText = `Åpner ${formatDate(nowWithOffset(attendanceStatus.timeUntilOpen))}`
       break
     }
     case "OPEN": {
-      const date = new Date(Date.now() + attendanceStatus.timeUntilClose)
-      eventAttendanceStatusText = `Stenger ${formatDate(date)}`
+      eventAttendanceStatusText = `Stenger ${formatDate(nowWithOffset(attendanceStatus.timeUntilClose))}`
       break
     }
     case "CLOSED": {
-      const date = new Date(Date.now() + attendanceStatus.timeSinceClose)
-      eventAttendanceStatusText = `Stengte ${formatDate(date)}`
+      eventAttendanceStatusText = `Stengte ${formatDate(nowWithOffset(attendanceStatus.timeSinceClose))}`
       break
     }
     default:
