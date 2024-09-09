@@ -25,7 +25,7 @@ type AttendanceStatus =
 
 export const getAttendanceStatus = (
   registerStartAndEnd: AttendanceRegisterStartAndEnd,
-  now: Date
+  now = new Date()
 ): AttendanceStatus => {
   const { registerStart, registerEnd } = registerStartAndEnd
 
