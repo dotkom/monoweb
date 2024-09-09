@@ -13,35 +13,32 @@ interface Props {
   unregisterForAttendance: () => void
 }
 
-export const RegisterMeButton: FC<Props> = ({
+export const RegistrationButton: FC<Props> = ({
   attendee,
   attendance,
   attendancePool,
   registerForAttendance,
   unregisterForAttendance,
 }) => {
-  const structuredDateInfo = getAttendanceStatus(attendance, new Date())
+  const attendanceStatus = getAttendanceStatus(attendance, new Date())
 
   let changeRegisteredStateButton: ReactElement<typeof Button>
   let eventAttendanceStatusText: string
 
-  switch (structuredDateInfo.status) {
+  switch (attendanceStatus.status) {
     case "NOT_OPENED": {
-      eventAttendanceStatusText = `Åpner ${formatDate(
-        new Date(Date.now() + structuredDateInfo.timeUntilOpen.getTime())
-      )}`
+      const date = new Date(Date.now() + attendanceStatus.timeUntilOpen)
+      eventAttendanceStatusText = `Åpner ${formatDate(date)}`
       break
     }
     case "OPEN": {
-      eventAttendanceStatusText = `Stenger ${formatDate(
-        new Date(Date.now() + structuredDateInfo.timeUntilClose.getTime())
-      )}`
+      const date = new Date(Date.now() + attendanceStatus.timeUntilClose)
+      eventAttendanceStatusText = `Stenger ${formatDate(date)}`
       break
     }
     case "CLOSED": {
-      eventAttendanceStatusText = `Stengte ${formatDate(
-        new Date(Date.now() + structuredDateInfo.timeSinceClose.getTime())
-      )}`
+      const date = new Date(Date.now() + attendanceStatus.timeSinceClose)
+      eventAttendanceStatusText = `Stengte ${formatDate(date)}`
       break
     }
     default:
@@ -61,7 +58,7 @@ export const RegisterMeButton: FC<Props> = ({
       <Button
         className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100", background)}
         onClick={registerForAttendance}
-        disabled={structuredDateInfo.status !== "OPEN" || !attendancePool}
+        disabled={attendanceStatus.status !== "OPEN" || !attendancePool}
         icon={<Icon icon="tabler:plus" className="text-3xl" />}
       >
         <span className="flex flex-col items-center w-max">

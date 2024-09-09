@@ -5,11 +5,10 @@ import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
-import { getStructuredDateInfo } from "../../utils"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
-import { RegisterMeButton } from "./RegisterMeButton"
+import { RegistrationButton } from "./RegistrationButton"
 
 interface Props {
   sessionUser?: Session["user"]
@@ -18,7 +17,7 @@ interface Props {
   event: Event
 }
 
-export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
+export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
     attendanceId: attendance.id,
     userId: sessionUser?.id ?? "",
@@ -45,7 +44,6 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   const userIsRegistered = Boolean(attendee)
 
   const attendablePool = (user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))) ?? null
-  const { status: attendanceStatus } = getStructuredDateInfo(attendance, new Date())
 
   const registerForAttendance = () => {
     if (!attendablePool) {
@@ -107,7 +105,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
 
       <div className="flex flex-row gap-3">
         {viewAttendeesButton}
-        <RegisterMeButton
+        <RegistrationButton
           attendee={attendee}
           attendance={attendance}
           attendancePool={attendablePool}

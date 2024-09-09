@@ -15,7 +15,7 @@ const mapToImageAndName = (item: Committee | Company) => (
   </div>
 )
 
-export const EventInfoBox: FC<Props> = ({ event, committees, companies }) => {
+export const EventDescriptionAndByline: FC<Props> = ({ event, committees, companies }) => {
   const committeeList = committees.map(mapToImageAndName)
   const companyList = companies.map(mapToImageAndName)
 

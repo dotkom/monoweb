@@ -1,40 +1,51 @@
 import type { Attendance } from "@dotkomonline/types"
 
-type ReturnType =
+type AttendanceRegisterStartAndEnd = Pick<Attendance, "registerStart" | "registerEnd">
+
+enum AttendanceStatusStatus {
+  Open = "OPEN",
+  Closed = "CLOSED",
+  NotOpened = "NOT_OPENED",
+}
+
+type AttendanceStatus =
   | {
-      status: "OPEN"
-      timeUntilClose: Date
+      status: AttendanceStatusStatus.Open
+      timeUntilClose: number
     }
   | {
-      status: "CLOSED"
-      timeElapsedSinceClose: Date
+      status: AttendanceStatusStatus.Closed
+      timeSinceClose: number
     }
   | {
-      status: "NOT_OPENED"
-      timeUtilOpen: Date
-      timeUntilClose: Date
+      status: AttendanceStatusStatus.NotOpened
+      timeUntilOpen: number
+      timeUntilClose: number
     }
-export const getStructuredDateInfo = (attendance: Attendance, now: Date): ReturnType => {
-  const registerStart = attendance.registerStart
-  const registerEnd = attendance.registerEnd
+
+export const getAttendanceStatus = (
+  registerStartAndEnd: AttendanceRegisterStartAndEnd,
+  now: Date
+): AttendanceStatus => {
+  const { registerStart, registerEnd } = registerStartAndEnd
 
   if (now < registerStart) {
     return {
-      status: "NOT_OPENED",
-      timeUtilOpen: new Date(registerStart.getTime() - now.getTime()),
-      timeUntilClose: new Date(registerEnd.getTime() - now.getTime()),
+      status: AttendanceStatusStatus.NotOpened,
+      timeUntilOpen: registerStart.getTime() - now.getTime(),
+      timeUntilClose: registerEnd.getTime() - now.getTime(),
     }
   }
 
   if (now > registerEnd) {
     return {
-      status: "CLOSED",
-      timeElapsedSinceClose: new Date(now.getTime() - registerEnd.getTime()),
+      status: AttendanceStatusStatus.Closed,
+      timeSinceClose: now.getTime() - registerEnd.getTime(),
     }
   }
 
   return {
-    status: "OPEN",
-    timeUntilClose: new Date(registerEnd.getTime() - now.getTime()),
+    status: AttendanceStatusStatus.Open,
+    timeUntilClose: registerEnd.getTime() - now.getTime(),
   }
 }
