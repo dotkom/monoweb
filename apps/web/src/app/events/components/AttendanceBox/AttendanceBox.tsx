@@ -85,7 +85,7 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
       <h2 className="border-none">Påmelding</h2>
-      {<AttendanceBoxPool pool={attendablePool} />}
+      <AttendanceBoxPool pool={attendablePool} />
 
       {userIsRegistered && attendance.extras && (
         <section>
