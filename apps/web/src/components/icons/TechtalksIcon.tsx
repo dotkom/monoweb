@@ -2,7 +2,7 @@ import type { SVGProps } from "react"
 
 const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 256 256"
+    viewBox="0 20 256 205"
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
     style={{
@@ -11,7 +11,6 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       strokeLinejoin: "round",
       strokeMiterlimit: 10,
     }}
-    width="1em"
     height="1em"
     {...props}
   >
@@ -21,8 +20,8 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       style={{
         fill: "none",
         fillRule: "nonzero",
-        stroke: "#000",
-        strokeWidth: 3,
+
+        strokeWidth: "5.5px",
       }}
     />
     <path
@@ -30,18 +29,13 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       style={{
         fill: "none",
         fillRule: "nonzero",
-        stroke: "#000",
-        strokeWidth: 2,
+        strokeWidth: "5.5px",
         strokeLinejoin: "miter",
       }}
     />
     <path
       d="m39.444 152.682-9.301-44.096 9.301 44.096ZM49.733 152.682l8.905-45.481M31.945 117.13l8.685-5.773 2.177 10.686 4.947-14.444 2.968 11.869 6.135-3.169"
       style={{
-        fill: "none",
-        fillRule: "nonzero",
-        stroke: "#000",
-        strokeWidth: "1.8px",
         strokeLinejoin: "miter",
       }}
     />
@@ -50,8 +44,7 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       style={{
         fill: "none",
         fillRule: "nonzero",
-        stroke: "#000",
-        strokeWidth: 2,
+        strokeWidth: "5.5px",
         strokeLinejoin: "miter",
       }}
     />
@@ -66,8 +59,7 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       style={{
         fill: "none",
         fillRule: "nonzero",
-        stroke: "#000",
-        strokeWidth: 3,
+        strokeWidth: "5.5px",
       }}
     />
     <path
@@ -75,8 +67,7 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       style={{
         fill: "none",
         fillRule: "nonzero",
-        stroke: "#000",
-        strokeWidth: 3,
+        strokeWidth: "5.5px",
       }}
     />
   </svg>

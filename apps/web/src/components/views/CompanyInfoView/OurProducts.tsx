@@ -30,13 +30,11 @@ const PRODUCTS = [
 
 const OurProducts = () => (
   <div className="flex flex-col justify-center">
-    <div className="flex justify-evenly">
+    <div className="flex flex-wrap max-w-[600px] justify-evenly items-center">
       {PRODUCTS.map((product) => (
-        <div key={product.name} className="flex flex-col text-center">
-          <div className="flex justify-center">
-            <product.icon className="h-[50px] w-[50px] md:h-12 md:w-[75px] lg:h-[100px] lg:w-[100px]" />
-          </div>
-          <Text className="font-bold">{product.name}</Text>
+        <div className="flex flex-col px-10 pb-8 justify-center">
+          <product.icon className="h-[50px] lg:h-[100px]" fill="#0D5474" stroke="#0D5474" />
+          <Text className="font-bold text-brand">{product.name}</Text>
         </div>
       ))}
     </div>
