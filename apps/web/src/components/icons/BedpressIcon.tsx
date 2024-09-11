@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const SvgBedpressIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -75,6 +75,6 @@ const SvgBedpressIcon = (props: SVGProps<SVGSVGElement>) => (
       }}
     />
   </svg>
-);
+)
 
-export default SvgBedpressIcon;
+export default SvgBedpressIcon

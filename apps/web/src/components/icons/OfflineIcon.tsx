@@ -11,7 +11,6 @@ const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
-    
     height="1em"
     {...props}
   >

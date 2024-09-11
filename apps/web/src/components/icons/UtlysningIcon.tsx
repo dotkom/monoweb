@@ -16,12 +16,12 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <title>Utlysning icon</title>
-      <path
-        d="M8.52 84h238.96v19.195l-14.482 8.31V134L153 155.574l-.521-44.069h-50.321L102 155.574l-78.998-12.589v-31.48L8.52 103.701V84Z"
-        style={{
-          fillOpacity: 0.13,
-        }}
-      />
+    <path
+      d="M8.52 84h238.96v19.195l-14.482 8.31V134L153 155.574l-.521-44.069h-50.321L102 155.574l-78.998-12.589v-31.48L8.52 103.701V84Z"
+      style={{
+        fillOpacity: 0.13,
+      }}
+    />
     <path
       d="m80.609 60.505 11.902-31.869 73.396.144 10.643 31.652"
       style={{
@@ -49,7 +49,7 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
       d="m23.002 111.505 79.654 25.344v25.344L128 183.917l25.344-21.724v-28.965l79.654-21.723-79.654 21.723v-21.723h-50.688v25.344"
       style={{
         fill: "none",
-        
+
         strokeWidth: "6px",
       }}
     />

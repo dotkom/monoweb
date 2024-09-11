@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -68,6 +68,6 @@ const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
       }}
     />
   </svg>
-);
+)
 
-export default SvgItexIcon;
+export default SvgItexIcon

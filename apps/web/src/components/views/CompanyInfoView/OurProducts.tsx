@@ -33,7 +33,7 @@ const OurProducts = () => (
     <div className="flex flex-wrap max-w-[600px] justify-evenly items-center">
       {PRODUCTS.map((product) => (
         <div className="flex flex-col px-10 pb-8 justify-center">
-          <product.icon className="h-[50px] lg:h-[100px]" fill="#0D5474" stroke="#0D5474"/>
+          <product.icon className="h-[50px] lg:h-[100px]" fill="#0D5474" stroke="#0D5474" />
           <Text className="font-bold text-brand">{product.name}</Text>
         </div>
       ))}

@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -71,6 +71,6 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
       }}
     />
   </svg>
-);
+)
 
-export default SvgTecktalksIcon;
+export default SvgTecktalksIcon
