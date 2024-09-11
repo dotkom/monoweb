@@ -3,9 +3,10 @@ import type { FC } from "react"
 
 interface Props {
   pool: AttendancePool | undefined | null
+  isAttending: boolean
 }
 
-export const AttendanceBoxPool: FC<Props> = ({ pool }) => {
+export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending }) => {
   if (!pool) {
     return (
       <div className="flex flex-col w-full bg-slate-3 rounded-lg">
@@ -26,7 +27,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool }) => {
         <p className="text-3xl">
           {pool.numAttendees}/{pool.capacity}
         </p>
-        <p>Du er ikke påmeldt</p>
+        <p>{isAttending ? 'Du er påmeldt' : 'Du er ikke påmeldt'}</p>
       </div>
     </div>
   )

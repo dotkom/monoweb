@@ -16,30 +16,8 @@ import type { EventCommitteeService } from "./event-committee-service"
 import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository.js"
+import type { DashboardEventDetail, WebEventDetail } from "@dotkomonline/types"
 
-type DashboardEventDetail = {
-  event: Event
-  eventCommittees: Committee[]
-  attendance: Attendance | null
-  pools: AttendancePool[] | null
-  hasAttendance: boolean
-}
-
-type WebEventDetail =
-  | {
-      hasAttendance: false
-      event: Event
-      eventCommittees: Committee[]
-      eventCompanies: Company[]
-    }
-  | {
-      hasAttendance: true
-      event: Event
-      eventCommittees: Committee[]
-      attendance: Attendance
-      pools: AttendancePool[]
-      eventCompanies: Company[]
-    }
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>

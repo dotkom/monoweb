@@ -12,31 +12,33 @@ const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) =
 
   const eventDetail = await client.event.getWebEventDetailData(id)
 
-  const { event, eventCommittees: committees, eventCompanies: companies, hasAttendance } = eventDetail
-
   return (
     <div className="mt-8 flex flex-col gap-8">
       <EventHeader event={eventDetail.event} />
       <div className="flex w-full flex-col md:flex-row">
-        <EventDescriptionAndByline event={eventDetail.event} committees={committees} companies={companies} />
+        <EventDescriptionAndByline
+            event={eventDetail.event}
+            committees={eventDetail.eventCommittees}
+            companies={eventDetail.eventCompanies} />
         <div className="flex-1 flex-col">
-          {hasAttendance && (
+          {eventDetail.hasAttendance && (
             <AttendanceCard
               sessionUser={session?.user}
-              attendance={eventDetail.attendance}
-              pools={eventDetail.pools}
-              event={event}
+              initialEventDetail={eventDetail}
             />
           )}
-          {committees.length ? <OrganizerBox committees={committees} /> : null}
+          {
+            eventDetail.eventCommittees.length ?
+                <OrganizerBox committees={eventDetail.eventCommittees} /> : null
+          }
           <TimeLocationBox
             datetimeStart={eventDetail.event.start}
-            datetimeEnd={event.end}
-            locationTitle={event.locationTitle}
-            locationAddress={event.locationAddress}
-            locationLink={event.locationLink}
-            eventTitle={event.title}
-            eventDescription={event.description}
+            datetimeEnd={eventDetail.event.end}
+            locationTitle={eventDetail.event.locationTitle}
+            locationAddress={eventDetail.event.locationAddress}
+            locationLink={eventDetail.event.locationLink}
+            eventTitle={eventDetail.event.title}
+            eventDescription={eventDetail.event.description}
           />
         </div>
       </div>

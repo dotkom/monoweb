@@ -4,6 +4,7 @@ import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
 import type { FC, ReactElement } from "react"
 import { getAttendanceDetails } from "../../utils"
+import { getColorStyles } from "@dotkomonline/ui/src/components/Button/Button"
 
 interface Props {
   attendance: Attendance
@@ -11,6 +12,7 @@ interface Props {
   attendancePool: AttendancePool | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
+  isLoading: boolean
 }
 
 const nowWithOffset = (offset: number) => new Date(Date.now() + offset)
@@ -21,6 +23,7 @@ export const RegistrationButton: FC<Props> = ({
   attendancePool,
   registerForAttendance,
   unregisterForAttendance,
+  isLoading
 }) => {
   const attendanceDetails = getAttendanceDetails(attendance)
 
@@ -44,29 +47,29 @@ export const RegistrationButton: FC<Props> = ({
       throw new Error("Unknown status")
   }
 
-  const background = attendancePool ? "bg-green-9" : "bg-slate-8"
+  const buttonStatusText = attendee ? "Meld meg av" : "Meld meg på"
+  const buttonIcon = null;
 
-  if (attendee) {
-    changeRegisteredStateButton = (
-      <Button className="w-full text-white rounded-lg" color="red" variant="solid" onClick={unregisterForAttendance}>
-        Meld meg av
-      </Button>
-    )
-  } else {
-    changeRegisteredStateButton = (
-      <Button
-        className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100", background)}
-        onClick={registerForAttendance}
+  return <Button
+        className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100")}
+        onClick={attendee ? unregisterForAttendance : registerForAttendance}
         disabled={attendanceDetails.status !== "Open" || !attendancePool}
-        icon={<Icon icon="tabler:plus" className="text-3xl" />}
+        color={attendee ? "red" : "green"}
+        variant="solid"
+        icon={buttonIcon}
       >
-        <span className="flex flex-col items-center w-max">
-          <span className="block uppercase">Meld meg på</span>
-          <span className="block font-medium text-xs">{eventAttendanceStatusText}</span>
-        </span>
-      </Button>
-    )
-  }
-
-  return changeRegisteredStateButton
+        {
+          <span className="flex flex-col items-center w-max">
+            {
+              isLoading ?
+                <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
+                  :
+                <>
+                  <span className="block uppercase">{buttonStatusText}</span>
+                  <span className="block font-medium text-xs">{eventAttendanceStatusText}</span>
+                </>
+            }
+          </span>
+        }
+  </Button>
 }

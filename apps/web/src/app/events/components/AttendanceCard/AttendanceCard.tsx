@@ -9,46 +9,50 @@ import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasDialog from "./ChooseExtrasDialog"
 import { RegistrationButton } from "./RegistrationButton"
+import type { WebEventDetail } from "@dotkomonline/types"
+
 
 interface Props {
   sessionUser?: Session["user"]
-  attendance: Attendance
-  pools: AttendancePool[]
-  event: Event
+  initialEventDetail: WebEventDetail
 }
 
-export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
+export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) => {
+  const { data: eventDetail, ...eventDetailQuery } = trpc.event.getWebEventDetailData.useQuery(
+    initialEventDetail.event.id, {
+        enabled: Boolean(sessionUser),
+        initialData: initialEventDetail,
+    })
+
+  if (!eventDetail.hasAttendance) return null;
+
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
-    attendanceId: attendance.id,
+    attendanceId: eventDetail.attendance.id,
     userId: sessionUser?.id!
   }, {
     enabled: Boolean(sessionUser),
   })
 
-  const attendanceId = event.attendanceId
   const [extraDialogOpen, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
 
   const { data: user } = trpc.user.getMe.useQuery()
 
-  if (!attendanceId) {
-    throw new Error("AttendanceBox rendered for event without attendance")
-  }
-
   const handleGatherExtrasChoices = () => {
-    if (attendance.extras !== null) {
+    if (eventDetail.attendance.extras !== null) {
       setExtraDialogOpen(true)
     }
   }
 
   const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
   const unregisterMutation = useUnregisterMutation()
+  const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading || eventDetailQuery.isLoading
 
   const userIsRegistered = Boolean(attendee)
 
-  const attendablePool = (user && pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))) ?? null
+  const attendablePool = (user && eventDetail.pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))) ?? null
 
-  const registerForAttendance = () => {
+  const registerForAttendance = async () => {
     if (!attendablePool) {
       throw new Error("Tried to register user for attendance without a group")
     }
@@ -57,20 +61,24 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, even
       throw new Error("Tried to register user without session")
     }
 
-    registerMutation.mutate({
+    await registerMutation.mutate({
       attendancePoolId: attendablePool?.id,
       userId: user.id,
     })
+
+    await eventDetailQuery.refetch()
   }
 
-  const unregisterForAttendance = () => {
+  const unregisterForAttendance = async () => {
     if (!attendee) {
       throw new Error("Tried to unregister user that is not registered")
     }
 
-    return unregisterMutation.mutate({
+    await unregisterMutation.mutate({
       id: attendee?.id,
     })
+
+    await eventDetailQuery.refetch()
   }
 
   const viewAttendeesButton = (
@@ -82,25 +90,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, even
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
       <h2 className="border-none">Påmelding</h2>
-      <AttendanceBoxPool pool={attendablePool} />
-
-      {userIsRegistered && attendance.extras && (
-        <section>
-          <ChooseExtrasDialog
-            defaultValues={attendee?.extrasChoices && { choices: attendee?.extrasChoices }}
-            /*setOpen={setExtraDialogOpen}*/
-            /*open={extraDialogOpen}*/
-            extras={attendance.extras ?? []}
-            onSubmit={(values) => {
-              if (!attendee) {
-                throw new Error("Tried to set extras for a non-registered user")
-              }
-              setExtrasChoices.mutate({ id: attendee.id, choices: values })
-              setExtraDialogOpen(false)
-            }}
-          />
-        </section>
-      )}
+      <AttendanceBoxPool pool={attendablePool} isAttending={userIsRegistered} />
 
       <div className="flex flex-row gap-3">
         {viewAttendeesButton}
@@ -108,10 +98,11 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, even
             attendee !== undefined &&
                 <RegistrationButton
                 attendee={attendee}
-                attendance={attendance}
+                attendance={eventDetail.attendance}
                 attendancePool={attendablePool}
                 registerForAttendance={registerForAttendance}
                 unregisterForAttendance={unregisterForAttendance}
+                isLoading={registerLoading}
                 />
         }
       </div>
