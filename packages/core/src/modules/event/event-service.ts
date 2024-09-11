@@ -142,6 +142,8 @@ export class EventServiceImpl implements EventService {
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
     const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id, 999)
 
+    console.log(`event ${id}: ${event.title} and attendandeId: ${event.attendanceId}`)
+
     if (!event.attendanceId) {
       return {
         hasAttendance: false,

@@ -3,11 +3,11 @@ import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
 import type { FC, ReactElement } from "react"
-import { getAttendanceStatus } from "../../utils"
+import { getAttendanceDetails } from "../../utils"
 
 interface Props {
-  attendee: Attendee | null
   attendance: Attendance
+  attendee: Attendee | null
   attendancePool: AttendancePool | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
@@ -22,22 +22,22 @@ export const RegistrationButton: FC<Props> = ({
   registerForAttendance,
   unregisterForAttendance,
 }) => {
-  const attendanceStatus = getAttendanceStatus(attendance)
+  const attendanceDetails = getAttendanceDetails(attendance)
 
   let changeRegisteredStateButton: ReactElement<typeof Button>
   let eventAttendanceStatusText: string
 
-  switch (attendanceStatus.status) {
-    case "NOT_OPENED": {
-      eventAttendanceStatusText = `Åpner ${formatDate(nowWithOffset(attendanceStatus.timeUntilOpen))}`
+  switch (attendanceDetails.status) {
+    case "NotOpened": {
+      eventAttendanceStatusText = `Åpner ${formatDate(nowWithOffset(attendanceDetails.timeUntilOpen))}`
       break
     }
-    case "OPEN": {
-      eventAttendanceStatusText = `Stenger ${formatDate(nowWithOffset(attendanceStatus.timeUntilClose))}`
+    case "Open": {
+      eventAttendanceStatusText = `Stenger ${formatDate(nowWithOffset(attendanceDetails.timeUntilClose))}`
       break
     }
-    case "CLOSED": {
-      eventAttendanceStatusText = `Stengte ${formatDate(nowWithOffset(attendanceStatus.timeSinceClose))}`
+    case "Closed": {
+      eventAttendanceStatusText = `Stengte ${formatDate(nowWithOffset(attendanceDetails.timeSinceClose))}`
       break
     }
     default:
@@ -57,7 +57,7 @@ export const RegistrationButton: FC<Props> = ({
       <Button
         className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100", background)}
         onClick={registerForAttendance}
-        disabled={attendanceStatus.status !== "OPEN" || !attendancePool}
+        disabled={attendanceDetails.status !== "Open" || !attendancePool}
         icon={<Icon icon="tabler:plus" className="text-3xl" />}
       >
         <span className="flex flex-col items-center w-max">

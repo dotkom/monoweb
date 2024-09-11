@@ -20,8 +20,11 @@ interface Props {
 export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, event }) => {
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
     attendanceId: attendance.id,
-    userId: sessionUser?.id ?? "",
+    userId: sessionUser?.id!
+  }, {
+    enabled: Boolean(sessionUser),
   })
+
   const attendanceId = event.attendanceId
   const [extraDialogOpen, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
@@ -56,7 +59,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, even
 
     registerMutation.mutate({
       attendancePoolId: attendablePool?.id,
-      userId: user?.id,
+      userId: user.id,
     })
   }
 
@@ -75,10 +78,6 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, even
       Vis påmeldte
     </Button>
   )
-
-  if (attendee === undefined) {
-    return <div>Loading</div>
-  }
 
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
@@ -105,13 +104,21 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, attendance, pools, even
 
       <div className="flex flex-row gap-3">
         {viewAttendeesButton}
-        <RegistrationButton
-          attendee={attendee}
-          attendance={attendance}
-          attendancePool={attendablePool}
-          registerForAttendance={registerForAttendance}
-          unregisterForAttendance={unregisterForAttendance}
-        />
+        {
+            attendee !== undefined &&
+                <RegistrationButton
+                attendee={attendee}
+                attendance={attendance}
+                attendancePool={attendablePool}
+                registerForAttendance={registerForAttendance}
+                unregisterForAttendance={unregisterForAttendance}
+                />
+        }
+      </div>
+
+      <div className="flex flex-row gap-3">
+        <p className="text-xs text-slate-9">Oppdater matallergier</p>
+        <p className="text-xs text-slate-9">Arrangementregler</p>
       </div>
     </section>
   )

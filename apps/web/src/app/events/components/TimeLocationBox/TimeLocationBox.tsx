@@ -39,7 +39,7 @@ export const TimeLocationBox: FC<Props> = ({
   })
 
   return (
-    <div className="border-slate-5 min-h-64 mb-8 border px-4 py-8">
+    <div className="border-slate-5 min-h-64 mb-8 border px-8 py-8">
       <h2>Oppmøte</h2>
       <div className="text-xs">
         {/* Time */}

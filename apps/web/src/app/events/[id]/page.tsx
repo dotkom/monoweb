@@ -5,10 +5,10 @@ import { EventDescriptionAndByline } from "../components/EventDescriptionAndByli
 import { EventHeader } from "../components/EventHeader"
 import { OrganizerBox } from "../components/OrganizerBox"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import { web as authOptions } from "@dotkomonline/auth"
 
 const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) => {
-  const session = await getServerSession()
-  const client = await getServerClient()
+  const [session, client] = await Promise.all([getServerSession(authOptions), getServerClient()])
 
   const eventDetail = await client.event.getWebEventDetailData(id)
 

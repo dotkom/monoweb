@@ -58,14 +58,16 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => ({
-        id: profile.sub,
-        name: profile.name,
-        email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
-      }),
+      profile: (profile: Auth0IdTokenClaims): User => {
+        return {
+            id: profile.sub,
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture ?? undefined,
+            // givenName: profile.given_name,
+            // familyName: profile.family_name,
+        }
+      }
     }),
   ],
   session: {

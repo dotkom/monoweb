@@ -2,36 +2,30 @@ import type { Attendance } from "@dotkomonline/types"
 
 type AttendanceRegisterStartAndEnd = Pick<Attendance, "registerStart" | "registerEnd">
 
-enum AttendanceStatusStatus {
-  Open = "OPEN",
-  Closed = "CLOSED",
-  NotOpened = "NOT_OPENED",
-}
-
-type AttendanceStatus =
+type AttendanceDetails =
   | {
-      status: AttendanceStatusStatus.Open
+      status: 'Open'
       timeUntilClose: number
     }
   | {
-      status: AttendanceStatusStatus.Closed
+      status: 'Closed'
       timeSinceClose: number
     }
   | {
-      status: AttendanceStatusStatus.NotOpened
+      status: 'NotOpened'
       timeUntilOpen: number
       timeUntilClose: number
     }
 
-export const getAttendanceStatus = (
+export const getAttendanceDetails = (
   registerStartAndEnd: AttendanceRegisterStartAndEnd,
   now = new Date()
-): AttendanceStatus => {
+): AttendanceDetails => {
   const { registerStart, registerEnd } = registerStartAndEnd
 
   if (now < registerStart) {
     return {
-      status: AttendanceStatusStatus.NotOpened,
+      status: 'NotOpened',
       timeUntilOpen: registerStart.getTime() - now.getTime(),
       timeUntilClose: registerEnd.getTime() - now.getTime(),
     }
@@ -39,13 +33,13 @@ export const getAttendanceStatus = (
 
   if (now > registerEnd) {
     return {
-      status: AttendanceStatusStatus.Closed,
+      status: 'Closed',
       timeSinceClose: now.getTime() - registerEnd.getTime(),
     }
   }
 
   return {
-    status: AttendanceStatusStatus.Open,
+    status: 'Open',
     timeUntilClose: registerEnd.getTime() - now.getTime(),
   }
 }
