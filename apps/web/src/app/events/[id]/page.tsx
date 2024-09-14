@@ -27,10 +27,6 @@ const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) =
               initialEventDetail={eventDetail}
             />
           )}
-          {
-            eventDetail.eventCommittees.length ?
-                <OrganizerBox committees={eventDetail.eventCommittees} /> : null
-          }
           <TimeLocationBox
             datetimeStart={eventDetail.event.start}
             datetimeEnd={eventDetail.event.end}

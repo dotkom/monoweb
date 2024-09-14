@@ -39,8 +39,8 @@ export const TimeLocationBox: FC<Props> = ({
   })
 
   return (
-    <div className="border-slate-5 min-h-64 mb-8 border px-8 py-8">
-      <h2>Oppmøte</h2>
+    <div className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-6 gap-3">
+      <h2 className="border-none">Oppmøte</h2>
       <div className="text-xs">
         {/* Time */}
         <div className="flex mb-8 mt-4">

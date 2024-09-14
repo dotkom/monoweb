@@ -1,15 +1,16 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendancePool, Event } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Event, ExtrasChoices } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
-import ChooseExtrasDialog from "./ChooseExtrasDialog"
+import ChooseExtrasForm from "./ChooseExtrasDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import type { WebEventDetail } from "@dotkomonline/types"
+import { attendanceRouter } from "@dotkomonline/gateway-trpc/src/modules/event/attendance-router"
 
 
 interface Props {
@@ -88,7 +89,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) =>
   )
 
   return (
-    <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-4 gap-3">
+    <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-6 gap-3">
       <h2 className="border-none">Påmelding</h2>
       <AttendanceBoxPool pool={attendablePool} isAttending={userIsRegistered} />
 
@@ -96,7 +97,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) =>
         {viewAttendeesButton}
         {
             attendee !== undefined &&
-                <RegistrationButton
+              <RegistrationButton
                 attendee={attendee}
                 attendance={eventDetail.attendance}
                 attendancePool={attendablePool}
@@ -106,6 +107,21 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) =>
                 />
         }
       </div>
+      {
+        attendee && eventDetail.attendance.extras !== null &&
+          <div className="w-full">
+            <ChooseExtrasForm
+              extras={eventDetail.attendance.extras}
+              onSubmit={(choices: ExtrasChoices) => {
+                setExtrasChoices.mutate({
+                  id: attendee.id,
+                  choices,
+                })
+                setExtraDialogOpen(false)
+              }}
+            />
+          </div>
+      }
 
       <div className="flex flex-row gap-3">
         <p className="text-xs text-slate-9">Oppdater matallergier</p>

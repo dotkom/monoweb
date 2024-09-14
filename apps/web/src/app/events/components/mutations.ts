@@ -43,11 +43,6 @@ export const useSetExtrasChoicesMutation = () => {
 
   return trpc.event.attendance.setExtrasChoices.useMutation({
     onSuccess: (data) => {
-      alert(
-        `Dine valg er lagret. Du har valgt:\n${data.extrasChoices
-          .map((choice) => `${choice.questionName}: ${choice.choiceName}`)
-          .join("\n")}`
-      )
       utils.event.getWebEventDetailData.invalidate()
     },
     onError: (error) => {
