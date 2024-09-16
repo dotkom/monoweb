@@ -44,15 +44,15 @@ interface InnerAttendanceCardProps {
 }
 
 export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, refetchEventDetail }) => {
-  const { data: attendee } = sessionUser?.id ? trpc.event.attendance.getAttendee.useQuery(
+  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
     {
       attendanceId: eventDetail.attendance.id,
-      userId: sessionUser.id,
+      userId: sessionUser?.id ?? "",
     },
     {
       enabled: Boolean(sessionUser) && eventDetail.hasAttendance,
     }
-  ) : { data: null }
+  )
 
   const [, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
