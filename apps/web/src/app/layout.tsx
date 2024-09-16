@@ -5,6 +5,7 @@ import { cn } from "@dotkomonline/ui"
 import { Fraunces, Poppins } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../styles/globals.css"
+import { Providers } from "./providers"
 
 export const metadata = {
   title: "Onlineweb 5",
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en">
       <body className={cn(fraunces.variable, poppins.variable, "h-full w-full")}>
         <QueryProvider>
-          <MainLayout>{children}</MainLayout>
+          <Providers>
+            <MainLayout>{children}</MainLayout>
+          </Providers>
         </QueryProvider>
       </body>
     </html>
