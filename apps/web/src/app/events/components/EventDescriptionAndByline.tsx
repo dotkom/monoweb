@@ -27,7 +27,4 @@ export const EventDescriptionAndByline: FC<Props> = ({ event, committees, compan
   )
 }
 
-export const SkeletonEventDescriptionAndByline = () => (
-    <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]">
-    </div>
-)
+export const SkeletonEventDescriptionAndByline = () => <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]" />

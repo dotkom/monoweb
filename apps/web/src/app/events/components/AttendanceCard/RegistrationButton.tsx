@@ -4,7 +4,6 @@ import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
 import type { FC, ReactElement } from "react"
 import { getAttendanceDetails } from "../../utils"
-import { getColorStyles } from "@dotkomonline/ui/src/components/Button/Button"
 
 interface Props {
   attendance: Attendance
@@ -23,7 +22,7 @@ export const RegistrationButton: FC<Props> = ({
   attendancePool,
   registerForAttendance,
   unregisterForAttendance,
-  isLoading
+  isLoading,
 }) => {
   const attendanceDetails = getAttendanceDetails(attendance)
 
@@ -48,28 +47,29 @@ export const RegistrationButton: FC<Props> = ({
   }
 
   const buttonStatusText = attendee ? "Meld meg av" : "Meld meg på"
-  const buttonIcon = null;
+  const buttonIcon = null
 
-  return <Button
-        className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100")}
-        onClick={attendee ? unregisterForAttendance : registerForAttendance}
-        disabled={attendanceDetails.status !== "Open" || !attendancePool}
-        color={attendee ? "red" : "green"}
-        variant="solid"
-        icon={buttonIcon}
-      >
-        {
-          <span className="flex flex-col items-center w-max">
-            {
-              isLoading ?
-                <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
-                  :
-                <>
-                  <span className="block uppercase">{buttonStatusText}</span>
-                  <span className="block font-medium text-xs">{eventAttendanceStatusText}</span>
-                </>
-            }
-          </span>
-        }
-  </Button>
+  return (
+    <Button
+      className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100")}
+      onClick={attendee ? unregisterForAttendance : registerForAttendance}
+      disabled={attendanceDetails.status !== "Open" || !attendancePool}
+      color={attendee ? "red" : "green"}
+      variant="solid"
+      icon={buttonIcon}
+    >
+      {
+        <span className="flex flex-col items-center w-max">
+          {isLoading ? (
+            <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
+          ) : (
+            <>
+              <span className="block uppercase">{buttonStatusText}</span>
+              <span className="block font-medium text-xs">{eventAttendanceStatusText}</span>
+            </>
+          )}
+        </span>
+      }
+    </Button>
+  )
 }

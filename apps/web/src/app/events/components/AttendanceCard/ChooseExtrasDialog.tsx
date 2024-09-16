@@ -1,6 +1,5 @@
-import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
 import type { Extras, ExtrasChoices } from "@dotkomonline/types"
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger, Button, Select } from "@dotkomonline/ui"
+import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
 import { useFieldArray, useForm } from "react-hook-form"
 
 interface Props {
@@ -77,7 +76,9 @@ export default function Form({ extras, onSubmit, defaultValues }: FormProps) {
         {fields.map((field, index) => {
           return (
             <div key={field.id} className="w-full">
-              <label className="font-bold" htmlFor={`extras[${index}].choiceId`}>{field.questionName}</label>
+              <label className="font-bold" htmlFor={`extras[${index}].choiceId`}>
+                {field.questionName}
+              </label>
               <div className="w-full bg-[#fff] p-[0.5px]">
                 <select
                   {...register(`choices.${index}.choiceId` as const, {

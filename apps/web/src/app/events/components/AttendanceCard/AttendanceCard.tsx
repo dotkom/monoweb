@@ -1,38 +1,41 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendancePool, Event, ExtrasChoices } from "@dotkomonline/types"
-import { Button } from "@dotkomonline/ui"
+import type { ExtrasChoices } from "@dotkomonline/types"
+import type { WebEventDetail } from "@dotkomonline/types"
+import { AlertDialog, AlertDialogContent, AlertDialogTrigger, Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasForm from "./ChooseExtrasDialog"
 import { RegistrationButton } from "./RegistrationButton"
-import type { WebEventDetail } from "@dotkomonline/types"
-import { attendanceRouter } from "@dotkomonline/gateway-trpc/src/modules/event/attendance-router"
-
 
 interface Props {
   sessionUser?: Session["user"]
   initialEventDetail: WebEventDetail
 }
 
-export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) => {
+export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail }) => {
   const { data: eventDetail, ...eventDetailQuery } = trpc.event.getWebEventDetailData.useQuery(
-    initialEventDetail.event.id, {
-        enabled: Boolean(sessionUser),
-        initialData: initialEventDetail,
-    })
+    initialEventDetail.event.id,
+    {
+      enabled: Boolean(sessionUser),
+      initialData: initialEventDetail,
+    }
+  )
 
-  if (!eventDetail.hasAttendance) return null;
+  if (!eventDetail.hasAttendance) return null
 
-  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery({
-    attendanceId: eventDetail.attendance.id,
-    userId: sessionUser?.id!
-  }, {
-    enabled: Boolean(sessionUser),
-  })
+  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
+    {
+      attendanceId: eventDetail.attendance.id,
+      userId: sessionUser?.id ?? "",
+    },
+    {
+      enabled: Boolean(sessionUser),
+    }
+  )
 
   const [extraDialogOpen, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
@@ -52,6 +55,16 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) =>
   const userIsRegistered = Boolean(attendee)
 
   const attendablePool = (user && eventDetail.pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))) ?? null
+  const [attendeeListOpen, setAttendeeListOpen] = useState(false)
+
+  const { data: attendeePublicInformation } = trpc.attendance.getPublicAttendeeInformation.useQuery(
+    {
+      id: eventDetail.attendance.id,
+    },
+    {
+      enabled: attendeeListOpen,
+    }
+  )
 
   const registerForAttendance = async () => {
     if (!attendablePool) {
@@ -83,9 +96,22 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) =>
   }
 
   const viewAttendeesButton = (
-    <Button className="w-full rounded-lg uppercase bg-blue-10 h-100" onClick={() => console.log("WIP")}>
-      Vis påmeldte
-    </Button>
+    <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
+      <AlertDialogTrigger asChild>
+        <Button className="w-full rounded-lg uppercase bg-blue-10 h-100">Vis påmeldte</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <h4 className="important:mt-0">Påmeldte</h4>
+
+        {attendeePublicInformation?.map((attendee) => (
+          <div key={attendee.id}>
+            <p>
+              {attendee.first_name} {attendee.last_name}
+            </p>
+          </div>
+        ))}
+      </AlertDialogContent>
+    </AlertDialog>
   )
 
   return (
@@ -95,33 +121,31 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail}) =>
 
       <div className="flex flex-row gap-3">
         {viewAttendeesButton}
-        {
-            attendee !== undefined &&
-              <RegistrationButton
-                attendee={attendee}
-                attendance={eventDetail.attendance}
-                attendancePool={attendablePool}
-                registerForAttendance={registerForAttendance}
-                unregisterForAttendance={unregisterForAttendance}
-                isLoading={registerLoading}
-                />
-        }
+        {attendee !== undefined && (
+          <RegistrationButton
+            attendee={attendee}
+            attendance={eventDetail.attendance}
+            attendancePool={attendablePool}
+            registerForAttendance={registerForAttendance}
+            unregisterForAttendance={unregisterForAttendance}
+            isLoading={registerLoading}
+          />
+        )}
       </div>
-      {
-        attendee && eventDetail.attendance.extras !== null &&
-          <div className="w-full">
-            <ChooseExtrasForm
-              extras={eventDetail.attendance.extras}
-              onSubmit={(choices: ExtrasChoices) => {
-                setExtrasChoices.mutate({
-                  id: attendee.id,
-                  choices,
-                })
-                setExtraDialogOpen(false)
-              }}
-            />
-          </div>
-      }
+      {attendee && eventDetail.attendance.extras !== null && (
+        <div className="w-full">
+          <ChooseExtrasForm
+            extras={eventDetail.attendance.extras}
+            onSubmit={(choices: ExtrasChoices) => {
+              setExtrasChoices.mutate({
+                id: attendee.id,
+                choices,
+              })
+              setExtraDialogOpen(false)
+            }}
+          />
+        </div>
+      )}
 
       <div className="flex flex-row gap-3">
         <p className="text-xs text-slate-9">Oppdater matallergier</p>

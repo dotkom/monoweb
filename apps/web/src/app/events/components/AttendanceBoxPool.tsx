@@ -27,7 +27,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending }) => {
         <p className="text-3xl">
           {pool.numAttendees}/{pool.capacity}
         </p>
-        <p>{isAttending ? 'Du er påmeldt' : 'Du er ikke påmeldt'}</p>
+        <p>{isAttending ? "Du er påmeldt" : "Du er ikke påmeldt"}</p>
       </div>
     </div>
   )

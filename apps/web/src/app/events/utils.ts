@@ -4,15 +4,15 @@ type AttendanceRegisterStartAndEnd = Pick<Attendance, "registerStart" | "registe
 
 type AttendanceDetails =
   | {
-      status: 'Open'
+      status: "Open"
       timeUntilClose: number
     }
   | {
-      status: 'Closed'
+      status: "Closed"
       timeSinceClose: number
     }
   | {
-      status: 'NotOpened'
+      status: "NotOpened"
       timeUntilOpen: number
       timeUntilClose: number
     }
@@ -25,7 +25,7 @@ export const getAttendanceDetails = (
 
   if (now < registerStart) {
     return {
-      status: 'NotOpened',
+      status: "NotOpened",
       timeUntilOpen: registerStart.getTime() - now.getTime(),
       timeUntilClose: registerEnd.getTime() - now.getTime(),
     }
@@ -33,13 +33,13 @@ export const getAttendanceDetails = (
 
   if (now > registerEnd) {
     return {
-      status: 'Closed',
+      status: "Closed",
       timeSinceClose: now.getTime() - registerEnd.getTime(),
     }
   }
 
   return {
-    status: 'Open',
+    status: "Open",
     timeUntilClose: registerEnd.getTime() - now.getTime(),
   }
 }

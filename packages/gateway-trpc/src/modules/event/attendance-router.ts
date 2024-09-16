@@ -9,7 +9,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, t } from "../../trpc"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
   getAttendee: protectedProcedure
@@ -104,13 +104,20 @@ export const attendanceRouter = t.router({
     )
     .query(async ({ input, ctx }) => ctx.attendancePoolService.getByAttendanceId(input.id)),
 
-  getAttendees: protectedProcedure
+  getPublicAttendeeInformation: publicProcedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.id)),
+    .query(async ({ input, ctx }) =>
+      (await ctx.attendeeService.getByAttendanceId(input.id)).map(({ user }) => ({
+        id: user.id,
+        first_name: user.givenName,
+        last_name: user.familyName,
+        studyYear: user.studyYear,
+      }))
+    ),
 
   getAttendance: protectedProcedure
     .input(

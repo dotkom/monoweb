@@ -1,13 +1,5 @@
-import type {
-  Attendance,
-  AttendancePool,
-  AttendanceWrite,
-  Committee,
-  Company,
-  Event,
-  EventId,
-  EventWrite,
-} from "@dotkomonline/types"
+import type { AttendanceWrite, Event, EventId, EventWrite } from "@dotkomonline/types"
+import type { DashboardEventDetail, WebEventDetail } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
@@ -16,8 +8,6 @@ import type { EventCommitteeService } from "./event-committee-service"
 import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository.js"
-import type { DashboardEventDetail, WebEventDetail } from "@dotkomonline/types"
-
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>

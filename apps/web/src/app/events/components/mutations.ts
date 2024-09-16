@@ -4,10 +4,7 @@ export const useUnregisterMutation = () => {
   const utils = trpc.useUtils()
   return trpc.event.attendance.deregisterForEvent.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        utils.event.getWebEventDetailData.refetch(),
-        utils.event.attendance.getAttendee.refetch(),
-      ])
+      await Promise.all([utils.event.getWebEventDetailData.refetch(), utils.event.attendance.getAttendee.refetch()])
     },
     onError: (error) => {
       console.error(error)
@@ -24,10 +21,7 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
 
   const mutation = trpc.event.attendance.registerForEvent.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        utils.event.getWebEventDetailData.refetch(),
-        utils.event.attendance.getAttendee.refetch(),
-      ])
+      await Promise.all([utils.event.getWebEventDetailData.refetch(), utils.event.attendance.getAttendee.refetch()])
       onSuccess()
     },
     onError: (error) => {
