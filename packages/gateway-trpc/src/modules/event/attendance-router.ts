@@ -103,7 +103,13 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.attendancePoolService.getByAttendanceId(input.id)),
-
+  getAttendees: protectedProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.id)),
   getPublicAttendeeInformation: publicProcedure
     .input(
       z.object({
