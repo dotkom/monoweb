@@ -18,7 +18,7 @@
     "@biomejs/biome": "1.6.4",
     "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
-    "postcss-import": "^15.1.0",
+    "postcss-import": "^16.0.0",
     "postcss": "^8.4.31",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-radix": "^2.8.0",
