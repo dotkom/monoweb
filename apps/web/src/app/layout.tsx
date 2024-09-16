@@ -22,7 +22,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <QueryProvider>
           <Providers>
             <MainLayout>{children}</MainLayout>
-           </Providers>
+          </Providers>
         </QueryProvider>
       </body>
     </html>
