@@ -2,13 +2,14 @@
 
 import { trpc } from "@/utils/trpc/client"
 import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger, Button } from "@dotkomonline/ui"
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger, Button, Icon } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasForm from "./ChooseExtrasDialog"
 import { RegistrationButton } from "./RegistrationButton"
+import ViewAttendeesDialogButton from "./ViewAttendeesButton"
 
 interface AttendanceCardProps {
   sessionUser?: Session["user"]
@@ -112,32 +113,13 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     refetchEventDetail()
   }
 
-  const viewAttendeesButton = (
-    <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
-      <AlertDialogTrigger asChild>
-        <Button className="w-full rounded-lg uppercase bg-blue-10 h-100">Vis påmeldte</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <h4 className="important:mt-0">Påmeldte</h4>
-
-        {attendeePublicInformation?.map((attendee) => (
-          <div key={attendee.id}>
-            <p>
-              {attendee.first_name} {attendee.last_name}
-            </p>
-          </div>
-        ))}
-      </AlertDialogContent>
-    </AlertDialog>
-  )
-
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-6 gap-3">
       <h2 className="border-none">Påmelding</h2>
       <AttendanceBoxPool pool={attendablePool} isAttending={userIsRegistered} />
 
       <div className="flex flex-row gap-3">
-        {viewAttendeesButton}
+        <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
         {attendee !== undefined && (
           <RegistrationButton
             attendee={attendee}
@@ -166,8 +148,19 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
       )}
 
       <div className="flex flex-row gap-3">
-        <p className="text-xs text-slate-9">Oppdater matallergier</p>
-        <p className="text-xs text-slate-9">Arrangementregler</p>
+        <p className="text-xs text-slate-9">Avmeldingsfrist 12:00 23.09.2024</p>
+      </div>
+      <div className="flex flex-row gap-3">
+        <a href="/profile">
+          <p className="text-xs text-slate-9">
+            <Icon className="inline-block align-middle text-lg" icon="tabler:edit"/>
+            Oppdater matallergier
+          </p>
+        </a>
+        <p className="text-xs text-slate-9">
+          <Icon className="inline-block align-middle text-lg" icon="tabler:book-2"/>
+          Arrangementbregler
+        </p>
       </div>
     </section>
   )
