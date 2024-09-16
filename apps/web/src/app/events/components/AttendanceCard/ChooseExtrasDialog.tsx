@@ -2,14 +2,15 @@ import type { Extras, ExtrasChoices } from "@dotkomonline/types"
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
 import { useFieldArray, useForm } from "react-hook-form"
 
-interface Props {
+interface ChooseExtrasDialogProps {
   open: boolean
   extras: Extras[]
   onSubmit: (choices: ExtrasChoices) => void
   setOpen: (open: boolean) => void
   defaultValues: ExtrasChoices | null
 }
-export function ChooseExtrasDialog({ open, extras, onSubmit, setOpen, defaultValues }: Props) {
+
+export function ChooseExtrasDialog({ open, extras, onSubmit, setOpen, defaultValues }: ChooseExtrasDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild />

@@ -1,8 +1,8 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { ExtrasChoices } from "@dotkomonline/types"
-import type { WebEventDetail } from "@dotkomonline/types"
+import type { } from "@dotkomonline/types"
+import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger, Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
@@ -11,12 +11,12 @@ import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation
 import ChooseExtrasForm from "./ChooseExtrasDialog"
 import { RegistrationButton } from "./RegistrationButton"
 
-interface Props {
+interface AttendanceCardProps {
   sessionUser?: Session["user"]
   initialEventDetail: WebEventDetail
 }
 
-export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail }) => {
+export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEventDetail }) => {
   const { data: eventDetail, ...eventDetailQuery } = trpc.event.getWebEventDetailData.useQuery(
     initialEventDetail.event.id,
     {
@@ -25,15 +25,27 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail }) =
     }
   )
 
-  if (!eventDetail.hasAttendance) return null
+  if (!eventDetail || !eventDetail.hasAttendance) {
+    return null
+  }
 
+  return <AttendanceCardInner sessionUser={sessionUser} eventDetail={eventDetail} refetchEventDetail={eventDetailQuery.refetch} />
+}
+
+interface InnerAttendanceCardProps {
+  sessionUser?: Session["user"]
+  eventDetail: Extract<WebEventDetail, { hasAttendance: true }>
+  refetchEventDetail: () => void
+}
+
+export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, refetchEventDetail }) => {
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
     {
       attendanceId: eventDetail.attendance.id,
       userId: sessionUser?.id ?? "",
     },
     {
-      enabled: Boolean(sessionUser),
+      enabled: Boolean(sessionUser) && eventDetail.hasAttendance,
     }
   )
 
@@ -62,7 +74,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail }) =
       id: eventDetail.attendance.id,
     },
     {
-      enabled: attendeeListOpen,
+      enabled: attendeeListOpen && eventDetail.hasAttendance,
     }
   )
 
@@ -80,7 +92,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail }) =
       userId: user.id,
     })
 
-    await eventDetailQuery.refetch()
+    await refetchEventDetail()
   }
 
   const unregisterForAttendance = async () => {
@@ -92,7 +104,7 @@ export const AttendanceCard: FC<Props> = ({ sessionUser, initialEventDetail }) =
       id: attendee?.id,
     })
 
-    await eventDetailQuery.refetch()
+    await refetchEventDetail()
   }
 
   const viewAttendeesButton = (
