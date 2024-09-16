@@ -17,6 +17,8 @@ interface Props {
 
 const capitalize = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
 
+const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("nb-NO", format).format(date);
+
 export const TimeLocationBox: FC<Props> = ({
   locationTitle,
   locationAddress,
@@ -26,9 +28,24 @@ export const TimeLocationBox: FC<Props> = ({
   eventDescription,
   locationLink,
 }) => {
-  const weekday = new Intl.DateTimeFormat("nb-NO", IntlFormats.Weekday).format(datetimeStart)
-  const date = new Intl.DateTimeFormat("nb-NO", IntlFormats.Date).format(datetimeStart)
-  const time = new Intl.DateTimeFormat("nb-NO", IntlFormats.Time).format(datetimeStart)
+  const weekdays = [formatWithIntl(datetimeStart, IntlFormats.Weekday)]
+  const date = formatWithIntl(datetimeStart, IntlFormats.Date)
+  const time = formatWithIntl(datetimeStart, IntlFormats.Time)
+
+  const greaterThanOneDay = datetimeStart.getDate() !== datetimeEnd.getDate()
+  const crossesWeek = datetimeStart.getDay() > datetimeEnd.getDay()
+  const timeDifference = Math.abs(datetimeStart.getTime() - datetimeEnd.getTime());
+  const greaterThanOneWeek = (timeDifference / (1000 * 60 * 60 * 24)) >= 7;
+
+  if (greaterThanOneDay) {
+    if (crossesWeek || greaterThanOneWeek) {
+      weekdays.length = 0;
+      weekdays.push(formatWithIntl(datetimeStart, IntlFormats.Date));
+      weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Date));
+    } else {
+      weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Weekday));
+    }
+  }
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
@@ -48,7 +65,7 @@ export const TimeLocationBox: FC<Props> = ({
             <Icon icon="tabler:clock" width={24} height={24} />
           </div>
           <div className="flex flex-1 flex-col">
-            <span className="text-lg">{capitalize(weekday)}</span>
+            <span className="text-lg">{capitalize(weekdays.join(" til "))}</span>
             <span>{date}</span>
             <span>{time}</span>
           </div>
