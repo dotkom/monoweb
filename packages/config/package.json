@@ -21,7 +21,7 @@
     "postcss-import": "^15.1.0",
     "postcss": "^8.4.31",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-radix": "^2.8.0",
+    "tailwindcss-radix": "^3.0.0",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.4.5"
   }
