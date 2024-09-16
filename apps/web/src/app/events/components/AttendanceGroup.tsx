@@ -24,11 +24,8 @@ export const AttendanceGroup = ({
       </p>
       <div className="mt-2">
         {canAttend &&
-          (isAttending ? (
-            <p className="text-center text-xs">Du er påmeldt</p>
-          ) : (
-            <p className="text-center text-xs">Du er ikke påmeldt</p>
-          ))}
+          <p className="text-center text-xs">{isAttending ? 'Du er påmeldt' : 'Du er ikke påmeldt'}</p>
+        }
       </div>
     </div>
   </div>
