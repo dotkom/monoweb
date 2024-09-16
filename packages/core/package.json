@@ -31,7 +31,7 @@
     "next": "^14.0.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "1.9.1",
     "@dotkomonline/types": "workspace:*",
     "@testcontainers/postgresql": "^10.11.0",
     "@types/node": "^20.12.7",
