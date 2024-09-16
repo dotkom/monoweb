@@ -1,7 +1,6 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { } from "@dotkomonline/types"
 import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger, Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
@@ -29,7 +28,13 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
     return null
   }
 
-  return <AttendanceCardInner sessionUser={sessionUser} eventDetail={eventDetail} refetchEventDetail={eventDetailQuery.refetch} />
+  return (
+    <AttendanceCardInner
+      sessionUser={sessionUser}
+      eventDetail={eventDetail}
+      refetchEventDetail={eventDetailQuery.refetch}
+    />
+  )
 }
 
 interface InnerAttendanceCardProps {
@@ -39,17 +44,17 @@ interface InnerAttendanceCardProps {
 }
 
 export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, refetchEventDetail }) => {
-  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
+  const { data: attendee } = sessionUser?.id ? trpc.event.attendance.getAttendee.useQuery(
     {
       attendanceId: eventDetail.attendance.id,
-      userId: sessionUser?.id ?? "",
+      userId: sessionUser.id,
     },
     {
       enabled: Boolean(sessionUser) && eventDetail.hasAttendance,
     }
-  )
+  ) : { data: null }
 
-  const [extraDialogOpen, setExtraDialogOpen] = useState(false)
+  const [, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
 
   const { data: user } = trpc.user.getMe.useQuery()
@@ -62,7 +67,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
 
   const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
   const unregisterMutation = useUnregisterMutation()
-  const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading || eventDetailQuery.isLoading
+  const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading
 
   const userIsRegistered = Boolean(attendee)
 
@@ -87,12 +92,12 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
       throw new Error("Tried to register user without session")
     }
 
-    await registerMutation.mutate({
+    registerMutation.mutate({
       attendancePoolId: attendablePool?.id,
       userId: user.id,
     })
 
-    await refetchEventDetail()
+    refetchEventDetail()
   }
 
   const unregisterForAttendance = async () => {
@@ -100,11 +105,11 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
       throw new Error("Tried to unregister user that is not registered")
     }
 
-    await unregisterMutation.mutate({
+    unregisterMutation.mutate({
       id: attendee?.id,
     })
 
-    await refetchEventDetail()
+    refetchEventDetail()
   }
 
   const viewAttendeesButton = (
@@ -144,6 +149,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
           />
         )}
       </div>
+
       {attendee && eventDetail.attendance.extras !== null && (
         <div className="w-full">
           <ChooseExtrasForm
