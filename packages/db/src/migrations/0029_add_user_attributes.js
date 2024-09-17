@@ -11,9 +11,7 @@ export async function up(db) {
     .addColumn("gender", "varchar(255)")
     .execute()
 
-  await db.schema
-    .alterTable("ow_user")
-    .renameColumn("auth0_sub", "auth0_id").execute()
+  await db.schema.alterTable("ow_user").renameColumn("auth0_sub", "auth0_id").execute()
 }
 
 /** @param db {import('kysely').Kysely} */
@@ -29,7 +27,5 @@ export async function down(db) {
     .dropColumn("gender")
     .execute()
 
-  await db.schema
-    .alterTable("ow_user")
-    .renameColumn("auth0_id", "auth0_sub").execute()
+  await db.schema.alterTable("ow_user").renameColumn("auth0_id", "auth0_sub").execute()
 }
