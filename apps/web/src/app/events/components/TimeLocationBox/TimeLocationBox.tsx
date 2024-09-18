@@ -29,22 +29,12 @@ export const TimeLocationBox: FC<Props> = ({
   locationLink,
 }) => {
   const weekdays = [formatWithIntl(datetimeStart, IntlFormats.Weekday)]
-  const date = formatWithIntl(datetimeStart, IntlFormats.Date)
+  const dates = [formatWithIntl(datetimeStart, IntlFormats.Date)]
   const time = formatWithIntl(datetimeStart, IntlFormats.Time)
 
-  const greaterThanOneDay = datetimeStart.getDate() !== datetimeEnd.getDate()
-  const crossesWeek = datetimeStart.getDay() > datetimeEnd.getDay()
-  const timeDifference = Math.abs(datetimeStart.getTime() - datetimeEnd.getTime());
-  const greaterThanOneWeek = (timeDifference / (1000 * 60 * 60 * 24)) >= 7;
-
-  if (greaterThanOneDay) {
-    if (crossesWeek || greaterThanOneWeek) {
-      weekdays.length = 0;
-      weekdays.push(formatWithIntl(datetimeStart, IntlFormats.Date));
-      weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Date));
-    } else {
-      weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Weekday));
-    }
+  if (datetimeStart.getDate() !== datetimeEnd.getDate()) {
+    weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Weekday));
+    dates.push(formatWithIntl(datetimeEnd, IntlFormats.Date));
   }
 
   const gcalLink = createGoogleCalendarLink({
@@ -65,9 +55,9 @@ export const TimeLocationBox: FC<Props> = ({
             <Icon icon="tabler:clock" width={24} height={24} />
           </div>
           <div className="flex flex-1 flex-col">
-            <span className="text-lg">{capitalize(weekdays.join(" til "))}</span>
-            <span>{date}</span>
-            <span>{time}</span>
+            <span className="text-lg">{dates.join(" til ")}</span>
+            <span className="text-sm">{capitalize(weekdays.join(" til "))}</span>
+            <span className="text-sm">{time}</span>
           </div>
           <div className="flex items-center">
             <ActionLink
