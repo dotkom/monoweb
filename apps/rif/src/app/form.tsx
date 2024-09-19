@@ -42,7 +42,7 @@ const excursionTooltip = (
   </Section>
 )
 
-const techTalksTooltip = (
+/*const techTalksTooltip = (
   <Section>
     <Text>
       Tech Talks har den hensikt å være et faglig arrangement for inspirasjon og faglig påfyll fra næringslivet. I
@@ -57,7 +57,7 @@ const techTalksTooltip = (
       aktuelle bedrifter på slutten av høstsemesteret.
     </Text>
   </Section>
-)
+)*/
 
 const femalesInTechTooltip = (
   <Section>
@@ -138,7 +138,7 @@ export const Form: FC = () => {
           label="Instagram Takeover"
           tooltip={instagramTakeoverTooltip}
         />
-        <CheckboxWithTooltip name="requestsTechTalksParticipation" label="Tech Talks" tooltip={techTalksTooltip} />
+        {/* <CheckboxWithTooltip name="requestsTechTalksParticipation" label="Tech Talks" tooltip={techTalksTooltip} /> */}
         <CheckboxWithTooltip name="requestsExcursionParticipation" label="IT-ekskursjonen" tooltip={excursionTooltip} />
         <CheckboxWithTooltip
           name="requestsFemalesInTechEvent"
