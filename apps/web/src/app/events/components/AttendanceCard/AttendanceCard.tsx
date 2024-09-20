@@ -2,7 +2,7 @@
 
 import { trpc } from "@/utils/trpc/client"
 import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger, Button, Icon } from "@dotkomonline/ui"
+import { Icon } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
@@ -153,12 +153,12 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
       <div className="flex flex-row gap-3">
         <a href="/profile">
           <p className="text-xs text-slate-9">
-            <Icon className="inline-block align-middle text-lg" icon="tabler:edit"/>
+            <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
             Oppdater matallergier
           </p>
         </a>
         <p className="text-xs text-slate-9">
-          <Icon className="inline-block align-middle text-lg" icon="tabler:book-2"/>
+          <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
           Arrangementbregler
         </p>
       </div>

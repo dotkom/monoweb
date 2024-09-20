@@ -1,11 +1,11 @@
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger, Button, Icon } from "@dotkomonline/ui";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger, Button, Icon } from "@dotkomonline/ui"
 
 interface ViewAttendeesDialogButtonProps {
-  attendeeListOpen: boolean;
-  setAttendeeListOpen: (open: boolean) => void;
+  attendeeListOpen: boolean
+  setAttendeeListOpen: (open: boolean) => void
 }
 
-const ViewAttendeesDialogButton = ({attendeeListOpen, setAttendeeListOpen}: ViewAttendeesDialogButtonProps) => (
+const ViewAttendeesDialogButton = ({ attendeeListOpen, setAttendeeListOpen }: ViewAttendeesDialogButtonProps) => (
   <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
     <AlertDialogTrigger asChild>
       <Button className="w-full rounded-lg uppercase bg-blue-10 h-100">Vis påmeldte</Button>
@@ -21,4 +21,4 @@ const ViewAttendeesDialogButton = ({attendeeListOpen, setAttendeeListOpen}: View
   </AlertDialog>
 )
 
-export default ViewAttendeesDialogButton;
+export default ViewAttendeesDialogButton

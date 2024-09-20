@@ -17,7 +17,8 @@ interface Props {
 
 const capitalize = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
 
-const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("nb-NO", format).format(date);
+const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat("nb-NO", format).format(date)
 
 export const TimeLocationBox: FC<Props> = ({
   locationTitle,
@@ -33,8 +34,8 @@ export const TimeLocationBox: FC<Props> = ({
   const time = formatWithIntl(datetimeStart, IntlFormats.Time)
 
   if (datetimeStart.getDate() !== datetimeEnd.getDate()) {
-    weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Weekday));
-    dates.push(formatWithIntl(datetimeEnd, IntlFormats.Date));
+    weekdays.push(formatWithIntl(datetimeEnd, IntlFormats.Weekday))
+    dates.push(formatWithIntl(datetimeEnd, IntlFormats.Date))
   }
 
   const gcalLink = createGoogleCalendarLink({

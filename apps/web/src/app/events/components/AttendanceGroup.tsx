@@ -23,9 +23,7 @@ export const AttendanceGroup = ({
         {numberOfPeople}/{totalSpots}
       </p>
       <div className="mt-2">
-        {canAttend &&
-          <p className="text-center text-xs">{isAttending ? 'Du er påmeldt' : 'Du er ikke påmeldt'}</p>
-        }
+        {canAttend && <p className="text-center text-xs">{isAttending ? "Du er påmeldt" : "Du er ikke påmeldt"}</p>}
       </div>
     </div>
   </div>
