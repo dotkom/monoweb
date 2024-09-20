@@ -1,4 +1,11 @@
-import type { DashboardEventDetail, WebEventDetail, AttendanceWrite, Event, EventId, EventWrite } from "@dotkomonline/types"
+import type {
+  AttendanceWrite,
+  DashboardEventDetail,
+  Event,
+  EventId,
+  EventWrite,
+  WebEventDetail,
+} from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
