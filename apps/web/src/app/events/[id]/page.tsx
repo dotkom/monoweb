@@ -22,15 +22,7 @@ const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) =
         />
         <div className="flex-1 flex-col">
           {eventDetail.hasAttendance && <AttendanceCard sessionUser={session?.user} initialEventDetail={eventDetail} />}
-          <TimeLocationBox
-            datetimeStart={eventDetail.event.start}
-            datetimeEnd={eventDetail.event.end}
-            locationTitle={eventDetail.event.locationTitle}
-            locationAddress={eventDetail.event.locationAddress}
-            locationLink={eventDetail.event.locationLink}
-            eventTitle={eventDetail.event.title}
-            eventDescription={eventDetail.event.description}
-          />
+          <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>
     </div>
