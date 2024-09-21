@@ -16,7 +16,6 @@ export default function Page() {
       requestsCompanyPresentation: false,
       requestsCourseEvent: false,
       requestsInstagramTakeover: false,
-      requestsTechTalksParticipation: false,
       requestsExcursionParticipation: false,
       requestsCollaborationEvent: false,
     },
