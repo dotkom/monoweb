@@ -24,7 +24,7 @@ export const deliverConfirmationEmail = async (form: FormSchema) => {
       },
     }),
   })
-  console.info(`Sent request to email endpoint, received ${response.status}`);
+  console.info(`Sent request to email endpoint, received ${response.status}`)
   return response
 }
 
@@ -49,6 +49,6 @@ export const deliverNotificationEmail = async (form: FormSchema) => {
       },
     }),
   })
-  console.info(`Sent confirmation to email endpoint, received ${response.status}`);
+  console.info(`Sent confirmation to email endpoint, received ${response.status}`)
   return response
 }

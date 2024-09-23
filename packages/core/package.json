@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
@@ -31,7 +31,7 @@
     "next": "^14.0.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.2",
     "@dotkomonline/types": "workspace:*",
     "@testcontainers/postgresql": "^10.11.0",
     "@types/node": "^20.12.7",

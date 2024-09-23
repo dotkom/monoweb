@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check ."
   },
   "files": [
@@ -15,7 +15,7 @@
     "typography.css"
   ],
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.2",
     "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
     "postcss-import": "^15.1.0",

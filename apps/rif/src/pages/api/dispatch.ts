@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { formSchema } from "../../app/form-schema"
 import { deliverConfirmationEmail, deliverNotificationEmail } from "../../email"
-import { createSpreadsheetRow } from "../../spreadsheet"
 
 export default async function Route(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {

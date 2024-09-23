@@ -14,6 +14,7 @@ import { RefundRequestServiceImpl } from "../refund-request-service"
 import { paymentPayload } from "./payment-service.spec"
 import { productPayload } from "./product-service.spec"
 
+// biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
 export const refundRequestPayload: Omit<RefundRequest, "id"> = {
   createdAt: new Date(2022, 1, 1),
   updatedAt: new Date(2022, 1, 1),

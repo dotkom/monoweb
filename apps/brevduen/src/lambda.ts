@@ -81,7 +81,10 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
       return { statusCode: 400, body: `Provided arguments don't match email input schema: ${err.message}` }
     }
     if (err instanceof InvalidTemplateArguments) {
-      return { statusCode: 400, body: `Arguments provided to template don't match the template's argument schema: ${err.message}` }
+      return {
+        statusCode: 400,
+        body: `Arguments provided to template don't match the template's argument schema: ${err.message}`,
+      }
     }
     console.error(err)
     return { statusCode: 500 }

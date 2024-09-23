@@ -8,7 +8,7 @@
   }
 }
 
-.parallax :nth-child(0) {
+.parallax :first-child {
   animation: wave 24s linear infinite;
 }
 .parallax :nth-child(1) {
