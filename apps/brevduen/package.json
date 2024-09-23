@@ -6,7 +6,7 @@
   "scripts": {
     "docker:dev": "docker run -p 9000:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=eu-north-1 brevduen:latest",
     "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "docker:build": "docker build --platform linux/amd64 -t brevduen:latest -f Dockerfile ../..",
     "docker:push:staging": "docker tag brevduen:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/brevduen-staging:latest",
@@ -21,7 +21,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.2",
     "@types/aws-lambda": "^8.10.129",
     "@types/node": "^20.12.7",
     "tsup": "^7.2.0",

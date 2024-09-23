@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
@@ -21,7 +21,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.2",
     "typescript": "^5.4.5"
   }
 }

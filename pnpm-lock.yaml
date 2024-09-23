@@ -34,8 +34,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@types/aws-lambda':
         specifier: ^8.10.129
         version: 8.10.131
@@ -44,7 +44,7 @@ importers:
         version: 20.12.7
       tsup:
         specifier: ^7.2.0
-        version: 7.2.0(@swc/core@1.7.14(@swc/helpers@0.5.12))(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5)
+        version: 7.2.0(@swc/core@1.7.14)(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5)
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -149,8 +149,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/config':
         specifier: workspace:^
         version: link:../../packages/config
@@ -180,7 +180,7 @@ importers:
         version: 7.0.1(postcss@8.4.31)
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -228,8 +228,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/config':
         specifier: workspace:^
         version: link:../../packages/config
@@ -250,7 +250,7 @@ importers:
         version: 8.4.33
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -310,8 +310,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/config':
         specifier: workspace:^
         version: link:../../packages/config
@@ -332,7 +332,7 @@ importers:
         version: 8.4.31
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -401,7 +401,7 @@ importers:
         version: 6.11.1
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)))
+        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)))
       '@tanstack/react-query':
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -467,8 +467,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -504,7 +504,7 @@ importers:
         version: 8.4.31
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       trpc-playground:
         specifier: ^1.0.4
         version: 1.0.4(@trpc/server@10.45.2)(@types/node@20.12.7)(koa@2.15.3)(sugarss@4.0.1(postcss@8.4.31))(typescript@5.4.5)(zod@3.22.4)
@@ -543,8 +543,8 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -552,14 +552,14 @@ importers:
   packages/config:
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@radix-ui/colors':
         specifier: ^3.0.0
         version: 3.0.0
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))
+        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(typescript@5.4.5)))
       postcss:
         specifier: ^8.4.31
         version: 8.4.31
@@ -568,10 +568,10 @@ importers:
         version: 15.1.0(postcss@8.4.31)
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(typescript@5.4.5))
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))
+        version: 1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(typescript@5.4.5)))
       tailwindcss-radix:
         specifier: ^2.8.0
         version: 2.8.0
@@ -619,8 +619,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
@@ -641,10 +641,10 @@ importers:
         version: 5.4.5
       vitest:
         specifier: ^1.3.1
-        version: 1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41))
+        version: 1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1)
       vitest-mock-extended:
         specifier: ^1.3.1
-        version: 1.3.1(typescript@5.4.5)(vitest@1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41)))
+        version: 1.3.1(typescript@5.4.5)(vitest@1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1))
 
   packages/db:
     dependencies:
@@ -659,8 +659,8 @@ importers:
         version: 8.11.3
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@types/pg':
         specifier: ^8.10.9
         version: 8.10.9
@@ -690,8 +690,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@types/react':
         specifier: ^18.2.38
         version: 18.3.3
@@ -712,8 +712,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -752,8 +752,8 @@ importers:
         version: 13.11.0
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@types/jsonwebtoken':
         specifier: ^9.0.5
         version: 9.0.5
@@ -765,7 +765,7 @@ importers:
         version: 5.4.5
       vitest:
         specifier: ^1.3.1
-        version: 1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41))
+        version: 1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1)
 
   packages/gateway-trpc:
     dependencies:
@@ -795,8 +795,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
@@ -808,7 +808,7 @@ importers:
         version: 5.4.5
       vitest:
         specifier: ^1.3.1
-        version: 1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41))
+        version: 1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1)
 
   packages/logger:
     dependencies:
@@ -820,8 +820,8 @@ importers:
         version: 3.13.0
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
 
   packages/pgx-ulid: {}
 
@@ -832,8 +832,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -896,8 +896,8 @@ importers:
         version: 2.2.0
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
@@ -915,7 +915,7 @@ importers:
         version: 8.4.31
       tailwindcss:
         specifier: ^3.3.5
-        version: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5))
+        version: 3.3.5(ts-node@10.9.2(@types/node@22.5.0)(typescript@5.4.5))
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -924,13 +924,13 @@ importers:
         version: 5.2.10(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.31))
       vitest:
         specifier: ^1.3.1
-        version: 1.6.0(@types/node@22.5.0)(@vitest/ui@2.0.5)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.31))
+        version: 1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.31))
 
   packages/utils:
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -963,8 +963,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
@@ -994,8 +994,8 @@ importers:
         version: link:../../packages/db
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.2
+        version: 1.9.2
       tsx:
         specifier: ^3.14.0
         version: 3.14.0
@@ -1322,55 +1322,55 @@ packages:
   '@balena/dockerignore@1.0.2':
     resolution: {integrity: sha512-wMue2Sy4GAVTk6Ic4tJVcnfdau+gx2EnG7S+uAEe+TWJFqE4YoWN4/H8MSLj4eYJKxGg26lZwboEniNiNwZQ6Q==}
 
-  '@biomejs/biome@1.6.4':
-    resolution: {integrity: sha512-3groVd2oWsLC0ZU+XXgHSNbq31lUcOCBkCcA7sAQGBopHcmL+jmmdoWlY3S61zIh+f2mqQTQte1g6PZKb3JJjA==}
+  '@biomejs/biome@1.9.2':
+    resolution: {integrity: sha512-4j2Gfwft8Jqp1X0qLYvK4TEy4xhTo4o6rlvJPsjPeEame8gsmbGQfOPBkw7ur+7/Z/f0HZmCZKqbMvR7vTXQYQ==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@1.6.4':
-    resolution: {integrity: sha512-2WZef8byI9NRzGajGj5RTrroW9BxtfbP9etigW1QGAtwu/6+cLkdPOWRAs7uFtaxBNiKFYA8j/BxV5zeAo5QOQ==}
+  '@biomejs/cli-darwin-arm64@1.9.2':
+    resolution: {integrity: sha512-rbs9uJHFmhqB3Td0Ro+1wmeZOHhAPTL3WHr8NtaVczUmDhXkRDWScaxicG9+vhSLj1iLrW47itiK6xiIJy6vaA==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@1.6.4':
-    resolution: {integrity: sha512-uo1zgM7jvzcoDpF6dbGizejDLCqNpUIRkCj/oEK0PB0NUw8re/cn1EnxuOLZqDpn+8G75COLQTOx8UQIBBN/Kg==}
+  '@biomejs/cli-darwin-x64@1.9.2':
+    resolution: {integrity: sha512-BlfULKijNaMigQ9GH9fqJVt+3JTDOSiZeWOQtG/1S1sa8Lp046JHG3wRJVOvekTPL9q/CNFW1NVG8J0JN+L1OA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@1.6.4':
-    resolution: {integrity: sha512-Hp8Jwt6rjj0wCcYAEN6/cfwrrPLLlGOXZ56Lei4Pt4jy39+UuPeAVFPeclrrCfxyL1wQ2xPrhd/saTHSL6DoJg==}
+  '@biomejs/cli-linux-arm64-musl@1.9.2':
+    resolution: {integrity: sha512-ZATvbUWhNxegSALUnCKWqetTZqrK72r2RsFD19OK5jXDj/7o1hzI1KzDNG78LloZxftrwr3uI9SqCLh06shSZw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-arm64@1.6.4':
-    resolution: {integrity: sha512-wAOieaMNIpLrxGc2/xNvM//CIZg7ueWy3V5A4T7gDZ3OL/Go27EKE59a+vMKsBCYmTt7jFl4yHz0TUkUbodA/w==}
+  '@biomejs/cli-linux-arm64@1.9.2':
+    resolution: {integrity: sha512-T8TJuSxuBDeQCQzxZu2o3OU4eyLumTofhCxxFd3+aH2AEWVMnH7Z/c3QP1lHI5RRMBP9xIJeMORqDQ5j+gVZzw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64-musl@1.6.4':
-    resolution: {integrity: sha512-wqi0hr8KAx5kBO0B+m5u8QqiYFFBJOSJVSuRqTeGWW+GYLVUtXNidykNqf1JsW6jJDpbkSp2xHKE/bTlVaG2Kg==}
+  '@biomejs/cli-linux-x64-musl@1.9.2':
+    resolution: {integrity: sha512-CjPM6jT1miV5pry9C7qv8YJk0FIZvZd86QRD3atvDgfgeh9WQU0k2Aoo0xUcPdTnoz0WNwRtDicHxwik63MmSg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-linux-x64@1.6.4':
-    resolution: {integrity: sha512-qTWhuIw+/ePvOkjE9Zxf5OqSCYxtAvcTJtVmZT8YQnmY2I62JKNV2m7tf6O5ViKZUOP0mOQ6NgqHKcHH1eT8jw==}
+  '@biomejs/cli-linux-x64@1.9.2':
+    resolution: {integrity: sha512-T0cPk3C3Jr2pVlsuQVTBqk2qPjTm8cYcTD9p/wmR9MeVqui1C/xTVfOIwd3miRODFMrJaVQ8MYSXnVIhV9jTjg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
 
-  '@biomejs/cli-win32-arm64@1.6.4':
-    resolution: {integrity: sha512-Wp3FiEeF6v6C5qMfLkHwf4YsoNHr/n0efvoC8jCKO/kX05OXaVExj+1uVQ1eGT7Pvx0XVm/TLprRO0vq/V6UzA==}
+  '@biomejs/cli-win32-arm64@1.9.2':
+    resolution: {integrity: sha512-2x7gSty75bNIeD23ZRPXyox6Z/V0M71ObeJtvQBhi1fgrvPdtkEuw7/0wEHg6buNCubzOFuN9WYJm6FKoUHfhg==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@1.6.4':
-    resolution: {integrity: sha512-mz183Di5hTSGP7KjNWEhivcP1wnHLGmOxEROvoFsIxMYtDhzJDad4k5gI/1JbmA0xe4n52vsgqo09tBhrMT/Zg==}
+  '@biomejs/cli-win32-x64@1.9.2':
+    resolution: {integrity: sha512-JC3XvdYcjmu1FmAehVwVV0SebLpeNTnO2ZaMdGCSOdS7f8O9Fq14T2P1gTG1Q29Q8Dt1S03hh0IdVpIZykOL8g==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -3784,9 +3784,6 @@ packages:
   '@vitest/expect@1.6.0':
     resolution: {integrity: sha512-ixEvFVQjycy/oNgHjqsL6AZCDduC+tflRluaHIzKIsdbzkLn2U/iBnVeJwB6HsIjQBdfMR8Z0tRxKUsvFJEeWQ==}
 
-  '@vitest/pretty-format@2.0.5':
-    resolution: {integrity: sha512-h8k+1oWHfwTkyTkb9egzwNMfJAEx4veaPSnMeKbVSjp4euqGSbQlm5+6VHwTr7u4FJslVVsUG5nopCaAYdOmSQ==}
-
   '@vitest/runner@1.6.0':
     resolution: {integrity: sha512-P4xgwPjwesuBiHisAVz/LSSZtDjOTPYZVmNAnpHHSR6ONrf8eCJOFRvUwdHn30F5M1fxhqtl7QZQUk2dprIXAg==}
 
@@ -3801,16 +3798,8 @@ packages:
     peerDependencies:
       vitest: 1.6.0
 
-  '@vitest/ui@2.0.5':
-    resolution: {integrity: sha512-m+ZpVt/PVi/nbeRKEjdiYeoh0aOfI9zr3Ria9LO7V2PlMETtAXJS3uETEZkc8Be2oOl8mhd7Ew+5SRBXRYncNw==}
-    peerDependencies:
-      vitest: 2.0.5
-
   '@vitest/utils@1.6.0':
     resolution: {integrity: sha512-21cPiuGMoMZwiOHa2i4LXkMkMkCGzA+MVFV70jRwHo95dL4x/ts5GZhML1QWuy7yfp3WzK3lRvZi3JnXTYqrBw==}
-
-  '@vitest/utils@2.0.5':
-    resolution: {integrity: sha512-d8HKbqIcya+GR67mkZbrzhS5kKhtp8dQLcmRZLGTscGVg7yImT82cIrhtn2L8+VujWcy6KZweApgNmPsTAO/UQ==}
 
   '@zxing/library@0.20.0':
     resolution: {integrity: sha512-6Ev6rcqVjMakZFIDvbUf0dtpPGeZMTfyxYg4HkVWioWeN7cRcnUWT3bU6sdohc82O1nPXcjq6WiGfXX2Pnit6A==}
@@ -5503,9 +5492,6 @@ packages:
   loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
 
-  loupe@3.1.1:
-    resolution: {integrity: sha512-edNu/8D5MKVfGVFRhFf8aAxiTM6Wumfz5XsaatSxlD3w4R1d/WEKUTydCdPGbl9K7QG/Ca3GnDV2sIKIpXRQcw==}
-
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
@@ -6966,10 +6952,6 @@ packages:
     resolution: {integrity: sha512-i11VH5gS6IFeLY3gMBQ00/MmLncVP7JLXOw1vlgkytLmJK7QnEr7NXf0LBdxfmNPAeyetukOk0bOYrJrFGjYJQ==}
     engines: {node: '>=14.0.0'}
 
-  tinyrainbow@1.2.0:
-    resolution: {integrity: sha512-weEDEq7Z5eTHPDh4xjX789+fHfF+P8boiFB+0vbWzpbnbsEr/GRaohi/uMKxg8RZMXnl1ItAi/IUHWMsjDV7kQ==}
-    engines: {node: '>=14.0.0'}
-
   tinyspy@2.2.1:
     resolution: {integrity: sha512-KYad6Vy5VDWV4GH3fjpseMQ/XU2BhIYP7Vzd0LG44qRWm/Yt2WCOTicFdvmgo6gWaqooMQCawTtILVQJupKu7A==}
     engines: {node: '>=14.0.0'}
@@ -8409,39 +8391,39 @@ snapshots:
 
   '@balena/dockerignore@1.0.2': {}
 
-  '@biomejs/biome@1.6.4':
+  '@biomejs/biome@1.9.2':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 1.6.4
-      '@biomejs/cli-darwin-x64': 1.6.4
-      '@biomejs/cli-linux-arm64': 1.6.4
-      '@biomejs/cli-linux-arm64-musl': 1.6.4
-      '@biomejs/cli-linux-x64': 1.6.4
-      '@biomejs/cli-linux-x64-musl': 1.6.4
-      '@biomejs/cli-win32-arm64': 1.6.4
-      '@biomejs/cli-win32-x64': 1.6.4
+      '@biomejs/cli-darwin-arm64': 1.9.2
+      '@biomejs/cli-darwin-x64': 1.9.2
+      '@biomejs/cli-linux-arm64': 1.9.2
+      '@biomejs/cli-linux-arm64-musl': 1.9.2
+      '@biomejs/cli-linux-x64': 1.9.2
+      '@biomejs/cli-linux-x64-musl': 1.9.2
+      '@biomejs/cli-win32-arm64': 1.9.2
+      '@biomejs/cli-win32-x64': 1.9.2
 
-  '@biomejs/cli-darwin-arm64@1.6.4':
+  '@biomejs/cli-darwin-arm64@1.9.2':
     optional: true
 
-  '@biomejs/cli-darwin-x64@1.6.4':
+  '@biomejs/cli-darwin-x64@1.9.2':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@1.6.4':
+  '@biomejs/cli-linux-arm64-musl@1.9.2':
     optional: true
 
-  '@biomejs/cli-linux-arm64@1.6.4':
+  '@biomejs/cli-linux-arm64@1.9.2':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@1.6.4':
+  '@biomejs/cli-linux-x64-musl@1.9.2':
     optional: true
 
-  '@biomejs/cli-linux-x64@1.6.4':
+  '@biomejs/cli-linux-x64@1.9.2':
     optional: true
 
-  '@biomejs/cli-win32-arm64@1.6.4':
+  '@biomejs/cli-win32-arm64@1.9.2':
     optional: true
 
-  '@biomejs/cli-win32-x64@1.6.4':
+  '@biomejs/cli-win32-x64@1.9.2':
     optional: true
 
   '@bundled-es-modules/cookie@2.0.0':
@@ -10510,7 +10492,7 @@ snapshots:
       '@swc/core-win32-x64-msvc': 1.4.17
       '@swc/helpers': 0.5.12
 
-  '@swc/core@1.7.14(@swc/helpers@0.5.12)':
+  '@swc/core@1.7.14':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.12
@@ -10525,7 +10507,6 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.7.14
       '@swc/core-win32-ia32-msvc': 1.7.14
       '@swc/core-win32-x64-msvc': 1.7.14
-      '@swc/helpers': 0.5.12
     optional: true
 
   '@swc/counter@0.1.3': {}
@@ -10557,21 +10538,21 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)))':
+  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)))':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+      tailwindcss: 3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
 
-  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))':
+  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(typescript@5.4.5)))':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5))
+      tailwindcss: 3.3.5(ts-node@10.9.2(typescript@5.4.5))
 
   '@tanstack/query-core@4.36.1': {}
 
@@ -10845,11 +10826,6 @@ snapshots:
       '@vitest/utils': 1.6.0
       chai: 4.5.0
 
-  '@vitest/pretty-format@2.0.5':
-    dependencies:
-      tinyrainbow: 1.2.0
-    optional: true
-
   '@vitest/runner@1.6.0':
     dependencies:
       '@vitest/utils': 1.6.0
@@ -10875,19 +10851,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41))
-
-  '@vitest/ui@2.0.5(vitest@1.6.0)':
-    dependencies:
-      '@vitest/utils': 2.0.5
-      fast-glob: 3.3.2
-      fflate: 0.8.2
-      flatted: 3.3.1
-      pathe: 1.1.2
-      sirv: 2.0.4
-      tinyrainbow: 1.2.0
-      vitest: 1.6.0(@types/node@22.5.0)(@vitest/ui@2.0.5)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.31))
-    optional: true
+      vitest: 1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1)
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -10895,14 +10859,6 @@ snapshots:
       estree-walker: 3.0.3
       loupe: 2.3.7
       pretty-format: 29.7.0
-
-  '@vitest/utils@2.0.5':
-    dependencies:
-      '@vitest/pretty-format': 2.0.5
-      estree-walker: 3.0.3
-      loupe: 3.1.1
-      tinyrainbow: 1.2.0
-    optional: true
 
   '@zxing/library@0.20.0':
     dependencies:
@@ -12772,11 +12728,6 @@ snapshots:
     dependencies:
       get-func-name: 2.0.2
 
-  loupe@3.1.1:
-    dependencies:
-      get-func-name: 2.0.2
-    optional: true
-
   lru-cache@10.4.3: {}
 
   lru-cache@5.1.1:
@@ -13715,29 +13666,37 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.4.31
 
-  postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)):
+  postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
       yaml: 2.3.1
     optionalDependencies:
       postcss: 8.4.31
-      ts-node: 10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)
+      ts-node: 10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5)
 
-  postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)):
+  postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(@types/node@22.5.0)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
       yaml: 2.3.1
     optionalDependencies:
       postcss: 8.4.31
-      ts-node: 10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)
+      ts-node: 10.9.2(@types/node@22.5.0)(typescript@5.4.5)
 
-  postcss-load-config@4.0.1(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)):
+  postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(typescript@5.4.5)):
+    dependencies:
+      lilconfig: 2.1.0
+      yaml: 2.3.1
+    optionalDependencies:
+      postcss: 8.4.31
+      ts-node: 10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5)
+
+  postcss-load-config@4.0.1(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
       yaml: 2.3.1
     optionalDependencies:
       postcss: 8.4.41
-      ts-node: 10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)
+      ts-node: 10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5)
 
   postcss-mixins@9.0.4(postcss@8.4.31):
     dependencies:
@@ -14488,11 +14447,6 @@ snapshots:
     dependencies:
       postcss: 8.4.31
 
-  sugarss@4.0.1(postcss@8.4.41):
-    dependencies:
-      postcss: 8.4.41
-    optional: true
-
   superjson@1.13.3:
     dependencies:
       copy-anything: 3.0.5
@@ -14515,13 +14469,13 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.23.8
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5))):
+  tailwindcss-animate@1.0.7(tailwindcss@3.3.5(ts-node@10.9.2(typescript@5.4.5))):
     dependencies:
-      tailwindcss: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5))
+      tailwindcss: 3.3.5(ts-node@10.9.2(typescript@5.4.5))
 
   tailwindcss-radix@2.8.0: {}
 
-  tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)):
+  tailwindcss@3.3.5(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -14540,7 +14494,7 @@ snapshots:
       postcss: 8.4.31
       postcss-import: 15.1.0(postcss@8.4.31)
       postcss-js: 4.0.1(postcss@8.4.31)
-      postcss-load-config: 4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+      postcss-load-config: 4.0.1(postcss@8.4.31)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
       postcss-nested: 6.0.1(postcss@8.4.31)
       postcss-selector-parser: 6.0.13
       resolve: 1.22.3
@@ -14548,7 +14502,7 @@ snapshots:
     transitivePeerDependencies:
       - ts-node
 
-  tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)):
+  tailwindcss@3.3.5(ts-node@10.9.2(@types/node@22.5.0)(typescript@5.4.5)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -14567,7 +14521,34 @@ snapshots:
       postcss: 8.4.31
       postcss-import: 15.1.0(postcss@8.4.31)
       postcss-js: 4.0.1(postcss@8.4.31)
-      postcss-load-config: 4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5))
+      postcss-load-config: 4.0.1(postcss@8.4.31)(ts-node@10.9.2(@types/node@22.5.0)(typescript@5.4.5))
+      postcss-nested: 6.0.1(postcss@8.4.31)
+      postcss-selector-parser: 6.0.13
+      resolve: 1.22.3
+      sucrase: 3.34.0
+    transitivePeerDependencies:
+      - ts-node
+
+  tailwindcss@3.3.5(ts-node@10.9.2(typescript@5.4.5)):
+    dependencies:
+      '@alloc/quick-lru': 5.2.0
+      arg: 5.0.2
+      chokidar: 3.5.3
+      didyoumean: 1.2.2
+      dlv: 1.1.3
+      fast-glob: 3.3.1
+      glob-parent: 6.0.2
+      is-glob: 4.0.3
+      jiti: 1.19.1
+      lilconfig: 2.1.0
+      micromatch: 4.0.5
+      normalize-path: 3.0.0
+      object-hash: 3.0.0
+      picocolors: 1.0.0
+      postcss: 8.4.31
+      postcss-import: 15.1.0(postcss@8.4.31)
+      postcss-js: 4.0.1(postcss@8.4.31)
+      postcss-load-config: 4.0.1(postcss@8.4.31)(ts-node@10.9.2(typescript@5.4.5))
       postcss-nested: 6.0.1(postcss@8.4.31)
       postcss-selector-parser: 6.0.13
       resolve: 1.22.3
@@ -14646,9 +14627,6 @@ snapshots:
   tinybench@2.9.0: {}
 
   tinypool@0.8.4: {}
-
-  tinyrainbow@1.2.0:
-    optional: true
 
   tinyspy@2.2.1: {}
 
@@ -14741,7 +14719,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5):
+  ts-node@10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -14759,10 +14737,10 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.7.14(@swc/helpers@0.5.12)
+      '@swc/core': 1.7.14
     optional: true
 
-  ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5):
+  ts-node@10.9.2(@types/node@22.5.0)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -14779,8 +14757,6 @@ snapshots:
       typescript: 5.4.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
-    optionalDependencies:
-      '@swc/core': 1.7.14(@swc/helpers@0.5.12)
     optional: true
 
   tsconfck@3.0.3(typescript@5.4.5):
@@ -14793,7 +14769,7 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
-  tsup@7.2.0(@swc/core@1.7.14(@swc/helpers@0.5.12))(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5):
+  tsup@7.2.0(@swc/core@1.7.14)(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5):
     dependencies:
       bundle-require: 4.0.2(esbuild@0.18.20)
       cac: 6.7.14
@@ -14803,14 +14779,14 @@ snapshots:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.1(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
+      postcss-load-config: 4.0.1(postcss@8.4.41)(ts-node@10.9.2(@swc/core@1.7.14)(@types/node@20.12.7)(typescript@5.4.5))
       resolve-from: 5.0.0
       rollup: 3.29.2
       source-map: 0.8.0-beta.0
       sucrase: 3.34.0
       tree-kill: 1.2.2
     optionalDependencies:
-      '@swc/core': 1.7.14(@swc/helpers@0.5.12)
+      '@swc/core': 1.7.14
       postcss: 8.4.41
       typescript: 5.4.5
     transitivePeerDependencies:
@@ -15080,13 +15056,13 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-node@1.6.0(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.41)):
+  vite-node@1.6.0(@types/node@20.12.7)(sugarss@4.0.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.6
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.41))
+      vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -15114,13 +15090,13 @@ snapshots:
       - supports-color
       - terser
 
-  vite-node@1.6.0(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41)):
+  vite-node@1.6.0(@types/node@22.5.0)(sugarss@4.0.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.6
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.2.10(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41))
+      vite: 5.2.10(@types/node@22.5.0)(sugarss@4.0.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -15152,7 +15128,7 @@ snapshots:
       fsevents: 2.3.3
       sugarss: 4.0.1(postcss@8.4.31)
 
-  vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.41)):
+  vite@5.2.10(@types/node@20.12.7)(sugarss@4.0.1):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
@@ -15160,7 +15136,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.12.7
       fsevents: 2.3.3
-      sugarss: 4.0.1(postcss@8.4.41)
+      sugarss: 4.0.1(postcss@8.4.31)
 
   vite@5.2.10(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.31)):
     dependencies:
@@ -15172,7 +15148,7 @@ snapshots:
       fsevents: 2.3.3
       sugarss: 4.0.1(postcss@8.4.31)
 
-  vite@5.2.10(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41)):
+  vite@5.2.10(@types/node@22.5.0)(sugarss@4.0.1):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
@@ -15180,15 +15156,15 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.5.0
       fsevents: 2.3.3
-      sugarss: 4.0.1(postcss@8.4.41)
+      sugarss: 4.0.1(postcss@8.4.31)
 
-  vitest-mock-extended@1.3.1(typescript@5.4.5)(vitest@1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41))):
+  vitest-mock-extended@1.3.1(typescript@5.4.5)(vitest@1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1)):
     dependencies:
       ts-essentials: 9.3.2(typescript@5.4.5)
       typescript: 5.4.5
-      vitest: 1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41))
+      vitest: 1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1)
 
-  vitest@1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41)):
+  vitest@1.6.0(@types/node@20.12.7)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -15207,8 +15183,8 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.9.0
       tinypool: 0.8.4
-      vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.41))
-      vite-node: 1.6.0(@types/node@20.12.7)(sugarss@4.0.1(postcss@8.4.41))
+      vite: 5.2.10(@types/node@20.12.7)(sugarss@4.0.1)
+      vite-node: 1.6.0(@types/node@20.12.7)(sugarss@4.0.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.12.7
@@ -15223,42 +15199,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41)):
-    dependencies:
-      '@vitest/expect': 1.6.0
-      '@vitest/runner': 1.6.0
-      '@vitest/snapshot': 1.6.0
-      '@vitest/spy': 1.6.0
-      '@vitest/utils': 1.6.0
-      acorn-walk: 8.3.3
-      chai: 4.5.0
-      debug: 4.3.6
-      execa: 8.0.1
-      local-pkg: 0.5.0
-      magic-string: 0.30.11
-      pathe: 1.1.2
-      picocolors: 1.0.1
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      tinybench: 2.9.0
-      tinypool: 0.8.4
-      vite: 5.2.10(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41))
-      vite-node: 1.6.0(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41))
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/node': 22.5.0
-      '@vitest/ui': 1.6.0(vitest@1.6.0)
-      jsdom: 24.1.1
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-
-  vitest@1.6.0(@types/node@22.5.0)(@vitest/ui@2.0.5)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.31)):
+  vitest@1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.31)):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -15282,7 +15223,42 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.5.0
-      '@vitest/ui': 2.0.5(vitest@1.6.0)
+      '@vitest/ui': 1.6.0(vitest@1.6.0)
+      jsdom: 24.1.1
+    transitivePeerDependencies:
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+
+  vitest@1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1):
+    dependencies:
+      '@vitest/expect': 1.6.0
+      '@vitest/runner': 1.6.0
+      '@vitest/snapshot': 1.6.0
+      '@vitest/spy': 1.6.0
+      '@vitest/utils': 1.6.0
+      acorn-walk: 8.3.3
+      chai: 4.5.0
+      debug: 4.3.6
+      execa: 8.0.1
+      local-pkg: 0.5.0
+      magic-string: 0.30.11
+      pathe: 1.1.2
+      picocolors: 1.0.1
+      std-env: 3.7.0
+      strip-literal: 2.1.0
+      tinybench: 2.9.0
+      tinypool: 0.8.4
+      vite: 5.2.10(@types/node@22.5.0)(sugarss@4.0.1)
+      vite-node: 1.6.0(@types/node@22.5.0)(sugarss@4.0.1)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/node': 22.5.0
+      '@vitest/ui': 1.6.0(vitest@1.6.0)
       jsdom: 24.1.1
     transitivePeerDependencies:
       - less
