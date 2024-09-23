@@ -9,21 +9,16 @@ interface TimeBoxProps {
   event: Event
 }
 
-const capitalize = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
-
 const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat("nb-NO", format).format(date)
 
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const { start, end, locationAddress, description, title: eventSummary } = event
 
-  const weekdays = [formatWithIntl(start, IntlFormats.Weekday)]
-  const dates = [formatWithIntl(start, IntlFormats.ShortDate)]
+  const multipleDays = start.getDate() !== end.getDate()
 
-  if (start.getDate() !== end.getDate()) {
-    weekdays.push(formatWithIntl(end, IntlFormats.Weekday))
-    dates.push(formatWithIntl(end, IntlFormats.ShortDate))
-  }
+  const time = { start: formatWithIntl(start, IntlFormats.Time), end: formatWithIntl(end, IntlFormats.Time) }
+  const date = { start: formatWithIntl(start, IntlFormats.ShortDate), end: formatWithIntl(end, IntlFormats.ShortDate) }
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
@@ -33,27 +28,28 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
     end,
   })
 
-  // TODO refactor
   return (
-    <div className="flex mb-8 mt-4">
+    <div className="flex">
       <div className="w-12 flex items-center">
         <Icon icon="tabler:clock" width={24} height={24} />
       </div>
-      <div className="flex flex-col">
-        <span className="flex flex-row gap-[1ch]">
-            <span className="flex flex-col">
-                <span className="text-lg">{dates[0]}</span>
-                <span className="text-lg">{formatWithIntl(start, IntlFormats.Time)} {dates.length === 1 ? ` til ${formatWithIntl(end, IntlFormats.Time)}` : null }</span>
+      <div className="flex flex-1 flex-col">
+        <span className="flex flex-row gap-[2ch] items-center">
+          <span className="flex flex-col">
+            <span className="text-lg font-medium">{date.start}</span>
+            <span className="text-base">
+              {time.start} {!multipleDays ? ` - ${time.end}` : null}
             </span>
-            {dates.length > 1 && (
-                <>
-                    <span className="text-lg">til</span>
-                    <span className="flex flex-col">
-                        <span className="text-lg">{dates[1]}</span>
-                        <span className="text-lg">kl. {formatWithIntl(end, IntlFormats.Time)}</span>
-                    </span>
-                </>
-            )}
+          </span>
+          {multipleDays && (
+            <>
+              <Icon icon={"tabler:arrow-right"} className="text-2xl" />
+              <span className="flex flex-col">
+                <span className="text-lg font-medium">{date.end}</span>
+                <span className="text-base">{time.end}</span>
+              </span>
+            </>
+          )}
         </span>
       </div>
       <div className="flex items-center">
