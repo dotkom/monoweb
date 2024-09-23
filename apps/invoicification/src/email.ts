@@ -24,6 +24,6 @@ export const deliverNotificationEmail = async (form: FormSchema) => {
       },
     }),
   })
-  console.info(`Sent notification to email endpoint, received ${response.status} (${await response.text()})`)
+  console.info(`Sent notification to email endpoint, received ${response.status}`)
   return response
 }
