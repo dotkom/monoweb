@@ -3,7 +3,7 @@ import { z } from "zod"
 
 const environmentVariableSchema = z.string().nonempty()
 
-export const createEnvironment = (skipValidation = false) =>
+export const createEnvironment = () =>
   createEnv({
     clientPrefix: "NEXT_PUBLIC_",
     server: {
@@ -71,7 +71,7 @@ export const createEnvironment = (skipValidation = false) =>
 
       S3_BUCKET_MONOWEB: process.env.S3_BUCKET_MONOWEB,
     },
-    skipValidation,
+    skipValidation: process.env.DOCKER_BUILD !== undefined,
   })
 
 export const env = createEnvironment()
