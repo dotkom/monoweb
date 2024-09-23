@@ -38,7 +38,7 @@ importers:
         version: 1.9.2
       '@types/aws-lambda':
         specifier: ^8.10.129
-        version: 8.10.131
+        version: 8.10.145
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.7
@@ -3644,8 +3644,8 @@ packages:
   '@types/acorn@4.0.6':
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}
 
-  '@types/aws-lambda@8.10.131':
-    resolution: {integrity: sha512-IWmFpqnVDvskYWnNSiu/qlRn80XlIOU0Gy5rKCl/NjhnI95pV8qIHs6L5b+bpHhyzuOSzjLgBcwgFSXrC1nZWA==}
+  '@types/aws-lambda@8.10.145':
+    resolution: {integrity: sha512-dtByW6WiFk5W5Jfgz1VM+YPA21xMXTuSFoLYIDY0L44jDLLflVPtZkYuu3/YxpGcvjzKFBZLU+GyKjR0HOYtyw==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -10587,7 +10587,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.5
 
-  '@types/aws-lambda@8.10.131': {}
+  '@types/aws-lambda@8.10.145': {}
 
   '@types/babel__core@7.20.5':
     dependencies:
