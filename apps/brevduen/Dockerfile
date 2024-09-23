@@ -5,7 +5,7 @@ COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json turbo.json ./
 
-RUN npm i -g pnpm@8
+RUN npm i -g pnpm@9.0.4
 RUN pnpm install --frozen-lockfile
 RUN pnpm build:brevduen
 
