@@ -401,7 +401,7 @@ importers:
         version: 6.11.1
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)))
+        version: 0.5.15(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)))
       '@tanstack/react-query':
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -559,7 +559,7 @@ importers:
         version: 3.0.0
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))
+        version: 0.5.15(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))
       postcss:
         specifier: ^8.4.31
         version: 8.4.31
@@ -3547,10 +3547,10 @@ packages:
       typescript:
         optional: true
 
-  '@tailwindcss/typography@0.5.10':
-    resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}
+  '@tailwindcss/typography@0.5.15':
+    resolution: {integrity: sha512-AqhlCXl+8grUz8uqExv5OTtgpjuVIwFTSXTrh8y9/pw6q2ek7fJ+Y8ZEVw7EB2DCcuCOtEjf9w3+J3rzts01uA==}
     peerDependencies:
-      tailwindcss: '>=3.0.0 || insiders'
+      tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20'
 
   '@tanstack/query-core@4.36.1':
     resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
@@ -10470,7 +10470,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)))':
+  '@tailwindcss/typography@0.5.15(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5)))':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
@@ -10478,7 +10478,7 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@20.12.7)(typescript@5.4.5))
 
-  '@tailwindcss/typography@0.5.10(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))':
+  '@tailwindcss/typography@0.5.15(tailwindcss@3.3.5(ts-node@10.9.2(@swc/core@1.7.14(@swc/helpers@0.5.12))(@types/node@22.5.0)(typescript@5.4.5)))':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
