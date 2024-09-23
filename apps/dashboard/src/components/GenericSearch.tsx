@@ -27,7 +27,7 @@ const GenericSearch = <T,>({
     const selectedItem = items.find((item) => dataMapper(item) === newValue)
     if (selectedItem) {
       if (resetOnClick) {
-        setValue("hello")
+        setValue("hello 2")
       }
       onSubmit(selectedItem)
     }
