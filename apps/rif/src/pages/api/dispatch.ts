@@ -14,7 +14,8 @@ export default async function Route(req: NextApiRequest, res: NextApiResponse) {
   }
   const body = parseResult.data
 
-  await createSpreadsheetRow(body)
+  // Hotfix
+  // await createSpreadsheetRow(body)
 
   let response: Response = await deliverConfirmationEmail(body)
   if (!response.ok) {
