@@ -16,7 +16,7 @@ export const ActionSelect: FC<ActionSelectProps> = ({ data, onChange, buttonProp
 
   const options = data.map((item) => (
     <Combobox.Option value={item.value} key={item.value}>
-      {item.label}
+      {item.label}Hello
     </Combobox.Option>
   ))
 
