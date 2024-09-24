@@ -59,7 +59,7 @@ const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
           </div>
         </div>
       </div>
-      <div className="mb-10 mt-10 flex flex-row gap-x-12">
+      <div className="mb-10 mt-10 flex flex-col xl:flex-row gap-x-12">
         <CompanyFiltersContainer
           chosenLocation={chosenLocation}
           setChosenLocation={setChosenLocation}

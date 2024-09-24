@@ -18,7 +18,7 @@ import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } f
 import { type UserRepository, UserRepositoryImpl } from "../user-repository"
 import { type UserService, UserServiceImpl } from "../user-service"
 
-export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
+type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
 interface ServerLayerOptions {
   db: Kysely<Database>

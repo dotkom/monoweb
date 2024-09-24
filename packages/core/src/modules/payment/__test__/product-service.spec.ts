@@ -6,6 +6,7 @@ import { ProductNotFoundError } from "../product-error"
 import { ProductRepositoryImpl } from "./../product-repository"
 import { ProductServiceImpl } from "./../product-service"
 
+// biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
 export const productPayload: Omit<Product, "id"> = {
   createdAt: new Date(2022, 1, 1),
   updatedAt: new Date(2022, 1, 1),

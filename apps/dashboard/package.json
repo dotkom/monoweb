@@ -6,7 +6,7 @@
     "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
@@ -41,11 +41,11 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",
     "react-zxing": "^2.0.0",
-    "superjson": "^1.13.3",
+    "superjson": "^2.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.2",
     "@dotkomonline/config": "workspace:^",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.38",
