@@ -14,7 +14,7 @@ export const useUnregisterMutation = () => {
 }
 
 interface UseRegisterMutationInput {
-  onSuccess: () => void
+  onSuccess?: () => void
 }
 
 export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => {
@@ -24,7 +24,7 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
     onSuccess: () => {
       utils.event.getWebEventDetailData.invalidate()
       utils.event.attendance.getAttendee.invalidate()
-      onSuccess()
+      onSuccess?.()
     },
     onError: (error) => {
       console.error(error)
