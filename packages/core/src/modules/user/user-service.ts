@@ -5,7 +5,8 @@ import type {
   PrivacyPermissionsWrite,
   User,
   UserId,
-  UserWrite,
+  UserMetadata,
+  UserMetadataWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
@@ -14,16 +15,15 @@ import type { UserRepository } from "./user-repository"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
-  getAll(limit: number): Promise<User[]>
+  getAll(limit: number, offset: number): Promise<User[]>
+  searchForUser(query: string, limit: number, offset: number): Promise<User[]>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>
   updatePrivacyPermissionsForUserId(
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
-  create(data: UserWrite): Promise<User>
-  update(data: User): Promise<User>
-  getByAuth0Id(auth0Id: string): Promise<User | null>
+  updateMetadata(userId: UserId, data: UserMetadataWrite): Promise<UserMetadata>
+  getById(auth0Id: string): Promise<User | null>
 }
 
 export class UserServiceImpl implements UserService {
@@ -33,28 +33,20 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
-  async getByAuth0Id(auth0Id: string) {
-    return this.userRepository.getByAuth0Id(auth0Id)
+  async getById(auth0Id: string) {
+    return this.userRepository.getById(auth0Id)
   }
 
-  async create(data: UserWrite) {
-    return this.userRepository.create(data)
+  async updateMetadata(userId: UserId, data: UserMetadataWrite) {
+    return this.userRepository.updateMetadata(userId, data)
   }
 
-  async update(data: User) {
-    return this.userRepository.update(data.id, data)
+  async getAll(limit: number, offset: number): Promise<User[]> {
+    return await this.userRepository.getAll(limit, offset)
   }
 
-  async getAll(limit: number) {
-    return await this.userRepository.getAll(limit)
-  }
-
-  async getById(id: User["id"]) {
-    return this.userRepository.getById(id)
-  }
-
-  async searchByFullName(searchQuery: string, take: number) {
-    return this.userRepository.searchByFullName(searchQuery, take)
+  async searchForUser(query: string, limit: number, offset: number): Promise<User[]> {
+    return await this.userRepository.searchForUser(query, limit, offset)
   }
 
   async getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions> {

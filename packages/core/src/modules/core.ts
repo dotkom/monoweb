@@ -118,7 +118,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const committeeOrganizerRepository: EventCommitteeRepository = new EventCommitteeRepositoryImpl(db)
 
-  const userRepository: UserRepository = new UserRepositoryImpl(db)
+  const userRepository: UserRepository = new UserRepositoryImpl(auth0ManagementClient)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
   const attendancePoolRepository: AttendancePoolRepository = new AttendancePoolRepositoryImpl(db)

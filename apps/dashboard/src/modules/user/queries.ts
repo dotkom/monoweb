@@ -12,7 +12,7 @@ export const useUsersQuery = () => {
 }
 
 export const useSearchUsersQuery = (fullName: string) => {
-  const { data = [], isLoading } = trpc.user.searchByFullName.useQuery({
+  const { data = [], isLoading } = trpc.user.searchByName.useQuery({
     searchQuery: fullName,
   })
   return { data, isLoading }

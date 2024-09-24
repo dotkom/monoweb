@@ -45,7 +45,7 @@ export class AttendeeServiceImpl implements AttendeeService {
   ) {}
 
   async getByAuth0UserId(auth0UserId: string, attendanceId: AttendanceId) {
-    const user = await this.userService.getByAuth0Id(auth0UserId)
+    const user = await this.userService.getById(auth0UserId)
     if (user === null) {
       return null
     }

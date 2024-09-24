@@ -1,63 +1,72 @@
 import type { Database } from "@dotkomonline/db"
-import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
+import { AppMetadataSchema, type User, type UserId, UserMetadataSchema, UserMetadataWrite } from "@dotkomonline/types"
 import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
 import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
-
-export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
+import { GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
 
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
-  getByAuth0Id(id: UserId): Promise<User | null>
-  getAll(limit: number): Promise<User[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User>
-  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  getAll(limit: number, page: number): Promise<User[]>
+  updateMetadata(id: UserId, data: UserMetadataWrite): Promise<UserMetadataWrite>
+  searchForUser(query: string, limit: number, page: number): Promise<User[]>
+}
+
+const mapToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
+  const metadata = UserMetadataSchema.safeParse(auth0User.user_metadata);
+  const app_metadata = AppMetadataSchema.safeParse(auth0User.app_metadata);
+
+  return {
+    id: auth0User.user_id,
+    email: auth0User.email,
+    metadata: metadata.success ? metadata.data : undefined,
+    app_metadata: app_metadata.success ? app_metadata.data : undefined,
+  }
 }
 
 export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly db: Kysely<Database>) {}
-  async getById(id: UserId) {
-    const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
-    return user ? mapToUser(user) : null
+  constructor(private readonly client: ManagementClient) {}
+
+  async getById(id: UserId): Promise<User | null> {
+    const user = await this.client.users.get({ id: id })
+
+    switch (user.status) {
+      case 200:
+        return mapToUser(user.data)
+      case 404:
+        return null
+      default:
+        throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
+    }
   }
 
-  async getByAuth0Id(id: UserId) {
-    const user = await this.db.selectFrom("owUser").selectAll().where("auth0Id", "=", id).executeTakeFirst()
-    return user ? mapToUser(user) : null
+  async getAll(limit: number, page: number): Promise<User[]> {
+    const users = await this.client.users.getAll({ per_page: limit, page: page })
+
+    return users.data.map(mapToUser)
   }
 
-  async getAll(limit: number) {
-    const users = await this.db.selectFrom("owUser").selectAll().limit(limit).execute()
-    return users.map(mapToUser)
-  }
-  async create(data: UserWrite) {
-    const user = await this.db
-      .insertInto("owUser")
-      .values(this.mapInsert(data))
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToUser(user)
-  }
-  async update(id: UserId, data: UserWrite) {
-    const user = await this.db
-      .updateTable("owUser")
-      .set(this.mapInsert(data))
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
+  async searchForUser(query: string, limit: number, page: number): Promise<User[]> {
+    const users = await this.client.users.getAll({ q: query, per_page: limit, page: page })
 
-    return mapToUser(user)
-  }
-  async searchByFullName(searchQuery: string, take: number, cursor?: Cursor) {
-    const query = orderedQuery(
-      this.db.selectFrom("owUser").selectAll().where(sql`name::text`, "ilike", `%${searchQuery}%`).limit(take),
-      cursor
-    )
-    const users = await query.execute()
-    return users.map(mapToUser)
+    return users.data.map(mapToUser)
   }
 
-  private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
-    return withInsertJsonValue(data, "allergies")
+  async updateMetadata(id: UserId, data: UserMetadataWrite) {
+    const existingUser = await this.getById(id)
+
+    if (!existingUser) {
+      throw new Error(`User with id ${id} not found`)
+    }
+
+    const newMetadata = {
+      ...existingUser.metadata,
+      ...data,
+    }
+
+    await this.client.users.update({ id: id }, {
+      user_metadata: newMetadata
+    })
+
+    return newMetadata
   }
 }
