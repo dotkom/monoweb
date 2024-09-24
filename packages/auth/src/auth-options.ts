@@ -1,13 +1,9 @@
 import type { ServiceLayer } from "@dotkomonline/core"
-import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
-import Auth0Provider from "next-auth/providers/auth0"
+import { type User } from "@dotkomonline/types"
+import type { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth"
+import Auth0Provider, { Auth0Profile } from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
-  given_name: string
-  family_name: string
-  nickname: string
-  name: string
-  picture: string
   gender: string
   updated_at: string
   email: string
@@ -22,18 +18,9 @@ interface Auth0IdTokenClaims {
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: User
+    user?: User
     sub: string
     id: string
-  }
-
-  interface User extends DefaultUser {
-    id: string
-    name: string
-    email: string
-    image?: string
-    givenName?: string
-    familyName?: string
   }
 }
 
@@ -58,14 +45,6 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => ({
-        id: profile.sub,
-        name: profile.name,
-        email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
-      }),
     }),
   ],
   session: {
@@ -74,11 +53,15 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
+        const user = await core.userService.getById(token.sub)
 
-        session.user.id = user.auth0Id
-        session.sub = token.sub
+        if (!user) {
+          console.warn(`User with id ${token.sub} not found`)
+          return session
+        }
+
+        session.user = user
+
         return session
       }
 
