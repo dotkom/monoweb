@@ -19,8 +19,12 @@ const mapToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
   return {
     id: auth0User.user_id,
     email: auth0User.email,
-    metadata: metadata.success ? metadata.data : undefined,
-    app_metadata: app_metadata.success ? app_metadata.data : undefined,
+    firstName: auth0User.given_name,
+    lastName: auth0User.family_name,
+    image: auth0User.picture,
+    emailVerified: auth0User.email_verified,
+    metadata: metadata.success ? metadata.data : null,
+    app_metadata: app_metadata.success ? app_metadata.data : null,
   }
 }
 

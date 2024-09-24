@@ -1,10 +1,15 @@
 import type { ServiceLayer } from "@dotkomonline/core"
-import { type User } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/types"
 import type { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth"
-import Auth0Provider, { Auth0Profile } from "next-auth/providers/auth0"
+import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
-  gender: string
+  sub: string
+  given_name: string
+  family_name: string
+  nickname: string
+  name: string
+  picture: string
   updated_at: string
   email: string
   email_verified: boolean
@@ -12,15 +17,13 @@ interface Auth0IdTokenClaims {
   aud: string
   iat: number
   exp: number
-  sub: string
   sid: string
 }
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user?: User
+    user: User
     sub: string
-    id: string
   }
 }
 
@@ -45,6 +48,16 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
+      profile: async (profile: Auth0IdTokenClaims): Promise<DefaultUser> => {
+        await core.userService.registerId(profile.sub)
+
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }
+      }
     }),
   ],
   session: {
@@ -53,17 +66,13 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        await core.userService.registerId(token.sub)
-        const user = await core.userService.getById(token.sub)
+        const user: User | null = await core.userService.getById(token.sub)
 
-        if (!user) {
-          console.warn(`User with id ${token.sub} not found`)
-          return session
+        if (user  === null) {
+          throw new Error(`Failed to fetch user with id ${token.sub}`)
         }
 
         session.user = user
-
-        return session
       }
 
       return session

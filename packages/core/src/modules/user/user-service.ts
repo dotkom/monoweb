@@ -23,7 +23,6 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   updateMetadata(userId: UserId, data: UserMetadataWrite): Promise<UserMetadata>
-  getById(auth0Id: string): Promise<User | null>
   registerId(id: UserId): Promise<void>
 }
 

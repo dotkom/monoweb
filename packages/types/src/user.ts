@@ -1,8 +1,6 @@
 import { z } from "zod"
 
 export const UserMetadataSchema = z.object({
-  first_name: z.string(),
-  last_name: z.string(),
   email: z.string().email(),
   phone: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]),
@@ -18,8 +16,12 @@ export const AppMetadataSchema = z.object({
 export const UserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
-  metadata: UserMetadataSchema.optional(),
-  app_metadata: AppMetadataSchema.optional(),
+  firstName: z.string(),
+  lastName: z.string(),
+  image: z.string().nullable(),
+  emailVerified: z.boolean(),
+  metadata: UserMetadataSchema.nullable(),
+  app_metadata: AppMetadataSchema.nullable(),
 })
 
 export type User = z.infer<typeof UserSchema>
