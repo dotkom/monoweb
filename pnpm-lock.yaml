@@ -14396,7 +14396,7 @@ snapshots:
       - sugarss
       - supports-color
       - terser
-   
+
   vitest@1.6.0(@types/node@22.6.1)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.4.47)):
     dependencies:
       '@vitest/expect': 1.6.0
@@ -14422,42 +14422,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.6.1
       '@vitest/ui': 1.6.0(vitest@1.6.0)
-      jsdom: 24.1.1
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-
-  vitest@1.6.0(@types/node@22.5.0)(@vitest/ui@1.6.0)(jsdom@24.1.1)(sugarss@4.0.1(postcss@8.4.41)):
-    dependencies:
-      '@vitest/expect': 1.6.0
-      '@vitest/runner': 1.6.0
-      '@vitest/snapshot': 1.6.0
-      '@vitest/spy': 1.6.0
-      '@vitest/utils': 1.6.0
-      acorn-walk: 8.3.3
-      chai: 4.5.0
-      debug: 4.3.6
-      execa: 8.0.1
-      local-pkg: 0.5.0
-      magic-string: 0.30.11
-      pathe: 1.1.2
-      picocolors: 1.0.1
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      tinybench: 2.9.0
-      tinypool: 0.8.4
-      vite: 5.2.10(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41))
-      vite-node: 1.6.0(@types/node@22.5.0)(sugarss@4.0.1(postcss@8.4.41))
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/node': 22.5.0
-      '@vitest/ui': 1.6.0(vitest@1.6.0)
-      jsdom: 24.1.1
+      jsdom: 22.1.0
     transitivePeerDependencies:
       - less
       - lightningcss
