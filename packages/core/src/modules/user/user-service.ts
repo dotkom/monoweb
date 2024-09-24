@@ -24,6 +24,7 @@ export interface UserService {
   ): Promise<PrivacyPermissions>
   updateMetadata(userId: UserId, data: UserMetadataWrite): Promise<UserMetadata>
   getById(auth0Id: string): Promise<User | null>
+  registerId(id: UserId): Promise<void>
 }
 
 export class UserServiceImpl implements UserService {
@@ -32,6 +33,10 @@ export class UserServiceImpl implements UserService {
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
+
+  async registerId(id: UserId) {
+    return this.userRepository.registerId(id)
+  }
 
   async getById(auth0Id: string) {
     return this.userRepository.getById(auth0Id)

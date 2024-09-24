@@ -53,6 +53,7 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
+        await core.userService.registerId(token.sub)
         const user = await core.userService.getById(token.sub)
 
         if (!user) {

@@ -9,6 +9,7 @@ export interface UserRepository {
   getAll(limit: number, page: number): Promise<User[]>
   updateMetadata(id: UserId, data: UserMetadataWrite): Promise<UserMetadataWrite>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
+  registerId(id: UserId): Promise<void>
 }
 
 const mapToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -24,7 +25,14 @@ const mapToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
 }
 
 export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly client: ManagementClient) {}
+  constructor(private readonly client: ManagementClient, private readonly db: Kysely<Database>) {}
+
+  async registerId(id: UserId): Promise<void> {
+    await this.db.insertInto("owUser")
+      .values({ id })
+      .onConflict(oc => oc.doNothing())
+      .execute()
+  }
 
   async getById(id: UserId): Promise<User | null> {
     const user = await this.client.users.get({ id: id })
