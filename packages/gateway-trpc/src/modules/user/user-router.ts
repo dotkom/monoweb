@@ -27,7 +27,7 @@ export const userRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.userService.updatePrivacyPermissionsForUserId(input.id, input.data)),
-  searchByName: protectedProcedure
+  searchByFullName: protectedProcedure
     .input(z.object({ searchQuery: z.string() }))
     .query(async ({ input, ctx }) => ctx.userService.searchForUser(input.searchQuery, 30, 0)),
 })
