@@ -8,7 +8,6 @@ import type {
   UserMetadata,
   UserMetadataWrite,
 } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"

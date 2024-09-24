@@ -2,7 +2,8 @@ import { sql } from "kysely"
 
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
-  await db.schema.alterTable("ow_user")
+  await db.schema
+    .alterTable("ow_user")
     .dropColumn("name")
     .dropColumn("picture")
     .dropColumn("allergies")
@@ -21,7 +22,8 @@ export async function up(db) {
 
 /** @param db {import('kysely').Kysely} */
 export async function down(db) {
-  await db.schema.alterTable("ow_user")
+  await db.schema
+    .alterTable("ow_user")
     .addColumn("family_name", "varchar(255)", (col) => col.notNull())
     .addColumn("middle_name", "varchar(255)", (col) => col.notNull())
     .addColumn("given_name", "varchar(255)", (col) => col.notNull())

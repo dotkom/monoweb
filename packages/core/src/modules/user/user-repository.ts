@@ -1,8 +1,13 @@
 import type { Database } from "@dotkomonline/db"
-import { AppMetadataSchema, type User, type UserId, UserMetadataSchema, UserMetadataWrite } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
-import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
-import { GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import {
+  AppMetadataSchema,
+  type User,
+  type UserId,
+  UserMetadataSchema,
+  type UserMetadataWrite,
+} from "@dotkomonline/types"
+import type { GetUsers200ResponseOneOfInner, ManagementClient } from "auth0"
+import type { Kysely } from "kysely"
 
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
@@ -13,8 +18,8 @@ export interface UserRepository {
 }
 
 const mapToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const metadata = UserMetadataSchema.safeParse(auth0User.user_metadata);
-  const app_metadata = AppMetadataSchema.safeParse(auth0User.app_metadata);
+  const metadata = UserMetadataSchema.safeParse(auth0User.user_metadata)
+  const app_metadata = AppMetadataSchema.safeParse(auth0User.app_metadata)
 
   return {
     id: auth0User.user_id,
@@ -29,12 +34,16 @@ const mapToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
 }
 
 export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly client: ManagementClient, private readonly db: Kysely<Database>) {}
+  constructor(
+    private readonly client: ManagementClient,
+    private readonly db: Kysely<Database>
+  ) {}
 
   async registerId(id: UserId): Promise<void> {
-    await this.db.insertInto("owUser")
+    await this.db
+      .insertInto("owUser")
       .values({ id })
-      .onConflict(oc => oc.doNothing())
+      .onConflict((oc) => oc.doNothing())
       .execute()
   }
 
@@ -75,9 +84,12 @@ export class UserRepositoryImpl implements UserRepository {
       ...data,
     }
 
-    await this.client.users.update({ id: id }, {
-      user_metadata: newMetadata
-    })
+    await this.client.users.update(
+      { id: id },
+      {
+        user_metadata: newMetadata,
+      }
+    )
 
     return newMetadata
   }

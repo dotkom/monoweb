@@ -154,7 +154,7 @@ export class AttendeeServiceImpl implements AttendeeService {
         isPunished: false,
         registeredAt: new Date(),
         studyYear: classYear,
-        name: user.metadata ? (user.firstName + " " + user.lastName) : "",
+        name: user.metadata ? `${user.firstName} ${user.lastName}` : "",
       })
       return ins
     }

@@ -57,7 +57,7 @@ export const getAuthOptions = ({
           email: profile.email,
           image: profile.picture,
         }
-      }
+      },
     }),
   ],
   session: {
@@ -68,7 +68,7 @@ export const getAuthOptions = ({
       if (token.sub) {
         const user: User | null = await core.userService.getById(token.sub)
 
-        if (user  === null) {
+        if (user === null) {
           throw new Error(`Failed to fetch user with id ${token.sub}`)
         }
 
