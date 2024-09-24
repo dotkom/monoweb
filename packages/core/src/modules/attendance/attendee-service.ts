@@ -31,7 +31,6 @@ export interface AttendeeService {
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
-  getByAuth0UserId(auth0UserId: string, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -42,15 +41,6 @@ export class AttendeeServiceImpl implements AttendeeService {
     private readonly userService: UserService,
     private readonly waitlistAttendeeService: WaitlistAttendeService
   ) {}
-
-  async getByAuth0UserId(auth0UserId: string, attendanceId: AttendanceId) {
-    const user = await this.userService.getById(auth0UserId)
-    if (user === null) {
-      return null
-    }
-    const attendee = await this.attendeeRepository.getByUserId(user.id, attendanceId)
-    return attendee
-  }
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)
@@ -121,8 +111,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("User is already registered")
     }
 
-    const studyStartYear = user.metadata?.study_start_year
-    if (studyStartYear === undefined) {
+    const studyStartYear = user.metadata?.study_start_year ?? null
+    if (studyStartYear === null) {
       throw new AttendeeRegistrationError("User has no study start year")
     }
 
@@ -210,12 +200,10 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async getByAttendanceId(id: AttendanceId) {
-    const attendees = await this.attendeeRepository.getByAttendanceId(id)
-    return attendees
+    return this.attendeeRepository.getByAttendanceId(id)
   }
 
   async getByAttendancePoolId(id: AttendancePoolId) {
-    const attendees = await this.attendeeRepository.getByAttendancePoolId(id)
-    return attendees
+    return await this.attendeeRepository.getByAttendancePoolId(id)
   }
 }
