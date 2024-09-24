@@ -8,7 +8,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type Json = ColumnType<JsonValue, string, string>;
+export type Json = JsonValue;
 
 export type JsonArray = JsonValue[];
 
@@ -211,24 +211,6 @@ export interface Offline {
   updatedAt: Generated<Timestamp>;
 }
 
-export interface OwUser {
-  allergies: Json
-  auth0Id: string
-  createdAt: Generated<Timestamp>
-  email: string
-  familyName: string
-  gender: string | null
-  givenName: string
-  id: Generated<string>
-  lastSyncedAt: Generated<Timestamp>
-  middleName: string
-  name: string
-  phone: string | null
-  picture: string | null
-  studyYear: Generated<number>
-  updatedAt: Generated<Timestamp>
-}
-
 export interface Payment {
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
@@ -320,7 +302,6 @@ export interface DB {
   mark: Mark;
   notificationPermissions: NotificationPermissions;
   offline: Offline;
-  owUser: OwUser;
   payment: Payment;
   personalMark: PersonalMark;
   privacyPermissions: PrivacyPermissions;

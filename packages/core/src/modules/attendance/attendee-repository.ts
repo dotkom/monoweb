@@ -69,10 +69,9 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
-      .leftJoin("owUser", "owUser.id", "attendee.userId")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .select(sql<User[]>`COALESCE(json_agg(ow_user), '[]')`.as("user"))
+      .select(sql<User[]>`COALESCE(json_agg(attendee.userId), '[]')`.as("user"))
       .where("attendance.id", "=", attendanceId)
       .groupBy("attendee.id")
       .execute()
@@ -82,7 +81,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...value,
         user: {
           ...value.user[0],
-          lastSyncedAt: new Date(value.user[0].lastSyncedAt),
         },
       }))
       .map(mapToAttendeeWithUser)
@@ -92,9 +90,8 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const res = await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
-      .leftJoin("owUser", "owUser.id", "attendee.userId")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .select(sql<User[]>`COALESCE(json_agg(ow_user) FILTER (WHERE ow_user.id IS NOT NULL), '[]')`.as("user"))
+      .select(sql<User[]>`COALESCE(json_agg(attendee.userId), '[]')`.as("user"))
       .where("attendancePool.id", "=", id)
       .groupBy("attendee.id")
       .execute()
@@ -104,7 +101,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...value,
         user: {
           ...value.user[0],
-          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
         },
       }))
       .map(mapToAttendeeWithUser)

@@ -31,7 +31,6 @@ import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
-import { type Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
@@ -65,7 +64,6 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -108,7 +106,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   }
 
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -148,11 +145,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository
-  )
-
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -249,6 +241,5 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    auth0SynchronizationService,
   }
 }
