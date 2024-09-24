@@ -7,7 +7,8 @@ export const UserMetadataSchema = z.object({
   phone: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]),
   allergies: z.array(z.string()),
-  picture_: z.string().nullable(),
+  picture_url: z.string().nullable(),
+  study_start_year: z.number().int(),
 })
 
 export const AppMetadataSchema = z.object({

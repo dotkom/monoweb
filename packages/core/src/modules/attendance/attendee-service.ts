@@ -3,7 +3,6 @@ import type {
   AttendancePoolId,
   Attendee,
   AttendeeId,
-  AttendeeUser,
   AttendeeWrite,
   ExtrasChoices,
   QrCodeRegistrationAttendee,
@@ -27,8 +26,8 @@ export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
-  getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
+  getByAttendanceId(attendanceId: string): Promise<Attendee[]>
+  getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
@@ -122,10 +121,21 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("User is already registered")
     }
 
+    const studyStartYear = user.metadata?.study_start_year
+    if (studyStartYear === undefined) {
+      throw new AttendeeRegistrationError("User has no study start year")
+    }
+
+    const beforeSummer = new Date().getMonth() < 7
+    let classYear = new Date().getFullYear() - studyStartYear
+    if (beforeSummer) {
+      classYear -= 1
+    }
+
     // Does user match criteria for the pool?
-    if (attendancePool.yearCriteria.includes(user.studyYear) === false) {
+    if (attendancePool.yearCriteria.includes(classYear) === false) {
       throw new AttendeeRegistrationError(
-        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${user.studyYear}`
+        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${classYear}`
       )
     }
 
@@ -153,8 +163,8 @@ export class AttendeeServiceImpl implements AttendeeService {
         userId,
         isPunished: false,
         registeredAt: new Date(),
-        studyYear: user.studyYear,
-        name: user.name,
+        studyYear: classYear,
+        name: user.metadata ? user.metadata.first_name + " " + user.metadata.last_name: "Anonymous user",
       })
       return ins
     }
