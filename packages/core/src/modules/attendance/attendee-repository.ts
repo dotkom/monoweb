@@ -5,8 +5,6 @@ import {
   type Attendee,
   type AttendeeId,
   AttendeeSchema,
-  type AttendeeUser,
-  AttendeeUserSchema,
   type AttendeeWrite,
   type ExtrasChoices,
   type User,
@@ -16,7 +14,6 @@ import { type Kysely, type Selectable, sql } from "kysely"
 import { withInsertJsonValue } from "../../utils/db-utils"
 
 const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
-const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
@@ -24,8 +21,8 @@ export interface AttendeeRepository {
   getById(id: AttendeeId): Promise<Attendee | null>
   update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee | null>
   updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee | null>
-  getByAttendanceId(id: AttendanceId): Promise<AttendeeUser[]>
-  getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
+  getByAttendanceId(id: AttendanceId): Promise<Attendee[]>
+  getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
@@ -66,44 +63,26 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
-    const res = await this.db
+    return await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
       .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .select(sql<User[]>`COALESCE(json_agg(attendee.userId), '[]')`.as("userIds"))
       .where("attendance.id", "=", attendanceId)
       .groupBy("attendee.id")
       .execute()
-
-    return res
-      .map((value) => ({
-        ...value,
-        user: {
-          ...value.user[0],
-        },
-      }))
-      .map(mapToAttendeeWithUser)
+      .then((res) => res.map(mapToAttendee))
   }
 
   async getByAttendancePoolId(id: AttendancePoolId) {
-    const res = await this.db
+    return await this.db
       .selectFrom("attendee")
       .selectAll("attendee")
       .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .select(sql<User[]>`COALESCE(json_agg(attendee.userId), '[]')`.as("userIds"))
       .where("attendancePool.id", "=", id)
       .groupBy("attendee.id")
       .execute()
-
-    return res
-      .map((value) => ({
-        ...value,
-        user: {
-          ...value.user[0],
-        },
-      }))
-      .map(mapToAttendeeWithUser)
+      .then((res) => res.map(mapToAttendee))
   }
 
   async update(obj: AttendeeWrite, id: AttendeeId) {
