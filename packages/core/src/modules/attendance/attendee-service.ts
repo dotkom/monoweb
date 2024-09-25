@@ -111,16 +111,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("User is already registered")
     }
 
-    const studyStartYear = user.metadata?.study_start_year ?? null
-    if (studyStartYear === null) {
-      throw new AttendeeRegistrationError("User has no study start year")
-    }
-
-    const beforeSummer = new Date().getMonth() < 7
-    let classYear = new Date().getFullYear() - studyStartYear
-    if (beforeSummer) {
-      classYear -= 1
-    }
+    // TODO: NOT IMPLEMENTED
+    const classYear = 1
 
     // Does user match criteria for the pool?
     if (attendancePool.yearCriteria.includes(classYear) === false) {
@@ -154,7 +146,7 @@ export class AttendeeServiceImpl implements AttendeeService {
         isPunished: false,
         registeredAt: new Date(),
         studyYear: classYear,
-        name: user.metadata ? `${user.firstName} ${user.lastName}` : "",
+        name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "",
       })
       return ins
     }
