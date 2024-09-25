@@ -533,10 +533,11 @@ resource "auth0_client" "monoweb_web" {
   callbacks = concat(
     ["https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"],
     {
-      "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+      "dev" = ["http://localhost:3000/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "stg" = [] # TODO
       "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
-  }[terraform.workspace])
+    }[terraform.workspace]
+  )
 
   grant_types     = ["authorization_code", "refresh_token"]
   is_first_party  = true
@@ -564,7 +565,7 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/auth0"],
     {
-      "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
+      "dev" = ["http://localhost:3002/api/auth/callback/auth0", "https://dashboard-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "stg" = [] # TODO
       "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace])
