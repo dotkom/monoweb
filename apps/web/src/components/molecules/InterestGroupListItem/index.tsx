@@ -3,7 +3,7 @@ import { Button } from "@dotkomonline/ui";
 
 const InterestGroupListItem = () => {
     return (
-        <div className="p-4 py-8 w-4/12 text-center m-1 shadow">
+        <div className="p-4 py-8 text-center m-1 shadow-md min-w-[250px]">
             <OnlineIcon className="w-5/12 mx-auto" />
             <h2 className="text-sm border-none !mt-4">Stipendsushi</h2>
             <p className="mt-2 text-left px-3">
