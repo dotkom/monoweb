@@ -140,7 +140,7 @@ importers:
         version: 7.49.3(react@18.3.1)
       react-zxing:
         specifier: ^2.0.0
-        version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 2.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       superjson:
         specifier: ^2.0.0
         version: 2.2.1
@@ -6164,9 +6164,9 @@ packages:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
 
-  react-zxing@2.0.0:
-    resolution: {integrity: sha512-tZV0UnWDnL+xUUVv15N8w04iKP2RJsraDZvN+t5VBb/3jDqmneLkfDs/beFS0l67aL55UCMN44mFmdx9mHqSrQ==}
-    engines: {node: ^18 || ^20, yarn: ^1.22}
+  react-zxing@2.0.2:
+    resolution: {integrity: sha512-6TRXPL+QESjVQOCAZVRT2pUf/Fz3t4nPfbQLvNH42Dy9r/bu1rJq1I/lCUY+fK2Wg3mvLxPxym2AzzOM32mcmg==}
+    engines: {node: ^18 || ^20 || ^22, yarn: ^1.22}
     peerDependencies:
       react: ^16.8.0  || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
@@ -13291,7 +13291,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  react-zxing@2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-zxing@2.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@zxing/library': 0.20.0
       react: 18.3.1
