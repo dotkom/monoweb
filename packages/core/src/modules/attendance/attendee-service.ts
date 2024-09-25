@@ -162,6 +162,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       extrasChoices: [],
       attendanceId,
       registeredAt: registrationTime,
+      firstName: user.profile?.firstName ?? "Anonym",
+      lastName: user.profile?.lastName ?? "",
     })
 
     return attendee

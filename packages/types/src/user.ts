@@ -24,7 +24,7 @@ export const UserSchema = z.object({
 export const UserWriteSchema = UserSchema.omit({
   id: true,
   emailVerified: true,
-}).partial()
+})
 
 export type User = z.infer<typeof UserSchema>
 

@@ -20,8 +20,9 @@ export interface UserService {
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  update(userId: UserId, data: UserWrite): Promise<User>
+  update(userId: UserId, data: Partial<UserWrite>): Promise<User>
   registerId(id: UserId): Promise<void>
+  createDummyUser(user: UserWrite, password: string): Promise<User>
 }
 
 export class UserServiceImpl implements UserService {
@@ -31,6 +32,10 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
+  async createDummyUser(user: Omit<User, "id">, password: string): Promise<User> {
+    return this.userRepository.createDummyUser(user, password)
+  }
+
   async registerId(id: UserId) {
     return this.userRepository.registerId(id)
   }
@@ -39,7 +44,7 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.getById(auth0Id)
   }
 
-  async update(userId: UserId, data: UserWrite): Promise<User> {
+  async update(userId: UserId, data: Partial<UserWrite>): Promise<User> {
     return this.userRepository.update(userId, data)
   }
 

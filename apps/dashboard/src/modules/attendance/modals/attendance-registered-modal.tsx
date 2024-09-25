@@ -15,7 +15,7 @@ export const AttendanceRegisteredModal: FC<ContextModalProps<AttendanceRegistere
   }, 3000)
   return (
     <div className="w-full">
-      <h1>{innerProps.user.name}</h1>
+      <h1>{`${innerProps.user.profile?.firstName} ${innerProps.user.profile?.lastName}`}</h1>
       <p>{innerProps.user.email}</p>
     </div>
   )

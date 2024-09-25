@@ -1,6 +1,6 @@
 import type { Database } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
-import type { GetUsers200ResponseOneOfInner, ManagementClient, UserUpdate } from "auth0"
+import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import type { Kysely } from "kysely"
 import { z } from "zod"
 
@@ -23,9 +23,10 @@ type AppMetadata = z.infer<typeof AppMetadataSchema>
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number, page: number): Promise<User[]>
-  update(id: UserId, data: UserWrite): Promise<User>
+  update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   registerId(id: UserId): Promise<void>
+  createDummyUser(data: UserWrite, password: string): Promise<User>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -40,15 +41,44 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     emailVerified: auth0User.email_verified,
     profile: metadata_profile
       ? {
-          ...metadata_profile,
           firstName: auth0User.given_name,
           lastName: auth0User.family_name,
+          phone: metadata_profile.phone,
+          gender: metadata_profile.gender,
+          allergies: metadata_profile.allergies,
+          rfid: metadata_profile.rfid,
+          compiled: metadata_profile.compiled,
+          address: metadata_profile.address,
         }
       : undefined,
   }
 }
 
-const mapUserWriteToPatch = (data: UserWrite): UserUpdate => {
+const mapUserToAuth0UserCreate = (user: Omit<User, "id">, password: string): UserCreate => {
+  const auth0User: UserCreate = {
+    email: user.email,
+    email_verified: user.emailVerified,
+    picture: user.image ?? undefined,
+    connection: "Username-Password-Authentication",
+    password: password,
+  }
+
+  if (user.profile) {
+    const { firstName, lastName, ...profile } = user.profile
+
+    auth0User.app_metadata = { profile }
+    auth0User.given_name = firstName
+    auth0User.family_name = lastName
+
+    if (firstName && lastName) {
+      auth0User.name = `${firstName} ${lastName}`
+    }
+  }
+
+  return auth0User
+}
+
+const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
   const userUpdate: UserUpdate = {
     email: data.email,
     image: data.image,
@@ -85,6 +115,23 @@ export class UserRepositoryImpl implements UserRepository {
       .execute()
   }
 
+  async createDummyUser(data: Omit<User, "id">, password: string): Promise<User> {
+    const response = await this.client.users.create(mapUserToAuth0UserCreate(data, password))
+
+    if (response.status !== 201) {
+      throw new Error(`Failed to create user: ${response.statusText}`)
+    }
+
+    await this.registerId(response.data.user_id)
+
+    const user = await this.getById(response.data.user_id)
+    if (user === null) {
+      throw new Error("Failed to fetch user after creation")
+    }
+
+    return user
+  }
+      
   async getById(id: UserId): Promise<User | null> {
     const user = await this.client.users.get({ id: id })
 
@@ -110,7 +157,7 @@ export class UserRepositoryImpl implements UserRepository {
     return users.data.map(mapAuth0UserToUser)
   }
 
-  async update(id: UserId, data: UserWrite) {
+  async update(id: UserId, data: Partial<UserWrite>) {
     const result = await this.client.users.update({ id }, mapUserWriteToPatch(data))
 
     const user = await this.client.users.get({ id })

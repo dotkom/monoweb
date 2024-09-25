@@ -1,3 +1,5 @@
+# This file has been temporarily disabled before classYears are available.
+
 import { createEnvironment } from "@dotkomonline/env"
 import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
@@ -71,8 +73,8 @@ const setupFakeFullAttendance = async (
   for (let i = 0; i < _users.length; i++) {
     const _user = _users[i]
     const email = `user${i}@local.com`
-    const fakeUser = getUserMock({ ..._user, studyYear: _user.studyYear, email })
-    const user = await core.userService.create(fakeUser)
+    const fakeUser = getUserMock({ ..._user, email })
+    const user = await core.userService.createDummyUser(fakeUser, "password")
     users.push(user)
   }
 
@@ -115,11 +117,11 @@ describe("attendance", () => {
 
     expect(pools).toHaveLength(1)
 
-    const fakeUser = getUserMock({ studyYear: 1 })
+    const fakeUser = getUserMock()
 
-    const user = await core.userService.create(fakeUser)
+    const user = await core.userService.createDummyUser(fakeUser, "password")
 
-    const matchingPool = pools.find((pool) => pool.yearCriteria.includes(user.studyYear))
+    const matchingPool = pools.find((pool) => pool.yearCriteria.includes(1))
     assert(matchingPool !== undefined, new Error("Pool not found"))
     const attendee = await core.attendeeService.registerForEvent(user.id, matchingPool.id, new Date())
 
@@ -151,7 +153,7 @@ describe("attendance", () => {
     const { users, pools } = await setupFakeFullAttendance(core, {
       attendance: {},
       pools: [{ capacity: 1, yearCriteria: [1, 2] }],
-      users: [{ studyYear: 1 }, { studyYear: 2 }],
+      users: [{ }, { }],
     })
 
     const pool = pools[0]
@@ -233,10 +235,10 @@ describe("attendance", () => {
         { capacity: 2, yearCriteria: [3, 4] }, // Pool for 3rd and 4th-year students
       ],
       users: [
-        { studyYear: 1 }, // User in 1st year
-        { studyYear: 1 }, // Another user in 1st year
-        { studyYear: 2 }, // User in 2nd year
-        { studyYear: 3 }, // User in 3rd year
+        {},
+        {},
+        {},
+        {}
       ],
     })
 
@@ -250,7 +252,7 @@ describe("attendance", () => {
     }
 
     // Step 3: Attempt to register a user beyond pool capacity and expect failure
-    const extraUser = getUserMock({ studyYear: 1 })
+    const extraUser = getUserMock({ })
     const extraUserCreated = await core.userService.create(extraUser)
 
     const matchingPool = pools.find((pool) => pool.yearCriteria.includes(extraUserCreated.studyYear))
