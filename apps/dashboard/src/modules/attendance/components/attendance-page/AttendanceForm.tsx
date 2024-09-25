@@ -4,7 +4,6 @@ import { createDateTimeInput, useFormBuilder } from "../../../../app/form"
 
 // Define the schema without the omitted fields
 const AttendanceFormSchema = AttendanceSchema.omit({
-  eventId: true,
   id: true,
 }).superRefine((val, ctx) => {
   // Check that the registerStart is before the registerEnd

@@ -60,6 +60,7 @@
     "@biomejs/biome": "^1.9.2",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/tsconfig": "workspace:*",
     "@types/cors": "^2.8.17",
     "@types/jsdom": "^21.1.6",
     "@types/node": "^20.12.7",

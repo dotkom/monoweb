@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.2",
+    "@dotkomonline/tsconfig": "workspace:*",
     "typescript": "^5.4.5"
   }
 }
