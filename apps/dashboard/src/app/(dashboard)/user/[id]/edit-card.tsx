@@ -1,10 +1,9 @@
-import { UserProfileSchema, UserWriteSchema } from "@dotkomonline/types"
-import { useState, type FC } from "react"
+import { UserProfileSchema } from "@dotkomonline/types"
+import { Title } from "@mantine/core"
+import type { FC } from "react"
 import { useUpdateUserMutation } from "../../../../modules/user/mutations"
 import { useUserProfileEditForm } from "./profile-edit-form"
-import { useUserEditForm } from "./user-edit-form"
 import { useUserDetailsContext } from "./provider"
-import { Button, Group, Stack, Title } from "@mantine/core"
 
 export const UserEditCard: FC = () => {
   const { user } = useUserDetailsContext()
@@ -26,15 +25,17 @@ export const UserEditCard: FC = () => {
       }
 
       update.mutate({
-        input: {profile: result},
+        input: { profile: result },
         id: user.id,
       })
     },
     defaultValues: { ...user.profile },
   })
 
-  return <>
-    <Title>Profil</Title>
-    <EditUserProfileComponent/>
-  </>
+  return (
+    <>
+      <Title>Profil</Title>
+      <EditUserProfileComponent />
+    </>
+  )
 }

@@ -29,7 +29,7 @@ export const useUserTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("emailVerified", {
         header: () => "Verifisert E-post",
-        cell: (info) => (info.getValue() ? <Icon icon="tabler:check" /> : null ),
+        cell: (info) => (info.getValue() ? <Icon icon="tabler:check" /> : null),
       }),
       columnHelper.accessor((evt) => evt, {
         id: "actions",

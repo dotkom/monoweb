@@ -15,7 +15,7 @@ export const UserProfileSchema = z.object({
 
 export const UserSchema = z.object({
   id: z.string(),
-  email: z.string().email(), 
+  email: z.string().email(),
   image: z.string().nullable(),
   emailVerified: z.boolean(),
   profile: UserProfileSchema.optional(),

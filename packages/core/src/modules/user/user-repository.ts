@@ -1,8 +1,7 @@
 import type { Database } from "@dotkomonline/db"
-import { GenderSchema, UserWrite, type User, type UserId } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
-import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
-import { GetUsers200ResponseOneOfInner, ManagementClient, PatchUsersByIdRequest, UserUpdate } from "auth0"
+import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import type { GetUsers200ResponseOneOfInner, ManagementClient, UserUpdate } from "auth0"
+import type { Kysely } from "kysely"
 import { z } from "zod"
 
 export const AppMetadataProfileSchema = z.object({
@@ -30,20 +29,22 @@ export interface UserRepository {
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const app_metadata_parsed = AppMetadataSchema.safeParse(auth0User.app_metadata);
+  const app_metadata_parsed = AppMetadataSchema.safeParse(auth0User.app_metadata)
 
-  const metadata_profile = app_metadata_parsed.success ? app_metadata_parsed.data.profile ?? null : null;
+  const metadata_profile = app_metadata_parsed.success ? (app_metadata_parsed.data.profile ?? null) : null
 
   return {
     id: auth0User.user_id,
     email: auth0User.email,
     image: auth0User.picture,
     emailVerified: auth0User.email_verified,
-    profile: metadata_profile ? {
-      ...metadata_profile,
-      firstName: auth0User.given_name,
-      lastName: auth0User.family_name,
-    } : undefined,
+    profile: metadata_profile
+      ? {
+          ...metadata_profile,
+          firstName: auth0User.given_name,
+          lastName: auth0User.family_name,
+        }
+      : undefined,
   }
 }
 
@@ -71,12 +72,16 @@ const mapUserWriteToPatch = (data: UserWrite): UserUpdate => {
 }
 
 export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly client: ManagementClient, private readonly db: Kysely<Database>) {}
+  constructor(
+    private readonly client: ManagementClient,
+    private readonly db: Kysely<Database>
+  ) {}
 
   async registerId(id: UserId): Promise<void> {
-    await this.db.insertInto("owUser")
+    await this.db
+      .insertInto("owUser")
       .values({ id })
-      .onConflict(oc => oc.doNothing())
+      .onConflict((oc) => oc.doNothing())
       .execute()
   }
 

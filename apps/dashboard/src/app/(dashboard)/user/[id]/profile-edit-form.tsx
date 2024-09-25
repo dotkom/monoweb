@@ -1,5 +1,5 @@
-import { UserProfile, UserProfileSchema } from "@dotkomonline/types"
-import { createCheckboxInput, createNumberInput, createSelectInput, createTagInput, createTextInput, useFormBuilder } from "../../../form"
+import { type UserProfile, UserProfileSchema } from "@dotkomonline/types"
+import { createCheckboxInput, createSelectInput, createTagInput, createTextInput, useFormBuilder } from "../../../form"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserProfile): void
@@ -32,7 +32,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
           { label: "Mann", value: "male" },
           { label: "Kvinne", value: "female" },
           { label: "Annet", value: "other" },
-        ]
+        ],
       }),
       allergies: createTagInput({
         label: "Allergier",
