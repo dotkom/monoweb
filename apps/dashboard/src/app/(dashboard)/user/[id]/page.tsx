@@ -22,7 +22,7 @@ export default function UserDetailsPage() {
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>{user.name}</Title>
+        <Title>{user.email}</Title>
       </Group>
 
       <Tabs defaultValue={SIDEBAR_LINKS[0].slug}>

@@ -28,6 +28,8 @@ export const UserWriteSchema = UserSchema.omit({
 
 export type User = z.infer<typeof UserSchema>
 
+export type UserProfile = z.infer<typeof UserProfileSchema>
+
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export type UserId = User["id"]

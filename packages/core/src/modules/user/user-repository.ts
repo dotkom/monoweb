@@ -106,7 +106,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async update(id: UserId, data: UserWrite) {
-    await this.client.users.update({ id: id }, mapUserWriteToPatch(data))
+    const result = await this.client.users.update({ id }, mapUserWriteToPatch(data))
 
     const user = await this.client.users.get({ id })
 

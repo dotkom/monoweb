@@ -8,9 +8,12 @@ export const userRouter = t.router({
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
   getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.auth.userId)),
   update: publicProcedure
-    .input(UserWriteSchema)
+    .input(z.object({
+      id: UserSchema.shape.id,
+      input: UserWriteSchema,
+    }))
     .mutation(async ({ input: changes, ctx }) =>
-      ctx.userService.update(ctx.auth!.userId, changes)
+      ctx.userService.update(changes.id, changes.input)
     ),
   getPrivacyPermissionssByUserId: protectedProcedure
     .input(z.string())
