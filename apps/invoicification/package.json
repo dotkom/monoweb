@@ -10,7 +10,7 @@
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "docker:build": "docker build --platform linux/amd64 -t invoicification:latest -f Dockerfile ../..",
-    "docker:push:prod": "docker tag rif:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/invoicification:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/invoicification:latest"
+    "docker:push:prod": "docker tag invoicification:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/invoicification:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/invoicification:latest"
   },
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
