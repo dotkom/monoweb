@@ -131,7 +131,7 @@ export class UserRepositoryImpl implements UserRepository {
 
     return user
   }
-      
+
   async getById(id: UserId): Promise<User | null> {
     const user = await this.client.users.get({ id: id })
 

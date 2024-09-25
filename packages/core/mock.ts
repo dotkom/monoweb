@@ -1,5 +1,4 @@
-import type { CompanyWrite, JobListingWrite, User, UserWrite } from "@dotkomonline/types"
-import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
+import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
 import { addWeeks, addYears } from "date-fns"
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
