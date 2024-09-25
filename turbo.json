@@ -88,5 +88,6 @@
       "outputs": [],
       "cache": false
     }
-  }
+  },
+  "globalDependencies": ["**/tsconfig.json"]
 }
