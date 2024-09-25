@@ -5,8 +5,7 @@ import type {
   PrivacyPermissionsWrite,
   User,
   UserId,
-  UserMetadata,
-  UserMetadataWrite,
+  UserWrite,
 } from "@dotkomonline/types"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
@@ -21,7 +20,7 @@ export interface UserService {
     id: UserId,
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
-  updateMetadata(userId: UserId, data: UserMetadataWrite): Promise<UserMetadata>
+  update(userId: UserId, data: UserWrite): Promise<User>
   registerId(id: UserId): Promise<void>
 }
 
@@ -40,8 +39,8 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.getById(auth0Id)
   }
 
-  async updateMetadata(userId: UserId, data: UserMetadataWrite) {
-    return this.userRepository.updateMetadata(userId, data)
+  async update(userId: UserId, data: UserWrite): Promise<User> {
+    return this.userRepository.update(userId, data)
   }
 
   async getAll(limit: number, offset: number): Promise<User[]> {

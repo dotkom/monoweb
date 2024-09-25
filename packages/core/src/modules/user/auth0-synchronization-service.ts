@@ -77,7 +77,7 @@ export class Auth0SynchronizationServiceImpl implements Auth0SynchronizationServ
     }
 
     this.logger.info("Updating user in local db for user %O", userAuth0.name)
-    return this.userService.updateMetadata(updatedUser)
+    return this.userService.update(updatedUser)
   }
 
   /**
