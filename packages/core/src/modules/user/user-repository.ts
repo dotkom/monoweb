@@ -1,5 +1,5 @@
 import type { Database } from "@dotkomonline/db"
-import { GenderSchema, UserMembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import type { Kysely } from "kysely"
 import { z } from "zod"
@@ -16,7 +16,6 @@ export const AppMetadataProfileSchema = z.object({
 export const AppMetadataSchema = z.object({
   ow_user_id: z.string().optional(),
   profile: AppMetadataProfileSchema.optional(),
-  membership: UserMembershipSchema.optional(),
 })
 
 type AppMetadata = z.infer<typeof AppMetadataSchema>
@@ -45,7 +44,6 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
           ...app_metadata.profile,
         }
       : undefined,
-    membership: app_metadata.membership,
   }
 }
 
@@ -60,7 +58,6 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
   if (user.profile) {
     auth0User.app_metadata = {
       profile: user.profile,
-      membership: user.membership,
     }
     auth0User.given_name = user.profile.firstName
     auth0User.family_name = user.profile.lastName
@@ -84,7 +81,6 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
     const { firstName, lastName, ...profile } = data.profile
 
     appMetadata.profile = profile
-    appMetadata.membership = data.membership
     userUpdate.given_name = firstName
     userUpdate.family_name = lastName
     userUpdate.app_metadata = appMetadata
