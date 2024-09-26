@@ -31,7 +31,7 @@ export const useUserMembershipEditForm = ({
           { label: "Master i algoritmer", value: "MASTER_ALGORITHMS" },
           { label: "Master i kunstig intelligens", value: "MASTER_ARTIFICIAL_INTELLIGENCE" },
           { label: "Sosialt medlem", value: "SOCIAL_MEMBER" },
-          { label: "Annet medlem", value: "SOCIAL_MEMBER" },
+          { label: "Annet medlem", value: "OTHER_MEMBER" },
           { label: "PhD", value: "PHD" },
         ],
       }),
