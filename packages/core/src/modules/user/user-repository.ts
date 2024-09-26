@@ -1,5 +1,5 @@
 import type { Database } from "@dotkomonline/db"
-import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, UserMembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import type { Kysely } from "kysely"
 import { z } from "zod"
@@ -16,6 +16,7 @@ export const AppMetadataProfileSchema = z.object({
 export const AppMetadataSchema = z.object({
   ow_user_id: z.string().optional(),
   profile: AppMetadataProfileSchema.optional(),
+  membership: UserMembershipSchema.optional(),
 })
 
 type AppMetadata = z.infer<typeof AppMetadataSchema>
@@ -30,48 +31,42 @@ export interface UserRepository {
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const app_metadata_parsed = AppMetadataSchema.safeParse(auth0User.app_metadata)
-
-  const metadata_profile = app_metadata_parsed.success ? (app_metadata_parsed.data.profile ?? null) : null
+  const app_metadata = AppMetadataSchema.parse(auth0User.app_metadata)
 
   return {
     id: auth0User.user_id,
     email: auth0User.email,
     image: auth0User.picture,
     emailVerified: auth0User.email_verified,
-    profile: metadata_profile
+    profile: app_metadata.profile
       ? {
           firstName: auth0User.given_name,
           lastName: auth0User.family_name,
-          phone: metadata_profile.phone,
-          gender: metadata_profile.gender,
-          allergies: metadata_profile.allergies,
-          rfid: metadata_profile.rfid,
-          compiled: metadata_profile.compiled,
-          address: metadata_profile.address,
+          ...app_metadata.profile,
         }
       : undefined,
+    membership: app_metadata.membership,
   }
 }
 
-const mapUserToAuth0UserCreate = (user: Omit<User, "id">, password: string): UserCreate => {
+const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate => {
   const auth0User: UserCreate = {
     email: user.email,
-    email_verified: user.emailVerified,
     picture: user.image ?? undefined,
     connection: "Username-Password-Authentication",
     password: password,
   }
 
   if (user.profile) {
-    const { firstName, lastName, ...profile } = user.profile
+    auth0User.app_metadata = {
+      profile: user.profile,
+      membership: user.membership,
+    }
+    auth0User.given_name = user.profile.firstName
+    auth0User.family_name = user.profile.lastName
 
-    auth0User.app_metadata = { profile }
-    auth0User.given_name = firstName
-    auth0User.family_name = lastName
-
-    if (firstName && lastName) {
-      auth0User.name = `${firstName} ${lastName}`
+    if (auth0User.given_name && auth0User.family_name) {
+      auth0User.name = `${auth0User.given_name} ${auth0User.family_name}`
     }
   }
 
@@ -89,6 +84,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
     const { firstName, lastName, ...profile } = data.profile
 
     appMetadata.profile = profile
+    appMetadata.membership = data.membership
     userUpdate.given_name = firstName
     userUpdate.family_name = lastName
     userUpdate.app_metadata = appMetadata
