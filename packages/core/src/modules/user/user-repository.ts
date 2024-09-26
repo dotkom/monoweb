@@ -13,13 +13,6 @@ export const AppMetadataProfileSchema = z.object({
   rfid: z.string().nullable(),
 })
 
-export const AppMetadataSchema = z.object({
-  ow_user_id: z.string().optional(),
-  profile: AppMetadataProfileSchema.optional(),
-})
-
-type AppMetadata = z.infer<typeof AppMetadataSchema>
-
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number, page: number): Promise<User[]>
@@ -30,18 +23,23 @@ export interface UserRepository {
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const app_metadata = AppMetadataSchema.parse(auth0User.app_metadata)
+  const profile = AppMetadataProfileSchema.optional().parse(auth0User.app_metadata?.["profile"])
 
   return {
     id: auth0User.user_id,
     email: auth0User.email,
     image: auth0User.picture,
     emailVerified: auth0User.email_verified,
-    profile: app_metadata.profile
+    profile: profile
       ? {
           firstName: auth0User.given_name,
           lastName: auth0User.family_name,
-          ...app_metadata.profile,
+          phone: profile.phone,
+          gender: profile.gender,
+          address: profile.address,
+          compiled: profile.compiled,
+          allergies: profile.allergies,
+          rfid: profile.rfid,
         }
       : undefined,
   }
@@ -75,15 +73,12 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
     email: data.email,
     image: data.image,
   }
-  const appMetadata: AppMetadata = {}
-
   if (data.profile) {
     const { firstName, lastName, ...profile } = data.profile
 
-    appMetadata.profile = profile
     userUpdate.given_name = firstName
     userUpdate.family_name = lastName
-    userUpdate.app_metadata = appMetadata
+    userUpdate.app_metadata = { profile }
 
     if (userUpdate.given_name && userUpdate.family_name) {
       userUpdate.name = `${userUpdate.given_name} ${userUpdate.family_name}`
@@ -139,6 +134,10 @@ export class UserRepositoryImpl implements UserRepository {
 
   async getAll(limit: number, page: number): Promise<User[]> {
     const users = await this.client.users.getAll({ per_page: limit, page: page })
+
+    if (users.status !== 200) {
+      throw new Error(`Failed to fetch users: ${users.statusText}`)
+    }
 
     return users.data.map(mapAuth0UserToUser)
   }
