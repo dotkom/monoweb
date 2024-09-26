@@ -1,14 +1,15 @@
 import type { ServiceLayer } from "@dotkomonline/core"
-import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import type { User } from "@dotkomonline/types"
+import type { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
+  sub: string
   given_name: string
   family_name: string
   nickname: string
   name: string
   picture: string
-  gender: string
   updated_at: string
   email: string
   email_verified: boolean
@@ -16,7 +17,6 @@ interface Auth0IdTokenClaims {
   aud: string
   iat: number
   exp: number
-  sub: string
   sid: string
 }
 
@@ -24,16 +24,6 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: User
     sub: string
-    id: string
-  }
-
-  interface User extends DefaultUser {
-    id: string
-    name: string
-    email: string
-    image?: string
-    givenName?: string
-    familyName?: string
   }
 }
 
@@ -58,14 +48,16 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => ({
-        id: profile.sub,
-        name: profile.name,
-        email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
-      }),
+      profile: async (profile: Auth0IdTokenClaims): Promise<DefaultUser> => {
+        await core.userService.registerId(profile.sub)
+
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }
+      },
     }),
   ],
   session: {
@@ -74,12 +66,13 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
+        const user: User | null = await core.userService.getById(token.sub)
 
-        session.user.id = user.auth0Id
-        session.sub = token.sub
-        return session
+        if (user === null) {
+          throw new Error(`Failed to fetch user with id ${token.sub}`)
+        }
+
+        session.user = user
       }
 
       return session

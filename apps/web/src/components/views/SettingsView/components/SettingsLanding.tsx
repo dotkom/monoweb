@@ -1,8 +1,8 @@
 import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
+import type { User } from "@dotkomonline/types"
 import { TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
 
 interface FormInputProps {
   title: string
@@ -24,8 +24,8 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
       <FormInput title="Navn">
         <div className="w-full flex flex-wrap justify-center ">
-          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.givenName} />
-          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.familyName} />
+          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.profile?.firstName} />
+          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.profile?.lastName} />
         </div>
       </FormInput>
       <FormInput title="Epost">

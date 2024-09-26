@@ -1,52 +1,35 @@
 import { z } from "zod"
 
-export const UserSchema = z.object({
-  id: z.string().ulid(),
-  auth0Id: z.string(),
-  email: z.string().email(),
-  givenName: z.string(),
-  familyName: z.string(),
-  middleName: z.string(),
-  gender: z.enum(["male", "female", "other"]),
-  name: z.string(),
+export const GenderSchema = z.enum(["male", "female", "other"])
+
+export const UserProfileSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
   phone: z.string().nullable(),
-  studyYear: z.number().int().min(-1).max(6),
+  gender: GenderSchema,
   allergies: z.array(z.string()),
-  picture: z.string().nullable(),
-  lastSyncedAt: z.date(),
+  rfid: z.string().nullable(),
+  compiled: z.boolean(),
+  address: z.string().nullable(),
 })
 
-export type UserId = User["id"]
+export const UserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  image: z.string().nullable(),
+  emailVerified: z.boolean(),
+  profile: UserProfileSchema.optional(),
+})
+
+export const UserWriteSchema = UserSchema.omit({
+  id: true,
+  emailVerified: true,
+})
+
 export type User = z.infer<typeof UserSchema>
 
-export const UserWriteSchema = UserSchema.partial({
-  id: true,
-})
+export type UserProfile = z.infer<typeof UserProfileSchema>
+
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
-export interface StudyYears {
-  [-1]: string
-  0: string
-  1: string
-  2: string
-  3: string
-  4: string
-  5: string
-  6: string
-}
-
-export const StudyYearAliases = {
-  [-1]: "Ingen medlemskap",
-  [0]: "Sosialt medlem",
-  [1]: "1. klasse",
-  [2]: "2. klasse",
-  [3]: "3. klasse",
-  [4]: "4. klasse",
-  [5]: "5. klasse",
-  [6]: "PhD",
-} as StudyYears
-
-export const studyYearOptions = Object.entries(StudyYearAliases).map(([value, label]) => ({
-  value: Number.parseInt(value),
-  label,
-}))
+export type UserId = User["id"]

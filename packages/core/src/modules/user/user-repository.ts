@@ -1,63 +1,162 @@
 import type { Database } from "@dotkomonline/db"
-import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
-import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
+import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
+import type { Kysely } from "kysely"
+import { z } from "zod"
 
-export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
+export const AppMetadataProfileSchema = z.object({
+  phone: z.string().nullable(),
+  gender: GenderSchema,
+  address: z.string().nullable(),
+  compiled: z.boolean(),
+  allergies: z.array(z.string()),
+  rfid: z.string().nullable(),
+})
 
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
-  getByAuth0Id(id: UserId): Promise<User | null>
-  getAll(limit: number): Promise<User[]>
-  create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User>
-  searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
+  getAll(limit: number, page: number): Promise<User[]>
+  update(id: UserId, data: Partial<UserWrite>): Promise<User>
+  searchForUser(query: string, limit: number, page: number): Promise<User[]>
+  registerId(id: UserId): Promise<void>
+  createDummyUser(data: UserWrite, password: string): Promise<User>
+}
+
+const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
+  const profile = AppMetadataProfileSchema.optional().parse(auth0User.app_metadata?.["profile"])
+
+  return {
+    id: auth0User.user_id,
+    email: auth0User.email,
+    image: auth0User.picture,
+    emailVerified: auth0User.email_verified,
+    profile: profile
+      ? {
+          firstName: auth0User.given_name,
+          lastName: auth0User.family_name,
+          phone: profile.phone,
+          gender: profile.gender,
+          address: profile.address,
+          compiled: profile.compiled,
+          allergies: profile.allergies,
+          rfid: profile.rfid,
+        }
+      : undefined,
+  }
+}
+
+const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate => {
+  const auth0User: UserCreate = {
+    email: user.email,
+    picture: user.image ?? undefined,
+    connection: "Username-Password-Authentication",
+    password: password,
+  }
+
+  if (user.profile) {
+    auth0User.app_metadata = {
+      profile: user.profile,
+    }
+    auth0User.given_name = user.profile.firstName
+    auth0User.family_name = user.profile.lastName
+
+    if (auth0User.given_name && auth0User.family_name) {
+      auth0User.name = `${auth0User.given_name} ${auth0User.family_name}`
+    }
+  }
+
+  return auth0User
+}
+
+const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
+  const userUpdate: UserUpdate = {
+    email: data.email,
+    image: data.image,
+  }
+  if (data.profile) {
+    const { firstName, lastName, ...profile } = data.profile
+
+    userUpdate.given_name = firstName
+    userUpdate.family_name = lastName
+    userUpdate.app_metadata = { profile }
+
+    if (userUpdate.given_name && userUpdate.family_name) {
+      userUpdate.name = `${userUpdate.given_name} ${userUpdate.family_name}`
+    }
+  }
+
+  return userUpdate
 }
 
 export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly db: Kysely<Database>) {}
-  async getById(id: UserId) {
-    const user = await this.db.selectFrom("owUser").selectAll().where("id", "=", id).executeTakeFirst()
-    return user ? mapToUser(user) : null
-  }
+  constructor(
+    private readonly client: ManagementClient,
+    private readonly db: Kysely<Database>
+  ) {}
 
-  async getByAuth0Id(id: UserId) {
-    const user = await this.db.selectFrom("owUser").selectAll().where("auth0Id", "=", id).executeTakeFirst()
-    return user ? mapToUser(user) : null
-  }
-
-  async getAll(limit: number) {
-    const users = await this.db.selectFrom("owUser").selectAll().limit(limit).execute()
-    return users.map(mapToUser)
-  }
-  async create(data: UserWrite) {
-    const user = await this.db
+  async registerId(id: UserId): Promise<void> {
+    await this.db
       .insertInto("owUser")
-      .values(this.mapInsert(data))
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToUser(user)
-  }
-  async update(id: UserId, data: UserWrite) {
-    const user = await this.db
-      .updateTable("owUser")
-      .set(this.mapInsert(data))
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-
-    return mapToUser(user)
-  }
-  async searchByFullName(searchQuery: string, take: number, cursor?: Cursor) {
-    const query = orderedQuery(
-      this.db.selectFrom("owUser").selectAll().where(sql`name::text`, "ilike", `%${searchQuery}%`).limit(take),
-      cursor
-    )
-    const users = await query.execute()
-    return users.map(mapToUser)
+      .values({ id })
+      .onConflict((oc) => oc.doNothing())
+      .execute()
   }
 
-  private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
-    return withInsertJsonValue(data, "allergies")
+  async createDummyUser(data: Omit<User, "id">, password: string): Promise<User> {
+    const response = await this.client.users.create(mapUserToAuth0UserCreate(data, password))
+
+    if (response.status !== 201) {
+      throw new Error(`Failed to create user: ${response.statusText}`)
+    }
+
+    await this.registerId(response.data.user_id)
+
+    const user = await this.getById(response.data.user_id)
+    if (user === null) {
+      throw new Error("Failed to fetch user after creation")
+    }
+
+    return user
+  }
+
+  async getById(id: UserId): Promise<User | null> {
+    const user = await this.client.users.get({ id: id })
+
+    switch (user.status) {
+      case 200:
+        return mapAuth0UserToUser(user.data)
+      case 404:
+        return null
+      default:
+        throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
+    }
+  }
+
+  async getAll(limit: number, page: number): Promise<User[]> {
+    const users = await this.client.users.getAll({ per_page: limit, page: page })
+
+    if (users.status !== 200) {
+      throw new Error(`Failed to fetch users: ${users.statusText}`)
+    }
+
+    return users.data.map(mapAuth0UserToUser)
+  }
+
+  async searchForUser(query: string, limit: number, page: number): Promise<User[]> {
+    const users = await this.client.users.getAll({ q: query, per_page: limit, page: page })
+
+    return users.data.map(mapAuth0UserToUser)
+  }
+
+  async update(id: UserId, data: Partial<UserWrite>) {
+    const result = await this.client.users.update({ id }, mapUserWriteToPatch(data))
+
+    const user = await this.client.users.get({ id })
+
+    if (user.status !== 200) {
+      throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
+    }
+
+    return mapAuth0UserToUser(user.data)
   }
 }

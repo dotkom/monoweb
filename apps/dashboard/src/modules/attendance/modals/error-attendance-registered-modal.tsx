@@ -10,7 +10,7 @@ export const AlreadyAttendedModal: FC<ContextModalProps<AttendanceRegisteredModa
   return (
     <div className="w-full">
       <h1>Bruker allerede påmeldt</h1>
-      <h2 className="text-">{innerProps.user.name}</h2>
+      <h2 className="text-">{`${innerProps.user.profile?.firstName} ${innerProps.user.profile?.lastName}`}</h2>
       <p>{innerProps.user.email}</p>
     </div>
   )

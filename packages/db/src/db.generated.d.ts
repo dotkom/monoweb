@@ -8,7 +8,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type Json = ColumnType<JsonValue, string, string>;
+export type Json = JsonValue;
 
 export type JsonArray = JsonValue[];
 
@@ -83,7 +83,7 @@ export interface Attendee {
   id: Generated<string>;
   registeredAt: Timestamp;
   updatedAt: Generated<Timestamp>;
-  userId: string;
+  userId: string | null;
 }
 
 export interface Committee {
@@ -198,7 +198,7 @@ export interface NotificationPermissions {
   registrationStart: Generated<boolean>;
   standardNotifications: Generated<boolean>;
   updatedAt: Generated<Timestamp>;
-  userId: string;
+  userId: string | null;
 }
 
 export interface Offline {
@@ -212,21 +212,7 @@ export interface Offline {
 }
 
 export interface OwUser {
-  allergies: Json
-  auth0Id: string
-  createdAt: Generated<Timestamp>
-  email: string
-  familyName: string
-  gender: string | null
-  givenName: string
-  id: Generated<string>
-  lastSyncedAt: Generated<Timestamp>
-  middleName: string
-  name: string
-  phone: string | null
-  picture: string | null
-  studyYear: Generated<number>
-  updatedAt: Generated<Timestamp>
+  id: string;
 }
 
 export interface Payment {
@@ -243,7 +229,7 @@ export interface Payment {
 
 export interface PersonalMark {
   markId: string;
-  userId: string;
+  userId: string | null;
 }
 
 export interface PrivacyPermissions {
@@ -254,7 +240,7 @@ export interface PrivacyPermissions {
   phoneVisible: Generated<boolean>;
   profileVisible: Generated<boolean>;
   updatedAt: Generated<Timestamp>;
-  userId: string;
+  userId: string | null;
   usernameVisible: Generated<boolean>;
 }
 
