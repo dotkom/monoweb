@@ -3,15 +3,22 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
-import { UserEditCard } from "./edit-card"
+import { MembershipEditCard } from "./membership-edit-card"
+import { UserEditCard } from "./profile-edit-card"
 import { useUserDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
-    icon: "tabler:building-warehouse",
-    label: "Info",
-    slug: "info",
+    icon: "tabler:user-circle",
+    label: "Profil",
+    slug: "profile",
     component: UserEditCard,
+  },
+  {
+    icon: "tabler:users",
+    label: "Medlemskap",
+    slug: "membership",
+    component: MembershipEditCard,
   },
 ] as const
 

@@ -1,5 +1,4 @@
 import { UserProfileSchema } from "@dotkomonline/types"
-import { Title } from "@mantine/core"
 import type { FC } from "react"
 import { useUpdateUserMutation } from "../../../../modules/user/mutations"
 import { useUserProfileEditForm } from "./profile-edit-form"
@@ -32,10 +31,5 @@ export const UserEditCard: FC = () => {
     defaultValues: { ...user.profile },
   })
 
-  return (
-    <>
-      <Title>Profil</Title>
-      <EditUserProfileComponent />
-    </>
-  )
+  return <EditUserProfileComponent />
 }

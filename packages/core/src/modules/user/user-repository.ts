@@ -1,5 +1,5 @@
 import type { Database } from "@dotkomonline/db"
-import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, UserMembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import type { Kysely } from "kysely"
 import { z } from "zod"
@@ -13,6 +13,14 @@ export const AppMetadataProfileSchema = z.object({
   rfid: z.string().nullable(),
 })
 
+export const AppMetadataSchema = z.object({
+  ow_user_id: z.string().optional(),
+  profile: AppMetadataProfileSchema.optional(),
+  membership: UserMembershipSchema.optional(),
+})
+
+type AppMetadata = z.infer<typeof AppMetadataSchema>
+
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number, page: number): Promise<User[]>
@@ -24,6 +32,7 @@ export interface UserRepository {
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
   const profile = AppMetadataProfileSchema.optional().parse(auth0User.app_metadata?.["profile"])
+  const membership = UserMembershipSchema.optional().parse(auth0User.app_metadata?.["membership"])
 
   return {
     id: auth0User.user_id,
@@ -34,14 +43,10 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
       ? {
           firstName: auth0User.given_name,
           lastName: auth0User.family_name,
-          phone: profile.phone,
-          gender: profile.gender,
-          address: profile.address,
-          compiled: profile.compiled,
-          allergies: profile.allergies,
-          rfid: profile.rfid,
+          ...profile,
         }
       : undefined,
+    membership: membership,
   }
 }
 
@@ -56,6 +61,7 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
   if (user.profile) {
     auth0User.app_metadata = {
       profile: user.profile,
+      membership: user.membership,
     }
     auth0User.given_name = user.profile.firstName
     auth0User.family_name = user.profile.lastName
@@ -73,17 +79,23 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
     email: data.email,
     image: data.image,
   }
+  const appMetadata: AppMetadata = {
+    membership: data.membership,
+  }
+
   if (data.profile) {
     const { firstName, lastName, ...profile } = data.profile
 
+    appMetadata.profile = profile
     userUpdate.given_name = firstName
     userUpdate.family_name = lastName
-    userUpdate.app_metadata = { profile }
 
     if (userUpdate.given_name && userUpdate.family_name) {
       userUpdate.name = `${userUpdate.given_name} ${userUpdate.family_name}`
     }
   }
+
+  userUpdate.app_metadata = appMetadata
 
   return userUpdate
 }
@@ -134,10 +146,6 @@ export class UserRepositoryImpl implements UserRepository {
 
   async getAll(limit: number, page: number): Promise<User[]> {
     const users = await this.client.users.getAll({ per_page: limit, page: page })
-
-    if (users.status !== 200) {
-      throw new Error(`Failed to fetch users: ${users.statusText}`)
-    }
 
     return users.data.map(mapAuth0UserToUser)
   }
