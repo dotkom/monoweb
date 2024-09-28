@@ -10,13 +10,21 @@ export interface InterestGroupListItemProps {
 const InterestGroupListItem: FC<InterestGroupListItemProps> = (
     props: InterestGroupListItemProps
 ) => (
-    <div className="p-4 py-8 text-center m-1 shadow-md min-w-[250px]">
-        <OnlineIcon className="w-5/12 mx-auto" />
-        <h2 className="text-sm border-none !mt-4">
+    <div className="p-4 py-8 text-center m-1 shadow-md min-w-[250px] flex flex-col">
+        <OnlineIcon className="w-5/12 mx-auto max-w-[150px] min-w-[120px]" />
+        <h2 className="!text-3xl border-none !mt-4">
             {props.interestGroup.name}
+            {!props.interestGroup.isActive && <> [inaktiv]</>}
         </h2>
-        <p className="mt-2 text-left px-3">{props.interestGroup.description}</p>
-        <Link href={`interest-groups/${props.interestGroup.id}`}>Les mer</Link>
+        <p className="mt-2 mb-6 text-left px-3">
+            {props.interestGroup.description}
+        </p>
+        <Link
+            className="mt-auto text-xl hover:underline"
+            href={`interest-groups/${props.interestGroup.id}`}
+        >
+            Les mer
+        </Link>
     </div>
 );
 
