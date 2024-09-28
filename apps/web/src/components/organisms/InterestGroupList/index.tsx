@@ -1,18 +1,16 @@
 import InterestGroupListItem from "@/components/molecules/InterestGroupListItem";
+import { getServerClient } from "@/utils/trpc/serverClient";
 
-export interface InterestGroupListProps {
-    itemOnClick: any;
-}
-
-export const InterestGroupList = (props: InterestGroupListProps) => {
-    const numbers = Array(13).fill(0);
+export const InterestGroupList = async () => {
+    const serverClient = await getServerClient();
+    const interestGroups = (await serverClient.interestGroup.all()).data;
 
     return (
         <div className="grid grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] w-10/12 2xl:grid-cols-4 gap-12 mx-auto">
-            {numbers.map((k, index) => (
+            {interestGroups.map((interestGroup, index) => (
                 <InterestGroupListItem
                     key={index}
-                    itemOnClick={() => props.itemOnClick(index)}
+                    interestGroup={interestGroup}
                 />
             ))}
         </div>
