@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   params.append("client_id", env.DATAPORTEN_CLIENT_ID)
   params.append("response_type", "code")
   params.append("scope", "openid userid-feide userid-name profile groups email")
-  params.append("redirect_uri", "https://web-git-feat-feide-user-data-dotkom.vercel.app/feide/callback")
+  params.append("redirect_uri", "http://localhost:3000/feide/callback")
 
   redirect(`https://auth.dataporten.no/oauth/authorization?${params.toString()}`)
 }

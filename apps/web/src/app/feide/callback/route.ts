@@ -75,12 +75,12 @@ export async function GET(request: NextRequest) {
   const client = new issuer.Client({
     client_id: env.DATAPORTEN_CLIENT_ID,
     client_secret: env.DATAPORTEN_CLIENT_SECRET,
-    redirect_uris: ["https://web-git-feat-feide-user-data-dotkom.vercel.app/feide/callback"],
+    redirect_uris: ["http://localhost:3000/feide/callback"],
   })
 
   const tokenSet = await client.grant({
     code,
-    redirect_uri: "https://web-git-feat-feide-user-data-dotkom.vercel.app/feide/callback",
+    redirect_uri: "http://localhost:3000/feide/callback",
     grant_type: "authorization_code",
   })
 
