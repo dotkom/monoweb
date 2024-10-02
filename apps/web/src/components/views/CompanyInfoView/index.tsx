@@ -9,7 +9,7 @@ export const CompanyInfoView = () => {
         <div className="mx-auto flex max-w-[768px] flex-col text-center items-center p-4 pb-9">
           <div className="font-fraunces font-extrabold mb-8 mt-5 text-4xl/relaxed lg:text-5xl/tight">
             Er din bedrift på jakt etter skarpe <br />
-            <span className="relative after:content-[''] after:bg-[#FCD49B] after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
+            <span className="relative after:content-[''] after:bg-amber-7 after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
               IT&ndash;studenter?
             </span>
           </div>
@@ -42,19 +42,8 @@ export const CompanyInfoView = () => {
 
       <OurProducts />
 
-      <div className="bg-blue-5 w-full py-10 rounded-lg">
+      <div className="bg-blue-3 w-full py-10 rounded-lg">
         <CompanyInterestProcess steps={["Kartlegging", "Intern Planlegging", "Tilbud", "Sammarbeid"]} />
-      </div>
-
-      <div className="max-w-4xl">
-        <h2 className="mb-4">Techtalks</h2>
-        <p>
-          Tech Talks har den hensikt å være et årlig arrangement for inspirasjon og faglig påfyll fra næringslivet.
-          Arrangementet pleier å finne sted en gang i midten av februar. Dagen er lagt opp med foredrag, workshops og
-          lyntaler av ulike bedrifter og på kveldstid arrangeres det en bankett. Formatet på arrangementet kan variere
-          fra år til år.
-        </p>
-        <p>Vi begynner å kontakte aktuelle bedrifter for Tech Talks på slutten av høstsemesteret.</p>
       </div>
 
       <div className="max-w-4xl">
