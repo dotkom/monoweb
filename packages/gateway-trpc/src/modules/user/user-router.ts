@@ -6,6 +6,9 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 export const userRouter = t.router({
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.userService.getAll(input.take)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
+  getByAuth0Id: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => ctx.userService.getByAuth0Id(input)),
   getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getByAuth0Id(ctx.auth.userId)),
   update: protectedProcedure
     .input(
@@ -13,9 +16,7 @@ export const userRouter = t.router({
         data: UserWriteSchema,
       })
     )
-    .mutation(async ({ input: changes, ctx }) =>
-      ctx.userService.update(changes.data)
-    ),
+    .mutation(async ({ input: changes, ctx }) => ctx.userService.update(changes.data)),
   getPrivacyPermissionssByUserId: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),

@@ -29,11 +29,6 @@ declare module "next-auth" {
 
   interface User extends DefaultUser {
     id: string
-    name: string
-    email: string
-    image?: string
-    givenName?: string
-    familyName?: string
   }
 }
 
@@ -75,7 +70,9 @@ export const getAuthOptions = ({
     async session({ session, token }) {
       if (token.sub) {
         session.sub = token.sub
-        return session
+        session.user = {
+          id: token.sub,
+        }
       }
 
       return session
