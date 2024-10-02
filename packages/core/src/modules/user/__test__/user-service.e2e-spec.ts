@@ -41,7 +41,6 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
   return {
     userService,
     auth0Repository,
-    syncedUserService,
   }
 }
 

@@ -2,10 +2,10 @@ import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
 import type { User } from "@dotkomonline/types"
 import { Button, TextInput, Textarea } from "@dotkomonline/ui"
+import jwt from "jsonwebtoken"
 import type { NextPage } from "next"
 import { cookies } from "next/headers"
 import Link from "next/link"
-import jwt from "jsonwebtoken"
 import { z } from "zod"
 
 interface FormInputProps {
@@ -25,8 +25,8 @@ const JWTSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   ntnu_username: z.string(),
-  subjects: z.array(z.object({code: z.string(), name: z.string()})),
-  studyPrograms: z.array(z.object({code: z.string(), name: z.string()})),
+  subjects: z.array(z.object({ code: z.string(), name: z.string() })),
+  studyPrograms: z.array(z.object({ code: z.string(), name: z.string() })),
 })
 
 const OnboardingProfile: NextPage = () => {
@@ -41,8 +41,7 @@ const OnboardingProfile: NextPage = () => {
           <Button>Bekreft med Feide</Button>
         </Link>
 
-        {
-          profile &&
+        {profile && (
           <div className="flex flex-col">
             <h3>Navn</h3>
             <div className="flex flex-row gap-1">
@@ -51,9 +50,7 @@ const OnboardingProfile: NextPage = () => {
             </div>
 
             <h3>NTNU-brukernavn</h3>
-            <div>{
-              profile.ntnu_username
-            }</div>
+            <div>{profile.ntnu_username}</div>
 
             <h3>Emner</h3>
             <table>
@@ -64,14 +61,12 @@ const OnboardingProfile: NextPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {
-                  profile.subjects.map((subject) => (
-                    <tr key={subject.code}>
-                      <td>{subject.code}</td>
-                      <td>{subject.name}</td>
-                    </tr>
-                  ))
-                }
+                {profile.subjects.map((subject) => (
+                  <tr key={subject.code}>
+                    <td>{subject.code}</td>
+                    <td>{subject.name}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
 
@@ -84,24 +79,22 @@ const OnboardingProfile: NextPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {
-                  profile.studyPrograms.map((program) => (
-                    <tr key={program.code}>
-                      <td>{program.code}</td>
-                      <td>{program.name}</td>
-                    </tr>
-                  ))
-                }
+                {profile.studyPrograms.map((program) => (
+                  <tr key={program.code}>
+                    <td>{program.code}</td>
+                    <td>{program.name}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-        }
+        )}
       </div>
     </div>
   )
 }
 
-const ExistingProfile: NextPage<{ user: User}> = ({ user }) => {
+const ExistingProfile: NextPage<{ user: User }> = ({ user }) => {
   return (
     <div className="flex w-full flex-col space-y-4">
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">

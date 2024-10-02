@@ -1,10 +1,10 @@
-import { authOptions } from "@dotkomonline/auth/src/web.app";
-import { getServerSession } from "next-auth";
-import { env } from "@dotkomonline/env";
-import { NextRequest, NextResponse } from "next/server";
-import { Issuer } from "openid-client";
-import jwt from "jsonwebtoken";
-import { z } from "zod";
+import { authOptions } from "@dotkomonline/auth/src/web.app"
+import { env } from "@dotkomonline/env"
+import jwt from "jsonwebtoken"
+import { getServerSession } from "next-auth"
+import { type NextRequest, NextResponse } from "next/server"
+import { Issuer } from "openid-client"
+import { z } from "zod"
 
 const GroupSchema = z.object({
   id: z.string(),
@@ -24,23 +24,23 @@ async function getFeideInformation(access_token: string) {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
-  });
+  })
 
   if (!groups_response.ok) {
-    throw new Error("Failed to get groups: " + await groups_response.text());
+    throw new Error(`Failed to get groups: ${await groups_response.text()}`)
   }
 
-  const groups = z.array(GroupSchema).parse(await groups_response.json());
+  const groups = z.array(GroupSchema).parse(await groups_response.json())
 
   const subjects = groups
     .filter((group) => group.type === "fc:fs:emne")
-    .map((group) => ({code: group.id.split(":").slice(5)[0], name: group.displayName}));
+    .map((group) => ({ code: group.id.split(":").slice(5)[0], name: group.displayName }))
 
   const studyPrograms = groups
     .filter((group) => group.type === "fc:fs:prg")
-    .map((group) => ({code: group.id.split(":").slice(5)[0], name: group.displayName}));
+    .map((group) => ({ code: group.id.split(":").slice(5)[0], name: group.displayName }))
 
-  return {subjects, studyPrograms};
+  return { subjects, studyPrograms }
 }
 
 const JWTSchema = z.object({
@@ -48,21 +48,21 @@ const JWTSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   ntnu_username: z.string(),
-  subjects: z.array(z.object({code: z.string(), name: z.string()})),
-  studyPrograms: z.array(z.object({code: z.string(), name: z.string()})),
+  subjects: z.array(z.object({ code: z.string(), name: z.string() })),
+  studyPrograms: z.array(z.object({ code: z.string(), name: z.string() })),
 })
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
 
   if (session === null) {
-    return Response.redirect("/", 302);
+    return Response.redirect("/", 302)
   }
 
-  const code = new URL(request.url).searchParams.get("code");
+  const code = new URL(request.url).searchParams.get("code")
 
   if (code === null) {
-    return new Response("Missing code", { status: 400 });
+    return new Response("Missing code", { status: 400 })
   }
 
   const issuer = await Issuer.discover("https://auth.dataporten.no")
@@ -70,31 +70,31 @@ export async function GET(request: NextRequest) {
     client_id: env.DATAPORTEN_CLIENT_ID,
     client_secret: env.DATAPORTEN_CLIENT_SECRET,
     redirect_uris: [env.DATAPORTEN_REDIRECT_URI],
-  });
+  })
 
   const tokenSet = await client.grant({
     code,
     redirect_uri: env.DATAPORTEN_REDIRECT_URI,
     grant_type: "authorization_code",
-  });
+  })
 
   if (!tokenSet || !tokenSet.access_token) {
-    return new Response("Failed to get token", { status: 500 });
+    return new Response("Failed to get token", { status: 500 })
   }
 
-  const feideInformation = await getFeideInformation(tokenSet.access_token);
+  const feideInformation = await getFeideInformation(tokenSet.access_token)
 
   const profile_response = await fetch("https://api.dataporten.no/userinfo/v1/userinfo", {
     headers: {
       Authorization: `Bearer ${tokenSet.access_token}`,
     },
-  });
+  })
 
   if (!profile_response.ok) {
-    return new Response("Failed to get profile: " + await profile_response.text(), { status: 500 });
+    return new Response(`Failed to get profile: ${await profile_response.text()}`, { status: 500 })
   }
 
-  const profile = ProfileSchema.parse(await profile_response.json());
+  const profile = ProfileSchema.parse(await profile_response.json())
 
   const token = jwt.sign(
     {
@@ -107,19 +107,17 @@ export async function GET(request: NextRequest) {
     },
     env.NEXTAUTH_SECRET,
     { expiresIn: "1d" }
-  );
+  )
 
-  const response = NextResponse.redirect(
-    new URL("/settings", request.url).toString(), 302
-  );
+  const response = NextResponse.redirect(new URL("/settings", request.url).toString(), 302)
 
   response.cookies.set("FeideProfileJWT", token, {
     maxAge: Date.now() + 1000 * 60 * 60 * 24,
-  });
+  })
 
-  response.headers.set("Set-Cookie", "test=1");
+  response.headers.set("Set-Cookie", "test=1")
 
-  response.cookies.set("test", "1");
+  response.cookies.set("test", "1")
 
-  return response;
+  return response
 }

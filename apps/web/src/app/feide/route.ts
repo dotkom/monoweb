@@ -1,13 +1,13 @@
-import { redirect } from "next/navigation";
-import { env } from "@dotkomonline/env";
+import { env } from "@dotkomonline/env"
+import { redirect } from "next/navigation"
 
 export async function GET(request: Request) {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams()
 
-  params.append("client_id", env.DATAPORTEN_CLIENT_ID);
-  params.append("response_type", "code");
-  params.append("scope", "openid userid-feide userid-name profile groups email");
-  params.append("redirect_uri", env.DATAPORTEN_REDIRECT_URI);
+  params.append("client_id", env.DATAPORTEN_CLIENT_ID)
+  params.append("response_type", "code")
+  params.append("scope", "openid userid-feide userid-name profile groups email")
+  params.append("redirect_uri", env.DATAPORTEN_REDIRECT_URI)
 
-  redirect("https://auth.dataporten.no/oauth/authorization?" + params.toString());
+  redirect(`https://auth.dataporten.no/oauth/authorization?${params.toString()}`)
 }
