@@ -15,10 +15,6 @@ const PRODUCTS = [
     icon: BedpressIcon,
   },
   {
-    name: "Tech Talks",
-    icon: TechtalksIcon,
-  },
-  {
     name: "Stillingsutlysning",
     icon: UtlysningIcon,
   },
@@ -30,11 +26,11 @@ const PRODUCTS = [
 
 const OurProducts = () => (
   <div className="flex flex-col justify-center">
-    <div className="flex flex-wrap max-w-[600px] justify-evenly items-center">
+    <div className="flex justify-evenly items-center">
       {PRODUCTS.map((product) => (
-        <div key={product.name} className="flex flex-col px-10 pb-8 justify-center">
-          <product.icon className="h-[50px] lg:h-[100px]" fill="#0D5474" stroke="#0D5474" />
-          <Text className="font-bold text-brand">{product.name}</Text>
+        <div key={product.name} className="flex flex-col px-10 pb-8 justify-center text-brand-lighter">
+          <product.icon className="h-[50px] lg:h-[100px]" fill="currentColor" stroke="currentColor" />
+          <Text className="font-bold text-current">{product.name}</Text>
         </div>
       ))}
     </div>
