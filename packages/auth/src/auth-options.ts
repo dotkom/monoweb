@@ -29,11 +29,6 @@ declare module "next-auth" {
 
   interface User extends DefaultUser {
     id: string
-    name: string
-    email: string
-    image?: string
-    givenName?: string
-    familyName?: string
   }
 }
 
@@ -74,12 +69,10 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
-
-        session.user.id = user.auth0Id
         session.sub = token.sub
-        return session
+        session.user = {
+          id: token.sub,
+        }
       }
 
       return session

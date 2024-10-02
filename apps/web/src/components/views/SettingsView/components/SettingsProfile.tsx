@@ -1,8 +1,12 @@
 import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
-import { TextInput, Textarea } from "@dotkomonline/ui"
+import type { User } from "@dotkomonline/types"
+import { Button, TextInput, Textarea } from "@dotkomonline/ui"
+import jwt from "jsonwebtoken"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
+import { cookies } from "next/headers"
+import Link from "next/link"
+import { z } from "zod"
 
 interface FormInputProps {
   title: string
@@ -16,7 +20,35 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-const Landing: NextPage<{ user: User }> = ({ user }) => {
+const JWTSchema = z.object({
+  name: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  ntnu_username: z.string(),
+  subjects: z.array(z.object({ code: z.string(), name: z.string() })),
+  studyPrograms: z.array(z.object({ code: z.string(), name: z.string() })),
+  studyStrings: z.array(z.string()),
+})
+
+const OnboardingProfile: NextPage = () => {
+  const feideProfileJWT = cookies().get("FeideProfileJWT")
+  const profile = feideProfileJWT ? jwt.decode(feideProfileJWT.value) : null
+
+  return (
+    <div className="flex w-full flex-col space-y-4">
+      <h2>Fullfør profil</h2>
+      <div>
+        <Link href="/feide">
+          <Button>Bekreft med Feide</Button>
+        </Link>
+
+        <pre>{JSON.stringify(profile, null, 2)}</pre>
+      </div>
+    </div>
+  )
+}
+
+const ExistingProfile: NextPage<{ user: User }> = ({ user }) => {
   return (
     <div className="flex w-full flex-col space-y-4">
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">
@@ -47,4 +79,8 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
   )
 }
 
-export default Landing
+const SettingsProfile: NextPage<{ user: User | null }> = ({ user }) => {
+  return user ? <ExistingProfile user={user} /> : <OnboardingProfile />
+}
+
+export default SettingsProfile

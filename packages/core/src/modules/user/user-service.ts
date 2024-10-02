@@ -22,7 +22,7 @@ export interface UserService {
   ): Promise<PrivacyPermissions>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   create(data: UserWrite): Promise<User>
-  update(data: User): Promise<User>
+  update(data: UserWrite): Promise<User>
   getByAuth0Id(auth0Id: string): Promise<User | null>
 }
 

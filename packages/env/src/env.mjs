@@ -34,6 +34,10 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
 
       S3_BUCKET_MONOWEB: environmentVariableSchema,
+
+      DATAPORTEN_CLIENT_ID: environmentVariableSchema,
+      DATAPORTEN_CLIENT_SECRET: environmentVariableSchema,
+      DATAPORTEN_REDIRECT_URI: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -70,6 +74,10 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_WEBHOOK_SECRET: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET,
 
       S3_BUCKET_MONOWEB: process.env.S3_BUCKET_MONOWEB,
+
+      DATAPORTEN_CLIENT_ID: process.env.DATAPORTEN_CLIENT_ID,
+      DATAPORTEN_CLIENT_SECRET: process.env.DATAPORTEN_CLIENT_SECRET,
+      DATAPORTEN_REDIRECT_URI: process.env.DATAPORTEN_REDIRECT_URI,
     },
     skipValidation: process.env.DOCKER_BUILD !== undefined,
   })

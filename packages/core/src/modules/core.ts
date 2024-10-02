@@ -65,7 +65,6 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -148,11 +147,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository
-  )
-
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -249,6 +243,5 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    auth0SynchronizationService,
   }
 }

@@ -9,7 +9,6 @@ import { type CleanupFunction, createServiceLayerForTesting } from "../../../../
 import type { Database } from "@dotkomonline/db"
 import type { Kysely } from "kysely"
 import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -39,15 +38,9 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
     notificationPermissionsRepository
   )
 
-  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
-  )
-
   return {
     userService,
     auth0Repository,
-    syncedUserService,
   }
 }
 

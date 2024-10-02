@@ -1,8 +1,16 @@
 "use server"
 
 import { appRouter, createCallerFactory, createContextInner } from "@dotkomonline/gateway-trpc"
+import { getServerSession } from "next-auth"
 
 const createCaller = createCallerFactory(appRouter)
-// TODO: Add a way to get the userId from the request
-export const getServerClient = async () => createCaller(await createContextInner({ auth: null }))
+
+export const getServerClient = async () => {
+  const session = await getServerSession()
+  return createCaller(
+    await createContextInner({
+      auth: session === null ? null : { userId: session.user.id },
+    })
+  )
+}
 export const getUnauthorizedServerClient = async () => createCaller(await createContextInner({ auth: null }))
