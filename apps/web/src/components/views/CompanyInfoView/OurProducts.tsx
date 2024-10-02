@@ -1,7 +1,6 @@
 import BedpressIcon from "@/components/icons/BedpressIcon"
 import ItexIcon from "@/components/icons/ItexIcon"
 import OfflineIcon from "@/components/icons/OfflineIcon"
-import TechtalksIcon from "@/components/icons/TechtalksIcon"
 import UtlysningIcon from "@/components/icons/UtlysningIcon"
 import { Text } from "@dotkomonline/ui"
 
