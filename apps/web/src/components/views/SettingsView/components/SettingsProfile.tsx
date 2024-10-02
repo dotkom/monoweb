@@ -27,11 +27,12 @@ const JWTSchema = z.object({
   ntnu_username: z.string(),
   subjects: z.array(z.object({ code: z.string(), name: z.string() })),
   studyPrograms: z.array(z.object({ code: z.string(), name: z.string() })),
+  studyStrings: z.array(z.string()),
 })
 
 const OnboardingProfile: NextPage = () => {
   const feideProfileJWT = cookies().get("FeideProfileJWT")
-  const profile = feideProfileJWT ? JWTSchema.parse(jwt.decode(feideProfileJWT.value)) : null
+  const profile = feideProfileJWT ? jwt.decode(feideProfileJWT.value) : null
 
   return (
     <div className="flex w-full flex-col space-y-4">
@@ -41,54 +42,7 @@ const OnboardingProfile: NextPage = () => {
           <Button>Bekreft med Feide</Button>
         </Link>
 
-        {profile && (
-          <div className="flex flex-col">
-            <h3>Navn</h3>
-            <div className="flex flex-row gap-1">
-              <div>{profile.firstName}</div>
-              <div>{profile.lastName}</div>
-            </div>
-
-            <h3>NTNU-brukernavn</h3>
-            <div>{profile.ntnu_username}</div>
-
-            <h3>Emner</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th className="text-left">Kode</th>
-                  <th className="text-left">Navn</th>
-                </tr>
-              </thead>
-              <tbody>
-                {profile.subjects.map((subject) => (
-                  <tr key={subject.code}>
-                    <td>{subject.code}</td>
-                    <td>{subject.name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <h3>Studier</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th className="text-left">Kode</th>
-                  <th className="text-left">Navn</th>
-                </tr>
-              </thead>
-              <tbody>
-                {profile.studyPrograms.map((program) => (
-                  <tr key={program.code}>
-                    <td>{program.code}</td>
-                    <td>{program.name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <pre>{JSON.stringify(profile, null, 2)}</pre>
       </div>
     </div>
   )

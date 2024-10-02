@@ -40,7 +40,12 @@ async function getFeideInformation(access_token: string) {
     .filter((group) => group.type === "fc:fs:prg")
     .map((group) => ({ code: group.id.split(":").slice(5)[0], name: group.displayName }))
 
-  return { subjects, studyPrograms }
+  const studyStrings = groups
+  // fc:fs:fs:str:ntnu.no:MIT-DBS
+    .filter((group) => group.type === "fc:fs:fs:str")
+    .map((group) => group.id.split(":").slice(5).join(":"))
+
+  return { subjects, studyPrograms, studyStrings }
 }
 
 const JWTSchema = z.object({
@@ -50,6 +55,7 @@ const JWTSchema = z.object({
   ntnu_username: z.string(),
   subjects: z.array(z.object({ code: z.string(), name: z.string() })),
   studyPrograms: z.array(z.object({ code: z.string(), name: z.string() })),
+  studyStrings: z.array(z.string()),
 })
 
 export async function GET(request: NextRequest) {
@@ -95,15 +101,25 @@ export async function GET(request: NextRequest) {
   }
 
   const profile = ProfileSchema.parse(await profile_response.json())
+  const groups_response = await fetch("https://groups-api.dataporten.no/groups/me/groups?show_all=true", {
+    headers: {
+      Authorization: `Bearer ${tokenSet.access_token}`,
+    },
+  })
+
+  if (!groups_response.ok) {
+    return new Response(`Failed to get groups: ${await groups_response.text()}`, { status: 500 })
+  }
+
+  const groups = z.array(GroupSchema).parse(await groups_response.json())
+
+  return Response.json({
+    profile, groups
+  })
 
   const token = jwt.sign(
     {
-      name: profile.norEduPersonLegalName,
-      firstName: profile.givenName[0],
-      lastName: profile.sn[0],
-      ntnu_username: profile.uid[0],
-      subjects: feideInformation.subjects,
-      studyPrograms: feideInformation.studyPrograms,
+      profile, groups
     },
     env.NEXTAUTH_SECRET,
     { expiresIn: "1d" }
@@ -111,9 +127,7 @@ export async function GET(request: NextRequest) {
 
   const response = NextResponse.redirect(new URL("/settings", request.url).toString(), 302)
 
-  response.cookies.set("FeideProfileJWT", token, {
-    maxAge: Date.now() + 1000 * 60 * 60 * 24,
-  })
+  response.cookies.set("FeideProfileJWT", token)
 
   response.headers.set("Set-Cookie", "test=1")
 
