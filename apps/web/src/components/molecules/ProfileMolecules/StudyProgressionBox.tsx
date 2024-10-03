@@ -15,7 +15,9 @@ const StudyProgressionBox: FC<StudyProgressionBoxProps> = ({ className }) => {
         <div className={`flex flex-col items-center justify-center gap-3 ${className ?? ''}`}>
             <p>{grade}. klasse</p>
             <p>Studiesett: {startYear}</p>
-            <StudentProgress year={grade} />  
+            <div className="transform scale-90">
+                <StudentProgress year={grade} />  
+            </div>
         </div>
     )
 }
