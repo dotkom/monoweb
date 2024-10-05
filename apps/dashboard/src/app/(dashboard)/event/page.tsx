@@ -1,4 +1,5 @@
 "use client"
+
 import type { Committee, Event } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"

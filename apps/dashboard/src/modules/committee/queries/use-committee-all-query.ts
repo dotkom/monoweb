@@ -1,4 +1,4 @@
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useCommitteeAllQuery = () => {
   const { data, ...query } = trpc.committee.all.useQuery({ take: 999 })

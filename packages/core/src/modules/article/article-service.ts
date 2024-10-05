@@ -1,5 +1,5 @@
 import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../query"
 import { ArticleNotFoundError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"

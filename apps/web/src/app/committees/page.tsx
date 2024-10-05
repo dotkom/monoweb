@@ -1,9 +1,8 @@
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 import Link from "next/link"
 
 const CommitteePage = async () => {
-  const serverClient = await getServerClient()
-  const committees = await serverClient.committee.all()
+  const committees = await server.committee.all.query()
 
   return (
     <ul className="text-blue-11 text-center text-2xl">

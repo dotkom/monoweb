@@ -7,7 +7,7 @@ import {
   type AttendeeId,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { withInsertJsonValue } from "../../utils/db-utils"
+import { withInsertJsonValue } from "../../query"
 
 type DatabaseAttendance = Selectable<Database["attendance"]>
 const mapToAttendance = (obj: DatabaseAttendance): Attendance => AttendanceSchema.parse(obj)

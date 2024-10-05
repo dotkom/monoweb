@@ -2,7 +2,7 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, useMemo } from "react"
-import { trpc } from "../../../../utils/trpc"
+import { trpc } from "../../../../trpc"
 import { InterestGroupDetailsContext } from "./provider"
 
 export default function InterestGroupDetailsLayout({

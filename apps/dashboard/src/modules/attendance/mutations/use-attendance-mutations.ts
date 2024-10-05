@@ -1,5 +1,5 @@
 import { useQueryGenericMutationNotification } from "../../../app/notifications"
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useAddAttendanceMutation = () => {
   const { fail, loading, complete } = useQueryGenericMutationNotification({

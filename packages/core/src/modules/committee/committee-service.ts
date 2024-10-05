@@ -1,5 +1,5 @@
 import type { Committee, CommitteeId, CommitteeWrite } from "@dotkomonline/types"
-import type { Collection, Pageable } from "../../utils/db-utils"
+import type { Collection, Pageable } from "../../query"
 import { CommitteeNotFoundError } from "./committee-error"
 import type { CommitteeRepository } from "./committee-repository"
 

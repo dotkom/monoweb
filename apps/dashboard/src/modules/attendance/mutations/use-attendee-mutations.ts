@@ -1,5 +1,5 @@
 import { useQueryNotification } from "../../../app/notifications"
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useRegisterForEventMutation = () => {
   const notification = useQueryNotification()

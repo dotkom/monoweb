@@ -1,7 +1,7 @@
 import type { Database } from "@dotkomonline/db"
 import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
 import type { Insertable, Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../query"
 
 export const mapToEvent = (data: Selectable<Database["event"]>) => {
   return EventSchema.parse(data)

@@ -13,7 +13,6 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/env": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "next": "^14.2.14",
     "next-auth": "^4.24.8",

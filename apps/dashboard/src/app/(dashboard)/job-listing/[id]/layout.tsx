@@ -2,7 +2,7 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, useMemo } from "react"
-import { trpc } from "../../../../utils/trpc"
+import { trpc } from "../../../../trpc"
 import { JobListingDetailsContext } from "./provider"
 
 export default function JobListingDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {

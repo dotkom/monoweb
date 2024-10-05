@@ -1,10 +1,9 @@
-import { createEnvironment } from "@dotkomonline/env"
 import type { Company } from "@dotkomonline/types"
 import { addDays, addMinutes, subDays } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { getCompanyMock, getJobListingMock } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { type ServiceLayer, createServiceLayer } from "../../core"
+import { getCompanyMock, getJobListingMock } from "../../../mock"
+import type { ServiceLayer } from "../../core"
 import {
   InvalidDeadlineError,
   InvalidEndDateError,
@@ -18,10 +17,9 @@ describe("job-listings", () => {
   let cleanup: CleanupFunction
 
   beforeEach(async () => {
-    const env = createEnvironment()
-    const context = await createServiceLayerForTesting(env, "job-listing")
+    const context = await createServiceLayerForTesting("job-listing")
+    core = context.core
     cleanup = context.cleanup
-    core = await createServiceLayer({ db: context.kysely })
     company = await core.companyService.createCompany(getCompanyMock())
   })
 

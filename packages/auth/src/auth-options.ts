@@ -1,4 +1,6 @@
-import type { ServiceLayer } from "@dotkomonline/core"
+import { type UserRepository, UserRepositoryImpl } from "@dotkomonline/core"
+import { createKysely } from "@dotkomonline/db"
+import type { UserWrite } from "@dotkomonline/types"
 import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
@@ -45,11 +47,45 @@ declare module "next-auth/jwt" {
   }
 }
 
+export interface AuthUserService {
+  getByAuth0Id(auth0Id: string): Promise<User | null>
+  create(data: UserWrite): Promise<User>
+}
+
+export class AuthUserServiceImpl implements AuthUserService {
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async getByAuth0Id(auth0Id: string) {
+    try {
+      return await this.userRepository.getByAuth0Id(auth0Id)
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
+  }
+
+  async create(data: UserWrite) {
+    return await this.userRepository.create(data)
+  }
+}
+
+export type AuthUserServiceLayer = Awaited<ReturnType<typeof createAuthServiceLayer>>
+
+export function createAuthServiceLayer(databaseUrl: string) {
+  const kysely = createKysely(databaseUrl)
+  const userRepository = new UserRepositoryImpl(kysely)
+  const authUserService = new AuthUserServiceImpl(userRepository)
+
+  return {
+    authUserService,
+  }
+}
+
 export interface AuthOptions {
   auth0ClientId: string
   auth0ClientSecret: string
   auth0Issuer: string
-  core: ServiceLayer
+  authServiceLayer: AuthUserServiceLayer
   jwtSecret: string
 }
 
@@ -57,7 +93,7 @@ export const getAuthOptions = ({
   auth0ClientId: oidcClientId,
   auth0ClientSecret: oidcClientSecret,
   auth0Issuer: oidcIssuer,
-  core,
+  authServiceLayer,
   jwtSecret,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
@@ -96,8 +132,24 @@ export const getAuthOptions = ({
     },
     async session({ session, token }) {
       if (token.sub) {
-        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
+        let user = await authServiceLayer.authUserService.getByAuth0Id(token.sub)
+        if (!user) {
+          user = await authServiceLayer.authUserService.create({
+            // TODO: Replace all of these values with https://github.com/dotkom/monoweb/pull/1023
+            auth0Id: token.sub,
+            email: token.email ?? "fakeemail@example.com",
+            givenName: "firstName",
+            familyName: "lastName",
+            middleName: "middleName",
+            name: "firstName middleName lastName",
+            allergies: ["allergy1", "allergy2"],
+            picture: "https://example.com/image.jpg",
+            studyYear: -1,
+            lastSyncedAt: new Date(),
+            phone: "12345678",
+            gender: "male",
+          })
+        }
 
         session.user.id = user.auth0Id
         session.sub = token.sub

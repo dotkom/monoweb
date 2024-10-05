@@ -13,7 +13,7 @@
     "docker:push:prod": "docker tag rif:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/rif:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/rif:latest"
   },
   "dependencies": {
-    "@dotkomonline/env": "workspace:*",
+    "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.4",

@@ -1,12 +1,10 @@
 import type { FormSchema } from "./app/form-schema"
-
-const endpoint = process.env.EMAIL_ENDPOINT ?? "https://brevduen.staging.online.ntnu.no/integrations/email"
-const token = process.env.EMAIL_TOKEN ?? "__NO_TOKEN_PROVIDED__"
+import { env } from "./env"
 
 export const deliverConfirmationEmail = async (form: FormSchema) => {
-  const response = await fetch(endpoint, {
+  const response = await fetch(env.EMAIL_ENDPOINT, {
     headers: {
-      "X-Email-Token": token,
+      "X-Email-Token": env.EMAIL_TOKEN,
       Accept: "application/json",
       "Content-Type": "application/json",
     },
@@ -29,9 +27,9 @@ export const deliverConfirmationEmail = async (form: FormSchema) => {
 }
 
 export const deliverNotificationEmail = async (form: FormSchema) => {
-  const response = await fetch(endpoint, {
+  const response = await fetch(env.EMAIL_ENDPOINT, {
     headers: {
-      "X-Email-Token": token,
+      "X-Email-Token": env.EMAIL_TOKEN,
       Accept: "application/json",
       "Content-Type": "application/json",
     },

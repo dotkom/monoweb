@@ -19,6 +19,8 @@
         "name": "next"
       }
     ],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "allowJs": true,
+    "resolveJsonModule": true
   }
 }
