@@ -49,6 +49,14 @@ import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
 import { type MarkService, MarkServiceImpl } from "./mark/mark-service"
 import { type PersonalMarkRepository, PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
 import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/personal-mark-service"
+import {
+  type MembershipApplicationRepository,
+  MembershipApplicationRepositoryImpl,
+} from "./memberships/membership-application-repository"
+import {
+  type MembershipApplicationService,
+  MembershipApplicationServiceImpl,
+} from "./memberships/membership-application-service"
 import { type OfflineRepository, OfflineRepositoryImpl } from "./offline/offline-repository"
 import { type OfflineService, OfflineServiceImpl } from "./offline/offline-service"
 import { type PaymentRepository, PaymentRepositoryImpl } from "./payment/payment-repository"
@@ -115,6 +123,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const jobListingLocationLinkRepository: JobListingLocationLinkRepository = new JobListingLocationLinkRepositoryImpl(
     db
   )
+  const membershipApplicationRepository: MembershipApplicationRepository = new MembershipApplicationRepositoryImpl(db)
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
@@ -219,6 +228,10 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
+  const membershipApplicationService: MembershipApplicationService = new MembershipApplicationServiceImpl(
+    membershipApplicationRepository
+  )
+
   return {
     userService,
     eventService,
@@ -243,5 +256,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
+    membershipApplicationService,
   }
 }

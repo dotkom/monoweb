@@ -24,10 +24,6 @@ export const useUserEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: U
         placeholder: "Kari",
         withAsterisk: true,
       }),
-      middleName: createTextInput({
-        label: "Mellomnavn",
-        withAsterisk: false,
-      }),
       familyName: createTextInput({
         label: "Etternavn",
         placeholder: "Dahl",

@@ -1,4 +1,4 @@
-import { ExistingProfile } from "@/components/views/SettingsView/components"
+import SettingsProfile from "@/components/views/SettingsView/components/SettingsProfile"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { getServerSession } from "next-auth"
@@ -14,7 +14,9 @@ const SettingsPage = async () => {
 
   const user = await trpc.user.getMe()
 
-  return <ExistingProfile user={user} />
+  return <div className="px-4">
+    <SettingsProfile user={user} />
+  </div>
 }
 
 export default SettingsPage

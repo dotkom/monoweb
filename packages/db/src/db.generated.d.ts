@@ -4,11 +4,13 @@ export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA";
 
 export type EventType = "ACADEMIC" | "BEDPRES" | "COMPANY" | "SOCIAL";
 
+export type FieldOfStudy = "BACHELOR" | "INTERNATIONAL" | "MASTER_ALGORITHMS" | "MASTER_ARTIFICIAL_INTELLIGENCE" | "MASTER_DATABASE_AND_SEARCH" | "MASTER_GAME_TECHNOLOGY" | "MASTER_HEALTH_INFORMATICS" | "MASTER_INTERACTION_DESIGN" | "MASTER_OTHER" | "MASTER_SOFTWARE_ENGINEERING" | "OTHER_MEMBER" | "PHD" | "SOCIAL_MEMBER";
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type Json = ColumnType<JsonValue, string, string>;
+export type Json = JsonValue;
 
 export type JsonArray = JsonValue[];
 
@@ -19,6 +21,8 @@ export type JsonObject = {
 export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
+
+export type MembershipRequestStatus = "ACCEPTED" | "PENDING" | "REJECTED";
 
 export type PaymentProvider = "STRIPE";
 
@@ -187,6 +191,26 @@ export interface Mark {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface MembershipRequests {
+  classYear: number;
+  comment: string | null;
+  createdAt: Generated<Timestamp>;
+  documentation: Json | null;
+  fieldOfStudy: FieldOfStudy;
+  preapproved: Generated<boolean>;
+  status: MembershipRequestStatus;
+  updatedAt: Generated<Timestamp>;
+  userId: string;
+}
+
+export interface Memberships {
+  classYear: number;
+  createdAt: Generated<Timestamp>;
+  fieldOfStudy: FieldOfStudy;
+  updatedAt: Generated<Timestamp>;
+  userId: string;
+}
+
 export interface NotificationPermissions {
   applications: Generated<boolean>;
   createdAt: Generated<Timestamp>;
@@ -212,21 +236,19 @@ export interface Offline {
 }
 
 export interface OwUser {
-  allergies: Json
-  auth0Id: string
-  createdAt: Generated<Timestamp>
-  email: string
-  familyName: string
-  gender: string | null
-  givenName: string
-  id: Generated<string>
-  lastSyncedAt: Generated<Timestamp>
-  middleName: string
-  name: string
-  phone: string | null
-  picture: string | null
-  studyYear: Generated<number>
-  updatedAt: Generated<Timestamp>
+  allergies: Json;
+  auth0Id: string;
+  createdAt: Generated<Timestamp>;
+  email: string;
+  familyName: string;
+  gender: string | null;
+  givenName: string;
+  id: Generated<string>;
+  name: string;
+  phone: string | null;
+  picture: string | null;
+  studyYear: Generated<number>;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Payment {
@@ -318,6 +340,8 @@ export interface DB {
   jobListingLocation: JobListingLocation;
   jobListingLocationLink: JobListingLocationLink;
   mark: Mark;
+  membershipRequests: MembershipRequests;
+  memberships: Memberships;
   notificationPermissions: NotificationPermissions;
   offline: Offline;
   owUser: OwUser;

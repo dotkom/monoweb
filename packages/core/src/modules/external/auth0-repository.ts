@@ -23,9 +23,7 @@ function mapToUser(user: GetUsers200ResponseOneOfInner): User {
     picture: user.picture,
 
     studyYear: app_metadata.study_year,
-    lastSyncedAt: new Date(app_metadata.last_synced_at),
     id: app_metadata.ow_user_id,
-    middleName: user_metadata.middle_name,
 
     gender: user_metadata.gender,
     allergies: user_metadata.allergies,
@@ -44,14 +42,12 @@ export class Auth0RepositoryImpl implements Auth0Repository {
     const newUser: Auth0UserUpdate = {
       app_metadata: {
         study_year: write.studyYear,
-        last_synced_at: write.lastSyncedAt,
         ow_user_id: write.id,
       },
       user_metadata: {
         allergies: write.allergies,
         gender: write.gender,
         phone: write.phone,
-        middle_name: write.middleName,
       },
       family_name: write.familyName,
       given_name: write.givenName,

@@ -6,6 +6,7 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 export const userRouter = t.router({
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.userService.getAll(input.take)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
+  create: protectedProcedure.input(UserWriteSchema).mutation(async ({ input, ctx }) => ctx.userService.create(input)),
   getByAuth0Id: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => ctx.userService.getByAuth0Id(input)),

@@ -82,7 +82,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...value,
         user: {
           ...value.user[0],
-          lastSyncedAt: new Date(value.user[0].lastSyncedAt),
         },
       }))
       .map(mapToAttendeeWithUser)
@@ -104,7 +103,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         ...value,
         user: {
           ...value.user[0],
-          lastSyncedAt: value.user[0].lastSyncedAt ? new Date(value.user[0].lastSyncedAt) : null,
         },
       }))
       .map(mapToAttendeeWithUser)

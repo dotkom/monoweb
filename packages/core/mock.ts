@@ -25,14 +25,12 @@ export const getAuth0UserMock = (write?: Partial<UserWrite>): GetUsers200Respons
     picture: write?.picture ?? "https://example.com/image.jpg",
     app_metadata: {
       study_year: write?.studyYear ?? -1,
-      last_synced_at: write?.lastSyncedAt ?? new Date(),
       ow_user_id: write?.id ?? ulid(),
     },
     user_metadata: {
       allergies: write?.allergies ?? ["gluten"],
       gender: write?.gender ?? "male",
       phone: write?.phone ?? "004712345678",
-      middle_name: write?.middleName ?? "Mellomnavn",
     },
   }) as unknown as GetUsers200ResponseOneOfInner
 
@@ -41,10 +39,8 @@ export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   studyYear: 0,
   email: "test-mail-that-does-not-exist6123123@gmail.com",
   givenName: "Test",
-  middleName: "Test",
   familyName: "User",
   name: "Test User",
-  lastSyncedAt: new Date(),
   allergies: [],
   gender: "other",
   phone: null,

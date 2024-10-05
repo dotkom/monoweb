@@ -6,14 +6,12 @@ export const UserSchema = z.object({
   email: z.string().email(),
   givenName: z.string(),
   familyName: z.string(),
-  middleName: z.string(),
   gender: z.enum(["male", "female", "other"]),
   name: z.string(),
   phone: z.string().nullable(),
   studyYear: z.number().int().min(-1).max(6),
   allergies: z.array(z.string()),
   picture: z.string().nullable(),
-  lastSyncedAt: z.date(),
 })
 
 export type UserId = User["id"]

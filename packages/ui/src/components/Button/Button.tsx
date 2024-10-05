@@ -82,6 +82,6 @@ export const getColorStyles = (variant: VariantProps<typeof buttonStyles>["varia
     case "subtle":
       return `bg-transparent text-${color}-11 hover:bg-${color}-2` as const
     default:
-      return ""
+      return "" as const
   }
 }

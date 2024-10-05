@@ -1,4 +1,5 @@
 export * from "./company"
+export * from "./membership"
 export * from "./user"
 export * from "./event"
 export * from "./mark"

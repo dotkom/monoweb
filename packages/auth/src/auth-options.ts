@@ -1,6 +1,7 @@
 import type { ServiceLayer } from "@dotkomonline/core"
 import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
+import Providers from 'next-auth/providers';
 
 interface Auth0IdTokenClaims {
   given_name: string
@@ -69,10 +70,9 @@ export const getAuthOptions = ({
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
+        session.user.id = token.sub
         session.sub = token.sub
-        session.user = {
-          id: token.sub,
-        }
+        return session
       }
 
       return session
