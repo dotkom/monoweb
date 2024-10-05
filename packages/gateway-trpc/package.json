@@ -14,11 +14,7 @@
     "coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@dotkomonline/db": "workspace:*",
-=======
     "@dotkomonline/auth": "workspace:*",
->>>>>>> origin/main
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@trpc/server": "^10.45.0",
@@ -26,13 +22,10 @@
     "jose": "^5.4.0",
     "zod": "^3.22.4"
   },
-<<<<<<< HEAD
-=======
   "peerDependencies": {
     "next": "^14.2.14",
     "next-auth": "^4.24.8"
   },
->>>>>>> origin/main
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/tsconfig": "workspace:*",
