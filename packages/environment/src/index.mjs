@@ -16,7 +16,10 @@ export function createEnvironment(variables, env = process.env) {
 
   const environment = schema.safeParse(env)
   const skipValidation = process.env.DOCKER_BUILD === "1"
-  if (!environment.success && !skipValidation) {
+  if (skipValidation) {
+    return environment.data ?? {}
+  }
+  if (!environment.success) {
     throw new Error(
       `The provided environments do not fulfill the requirements of the schema: ${environment.error.message}`
     )

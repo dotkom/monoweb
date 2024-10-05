@@ -1,4 +1,3 @@
-import type { File } from "../../../stubs/file/File"
 import { uploadFileToS3PresignedUrl } from "../../s3"
 import { trpc } from "../../trpc"
 
