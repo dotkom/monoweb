@@ -1,0 +1,25 @@
+{
+  "name": "@dotkomonline/environment",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "lint": "biome check . --write",
+    "lint-check": "biome check .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/tsconfig": "workspace:*"
+  }
+}
