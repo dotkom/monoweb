@@ -13,7 +13,6 @@
   "dependencies": {
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
-    "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/proxy-nextjs": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
