@@ -922,15 +922,15 @@ importers:
         specifier: workspace:*
         version: link:../logger
       next:
-        specifier: ^14.0.3
+        specifier: ^14.2.14
         version: 14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-auth:
-        specifier: ^4.24.5
+        specifier: ^4.24.8
         version: 4.24.8(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.6.4
-        version: 1.6.4
+        specifier: ^1.9.3
+        version: 1.9.3
 
   packages/tsconfig: {}
 
