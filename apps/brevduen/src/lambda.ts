@@ -9,6 +9,7 @@ import {
 } from "@dotkomonline/emails"
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Handler } from "aws-lambda"
 import { ZodError, z } from "zod"
+import { env } from "./env.js"
 
 const ses = new SESClient()
 
@@ -42,7 +43,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
   if (!xEmailToken) {
     return { statusCode: 401, body: "Missing API Token" }
   }
-  if (xEmailToken !== process.env.EMAIL_TOKEN) {
+  if (xEmailToken !== env.EMAIL_TOKEN) {
     return { statusCode: 403, body: "Invalid API Token" }
   }
   try {
