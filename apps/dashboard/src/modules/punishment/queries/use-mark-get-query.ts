@@ -1,5 +1,5 @@
 import type { MarkId } from "@dotkomonline/types"
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useMarkGetQuery = (id: MarkId) => {
   const { data, ...query } = trpc.mark.get.useQuery(id)

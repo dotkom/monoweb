@@ -5,7 +5,7 @@
  * consumer of environment variables.
  */
 export declare function createEnvironment<T>(
-  schema: Record<T, import("zod").ZodString>,
+  schema: Record<T, import("zod").ZodString | import("zod").ZodDefault<import("zod").ZodString>>,
   env?: NodeJS.ProcessEnv
 ): Record<T, string>
 

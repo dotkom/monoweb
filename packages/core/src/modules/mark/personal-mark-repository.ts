@@ -1,7 +1,7 @@
 import type { Database } from "@dotkomonline/db"
 import { type Mark, type MarkId, type PersonalMark, PersonalMarkSchema, type UserId } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../query"
 import { mapToMark } from "./mark-repository"
 
 export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark =>

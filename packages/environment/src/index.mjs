@@ -2,13 +2,21 @@ import { z } from "zod"
 
 /**
  * @template T
- * @param items {Record<T, z.ZodString>}
+ * @param variables {Record<T, z.ZodString>}
  * @param env {NodeJS.ProcessEnv}
  */
-export function createEnvironment(items, env = process.env) {
+export function createEnvironment(variables, env = process.env) {
+  const isClient = typeof window !== "undefined"
+  let items = variables
+  if (isClient) {
+    const clientItems = Object.entries(items).filter(([key]) => key.startsWith("NEXT_PUBLIC_"))
+    items = Object.fromEntries(clientItems)
+  }
   const schema = z.object(items)
+
   const environment = schema.safeParse(env)
-  if (!environment.success) {
+  const skipValidation = process.env.DOCKER_BUILD === "1"
+  if (!environment.success && !skipValidation) {
     throw new Error(
       `The provided environments do not fulfill the requirements of the schema: ${environment.error.message}`
     )

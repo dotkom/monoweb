@@ -1,4 +1,4 @@
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useOfflineAllQuery = () => {
   const { data: offlines = [], ...query } = trpc.offline.all.useQuery({ take: 999 })

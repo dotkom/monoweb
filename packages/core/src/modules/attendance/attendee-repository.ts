@@ -13,7 +13,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import { type Kysely, type Selectable, sql } from "kysely"
-import { withInsertJsonValue } from "../../utils/db-utils"
+import { withInsertJsonValue } from "../../query"
 
 const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
 const mapToAttendeeWithUser = (obj: unknown): AttendeeUser => AttendeeUserSchema.parse(obj)

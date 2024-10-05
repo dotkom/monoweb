@@ -8,7 +8,7 @@ import {
   type AttendancePoolWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable, Updateable } from "kysely"
-import { withInsertJsonValue } from "../../utils/db-utils"
+import { withInsertJsonValue } from "../../query"
 
 type DatabasePool = Selectable<Database["attendancePool"]> & { numAttendees: number }
 type DatabasePoolBase = Selectable<Database["attendancePool"]>

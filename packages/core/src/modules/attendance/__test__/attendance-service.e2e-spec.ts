@@ -1,11 +1,10 @@
-import { createEnvironment } from "@dotkomonline/env"
 import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import assert from "../../../../assert"
-import { getUserMock } from "../../../../mock"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-import { type ServiceLayer, createServiceLayer } from "../../core"
+import assert from "../../../assert"
+import { getUserMock } from "../../../mock"
+import type { ServiceLayer } from "../../core"
 import { AttendanceDeletionError, ExtrasUpdateAfterRegistrationStartError } from "../attendance-error"
 import { CantDeletePoolError } from "../attendance-pool-error"
 import { AttendeeDeregistrationError, AttendeeRegistrationError } from "../attendee-error"
@@ -88,10 +87,9 @@ describe("attendance", () => {
   let cleanup: CleanupFunction
 
   beforeEach(async () => {
-    const env = createEnvironment()
-    const context = await createServiceLayerForTesting(env, "attendance")
+    const context = await createServiceLayerForTesting("attendance")
     cleanup = context.cleanup
-    core = await createServiceLayer({ db: context.kysely })
+    core = context.core
   })
 
   afterEach(async () => {

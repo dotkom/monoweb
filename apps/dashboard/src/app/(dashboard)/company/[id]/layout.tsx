@@ -2,7 +2,7 @@
 
 import { Loader } from "@mantine/core"
 import type { PropsWithChildren } from "react"
-import { trpc } from "../../../../utils/trpc"
+import { trpc } from "../../../../trpc"
 import { CompanyDetailsContext } from "./provider"
 
 export default function CompanyDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {

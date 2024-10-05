@@ -8,7 +8,7 @@ import type {
   EventId,
   EventWrite,
 } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../query"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"

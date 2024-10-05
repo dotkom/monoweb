@@ -1,55 +1,10 @@
-import { createEnvironment } from "@dotkomonline/env"
 import type { ManagementClient } from "auth0"
 import { ulid } from "ulid"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
-import { getUserMock, mockAuth0UserResponse } from "../../../../mock"
+import type { DeepMockProxy } from "vitest-mock-extended"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
-
-import type { Database } from "@dotkomonline/db"
-import type { Kysely } from "kysely"
-import { type Auth0Repository, Auth0RepositoryImpl } from "../../external/auth0-repository"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "../auth0-synchronization-service"
-import {
-  type NotificationPermissionsRepository,
-  NotificationPermissionsRepositoryImpl,
-} from "../notification-permissions-repository"
-import { type PrivacyPermissionsRepository, PrivacyPermissionsRepositoryImpl } from "../privacy-permissions-repository"
-import { type UserRepository, UserRepositoryImpl } from "../user-repository"
-import { type UserService, UserServiceImpl } from "../user-service"
-
-type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
-
-interface ServerLayerOptions {
-  db: Kysely<Database>
-  auth0MgmtClient: ManagementClient
-}
-
-const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) => {
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0MgmtClient)
-
-  const userRepository: UserRepository = new UserRepositoryImpl(db)
-  const privacyPermissionsRepository: PrivacyPermissionsRepository = new PrivacyPermissionsRepositoryImpl(db)
-  const notificationPermissionsRepository: NotificationPermissionsRepository =
-    new NotificationPermissionsRepositoryImpl(db)
-
-  const userService: UserService = new UserServiceImpl(
-    userRepository,
-    privacyPermissionsRepository,
-    notificationPermissionsRepository
-  )
-
-  const syncedUserService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
-  )
-
-  return {
-    userService,
-    auth0Repository,
-    syncedUserService,
-  }
-}
+import { getUserMock, mockAuth0UserResponse } from "../../../mock"
+import type { ServiceLayer } from "../../core"
 
 describe("users", () => {
   let core: ServiceLayer
@@ -57,11 +12,10 @@ describe("users", () => {
   let auth0Client: DeepMockProxy<ManagementClient>
 
   beforeEach(async () => {
-    const env = createEnvironment()
-    const context = await createServiceLayerForTesting(env, "user")
+    const context = await createServiceLayerForTesting("user")
     cleanup = context.cleanup
-    auth0Client = mockDeep<ManagementClient>()
-    core = await createServiceLayer({ db: context.kysely, auth0MgmtClient: auth0Client })
+    auth0Client = context.auth0Client
+    core = context.core
   })
 
   afterEach(async () => {

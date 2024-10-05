@@ -5,26 +5,31 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/index.ts",
-    "build": "tsc",
-    "lint": "biome check . --apply",
+    "build": "tsup src/index.ts",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dotkomonline/env": "workspace:*",
+    "@aws-sdk/client-s3": "^3.665.0",
+    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@fastify/cors": "^9.0.1",
     "@trpc/server": "^10.45.0",
+    "auth0": "^4.3.1",
     "fastify": "^4.28.0",
+    "stripe": "^13.11.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/tsconfig": "workspace:*",
     "@types/node": "^20.12.7",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
-    "tsx": "^4.15.6"
+    "tsx": "^4.15.6",
+    "tsup": "^8.3.0"
   }
 }

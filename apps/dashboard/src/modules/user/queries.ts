@@ -1,5 +1,5 @@
 import type { AttendanceId } from "@dotkomonline/types"
-import { trpc } from "../../utils/trpc"
+import { trpc } from "../../trpc"
 
 export const useUserQuery = (id: AttendanceId) => {
   const { data, isLoading } = trpc.user.get.useQuery(id)

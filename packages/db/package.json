@@ -13,9 +13,8 @@
     "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
-    "@dotkomonline/env": "workspace:*",
     "kysely": "^0.27.0",
-    "pg": "^8.11.3"
+    "pg": "^8.13.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

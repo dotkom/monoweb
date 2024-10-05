@@ -8,7 +8,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../query"
 
 const mapToPayment = (data: Selectable<Database["payment"]>) => PaymentSchema.parse(data)
 

@@ -1,9 +1,7 @@
-import { S3Client } from "@aws-sdk/client-s3"
-import type { Database } from "@dotkomonline/db"
-import { env } from "@dotkomonline/env"
-import { ManagementClient } from "auth0"
-import type { Kysely } from "kysely"
-import Stripe from "stripe"
+import type { S3Client } from "@aws-sdk/client-s3"
+import type { KyselyDatabase } from "@dotkomonline/db"
+import type { ManagementClient } from "auth0"
+import type Stripe from "stripe"
 import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article-repository"
 import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
 import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
@@ -32,6 +30,7 @@ import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
+import { type Auth0Service, Auth0ServiceImpl } from "./external/auth0-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
@@ -65,7 +64,6 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -79,36 +77,30 @@ import { type UserService, UserServiceImpl } from "./user/user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
-export interface ServerLayerOptions {
-  db: Kysely<Database>
+export type StripeAccount = {
+  stripe: Stripe
+  publicKey: string
+  webhookSecret: string
 }
 
-export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
-  const s3Client = new S3Client({
-    region: env.AWS_REGION,
-  })
-  const auth0ManagementClient = new ManagementClient({
-    domain: "onlineweb.eu.auth0.com",
-    clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
-    clientId: env.GTX_AUTH0_CLIENT_ID,
-  })
-  const trikomStripeSdk = new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
-  const fagkomStripeSdk = new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
-  const stripeAccounts = {
-    trikom: {
-      stripe: trikomStripeSdk,
-      publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
-    },
-    fagkom: {
-      stripe: fagkomStripeSdk,
-      publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
-    },
-  }
+export interface ServiceLayerOptions {
+  db: KyselyDatabase
+  s3Client: S3Client
+  s3BucketName: string
+  stripeAccounts: Record<string, StripeAccount>
+  managementClient: ManagementClient
+}
 
+export const createServiceLayer = async ({
+  db,
+  s3Client,
+  s3BucketName,
+  managementClient,
+  stripeAccounts,
+}: ServiceLayerOptions) => {
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(managementClient)
+  const auth0Service: Auth0Service = new Auth0ServiceImpl(auth0Repository)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -148,11 +140,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     userRepository,
     privacyPermissionsRepository,
     notificationPermissionsRepository
-  )
-
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
@@ -216,7 +203,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
+  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository, s3BucketName)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,
@@ -249,6 +236,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    auth0SynchronizationService,
+    auth0Service,
   }
 }

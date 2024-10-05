@@ -47,7 +47,7 @@
     "next-auth": "^4.24.8",
     "next-superjson-plugin": "^0.6.0",
     "next-themes": "^0.3.0",
-    "pg": "^8.11.3",
+    "pg": "^8.13.0",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
