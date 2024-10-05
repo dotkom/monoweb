@@ -16,7 +16,6 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/gateway-trpc": "workspace:^",
     "@dotkomonline/types": "workspace:^",
     "@trpc/react-query": "^10.45.0",
     "ical-generator": "^5.0.1",

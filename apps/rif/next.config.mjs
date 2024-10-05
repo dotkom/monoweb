@@ -4,7 +4,7 @@
 const config = {
   reactStrictMode: true,
   swcMinify: true,
-  transpilePackages: ["@dotkomonline/env", "@dotkomonline/ui"],
+  transpilePackages: ["@dotkomonline/ui"],
   output: "standalone",
 }
 

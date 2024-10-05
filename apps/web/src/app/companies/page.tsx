@@ -1,9 +1,8 @@
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 import Link from "next/link"
 
 const CompanyPage = async () => {
-  const serverClient = await getServerClient()
-  const data = await serverClient.company.all()
+  const data = await server.company.all.query()
 
   return (
     <ul className="text-blue-11 text-center text-2xl">

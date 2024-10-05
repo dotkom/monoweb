@@ -1,13 +1,12 @@
 import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
 import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 import { Button } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import Link from "next/link"
 
 export default async function App() {
-  const serverClient = await getServerClient()
-  const events = await serverClient.event.recommended()
+  const events = await server.event.recommended.query()
 
   return (
     <div className="mt-8">
