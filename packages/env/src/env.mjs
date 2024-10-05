@@ -33,6 +33,9 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_SECRET_KEY: environmentVariableSchema,
       FAGKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
 
+      RPC_ALLOWED_ORIGINS: environmentVariableSchema,
+      RPC_HOST: environmentVariableSchema,
+
       S3_BUCKET_MONOWEB: environmentVariableSchema,
     },
     client: {
@@ -68,6 +71,9 @@ export const createEnvironment = () =>
       FAGKOM_STRIPE_PUBLIC_KEY: process.env.FAGKOM_STRIPE_PUBLIC_KEY,
       FAGKOM_STRIPE_SECRET_KEY: process.env.FAGKOM_STRIPE_SECRET_KEY,
       FAGKOM_STRIPE_WEBHOOK_SECRET: process.env.FAGKOM_STRIPE_WEBHOOK_SECRET,
+
+      RPC_ALLOWED_ORIGINS: process.env.RPC_ALLOWED_ORIGINS,
+      RPC_HOST: process.env.RPC_HOST,
 
       S3_BUCKET_MONOWEB: process.env.S3_BUCKET_MONOWEB,
     },

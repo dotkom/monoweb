@@ -19,6 +19,7 @@
     "@dotkomonline/db": "workspace:*",
     "@trpc/server": "^10.45.0",
     "superjson": "^2.0.0",
+    "jose": "^5.4.0",
     "zod": "^3.22.4"
   },
   "peerDependencies": {

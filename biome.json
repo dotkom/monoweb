@@ -19,7 +19,7 @@
   },
   "javascript": {
     "formatter": {
-      "trailingCommas": "es5",
+      "trailingComma": "es5",
       "semicolons": "asNeeded",
       "lineWidth": 120,
       "quoteProperties": "asNeeded"
