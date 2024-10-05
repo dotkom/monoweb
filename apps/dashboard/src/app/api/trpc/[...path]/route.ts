@@ -1,5 +1,5 @@
-import { env } from "@dotkomonline/env"
 import { createProxyRoute } from "@dotkomonline/proxy-nextjs"
+import { env } from "../../../../env"
 
 const handler = createProxyRoute({
   mountPath: "/api/trpc",

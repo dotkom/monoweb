@@ -1,4 +1,4 @@
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useInterestGroupAllQuery = () => {
   const { data, ...query } = trpc.interestGroup.all.useQuery()

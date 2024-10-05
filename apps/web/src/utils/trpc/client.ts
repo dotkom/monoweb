@@ -1,6 +1,5 @@
 "use client"
 
-import { env } from "@dotkomonline/env"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import { type CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { createTRPCReact } from "@trpc/react-query"

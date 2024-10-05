@@ -24,7 +24,7 @@
     "build:brevduen": "turbo run build --filter=@dotkomonline/brevduen",
     "build:rif": "turbo run build --filter=@dotkomonline/rif",
     "build:invoicification": "turbo run build --filter=@dotkomonline/invoicification",
-    "lint": "turbo run lint",
+    "lint": "pnpm run -r lint",
     "lint-check": "turbo run lint-check",
     "test": "turbo run test",
     "test:it": "turbo run test:it",

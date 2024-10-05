@@ -1,4 +1,4 @@
 import { createKysely } from "@dotkomonline/db"
-import { env } from "@dotkomonline/env"
+import { env } from "./env"
 
-export const db = createKysely(env)
+export const db = createKysely(env.DATABASE_URL)

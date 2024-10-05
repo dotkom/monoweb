@@ -1,7 +1,11 @@
-import type { File } from "../../stubs/file/File"
+import type { File } from "../stubs/file/File"
 
 // Expected response: 204 No Content. Returns resource URL if successful.
-export async function s3UploadFile(file: File, fields: Record<string, string>, url: string): Promise<string> {
+export async function uploadFileToS3PresignedUrl(
+  file: File,
+  fields: Record<string, string>,
+  url: string
+): Promise<string> {
   try {
     const formData = new FormData()
     for (const [key, value] of Object.entries(fields)) {
