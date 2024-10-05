@@ -63,6 +63,9 @@ importers:
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
+      '@dotkomonline/gateway-trpc':
+        specifier: workspace:*
+        version: link:../../packages/gateway-trpc
       '@dotkomonline/proxy-nextjs':
         specifier: workspace:*
         version: link:../../packages/proxy-nextjs
@@ -112,13 +115,13 @@ importers:
         specifier: ^8.10.7
         version: 8.20.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/client':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
       '@trpc/react-query':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/server':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2
       clsx:
         specifier: ^2.0.0
@@ -132,9 +135,6 @@ importers:
       next-auth:
         specifier: ^4.24.8
         version: 4.24.8(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      pg-native:
-        specifier: file:./stubs/pg-native
-        version: file:apps/dashboard/stubs/pg-native
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -376,7 +376,7 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@trpc/server':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2
       auth0:
         specifier: ^4.3.1
@@ -485,13 +485,13 @@ importers:
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/client':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
       '@trpc/next':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/react-query@10.45.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@10.45.2)(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/react-query':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 1.7.7
@@ -809,7 +809,7 @@ importers:
         specifier: workspace:^
         version: link:../types
       '@trpc/react-query':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ical-generator:
         specifier: ^5.0.1
@@ -858,7 +858,7 @@ importers:
         specifier: workspace:*
         version: link:../db
       '@trpc/server':
-        specifier: ^10.45.0
+        specifier: ^10.45.2
         version: 10.45.2
       jose:
         specifier: ^5.4.0
@@ -5829,9 +5829,6 @@ packages:
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
-
-  pg-native@file:apps/dashboard/stubs/pg-native:
-    resolution: {directory: apps/dashboard/stubs/pg-native, type: directory}
 
   pg-numeric@1.0.2:
     resolution: {integrity: sha512-BM/Thnrw5jm2kKLE5uJkXqqExRUY/toLHda65XgFTBTFYZyopbKjBe29Ii3RbkvlsMoFwD+tHeGaCjjv0gHlyw==}
@@ -12796,8 +12793,6 @@ snapshots:
   pg-connection-string@2.7.0: {}
 
   pg-int8@1.0.1: {}
-
-  pg-native@file:apps/dashboard/stubs/pg-native: {}
 
   pg-numeric@1.0.2: {}
 

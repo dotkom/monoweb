@@ -16,7 +16,7 @@
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@fastify/cors": "^9.0.1",
-    "@trpc/server": "^10.45.0",
+    "@trpc/server": "^10.45.2",
     "auth0": "^4.3.1",
     "fastify": "^4.28.0",
     "stripe": "^13.11.0",
