@@ -84,5 +84,9 @@ server.register(fastifyTRPCPlugin, {
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 })
 
+server.get("/health", (_, res) => {
+  res.send({ status: "ok" })
+})
+
 await server.listen({ port: 4444, host: "0.0.0.0" })
 console.info("Started RPC server on http://0.0.0.0:4444")

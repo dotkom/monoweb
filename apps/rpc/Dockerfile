@@ -34,7 +34,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 rpc
 USER rpc
 
-COPY --from=builder /app/apps/rpc/dist ./
-COPY --from=builder /app/apps/rpc/package.json ./
+COPY --from=installer --chown=nextjs:rpc /app/apps/rpc/dist ./
+COPY --from=installer --chown=nextjs:rpc /app/apps/rpc/package.json ./
 
 CMD node index.js
