@@ -1,0 +1,38 @@
+{
+  "name": "@dotkomonline/email-slack-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docker:dev": "docker run -p 9000:8080 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION=eu-north-1 email-slack-app:latest",
+    "build": "tsup src/lambda.ts && echo '{\"type\":\"module\"}' > dist/package.json",
+    "lint": "biome check . --write",
+    "lint-check": "biome check .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.665.0",
+    "@dotkomonline/environment": "workspace:*",
+    "@googleapis/gmail": "^12.0.0",
+    "@sentry/aws-serverless": "^8.33.1",
+    "@sentry/profiling-node": "^8.33.1",
+    "@types/google-apps-script": "^1.0.83",
+    "@types/node": "^22.7.4",
+    "axios": "^1.7.7",
+    "crypto": "^1.0.1",
+    "google-auth-library": "^9.14.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/tsconfig": "workspace:*",
+    "@types/aws-lambda": "^8.10.129",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "^20.16.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.4.5"
+  }
+}

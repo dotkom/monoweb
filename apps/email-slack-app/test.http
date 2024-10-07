@@ -1,0 +1,3 @@
+POST https://email-slack-app.online.ntnu.no/integrations/email
+Content-Type: application/json
+

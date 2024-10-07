@@ -1,0 +1,25 @@
+#!/usr/bin/env just --justfile
+export PATH := "./node_modules/.bin:" + env_var('PATH')
+
+build env:
+  docker image rm -f email-slack-app:latest || true
+  docker build --platform linux/arm64 -t email-slack-app:latest -f Dockerfile ../..
+
+push env:
+  docker tag email-slack-app:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/email-slack-app-{{env}}:latest
+  docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/email-slack-app-{{env}}:latest
+
+update env:
+  aws lambda update-function-code --function-name email-slack-app-{{env}} \
+    --image-uri 891459268445.dkr.ecr.eu-north-1.amazonaws.com/email-slack-app-{{env}}:latest \
+    --region eu-north-1
+	
+release env: (build env) (push env) (update env)
+
+# When selecting channel to send to this is useful to get the ids
+get-label-id:
+  tsx src/scripts/labels.ts
+
+# If creating new refresh token is needed
+get-google-refresh-token:
+  tsx src/scripts/auth-google.ts
