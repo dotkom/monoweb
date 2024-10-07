@@ -1,13 +1,13 @@
 import { gmail } from "@googleapis/gmail"
 import type { Env } from "../env"
-import { EmailSlackService } from "./EmailSlackService"
+import { EmailSlackService } from "./MailBotService"
 import { SlackClient } from "./SlackClient"
-import { GmailServiceImpl } from "./gmail/GmailService"
-import { GoogleAuthorizer } from "./gmail/GoogleAuthorizer"
+import { GmailClient } from "./gmail-client"
+import { GoogleAuthorizer } from "./gmail-client/GoogleAuthorizer"
 
 interface ServiceLayerOptions {
   slackClient: SlackClient
-  gmailClient: GmailServiceImpl
+  gmailClient: GmailClient
 }
 
 export const createServiceLayer = async ({ slackClient, gmailClient }: ServiceLayerOptions) => {
@@ -48,7 +48,7 @@ export const createExternalClients = async ({
   const oauthClient = await googleAuthorizer.authorizeOauthClientWithUserRefreshToken(googleRefreshToken)
   const gmailApiClient = gmail({ version: "v1", auth: oauthClient })
 
-  const gmailClient = new GmailServiceImpl(gmailApiClient)
+  const gmailClient = new GmailClient(gmailApiClient)
 
   return { slackClient, gmailClient }
 }

@@ -136,7 +136,7 @@ export interface SearchQuery {
   // smallerThanInBytes?: number,
 }
 
-export interface GmailService {
+export interface GmailClient {
   /**
    * Finds messages based on the searchQuery
    * Can be typed or plain text as you can be used to in the gmail search-bar
@@ -152,7 +152,7 @@ export interface GmailService {
   getAllLabels(): Promise<Label[]>;
 }
 
-export class GmailServiceImpl implements GmailService {
+export class GmailClient implements GmailClient {
   constructor(private readonly gmailClient: gmail_v1.Gmail) {}
 
   public async removeLabel(messageId: string, labelId: string): Promise<void> {

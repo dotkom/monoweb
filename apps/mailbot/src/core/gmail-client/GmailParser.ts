@@ -1,6 +1,6 @@
 import type { gmail_v1 } from "@googleapis/gmail"
 import { z } from "zod"
-import type { Message } from "./GmailService"
+import type { Message } from "."
 
 const HeadersSchema = z.object({
   name: z.string().optional(),
