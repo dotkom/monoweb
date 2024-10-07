@@ -13,6 +13,8 @@ export const env = createEnvironment({
   SLACK_CHANNEL_ID: variable,
   BLOCKED_SENDERS: variable,
   BLOCKED_RECEIVERS: variable,
+
+  SENTRY_DSN: variable,
 })
 
 export type Env = typeof env

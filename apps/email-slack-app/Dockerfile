@@ -11,6 +11,7 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm build:email-slack-app
 
 FROM public.ecr.aws/lambda/nodejs:latest-arm64 AS runner
+# FROM public.ecr.aws/lambda/nodejs:20 AS runner
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 

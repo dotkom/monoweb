@@ -5,7 +5,7 @@ import { createExternalClients, createServiceLayer } from "./core"
 import { env } from "./env"
 
 Sentry.init({
-  dsn: "https://a07a847a3bbab26aac0ea417edcbc7f2@o4504113989287936.ingest.us.sentry.io/4508080738467840",
+  dsn: env.SENTRY_DSN,
   integrations: [nodeProfilingIntegration()],
   // Tracing
   tracesSampleRate: 1.0, //  Capture 100% of the transactions

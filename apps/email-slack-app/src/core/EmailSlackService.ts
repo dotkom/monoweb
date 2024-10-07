@@ -1,10 +1,10 @@
 import type { SlackClient } from "./SlackClient"
-import type { GmailClientWrapper } from "./gmail/GmailClient"
+import type { GmailServiceImpl } from "./gmail/GmailService"
 
 export class EmailSlackService {
   constructor(
     private readonly slackClient: SlackClient,
-    private readonly gmailClient: GmailClientWrapper
+    private readonly gmailClient: GmailServiceImpl
   ) {}
 
   async processPending(
