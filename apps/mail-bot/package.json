@@ -1,5 +1,5 @@
 {
-  "name": "@dotkomonline/email-slack-app",
+  "name": "@dotkomonline/mail-bot",
   "version": "0.1.0",
   "private": true,
   "type": "module",
