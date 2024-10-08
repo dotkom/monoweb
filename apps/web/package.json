@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build:prod": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6007",
@@ -23,6 +23,8 @@
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
+    "@aws-sdk/client-s3": "^3.665.0",
+    "@aws-sdk/s3-presigned-post": "^3.665.0",
     "@fadi-ui/react-country-flag": "^1.0.7",
     "@next/env": "^14.2.14",
     "@portabletext/react": "^3.0.11",
