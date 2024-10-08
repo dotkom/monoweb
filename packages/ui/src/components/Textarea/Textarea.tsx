@@ -20,7 +20,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && <Label htmlFor={props.id}>{label}</Label>}
         <textarea
           className={cn(
-            "border-slate-6 focus:riled:cursor-not-allowed placeholder:text-slate-9 focus:ring-brand flex h-20 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-2 disabled:opacity-50",
+            "border-solid border outline-none focus:border-blue-7 bg-white-3 hover:bg-white-4 active:bg-white-5 rounded-md p-2 focus:ring-2 focus:ring-brand",
             statusVariants({ status: status ?? (error ? "danger" : undefined) }),
             className
           )}

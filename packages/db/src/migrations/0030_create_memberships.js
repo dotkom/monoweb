@@ -28,6 +28,11 @@ export async function up(db) {
     .addColumn("class_year", "integer", (col) => col.notNull())
     .execute()
 
+  await db.schema
+    .alterTable("ow_user")
+    .addColumn("membership_id", sql`ulid`, (col) => col.references("memberships.user_id").onDelete("set null"))
+    .execute()
+
   await db.schema.createType("membership_request_status").asEnum(["PENDING", "ACCEPTED", "REJECTED"]).execute()
 
   await createTableWithDefaults("membership_requests", { createdAt: true, updatedAt: true }, db.schema)
@@ -43,6 +48,7 @@ export async function up(db) {
 
 /** @param db {import('kysely').Kysely} */
 export async function down(db) {
+  await db.schema.alterTable("ow_user").dropColumn("membership_id").execute()
   await db.schema.dropTable("membership_requests").execute()
   await db.schema.dropTable("memberships").execute()
   await db.schema.dropType("membership_request_status").execute()

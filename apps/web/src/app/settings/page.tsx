@@ -14,6 +14,10 @@ const SettingsPage = async () => {
 
   const user = await trpc.user.getMe()
 
+  if (user === null) {
+    redirect("/onboarding")
+  }
+
   return <div className="px-4">
     <SettingsProfile user={user} />
   </div>

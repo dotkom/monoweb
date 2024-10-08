@@ -1,7 +1,8 @@
 import type { ServiceLayer } from "@dotkomonline/core"
-import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import { getServerSession, type DefaultSession, type DefaultUser, type NextAuthOptions, type User } from "next-auth"
 import Auth0Provider from "next-auth/providers/auth0"
 import Providers from 'next-auth/providers';
+import { redirect } from "next/navigation";
 
 interface Auth0IdTokenClaims {
   given_name: string
@@ -76,6 +77,6 @@ export const getAuthOptions = ({
       }
 
       return session
-    },
+    }
   },
 })

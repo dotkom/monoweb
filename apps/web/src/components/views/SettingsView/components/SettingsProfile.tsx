@@ -1,12 +1,7 @@
-import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
-import type { User } from "@dotkomonline/types"
-import { Button, TextInput, Textarea } from "@dotkomonline/ui"
-import jwt from "jsonwebtoken"
+import { type FeideDocumentation, type Membership, type User } from "@dotkomonline/types"
+import { Button, Select, SelectContent, SelectGroup, SelectIcon, SelectLabel, SelectPortal, SelectTrigger, SelectValue, SelectViewport, TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
-import { cookies } from "next/headers"
-import Link from "next/link"
-import { z } from "zod"
 
 interface FormInputProps {
   title: string
@@ -20,20 +15,7 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-const OnboardingProfile: NextPage = () => {
-  return (
-    <div className="flex w-full flex-col space-y-4">
-      <h2>Fullfør profil</h2>
-      <div>
-        <Link href="/feide">
-          <Button>Bekreft med Feide</Button>
-        </Link>
-      </div>
-    </div>
-  )
-}
-
-const ExistingProfile: NextPage<{ user: User }> = ({ user }) => {
+const SettingsProfile: NextPage<{ user: User, membership?: Membership }> = ({ user }) => {
   return (
     <div className="flex w-full flex-col space-y-4">
       <h2>{user.givenName} {user.familyName}</h2>
@@ -47,17 +29,34 @@ const ExistingProfile: NextPage<{ user: User }> = ({ user }) => {
         </div>
       </FormInput>
       <FormInput title="Bio">
-        <Textarea placeholder="Din råkule bio" />
+        <Textarea placeholder="Din råkule bio" value={""} />
       </FormInput>
       <FormInput title="Allergier">
-        <Textarea placeholder="Dine allergier" />
+        <Textarea placeholder="Dine allergier" value={user.allergies.join("\n")} />
+      </FormInput>
+      <h2>Medlemskap</h2>
+      <FormInput title="Studieretning">
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Studieretning" />
+            <SelectIcon />
+          </SelectTrigger>
+          <SelectPortal>
+            <SelectContent>
+              <SelectViewport>
+                <SelectGroup>
+                  <SelectLabel>Landskode</SelectLabel>
+                </SelectGroup>
+              </SelectViewport>
+            </SelectContent>
+          </SelectPortal>
+        </Select>
+      </FormInput>
+      <FormInput title="Årstrinn">
+        <TextInput placeholder="Studieretning" />
       </FormInput>
     </div>
   )
-}
-
-const SettingsProfile: NextPage<{ user: User | null }> = ({ user }) => {
-  return user ? <ExistingProfile user={user} /> : <OnboardingProfile />
 }
 
 export default SettingsProfile

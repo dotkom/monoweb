@@ -98,8 +98,8 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
               Meld meg av
             </Button>
           ) : (
-            <Button className="mt-2 w-full" onClick={registerForAttendance}>
-              Meld meg på
+            <Button className="mt-2 w-full" onClick={registerForAttendance} disabled={!myGroups}>
+              {myGroups ? 'Meld meg på' : 'Ikke åpent for ditt årstrinn'}
             </Button>
           ))}
       </div>

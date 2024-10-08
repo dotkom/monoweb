@@ -1,4 +1,4 @@
-import { getFeideMembershipDocumentation, getFeideProfileInformation } from "@/utils/feide"
+import { createDocumentation, getFeideGroups, getFeideProfileInformation } from "@/utils/feide"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { env } from "@dotkomonline/env"
@@ -6,19 +6,8 @@ import { getServerSession } from "next-auth"
 import { type NextRequest, NextResponse } from "next/server"
 import { Issuer } from "openid-client"
 import { z } from "zod"
-
-const GroupSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  displayName: z.string(),
-})
-
-const ProfileSchema = z.object({
-  norEduPersonLegalName: z.string(),
-  uid: z.array(z.string()),
-  sn: z.array(z.string()).length(1),
-  givenName: z.array(z.string()).length(1),
-})
+import jwt from "jsonwebtoken"
+import { FeideDocumentationSchema } from "@dotkomonline/types"
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -56,35 +45,23 @@ export async function GET(request: NextRequest) {
     return new Response("Failed to get token", { status: 500 })
   }
 
-  const documentation = await getFeideMembershipDocumentation(tokenSet.access_token)
-  const profile = await getFeideProfileInformation(tokenSet.access_token)
+  const membershipDocumentation = await createDocumentation(
+    await getFeideGroups(tokenSet.access_token),
+    await getFeideProfileInformation(tokenSet.access_token)
+  )
+  const user = await trpc.user.getByAuth0Id(session.sub)
+  const userExists = Boolean(user)
 
-  let user = await trpc.user.getByAuth0Id(session.sub)
+  const response = NextResponse.redirect(
+    new URL(userExists ? "/settings" : "/onboarding", request.url).toString(),
+    {
+      status: 302,
+    }
+  )
 
-  if (user === null) {
-    user = await trpc.user.create({
-      auth0Id: session.sub,
-      email: session.user.email,
-      givenName: profile.givenName[0],
-      familyName: profile.sn[0],
-      gender: "male",
-      name: profile.norEduPersonLegalName,
-      phone: null,
-      studyYear: -1,
-      picture: null,
-      allergies: [],
-    })
-  }
-
-  await trpc.membershipApplication.create({
-    userId: user.id,
-    documentation,
-    fieldOfStudy: "MASTER_SOFTWARE_ENGINEERING",
-    classYear: 2022,
-    status: "PENDING",
-    preapproved: false,
-    comment: "What the sigma",
+  response.cookies.set("feideDocumentationJWT", jwt.sign(membershipDocumentation, env.NEXTAUTH_SECRET), {
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
   })
 
-  return NextResponse.redirect(new URL("/onboarding", request.url).toString(), 302)
+  return response
 }

@@ -244,6 +244,7 @@ export interface OwUser {
   gender: string | null;
   givenName: string;
   id: Generated<string>;
+  membershipId: string | null;
   name: string;
   phone: string | null;
   picture: string | null;
