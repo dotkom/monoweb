@@ -54,6 +54,12 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.665.0
+        version: 3.665.0
+      '@aws-sdk/s3-presigned-post':
+        specifier: ^3.665.0
+        version: 3.665.0
       '@dotkomonline/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -132,6 +138,9 @@ importers:
       next-auth:
         specifier: ^4.24.8
         version: 4.24.8(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      pg:
+        specifier: ^8.11.3
+        version: 8.13.0(pg-native@file:apps/dashboard/stubs/pg-native)
       pg-native:
         specifier: file:./stubs/pg-native
         version: file:apps/dashboard/stubs/pg-native
@@ -13142,6 +13151,10 @@ snapshots:
 
   pg-numeric@1.0.2: {}
 
+  pg-pool@3.7.0(pg@8.13.0(pg-native@file:apps/dashboard/stubs/pg-native)):
+    dependencies:
+      pg: 8.13.0(pg-native@file:apps/dashboard/stubs/pg-native)
+
   pg-pool@3.7.0(pg@8.13.0):
     dependencies:
       pg: 8.13.0
@@ -13175,6 +13188,17 @@ snapshots:
       pgpass: 1.0.5
     optionalDependencies:
       pg-cloudflare: 1.1.1
+
+  pg@8.13.0(pg-native@file:apps/dashboard/stubs/pg-native):
+    dependencies:
+      pg-connection-string: 2.7.0
+      pg-pool: 3.7.0(pg@8.13.0(pg-native@file:apps/dashboard/stubs/pg-native))
+      pg-protocol: 1.7.0
+      pg-types: 2.2.0
+      pgpass: 1.0.5
+    optionalDependencies:
+      pg-cloudflare: 1.1.1
+      pg-native: file:apps/dashboard/stubs/pg-native
 
   pgpass@1.0.5:
     dependencies:
