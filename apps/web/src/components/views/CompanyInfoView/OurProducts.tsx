@@ -24,15 +24,13 @@ const PRODUCTS = [
 ] as const
 
 const OurProducts = () => (
-  <div className="flex flex-col justify-center">
-    <div className="flex justify-evenly items-center">
-      {PRODUCTS.map((product) => (
-        <div key={product.name} className="flex flex-col px-10 pb-8 justify-center text-brand-lighter">
-          <product.icon className="h-[50px] lg:h-[100px]" fill="currentColor" stroke="currentColor" />
-          <Text className="font-bold text-current">{product.name}</Text>
-        </div>
-      ))}
-    </div>
+  <div className="columns-2 md:flex md:justify-evenly md:gap-20">
+    {PRODUCTS.map((product) => (
+      <div key={product.name} className="flex flex-col pb-8 items-center text-brand-lighter">
+        <product.icon className="h-[50px] lg:h-[100px]" fill="currentColor" stroke="currentColor" />
+        <Text className="font-bold text-current">{product.name}</Text>
+      </div>
+    ))}
   </div>
 )
 
