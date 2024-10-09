@@ -5,6 +5,7 @@ export const FeideDocumentationSchema = z.object({
     z.object({
       code: z.string(),
       name: z.string(),
+      year: z.number().int().optional(),
     })
   ),
   studyPrograms: z.array(

@@ -236,7 +236,7 @@ export interface Offline {
 }
 
 export interface OwUser {
-  allergies: Json;
+  allergies: string;
   auth0Id: string;
   createdAt: Generated<Timestamp>;
   email: string;
@@ -248,7 +248,7 @@ export interface OwUser {
   name: string;
   phone: string | null;
   picture: string | null;
-  studyYear: Generated<number>;
+  studyYear: number | null;
   updatedAt: Generated<Timestamp>;
 }
 

@@ -32,7 +32,7 @@ const SettingsProfile: NextPage<{ user: User, membership?: Membership }> = ({ us
         <Textarea placeholder="Din råkule bio" value={""} />
       </FormInput>
       <FormInput title="Allergier">
-        <Textarea placeholder="Dine allergier" value={user.allergies.join("\n")} />
+        <Textarea placeholder="Dine allergier" value={user.allergies} />
       </FormInput>
       <h2>Medlemskap</h2>
       <FormInput title="Studieretning">

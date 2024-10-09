@@ -58,6 +58,8 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
-    return withInsertJsonValue(data, "allergies")
+    const { studyYear, ...rest } = data
+
+    return { ...rest, studyYear: studyYear ?? undefined }
   }
 }

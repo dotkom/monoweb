@@ -52,11 +52,11 @@ import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/person
 import {
   type MembershipApplicationRepository,
   MembershipApplicationRepositoryImpl,
-} from "./memberships/membership-application-repository"
+} from "./membership-applications/membership-application-repository"
 import {
   type MembershipApplicationService,
   MembershipApplicationServiceImpl,
-} from "./memberships/membership-application-service"
+} from "./membership-applications/membership-application-service"
 import { type OfflineRepository, OfflineRepositoryImpl } from "./offline/offline-repository"
 import { type OfflineService, OfflineServiceImpl } from "./offline/offline-service"
 import { type PaymentRepository, PaymentRepositoryImpl } from "./payment/payment-repository"
@@ -155,7 +155,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository
+    notificationPermissionsRepository,
+    auth0Repository
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)

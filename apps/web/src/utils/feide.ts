@@ -1,10 +1,13 @@
-import { MembershipDocumentation } from "@dotkomonline/types"
+import { FeideDocumentation, Membership, MembershipDocumentation } from "@dotkomonline/types"
 import { z } from "zod"
 
 const FeideGroupSchema = z.object({
   id: z.string(),
   type: z.string(),
   displayName: z.string(),
+  membership: z.object({
+    notAfter: z.string().datetime().optional(),
+  }).optional(),
 })
 
 const FeideProfileSchema = z.object({
@@ -20,7 +23,7 @@ export type FeideProfile = z.infer<typeof FeideProfileSchema>
 export function createDocumentation(groups: FeideGroup[], profile: FeideProfile): MembershipDocumentation {
   const subjects = groups
     .filter((group) => group.type === "fc:fs:emne")
-    .map((group) => ({ code: group.id.split(":").slice(5)[0], name: group.displayName }))
+    .map((group) => ({ code: group.id.split(":").slice(5)[0], name: group.displayName, year: group.membership?.notAfter ? new Date(group.membership.notAfter).getFullYear() : undefined }))
 
   const studyPrograms = groups
     .filter((group) => group.type === "fc:fs:prg")
@@ -38,6 +41,10 @@ export function createDocumentation(groups: FeideGroup[], profile: FeideProfile)
   return { subjects, studyPrograms, studyFields, fullName, givenName, familyName, feideUsername }
 }
 
+export function calculateDefaultMembership(documentation: MembershipDocumentation): Membership | null {
+  return null
+}
+
 export async function getFeideGroups(access_token: string): Promise<FeideGroup[]> {
   const groups_response = await fetch("https://groups-api.dataporten.no/groups/me/groups?show_all=true", {
     headers: {
@@ -49,7 +56,9 @@ export async function getFeideGroups(access_token: string): Promise<FeideGroup[]
     throw new Error(`Failed to get groups: ${await groups_response.text()}`)
   }
 
-  return z.array(FeideGroupSchema).parse(await groups_response.json())
+  const data = await groups_response.json();
+
+  return z.array(FeideGroupSchema).parse(data)
 }
 
 export async function getFeideProfileInformation(access_token: string): Promise<FeideProfile> {

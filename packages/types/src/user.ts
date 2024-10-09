@@ -9,8 +9,8 @@ export const UserSchema = z.object({
   gender: z.enum(["male", "female", "other"]),
   name: z.string(),
   phone: z.string().nullable(),
-  studyYear: z.number().int().min(-1).max(6),
-  allergies: z.array(z.string()),
+  studyYear: z.number().int().min(-1).max(6).nullable(),
+  allergies: z.string(),
   picture: z.string().nullable(),
 })
 
@@ -21,6 +21,15 @@ export const UserWriteSchema = UserSchema.partial({
   id: true,
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
+
+// Only the user defined fields
+export const UserSignupSchema = UserSchema.pick({
+  phone: true,
+  allergies: true,
+  gender: true,
+})
+
+export type UserSignup = z.infer<typeof UserSignupSchema>
 
 export interface StudyYears {
   [-1]: string

@@ -1,5 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { PrivacyPermissionsWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
+import { PrivacyPermissionsWriteSchema, UserSchema, UserSignupSchema, UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
@@ -32,4 +32,10 @@ export const userRouter = t.router({
   searchByFullName: protectedProcedure
     .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.userService.searchByFullName(input.searchQuery, input.paginate.take)),
+  
+  signup: protectedProcedure
+    .input(z.object({ signupInformation: UserSignupSchema, feideDocumentationJWT: z.string() }))
+    .mutation(async ({ input, ctx }) => 
+      ctx.userService.signup(ctx.auth.userId, input.signupInformation, input.feideDocumentationJWT)
+    )
 })

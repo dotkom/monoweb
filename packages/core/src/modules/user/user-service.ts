@@ -1,16 +1,23 @@
-import type {
-  NotificationPermissions,
-  NotificationPermissionsWrite,
-  PrivacyPermissions,
-  PrivacyPermissionsWrite,
-  User,
-  UserId,
-  UserWrite,
+import {
+  FeideDocumentationSchema,
+  UserWriteSchema,
+  type FeideDocumentation,
+  type NotificationPermissions,
+  type NotificationPermissionsWrite,
+  type PrivacyPermissions,
+  type PrivacyPermissionsWrite,
+  type User,
+  type UserId,
+  type UserSignup,
+  type UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
+import { env } from "@dotkomonline/env"
+import jwt from "jsonwebtoken"
+import { Auth0Repository } from "../external/auth0-repository"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
@@ -24,13 +31,15 @@ export interface UserService {
   create(data: UserWrite): Promise<User>
   update(data: UserWrite): Promise<User>
   getByAuth0Id(auth0Id: string): Promise<User | null>
+  signup(auth0Id: string, signupInfo: UserSignup, feideDocumentationJWT: string): Promise<User>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
+    private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
+    private readonly auth0Repository: Auth0Repository
   ) {}
 
   async getByAuth0Id(auth0Id: string) {
@@ -101,5 +110,29 @@ export class UserServiceImpl implements UserService {
     }
 
     return notificationPermissions
+  }
+
+  async signup(auth0Id: string, signupInfo: UserSignup, feideDocumentationJWT: string): Promise<User> {
+    const feideDocumentation = FeideDocumentationSchema.parse(jwt.verify(feideDocumentationJWT, env.NEXTAUTH_SECRET))
+
+    const auth0User = await this.auth0Repository.get(auth0Id)
+    if (!auth0User) {
+      throw new Error("User not found in Auth0")
+    }
+
+    const userWrite: UserWrite = UserWriteSchema.parse({
+      auth0Id,
+      email: auth0User.email,
+      givenName: feideDocumentation.givenName,
+      familyName: feideDocumentation.familyName,
+      gender: signupInfo.gender,
+      name: feideDocumentation.fullName,
+      phone: signupInfo.phone,
+      allergies: signupInfo.allergies,
+      picture: null,
+      studyYear: null
+    })
+
+    return this.create(userWrite)
   }
 }
