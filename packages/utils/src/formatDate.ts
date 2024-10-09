@@ -10,6 +10,11 @@ const DEFAULT_INTL_DATE_FORMAT_OPTIONS = {
   year: "numeric",
 } satisfies Intl.DateTimeFormatOptions
 
+const DEFAULT_INTL_SHORT_DATE_FORMAT_OPTIONS = {
+  day: "2-digit",
+  month: "long",
+} satisfies Intl.DateTimeFormatOptions
+
 const DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS = {
   weekday: "long",
 } satisfies Intl.DateTimeFormatOptions
@@ -21,6 +26,7 @@ const DEFAULT_INTL_TIME_FORMAT_OPTIONS = {
 
 export const IntlFormats = {
   Date: DEFAULT_INTL_DATE_FORMAT_OPTIONS,
+  ShortDate: DEFAULT_INTL_SHORT_DATE_FORMAT_OPTIONS,
   Time: DEFAULT_INTL_TIME_FORMAT_OPTIONS,
   Weekday: DEFAULT_INTL_WEEKDAY_FORMAT_OPTIONS,
   DateTime: { ...DEFAULT_INTL_DATE_FORMAT_OPTIONS, ...DEFAULT_INTL_TIME_FORMAT_OPTIONS },

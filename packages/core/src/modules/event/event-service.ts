@@ -1,12 +1,10 @@
 import type {
-  Attendance,
-  AttendancePool,
   AttendanceWrite,
-  Committee,
-  Company,
+  DashboardEventDetail,
   Event,
   EventId,
   EventWrite,
+  WebEventDetail,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
 import { AttendanceNotFound } from "../attendance/attendance-error"
@@ -16,30 +14,6 @@ import type { EventCommitteeService } from "./event-committee-service"
 import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository.js"
-
-type DashboardEventDetail = {
-  event: Event
-  eventCommittees: Committee[]
-  attendance: Attendance | null
-  pools: AttendancePool[] | null
-  hasAttendance: boolean
-}
-
-type WebEventDetail =
-  | {
-      hasAttendance: false
-      event: Event
-      eventCommittees: Committee[]
-      eventCompanies: Company[]
-    }
-  | {
-      hasAttendance: true
-      event: Event
-      eventCommittees: Committee[]
-      attendance: Attendance
-      pools: AttendancePool[]
-      eventCompanies: Company[]
-    }
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -141,6 +115,8 @@ export class EventServiceImpl implements EventService {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
     const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id, 999)
+
+    console.log(`event ${id}: ${event.title} and attendandeId: ${event.attendanceId}`)
 
     if (!event.attendanceId) {
       return {
