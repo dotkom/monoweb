@@ -211,6 +211,13 @@ export interface Offline {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface Auditlog {
+  id: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  action: string;
+  userId: string;
+  type: "User" | "Company" | "Event" | "Committee";
+}
 export interface OwUser {
   allergies: Json
   auth0Id: string
@@ -308,6 +315,7 @@ export interface DB {
   attendance: Attendance;
   attendancePool: AttendancePool;
   attendee: Attendee;
+  auditlog: Auditlog;
   committee: Committee;
   company: Company;
   event: Event;

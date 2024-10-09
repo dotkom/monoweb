@@ -1,4 +1,5 @@
 import { articleRouter } from "./modules/article/article-router"
+import { auditlogRouter } from "./modules/auditlog/auditlog-router"
 import { committeeRouter } from "./modules/committee/committee-router"
 import { companyRouter } from "./modules/company/company-router"
 import { attendanceRouter } from "./modules/event/attendance-router"
@@ -24,6 +25,7 @@ export const appRouter = t.router({
   jobListing: jobListingRouter,
   offline: offlineRouter,
   article: articleRouter,
+  auditlog: auditlogRouter,
   interestGroup: interestGroupRouter,
 })
 
