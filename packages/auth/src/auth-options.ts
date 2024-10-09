@@ -1,5 +1,6 @@
 import type { ServiceLayer } from "@dotkomonline/core"
 import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
@@ -37,6 +38,13 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT, Record<string, unknown> {
+    accessToken?: string
+    refreshToken?: string
+  }
+}
+
 export interface AuthOptions {
   auth0ClientId: string
   auth0ClientSecret: string
@@ -58,15 +66,18 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture ?? undefined,
-          // givenName: profile.given_name,
-          // familyName: profile.family_name,
-        }
+      profile: (profile: Auth0IdTokenClaims): User => ({
+        id: profile.sub,
+        name: profile.name,
+        email: profile.email,
+        image: profile.picture ?? undefined,
+        // givenName: profile.given_name,
+        // familyName: profile.family_name,
+      }),
+      authorization: {
+        params: {
+          scope: "openid profile email offline_access",
+        },
       },
     }),
   ],
@@ -74,6 +85,15 @@ export const getAuthOptions = ({
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, account }): Promise<JWT> {
+      if (account?.access_token) {
+        token.accessToken = account.access_token
+      }
+      if (account?.refresh_token) {
+        token.refreshToken = account.refresh_token
+      }
+      return token
+    },
     async session({ session, token }) {
       if (token.sub) {
         await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data

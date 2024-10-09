@@ -28,7 +28,9 @@
     "INTEREST_FORM_SPREADSHEET_ID",
     "GTX_AUTH0_CLIENT_ID",
     "GTX_AUTH0_CLIENT_SECRET",
-    "GTX_AUTH0_ISSUER"
+    "GTX_AUTH0_ISSUER",
+    "RPC_ALLOWED_ORIGINS",
+    "RPC_HOST"
   ],
   "tasks": {
     "build": {
@@ -88,5 +90,6 @@
       "outputs": [],
       "cache": false
     }
-  }
+  },
+  "globalDependencies": ["**/tsconfig.json"]
 }
