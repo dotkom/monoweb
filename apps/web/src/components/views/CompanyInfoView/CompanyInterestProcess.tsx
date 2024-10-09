@@ -11,10 +11,10 @@ const CompanyInterestProcess: FC<CompanyInterestProcessProps> = ({ steps }) => {
       {steps.map((step, index) => (
         <>
           <div key={step} className="mb-1 w-36 flex flex-col items-center z-10 py-3">
-            <Circle size={700 / 15} color="bg-brand">
-              <p className="font-bold text-background">{index + 1}</p>
+            <Circle size={700 / 15} color="bg-brand-lighter">
+              <p className="text-white font-bold text-background">{index + 1}</p>
             </Circle>
-            <p className="text-brand text-center text-xl font-semibold mt-9 md:mt-14">{step}</p>
+            <p className="text-brand-lighter text-center text-xl font-semibold mt-9 md:mt-14">{step}</p>
           </div>
           {index !== steps.length - 1 && (
             <svg
