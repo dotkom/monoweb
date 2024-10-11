@@ -51,12 +51,14 @@ export const OnboardingForm: NextPage<{ session: Session, feideDocumentationJWT:
   const router = useRouter();
 
   const signupMutation = trpc.user.signup.useMutation();
+  const autoMembershipMutation = trpc.
 
   const onSubmit = async (data: UserSignup) => {
     await signupMutation.mutate({
       signupInformation: data,
       feideDocumentationJWT: feideDocumentationJWT
     })
+    await 
 
     router.push("/");
   }

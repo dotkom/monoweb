@@ -6,8 +6,8 @@ import { type Cursor, withInsertJsonValue } from "../../utils/db-utils"
 export interface MembershipRepository {
   getById(id: UserId): Promise<Membership | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Membership[]>
-  create(membershipmembershipInsert: Membership): Promise<Membership>
-  update(membershipmembershipUpdate: Membership): Promise<Membership | undefined>
+  create(userId: UserId, membershipmembershipInsert: Membership): Promise<Membership>
+  update(userId: UserId, membershipmembershipUpdate: Membership): Promise<Membership | undefined>
   delete(id: UserId): Promise<Membership | undefined>
 }
 
@@ -33,20 +33,20 @@ export class MembershipRepositoryImpl implements MembershipRepository {
     return memberships.map(mapToMembership)
   }
 
-  async create(membershipInsert: Membership): Promise<Membership> {
+  async create(userId: UserId, membershipInsert: Membership): Promise<Membership> {
     const membership = await this.db
       .insertInto("memberships")
-      .values(membershipInsert)
+      .values({...membershipInsert, userId})
       .returningAll()
       .executeTakeFirstOrThrow()
     return mapToMembership(membership)
   }
 
-  async update(membershipUpdate: Membership): Promise<Membership | undefined> {
+  async update(userId: UserId, membershipUpdate: Membership): Promise<Membership | undefined> {
     const membership = await this.db
       .updateTable("memberships")
       .set(membershipUpdate)
-      .where("userId", "=", membershipUpdate.userId)
+      .where("userId", "=", userId)
       .returningAll()
       .executeTakeFirst()
     return membership ? mapToMembership(membership) : undefined

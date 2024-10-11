@@ -18,7 +18,6 @@ export const FieldOfStudySchema = z.enum([
 ])
 
 export const MembershipSchema = z.object({
-  userId: z.string().ulid(),
   fieldOfStudy: FieldOfStudySchema,
   classYear: z.number().int(),
 })

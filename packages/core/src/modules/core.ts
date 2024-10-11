@@ -52,11 +52,11 @@ import { type PersonalMarkService, PersonalMarkServiceImpl } from "./mark/person
 import {
   type MembershipApplicationRepository,
   MembershipApplicationRepositoryImpl,
-} from "./membership-applications/membership-application-repository"
+} from "./memberships/membership-application-repository"
 import {
   type MembershipApplicationService,
   MembershipApplicationServiceImpl,
-} from "./membership-applications/membership-application-service"
+} from "./memberships/membership-application-service"
 import { type OfflineRepository, OfflineRepositoryImpl } from "./offline/offline-repository"
 import { type OfflineService, OfflineServiceImpl } from "./offline/offline-service"
 import { type PaymentRepository, PaymentRepositoryImpl } from "./payment/payment-repository"
