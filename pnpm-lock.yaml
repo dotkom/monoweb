@@ -753,8 +753,8 @@ importers:
         specifier: ^8.10.9
         version: 8.11.10
       kysely-codegen:
-        specifier: ^0.15.0
-        version: 0.15.0(kysely@0.27.4)(pg@8.13.0)
+        specifier: ^0.16.0
+        version: 0.16.8(kysely@0.27.4)(pg@8.13.0)
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -5372,25 +5372,28 @@ packages:
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
 
-  kysely-codegen@0.15.0:
-    resolution: {integrity: sha512-LPta2nQOyoEPDQ3w/Gsplc+2iyZPAsGvtWoS21VzOB0NDQ0B38Xy1gS8WlbGef542Zdw2eLJHxekud9DzVdNRw==}
+  kysely-codegen@0.16.8:
+    resolution: {integrity: sha512-+N4SDdI9akUWug0i/3UvlktpfPiCt1mtDQ+pVCqI5E98xcGWpdfVXb4CD7CGGNg+QMXqpiR3bVKd0LgCJQtrPA==}
     hasBin: true
     peerDependencies:
       '@libsql/kysely-libsql': ^0.3.0
       '@tediousjs/connection-string': ^0.5.0
       better-sqlite3: '>=7.6.2'
       kysely: ^0.27.0
+      kysely-bun-sqlite: ^0.3.2
       kysely-bun-worker: ^0.5.3
       mysql2: ^2.3.3 || ^3.0.0
       pg: ^8.8.0
       tarn: ^3.0.0
-      tedious: ^16.6.0 || ^17.0.0
+      tedious: ^18.0.0
     peerDependenciesMeta:
       '@libsql/kysely-libsql':
         optional: true
       '@tediousjs/connection-string':
         optional: true
       better-sqlite3:
+        optional: true
+      kysely-bun-sqlite:
         optional: true
       kysely-bun-worker:
         optional: true
@@ -6119,6 +6122,10 @@ packages:
 
   pkg-types@1.2.0:
     resolution: {integrity: sha512-+ifYuSSqOQ8CqP4MbZA5hDpb97n3E8SVWdJe+Wms9kj745lmd3b7EZJiqvmLwAlmRfjrI7Hi5z3kdBJ93lFNPA==}
+
+  pluralize@8.0.0:
+    resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
+    engines: {node: '>=4'}
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -12235,7 +12242,7 @@ snapshots:
 
   kuler@2.0.0: {}
 
-  kysely-codegen@0.15.0(kysely@0.27.4)(pg@8.13.0):
+  kysely-codegen@0.16.8(kysely@0.27.4)(pg@8.13.0):
     dependencies:
       chalk: 4.1.2
       dotenv: 16.4.5
@@ -12244,6 +12251,7 @@ snapshots:
       kysely: 0.27.4
       micromatch: 4.0.8
       minimist: 1.2.8
+      pluralize: 8.0.0
     optionalDependencies:
       pg: 8.13.0
 
@@ -13238,6 +13246,8 @@ snapshots:
       confbox: 0.1.7
       mlly: 1.7.1
       pathe: 1.1.2
+
+  pluralize@8.0.0: {}
 
   postcss-import@15.1.0(postcss@8.4.47):
     dependencies:
