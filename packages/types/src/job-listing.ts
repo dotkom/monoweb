@@ -26,7 +26,7 @@ export const JobListingWriteSchema = JobListingSchema.partial({
   .extend({
     companyId: z.string().ulid(),
   })
-  .strict()
+  .partial()
 
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]
