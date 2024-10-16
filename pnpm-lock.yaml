@@ -357,12 +357,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@aws-sdk/client-s3':
-        specifier: ^3.583.0
-        version: 3.667.0
-      '@aws-sdk/s3-presigned-post':
-        specifier: ^3.583.0
-        version: 3.667.0
       '@dotkomonline/auth':
         specifier: workspace:*
         version: link:../../packages/auth

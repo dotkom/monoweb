@@ -59,7 +59,7 @@ const navigations = [
     icon: "tabler:users-group",
     children: [
       { label: "Brukere", href: "/user" },
-      { label: "Medlemskap", href: "/membership" },
+      { label: "Søknader om medlemsskap", href: "/membership-applications"},
     ],
   },
 ] as const

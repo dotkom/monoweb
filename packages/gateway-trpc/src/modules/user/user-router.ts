@@ -1,5 +1,5 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { PrivacyPermissionsWriteSchema, UserSchema, UserSignupSchema, UserWriteSchema } from "@dotkomonline/types"
+import { PrivacyPermissionsWriteSchema, UserSchema, UserEditableFieldsSchema, UserWriteSchema, UserIdSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
@@ -15,9 +15,10 @@ export const userRouter = t.router({
     .input(
       z.object({
         data: UserWriteSchema,
+        id: UserIdSchema
       })
     )
-    .mutation(async ({ input: changes, ctx }) => ctx.userService.update(changes.data)),
+    .mutation(async ({ input: changes, ctx }) => ctx.userService.updateByAuth0Id(changes.id, changes.data)),
   getPrivacyPermissionssByUserId: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),
@@ -34,8 +35,12 @@ export const userRouter = t.router({
     .query(async ({ input, ctx }) => ctx.userService.searchByFullName(input.searchQuery, input.paginate.take)),
   
   signup: protectedProcedure
-    .input(z.object({ signupInformation: UserSignupSchema, feideDocumentationJWT: z.string() }))
+    .input(z.object({ signupInformation: UserEditableFieldsSchema, feideDocumentationJWT: z.string() }))
     .mutation(async ({ input, ctx }) => 
       ctx.userService.signup(ctx.auth.userId, input.signupInformation, input.feideDocumentationJWT)
-    )
+    ),
+
+  updateMe: protectedProcedure
+    .input(UserEditableFieldsSchema)
+    .mutation(async ({ input, ctx }) => ctx.userService.updateByAuth0Id(ctx.auth.userId, input)),
 })

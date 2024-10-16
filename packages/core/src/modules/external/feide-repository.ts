@@ -1,30 +1,5 @@
-import { MembershipDocumentation } from "@dotkomonline/types"
+import { FeideGroup, FeideGroupSchema, FeideProfile, FeideProfileSchema } from "@dotkomonline/types"
 import { z } from "zod"
-
-const FeideGroupMembershipSchema = z.object({
-  basic: z.string(),
-  displayName: z.string(),
-  affiliation: z.array(z.string()),
-  primaryAffiliation: z.string().optional(),
-  title: z.array(z.string()).optional(),
-})
-
-const FeideGroupSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  displayName: z.string(),
-  membership: FeideGroupMembershipSchema.optional(),
-})
-
-const FeideProfileSchema = z.object({
-  norEduPersonLegalName: z.string(),
-  uid: z.array(z.string()),
-  sn: z.array(z.string()).length(1),
-  givenName: z.array(z.string()).length(1),
-})
-
-export type FeideGroup = z.infer<typeof FeideGroupSchema>
-export type FeideProfile = z.infer<typeof FeideProfileSchema>
 
 export interface FeideRepository {
   getFeideGroups(access_token: string): Promise<FeideGroup[]>
@@ -44,7 +19,7 @@ export class FeideRepositoryImpl implements FeideRepository {
     }
   
     const data = await groups_response.json();
-  
+
     return z.array(FeideGroupSchema).parse(data)
   }
 

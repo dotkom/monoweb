@@ -1,7 +1,13 @@
+"use client"
+
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
-import { type FeideDocumentation, type Membership, type User } from "@dotkomonline/types"
+import { trpc } from "@/utils/trpc/client"
+import { UserEditableFields, type FeideDocumentation, type Membership, type User } from "@dotkomonline/types"
 import { Button, Select, SelectContent, SelectGroup, SelectIcon, SelectLabel, SelectPortal, SelectTrigger, SelectValue, SelectViewport, TextInput, Textarea } from "@dotkomonline/ui"
+import clsx from "clsx"
+import { cva } from "cva"
 import type { NextPage } from "next"
+import { useForm } from "react-hook-form"
 
 interface FormInputProps {
   title: string
@@ -16,24 +22,53 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
 )
 
 const SettingsProfile: NextPage<{ user: User, membership?: Membership }> = ({ user }) => {
+  const { register, handleSubmit } = useForm<UserEditableFields>({
+    defaultValues: {
+      phone: user.phone,
+      allergies: user.allergies,
+      biography: user.biography,
+      gender: user.gender
+    },
+  });
+
+  const updateMutation = trpc.user.updateMe.useMutation()
+
+  const onSubmit = async (data: UserEditableFields) => {
+    await updateMutation.mutateAsync(data)
+
+    return false
+  }
+
   return (
     <div className="flex w-full flex-col space-y-4">
       <h2>{user.givenName} {user.familyName}</h2>
-      <FormInput title="Epost">
-        <TextInput disabled width="flex-1" placeholder="Epost" defaultValue={user.email} />
-      </FormInput>
-      <FormInput title="Telefon">
-        <div className="w-full flex space-x-2">
-          <CountryCodeSelect />
-          <TextInput width="w-full" maxLength={8} />
+      <form className="flex flex-col space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <FormInput title="Epost">
+          <TextInput disabled width="flex-1" placeholder="Epost" defaultValue={user.email} />
+        </FormInput>
+        <FormInput title="Telefon">
+          <div className="w-full flex space-x-2">
+            <TextInput width="w-full" maxLength={8} {...register("phone", { 
+              pattern: {
+                value: /^\d{8}$/,
+                message: "Telefonnummeret må være 8 siffer"
+              }
+            })} />
+          </div>
+        </FormInput>
+        <FormInput title="Bio">
+          <Textarea placeholder="Din råkule bio" {...register("biography")} />
+        </FormInput>
+        <FormInput title="Allergier">
+          <Textarea placeholder="Dine allergier" {...register("allergies")} />
+        </FormInput>
+        <div>
+          <Button
+            className="px-8"
+            loading={updateMutation.isLoading}>Lagre</Button>
         </div>
-      </FormInput>
-      <FormInput title="Bio">
-        <Textarea placeholder="Din råkule bio" value={""} />
-      </FormInput>
-      <FormInput title="Allergier">
-        <Textarea placeholder="Dine allergier" value={user.allergies} />
-      </FormInput>
+      </form>
+
       <h2>Medlemskap</h2>
       <FormInput title="Studieretning">
         <Select>

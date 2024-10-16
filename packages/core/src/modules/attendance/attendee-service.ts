@@ -14,6 +14,7 @@ import { IllegalStateError } from "../../error"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
+ 
 import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"

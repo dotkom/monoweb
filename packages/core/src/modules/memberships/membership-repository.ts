@@ -1,5 +1,5 @@
 import type { Database } from "@dotkomonline/db"
-import { type Membership, MembershipSchema, type UserId } from "@dotkomonline/types"
+import { FeideDocumentation, type Membership, MembershipSchema, type UserId } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
 import { type Cursor, withInsertJsonValue } from "../../utils/db-utils"
 

@@ -3,6 +3,7 @@ import { FeideDocumentationSchema } from "./feide"
 
 export const FieldOfStudySchema = z.enum([
   "BACHELOR",
+
   "MASTER_SOFTWARE_ENGINEERING",
   "MASTER_DATABASE_AND_SEARCH",
   "MASTER_ALGORITHMS",
@@ -11,11 +12,25 @@ export const FieldOfStudySchema = z.enum([
   "MASTER_HEALTH_INFORMATICS",
   "MASTER_INTERACTION_DESIGN",
   "MASTER_OTHER",
+
   "SOCIAL_MEMBER",
   "PHD",
   "INTERNATIONAL",
   "OTHER_MEMBER",
 ])
+
+export const isMaster = (fieldOfStudy: FieldOfStudy): boolean => {
+  return [
+    "MASTER_SOFTWARE_ENGINEERING",
+    "MASTER_DATABASE_AND_SEARCH",
+    "MASTER_ALGORITHMS",
+    "MASTER_GAME_TECHNOLOGY",
+    "MASTER_ARTIFICIAL_INTELLIGENCE",
+    "MASTER_HEALTH_INFORMATICS",
+    "MASTER_INTERACTION_DESIGN",
+    "MASTER_OTHER",
+  ].includes(fieldOfStudy)
+}
 
 export const MembershipSchema = z.object({
   fieldOfStudy: FieldOfStudySchema,

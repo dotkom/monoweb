@@ -1,4 +1,3 @@
-import { createDocumentation, getFeideGroups, getFeideProfileInformation } from "@/utils/feide"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { env } from "@dotkomonline/env"
@@ -8,6 +7,7 @@ import { Issuer } from "openid-client"
 import { z } from "zod"
 import jwt from "jsonwebtoken"
 import { FeideDocumentationSchema } from "@dotkomonline/types"
+import { createFeideDocumentationJWT } from "@/utils/feideDocumentationJWT"
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     return Response.redirect("/", 302)
   }
 
-  if (!session.user.email) {
+  if (!session.user?.email) {
     return new Response("Missing user email", { status: 400 })
   }
 
@@ -45,10 +45,8 @@ export async function GET(request: NextRequest) {
     return new Response("Failed to get token", { status: 500 })
   }
 
-  const membershipDocumentation = await createDocumentation(
-    await getFeideGroups(tokenSet.access_token),
-    await getFeideProfileInformation(tokenSet.access_token)
-  )
+  const membershipDocumentation = await trpc.membership.getDocumentation({accessToken: tokenSet.access_token})
+  console.log("membershipDocumentation", membershipDocumentation)
   const user = await trpc.user.getByAuth0Id(session.sub)
   const userExists = Boolean(user)
 
@@ -59,9 +57,9 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  response.cookies.set("feideDocumentationJWT", jwt.sign(membershipDocumentation, env.NEXTAUTH_SECRET), {
+  response.cookies.set("feideDocumentationJWT", createFeideDocumentationJWT(membershipDocumentation), {
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
-  })
+  });
 
   return response
 }

@@ -83,6 +83,9 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
+import { FeideRepository, FeideRepositoryImpl } from "./external/feide-repository"
+import { MembershipService, MembershipServiceImpl } from "./memberships/membership-service"
+import { MembershipRepository, MembershipRepositoryImpl } from "./memberships/membership-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -114,6 +117,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     },
   }
 
+  const feideRepository: FeideRepository = new FeideRepositoryImpl()
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
   const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
@@ -124,6 +128,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     db
   )
   const membershipApplicationRepository: MembershipApplicationRepository = new MembershipApplicationRepositoryImpl(db)
+  const membershipRepository: MembershipRepository = new MembershipRepositoryImpl(db)
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
@@ -232,6 +237,10 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const membershipApplicationService: MembershipApplicationService = new MembershipApplicationServiceImpl(
     membershipApplicationRepository
   )
+  const membershipService: MembershipService  = new MembershipServiceImpl(
+    membershipRepository,
+    feideRepository
+  )
 
   return {
     userService,
@@ -258,5 +267,6 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     interestGroupRepository,
     interestGroupService,
     membershipApplicationService,
+    membershipService
   }
 }

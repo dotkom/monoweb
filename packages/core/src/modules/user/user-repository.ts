@@ -1,6 +1,6 @@
 import type { Database } from "@dotkomonline/db"
 import { type User, type UserId, UserSchema, type UserWrite } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
+import { type Insertable, type Kysely, type Selectable, sql, Updateable } from "kysely"
 import { type Cursor, orderedQuery, withInsertJsonValue } from "../../utils/db-utils"
 
 export const mapToUser = (payload: Selectable<Database["owUser"]>): User => UserSchema.parse(payload)
@@ -10,7 +10,8 @@ export interface UserRepository {
   getByAuth0Id(id: UserId): Promise<User | null>
   getAll(limit: number): Promise<User[]>
   create(userWrite: UserWrite): Promise<User>
-  update(id: UserId, data: UserWrite): Promise<User>
+  update(id: UserId, data: Partial<UserWrite>): Promise<User>
+  updateByAuth0Id(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
 }
 
@@ -38,16 +39,29 @@ export class UserRepositoryImpl implements UserRepository {
       .executeTakeFirstOrThrow()
     return mapToUser(user)
   }
-  async update(id: UserId, data: UserWrite) {
+
+  async update(id: UserId, data: Partial<User>) {
     const user = await this.db
       .updateTable("owUser")
-      .set(this.mapInsert(data))
+      .set(this.mapUpdate(data))
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
 
     return mapToUser(user)
   }
+
+  async updateByAuth0Id(id: string, data: Partial<User>) {
+    const user = await this.db
+      .updateTable("owUser")
+      .set(this.mapUpdate(data))
+      .where("auth0Id", "=", id)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+
+    return mapToUser(user)
+  }
+
   async searchByFullName(searchQuery: string, take: number, cursor?: Cursor) {
     const query = orderedQuery(
       this.db.selectFrom("owUser").selectAll().where(sql`name::text`, "ilike", `%${searchQuery}%`).limit(take),
@@ -55,6 +69,12 @@ export class UserRepositoryImpl implements UserRepository {
     )
     const users = await query.execute()
     return users.map(mapToUser)
+  }
+
+  private mapUpdate = (data: Partial<User>): Updateable<Database["owUser"]> => {
+    const { studyYear, ...rest } = data
+
+    return { ...rest, studyYear: studyYear ?? undefined }
   }
 
   private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {

@@ -8,7 +8,7 @@ import {
   type PrivacyPermissionsWrite,
   type User,
   type UserId,
-  type UserSignup,
+  type UserEditableFields,
   type UserWrite,
 } from "@dotkomonline/types"
 import type { Cursor } from "../../utils/db-utils"
@@ -29,9 +29,9 @@ export interface UserService {
   ): Promise<PrivacyPermissions>
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   create(data: UserWrite): Promise<User>
-  update(data: UserWrite): Promise<User>
+  updateByAuth0Id(userId: string, data: Partial<UserWrite>): Promise<User>
   getByAuth0Id(auth0Id: string): Promise<User | null>
-  signup(auth0Id: string, signupInfo: UserSignup, feideDocumentationJWT: string): Promise<User>
+  signup(auth0Id: string, signupInfo: UserEditableFields, feideDocumentationJWT: string): Promise<User>
 }
 
 export class UserServiceImpl implements UserService {
@@ -50,8 +50,8 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.create(data)
   }
 
-  async update(data: User) {
-    return this.userRepository.update(data.id, data)
+  async updateByAuth0Id(auth0Id: string, data: Partial<UserWrite>) {
+    return this.userRepository.updateByAuth0Id(auth0Id, data)
   }
 
   async getAll(limit: number) {
@@ -112,7 +112,7 @@ export class UserServiceImpl implements UserService {
     return notificationPermissions
   }
 
-  async signup(auth0Id: string, signupInfo: UserSignup, feideDocumentationJWT: string): Promise<User> {
+  async signup(auth0Id: string, signupInfo: UserEditableFields, feideDocumentationJWT: string): Promise<User> {
     const feideDocumentation = FeideDocumentationSchema.parse(jwt.verify(feideDocumentationJWT, env.NEXTAUTH_SECRET))
 
     const auth0User = await this.auth0Repository.get(auth0Id)
@@ -127,6 +127,7 @@ export class UserServiceImpl implements UserService {
       familyName: feideDocumentation.familyName,
       gender: signupInfo.gender,
       name: feideDocumentation.fullName,
+      biography: signupInfo.biography,
       phone: signupInfo.phone,
       allergies: signupInfo.allergies,
       picture: null,

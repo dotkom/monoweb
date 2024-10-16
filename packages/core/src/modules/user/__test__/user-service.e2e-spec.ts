@@ -97,7 +97,7 @@ describe("users", () => {
       givenName: updatedGivenName,
     }
 
-    const updated = await core.userService.update(updatedUserWrite)
+    const updated = await core.userService.updateByAuth0Id(updatedUserWrite)
 
     expect(updated.givenName).toEqual(updatedGivenName)
   })
