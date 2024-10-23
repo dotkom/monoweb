@@ -9,7 +9,10 @@ export async function up(db) {
     .dropColumn("allergies").execute()
 
   await db.schema.alterTable("ow_user")
-    .addColumn("allergies", "text", col => col.notNull()).execute()
+    .addColumn("allergies", "text", col => col.notNull().defaultTo("")).execute()
+  
+  await db.schema.alterTable("ow_user")
+    .alterColumn("allergies", col => col.dropDefault()).execute()
 
   await db.schema.alterTable("ow_user")
     .alterColumn("studyYear", col => col.dropNotNull()).execute()
