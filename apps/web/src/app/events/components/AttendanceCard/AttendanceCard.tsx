@@ -4,7 +4,7 @@ import { trpc } from "@/utils/trpc/client"
 import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
-import { type FC, useState } from "react"
+import { type FC, useMemo, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
 import ChooseExtrasForm from "./ChooseExtrasDialog"
@@ -66,13 +66,49 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     }
   }
 
+  const { data: attendablePool } = trpc.attendance.getAttendablePool.useQuery(
+    {
+      attendanceId: eventDetail.attendance.id,
+      userId: user?.id ?? "",
+    },
+    {
+      enabled: user !== undefined && eventDetail.hasAttendance,
+    }
+  )
+
+  const attendedPool = attendee?.attendancePoolId
+    ? eventDetail.pools.find((pool) => pool.id === attendee.attendancePoolId)
+    : null
+
+  const now = useMemo(() => new Date(), [])
+
+  const { data: canRegisterToEvent } = trpc.attendance.canRegisterForEvent.useQuery(
+    {
+      userId: user?.id ?? "",
+      attendancePoolId: attendablePool?.id ?? "",
+      registeredAt: now,
+    },
+    {
+      enabled: Boolean(user) && Boolean(attendablePool),
+    }
+  )
+
+  const { data: canDeregisterToEvent } = trpc.attendance.canDeregisterForEvent.useQuery(
+    {
+      attendeeId: attendee?.id ?? "",
+      deregisteredAt: now,
+    },
+    {
+      enabled: Boolean(attendee?.id),
+    }
+  )
+
   const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
   const unregisterMutation = useUnregisterMutation()
   const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading
 
   const userIsRegistered = Boolean(attendee)
 
-  const attendablePool = (user && eventDetail.pools.find((pool) => pool.yearCriteria.includes(user?.studyYear))) ?? null
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const { data: attendeePublicInformation } = trpc.attendance.getPublicAttendeeInformation.useQuery(
@@ -116,7 +152,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
   return (
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-6 gap-3">
       <h2 className="border-none">Påmelding</h2>
-      <AttendanceBoxPool pool={attendablePool} isAttending={userIsRegistered} />
+      <AttendanceBoxPool pool={attendablePool || attendedPool} isAttending={userIsRegistered} />
 
       <div className="flex flex-row gap-3">
         <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
@@ -124,10 +160,10 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
           <RegistrationButton
             attendee={attendee}
             attendance={eventDetail.attendance}
-            attendancePool={attendablePool}
             registerForAttendance={registerForAttendance}
             unregisterForAttendance={unregisterForAttendance}
             isLoading={registerLoading}
+            enabled={canRegisterToEvent || canDeregisterToEvent}
           />
         )}
       </div>

@@ -1,4 +1,4 @@
-import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
+import type { Attendance, Attendee } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
@@ -8,10 +8,10 @@ import { getAttendanceDetails } from "../../utils"
 interface Props {
   attendance: Attendance
   attendee: Attendee | null
-  attendancePool: AttendancePool | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
   isLoading: boolean
+  enabled: boolean | undefined
 }
 
 const nowWithOffset = (offset: number) => new Date(Date.now() + offset)
@@ -19,10 +19,10 @@ const nowWithOffset = (offset: number) => new Date(Date.now() + offset)
 export const RegistrationButton: FC<Props> = ({
   attendee,
   attendance,
-  attendancePool,
   registerForAttendance,
   unregisterForAttendance,
   isLoading,
+  enabled,
 }) => {
   const attendanceDetails = getAttendanceDetails(attendance)
 
@@ -49,12 +49,16 @@ export const RegistrationButton: FC<Props> = ({
   const buttonStatusText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
+  const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
+  const color =
+    attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "slate" : attendee ? "red" : "green"
+
   return (
     <Button
       className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100")}
       onClick={attendee ? unregisterForAttendance : registerForAttendance}
-      disabled={attendanceDetails.status !== "Open" || !attendancePool}
-      color={attendee ? "red" : "green"}
+      disabled={!enabled}
+      color={color}
       variant="solid"
       icon={buttonIcon}
     >
