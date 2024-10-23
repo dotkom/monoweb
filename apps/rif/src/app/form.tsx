@@ -42,23 +42,6 @@ const excursionTooltip = (
   </Section>
 )
 
-const techTalksTooltip = (
-  <Section>
-    <Text>
-      Tech Talks har den hensikt å være et faglig arrangement for inspirasjon og faglig påfyll fra næringslivet. I
-      tillegg skal det gi inntekt til ekskursjonskomiteen som arrangerer den årlige ekskursjonen for
-      informatikkstudentene ved NTNU.
-    </Text>
-    <Text>Arrangementet pleier å finne sted en gang i midten av februar.</Text>
-    <Text>
-      Arrangementet er lagt opp slik at flere bedrifter holder foredrag, workshops og lyntaler hvor de kan få presentert
-      seg selv og vise fram sin faglige styrke. Dette vil være spredt utover hele dagen på et frokostseminar,
-      lunsj-event eller kvelds-event. Formatet på arrangementet kan variere fra år til år. Vi begynner å kontakte
-      aktuelle bedrifter på slutten av høstsemesteret.
-    </Text>
-  </Section>
-)
-
 const femalesInTechTooltip = (
   <Section>
     <Text>
@@ -138,7 +121,6 @@ export const Form: FC = () => {
           label="Instagram Takeover"
           tooltip={instagramTakeoverTooltip}
         />
-        <CheckboxWithTooltip name="requestsTechTalksParticipation" label="Tech Talks" tooltip={techTalksTooltip} />
         <CheckboxWithTooltip name="requestsExcursionParticipation" label="IT-ekskursjonen" tooltip={excursionTooltip} />
         <CheckboxWithTooltip
           name="requestsFemalesInTechEvent"

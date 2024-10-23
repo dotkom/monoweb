@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/tsconfig": "workspace:*",
     "typescript": "^5.4.5"
   }
 }

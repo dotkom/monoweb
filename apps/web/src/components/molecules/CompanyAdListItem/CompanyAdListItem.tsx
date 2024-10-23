@@ -25,7 +25,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
   return (
     <Link
       href={`/career/${jobListing.id}`}
-      className="border-slate-3 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
+      className="border-slate-3 flex h-48 items-center justify-between rounded-lg border px-6 py-2"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -35,9 +35,11 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
           width={140}
           height={80}
           alt={`${jobListing.company.name}’s job posting`}
+          className="hidden md:block"
         />
+
         <div>
-          <h3 className="mt-2">{jobListing.title}</h3>
+          <h3 className="mt-1 text-lg md:text-xl xl:text-2xl">{jobListing.title}</h3>
           <p className="text-slate-8 my-2">{jobListing.company.name}</p>
           <div className="flex flex-row gap-4">
             <div className="flex flex-row gap-1">

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "email:dev": "email dev --port 7777 --dir src/emails",
     "email:export": "email export --dir src/emails",
@@ -12,15 +12,16 @@
   },
   "main": "src/index.ts",
   "dependencies": {
-    "@react-email/components": "^0.0.22",
+    "@react-email/components": "^0.0.25",
     "@react-email/render": "^0.0.17",
     "@react-email/tailwind": "^0.0.19",
     "react": "^18.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
-    "@types/react": "^18.2.38",
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/tsconfig": "workspace:*",
+    "@types/react": "^18.3.11",
     "react-email": "^1.9.5",
     "typescript": "^5.4.5"
   }
