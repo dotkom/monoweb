@@ -24,7 +24,6 @@ export const UserWriteSchema = UserSchema.omit({
 })
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
-// Only the user defined fields
 export const UserEditableFieldsSchema = UserSchema.pick({
   phone: true,
   allergies: true,
