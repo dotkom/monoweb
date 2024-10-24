@@ -11,6 +11,20 @@ export const ExtraSchema = z.object({
   ),
 })
 
+export const ExtraResultsSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  totalCount: z.number(),
+  choices: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      count: z.number(),
+    })
+  ),
+})
+export type ExtraResults = z.infer<typeof ExtraResultsSchema>
+
 export const ExtrasSchema = z.array(ExtraSchema).nullable()
 
 export type Extras = z.infer<typeof ExtraSchema>

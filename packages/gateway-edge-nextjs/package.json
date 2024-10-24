@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
@@ -21,17 +21,18 @@
     "@trpc/react-query": "^10.45.0",
     "ical-generator": "^5.0.1",
     "jsonwebtoken": "^9.0.2",
-    "next-auth": "^4.24.5",
+    "next-auth": "^4.24.8",
     "stripe": "^13.11.0"
   },
   "peerDependencies": {
-    "next": "^14.0.3"
+    "next": "^14.2.14"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/tsconfig": "workspace:*",
+    "@types/jsonwebtoken": "^9.0.5",
     "@vitest/ui": "^1.3.1",
     "typescript": "^5.4.5",
-    "vitest": "^1.3.1",
-    "@types/jsonwebtoken": "^9.0.5"
+    "vitest": "^1.3.1"
   }
 }

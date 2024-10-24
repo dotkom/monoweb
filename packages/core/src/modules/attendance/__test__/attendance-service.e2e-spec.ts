@@ -369,12 +369,14 @@ describe("attendance", () => {
       questionId: foodQuestion.id,
       choiceId: pizza.id,
       choiceName: pizza.name,
+      questionName: foodQuestion.name,
     }
 
     const choice2 = {
       questionId: drinkQuestion.id,
       choiceId: fanta.id,
       choiceName: fanta.name,
+      questionName: drinkQuestion.name,
     }
 
     const updatedAttendee1 = await core.attendeeService.updateExtraChoices(attendee.id, [choice1])

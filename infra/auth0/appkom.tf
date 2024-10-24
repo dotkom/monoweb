@@ -2,9 +2,10 @@ resource "auth0_client" "appkom_opptak" {
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
-    "stg" = []
+    "stg" = ["http://localhost:3000"]
     "prd" = [
-      "https://online-opptak.vercel.app", 
+      "https://opptak.online.ntnu.no",
+      "https://online-opptak.vercel.app",
       "http://localhost:3000",
     ]
   }[terraform.workspace]
@@ -12,9 +13,10 @@ resource "auth0_client" "appkom_opptak" {
   app_type        = "spa"
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = []
+    "stg" = ["http://localhost:3000/api/auth/callback/auth0"]
     "prd" = [
       "https://online-opptak.vercel.app/api/auth/callback/auth0", 
+      "https://opptak.online.ntnu.no/api/auth/callback/auth0",
       "http://localhost:3000/api/auth/callback/auth0",
     ]
   }[terraform.workspace]
@@ -93,6 +95,7 @@ resource "auth0_client" "appkom_events_app" {
     "stg" = []
     "prd" = [
       "ntnu.online.app://auth.online.ntnu.no/ios/ntnu.online.app/callback",
+      "ntnu.online.app://auth.online.ntnu.no/android/ntnu.online.app/callback",
       "https://auth.online.ntnu.no/android/ntnu.online.app/callback",
     ]
   }[terraform.workspace]

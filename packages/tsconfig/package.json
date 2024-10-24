@@ -1,0 +1,12 @@
+{
+  "name": "@dotkomonline/tsconfig",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "exports": {
+    "./tsconfig.json": "./tsconfig.json"
+  }
+}

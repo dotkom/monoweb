@@ -9,7 +9,7 @@
     @apply font-fraunces border-b-slate-7 mt-10 scroll-m-20 border-b pb-1 text-3xl font-semibold tracking-tight transition-colors first:mt-0 !important;
   }
   h3 {
-    @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight !important;
+    @apply mt-8 scroll-m-20 font-semibold tracking-tight !important;
   }
   h4 {
     @apply mt-8 scroll-m-20 text-xl font-semibold tracking-tight !important;

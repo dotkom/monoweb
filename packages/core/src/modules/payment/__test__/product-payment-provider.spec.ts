@@ -5,6 +5,7 @@ import { ProductPaymentProviderRepositoryImpl } from "../product-payment-provide
 import { ProductPaymentProviderServiceImpl } from "../product-payment-provider-service"
 import { productPayload } from "./product-service.spec"
 
+// biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
 export const productPaymentProvidersPayload: ProductPaymentProvider[] = [
   {
     productId: randomUUID(),
@@ -13,6 +14,7 @@ export const productPaymentProvidersPayload: ProductPaymentProvider[] = [
   },
 ]
 
+// biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
 export const paymentProvidersPayload: PaymentProvider[] = productPaymentProvidersPayload.map((payload) => ({
   paymentProvider: payload.paymentProvider,
   paymentProviderId: payload.paymentProviderId,

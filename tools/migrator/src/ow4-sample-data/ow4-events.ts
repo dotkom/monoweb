@@ -1,6 +1,4 @@
-import type { Database } from "@dotkomonline/db"
 import type { EventType } from "@dotkomonline/db/src/db.generated"
-import type { Insertable } from "kysely"
 import { z } from "zod"
 
 const OW4APIImageSchema = z.object({
@@ -45,7 +43,7 @@ const OW4APIEventSchema = z.object({
   event_end: z.string(),
   event_type: z.number(),
   id: z.number(),
-  image: OW4APIImageSchema,
+  image: OW4APIImageSchema.nullable(),
   ingress: z.string(),
   ingress_short: z.string(),
   location: z.string(),
@@ -55,7 +53,7 @@ const OW4APIEventSchema = z.object({
   organizer: z.number(),
 })
 
-const eventTypeMapping: Map<number, EventType> = new Map()
+export const eventTypeMapping: Map<number, EventType> = new Map()
 eventTypeMapping.set(1, "SOCIAL")
 eventTypeMapping.set(2, "BEDPRES")
 eventTypeMapping.set(3, "ACADEMIC")
@@ -68,54 +66,11 @@ const OW4APIEventsEndpointSchema = z.object({
   results: z.array(OW4APIEventSchema),
 })
 
-async function getOW4Events(): Promise<z.infer<typeof OW4APIEventSchema>[]> {
+export async function getOW4Events(): Promise<z.infer<typeof OW4APIEventSchema>[]> {
   const url = "https://old.online.ntnu.no/api/v1/events/?format=json"
 
   const response = await fetch(url)
   const data = OW4APIEventsEndpointSchema.parse(await response.json())
 
   return data.results
-}
-
-type Attendance = Insertable<Database["attendance"]>
-type Event = Insertable<Database["event"]>
-
-export async function getEventAndAttendanceSampleData(): Promise<{
-  events: Event[]
-  attendances: (Attendance | null)[]
-}> {
-  const ow4Events = await getOW4Events()
-
-  const events: Event[] = []
-  const attendances: (Attendance | null)[] = []
-
-  for (const ow4Event of ow4Events) {
-    if (ow4Event.attendance_event) {
-      attendances.push({
-        deregisterDeadline: ow4Event.attendance_event.unattend_deadline,
-        start: ow4Event.attendance_event.registration_start,
-        end: ow4Event.attendance_event.registration_end,
-        limit: ow4Event.attendance_event.max_capacity,
-      })
-    } else {
-      attendances.push(null)
-    }
-
-    events.push({
-      title: ow4Event.title,
-      status: "PUBLIC",
-      type: eventTypeMapping.get(ow4Event.event_type),
-      public: true,
-      start: ow4Event.event_start,
-      end: ow4Event.event_end,
-      description: ow4Event.description,
-      imageUrl: ow4Event.image.lg,
-      location: ow4Event.location,
-    })
-  }
-
-  return {
-    events,
-    attendances,
-  }
 }

@@ -3,7 +3,7 @@ import { z } from "zod"
 
 const environmentVariableSchema = z.string().nonempty()
 
-export const createEnvironment = (skipValidation = false) =>
+export const createEnvironment = () =>
   createEnv({
     clientPrefix: "NEXT_PUBLIC_",
     server: {
@@ -34,6 +34,10 @@ export const createEnvironment = (skipValidation = false) =>
       FAGKOM_STRIPE_WEBHOOK_SECRET: environmentVariableSchema,
 
       STATIC_ASSETS_BUCKET: environmentVariableSchema,
+      RPC_ALLOWED_ORIGINS: environmentVariableSchema,
+      RPC_HOST: environmentVariableSchema,
+
+      S3_BUCKET_MONOWEB: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -73,8 +77,12 @@ export const createEnvironment = (skipValidation = false) =>
       NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_VERCEL_URL: process.env.VERCEL_URL,
       NEXT_PUBLIC_STATIC_ASSETS_BUCKET: process.env.NEXT_PUBLIC_STATIC_ASSETS_BUCKET,
+      RPC_ALLOWED_ORIGINS: process.env.RPC_ALLOWED_ORIGINS,
+      RPC_HOST: process.env.RPC_HOST,
+
+      S3_BUCKET_MONOWEB: process.env.S3_BUCKET_MONOWEB,
     },
-    skipValidation,
+    skipValidation: process.env.DOCKER_BUILD !== undefined,
   })
 
 export const env = createEnvironment()

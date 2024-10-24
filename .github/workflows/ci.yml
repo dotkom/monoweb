@@ -5,6 +5,7 @@ on:
     branches: ["main"]
   pull_request:
     types: [opened, synchronize]
+  merge_group:
 
 env:
   DASHBOARD_AUTH0_CLIENT_ID: ${{ secrets.DASHBOARD_AUTH0_CLIENT_ID }}
@@ -26,6 +27,8 @@ env:
   GTX_AUTH0_CLIENT_ID: ${{ secrets.GTX_AUTH0_CLIENT_ID }}
   GTX_AUTH0_CLIENT_SECRET: ${{ secrets.GTX_AUTH0_CLIENT_SECRET }}
   GTX_AUTH0_ISSUER: ${{ secrets.GTX_AUTH0_ISSUER }}
+  RPC_HOST: ${{ secrets.RPC_HOST }}
+  RPC_ALLOWED_ORIGINS: ${{ secrets.RPC_ALLOWED_ORIGINS }}
 
 jobs:
   build:
@@ -42,7 +45,7 @@ jobs:
           fetch-depth: 2
  
       - name: Cache turbo build setup
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
@@ -54,7 +57,7 @@ jobs:
           version: 9.0.4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.12.2
           cache: 'pnpm'

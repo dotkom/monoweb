@@ -16,9 +16,9 @@ const sortOption = ["Frist", "Opprettet"] as const
 export type SortOption = (typeof sortOption)[number]
 
 const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
-  <div className="border-slate-3  h-fit w-72 rounded-lg border shadow-b-sm">
+  <div className="border-slate-3 h-fit xl:w-72 rounded-lg border shadow-b-sm">
     <div className="border-slate-3 flex flex-row justify-between border-b py-4">
-      <h4 className="mx-4 my-auto  text-lg align-middle">Filter</h4>
+      <h4 className="mx-4 my-auto text-lg align-middle">Filter</h4>
     </div>
     <div className="mx-4">
       <p className="mt-4 font-semibold">Søk</p>
@@ -45,7 +45,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
                   props.setChosenEmployments([...props.chosenEmployments])
                 }}
               />
-              <div className=" inline-block text-base">{content.name}</div>
+              <div className="inline-block text-base">{content.name}</div>
             </div>
           ))}
         </div>
@@ -58,7 +58,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
         <select
           value={props.chosenLocation}
           onChange={(e) => props.setChosenLocation(e.target.value)}
-          className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
+          className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border"
           name="places"
         >
           {props.places.map((place) => (
@@ -77,7 +77,7 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
           onChange={(e) => {
             props.setChosenSort(e.target.value as SortOption)
           }}
-          className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border-[1px]"
+          className="border-slate-8 radius my-2 mb-4 h-10 w-full rounded-md border"
           name="kategorier"
         >
           {sortOption.map((category) => (

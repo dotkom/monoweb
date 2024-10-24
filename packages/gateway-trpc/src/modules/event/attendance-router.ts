@@ -15,11 +15,11 @@ export const attendanceRouter = t.router({
   getAttendee: protectedProcedure
     .input(
       z.object({
-        userId: UserSchema.shape.id,
+        userId: z.string(),
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getByUserId(input.userId, input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendeeService.getByAuth0UserId(input.userId, input.attendanceId)),
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.attendancePoolService.create(input)),
@@ -87,7 +87,7 @@ export const attendanceRouter = t.router({
       async ({ input, ctx }) => await ctx.attendeeService.handleQrCodeRegistration(input.userId, input.attendanceId)
     ),
 
-  addExtraChoice: protectedProcedure
+  setExtrasChoices: protectedProcedure
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
@@ -155,4 +155,12 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.waitlistAttendeService.getByAttendanceId(input.id)),
+
+  getExtrasResults: protectedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendanceService.getExtrasResults(input.attendanceId)),
 })

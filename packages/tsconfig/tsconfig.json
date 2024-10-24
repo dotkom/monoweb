@@ -17,6 +17,6 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["apps/", "packages/", "tools/"],
+  "include": ["../../apps/", "../../packages/", "../../tools/"],
   "noErrorTruncation": true
 }

@@ -12,17 +12,17 @@ export const refundRequestRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.refundRequestService.createRefundRequest(input.paymentId, ctx.auth.userId, input.reason)
+      ctx.refundRequestService.createRefundRequest(input.paymentId, ctx.principal, input.reason)
     ),
   edit: protectedProcedure
     .input(z.object({ id: RefundRequestSchema.shape.id, reason: z.string().min(0).max(255) }))
     .mutation(async ({ input, ctx }) => ctx.refundRequestService.updateRefundRequest(input.id, input)),
   approve: protectedProcedure
     .input(RefundRequestSchema.shape.id)
-    .mutation(async ({ input, ctx }) => ctx.refundRequestService.approveRefundRequest(input, ctx.auth.userId)),
+    .mutation(async ({ input, ctx }) => ctx.refundRequestService.approveRefundRequest(input, ctx.principal)),
   reject: protectedProcedure
     .input(RefundRequestSchema.shape.id)
-    .mutation(async ({ input, ctx }) => ctx.refundRequestService.rejectRefundRequest(input, ctx.auth.userId)),
+    .mutation(async ({ input, ctx }) => ctx.refundRequestService.rejectRefundRequest(input, ctx.principal)),
   delete: protectedProcedure
     .input(RefundRequestSchema.shape.id)
     .mutation(async ({ input, ctx }) => ctx.refundRequestService.deleteRefundRequest(input)),

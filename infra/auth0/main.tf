@@ -63,7 +63,36 @@ resource "auth0_branding" "branding" {
   }
 
   universal_login {
-    body = file("branding/universal_login_base.html")
+    body = templatefile("branding/universal_login_base.html",
+      {
+        "dev" = { "ENV_SPECIFIC" : <<EOT
+        <style>
+        .warning {
+          font-family: comic sans ms;
+          color: hotpink;
+          font-size: 13vw;
+        }
+        </style>
+        <h1 class="warning">DEVELOPMENT</h1>
+        EOT
+        }
+        "stg" = { "ENV_SPECIFIC" : <<EOT
+        <style>
+        .warning {
+          font-family: comic sans ms;
+          color: orangered;
+          font-size: 13vw;
+        }
+        :root {
+          --page-background-color: firebrick;
+        }
+        </style>
+        <h1 class="warning">STAGING</h1>
+        EOT
+        }
+        "prd" = { "ENV_SPECIFIC" : "" }
+      }[terraform.workspace]
+    )
   }
 }
 
@@ -82,39 +111,86 @@ resource "auth0_resource_server" "online" {
 }
 
 # TODO: feide-log-in
-# resource "auth0_connection" "feide" {
-#   display_name         = null
-#   is_domain_connection = false
-#   metadata             = {}
-#   name                 = "FEIDE"
-#   realms               = ["FEIDE"]
-#   show_as_button       = null
-#   strategy             = "oauth2"
-#   options {
-#     allowed_audiences      = []
-#     api_enable_users       = false
-#     auth_params            = {}
-#     authorization_endpoint = "https://auth.dataporten.no/oauth/authorization"
-#     token_endpoint         = "https://auth.dataporten.no/oauth/token"
-#     client_id              = var.FEIDE_CLIENT_ID
-#     client_secret          = var.FEIDE_CLIENT_SECRET
-#     scopes                 = ["email", "groups", "openid", "phone_number", "profile", "userid-feide"]
-#     scripts = {
-#       fetchUserProfile = file("js/fetchUserProfile.js")
-#     }
-#   }
-# }
+resource "auth0_connection" "feide" {
+  display_name         = "FEIDE"
+  is_domain_connection = false
+  metadata             = {}
+  name                 = "FEIDE"
+  # realms               = ["FEIDE"]
+  show_as_button = null
+  strategy       = "oauth2"
+  options {
+    allowed_audiences      = []
+    api_enable_users       = false
+    auth_params            = {}
+    authorization_endpoint = "https://auth.dataporten.no/oauth/authorization"
+    token_endpoint         = "https://auth.dataporten.no/oauth/token"
+    client_id              = var.FEIDE_CLIENT_ID
+    client_secret          = var.FEIDE_CLIENT_SECRET
+    scopes                 = ["email", "groups", "openid", "phone_number", "profile", "userid-feide"]
+    scripts = {
+      fetchUserProfile = file("js/fetchUserProfile.js")
+    }
+  }
 
-# resource "auth0_connection_clients" "feide" {
-#   connection_id = auth0_connection.feide.id
-#   enabled_clients = [
-#     auth0_client.onlineweb_frontend.client_id,
-#     auth0_client.onlineweb4.client_id,
-#     auth0_client.monoweb_web.client_id,
-#     auth0_client.monoweb_dashboard.client_id,
-#     auth0_client.vengeful_vineyard_frontend.client_id,
-#   ]
-# }
+  count = terraform.workspace == "prd" ? 0 : 1
+}
+
+resource "auth0_client" "wiki_frontend" {
+  app_type = "regular_web"
+  callbacks = {
+    "dev" = [
+      "http://localhost:3001/api/auth/callback/auth0",
+    ]
+    "stg" = [
+      "https://wiki.staging.online.ntnu.no/api/auth/callback/auth0",
+    ]
+    "prd" = [
+      "https://wiki.online.ntnu.no/api/auth/callback/auth0",
+    ]
+  }[terraform.workspace]
+  grant_types     = ["authorization_code", "refresh_token"]
+  name            = "Wiki${local.name_suffix[terraform.workspace]}"
+  is_first_party  = true
+  oidc_conformant = true
+
+  allowed_clients     = []
+  allowed_logout_urls = []
+  allowed_origins     = []
+  # you go here if you decline an auth grant
+  initiate_login_uri = "https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
+  organization_require_behavior = "no_prompt"
+  jwt_configuration {
+    alg = "RS256"
+  }
+
+  count = terraform.workspace == "prd" ? 0 : 1
+}
+
+data "auth0_client" "wiki_frontend" {
+  client_id = auth0_client.wiki_frontend[0].client_id
+  count     = terraform.workspace == "prd" ? 0 : 1
+}
+
+resource "auth0_connection_clients" "feide" {
+  connection_id = auth0_connection.feide[0].id
+  enabled_clients = concat([
+    auth0_client.onlineweb_frontend.client_id,
+    auth0_client.onlineweb4.client_id,
+    auth0_client.monoweb_web.client_id,
+    auth0_client.monoweb_dashboard.client_id,
+    auth0_client.appkom_autobank.client_id,
+    auth0_client.vengeful_vineyard_frontend.client_id,
+  ], terraform.workspace != "prd" ? [auth0_client.wiki_frontend[0].client_id] : [])
+
+  count = terraform.workspace == "prd" ? 0 : 1
+}
 
 # resource "auth0_action" "klassetrinn_autoconf" {
 #   name = "Klassetrinn Autoconf"
@@ -196,11 +272,13 @@ locals {
     appkom-autobank      = data.auth0_client.appkom_autobank
   }
 
-  monoweb = {
+  monoweb = merge({
     web       = data.auth0_client.monoweb_web
     dashboard = data.auth0_client.monoweb_dashboard
     gtx       = data.auth0_client.gtx
-  }
+    },
+    terraform.workspace != "prd" ? { wiki = data.auth0_client.wiki_frontend } : {}
+  )
 }
 
 resource "doppler_secret" "client_ids" {
@@ -320,7 +398,7 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
 # has to be imported on new tenant
 resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
-  enabled_clients = [
+  enabled_clients = concat([
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
@@ -328,7 +406,8 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.vengeful_vineyard_frontend.client_id,
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
-  ]
+    auth0_client.appkom_autobank.client_id,
+  ], terraform.workspace == "prd" ? [] : [auth0_client.wiki_frontend[0].client_id])
 }
 
 resource "auth0_prompt" "prompts" {
@@ -436,8 +515,9 @@ resource "auth0_client" "onlineweb4" {
   grant_types = ["authorization_code", "client_credentials", "refresh_token"]
   name        = "OnlineWeb4${local.name_suffix[terraform.workspace]}"
 
-  is_first_party  = true
-  oidc_conformant = true
+  is_first_party                = true
+  oidc_conformant               = true
+  organization_require_behavior = "no_prompt"
 
   refresh_token {
     rotation_type   = "rotating"

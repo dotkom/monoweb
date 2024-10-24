@@ -7,20 +7,21 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
     "@dotkomonline/env": "workspace:*",
-    "kysely": "^0.26.3",
+    "kysely": "^0.27.0",
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/tsconfig": "workspace:*",
     "@types/pg": "^8.10.9",
-    "kysely-codegen": "^0.11.0",
+    "kysely-codegen": "^0.16.0",
     "typescript": "^5.4.5"
   }
 }

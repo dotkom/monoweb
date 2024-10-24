@@ -1,27 +1,12 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon } from "@dotkomonline/ui"
+import { formatRelativeTime } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+
 interface CompanyAdListItemProps {
   jobListing: JobListing
-}
-function timeSinceCreated(date: Date) {
-  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 1) {
-    return "nylig lagt til"
-  }
-  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60)) < 24) {
-    const timer = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60))
-    return timer === 1 ? "1 time gammel" : `${timer} timer gammel`
-  }
-  if ((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000) < 7) {
-    const dager = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
-    return `${dager} dager gammel`
-  }
-  if (Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24 * 7)) < 52) {
-    const uker = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24 * 7))
-    return `${uker} uker gammel`
-  }
 }
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
@@ -40,7 +25,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
   return (
     <Link
       href={`/career/${jobListing.id}`}
-      className="border-slate-3 flex h-[130px] items-center justify-between rounded-lg border px-6 py-2"
+      className="border-slate-3 flex h-48 items-center justify-between rounded-lg border px-6 py-2"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -50,9 +35,11 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
           width={140}
           height={80}
           alt={`${jobListing.company.name}’s job posting`}
+          className="hidden md:block"
         />
+
         <div>
-          <h3 className="mt-2">{jobListing.title}</h3>
+          <h3 className="mt-1 text-lg md:text-xl xl:text-2xl">{jobListing.title}</h3>
           <p className="text-slate-8 my-2">{jobListing.company.name}</p>
           <div className="flex flex-row gap-4">
             <div className="flex flex-row gap-1">
@@ -61,7 +48,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
             </div>
             <div className="flex flex-row gap-1">
               <Icon width={16} icon={"tabler:clock-hour-3"} />
-              {timeSinceCreated(jobListing.createdAt)}
+              {formatRelativeTime(jobListing.createdAt)}
             </div>
           </div>
         </div>

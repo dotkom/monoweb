@@ -1,5 +1,6 @@
 "use client"
 import type { Committee, Event } from "@dotkomonline/types"
+import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -9,7 +10,6 @@ import { GenericTable } from "../../../components/GenericTable"
 import EventCommittees from "../../../components/molecules/company-name/event-committees"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
-import { formatDate } from "../../../utils/format"
 
 type TableColumns = Event & {
   committees: Committee[]
