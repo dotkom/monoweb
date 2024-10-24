@@ -1,7 +1,9 @@
-import { FeideDocumentation, FeideGroup, FeideProfile, FieldOfStudy, isMaster, Membership, MembershipDocumentation, UserId } from "@dotkomonline/types"
+import { FeideDocumentation, FeideDocumentationSchema, FeideGroup, FeideProfile, FieldOfStudy, isMaster, Membership, MembershipDocumentation, UserId } from "@dotkomonline/types"
 import { FeideRepository } from "../external/feide-repository"
 import { MembershipRepository } from "./membership-repository"
 import { Cursor } from "../../utils/db-utils"
+import { env } from "@dotkomonline/env"
+import jwt from "jsonwebtoken"
 
 export function createDocumentation(groups: FeideGroup[], profile: FeideProfile): MembershipDocumentation {
   const subjects = groups
@@ -102,7 +104,7 @@ const isBachelorStudy = (studyProgramme: string) => BACHELOR_STUDY_CODES.include
 
 
 export interface MembershipService {
-  updateAutomatically(userId: UserId, documentation: FeideDocumentation): Promise<Membership | undefined>
+  updateAutomatically(userId: UserId, documentationJWT: string): Promise<Membership | undefined>
   getDocumentation(userId: UserId): Promise<MembershipDocumentation>
   getById(userId: UserId): Promise<Membership | undefined>
   getAll(take: number, cursor?: Cursor): Promise<Membership[]>
@@ -114,10 +116,11 @@ export interface MembershipService {
 export class MembershipServiceImpl {
   constructor(
     private readonly membershipRepository: MembershipRepository,
-    private readonly feideRepository: FeideRepository
+    private readonly feideRepository: FeideRepository,
   ) {}
 
-  async updateAutomatically(userId: UserId, documentation: FeideDocumentation): Promise<Membership | undefined> {
+  async updateAutomatically(userId: UserId, documentationJWT: string): Promise<Membership | undefined> {
+    const documentation = FeideDocumentationSchema.parse(jwt.verify(documentationJWT, env.FEIDE_JWT_SECRET) as FeideDocumentation)
     const existingMembership = await this.membershipRepository.getById(userId)
     const defaultMembership = calculateDefaultMembership(documentation)
 
@@ -132,7 +135,7 @@ export class MembershipServiceImpl {
     }
 
     // Upgrade bachelor students to master students
-    if (existingMembership?.fieldOfStudy === "BACHELOR" && isMaster(defaultMembership.fieldOfStudy)) {
+    if (existingMembership.fieldOfStudy === "BACHELOR" && isMaster(defaultMembership.fieldOfStudy)) {
       return this.membershipRepository.update(userId, defaultMembership)
     }
 
@@ -142,12 +145,8 @@ export class MembershipServiceImpl {
   }
 
   async getDocumentation(accessToken: string): Promise<MembershipDocumentation> {
-    console.log("crip walk")
     const groups = await this.feideRepository.getFeideGroups(accessToken)
     const profile = await this.feideRepository.getFeideProfileInformation(accessToken)
-    console.log("crip walk")
-    console.log(groups)
-    console.log(profile)
 
     return createDocumentation(groups, profile)
   }

@@ -1,4 +1,4 @@
-import PersonvernOption from "./SettingsToggleOption"
+import PersonvernOption from "../(profile)/SettingsToggleOption"
 
 export const toggleItems = [
   {

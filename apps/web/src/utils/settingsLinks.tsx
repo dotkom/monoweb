@@ -6,6 +6,12 @@ export const settingsItems = [
     description: "Endre din profilinformasjon",
   },
   {
+    title: "Medlemskap",
+    slug: "/settings/membership",
+    icon: "tabler:address-book",
+    description: "Oppdater ditt medlemskap",
+  },
+  {
     title: "Personvern",
     slug: "/settings/privacy",
     icon: "uil:shield-check",

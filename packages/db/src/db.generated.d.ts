@@ -197,6 +197,7 @@ export interface Mark {
 }
 
 export interface MembershipRequests {
+  auth0UserId: string;
   classYear: number;
   comment: string | null;
   createdAt: Generated<Timestamp>;
@@ -205,7 +206,6 @@ export interface MembershipRequests {
   preapproved: Generated<boolean>;
   status: MembershipRequestStatus;
   updatedAt: Generated<Timestamp>;
-  userId: string;
 }
 
 export interface Memberships {
@@ -254,7 +254,6 @@ export interface OwUser {
   name: string;
   phone: string;
   picture: string | null;
-  studyYear: number | null;
   updatedAt: Generated<Timestamp>;
 }
 

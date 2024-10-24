@@ -120,6 +120,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   const feideRepository: FeideRepository = new FeideRepositoryImpl()
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
   const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)

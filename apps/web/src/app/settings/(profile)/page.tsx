@@ -1,4 +1,4 @@
-import SettingsProfile from "@/components/views/SettingsView/components/SettingsProfile"
+import SettingsProfile from "./SettingsProfile"
 import { getServerClient } from "@/utils/trpc/serverClient"
 import { authOptions } from "@dotkomonline/auth/src/web.app"
 import { getServerSession } from "next-auth"
@@ -18,9 +18,8 @@ const SettingsPage = async () => {
     redirect("/onboarding")
   }
 
-  return <div className="px-4">
-    <SettingsProfile user={user} />
-  </div>
+  return <SettingsProfile user={user} />
 }
+
 
 export default SettingsPage

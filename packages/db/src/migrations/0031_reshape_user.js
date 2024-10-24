@@ -25,6 +25,9 @@ export async function up(db) {
   
   await db.schema.alterTable("ow_user")
     .addColumn("biography", "text", col => col.defaultTo("").notNull()).execute()
+  
+  await db.schema.alterTable("ow_user")
+    .dropColumn("studyYear").execute()
 }
 
 /** @param db {import('kysely').Kysely} */
@@ -53,4 +56,7 @@ export async function down(db) {
   
   await db.schema.alterTable("ow_user")
     .dropColumn("biography").execute()
+  
+  await db.schema.alterTable("ow_user")
+    .addColumn("studyYear", "integer", col => col.notNull().defaultTo(-1)).execute()
 }

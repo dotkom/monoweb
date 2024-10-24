@@ -49,9 +49,6 @@ export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
           return `${attendee.user.name}`
         },
       }),
-      columnHelper.accessor("user.studyYear", {
-        header: () => "Klassetrinn",
-      }),
       columnHelper.accessor((attendee) => attendee, {
         id: "attend",
         header: () => "Møtt",

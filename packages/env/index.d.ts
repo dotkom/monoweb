@@ -29,6 +29,7 @@ export declare type EnvironmentKeys =
   | "DATAPORTEN_CLIENT_ID"
   | "DATAPORTEN_CLIENT_SECRET"
   | "DATAPORTEN_REDIRECT_URI"
+  | "FEIDE_JWT_SECRET"
 
 export declare type Environment = Record<EnvironmentKeys, string>
 

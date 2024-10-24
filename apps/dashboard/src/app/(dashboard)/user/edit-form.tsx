@@ -41,10 +41,6 @@ export const useUserEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: U
         label: "Allergier",
         placeholder: "Gluten",
       }),
-      studyYear: createNumberInput({
-        label: "Studieår",
-        placeholder: "2",
-      }),
       gender: createTextInput({
         label: "Kjønn",
         placeholder: "Kvinne",

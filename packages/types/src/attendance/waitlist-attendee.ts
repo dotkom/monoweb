@@ -11,8 +11,6 @@ export const WaitlistAttendeeSchema = z.object({
   isPunished: z.boolean(),
   registeredAt: z.date(),
 
-  studyYear: z.number().int(),
-
   attendancePoolId: z.string().ulid(),
 
   name: z.string(),

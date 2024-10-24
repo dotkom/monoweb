@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import ProfileMenuItem from "./SettingsMenuItem"
 
-const MobileMenuContainer = () => {
+export const MobileMenuContainer = () => {
   const currentSlug = usePathname()
   const currentLink = settingsItems.find((item) => item.slug === currentSlug)
   const [open, setOpen] = useState(false)
@@ -52,5 +52,3 @@ const MobileMenuContainer = () => {
     </div>
   )
 }
-
-export default MobileMenuContainer

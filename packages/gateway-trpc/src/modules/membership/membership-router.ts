@@ -30,6 +30,14 @@ export const membershipRouter = t.router({
     .query(async ({ input, ctx }) => ctx.membershipService.getDocumentation(input.accessToken)),
   
   updateAutomatically: protectedProcedure
-    .input(z.object({ documentationJWT: FeideDocumentationSchema }))
-    .mutation(async ({ input, ctx }) => ctx.membershipService.updateAutomatically())
+    .input(z.object({ documentationJWT: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.userService.getByAuth0Id(ctx.auth.userId)
+
+      if (!user) {
+        throw new Error("User not found")
+      }
+
+      ctx.membershipService.updateAutomatically(user.id, input.documentationJWT)
+    }),
 })

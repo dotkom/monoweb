@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { FeideDocumentationSchema } from "./feide"
 
-export const FieldOfStudySchema = z.enum([
+export const FieldsOfStudy = [
   "BACHELOR",
 
   "MASTER_SOFTWARE_ENGINEERING",
@@ -17,7 +17,9 @@ export const FieldOfStudySchema = z.enum([
   "PHD",
   "INTERNATIONAL",
   "OTHER_MEMBER",
-])
+] as const
+
+export const FieldOfStudySchema = z.enum(FieldsOfStudy)
 
 export const isMaster = (fieldOfStudy: FieldOfStudy): boolean => {
   return [

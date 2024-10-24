@@ -12,7 +12,6 @@ export const UserSchema = z.object({
   name: z.string(),
   phone: z.string(),
   biography: z.string(),
-  studyYear: z.number().int().min(-1).max(6).nullable(),
   allergies: z.string(),
   picture: z.string().nullable(),
 })
@@ -34,30 +33,3 @@ export const UserEditableFieldsSchema = UserSchema.pick({
 })
 
 export type UserEditableFields = z.infer<typeof UserEditableFieldsSchema>
-
-export interface StudyYears {
-  [-1]: string
-  0: string
-  1: string
-  2: string
-  3: string
-  4: string
-  5: string
-  6: string
-}
-
-export const StudyYearAliases = {
-  [-1]: "Ingen medlemskap",
-  [0]: "Sosialt medlem",
-  [1]: "1. klasse",
-  [2]: "2. klasse",
-  [3]: "3. klasse",
-  [4]: "4. klasse",
-  [5]: "5. klasse",
-  [6]: "PhD",
-} as StudyYears
-
-export const studyYearOptions = Object.entries(StudyYearAliases).map(([value, label]) => ({
-  value: Number.parseInt(value),
-  label,
-}))

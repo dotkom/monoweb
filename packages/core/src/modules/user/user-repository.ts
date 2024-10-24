@@ -72,14 +72,10 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   private mapUpdate = (data: Partial<User>): Updateable<Database["owUser"]> => {
-    const { studyYear, ...rest } = data
-
-    return { ...rest, studyYear: studyYear ?? undefined }
+    return data
   }
 
   private mapInsert = (data: UserWrite): Insertable<Database["owUser"]> => {
-    const { studyYear, ...rest } = data
-
-    return { ...rest, studyYear: studyYear ?? undefined }
+    return data
   }
 }

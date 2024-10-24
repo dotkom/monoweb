@@ -1,33 +1,14 @@
 "use client"
 
-import { Button, Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectLabel, SelectPortal, SelectTrigger, SelectValue, SelectViewport, TextInput, Textarea } from "@dotkomonline/ui"
-import { FeideDocumentation, UserEditableFields } from "@dotkomonline/types";
-import { forwardRef, PropsWithChildren } from "react";
+import { Button, TextInput, Textarea } from "@dotkomonline/ui"
+import { UserEditableFields } from "@dotkomonline/types";
+import { PropsWithChildren } from "react";
 import { NextPage } from "next";
 import { Controller, useForm } from "react-hook-form";
 import { trpc } from "@/utils/trpc/client";
 import { Session } from "next-auth";
 import { useRouter } from "next/navigation";
-
-const SimpleSelect = forwardRef<HTMLButtonElement, { options: { label: string, value: string }[] } & React.ComponentProps<typeof Select>>(
-  ({ options, value, onValueChange, ...props }, ref) => <Select {...props} value={value} onValueChange={e => onValueChange?.(e)}>
-    <SelectTrigger ref={ref} value={value}>
-      <SelectValue placeholder="Velg" />
-      <SelectIcon />
-    </SelectTrigger>
-    <SelectPortal>
-      <SelectContent>
-        <SelectViewport>
-          <SelectGroup>
-            {options.map(option => (
-              <SelectItem key={option.value} label={option.label} value={option.value} />
-            ))}
-          </SelectGroup>
-        </SelectViewport>
-      </SelectContent>
-    </SelectPortal>
-  </Select>
-)
+import { EnumSelect } from "@dotkomonline/ui";
 
 const SignupSection = ({ children, label, reason }: PropsWithChildren<{label: string, reason: string}>) => (
   <div className="flex flex-col py-2">
@@ -52,13 +33,16 @@ export const OnboardingForm: NextPage<{ session: Session, feideDocumentationJWT:
   const router = useRouter();
 
   const signupMutation = trpc.user.signup.useMutation();
-  const membershipMutation = trpc.membership
+  const membershipMutation = trpc.membership.updateAutomatically.useMutation();
 
   const onSubmit = async (data: UserEditableFields) => {
-    console.log("data:", data)
-    const result = await signupMutation.mutateAsync({
+    await signupMutation.mutateAsync({
       signupInformation: data,
       feideDocumentationJWT: feideDocumentationJWT
+    })
+    await membershipMutation.mutateAsync({
+      userId: session.sub,
+      documentationJWT: feideDocumentationJWT
     })
     router.push("/");
   }
@@ -78,7 +62,7 @@ export const OnboardingForm: NextPage<{ session: Session, feideDocumentationJWT:
           name="gender"
           control={control}
           render={({ field }) => (
-            <SimpleSelect
+            <EnumSelect
               options={[
                 { label: "Kvinne", value: "female" },
                 { label: "Mann", value: "male"},

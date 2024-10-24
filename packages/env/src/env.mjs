@@ -38,6 +38,8 @@ export const createEnvironment = () =>
       DATAPORTEN_CLIENT_ID: environmentVariableSchema,
       DATAPORTEN_CLIENT_SECRET: environmentVariableSchema,
       DATAPORTEN_REDIRECT_URI: environmentVariableSchema,
+
+      FEIDE_JWT_SECRET: environmentVariableSchema,
     },
     client: {
       NEXT_PUBLIC_NODE_ENV: environmentVariableSchema.optional(),
@@ -58,6 +60,7 @@ export const createEnvironment = () =>
 
       DATABASE_URL: process.env.DATABASE_URL,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+      FEIDE_JWT_SECRET: process.env.FEIDE_JWT_SECRET,
 
       NODE_ENV: process.env.NODE_ENV,
       NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,

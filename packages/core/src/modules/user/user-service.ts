@@ -39,7 +39,7 @@ export class UserServiceImpl implements UserService {
     private readonly userRepository: UserRepository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository,
-    private readonly auth0Repository: Auth0Repository
+    private readonly auth0Repository: Auth0Repository,
   ) {}
 
   async getByAuth0Id(auth0Id: string) {
@@ -113,7 +113,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async signup(auth0Id: string, signupInfo: UserEditableFields, feideDocumentationJWT: string): Promise<User> {
-    const feideDocumentation = FeideDocumentationSchema.parse(jwt.verify(feideDocumentationJWT, env.NEXTAUTH_SECRET))
+    const feideDocumentation = FeideDocumentationSchema.parse(jwt.verify(feideDocumentationJWT, env.FEIDE_JWT_SECRET))
 
     const auth0User = await this.auth0Repository.get(auth0Id)
     if (!auth0User) {

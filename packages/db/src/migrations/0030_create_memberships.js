@@ -36,7 +36,6 @@ export async function up(db) {
   await db.schema.createType("membership_request_status").asEnum(["PENDING", "ACCEPTED", "REJECTED"]).execute()
 
   await createTableWithDefaults("membership_requests", { createdAt: true, updatedAt: true }, db.schema)
-    .addColumn("user_id", sql`ulid`, (col) => col.notNull().references("ow_user.id").primaryKey().onDelete("cascade"))
     .addColumn("field_of_study", sql`field_of_study`, (col) => col.notNull())
     .addColumn("class_year", "integer", (col) => col.notNull())
     .addColumn("status", sql`membership_request_status`, (col) => col.notNull())

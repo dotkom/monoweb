@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   }
 
   const membershipDocumentation = await trpc.membership.getDocumentation({accessToken: tokenSet.access_token})
-  console.log("membershipDocumentation", membershipDocumentation)
+
   const user = await trpc.user.getByAuth0Id(session.sub)
   const userExists = Boolean(user)
 
@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
   )
 
   response.cookies.set("feideDocumentationJWT", createFeideDocumentationJWT(membershipDocumentation), {
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
-  });
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+  })
 
   return response
 }
