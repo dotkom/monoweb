@@ -1,6 +1,10 @@
 import { type SelectQueryBuilder, sql } from "kysely"
 import { z } from "zod"
 
+export type Keys<T> = {
+  [K in keyof T]: unknown
+}
+
 type ObjectWithKey<T> = T extends object ? T : never
 type ObjectWithStringifiedProperty<T extends object, K extends keyof T> = T & { [Property in K]: string }
 
@@ -13,6 +17,40 @@ export function withInsertJsonValue<T extends object, K extends keyof T>(
   return {
     ...originalObject,
     [propertyToConvert]: stringifiedPropertyValue,
+  }
+}
+
+// https://node-postgres.com/features/types#date--timestamp--timestamptz deserialized datetime fields automatically, but when using json_build_object, the createdAt field is returned as a string instead of being parsed as a Date.
+// This function deserializes datetime fields to js Date objects if they are present in the result.
+export const fixJsonDatesStandardCols = <T extends { createdAt?: string | Date; updatedAt?: string | Date }>(
+  obj?: T | null | undefined
+): T => {
+  let final = {}
+  if (typeof obj?.createdAt === "string") {
+    final = {
+      createdAt: new Date(obj.createdAt),
+    }
+  }
+
+  if (typeof obj?.updatedAt === "string") {
+    final = {
+      ...final,
+      updatedAt: new Date(obj.updatedAt),
+    }
+  }
+
+  if (!obj) return {} as T
+
+  return {
+    ...obj,
+    ...final,
+  }
+}
+
+export const fixDate = <T>(obj: T, prop: keyof T) => {
+  return {
+    ...obj,
+    [prop]: new Date(obj[prop] as string),
   }
 }
 
@@ -39,61 +77,4 @@ export function orderedQuery<DB, TB extends keyof DB, O>(qb: SelectQueryBuilder<
   }
 
   return queryBuilder.orderBy(sql`id`, "desc")
-}
-
-/**
- * Wrap a sub-query with the necessary pagination queries, and return the resulting collection.
- *
- * This takes a QueryBuilder created with `db.selectFrom(...)` and a cursor, and fetches the requested page from the
- * database. Then it maps each database record to a wanted output type.
- */
-export const paginatedQuery = async <T extends OrderedIdentifier, DB, TB extends keyof DB, O extends OrderedIdentifier>(
-  qb: SelectQueryBuilder<DB, TB, O>,
-  pageable: Pageable,
-  mapper: (payload: O) => T
-): Promise<Collection<T>> => {
-  // Take N+1 to determine if there is a record behind `take`.
-  const pageWithNextLength = pageable.take + 1
-  let builder = qb.limit(pageWithNextLength)
-  // If a cursor was provided, skip forwards to the specified record
-  if (pageable.cursor !== undefined) {
-    builder = builder.where(sql`id`, "<", sql`${pageable.cursor.id}`)
-  }
-  // Always perform ordering on id.
-  builder = builder.orderBy(sql`id`, "desc")
-
-  // Perform the query and build the output
-  const records = await builder.execute()
-  const hasNextCursor = records.length !== 0 && records.length === pageWithNextLength
-  const last = records.at(-1)
-
-  let cursor: Cursor | null = null
-  if (hasNextCursor && last !== undefined) {
-    cursor = {
-      id: last.id,
-    }
-  }
-
-  const data = records.slice(0, pageable.take).map(mapper)
-  return {
-    next: cursor,
-    data,
-    count: Math.min(pageable.take, data.length),
-  }
-}
-
-/**
- * Trait type for anything that has an id.
- *
- * Any type that should be pageable in the collections system must have an identifier that is monotonically ordered. In
- * our case, we have ULID identifiers on all resources.
- */
-export interface OrderedIdentifier {
-  id: string
-}
-
-export interface Collection<T extends OrderedIdentifier> {
-  data: T[]
-  count: number
-  next: Cursor | null
 }

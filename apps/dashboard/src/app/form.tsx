@@ -1,12 +1,10 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  Anchor,
   Box,
   Button,
   Checkbox,
   type CheckboxProps,
-  FileInput,
   type FileInputProps,
   Flex,
   MultiSelect,
@@ -37,15 +35,17 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
+import FileAssetInput from "../components/molecules/ImageUpload/FileAssetInput"
+import ImageUploadInput from "../components/molecules/ImageUpload/ImageUploadInput"
 
-interface InputFieldContext<T extends FieldValues> {
+export interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
   control: Control<T>
   state: FormState<T>
   defaultValue: FieldValue<T>
 }
-type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
+export type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 
 export function createMultipleSelectInput<F extends FieldValues>({
   ...props
@@ -254,35 +254,46 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
-export function createFileInput<F extends FieldValues>({
+export function createImageInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
-  existingFileUrl?: string
+  cropAspectLock?: number
 }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
         <Text>{props.label}</Text>
-        {props.existingFileUrl ? (
-          <Anchor href={props.existingFileUrl} mb="sm" display="block">
-            Link til ressurs
-          </Anchor>
-        ) : (
-          <Text mb="sm" fs="italic">
-            Ingen fil lastet opp
-          </Text>
-        )}
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
         <Controller
           control={control}
           name={name}
           render={({ field }) => (
-            <FileInput
-              {...props}
-              value={field.value}
-              onChange={(value) => field.onChange({ target: { value } })}
-              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-              label=""
+            <ImageUploadInput
+              setImageVariant={field.onChange}
+              imageVariant={field.value}
+              cropAspectLock={props.cropAspectLock}
+              error={state.errors[name]}
             />
+          )}
+        />
+      </Box>
+    )
+  }
+}
+
+export function createFileInput<F extends FieldValues>({
+  ...props
+}: Omit<FileInputProps, "error">): InputProducerResult<F> {
+  return function FormFileInput({ name, state, control }) {
+    return (
+      <Box>
+        <Text>{props.label}</Text>
+        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <FileAssetInput fileAsset={field.value} setFileAsset={field.onChange} error={state.errors[name] ?? null} />
           )}
         />
       </Box>
@@ -359,8 +370,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          console.log(e)
-          return form.handleSubmit((values) => {
+          form.handleSubmit((values) => {
             return onSubmit(values, form)
           })(e)
         }}

@@ -6,6 +6,7 @@ import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
+import { buildAssetUrl, buildImgUrl } from "../../utils/s3"
 
 interface Props {
   data: Offline[]
@@ -23,15 +24,29 @@ export const useOfflineTable = ({ data }: Props) => {
         header: () => "Utgivelsesdato",
         cell: (info) => <Text>{formatDate(info.getValue(), { relativeDateThresholdDays: 7 })}</Text>,
       }),
-      columnHelper.accessor("fileUrl", {
+      columnHelper.accessor("pdf", {
         header: () => "Fil",
         cell: (info) => {
-          const val = info.getValue()
-          if (val === null) {
+          const asset = info.getValue()
+          if (asset === null) {
             return "Ingen fil"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopenere">
+            <Anchor target="_blank" href={buildAssetUrl(asset.key)} rel="noopenere">
+              Link
+            </Anchor>
+          )
+        },
+      }),
+      columnHelper.accessor("image", {
+        header: () => "Bilde",
+        cell: (info) => {
+          const image = info.getValue()
+          if (image === null) {
+            return "Ingen bilde"
+          }
+          return (
+            <Anchor target="_blank" href={buildImgUrl(image)} rel="noopenere">
               Link
             </Anchor>
           )

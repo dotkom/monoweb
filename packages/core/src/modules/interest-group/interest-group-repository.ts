@@ -6,11 +6,11 @@ import {
   type InterestGroupWrite,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Collection, type Pageable, paginatedQuery } from "../../utils/db-utils"
+import { type Pageable, type PaginatedResult, paginatedQuery } from "../../utils/cursor"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | undefined>
-  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>
+  getAll(pageable: Pageable): Promise<PaginatedResult<InterestGroup>>
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
@@ -28,9 +28,19 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
     return interestGroup ? mapToInterestGroup(interestGroup) : undefined
   }
 
-  async getAll(pageable: Pageable): Promise<Collection<InterestGroup>> {
-    const res = paginatedQuery(this.db.selectFrom("interestGroup").selectAll(), pageable, mapToInterestGroup)
-    return res
+  async getAll(pageable: Pageable) {
+    const query = this.db.selectFrom("interestGroup").selectAll()
+
+    const result = await paginatedQuery(query, {
+      pageable,
+      columns: ["id"],
+      order: "desc",
+    })
+
+    return {
+      next: result.next,
+      data: result.data.map(mapToInterestGroup),
+    }
   }
 
   async create(values: InterestGroupWrite): Promise<InterestGroup> {
