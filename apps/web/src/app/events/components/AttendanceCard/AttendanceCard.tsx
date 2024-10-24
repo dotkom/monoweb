@@ -130,7 +130,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     }
 
     registerMutation.mutate({
-      attendancePoolId: attendablePool?.id,
+      attendancePoolId: attendablePool.id,
       userId: user.id,
     })
 
@@ -143,7 +143,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     }
 
     unregisterMutation.mutate({
-      id: attendee?.id,
+      id: attendee.id,
     })
 
     refetchEventDetail()

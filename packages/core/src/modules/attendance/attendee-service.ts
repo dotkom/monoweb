@@ -179,7 +179,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const userAlreadyRegistered = await this.attendeeRepository
       .getByUserId(userId, attendanceId)
-      .then((attendee) => attendee !== null)
+      .then((attendee) => Boolean(attendee))
 
     if (userAlreadyRegistered) {
       throw new AttendeeRegistrationError("User already registered")
@@ -206,7 +206,6 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("Attendance has ended")
     }
 
-    // Check if the pool is full
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
 
     if (numAttendees > attendancePool.capacity) {
