@@ -34,10 +34,10 @@ const PasswordPage = async () => {
   return <>
     <h2>Ditt medlemmskap</h2>
     <SettingsField title="Studieretning">
-      <TextInput disabled width="w-full" value={fieldOfStudyName(membership.fieldOfStudy)} className="w-full"/>
+      <TextInput disabled width="w-full" value={fieldOfStudyName(membership.onlineFieldOfStudy)} className="w-full"/>
     </SettingsField>
     <SettingsField title="Klassetrinn">
-      <TextInput disabled width="w-full" value={`${membership.classYear}. klasse`} />
+      <TextInput disabled width="w-full" value={`${new Date().getFullYear() - membership.classYear + 1}. klasse`} />
     </SettingsField>
 
     <SettingsSection className="flex gap-4">
