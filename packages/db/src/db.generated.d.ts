@@ -9,8 +9,6 @@ export type EventStatus = "ATTENDANCE" | "NO_LIMIT" | "PUBLIC" | "TBA";
 
 export type EventType = "ACADEMIC" | "BEDPRES" | "COMPANY" | "SOCIAL";
 
-export type FieldOfStudy = "BACHELOR" | "INTERNATIONAL" | "MASTER_ALGORITHMS" | "MASTER_ARTIFICIAL_INTELLIGENCE" | "MASTER_DATABASE_AND_SEARCH" | "MASTER_GAME_TECHNOLOGY" | "MASTER_HEALTH_INFORMATICS" | "MASTER_INTERACTION_DESIGN" | "MASTER_OTHER" | "MASTER_SOFTWARE_ENGINEERING" | "OTHER_MEMBER" | "PHD" | "SOCIAL_MEMBER";
-
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
@@ -27,7 +25,7 @@ export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
-export type MembershipRequestStatus = "ACCEPTED" | "PENDING" | "REJECTED";
+export type OnlineFieldOfStudy = "BACHELOR_INFORMATICS" | "MASTER_INFORMATICS" | "PHD";
 
 export type PaymentProvider = "STRIPE";
 
@@ -196,22 +194,13 @@ export interface Mark {
   updatedAt: Generated<Timestamp>;
 }
 
-export interface MembershipRequests {
-  auth0UserId: string;
-  classYear: number;
-  comment: string | null;
-  createdAt: Generated<Timestamp>;
-  documentation: Json | null;
-  fieldOfStudy: FieldOfStudy;
-  preapproved: Generated<boolean>;
-  status: MembershipRequestStatus;
-  updatedAt: Generated<Timestamp>;
-}
-
 export interface Memberships {
-  classYear: number;
+  classYear: number | null;
   createdAt: Generated<Timestamp>;
-  fieldOfStudy: FieldOfStudy;
+  extraordinaryFullMembership: Generated<boolean>;
+  onlineFieldOfStudy: OnlineFieldOfStudy | null;
+  socialMembership: Generated<boolean>;
+  studyprogrammeCodes: Json;
   updatedAt: Generated<Timestamp>;
   userId: string;
 }
@@ -346,7 +335,6 @@ export interface DB {
   jobListingLocation: JobListingLocation;
   jobListingLocationLink: JobListingLocationLink;
   mark: Mark;
-  membershipRequests: MembershipRequests;
   memberships: Memberships;
   notificationPermissions: NotificationPermissions;
   offline: Offline;

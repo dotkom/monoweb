@@ -359,7 +359,6 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          console.log(e)
           return form.handleSubmit((values) => {
             return onSubmit(values, form)
           })(e)

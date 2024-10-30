@@ -49,9 +49,6 @@ export async function down(db) {
     .execute()
 
   await db.schema.alterTable("ow_user")
-    .alterColumn("studyYear", col => col.setDefault(sql`'-1'::integer`)).execute()
-
-  await db.schema.alterTable("ow_user")
     .alterColumn("phone", col => col.dropNotNull()).execute()
   
   await db.schema.alterTable("ow_user")

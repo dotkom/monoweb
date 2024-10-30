@@ -3,6 +3,7 @@ import { getServerSession, type DefaultSession, type DefaultUser, type NextAuthO
 import Auth0Provider from "next-auth/providers/auth0"
 import Providers from 'next-auth/providers';
 import { redirect } from "next/navigation";
+import { cookies, headers } from "next/headers";
 
 interface Auth0IdTokenClaims {
   given_name: string
@@ -27,6 +28,7 @@ declare module "next-auth" {
     user: User
     sub: string
     id: string
+    onboarding?: boolean
   }
 
   interface User extends DefaultUser {

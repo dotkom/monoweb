@@ -6,6 +6,7 @@ export const FeideGroupMembershipSchema = z.object({
   affiliation: z.array(z.string()).optional(),
   primaryAffiliation: z.string().optional(),
   title: z.array(z.string()).optional(),
+  notAfter: z.string().datetime().optional(),
 })
 
 export const FeideGroupSchema = z.object({
@@ -13,7 +14,7 @@ export const FeideGroupSchema = z.object({
   type: z.string(),
   displayName: z.string(),
   membership: FeideGroupMembershipSchema.optional(),
-})
+}).passthrough()
 
 export const FeideProfileSchema = z.object({
   norEduPersonLegalName: z.string(),

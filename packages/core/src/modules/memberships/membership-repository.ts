@@ -36,7 +36,7 @@ export class MembershipRepositoryImpl implements MembershipRepository {
   async create(userId: UserId, membershipInsert: Membership): Promise<Membership> {
     const membership = await this.db
       .insertInto("memberships")
-      .values({...membershipInsert, userId})
+      .values({...withInsertJsonValue(membershipInsert, "studyprogrammeCodes"), userId})
       .returningAll()
       .executeTakeFirstOrThrow()
     return mapToMembership(membership)
@@ -45,7 +45,7 @@ export class MembershipRepositoryImpl implements MembershipRepository {
   async update(userId: UserId, membershipUpdate: Membership): Promise<Membership | undefined> {
     const membership = await this.db
       .updateTable("memberships")
-      .set(membershipUpdate)
+      .set(withInsertJsonValue(membershipUpdate, "studyprogrammeCodes"))
       .where("userId", "=", userId)
       .returningAll()
       .executeTakeFirst()

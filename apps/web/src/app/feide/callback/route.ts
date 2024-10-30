@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
   const userExists = Boolean(user)
 
   const response = NextResponse.redirect(
-    new URL(userExists ? "/settings" : "/onboarding", request.url).toString(),
+    new URL(userExists ? "/settings/membership" : "/onboarding", request.url).toString(),
     {
       status: 302,
     }

@@ -27,7 +27,7 @@ const PasswordPage = async () => {
 
   if (!membership) {
     return <div className="pb-8">
-      <h2>Du har ikke noe medlemsskap.</h2>
+      <h2>Du har ikke noe medlemsskap</h2>
     </div>
   }
 
