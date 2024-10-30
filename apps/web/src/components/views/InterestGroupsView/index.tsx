@@ -1,4 +1,5 @@
 import InterestGroupList from "@/components/organisms/InterestGroupList";
+import { Button } from "@dotkomonline/ui";
 import Link from "next/link";
 
 export const InterestGroupsView = () => {
@@ -13,31 +14,31 @@ export const InterestGroupsView = () => {
                 interesser. Har du og en kompis eller to en
                 sær/stilig/fantastisk interesse? Opprett en interessegruppe!
             </p>
-            <h2 className="border-none mb-2 !mt-8">
-                Opprettelse av interessegruppe og søknad til støtte
-            </h2>
-            <p>
-                For å opprette en ny interessegruppe, ta over en eksisterende,
-                eller søke om økonomisk støtte til din interessegruppe, send en
-                mail til{" "}
-                <Link
-                    className="hover:underline text-blue-8"
-                    href={"mailto:backlog@online.ntnu.no"}
-                >
-                    backlog@online.ntnu.no
-                </Link>
-            </p>
-            <p>
+            <p className="pt-4">
                 Mer informasjon om hvordan dette gjøres finnes{" "}
                 <Link
                     className="hover:underline text-blue-8"
                     href={
-                        "https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper"
+                        "https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"
                     }
                 >
                     her.
                 </Link>
             </p>
+            <Link
+                href={
+                    "https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"
+                }
+            >
+                <Button className="mr-4 mt-4">Opprett interessegruppe</Button>
+            </Link>
+            <Link
+                href={
+                    "https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
+                }
+            >
+                <Button>Søk om støtte</Button>
+            </Link>
             <div className="mt-16">
                 <InterestGroupList />
             </div>
