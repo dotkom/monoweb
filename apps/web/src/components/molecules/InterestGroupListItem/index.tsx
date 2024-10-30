@@ -10,7 +10,7 @@ export interface InterestGroupListItemProps {
 const InterestGroupListItem: FC<InterestGroupListItemProps> = (
     props: InterestGroupListItemProps
 ) => (
-    <div className="p-4 py-8 text-center m-1 shadow-md min-w-[250px] flex flex-col">
+    <div className="p-4 py-8 text-center m-1 shadow-md rounded-lg border-slate-3 border min-w-[250px] flex flex-col">
         <OnlineIcon className="w-5/12 mx-auto max-w-[150px] min-w-[120px]" />
         <h2 className="!text-3xl border-none !mt-4">
             {props.interestGroup.name}

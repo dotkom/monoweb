@@ -13,6 +13,48 @@ export const InterestGroupList = async () => {
                     interestGroup={interestGroup}
                 />
             ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
+                        {interestGroups.map((interestGroup, index) => (
+                <InterestGroupListItem
+                    key={index}
+                    interestGroup={interestGroup}
+                />
+            ))}
         </div>
     );
 };

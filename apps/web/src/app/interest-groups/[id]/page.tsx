@@ -1,42 +1,43 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon";
 import { getServerClient } from "@/utils/trpc/serverClient";
 import Link from "next/link";
+import { BackButton } from "@dotkomonline/ui";
 
 const InterestPage = async ({ params: { id } }: { params: { id: string } }) => {
     const serverClient = await getServerClient();
     const interestGroup = await serverClient.interestGroup.get(id);
 
     return interestGroup != null ? (
-        <div className="p-4 py-8 my-16 mx-auto shadow-md w-10/12 flex flex-row">
-            <div className="mr-4">
-                <h2 className="text-lg border-none !mt-4">
-                    {interestGroup.name}
-                </h2>
-                <p className="mt-2">
-                    {interestGroup.longDescription
-                        ? interestGroup.longDescription
-                        : interestGroup.description}
-                </p>
-                {interestGroup.joinInfo && (
-                    <div>
-                        <h3 className="text-lg border-none !mt-4">Kontakt</h3>
-                        {interestGroup.joinInfo}
-                    </div>
-                )}
-                {interestGroup.link && (
-                    <div>
-                        <h3 className="text-lg border-none !mt-4">Wikiside</h3>
+        <div className="p-14 my-16 mx-auto border-slate-3 rounded-lg border shadow-md w-10/12 ">
+            <BackButton className="bg-transparent p-0 hover:underline mb-4">
+                {"<"} Tilbake
+            </BackButton>
+            <div className="flex md:flex-row flex-col-reverse">
+                <div className="mr-4">
+                    <h2 className="text-lg border-none !mt-4">
+                        {interestGroup.name}
+                    </h2>
+                    <p className="mt-2">
+                        {interestGroup.longDescription
+                            ? interestGroup.longDescription
+                            : interestGroup.description}
+                    </p>
+                    {interestGroup.joinInfo && (
+                        <section className="mt-10">
+                            <h3 className="text-lg border-none">Kontakt</h3>
+                            {interestGroup.joinInfo}
+                        </section>
+                    )}
+                    {interestGroup.link && (
                         <Link
-                            className="hover:underline text-blue-8"
+                            className="hover:underline text-blue-10 block mt-4"
                             href={`${interestGroup.link}`}
                         >
-                            {interestGroup.link}
+                            Gå til Wikisiden her
                         </Link>
-                    </div>
-                )}
-            </div>
-            <div className="ml-auto">
-                <OnlineIcon className="w-[50%] min-w-[150px] ml-auto" />
+                    )}
+                </div>
+                <OnlineIcon className="max-w-[200px] min-w-[200px] py-auto m-auto sm:mb-auto mb-9 mt-2" />
             </div>
         </div>
     ) : (
