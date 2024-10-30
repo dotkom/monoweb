@@ -29,6 +29,7 @@
     "test": "turbo run test",
     "test:it": "turbo run test:it",
     "dev": "dotenv -e .env -- turbo run dev",
+    "dev:web": "dotenv -e .env -- turbo run dev --filter=@dotkomonline/rpc --filter=@dotkomonline/web --filter=@dotkomonline/dashboard",
     "migrate": "dotenv -e .env -- turbo run migrate && cd packages/db && pnpm generate-types",
     "migrate-down": "dotenv -e .env -- turbo run migrate -- down && cd packages/db && pnpm generate-types",
     "migrate-down-all": "dotenv -e .env -- turbo run migrate -- down-all && cd packages/db && pnpm generate-types",
