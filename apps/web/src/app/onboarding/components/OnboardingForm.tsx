@@ -44,7 +44,7 @@ export const OnboardingForm: NextPage<{ session: Session, feideDocumentationJWT:
       userId: session.sub,
       documentationJWT: feideDocumentationJWT
     })
-    router.push("/");
+    router.push("/settings/membership")
   }
   
   return <div className="flex w-full flex-col space-y-4">

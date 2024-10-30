@@ -79,6 +79,9 @@ export const getAuthOptions = ({
       }
 
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      return "/onboarding"
     }
   },
 })
