@@ -1,7 +1,6 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon";
 import { getServerClient } from "@/utils/trpc/serverClient";
 import Link from "next/link";
-import { BackButton } from "@dotkomonline/ui";
 
 const InterestPage = async ({ params: { id } }: { params: { id: string } }) => {
     const serverClient = await getServerClient();
@@ -9,9 +8,11 @@ const InterestPage = async ({ params: { id } }: { params: { id: string } }) => {
 
     return interestGroup != null ? (
         <div className="p-14 my-16 mx-auto border-slate-3 rounded-lg border shadow-md w-10/12 ">
-            <BackButton className="bg-transparent p-0 hover:underline mb-4">
+            <Link
+                className="bg-transparent p-0 hover:underline mb-4"
+                href={`/interest-groups`}>
                 {"<"} Tilbake
-            </BackButton>
+            </Link>
             <div className="flex md:flex-row flex-col-reverse">
                 <div className="mr-4">
                     <h2 className="text-lg border-none !mt-4">
