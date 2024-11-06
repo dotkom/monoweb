@@ -4,7 +4,6 @@ import { env } from "@dotkomonline/env"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import { type CreateTRPCClientOptions, httpBatchLink, loggerLink } from "@trpc/client"
 import { createTRPCReact } from "@trpc/react-query"
-import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
 import superjson from "superjson"
 
 const getBaseUrl = () => {
@@ -35,15 +34,3 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
 
 // React query trpc
 export const trpc = createTRPCReact<AppRouter>({})
-
-/**
- * Inference helpers for input types
- * @example type HelloInput = RouterInputs['example']['hello']
- **/
-export type RouterInputs = inferRouterInputs<AppRouter>
-
-/**
- * Inference helpers for output types
- * @example type HelloOutput = RouterOutputs['example']['hello']
- **/
-export type RouterOutputs = inferRouterOutputs<AppRouter>

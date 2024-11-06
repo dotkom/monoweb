@@ -9,9 +9,9 @@ import superjson from "superjson"
 
 const getBaseUrl = () => {
   if (env.NEXT_PUBLIC_NODE_ENV === "production") {
-    return "https://web.online.ntnu.no"
+    return "https://rpc.web.online.ntnu.no"
   }
-  return "http://localhost:3000"
+  return "http://localhost:3002"
 }
 
 export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
