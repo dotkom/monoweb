@@ -2,7 +2,7 @@ import { UserWriteSchema } from "@dotkomonline/types"
 import { Title } from "@mantine/core"
 import type { FC } from "react"
 import { useUpdateUserMutation } from "../../../../modules/user/mutations"
-import { useUserProfileEditForm } from "./profile-edit-form"
+import { useUserProfileEditForm } from "./edit-form"
 import { useUserDetailsContext } from "./provider"
 
 export const UserEditCard: FC = () => {
