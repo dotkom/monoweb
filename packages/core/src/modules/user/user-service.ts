@@ -35,6 +35,10 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.createDummyUser(user, password)
   }
 
+  async registerId(auth0Id: string) {
+    return this.userRepository.registerId(auth0Id)
+  }
+
   async getById(auth0Id: string) {
     return this.userRepository.getById(auth0Id)
   }

@@ -1,5 +1,7 @@
+import { Database } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
+import { Kysely } from "kysely"
 import { z } from "zod"
 
 export const AppMetadataProfileSchema = z.object({
@@ -17,6 +19,7 @@ export interface UserRepository {
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   createDummyUser(data: UserWrite, password: string): Promise<User>
+  registerId(auth0Id: string): Promise<void>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -78,6 +81,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
 export class UserRepositoryImpl implements UserRepository {
   constructor(
     private readonly client: ManagementClient,
+    private readonly db: Kysely<Database>
   ) {}
 
   async createDummyUser(data: Omit<User, "id">, password: string): Promise<User> {
@@ -93,6 +97,12 @@ export class UserRepositoryImpl implements UserRepository {
     }
 
     return user
+  }
+
+  async registerId(auth0Id: string): Promise<void> {
+    await this.db.insertInto("owUser").values({ id: auth0Id }).onConflict(
+      (conflict) => conflict.doNothing()
+    ).execute()
   }
 
   async getById(id: UserId): Promise<User | null> {

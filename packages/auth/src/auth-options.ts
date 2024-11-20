@@ -85,6 +85,7 @@ export const getAuthOptions = ({
     async session({ session, token }) {
       if (token.sub) {
         const user: User | null = await core.userService.getById(token.sub)
+        await core.userService.registerId(token.sub)
 
         if (user === null) {
           throw new Error(`Failed to fetch user with id ${token.sub}`)
