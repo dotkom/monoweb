@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { CountryCodes } from "@/utils/countryCodes";
+import { CountryCodes } from "@/utils/countryCodes"
 import {
   Select,
   SelectContent,
@@ -14,21 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
   SelectViewport,
-} from "@dotkomonline/ui";
-import { ReactCountryFlag } from "@fadi-ui/react-country-flag";
-import { ComponentProps } from "react";
-import { useForm } from "react-hook-form";
+} from "@dotkomonline/ui"
+import { type CountryCodes as CountryCodeProps, ReactCountryFlag } from "@fadi-ui/react-country-flag"
+import { useState } from "react"
 
-// steal prop type from Select
-export const CountryCodeSelect = (props: ComponentProps<typeof Select>) => {
+export const CountryCodeSelect = () => {
+  const [currentCountry, setCurrentCountry] = useState<CountryCodeProps>("NO")
   return (
-    <Select
-      {...props}
-      defaultValue="NO" // Set default value
-    >
+    <Select onValueChange={(value) => setCurrentCountry(value as CountryCodeProps)}>
       <SelectTrigger className="w-fit h-full">
-        <ReactCountryFlag countryCode="NO" width={20} />
-        <SelectValue placeholder="+47" />
+        <ReactCountryFlag countryCode={currentCountry} width={20} />
+        <SelectValue placeholder="+47" defaultValue={"NO"} defaultChecked />
         <SelectIcon className="max-sm:hidden" />
       </SelectTrigger>
 
@@ -39,12 +35,16 @@ export const CountryCodeSelect = (props: ComponentProps<typeof Select>) => {
             <SelectGroup>
               <SelectLabel>Landskode</SelectLabel>
               {CountryCodes.sort((a, b) => a.dial_code.localeCompare(b.dial_code)).map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  <div className="flex flex-row items-center justify-between">
-                    <span>{country.dial_code}</span>
-                    <ReactCountryFlag countryCode={country.code} width={20} />
-                  </div>
-                </SelectItem>
+                <div key={country.code} className="flex flex-row items-center justify-between">
+                  <SelectItem
+                    label={country.dial_code}
+                    value={country.code}
+                    onClick={() => {
+                      setCurrentCountry(country.code as CountryCodeProps)
+                    }}
+                  />
+                  <ReactCountryFlag countryCode={country.code as CountryCodeProps} width={20} />
+                </div>
               ))}
             </SelectGroup>
           </SelectViewport>
@@ -52,5 +52,5 @@ export const CountryCodeSelect = (props: ComponentProps<typeof Select>) => {
         </SelectContent>
       </SelectPortal>
     </Select>
-  );
-};
+  )
+}
