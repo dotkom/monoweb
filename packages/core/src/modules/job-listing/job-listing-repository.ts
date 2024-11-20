@@ -1,15 +1,16 @@
 import type { Database } from "@dotkomonline/db"
 import { type JobListing, type JobListingId, JobListingSchema } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql } from "kysely"
+import { type Insertable, type Kysely, type Selectable, sql, Updateable } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 type JobListingWrite = Insertable<Database["jobListing"]>
+type JobListingUpdate = Updateable<Database["jobListing"]>
 
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | undefined>
   getAll(take: number, cursor?: Cursor): Promise<JobListing[]>
   createJobListing(values: JobListingWrite): Promise<JobListing>
-  updateJobListingById(id: JobListingId, data: JobListingWrite): Promise<JobListing>
+  updateJobListingById(id: JobListingId, data: JobListingUpdate): Promise<JobListing>
 }
 
 const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing =>
@@ -46,7 +47,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     return this.getById(jobListing.id)
   }
 
-  async updateJobListingById(id: JobListingId, data: JobListingWrite): Promise<JobListing> {
+  async updateJobListingById(id: JobListingId, data: JobListingUpdate): Promise<JobListing> {
     await this.db.updateTable("jobListing").set(data).where("id", "=", id).execute()
     return this.getById(id)
   }

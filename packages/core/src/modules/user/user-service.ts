@@ -22,6 +22,7 @@ export interface UserService {
   ): Promise<PrivacyPermissions>
   update(userId: UserId, data: Partial<UserWrite>): Promise<User>
   createDummyUser(user: UserWrite, password: string): Promise<User>
+  registerId(auth0Id: string): Promise<void>
 }
 
 export class UserServiceImpl implements UserService {
