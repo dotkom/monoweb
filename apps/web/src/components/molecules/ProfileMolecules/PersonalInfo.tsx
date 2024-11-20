@@ -16,7 +16,7 @@ const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <Avatar className="w-40 h-auto opacity-60">
-        <AvatarImage src={user.image} alt="UserAvatar" />
+        <AvatarImage src={user.image ?? undefined} alt="UserAvatar" />
         <AvatarFallback className="w-40 h-40">{user.name}</AvatarFallback>
       </Avatar>
       <p className="text-lg">{user.name}</p>
