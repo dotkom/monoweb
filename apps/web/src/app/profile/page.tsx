@@ -9,7 +9,11 @@ const ProfilePage = async () => {
     redirect("/")
   }
 
-  return <ProfilePoster user={session.user} />
+  return (
+    <>
+      <ProfilePoster user={session.user} />
+    </>
+  )
 }
 
 export default ProfilePage
