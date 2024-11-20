@@ -1,7 +1,7 @@
-import { Database } from "@dotkomonline/db"
+import type { Database } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
-import { Kysely } from "kysely"
+import type { Kysely } from "kysely"
 import { z } from "zod"
 
 export const AppMetadataProfileSchema = z.object({
@@ -10,7 +10,7 @@ export const AppMetadataProfileSchema = z.object({
   address: z.string(),
   compiled: z.boolean().default(false),
   allergies: z.string(),
-  rfid: z.string()
+  rfid: z.string(),
 })
 
 export interface UserRepository {
@@ -23,7 +23,7 @@ export interface UserRepository {
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const appMetadata: Record<string, unknown> = auth0User.app_metadata ?? {};
+  const appMetadata: Record<string, unknown> = auth0User.app_metadata ?? {}
 
   return {
     id: auth0User.user_id,
@@ -36,7 +36,7 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     rfid: z.string().safeParse(appMetadata.rfid).data,
     compiled: z.boolean().default(false).parse(appMetadata.compiled),
     gender: GenderSchema.safeParse(appMetadata.gender).data,
-    phone: z.string().safeParse(appMetadata.phone).data
+    phone: z.string().safeParse(appMetadata.phone).data,
   }
 }
 
@@ -54,8 +54,8 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
     compiled: user.compiled,
     address: user.address,
     gender: user.gender,
-    phone: user.phone
-  }
+    phone: user.phone,
+  },
 })
 
 const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
@@ -71,8 +71,8 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
       rfid: data.rfid,
       compiled: data.compiled,
       gender: data.gender,
-      phone: data.phone
-    }
+      phone: data.phone,
+    },
   }
 
   return userUpdate
@@ -100,9 +100,11 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async registerId(auth0Id: string): Promise<void> {
-    await this.db.insertInto("owUser").values({ id: auth0Id }).onConflict(
-      (conflict) => conflict.doNothing()
-    ).execute()
+    await this.db
+      .insertInto("owUser")
+      .values({ id: auth0Id })
+      .onConflict((conflict) => conflict.doNothing())
+      .execute()
   }
 
   async getById(id: UserId): Promise<User | null> {

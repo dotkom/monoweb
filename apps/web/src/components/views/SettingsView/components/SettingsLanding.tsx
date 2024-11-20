@@ -1,9 +1,6 @@
 "use client"
-
-import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
-import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
 import { trpc } from "@/utils/trpc/client"
-import type { User, UserWrite } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/types"
 import { Button, TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
 import { useForm } from "react-hook-form"
@@ -38,10 +35,11 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
 
   function handleSubmitForm(data: EditableFields) {
     updateUserMutation.mutate({
-      id: user.id, input: data
+      id: user.id,
+      input: data,
     })
 
-    return false;
+    return false
   }
 
   return (
@@ -52,17 +50,33 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </div>
       */}
       <FormInput title="Epost">
-        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} disabled/>
+        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} disabled />
       </FormInput>
       <FormInput title="Navn">
         <div className="w-full flex flex-wrap justify-center ">
-          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.firstName} {...register("firstName")} />
-          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.lastName} {...register("lastName")} />
+          <TextInput
+            width="flex-1 mb-2 mx-1"
+            placeholder="Fornavn"
+            defaultValue={user.firstName}
+            {...register("firstName")}
+          />
+          <TextInput
+            width="flex-1 mx-1"
+            placeholder="Etternavn"
+            defaultValue={user.lastName}
+            {...register("lastName")}
+          />
         </div>
       </FormInput>
       <FormInput title="Telefon">
         <div className="w-full flex space-x-2">
-          <TextInput width="w-full" maxLength={12} placeholder="Telefon" defaultValue={user.phone} {...register("phone")} />
+          <TextInput
+            width="w-full"
+            maxLength={12}
+            placeholder="Telefon"
+            defaultValue={user.phone}
+            {...register("phone")}
+          />
         </div>
       </FormInput>
       {/*
@@ -79,10 +93,12 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
             <option value="male">Mann</option>
             <option value="female">Kvinne</option>
             <option value="other">Annet</option>
-          </select>  
+          </select>
         </div>
       </FormInput>
-      <Button type="submit" className="px-8" loading={updateUserMutation.isLoading}>Lagre</Button>
+      <Button type="submit" className="px-8" loading={updateUserMutation.isLoading}>
+        Lagre
+      </Button>
     </form>
   )
 }

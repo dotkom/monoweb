@@ -1,6 +1,6 @@
 import type { ServiceLayer } from "@dotkomonline/core"
 import type { User } from "@dotkomonline/types"
-import type { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth"
+import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
 

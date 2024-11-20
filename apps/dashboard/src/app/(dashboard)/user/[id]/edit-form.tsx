@@ -1,5 +1,5 @@
 import { type UserWrite, UserWriteSchema } from "@dotkomonline/types"
-import { createCheckboxInput, createSelectInput, createTagInput, createTextInput, useFormBuilder } from "../../../form"
+import { createCheckboxInput, createSelectInput, createTextInput, useFormBuilder } from "../../../form"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void

@@ -1,6 +1,6 @@
 import type { Database } from "@dotkomonline/db"
 import { type JobListing, type JobListingId, JobListingSchema } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, sql, Updateable } from "kysely"
+import { type Insertable, type Kysely, type Selectable, type Updateable, sql } from "kysely"
 import { type Cursor, orderedQuery } from "../../utils/db-utils"
 
 type JobListingWrite = Insertable<Database["jobListing"]>

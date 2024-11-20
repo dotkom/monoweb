@@ -24,7 +24,8 @@ export async function up(db) {
 
   // remove table key constraints
   await db.schema.alterTable("ow_user").dropConstraint("ow_user_pkey").execute()
-  await db.schema.alterTable("ow_user")
+  await db.schema
+    .alterTable("ow_user")
     .dropColumn("id")
     .dropColumn("family_name")
     .dropColumn("middle_name")
@@ -41,13 +42,9 @@ export async function up(db) {
     .dropColumn("study_year")
     .execute()
 
-  await db.schema.alterTable("ow_user")
-    .renameColumn("auth0_id", "id")
-    .execute()
+  await db.schema.alterTable("ow_user").renameColumn("auth0_id", "id").execute()
 
-  await db.schema.alterTable("ow_user")
-    .addPrimaryKeyConstraint("ow_user_pkey", ["id"])
-    .execute()
+  await db.schema.alterTable("ow_user").addPrimaryKeyConstraint("ow_user_pkey", ["id"]).execute()
 
   for (const [table, constraint, column] of owUserIdForeignKeys) {
     await db.schema
@@ -70,14 +67,10 @@ export async function down(db) {
       .execute()
   }
 
-  await db.schema.alterTable("ow_user")
-  .dropConstraint("ow_user_pkey")
-  .execute()
-  
-  await db.schema.alterTable("ow_user")
-    .renameColumn("id", "auth0_id")
-    .execute()
-  
+  await db.schema.alterTable("ow_user").dropConstraint("ow_user_pkey").execute()
+
+  await db.schema.alterTable("ow_user").renameColumn("id", "auth0_id").execute()
+
   await db.schema
     .alterTable("ow_user")
     .addColumn("id", sql`ulid`, (col) => col.primaryKey().defaultTo(sql`gen_ulid()`))
@@ -97,11 +90,10 @@ export async function down(db) {
     .execute()
 
   for (const [table, constraint, column] of owUserIdForeignKeys) {
-    await db.schema.alterTable(table)
-      .dropColumn(column)
-      .execute()
-    
-    await db.schema.alterTable(table)
+    await db.schema.alterTable(table).dropColumn(column).execute()
+
+    await db.schema
+      .alterTable(table)
       .addColumn(column, sql`ulid`, (col) => col.references("ow_user.id"))
       .execute()
   }
