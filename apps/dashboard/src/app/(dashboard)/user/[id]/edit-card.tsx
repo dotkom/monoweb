@@ -1,4 +1,4 @@
-import { UserProfileSchema } from "@dotkomonline/types"
+import { UserWriteSchema } from "@dotkomonline/types"
 import { Title } from "@mantine/core"
 import type { FC } from "react"
 import { useUpdateUserMutation } from "../../../../modules/user/mutations"
@@ -10,26 +10,26 @@ export const UserEditCard: FC = () => {
   const update = useUpdateUserMutation()
 
   const EditUserProfileComponent = useUserProfileEditForm({
-    label: user.profile === undefined ? "Opprett profil" : "Oppdater profil",
+    label: "Oppdater profil",
     onSubmit: (data) => {
-      const result = UserProfileSchema.parse(data)
+      const result = UserWriteSchema.parse(data)
 
       if (result.address === "") {
-        result.address = null
+        result.address = undefined
       }
       if (result.phone === "") {
-        result.phone = null
+        result.phone = undefined
       }
       if (result.rfid === "") {
-        result.rfid = null
+        result.rfid = undefined
       }
 
       update.mutate({
-        input: { profile: result },
+        input: result,
         id: user.id,
       })
     },
-    defaultValues: { ...user.profile },
+    defaultValues: { ...user },
   })
 
   return (

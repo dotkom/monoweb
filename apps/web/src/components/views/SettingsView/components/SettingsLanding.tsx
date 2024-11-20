@@ -3,7 +3,7 @@
 import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
 import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
 import { trpc } from "@/utils/trpc/client"
-import type { User } from "@dotkomonline/types"
+import type { User, UserWrite } from "@dotkomonline/types"
 import { Button, TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
 import { useForm } from "react-hook-form"
@@ -20,27 +20,25 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
   </div>
 )
 
-type EditableFields = Pick<User, "firstName" | "lastName" | "phone" | "biography" | "allergies">
+type EditableFields = Pick<User, "firstName" | "lastName" | "biography" | "allergies" | "gender" | "phone">
 
 const Landing: NextPage<{ user: User }> = ({ user }) => {
   const { register, handleSubmit } = useForm<EditableFields>({
     defaultValues: {
       firstName: user.firstName,
       lastName: user.lastName,
-      phone: user.phone,
       biography: user.biography,
       allergies: user.allergies,
+      gender: user.gender,
+      phone: user.phone,
     },
   })
 
   const updateUserMutation = trpc.user.update.useMutation()
 
   function handleSubmitForm(data: EditableFields) {
-    console.log(data)
-
     updateUserMutation.mutate({
-      id: user.id,
-      input: data
+      id: user.id, input: data
     })
 
     return false;
@@ -64,7 +62,7 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       </FormInput>
       <FormInput title="Telefon">
         <div className="w-full flex space-x-2">
-          <TextInput width="w-full" maxLength={8} placeholder="Telefon" defaultValue={user.phone} {...register("phone")} />
+          <TextInput width="w-full" maxLength={12} placeholder="Telefon" defaultValue={user.phone} {...register("phone")} />
         </div>
       </FormInput>
       {/*
@@ -74,6 +72,15 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
       */}
       <FormInput title="Allergier">
         <Textarea placeholder="Dine allergier" {...register("allergies")} />
+      </FormInput>
+      <FormInput title="Kjønn">
+        <div className="w-full">
+          <select {...register("gender")} defaultValue={user.gender} className="px-4 py-2">
+            <option value="male">Mann</option>
+            <option value="female">Kvinne</option>
+            <option value="other">Annet</option>
+          </select>  
+        </div>
       </FormInput>
       <Button type="submit" className="px-8" loading={updateUserMutation.isLoading}>Lagre</Button>
     </form>

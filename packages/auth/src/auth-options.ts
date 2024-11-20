@@ -48,16 +48,12 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: async (profile: Auth0IdTokenClaims): Promise<DefaultUser> => {
-        await core.userService.registerId(profile.sub)
-
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-        }
-      },
+      profile: async (profile: Auth0IdTokenClaims): Promise<DefaultUser> => ({
+        id: profile.sub,
+        name: profile.name,
+        email: profile.email,
+        image: profile.picture,
+      }),
     }),
   ],
   session: {

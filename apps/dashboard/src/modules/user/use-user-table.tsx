@@ -15,21 +15,17 @@ export const useUserTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<User>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("profile.firstName", {
+      columnHelper.accessor("firstName", {
         header: () => "Fornavn",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("profile.lastName", {
+      columnHelper.accessor("lastName", {
         header: () => "Etternavn",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("email", {
         header: () => "E-post",
         cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("emailVerified", {
-        header: () => "Verifisert E-post",
-        cell: (info) => (info.getValue() ? <Icon icon="tabler:check" /> : null),
       }),
       columnHelper.accessor((evt) => evt, {
         id: "actions",

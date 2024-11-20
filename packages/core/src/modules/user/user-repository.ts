@@ -1,7 +1,5 @@
-import type { Database } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
-import type { Kysely } from "kysely"
 import { z } from "zod"
 
 export const AppMetadataProfileSchema = z.object({
@@ -29,12 +27,13 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     firstName: auth0User.given_name,
     lastName: auth0User.family_name,
     email: auth0User.email,
-    phone: auth0User.app_metadata?.phone,
     image: auth0User.picture,
-    address: typeof appMetadata.address === "string" ? appMetadata.address : undefined,
-    allergies: typeof appMetadata.allergies === "string" ? appMetadata.allergies : undefined,
-    rfid: typeof appMetadata.rfid === "string" ? appMetadata.rfid : undefined,
-    compiled: typeof appMetadata.compiled === "boolean" ? appMetadata.compiled : false,
+    address: z.string().safeParse(appMetadata.address).data,
+    allergies: z.string().safeParse(appMetadata.allergies).data,
+    rfid: z.string().safeParse(appMetadata.rfid).data,
+    compiled: z.boolean().default(false).parse(appMetadata.compiled),
+    gender: GenderSchema.safeParse(appMetadata.gender).data,
+    phone: z.string().safeParse(appMetadata.phone).data
   }
 }
 
@@ -47,27 +46,29 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
   connection: "Username-Password-Authentication",
   password: password,
   app_metadata: {
-    phone: user.phone,
     rfid: user.rfid,
     allergies: user.allergies,
     compiled: user.compiled,
     address: user.address,
+    gender: user.gender,
+    phone: user.phone
   }
 })
 
 const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
   const userUpdate: UserUpdate = {
     email: data.email,
-    image: data.image,
     family_name: data.lastName,
     given_name: data.firstName,
     name: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : undefined,
+    picture: data.image,
     app_metadata: {
-      phone: data.phone,
       address: data.address,
       allergies: data.allergies,
       rfid: data.rfid,
-      compiled: data.compiled
+      compiled: data.compiled,
+      gender: data.gender,
+      phone: data.phone
     }
   }
 

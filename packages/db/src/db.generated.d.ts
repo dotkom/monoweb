@@ -216,10 +216,6 @@ export interface Offline {
   updatedAt: Generated<Timestamp>;
 }
 
-export interface OwUser {
-  id: string;
-}
-
 export interface Payment {
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
@@ -311,7 +307,6 @@ export interface DB {
   mark: Mark;
   notificationPermissions: NotificationPermissions;
   offline: Offline;
-  owUser: OwUser;
   payment: Payment;
   personalMark: PersonalMark;
   privacyPermissions: PrivacyPermissions;
