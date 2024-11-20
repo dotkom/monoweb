@@ -5,6 +5,7 @@ import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
 import { UserEditCard } from "./edit-card"
 import { useUserDetailsContext } from "./provider"
+import { UserActionsPage } from "./actions-page"
 
 const SIDEBAR_LINKS = [
   {
@@ -12,6 +13,12 @@ const SIDEBAR_LINKS = [
     label: "Info",
     slug: "info",
     component: UserEditCard,
+  },
+  {
+    icon: "tabler:tool",
+    label: "Handlinger",
+    slug: "actions",
+    component: UserActionsPage,
   },
 ] as const
 
