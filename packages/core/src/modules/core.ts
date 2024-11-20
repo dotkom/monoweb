@@ -146,6 +146,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
 
   const userService: UserService = new UserServiceImpl(
     userRepository,
+    auth0Repository,
     privacyPermissionsRepository,
     notificationPermissionsRepository
   )

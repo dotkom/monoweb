@@ -4,9 +4,10 @@ import type { UserUpdate as Auth0UserUpdate, GetUsers200ResponseOneOfInner, Mana
 import { InternalServerError } from "../../error"
 import { GetUserServerError } from "./auth0-errors"
 
-export interface Auth0Repository {
+export interface  Auth0Repository {
   getByAuth0UserId(auth0Id: string): Promise<User | null>
   update(auth0Id: string, data: UserWrite): Promise<User>
+  delete(auth0Id: string): Promise<void>
 }
 
 function mapToUser(user: GetUsers200ResponseOneOfInner): User {
@@ -68,6 +69,17 @@ export class Auth0RepositoryImpl implements Auth0Repository {
     }
 
     return mapToUser(result.data)
+  }
+
+  async delete(auth0Id: string) {
+    const result = await this.client.users.delete({ id: auth0Id })
+
+    if (result.status !== 204) {
+      this.logger.error("Error deleting auth0 user", { status: result.status, message: result.statusText })
+      throw new InternalServerError("An error occurred while deleting user")
+    }
+
+    this.logger.info("Deleted user with id:", auth0Id)
   }
 
   async getByAuth0UserId(id: string): Promise<User | null> {

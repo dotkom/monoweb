@@ -16,6 +16,7 @@ export const userRouter = t.router({
     .mutation(async ({ input: changes, ctx }) =>
       ctx.auth0SynchronizationService.updateUserInAuth0AndLocalDb(changes.data)
     ),
+  delete: protectedProcedure.input(z.object({ auth0Id: z.string() })).mutation(async ({ input, ctx }) => ctx.userService.delete(input.auth0Id)),
   getPrivacyPermissionssByUserId: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),

@@ -11,6 +11,7 @@ import type { Cursor } from "../../utils/db-utils"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
+import { Auth0Repository } from "../external/auth0-repository"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
@@ -23,12 +24,14 @@ export interface UserService {
   searchByFullName(searchQuery: string, take: number, cursor?: Cursor): Promise<User[]>
   create(data: UserWrite): Promise<User>
   update(data: User): Promise<User>
+  delete(id: UserId): Promise<void>
   getByAuth0Id(auth0Id: string): Promise<User | null>
 }
 
 export class UserServiceImpl implements UserService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly auth0Repository: Auth0Repository,
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
@@ -43,6 +46,10 @@ export class UserServiceImpl implements UserService {
 
   async update(data: User) {
     return this.userRepository.update(data.id, data)
+  }
+
+  async delete(auth0Id: string): Promise<void> {
+      return this.auth0Repository.delete(auth0Id)
   }
 
   async getAll(limit: number) {

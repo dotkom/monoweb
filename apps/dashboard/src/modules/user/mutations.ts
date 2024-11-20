@@ -12,3 +12,15 @@ export const useUpdateUserMutation = () => {
     onSuccess: complete,
   })
 }
+
+export const useDeleteUserMutation = () => {
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return trpc.user.delete.useMutation({
+    onError: fail,
+    onMutate: loading,
+    onSuccess: complete,
+  })
+}

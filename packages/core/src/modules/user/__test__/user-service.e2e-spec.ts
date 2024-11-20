@@ -35,6 +35,7 @@ const createServiceLayer = async ({ db, auth0MgmtClient }: ServerLayerOptions) =
 
   const userService: UserService = new UserServiceImpl(
     userRepository,
+    auth0Repository,
     privacyPermissionsRepository,
     notificationPermissionsRepository
   )
