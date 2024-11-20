@@ -1,6 +1,7 @@
 import type { ServiceLayer } from "@dotkomonline/core"
 import type { User } from "@dotkomonline/types"
 import type { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth"
+import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
 
 interface Auth0IdTokenClaims {
@@ -27,6 +28,13 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT, Record<string, unknown> {
+    accessToken?: string
+    refreshToken?: string
+  }
+}
+
 export interface AuthOptions {
   auth0ClientId: string
   auth0ClientSecret: string
@@ -48,18 +56,32 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: async (profile: Auth0IdTokenClaims): Promise<DefaultUser> => ({
+      profile: (profile: Auth0IdTokenClaims) => ({
         id: profile.sub,
         name: profile.name,
         email: profile.email,
         image: profile.picture,
       }),
+      authorization: {
+        params: {
+          scope: "openid profile email offline_access",
+        },
+      },
     }),
   ],
   session: {
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, account }): Promise<JWT> {
+      if (account?.access_token) {
+        token.accessToken = account.access_token
+      }
+      if (account?.refresh_token) {
+        token.refreshToken = account.refresh_token
+      }
+      return token
+    },
     async session({ session, token }) {
       if (token.sub) {
         const user: User | null = await core.userService.getById(token.sub)

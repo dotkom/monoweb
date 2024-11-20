@@ -20,7 +20,7 @@
     "@biomejs/biome": "^1.9.2",
     "@dotkomonline/logger": "workspace:*",
     "@types/pg": "^8.10.9",
-    "date-fns": "^3.0.0",
+    "date-fns": "^4.1.0",
     "dotenv-cli": "^7.3.0",
     "tsx": "^3.14.0",
     "typescript": "^5.4.5"
