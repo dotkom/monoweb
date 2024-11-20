@@ -5,12 +5,12 @@ import type { Kysely } from "kysely"
 import { z } from "zod"
 
 export const AppMetadataProfileSchema = z.object({
-  phone: z.string().nullable(),
+  phone: z.string(),
   gender: GenderSchema,
-  address: z.string().nullable(),
-  compiled: z.boolean(),
-  allergies: z.array(z.string()),
-  rfid: z.string().nullable(),
+  address: z.string(),
+  compiled: z.boolean().default(false),
+  allergies: z.string(),
+  rfid: z.string()
 })
 
 export interface UserRepository {
@@ -18,70 +18,56 @@ export interface UserRepository {
   getAll(limit: number, page: number): Promise<User[]>
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
-  registerId(id: UserId): Promise<void>
   createDummyUser(data: UserWrite, password: string): Promise<User>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
-  const profile = AppMetadataProfileSchema.optional().parse(auth0User.app_metadata?.["profile"])
+  const appMetadata: Record<string, unknown> = auth0User.app_metadata ?? {};
 
   return {
     id: auth0User.user_id,
+    firstName: auth0User.given_name,
+    lastName: auth0User.family_name,
     email: auth0User.email,
+    phone: auth0User.app_metadata?.phone,
     image: auth0User.picture,
-    emailVerified: auth0User.email_verified,
-    profile: profile
-      ? {
-          firstName: auth0User.given_name,
-          lastName: auth0User.family_name,
-          phone: profile.phone,
-          gender: profile.gender,
-          address: profile.address,
-          compiled: profile.compiled,
-          allergies: profile.allergies,
-          rfid: profile.rfid,
-        }
-      : undefined,
+    address: typeof appMetadata.address === "string" ? appMetadata.address : undefined,
+    allergies: typeof appMetadata.allergies === "string" ? appMetadata.allergies : undefined,
+    rfid: typeof appMetadata.rfid === "string" ? appMetadata.rfid : undefined,
+    compiled: typeof appMetadata.compiled === "boolean" ? appMetadata.compiled : false,
   }
 }
 
-const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate => {
-  const auth0User: UserCreate = {
-    email: user.email,
-    picture: user.image ?? undefined,
-    connection: "Username-Password-Authentication",
-    password: password,
+const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate => ({
+  email: user.email,
+  name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : undefined,
+  given_name: user.firstName,
+  family_name: user.lastName,
+  picture: user.image ?? undefined,
+  connection: "Username-Password-Authentication",
+  password: password,
+  app_metadata: {
+    phone: user.phone,
+    rfid: user.rfid,
+    allergies: user.allergies,
+    compiled: user.compiled,
+    address: user.address,
   }
-
-  if (user.profile) {
-    auth0User.app_metadata = {
-      profile: user.profile,
-    }
-    auth0User.given_name = user.profile.firstName
-    auth0User.family_name = user.profile.lastName
-
-    if (auth0User.given_name && auth0User.family_name) {
-      auth0User.name = `${auth0User.given_name} ${auth0User.family_name}`
-    }
-  }
-
-  return auth0User
-}
+})
 
 const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
   const userUpdate: UserUpdate = {
     email: data.email,
     image: data.image,
-  }
-  if (data.profile) {
-    const { firstName, lastName, ...profile } = data.profile
-
-    userUpdate.given_name = firstName
-    userUpdate.family_name = lastName
-    userUpdate.app_metadata = { profile }
-
-    if (userUpdate.given_name && userUpdate.family_name) {
-      userUpdate.name = `${userUpdate.given_name} ${userUpdate.family_name}`
+    family_name: data.lastName,
+    given_name: data.firstName,
+    name: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : undefined,
+    app_metadata: {
+      phone: data.phone,
+      address: data.address,
+      allergies: data.allergies,
+      rfid: data.rfid,
+      compiled: data.compiled
     }
   }
 
@@ -91,16 +77,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
 export class UserRepositoryImpl implements UserRepository {
   constructor(
     private readonly client: ManagementClient,
-    private readonly db: Kysely<Database>
   ) {}
-
-  async registerId(id: UserId): Promise<void> {
-    await this.db
-      .insertInto("owUser")
-      .values({ id })
-      .onConflict((oc) => oc.doNothing())
-      .execute()
-  }
 
   async createDummyUser(data: Omit<User, "id">, password: string): Promise<User> {
     const response = await this.client.users.create(mapUserToAuth0UserCreate(data, password))
@@ -108,8 +85,6 @@ export class UserRepositoryImpl implements UserRepository {
     if (response.status !== 201) {
       throw new Error(`Failed to create user: ${response.statusText}`)
     }
-
-    await this.registerId(response.data.user_id)
 
     const user = await this.getById(response.data.user_id)
     if (user === null) {

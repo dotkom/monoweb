@@ -1,15 +1,21 @@
+"use client"
+
 import { SettingsLanding } from "@/components/views/SettingsView/components"
-import { getServerSession } from "next-auth"
+import { trpc } from "@/utils/trpc/client"
 import { redirect } from "next/navigation"
 
-const SettingsPage = async () => {
-  const session = await getServerSession()
+const SettingsPage = () => {
+  const { data: user } = trpc.user.getMe.useQuery()
 
-  if (session === null) {
+  if (user === null) {
     redirect("/")
   }
 
-  return <SettingsLanding user={session.user} />
+  if (user === undefined) {
+    return <div>Loading...</div>
+  }
+
+  return <SettingsLanding user={user} />
 }
 
 export default SettingsPage

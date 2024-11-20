@@ -146,7 +146,7 @@ export class AttendeeServiceImpl implements AttendeeService {
         isPunished: false,
         registeredAt: new Date(),
         studyYear: classYear,
-        name: user.profile ? `${user.profile.firstName} ${user.profile.lastName}` : "",
+        name: user.firstName + " " + user.lastName,
       })
       return ins
     }
@@ -162,8 +162,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       extrasChoices: [],
       attendanceId,
       registeredAt: registrationTime,
-      firstName: user.profile?.firstName ?? "Anonym",
-      lastName: user.profile?.lastName ?? "",
+      firstName: user.firstName ?? "Anonym",
+      lastName: user.lastName ?? "",
     })
 
     return attendee
