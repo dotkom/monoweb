@@ -53,45 +53,45 @@ export default function InvoiceFormForBedkom({
             <Heading as="h1">{companyName} har sendt inn fakturainformasjon.</Heading>
             <Section>
               <Row>
-                <Column>Organisasjonsnummer</Column>
+                <Column style={{ width: "28ch" }}>Organisasjonsnummer</Column>
                 <Column>{organizationNumber}</Column>
               </Row>
               <Row>
-                <Column>Bedriftsnavn</Column>
+                <Column style={{ width: "28ch" }}>Bedriftsnavn</Column>
                 <Column>{companyName}</Column>
               </Row>
             </Section>
 
             <Section>
               <Row>
-                <Column>Bedriftens kontaktperson</Column>
+                <Column style={{ width: "28ch" }}>Bedriftens kontaktperson</Column>
                 <Column>{contactName}</Column>
               </Row>
               <Row>
-                <Column>E-post adresse kontaktperson</Column>
+                <Column style={{ width: "28ch" }}>E-post adresse kontaktperson</Column>
                 <Column>{contactEmail}</Column>
               </Row>
               <Row>
-                <Column>Telefonnummer kontaktperson</Column>
+                <Column style={{ width: "28ch" }}>Telefonnummer kontaktperson</Column>
                 <Column>{contactTel}</Column>
               </Row>
             </Section>
 
             <Section>
               <Row>
-                <Column>Anledning</Column>
+                <Column style={{ width: "28ch" }}>Anledning</Column>
                 <Column>{invoiceRelation}</Column>
               </Row>
               <Row>
-                <Column>Foretrukket leveringsmetode</Column>
+                <Column style={{ width: "28ch" }}>Foretrukket leveringsmetode</Column>
                 <Column>{preferredDeliveryMethod}</Column>
               </Row>
               <Row>
-                <Column>Foretrukket bestillingsnummer</Column>
+                <Column style={{ width: "28ch" }}>Foretrukket bestillingsnummer</Column>
                 <Column>{preferredPurchaseOrderNumber ?? "Ingen preferanse"}</Column>
               </Row>
               <Row>
-                <Column>Foretrukket forfallsdato</Column>
+                <Column style={{ width: "28ch" }}>Foretrukket forfallsdato</Column>
                 <Column>{preferredDueDateLength} dager</Column>
               </Row>
 
