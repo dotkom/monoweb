@@ -159,13 +159,16 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
     "stg" = [
       "https://staging.vinstraff.no",
       "https://staging.vinstraff.no/docs/oauth2-redirect",
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:8000/docs/oauth2-redirect",
     ]
     "prd" = [
       "https://vinstraff.no",
       "https://vinstraff.no/docs/oauth2-redirect",
       "http://localhost:3000",
       "http://localhost:8000",
-      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
