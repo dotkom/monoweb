@@ -136,61 +136,6 @@ resource "auth0_connection" "feide" {
   count = terraform.workspace == "prd" ? 0 : 1
 }
 
-resource "auth0_client" "wiki_frontend" {
-  app_type = "regular_web"
-  callbacks = {
-    "dev" = [
-      "http://localhost:3001/api/auth/callback/auth0",
-    ]
-    "stg" = [
-      "https://wiki.staging.online.ntnu.no/api/auth/callback/auth0",
-    ]
-    "prd" = [
-      "https://wiki.online.ntnu.no/api/auth/callback/auth0",
-    ]
-  }[terraform.workspace]
-  grant_types     = ["authorization_code", "refresh_token"]
-  name            = "Wiki${local.name_suffix[terraform.workspace]}"
-  is_first_party  = true
-  oidc_conformant = true
-
-  allowed_clients     = []
-  allowed_logout_urls = []
-  allowed_origins     = []
-  # you go here if you decline an auth grant
-  initiate_login_uri = "https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-
-  # organization_require_behavior is here since so that terraform does not attempt to apply it everytime
-  organization_require_behavior = "no_prompt"
-  jwt_configuration {
-    alg = "RS256"
-  }
-
-  count = terraform.workspace == "prd" ? 0 : 1
-}
-
-data "auth0_client" "wiki_frontend" {
-  client_id = auth0_client.wiki_frontend[0].client_id
-  count     = terraform.workspace == "prd" ? 0 : 1
-}
-
-resource "auth0_connection_clients" "feide" {
-  connection_id = auth0_connection.feide[0].id
-  enabled_clients = concat([
-    auth0_client.onlineweb_frontend.client_id,
-    auth0_client.onlineweb4.client_id,
-    auth0_client.monoweb_web.client_id,
-    auth0_client.monoweb_dashboard.client_id,
-    auth0_client.appkom_autobank.client_id,
-    auth0_client.vengeful_vineyard_frontend.client_id,
-  ], terraform.workspace != "prd" ? [auth0_client.wiki_frontend[0].client_id] : [])
-
-  count = terraform.workspace == "prd" ? 0 : 1
-}
 
 # resource "auth0_action" "klassetrinn_autoconf" {
 #   name = "Klassetrinn Autoconf"
@@ -243,6 +188,40 @@ data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
 
+resource "auth0_client" "hs_julekalender" {
+  app_type = "spa"
+  callbacks = {
+    "dev" = [
+      "http://localhost:3000/api/auth/callback/auth0",
+    ]
+    "stg" = [
+      "http://localhost:3000/api/auth/callback/auth0",
+    ]
+    "prd" = [
+      "https://online-christmas.vercel.app/api/auth/callback/auth0",
+      "https://jul.online.ntnu.no/api/auth/callback/auth0",
+    ]
+  }[terraform.workspace]
+  grant_types                   = ["authorization_code", "refresh_token"]
+  name                          = "Hovedstyrets Julekalender${local.name_suffix[terraform.workspace]}"
+  organization_require_behavior = "no_prompt"
+  is_first_party                = true
+  oidc_conformant               = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
+data "auth0_client" "hs_julekalender" {
+  client_id = auth0_client.hs_julekalender.client_id
+}
+
 locals {
   projects = {
     # key here must be project name
@@ -252,15 +231,14 @@ locals {
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
+    hs-julekalender      = data.auth0_client.hs_julekalender
   }
 
-  monoweb = merge({
+  monoweb = {
     web       = data.auth0_client.monoweb_web
     dashboard = data.auth0_client.monoweb_dashboard
     gtx       = data.auth0_client.gtx
-    },
-    terraform.workspace != "prd" ? { wiki = data.auth0_client.wiki_frontend } : {}
-  )
+    } 
 }
 
 resource "doppler_secret" "client_ids" {
@@ -380,7 +358,7 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
 # has to be imported on new tenant
 resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
-  enabled_clients = concat([
+  enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
     auth0_client.monoweb_web.client_id,
@@ -389,7 +367,7 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
-  ], terraform.workspace == "prd" ? [] : [auth0_client.wiki_frontend[0].client_id])
+  ]
 }
 
 resource "auth0_prompt" "prompts" {
