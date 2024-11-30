@@ -1,3 +1,5 @@
+# This file has been temporarily disabled before studyYears are available.
+
 import { createEnvironment } from "@dotkomonline/env"
 import type { AttendancePoolWrite, AttendanceWrite, AttendeeWrite, UserWrite } from "@dotkomonline/types"
 import { ulid } from "ulid"

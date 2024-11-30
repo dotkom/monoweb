@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { type User, UserSchema } from "../user"
+import type { User } from "../user"
 
 export const ExtraChoice = z.object({
   questionId: z.string(),
@@ -17,11 +17,14 @@ export const AttendeeSchema = z.object({
 
   attendanceId: z.string().ulid(),
   attendancePoolId: z.string().ulid(),
-  userId: z.string().ulid(),
+  userId: z.string(),
 
   attended: z.boolean(),
   extrasChoices: ExtrasChoices,
   registeredAt: z.date(),
+
+  firstName: z.string(),
+  lastName: z.string(),
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.partial({
@@ -30,12 +33,9 @@ export const AttendeeWriteSchema = AttendeeSchema.partial({
   updatedAt: true,
 })
 
-export const AttendeeUserSchema = AttendeeSchema.extend({ user: UserSchema })
-
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
-export type AttendeeUser = z.infer<typeof AttendeeUserSchema>
 export type ExtraChoice = z.infer<typeof ExtraChoice>
 export type ExtrasChoices = z.infer<typeof ExtrasChoices>
 export type QrCodeRegistrationAttendee = { attendee: Attendee; user: User; alreadyAttended: boolean }

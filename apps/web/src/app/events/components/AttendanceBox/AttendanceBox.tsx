@@ -55,7 +55,8 @@ export const AttendanceBox: FC<Props> = ({ sessionUser, attendance, pools, event
     new Date()
   )
   const userIsRegistered = Boolean(attendee)
-  const myGroups = user && pools?.find((a) => a.yearCriteria.includes(user?.studyYear))
+  // TODO: CORRECT THIS
+  const myGroups = user && pools?.find((a) => a.yearCriteria.includes(1))
 
   const visiblePools = pools?.filter((pool) => pool.isVisible)
 

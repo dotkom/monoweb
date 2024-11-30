@@ -23,7 +23,7 @@ export const UserSearch: FC<UserSearchProps> = ({ onSubmit }) => {
         onSubmit(user)
       }}
       items={users}
-      dataMapper={(item: User) => `${item.name}`}
+      dataMapper={(item: User) => `${item.email} ${item.firstName} ${item.lastName}`}
       placeholder="Søk etter bruker..."
       resetOnClick
     />
