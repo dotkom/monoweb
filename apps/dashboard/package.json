@@ -22,7 +22,7 @@
     "@aws-sdk/s3-presigned-post": "^3.665.0",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.4",
-    "@iconify/react": "^4.1.1",
+    "@iconify/react": "^5.0.0",
     "@mantine/core": "^7.13.2",
     "@mantine/dates": "^7.13.2",
     "@mantine/hooks": "^7.13.2",
