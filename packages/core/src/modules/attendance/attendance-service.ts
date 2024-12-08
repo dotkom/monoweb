@@ -1,11 +1,15 @@
 import type {
   Attendance,
   AttendanceId,
+  AttendancePool,
   AttendanceWrite,
   ExtraResults,
   Extras,
+  UserId,
   WaitlistAttendee,
 } from "@dotkomonline/types"
+import { UserNotFoundError } from "../user/user-error"
+import type { UserService } from "../user/user-service"
 import {
   AttendanceDeletionError,
   AttendanceNotFound,
@@ -26,6 +30,7 @@ export interface AttendanceService {
   merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
   updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
   getExtrasResults(attendanceId: AttendanceId): Promise<ExtraResults[] | null>
+  getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId): Promise<AttendancePool | null>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -33,7 +38,8 @@ export class AttendanceServiceImpl implements AttendanceService {
     private readonly attendanceRepository: AttendanceRepository,
     private readonly attendeeRepository: AttendeeRepository,
     private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository
+    private readonly attendancePoolRepository: AttendancePoolRepository,
+    private readonly userService: UserService
   ) {}
 
   async getExtrasResults(attendanceId: AttendanceId) {
@@ -187,5 +193,22 @@ export class AttendanceServiceImpl implements AttendanceService {
       )
     )
     await Promise.all(pools.map((pool) => this.attendancePoolRepository.delete(pool.id)))
+  }
+
+  async getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId) {
+    const user = await this.userService.getById(userId)
+
+    if (!user) {
+      throw new UserNotFoundError(userId)
+    }
+
+    const userAttendablePool = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
+    const userAttendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+
+    if (userAttendee) {
+      return null
+    }
+
+    return userAttendablePool.find((pool) => pool.yearCriteria.includes(user.studyYear)) ?? null
   }
 }

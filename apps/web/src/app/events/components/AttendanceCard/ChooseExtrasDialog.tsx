@@ -1,15 +1,16 @@
 import type { Extras, ExtrasChoices } from "@dotkomonline/types"
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger, Button } from "@dotkomonline/ui"
+import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
 import { useFieldArray, useForm } from "react-hook-form"
 
-interface Props {
+interface ChooseExtrasDialogProps {
   open: boolean
   extras: Extras[]
   onSubmit: (choices: ExtrasChoices) => void
   setOpen: (open: boolean) => void
   defaultValues: ExtrasChoices | null
 }
-export function ChooseExtrasDialog({ open, extras, onSubmit, setOpen, defaultValues }: Props) {
+
+export function ChooseExtrasDialog({ open, extras, onSubmit, setOpen, defaultValues }: ChooseExtrasDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild />
@@ -72,28 +73,30 @@ export default function Form({ extras, onSubmit, defaultValues }: FormProps) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit_)}>
+      <form onChange={handleSubmit(onSubmit_)}>
         {fields.map((field, index) => {
           return (
-            <div key={field.id}>
-              <label htmlFor={`extras[${index}].choiceId`}>{field.questionName}</label>
-              <select
-                {...register(`choices.${index}.choiceId` as const, {
-                  required: true,
-                })}
-                className="block mt-1 mb-2"
-              >
-                {extras[index].choices.map((choice) => (
-                  <option key={choice.id} value={choice.id}>
-                    {choice.name}
-                  </option>
-                ))}
-              </select>
+            <div key={field.id} className="w-full">
+              <label className="font-bold" htmlFor={`extras[${index}].choiceId`}>
+                {field.questionName}
+              </label>
+              <div className="w-full bg-[#fff] p-[0.5px]">
+                <select
+                  {...register(`choices.${index}.choiceId` as const, {
+                    required: true,
+                  })}
+                  className="block mt-1 mb-2 w-full text-xl"
+                >
+                  {extras[index].choices.map((choice) => (
+                    <option key={choice.id} value={choice.id}>
+                      {choice.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           )
         })}
-
-        <Button type="submit">Send inn</Button>
       </form>
     </div>
   )
