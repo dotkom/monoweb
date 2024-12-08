@@ -30,9 +30,19 @@ export const useInterestGroupWriteForm = ({
         withAsterisk: true,
         rows: 5,
       }),
+      longDescription: createTextareaInput({
+        label: "Lang beskrivelse",
+        withAsterisk: false,
+        rows: 5,
+      }),
+      joinInfo: createTextareaInput({
+        label: "Hvordan bli med",
+        withAsterisk: false,
+        rows: 5,
+      }),
       link: createTextInput({
-        label: "Slack Link",
-        placeholder: "https://onlinentnu.slack.com/archives/C03S8TX1L",
+        label: "Wiki Link",
+        placeholder: "https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/",
         type: "url",
       }),
       isActive: createCheckboxInput({

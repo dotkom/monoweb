@@ -20,7 +20,7 @@ const links: MenuLink[] = [
     items: [
       {
         title: "Interessegrupper",
-        href: "#",
+        href: "/interest-groups",
         description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
       },
       {
