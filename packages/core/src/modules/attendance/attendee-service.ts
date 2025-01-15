@@ -1,5 +1,6 @@
 import type {
   AttendanceId,
+  AttendancePool,
   AttendancePoolId,
   Attendee,
   AttendeeId,
@@ -14,7 +15,6 @@ import { IllegalStateError } from "../../error"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
-import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { AttendanceRepository } from "./attendance-repository"
@@ -23,6 +23,9 @@ import type { AttendeeRepository } from "./attendee-repository"
 import type { WaitlistAttendeService } from "./waitlist-attendee-service"
 
 export interface AttendeeService {
+  getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId): Promise<AttendancePool | null>
+  canRegisterForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date): Promise<void>
+  canDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
@@ -103,9 +106,67 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
+  /**
+   * Registers a user for an event
+   *
+   * @throws {AttendancePoolNotFoundError} If the attendance pool does not exist
+   * @throws {UserNotFoundError} If the user does not exist
+   * @throws {AttendeeRegistrationError} If the user is already registered, does not meet the year criteria, or the attendance has not started or has ended
+   * @throws {IllegalStateError} If the pool has more attendees than the capacity
+   */
   async registerForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date) {
+    // This will throw an error if the user can't register
+    this.canRegisterForEvent(userId, attendancePoolId, registrationTime)
+
     const user = await this.userService.getById(userId)
     const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
+
+    if (attendancePool === null) {
+      throw new AttendancePoolNotFoundError(attendancePoolId)
+    }
+
+    if (user === null) {
+      throw new UserNotFoundError(userId)
+    }
+
+    const attendee = await this.attendeeRepository.create({
+      attendancePoolId,
+      userId,
+      attended: false,
+      extrasChoices: [],
+      attendanceId: attendancePool.attendanceId,
+      registeredAt: registrationTime,
+    })
+
+    const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
+
+    if (numAttendees === attendancePool.capacity) {
+      // Create waitlist attendee
+      return await this.waitlistAttendeeService.create({
+        attendanceId: attendancePool.attendanceId,
+        userId,
+        isPunished: false,
+        registeredAt: new Date(),
+        studyYear: user.studyYear,
+        name: user.name,
+      })
+    }
+
+    return attendee
+  }
+
+  /**
+   * Checks if a user can register for an event
+   *
+   * @throws {AttendancePoolNotFoundError} If the attendance pool does not exist
+   * @throws {UserNotFoundError} If the user does not exist
+   * @throws {AttendeeRegistrationError} If the user is already registered, does not meet the year criteria, or the attendance has not started or has ended
+   * @throws {IllegalStateError} If the pool has more attendees than the capacity
+   */
+  async canRegisterForEvent(userId: UserId, attendancePoolId: AttendancePoolId, registrationTime: Date) {
+    const user = await this.userService.getById(userId)
+    const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
+
     if (attendancePool === null) {
       throw new AttendancePoolNotFoundError(attendancePoolId)
     }
@@ -116,21 +177,23 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const attendanceId = attendancePool.attendanceId
 
-    // is user already registered?
-    const userAlreadyRegistered = await this.attendeeRepository.getByUserId(userId, attendanceId)
-    if (userAlreadyRegistered !== null) {
-      throw new AttendeeRegistrationError("User is already registered")
+    const userAlreadyRegistered = await this.attendeeRepository
+      .getByUserId(userId, attendanceId)
+      .then((attendee) => Boolean(attendee))
+
+    if (userAlreadyRegistered) {
+      throw new AttendeeRegistrationError("User already registered")
     }
 
-    // Does user match criteria for the pool?
-    if (attendancePool.yearCriteria.includes(user.studyYear) === false) {
+    const userHasAttendancePool = attendancePool.yearCriteria.includes(user.studyYear)
+    if (!userHasAttendancePool) {
       throw new AttendeeRegistrationError(
         `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${user.studyYear}`
       )
     }
 
-    // is attendance open?
     const attendance = await this.attendanceRespository.getById(attendanceId)
+
     if (attendance === null) {
       throw new AttendancePoolNotFoundError(attendanceId)
     }
@@ -143,48 +206,51 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("Attendance has ended")
     }
 
-    // is the pool full?
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
-
-    if (numAttendees === attendancePool.capacity) {
-      // create waitlist attendee
-      const ins = await this.waitlistAttendeeService.create({
-        attendanceId,
-        userId,
-        isPunished: false,
-        registeredAt: new Date(),
-        studyYear: user.studyYear,
-        name: user.name,
-      })
-      return ins
-    }
 
     if (numAttendees > attendancePool.capacity) {
       throw new IllegalStateError("Pool has more attendees than the capacity")
     }
-
-    const attendee = await this.attendeeRepository.create({
-      attendancePoolId: attendancePool.id,
-      userId,
-      attended: false,
-      extrasChoices: [],
-      attendanceId,
-      registeredAt: registrationTime,
-    })
-
-    return attendee
   }
 
-  async deregisterForEvent(id: AttendeeId, now: Date) {
+  /**
+   * Checks if a user can deregister for an event
+   *
+   * @throws {AttendeeNotFoundError} If the attendee does not exist
+   * @throws {AttendeeDeregistrationError} If the deregister deadline has passed
+   */
+  async canDeregisterForEvent(id: AttendeeId, time: Date) {
     const attendance = await this.attendanceRespository.getByAttendeeId(id)
 
     if (attendance === null) {
-      throw new AttendanceNotFound(id)
+      throw new AttendeeNotFoundError(id)
     }
 
-    if (attendance.deregisterDeadline < now) {
+    if (time > attendance.deregisterDeadline) {
       throw new AttendeeDeregistrationError("The deregister deadline has passed")
     }
+  }
+
+  async getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId) {
+    const user = await this.userService.getById(userId)
+
+    if (user === null) {
+      throw new UserNotFoundError(userId)
+    }
+
+    const attendancePools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
+
+    return attendancePools.find((pool) => pool.yearCriteria.includes(user.studyYear)) ?? null
+  }
+
+  /**
+   * Deregisters a user from an event
+   *
+   * @throws {AttendeeNotFoundError} If the attendee does not exist
+   * @throws {AttendeeDeregistrationError} If the attendance has already started
+   */
+  async deregisterForEvent(id: AttendeeId, now: Date) {
+    this.canDeregisterForEvent(id, now)
 
     await this.attendeeRepository.delete(id)
   }

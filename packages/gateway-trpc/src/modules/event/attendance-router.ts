@@ -9,7 +9,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, t } from "../../trpc"
+import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
   getAttendee: protectedProcedure
@@ -20,6 +20,7 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.attendeeService.getByAuth0UserId(input.userId, input.attendanceId)),
+
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.attendancePoolService.create(input)),
@@ -40,6 +41,44 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendancePoolService.delete(input.id)),
+
+  getAttendablePool: protectedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+        userId: UserSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) => ctx.attendanceService.getAttendablePoolByUserId(input.attendanceId, input.userId)),
+
+  canRegisterForEvent: protectedProcedure
+    .input(
+      z.object({
+        userId: UserSchema.shape.id,
+        attendancePoolId: AttendancePoolSchema.shape.id,
+        registeredAt: z.date(),
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.attendeeService
+        .canRegisterForEvent(input.userId, input.attendancePoolId, input.registeredAt)
+        .then(() => true)
+        .catch(() => false)
+    ),
+
+  canDeregisterForEvent: protectedProcedure
+    .input(
+      z.object({
+        attendeeId: AttendeeSchema.shape.id,
+        deregisteredAt: z.date(),
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      ctx.attendeeService
+        .canDeregisterForEvent(input.attendeeId, input.deregisteredAt)
+        .then(() => true)
+        .catch(() => false)
+    ),
 
   registerForEvent: protectedProcedure
     .input(
@@ -76,6 +115,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.attended, input.id)),
+
   handleQrCodeRegistration: protectedProcedure
     .input(
       z.object({
@@ -112,6 +152,21 @@ export const attendanceRouter = t.router({
     )
     .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.id)),
 
+  getPublicAttendeeInformation: publicProcedure
+    .input(
+      z.object({
+        id: AttendanceSchema.shape.id,
+      })
+    )
+    .query(async ({ input, ctx }) =>
+      (await ctx.attendeeService.getByAttendanceId(input.id)).map(({ user }) => ({
+        id: user.id,
+        first_name: user.givenName,
+        last_name: user.familyName,
+        studyYear: user.studyYear,
+      }))
+    ),
+
   getAttendance: protectedProcedure
     .input(
       z.object({
@@ -119,6 +174,7 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.attendanceService.getById(input.id)),
+
   updateAttendance: protectedProcedure
     .input(
       z.object({
@@ -127,6 +183,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.update(input.attendance, input.id)),
+
   mergeAttendance: protectedProcedure
     .input(
       z.object({
