@@ -6,12 +6,15 @@ import { createDateTimeInput, useFormBuilder } from "../../../../app/form"
 const AttendanceFormSchema = AttendanceSchema.omit({
   id: true,
 }).superRefine((val, ctx) => {
-  // Check that the registerStart is before the registerEnd
-  if (!(val.registerStart <= val.deregisterDeadline && val.deregisterDeadline <= val.registerEnd)) {
-    const message = "Påmeldingsstart < Frist avmelding < Påmeldingsslutt"
+  if (val.registerStart > val.registerEnd) {
+    const message = "Påmeldingsstart må være før påmeldingsslutt"
     const code = "custom"
-    ctx.addIssue({ message, code, path: ["registerStart"] })
     ctx.addIssue({ message, code, path: ["registerEnd"] })
+  }
+
+  if (val.registerStart > val.deregisterDeadline) {
+    const message = "Påmeldingsstart må være før frist avmelding"
+    const code = "custom"
     ctx.addIssue({ message, code, path: ["deregisterDeadline"] })
   }
 
