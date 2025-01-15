@@ -43,8 +43,8 @@ importers:
         specifier: ^8.10.129
         version: 8.10.146
       '@types/node':
-        specifier: ^20.16.10
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       tsup:
         specifier: ^7.2.0
         version: 7.3.0(@swc/core@1.7.28(@swc/helpers@0.5.5))(postcss@8.5.1)(typescript@5.6.2)
@@ -173,8 +173,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       '@types/node':
-        specifier: ^20.16.10
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.11
@@ -255,8 +255,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       '@types/node':
-        specifier: ^20.16.10
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.11
@@ -340,8 +340,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/config
       '@types/node':
-        specifier: ^20.16.10
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.11
@@ -398,8 +398,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       '@types/node':
-        specifier: ^20.12.7
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       tslib:
         specifier: ^2.6.2
         version: 2.7.0
@@ -561,8 +561,8 @@ importers:
         specifier: ^21.1.6
         version: 21.1.7
       '@types/node':
-        specifier: ^20.16.10
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.11
@@ -713,8 +713,8 @@ importers:
         specifier: ^10.13.2
         version: 10.13.2
       '@types/node':
-        specifier: ^20.16.10
-        version: 20.16.10
+        specifier: ^22.0.0
+        version: 22.7.4
       '@vitest/ui':
         specifier: ^1.3.1
         version: 1.6.0(vitest@1.6.0)
@@ -726,10 +726,10 @@ importers:
         version: 5.6.2
       vitest:
         specifier: ^1.3.1
-        version: 1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))
+        version: 1.6.0(@types/node@22.7.4)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))
       vitest-mock-extended:
         specifier: ^1.3.1
-        version: 1.3.2(typescript@5.6.2)(vitest@1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1)))
+        version: 1.3.2(typescript@5.6.2)(vitest@1.6.0(@types/node@22.7.4)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1)))
 
   packages/db:
     dependencies:
@@ -10359,7 +10359,7 @@ snapshots:
 
   '@types/cors@2.8.17':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
 
   '@types/debug@4.1.12':
     dependencies:
@@ -10367,13 +10367,13 @@ snapshots:
 
   '@types/docker-modem@3.0.6':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
       '@types/ssh2': 1.15.1
 
   '@types/dockerode@3.3.31':
     dependencies:
       '@types/docker-modem': 3.0.6
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
       '@types/ssh2': 1.15.1
 
   '@types/estree-jsx@1.0.5':
@@ -10390,7 +10390,7 @@ snapshots:
 
   '@types/follow-redirects@1.14.4':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
 
   '@types/hast@3.0.4':
     dependencies:
@@ -10398,13 +10398,13 @@ snapshots:
 
   '@types/jsdom@21.1.7':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
       '@types/tough-cookie': 4.0.5
       parse5: 7.1.2
 
   '@types/jsonwebtoken@9.0.7':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
 
   '@types/mdast@4.0.4':
     dependencies:
@@ -10418,7 +10418,7 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
 
   '@types/node@18.19.54':
     dependencies:
@@ -10444,7 +10444,7 @@ snapshots:
 
   '@types/progress-stream@2.0.5':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
 
   '@types/prop-types@15.7.13': {}
 
@@ -10459,11 +10459,11 @@ snapshots:
 
   '@types/ssh2-streams@0.1.12':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
 
   '@types/ssh2@0.5.52':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
       '@types/ssh2-streams': 0.1.12
 
   '@types/ssh2@1.15.1':
@@ -10533,7 +10533,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.1.0
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))
+      vitest: 1.6.0(@types/node@22.7.4)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -14092,7 +14092,7 @@ snapshots:
 
   stripe@13.11.0:
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.7.4
       qs: 6.13.0
 
   strnum@1.0.5: {}
@@ -14558,24 +14558,6 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@1.6.0(@types/node@20.16.10)(sugarss@4.0.1(postcss@8.5.1)):
-    dependencies:
-      cac: 6.7.14
-      debug: 4.3.7
-      pathe: 1.1.2
-      picocolors: 1.1.0
-      vite: 5.4.8(@types/node@20.16.10)(sugarss@4.0.1(postcss@8.5.1))
-    transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-
   vite-node@1.6.0(@types/node@22.7.4)(sugarss@4.0.1(postcss@8.5.1)):
     dependencies:
       cac: 6.7.14
@@ -14605,16 +14587,6 @@ snapshots:
       - supports-color
       - typescript
 
-  vite@5.4.8(@types/node@20.16.10)(sugarss@4.0.1(postcss@8.5.1)):
-    dependencies:
-      esbuild: 0.21.5
-      postcss: 8.5.1
-      rollup: 4.22.4
-    optionalDependencies:
-      '@types/node': 20.16.10
-      fsevents: 2.3.3
-      sugarss: 4.0.1(postcss@8.5.1)
-
   vite@5.4.8(@types/node@22.7.4)(sugarss@4.0.1(postcss@8.5.1)):
     dependencies:
       esbuild: 0.21.5
@@ -14625,47 +14597,11 @@ snapshots:
       fsevents: 2.3.3
       sugarss: 4.0.1(postcss@8.5.1)
 
-  vitest-mock-extended@1.3.2(typescript@5.6.2)(vitest@1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))):
+  vitest-mock-extended@1.3.2(typescript@5.6.2)(vitest@1.6.0(@types/node@22.7.4)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))):
     dependencies:
       ts-essentials: 10.0.2(typescript@5.6.2)
       typescript: 5.6.2
-      vitest: 1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))
-
-  vitest@1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1)):
-    dependencies:
-      '@vitest/expect': 1.6.0
-      '@vitest/runner': 1.6.0
-      '@vitest/snapshot': 1.6.0
-      '@vitest/spy': 1.6.0
-      '@vitest/utils': 1.6.0
-      acorn-walk: 8.3.4
-      chai: 4.5.0
-      debug: 4.3.7
-      execa: 8.0.1
-      local-pkg: 0.5.0
-      magic-string: 0.30.11
-      pathe: 1.1.2
-      picocolors: 1.1.0
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      tinybench: 2.9.0
-      tinypool: 0.8.4
-      vite: 5.4.8(@types/node@20.16.10)(sugarss@4.0.1(postcss@8.5.1))
-      vite-node: 1.6.0(@types/node@20.16.10)(sugarss@4.0.1(postcss@8.5.1))
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/node': 20.16.10
-      '@vitest/ui': 1.6.0(vitest@1.6.0)
-      jsdom: 22.1.0
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
+      vitest: 1.6.0(@types/node@22.7.4)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1))
 
   vitest@1.6.0(@types/node@22.7.4)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@4.0.1(postcss@8.5.1)):
     dependencies:
