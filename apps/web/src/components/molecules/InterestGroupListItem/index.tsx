@@ -14,7 +14,7 @@ const InterestGroupListItem: FC<InterestGroupListItemProps> = (
         <OnlineIcon className="w-5/12 mx-auto max-w-[150px] min-w-[120px]" />
         <h2 className="!text-3xl border-none !mt-4">
             {props.interestGroup.name}
-            {!props.interestGroup.isActive && <> [inaktiv]</>}
+            {!props.interestGroup.isActive && <span> [inaktiv]<span/>}
         </h2>
         <p className="mt-2 mb-6 text-left px-3">
             {props.interestGroup.description}
