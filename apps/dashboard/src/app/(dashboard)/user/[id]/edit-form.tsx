@@ -20,11 +20,11 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       lastName: createTextInput({
         label: "Etternavn",
-        placeholder: "Ola",
+        placeholder: "Nordmann",
       }),
       phone: createTextInput({
         label: "Telefon",
-        placeholder: "12345678",
+        placeholder: "+4712345678",
       }),
       gender: createSelectInput({
         label: "Kjønn",
