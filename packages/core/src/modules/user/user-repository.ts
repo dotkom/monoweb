@@ -18,7 +18,7 @@ export interface UserRepository {
   getAll(limit: number, page: number): Promise<User[]>
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
-  createDummyUser(data: UserWrite, password: string): Promise<User>
+  create(data: UserWrite, password: string): Promise<User>
   registerId(auth0Id: string): Promise<void>
 }
 
@@ -84,7 +84,7 @@ export class UserRepositoryImpl implements UserRepository {
     private readonly db: Kysely<Database>
   ) {}
 
-  async createDummyUser(data: Omit<User, "id">, password: string): Promise<User> {
+  async create(data: Omit<User, "id">, password: string): Promise<User> {
     const response = await this.client.users.create(mapUserToAuth0UserCreate(data, password))
 
     if (response.status !== 201) {
