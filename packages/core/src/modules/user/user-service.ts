@@ -21,7 +21,6 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   update(userId: UserId, data: Partial<UserWrite>): Promise<User>
-  createUser(user: UserWrite, password: string): Promise<User>
   registerId(auth0Id: string): Promise<void>
 }
 
@@ -31,10 +30,6 @@ export class UserServiceImpl implements UserService {
     private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
-
-  async createUser(user: Omit<User, "id">, password: string): Promise<User> {
-    return this.userRepository.create(user, password)
-  }
 
   async registerId(auth0Id: string) {
     return this.userRepository.registerId(auth0Id)
