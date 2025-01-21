@@ -15,7 +15,7 @@ const mapToImageAndName = (item: Committee | Company) => (
   </div>
 )
 
-export const EventInfoBox: FC<Props> = ({ event, committees, companies }) => {
+export const EventDescriptionAndByline: FC<Props> = ({ event, committees, companies }) => {
   const committeeList = committees.map(mapToImageAndName)
   const companyList = companies.map(mapToImageAndName)
 
@@ -26,3 +26,5 @@ export const EventInfoBox: FC<Props> = ({ event, committees, companies }) => {
     </div>
   )
 }
+
+export const SkeletonEventDescriptionAndByline = () => <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]" />

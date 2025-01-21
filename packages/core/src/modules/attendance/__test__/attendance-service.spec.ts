@@ -6,18 +6,21 @@ import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { AttendanceServiceImpl } from "../attendance-service"
 import { AttendeeRepositoryImpl } from "../attendee-repository"
 import { WaitlistAttendeRepositoryImpl } from "../waitlist-attendee-repository"
+import { UserServiceImpl } from "../../user/user-service"
 
 describe("AttendanceService", () => {
   const attendanceRepository = vi.mocked(AttendanceRepositoryImpl.prototype)
   const attendeeRepository = vi.mocked(AttendeeRepositoryImpl.prototype)
   const waitlistAttendeeRepository = vi.mocked(WaitlistAttendeRepositoryImpl.prototype)
   const attendancePoolRepository = vi.mocked(AttendancePoolRepositoryImpl.prototype)
+  const userService = vi.mocked(UserServiceImpl.prototype)
 
   const attendanceService = new AttendanceServiceImpl(
     attendanceRepository,
     attendeeRepository,
     waitlistAttendeeRepository,
-    attendancePoolRepository
+    attendancePoolRepository,
+    userService
   )
 
   it("Sorts waitlist based on registeredAt when merging pools", async () => {
