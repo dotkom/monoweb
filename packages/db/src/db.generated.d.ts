@@ -88,7 +88,7 @@ export interface Attendee {
   id: Generated<string>;
   registeredAt: Timestamp;
   updatedAt: Generated<Timestamp>;
-  userId: string | null;
+  userId: string;
 }
 
 export interface Committee {
@@ -203,7 +203,7 @@ export interface NotificationPermissions {
   registrationStart: Generated<boolean>;
   standardNotifications: Generated<boolean>;
   updatedAt: Generated<Timestamp>;
-  userId: string | null;
+  userId: string;
 }
 
 export interface Offline {
@@ -234,7 +234,7 @@ export interface Payment {
 
 export interface PersonalMark {
   markId: string;
-  userId: string | null;
+  userId: string;
 }
 
 export interface PrivacyPermissions {
@@ -245,7 +245,7 @@ export interface PrivacyPermissions {
   phoneVisible: Generated<boolean>;
   profileVisible: Generated<boolean>;
   updatedAt: Generated<Timestamp>;
-  userId: string | null;
+  userId: string;
   usernameVisible: Generated<boolean>;
 }
 
