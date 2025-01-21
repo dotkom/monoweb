@@ -32,6 +32,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
           { label: "Mann", value: "male" },
           { label: "Kvinne", value: "female" },
           { label: "Annet", value: "other" },
+          { label: "Ikke oppgitt", value: "unknown" },
         ],
       }),
       allergies: createTextInput({
