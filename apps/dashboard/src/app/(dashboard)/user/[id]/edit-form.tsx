@@ -45,10 +45,6 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       compiled: createCheckboxInput({
         label: "Kompilert",
-      }),
-      address: createTextInput({
-        label: "Adresse",
-        placeholder: "Osloveien 1, 0001 Oslo",
-      }),
+      }) 
     },
   })
