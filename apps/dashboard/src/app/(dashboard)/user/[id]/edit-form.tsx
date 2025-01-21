@@ -45,6 +45,6 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       }),
       compiled: createCheckboxInput({
         label: "Kompilert",
-      }) 
+      }),
     },
   })
