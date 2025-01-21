@@ -52,6 +52,7 @@ export class UserServiceImpl implements UserService {
     return await this.userRepository.getAll(limit, offset)
   }
 
+  // https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
   async searchForUser(query: string, limit: number, offset: number): Promise<User[]> {
     return await this.userRepository.searchForUser(query, limit, offset)
   }

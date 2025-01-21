@@ -130,6 +130,7 @@ export class UserRepositoryImpl implements UserRepository {
     return users.data.map(mapAuth0UserToUser)
   }
 
+  // https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
   async searchForUser(query: string, limit: number, page: number): Promise<User[]> {
     const users = await this.client.users.getAll({ q: query, per_page: limit, page: page })
 
