@@ -15,13 +15,13 @@ export const UserEditCard: FC = () => {
       const result = UserWriteSchema.parse(data)
 
       if (result.address === "") {
-        result.address = undefined
+        delete result.address
       }
       if (result.phone === "") {
-        result.phone = undefined
+        delete result.phone
       }
       if (result.rfid === "") {
-        result.rfid = undefined
+        delete result.rfid
       }
 
       update.mutate({
