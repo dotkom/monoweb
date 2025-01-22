@@ -1,3 +1,5 @@
+import { sql } from "kysely";
+
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
     await db.schema
