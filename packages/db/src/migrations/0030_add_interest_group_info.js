@@ -2,8 +2,8 @@
 export async function up(db) {
     await db.schema
         .alterTable("interest_group")
-        .addColumn("long_description", "text")
-        .addColumn("join_info", "text")
+        .addColumn("long_description", sql`text`, (col) => col.notNull().defaultTo(''))
+        .addColumn("join_info", sql`text`, (col) => col.notNull().defaultTo(''))
         .execute();
 }
 
