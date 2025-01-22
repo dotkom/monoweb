@@ -87,8 +87,8 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <p className="m-0 text-3xl">{title}</p>
         </div>
         <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
-          {description.split("\n").map((paragraph, index) => (
-            <p key={index} className={paragraph ? "" : "my-2"}>
+          {description.split("\n").map((paragraph) => (
+            <p key={paragraph.slice(0, 10)} className={paragraph ? "" : "my-2"}>
               {paragraph}
             </p>
           ))}
