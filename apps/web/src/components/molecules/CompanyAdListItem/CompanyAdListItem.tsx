@@ -35,7 +35,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
           width={140}
           height={80}
           alt={`${jobListing.company.name}’s job posting`}
-          className="hidden md:block"
+          className="hidden md:block rounded"
         />
 
         <div>
