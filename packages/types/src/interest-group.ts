@@ -8,6 +8,8 @@ export const InterestGroupSchema = z.object({
   description: z.string(),
   link: z.string().nullable(), //slack link
   isActive: z.boolean(),
+  longDescription: z.string(),
+  joinInfo: z.string(),
 })
 
 export type InterestGroup = z.infer<typeof InterestGroupSchema>
