@@ -29,6 +29,7 @@ export const JobListingEditCard: FC = () => {
       employment: jobListing.employment,
       featured: jobListing.featured,
       locations: jobListing.locations,
+      createdAt: jobListing.createdAt,
     },
   })
   return <FormComponent />

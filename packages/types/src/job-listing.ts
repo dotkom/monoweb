@@ -3,7 +3,7 @@ import { CompanySchema } from "./company"
 
 export const JobListingSchema = z.object({
   id: z.string().ulid(),
-  createdAt: z.date(),
+  createdAt: z.date().optional(),
   company: CompanySchema.pick({ id: true, name: true, image: true }),
   title: z.string().max(1000).min(1),
   ingress: z.string().min(1),
