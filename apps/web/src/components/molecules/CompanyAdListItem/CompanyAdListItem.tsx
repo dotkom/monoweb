@@ -48,7 +48,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
             </div>
             <div className="flex flex-row gap-1">
               <Icon width={16} icon={"tabler:clock-hour-3"} />
-              {formatRelativeTime(jobListing.createdAt)}
+              {formatRelativeTime(jobListing.createdAt || new Date())}
             </div>
           </div>
         </div>
