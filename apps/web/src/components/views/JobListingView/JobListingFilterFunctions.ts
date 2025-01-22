@@ -44,7 +44,6 @@ export function sortDates(jobListing1: JobListing, jobListing2: JobListing, chos
     return jobListing1.deadline.getTime() - jobListing2.deadline.getTime()
   }
   if (chosenSort === "Opprettet") {
-    if (!jobListing1.createdAt || !jobListing2.createdAt) return 0
     return jobListing1.createdAt.getTime() - jobListing2.createdAt.getTime()
   }
   return 0
