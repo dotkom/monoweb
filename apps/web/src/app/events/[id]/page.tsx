@@ -1,15 +1,14 @@
-import { getServerClient } from "@/utils/trpc/serverClient"
-import { web as authOptions } from "@dotkomonline/auth"
 import { getServerSession } from "next-auth"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
 import { EventDescriptionAndByline } from "../components/EventDescriptionAndByline"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {server} from "@/utils/trpc/server";
 
 const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) => {
-  const [session, client] = await Promise.all([getServerSession(authOptions), getServerClient()])
-
-  const eventDetail = await client.event.getWebEventDetailData(id)
+  const session = await getServerSession(authOptions)
+  const eventDetail = await server.event.getWebEventDetailData.query(id)
 
   return (
     <div className="mt-8 flex flex-col gap-8">

@@ -1,10 +1,9 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { getServerClient } from "@/utils/trpc/serverClient"
 import Link from "next/link"
+import {server} from "@/utils/trpc/server";
 
 const InterestPage = async ({ params: { id } }: { params: { id: string } }) => {
-  const serverClient = await getServerClient()
-  const interestGroup = await serverClient.interestGroup.get(id)
+  const interestGroup = await server.interestGroup.get.query(id)
 
   return interestGroup != null ? (
     <div className="p-14 my-16 mx-auto border-slate-3 rounded-lg border shadow-md w-10/12 ">
