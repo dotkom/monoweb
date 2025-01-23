@@ -78,8 +78,12 @@ server.register(fastifyTRPCPlugin, {
     router: appRouter,
     createContext: createFastifyContext,
     onError: ({ path, error }) => {
-      // report to error monitoring
       console.error(`Error in tRPC handler on path '${path}':`, error)
+      if (error.cause instanceof AggregateError) {
+        for (const err of error.cause.errors) {
+          console.error(`  AggregateError Child in tRPC handler on path '${path}':`, err)
+        }
+      }
     },
   } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
 })
