@@ -212,21 +212,21 @@ export interface Offline {
 }
 
 export interface OwUser {
-  allergies: Json
-  auth0Id: string
-  createdAt: Generated<Timestamp>
-  email: string
-  familyName: string
-  gender: string | null
-  givenName: string
-  id: Generated<string>
-  lastSyncedAt: Generated<Timestamp>
-  middleName: string
-  name: string
-  phone: string | null
-  picture: string | null
-  studyYear: Generated<number>
-  updatedAt: Generated<Timestamp>
+  allergies: Json;
+  auth0Id: string;
+  createdAt: Generated<Timestamp>;
+  email: string;
+  familyName: string;
+  gender: string | null;
+  givenName: string;
+  id: Generated<string>;
+  lastSyncedAt: Generated<Timestamp>;
+  middleName: string;
+  name: string;
+  phone: string | null;
+  picture: string | null;
+  studyYear: Generated<number>;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Payment {
