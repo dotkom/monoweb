@@ -21,7 +21,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   update(userId: UserId, data: Partial<UserWrite>): Promise<User>
-  registerId(auth0Id: string): Promise<void>
+  registerId(auth0Id: string): Promise<User>
 }
 
 export class UserServiceImpl implements UserService {
