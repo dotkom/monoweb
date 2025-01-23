@@ -28,8 +28,6 @@ async function fetchUserProfile(accessToken, ctx, callback) {
     email: openid_userinfo.email,
     email_verified: openid_userinfo.email_verified,
     name: openid_userinfo.name,
-    app_metadata: {
-      ntnuUsername: ntnu_username,
-    }
+    app_metadata: { ntnu_username }
   });
 }
