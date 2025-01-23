@@ -1,24 +1,25 @@
+import type { S3Client } from "@aws-sdk/client-s3"
 import { type Database, createKysely, createMigrator } from "@dotkomonline/db"
-import { type Environment, createEnvironment } from "@dotkomonline/env"
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
+import type { ManagementClient } from "auth0"
 import { type Kysely, sql } from "kysely"
 import { afterAll, beforeAll } from "vitest"
+import { mockDeep } from "vitest-mock-extended"
+import { createServiceLayer } from "./src"
+import type { StripeAccount } from "./src/modules/payment/payment-service"
 
 let container: StartedPostgreSqlContainer
 let host: Kysely<Database>
 
-async function runMigrations(env: Environment, dbName: string) {
-  const db = createKyselyForDatabase(env, dbName)
+async function runMigrations(dbName: string) {
+  const db = createKyselyForDatabase(dbName)
   const migrator = createMigrator(db, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
   await migrator.migrateToLatest().catch(console.warn)
   await db.destroy()
 }
 
-function createKyselyForDatabase(env: Environment, dbName: string): Kysely<Database> {
-  return createKysely({
-    ...env,
-    DATABASE_URL: `postres://local:local@${container.getHost()}:${container.getFirstMappedPort()}/${dbName}`,
-  })
+function createKyselyForDatabase(dbName: string): Kysely<Database> {
+  return createKysely(`postres://local:local@${container.getHost()}:${container.getFirstMappedPort()}/${dbName}`)
 }
 
 async function createTestDatabase(dbName: string) {
@@ -33,13 +34,29 @@ async function createTestDatabase(dbName: string) {
 
 export type CleanupFunction = () => Promise<void>
 
-export async function createServiceLayerForTesting(env: Environment, database: string) {
+export async function createServiceLayerForTesting(database: string) {
   await createTestDatabase(database)
-  await runMigrations(env, database)
-  const kysely = createKyselyForDatabase(env, database)
+  await runMigrations(database)
+  const kysely = createKyselyForDatabase(database)
+
+  const s3Client = mockDeep<S3Client>()
+  const auth0Client = mockDeep<ManagementClient>()
+  const stripeAccounts = mockDeep<Record<string, StripeAccount>>()
+  const s3BucketName = crypto.randomUUID()
+  const core = await createServiceLayer({
+    db: kysely,
+    s3Client,
+    managementClient: auth0Client,
+    stripeAccounts,
+    s3BucketName,
+  })
 
   return {
+    core,
     kysely,
+    s3Client,
+    auth0Client,
+    stripeAccounts,
     cleanup: async () => {
       await kysely.destroy()
     },
@@ -55,8 +72,7 @@ beforeAll(async () => {
     .withReuse()
     .start()
 
-  process.env.DATABASE_URL = container.getConnectionUri()
-  host = createKysely(createEnvironment())
+  host = createKysely(container.getConnectionUri())
 }, 30000)
 
 afterAll(async () => {

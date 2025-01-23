@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/core": "workspace:*"
+    "@dotkomonline/core": "workspace:*",
+    "@dotkomonline/environment": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.2",

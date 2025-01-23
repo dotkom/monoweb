@@ -1,5 +1,5 @@
 import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../query"
 import { CompanyNotFoundError } from "./company-error"
 import type { CompanyRepository } from "./company-repository"
 

@@ -125,6 +125,9 @@ export class AttendeeServiceImpl implements AttendeeService {
       extrasChoices: [],
       attendanceId: attendancePool.attendanceId,
       registeredAt: registrationTime,
+      // TODO: Double-check regression from 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
+      firstName: user.firstName,
+      lastName: user.lastName,
     })
 
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
@@ -136,8 +139,10 @@ export class AttendeeServiceImpl implements AttendeeService {
         userId,
         isPunished: false,
         registeredAt: new Date(),
+        // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
         studyYear: user.studyYear,
-        name: user.name,
+        // TODO: Regression from 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
+        name: `${user.firstName} ${user.lastName}`,
       })
     }
 
@@ -152,7 +157,7 @@ export class AttendeeServiceImpl implements AttendeeService {
    * @throws {AttendeeRegistrationError} If the user is already registered, does not meet the year criteria, or the attendance has not started or has ended
    * @throws {IllegalStateError} If the pool has more attendees than the capacity
    */
-  async canRegisterForEvent(userId: UserId, attendancePoolId: AttendancePoolId, registrationTime: Date) {
+  async canRegisterForEvent(userId: UserId, attendancePoolId: AttendancePoolId, registrationTime: Date): Promise<void> {
     const user = await this.userService.getById(userId)
     const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
 
@@ -210,6 +215,8 @@ export class AttendeeServiceImpl implements AttendeeService {
         studyYear: classYear,
         name: `${user.firstName} ${user.lastName}`,
       })
+
+      // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
       return ins
     }
 
@@ -228,6 +235,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       lastName: user.lastName ?? "",
     })
 
+    // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
     return attendee
   }
 
@@ -258,6 +266,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const attendancePools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
 
+    // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
     return attendancePools.find((pool) => pool.yearCriteria.includes(user.studyYear)) ?? null
   }
 
