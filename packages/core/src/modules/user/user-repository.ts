@@ -91,16 +91,16 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async registerAndGet(auth0Id: string): Promise<User> {
-    await this.db
-      .insertInto("owUser")
-      .values({ id: auth0Id })
-      .onConflict((conflict) => conflict.doNothing())
-      .execute()
-    
     const user = await this.getById(auth0Id)
     if (user === null) {
       throw new Error("Failed to fetch user after registration")
     }
+
+    await this.db
+      .insertInto("owUser")
+      .values({ id: auth0Id })
+      .onConflict((conflict) => conflict.doNothing())
+      .execute() 
 
     return user
   }
