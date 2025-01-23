@@ -6,7 +6,7 @@ export const WaitlistAttendeeSchema = z.object({
   updatedAt: z.date(),
 
   attendanceId: z.string().ulid(),
-  userId: z.string().ulid(),
+  userId: z.string(),
   position: z.number(),
   isPunished: z.boolean(),
   registeredAt: z.date(),

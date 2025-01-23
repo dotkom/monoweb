@@ -4,7 +4,6 @@ import type {
   AttendancePoolId,
   Attendee,
   AttendeeId,
-  AttendeeUser,
   AttendeeWrite,
   ExtrasChoices,
   QrCodeRegistrationAttendee,
@@ -30,12 +29,11 @@ export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  getByAttendanceId(attendanceId: string): Promise<AttendeeUser[]>
-  getByAttendancePoolId(id: AttendancePoolId): Promise<AttendeeUser[]>
+  getByAttendanceId(attendanceId: string): Promise<Attendee[]>
+  getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
-  getByAuth0UserId(auth0UserId: string, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -46,15 +44,6 @@ export class AttendeeServiceImpl implements AttendeeService {
     private readonly userService: UserService,
     private readonly waitlistAttendeeService: WaitlistAttendeService
   ) {}
-
-  async getByAuth0UserId(auth0UserId: string, attendanceId: AttendanceId) {
-    const user = await this.userService.getByAuth0Id(auth0UserId)
-    if (user === null) {
-      return null
-    }
-    const attendee = await this.attendeeRepository.getByUserId(user.id, attendanceId)
-    return attendee
-  }
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)
@@ -185,10 +174,13 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("User already registered")
     }
 
-    const userHasAttendancePool = attendancePool.yearCriteria.includes(user.studyYear)
-    if (!userHasAttendancePool) {
+    // TODO: NOT IMPLEMENTED
+    const classYear = 1
+
+    // Does user match criteria for the pool?
+    if (attendancePool.yearCriteria.includes(classYear) === false) {
       throw new AttendeeRegistrationError(
-        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${user.studyYear}`
+        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${classYear}`
       )
     }
 
@@ -208,9 +200,35 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
 
+    if (numAttendees === attendancePool.capacity) {
+      // create waitlist attendee
+      const ins = await this.waitlistAttendeeService.create({
+        attendanceId,
+        userId,
+        isPunished: false,
+        registeredAt: new Date(),
+        studyYear: classYear,
+        name: `${user.firstName} ${user.lastName}`,
+      })
+      return ins
+    }
+
     if (numAttendees > attendancePool.capacity) {
       throw new IllegalStateError("Pool has more attendees than the capacity")
     }
+
+    const attendee = await this.attendeeRepository.create({
+      attendancePoolId: attendancePool.id,
+      userId,
+      attended: false,
+      extrasChoices: [],
+      attendanceId,
+      registeredAt: registrationTime,
+      firstName: user.firstName ?? "Anonym",
+      lastName: user.lastName ?? "",
+    })
+
+    return attendee
   }
 
   /**
@@ -266,12 +284,10 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async getByAttendanceId(id: AttendanceId) {
-    const attendees = await this.attendeeRepository.getByAttendanceId(id)
-    return attendees
+    return this.attendeeRepository.getByAttendanceId(id)
   }
 
   async getByAttendancePoolId(id: AttendancePoolId) {
-    const attendees = await this.attendeeRepository.getByAttendancePoolId(id)
-    return attendees
+    return await this.attendeeRepository.getByAttendancePoolId(id)
   }
 }
