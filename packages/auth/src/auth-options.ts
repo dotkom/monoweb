@@ -82,7 +82,7 @@ export const getAuthOptions = ({
     },
     async session({ session, token }) {
       if (token.sub) {
-        session.user = await server.user.register.mutate(token.sub)
+        session.user = await server.user.registerAndGet.mutate(token.sub)
       }
 
       return session

@@ -21,7 +21,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   update(userId: UserId, data: Partial<UserWrite>): Promise<User>
-  registerId(auth0Id: string): Promise<User>
+  registerAndGet(auth0Id: string): Promise<User>
 }
 
 export class UserServiceImpl implements UserService {
@@ -31,8 +31,8 @@ export class UserServiceImpl implements UserService {
     private readonly notificationPermissionsRepository: NotificationPermissionsRepository
   ) {}
 
-  async registerId(auth0Id: string) {
-    return this.userRepository.registerId(auth0Id)
+  async registerAndGet(auth0Id: string) {
+    return this.userRepository.registerAndGet(auth0Id)
   }
 
   async getById(auth0Id: string) {
