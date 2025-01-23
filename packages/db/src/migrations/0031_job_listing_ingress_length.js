@@ -1,8 +1,14 @@
+import { sql } from "kysely"
+
 /** @param db {import('kysely').Kysely} */
 export async function up(db) {
   await db.schema
     .alterTable("job_listing")
-    .alterColumn("ingress", sql`text`, (col) => col.notNull())
+    .alterColumn(
+      "ingress",
+      (col) => col.setDataType("text"),
+      (col) => col.notNull()
+    )
     .execute()
 }
 
@@ -10,6 +16,10 @@ export async function up(db) {
 export async function down(db) {
   await db.schema
     .alterTable("job_listing")
-    .alterColumn("ingress", sql`character varying(250)`, (col) => col.notNull())
+    .alterColumn(
+      "ingress",
+      (col) => col.setDataType(sql`character varying(250)`),
+      (col) => col.notNull()
+    )
     .execute()
 }
