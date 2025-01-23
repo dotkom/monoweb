@@ -1,5 +1,5 @@
 import InterestGroupListItem from "@/components/molecules/InterestGroupListItem"
-import {server} from "@/utils/trpc/server";
+import { server } from "@/utils/trpc/server"
 
 export const InterestGroupList = async () => {
   const interestGroups = await server.interestGroup.all.query()

@@ -1,6 +1,6 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
+import { server } from "@/utils/trpc/server"
 import Link from "next/link"
-import {server} from "@/utils/trpc/server";
 
 const InterestPage = async ({ params: { id } }: { params: { id: string } }) => {
   const interestGroup = await server.interestGroup.get.query(id)

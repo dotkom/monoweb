@@ -1,10 +1,10 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { server } from "@/utils/trpc/server"
 import { getServerSession } from "next-auth"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
 import { EventDescriptionAndByline } from "../components/EventDescriptionAndByline"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {server} from "@/utils/trpc/server";
 
 const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) => {
   const session = await getServerSession(authOptions)
