@@ -147,7 +147,9 @@ export interface InterestGroup {
   description: string;
   id: Generated<string>;
   isActive: Generated<boolean>;
+  joinInfo: Generated<string>;
   link: string | null;
+  longDescription: Generated<string>;
   name: string;
   updatedAt: Generated<Timestamp>;
 }

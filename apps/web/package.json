@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build:prod": "next build",
+    "build": "next build",
     "start": "next start",
     "storybook": "start-storybook -p 6007",
     "build-storybook": "build-storybook",

@@ -10,7 +10,7 @@
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
-    "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
+    "generate-types": "kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
     "kysely": "^0.27.0",
