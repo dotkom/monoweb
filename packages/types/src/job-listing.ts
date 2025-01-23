@@ -22,6 +22,7 @@ export const JobListingSchema = z.object({
 export const JobListingWriteSchema = JobListingSchema.partial({
   id: true,
   company: true,
+  createdAt: true,
 })
   .extend({
     companyId: z.string().ulid(),
