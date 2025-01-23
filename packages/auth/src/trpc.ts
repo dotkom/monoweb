@@ -8,7 +8,6 @@ export const server = trpc.createTRPCProxyClient<AppRouter>({
   links: [
     trpc.httpLink({
       url: `${env.RPC_HOST}/api/trpc`,
-      // TODO: Support authentication
     }),
   ],
 })
