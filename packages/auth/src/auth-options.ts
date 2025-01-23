@@ -1,4 +1,3 @@
-import type { ServiceLayer } from "@dotkomonline/core"
 import type { User } from "@dotkomonline/types"
 import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
@@ -39,7 +38,6 @@ export interface AuthOptions {
   auth0ClientId: string
   auth0ClientSecret: string
   auth0Issuer: string
-  core: ServiceLayer
   jwtSecret: string
 }
 
@@ -47,7 +45,6 @@ export const getAuthOptions = ({
   auth0ClientId: oidcClientId,
   auth0ClientSecret: oidcClientSecret,
   auth0Issuer: oidcIssuer,
-  core,
   jwtSecret,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
@@ -84,14 +81,12 @@ export const getAuthOptions = ({
     },
     async session({ session, token }) {
       if (token.sub) {
-        const user: User | null = await core.userService.getById(token.sub)
-        await core.userService.registerId(token.sub)
-
-        if (user === null) {
-          throw new Error(`Failed to fetch user with id ${token.sub}`)
-        }
-
-        session.user = user
+        // const user: User | null = await core.userService.getById(token.sub)
+        // await core.userService.registerId(token.sub)
+        // if (user === null) {
+        //   throw new Error(`Failed to fetch user with id ${token.sub}`)
+        // }
+        // session.user = user
       }
 
       return session
