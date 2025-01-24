@@ -864,7 +864,7 @@ resource "auth0_action" "feide_account_linking" {
   
   secrets {
     name  = "PRODUCTION"
-    value = "false"
+    value = "${terraform.workspace == "prd" ? "true" : "false"}"
   }
 }
 
