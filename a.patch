@@ -1,0 +1,37 @@
+diff --git a/doppler.yaml b/doppler.yaml
+index c13a5a15..85faaf6d 100644
+--- a/doppler.yaml
++++ b/doppler.yaml
+@@ -16,4 +16,7 @@ setup:
+     path: apps/rpc
+   - project: monoweb-web
+     config: dev
+-    path: apps/web
+\ No newline at end of file
++    path: apps/web
++  - project: monoweb-rpc
++    config: dev
++    path: tools/migrator
+diff --git a/package.json b/package.json
+index b2e2c689..01a082d8 100644
+--- a/package.json
++++ b/package.json
+@@ -28,12 +28,12 @@
+     "test": "turbo run test",
+     "test:it": "turbo run test:it",
+     "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run -- pnpm run dev",
+-    "migrate": "pnpm -F @dotkomonline/migrator run  migrate && cd packages/db && pnpm generate-types",
+-    "migrate-down": "pnpm -F @dotkomonline/migrator run migrate -- down && cd packages/db && pnpm generate-types",
+-    "migrate-down-all": "pnpm -F @dotkomonline/migrator run migrate -- down-all && cd packages/db && pnpm generate-types",
+-    "migrate-dev": "pnpm -F @dotkomonline/migrator run migrate -- latest --with-seed && cd packages/db && pnpm generate-types",
+-    "migrate-with-fixtures": "pnpm -F @dotkomonline/migrator run migrate -- latest --with-fixtures && cd packages/db && pnpm generate-types",
+-    "migrate-with-sample-data": "pnpm -F @dotkomonline/migrator run migrate -- latest --sample-data && cd packages/db && pnpm generate-types",
++    "migrate": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate && cd packages/db && pnpm generate-types",
++    "migrate-down": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- down && cd packages/db && pnpm generate-types",
++    "migrate-down-all": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- down-all && cd packages/db && pnpm generate-types",
++    "migrate-dev": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- latest --with-seed && cd packages/db && pnpm generate-types",
++    "migrate-with-fixtures": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- latest --with-fixtures && cd packages/db && pnpm generate-types",
++    "migrate-with-sample-data": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- latest --sample-data && cd packages/db && pnpm generate-types",
+     "storybook": "turbo run storybook --filter=storybook",
+     "type-check": "turbo run type-check",
+     "clean": "turbo run clean",
