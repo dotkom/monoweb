@@ -6,7 +6,7 @@ import { sql } from "kysely"
 export const createTableWithDefaults = (tableName, options, schema) => {
   let table = schema.createTable(tableName)
   if (options.id) {
-    table = table.addColumn("id", sql`ulid`, (col) => col.primaryKey().defaultTo(sql`gen_ulid()`))
+    table = table.addColumn("id", sql`uuid`, (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
   }
   if (options.createdAt) {
     table = table.addColumn("created_at", "timestamptz", (col) => col.defaultTo(sql`now()`).notNull())

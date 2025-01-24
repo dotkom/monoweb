@@ -64,7 +64,7 @@ export async function createServiceLayerForTesting(database: string) {
 }
 
 beforeAll(async () => {
-  container = await new PostgreSqlContainer("public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3")
+  container = await new PostgreSqlContainer("postgres:15-alpine")
     .withExposedPorts(5432)
     .withUsername("local")
     .withPassword("local")

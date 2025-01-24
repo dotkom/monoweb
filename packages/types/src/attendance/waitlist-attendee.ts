@@ -1,11 +1,11 @@
 import { z } from "zod"
 
 export const WaitlistAttendeeSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
 
-  attendanceId: z.string().ulid(),
+  attendanceId: z.string().uuid(),
   userId: z.string(),
   position: z.number(),
   isPunished: z.boolean(),
@@ -13,7 +13,7 @@ export const WaitlistAttendeeSchema = z.object({
 
   studyYear: z.number().int(),
 
-  attendancePoolId: z.string().ulid(),
+  attendancePoolId: z.string().uuid(),
 
   name: z.string(),
 })
