@@ -54,17 +54,14 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
-    return attendee
+    return await this.attendeeRepository.getByUserId(userId, attendanceId)
   }
 
   async updateAttended(attended: boolean, id: AttendeeId) {
     const attendee = await this.attendeeRepository.update({ attended }, id)
-
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
     }
-
     return attendee
   }
 
@@ -125,7 +122,6 @@ export class AttendeeServiceImpl implements AttendeeService {
       extrasChoices: [],
       attendanceId: attendancePool.attendanceId,
       registeredAt: registrationTime,
-      // TODO: Double-check regression from 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
       firstName: user.firstName,
       lastName: user.lastName,
     })
@@ -139,9 +135,7 @@ export class AttendeeServiceImpl implements AttendeeService {
         userId,
         isPunished: false,
         registeredAt: new Date(),
-        // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
-        studyYear: user.studyYear,
-        // TODO: Regression from 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
+        studyYear: -69,
         name: `${user.firstName} ${user.lastName}`,
       })
     }
@@ -179,13 +173,10 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("User already registered")
     }
 
-    // TODO: NOT IMPLEMENTED
-    const classYear = 1
-
     // Does user match criteria for the pool?
-    if (attendancePool.yearCriteria.includes(classYear) === false) {
+    if (!attendancePool.yearCriteria.includes(-69)) {
       throw new AttendeeRegistrationError(
-        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${classYear}`
+        `Pool criteria: ${attendancePool.yearCriteria.join(", ")}, user study year: ${-69}`
       )
     }
 
@@ -206,25 +197,21 @@ export class AttendeeServiceImpl implements AttendeeService {
     const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
 
     if (numAttendees === attendancePool.capacity) {
-      // create waitlist attendee
-      const ins = await this.waitlistAttendeeService.create({
+      await this.waitlistAttendeeService.create({
         attendanceId,
         userId,
         isPunished: false,
         registeredAt: new Date(),
-        studyYear: classYear,
+        studyYear: -69,
         name: `${user.firstName} ${user.lastName}`,
       })
-
-      // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
-      return ins
     }
 
     if (numAttendees > attendancePool.capacity) {
       throw new IllegalStateError("Pool has more attendees than the capacity")
     }
 
-    const attendee = await this.attendeeRepository.create({
+    await this.attendeeRepository.create({
       attendancePoolId: attendancePool.id,
       userId,
       attended: false,
@@ -234,9 +221,6 @@ export class AttendeeServiceImpl implements AttendeeService {
       firstName: user.firstName ?? "Anonym",
       lastName: user.lastName ?? "",
     })
-
-    // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
-    return attendee
   }
 
   /**
@@ -266,8 +250,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const attendancePools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
 
-    // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
-    return attendancePools.find((pool) => pool.yearCriteria.includes(user.studyYear)) ?? null
+    return attendancePools.find((pool) => pool.yearCriteria.includes(-69)) ?? null
   }
 
   /**
