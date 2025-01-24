@@ -35,7 +35,7 @@ exports.onExecutePostLogin = async (event, api) => {
   });
 
   const response = await mgmt.users.getAll({
-    "q": `app_metadata.ntnu_username:${ntnu_username}`
+    "q": `app_metadata.ntnu_username:${ntnu_username} AND NOT user_id:${event.user.user_id}`
   });
   if (response.status !== 200) {
     throw new Error(response.data);
