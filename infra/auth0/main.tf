@@ -793,3 +793,86 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
     "delete:refresh_tokens"
   ]
 }
+
+resource "auth0_client" "feide_account_linker" {
+  name = "Feide Account Linker"
+  app_type = "non_interactive"
+
+  grant_types = [
+    "client_credentials"
+  ]
+
+  jwt_configuration {
+    alg = "RS256"
+    lifetime_in_seconds = 10
+  }
+
+  oidc_conformant = true
+  is_first_party = true
+}
+
+resource "auth0_client_credentials" "feide_account_linker" {
+  client_id = auth0_client.feide_account_linker.client_id
+  authentication_method = "client_secret_post"
+}
+
+resource "auth0_client_grant" "m2m_grant" {
+  client_id = auth0_client.feide_account_linker.client_id
+  audience = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+
+  scopes = [
+    "read:users",
+    "update:users"
+  ]
+}
+
+resource "auth0_action" "feide_account_linking" {
+  name = "Feide Account Linking"
+  runtime = "node18"
+  code = file("js/actions/linkFeideAccounts.js")
+  deploy = true
+
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+
+  dependencies {
+    name = "auth0"
+    version = "latest"
+  }
+
+  secrets {
+    name = "FEIDE_CONNECTION_ID"
+    value = auth0_connection.feide.id
+  }
+
+  secrets {
+    name  = "DOMAIN"
+    value = data.auth0_tenant.tenant.domain
+  }
+
+  secrets {
+    name  = "CLIENT_ID"
+    value = auth0_client.feide_account_linker.client_id
+  }
+
+  secrets {
+    name  = "CLIENT_SECRET"
+    value = auth0_client_credentials.feide_account_linker.client_secret
+  }
+  
+  secrets {
+    name  = "PRODUCTION"
+    value = "false"
+  }
+}
+
+resource "auth0_trigger_actions" "login_flow" {
+  trigger = "post-login"
+
+  actions {
+    id           = auth0_action.feide_account_linking.id
+    display_name = auth0_action.feide_account_linking.name
+  }
+}
