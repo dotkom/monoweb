@@ -17,7 +17,7 @@ export function withInsertJsonValue<T extends object, K extends keyof T>(
 }
 
 export const CursorSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
 })
 
 export const PaginateInputSchema = z
@@ -85,8 +85,7 @@ export const paginatedQuery = async <T extends OrderedIdentifier, DB, TB extends
 /**
  * Trait type for anything that has an id.
  *
- * Any type that should be pageable in the collections system must have an identifier that is monotonically ordered. In
- * our case, we have ULID identifiers on all resources.
+ * Any type that should be pageable in the collections system must have an identifier that is monotonically ordered.
  */
 export interface OrderedIdentifier {
   id: string
