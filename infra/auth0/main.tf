@@ -149,6 +149,8 @@ resource "auth0_connection" "feide" {
 # }
 
 resource "auth0_client" "vengeful_vineyard_frontend" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://vinstraff.no/*"
   app_type = "spa"
   callbacks = {
     "dev" = [
@@ -169,7 +171,7 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
       "https://vinstraff.no/docs/oauth2-redirect",
       "http://localhost:3000",
       "http://localhost:8000",
-      "http://localhost:8000/docs/oauth2-redirect",
+      "http://localhost:3000/docs/oauth2-redirect"
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
@@ -192,40 +194,6 @@ data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
 
-resource "auth0_client" "hs_julekalender" {
-  app_type = "spa"
-  callbacks = {
-    "dev" = [
-      "http://localhost:3000/api/auth/callback/auth0",
-    ]
-    "stg" = [
-      "http://localhost:3000/api/auth/callback/auth0",
-    ]
-    "prd" = [
-      "https://online-christmas.vercel.app/api/auth/callback/auth0",
-      "https://jul.online.ntnu.no/api/auth/callback/auth0",
-    ]
-  }[terraform.workspace]
-  grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Hovedstyrets Julekalender${local.name_suffix[terraform.workspace]}"
-  organization_require_behavior = "no_prompt"
-  is_first_party                = true
-  oidc_conformant               = true
-
-  refresh_token {
-    rotation_type   = "rotating"
-    expiration_type = "expiring"
-  }
-
-  jwt_configuration {
-    alg = "RS256"
-  }
-}
-
-data "auth0_client" "hs_julekalender" {
-  client_id = auth0_client.hs_julekalender.client_id
-}
-
 locals {
   projects = {
     # key here must be project name
@@ -235,7 +203,6 @@ locals {
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
-    hs-julekalender      = data.auth0_client.hs_julekalender
   }
 
   monoweb = {
@@ -318,6 +285,8 @@ resource "doppler_secret" "mgmt_tenants_monoweb" {
 }
 
 resource "auth0_client" "onlineweb_frontend" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://online.ntnu.no/*"
   app_type = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:8080"]
@@ -353,6 +322,7 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
   is_first_party = true
   app_type       = "non_interactive"
   name           = "Auth0 Account Management API Management Client"
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
 
   jwt_configuration {
     alg = "RS256"
@@ -454,6 +424,7 @@ resource "auth0_resource_server" "auth0_management_api" {
 }
 
 resource "auth0_client" "gtx" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_clients = []
   allowed_origins = []
   app_type        = "non_interactive" # this is a machine to machine application
@@ -481,6 +452,8 @@ resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
 }
 
 resource "auth0_client" "onlineweb4" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://old.online.ntnu.no/*"
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
@@ -524,6 +497,8 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
   ]
 }
 resource "auth0_client" "monoweb_web" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://web.online.ntnu.no/*"
   allowed_clients     = []
   allowed_logout_urls = []
   allowed_origins     = []
@@ -560,13 +535,13 @@ data "auth0_client" "monoweb_web" {
 }
 
 resource "auth0_client" "monoweb_dashboard" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   app_type = "regular_web"
   callbacks = concat(
-    ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/auth0"],
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
       "stg" = [] # TODO
-      "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
+      "prd" = ["https://dashboard.online.ntnu.no/api/auth/callback/auth0", "https://online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace])
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
   name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
@@ -795,6 +770,8 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
 }
 
 resource "auth0_client" "feide_account_linker" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
   name = "Feide Account Linker"
   app_type = "non_interactive"
 
@@ -812,12 +789,16 @@ resource "auth0_client" "feide_account_linker" {
 }
 
 resource "auth0_client_credentials" "feide_account_linker" {
-  client_id = auth0_client.feide_account_linker.client_id
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  client_id = auth0_client.feide_account_linker[0].client_id
   authentication_method = "client_secret_post"
 }
 
 resource "auth0_client_grant" "m2m_grant" {
-  client_id = auth0_client.feide_account_linker.client_id
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  client_id = auth0_client.feide_account_linker[0].client_id
   audience = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
 
   scopes = [
@@ -827,6 +808,8 @@ resource "auth0_client_grant" "m2m_grant" {
 }
 
 resource "auth0_action" "feide_account_linking" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
   name = "Feide Account Linking"
   runtime = "node18"
   code = file("js/actions/linkFeideAccounts.js")
@@ -844,7 +827,7 @@ resource "auth0_action" "feide_account_linking" {
 
   secrets {
     name = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide.id
+    value = auth0_connection.feide[0].id
   }
 
   secrets {
@@ -854,12 +837,12 @@ resource "auth0_action" "feide_account_linking" {
 
   secrets {
     name  = "CLIENT_ID"
-    value = auth0_client.feide_account_linker.client_id
+    value = auth0_client.feide_account_linker[0].client_id
   }
 
   secrets {
     name  = "CLIENT_SECRET"
-    value = auth0_client_credentials.feide_account_linker.client_secret
+    value = auth0_client_credentials.feide_account_linker[0].client_secret
   }
   
   secrets {
@@ -869,10 +852,12 @@ resource "auth0_action" "feide_account_linking" {
 }
 
 resource "auth0_trigger_actions" "login_flow" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
   trigger = "post-login"
 
   actions {
-    id           = auth0_action.feide_account_linking.id
-    display_name = auth0_action.feide_account_linking.name
+    id           = auth0_action.feide_account_linking[0].id
+    display_name = auth0_action.feide_account_linking[0].name
   }
 }
