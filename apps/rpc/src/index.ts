@@ -39,7 +39,7 @@ const stripeAccounts = {
     webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
 }
-const kysely = createKysely(env.DATABASE_URL)
+const kysely = createKysely(env.DATABASE_URL, env.AWS_RDS_CERTIFICATE_AUTHORITY)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
