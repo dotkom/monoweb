@@ -13,6 +13,7 @@
     "generate-types": "kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
+    "@dotkomonline/logger": "workspace:*",
     "kysely": "^0.27.0",
     "pg": "^8.13.0"
   },
