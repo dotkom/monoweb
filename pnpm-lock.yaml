@@ -140,7 +140,7 @@ importers:
         version: 4.24.11(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       pg:
         specifier: ^8.11.3
-        version: 8.13.0
+        version: 8.13.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -531,7 +531,7 @@ importers:
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       pg:
         specifier: ^8.13.0
-        version: 8.13.0
+        version: 8.13.1
       qrcode.react:
         specifier: ^3.1.0
         version: 3.2.0(react@18.3.1)
@@ -741,7 +741,7 @@ importers:
         version: 0.27.5
       pg:
         specifier: ^8.13.0
-        version: 8.13.0
+        version: 8.13.1
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.3
@@ -751,10 +751,10 @@ importers:
         version: link:../tsconfig
       '@types/pg':
         specifier: ^8.10.9
-        version: 8.11.10
+        version: 8.11.11
       kysely-codegen:
         specifier: ^0.16.0
-        version: 0.16.8(kysely@0.27.5)(pg@8.13.0)
+        version: 0.16.8(kysely@0.27.5)(pg@8.13.1)
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -1076,7 +1076,7 @@ importers:
         version: 0.27.5
       pg:
         specifier: ^8.13.0
-        version: 8.13.0
+        version: 8.13.1
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -1089,7 +1089,7 @@ importers:
         version: link:../../packages/logger
       '@types/pg':
         specifier: ^8.10.9
-        version: 8.11.10
+        version: 8.11.11
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -3764,9 +3764,6 @@ packages:
   '@types/node@18.19.74':
     resolution: {integrity: sha512-HMwEkkifei3L605gFdV+/UwtpxP6JSzM+xFk2Ia6DNFSwSVBRh9qp5Tgf4lNFOMfPVuU0WnkcWpXZpgn5ufO4A==}
 
-  '@types/node@20.16.10':
-    resolution: {integrity: sha512-vQUKgWTjEIRFCvK6CyriPH3MZYiYlNy0fKiEYHWbcoWLEgs4opurGGKlebrTLqdSMIbXImH6XExNiIyNUv3WpA==}
-
   '@types/node@22.10.10':
     resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
 
@@ -3776,8 +3773,8 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
-  '@types/pg@8.11.10':
-    resolution: {integrity: sha512-LczQUW4dbOQzsH2RQ5qoeJ6qJPdrcM/DcMLoqWQkMLMsq83J5lAX3LXjdkWdpscFy67JSOWDnh7Ny/sPFykmkg==}
+  '@types/pg@8.11.11':
+    resolution: {integrity: sha512-kGT1qKM8wJQ5qlawUrEkXgvMSXoV213KfMGXcwfDwUIfUHXqXYXOfS1nE1LINRJVVVx5wCm70XnFlMHaIcQAfw==}
 
   '@types/prismjs@1.26.5':
     resolution: {integrity: sha512-AUZTa7hQ2KY5L7AmtSiqxlhWxb4ina0yd8hNbl4TWuqnv/pFP0nDMb3YrfSBf4hJVGLh2YEIBfKaBW/9UEl6IQ==}
@@ -6240,8 +6237,8 @@ packages:
     resolution: {integrity: sha512-cRL3JpS3lKMGsKaWndugWQoLOCoP+Cic8oseVcbr0qhPzYD5DWXK+RZ9LY9wxRf7RQia4SCwQlXk0q6FCPrVng==}
     engines: {node: '>=10'}
 
-  pg@8.13.0:
-    resolution: {integrity: sha512-34wkUTh3SxTClfoHB3pQ7bIMvw9dpFU1audQQeZG837fmHfHpr14n/AELVDoOYVDW2h5RDWU78tFjkD+erSBsw==}
+  pg@8.13.1:
+    resolution: {integrity: sha512-OUir1A0rPNZlX//c7ksiu7crsGZTKSOXJPgtNiHGIlC9H0lO+NC6ZDYksSgBYY/thSWhnSRBv8w1lieNNGATNQ==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -10694,10 +10691,6 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.16.10':
-    dependencies:
-      undici-types: 6.19.8
-
   '@types/node@22.10.10':
     dependencies:
       undici-types: 6.20.0
@@ -10708,9 +10701,9 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
-  '@types/pg@8.11.10':
+  '@types/pg@8.11.11':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 22.10.10
       pg-protocol: 1.7.0
       pg-types: 4.0.2
 
@@ -12673,7 +12666,7 @@ snapshots:
 
   kuler@2.0.0: {}
 
-  kysely-codegen@0.16.8(kysely@0.27.5)(pg@8.13.0):
+  kysely-codegen@0.16.8(kysely@0.27.5)(pg@8.13.1):
     dependencies:
       chalk: 4.1.2
       dotenv: 16.4.5
@@ -12684,7 +12677,7 @@ snapshots:
       minimist: 1.2.8
       pluralize: 8.0.0
     optionalDependencies:
-      pg: 8.13.0
+      pg: 8.13.1
 
   kysely@0.27.5: {}
 
@@ -13676,9 +13669,9 @@ snapshots:
 
   pg-numeric@1.0.2: {}
 
-  pg-pool@3.7.0(pg@8.13.0):
+  pg-pool@3.7.0(pg@8.13.1):
     dependencies:
-      pg: 8.13.0
+      pg: 8.13.1
 
   pg-protocol@1.7.0: {}
 
@@ -13700,10 +13693,10 @@ snapshots:
       postgres-interval: 3.0.0
       postgres-range: 1.1.4
 
-  pg@8.13.0:
+  pg@8.13.1:
     dependencies:
       pg-connection-string: 2.7.0
-      pg-pool: 3.7.0(pg@8.13.0)
+      pg-pool: 3.7.0(pg@8.13.1)
       pg-protocol: 1.7.0
       pg-types: 2.2.0
       pgpass: 1.0.5
