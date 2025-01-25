@@ -151,6 +151,9 @@ resource "auth0_connection" "feide" {
 resource "auth0_client" "vengeful_vineyard_frontend" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   cross_origin_loc = "https://vinstraff.no/*"
+  allowed_origins = [
+    "http://localhost:3000"
+  ]
   app_type = "spa"
   callbacks = {
     "dev" = [
@@ -540,8 +543,11 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = [] # TODO
-      "prd" = ["https://dashboard.online.ntnu.no/api/auth/callback/auth0", "https://online.ntnu.no/api/auth/callback/auth0"]
+      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0"]
+      "prd" = [
+        "https://dashboard.online.ntnu.no/api/auth/callback/auth0", 
+        "https://online.ntnu.no/api/auth/callback/auth0"
+      ]
   }[terraform.workspace])
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
   name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
