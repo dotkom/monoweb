@@ -155,7 +155,7 @@ importers:
         version: 2.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       superjson:
         specifier: ^2.0.0
-        version: 2.2.1
+        version: 2.2.2
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -525,7 +525,7 @@ importers:
         version: 4.24.11(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-superjson-plugin:
         specifier: ^0.6.0
-        version: 0.6.3(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(superjson@2.2.1)
+        version: 0.6.3(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(superjson@2.2.2)
       next-themes:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -549,7 +549,7 @@ importers:
         version: 4.12.0(react@18.3.1)
       superjson:
         specifier: ^2.0.0
-        version: 2.2.1
+        version: 2.2.2
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -880,7 +880,7 @@ importers:
         version: 4.24.8(next@14.2.14(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       superjson:
         specifier: ^2.0.0
-        version: 2.2.1
+        version: 2.2.2
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -7064,8 +7064,8 @@ packages:
     peerDependencies:
       postcss: ^8.3.3
 
-  superjson@2.2.1:
-    resolution: {integrity: sha512-8iGv75BYOa0xRJHK5vRLEjE2H/i4lulTjzpUXic3Eg8akftYjkmQDa8JARQ42rlczXyFR3IeRoeFCc7RxHsYZA==}
+  superjson@2.2.2:
+    resolution: {integrity: sha512-5JRxVqC8I8NuOUjzBbvVJAKNM8qoVuH0O77h4WInc/qC2q5IreqKxYwgkga3PfA22OayK2ikceb/B26dztPl+Q==}
     engines: {node: '>=16'}
 
   supports-color@2.0.0:
@@ -13387,11 +13387,11 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
       uuid: 8.3.2
 
-  next-superjson-plugin@0.6.3(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(superjson@2.2.1):
+  next-superjson-plugin@0.6.3(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(superjson@2.2.2):
     dependencies:
       hoist-non-react-statics: 3.3.2
       next: 14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      superjson: 2.2.1
+      superjson: 2.2.2
 
   next-themes@0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -14610,7 +14610,7 @@ snapshots:
       postcss: 8.5.1
     optional: true
 
-  superjson@2.2.1:
+  superjson@2.2.2:
     dependencies:
       copy-anything: 3.0.5
 
