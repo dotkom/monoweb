@@ -4,7 +4,7 @@ FROM base AS builder
 WORKDIR /app
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.4.0 turbo@2.0.14
+RUN npm install -g pnpm@9.4.0 turbo@2.0.14 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -15,9 +15,9 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.4.0 turbo@2.0.14
+RUN npm install -g pnpm@9.4.0 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
-RUN pnpm install
+RUN pnpm install --ignore-scripts
 COPY --from=builder /app/out/full .
 RUN turbo run build --filter @dotkomonline/rif
 
@@ -36,8 +36,8 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer --chown=nextjs:nodejs /app/apps/rif/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/rif/.next/static ./apps/rif/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/rif/public ./apps/rif/public
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/.next/static ./apps/rif/.next/static
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/rif/public ./apps/rif/public
 
 CMD node apps/rif/server.js
