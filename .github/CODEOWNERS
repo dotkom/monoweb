@@ -41,7 +41,7 @@ packages/logger       @junlarsen
 packages/proxy-nextjs @junlarsen
 packages/tsconfig
 packages/types
-packages/ui           @brage-andreas @madsbarnes
+packages/ui           @brage-andreas @madsab
 packages/utils        @brage-andreas
 
 
