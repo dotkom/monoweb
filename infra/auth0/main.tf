@@ -132,8 +132,6 @@ resource "auth0_connection" "feide" {
       fetchUserProfile = file("js/fetchUserProfile.js")
     }
   }
-
-  count = terraform.workspace == "prd" ? 0 : 1
 }
 
 
@@ -361,6 +359,20 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
 # has to be imported on new tenant
 resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
+  enabled_clients = [
+    auth0_client.onlineweb_frontend.client_id,
+    auth0_client.onlineweb4.client_id,
+    auth0_client.monoweb_web.client_id,
+    auth0_client.monoweb_dashboard.client_id,
+    auth0_client.vengeful_vineyard_frontend.client_id,
+    auth0_client.appkom_opptak.client_id,
+    auth0_client.appkom_events_app.client_id,
+    auth0_client.appkom_autobank.client_id,
+  ]
+}
+
+resource "auth0_connection_clients" "feide" {
+  connection_id = auth0_connection.feide.id
   enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
