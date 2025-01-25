@@ -124,17 +124,9 @@ Please consult the example [.env.example](.env.example) file for the environment
 
 ### Running with your own PostgreSQL database
 
-> This section requires you to have both [Docker](#tools) and [Docker Compose](#tools) installed.
+> Running your own database instance requires [Docker](#tools) and [Docker Compose](#tools) to be installed.
 
-```bash
-docker run -d -p 5432:5432 postgres:15-alpine \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_DB=postgres
-  
-# Set your DATABASE_URL to the following:
-export DATABASE_URL="postgres://postgres:postgres@localhost:5432/postgres"
-```
+To start the database run `docker compose up`.
 
 ### What runs where?
 
