@@ -112,6 +112,9 @@ resource "auth0_resource_server" "online" {
 
 # TODO: feide-log-in
 resource "auth0_connection" "feide" {
+    # Currently only enable in staging:
+  count = terraform.workspace == "prd" ? 0 : 1
+
   display_name         = "FEIDE"
   is_domain_connection = false
   metadata             = {}
@@ -372,7 +375,11 @@ resource "auth0_connection_clients" "username_password_authentication" {
 }
 
 resource "auth0_connection_clients" "feide" {
-  connection_id = auth0_connection.feide.id
+
+  # Currently only enable in staging:
+  count = terraform.workspace == "prd" ? 0 : 1
+  connection_id = auth0_connection.feide[0].id
+
   enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
