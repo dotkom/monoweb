@@ -465,7 +465,7 @@ importers:
         version: 14.2.23
       '@portabletext/react':
         specifier: ^3.0.11
-        version: 3.1.0(react@18.3.1)
+        version: 3.2.0(react@18.3.1)
       '@radix-ui/colors':
         specifier: ^3.0.0
         version: 3.0.0
@@ -2554,14 +2554,14 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
-  '@portabletext/react@3.1.0':
-    resolution: {integrity: sha512-ZGHlvS+NvId9RSqnflN8xF2KVZgAgD399dK1GaycurnGNZGZYTd5nZmc8by1yL76Ar8n/dbVtouUDJIkO4Tupw==}
+  '@portabletext/react@3.2.0':
+    resolution: {integrity: sha512-BA216Z8yhb/eP24bfb09uiT0SVnQHTVZMPXf4MRBEZ+G8cMzZM/ab3tcp8owyp91+3kTKR0qSIpzYSKdm1Pakw==}
     engines: {node: ^14.13.1 || >=16.0.0}
     peerDependencies:
-      react: ^17 || ^18 || >=19.0.0-rc
+      react: ^17 || ^18 || >=19.0.0-0
 
-  '@portabletext/toolkit@2.0.15':
-    resolution: {integrity: sha512-KRNEUAd6eOxE9y591qC0sE24ZG2q27OHXe0dsPclj4IoEzf8aEuDcHR64wfFtB0aHq9Wdx3pIinmhZZcl35/vg==}
+  '@portabletext/toolkit@2.0.16':
+    resolution: {integrity: sha512-aBvnD8MscoAlEIuZBn0Aksd+oCuoMGFOT3CtHIgRBaac0Vu4YnnMUF45xo/B/T5vmwWcnDXoJEJdn+SKDg1m+A==}
     engines: {node: ^14.13.1 || >=16.0.0}
 
   '@portabletext/types@2.0.13':
@@ -9409,13 +9409,13 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
-  '@portabletext/react@3.1.0(react@18.3.1)':
+  '@portabletext/react@3.2.0(react@18.3.1)':
     dependencies:
-      '@portabletext/toolkit': 2.0.15
+      '@portabletext/toolkit': 2.0.16
       '@portabletext/types': 2.0.13
       react: 18.3.1
 
-  '@portabletext/toolkit@2.0.15':
+  '@portabletext/toolkit@2.0.16':
     dependencies:
       '@portabletext/types': 2.0.13
 
