@@ -507,14 +507,16 @@ resource "auth0_client" "monoweb_web" {
   allowed_origins     = []
   app_type            = "regular_web"
   # you go here if you decline an auth grant
-  initiate_login_uri = "https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"
-  callbacks = concat(
-    ["https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"],
-    {
-      "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-      "stg" = [] # TODO
-      "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
-  }[terraform.workspace])
+  initiate_login_uri = {
+    "dev" = "http://localhost:3000/api/auth/callback/auth0"
+    "stg" = "https://stg.web.online.ntnu.no/api/auth/callback/auth0"
+    "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
+  }[terraform.workspace]
+  callbacks = {
+    "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+    "stg" = ["https://stg.web.online.ntnu.no/api/auth/callback/auth0"]
+    "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
+  }[terraform.workspace]
 
   grant_types     = ["authorization_code", "refresh_token"]
   is_first_party  = true
