@@ -386,7 +386,7 @@ importers:
         version: 10.45.2
       auth0:
         specifier: ^4.3.1
-        version: 4.10.0
+        version: 4.17.0
       fastify:
         specifier: ^4.28.0
         version: 4.28.1
@@ -686,7 +686,7 @@ importers:
         version: link:../logger
       auth0:
         specifier: ^4.3.1
-        version: 4.10.0
+        version: 4.17.0
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -4065,8 +4065,8 @@ packages:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
 
-  auth0@4.10.0:
-    resolution: {integrity: sha512-xfNtSyL84w9z1DQXWV1GXgtq2Oi3OXeJe/r+pI29GKZHpfgspNb4rFqp/CqI8zKVir6L3Iq2KZgE2rDHRDtxfA==}
+  auth0@4.17.0:
+    resolution: {integrity: sha512-5X4k+l0D1Xo+SBbgkQogobU6SSW+zDUNWtqa0HsYQTrTVA6CQmLRE0bxzDFS9lnTXGQEQwKXhDMHdksj2csrpg==}
     engines: {node: '>=18'}
 
   autoprefixer@10.4.20:
@@ -7456,11 +7456,11 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  undici-types@6.19.8:
-    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
   undici@5.28.4:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
@@ -11015,10 +11015,10 @@ snapshots:
 
   atomic-sleep@1.0.0: {}
 
-  auth0@4.10.0:
+  auth0@4.17.0:
     dependencies:
       jose: 4.15.9
-      undici-types: 6.19.8
+      undici-types: 6.21.0
       uuid: 9.0.1
 
   autoprefixer@10.4.20(postcss@8.5.1):
@@ -15010,9 +15010,9 @@ snapshots:
 
   undici-types@5.26.5: {}
 
-  undici-types@6.19.8: {}
-
   undici-types@6.20.0: {}
+
+  undici-types@6.21.0: {}
 
   undici@5.28.4:
     dependencies:
