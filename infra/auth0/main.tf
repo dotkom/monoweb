@@ -828,7 +828,7 @@ resource "auth0_action" "feide_account_linking" {
 
   secrets {
     name = "FEIDE_CONNECTION_ID"
-    value = auth0_connection.feide[0].id
+    value = auth0_connection.feide.id
   }
 
   secrets {
