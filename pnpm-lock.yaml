@@ -756,8 +756,8 @@ importers:
         specifier: ^8.10.9
         version: 8.11.11
       kysely-codegen:
-        specifier: ^0.16.0
-        version: 0.16.8(kysely@0.27.5)(pg@8.13.1)
+        specifier: ^0.17.0
+        version: 0.17.0(kysely@0.27.5)(pg@8.13.1)
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -4672,10 +4672,6 @@ packages:
     resolution: {integrity: sha512-8NHi73otpWsZGBSZwwknTXS5pqMOrk9+Ssrna8xCaxkzEpU9OTf9R5ArQGVw03//Zmk9MOwLPng9WwndvpAJ5g==}
     engines: {node: '>=12'}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
-    engines: {node: '>=12'}
-
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
@@ -5550,8 +5546,8 @@ packages:
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
 
-  kysely-codegen@0.16.8:
-    resolution: {integrity: sha512-+N4SDdI9akUWug0i/3UvlktpfPiCt1mtDQ+pVCqI5E98xcGWpdfVXb4CD7CGGNg+QMXqpiR3bVKd0LgCJQtrPA==}
+  kysely-codegen@0.17.0:
+    resolution: {integrity: sha512-C36g6epial8cIOSBEWGI9sRfkKSsEzTcivhjPivtYFQnhMdXnrVFaUe7UMZHeSdXaHiWDqDOkReJgWLD8nPKdg==}
     hasBin: true
     peerDependencies:
       '@libsql/kysely-libsql': ^0.3.0
@@ -11622,9 +11618,7 @@ snapshots:
 
   dotenv-expand@11.0.6:
     dependencies:
-      dotenv: 16.4.5
-
-  dotenv@16.4.5: {}
+      dotenv: 16.4.7
 
   dotenv@16.4.7: {}
 
@@ -12759,10 +12753,10 @@ snapshots:
 
   kuler@2.0.0: {}
 
-  kysely-codegen@0.16.8(kysely@0.27.5)(pg@8.13.1):
+  kysely-codegen@0.17.0(kysely@0.27.5)(pg@8.13.1):
     dependencies:
       chalk: 4.1.2
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       dotenv-expand: 11.0.6
       git-diff: 2.0.6
       kysely: 0.27.5
