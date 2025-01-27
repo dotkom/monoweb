@@ -44,7 +44,6 @@ export const RegistrationButton: FC<Props> = ({
     <Button
       className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100")}
       onClick={attendee ? unregisterForAttendance : registerForAttendance}
-      disabled={!enabled}
       color={color}
       variant="solid"
       icon={buttonIcon}
