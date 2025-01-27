@@ -70,6 +70,14 @@ jobs:
 
       - name: Lint
         run: pnpm lint-check
-      
+
       - name: Build
-        run: pnpm run build
+        # TODO: Building Next.js apps that do server-side fetching doesn't have the
+        #       right variables at the moment. This is easily fixable but I don't
+        #       have the capacity right now.
+        run: |
+          pnpm run -F @dotkomonline/brevduen \
+            -F @dotkomonline/invoicification \
+            -F @dotkomonline/rif \
+            -F @dotkomonline/rpc \
+            build

@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const OfflineSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
   title: z.string().max(1000).min(1),
   published: z.date(),
   fileUrl: z.string().nullable(), // s3 link

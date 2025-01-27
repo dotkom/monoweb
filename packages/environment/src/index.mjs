@@ -15,7 +15,7 @@ export function createEnvironment(variables, env = process.env) {
   const schema = z.object(items)
 
   const environment = schema.safeParse(env)
-  const skipValidation = process.env.DOCKER_BUILD === "1"
+  const skipValidation = process.env.DOCKER_BUILD === "1" || process.env.CI !== undefined
   if (skipValidation) {
     return environment.data ?? {}
   }

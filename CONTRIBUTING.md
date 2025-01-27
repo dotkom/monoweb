@@ -124,30 +124,9 @@ Please consult the example [.env.example](.env.example) file for the environment
 
 ### Running with your own PostgreSQL database
 
-> This section requires you to have both [Docker](#tools) and [Docker Compose](#tools) installed.
+> Running your own database instance requires [Docker](#tools) and [Docker Compose](#tools) to be installed.
 
-We use PostgreSQL 15 with the `pgx_ulid` extension. You can use the `packages/pgx-ulid` package to build the extension
-into a Docker image, and then run the image to get a PostgreSQL instance with the extension.
-
-```bash
-cd packages/pgx-ulid
-sh build.sh
-
-# You now have a Docker image named pgx_ulid:0.1.3
-```
-
-If you don't want to manually build the image (it takes a while, and is error prone), you can use Dotkom's publicly
-distributed image. The image is available at `https://gallery.ecr.aws/dotkom/dotkom/pgx-ulid`.
-
-```bash
-docker run -d -p 5432:5432 public.ecr.aws/dotkom/dotkom/pgx-ulid \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_DB=postgres
-  
-# Set your DATABASE_URL to the following:
-export DATABASE_URL="postgres://postgres:postgres@localhost:5432/postgres"
-```
+To start the database run `docker compose up`.
 
 ### What runs where?
 
@@ -171,8 +150,7 @@ Setup functions: `packages/core/vitest-integration.setup.ts`
 
 - Docker
 
-Monoweb uses test containers to run a PostgreSQL database in Docker for testing. The tests are setup to use a custom postgres image with ulid extension (see setup file). By running the tests, this image should be downloaded. When the image is downloaded, you should be able to run the tests. It might take a while to download the image the first time.
-
+Monoweb uses test containers to run a PostgreSQL database in Docker for testing.
 #### How to run
 
 ```bash

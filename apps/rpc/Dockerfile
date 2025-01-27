@@ -4,7 +4,7 @@ FROM base AS builder
 WORKDIR /app
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.4.0 turbo@2.0.14
+RUN npm install -g pnpm@9.4.0 turbo@2.0.14 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -15,9 +15,9 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.4.0 turbo@2.0.14
+RUN npm install -g pnpm@9.4.0 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
-RUN pnpm install
+RUN pnpm install --ignore-scripts
 COPY --from=builder /app/out/full .
 RUN turbo run build --filter @dotkomonline/rpc
 
@@ -34,7 +34,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 rpc
 USER rpc
 
-COPY --from=installer --chown=nextjs:rpc /app/apps/rpc/dist ./
-COPY --from=installer --chown=nextjs:rpc /app/apps/rpc/package.json ./
+COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/index.js ./
+COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/package.json ./
 
 CMD node index.js

@@ -11,12 +11,12 @@ export const ExtraChoice = z.object({
 export const ExtrasChoices = z.array(ExtraChoice)
 
 export const AttendeeSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 
-  attendanceId: z.string().ulid(),
-  attendancePoolId: z.string().ulid(),
+  attendanceId: z.string().uuid(),
+  attendancePoolId: z.string().uuid(),
   userId: z.string(),
 
   attended: z.boolean(),

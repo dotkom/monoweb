@@ -23,7 +23,6 @@
     "date-fns": "^4.1.0",
     "kysely": "^0.27.0",
     "stripe": "^13.11.0",
-    "ulid": "^2.3.0",
     "zod": "^3.22.4"
   },
   "peerDependencies": {

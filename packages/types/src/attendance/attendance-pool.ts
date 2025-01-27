@@ -3,11 +3,11 @@ import { z } from "zod"
 export const YearCriteriaSchema = z.array(z.number())
 
 export const AttendancePoolSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   capacity: z.number(),
-  attendanceId: z.string().ulid(),
+  attendanceId: z.string().uuid(),
   yearCriteria: YearCriteriaSchema,
   numAttendees: z.number(),
   title: z.string().min(1),

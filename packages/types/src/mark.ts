@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const MarkSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   title: z.string(),

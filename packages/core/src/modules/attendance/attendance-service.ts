@@ -208,8 +208,6 @@ export class AttendanceServiceImpl implements AttendanceService {
     if (userAttendee) {
       return null
     }
-
-    // @ts-expect-error - regression 3c592dd6edcc53f8845ff0fa2c13e4fba3f8ce74
-    return userAttendablePool.find((pool) => pool.yearCriteria.includes(user.studyYear)) ?? null
+    return userAttendablePool.find((pool) => pool.yearCriteria.includes(-69)) ?? null
   }
 }

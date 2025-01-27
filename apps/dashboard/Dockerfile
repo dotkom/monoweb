@@ -4,7 +4,7 @@ FROM base AS builder
 WORKDIR /app
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.4.0 turbo@2.0.14
+RUN npm install -g pnpm@9.4.0 turbo@2.0.14 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -15,9 +15,9 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.4.0 turbo@2.0.14
+RUN npm install -g pnpm@9.4.0 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
-RUN pnpm install
+RUN pnpm install --ignore-scripts
 COPY --from=builder /app/out/full .
 RUN turbo run build --filter @dotkomonline/dashboard
 
@@ -36,8 +36,8 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer --chown=nextjs:nodejs /app/apps/dashboard/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/dashboard/.next/static ./apps/dashboard/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/dashboard/public ./apps/dashboard/public
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/.next/static ./apps/dashboard/.next/static
+COPY --from=installer --chown=nextjs:nodejs --chmod=755 /app/apps/dashboard/public ./apps/dashboard/public
 
 CMD node apps/dashboard/server.js

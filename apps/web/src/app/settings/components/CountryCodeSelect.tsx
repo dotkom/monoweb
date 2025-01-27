@@ -15,6 +15,7 @@ import {
   SelectValue,
   SelectViewport,
 } from "@dotkomonline/ui"
+// @ts-expect-error: this should be completely replaced because a dependency for a flag is silly
 import { type CountryCodes as CountryCodeProps, ReactCountryFlag } from "@fadi-ui/react-country-flag"
 import { useState } from "react"
 
