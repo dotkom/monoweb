@@ -118,10 +118,10 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
           <RegistrationButton
             attendee={attendee}
             attendance={eventDetail.attendance}
+            attendablePool={attendedPool ?? null}
             registerForAttendance={registerForAttendance}
             unregisterForAttendance={unregisterForAttendance}
             isLoading={registerLoading}
-            enabled={false}
           />
         )}
       </div>

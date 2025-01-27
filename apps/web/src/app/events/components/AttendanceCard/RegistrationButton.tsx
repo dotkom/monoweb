@@ -1,57 +1,44 @@
-import type { Attendance, Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
-import type { FC, ReactElement } from "react"
-import { getAttendanceDetails } from "../../utils"
+import type { FC } from "react"
 
 interface Props {
   attendance: Attendance
   attendee: Attendee | null
+  attendablePool: AttendancePool | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
   isLoading: boolean
-  enabled: boolean | undefined
 }
-
-const nowWithOffset = (offset: number) => new Date(Date.now() + offset)
 
 export const RegistrationButton: FC<Props> = ({
   attendee,
   attendance,
+  attendablePool,
   registerForAttendance,
   unregisterForAttendance,
   isLoading,
-  enabled,
 }) => {
-  const attendanceDetails = getAttendanceDetails(attendance)
+  const now = new Date()
 
-  let changeRegisteredStateButton: ReactElement<typeof Button>
   let eventAttendanceStatusText: string
 
-  switch (attendanceDetails.status) {
-    case "NotOpened": {
-      eventAttendanceStatusText = `Åpner ${formatDate(nowWithOffset(attendanceDetails.timeUntilOpen))}`
-      break
-    }
-    case "Open": {
-      eventAttendanceStatusText = `Stenger ${formatDate(nowWithOffset(attendanceDetails.timeUntilClose))}`
-      break
-    }
-    case "Closed": {
-      eventAttendanceStatusText = `Stengte ${formatDate(nowWithOffset(attendanceDetails.timeSinceClose))}`
-      break
-    }
-    default:
-      throw new Error("Unknown status")
+  if (now < attendance.registerStart) {
+    eventAttendanceStatusText = `Åpner ${formatDate(attendance.registerStart)}`
+  } else if (now > attendance.registerEnd) {
+    eventAttendanceStatusText = `Stenger ${formatDate(attendance.registerEnd)}`
+  } else {
+    eventAttendanceStatusText = `Stengte ${formatDate(attendance.registerEnd)}`
   }
 
-  const buttonStatusText = attendee ? "Meld meg av" : "Meld meg på"
+  const canRegisterToEvent = now >= attendance.registerStart && now <= attendance.registerEnd && Boolean(attendablePool)
+  const canDeregisterToEvent = attendee && now < attendance.deregisterDeadline
+  const buttonStatusText = canDeregisterToEvent ? "Meld meg av" : canRegisterToEvent ? "Meld meg på" : "Ingen påmelding"
   const buttonIcon = null
 
-  const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  const color =
-    attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "slate" : attendee ? "red" : "green"
+  const color = canRegisterToEvent ? "green" : canDeregisterToEvent ? "red" : "slate"
 
   return (
     <Button
