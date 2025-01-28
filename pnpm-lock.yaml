@@ -83,10 +83,10 @@ importers:
         version: link:../../packages/utils
       '@hookform/error-message':
         specifier: ^2.0.1
-        version: 2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.53.0(react@18.3.1))(react@18.3.1)
+        version: 2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.54.2(react@18.3.1))(react@18.3.1)
       '@hookform/resolvers':
         specifier: ^3.3.4
-        version: 3.10.0(react-hook-form@7.53.0(react@18.3.1))
+        version: 3.10.0(react-hook-form@7.54.2(react@18.3.1))
       '@iconify/react':
         specifier: ^4.1.1
         version: 4.1.1(react@18.3.1)
@@ -149,7 +149,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.48.2
-        version: 7.53.0(react@18.3.1)
+        version: 7.54.2(react@18.3.1)
       react-zxing:
         specifier: ^2.0.0
         version: 2.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -213,10 +213,10 @@ importers:
         version: link:../../packages/ui
       '@hookform/error-message':
         specifier: ^2.0.1
-        version: 2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.53.0(react@18.3.1))(react@18.3.1)
+        version: 2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.54.2(react@18.3.1))(react@18.3.1)
       '@hookform/resolvers':
         specifier: ^3.3.4
-        version: 3.10.0(react-hook-form@7.53.0(react@18.3.1))
+        version: 3.10.0(react-hook-form@7.54.2(react@18.3.1))
       '@iconify/react':
         specifier: ^4.1.1
         version: 4.1.1(react@18.3.1)
@@ -237,7 +237,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.48.2
-        version: 7.53.0(react@18.3.1)
+        version: 7.54.2(react@18.3.1)
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -289,10 +289,10 @@ importers:
         version: link:../../packages/ui
       '@hookform/error-message':
         specifier: ^2.0.1
-        version: 2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.53.0(react@18.3.1))(react@18.3.1)
+        version: 2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.54.2(react@18.3.1))(react@18.3.1)
       '@hookform/resolvers':
         specifier: ^3.3.4
-        version: 3.10.0(react-hook-form@7.53.0(react@18.3.1))
+        version: 3.10.0(react-hook-form@7.54.2(react@18.3.1))
       '@iconify/react':
         specifier: ^4.1.1
         version: 4.1.1(react@18.3.1)
@@ -325,7 +325,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.48.2
-        version: 7.53.0(react@18.3.1)
+        version: 7.54.2(react@18.3.1)
       zod:
         specifier: ^3.22.4
         version: 3.23.8
@@ -543,7 +543,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.48.2
-        version: 7.53.0(react@18.3.1)
+        version: 7.54.2(react@18.3.1)
       react-icons:
         specifier: ^4.12.0
         version: 4.12.0(react@18.3.1)
@@ -6584,8 +6584,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  react-hook-form@7.53.0:
-    resolution: {integrity: sha512-M1n3HhqCww6S2hxLxciEXy2oISPnAzxY7gvwVPrtlczTM/1dDadXgUxDpHMrMTblDOcm/AXtXxHwZ3jpg1mqKQ==}
+  react-hook-form@7.54.2:
+    resolution: {integrity: sha512-eHpAUgUjWbZocoQYUHposymRb4ZP6d0uwUnooL2uOybA9/3tPUvoAKqEWK1WaSiTxxOfTpffNZP7QwlnM3/gEg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -8980,15 +8980,15 @@ snapshots:
 
   '@floating-ui/utils@0.2.8': {}
 
-  '@hookform/error-message@2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.53.0(react@18.3.1))(react@18.3.1)':
+  '@hookform/error-message@2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.54.2(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-hook-form: 7.53.0(react@18.3.1)
+      react-hook-form: 7.54.2(react@18.3.1)
 
-  '@hookform/resolvers@3.10.0(react-hook-form@7.53.0(react@18.3.1))':
+  '@hookform/resolvers@3.10.0(react-hook-form@7.54.2(react@18.3.1))':
     dependencies:
-      react-hook-form: 7.53.0(react@18.3.1)
+      react-hook-form: 7.54.2(react@18.3.1)
 
   '@iconify-icon/react@1.0.8(react@18.3.1)':
     dependencies:
@@ -14063,7 +14063,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  react-hook-form@7.53.0(react@18.3.1):
+  react-hook-form@7.54.2(react@18.3.1):
     dependencies:
       react: 18.3.1
 
