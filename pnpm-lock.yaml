@@ -47,10 +47,10 @@ importers:
         version: 22.10.10
       tsup:
         specifier: ^8.3.0
-        version: 8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.6.2)(yaml@2.7.0)
+        version: 8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   apps/dashboard:
     dependencies:
@@ -201,7 +201,7 @@ importers:
         version: 2.8.1
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   apps/invoicification:
     dependencies:
@@ -277,7 +277,7 @@ importers:
         version: 2.8.1
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   apps/rif:
     dependencies:
@@ -362,7 +362,7 @@ importers:
         version: 2.8.1
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   apps/rpc:
     dependencies:
@@ -414,13 +414,13 @@ importers:
         version: 2.8.1
       tsup:
         specifier: ^8.3.0
-        version: 8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.6.2)(yaml@2.7.0)
+        version: 8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
       tsx:
         specifier: ^4.15.6
         version: 4.19.2
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   apps/web:
     dependencies:
@@ -601,7 +601,7 @@ importers:
         version: 2.8.1
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   packages/auth:
     dependencies:
@@ -635,7 +635,7 @@ importers:
         version: link:../tsconfig
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   packages/config:
     devDependencies:
@@ -668,7 +668,7 @@ importers:
         version: 2.9.0
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   packages/core:
     dependencies:
@@ -726,13 +726,13 @@ importers:
         version: 10.13.2
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
       vitest:
         specifier: ^1.3.1
         version: 1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1))
       vitest-mock-extended:
         specifier: ^1.3.1
-        version: 1.3.2(typescript@5.6.2)(vitest@1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1)))
+        version: 1.3.2(typescript@5.7.3)(vitest@1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1)))
 
   packages/db:
     dependencies:
@@ -760,7 +760,7 @@ importers:
         version: 0.17.0(kysely@0.27.5)(pg@8.13.1)
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   packages/emails:
     dependencies:
@@ -794,7 +794,7 @@ importers:
         version: 1.10.1
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   packages/environment:
     dependencies:
@@ -853,7 +853,7 @@ importers:
         version: 1.6.0(vitest@1.6.0)
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
       vitest:
         specifier: ^1.3.1
         version: 1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1))
@@ -902,7 +902,7 @@ importers:
         version: 1.6.0(vitest@1.6.0)
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
       vitest:
         specifier: ^1.3.1
         version: 1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1))
@@ -952,7 +952,7 @@ importers:
         version: link:../tsconfig
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   packages/ui:
     dependencies:
@@ -1022,7 +1022,7 @@ importers:
         version: link:../tsconfig
       '@ladle/react':
         specifier: ^4.0.3
-        version: 4.1.2(@swc/helpers@0.5.15)(@types/node@22.10.10)(@types/react@18.3.18)(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sugarss@5.0.0(postcss@8.5.1))(typescript@5.6.2)
+        version: 4.1.2(@swc/helpers@0.5.15)(@types/node@22.10.10)(@types/react@18.3.18)(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sugarss@5.0.0(postcss@8.5.1))(typescript@5.7.3)
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.18
@@ -1037,7 +1037,7 @@ importers:
         version: 3.4.17
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
       vite:
         specifier: ^5.0.0
         version: 5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1))
@@ -1055,7 +1055,7 @@ importers:
         version: link:../tsconfig
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   tools/migrator:
     dependencies:
@@ -1104,7 +1104,7 @@ importers:
         version: 3.14.0
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
   tools/shell:
     dependencies:
@@ -1126,7 +1126,7 @@ importers:
         version: 3.14.0
       typescript:
         specifier: ^5.4.5
-        version: 5.6.2
+        version: 5.7.3
 
 packages:
 
@@ -7426,11 +7426,6 @@ packages:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
 
-  typescript@5.6.2:
-    resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@5.7.3:
     resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
     engines: {node: '>=14.17'}
@@ -9060,7 +9055,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@ladle/react@4.1.2(@swc/helpers@0.5.15)(@types/node@22.10.10)(@types/react@18.3.18)(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sugarss@5.0.0(postcss@8.5.1))(typescript@5.6.2)':
+  '@ladle/react@4.1.2(@swc/helpers@0.5.15)(@types/node@22.10.10)(@types/react@18.3.18)(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sugarss@5.0.0(postcss@8.5.1))(typescript@5.7.3)':
     dependencies:
       '@babel/code-frame': 7.26.2
       '@babel/core': 7.26.0
@@ -9087,7 +9082,7 @@ snapshots:
       koa: 2.15.3
       koa-connect: 2.1.0
       lodash.merge: 4.6.2
-      msw: 2.7.0(@types/node@22.10.10)(typescript@5.6.2)
+      msw: 2.7.0(@types/node@22.10.10)(typescript@5.7.3)
       open: 10.1.0
       prism-react-renderer: 2.4.1(react@18.3.1)
       prop-types: 15.8.1
@@ -9102,7 +9097,7 @@ snapshots:
       source-map: 0.7.4
       vfile: 6.0.3
       vite: 5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1))
-      vite-tsconfig-paths: 4.3.2(typescript@5.6.2)(vite@5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1)))
+      vite-tsconfig-paths: 4.3.2(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1)))
     transitivePeerDependencies:
       - '@swc/helpers'
       - '@types/node'
@@ -13363,7 +13358,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw@2.7.0(@types/node@22.10.10)(typescript@5.6.2):
+  msw@2.7.0(@types/node@22.10.10)(typescript@5.7.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
@@ -13384,7 +13379,7 @@ snapshots:
       type-fest: 4.32.0
       yargs: 17.7.2
     optionalDependencies:
-      typescript: 5.6.2
+      typescript: 5.7.3
     transitivePeerDependencies:
       - '@types/node'
 
@@ -14858,21 +14853,21 @@ snapshots:
 
   ts-custom-error@3.3.1: {}
 
-  ts-essentials@10.0.2(typescript@5.6.2):
+  ts-essentials@10.0.2(typescript@5.7.3):
     optionalDependencies:
-      typescript: 5.6.2
+      typescript: 5.7.3
 
   ts-interface-checker@0.1.13: {}
 
-  tsconfck@3.1.4(typescript@5.6.2):
+  tsconfck@3.1.4(typescript@5.7.3):
     optionalDependencies:
-      typescript: 5.6.2
+      typescript: 5.7.3
 
   tslib@2.8.1: {}
 
   tsscmp@1.0.6: {}
 
-  tsup@8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.6.2)(yaml@2.7.0):
+  tsup@8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.24.2)
       cac: 6.7.14
@@ -14893,7 +14888,7 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.10.9(@swc/helpers@0.5.15)
       postcss: 8.5.1
-      typescript: 5.6.2
+      typescript: 5.7.3
     transitivePeerDependencies:
       - jiti
       - supports-color
@@ -14972,8 +14967,6 @@ snapshots:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
-
-  typescript@5.6.2: {}
 
   typescript@5.7.3: {}
 
@@ -15152,11 +15145,11 @@ snapshots:
       - supports-color
       - terser
 
-  vite-tsconfig-paths@4.3.2(typescript@5.6.2)(vite@5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1))):
+  vite-tsconfig-paths@4.3.2(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1))):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
-      tsconfck: 3.1.4(typescript@5.6.2)
+      tsconfck: 3.1.4(typescript@5.7.3)
     optionalDependencies:
       vite: 5.4.14(@types/node@22.10.10)(sugarss@5.0.0(postcss@8.5.1))
     transitivePeerDependencies:
@@ -15183,10 +15176,10 @@ snapshots:
       fsevents: 2.3.3
       sugarss: 5.0.0(postcss@8.5.1)
 
-  vitest-mock-extended@1.3.2(typescript@5.6.2)(vitest@1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1))):
+  vitest-mock-extended@1.3.2(typescript@5.7.3)(vitest@1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1))):
     dependencies:
-      ts-essentials: 10.0.2(typescript@5.6.2)
-      typescript: 5.6.2
+      ts-essentials: 10.0.2(typescript@5.7.3)
+      typescript: 5.7.3
       vitest: 1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1))
 
   vitest@1.6.0(@types/node@22.10.10)(@vitest/ui@1.6.0)(jsdom@22.1.0)(sugarss@5.0.0(postcss@8.5.1)):
