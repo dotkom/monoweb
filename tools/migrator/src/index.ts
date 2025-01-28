@@ -69,7 +69,7 @@ program
       }
     }
 
-    console.log(option);
+    console.log(option)
 
     if (option.withSeed) {
       const { seed } = await import("./seed")
