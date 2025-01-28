@@ -198,7 +198,7 @@ importers:
         version: 3.4.17
       tslib:
         specifier: ^2.6.2
-        version: 2.7.0
+        version: 2.8.1
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -274,7 +274,7 @@ importers:
         version: 3.4.17
       tslib:
         specifier: ^2.6.2
-        version: 2.7.0
+        version: 2.8.1
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -359,7 +359,7 @@ importers:
         version: 3.4.17
       tslib:
         specifier: ^2.6.2
-        version: 2.7.0
+        version: 2.8.1
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -411,7 +411,7 @@ importers:
         version: 22.10.10
       tslib:
         specifier: ^2.6.2
-        version: 2.7.0
+        version: 2.8.1
       tsup:
         specifier: ^8.3.0
         version: 8.3.6(@swc/core@1.10.9(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.6.2)(yaml@2.7.0)
@@ -598,7 +598,7 @@ importers:
         version: 3.4.17
       tslib:
         specifier: ^2.6.2
-        version: 2.7.0
+        version: 2.8.1
       typescript:
         specifier: ^5.4.5
         version: 5.6.2
@@ -7311,9 +7311,6 @@ packages:
       typescript:
         optional: true
 
-  tslib@2.7.0:
-    resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
-
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -7879,13 +7876,13 @@ snapshots:
     dependencies:
       '@aws-crypto/util': 5.2.0
       '@aws-sdk/types': 3.734.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-crypto/crc32c@5.2.0':
     dependencies:
       '@aws-crypto/util': 5.2.0
       '@aws-sdk/types': 3.734.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-crypto/sha1-browser@5.2.0':
     dependencies:
@@ -7894,7 +7891,7 @@ snapshots:
       '@aws-sdk/types': 3.734.0
       '@aws-sdk/util-locate-window': 3.723.0
       '@smithy/util-utf8': 2.3.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-crypto/sha256-browser@5.2.0':
     dependencies:
@@ -7979,7 +7976,7 @@ snapshots:
       '@smithy/util-stream': 4.0.2
       '@smithy/util-utf8': 4.0.0
       '@smithy/util-waiter': 4.0.2
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -8182,14 +8179,14 @@ snapshots:
       '@smithy/protocol-http': 5.0.1
       '@smithy/types': 4.1.0
       '@smithy/util-config-provider': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-expect-continue@3.734.0':
     dependencies:
       '@aws-sdk/types': 3.734.0
       '@smithy/protocol-http': 5.0.1
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-flexible-checksums@3.735.0':
     dependencies:
@@ -8205,7 +8202,7 @@ snapshots:
       '@smithy/util-middleware': 4.0.1
       '@smithy/util-stream': 4.0.2
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-host-header@3.734.0':
     dependencies:
@@ -8218,7 +8215,7 @@ snapshots:
     dependencies:
       '@aws-sdk/types': 3.734.0
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-logger@3.734.0':
     dependencies:
@@ -8248,13 +8245,13 @@ snapshots:
       '@smithy/util-middleware': 4.0.1
       '@smithy/util-stream': 4.0.2
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-ssec@3.734.0':
     dependencies:
       '@aws-sdk/types': 3.734.0
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/middleware-user-agent@3.734.0':
     dependencies:
@@ -8328,7 +8325,7 @@ snapshots:
       '@smithy/types': 4.1.0
       '@smithy/util-hex-encoding': 4.0.0
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - aws-crt
 
@@ -8339,7 +8336,7 @@ snapshots:
       '@smithy/protocol-http': 5.0.1
       '@smithy/signature-v4': 5.0.1
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/token-providers@3.734.0':
     dependencies:
@@ -8359,7 +8356,7 @@ snapshots:
 
   '@aws-sdk/util-arn-parser@3.723.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/util-endpoints@3.734.0':
     dependencies:
@@ -8373,7 +8370,7 @@ snapshots:
       '@aws-sdk/types': 3.734.0
       '@smithy/querystring-builder': 4.0.1
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@aws-sdk/util-locate-window@3.723.0':
     dependencies:
@@ -8397,7 +8394,7 @@ snapshots:
   '@aws-sdk/xml-builder@3.734.0':
     dependencies:
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -10150,11 +10147,11 @@ snapshots:
   '@smithy/chunked-blob-reader-native@4.0.0':
     dependencies:
       '@smithy/util-base64': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/chunked-blob-reader@5.0.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/config-resolver@4.0.1':
     dependencies:
@@ -10188,30 +10185,30 @@ snapshots:
       '@aws-crypto/crc32': 5.2.0
       '@smithy/types': 4.1.0
       '@smithy/util-hex-encoding': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/eventstream-serde-browser@4.0.1':
     dependencies:
       '@smithy/eventstream-serde-universal': 4.0.1
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/eventstream-serde-config-resolver@4.0.1':
     dependencies:
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/eventstream-serde-node@4.0.1':
     dependencies:
       '@smithy/eventstream-serde-universal': 4.0.1
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/eventstream-serde-universal@4.0.1':
     dependencies:
       '@smithy/eventstream-codec': 4.0.1
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/fetch-http-handler@5.0.1':
     dependencies:
@@ -10226,7 +10223,7 @@ snapshots:
       '@smithy/chunked-blob-reader': 5.0.0
       '@smithy/chunked-blob-reader-native': 4.0.0
       '@smithy/types': 4.1.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/hash-node@4.0.1':
     dependencies:
@@ -10239,7 +10236,7 @@ snapshots:
     dependencies:
       '@smithy/types': 4.1.0
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/invalid-dependency@4.0.1':
     dependencies:
@@ -10258,7 +10255,7 @@ snapshots:
     dependencies:
       '@smithy/types': 4.1.0
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/middleware-content-length@4.0.1':
     dependencies:
@@ -10353,7 +10350,7 @@ snapshots:
       '@smithy/util-middleware': 4.0.1
       '@smithy/util-uri-escape': 4.0.0
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/smithy-client@4.1.2':
     dependencies:
@@ -10429,7 +10426,7 @@ snapshots:
 
   '@smithy/util-hex-encoding@4.0.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-middleware@4.0.1':
     dependencies:
@@ -10451,11 +10448,11 @@ snapshots:
       '@smithy/util-buffer-from': 4.0.0
       '@smithy/util-hex-encoding': 4.0.0
       '@smithy/util-utf8': 4.0.0
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-uri-escape@4.0.0':
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@smithy/util-utf8@2.3.0':
     dependencies:
@@ -10578,7 +10575,7 @@ snapshots:
   '@swc/helpers@0.5.5':
     dependencies:
       '@swc/counter': 0.1.3
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   '@swc/types@0.1.17':
     dependencies:
@@ -14099,7 +14096,7 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-style-singleton: 2.2.1(@types/react@18.3.18)(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.18
 
@@ -14116,7 +14113,7 @@ snapshots:
       react: 18.3.1
       react-remove-scroll-bar: 2.3.6(@types/react@18.3.18)(react@18.3.1)
       react-style-singleton: 2.2.1(@types/react@18.3.18)(react@18.3.1)
-      tslib: 2.7.0
+      tslib: 2.8.1
       use-callback-ref: 1.3.2(@types/react@18.3.18)(react@18.3.1)
       use-sidecar: 1.1.2(@types/react@18.3.18)(react@18.3.1)
     optionalDependencies:
@@ -14138,7 +14135,7 @@ snapshots:
       get-nonce: 1.0.1
       invariant: 2.2.4
       react: 18.3.1
-      tslib: 2.7.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.18
 
@@ -14410,7 +14407,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   safe-buffer@5.1.2: {}
 
@@ -14871,8 +14868,6 @@ snapshots:
     optionalDependencies:
       typescript: 5.6.2
 
-  tslib@2.7.0: {}
-
   tslib@2.8.1: {}
 
   tsscmp@1.0.6: {}
@@ -15061,7 +15056,7 @@ snapshots:
   use-callback-ref@1.3.2(@types/react@18.3.18)(react@18.3.1):
     dependencies:
       react: 18.3.1
-      tslib: 2.7.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.18
 
@@ -15093,7 +15088,7 @@ snapshots:
     dependencies:
       detect-node-es: 1.1.0
       react: 18.3.1
-      tslib: 2.7.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.18
 
