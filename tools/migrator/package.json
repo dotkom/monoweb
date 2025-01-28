@@ -2,9 +2,10 @@
   "name": "@dotkomonline/migrator",
   "type": "module",
   "scripts": {
-    "migrate": "tsx ./src/index.ts && pnpm run -r -F @dotkomonline/db generate-types",
+    "migrate": "tsx ./src/index.ts",
     "lint": "biome check . --write",
-    "lint-check": "biome check ."
+    "lint-check": "biome check .",
+    "generate-types": "kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
   },
   "dependencies": {
     "@dotkomonline/environment": "workspace:*",
@@ -14,7 +15,8 @@
     "commander": "^12.0.0",
     "kysely": "^0.27.0",
     "pg": "^8.13.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "kysely-codegen": "^0.17.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.2",
