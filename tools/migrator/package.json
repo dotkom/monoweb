@@ -2,7 +2,7 @@
   "name": "@dotkomonline/migrator",
   "type": "module",
   "scripts": {
-    "migrate": "tsx ./src/index.ts",
+    "migrate": "tsx ./src/index.ts && pnpm run -r -F @dotkomonline/db generate-types",
     "lint": "biome check . --write",
     "lint-check": "biome check ."
   },
