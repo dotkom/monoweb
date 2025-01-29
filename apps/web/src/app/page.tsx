@@ -1,6 +1,5 @@
 import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
 import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
-import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import { Button } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
@@ -11,7 +10,6 @@ export default async function App() {
 
   return (
     <div className="mt-8">
-      {env.RPC_HOST}
       <CompanySplash className="hidden md:flex" />
       <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
         <Link href="/events" className="hidden text-3xl font-semibold hover:underline sm:block">
