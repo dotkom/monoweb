@@ -2,7 +2,7 @@ import type { User } from "@dotkomonline/types"
 import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
-import { server } from "./trpc"
+import { createServer as createProxyServer } from "./trpc"
 
 interface Auth0IdTokenClaims {
   sub: string
@@ -40,6 +40,7 @@ export interface AuthOptions {
   auth0ClientSecret: string
   auth0Issuer: string
   jwtSecret: string
+  rpcHost: string
 }
 
 export const getAuthOptions = ({
@@ -47,6 +48,7 @@ export const getAuthOptions = ({
   auth0ClientSecret: oidcClientSecret,
   auth0Issuer: oidcIssuer,
   jwtSecret,
+  rpcHost
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
   providers: [
@@ -82,10 +84,12 @@ export const getAuthOptions = ({
     },
     async session({ session, token }) {
       if (token.sub) {
-        session.user = await server.user.registerAndGet.mutate(token.sub)
+        const trpcProxyServer = createProxyServer(rpcHost, token.accessToken!);
+
+        session.user = await trpcProxyServer.user.registerAndGet.mutate(token.sub);
       }
 
       return session
-    },
-  },
+    }
+  }
 })
