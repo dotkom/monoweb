@@ -83,8 +83,8 @@ export const getAuthOptions = ({
       return token
     },
     async session({ session, token }) {
-      if (token.sub) {
-        const trpcProxyServer = createProxyServer(rpcHost, token.accessToken!);
+      if (token.sub && token.accessToken) {
+        const trpcProxyServer = createProxyServer(rpcHost, token.accessToken);
 
         session.user = await trpcProxyServer.user.registerAndGet.mutate(token.sub);
       }
