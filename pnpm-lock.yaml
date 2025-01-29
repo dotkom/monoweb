@@ -954,8 +954,8 @@ importers:
   packages/ui:
     dependencies:
       '@iconify-icon/react':
-        specifier: ^1.0.8
-        version: 1.0.8(react@18.3.1)
+        specifier: ^2.0.0
+        version: 2.3.0(react@18.3.1)
       '@radix-ui/colors':
         specifier: ^3.0.0
         version: 3.0.0
@@ -2216,8 +2216,8 @@ packages:
     peerDependencies:
       react-hook-form: ^7.0.0
 
-  '@iconify-icon/react@1.0.8':
-    resolution: {integrity: sha512-T8Hzz0cQ+08hboS1KFt5t/lBxwpZZuMNVxld2O7vfarPd6mZt9DRRQiM5RIYfB6hxVNddDuzyxbqqfGcMU27pA==}
+  '@iconify-icon/react@2.3.0':
+    resolution: {integrity: sha512-7at8wGF+igiCS2XMaIrkZokD0zxz0pNa5SZn5tJAkZMJezeJlYiFXI5rYkiEpUpMaNYhYTqGLB90I/0sKJZkUw==}
     peerDependencies:
       react: '>=16'
 
@@ -5262,8 +5262,8 @@ packages:
       rrule:
         optional: true
 
-  iconify-icon@1.0.8:
-    resolution: {integrity: sha512-jvbUKHXf8EnGGArmhlP2IG8VqQLFFyTvTqb9LVL2TKTh7/eCCD1o2HHE9thpbJJb6B8hzhcFb6rOKhvo7reNKA==}
+  iconify-icon@2.3.0:
+    resolution: {integrity: sha512-C0beI9oTDxQz6voI5CKl7MiJf0Lw4UU8K4G4t6pcUDClLmCvuMOpcvd8MAztQ2SfoH0iv7WHdxBFjekKPFKH2Q==}
 
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
@@ -8936,9 +8936,9 @@ snapshots:
     dependencies:
       react-hook-form: 7.54.2(react@18.3.1)
 
-  '@iconify-icon/react@1.0.8(react@18.3.1)':
+  '@iconify-icon/react@2.3.0(react@18.3.1)':
     dependencies:
-      iconify-icon: 1.0.8
+      iconify-icon: 2.3.0
       react: 18.3.1
 
   '@iconify/react@4.1.1(react@18.3.1)':
@@ -12381,7 +12381,7 @@ snapshots:
       '@types/node': 22.12.0
       dayjs: 1.11.13
 
-  iconify-icon@1.0.8:
+  iconify-icon@2.3.0:
     dependencies:
       '@iconify/types': 2.0.0
 
