@@ -48,7 +48,7 @@ export const getAuthOptions = ({
   auth0ClientSecret: oidcClientSecret,
   auth0Issuer: oidcIssuer,
   jwtSecret,
-  rpcHost
+  rpcHost,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
   providers: [
@@ -84,12 +84,12 @@ export const getAuthOptions = ({
     },
     async session({ session, token }) {
       if (token.sub && token.accessToken) {
-        const trpcProxyServer = createServer(rpcHost, token.accessToken);
+        const trpcProxyServer = createServer(rpcHost, token.accessToken)
 
-        session.user = await trpcProxyServer.user.registerAndGet.mutate(token.sub);
+        session.user = await trpcProxyServer.user.registerAndGet.mutate(token.sub)
       }
 
       return session
-    }
-  }
+    },
+  },
 })

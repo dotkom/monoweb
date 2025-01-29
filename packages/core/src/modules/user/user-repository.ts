@@ -100,7 +100,7 @@ export class UserRepositoryImpl implements UserRepository {
       .insertInto("owUser")
       .values({ id: auth0Id })
       .onConflict((conflict) => conflict.doNothing())
-      .execute() 
+      .execute()
 
     return user
   }
