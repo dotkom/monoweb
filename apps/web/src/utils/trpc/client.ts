@@ -14,7 +14,7 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
         env.NEXT_PUBLIC_ORIGIN === "development" || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
-      url: `${env.RPC_HOST}/api/trpc`,
+      url: `${env.NEXT_PUBLIC_ORIGIN}/api/trpc`,
       async fetch(url, options) {
         return fetch(url, {
           ...options,
