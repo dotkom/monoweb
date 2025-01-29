@@ -1,5 +1,7 @@
 # Monoweb 
 
+<!-- lorem ipsum -->
+
 Monoweb is the next-generation web application for Online. This monorepo contains all the source code for the
 applications that power the Online web experience.
 
