@@ -2,6 +2,7 @@ import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createRichTextInput,
   createSelectInput,
   createTagInput,
   createTextInput,
@@ -52,11 +53,9 @@ export const useJobListingWriteForm = ({
         withAsterisk: true,
         rows: 4,
       }),
-      description: createTextareaInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
-        placeholder: "Detaljert beskrivelse av stillingen...",
         withAsterisk: true,
-        rows: 30,
       }),
       start: createDateTimeInput({
         label: "Startdato",
