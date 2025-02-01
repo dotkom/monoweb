@@ -1,3 +1,5 @@
+import { MDXEditor, type MDXEditorProps } from "@mdxeditor/editor"
+import "@mdxeditor/editor/style.css"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
@@ -9,6 +11,7 @@ import {
   FileInput,
   type FileInputProps,
   Flex,
+  Input,
   MultiSelect,
   type MultiSelectProps,
   NumberInput,
@@ -236,6 +239,44 @@ export function createTextareaInput<F extends FieldValues>({
         {...props}
         error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
       />
+    )
+  }
+}
+
+export function createRichTextInput<F extends FieldValues>({
+  onChange,
+  required,
+  label,
+  ...props
+}: Omit<MDXEditorProps, "error"> & {required: boolean, label: string }): InputProducerResult<F> {
+  return function RichTextInput({ name, control }) {
+    return (
+      <>
+        <Input.Wrapper>
+          <Input.Label required={required}>
+            {label}
+          </Input.Label>
+
+          <div style={{ border: "1px solid lightgrey", borderRadius: "4px", padding: 0 }}>
+            <Controller
+              control={control}
+              name={name}
+              render={({ field }) => (
+                <MDXEditor
+                  {...props}
+                  markdown={field.value}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    if (onChange) {
+                      onChange(value)
+                    }
+                  }}
+                />
+              )}
+            />
+          </div>
+        </Input.Wrapper>
+      </>
     )
   }
 }
