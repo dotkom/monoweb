@@ -9,8 +9,6 @@ import {
   FileInput,
   type FileInputProps,
   Flex,
-  Input,
-  InputProps,
   MultiSelect,
   type MultiSelectProps,
   NumberInput,
@@ -27,7 +25,7 @@ import {
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import { Editor } from "novel"
-import { useState, type FC } from "react"
+import { type FC, useState } from "react"
 import {
   type Control,
   Controller,
@@ -231,48 +229,46 @@ export function createCheckboxInput<F extends FieldValues>({
 
 function isJsonString(str: string) {
   try {
-    JSON.parse(str);
+    JSON.parse(str)
   } catch (e) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }
 
 export function createRichTextInput<F extends FieldValues>({
   ...props
 }: Omit<TextInputProps, "error">): InputProducerResult<F> {
   return function FormTextInput({ name, state, register, defaultValue }) {
-    const [data, setData] = useState<undefined | string>(undefined);
-    
+    const [data, setData] = useState<undefined | string>(undefined)
+
     return (
       <>
-       <p>Default</p>
-       <p >{defaultValue}</p>
-       {/* <input name={name} value={data} {...register(name)} type="hidden"></input> 
+        <p>Default</p>
+        <p>{defaultValue}</p>
+        {/* <input name={name} value={data} {...register(name)} type="hidden"></input> 
       //  DETTE funker ikke siden jeg må klikke på TextInput elementet uansett :((((( 
       HELP LARSEN
        */}
-      <TextInput
-        {...register(name)}
-        {...props}
-        readOnly
-        value={data}
-        error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-      />
-      <Editor
-      className="p-0 border-stone-200 bg-white sm:rounded-lg sm:border sm:shadow-lg"
-      defaultValue={
-        isJsonString(defaultValue) ? JSON.parse(defaultValue) : {}
-      }
-      debounceDuration={200}
-      onDebouncedUpdate={(value) => {
-        if (value && JSON.stringify(value.getJSON()) !== '{"type":"doc","content":[{"type":"paragraph"}]}') {
-          setData(JSON.stringify(value?.getJSON()));
-        }
-      }}
-      // editorProps={{editable: (state) => false}}
-    />
-    </>
+        <TextInput
+          {...register(name)}
+          {...props}
+          readOnly
+          value={data}
+          error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        />
+        <Editor
+          className="p-0 border-stone-200 bg-white sm:rounded-lg sm:border sm:shadow-lg"
+          defaultValue={isJsonString(defaultValue) ? JSON.parse(defaultValue) : {}}
+          debounceDuration={200}
+          onDebouncedUpdate={(value) => {
+            if (value && JSON.stringify(value.getJSON()) !== '{"type":"doc","content":[{"type":"paragraph"}]}') {
+              setData(JSON.stringify(value?.getJSON()))
+            }
+          }}
+          // editorProps={{editable: (state) => false}}
+        />
+      </>
     )
   }
 }
