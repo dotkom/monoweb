@@ -6,6 +6,6 @@ export const env = createEnvironment({
   OAUTH_ISSUER: variable,
   NEXTAUTH_SECRET: variable,
   NEXTAUTH_URL: variable.url(),
-  NEXT_PUBLIC_ORIGIN: variable.default("http://localhost:3000"),
+  NEXT_PUBLIC_ORIGIN: variable,
   RPC_HOST: variable,
 })
