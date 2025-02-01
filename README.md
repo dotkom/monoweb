@@ -18,7 +18,7 @@ doppler setup # Press Y on every prompt
 git clone https://github.com/dotkom/monoweb
 cd monoweb
 
-docker compose up
+docker compose up # 'docker compose up -d' can also run instead to skip 2 terminal windows
 ```
 
 Terminal 2 (in monoweb folder):
