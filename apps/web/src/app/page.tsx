@@ -33,6 +33,7 @@ export default async function App() {
           />
         ))}
       </div>
+      { /* Lorem ipsum */ }
       <div className="h-screen" />
     </div>
   )
