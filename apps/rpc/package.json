@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsup src/index.ts",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
