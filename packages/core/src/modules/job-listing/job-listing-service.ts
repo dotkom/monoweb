@@ -84,13 +84,11 @@ export class JobListingServiceImpl implements JobListingService {
    * @throws {MissingLocationError} if the location is empty
    */
   private validateWriteModel(input: JobListingWrite): void {
-    assert(isAfter(input.start, new Date()), new InvalidStartDateError("start date cannot be before today"))
     assert(isAfter(input.end, input.start), new InvalidEndDateError("end date cannot be before start date"))
     assert(
       input.deadline !== null ? isBefore(input.deadline, input.start) : true,
       new InvalidDeadlineError("deadline cannot be after start date")
     )
-    assert(input.locations.length > 0, new MissingLocationError())
   }
 
   private getLocationDiff(actual: string[], expected: string[]) {

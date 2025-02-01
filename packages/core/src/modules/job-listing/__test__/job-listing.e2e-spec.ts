@@ -34,26 +34,6 @@ describe("job-listings", () => {
     expect(match).toEqual(jobListing)
   })
 
-  it("should fail if the end date is in the past", async () => {
-    await expect(
-      core.jobListingService.createJobListing(
-        getJobListingMock(company.id, {
-          end: subDays(new Date(), 1),
-        })
-      )
-    ).rejects.toThrow(InvalidEndDateError)
-  })
-
-  it("should fail if the start date is in the past", async () => {
-    await expect(
-      core.jobListingService.createJobListing(
-        getJobListingMock(company.id, {
-          start: subDays(new Date(), 1),
-        })
-      )
-    ).rejects.toThrow(InvalidStartDateError)
-  })
-
   it("should fail if the start date is after the end date", async () => {
     await expect(
       core.jobListingService.createJobListing(
@@ -75,16 +55,6 @@ describe("job-listings", () => {
         })
       )
     ).rejects.toThrow(InvalidDeadlineError)
-  })
-
-  it("should fail if there are zero locations specified", async () => {
-    await expect(
-      core.jobListingService.createJobListing(
-        getJobListingMock(company.id, {
-          locations: [],
-        })
-      )
-    ).rejects.toThrow(MissingLocationError)
   })
 
   it("should be able to update locations by diffing", async () => {
