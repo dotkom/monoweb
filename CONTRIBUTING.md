@@ -79,40 +79,22 @@ The following tools are used to develop Monoweb:
 To get started with local development, ensure you have the [applicable tools](#tools) installed. To build and run all the
 applications, you can use the following commands:
 
+Terminal 1:
 ```bash
 doppler login
-doppler setup --project monoweb --config dev
+doppler setup # Press Y on every prompt
 
 git clone https://github.com/dotkom/monoweb
 cd monoweb
 
+docker compose up # 'docker compose up -d' can also run instead to skip 2 terminal windows
+```
+
+Terminal 2 (in monoweb folder):
+```bash
 pnpm install
-doppler run pnpm dev
-```
-
-> Note that this, by default, uses a shared database hosted on https://neon.tech. Because this database is shared, you
-> should be careful with what you do with it. If you need to perform migrations or change data, you should set up your
-> branch on Neon. See the [guide for using Neon like a pro](./using-neon-like-a-pro.md) for more information.
-
-If you want to run a specific application, you can use the `--filter` flag:
-
-```bash
-doppler run pnpm dev --filter=@dotkomonline/web
-```
-
-If you have some local variables that you want to use, and override the Doppler ones you can use the `--preserve-env`
-flag:
-
-```bash
-export DATABASE_URL="postgres://<username>:<password>@localhost:5432/<db_name>"
-doppler run --preserve-env pnpm dev
-```
-
-If you are not using Doppler, you need to use a standalone `.env` file placed in the project root. For how to populate the `.env` file, see [this chapter](#required-environment-variables). For how to start local development, follow the rest of the chapter where you omit the use of Doppler:
-
-```diff
-- doppler run pnpm dev
-+ pnpm dev
+pnpm migrate # Only needs to be run once to set up the database
+pnpm dev
 ```
 
 ### Required Environment Variables
