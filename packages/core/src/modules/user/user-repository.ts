@@ -138,9 +138,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async update(id: UserId, data: Partial<UserWrite>) {
-    const result = await this.client.users.update({ id }, mapUserWriteToPatch(data))
-
-    const user = await this.client.users.get({ id })
+    const user = await this.client.users.update({ id }, mapUserWriteToPatch(data))
 
     if (user.status !== 200) {
       throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
