@@ -34,7 +34,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 rpc
 USER rpc
 
-COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/index.js ./
+COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/dist/index.js ./
 COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/package.json ./
 
 CMD node index.js
