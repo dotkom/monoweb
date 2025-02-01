@@ -40,7 +40,6 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
-import { JSONContent } from '@tiptap/react';
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
