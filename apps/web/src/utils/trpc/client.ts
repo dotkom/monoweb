@@ -11,10 +11,10 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
   links: [
     loggerLink({
       enabled: (opts) =>
-        (process.env.NEXT_PUBLIC_ORIGIN ?? "").includes("localhost") || (opts.direction === "down" && opts.result instanceof Error),
+        env.NEXT_PUBLIC_ORIGIN === "development" || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
-      url: `${process.env.NEXT_PUBLIC_ORIGIN}/api/trpc`,
+      url: `${env.NEXT_PUBLIC_ORIGIN}/api/trpc`,
       async fetch(url, options) {
         return fetch(url, {
           ...options,
