@@ -10,8 +10,7 @@ export const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
   links: [
     loggerLink({
       enabled: (opts) =>
-        (process.env.NEXT_PUBLIC_ORIGIN ?? "").includes("localhost") ||
-        (opts.direction === "down" && opts.result instanceof Error),
+        (process.env.NEXT_PUBLIC_ORIGIN ?? '').includes("localhost") || (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpBatchLink({
       url: `${process.env.NEXT_PUBLIC_ORIGIN}/api/trpc`,
