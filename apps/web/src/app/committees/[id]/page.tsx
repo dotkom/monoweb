@@ -6,7 +6,8 @@ export const generateStaticParams = async () => {
   return committeeIds.map((id) => ({ id }))
 }
 
-const CommitteePage = async ({ params: { id } }: { params: { id: string } }) => {
+const CommitteePage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
   const committee = await server.committee.get.query(id)
   const committeeEvents = await server.event.allByCommittee.query({ id })
 
