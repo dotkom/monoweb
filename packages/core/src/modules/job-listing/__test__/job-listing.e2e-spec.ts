@@ -1,15 +1,10 @@
 import type { Company } from "@dotkomonline/types"
-import { addDays, addMinutes, subDays } from "date-fns"
+import { addDays, addMinutes } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { getCompanyMock, getJobListingMock } from "../../../mock"
 import type { ServiceLayer } from "../../core"
-import {
-  InvalidDeadlineError,
-  InvalidEndDateError,
-  InvalidStartDateError,
-  MissingLocationError,
-} from "../job-listing-error"
+import { InvalidDeadlineError, InvalidEndDateError } from "../job-listing-error"
 
 describe("job-listings", () => {
   let core: ServiceLayer
