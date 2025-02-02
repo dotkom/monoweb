@@ -14,9 +14,6 @@ const config = {
       },
     ],
   },
-  experimental: {
-    swcPlugins: [["next-superjson-plugin", {}]],
-  },
   transpilePackages: [
     "@dotkomonline/auth",
     "@dotkomonline/db",
