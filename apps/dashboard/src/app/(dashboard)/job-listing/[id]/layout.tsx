@@ -5,8 +5,9 @@ import { type PropsWithChildren, useMemo } from "react"
 import { trpc } from "../../../../trpc"
 import { JobListingDetailsContext } from "./provider"
 
-export default function JobListingDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = trpc.jobListing.get.useQuery(params.id)
+export default async function JobListingDetailsLayout({ children, params }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const { id } = await params
+  const { data, isLoading } = trpc.jobListing.get.useQuery(id)
   const value = useMemo(
     () =>
       data === undefined || isLoading

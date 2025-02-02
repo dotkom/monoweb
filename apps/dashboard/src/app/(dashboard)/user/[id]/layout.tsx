@@ -5,8 +5,8 @@ import { type PropsWithChildren, useMemo } from "react"
 import { trpc } from "../../../../trpc"
 import { UserDetailsContext } from "./provider"
 
-export default function UserDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const id = decodeURIComponent(params.id)
+export default async function UserDetailsLayout({ children, params }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const id = decodeURIComponent((await params).id)
   const { data, isLoading } = trpc.user.get.useQuery(id)
   const value = useMemo(
     () =>

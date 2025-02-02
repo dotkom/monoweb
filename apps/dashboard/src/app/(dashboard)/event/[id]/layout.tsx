@@ -5,8 +5,9 @@ import { type PropsWithChildren, useMemo } from "react"
 import { useEventDetailsGetQuery } from "../../../../modules/event/queries/use-event-get-query"
 import { EventDetailsContext } from "./provider"
 
-export default function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = useEventDetailsGetQuery(params.id)
+export default async function EventDetailsLayout({ children, params }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const { id } = await params
+  const { data, isLoading } = useEventDetailsGetQuery(id)
   const value = useMemo(
     () =>
       data === undefined || isLoading

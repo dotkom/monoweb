@@ -5,11 +5,12 @@ import { type PropsWithChildren, useMemo } from "react"
 import { trpc } from "../../../../trpc"
 import { InterestGroupDetailsContext } from "./provider"
 
-export default function InterestGroupDetailsLayout({
+export default async function InterestGroupDetailsLayout({
   children,
   params,
-}: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = trpc.interestGroup.get.useQuery(params.id)
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const { id } = await params
+  const { data, isLoading } = trpc.interestGroup.get.useQuery(id)
   const value = useMemo(
     () =>
       data === undefined || isLoading
