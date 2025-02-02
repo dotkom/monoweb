@@ -5,7 +5,10 @@ import { type PropsWithChildren, useMemo } from "react"
 import { trpc } from "../../../../trpc"
 import { ArticleDetailsContext } from "./provider"
 
-export default async function ArticleDetailsLayout({ children, params }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+export default async function ArticleDetailsLayout({
+  children,
+  params,
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
   const { id } = await params
   const { data, isLoading } = trpc.article.get.useQuery(id)
   const value = useMemo(
