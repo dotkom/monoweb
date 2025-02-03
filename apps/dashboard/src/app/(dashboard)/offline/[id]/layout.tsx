@@ -1,12 +1,16 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { type PropsWithChildren, useMemo } from "react"
+import { type PropsWithChildren, use, useMemo } from "react"
 import { trpc } from "../../../../trpc"
 import { OfflineDetailsContext } from "./provider"
 
-export default function OfflineDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = trpc.offline.get.useQuery(params.id)
+export default function OfflineDetailsLayout({
+  children,
+  params,
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const { id } = use(params)
+  const { data, isLoading } = trpc.offline.get.useQuery(id)
   const value = useMemo(
     () =>
       data === undefined || isLoading

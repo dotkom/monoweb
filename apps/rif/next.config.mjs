@@ -3,7 +3,6 @@
  */
 const config = {
   reactStrictMode: true,
-  swcMinify: true,
   transpilePackages: ["@dotkomonline/ui"],
   output: "standalone",
 }
