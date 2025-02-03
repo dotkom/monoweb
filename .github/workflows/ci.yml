@@ -70,6 +70,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint-check
+      
+      - name: Test
+        run: pnpm test
 
       - name: Build
         # TODO: Building Next.js apps that do server-side fetching doesn't have the
