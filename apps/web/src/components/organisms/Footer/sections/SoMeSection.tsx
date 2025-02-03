@@ -13,9 +13,7 @@ export const SoMeSection = () => {
     <ul className="mx-8 mb-4 flex sm:justify-center">
       {links.map((link) => (
         <Link href={link.url} key={link.key}>
-          <li className="mx-4 w-16 cursor-pointer">
-            {link.icon}
-          </li>
+          <li className="mx-4 w-16 cursor-pointer">{link.icon}</li>
         </Link>
       ))}
     </ul>
