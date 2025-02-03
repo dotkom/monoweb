@@ -53,13 +53,13 @@ for (const migration of migrations) {
     const customTypesAfter = new Set(await getCustomTypeNames(kysely))
     const tablesAfter = new Map((await kysely.introspection.getTables()).map((table) => [table.name, table]))
 
-    expect
-      .soft(customTypesAfter, "Custom types were not the same after migrating up and then back down")
-      .toEqual(customTypesBefore)
+    expect(customTypesAfter, "Custom types were not the same after migrating up and then back down").toEqual(
+      customTypesBefore
+    )
 
-    expect
-      .soft(tablesAfter.keys(), "Tables were not the same after migrating up and then back down")
-      .toEqual(tablesBefore.keys())
+    expect(tablesAfter.keys(), "Tables were not the same after migrating up and then back down").toEqual(
+      tablesBefore.keys()
+    )
 
     for (const [tableName, tableBefore] of tablesBefore) {
       const tableAfter = tablesAfter.get(tableName)
@@ -71,23 +71,19 @@ for (const migration of migrations) {
       const columnNamesBefore = Array.from(tableBefore.columns.map((column) => column.name))
       const columnNamesAfter = Array.from(tableAfter.columns.map((column) => column.name))
 
-      expect
-        .soft(
-          columnNamesAfter,
-          `Columns for table ${tableName} were not the same after migrating up and then back down`
-        )
-        .toEqual(columnNamesBefore)
+      expect(
+        columnNamesAfter,
+        `Columns for table ${tableName} were not the same after migrating up and then back down`
+      ).toEqual(columnNamesBefore)
 
       for (const columnName of columnNamesBefore) {
         const columnBefore = tableBefore.columns.find((column) => column.name === columnName)
         const columnAfter = tableAfter.columns.find((column) => column.name === columnName)
 
-        expect
-          .soft(
-            columnAfter,
-            `Column ${columnName} for table ${tableName} was not the same after migrating up and then back down`
-          )
-          .toEqual(columnBefore)
+        expect(
+          columnAfter,
+          `Column ${columnName} for table ${tableName} was not the same after migrating up and then back down`
+        ).toEqual(columnBefore)
       }
     }
 
