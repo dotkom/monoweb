@@ -54,20 +54,12 @@ for (const migration of migrations) {
     const tablesAfter = new Map((await kysely.introspection.getTables()).map((table) => [table.name, table]))
 
     expect
-      .soft(customTypesAfter, "Custom types added during migrate up were not removed when migrating back down")
+      .soft(customTypesAfter, "Custom types were not the same after migrating up and then back down")
       .toEqual(customTypesBefore)
 
     expect
-      .soft(customTypesAfter, "Custom types removed during migrate up were not added back when migrating back up")
-      .toEqual(customTypesBefore)
-
-    expect
-      .soft(tablesAfter.keys(), "Tables added during migrate up were not removed when migrating back down")
+      .soft(tablesAfter.keys(), "Tables were not the same after migrating up and then back down")
       .toEqual(tablesBefore.keys())
-
-    expect
-      .soft(tablesBefore.keys(), "Tables removed during migrate up were not added back when migrating back up")
-      .toEqual(tablesAfter.keys())
 
     for (const [tableName, tableBefore] of tablesBefore) {
       const tableAfter = tablesAfter.get(tableName)
@@ -82,9 +74,21 @@ for (const migration of migrations) {
       expect
         .soft(
           columnNamesAfter,
-          `Columns added to table ${tableName} during migrate up were not removed when migrating back down`
+          `Columns for table ${tableName} were not the same after migrating up and then back down`
         )
         .toEqual(columnNamesBefore)
+
+      for (const columnName of columnNamesBefore) {
+        const columnBefore = tableBefore.columns.find((column) => column.name === columnName)
+        const columnAfter = tableAfter.columns.find((column) => column.name === columnName)
+
+        expect
+          .soft(
+            columnAfter,
+            `Column ${columnName} for table ${tableName} was not the same after migrating up and then back down`
+          )
+          .toEqual(columnBefore)
+      }
     }
 
     await migration.migration.up(kysely)
