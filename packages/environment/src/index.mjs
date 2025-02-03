@@ -1,11 +1,5 @@
 import { z } from "zod"
 
-if (typeof window !== "undefined") {
-  throw new Error(
-    "The @dotkomonline/environment package should not be imported on the client side. Use process.env directly."
-  )
-}
-
 /**
  * @template T
  * @param variables {Record<T, z.ZodString>}
