@@ -73,6 +73,9 @@ jobs:
       
       - name: Test
         run: pnpm test
+      
+      - name: Integration Test
+        run: pnpm test:it
 
       - name: Build
         # TODO: Building Next.js apps that do server-side fetching doesn't have the
