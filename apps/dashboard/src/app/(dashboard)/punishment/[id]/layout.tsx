@@ -1,7 +1,7 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { use, type PropsWithChildren } from "react"
+import { type PropsWithChildren, use } from "react"
 import { useMarkGetQuery } from "../../../../modules/punishment/queries/use-mark-get-query"
 import { MarkDetailsContext } from "./provider"
 
