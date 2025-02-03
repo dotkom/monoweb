@@ -1,15 +1,15 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { type PropsWithChildren, useMemo } from "react"
+import { type PropsWithChildren, use, useMemo } from "react"
 import { trpc } from "../../../../trpc"
 import { ArticleDetailsContext } from "./provider"
 
-export default async function ArticleDetailsLayout({
+export default function ArticleDetailsLayout({
   children,
   params,
 }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
-  const { id } = await params
+  const { id } = use(params)
   const { data, isLoading } = trpc.article.get.useQuery(id)
   const value = useMemo(
     () =>

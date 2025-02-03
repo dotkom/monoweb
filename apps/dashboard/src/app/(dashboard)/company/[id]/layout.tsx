@@ -1,15 +1,15 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import type { PropsWithChildren } from "react"
+import { use, type PropsWithChildren } from "react"
 import { trpc } from "../../../../trpc"
 import { CompanyDetailsContext } from "./provider"
 
-export default async function CompanyDetailsLayout({
+export default function CompanyDetailsLayout({
   children,
   params,
 }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
-  const { id } = await params
+  const { id } = use(params)
   const { data, isLoading } = trpc.company.get.useQuery(id)
   return (
     <>
