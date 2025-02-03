@@ -54,17 +54,11 @@ for (const migration of migrations) {
     const tablesAfter = new Map((await kysely.introspection.getTables()).map((table) => [table.name, table]))
 
     expect
-      .soft(
-        customTypesAfter,
-        "Custom types added during migrate up were not removed when migrating back down"
-      )
+      .soft(customTypesAfter, "Custom types added during migrate up were not removed when migrating back down")
       .toEqual(customTypesBefore)
 
     expect
-      .soft(
-        customTypesAfter,
-        "Custom types removed during migrate up were not added back when migrating back up"
-      )
+      .soft(customTypesAfter, "Custom types removed during migrate up were not added back when migrating back up")
       .toEqual(customTypesBefore)
 
     expect
@@ -72,10 +66,7 @@ for (const migration of migrations) {
       .toEqual(tablesBefore.keys())
 
     expect
-      .soft(
-        tablesBefore.keys(),
-        "Tables removed during migrate up were not added back when migrating back up"
-      )
+      .soft(tablesBefore.keys(), "Tables removed during migrate up were not added back when migrating back up")
       .toEqual(tablesAfter.keys())
 
     for (const [tableName, tableBefore] of tablesBefore) {
