@@ -1,5 +1,4 @@
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
-import chalk from "chalk"
 import { type Kysely, sql } from "kysely"
 import { expect, test } from "vitest"
 import { type Database, createKysely, createMigrator } from "./index"
@@ -57,25 +56,25 @@ for (const migration of migrations) {
     expect
       .soft(
         customTypesAfter,
-        chalk.red("Custom types added during migrate up were not removed when migrating back down")
+        "Custom types added during migrate up were not removed when migrating back down"
       )
       .toEqual(customTypesBefore)
 
     expect
       .soft(
         customTypesAfter,
-        chalk.red("Custom types removed during migrate up were not added back when migrating back up")
+        "Custom types removed during migrate up were not added back when migrating back up"
       )
       .toEqual(customTypesBefore)
 
     expect
-      .soft(tablesAfter.keys(), chalk.red("Tables added during migrate up were not removed when migrating back down"))
+      .soft(tablesAfter.keys(), "Tables added during migrate up were not removed when migrating back down")
       .toEqual(tablesBefore.keys())
 
     expect
       .soft(
         tablesBefore.keys(),
-        chalk.red("Tables removed during migrate up were not added back when migrating back up")
+        "Tables removed during migrate up were not added back when migrating back up"
       )
       .toEqual(tablesAfter.keys())
 
@@ -92,7 +91,7 @@ for (const migration of migrations) {
       expect
         .soft(
           columnNamesAfter,
-          chalk.red(`Columns added to table ${tableName} during migrate up were not removed when migrating back down`)
+          `Columns added to table ${tableName} during migrate up were not removed when migrating back down`
         )
         .toEqual(columnNamesBefore)
     }
