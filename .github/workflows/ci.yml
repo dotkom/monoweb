@@ -70,6 +70,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint-check
+      
+      - name: Validate migrations
+        run: pnpm run -F @dotkomonline/db test
 
       - name: Build
         # TODO: Building Next.js apps that do server-side fetching doesn't have the
