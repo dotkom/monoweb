@@ -34,7 +34,8 @@ const ARTICLE_QUERY = `
   }
 `
 
-const ArticlePage = async ({ params: { slug } }: { params: { slug: string } }) => {
+const ArticlePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params
   const article = await sanityClient.fetch<Article>(ARTICLE_QUERY, { slug })
   if (!article) {
     return <pre>{JSON.stringify(await generateStaticParams(), null, 4)}</pre>

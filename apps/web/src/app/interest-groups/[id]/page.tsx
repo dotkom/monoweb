@@ -2,7 +2,8 @@ import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { server } from "@/utils/trpc/server"
 import Link from "next/link"
 
-const InterestPage = async ({ params: { id } }: { params: { id: string } }) => {
+const InterestPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
   const interestGroup = await server.interestGroup.get.query(id)
 
   return interestGroup != null ? (

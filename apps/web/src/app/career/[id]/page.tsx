@@ -3,12 +3,13 @@ import { server } from "@/utils/trpc/server"
 import { notFound } from "next/navigation"
 
 interface JobListingProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-const JobListingPage = async ({ params: { id } }: JobListingProps) => {
+const JobListingPage = async ({ params }: JobListingProps) => {
+  const { id } = await params
   const data = await server.jobListing.get.query(id)
   if (!data) {
     return notFound()
