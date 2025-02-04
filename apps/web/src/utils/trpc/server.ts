@@ -3,7 +3,7 @@ import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import * as trpc from "@trpc/client"
 import { getToken } from "next-auth/jwt"
 import type { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers"
-import type { ReadonlyRequestCookies  } from "next/dist/server/web/spec-extension/adapters/request-cookies"
+import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 import type { RequestCookies } from "next/dist/server/web/spec-extension/cookies"
 import { cookies, headers } from "next/headers"
 import type { NextRequest } from "next/server"
@@ -19,7 +19,8 @@ https://github.com/nextauthjs/next-auth/issues/7913
 This can be replaced by auth() in next-auth 5, but it is still in beta
 */
 async function getTokenServerside() {
-  let reqHeaders, reqCookies
+  let reqHeaders: ReadonlyHeaders
+  let reqCookies: ReadonlyRequestCookies
 
   // If we are not in a request context, we can't get the token
   try {
