@@ -4,7 +4,7 @@ import Link from "next/link"
 import type { ComponentPropsWithoutRef } from "react"
 
 export default async (props: ComponentPropsWithoutRef<"div">) => {
-  if (cookies().has("companysplashdismissed")) {
+  if ((await cookies()).has("companysplashdismissed")) {
     return null
   }
   return (

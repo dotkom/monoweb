@@ -6,7 +6,8 @@ import { EventDescriptionAndByline } from "../components/EventDescriptionAndByli
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 
-const EventDetailPage = async ({ params: { id } }: { params: { id: string } }) => {
+const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
   const session = await getServerSession(authOptions)
   const eventDetail = await server.event.getWebEventDetailData.query(id)
 
