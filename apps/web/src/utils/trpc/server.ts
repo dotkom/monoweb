@@ -46,7 +46,7 @@ export const server = trpc.createTRPCProxyClient<AppRouter>({
         const token = await getTokenServerside()
 
         if (token) {
-          return { Authorization: `Bearer ${token}` }
+          return { Authorization: `Bearer ${token.accessToken}` }
         }
 
         return {}
