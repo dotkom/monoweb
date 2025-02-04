@@ -22,7 +22,7 @@ async function getTokenServerside() {
   let reqHeaders: ReadonlyHeaders
   let reqCookies: ReadonlyRequestCookies
 
-  // If we are not in a request context, we can't get the token
+  // If we in for example static generation, we don't have headers or cookies available.
   try {
     reqHeaders = await headers()
     reqCookies = await cookies()
