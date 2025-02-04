@@ -1,5 +1,5 @@
 import type { Database } from "@dotkomonline/db"
-import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, MembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import type { Kysely } from "kysely"
 import { z } from "zod"
@@ -28,6 +28,7 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     compiled: z.boolean().default(false).parse(appMetadata.compiled),
     gender: GenderSchema.safeParse(appMetadata.gender).data,
     phone: z.string().safeParse(appMetadata.phone).data,
+    membership: MembershipSchema.safeParse(appMetadata.membership).data,
   }
 }
 
@@ -46,6 +47,7 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
     address: user.address,
     gender: user.gender,
     phone: user.phone,
+    membership: user.membership,
   },
 })
 
@@ -63,6 +65,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
       compiled: data.compiled,
       gender: data.gender,
       phone: data.phone,
+      membership: data.membership,
     },
   }
 
