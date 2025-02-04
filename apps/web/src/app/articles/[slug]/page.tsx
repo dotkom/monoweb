@@ -2,6 +2,17 @@ import type { Article } from "@/api/get-article"
 import sanityClient from "@/api/sanity"
 import { ArticleView } from "@/components/views/ArticleView"
 
+export const generateStaticParams = async () => {
+  const slugs = await sanityClient.fetch<string[]>(`
+      *[_type == "article" && !(_id in path("drafts.**"))]{
+        slug {
+        current
+        }
+      }.slug.current
+    `)
+  return slugs.map((slug) => ({ slug }))
+}
+
 const ARTICLE_QUERY = `
 *[_type == "article" && slug.current==$slug && !(_id in path("drafts.**"))][0]{
     title,
@@ -26,6 +37,9 @@ const ARTICLE_QUERY = `
 const ArticlePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params
   const article = await sanityClient.fetch<Article>(ARTICLE_QUERY, { slug })
+  if (!article) {
+    return <pre>{JSON.stringify(await generateStaticParams(), null, 4)}</pre>
+  }
   return <ArticleView article={article} />
 }
 
