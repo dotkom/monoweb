@@ -1,4 +1,5 @@
 import type {
+  Membership,
   NotificationPermissions,
   NotificationPermissionsWrite,
   PrivacyPermissions,

@@ -1,15 +1,7 @@
 import { z } from "zod"
+import { MembershipSchema } from "./membership"
 
 export const GenderSchema = z.enum(["male", "female", "other"])
-
-const MembershipTypeSchema = z.enum(["BACHELOR", "MASTER", "SOCIAL", "EXTRAORDINARY"])
-type MembershipType = z.infer<typeof MembershipTypeSchema>
-
-export const MembershipSchema = z.object({
-  type: MembershipTypeSchema,
-  specialization: z.string().optional(),
-  start_year: z.number(),
-})
 
 export const UserSchema = z.object({
   id: z.string(),

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import type { User } from "../user"
+import type { User } from "../user/user"
 
 export const ExtraChoice = z.object({
   questionId: z.string(),
