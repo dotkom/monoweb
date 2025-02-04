@@ -18,11 +18,20 @@ https://github.com/nextauthjs/next-auth/issues/7913
 
 This can be replaced by auth() in next-auth 5, but it is still in beta
 */
-async function getTokenServerside({ headers, cookies }: { headers: ReadonlyHeaders; cookies: ReadonlyRequestCookies }) {
+async function getTokenServerside() {
+  let reqHeaders, reqCookies
+
+  // If we are not in a request context, we can't get the token
+  try {
+    reqHeaders = await headers()
+    reqCookies = await cookies()
+  } catch (e) {
+    return null
+  }
   return await getToken({
     req: {
-      headers: headers,
-      cookies: cookies as unknown as RequestCookies,
+      headers: reqHeaders,
+      cookies: reqCookies as unknown as RequestCookies,
     } as NextRequest,
   })
 }
@@ -33,15 +42,13 @@ export const server = trpc.createTRPCProxyClient<AppRouter>({
     trpc.httpLink({
       url: `${env.RPC_HOST}/api/trpc`,
       headers: async () => {
-        const token = await getTokenServerside({ headers: await headers(), cookies: await cookies() })
+        const token = await getTokenServerside()
 
-        if (!token) {
-          return {}
+        if (token) {
+          return { Authorization: `Bearer ${token}` }
         }
 
-        return {
-          Authorization: `Bearer ${token}`,
-        }
+        return {}
       },
     }),
   ],
