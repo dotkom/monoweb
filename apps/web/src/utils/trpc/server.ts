@@ -12,8 +12,11 @@ import superjson from "superjson"
 /*
 This hack is needed because some genius at next auth decided to make the only api to get the token from jwt require a request object
 https://github.com/nextauthjs/next-auth/blob/31ead6df29c508b8177f6e088cd4f11f3a341886/packages/core/src/jwt.ts#L141
+
 Discussion:
 https://github.com/nextauthjs/next-auth/issues/7913
+
+This can be replaced by auth() in next-auth 5, but it is still in beta
 */
 async function getTokenServerside({ headers, cookies }: { headers: ReadonlyHeaders; cookies: ReadonlyRequestCookies }) {
   return await getToken({
