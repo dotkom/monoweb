@@ -14,16 +14,16 @@ export const useUserTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<User>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("email", {
-        header: () => "E-post",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("givenName", {
+      columnHelper.accessor("firstName", {
         header: () => "Fornavn",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("familyName", {
+      columnHelper.accessor("lastName", {
         header: () => "Etternavn",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("email", {
+        header: () => "E-post",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor((evt) => evt, {

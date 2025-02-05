@@ -5,7 +5,6 @@ export enum InvoiceRelation {
   COURSE_EVENT = "Kurs",
   OFFLINE_ADVERTISEMENT = "Annonse i Offline",
   JOB_LISTING = "Jobbannonse",
-  TECH_TALKS_PARTICIPATION = "Tech Talks",
   EXCURSION_PARTICIPATION = "ITEX",
   OTHER = "Annet",
 }

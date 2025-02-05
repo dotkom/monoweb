@@ -19,7 +19,7 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getByAuth0UserId(input.userId, input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendeeService.getByUserId(input.userId, input.attendanceId)),
   createPool: protectedProcedure
     .input(AttendancePoolWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.attendancePoolService.create(input)),

@@ -1,8 +1,11 @@
 import { z } from "zod"
-import { AttendanceSchema } from "./attendance/attendance"
+import { type Attendance, AttendanceSchema } from "./attendance/attendance"
+import type { AttendancePool } from "./attendance/attendance-pool"
+import type { Committee } from "./committee"
+import type { Company } from "./company"
 
 export const EventSchema = z.object({
-  id: z.string().ulid(),
+  id: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
   title: z.string().min(1),
@@ -36,3 +39,27 @@ export const AttendanceEventSchema = EventSchema.extend({
 })
 
 export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
+
+export type DashboardEventDetail = {
+  event: Event
+  eventCommittees: Committee[]
+  attendance: Attendance | null
+  pools: AttendancePool[] | null
+  hasAttendance: boolean
+}
+
+export type WebEventDetail =
+  | {
+      hasAttendance: false
+      event: Event
+      eventCommittees: Committee[]
+      eventCompanies: Company[]
+    }
+  | {
+      hasAttendance: true
+      event: Event
+      eventCommittees: Committee[]
+      attendance: Attendance
+      pools: AttendancePool[]
+      eventCompanies: Company[]
+    }

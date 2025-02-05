@@ -1,22 +1,23 @@
 {
+  "noErrorTruncation": true,
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "noEmit": true,
     "module": "esnext",
-    "importHelpers": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
+
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "stripInternal": true,
+
+    "noEmit": true
   },
-  "include": ["../../apps/", "../../packages/", "../../tools/"],
-  "noErrorTruncation": true
 }

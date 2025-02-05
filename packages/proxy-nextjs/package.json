@@ -6,13 +6,13 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "next": "^14.2.14",
+    "next": "^15.1.6",
     "next-auth": "^4.24.8"
   },
   "devDependencies": {

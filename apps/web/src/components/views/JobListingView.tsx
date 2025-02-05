@@ -32,7 +32,9 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
     <div className="mx-auto mt-10 flex w-10/12 justify-between">
       <div className="w-1/3">
         <div className="relative pb-10">
-          {company.image && <Image src={company.image} width={4000} height={250} alt="company_image" />}
+          {company.image && (
+            <Image src={company.image} width={4000} height={250} alt="company_image" className="rounded-lg" />
+          )}
         </div>
 
         <p>{ingress}</p>
@@ -41,7 +43,7 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
         <Link href="/career">
           <div className="flex items-center">
             <Icon icon="mdi:arrow-left" className="text-blue-9" width={20} height={20} />
-            <h2 className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</h2>
+            <p className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</p>
           </div>
         </Link>
         <div className="bg-slate-9 mb-7 mt-3 h-[0.5px] w-full" />
@@ -73,19 +75,23 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
         <div className="bg-slate-9 mb-3 mt-7 h-[0.5px] w-full" />
         {applicationLink ? (
           <Link href={applicationLink}>
-            <Button className="bg-blue-8 mt-3 w-20">Søk</Button>
+            <Button className="bg-blue-8 mt-3 w-20 mb-20">Søk</Button>
           </Link>
         ) : (
           <div>ingen link</div>
         )}
       </div>
       <div className="w-2/3">
-        <div className="border-amber-9 ml-8 mt-2 border-l-[1px] pl-4">
+        <div className="border-amber-9 ml-8 mt-2 border-l-[1px] pl-4 mb-10">
           <p className="m-0 text-4xl font-bold">{company.name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col gap-6 [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
-          {description}
+        <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
+          {description.split("\n").map((paragraph) => (
+            <p key={paragraph.slice(0, 10)} className={paragraph ? "" : "my-2"}>
+              {paragraph}
+            </p>
+          ))}
         </div>
       </div>
     </div>

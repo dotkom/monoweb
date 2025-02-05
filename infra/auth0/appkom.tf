@@ -1,5 +1,6 @@
 resource "auth0_client" "appkom_opptak" {
   allowed_clients = []
+    cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
     "stg" = ["http://localhost:3000"]
@@ -41,6 +42,7 @@ data "auth0_client" "appkom_opptak" {
 }
 
 resource "auth0_client" "appkom_autobank" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
@@ -76,6 +78,7 @@ data "auth0_client" "appkom_autobank" {
 
 resource "auth0_client" "appkom_events_app" {
   description     = "Appkom sin Online Events app"
+    cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]

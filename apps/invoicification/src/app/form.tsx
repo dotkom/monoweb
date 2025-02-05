@@ -81,7 +81,7 @@ export const Form: FC = () => {
             control={control}
             name="invoiceRelation"
             placeholder="Velg anledning"
-            options={Object.entries(InvoiceRelation).map(([key, value]) => ({
+            options={Object.values(InvoiceRelation).map((value) => ({
               value,
               label: value,
             }))}

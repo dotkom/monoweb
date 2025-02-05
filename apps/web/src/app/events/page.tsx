@@ -1,5 +1,5 @@
 import { EventList } from "@/components/organisms/EventList"
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 import { getCalendarArray } from "@/components/organisms/EventCalendar/getCalendarArray"
 import EventCalendar from "@/components/organisms/EventCalendar"
 import type { Event } from "@dotkomonline/types"
@@ -136,9 +136,7 @@ let events: Event[] = [
 
 const EventPage = async () => {
 
-  const serverClient = await getServerClient()
-
-  // const events = await serverClient.event.all({take: 50})
+  // const events = await server.event.all({take: 50})
 
   const now = new Date();
 
