@@ -30,6 +30,10 @@ import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type FeideGroupsRepository, FeideGroupsRepositoryImpl } from "./external/feide-groups-repository"
+import {
+  type NTNUStudyplanRepository,
+  NTNUStudyplanRepositoryImpl,
+} from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
@@ -73,7 +77,6 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
-import { NTNUStudyplanRepository, NTNUStudyplanRepositoryImpl } from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
