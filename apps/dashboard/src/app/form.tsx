@@ -1,4 +1,22 @@
-import { MDXEditor, type MDXEditorProps } from "@mdxeditor/editor"
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CodeToggle,
+  CreateLink,
+  ListsToggle,
+  MDXEditor,
+  type MDXEditorProps,
+  Separator,
+  UndoRedo,
+  frontmatterPlugin,
+  headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+} from "@mdxeditor/editor"
 import "@mdxeditor/editor/style.css"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -248,14 +266,12 @@ export function createRichTextInput<F extends FieldValues>({
   required,
   label,
   ...props
-}: Omit<MDXEditorProps, "error"> & {required: boolean, label: string }): InputProducerResult<F> {
+}: Omit<MDXEditorProps, "error"> & { required: boolean; label: string }): InputProducerResult<F> {
   return function RichTextInput({ name, control }) {
     return (
       <>
         <Input.Wrapper>
-          <Input.Label required={required}>
-            {label}
-          </Input.Label>
+          <Input.Label required={required}>{label}</Input.Label>
 
           <div style={{ border: "1px solid lightgrey", borderRadius: "4px", padding: 0 }}>
             <Controller
@@ -265,6 +281,30 @@ export function createRichTextInput<F extends FieldValues>({
                 <MDXEditor
                   {...props}
                   markdown={field?.value ?? ""}
+                  plugins={[
+                    toolbarPlugin({
+                      toolbarContents: () => (
+                        <>
+                          <UndoRedo />
+                          <Separator />
+                          <BoldItalicUnderlineToggles />
+                          <ListsToggle />
+                          <CodeToggle />
+                          <Separator />
+                          <BlockTypeSelect />
+                          <CreateLink />
+                          <Separator />
+                        </>
+                      ),
+                    }),
+                    listsPlugin(),
+                    headingsPlugin(),
+                    linkPlugin(),
+                    linkDialogPlugin(),
+                    thematicBreakPlugin(),
+                    frontmatterPlugin(),
+                    markdownShortcutPlugin(),
+                  ]}
                   onChange={(value) => {
                     field.onChange(value)
                     if (onChange) {
