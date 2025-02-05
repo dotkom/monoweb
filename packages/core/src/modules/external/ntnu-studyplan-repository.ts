@@ -68,6 +68,7 @@ export interface NTNUStudyplanRepository {
 }
 
 export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
+  // This is not a documented API, so it might not be reliable
   private readonly endpoint = "https://www.ntnu.no/web/studier/studieplan"
 
   async getStudyplan(code: string, year: number): Promise<z.infer<typeof StudyplanSchema>> {
