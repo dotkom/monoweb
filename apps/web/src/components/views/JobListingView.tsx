@@ -4,12 +4,15 @@ import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import remarkHtml from 'remark-html'
+import remarkParse from 'remark-parse'
+import {unified} from 'unified'
 
 interface JobListingViewProps {
   jobListing: JobListing
 }
 
-export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewProps) => {
+export const JobListingView: FC<JobListingViewProps> = async (props: JobListingViewProps) => {
   const {
     title,
     applicationEmail,
@@ -27,6 +30,11 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
     start,
     deadline,
   } = props.jobListing
+
+  const descriptionHtml = await unified()
+    .use(remarkParse)
+    .use(remarkHtml)
+    .process(description);
 
   return (
     <div className="mx-auto mt-10 flex w-10/12 justify-between">
@@ -87,11 +95,7 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <p className="m-0 text-3xl">{title}</p>
         </div>
         <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
-          {description.split("\n").map((paragraph) => (
-            <p key={paragraph.slice(0, 10)} className={paragraph ? "" : "my-2"}>
-              {paragraph}
-            </p>
-          ))}
+          <div className="joblisting-content" dangerouslySetInnerHTML={{ __html: descriptionHtml.toString() }} />
         </div>
       </div>
     </div>
