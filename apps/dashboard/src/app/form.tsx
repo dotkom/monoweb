@@ -264,7 +264,7 @@ export function createRichTextInput<F extends FieldValues>({
               render={({ field }) => (
                 <MDXEditor
                   {...props}
-                  markdown={field.value}
+                  markdown={field?.value ?? ""}
                   onChange={(value) => {
                     field.onChange(value)
                     if (onChange) {
