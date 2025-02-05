@@ -89,7 +89,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
       code,
     })
 
-    let response;
+    let response: Response
     try {
       response = await fetch(`${this.endpoint}?${params.toString()}`)
 
@@ -113,7 +113,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return StudyplanEndpointSchema.parse(data).studyplan
   }
 
-  private getStudyDirectionCourses(direction: z.infer<typeof StudyDirectionSchema>, periodNumber: string) { 
+  private getStudyDirectionCourses(direction: z.infer<typeof StudyDirectionSchema>, periodNumber: string) {
     const courses: StudyplanCourse[] = []
 
     for (const courseGroup of direction.courseGroups ?? []) {
@@ -124,7 +124,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
           year: Math.floor((Number.parseInt(periodNumber) + 1) / 2),
           direction: direction.code && direction.name ? { code: direction.code, name: direction.name } : null,
           planCode: course.studyChoice.code,
-          credit: course.credit ?? null
+          credit: course.credit ?? null,
         })
       }
     }
@@ -141,6 +141,8 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
   async getStudyplanCourses(code: string, year: number): Promise<StudyplanCourse[]> {
     const studyplan = await this.getStudyplan(code, year)
 
-    return studyplan.studyPeriods.flatMap((period) => this.getStudyDirectionCourses(period.direction, period.periodNumber))
+    return studyplan.studyPeriods.flatMap((period) =>
+      this.getStudyDirectionCourses(period.direction, period.periodNumber)
+    )
   }
 }
