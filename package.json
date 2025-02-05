@@ -28,7 +28,7 @@
     "lint-check": "turbo run lint-check",
     "test": "turbo run test",
     "test:it": "turbo run test:it",
-    "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run -- pnpm run dev",
+    "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env -- pnpm run dev",
     "migrate": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate",
     "migrate-down": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- down",
     "migrate-down-all": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate",

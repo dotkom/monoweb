@@ -11,6 +11,7 @@ export interface UserRepository {
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   create(data: UserWrite, password: string): Promise<User>
   registerId(auth0Id: string): Promise<void>
+  getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -112,6 +113,22 @@ export class UserRepositoryImpl implements UserRepository {
       default:
         throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
     }
+  }
+
+  async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
+    const user = await this.client.users.get({ id })
+
+    if (user.status !== 200) {
+      return { user: null, accessToken: null }
+    }
+
+    for (const identity of user.data.identities) {
+      if (identity.connection === "FEIDE") {
+        return { user: mapAuth0UserToUser(user.data), accessToken: identity.access_token }
+      }
+    }
+
+    return { user: mapAuth0UserToUser(user.data), accessToken: null }
   }
 
   async getAll(limit: number, page: number): Promise<User[]> {

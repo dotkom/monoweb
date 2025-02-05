@@ -29,6 +29,7 @@ import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
+import { type FeideGroupsRepository, FeideGroupsRepositoryImpl } from "./external/feide-groups-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
@@ -72,6 +73,7 @@ import {
 } from "./user/privacy-permissions-repository"
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
+import { NTNUStudyplanRepository, NTNUStudyplanRepositoryImpl } from "./external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -132,10 +134,15 @@ export const createServiceLayer = async ({
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
 
+  const feideGroupsRepository: FeideGroupsRepository = new FeideGroupsRepositoryImpl()
+  const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
+
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
-    notificationPermissionsRepository
+    notificationPermissionsRepository,
+    feideGroupsRepository,
+    ntnuStudyplanRepository
   )
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)

@@ -55,14 +55,18 @@ const InnerProfileMenu = () => {
         <Button
           variant="subtle"
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-          onClick={async () => signIn("auth0")}
+          onClick={async () => signIn("auth0", undefined, {
+            prompt: "login",
+          })}
         >
           Log in
         </Button>
         <Button
           variant="gradient"
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          onClick={async () => signIn("auth0")}
+          onClick={async () => signIn("auth0", undefined, {
+            prompt: "signup",
+          })}
         >
           Sign up
         </Button>

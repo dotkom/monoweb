@@ -62,6 +62,7 @@ export type StudyplanCourse = {
   name: string
   year: number
   direction: { code: string; name: string } | null
+  credit: string | null
   planCode: string
 }
 
@@ -71,11 +72,11 @@ const STATIC_FALLBACK_DATA: Record<string, Studyplan> = {
 }
 
 export interface NTNUStudyplanRepository {
-  getStudyCourses(code: string, year: number): Promise<StudyplanCourse[]>
+  getStudyplanCourses(code: string, year: number): Promise<StudyplanCourse[]>
 }
 
 export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
-  // This is not a documented API, so it might not be reliable
+  // This is not a documented API, so it might not be reliable. In case it fails we have a fallback to static data for some study programs
   private readonly endpoint = "https://www.ntnu.no/web/studier/studieplan"
 
   async getStudyplan(code: string, year: number): Promise<z.infer<typeof StudyplanSchema>> {
@@ -112,8 +113,8 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return StudyplanEndpointSchema.parse(data).studyplan
   }
 
-  private getStudyDirectionCourses(direction: z.infer<typeof StudyDirectionSchema>, periodNumber: string): StudyplanCourse[] {
-    const courses = []
+  private getStudyDirectionCourses(direction: z.infer<typeof StudyDirectionSchema>, periodNumber: string) { 
+    const courses: StudyplanCourse[] = []
 
     for (const courseGroup of direction.courseGroups ?? []) {
       for (const course of courseGroup.courses) {
@@ -123,6 +124,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
           year: Math.floor((Number.parseInt(periodNumber) + 1) / 2),
           direction: direction.code && direction.name ? { code: direction.code, name: direction.name } : null,
           planCode: course.studyChoice.code,
+          credit: course.credit ?? null
         })
       }
     }
@@ -136,7 +138,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return courses
   }
 
-  async getStudyCourses(code: string, year: number): Promise<StudyplanCourse[]> {
+  async getStudyplanCourses(code: string, year: number): Promise<StudyplanCourse[]> {
     const studyplan = await this.getStudyplan(code, year)
 
     return studyplan.studyPeriods.flatMap((period) => this.getStudyDirectionCourses(period.direction, period.periodNumber))
