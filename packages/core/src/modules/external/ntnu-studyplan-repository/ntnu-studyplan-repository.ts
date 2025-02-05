@@ -1,4 +1,5 @@
 import { z } from "zod"
+import fs from "fs"
 
 const BaseStudyWaypointSchema = z.object({
   code: z.string(),
@@ -55,6 +56,8 @@ const StudyplanEndpointSchema = z.object({
   studyplan: StudyplanSchema,
 })
 
+type Studyplan = z.infer<typeof StudyplanSchema>
+
 type StudyplanCourse = {
   code: string
   name: string
@@ -63,8 +66,14 @@ type StudyplanCourse = {
   planCode: string
 }
 
+const STATIC_FALLBACK_DATA: Record<string, Studyplan> = {
+  BIT: (await import("./static-fallback-data/BIT.json")) as Studyplan,
+  MSIT: (await import("./static-fallback-data/MSIT.json")) as Studyplan,
+}
+
 export interface NTNUStudyplanRepository {
   getStudyplan(code: string, year: number): Promise<z.infer<typeof StudyplanSchema>>
+  getStudyCourses(code: string, year: number): Promise<StudyplanCourse[]>
 }
 
 export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
@@ -80,10 +89,24 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
       year: year.toString(),
       code,
     })
-    const response = await fetch(`${this.endpoint}?${params.toString()}`)
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch studyplan: ${await response.text()}`)
+    let response;
+    try {
+      response = await fetch(`${this.endpoint}?${params.toString()}`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch studyplan for ${code} ${year}: ${await response.text()}`)
+      }
+    } catch (error) {
+      console.error("Failed to fetch studyplan:", error)
+
+      if (code in STATIC_FALLBACK_DATA) {
+        console.error("Using static data fallback because NTNU API failed")
+
+        return STATIC_FALLBACK_DATA[code]
+      }
+
+      throw error
     }
 
     const data = await response.json()
@@ -121,3 +144,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return studyplan.studyPeriods.flatMap((period) => this.getStudyDirectionCourses(period.direction, period.periodNumber))
   }
 }
+
+const ntnuStudyplanRepository = new NTNUStudyplanRepositoryImpl()
+console.log(await ntnuStudyplanRepository.getStudyCourses("BIT", 2022))
+
