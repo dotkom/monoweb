@@ -120,13 +120,3 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return studyplan.studyPeriods.flatMap((period) => this.getStudyDirectionCourses(period.direction, period.periodNumber))
   }
 }
-
-const studyplanRepository = new NTNUStudyplanRepositoryImpl()
-
-const studyplan = await studyplanRepository.getStudyCourses("MTDT", 2020)
-
-
-const courses = studyplan.studyPeriods.flatMap((period) => getDirectionCourses(period.direction, period.periodNumber))
-
-const obligatoryCourses = courses.filter((course) => course.planCode === "O")
-console.log(obligatoryCourses)
