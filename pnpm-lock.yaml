@@ -742,6 +742,9 @@ importers:
       kysely:
         specifier: ^0.27.0
         version: 0.27.5
+      kysely-codegen:
+        specifier: ^0.17.0
+        version: 0.17.0(kysely@0.27.5)(pg@8.13.1)
       pg:
         specifier: ^8.13.0
         version: 8.13.1
@@ -1074,9 +1077,6 @@ importers:
       kysely:
         specifier: ^0.27.0
         version: 0.27.5
-      kysely-codegen:
-        specifier: ^0.17.0
-        version: 0.17.0(kysely@0.27.5)(pg@8.13.1)
       pg:
         specifier: ^8.13.0
         version: 8.13.1
