@@ -502,12 +502,12 @@ resource "auth0_client" "monoweb_web" {
   # you go here if you decline an auth grant
   initiate_login_uri = {
     "dev" = "http://localhost:3000/api/auth/callback/auth0"
-    "stg" = "https://stg.web.online.ntnu.no/api/auth/callback/auth0"
+    "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://stg.web.online.ntnu.no/api/auth/callback/auth0"]
+    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0"]
     "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
 

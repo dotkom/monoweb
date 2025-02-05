@@ -3,7 +3,6 @@
  */
 const config = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -13,9 +12,6 @@ const config = {
         port: "",
       },
     ],
-  },
-  experimental: {
-    swcPlugins: [["next-superjson-plugin", {}]],
   },
   transpilePackages: [
     "@dotkomonline/auth",

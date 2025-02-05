@@ -1,15 +1,10 @@
 import type { Company } from "@dotkomonline/types"
-import { addDays, addMinutes, subDays } from "date-fns"
+import { addDays, addMinutes } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
 import { getCompanyMock, getJobListingMock } from "../../../mock"
 import type { ServiceLayer } from "../../core"
-import {
-  InvalidDeadlineError,
-  InvalidEndDateError,
-  InvalidStartDateError,
-  MissingLocationError,
-} from "../job-listing-error"
+import { InvalidDeadlineError, InvalidEndDateError } from "../job-listing-error"
 
 describe("job-listings", () => {
   let core: ServiceLayer
@@ -34,26 +29,6 @@ describe("job-listings", () => {
     expect(match).toEqual(jobListing)
   })
 
-  it("should fail if the end date is in the past", async () => {
-    await expect(
-      core.jobListingService.createJobListing(
-        getJobListingMock(company.id, {
-          end: subDays(new Date(), 1),
-        })
-      )
-    ).rejects.toThrow(InvalidEndDateError)
-  })
-
-  it("should fail if the start date is in the past", async () => {
-    await expect(
-      core.jobListingService.createJobListing(
-        getJobListingMock(company.id, {
-          start: subDays(new Date(), 1),
-        })
-      )
-    ).rejects.toThrow(InvalidStartDateError)
-  })
-
   it("should fail if the start date is after the end date", async () => {
     await expect(
       core.jobListingService.createJobListing(
@@ -75,16 +50,6 @@ describe("job-listings", () => {
         })
       )
     ).rejects.toThrow(InvalidDeadlineError)
-  })
-
-  it("should fail if there are zero locations specified", async () => {
-    await expect(
-      core.jobListingService.createJobListing(
-        getJobListingMock(company.id, {
-          locations: [],
-        })
-      )
-    ).rejects.toThrow(MissingLocationError)
   })
 
   it("should be able to update locations by diffing", async () => {

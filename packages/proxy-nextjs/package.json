@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "next": "^14.2.14",
+    "next": "^15.1.6",
     "next-auth": "^4.24.8"
   },
   "devDependencies": {

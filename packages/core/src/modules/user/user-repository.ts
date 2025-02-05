@@ -4,15 +4,6 @@ import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserU
 import type { Kysely } from "kysely"
 import { z } from "zod"
 
-export const AppMetadataProfileSchema = z.object({
-  phone: z.string(),
-  gender: GenderSchema,
-  address: z.string(),
-  compiled: z.boolean().default(false),
-  allergies: z.string(),
-  rfid: z.string(),
-})
-
 export interface UserRepository {
   getById(id: UserId): Promise<User | null>
   getAll(limit: number, page: number): Promise<User[]>
@@ -138,9 +129,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async update(id: UserId, data: Partial<UserWrite>) {
-    const result = await this.client.users.update({ id }, mapUserWriteToPatch(data))
-
-    const user = await this.client.users.get({ id })
+    const user = await this.client.users.update({ id }, mapUserWriteToPatch(data))
 
     if (user.status !== 200) {
       throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)

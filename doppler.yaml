@@ -17,3 +17,6 @@ setup:
   - project: monoweb-web
     config: dev
     path: apps/web
+  - project: monoweb-migrator
+    config: dev
+    path: tools/migrator

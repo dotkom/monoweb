@@ -9,8 +9,7 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
-    "type-check": "tsc --noEmit",
-    "generate-types": "kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
@@ -21,7 +20,6 @@
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/tsconfig": "workspace:*",
     "@types/pg": "^8.10.9",
-    "kysely-codegen": "^0.16.0",
     "typescript": "^5.4.5"
   }
 }

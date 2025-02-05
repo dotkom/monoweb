@@ -2,13 +2,7 @@ import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/ty
 import { isAfter, isBefore } from "date-fns"
 import assert from "../../assert"
 import type { Cursor } from "../../query"
-import {
-  InvalidDeadlineError,
-  InvalidEndDateError,
-  InvalidStartDateError,
-  JobListingNotFoundError,
-  MissingLocationError,
-} from "./job-listing-error"
+import { InvalidDeadlineError, InvalidEndDateError, JobListingNotFoundError } from "./job-listing-error"
 import type { JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 import type { JobListingLocationRepository } from "./job-listing-location-repository"
 import type { JobListingRepository } from "./job-listing-repository"
@@ -84,13 +78,11 @@ export class JobListingServiceImpl implements JobListingService {
    * @throws {MissingLocationError} if the location is empty
    */
   private validateWriteModel(input: JobListingWrite): void {
-    assert(isAfter(input.start, new Date()), new InvalidStartDateError("start date cannot be before today"))
     assert(isAfter(input.end, input.start), new InvalidEndDateError("end date cannot be before start date"))
     assert(
       input.deadline !== null ? isBefore(input.deadline, input.start) : true,
       new InvalidDeadlineError("deadline cannot be after start date")
     )
-    assert(input.locations.length > 0, new MissingLocationError())
   }
 
   private getLocationDiff(actual: string[], expected: string[]) {
