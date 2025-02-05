@@ -1,16 +1,23 @@
-import { auth } from "@/auth"
-import ProfilePoster from "@/components/views/ProfileView"
-import { redirect } from "next/navigation"
+"use client"
 
-const ProfilePage = async () => {
-  const session = await auth.getServerSession()
-  if (session === null) {
-    redirect("/")
-  }
+import ProfilePoster from "@/components/views/ProfileView"
+import { useTRPC } from "@/utils/trpc/client"
+import { Button } from "@dotkomonline/ui"
+import {useMutation} from "@tanstack/react-query";
+
+const ProfilePage = () => {
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
+  const { mutate: refreshMembership, isLoading, data: membership } = useMutation(trpc.user.refreshMembership.mutationOptions())
 
   return (
     <>
-      <ProfilePoster user={session} />
+      {user && <ProfilePoster user={user} />}
+      <Button className="mt-8" onClick={() => refreshMembership()}>
+        Oppdater medlemsskap
+      </Button>
+      <pre>{JSON.stringify(membership, null, 2)}</pre>
+      <div className="h-screen" />
     </>
   )
 }

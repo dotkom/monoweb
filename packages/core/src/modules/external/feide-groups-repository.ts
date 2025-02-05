@@ -9,9 +9,9 @@ export type FeideGroup = {
 }
 
 export type StudentInformation = {
-  subjects: FeideGroup[]
+  courses: FeideGroup[]
   studyProgrammes: FeideGroup[]
-  studySpecialisations: FeideGroup[]
+  studySpecializations: FeideGroup[]
 }
 
 export interface FeideGroupsRepository {
@@ -58,20 +58,20 @@ export class FeideGroupsRepositoryImpl implements FeideGroupsRepository {
 
     const responseGroups = z.array(FeideResponseGroupSchema).parse(await response.json())
 
-    const subjects = responseGroups.filter((group) => group.type === "fc:fs:emne").map(this.responseGroupToFeideGroup)
+    const courses = responseGroups.filter((group) => group.type === "fc:fs:emne").map(this.responseGroupToFeideGroup)
 
-    const studySpecialization = responseGroups
+    const studySpecializations = responseGroups
       .filter((group) => group.type === "fc:fs:str")
       .map(this.responseGroupToFeideGroup)
 
-    const studyProgramme = responseGroups
+    const studyProgrammes = responseGroups
       .filter((group) => group.type === "fc:fs:prg")
       .map(this.responseGroupToFeideGroup)
 
     return {
-      subjects: subjects,
-      studyProgrammes: studyProgramme,
-      studySpecialisations: studySpecialization,
+      courses,
+      studyProgrammes,
+      studySpecializations,
     }
   }
 }

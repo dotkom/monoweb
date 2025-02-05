@@ -23,7 +23,7 @@ export const UserSchema = z.object({
 
 const gracePeriod = 1
 
-export function membershipInformation(user: User): { year: number, isSocial: boolean } | null{
+export function membershipInformation(user: User): { year: number; isSocial: boolean } | null {
   if (!user.membership) return null
 
   const currentYear = new Date().getFullYear()
@@ -38,7 +38,7 @@ export function membershipInformation(user: User): { year: number, isSocial: boo
   return { year: academicYearsSinceMembershipStart + startYear, isSocial: user.membership.type === "SOCIAL" }
 }
 
-function membershipYearRange(memebershipType: MembershipType): { startYear: number, endYear: number } {
+function membershipYearRange(memebershipType: MembershipType): { startYear: number; endYear: number } {
   switch (memebershipType) {
     case "SOCIAL":
     case "EXTRAORDINARY":

@@ -34,4 +34,5 @@ export const userRouter = t.router({
   searchByFullName: protectedProcedure
     .input(z.object({ searchQuery: z.string() }))
     .query(async ({ input, ctx }) => ctx.userService.searchForUser(input.searchQuery, 30, 0)),
+  refreshMembership: protectedProcedure.mutation(async ({ ctx }) => ctx.userService.refreshMembership(ctx.principal)),
 })
