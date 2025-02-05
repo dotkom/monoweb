@@ -1,5 +1,4 @@
 import { z } from "zod"
-import fs from "fs"
 
 const BaseStudyWaypointSchema = z.object({
   code: z.string(),
@@ -23,7 +22,7 @@ const StudyChoiceSchema = z.object({
 const CourseSchema = z.object({
   code: z.string(),
   name: z.string(),
-  credit: z.string(),
+  credit: z.string().nullable(),
   studyChoice: StudyChoiceSchema,
 })
 
@@ -143,4 +142,3 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return studyplan.studyPeriods.flatMap((period) => this.getStudyDirectionCourses(period.direction, period.periodNumber))
   }
 }
-
