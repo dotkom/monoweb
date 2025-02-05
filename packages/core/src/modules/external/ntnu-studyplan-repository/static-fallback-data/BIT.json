@@ -1,7 +1,7 @@
 {
   "code": "BIT",
   "name": "Informatikk - bachelor",
-  "year": 2022,
+  "year": 2024,
   "studyPeriods": [
     {
       "periodNumber": "1",
@@ -10,7 +10,7 @@
         "name": null,
         "courseGroups": [
           {
-            "code": "BITOBLIG22",
+            "code": "BITOBLIG24",
             "name": "Obligatoriske emner",
             "courses": [
               {
@@ -76,7 +76,7 @@
         "name": null,
         "courseGroups": [
           {
-            "code": "BITOBLIG22",
+            "code": "BITOBLIG24",
             "name": "Obligatoriske emner",
             "courses": [
               {
@@ -132,7 +132,7 @@
         "name": null,
         "courseGroups": [
           {
-            "code": "BITOBLIG22",
+            "code": "BITOBLIG24",
             "name": "Obligatoriske emner",
             "courses": [
               {
@@ -157,7 +157,7 @@
               },
               {
                 "code": "TDT4160",
-                "name": "Datamaskiner og digitalteknikk",
+                "name": "Datamaskiner",
                 "credit": "7.5",
                 "studyChoice": {
                   "code": "O",
@@ -168,7 +168,7 @@
             ]
           },
           {
-            "code": "BITOMRÅDE22",
+            "code": "BITOMRÅDE24",
             "name": "Områdeemne",
             "courses": [
               {
@@ -204,7 +204,7 @@
             ]
           },
           {
-            "code": "VALGBAREBIT22",
+            "code": "VALGBAREBIT24",
             "name": "Valgbare emner i bachelorstudiet i informatikk",
             "courses": [
               {
@@ -250,7 +250,7 @@
         "name": null,
         "courseGroups": [
           {
-            "code": "BITOBLIG22",
+            "code": "BITOBLIG24",
             "name": "Obligatoriske emner",
             "courses": [
               {
@@ -286,7 +286,7 @@
         "name": null,
         "courseGroups": [
           {
-            "code": "BITVALG22",
+            "code": "BITVALG24",
             "name": "Valgbare IT-emner",
             "courses": [
               {
@@ -382,7 +382,7 @@
         "name": null,
         "courseGroups": [
           {
-            "code": "BITOBLIG22",
+            "code": "BITOBLIG24",
             "name": "Obligatoriske emner",
             "courses": [
               {
@@ -398,7 +398,7 @@
             ]
           },
           {
-            "code": "BITVALG22",
+            "code": "BITVALG24",
             "name": "Valgbare IT-emner",
             "courses": [
               {
@@ -432,6 +432,16 @@
                 }
               },
               {
+                "code": "TDT4237",
+                "name": "Programvaresikkerhet og personvern",
+                "credit": "7.5",
+                "studyChoice": {
+                  "code": "M2A",
+                  "name": "Minst 2 emner fra A-gruppe",
+                  "description": "Minst 2 emner fra gruppe A"
+                }
+              },
+              {
                 "code": "TDT4240",
                 "name": "Programvarearkitektur",
                 "credit": "7.5",
@@ -444,6 +454,16 @@
               {
                 "code": "TDT4300",
                 "name": "Datavarehus og datagruvedrift",
+                "credit": "7.5",
+                "studyChoice": {
+                  "code": "M2A",
+                  "name": "Minst 2 emner fra A-gruppe",
+                  "description": "Minst 2 emner fra gruppe A"
+                }
+              },
+              {
+                "code": "TDT4310",
+                "name": "Intelligent tekstanalyse og språkforståelse",
                 "credit": "7.5",
                 "studyChoice": {
                   "code": "M2A",
