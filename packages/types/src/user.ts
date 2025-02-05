@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { MembershipSchema } from "./membership"
 
 export const GenderSchema = z.enum(["male", "female", "other"])
 
@@ -17,8 +16,6 @@ export const UserSchema = z.object({
   allergies: z.string().optional(),
   address: z.string().optional(),
   biography: z.string().optional(),
-
-  membership: MembershipSchema.optional(),
 })
 
 export const UserWriteSchema = UserSchema.omit({
