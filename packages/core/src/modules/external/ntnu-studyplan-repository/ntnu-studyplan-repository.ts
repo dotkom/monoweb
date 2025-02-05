@@ -58,7 +58,7 @@ const StudyplanEndpointSchema = z.object({
 
 type Studyplan = z.infer<typeof StudyplanSchema>
 
-type StudyplanCourse = {
+export type StudyplanCourse = {
   code: string
   name: string
   year: number
@@ -72,7 +72,6 @@ const STATIC_FALLBACK_DATA: Record<string, Studyplan> = {
 }
 
 export interface NTNUStudyplanRepository {
-  getStudyplan(code: string, year: number): Promise<z.infer<typeof StudyplanSchema>>
   getStudyCourses(code: string, year: number): Promise<StudyplanCourse[]>
 }
 
@@ -144,7 +143,4 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return studyplan.studyPeriods.flatMap((period) => this.getStudyDirectionCourses(period.direction, period.periodNumber))
   }
 }
-
-const ntnuStudyplanRepository = new NTNUStudyplanRepositoryImpl()
-console.log(await ntnuStudyplanRepository.getStudyCourses("BIT", 2022))
 
