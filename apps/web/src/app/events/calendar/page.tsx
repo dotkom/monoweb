@@ -5,7 +5,7 @@ import { server } from "@/utils/trpc/server";
 
 const EventPage = async () => {
   // TODO: get all events between to given dates for the current month
-  const events = await server.event.all({take: 50})
+  const events = await server.event.all.query({take: 50})
 
   const now = new Date();
 
@@ -13,7 +13,7 @@ const EventPage = async () => {
   
   return (
     <>
-      <h1>Arrangement</h1>
+      <h1 className="py-6">Arrangement</h1>
       <EventCalendar cal={cal} />
     </>
   );
