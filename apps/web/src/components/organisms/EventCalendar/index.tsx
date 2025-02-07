@@ -55,20 +55,20 @@ const EventCalendar: FC<CalendarProps> = ({ cal }) => {
   nowDate.setHours(0, 0, 0, 0);
 
   return (
-    <div>
-      <div className="flex justify-between items-center">
+    <div className='mb-10'>
+      <div className="flex flex-col sm:flex-row justify-between items-center">
         <EventsViewToggle active="cal"/>
-        <div className='flex items-center gap-4 justify-between sm:justify-end'>
+        <div className='w-full flex items-center gap-4 justify-between sm:justify-end'>
           <h2>{months[cal.month]} {cal.year}</h2>
-          <div className='flex pb-2'>
+          <div className='flex pb-2 gap-2 sm:gap-0'>
             <Link 
-              className='rounded-full hover:bg-slate-4 flex p-2 duration-200'
+              className='rounded-full hover:bg-slate-4 flex p-3 sm:p-2 duration-200'
               href={`/events/calendar/${cal.month === 0 ? cal.year - 1 : cal.year}/${cal.month === 0 ? 12 : cal.month}`}
             >
               <Icon icon="tabler:chevron-left" width={24} height={24} />
             </Link>
             <Link 
-              className='rounded-full hover:bg-slate-4 flex p-2 duration-200'
+              className='rounded-full hover:bg-slate-4 flex p-3 sm:p-2 duration-200'
               href={`/events/calendar/${cal.month === 11 ? cal.year + 1 : cal.year}/${cal.month === 11 ? 1 : cal.month + 2}`}
             >
               <Icon icon="tabler:chevron-right" width={24} height={24} />
@@ -145,7 +145,20 @@ const EventCalendar: FC<CalendarProps> = ({ cal }) => {
             </div>
           </div>
         ))}
-      <div><span></span></div>
+      <div className='flex gap-4 text-sm p-2 sm:pl-6'>
+        <span className="flex items-center">
+          <span className="w-3 h-3 bg-red-8 rounded-full mr-1"></span>
+          Sosialt
+        </span>
+        <span className="flex items-center">
+          <span className="w-3 h-3 bg-blue-8 rounded-full mr-1"></span>
+          Kurs
+        </span>
+        <span className="flex items-center">
+          <span className="w-3 h-3 bg-green-8 rounded-full mr-1"></span>
+          Bedpres
+        </span>
+      </div>
     </div>
   );
 };
