@@ -943,6 +943,9 @@ importers:
 
   packages/types:
     dependencies:
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../utils
       zod:
         specifier: ^3.22.4
         version: 3.24.1

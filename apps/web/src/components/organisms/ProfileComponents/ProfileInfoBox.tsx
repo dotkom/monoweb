@@ -27,7 +27,7 @@ const ProfileInfoBox: FC<ProfileInfoBoxProps> = ({ user }) => {
         </div>
       )}
       <div className={`min-w-[410px] ${lineStyle}`}>
-        <StudyProgressionBox />
+        <StudyProgressionBox user={user} />
       </div>
     </div>
   )

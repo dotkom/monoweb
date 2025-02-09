@@ -17,6 +17,7 @@ import type {
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
+import { UserNoFeideTokenError } from "./user-error"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
@@ -63,23 +64,39 @@ export class UserServiceImpl implements UserService {
   async refreshMembership(userId: UserId): Promise<Membership | null> {
     const { user, accessToken } = await this.userRepository.getByIdWithFeideAccessToken(userId)
 
-    console.log("Calculating membership for user:", user)
-
-    console.log("FEIDE token:", accessToken)
+    if (!user) {
+      throw new Error("Could not find user to refresh membership for")
+    }
 
     if (!accessToken) {
-      throw new Error("User does not have a FEIDE access token")
+      throw new UserNoFeideTokenError("User does not have a FEIDE access token")
     }
 
     const { studyProgrammes, studySpecializations, courses } =
       await this.feideGroupsRepository.getStudentInformation(accessToken)
 
-    console.log("Study programmes:", studyProgrammes)
-    console.log("Study specializations:", studySpecializations)
+    const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
+    const existingMembership = user.membership;
 
-    const membership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
+    if (!defaultMembership) {
+      return existingMembership ?? null;
+    }
 
-    return membership
+    // Use the calculated membership if the user does not already have one 
+    if (!existingMembership) {
+      await this.userRepository.update(userId, { membership: defaultMembership })
+
+      return defaultMembership
+    }
+
+    // Replace bachelor memberships with master memberships
+    if (existingMembership.type === "BACHELOR" && defaultMembership.type === "MASTER") {
+      await this.userRepository.update(userId, { membership: defaultMembership })
+
+      return defaultMembership
+    }
+
+    return defaultMembership
   }
 
   private async calculateDefaultMembership(
@@ -97,32 +114,33 @@ export class UserServiceImpl implements UserService {
       return null
     }
 
-    const studyLength = masterProgramme ? 2 : 3
-    // Get the newest study plan we can be sure is complete
-    const studyplanYear = getAcademicYear(new Date()) - studyLength
-    const studyplanCourses = await this.ntnuStudyplanRepository.getStudyplanCourses(
-      relevantProgramme.code,
-      studyplanYear
-    )
-
-    const estimatedEstudyYear = await this.estimateStudyGrade(studyplanCourses, courses)
-
+    const programmeLength = masterProgramme ? 2 : 3
+    const estimatedStudyGrade = await this.estimateStudyGrade(relevantProgramme.code, programmeLength, courses)
+    const estimatedStartYear = getAcademicYear(new Date()) - estimatedStudyGrade + 1;
+ 
     if (masterProgramme) {
       return {
         type: "MASTER",
-        start_year: estimatedEstudyYear,
+        start_year: estimatedStartYear,
         specialization: studySpecializations.length > 0 ? studySpecializations[0].code : undefined,
       }
     }
 
     return {
       type: "BACHELOR",
-      start_year: estimatedEstudyYear,
+      start_year: estimatedStartYear,
     }
   }
 
   // This function takes a list of courses from the study plan and a list of courses taken by the user, and estimates the grade level of the user (klassetrinn)
-  async estimateStudyGrade(studyplanCourses: StudyplanCourse[], coursesTaken: FeideGroup[]): Promise<number> {
+  private async estimateStudyGrade(programmeCode: string, programmeLength: number, coursesTaken: FeideGroup[]): Promise<number> {
+    // Get the newest study plan we can be sure is complete
+    const studyplanYear = getAcademicYear(new Date()) - programmeLength
+    const studyplanCourses = await this.ntnuStudyplanRepository.getStudyplanCourses(
+      programmeCode,
+      studyplanYear
+    )
+
     // Sum up how much each course from the study plan indicates each grade level in the study plan
     // Example: { TDT4100: { "1": 7.5 } }, Object oriented programming indicates a first year (grade 1) with 7.5 credits indication strength
     const courseGradeIndications: Record<string, { grade: number; credits: number }> = {}

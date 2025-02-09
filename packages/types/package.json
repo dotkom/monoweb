@@ -11,7 +11,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@dotkomonline/utils": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

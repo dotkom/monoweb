@@ -6,7 +6,10 @@ import { Button } from "@dotkomonline/ui"
 
 const ProfilePage = () => {
   const { data: user } = trpc.user.getMe.useQuery()
-  const { mutate: refreshMembership, isLoading, data: membership } = trpc.user.refreshMembership.useMutation()
+  const {
+    mutate: refreshMembership,
+    data: membership,
+  } = trpc.user.refreshMembership.useMutation();
 
   return (
     <>
