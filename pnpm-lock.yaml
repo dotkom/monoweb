@@ -1055,6 +1055,9 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
+      '@dotkomonline/utils':
+        specifier: workspace:*
+        version: link:../utils
       zod:
         specifier: ^3.22.4
         version: 3.24.2
