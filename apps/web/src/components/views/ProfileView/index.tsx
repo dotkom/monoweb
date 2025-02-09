@@ -1,6 +1,6 @@
 import ProfileInfoBox from "@/components/organisms/ProfileComponents/ProfileInfoBox"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
+import type { User } from "@dotkomonline/types"
 
 const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
   return (

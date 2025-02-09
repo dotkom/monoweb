@@ -1,7 +1,7 @@
 import BioDisplay from "@/components/molecules/ProfileMolecules/BioDisplay"
 import PersonalInfo from "@/components/molecules/ProfileMolecules/PersonalInfo"
 import StudyProgressionBox from "@/components/molecules/ProfileMolecules/StudyProgressionBox"
-import type { User } from "next-auth"
+import type { User } from "@dotkomonline/types"
 import type { FC } from "react"
 
 type ProfileInfoBoxProps = {
