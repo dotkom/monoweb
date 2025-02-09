@@ -506,9 +506,9 @@ resource "auth0_client" "monoweb_web" {
   allowed_logout_urls = []
   allowed_origins     = []
   app_type            = "regular_web"
-  # you go here if you decline an auth grant
+  # you go here if you decline an auth grant, cannot be http
   initiate_login_uri = {
-    "dev" = "http://localhost:3000/api/auth/callback/auth0"
+    "dev" = null
     "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]

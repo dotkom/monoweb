@@ -387,6 +387,9 @@ importers:
       auth0:
         specifier: ^4.18.0
         version: 4.18.0
+      dotenv-cli:
+        specifier: ^7.3.0
+        version: 7.4.4
       fastify:
         specifier: ^5.2.1
         version: 5.2.1
@@ -742,6 +745,9 @@ importers:
       kysely:
         specifier: ^0.27.0
         version: 0.27.5
+      kysely-codegen:
+        specifier: ^0.17.0
+        version: 0.17.0(kysely@0.27.5)(pg@8.13.1)
       pg:
         specifier: ^8.13.0
         version: 8.13.1
@@ -1074,9 +1080,6 @@ importers:
       kysely:
         specifier: ^0.27.0
         version: 0.27.5
-      kysely-codegen:
-        specifier: ^0.17.0
-        version: 0.17.0(kysely@0.27.5)(pg@8.13.1)
       pg:
         specifier: ^8.13.0
         version: 8.13.1
@@ -4586,10 +4589,6 @@ packages:
   crc32-stream@6.0.0:
     resolution: {integrity: sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g==}
     engines: {node: '>= 14'}
-
-  cross-spawn@7.0.3:
-    resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
-    engines: {node: '>= 8'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -11582,12 +11581,6 @@ snapshots:
       crc-32: 1.2.2
       readable-stream: 4.7.0
 
-  cross-spawn@7.0.3:
-    dependencies:
-      path-key: 3.1.1
-      shebang-command: 2.0.0
-      which: 2.0.2
-
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -12019,7 +12012,7 @@ snapshots:
 
   execa@5.1.1:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       get-stream: 6.0.1
       human-signals: 2.1.0
       is-stream: 2.0.1
