@@ -1,11 +1,11 @@
 import BioDisplay from "@/components/molecules/ProfileMolecules/BioDisplay"
 import PersonalInfo from "@/components/molecules/ProfileMolecules/PersonalInfo"
 import StudyProgressionBox from "@/components/molecules/ProfileMolecules/StudyProgressionBox"
-import type { Session } from "@dotkomonline/oauth2/session"
+import type { User } from "@dotkomonline/types"
 import type { FC } from "react"
 
 type ProfileInfoBoxProps = {
-  user: Session
+  user: User
 }
 
 const ProfileInfoBox: FC<ProfileInfoBoxProps> = ({ user }) => {

@@ -1,6 +1,7 @@
 import ProfileInfoBox from "@/components/organisms/ProfileComponents/ProfileInfoBox"
 import type { Session } from "@dotkomonline/oauth2/session"
 import type { NextPage } from "next"
+import type { User } from "@dotkomonline/types"
 
 const ProfilePoster: NextPage<{ user: Session }> = ({ user }) => {
   return (
