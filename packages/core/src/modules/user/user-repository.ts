@@ -1,5 +1,5 @@
 import type { Database } from "@dotkomonline/db"
-import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, MembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import type { Kysely } from "kysely"
 import { z } from "zod"
@@ -11,6 +11,7 @@ export interface UserRepository {
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   create(data: UserWrite, password: string): Promise<User>
   registerId(auth0Id: string): Promise<void>
+  getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -28,6 +29,7 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     compiled: z.boolean().default(false).parse(appMetadata.compiled),
     gender: GenderSchema.safeParse(appMetadata.gender).data,
     phone: z.string().safeParse(appMetadata.phone).data,
+    membership: MembershipSchema.safeParse(appMetadata.membership).data,
   }
 }
 
@@ -46,6 +48,7 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
     address: user.address,
     gender: user.gender,
     phone: user.phone,
+    membership: user.membership,
   },
 })
 
@@ -63,6 +66,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
       compiled: data.compiled,
       gender: data.gender,
       phone: data.phone,
+      membership: data.membership,
     },
   }
 
@@ -109,6 +113,22 @@ export class UserRepositoryImpl implements UserRepository {
       default:
         throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
     }
+  }
+
+  async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
+    const user = await this.client.users.get({ id })
+
+    if (user.status !== 200) {
+      return { user: null, accessToken: null }
+    }
+
+    for (const identity of user.data.identities) {
+      if (identity.connection === "FEIDE") {
+        return { user: mapAuth0UserToUser(user.data), accessToken: identity.access_token }
+      }
+    }
+
+    return { user: mapAuth0UserToUser(user.data), accessToken: null }
   }
 
   async getAll(limit: number, page: number): Promise<User[]> {

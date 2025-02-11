@@ -451,6 +451,7 @@ resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
   scopes = [
     "read:users",
     "update:users",
+    "read:user_idp_tokens"
   ]
 }
 
@@ -856,6 +857,30 @@ resource "auth0_action" "feide_account_linking" {
   secrets {
     name  = "PRODUCTION"
     value = "${terraform.workspace == "prd" ? "true" : "false"}"
+  }
+}
+
+resource "auth0_action" "update_membership" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  name = "Membership Update"
+  runtime = "node18"
+  code = file("js/actions/updateMembership.js")
+  deploy = true
+
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+
+  secrets {
+    name = "FEIDE_CONNECTION_ID"
+    value = auth0_connection.feide[0].id
+  }
+
+  secrets {
+    name = "RPC_HOST"
+    value = "rpc.staging.online.ntnu.no"
   }
 }
 

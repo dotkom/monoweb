@@ -19,6 +19,7 @@
     "@aws-sdk/s3-presigned-post": "^3.665.0",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/utils": "workspace:*",
     "auth0": "^4.18.0",
     "date-fns": "^4.1.0",
     "kysely": "^0.27.0",
