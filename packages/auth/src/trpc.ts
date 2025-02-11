@@ -1,4 +1,3 @@
-import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import * as trpc from "@trpc/client"
 import superjson from "superjson"
 

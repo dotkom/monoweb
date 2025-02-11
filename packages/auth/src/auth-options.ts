@@ -1,4 +1,4 @@
-import { UserSchema, type User } from "@dotkomonline/types"
+import { type User, UserSchema } from "@dotkomonline/types"
 import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
