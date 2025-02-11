@@ -12,7 +12,7 @@ export const AttendanceSchema = z.object({
   registerStart: z.coerce.date(),
   deregisterDeadline: z.coerce.date(),
   registerEnd: z.coerce.date(),
-  extras: JsonValueSchema,
+  extras: JsonValueSchema.nullable(),
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>

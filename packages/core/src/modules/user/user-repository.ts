@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
+import { DBClient } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
-import type { Kysely } from "kysely"
 import { z } from "zod"
 
 export interface UserRepository {
@@ -72,7 +71,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
 export class UserRepositoryImpl implements UserRepository {
   constructor(
     private readonly client: ManagementClient,
-    private readonly db: Kysely<Database>
+    private readonly db: DBClient
   ) {}
 
   async create(data: Omit<User, "id">, password: string): Promise<User> {
@@ -91,11 +90,17 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async registerId(auth0Id: string): Promise<void> {
-    await this.db
-      .insertInto("owUser")
-      .values({ id: auth0Id })
-      .onConflict((conflict) => conflict.doNothing())
-      .execute()
+    await this.db.owUser.upsert({
+      where: {
+        id: auth0Id
+      },
+      update: {
+        id: auth0Id
+      },
+      create: {
+        id: auth0Id
+      }
+    })
   }
 
   async getById(id: UserId): Promise<User | null> {

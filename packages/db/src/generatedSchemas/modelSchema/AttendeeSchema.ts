@@ -13,7 +13,7 @@ export const AttendeeSchema = z.object({
   userId: z.string(),
   attendancePoolId: z.string(),
   registeredAt: z.coerce.date(),
-  extrasChoices: JsonValueSchema,
+  extrasChoices: JsonValueSchema.nullable(),
   attended: z.boolean(),
   firstName: z.string(),
   lastName: z.string(),

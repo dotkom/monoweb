@@ -35,7 +35,7 @@ describe("ProductPaymentProviderService", () => {
     vi.spyOn(productPaymentProviderRepository, "addPaymentProvider").mockResolvedValueOnce(productPaymentProvider)
     const result = await productPaymentProviderService.addPaymentProvider(productPaymentProvider)
     expect(result).toEqual(productPaymentProvider)
-    expect(productPaymentProviderRepository.addPaymentProvider).toHaveBeenCalledWith(productPaymentProvider)
+    expect(productPaymentProviderRepository.create).toHaveBeenCalledWith(productPaymentProvider)
   })
 
   it("should delete payment provider from product", async () => {
@@ -46,7 +46,7 @@ describe("ProductPaymentProviderService", () => {
       productPaymentProvider.paymentProvider
     )
     expect(result).toEqual(undefined)
-    expect(productPaymentProviderRepository.deletePaymentProvider).toHaveBeenCalledWith(
+    expect(productPaymentProviderRepository.delete).toHaveBeenCalledWith(
       productPayloadExtended.id,
       productPaymentProvider.paymentProvider
     )

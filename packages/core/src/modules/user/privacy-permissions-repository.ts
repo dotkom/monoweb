@@ -1,14 +1,9 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import {
   type PrivacyPermissions,
-  PrivacyPermissionsSchema,
   type PrivacyPermissionsWrite,
   type UserId,
 } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-
-export const mapToPrivacyPermissions = (payload: Selectable<Database["privacyPermissions"]>): PrivacyPermissions =>
-  PrivacyPermissionsSchema.parse(payload)
 
 export interface PrivacyPermissionsRepository {
   getByUserId(id: UserId): Promise<PrivacyPermissions | undefined>
@@ -20,42 +15,20 @@ export interface PrivacyPermissionsRepository {
 }
 
 export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async getByUserId(id: UserId): Promise<PrivacyPermissions | undefined> {
-    const privacyPermissions = await this.db
-      .selectFrom("privacyPermissions")
-      .selectAll()
-      .where("userId", "=", id)
-      .executeTakeFirst()
-
-    return privacyPermissions ? mapToPrivacyPermissions(privacyPermissions) : undefined
+  async getByUserId(userId: UserId): Promise<PrivacyPermissions | null> {
+    return await this.db.privacyPermissions.findUnique({ where: { userId } })
   }
 
   async create(data: PrivacyPermissionsWrite): Promise<PrivacyPermissions> {
-    const privacyPermissions = await this.db
-      .insertInto("privacyPermissions")
-      .values(data)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-
-    return mapToPrivacyPermissions(privacyPermissions)
+    return await this.db.privacyPermissions.create({ data })
   }
 
   async update(
-    userId: UserId,
-    data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
+    id: string,
+    data: Partial<PrivacyPermissionsWrite>
   ): Promise<PrivacyPermissions | undefined> {
-    const privacyPermissions = await this.db
-      .updateTable("privacyPermissions")
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
-      .where("userId", "=", userId)
-      .returningAll()
-      .executeTakeFirst()
-
-    return privacyPermissions ? mapToPrivacyPermissions(privacyPermissions) : undefined
+    return await this.db.privacyPermissions.update({ data, where: { id } })
   }
 }

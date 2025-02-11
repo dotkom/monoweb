@@ -197,7 +197,7 @@ model Mark {
   id        String        @id @default(uuid())
   title     String        @db.VarChar(255)
   updatedAt DateTime      @updatedAt
-  createdAt DateTime
+  createdAt DateTime      @default(now())
   category  String        @db.VarChar(255)
   details   String?
   duration  Int
@@ -317,23 +317,14 @@ model JobListing {
   applicationLink     String?               @db.VarChar(200)
   applicationEmail    String?               @db.VarChar(254)
   deadlineAsap        Boolean
-  locations           JobListingLocationLink[]
+  locations           JobListingLocation[]
 }
 
 model JobListingLocation {
   id        String                   @id @default(uuid())
   createdAt DateTime                 @default(now())
   name      String                   @unique
-  listings  JobListingLocationLink[]
-}
-
-model JobListingLocationLink {
-  id           String             @id @default(uuid())
-  createdAt    DateTime           @default(now())
-  jobListing   JobListing         @relation(fields: [jobListingId], references: [id])
-  jobListingId String
-  location     JobListingLocation @relation(fields: [locationId], references: [id])
-  locationId   String
+  listings  JobListing[]
 }
 
 model Offline {

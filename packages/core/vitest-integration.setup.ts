@@ -1,5 +1,4 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import { type Database, createKysely, createMigrator } from "@dotkomonline/db"
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
 import type { ManagementClient } from "auth0"
 import { type Kysely, sql } from "kysely"
@@ -7,9 +6,10 @@ import { afterAll, beforeAll } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import { createServiceLayer } from "./src"
 import type { StripeAccount } from "./src/modules/payment/payment-service"
+import { DBClient } from "@dotkomonline/db"
 
 let container: StartedPostgreSqlContainer
-let host: Kysely<Database>
+let host: DBClient
 
 async function runMigrations(dbName: string) {
   const db = createKyselyForDatabase(dbName)

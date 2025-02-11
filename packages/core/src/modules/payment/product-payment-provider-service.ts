@@ -17,11 +17,11 @@ export class ProductPaymentProviderServiceImpl implements ProductPaymentProvider
   constructor(private readonly productPaymentProviderRepository: ProductPaymentProviderRepository) {}
 
   async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined> {
-    return this.productPaymentProviderRepository.addPaymentProvider(data)
+    return this.productPaymentProviderRepository.create(data)
   }
 
   async deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void> {
-    return this.productPaymentProviderRepository.deletePaymentProvider(productId, paymentProviderId)
+    return this.productPaymentProviderRepository.delete(productId, paymentProviderId)
   }
 
   async getAllByProductId(productId: ProductId): Promise<PaymentProvider[]> {

@@ -20,10 +20,12 @@ export const JobListingSchema = dbSchemas.JobListingSchema.omit({
 
 export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
-  company: true,
   createdAt: true,
+  company: true,
+  locations: true
 }).extend({
   companyId: z.string().uuid(),
+  locationIds: z.array(z.string().uuid())
 })
 
 export type JobListing = z.infer<typeof JobListingSchema>

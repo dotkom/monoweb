@@ -1,53 +1,33 @@
-import type { Database } from "@dotkomonline/db"
+import { DBClient } from "@dotkomonline/db"
 import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
-
-export const mapToMark = (payload: Selectable<Database["mark"]>): Mark => MarkSchema.parse(payload)
-
 export interface MarkRepository {
-  getById(id: MarkId): Promise<Mark | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Mark[]>
+  getById(id: MarkId): Promise<Mark | null>
+  getAll(take: number): Promise<Mark[]>
   create(markInsert: MarkWrite): Promise<Mark>
-  update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | undefined>
-  delete(id: MarkId): Promise<Mark | undefined>
+  update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | null>
+  delete(id: MarkId): Promise<Mark | null>
 }
 
 export class MarkRepositoryImpl implements MarkRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async getById(id: MarkId): Promise<Mark | undefined> {
-    const mark = await this.db.selectFrom("mark").selectAll().where("id", "=", id).executeTakeFirst()
-    return mark ? mapToMark(mark) : undefined
+  async getById(id: MarkId): Promise<Mark | null> {
+    return await this.db.mark.findUnique({ where: { id } })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Mark[]> {
-    const query = orderedQuery(this.db.selectFrom("mark").selectAll().limit(take), cursor)
-    const marks = await query.execute()
-    return marks.map(mapToMark)
+  async getAll(take: number): Promise<Mark[]> {
+    return await this.db.mark.findMany({ take })
   }
 
-  async create(markInsert: MarkWrite): Promise<Mark> {
-    const mark = await this.db
-      .insertInto("mark")
-      .values({ ...markInsert, createdAt: new Date() })
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToMark(mark)
+  async create(data: MarkWrite): Promise<Mark> {
+    return await this.db.mark.create({ data })
   }
 
-  async update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | undefined> {
-    const mark = await this.db
-      .updateTable("mark")
-      .set({ ...markUpdate, updatedAt: new Date() })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
-    return mark ? mapToMark(mark) : undefined
+  async update(id: MarkId, data: MarkWrite): Promise<Mark | null> {
+    return await this.db.mark.update({ where: { id }, data })
   }
 
-  async delete(id: MarkId): Promise<Mark | undefined> {
-    const mark = await this.db.deleteFrom("mark").where("id", "=", id).returningAll().executeTakeFirst()
-    return mark ? mapToMark(mark) : undefined
+  async delete(id: MarkId): Promise<Mark | null> {
+    return await this.db.mark.delete({ where: { id }})
   }
 }

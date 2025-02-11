@@ -19,13 +19,13 @@ export { NotificationPermissionsScalarFieldEnumSchema } from './NotificationPerm
 export { EventCommitteeScalarFieldEnumSchema } from './EventCommitteeScalarFieldEnumSchema';
 export { JobListingScalarFieldEnumSchema } from './JobListingScalarFieldEnumSchema';
 export { JobListingLocationScalarFieldEnumSchema } from './JobListingLocationScalarFieldEnumSchema';
-export { JobListingLocationLinkScalarFieldEnumSchema } from './JobListingLocationLinkScalarFieldEnumSchema';
 export { OfflineScalarFieldEnumSchema } from './OfflineScalarFieldEnumSchema';
 export { ArticleScalarFieldEnumSchema } from './ArticleScalarFieldEnumSchema';
 export { ArticleTagScalarFieldEnumSchema } from './ArticleTagScalarFieldEnumSchema';
 export { ArticleTagLinkScalarFieldEnumSchema } from './ArticleTagLinkScalarFieldEnumSchema';
 export { InterestGroupScalarFieldEnumSchema } from './InterestGroupScalarFieldEnumSchema';
 export { SortOrderSchema } from './SortOrderSchema';
+export { NullableJsonNullValueInputSchema } from './NullableJsonNullValueInputSchema';
 export { JsonNullValueInputSchema } from './JsonNullValueInputSchema';
 export { QueryModeSchema } from './QueryModeSchema';
 export { NullsOrderSchema } from './NullsOrderSchema';

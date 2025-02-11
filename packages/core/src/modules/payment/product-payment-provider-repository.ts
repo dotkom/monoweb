@@ -1,4 +1,4 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import {
   type PaymentProvider,
   PaymentProviderSchema,
@@ -7,59 +7,33 @@ import {
   ProductPaymentProviderSchema,
   type ProductPaymentProviderWrite,
 } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-
-const mapToProductPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) =>
-  ProductPaymentProviderSchema.parse(data)
-
-const mapToPaymentProvider = (data: Selectable<Database["productPaymentProvider"]>) => PaymentProviderSchema.parse(data)
 
 export interface ProductPaymentProviderRepository {
-  addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined>
-  deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void>
+  create(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null>
+  delete(productId: ProductId, paymentProviderId: string): Promise<PaymentProvider>
   getAllByProductId(productId: ProductId): Promise<PaymentProvider[]>
   productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean>
 }
 
 export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | undefined> {
-    const productPaymentProvider = await this.db
-      .insertInto("productPaymentProvider")
-      .values(data)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-
-    return mapToProductPaymentProvider(productPaymentProvider)
+  async create(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null> {
+    return await this.db.productPaymentProvider.create({ data })
   }
 
-  async deletePaymentProvider(productId: ProductId, paymentProviderId: string): Promise<void> {
-    await this.db
-      .deleteFrom("productPaymentProvider")
-      .where("productId", "=", productId)
-      .where("paymentProviderId", "=", paymentProviderId)
-      .execute()
+  async delete(productId: ProductId, paymentProviderId: string): Promise<PaymentProvider> {
+    return await this.db.productPaymentProvider.delete({ where: { productId_paymentProviderId: { productId, paymentProviderId } } })
   }
 
   async getAllByProductId(productId: ProductId): Promise<PaymentProvider[]> {
-    const productPaymentProviders = await this.db
-      .selectFrom("productPaymentProvider")
-      .selectAll()
-      .where("productId", "=", productId)
-      .execute()
-
-    return productPaymentProviders.map(mapToPaymentProvider)
+    return await this.db.productPaymentProvider.findMany({ where: { productId }})
   }
 
   async productHasPaymentProviderId(productId: ProductId, paymentProviderId: string): Promise<boolean> {
-    const productPaymentProvider = await this.db
-      .selectFrom("productPaymentProvider")
-      .selectAll()
-      .where("productId", "=", productId)
-      .where("paymentProviderId", "=", paymentProviderId)
-      .executeTakeFirst()
-
-    return Boolean(productPaymentProvider)
+    return Boolean(await this.db.productPaymentProvider.findUnique({
+      where: { productId_paymentProviderId: { productId, paymentProviderId } },
+      select: { }
+    }))
   }
 }
