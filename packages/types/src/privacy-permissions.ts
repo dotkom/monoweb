@@ -1,16 +1,7 @@
 import { z } from "zod"
+import { PrivacyPermissionsSchema as GeneratedPrivacyPermissionsSchema } from "@dotkomonline/db"
 
-export const PrivacyPermissionsSchema = z.object({
-  userId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  profileVisible: z.boolean(),
-  usernameVisible: z.boolean(),
-  emailVisible: z.boolean(),
-  phoneVisible: z.boolean(),
-  addressVisible: z.boolean(),
-  attendanceVisible: z.boolean(),
-})
+export const PrivacyPermissionsSchema = GeneratedPrivacyPermissionsSchema.extend({})
 
 export type PrivacyPermissions = z.infer<typeof PrivacyPermissionsSchema>
 

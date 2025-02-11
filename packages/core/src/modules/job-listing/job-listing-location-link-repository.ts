@@ -1,38 +1,24 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import type { JobListingId, JobListingLocationId } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
 
 export interface JobListingLocationLinkRepository {
-  add(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void>
+  create(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void>
   remove(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void>
   removeByLocationName(jobListingId: JobListingId, locationName: string): Promise<void>
 }
 
 export class JobListingLocationLinkRepositoryImpl implements JobListingLocationLinkRepository {
-  constructor(private readonly db: Kysely<Database>) {}
-  async add(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void> {
-    await this.db
-      .insertInto("jobListingLocationLink")
-      .values({ locationId, jobListingId })
-      .returningAll()
-      .executeTakeFirstOrThrow()
+  constructor(private readonly db: DBClient) {}
+
+  async create(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void> {
+    await this.db.jobListingLocationLink.create({ data: { jobListingId, locationId }})
   }
 
   async removeByLocationName(jobListingId: JobListingId, locationName: string): Promise<void> {
-    await this.db
-      .deleteFrom("jobListingLocationLink")
-      .where("jobListingId", "=", jobListingId)
-      .where("locationId", "=", (eb) =>
-        eb.selectFrom("jobListingLocation").where("name", "=", locationName).select("id")
-      )
-      .execute()
+    await this.db.jobListingLocationLink.deleteMany({ where: { jobListingId, location: { name: locationName } } })
   }
 
   async remove(jobListingId: JobListingId, locationId: JobListingLocationId): Promise<void> {
-    await this.db
-      .deleteFrom("jobListingLocationLink")
-      .where("jobListingId", "=", jobListingId)
-      .where("locationId", "=", locationId)
-      .execute()
+    await this.db.jobListingLocationLink.deleteMany({ where: { jobListingId, locationId} })
   }
 }

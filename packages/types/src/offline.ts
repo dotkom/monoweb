@@ -1,12 +1,7 @@
 import { z } from "zod"
+import { dbSchemas } from "@dotkomonline/db"
 
-export const OfflineSchema = z.object({
-  id: z.string().uuid(),
-  title: z.string().max(1000).min(1),
-  published: z.date(),
-  fileUrl: z.string().nullable(), // s3 link
-  imageUrl: z.string().nullable(), // s3 link
-})
+export const OfflineSchema = dbSchemas.OfflineSchema.extend({})
 
 export const OfflineWriteSchema = OfflineSchema.partial({
   id: true,

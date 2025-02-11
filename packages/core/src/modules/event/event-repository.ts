@@ -1,14 +1,9 @@
 import type { Database } from "@dotkomonline/db"
-import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
-import type { Insertable, Kysely, Selectable, Updateable } from "kysely"
+import { EventCreateInputSchema } from "@dotkomonline/db/prisma/generated/zod/inputTypeSchemas"
+import type { Event, EventId } from "@dotkomonline/types"
 import { type Cursor, orderedQuery } from "../../query"
 
-export const mapToEvent = (data: Selectable<Database["event"]>) => {
-  return EventSchema.parse(data)
-}
-
-export type EventInsert = Insertable<Database["event"]>
-export type EventUpdate = Updateable<Database["event"]>
+const a = EventCreateInputSchema
 
 export interface EventRepository {
   create(data: EventInsert): Promise<Event>
@@ -21,7 +16,7 @@ export interface EventRepository {
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: Database) {}
 
   async addAttendance(eventId: EventId, attendanceId: string) {
     const insert = await this.db

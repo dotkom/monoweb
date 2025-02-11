@@ -6,6 +6,7 @@ import type {
   AttendeeId,
   AttendeeWrite,
   ExtrasChoices,
+  ExtrasChoicesSchema,
   QrCodeRegistrationAttendee,
   UserId,
   WaitlistAttendee,
@@ -25,7 +26,6 @@ export interface AttendeeService {
   getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId): Promise<AttendancePool | null>
   canRegisterForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date): Promise<void>
   canDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>

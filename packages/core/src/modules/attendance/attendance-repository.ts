@@ -1,16 +1,14 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import {
   type Attendance,
   type AttendanceId,
-  AttendanceSchema,
   type AttendanceWrite,
   type AttendeeId,
+  type Extras,
+  ExtrasSchema,
 } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { withInsertJsonValue } from "../../query"
-
-type DatabaseAttendance = Selectable<Database["attendance"]>
-const mapToAttendance = (obj: DatabaseAttendance): Attendance => AttendanceSchema.parse(obj)
+import { Prisma } from "@prisma/client"
+import { JsonValue } from "@prisma/client/runtime/library"
 
 export interface AttendanceRepository {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -22,53 +20,71 @@ export interface AttendanceRepository {
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   async getAll() {
-    const res = await this.db.selectFrom("attendance").selectAll("attendance").execute()
-    return res.map(mapToAttendance)
+    const attendances = await this.db.attendance.findMany({})
+    
+    return attendances.map(this.parseExtras)
   }
 
-  async create(obj: AttendanceWrite) {
-    const res = await this.db
-      .insertInto("attendance")
-      .values(withInsertJsonValue(obj, "extras"))
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToAttendance(res)
+  async create(data: AttendanceWrite) {
+    const createdAttendance = await this.db.attendance.create({
+      data: this.correctNullTypes(data),
+    })
+
+    return this.parseExtras(createdAttendance)
   }
 
-  async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
-    const res = await this.db
-      .updateTable("attendance")
-      .set(withInsertJsonValue(obj, "extras"))
-      .returningAll()
-      .where("id", "=", id)
-      .executeTakeFirstOrThrow()
-    return mapToAttendance(res)
+  async update(data: Partial<AttendanceWrite>, id: AttendanceId) {
+    const updatedAttendance = await this.db.attendance.update({
+      data: this.correctNullTypes(data),
+      where: { id },
+    })
+
+    return this.parseExtras(updatedAttendance)
   }
 
   async delete(id: AttendanceId) {
-    const result = await this.db.deleteFrom("attendance").where("id", "=", id).returningAll().executeTakeFirst()
-    return result ? mapToAttendance(result) : null
+    const deletedAttendance = await this.db.attendance.delete({ where: { id } })
+    return this.parseExtras(deletedAttendance)
   }
 
   async getById(id: AttendanceId) {
-    const res = await this.db.selectFrom("attendance").selectAll("attendance").where("id", "=", id).executeTakeFirst()
-    if (!res) {
-      return null
-    }
-    return mapToAttendance(res)
+    const attendance = await this.db.attendance.findUnique({ where: { id } })
+
+    if (!attendance) return null
+
+    return this.parseExtras(attendance)
   }
 
   async getByAttendeeId(id: AttendeeId) {
-    const res = await this.db
-      .selectFrom("attendance")
-      .selectAll("attendance")
-      .leftJoin("attendee", "attendee.attendanceId", "attendance.id")
-      .where("attendee.id", "=", id)
-      .executeTakeFirst()
+    const attendance = await this.db.attendance.findFirst({
+      where: {
+        attendees: {
+          some: {
+            id,
+          },
+        },
+      },
+    })
 
-    return res ? mapToAttendance(res) : null
+    if (attendance === null) return null
+
+    return this.parseExtras(attendance)
+  }
+
+  // Prisma requires distinction between database null and json null, so here we choose database null
+  private correctNullTypes<T extends { extras?: unknown }>(data: T) {
+    return { ...data, extras: data.extras === null ? Prisma.DbNull : data.extras }
+  }
+
+  // Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed
+  private parseExtras<T extends { extras: JsonValue }>(
+    unparsedObj: T
+  ): Omit<T, "extras"> & { extras: Extras[] } {
+    const { extras, ...attendance } = unparsedObj
+
+    return { ...attendance, extras: ExtrasSchema.parse(extras) }
   }
 }

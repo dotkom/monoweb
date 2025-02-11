@@ -1,5 +1,4 @@
 import { S3Client } from "@aws-sdk/client-s3"
-import { createKysely } from "@dotkomonline/db"
 import {
   type AppRouter,
   type CreateContextOptions,
@@ -14,6 +13,7 @@ import { ManagementClient } from "auth0"
 import fastify from "fastify"
 import Stripe from "stripe"
 import { env } from "./env"
+import { createPrisma } from "@dotkomonline/db"
 
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = env.OAUTH_AUDIENCES.split(",")
@@ -39,7 +39,7 @@ const stripeAccounts = {
     webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
 }
-const kysely = createKysely(env.DATABASE_URL, env.AWS_RDS_CERTIFICATE_AUTHORITY)
+const prisma = createPrisma(env.DATABASE_URL)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
@@ -48,7 +48,7 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     s3BucketName: env.AWS_S3_BUCKET,
     stripeAccounts,
     managementClient: auth0Client,
-    db: kysely,
+    db: prisma,
   }
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)

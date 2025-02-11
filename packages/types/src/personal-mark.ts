@@ -1,9 +1,7 @@
 import { z } from "zod"
+import { dbSchemas } from "@dotkomonline/db"
 
-export const PersonalMarkSchema = z.object({
-  markId: z.string(),
-  userId: z.string(),
-})
+export const PersonalMarkSchema = dbSchemas.PersonalMarkSchema.extend({})
 
 export type PersonalMark = z.infer<typeof PersonalMarkSchema>
 

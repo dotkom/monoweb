@@ -19,7 +19,7 @@ type CreateWaitlist = z.infer<typeof CreateWaitlistSchema>
 export interface WaitlistAttendeService {
   create(obj: CreateWaitlist): Promise<WaitlistAttendee>
   delete(id: WaitlistAttendeeId): Promise<void>
-  getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
+  getByUserId(userId: UserId): Promise<WaitlistAttendee[] | null>
   getByAttendanceId(id: string): Promise<WaitlistAttendee[] | null>
 }
 
@@ -55,8 +55,8 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
     await this.waitlistAttendeeRepository.delete(id)
   }
 
-  async getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null> {
-    return this.waitlistAttendeeRepository.getByUserId(userId, waitlistAttendeeId)
+  async getByUserId(userId: UserId): Promise<WaitlistAttendee[] | null> {
+    return this.waitlistAttendeeRepository.getByUserId(userId)
   }
 
   async getByAttendanceId(id: string): Promise<WaitlistAttendee[]> {

@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "kysely": "^0.27.0",
-    "kysely-codegen": "^0.17.0",
-    "pg": "^8.13.0"
+    "@prisma/client": "^6.3.1",
+    "pg": "^8.13.0",
+    "zod": "^3.24.1",
+    "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

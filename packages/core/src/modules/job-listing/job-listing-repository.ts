@@ -1,23 +1,15 @@
-import type { Database } from "@dotkomonline/db"
-import { type JobListing, type JobListingId, JobListingSchema } from "@dotkomonline/types"
-import { type Insertable, type Kysely, type Selectable, type Updateable, sql } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
-
-type JobListingWrite = Insertable<Database["jobListing"]>
-type JobListingUpdate = Updateable<Database["jobListing"]>
+import { DBClient } from "@dotkomonline/db"
+import { type JobListing, type JobListingId, JobListingSchema, JobListingWrite } from "@dotkomonline/types"
 
 export interface JobListingRepository {
-  getById(id: JobListingId): Promise<JobListing | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<JobListing[]>
+  getById(id: JobListingId): Promise<JobListing | null>
+  getAll(take: number): Promise<JobListing[]>
   createJobListing(values: JobListingWrite): Promise<JobListing>
-  updateJobListingById(id: JobListingId, data: JobListingUpdate): Promise<JobListing>
+  updateJobListingById(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
 }
 
-const mapToJobListing = (jobListing: Selectable<Database["jobListing"]>): JobListing =>
-  JobListingSchema.parse(jobListing)
-
 export class JobListingRepositoryImpl implements JobListingRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   private baseJobListingQuery() {
     return this.db
@@ -52,9 +44,18 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     return this.getById(id)
   }
 
-  async getById(id: string): Promise<JobListing> {
-    const jobListing = await this.baseJobListingQuery().where("jobListing.id", "=", id).executeTakeFirstOrThrow()
-    return mapToJobListing(jobListing)
+  async getById(id: string): Promise<JobListing | null> {
+    const ret = await this.db.jobListing.findUnique({
+      where: { id },
+      include: {
+        company: true,
+        locations: {
+          include: {
+            location: true
+          }
+        }
+      }
+    })
   }
 
   async getAll(take: number, cursor?: Cursor): Promise<JobListing[]> {

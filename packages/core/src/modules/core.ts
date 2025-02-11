@@ -1,5 +1,4 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import type { KyselyDatabase } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import type Stripe from "stripe"
 import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article-repository"
@@ -82,7 +81,7 @@ export type StripeAccount = {
 }
 
 export interface ServiceLayerOptions {
-  db: KyselyDatabase
+  db: PrismaClient
   s3Client: S3Client
   s3BucketName: string
   stripeAccounts: Record<string, StripeAccount>

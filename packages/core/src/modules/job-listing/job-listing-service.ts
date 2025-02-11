@@ -47,8 +47,8 @@ export class JobListingServiceImpl implements JobListingService {
     for (const location of locations) {
       const match =
         allLocations.find((x) => x.name === location) ??
-        (await this.jobListingLocationRepository.add({ name: location }))
-      await this.jobListingLocationLinkRepository.add(jobListing.id, match.id)
+        (await this.jobListingLocationRepository.create({ name: location }))
+      await this.jobListingLocationLinkRepository.create(jobListing.id, match.id)
     }
 
     return { ...jobListing, locations }
@@ -101,8 +101,8 @@ export class JobListingServiceImpl implements JobListingService {
     for (const locationName of toAdd) {
       const location =
         (await this.jobListingLocationRepository.findByName(locationName)) ??
-        (await this.jobListingLocationRepository.add({ name: locationName }))
-      await this.jobListingLocationLinkRepository.add(jobListing.id, location.id)
+        (await this.jobListingLocationRepository.create({ name: locationName }))
+      await this.jobListingLocationLinkRepository.create(jobListing.id, location.id)
     }
   }
 

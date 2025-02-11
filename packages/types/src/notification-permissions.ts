@@ -1,18 +1,8 @@
 import { z } from "zod"
 
-export const NotificationPermissionsSchema = z.object({
-  userId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  applications: z.boolean(),
-  newArticles: z.boolean(),
-  standardNotifications: z.boolean(),
-  groupMessages: z.boolean(),
-  markRulesUpdates: z.boolean(), // should not be able to disable
-  receipts: z.boolean(),
-  registrationByAdministrator: z.boolean(),
-  registrationStart: z.boolean(),
-})
+import { dbSchemas } from "@dotkomonline/db"
+
+export const NotificationPermissionsSchema = dbSchemas.NotificationPermissionsSchema.extend({})
 
 export type NotificationPermissions = z.infer<typeof NotificationPermissionsSchema>
 
