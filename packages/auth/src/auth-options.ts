@@ -88,8 +88,6 @@ export const getAuthOptions = ({
 
         const user = await trpcProxyServer.mutation("user.registerAndGet", token.sub)
 
-        console.log(user)
-
         session.user = UserSchema.parse(user)
       }
 
