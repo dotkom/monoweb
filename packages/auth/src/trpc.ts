@@ -3,7 +3,7 @@ import * as trpc from "@trpc/client"
 import superjson from "superjson"
 
 export const createServer = (rpcHost: string, accessToken: string) =>
-  trpc.createTRPCProxyClient<AppRouter>({
+  trpc.createTRPCUntypedClient({
     transformer: superjson,
     links: [
       trpc.httpLink({

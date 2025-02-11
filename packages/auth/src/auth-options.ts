@@ -1,4 +1,4 @@
-import type { User } from "@dotkomonline/types"
+import { UserSchema, type User } from "@dotkomonline/types"
 import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
@@ -86,7 +86,11 @@ export const getAuthOptions = ({
       if (token.sub && token.accessToken) {
         const trpcProxyServer = createServer(rpcHost, token.accessToken)
 
-        session.user = await trpcProxyServer.user.registerAndGet.mutate(token.sub)
+        const user = await trpcProxyServer.mutation("user.registerAndGet", token.sub)
+
+        console.log(user)
+
+        session.user = UserSchema.parse(user)
       }
 
       return session
