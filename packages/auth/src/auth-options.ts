@@ -1,7 +1,8 @@
-import type { User } from "@dotkomonline/types"
+import { type User, UserSchema } from "@dotkomonline/types"
 import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
+import { createServer } from "./trpc"
 
 interface Auth0IdTokenClaims {
   sub: string
@@ -39,6 +40,7 @@ export interface AuthOptions {
   auth0ClientSecret: string
   auth0Issuer: string
   jwtSecret: string
+  rpcHost: string
 }
 
 export const getAuthOptions = ({
@@ -46,6 +48,7 @@ export const getAuthOptions = ({
   auth0ClientSecret: oidcClientSecret,
   auth0Issuer: oidcIssuer,
   jwtSecret,
+  rpcHost,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
   providers: [
@@ -80,13 +83,12 @@ export const getAuthOptions = ({
       return token
     },
     async session({ session, token }) {
-      if (token.sub) {
-        // const user: User | null = await core.userService.getById(token.sub)
-        // await core.userService.registerId(token.sub)
-        // if (user === null) {
-        //   throw new Error(`Failed to fetch user with id ${token.sub}`)
-        // }
-        // session.user = user
+      if (token.sub && token.accessToken) {
+        const trpcProxyServer = createServer(rpcHost, token.accessToken)
+
+        const user = await trpcProxyServer.mutation("user.registerAndGet", token.sub)
+
+        session.user = UserSchema.parse(user)
       }
 
       return session

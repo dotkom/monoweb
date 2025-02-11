@@ -10,7 +10,7 @@ export interface UserRepository {
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   create(data: UserWrite, password: string): Promise<User>
-  registerId(auth0Id: string): Promise<void>
+  registerAndGet(auth0Id: string): Promise<User>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -90,12 +90,19 @@ export class UserRepositoryImpl implements UserRepository {
     return user
   }
 
-  async registerId(auth0Id: string): Promise<void> {
+  async registerAndGet(auth0Id: string): Promise<User> {
+    const user = await this.getById(auth0Id)
+    if (user === null) {
+      throw new Error("Failed to fetch user after registration")
+    }
+
     await this.db
       .insertInto("owUser")
       .values({ id: auth0Id })
       .onConflict((conflict) => conflict.doNothing())
       .execute()
+
+    return user
   }
 
   async getById(id: UserId): Promise<User | null> {
