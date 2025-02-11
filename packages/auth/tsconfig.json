@@ -1,9 +1,4 @@
 {
   "extends": "../../packages/tsconfig/tsconfig.json",
-  "include": ["./**/*.ts", "./**/*.tsx"],
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+  "include": ["./**/*.ts", "./**/*.tsx"]
 }
