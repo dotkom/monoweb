@@ -45,7 +45,6 @@ export class FeideGroupsRepositoryImpl implements FeideGroupsRepository {
   }
 
   async getStudentInformation(accessToken: string): Promise<StudentInformation> {
-    console.log("FETCHING WITH THIS TOKEN:", accessToken)
     const response = await fetch(`${this.baseUrl}/me/groups`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
