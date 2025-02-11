@@ -611,9 +611,6 @@ importers:
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
-      '@dotkomonline/environment':
-        specifier: workspace:*
-        version: link:../environment
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
