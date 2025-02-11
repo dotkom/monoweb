@@ -193,6 +193,38 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
+resource "auth0_client" "voting" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://vedtatt.online.ntnu.no/"
+  app_type = "spa"
+  callbacks = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no"
+    ]
+  }[terraform.workspace]
+  grant_types                   = ["authorization_code", "refresh_token"]
+  name                          = "Vedtatt Klone${local.name_suffix[terraform.workspace]}"
+  organization_require_behavior = "no_prompt"
+  is_first_party                = true
+  oidc_conformant               = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
