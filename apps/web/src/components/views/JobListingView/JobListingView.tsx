@@ -10,7 +10,7 @@ interface JoblistingProps {
   jobListings: JobListing[]
 }
 
-const employmentType = ["Deltid", "Fulltid", "Sommerjobb/internship", "Annet"] as const
+const employmentType = ["PARTTIME", "FULLTIME", "SUMMER_INTERNSHIP", "OTHER"] as const
 export type EmploymentType = (typeof employmentType)[number]
 export interface EmploymentCheckbox {
   name: EmploymentType

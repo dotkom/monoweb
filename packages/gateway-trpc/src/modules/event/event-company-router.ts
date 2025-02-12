@@ -23,11 +23,10 @@ export const eventCompanyRouter = t.router({
   get: publicProcedure
     .input(
       z.object({
-        id: EventSchema.shape.id,
-        pagination: PaginateInputSchema,
+        id: EventSchema.shape.id
       })
     )
     .query(async ({ input, ctx }) =>
-      ctx.eventCompanyService.getCompaniesByEventId(input.id, input.pagination.take, input.pagination.cursor)
+      ctx.eventCompanyService.getCompaniesByEventId(input.id)
     ),
 })

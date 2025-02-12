@@ -18,7 +18,7 @@ export const companyRouter = t.router({
     .mutation(async ({ input: changes, ctx }) => ctx.companyService.updateCompany(changes.id, changes.input)),
   all: t.procedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.companyService.getCompanies(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => ctx.companyService.getCompanies(input)),
   get: t.procedure.input(CompanySchema.shape.id).query(async ({ input, ctx }) => ctx.companyService.getCompany(input)),
   event: companyEventRouter,
 })

@@ -76,6 +76,7 @@ model OwUser {
   PrivacyPermissions        PrivacyPermissions?
   NotificationPermissions   NotificationPermissions?
   PersonalMark              PersonalMark[]
+  InterestGroupsMemberships InterestGroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
 }
@@ -388,4 +389,15 @@ model InterestGroup {
   isActive        Boolean  @default(true)
   longDescription String   @default("")
   joinInfo        String   @default("")
+  members         InterestGroupMember[]
+}
+
+model InterestGroupMember {
+  interestGroupId String
+  interestGroup InterestGroup @relation(fields: [interestGroupId], references: [id])
+
+  userId          String
+  user            OwUser      @relation(fields: [userId], references: [id])
+
+  @@id([interestGroupId])
 }

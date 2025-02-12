@@ -24,6 +24,7 @@ export { ArticleScalarFieldEnumSchema } from './ArticleScalarFieldEnumSchema';
 export { ArticleTagScalarFieldEnumSchema } from './ArticleTagScalarFieldEnumSchema';
 export { ArticleTagLinkScalarFieldEnumSchema } from './ArticleTagLinkScalarFieldEnumSchema';
 export { InterestGroupScalarFieldEnumSchema } from './InterestGroupScalarFieldEnumSchema';
+export { InterestGroupMemberScalarFieldEnumSchema } from './InterestGroupMemberScalarFieldEnumSchema';
 export { SortOrderSchema } from './SortOrderSchema';
 export { NullableJsonNullValueInputSchema } from './NullableJsonNullValueInputSchema';
 export { JsonNullValueInputSchema } from './JsonNullValueInputSchema';

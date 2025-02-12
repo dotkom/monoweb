@@ -17,7 +17,7 @@ export const articleRouter = t.router({
     .mutation(async ({ input, ctx }) => await ctx.articleService.update(input.id, input.input)),
   all: publicProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => await ctx.articleService.getAll(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => await ctx.articleService.getAll(input)),
   get: publicProcedure
     .input(ArticleSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.articleService.getById(input)),
@@ -25,8 +25,7 @@ export const articleRouter = t.router({
     .input(ArticleSchema.shape.slug)
     .query(async ({ input, ctx }) => await ctx.articleService.getBySlug(input)),
   getTags: publicProcedure
-    .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => await ctx.articleService.getTags(input.take, input.cursor)),
+    .query(async ({ ctx }) => await ctx.articleService.getTags()),
   addTag: protectedProcedure
     .input(
       z.object({

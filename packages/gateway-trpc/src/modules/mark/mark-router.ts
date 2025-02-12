@@ -14,7 +14,7 @@ export const markRouter = t.router({
     .mutation(async ({ input: changes, ctx }) => ctx.markService.updateMark(changes.id, changes)),
   all: protectedProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.markService.getMarks(input.take)),
+    .query(async ({ input, ctx }) => ctx.markService.getMarks(input)),
   get: protectedProcedure.input(MarkSchema.shape.id).query(async ({ input, ctx }) => ctx.markService.getMark(input)),
   delete: protectedProcedure
     .input(MarkSchema.shape.id)

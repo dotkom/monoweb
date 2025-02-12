@@ -23,3 +23,4 @@ export * from './ArticleSchema';
 export * from './ArticleTagSchema';
 export * from './ArticleTagLinkSchema';
 export * from './InterestGroupSchema';
+export * from './InterestGroupMemberSchema';
