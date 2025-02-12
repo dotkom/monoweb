@@ -26,12 +26,12 @@ export const ExtraResultsSchema = z.object({
 })
 export type ExtraResults = z.infer<typeof ExtraResultsSchema>
 
-export const ExtrasSchema = z.array(ExtraSchema)
+export const ExtrasSchema = z.array(ExtraSchema).nullable()
 
 export type Extras = z.infer<typeof ExtraSchema>
 
 export const AttendanceSchema = dbSchemas.AttendanceSchema.extend({
-  extras: ExtrasSchema.nullable()
+  extras: ExtrasSchema
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({

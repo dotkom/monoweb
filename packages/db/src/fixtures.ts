@@ -30,7 +30,7 @@ await db.mark.createManyAndReturn({ data: getMarkFixtures() });
 const products = await db.product.createManyAndReturn({ data: getProductFixtures() });
 
 const jobListings = await db.jobListing.createManyAndReturn({
-  data: getJobListingFixtures(companies[0].id),
+  data: getJobListingFixtures(companies.map(company => company.id))
 });
 
 await db.jobListingLocation.createManyAndReturn({

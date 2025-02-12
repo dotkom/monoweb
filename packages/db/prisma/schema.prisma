@@ -332,10 +332,12 @@ model JobListing {
 }
 
 model JobListingLocation {
-  name         String     @id
+  name         String
   createdAt    DateTime   @default(now())
   jobListing   JobListing @relation(fields: [jobListingId], references: [id])
   jobListingId String
+
+  @@id([name, jobListingId])
 }
 
 model Offline {
