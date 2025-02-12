@@ -1,5 +1,5 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import { type DBClient, getTestContainerDatabase } from "@dotkomonline/db"
+import { type DBClient, testDatabases } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import { afterAll, afterEach, beforeAll, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
@@ -25,7 +25,8 @@ let dbClient: DBClient
 export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 
 beforeAll(async () => {
-  dbClient = await getTestContainerDatabase()
+  // biome-ignore lint/style/noNonNullAssertion: this is defined except in vercel
+  dbClient = await testDatabases!.getTestContainerDatabase()
   core = await createServiceLayerForTesting()
 }, MIGRATION_TIMEOUT)
 
