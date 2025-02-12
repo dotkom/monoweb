@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process"
+import { spawn } from "child_process"
 
 const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
 const PRISMA_BIN_PATH = `${import.meta.dirname}/../node_modules/.bin/prisma`
