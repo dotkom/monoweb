@@ -1,5 +1,5 @@
-import { DBClient } from "@dotkomonline/db"
-import { type JobListing, type JobListingId, JobListingSchema, JobListingWrite } from "@dotkomonline/types"
+import type { DBClient } from "@dotkomonline/db"
+import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | null>
@@ -12,39 +12,31 @@ export class JobListingRepositoryImpl implements JobListingRepository {
   constructor(private readonly db: DBClient) {}
 
   async createJobListing(data: JobListingWrite): Promise<JobListing> {
-    const { companyId, locationIds, ...rest } = data
+    const { companyId, ...rest } = data
 
     return await this.db.jobListing.create({
       data: {
         ...rest,
         company: {
           connect: {
-            id: companyId
-          }
+            id: companyId,
+          },
         },
-        locations: {
-          connect: locationIds.map(id => ({ id })) 
-        }
       },
       include: {
         company: true,
-        locations: true
-      }
+      },
     })
   }
 
   async update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing> {
-    const { locationIds, ...rest } = data;
-
-    return await this.db.jobListing.update({ where: { id }, data: {
-      ...rest,
-      locations: {
-        connect: locationIds?.map(id => ({ id }))
-      }
-    }, include: {
-      company: true,
-      locations: true
-    }})
+    return await this.db.jobListing.update({
+      where: { id },
+      data,
+      include: {
+        company: true,
+      },
+    })
   }
 
   async getById(id: string): Promise<JobListing | null> {
@@ -52,12 +44,11 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       where: { id },
       include: {
         company: true,
-        locations: true
-      }
+      },
     })
   }
 
   async getAll(take: number): Promise<JobListing[]> {
-    return await this.db.jobListing.findMany({ take, include: { company: true, locations: true } })
+    return await this.db.jobListing.findMany({ take, include: { company: true } })
   }
 }

@@ -12,7 +12,7 @@ export interface PresignedPost {
 }
 
 export interface OfflineService {
-  get(id: OfflineId): Promise<Offline>
+  get(id: OfflineId): Promise<Offline | null>
   getAll(take: number, cursor?: Cursor): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
   update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline>
@@ -31,7 +31,7 @@ export class OfflineServiceImpl implements OfflineService {
    *
    * @throws {OfflineNotFoundError} if the offline does not exist
    */
-  async get(id: OfflineId): Promise<Offline> {
+  async get(id: OfflineId): Promise<Offline | null> {
     const offline = await this.offlineRepository.getById(id)
     if (offline === undefined) {
       throw new OfflineNotFoundError(id)
@@ -39,8 +39,8 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Offline[]> {
-    const offlines = await this.offlineRepository.getAll(take, cursor)
+  async getAll(take: number): Promise<Offline[]> {
+    const offlines = await this.offlineRepository.getAll(take)
     return offlines
   }
 

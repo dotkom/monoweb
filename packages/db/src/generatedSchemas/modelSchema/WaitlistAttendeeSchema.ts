@@ -8,13 +8,13 @@ export const WaitlistAttendeeSchema = z.object({
   id: z.string().uuid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  attendanceId: z.string().nullable(),
+  attendanceId: z.string(),
   userId: z.string().nullable(),
   position: z.number().int().nullable(),
   isPunished: z.boolean().nullable(),
   registeredAt: z.coerce.date().nullable(),
   studyYear: z.number().int(),
-  attendancePoolId: z.string().nullable(),
+  attendancePoolId: z.string(),
   name: z.string(),
 })
 

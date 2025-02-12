@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto"
 import type { Company } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository"
 import { type EventCompanyService, EventCompanyServiceImpl } from "../event-company-service"
 
 describe("EventCompanyService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
 

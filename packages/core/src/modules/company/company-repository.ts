@@ -1,5 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import { type Company, type CompanyId, CompanySchema, type CompanyWrite } from "@dotkomonline/types"
+import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
 
 export interface CompanyRepository {
   getById(id: CompanyId): Promise<Company | null>
@@ -12,7 +12,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
   constructor(private readonly db: DBClient) {}
 
   async getById(id: string): Promise<Company | null> {
-    return await this.db.company.findUnique({ where: { id }})
+    return await this.db.company.findUnique({ where: { id } })
   }
 
   async getAll(take: number): Promise<Company[]> {

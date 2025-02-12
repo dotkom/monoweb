@@ -19,6 +19,7 @@ export { NotificationPermissionsScalarFieldEnumSchema } from './NotificationPerm
 export { EventCommitteeScalarFieldEnumSchema } from './EventCommitteeScalarFieldEnumSchema';
 export { JobListingScalarFieldEnumSchema } from './JobListingScalarFieldEnumSchema';
 export { JobListingLocationScalarFieldEnumSchema } from './JobListingLocationScalarFieldEnumSchema';
+export { JobListingLocationLinkScalarFieldEnumSchema } from './JobListingLocationLinkScalarFieldEnumSchema';
 export { OfflineScalarFieldEnumSchema } from './OfflineScalarFieldEnumSchema';
 export { ArticleScalarFieldEnumSchema } from './ArticleScalarFieldEnumSchema';
 export { ArticleTagScalarFieldEnumSchema } from './ArticleTagScalarFieldEnumSchema';

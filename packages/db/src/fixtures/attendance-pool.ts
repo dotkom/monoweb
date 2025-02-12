@@ -1,9 +1,8 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
-import type { InsertedIds } from "../fixture"
+import type { AttendanceId } from "@dotkomonline/types"
+import type { Prisma } from "@prisma/client"
 
-export const getPoolFixtures: (attendance_ids: InsertedIds["attendance"]) => Insertable<Database["attendancePool"]>[] =
-  (attendance_ids) => [
+export const getPoolFixtures = (attendance_ids: AttendanceId[]): Prisma.AttendancePoolCreateManyInput[] => 
+  [
     {
       title: "Sosial + 1. klasse + 2. klasse",
       attendanceId: attendance_ids[0],

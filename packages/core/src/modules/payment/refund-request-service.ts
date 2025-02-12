@@ -13,7 +13,7 @@ export interface RefundRequestService {
   createRefundRequest(paymentId: PaymentId, userId: UserId, reason: string): Promise<RefundRequest>
   updateRefundRequest(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
   deleteRefundRequest(id: RefundRequestId): Promise<void>
-  getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | undefined>
+  getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | null>
   getRefundRequests(take: number, cursor?: Cursor): Promise<RefundRequest[]>
   approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
   rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
@@ -60,7 +60,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
       userId,
       reason,
       status: "PENDING",
-      handledBy: null,
+      handledById: null,
     })
   }
 
@@ -72,12 +72,12 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     return this.refundRequestRepository.delete(id)
   }
 
-  async getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | undefined> {
+  async getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | null> {
     return this.refundRequestRepository.getById(id)
   }
 
-  async getRefundRequests(take: number, cursor?: Cursor): Promise<RefundRequest[]> {
-    return this.refundRequestRepository.getAll(take, cursor)
+  async getRefundRequests(take: number): Promise<RefundRequest[]> {
+    return this.refundRequestRepository.getAll(take)
   }
 
   /**
@@ -86,7 +86,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
    * @throws {RefundRequestNotFoundError} if refund request is not found
    * @throws {InvalidRefundRequestStatusError} if refund request is not pending
    */
-  async approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void> {
+  async approveRefundRequest(id: RefundRequestId, handledById: UserId): Promise<void> {
     const refundRequest = await this.refundRequestRepository.getById(id)
 
     if (!refundRequest) {
@@ -99,7 +99,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
 
     const updatedRefundRequest = await this.refundRequestRepository.update(id, {
       status: "APPROVED",
-      handledBy,
+      handledById,
     })
 
     // Automatically refund the payment. We already know the request was approved, so no need to check.
@@ -112,7 +112,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
    * @throws {RefundRequestNotFoundError} if refund request is not found
    * @throws {InvalidRefundRequestStatusError} if refund request is not pending
    */
-  async rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void> {
+  async rejectRefundRequest(id: RefundRequestId, handledById: UserId): Promise<void> {
     const refundRequest = await this.refundRequestRepository.getById(id)
 
     if (!refundRequest) {
@@ -125,7 +125,7 @@ export class RefundRequestServiceImpl implements RefundRequestService {
 
     await this.refundRequestRepository.update(id, {
       status: "REJECTED",
-      handledBy,
+      handledById,
     })
   }
 }

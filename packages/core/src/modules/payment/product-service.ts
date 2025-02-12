@@ -30,8 +30,8 @@ export class ProductServiceImpl implements ProductService {
     return product
   }
 
-  async getProducts(take: number, cursor?: Cursor): Promise<Product[]> {
-    const products = await this.productRepository.getAll(take, cursor)
+  async getProducts(take: number): Promise<Product[]> {
+    const products = await this.productRepository.getAll(take)
     return products
   }
 }

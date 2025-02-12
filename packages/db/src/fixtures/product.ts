@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client"
 
-export const getProductFixtures: () => Insertable<Database["product"]>[] = () => [
+export const getProductFixtures: () => Prisma.ProductCreateManyInput[] = () => [
   {
     createdAt: new Date("2023-04-29 21:20:15.229179+00"),
     updatedAt: new Date("2023-04-29 21:20:15.229179+00"),

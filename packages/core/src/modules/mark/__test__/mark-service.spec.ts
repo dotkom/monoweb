@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { MarkNotFoundError } from "../mark-error"
 import { MarkRepositoryImpl } from "../mark-repository"
 import { MarkServiceImpl } from "../mark-service"
 
 describe("MarkService", () => {
-  const db = vi.mocked(Kysely.prototype, true)
+  const db = vi.mocked(PrismaClient.prototype, true)
   const markRepository = new MarkRepositoryImpl(db)
   const markService = new MarkServiceImpl(markRepository)
 
@@ -26,7 +26,7 @@ describe("MarkService", () => {
 
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
-    vi.spyOn(markRepository, "getById").mockResolvedValueOnce(undefined)
+    vi.spyOn(markRepository, "getById").mockResolvedValueOnce(null)
     await expect(markService.getMark(unknownID)).rejects.toThrow(MarkNotFoundError)
     expect(markRepository.getById).toHaveBeenCalledWith(unknownID)
   })

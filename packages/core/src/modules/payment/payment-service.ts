@@ -71,8 +71,8 @@ export class PaymentServiceImpl implements PaymentService {
     }))
   }
 
-  async getPayments(take: number, cursor?: Cursor): Promise<Payment[]> {
-    return this.paymentRepository.getAll(take, cursor)
+  async getPayments(take: number): Promise<Payment[]> {
+    return this.paymentRepository.getAll(take)
   }
 
   /**
@@ -195,14 +195,16 @@ export class PaymentServiceImpl implements PaymentService {
     paymentProviderOrderId: string | undefined,
     checkRefundRequest = true
   ): Promise<{ payment: Payment; product: Product }> {
-    let payment: Payment | undefined
+    let payment: Payment | null
     if (paymentId) {
       payment = await this.paymentRepository.getById(paymentId)
     } else if (paymentProviderOrderId) {
       payment = await this.paymentRepository.getByPaymentProviderOrderId(paymentProviderOrderId)
+    } else {
+      throw new Error("Please provide either paymentId or paymentProviderId")
     }
 
-    if (!payment) {
+    if (payment === null) {
       // Non-null assertion used because TypeScript is unable to deduce that
       // both paymentId and paymentProviderOrderId cannot be undefined at this
       // point.

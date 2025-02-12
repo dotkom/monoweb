@@ -1,11 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
-  type PaymentId,
-  type RefundRequest,
-  type RefundRequestId,
-  RefundRequestSchema,
-  type RefundRequestWrite,
-} from "@dotkomonline/types"
+import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite } from "@dotkomonline/types"
 
 export interface RefundRequestRepository {
   create(data: RefundRequestWrite): Promise<RefundRequest>
@@ -13,7 +7,7 @@ export interface RefundRequestRepository {
   delete(id: RefundRequestId): Promise<void>
   getById(id: RefundRequestId): Promise<RefundRequest | null>
   getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | null>
-  getAll(take: number, cursor?: Cursor): Promise<RefundRequest[]>
+  getAll(take: number): Promise<RefundRequest[]>
 }
 
 export class RefundRequestRepositoryImpl implements RefundRequestRepository {
@@ -32,7 +26,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
   }
 
   async getById(id: RefundRequestId): Promise<RefundRequest | null> {
-    return await this.db.refundRequest.findUnique({ where: { id }})
+    return await this.db.refundRequest.findUnique({ where: { id } })
   }
 
   async getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | null> {

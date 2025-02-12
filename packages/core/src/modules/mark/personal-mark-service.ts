@@ -23,17 +23,17 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   ) {}
 
   async getPersonalMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, take, cursor)
+    const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, take)
     return personalMarks
   }
 
   async getMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]> {
-    const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor)
+    const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take)
     return personalMarks
   }
 
-  async getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    const personalMarks = await this.personalMarkRepository.getByMarkId(markId, take, cursor)
+  async getPersonalMarksByMarkId(markId: MarkId, take: number): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getByMarkId(markId, take)
     return personalMarks
   }
 

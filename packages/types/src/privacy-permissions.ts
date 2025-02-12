@@ -1,7 +1,7 @@
+import { dbSchemas } from "@dotkomonline/db"
 import { z } from "zod"
-import { PrivacyPermissionsSchema as GeneratedPrivacyPermissionsSchema } from "@dotkomonline/db"
 
-export const PrivacyPermissionsSchema = GeneratedPrivacyPermissionsSchema.extend({})
+export const PrivacyPermissionsSchema = dbSchemas.PrivacyPermissionsSchema.extend({})
 
 export type PrivacyPermissions = z.infer<typeof PrivacyPermissionsSchema>
 

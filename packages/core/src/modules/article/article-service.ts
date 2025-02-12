@@ -9,8 +9,8 @@ export interface ArticleService {
   create(input: ArticleWrite): Promise<Article>
   update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(take: number, cursor?: Cursor): Promise<Article[]>
-  getById(id: ArticleId): Promise<Article | undefined>
-  getBySlug(slug: ArticleSlug): Promise<Article | undefined>
+  getById(id: ArticleId): Promise<Article | null>
+  getBySlug(slug: ArticleSlug): Promise<Article | null>
 
   getTags(take: number, cursor?: Cursor): Promise<ArticleTag[]>
   addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
@@ -35,26 +35,26 @@ export class ArticleServiceImpl implements ArticleService {
    */
   async update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
     const match = await this.articleRepository.getById(id)
-    if (match === undefined) {
+    if (match === null) {
       throw new ArticleNotFoundError(id)
     }
     return await this.articleRepository.update(match.id, input)
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Article[]> {
-    return await this.articleRepository.getAll(take, cursor)
+  async getAll(take: number): Promise<Article[]> {
+    return await this.articleRepository.getAll(take)
   }
 
-  async getById(id: ArticleId): Promise<Article | undefined> {
+  async getById(id: ArticleId): Promise<Article | null> {
     return await this.articleRepository.getById(id)
   }
 
-  async getBySlug(slug: ArticleSlug): Promise<Article | undefined> {
+  async getBySlug(slug: ArticleSlug): Promise<Article | null> {
     return await this.articleRepository.getBySlug(slug)
   }
 
-  async getTags(take: number, cursor?: Cursor): Promise<ArticleTag[]> {
-    return await this.articleTagRepository.getAll(take, cursor)
+  async getTags(take: number): Promise<ArticleTag[]> {
+    return await this.articleTagRepository.getAll(take)
   }
 
   /**
@@ -68,7 +68,7 @@ export class ArticleServiceImpl implements ArticleService {
       throw new ArticleNotFoundError(id)
     }
     let name = await this.articleTagRepository.getByName(tag)
-    if (name === undefined) {
+    if (name === null) {
       name = await this.articleTagRepository.create(tag)
     }
     return await this.articleTagLinkRepository.add(id, name.name)

@@ -1,9 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
-  type InterestGroup,
-  type InterestGroupId,
-  type InterestGroupWrite,
-} from "@dotkomonline/types"
+import type { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | null>
@@ -17,7 +13,7 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
   constructor(private readonly db: DBClient) {}
 
   async getById(id: InterestGroupId): Promise<InterestGroup | null> {
-    return await this.db.interestGroup.findUnique({ where: { id }})
+    return await this.db.interestGroup.findUnique({ where: { id } })
   }
 
   async getAll(): Promise<InterestGroup[]> {

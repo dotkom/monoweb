@@ -1,5 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import { type Product, type ProductId, ProductSchema, type ProductWrite } from "@dotkomonline/types"
+import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
 
 export interface ProductRepository {
   create(data: ProductWrite): Promise<Product>
@@ -22,7 +22,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   async getById(id: string): Promise<Product | null> {
-    return await this.db.product.findUnique({ where: { id }, include: { paymentProviders: true} })
+    return await this.db.product.findUnique({ where: { id }, include: { paymentProviders: true } })
   }
 
   async getAll(take: number): Promise<Product[]> {

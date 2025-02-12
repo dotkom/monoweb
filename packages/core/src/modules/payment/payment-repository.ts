@@ -1,12 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
-  type Payment,
-  type PaymentId,
-  PaymentSchema,
-  type PaymentWrite,
-  type ProductId,
-  type UserId,
-} from "@dotkomonline/types"
+import type { Payment, PaymentId, PaymentWrite, ProductId, UserId } from "@dotkomonline/types"
 
 export interface PaymentRepository {
   create(data: PaymentWrite): Promise<Payment | null>
@@ -36,9 +29,12 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     paymentProviderSessionId: string,
     data: Partial<Omit<PaymentWrite, "id">>
   ): Promise<Payment> {
-    const payments = await this.db.payment.updateManyAndReturn({ data, where: {
-      paymentProviderSessionId
-    }})
+    const payments = await this.db.payment.updateManyAndReturn({
+      data,
+      where: {
+        paymentProviderSessionId,
+      },
+    })
 
     if (payments.length !== 1) {
       throw new Error("Expected one payment from specific payment provider session id")

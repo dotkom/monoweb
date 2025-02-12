@@ -48,8 +48,8 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEvents(take: number, cursor?: Cursor): Promise<Event[]> {
-    const events = await this.eventRepository.getAll(take, cursor)
+  async getEvents(take: number): Promise<Event[]> {
+    const events = await this.eventRepository.getAll(take)
     return events
   }
 
@@ -58,8 +58,8 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor)
+  async getEventsByCommitteeId(committeeId: string, take: number): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByCommitteeId(committeeId, take)
     return events
   }
 

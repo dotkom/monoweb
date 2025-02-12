@@ -1,17 +1,15 @@
 import type { DBClient } from "@dotkomonline/db"
 import {
-  AttendanceId,
-  AttendancePoolId,
-  Attendee,
-  AttendeeId,
-  AttendeeWrite,
-  ExtrasChoices,
+  type AttendanceId,
+  type AttendancePoolId,
+  type Attendee,
+  type AttendeeId,
+  type AttendeeWrite,
+  type ExtrasChoices,
   ExtrasChoicesSchema,
-  UserId,
+  type UserId,
 } from "@dotkomonline/types"
-import { Prisma } from "@prisma/client"
-import { JsonValue } from "@prisma/client/runtime/library"
-import type { ZodSchema } from "zod"
+import type { JsonValue } from "@prisma/client/runtime/library"
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
@@ -28,10 +26,9 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   constructor(private readonly db: DBClient) {}
 
   async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    const user = await this.db.attendee.findFirst({ where: { userId, attendanceId }})
+    const user = await this.db.attendee.findFirst({ where: { userId, attendanceId } })
 
-    if (user === null)
-      return null
+    if (user === null) return null
 
     return this.parseExtrasChoices(user)
   }
@@ -51,8 +48,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   async getById(id: AttendeeId): Promise<Attendee | null> {
     const user = await this.db.attendee.findUnique({ where: { id } })
 
-    if (user === null)
-      return null
+    if (user === null) return null
 
     return this.parseExtrasChoices(user)
   }

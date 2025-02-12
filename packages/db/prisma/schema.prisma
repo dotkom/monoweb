@@ -4,12 +4,12 @@ generator client {
 
 generator zod {
   provider = "zod-prisma-types"
-  output = "../src/generatedSchemas"
+  output   = "../src/generatedSchemas"
 
   useMultipleFiles = true
   createInputTypes = false
-  addIncludeType = false
-  addSelectType = false
+  addIncludeType   = false
+  addSelectType    = false
 }
 
 datasource db {
@@ -52,36 +52,36 @@ enum RefundRequestStatus {
 }
 
 enum CompanyType {
-  CONSULTING
-  RESEARCH
-  DEVELOPMENT
-  OTHER
+  Consulting
+  Research
+  Development
+  Other
 }
 
 model OwUser {
-  id                       String                 @id
-  Attendee                 Attendee[]
-  WaitlistAttendee         WaitlistAttendee[]
-  Payment                  Payment[]
+  id                        String                   @id
+  Attendee                  Attendee[]
+  WaitlistAttendee          WaitlistAttendee[]
+  Payment                   Payment[]
   // Updated relations with explicit names
-  RequestedRefunds         RefundRequest[]        @relation("RequestedBy")
-  HandledRefunds           RefundRequest[]        @relation("HandledBy")
-  PrivacyPermissions       PrivacyPermissions?
-  NotificationPermissions  NotificationPermissions?
-  PersonalMark             PersonalMark[]
-  privacyPermissionsId     String?                @unique
-  notificationPermissionsId String?               @unique
+  RequestedRefunds          RefundRequest[]          @relation("RequestedBy")
+  HandledRefunds            RefundRequest[]          @relation("HandledBy")
+  PrivacyPermissions        PrivacyPermissions?
+  NotificationPermissions   NotificationPermissions?
+  PersonalMark              PersonalMark[]
+  privacyPermissionsId      String?                  @unique
+  notificationPermissionsId String?                  @unique
 }
 
 model Company {
-  id          String      @id @default(uuid())
-  createdAt   DateTime    @default(now())
-  name        String      @db.VarChar(100)
+  id          String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  name        String         @db.VarChar(100)
   description String
-  phone       String?     @db.VarChar(69)
-  email       String      @unique @db.VarChar(69)
-  website     String      @db.VarChar(100)
-  location    String?     @db.VarChar(100)
+  phone       String?        @db.VarChar(69)
+  email       String         @db.VarChar(69)
+  website     String         @db.VarChar(100)
+  location    String?        @db.VarChar(100)
   type        CompanyType
   image       String?
   events      EventCompany[]
@@ -89,19 +89,19 @@ model Company {
 }
 
 model Committee {
-  id          String      @id @default(uuid())
-  createdAt   DateTime    @default(now())
-  name        String      @db.VarChar(100)
-  description String      @default("")
-  email       String      @default("kontakt@online.ntnu.no")
+  id          String           @id @default(uuid())
+  createdAt   DateTime         @default(now())
+  name        String           @db.VarChar(100)
+  description String           @default("")
+  email       String           @default("kontakt@online.ntnu.no")
   image       String?
   events      EventCommittee[]
 }
 
 model Attendance {
-  id                 String            @id @default(uuid())
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  id                 String             @id @default(uuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
   registerStart      DateTime
   deregisterDeadline DateTime
   registerEnd        DateTime
@@ -113,18 +113,18 @@ model Attendance {
 }
 
 model AttendancePool {
-  id            String             @id @default(uuid())
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  title         String
-  attendance    Attendance         @relation(fields: [attendanceId], references: [id])
-  attendanceId  String
-  yearCriteria  Json
-  capacity      Int
-  isVisible     Boolean
-  type          String
-  attendees     Attendee[]
-  waitlist      WaitlistAttendee[]
+  id           String             @id @default(uuid())
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  title        String
+  attendance   Attendance         @relation(fields: [attendanceId], references: [id])
+  attendanceId String
+  yearCriteria Json
+  capacity     Int
+  isVisible    Boolean
+  type         String
+  attendees    Attendee[]
+  waitlist     WaitlistAttendee[]
 }
 
 model WaitlistAttendee {
@@ -132,7 +132,7 @@ model WaitlistAttendee {
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   attendance       Attendance?     @relation(fields: [attendanceId], references: [id])
-  attendanceId     String?
+  attendanceId     String
   user             OwUser?         @relation(fields: [userId], references: [id])
   userId           String?
   position         Int?
@@ -140,23 +140,23 @@ model WaitlistAttendee {
   registeredAt     DateTime?
   studyYear        Int
   attendancePool   AttendancePool? @relation(fields: [attendancePoolId], references: [id])
-  attendancePoolId String?
+  attendancePoolId String
   name             String
 }
 
 model Attendee {
-  id               String          @id @default(uuid())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  attendance       Attendance      @relation(fields: [attendanceId], references: [id])
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  attendance       Attendance     @relation(fields: [attendanceId], references: [id])
   attendanceId     String
-  user             OwUser          @relation(fields: [userId], references: [id])
+  user             OwUser         @relation(fields: [userId], references: [id])
   userId           String
-  attendancePool   AttendancePool  @relation(fields: [attendancePoolId], references: [id])
+  attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
   registeredAt     DateTime
   extrasChoices    Json?
-  attended         Boolean         @default(false)
+  attended         Boolean        @default(false)
   firstName        String
   lastName         String
 
@@ -164,41 +164,42 @@ model Attendee {
 }
 
 model Event {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  title            String         @db.VarChar(255)
-  start            DateTime
-  end              DateTime
-  status           EventStatus
-  public           Boolean
-  description      String?
-  subtitle         String?        @db.VarChar(255)
-  imageUrl         String?        @db.VarChar(255)
-  locationTitle    String         @db.VarChar(255)
-  locationAddress  String?        @db.VarChar(255)
-  locationLink     String?
-  attendance       Attendance?    @relation(fields: [attendanceId], references: [id])
-  attendanceId     String?
-  type             EventType
-  companies        EventCompany[]
-  committees       EventCommittee[]
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  title           String           @db.VarChar(255)
+  start           DateTime
+  end             DateTime
+  status          EventStatus
+  public          Boolean
+  description     String?
+  subtitle        String?          @db.VarChar(255)
+  imageUrl        String?          @db.VarChar(255)
+  locationTitle   String           @db.VarChar(255)
+  locationAddress String?          @db.VarChar(255)
+  locationLink    String?
+  attendance      Attendance?      @relation(fields: [attendanceId], references: [id])
+  attendanceId    String?
+  type            EventType
+  companies       EventCompany[]
+  committees      EventCommittee[]
 }
 
 model EventCompany {
-  eventId    String
-  companyId  String
-  event      Event     @relation(fields: [eventId], references: [id])
-  company    Company   @relation(fields: [companyId], references: [id])
+  eventId   String
+  companyId String
+  event     Event   @relation(fields: [eventId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
+
   @@id([eventId, companyId])
 }
 
 model Mark {
-  id        String        @id @default(uuid())
-  title     String        @db.VarChar(255)
-  updatedAt DateTime      @updatedAt
-  createdAt DateTime      @default(now())
-  category  String        @db.VarChar(255)
+  id        String         @id @default(uuid())
+  title     String         @db.VarChar(255)
+  updatedAt DateTime       @updatedAt
+  createdAt DateTime       @default(now())
+  category  String         @db.VarChar(255)
   details   String?
   duration  Int
   users     PersonalMark[]
@@ -209,30 +210,31 @@ model PersonalMark {
   markId String
   user   OwUser @relation(fields: [userId], references: [id])
   userId String
+
   @@id([markId, userId])
 }
 
 model Product {
-  id                      String                   @id @default(uuid())
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
-  type                    ProductType
-  objectId                String?                  @unique
-  amount                  Int
-  deletedAt               DateTime?
-  isRefundable            Boolean                  @default(true)
-  refundRequiresApproval  Boolean                  @default(true)
-  payments                Payment[]
-  paymentProviders        ProductPaymentProvider[]
+  id                     String                   @id @default(uuid())
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  type                   ProductType
+  objectId               String?                  @unique
+  amount                 Int
+  deletedAt              DateTime?
+  isRefundable           Boolean                  @default(true)
+  refundRequiresApproval Boolean                  @default(true)
+  payments               Payment[]
+  paymentProviders       ProductPaymentProvider[]
 }
 
 model Payment {
-  id                       String             @id @default(uuid())
-  createdAt                DateTime           @default(now())
-  updatedAt                DateTime           @updatedAt
-  product                  Product            @relation(fields: [productId], references: [id])
+  id                       String         @id @default(uuid())
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
+  product                  Product        @relation(fields: [productId], references: [id])
   productId                String
-  user                     OwUser             @relation(fields: [userId], references: [id])
+  user                     OwUser         @relation(fields: [userId], references: [id])
   userId                   String
   paymentProviderId        String
   paymentProviderSessionId String
@@ -246,85 +248,96 @@ model ProductPaymentProvider {
   productId         String
   paymentProvider   PaymentProvider
   paymentProviderId String
+
   @@id([productId, paymentProviderId])
 }
 
 model RefundRequest {
-  id           String             @id @default(uuid())
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  payment      Payment            @relation(fields: [paymentId], references: [id])
-  paymentId    String             @unique
-  user         OwUser             @relation("RequestedBy", fields: [userId], references: [id])
-  userId       String
-  reason       String
-  status       RefundRequestStatus @default(PENDING)
-  handledBy    OwUser?            @relation("HandledBy", fields: [handledById], references: [id])
-  handledById  String?
+  id          String              @id @default(uuid())
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  payment     Payment             @relation(fields: [paymentId], references: [id])
+  paymentId   String              @unique
+  user        OwUser              @relation("RequestedBy", fields: [userId], references: [id])
+  userId      String
+  reason      String
+  status      RefundRequestStatus @default(PENDING)
+  handledBy   OwUser?             @relation("HandledBy", fields: [handledById], references: [id])
+  handledById String?
 }
 
 model PrivacyPermissions {
-  id               String    @id @default(uuid())
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  user             OwUser    @relation(fields: [userId], references: [id])
-  userId           String    @unique
-  profileVisible   Boolean   @default(true)
-  usernameVisible  Boolean   @default(true)
-  emailVisible     Boolean   @default(false)
-  phoneVisible     Boolean   @default(false)
-  addressVisible   Boolean   @default(false)
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              OwUser   @relation(fields: [userId], references: [id])
+  userId            String   @unique
+  profileVisible    Boolean  @default(true)
+  usernameVisible   Boolean  @default(true)
+  emailVisible      Boolean  @default(false)
+  phoneVisible      Boolean  @default(false)
+  addressVisible    Boolean  @default(false)
   attendanceVisible Boolean  @default(false)
 }
 
 model NotificationPermissions {
-  id                             String    @id @default(uuid())
-  createdAt                      DateTime  @default(now())
-  updatedAt                      DateTime  @updatedAt
-  user                           OwUser    @relation(fields: [userId], references: [id])
-  userId                         String    @unique
-  applications                   Boolean   @default(true)
-  newArticles                    Boolean   @default(true)
-  standardNotifications          Boolean   @default(true)
-  groupMessages                  Boolean   @default(true)
-  markRulesUpdates               Boolean   @default(true)
-  receipts                       Boolean   @default(true)
-  registrationByAdministrator    Boolean   @default(true)
-  registrationStart              Boolean   @default(true)
+  id                          String   @id @default(uuid())
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+  user                        OwUser   @relation(fields: [userId], references: [id])
+  userId                      String   @unique
+  applications                Boolean  @default(true)
+  newArticles                 Boolean  @default(true)
+  standardNotifications       Boolean  @default(true)
+  groupMessages               Boolean  @default(true)
+  markRulesUpdates            Boolean  @default(true)
+  receipts                    Boolean  @default(true)
+  registrationByAdministrator Boolean  @default(true)
+  registrationStart           Boolean  @default(true)
 }
 
 model EventCommittee {
-  committeeId  String
-  eventId      String
-  committee    Committee @relation(fields: [committeeId], references: [id])
-  event        Event     @relation(fields: [eventId], references: [id])
+  committeeId String
+  eventId     String
+  committee   Committee @relation(fields: [committeeId], references: [id])
+  event       Event     @relation(fields: [eventId], references: [id])
+
   @@id([committeeId, eventId])
 }
 
 model JobListing {
-  id                  String                @id @default(uuid())
-  createdAt           DateTime              @default(now())
-  company             Company               @relation(fields: [companyId], references: [id])
-  companyId           String
-  title               String                @db.VarChar(100)
-  ingress             String
-  description         String
-  start               DateTime
-  end                 DateTime
-  featured            Boolean
-  deadline            DateTime?
-  employment          String                @db.VarChar(100)
-  applicationLink     String?               @db.VarChar(200)
-  applicationEmail    String?               @db.VarChar(254)
-  deadlineAsap        Boolean
-  locations           JobListingLocation[]
+  id               String                   @id @default(uuid())
+  createdAt        DateTime                 @default(now())
+  company          Company                  @relation(fields: [companyId], references: [id])
+  companyId        String
+  title            String                   @db.VarChar(100)
+  ingress          String
+  description      String
+  start            DateTime
+  end              DateTime
+  featured         Boolean
+  deadline         DateTime?
+  employment       String                   @db.VarChar(100)
+  applicationLink  String?                  @db.VarChar(200)
+  applicationEmail String?                  @db.VarChar(254)
+  deadlineAsap     Boolean
+  locations        JobListingLocationLink[]
 }
 
 model JobListingLocation {
   id        String                   @id @default(uuid())
   createdAt DateTime                 @default(now())
   name      String                   @unique
-  listings  JobListing[]
+  listings  JobListingLocationLink[]
+}
+
+model JobListingLocationLink {
+  id           String             @id @default(uuid())
+  createdAt    DateTime           @default(now())
+  jobListing   JobListing         @relation(fields: [jobListingId], references: [id])
+  jobListingId String
+  location     JobListingLocation @relation(fields: [locationId], references: [id])
+  locationId   String
 }
 
 model Offline {
@@ -338,21 +351,21 @@ model Offline {
 }
 
 model Article {
-  id            String          @id @default(uuid())
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  title         String
-  author        String
-  photographer  String
-  imageUrl      String
-  slug          String          @unique
-  excerpt       String
-  content       String
-  tags          ArticleTagLink[]
+  id           String           @id @default(uuid())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  title        String
+  author       String
+  photographer String
+  imageUrl     String
+  slug         String           @unique
+  excerpt      String
+  content      String
+  tags         ArticleTagLink[]
 }
 
 model ArticleTag {
-  name  String            @id
+  name     String           @id
   articles ArticleTagLink[]
 }
 
@@ -361,6 +374,7 @@ model ArticleTagLink {
   articleId String
   tag       ArticleTag @relation(fields: [tagName], references: [name])
   tagName   String
+
   @@id([articleId, tagName])
 }
 

@@ -1,12 +1,11 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
+import type {
   AttendanceId,
   AttendancePoolId,
-  type UserId,
-  type WaitlistAttendee,
-  type WaitlistAttendeeId,
-  WaitlistAttendeeSchema,
-  type WaitlistAttendeeWrite,
+  UserId,
+  WaitlistAttendee,
+  WaitlistAttendeeId,
+  WaitlistAttendeeWrite,
 } from "@dotkomonline/types"
 
 export interface WaitlistAttendeRepository {
@@ -34,7 +33,7 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
-    return await this.db.waitlistAttendee.findMany({ where: { attendanceId }})
+    return await this.db.waitlistAttendee.findMany({ where: { attendanceId } })
   }
 
   async getByUserId(userId: UserId) {
@@ -42,6 +41,6 @@ export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository 
   }
 
   async getByPoolId(attendancePoolId: AttendancePoolId) {
-    return await this.db.waitlistAttendee.findMany({ where: { attendancePoolId }})
+    return await this.db.waitlistAttendee.findMany({ where: { attendancePoolId } })
   }
 }

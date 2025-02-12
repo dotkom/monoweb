@@ -1,17 +1,16 @@
-import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
+import type { JobListingId, JobListingWithLocation, JobListingWithLocationWrite } from "@dotkomonline/types"
 import { isAfter, isBefore } from "date-fns"
 import assert from "../../assert"
-import type { Cursor } from "../../query"
 import { InvalidDeadlineError, InvalidEndDateError, JobListingNotFoundError } from "./job-listing-error"
 import type { JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 import type { JobListingLocationRepository } from "./job-listing-location-repository"
 import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
-  getById(id: JobListingId): Promise<JobListing>
-  getAll(take: number, cursor?: Cursor): Promise<JobListing[]>
-  createJobListing(payload: JobListingWrite): Promise<JobListing>
-  updateJobListingById(id: JobListingId, payload: JobListingWrite): Promise<JobListing>
+  getById(id: JobListingId): Promise<JobListingWithLocation>
+  getAll(take: number): Promise<JobListingWithLocation[]>
+  create(payload: JobListingWithLocationWrite): Promise<JobListingWithLocation>
+  update(id: JobListingId, payload: JobListingWithLocationWrite): Promise<JobListingWithLocation>
   getLocations(): Promise<string[]>
 }
 
@@ -27,7 +26,7 @@ export class JobListingServiceImpl implements JobListingService {
    *
    * @throws {JobListingNotFoundError} if the job listing does not exist
    */
-  async getById(id: JobListingId): Promise<JobListing> {
+  async getById(id: JobListingId): Promise<JobListingWithLocation> {
     const jobListing = await this.jobListingRepository.getById(id)
     if (!jobListing) {
       throw new JobListingNotFoundError(id)
@@ -35,11 +34,11 @@ export class JobListingServiceImpl implements JobListingService {
     return jobListing
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<JobListing[]> {
-    return await this.jobListingRepository.getAll(take, cursor)
+  async getAll(take: number): Promise<JobListingWithLocation[]> {
+    const jobListings = await this.jobListingRepository.getAll(take)
   }
 
-  async createJobListing({ locations, ...input }: JobListingWrite): Promise<JobListing> {
+  async create({ locations, ...input }: JobListingWithLocationWrite): Promise<JobListingWithLocation> {
     this.validateWriteModel({ locations, ...input })
 
     const jobListing = await this.jobListingRepository.createJobListing(input)
@@ -47,16 +46,19 @@ export class JobListingServiceImpl implements JobListingService {
     for (const location of locations) {
       const match =
         allLocations.find((x) => x.name === location) ??
-        (await this.jobListingLocationRepository.create({ name: location }))
-      await this.jobListingLocationLinkRepository.create(jobListing.id, match.id)
+        (await this.jobListingLocationRepository.add({ name: location }))
+      await this.jobListingLocationLinkRepository.add(jobListing.id, match.id)
     }
 
     return { ...jobListing, locations }
   }
 
-  async updateJobListingById(id: JobListingId, { locations, ...input }: JobListingWrite): Promise<JobListing> {
+  async update(
+    id: JobListingId,
+    { locations, ...input }: JobListingWithLocationWrite
+  ): Promise<JobListingWithLocation> {
     const existing = await this.jobListingRepository.getById(id)
-    const merged: JobListingWrite = { ...existing, ...input, locations }
+    const merged: JobListingWithLocationWrite = { ...existing, ...input, locations }
 
     this.validateWriteModel(merged)
 
@@ -77,7 +79,7 @@ export class JobListingServiceImpl implements JobListingService {
    * @throws {InvalidDeadlineError} if the deadline is after the start date
    * @throws {MissingLocationError} if the location is empty
    */
-  private validateWriteModel(input: JobListingWrite): void {
+  private validateWriteModel(input: JobListingWithLocationWrite): void {
     assert(isAfter(input.end, input.start), new InvalidEndDateError("end date cannot be before start date"))
     assert(
       input.deadline !== null ? isBefore(input.deadline, input.start) : true,
@@ -91,7 +93,7 @@ export class JobListingServiceImpl implements JobListingService {
     return { toRemove, toAdd }
   }
 
-  private async applyLocationDiff(toRemove: string[], toAdd: string[], jobListing: JobListing) {
+  private async applyLocationDiff(toRemove: string[], toAdd: string[], jobListing: JobListingWithLocation) {
     for (const locationName of toRemove) {
       await this.jobListingLocationLinkRepository.removeByLocationName(jobListing.id, locationName)
     }
@@ -101,8 +103,8 @@ export class JobListingServiceImpl implements JobListingService {
     for (const locationName of toAdd) {
       const location =
         (await this.jobListingLocationRepository.findByName(locationName)) ??
-        (await this.jobListingLocationRepository.create({ name: locationName }))
-      await this.jobListingLocationLinkRepository.create(jobListing.id, location.id)
+        (await this.jobListingLocationRepository.add({ name: locationName }))
+      await this.jobListingLocationLinkRepository.add(jobListing.id, location.id)
     }
   }
 

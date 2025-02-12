@@ -1,10 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
-  type NotificationPermissions,
-  NotificationPermissionsSchema,
-  type NotificationPermissionsWrite,
-  type UserId,
-} from "@dotkomonline/types"
+import type { NotificationPermissions, NotificationPermissionsWrite, UserId } from "@dotkomonline/types"
 
 export interface NotificationPermissionsRepository {
   getByUserId(id: UserId): Promise<NotificationPermissions | null>
@@ -23,7 +18,7 @@ export class NotificationPermissionsRepositoryImpl implements NotificationPermis
   }
 
   async create(data: NotificationPermissionsWrite): Promise<NotificationPermissions> {
-    return await this.db.notificationPermissions.create({ data  })
+    return await this.db.notificationPermissions.create({ data })
   }
 
   async update(

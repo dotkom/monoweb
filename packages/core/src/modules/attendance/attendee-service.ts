@@ -6,7 +6,6 @@ import type {
   AttendeeId,
   AttendeeWrite,
   ExtrasChoices,
-  ExtrasChoicesSchema,
   QrCodeRegistrationAttendee,
   UserId,
   WaitlistAttendee,
@@ -132,6 +131,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       // Create waitlist attendee
       return await this.waitlistAttendeeService.create({
         attendanceId: attendancePool.attendanceId,
+        attendancePoolId: attendancePool.id,
+        position: null,
         userId,
         isPunished: false,
         registeredAt: new Date(),
@@ -199,7 +200,9 @@ export class AttendeeServiceImpl implements AttendeeService {
     if (numAttendees === attendancePool.capacity) {
       await this.waitlistAttendeeService.create({
         attendanceId,
+        attendancePoolId: attendancePool.id,
         userId,
+        position: null,
         isPunished: false,
         registeredAt: new Date(),
         studyYear: -69,

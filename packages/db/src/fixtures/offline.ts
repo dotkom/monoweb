@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client";
 
-export const getOfflineFixtures: () => Insertable<Database["offline"]>[] = () => [
+export const getOfflineFixtures: () => Prisma.OfflineCreateManyInput[] = () => [
   {
     title: "Offline #1",
     published: new Date("2023-10-09T10:00:00+02:00"),

@@ -1,17 +1,10 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
-  type PrivacyPermissions,
-  type PrivacyPermissionsWrite,
-  type UserId,
-} from "@dotkomonline/types"
+import type { PrivacyPermissions, PrivacyPermissionsWrite, UserId } from "@dotkomonline/types"
 
 export interface PrivacyPermissionsRepository {
-  getByUserId(id: UserId): Promise<PrivacyPermissions | undefined>
+  getByUserId(id: UserId): Promise<PrivacyPermissions | null>
   create(data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions>
-  update(
-    userId: string,
-    data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
-  ): Promise<PrivacyPermissions | undefined>
+  update(userId: string, data: Partial<Omit<PrivacyPermissionsWrite, "userId">>): Promise<PrivacyPermissions | null>
 }
 
 export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {
@@ -25,10 +18,7 @@ export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepos
     return await this.db.privacyPermissions.create({ data })
   }
 
-  async update(
-    id: string,
-    data: Partial<PrivacyPermissionsWrite>
-  ): Promise<PrivacyPermissions | undefined> {
+  async update(id: string, data: Partial<PrivacyPermissionsWrite>): Promise<PrivacyPermissions | null> {
     return await this.db.privacyPermissions.update({ data, where: { id } })
   }
 }

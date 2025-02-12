@@ -1,5 +1,5 @@
-import { DBClient } from "@dotkomonline/db"
-import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
+import type { DBClient } from "@dotkomonline/db"
+import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
 
 export interface OfflineRepository {
   getById(id: OfflineId): Promise<Offline | null>

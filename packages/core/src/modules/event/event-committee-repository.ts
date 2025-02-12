@@ -1,11 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import {
-  type Committee,
-  type CommitteeId,
-  type EventCommittee,
-  EventCommitteeSchema,
-  type EventId,
-} from "@dotkomonline/types"
+import type { Committee, CommitteeId, EventId } from "@dotkomonline/types"
 
 export interface EventCommitteeRepository {
   getAllEventCommittees(eventId: EventId, take: number): Promise<Committee[]>
@@ -18,9 +12,9 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
   constructor(private readonly db: DBClient) {}
 
   async getAllEventCommittees(eventId: EventId): Promise<Committee[]> {
-    const eventCommittees = await this.db.eventCommittee.findMany({ where: { eventId }, select: { committee: true }})
+    const eventCommittees = await this.db.eventCommittee.findMany({ where: { eventId }, select: { committee: true } })
 
-    return eventCommittees.map(eventCommitee => eventCommitee.committee)
+    return eventCommittees.map((eventCommitee) => eventCommitee.committee)
   }
 
   async getAllCommittees(eventId: EventId): Promise<Committee[]> {
@@ -32,6 +26,6 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
   }
 
   async removeCommitteFromEvent(eventId: EventId, committeeId: CommitteeId): Promise<void> {
-    await this.db.eventCommittee.delete({ where: { committeeId_eventId: { eventId, committeeId }}})
+    await this.db.eventCommittee.delete({ where: { committeeId_eventId: { eventId, committeeId } } })
   }
 }

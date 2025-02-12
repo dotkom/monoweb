@@ -1,10 +1,9 @@
 import type { InterestGroup, InterestGroupId, InterestGroupWrite } from "@dotkomonline/types"
-import type { Collection, Pageable } from "../../query"
 import type { InterestGroupRepository } from "./interest-group-repository"
 
 export interface InterestGroupService {
-  getById(id: InterestGroupId): Promise<InterestGroup | undefined>
-  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>
+  getById(id: InterestGroupId): Promise<InterestGroup | null>
+  getAll(): Promise<InterestGroup[]>
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: InterestGroupWrite): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
@@ -13,12 +12,12 @@ export interface InterestGroupService {
 export class InterestGroupServiceImpl implements InterestGroupService {
   constructor(private readonly interestGroupRepository: InterestGroupRepository) {}
 
-  async getById(id: InterestGroupId): Promise<InterestGroup | undefined> {
+  async getById(id: InterestGroupId): Promise<InterestGroup | null> {
     return this.interestGroupRepository.getById(id)
   }
 
-  async getAll(pageable: Pageable): Promise<Collection<InterestGroup>> {
-    return this.interestGroupRepository.getAll(pageable)
+  async getAll(): Promise<InterestGroup[]> {
+    return this.interestGroupRepository.getAll()
   }
 
   async create(values: InterestGroupWrite): Promise<InterestGroup> {

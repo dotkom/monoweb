@@ -1,5 +1,5 @@
-import { DBClient } from "@dotkomonline/db"
-import { type Mark, type MarkId, MarkSchema, type MarkWrite } from "@dotkomonline/types"
+import type { DBClient } from "@dotkomonline/db"
+import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
 export interface MarkRepository {
   getById(id: MarkId): Promise<Mark | null>
   getAll(take: number): Promise<Mark[]>
@@ -28,6 +28,6 @@ export class MarkRepositoryImpl implements MarkRepository {
   }
 
   async delete(id: MarkId): Promise<Mark | null> {
-    return await this.db.mark.delete({ where: { id }})
+    return await this.db.mark.delete({ where: { id } })
   }
 }

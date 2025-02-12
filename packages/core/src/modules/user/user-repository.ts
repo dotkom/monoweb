@@ -1,4 +1,4 @@
-import { DBClient } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import { z } from "zod"
@@ -92,14 +92,14 @@ export class UserRepositoryImpl implements UserRepository {
   async registerId(auth0Id: string): Promise<void> {
     await this.db.owUser.upsert({
       where: {
-        id: auth0Id
+        id: auth0Id,
       },
       update: {
-        id: auth0Id
+        id: auth0Id,
       },
       create: {
-        id: auth0Id
-      }
+        id: auth0Id,
+      },
     })
   }
 

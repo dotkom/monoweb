@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto"
 import type { Company } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { CompanyNotFoundError } from "../company-error"
 import { CompanyRepositoryImpl } from "../company-repository"
 import { CompanyServiceImpl } from "../company-service"
 
 describe("CompanyService", () => {
-  const db = vi.mocked(Kysely.prototype, true)
+  const db = vi.mocked(PrismaClient.prototype, true)
   const companyRepository = new CompanyRepositoryImpl(db)
   const companyService = new CompanyServiceImpl(companyRepository)
 
@@ -30,7 +30,7 @@ describe("CompanyService", () => {
 
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
-    vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(undefined)
+    vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(null)
     await expect(companyService.getCompany(unknownID)).rejects.toThrow(CompanyNotFoundError)
     expect(companyRepository.getById).toHaveBeenCalledWith(unknownID)
   })

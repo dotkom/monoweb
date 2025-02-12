@@ -26,12 +26,13 @@ export class CompanyServiceImpl implements CompanyService {
     return company
   }
 
-  async getCompanies(take: number, cursor?: Cursor): Promise<Company[]> {
-    const companies = await this.companyRepository.getAll(take, cursor)
+  async getCompanies(take: number): Promise<Company[]> {
+    const companies = await this.companyRepository.getAll(take)
     return companies
   }
 
   async createCompany(payload: CompanyWrite): Promise<Company> {
+    console.log("creating company:", payload)
     const company = await this.companyRepository.create(payload)
     return company
   }

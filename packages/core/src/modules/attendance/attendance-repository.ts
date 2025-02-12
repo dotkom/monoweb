@@ -8,7 +8,7 @@ import {
   ExtrasSchema,
 } from "@dotkomonline/types"
 import { Prisma } from "@prisma/client"
-import { JsonValue } from "@prisma/client/runtime/library"
+import type { JsonValue } from "@prisma/client/runtime/library"
 
 export interface AttendanceRepository {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -24,7 +24,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
   async getAll() {
     const attendances = await this.db.attendance.findMany({})
-    
+
     return attendances.map(this.parseExtras)
   }
 
@@ -80,9 +80,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   // Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed
-  private parseExtras<T extends { extras: JsonValue }>(
-    unparsedObj: T
-  ): Omit<T, "extras"> & { extras: Extras[] } {
+  private parseExtras<T extends { extras: JsonValue }>(unparsedObj: T): Omit<T, "extras"> & { extras: Extras[] } {
     const { extras, ...attendance } = unparsedObj
 
     return { ...attendance, extras: ExtrasSchema.parse(extras) }

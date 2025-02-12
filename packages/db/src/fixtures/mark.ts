@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client";
 
-export const getMarkFixtures: () => Insertable<Database["mark"]>[] = () => [
+export const getMarkFixtures: () => Prisma.MarkCreateManyInput[] = () => [
   {
     updatedAt: new Date("2023-01-25 19:58:43.138389+00"),
     title: "a",

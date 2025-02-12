@@ -5,7 +5,7 @@ import type { MarkRepository } from "./mark-repository"
 
 export interface MarkService {
   getMark(id: MarkId): Promise<Mark>
-  getMarks(limit: number, cursor?: Cursor): Promise<Mark[]>
+  getMarks(limit: number): Promise<Mark[]>
   createMark(payload: MarkWrite): Promise<Mark>
   updateMark(id: MarkId, payload: MarkWrite): Promise<Mark>
   deleteMark(id: MarkId): Promise<Mark>
@@ -27,8 +27,8 @@ export class MarkServiceImpl implements MarkService {
     return mark
   }
 
-  async getMarks(limit: number, cursor?: Cursor): Promise<Mark[]> {
-    const marks = await this.markRepository.getAll(limit, cursor)
+  async getMarks(limit: number): Promise<Mark[]> {
+    const marks = await this.markRepository.getAll(limit)
     return marks
   }
 

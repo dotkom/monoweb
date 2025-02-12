@@ -1,4 +1,4 @@
-import { DBClient } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
 
 export interface EventCompanyRepository {
@@ -16,16 +16,16 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
   }
 
   async deleteCompany(eventId: EventId, companyId: CompanyId) {
-    await this.db.eventCompany.delete({ where: { eventId_companyId: { eventId, companyId }}})
+    await this.db.eventCompany.delete({ where: { eventId_companyId: { eventId, companyId } } })
   }
 
   async getCompaniesByEventId(eventId: EventId, take: number) {
-    const eventCompanies = await this.db.eventCompany.findMany({ where: { eventId }, take, include: { company: true }})
+    const eventCompanies = await this.db.eventCompany.findMany({ where: { eventId }, take, include: { company: true } })
 
-    return eventCompanies.map(eventCompany => eventCompany.company)
+    return eventCompanies.map((eventCompany) => eventCompany.company)
   }
 
   async getEventsByCompanyId(companyId: string, take: number): Promise<Event[]> {
-    return await this.db.event.findMany({ take, where: { companies: { some: { companyId }}} })
+    return await this.db.event.findMany({ take, where: { companies: { some: { companyId } } } })
   }
 }

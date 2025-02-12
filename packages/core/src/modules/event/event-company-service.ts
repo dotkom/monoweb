@@ -20,7 +20,7 @@ export class EventCompanyServiceImpl implements EventCompanyService {
     await this.eventCompanyRepository.deleteCompany(id, company)
   }
 
-  async getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor) {
-    return await this.eventCompanyRepository.getCompaniesByEventId(id, take, cursor)
+  async getCompaniesByEventId(id: EventId, take: number) {
+    return await this.eventCompanyRepository.getCompaniesByEventId(id, take)
   }
 }

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { PaymentProvider, Product, ProductPaymentProvider } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { ProductPaymentProviderRepositoryImpl } from "../product-payment-provider-repository"
 import { ProductPaymentProviderServiceImpl } from "../product-payment-provider-service"
 import { productPayload } from "./product-service.spec"
@@ -21,7 +21,7 @@ export const paymentProvidersPayload: PaymentProvider[] = productPaymentProvider
 }))
 
 describe("ProductPaymentProviderService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const productPaymentProviderRepository = new ProductPaymentProviderRepositoryImpl(db)
   const productPaymentProviderService = new ProductPaymentProviderServiceImpl(productPaymentProviderRepository)
 
@@ -32,7 +32,7 @@ describe("ProductPaymentProviderService", () => {
 
   it("should add payment provider to product", async () => {
     const productPaymentProvider = productPaymentProvidersPayload[0]
-    vi.spyOn(productPaymentProviderRepository, "addPaymentProvider").mockResolvedValueOnce(productPaymentProvider)
+    vi.spyOn(productPaymentProviderRepository, "create").mockResolvedValueOnce(productPaymentProvider)
     const result = await productPaymentProviderService.addPaymentProvider(productPaymentProvider)
     expect(result).toEqual(productPaymentProvider)
     expect(productPaymentProviderRepository.create).toHaveBeenCalledWith(productPaymentProvider)
@@ -40,7 +40,7 @@ describe("ProductPaymentProviderService", () => {
 
   it("should delete payment provider from product", async () => {
     const productPaymentProvider = productPaymentProvidersPayload[0]
-    vi.spyOn(productPaymentProviderRepository, "deletePaymentProvider").mockResolvedValueOnce(undefined)
+    vi.spyOn(productPaymentProviderRepository, "delete").mockResolvedValueOnce(undefined)
     const result = await productPaymentProviderService.deletePaymentProvider(
       productPayloadExtended.id,
       productPaymentProvider.paymentProvider

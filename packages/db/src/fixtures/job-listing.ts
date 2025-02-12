@@ -1,6 +1,4 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
-import type { InsertedIds } from "../fixture"
+import type { Prisma } from "@prisma/client"
 
 const employments = {
   fulltime: "Fulltid",
@@ -10,7 +8,7 @@ const employments = {
 } as const
 
 // export const jobListings: Insertable<Database["jobListing"]>[] = [
-export const getJobListingFixtures: (companyId: InsertedIds["company"]) => Insertable<Database["jobListing"]>[] = (
+export const getJobListingFixtures: (companyId: string) => Prisma.JobListingCreateManyInput[] = (
   companyIds
 ) => [
   {
@@ -249,7 +247,7 @@ export const getJobListingFixtures: (companyId: InsertedIds["company"]) => Inser
   },
 ]
 
-export const getJobListingLocationFixtures: () => Insertable<Database["jobListingLocation"]>[] = () => [
+export const getJobListingLocationFixtures: () => Prisma.JobListingLocationCreateManyInput[] = () => [
   { name: "Fredrikstad" },
   { name: "Tromsø" },
   { name: "Bodø" },
@@ -260,21 +258,21 @@ export const getJobListingLocationFixtures: () => Insertable<Database["jobListin
 export const getJobListingLocationLinkFixtures: (
   jobListingIds: string[],
   locationIds: string[]
-) => Insertable<Database["jobListingLocationLink"]>[] = (jobListingIds, locationIds) => [
+) => Prisma.JobListingLocationLinkCreateManyInput[] = (jobListingIds, locationIds) => [
   {
     jobListingId: jobListingIds[0],
-    locationId: locationIds[0],
+    locationId: locationIds[0]
   },
   {
     jobListingId: jobListingIds[0],
-    locationId: locationIds[1],
+    locationId: locationIds[1]
   },
   {
     jobListingId: jobListingIds[0],
-    locationId: locationIds[1],
+    locationId: locationIds[1]
   },
   {
     jobListingId: jobListingIds[0],
-    locationId: locationIds[1],
+    locationId: locationIds[1]
   },
 ]

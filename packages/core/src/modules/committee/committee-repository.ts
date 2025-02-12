@@ -1,6 +1,5 @@
-import { type Committee, type CommitteeId, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types"
-import { Pageable } from "../../query"
-import { DBClient } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
+import type { Committee, CommitteeId, CommitteeWrite } from "@dotkomonline/types"
 
 export interface CommitteeRepository {
   create(values: CommitteeWrite): Promise<Committee>
@@ -13,7 +12,7 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   constructor(private readonly db: DBClient) {}
 
   async getById(id: CommitteeId) {
-    return await this.db.committee.findUnique({ where: { id }})
+    return await this.db.committee.findUnique({ where: { id } })
   }
 
   async getAll() {
@@ -25,6 +24,6 @@ export class CommitteeRepositoryImpl implements CommitteeRepository {
   }
 
   async getAllIds() {
-    return (await this.db.committee.findMany({ select: { id: true }})).map(commitee => commitee.id)
+    return (await this.db.committee.findMany({ select: { id: true } })).map((commitee) => commitee.id)
   }
 }

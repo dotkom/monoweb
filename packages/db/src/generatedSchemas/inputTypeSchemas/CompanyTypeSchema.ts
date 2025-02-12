@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CompanyTypeSchema = z.enum(['CONSULTING','RESEARCH','DEVELOPMENT','OTHER']);
+export const CompanyTypeSchema = z.enum(['Consulting','Research','Development','Other']);
 
 export type CompanyTypeType = `${z.infer<typeof CompanyTypeSchema>}`
 

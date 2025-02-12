@@ -14,4 +14,3 @@ export const PaginateInputSchema = z
 
 export type Pageable = z.infer<typeof PaginateInputSchema>
 export type Cursor = z.infer<typeof CursorSchema>
-
