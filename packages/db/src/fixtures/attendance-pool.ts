@@ -1,7 +1,6 @@
-import type { AttendanceId } from "@dotkomonline/types"
 import type { Prisma } from "@prisma/client"
 
-export const getPoolFixtures = (attendance_ids: AttendanceId[]): Prisma.AttendancePoolCreateManyInput[] => [
+export const getPoolFixtures = (attendance_ids: string): Prisma.AttendancePoolCreateManyInput[] => [
   {
     title: "Sosial + 1. klasse + 2. klasse",
     attendanceId: attendance_ids[0],
