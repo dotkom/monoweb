@@ -46,7 +46,6 @@ packages/utils        @brage-andreas
 
 
 # Tools
-tools/migrator        @jotjern @junlarsen
 tools/shell           @henrikskog
 
 

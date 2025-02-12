@@ -6,15 +6,14 @@ export interface JobListingRepository {
   getAll(take: number, cursor?: JobListingId): Promise<JobListing[]>
   createJobListing(values: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
+  getLocations(): Promise<string[]>
 }
 
 export class JobListingRepositoryImpl implements JobListingRepository {
   constructor(private readonly db: DBClient) {}
 
-  async createJobListing(data: JobListingWrite): Promise<JobListing> {
-    const { companyId, ...rest } = data
-
-    return await this.db.jobListing.create({
+  async createJobListing({ companyId, locations, ...rest }: JobListingWrite): Promise<JobListing> {
+    const jobListing = await this.db.jobListing.create({
       data: {
         ...rest,
         company: {
@@ -22,33 +21,74 @@ export class JobListingRepositoryImpl implements JobListingRepository {
             id: companyId,
           },
         },
+        locations: {
+          connectOrCreate: locations.map(name => ({
+            create: { name },
+            where: { name }
+          }))
+        }
       },
       include: {
         company: true,
+        locations: true
       },
     })
+
+    return this.flattenJobListingLocations(jobListing)
   }
 
-  async update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing> {
-    return await this.db.jobListing.update({
+  async update(id: JobListingId, { locations, ...rest }: Partial<JobListingWrite>): Promise<JobListing> {
+    const updatedJobListing = await this.db.jobListing.update({
       where: { id },
-      data,
+      data: {
+        ...rest,
+        locations: {
+          connectOrCreate: locations?.map(name => ({
+            create: { name },
+            where: { name }
+          }))
+        }
+      },
       include: {
         company: true,
+        locations: true
       },
     })
+
+    return this.flattenJobListingLocations(updatedJobListing)
   }
 
   async getById(id: string): Promise<JobListing | null> {
-    return await this.db.jobListing.findUnique({
+    const jobListing = await this.db.jobListing.findUnique({
       where: { id },
       include: {
         company: true,
+        locations: true
       },
     })
+
+    if (jobListing === null)
+      return null
+
+    return this.flattenJobListingLocations(jobListing)
   }
 
   async getAll(take: number, cursor?: string ): Promise<JobListing[]> {
-    return await this.db.jobListing.findMany({ take, include: { company: true }, where: { id: { gt: cursor }} })
+    const jobListings = await this.db.jobListing.findMany({ take, include: { company: true, locations: true }, where: { id: { gt: cursor }} })
+
+    return await jobListings.map(this.flattenJobListingLocations)
+  }
+
+  async getLocations(): Promise<string[]> {
+    const allLocations = await this.db.jobListingLocation.findMany({
+      distinct: "name"
+    })
+
+    return allLocations.map(loc => loc.name)
+  }
+
+  // Takes the locations attribute and turns it from { name: "...", ...}[] to just "..."[]
+  private flattenJobListingLocations<V extends {name: string}, T extends {locations: V[]}>({locations, ...obj}: T): Omit<T, "locations"> & {locations: string[]} {
+    return {...obj, locations: locations.map(({ name }) => name)}
   }
 }

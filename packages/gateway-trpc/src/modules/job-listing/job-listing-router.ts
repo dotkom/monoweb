@@ -1,20 +1,20 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
-import { JobListingSchema, JobListingWithLocationWriteSchema, JobListingWriteSchema } from "@dotkomonline/types"
+import { JobListingSchema, JobListingWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
 export const jobListingRouter = t.router({
   create: t.procedure
-    .input(JobListingWithLocationWriteSchema)
+    .input(JobListingWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.jobListingService.create(input)),
   edit: protectedProcedure
     .input(
       z.object({
         id: JobListingSchema.shape.id,
-        data: JobListingWithLocationWriteSchema.partial()
+        input: JobListingWriteSchema.partial()
       })
     )
-    .mutation(async ({ input: { id, data }, ctx }) => ctx.jobListingService.update(id, data)),
+    .mutation(async ({ input: { id, input }, ctx }) => ctx.jobListingService.update(id, input)),
   all: t.procedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.jobListingService.getAll(input.take, input.cursor)),

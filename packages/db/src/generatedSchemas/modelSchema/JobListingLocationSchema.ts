@@ -5,9 +5,9 @@ import { z } from 'zod';
 /////////////////////////////////////////
 
 export const JobListingLocationSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.coerce.date(),
   name: z.string(),
+  createdAt: z.coerce.date(),
+  jobListingId: z.string(),
 })
 
 export type JobListingLocation = z.infer<typeof JobListingLocationSchema>

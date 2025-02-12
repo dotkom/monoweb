@@ -13,7 +13,7 @@ export default function OfflineDetailsLayout({
   const { data, isLoading } = trpc.offline.get.useQuery(id)
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             offline: data,

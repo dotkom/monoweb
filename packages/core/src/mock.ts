@@ -1,4 +1,4 @@
-import type { CompanyWrite, JobListingWithLocationWrite, UserWrite } from "@dotkomonline/types"
+import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
 import { addWeeks, addYears } from "date-fns"
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
@@ -28,7 +28,7 @@ export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWri
   ...defaults,
 })
 
-export const getJobListingMock = (companyId: string, defaults: Partial<JobListingWithLocationWrite> = {}): JobListingWithLocationWrite=> ({
+export const getJobListingMock = (companyId: string, defaults: Partial<JobListingWrite> = {}): JobListingWrite=> ({
   companyId,
   title: "Core Developer",
   ingress:
@@ -39,7 +39,7 @@ export const getJobListingMock = (companyId: string, defaults: Partial<JobListin
   end: addWeeks(addYears(new Date(), 1), 4),
   featured: false,
   deadline: addWeeks(new Date(), 2),
-  employment: "Fulltid",
+  employment: "FULLTIME",
   applicationLink: "https://example.com",
   applicationEmail: "hello@example.com",
   deadlineAsap: false,

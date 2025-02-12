@@ -5,6 +5,8 @@ export const OfflineSchema = dbSchemas.OfflineSchema.extend({})
 
 export const OfflineWriteSchema = OfflineSchema.partial({
   id: true,
+  updatedAt: true,
+  createdAt: true
 })
 
 export type Offline = z.infer<typeof OfflineSchema>

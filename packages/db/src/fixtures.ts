@@ -9,7 +9,6 @@ import { getInterestGroupFixtures } from "./fixtures/interest-group"
 import {
   getJobListingFixtures,
   getJobListingLocationFixtures,
-  getJobListingLocationLinkFixtures,
 } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
 import { getOfflineFixtures } from "./fixtures/offline"
@@ -26,20 +25,16 @@ const companies = await db.company.createManyAndReturn({ data: getCompanyFixture
 const committees = await db.committee.createManyAndReturn({ data: getCommitteeFixtures() });
 const attendances = await db.attendance.createManyAndReturn({ data: getAttendanceFixtures() });
 const events = await db.event.createManyAndReturn({ data: getEventFixtures(attendances.map(a => a.id)) });
-const attendancePool = await db.attendancePool.createManyAndReturn({ data: getPoolFixtures(attendances.map(a => a.id)) });
-const marks = await db.mark.createManyAndReturn({ data: getMarkFixtures() });
+await db.attendancePool.createManyAndReturn({ data: getPoolFixtures(attendances.map(a => a.id)) });
+await db.mark.createManyAndReturn({ data: getMarkFixtures() });
 const products = await db.product.createManyAndReturn({ data: getProductFixtures() });
 
 const jobListings = await db.jobListing.createManyAndReturn({
   data: getJobListingFixtures(companies[0].id),
 });
 
-const jobListingLocations = await db.jobListingLocation.createManyAndReturn({
-  data: getJobListingLocationFixtures(),
-});
-
-await db.jobListingLocationLink.createMany({
-  data: getJobListingLocationLinkFixtures(jobListings.map(l => l.id), jobListingLocations.map(l => l.id)),
+await db.jobListingLocation.createManyAndReturn({
+  data: getJobListingLocationFixtures(jobListings.map(jobListing => jobListing.id)),
 });
 
 await db.offline.createMany({

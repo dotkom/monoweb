@@ -58,6 +58,13 @@ enum CompanyType {
   Other
 }
 
+enum EmploymentType {
+  PARTTIME
+  FULLTIME
+  SUMMER_INTERNSHIP
+  OTHER
+}
+
 model OwUser {
   id                        String                   @id
   Attendee                  Attendee[]
@@ -306,38 +313,29 @@ model EventCommittee {
 }
 
 model JobListing {
-  id               String                   @id @default(uuid())
-  createdAt        DateTime                 @default(now())
-  company          Company                  @relation(fields: [companyId], references: [id])
+  id               String               @id @default(uuid())
+  createdAt        DateTime             @default(now())
+  company          Company              @relation(fields: [companyId], references: [id])
   companyId        String
-  title            String                   @db.VarChar(100)
+  title            String               @db.VarChar(100)
   ingress          String
   description      String
   start            DateTime
   end              DateTime
   featured         Boolean
   deadline         DateTime?
-  employment       String                   @db.VarChar(100)
-  applicationLink  String?                  @db.VarChar(200)
-  applicationEmail String?                  @db.VarChar(254)
+  employment       EmploymentType
+  applicationLink  String?              @db.VarChar(200)
+  applicationEmail String?              @db.VarChar(254)
   deadlineAsap     Boolean
-  locations        JobListingLocationLink[]
+  locations        JobListingLocation[]
 }
 
 model JobListingLocation {
-  id        String                   @id @default(uuid())
-  createdAt DateTime                 @default(now())
-  name      String                   @unique
-  listings  JobListingLocationLink[]
-}
-
-model JobListingLocationLink {
-  id           String             @id @default(uuid())
-  createdAt    DateTime           @default(now())
-  jobListing   JobListing         @relation(fields: [jobListingId], references: [id])
+  name         String     @id
+  createdAt    DateTime   @default(now())
+  jobListing   JobListing @relation(fields: [jobListingId], references: [id])
   jobListingId String
-  location     JobListingLocation @relation(fields: [locationId], references: [id])
-  locationId   String
 }
 
 model Offline {

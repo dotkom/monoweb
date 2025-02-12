@@ -14,7 +14,8 @@ function migrateTestDatabase(dbUrl: string) {
   return new Promise<void>((resolve, reject) => {
     const proc = spawn(PRISMA_BIN_PATH, ["migrate", "reset", "--force", "--skip-generate", "--schema", SCHEMA_FILE_PATH], {
       env: {
-        DATABASE_URL: dbUrl
+        DATABASE_URL: dbUrl,
+        NODE_ENV: "development"
       },
       stdio: "inherit"
     })

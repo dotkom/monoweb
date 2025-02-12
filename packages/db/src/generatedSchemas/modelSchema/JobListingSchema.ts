@@ -1,10 +1,12 @@
 import { z } from 'zod';
+import { EmploymentTypeSchema } from '../inputTypeSchemas/EmploymentTypeSchema'
 
 /////////////////////////////////////////
 // JOB LISTING SCHEMA
 /////////////////////////////////////////
 
 export const JobListingSchema = z.object({
+  employment: EmploymentTypeSchema,
   id: z.string().uuid(),
   createdAt: z.coerce.date(),
   companyId: z.string(),
@@ -15,7 +17,6 @@ export const JobListingSchema = z.object({
   end: z.coerce.date(),
   featured: z.boolean(),
   deadline: z.coerce.date().nullable(),
-  employment: z.string(),
   applicationLink: z.string().nullable(),
   applicationEmail: z.string().nullable(),
   deadlineAsap: z.boolean(),

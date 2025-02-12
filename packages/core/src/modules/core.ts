@@ -32,14 +32,6 @@ import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
-import {
-  type JobListingLocationLinkRepository,
-  JobListingLocationLinkRepositoryImpl,
-} from "./job-listing/job-listing-location-link-repository"
-import {
-  type JobListingLocationRepository,
-  JobListingLocationRepositoryImpl,
-} from "./job-listing/job-listing-location-repository"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { type JobListingService, JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
@@ -100,10 +92,6 @@ export const createServiceLayer = async ({
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
-  const jobListingLocationRepository: JobListingLocationRepository = new JobListingLocationRepositoryImpl(db)
-  const jobListingLocationLinkRepository: JobListingLocationLinkRepository = new JobListingLocationLinkRepositoryImpl(
-    db
-  )
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
@@ -142,8 +130,6 @@ export const createServiceLayer = async ({
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(
     jobListingRepository,
-    jobListingLocationRepository,
-    jobListingLocationLinkRepository
   )
 
   const attendanceService: AttendanceService = new AttendanceServiceImpl(

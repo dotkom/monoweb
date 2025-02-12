@@ -18,7 +18,6 @@ export * from './NotificationPermissionsSchema';
 export * from './EventCommitteeSchema';
 export * from './JobListingSchema';
 export * from './JobListingLocationSchema';
-export * from './JobListingLocationLinkSchema';
 export * from './OfflineSchema';
 export * from './ArticleSchema';
 export * from './ArticleTagSchema';

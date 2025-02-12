@@ -36,6 +36,8 @@ export const AttendanceSchema = dbSchemas.AttendanceSchema.extend({
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({
   id: true,
+  updatedAt: true,
+  createdAt: true
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>
