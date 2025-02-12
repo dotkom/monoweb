@@ -104,8 +104,8 @@ const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInt
             </section>
           )}
           {interestGroup.link && (
-            <Link className="hover:underline text-blue-10 block mt-4" href={`${interestGroup.link}`}>
-              Gå til Wikisiden her
+            <Link className="hover:underline text-blue-10 block mt-4" href={interestGroup.link}>
+              Gå til wikisiden her
             </Link>
           )}
           <div className="mt-8">
