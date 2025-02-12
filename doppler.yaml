@@ -1,19 +1,19 @@
 setup:
-    - project: monoweb-brevduen
-      config: dev
-      path: apps/brevduen
-    - project: monoweb-dashboard
-      config: dev
-      path: apps/dashboard
-    - project: monoweb-invoicification
-      config: dev
-      path: apps/invoicification
-    - project: monoweb-rif
-      config: dev
-      path: apps/rif
-    - project: monoweb-rpc
-      config: dev
-      path: apps/rpc
-    - project: monoweb-web
-      config: dev
-      path: apps/web
+  - project: monoweb-brevduen
+    config: dev_personal
+    path: apps/brevduen
+  - project: monoweb-dashboard
+    config: dev_personal
+    path: apps/dashboard
+  - project: monoweb-invoicification
+    config: dev_personal
+    path: apps/invoicification
+  - project: monoweb-rif
+    config: dev_personal
+    path: apps/rif
+  - project: monoweb-rpc
+    config: dev_personal
+    path: apps/rpc
+  - project: monoweb-web
+    config: dev_personal
+    path: apps/web
