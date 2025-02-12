@@ -6,7 +6,7 @@ import type {
   EventWrite,
   WebEventDetail,
 } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
+import type { Cursor, Pageable } from "../../query"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"
@@ -19,9 +19,9 @@ export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
   updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: EventId): Promise<Event>
-  getEvents(take: number, cursor?: Cursor): Promise<Event[]>
+  getEvents(page: Pageable): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
-  getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
   getWebDetail(id: EventId): Promise<WebEventDetail>
   getDashboardDetail(id: EventId): Promise<DashboardEventDetail>
@@ -48,8 +48,8 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEvents(take: number): Promise<Event[]> {
-    const events = await this.eventRepository.getAll(take)
+  async getEvents(page: Pageable): Promise<Event[]> {
+    const events = await this.eventRepository.getAll(page)
     return events
   }
 
@@ -58,8 +58,8 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCommitteeId(committeeId: string, take: number): Promise<Event[]> {
-    const events = await this.eventRepository.getAllByCommitteeId(committeeId, take)
+  async getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByCommitteeId(committeeId, page)
     return events
   }
 
@@ -114,7 +114,7 @@ export class EventServiceImpl implements EventService {
   async getWebDetail(id: EventId): Promise<WebEventDetail> {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
-    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id, 999)
+    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
 
     console.log(`event ${id}: ${event.title} and attendandeId: ${event.attendanceId}`)
 

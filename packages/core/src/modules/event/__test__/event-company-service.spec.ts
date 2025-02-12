@@ -34,7 +34,7 @@ describe("EventCompanyService", () => {
   it("gets all companies related to an event", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "getCompaniesByEventId").mockResolvedValueOnce([bekk])
-    const companies = await eventCompanyService.getCompaniesByEventId(id, 20, undefined)
+    const companies = await eventCompanyService.getCompaniesByEventId(id)
     expect(companies).toEqual([bekk])
     expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id, 20, undefined)
   })

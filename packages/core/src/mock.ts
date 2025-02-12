@@ -8,11 +8,11 @@ export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   lastName: "Test",
   allergies: "",
   gender: "other",
-  phone: undefined,
-  address: undefined,
+  phone: null,
+  address: null,
   compiled: false,
-  rfid: undefined,
-  biography: undefined,
+  rfid: null,
+  biography: null,
   ...defaults,
 })
 

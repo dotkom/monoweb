@@ -3,10 +3,11 @@ import { isAfter, isBefore } from "date-fns"
 import assert from "../../assert"
 import { InvalidDeadlineError, InvalidEndDateError } from "./job-listing-error"
 import type { JobListingRepository } from "./job-listing-repository"
+import { Pageable } from "../../query"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing | null>
-  getAll(take: number, cursor?: JobListingId): Promise<JobListing[]>
+  getAll(page: Pageable): Promise<JobListing[]>
   create(payload: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, payload: Partial<JobListingWrite>): Promise<JobListing>
   getLocations(): Promise<string[]>
@@ -19,8 +20,8 @@ export class JobListingServiceImpl implements JobListingService {
     return await this.jobListingRepository.getById(id)
   }
 
-  async getAll(take: number, cursor?: JobListingId): Promise<JobListing[]> {
-    return await this.jobListingRepository.getAll(take, cursor)
+  async getAll(page: Pageable): Promise<JobListing[]> {
+    return await this.jobListingRepository.getAll(page)
   }
 
   async create(data: JobListingWrite): Promise<JobListing> {

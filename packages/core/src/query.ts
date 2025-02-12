@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const PaginateInputSchema = z
   .object({
-    take: z.number().default(50),
+    take: z.number(),
     cursor: z.string().uuid().optional(),
   })
   .optional()

@@ -4,18 +4,17 @@ export const GenderSchema = z.enum(["male", "female", "other"])
 
 export const UserSchema = z.object({
   id: z.string(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  firstName: z.string().nullable().default(null),
+  lastName: z.string().nullable().default(null),
   compiled: z.boolean().default(false),
   email: z.string().email(),
-  image: z.string().nullable(),
-
-  phone: z.string().optional(),
-  gender: GenderSchema.optional(),
-  rfid: z.string().optional(),
-  allergies: z.string().optional(),
-  address: z.string().optional(),
-  biography: z.string().optional(),
+  image: z.string().nullable().default(null),
+  biography: z.string().nullable().default(null),
+  phone: z.string().nullable().default(null),
+  gender: GenderSchema.nullable().default(null),
+  rfid: z.string().nullable().default(null),
+  allergies: z.string().nullable().default(null),
+  address: z.string().nullable().default(null),
 })
 
 export const UserWriteSchema = UserSchema.omit({

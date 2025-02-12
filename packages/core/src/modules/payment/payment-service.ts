@@ -1,7 +1,7 @@
 import type { Payment, PaymentProvider, Product, ProductId, UserId } from "@dotkomonline/types"
 import type Stripe from "stripe"
 import { IllegalStateError } from "../../error"
-import type { Cursor } from "../../query"
+import type { Cursor, Pageable } from "../../query"
 import type { EventRepository } from "../event/event-repository"
 import {
   InvalidPaymentStatusError,
@@ -30,7 +30,7 @@ export interface PaymentService {
   findStripeSdkByPublicKey(publicKey: string): Stripe | null
   findWebhookSecretByPublicKey(publicKey: string): string | null
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
-  getPayments(take: number, cursor?: Cursor): Promise<Payment[]>
+  getPayments(page: Pageable): Promise<Payment[]>
   createStripeCheckoutSessionForProductId(
     productId: ProductId,
     stripePublicKey: string,
@@ -71,8 +71,8 @@ export class PaymentServiceImpl implements PaymentService {
     }))
   }
 
-  async getPayments(take: number): Promise<Payment[]> {
-    return this.paymentRepository.getAll(take)
+  async getPayments(page: Pageable): Promise<Payment[]> {
+    return this.paymentRepository.getAll(page)
   }
 
   /**

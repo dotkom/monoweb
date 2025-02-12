@@ -164,8 +164,8 @@ model Attendee {
   registeredAt     DateTime
   extrasChoices    Json?
   attended         Boolean        @default(false)
-  firstName        String
-  lastName         String
+  firstName        String?
+  lastName         String?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
 }

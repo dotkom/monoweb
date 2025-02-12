@@ -1,6 +1,6 @@
 import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite, UserId } from "@dotkomonline/types"
 import { IllegalStateError } from "../../error"
-import type { Cursor } from "../../query"
+import type { Cursor, Pageable } from "../../query"
 import { PaymentNotFoundError, UnrefundablePaymentError } from "./payment-error"
 import type { PaymentRepository } from "./payment-repository"
 import type { PaymentService } from "./payment-service"
@@ -14,7 +14,7 @@ export interface RefundRequestService {
   updateRefundRequest(id: RefundRequestId, data: Partial<RefundRequestWrite>): Promise<RefundRequest>
   deleteRefundRequest(id: RefundRequestId): Promise<void>
   getRefundRequestById(id: RefundRequestId): Promise<RefundRequest | null>
-  getRefundRequests(take: number, cursor?: Cursor): Promise<RefundRequest[]>
+  getRefundRequests(page: Pageable): Promise<RefundRequest[]>
   approveRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
   rejectRefundRequest(id: RefundRequestId, handledBy: UserId): Promise<void>
 }
@@ -76,8 +76,8 @@ export class RefundRequestServiceImpl implements RefundRequestService {
     return this.refundRequestRepository.getById(id)
   }
 
-  async getRefundRequests(take: number): Promise<RefundRequest[]> {
-    return this.refundRequestRepository.getAll(take)
+  async getRefundRequests(page: Pageable): Promise<RefundRequest[]> {
+    return this.refundRequestRepository.getAll(page)
   }
 
   /**

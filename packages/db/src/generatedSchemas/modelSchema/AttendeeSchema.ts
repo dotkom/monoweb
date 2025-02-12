@@ -15,8 +15,8 @@ export const AttendeeSchema = z.object({
   registeredAt: z.coerce.date(),
   extrasChoices: JsonValueSchema.nullable(),
   attended: z.boolean(),
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().nullable(),
+  lastName: z.string().nullable(),
 })
 
 export type Attendee = z.infer<typeof AttendeeSchema>

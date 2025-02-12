@@ -1,5 +1,5 @@
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
+import type { Cursor, Pageable } from "../../query"
 import type { S3Repository } from "../external/s3-repository"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"
@@ -13,7 +13,7 @@ export interface PresignedPost {
 
 export interface OfflineService {
   get(id: OfflineId): Promise<Offline | null>
-  getAll(take: number, cursor?: Cursor): Promise<Offline[]>
+  getAll(page: Pageable): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
   update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline>
   createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
@@ -39,8 +39,8 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async getAll(take: number): Promise<Offline[]> {
-    const offlines = await this.offlineRepository.getAll(take)
+  async getAll(page: Pageable): Promise<Offline[]> {
+    const offlines = await this.offlineRepository.getAll(page)
     return offlines
   }
 

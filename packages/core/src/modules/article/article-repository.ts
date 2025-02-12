@@ -8,7 +8,7 @@ export interface ArticleRepository {
   getAll(page: Pageable): Promise<Article[]>
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
-  getByTags(tags: ArticleTagName[], page: Pageable): Promise<Article[]>
+  getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
 }
 
 export class ArticleRepositoryImpl implements ArticleRepository {

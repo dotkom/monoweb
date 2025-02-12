@@ -1,10 +1,11 @@
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
 import { MarkNotFoundError } from "./mark-error"
 import type { MarkRepository } from "./mark-repository"
+import { Pageable } from "../../query"
 
 export interface MarkService {
   getMark(id: MarkId): Promise<Mark>
-  getMarks(limit: number): Promise<Mark[]>
+  getMarks(page: Pageable): Promise<Mark[]>
   createMark(payload: MarkWrite): Promise<Mark>
   updateMark(id: MarkId, payload: MarkWrite): Promise<Mark>
   deleteMark(id: MarkId): Promise<Mark>
@@ -26,8 +27,8 @@ export class MarkServiceImpl implements MarkService {
     return mark
   }
 
-  async getMarks(limit: number): Promise<Mark[]> {
-    const marks = await this.markRepository.getAll(limit)
+  async getMarks(page: Pageable): Promise<Mark[]> {
+    const marks = await this.markRepository.getAll(page)
     return marks
   }
 

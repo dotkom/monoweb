@@ -5,7 +5,7 @@ import type { EventCompanyRepository } from "./event-company-repository"
 export interface EventCompanyService {
   createCompany(id: EventId, company: CompanyId): Promise<void>
   deleteCompany(id: EventId, company: CompanyId): Promise<void>
-  getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor): Promise<Company[]>
+  getCompaniesByEventId(id: EventId): Promise<Company[]>
 }
 
 export class EventCompanyServiceImpl implements EventCompanyService {
@@ -20,7 +20,7 @@ export class EventCompanyServiceImpl implements EventCompanyService {
     await this.eventCompanyRepository.deleteCompany(id, company)
   }
 
-  async getCompaniesByEventId(id: EventId, take: number) {
-    return await this.eventCompanyRepository.getCompaniesByEventId(id, take)
+  async getCompaniesByEventId(id: EventId) {
+    return await this.eventCompanyRepository.getCompaniesByEventId(id)
   }
 }
