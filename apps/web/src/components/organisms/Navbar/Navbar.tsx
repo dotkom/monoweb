@@ -29,6 +29,11 @@ const links: MenuLink[] = [
         description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
       },
       {
+        title: "Komiteer",
+        href: "#",
+        description: "På denne siden finner du informasjon om alle de forskjellige interessegruppene i online",
+      },
+      {
         title: "Om Linjeforeningen Online",
         href: "#",
         description: "Informasjon om Linjeforeningen",
