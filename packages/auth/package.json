@@ -14,6 +14,8 @@
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/types": "workspace:*",
+    "@trpc/client": "^10.45.2",
+    "superjson": "^2.0.0",
     "next": "^15.1.6",
     "next-auth": "^4.24.8",
     "react": "^18.2.0",

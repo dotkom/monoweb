@@ -8,6 +8,9 @@ export const userRouter = t.router({
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.userService.getAll(input.take, 0)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
+  registerAndGet: protectedProcedure
+    .input(UserSchema.shape.id)
+    .mutation(async ({ input, ctx }) => ctx.userService.registerAndGet(input)),
   getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.principal)),
   update: protectedProcedure
     .input(

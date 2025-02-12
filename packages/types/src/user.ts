@@ -4,8 +4,8 @@ export const GenderSchema = z.enum(["male", "female", "other"])
 
 export const UserSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   compiled: z.boolean().default(false),
   email: z.string().email(),
   image: z.string().nullable(),
