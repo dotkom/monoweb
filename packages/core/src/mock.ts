@@ -1,4 +1,4 @@
-import type { CompanyWrite, JobListingWithLocationWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
+import type { CompanyWrite, JobListingWithLocationWrite, UserWrite } from "@dotkomonline/types"
 import { addWeeks, addYears } from "date-fns"
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({

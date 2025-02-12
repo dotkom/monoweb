@@ -8,9 +8,9 @@ import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListingWithLocation>
-  getAll(take: number): Promise<JobListingWithLocation[]>
+  getAll(take: number, cursor?: JobListingId): Promise<JobListingWithLocation[]>
   create(payload: JobListingWithLocationWrite): Promise<JobListingWithLocation>
-  update(id: JobListingId, payload: JobListingWithLocationWrite): Promise<JobListingWithLocation>
+  update(id: JobListingId, payload: Partial<JobListingWithLocationWrite>): Promise<JobListingWithLocation>
   getLocations(): Promise<string[]>
 }
 
@@ -34,8 +34,8 @@ export class JobListingServiceImpl implements JobListingService {
     return jobListing
   }
 
-  async getAll(take: number): Promise<JobListingWithLocation[]> {
-    const jobListings = await this.jobListingRepository.getAll(take)
+  async getAll(take: number, cursor?: JobListingId): Promise<JobListingWithLocation[]> {
+    return await this.jobListingRepository.getAll(take, cursor)
   }
 
   async create({ locations, ...input }: JobListingWithLocationWrite): Promise<JobListingWithLocation> {
@@ -55,7 +55,7 @@ export class JobListingServiceImpl implements JobListingService {
 
   async update(
     id: JobListingId,
-    { locations, ...input }: JobListingWithLocationWrite
+    { locations, ...input }: Partial<JobListingWithLocationWrite>
   ): Promise<JobListingWithLocation> {
     const existing = await this.jobListingRepository.getById(id)
     const merged: JobListingWithLocationWrite = { ...existing, ...input, locations }

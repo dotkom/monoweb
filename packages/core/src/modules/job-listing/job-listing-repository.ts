@@ -3,7 +3,7 @@ import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/ty
 
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | null>
-  getAll(take: number): Promise<JobListing[]>
+  getAll(take: number, cursor?: JobListingId): Promise<JobListing[]>
   createJobListing(values: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
 }
@@ -48,7 +48,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     })
   }
 
-  async getAll(take: number): Promise<JobListing[]> {
-    return await this.db.jobListing.findMany({ take, include: { company: true } })
+  async getAll(take: number, cursor?: string ): Promise<JobListing[]> {
+    return await this.db.jobListing.findMany({ take, include: { company: true }, where: { id: { gt: cursor }} })
   }
 }
