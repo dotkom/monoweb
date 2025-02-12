@@ -22,10 +22,9 @@ export class JobListingRepositoryImpl implements JobListingRepository {
           },
         },
         locations: {
-          connectOrCreate: locations.map(name => ({
-            create: { name },
-            where: { name }
-          }))
+          createMany: {
+            data: locations.map(name => ({ name })
+          }
         }
       },
       include: {
@@ -44,8 +43,8 @@ export class JobListingRepositoryImpl implements JobListingRepository {
         ...rest,
         locations: {
           connectOrCreate: locations?.map(name => ({
-            create: { name },
-            where: { name }
+            create: { name, jobListingId: id },
+            where: { name_jobListingId: { name, jobListingId: id }}
           }))
         }
       },
