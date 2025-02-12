@@ -238,6 +238,7 @@ locals {
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
+    appkom-veldedighet   = data.auth0_client.appkom_veldedighet
   }
 
   monoweb = {
