@@ -718,6 +718,9 @@ importers:
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../types
+      '@testcontainers/postgresql':
+        specifier: ^10.18.0
+        version: 10.18.0
       '@types/node':
         specifier: ^22.0.0
         version: 22.13.1
@@ -758,9 +761,6 @@ importers:
       '@dotkomonline/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
-      '@testcontainers/postgresql':
-        specifier: ^10.13.2
-        version: 10.18.0
       '@types/pg':
         specifier: ^8.10.9
         version: 8.11.11
