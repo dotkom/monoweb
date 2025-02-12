@@ -9,7 +9,7 @@ const SkeletonInterestGroupView: FC = () => {
           <h2 className="bg-slate-5 text-transparent rounded-2xl animate-pulse text-lg border-none">
             Lorem ipsumLorem ipsum
           </h2>
-          <p className="mt-2 bg-slate-5 text-transparent rounded-2xl animate-pulse text-lg border-none h-[200px] w-full"></p>
+          <p className="mt-2 bg-slate-5 text-transparent rounded-2xl animate-pulse text-lg border-none h-[200px] w-full" />
         </div>
         <p className="w-[200px] min-w-[200px] h-[200px] py-auto ml-auto sm:mb-auto mb-9 mt-2 animate-pulse rounded-full bg-slate-5" />
       </div>
