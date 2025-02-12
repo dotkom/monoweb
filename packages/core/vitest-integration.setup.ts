@@ -1,10 +1,10 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import { createPrisma, type DBClient, migrateTestDatabase } from "@dotkomonline/db"
+import { type DBClient, createPrisma, migrateTestDatabase } from "@dotkomonline/db"
+import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import type { ManagementClient } from "auth0"
 import { afterAll, afterEach, beforeAll, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import { type StripeAccount, createServiceLayer } from "./src"
-import { PostgreSqlContainer } from "@testcontainers/postgresql"
 
 const MIGRATION_TIMEOUT = 10_000
 
@@ -37,14 +37,14 @@ export async function getTestContainerDatabase() {
 
   console.log(`Container started: ${container}`)
 
-  return `postgresql://${DB_USERNAME}:${DB_PASSWORD}@${container.getHost()}:${container.getFirstMappedPort()}/${DB_NAME}` 
+  return `postgresql://${DB_USERNAME}:${DB_PASSWORD}@${container.getHost()}:${container.getFirstMappedPort()}/${DB_NAME}`
 }
 
 let dbClient: DBClient
 export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 
 beforeAll(async () => {
-  const dbUrl = await getTestContainerDatabase();
+  const dbUrl = await getTestContainerDatabase()
 
   await migrateTestDatabase(dbUrl)
 

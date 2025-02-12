@@ -1,7 +1,7 @@
-import { spawn } from "child_process"
+import { spawn } from "node:child_process"
 
-const SCHEMA_FILE_PATH = import.meta.dirname + "/../prisma/schema.prisma"
-const PRISMA_BIN_PATH = import.meta.dirname + "/../node_modules/.bin/prisma"
+const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
+const PRISMA_BIN_PATH = `${import.meta.dirname}/../node_modules/.bin/prisma`
 
 export function migrateTestDatabase(dbUrl: string) {
   return new Promise<void>((resolve, reject) => {
@@ -27,5 +27,3 @@ export function migrateTestDatabase(dbUrl: string) {
     })
   })
 }
-
-
