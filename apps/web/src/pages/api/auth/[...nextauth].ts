@@ -7,6 +7,7 @@ export const authOptions = getAuthOptions({
   auth0ClientSecret: env.OAUTH_CLIENT_SECRET,
   auth0Issuer: env.OAUTH_ISSUER,
   jwtSecret: env.NEXTAUTH_SECRET,
+  rpcHost: env.RPC_HOST,
 })
 
 export default NextAuth(authOptions)

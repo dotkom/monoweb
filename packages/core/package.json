@@ -26,7 +26,7 @@
     "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "next": "^14.2.14"
+    "next": "^15.1.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
