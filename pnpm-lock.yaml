@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@biomejs/biome':
-        specifier: 1.9.4
-        version: 1.9.4
       turbo:
         specifier: ^2.3.4
         version: 2.4.0
@@ -699,9 +696,6 @@ importers:
       next:
         specifier: ^14.2.14
         version: 14.2.14(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      prisma:
-        specifier: ^6.3.1
-        version: 6.3.1(typescript@5.7.3)
       stripe:
         specifier: ^13.11.0
         version: 13.11.0
@@ -12639,13 +12633,13 @@ snapshots:
       data-urls: 4.0.0
       decimal.js: 10.4.3
       domexception: 4.0.0
-      form-data: 4.0.0
+      form-data: 4.0.1
       html-encoding-sniffer: 3.0.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-potential-custom-element-name: 1.0.1
       nwsapi: 2.2.12
-      parse5: 7.1.2
+      parse5: 7.2.1
       rrweb-cssom: 0.6.0
       saxes: 6.0.0
       symbol-tree: 3.2.4
