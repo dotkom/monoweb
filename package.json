@@ -31,7 +31,7 @@
     "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
     "migrate": "pnpm -F @dotkomonline/db migrate",
-    "generate": "pnpm -rc -F @dotkomonline/db exec pnpm generate",
+    "generate": "pnpm -F @dotkomonline/db generate",
     "migrate-with-fixtures": "pnpm -F @dotkomonline/db migrate-with-fixtures",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
