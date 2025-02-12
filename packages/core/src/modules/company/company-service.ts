@@ -32,7 +32,6 @@ export class CompanyServiceImpl implements CompanyService {
   }
 
   async createCompany(payload: CompanyWrite): Promise<Company> {
-    console.log("creating company:", payload)
     const company = await this.companyRepository.create(payload)
     return company
   }
