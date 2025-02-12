@@ -1,7 +1,6 @@
 import { type Prisma, PrismaClient } from "@prisma/client"
 import type { DefaultArgs } from "@prisma/client/runtime/library"
 
-export * from "./testDatabases"
 export * as dbSchemas from "./generatedSchemas"
 
 export type DBClient = PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
