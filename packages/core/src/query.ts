@@ -8,7 +8,9 @@ export const PaginateInputSchema = z
   .optional()
   .default({ take: 20, cursor: undefined })
 
-export function pageQuery(page: Pageable) {
+export function pageQuery(page: Pageable): { orderBy: { id: "desc" }; cursor?: { id: string }; skip?: number } {
+  if (!page || !page.cursor) return { orderBy: { id: "desc" as const } }
+
   return {
     cursor: { id: page.cursor },
     orderBy: { id: "desc" as const },
