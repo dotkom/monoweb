@@ -32,10 +32,10 @@ const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")
   const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
-    { name: "Deltid", checked: false },
-    { name: "Fulltid", checked: false },
-    { name: "Sommerjobb/internship", checked: false },
-    { name: "Annet", checked: false },
+    { name: "PARTTIME", checked: false },
+    { name: "FULLTIME", checked: false },
+    { name: "SUMMER_INTERNSHIP", checked: false },
+    { name: "OTHER", checked: false },
   ])
   const [chosenSort, setChosenSort] = useState<SortOption>("Frist")
 
