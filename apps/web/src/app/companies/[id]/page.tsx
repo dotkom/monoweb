@@ -1,10 +1,10 @@
 import { CompanyView } from "@/components/views/CompanyView"
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 
-const CompanyPage = async ({ params: { id } }: { params: { id: string } }) => {
-  const serverClient = await getServerClient()
-  const eventsData = await serverClient.event.allByCompany({ id })
-  const company = await serverClient.company.get(id)
+const CompanyPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
+  const eventsData = await server.event.allByCompany.query({ id })
+  const company = await server.company.get.query(id)
 
   return <CompanyView company={company} events={eventsData} />
 }

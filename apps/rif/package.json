@@ -13,7 +13,7 @@
     "docker:push:prod": "docker tag rif:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/rif:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/rif:latest"
   },
   "dependencies": {
-    "@dotkomonline/env": "workspace:*",
+    "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.4",
@@ -24,7 +24,7 @@
     "clsx": "^2.0.0",
     "google-auth-library": "^9.6.3",
     "google-spreadsheet": "^4.1.1",
-    "next": "^14.2.14",
+    "next": "^15.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",

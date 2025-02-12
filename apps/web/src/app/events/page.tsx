@@ -1,9 +1,8 @@
 import { EventList } from "@/components/organisms/EventList"
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 
 const EventPage = async () => {
-  const serverClient = await getServerClient()
-  const events = await serverClient.event.all()
+  const events = await server.event.all.query()
   return <EventList title="Arrangementer" events={events} />
 }
 

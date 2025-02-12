@@ -1,9 +1,8 @@
 import JobListingView from "@/components/views/JobListingView/JobListingView"
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 
 const CareerPage = async () => {
-  const serverClient = await getServerClient()
-  const data = await serverClient.jobListing.all()
+  const data = await server.jobListing.all.query()
   return <JobListingView jobListings={data ?? []} />
 }
 export default CareerPage

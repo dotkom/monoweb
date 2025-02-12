@@ -1,6 +1,5 @@
-import { env } from "@dotkomonline/env"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../query"
 import type { S3Repository } from "../external/s3-repository"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"
@@ -23,7 +22,8 @@ export interface OfflineService {
 export class OfflineServiceImpl implements OfflineService {
   constructor(
     private readonly offlineRepository: OfflineRepository,
-    private readonly s3Repository: S3Repository
+    private readonly s3Repository: S3Repository,
+    private readonly s3BucketName: string
   ) {}
 
   /**
@@ -55,6 +55,7 @@ export class OfflineServiceImpl implements OfflineService {
   }
 
   async createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    return this.s3Repository.createPresignedPost(env.S3_BUCKET_MONOWEB, `offlines/${filename}`, mimeType, 60) // 60 MB file limit
+    // 60 MB file limit
+    return this.s3Repository.createPresignedPost(this.s3BucketName, `offlines/${filename}`, mimeType, 60)
   }
 }

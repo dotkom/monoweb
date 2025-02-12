@@ -1,15 +1,16 @@
-import type { ServiceLayer } from "@dotkomonline/core"
-import type { DefaultSession, DefaultUser, NextAuthOptions, User } from "next-auth"
+import { type User, UserSchema } from "@dotkomonline/types"
+import type { DefaultSession, NextAuthOptions } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
+import { createServer } from "./trpc"
 
 interface Auth0IdTokenClaims {
+  sub: string
   given_name: string
   family_name: string
   nickname: string
   name: string
   picture: string
-  gender: string
   updated_at: string
   email: string
   email_verified: boolean
@@ -17,7 +18,6 @@ interface Auth0IdTokenClaims {
   aud: string
   iat: number
   exp: number
-  sub: string
   sid: string
 }
 
@@ -25,16 +25,6 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: User
     sub: string
-    id: string
-  }
-
-  interface User extends DefaultUser {
-    id: string
-    name: string
-    email: string
-    image?: string
-    givenName?: string
-    familyName?: string
   }
 }
 
@@ -49,16 +39,16 @@ export interface AuthOptions {
   auth0ClientId: string
   auth0ClientSecret: string
   auth0Issuer: string
-  core: ServiceLayer
   jwtSecret: string
+  rpcHost: string
 }
 
 export const getAuthOptions = ({
   auth0ClientId: oidcClientId,
   auth0ClientSecret: oidcClientSecret,
   auth0Issuer: oidcIssuer,
-  core,
   jwtSecret,
+  rpcHost,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
   providers: [
@@ -66,13 +56,11 @@ export const getAuthOptions = ({
       clientId: oidcClientId,
       clientSecret: oidcClientSecret,
       issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims): User => ({
+      profile: (profile: Auth0IdTokenClaims) => ({
         id: profile.sub,
         name: profile.name,
         email: profile.email,
-        image: profile.picture ?? undefined,
-        // givenName: profile.given_name,
-        // familyName: profile.family_name,
+        image: profile.picture,
       }),
       authorization: {
         params: {
@@ -95,13 +83,12 @@ export const getAuthOptions = ({
       return token
     },
     async session({ session, token }) {
-      if (token.sub) {
-        await core.auth0SynchronizationService.populateUserWithFakeData(token.sub, token.email) // Remove when we have real data
-        const user = await core.auth0SynchronizationService.ensureUserLocalDbIsSynced(token.sub, new Date())
+      if (token.sub && token.accessToken) {
+        const trpcProxyServer = createServer(rpcHost, token.accessToken)
 
-        session.user.id = user.auth0Id
-        session.sub = token.sub
-        return session
+        const user = await trpcProxyServer.mutation("user.registerAndGet", token.sub)
+
+        session.user = UserSchema.parse(user)
       }
 
       return session

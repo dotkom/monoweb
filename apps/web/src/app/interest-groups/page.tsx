@@ -1,7 +1,7 @@
-import InterestGroupsView from "@/components/views/InterestGroupsView";
+import InterestGroupsView from "@/components/views/InterestGroupsView"
 
 const InterestPage = async () => {
-    return <InterestGroupsView />;
-};
+  return <InterestGroupsView />
+}
 
-export default InterestPage;
+export default InterestPage

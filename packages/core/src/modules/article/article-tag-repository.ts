@@ -1,7 +1,7 @@
 import type { Database } from "@dotkomonline/db"
 import { type ArticleTag, type ArticleTagName, ArticleTagSchema } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../query"
 
 export const mapToArticleTag = (payload: Selectable<Database["articleTags"]>) => ArticleTagSchema.parse(payload)
 

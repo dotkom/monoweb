@@ -1,4 +1,4 @@
-import { env } from "@dotkomonline/env"
+import { env } from "@/env"
 import { createProxyRoute } from "@dotkomonline/proxy-nextjs"
 
 const handler = createProxyRoute({

@@ -1,7 +1,7 @@
 import type { Database } from "@dotkomonline/db"
 import type { CompanyId, Event } from "@dotkomonline/types"
 import type { Kysely } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
+import { type Cursor, orderedQuery } from "../../query"
 import { mapToEvent } from "../event/event-repository"
 
 export interface CompanyEventRepository {

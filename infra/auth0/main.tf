@@ -112,6 +112,9 @@ resource "auth0_resource_server" "online" {
 
 # TODO: feide-log-in
 resource "auth0_connection" "feide" {
+    # Currently only enable in staging:
+  count = terraform.workspace == "prd" ? 0 : 1
+
   display_name         = "FEIDE"
   is_domain_connection = false
   metadata             = {}
@@ -132,8 +135,6 @@ resource "auth0_connection" "feide" {
       fetchUserProfile = file("js/fetchUserProfile.js")
     }
   }
-
-  count = terraform.workspace == "prd" ? 0 : 1
 }
 
 
@@ -148,6 +149,11 @@ resource "auth0_connection" "feide" {
 # }
 
 resource "auth0_client" "vengeful_vineyard_frontend" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://vinstraff.no/*"
+  allowed_origins = [
+    "http://localhost:3000"
+  ]
   app_type = "spa"
   callbacks = {
     "dev" = [
@@ -168,7 +174,7 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
       "https://vinstraff.no/docs/oauth2-redirect",
       "http://localhost:3000",
       "http://localhost:8000",
-      "http://localhost:8000/docs/oauth2-redirect",
+      "http://localhost:3000/docs/oauth2-redirect"
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
@@ -187,26 +193,24 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
-data "auth0_client" "vengeful_vineyard_frontend" {
-  client_id = auth0_client.vengeful_vineyard_frontend.client_id
-}
-
-resource "auth0_client" "hs_julekalender" {
+resource "auth0_client" "voting" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://vedtatt.online.ntnu.no/"
   app_type = "spa"
   callbacks = {
     "dev" = [
-      "http://localhost:3000/api/auth/callback/auth0",
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
     ]
-    "stg" = [
-      "http://localhost:3000/api/auth/callback/auth0",
-    ]
+    "stg" = []
     "prd" = [
-      "https://online-christmas.vercel.app/api/auth/callback/auth0",
-      "https://jul.online.ntnu.no/api/auth/callback/auth0",
+      "https://vedtatt.online.ntnu.no"
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
-  name                          = "Hovedstyrets Julekalender${local.name_suffix[terraform.workspace]}"
+  name                          = "Vedtatt Klone${local.name_suffix[terraform.workspace]}"
   organization_require_behavior = "no_prompt"
   is_first_party                = true
   oidc_conformant               = true
@@ -221,8 +225,8 @@ resource "auth0_client" "hs_julekalender" {
   }
 }
 
-data "auth0_client" "hs_julekalender" {
-  client_id = auth0_client.hs_julekalender.client_id
+data "auth0_client" "vengeful_vineyard_frontend" {
+  client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
 
 locals {
@@ -234,7 +238,7 @@ locals {
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
-    hs-julekalender      = data.auth0_client.hs_julekalender
+    appkom-veldedighet   = data.auth0_client.appkom_veldedighet
   }
 
   monoweb = {
@@ -317,6 +321,8 @@ resource "doppler_secret" "mgmt_tenants_monoweb" {
 }
 
 resource "auth0_client" "onlineweb_frontend" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://online.ntnu.no/*"
   app_type = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:8080"]
@@ -352,6 +358,7 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
   is_first_party = true
   app_type       = "non_interactive"
   name           = "Auth0 Account Management API Management Client"
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
 
   jwt_configuration {
     alg = "RS256"
@@ -361,6 +368,24 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
 # has to be imported on new tenant
 resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
+  enabled_clients = [
+    auth0_client.onlineweb_frontend.client_id,
+    auth0_client.onlineweb4.client_id,
+    auth0_client.monoweb_web.client_id,
+    auth0_client.monoweb_dashboard.client_id,
+    auth0_client.vengeful_vineyard_frontend.client_id,
+    auth0_client.appkom_opptak.client_id,
+    auth0_client.appkom_events_app.client_id,
+    auth0_client.appkom_autobank.client_id,
+  ]
+}
+
+resource "auth0_connection_clients" "feide" {
+
+  # Currently only enable in staging:
+  count = terraform.workspace == "prd" ? 0 : 1
+  connection_id = auth0_connection.feide[0].id
+
   enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
@@ -435,6 +460,7 @@ resource "auth0_resource_server" "auth0_management_api" {
 }
 
 resource "auth0_client" "gtx" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_clients = []
   allowed_origins = []
   app_type        = "non_interactive" # this is a machine to machine application
@@ -462,6 +488,8 @@ resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
 }
 
 resource "auth0_client" "onlineweb4" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://old.online.ntnu.no/*"
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
@@ -505,19 +533,23 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
   ]
 }
 resource "auth0_client" "monoweb_web" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://web.online.ntnu.no/*"
   allowed_clients     = []
   allowed_logout_urls = []
   allowed_origins     = []
   app_type            = "regular_web"
-  # you go here if you decline an auth grant
-  initiate_login_uri = "https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"
-  callbacks = concat(
-    ["https://${terraform.workspace}.web.online.ntnu.no/api/auth/callback/auth0"],
-    {
-      "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-      "stg" = [] # TODO
-      "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
-  }[terraform.workspace])
+  # you go here if you decline an auth grant, cannot be http
+  initiate_login_uri = {
+    "dev" = null
+    "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
+    "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
+  }[terraform.workspace]
+  callbacks = {
+    "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0"]
+    "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
+  }[terraform.workspace]
 
   grant_types     = ["authorization_code", "refresh_token"]
   is_first_party  = true
@@ -541,13 +573,16 @@ data "auth0_client" "monoweb_web" {
 }
 
 resource "auth0_client" "monoweb_dashboard" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   app_type = "regular_web"
   callbacks = concat(
-    ["https://${terraform.workspace}.dashboard.online.ntnu.no/api/auth/callback/auth0"],
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = [] # TODO
-      "prd" = ["https://online.ntnu.no/api/auth/callback/auth0"]
+      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0"]
+      "prd" = [
+        "https://dashboard.online.ntnu.no/api/auth/callback/auth0", 
+        "https://online.ntnu.no/api/auth/callback/auth0"
+      ]
   }[terraform.workspace])
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
   name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
@@ -773,4 +808,97 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
     "read:refresh_tokens",
     "delete:refresh_tokens"
   ]
+}
+
+resource "auth0_client" "feide_account_linker" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  name = "Feide Account Linker"
+  app_type = "non_interactive"
+
+  grant_types = [
+    "client_credentials"
+  ]
+
+  jwt_configuration {
+    alg = "RS256"
+    lifetime_in_seconds = 10
+  }
+
+  oidc_conformant = true
+  is_first_party = true
+}
+
+resource "auth0_client_credentials" "feide_account_linker" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  client_id = auth0_client.feide_account_linker[0].client_id
+  authentication_method = "client_secret_post"
+}
+
+resource "auth0_client_grant" "m2m_grant" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  client_id = auth0_client.feide_account_linker[0].client_id
+  audience = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+
+  scopes = [
+    "read:users",
+    "update:users"
+  ]
+}
+
+resource "auth0_action" "feide_account_linking" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  name = "Feide Account Linking"
+  runtime = "node18"
+  code = file("js/actions/linkFeideAccounts.js")
+  deploy = true
+
+  supported_triggers {
+    id      = "post-login"
+    version = "v3"
+  }
+
+  dependencies {
+    name = "auth0"
+    version = "latest"
+  }
+
+  secrets {
+    name = "FEIDE_CONNECTION_ID"
+    value = auth0_connection.feide[0].id
+  }
+
+  secrets {
+    name  = "DOMAIN"
+    value = data.auth0_tenant.tenant.domain
+  }
+
+  secrets {
+    name  = "CLIENT_ID"
+    value = auth0_client.feide_account_linker[0].client_id
+  }
+
+  secrets {
+    name  = "CLIENT_SECRET"
+    value = auth0_client_credentials.feide_account_linker[0].client_secret
+  }
+  
+  secrets {
+    name  = "PRODUCTION"
+    value = "${terraform.workspace == "prd" ? "true" : "false"}"
+  }
+}
+
+resource "auth0_trigger_actions" "login_flow" {
+  count = terraform.workspace == "prd" ? 0 : 1
+
+  trigger = "post-login"
+
+  actions {
+    id           = auth0_action.feide_account_linking[0].id
+    display_name = auth0_action.feide_account_linking[0].name
+  }
 }

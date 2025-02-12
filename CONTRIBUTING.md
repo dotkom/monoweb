@@ -79,40 +79,22 @@ The following tools are used to develop Monoweb:
 To get started with local development, ensure you have the [applicable tools](#tools) installed. To build and run all the
 applications, you can use the following commands:
 
+Terminal 1:
 ```bash
 doppler login
-doppler setup --project monoweb --config dev
+doppler setup # Press Y on every prompt
 
 git clone https://github.com/dotkom/monoweb
 cd monoweb
 
+docker compose up # 'docker compose up -d' can also run instead to skip 2 terminal windows
+```
+
+Terminal 2 (in monoweb folder):
+```bash
 pnpm install
-doppler run pnpm dev
-```
-
-> Note that this, by default, uses a shared database hosted on https://neon.tech. Because this database is shared, you
-> should be careful with what you do with it. If you need to perform migrations or change data, you should set up your
-> branch on Neon. See the [guide for using Neon like a pro](./using-neon-like-a-pro.md) for more information.
-
-If you want to run a specific application, you can use the `--filter` flag:
-
-```bash
-doppler run pnpm dev --filter=@dotkomonline/web
-```
-
-If you have some local variables that you want to use, and override the Doppler ones you can use the `--preserve-env`
-flag:
-
-```bash
-export DATABASE_URL="postgres://<username>:<password>@localhost:5432/<db_name>"
-doppler run --preserve-env pnpm dev
-```
-
-If you are not using Doppler, you need to use a standalone `.env` file placed in the project root. For how to populate the `.env` file, see [this chapter](#required-environment-variables). For how to start local development, follow the rest of the chapter where you omit the use of Doppler:
-
-```diff
-- doppler run pnpm dev
-+ pnpm dev
+pnpm migrate # Only needs to be run once to set up the database
+pnpm dev
 ```
 
 ### Required Environment Variables
@@ -124,30 +106,9 @@ Please consult the example [.env.example](.env.example) file for the environment
 
 ### Running with your own PostgreSQL database
 
-> This section requires you to have both [Docker](#tools) and [Docker Compose](#tools) installed.
+> Running your own database instance requires [Docker](#tools) and [Docker Compose](#tools) to be installed.
 
-We use PostgreSQL 15 with the `pgx_ulid` extension. You can use the `packages/pgx-ulid` package to build the extension
-into a Docker image, and then run the image to get a PostgreSQL instance with the extension.
-
-```bash
-cd packages/pgx-ulid
-sh build.sh
-
-# You now have a Docker image named pgx_ulid:0.1.3
-```
-
-If you don't want to manually build the image (it takes a while, and is error prone), you can use Dotkom's publicly
-distributed image. The image is available at `https://gallery.ecr.aws/dotkom/dotkom/pgx-ulid`.
-
-```bash
-docker run -d -p 5432:5432 public.ecr.aws/dotkom/dotkom/pgx-ulid \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_DB=postgres
-  
-# Set your DATABASE_URL to the following:
-export DATABASE_URL="postgres://postgres:postgres@localhost:5432/postgres"
-```
+To start the database run `docker compose up`.
 
 ### What runs where?
 
@@ -171,8 +132,7 @@ Setup functions: `packages/core/vitest-integration.setup.ts`
 
 - Docker
 
-Monoweb uses test containers to run a PostgreSQL database in Docker for testing. The tests are setup to use a custom postgres image with ulid extension (see setup file). By running the tests, this image should be downloaded. When the image is downloaded, you should be able to run the tests. It might take a while to download the image the first time.
-
+Monoweb uses test containers to run a PostgreSQL database in Docker for testing.
 #### How to run
 
 ```bash

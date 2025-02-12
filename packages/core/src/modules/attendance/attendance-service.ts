@@ -208,7 +208,6 @@ export class AttendanceServiceImpl implements AttendanceService {
     if (userAttendee) {
       return null
     }
-
-    return userAttendablePool.find((pool) => pool.yearCriteria.includes(user.studyYear)) ?? null
+    return userAttendablePool.find((pool) => pool.yearCriteria.includes(-69)) ?? null
   }
 }
