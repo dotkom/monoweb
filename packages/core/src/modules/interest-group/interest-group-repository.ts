@@ -2,8 +2,11 @@ import type { Database } from "@dotkomonline/db"
 import {
   type InterestGroup,
   type InterestGroupId,
+  type InterestGroupMember,
+  InterestGroupMemberSchema,
   InterestGroupSchema,
   type InterestGroupWrite,
+  type UserId,
 } from "@dotkomonline/types"
 import type { Kysely, Selectable } from "kysely"
 import { type Collection, type Pageable, paginatedQuery } from "../../query"
@@ -14,10 +17,20 @@ export interface InterestGroupRepository {
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
+  getAllMembers(id: InterestGroupId): Promise<InterestGroupMember[]>
+  getAllByMember(userId: UserId): Promise<InterestGroup[]>
+  addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
+  removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
 }
 
-function mapToInterestGroup(interestGroup: Selectable<Database["interestGroup"]>): InterestGroup {
+export function mapToInterestGroup(interestGroup: Selectable<Database["interestGroup"]>): InterestGroup {
   return InterestGroupSchema.parse(interestGroup)
+}
+
+export function mapToInterestGroupMember(
+  interestGroupMember: Selectable<Database["interestGroupMember"]>
+): InterestGroupMember {
+  return InterestGroupMemberSchema.parse(interestGroupMember)
 }
 
 export class InterestGroupRepositoryImpl implements InterestGroupRepository {
@@ -54,5 +67,44 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
 
   async delete(id: InterestGroupId): Promise<void> {
     await this.db.deleteFrom("interestGroup").where("id", "=", id).execute()
+  }
+
+  async getAllMembers(id: InterestGroupId): Promise<InterestGroupMember[]> {
+    const members = await this.db
+      .selectFrom("interestGroupMember")
+      .selectAll("interestGroupMember")
+      .where("interestGroupId", "=", id)
+      .execute()
+
+    return members.map(mapToInterestGroupMember)
+  }
+
+  async getAllByMember(userId: UserId): Promise<InterestGroup[]> {
+    const interestGroups = await this.db
+      .selectFrom("interestGroup")
+      .innerJoin("interestGroupMember", "interestGroupMember.userId", "interestGroup.id")
+      .selectAll("interestGroup")
+      .where("interestGroupMember.userId", "=", userId)
+      .execute()
+
+    return interestGroups.map(mapToInterestGroup)
+  }
+
+  async addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember> {
+    const interestGroupMember = await this.db
+      .insertInto("interestGroupMember")
+      .values({ interestGroupId: interestGroupId, userId: userId })
+      .returningAll()
+      .executeTakeFirstOrThrow()
+
+    return mapToInterestGroupMember(interestGroupMember)
+  }
+
+  async removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void> {
+    await this.db
+      .deleteFrom("interestGroupMember")
+      .where("interestGroupId", "=", interestGroupId)
+      .where("userId", "=", userId)
+      .execute()
   }
 }

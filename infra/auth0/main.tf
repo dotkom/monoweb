@@ -193,6 +193,38 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
+resource "auth0_client" "voting" {
+  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_loc = "https://vedtatt.online.ntnu.no/"
+  app_type = "spa"
+  callbacks = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no"
+    ]
+  }[terraform.workspace]
+  grant_types                   = ["authorization_code", "refresh_token"]
+  name                          = "Vedtatt Klone${local.name_suffix[terraform.workspace]}"
+  organization_require_behavior = "no_prompt"
+  is_first_party                = true
+  oidc_conformant               = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
@@ -206,6 +238,7 @@ locals {
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
+    appkom-veldedighet   = data.auth0_client.appkom_veldedighet
   }
 
   monoweb = {
@@ -506,9 +539,9 @@ resource "auth0_client" "monoweb_web" {
   allowed_logout_urls = []
   allowed_origins     = []
   app_type            = "regular_web"
-  # you go here if you decline an auth grant
+  # you go here if you decline an auth grant, cannot be http
   initiate_login_uri = {
-    "dev" = "http://localhost:3000/api/auth/callback/auth0"
+    "dev" = null
     "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
