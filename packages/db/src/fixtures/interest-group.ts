@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client"
 
-export const getInterestGroupFixtures: () => Prisma.InterestGroupCreateManyInput[] = () => ([
+export const getInterestGroupFixtures: () => Prisma.InterestGroupCreateManyInput[] = () => [
   {
     updatedAt: new Date("2023-01-25 19:58:43.138389+00"),
     name: "testWithLink",
@@ -23,4 +23,4 @@ export const getInterestGroupFixtures: () => Prisma.InterestGroupCreateManyInput
     description: "description",
     isActive: false,
   },
-])
+]

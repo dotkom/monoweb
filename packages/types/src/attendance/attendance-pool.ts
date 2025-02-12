@@ -7,7 +7,7 @@ export type YearCriteria = z.infer<typeof YearCriteriaSchema>
 
 export const AttendancePoolSchema = dbSchemas.AttendancePoolSchema.extend({
   numAttendees: z.number(),
-  yearCriteria: YearCriteriaSchema
+  yearCriteria: YearCriteriaSchema,
 })
 
 export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({

@@ -45,7 +45,7 @@ describe("job-listings", async () => {
   it("should be able to update locations by diffing", async () => {
     const jobListing = await core.jobListingService.create(
       getJobListingMock(company.id, {
-        locations: ["Oslo", "Trondheim"]
+        locations: ["Oslo", "Trondheim"],
       })
     )
     const newLocations = ["Trondheim", "Bergen"]

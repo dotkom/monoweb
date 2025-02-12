@@ -1,5 +1,5 @@
-import type { z } from "zod"
 import { dbSchemas } from "@dotkomonline/db"
+import type { z } from "zod"
 
 export const CompanySchema = dbSchemas.CompanySchema.extend({})
 

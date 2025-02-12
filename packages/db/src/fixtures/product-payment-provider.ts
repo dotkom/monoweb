@@ -6,11 +6,11 @@ export const getProductPaymentProviderFixtures: (
   {
     paymentProvider: "STRIPE",
     paymentProviderId: "pk_test_t3JLACvjcDHrHyEQEkQYm3Hz",
-    productId: productIds[0]
+    productId: productIds[0],
   },
   {
     paymentProvider: "STRIPE",
     paymentProviderId: "pk_test_t3JLACvjcDHrHyEQEkQYm3Hz",
-    productId: productIds[1]
-  }
+    productId: productIds[1],
+  },
 ]

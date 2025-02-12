@@ -1,4 +1,4 @@
-import type { JobListingId, JobListing, JobListingWrite } from "@dotkomonline/types"
+import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 import { isAfter, isBefore } from "date-fns"
 import assert from "../../assert"
 import { InvalidDeadlineError, InvalidEndDateError } from "./job-listing-error"
@@ -13,9 +13,7 @@ export interface JobListingService {
 }
 
 export class JobListingServiceImpl implements JobListingService {
-  constructor(
-    private readonly jobListingRepository: JobListingRepository,
-  ) {}
+  constructor(private readonly jobListingRepository: JobListingRepository) {}
 
   async getById(id: JobListingId): Promise<JobListing | null> {
     return await this.jobListingRepository.getById(id)
@@ -42,8 +40,12 @@ export class JobListingServiceImpl implements JobListingService {
    * @throws {InvalidDeadlineError} if the deadline is after the start date
    */
   private validateWriteModel(input: Partial<JobListingWrite>): void {
-    assert(input.start && input.end && isAfter(input.end, input.start), new InvalidEndDateError("end date cannot be before start date"))
-    assert(input.deadline && input.start && isBefore(input.deadline, input.start) ,
+    assert(
+      input.start && input.end && isAfter(input.end, input.start),
+      new InvalidEndDateError("end date cannot be before start date")
+    )
+    assert(
+      input.deadline && input.start && isBefore(input.deadline, input.start),
       new InvalidDeadlineError("deadline cannot be after start date")
     )
   }

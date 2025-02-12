@@ -8,9 +8,7 @@ const employments = {
 } as const
 
 // export const jobListings: Insertable<Database["jobListing"]>[] = [
-export const getJobListingFixtures: (companyIds: string[]) => Prisma.JobListingCreateManyInput[] = (
-  companyIds
-) => [
+export const getJobListingFixtures: (companyIds: string[]) => Prisma.JobListingCreateManyInput[] = (companyIds) => [
   {
     companyId: companyIds[0],
     title: "Job at Bekk",

@@ -1,4 +1,4 @@
-import { AttendanceSchema, AttendanceWriteSchema } from "@dotkomonline/types"
+import { AttendanceWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 import { createDateTimeInput, useFormBuilder } from "../../../../app/form"
 

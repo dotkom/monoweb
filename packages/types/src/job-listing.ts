@@ -1,10 +1,10 @@
+import { dbSchemas } from "@dotkomonline/db"
 import { z } from "zod"
 import { CompanySchema } from "./company"
-import { dbSchemas } from "@dotkomonline/db"
 
 export const JobListingLocationSchema = dbSchemas.JobListingLocationSchema.extend({})
 export const JobListingLocationWriteSchema = JobListingLocationSchema.omit({
-  createdAt: true
+  createdAt: true,
 })
 
 export type JobListingLocation = z.infer<typeof JobListingLocationSchema>
@@ -12,10 +12,10 @@ export type JobListingLocationId = JobListingLocation["name"]
 export type JobListingLocationWrite = z.infer<typeof JobListingLocationWriteSchema>
 
 export const JobListingSchema = dbSchemas.JobListingSchema.omit({
-  companyId: true
+  companyId: true,
 }).extend({
   company: CompanySchema,
-  locations: z.array(z.string())
+  locations: z.array(z.string()),
 })
 
 export const JobListingWriteSchema = JobListingSchema.omit({
@@ -23,7 +23,7 @@ export const JobListingWriteSchema = JobListingSchema.omit({
   createdAt: true,
   company: true,
 }).extend({
-  companyId: z.string().uuid()
+  companyId: z.string().uuid(),
 })
 
 export type JobListing = z.infer<typeof JobListingSchema>

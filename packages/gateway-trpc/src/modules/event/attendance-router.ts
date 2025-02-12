@@ -5,7 +5,6 @@ import {
   AttendanceWriteSchema,
   AttendeeSchema,
   ExtraSchema,
-  ExtrasChoices,
   ExtrasChoicesSchema,
   UserSchema,
 } from "@dotkomonline/types"

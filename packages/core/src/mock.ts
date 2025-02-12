@@ -28,7 +28,7 @@ export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWri
   ...defaults,
 })
 
-export const getJobListingMock = (companyId: string, defaults: Partial<JobListingWrite> = {}): JobListingWrite=> ({
+export const getJobListingMock = (companyId: string, defaults: Partial<JobListingWrite> = {}): JobListingWrite => ({
   companyId,
   title: "Core Developer",
   ingress:

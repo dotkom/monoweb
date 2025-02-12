@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 
-export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => ([
+export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
   {
     registerStart: new Date("2023-02-22 13:30:04.713+00"),
     registerEnd: new Date("2023-02-22 13:30:04.713+00"),
@@ -54,4 +54,4 @@ export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => (
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
     extras: Prisma.DbNull,
   },
-])
+]

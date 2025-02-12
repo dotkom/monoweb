@@ -128,9 +128,7 @@ export const createServiceLayer = async ({
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
-  const jobListingService: JobListingService = new JobListingServiceImpl(
-    jobListingRepository,
-  )
+  const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
     attendanceRepository,

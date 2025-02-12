@@ -23,13 +23,13 @@ export class JobListingRepositoryImpl implements JobListingRepository {
         },
         locations: {
           createMany: {
-            data: locations.map(name => ({ name })
-          }
-        }
+            data: locations.map((name) => ({ name })),
+          },
+        },
       },
       include: {
         company: true,
-        locations: true
+        locations: true,
       },
     })
 
@@ -42,15 +42,27 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       data: {
         ...rest,
         locations: {
-          connectOrCreate: locations?.map(name => ({
-            create: { name, jobListingId: id },
-            where: { name_jobListingId: { name, jobListingId: id }}
-          }))
-        }
+          connectOrCreate: locations?.map((name) => ({
+            create: { name },
+            where: { name_jobListingId: { name, jobListingId: id } },
+          })),
+          deleteMany: {
+            AND: [
+              {
+                jobListingId: id,
+              },
+              {
+                name: {
+                  notIn: locations,
+                },
+              },
+            ],
+          },
+        },
       },
       include: {
         company: true,
-        locations: true
+        locations: true,
       },
     })
 
@@ -62,32 +74,38 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       where: { id },
       include: {
         company: true,
-        locations: true
+        locations: true,
       },
     })
 
-    if (jobListing === null)
-      return null
+    if (jobListing === null) return null
 
     return this.flattenJobListingLocations(jobListing)
   }
 
-  async getAll(take: number, cursor?: string ): Promise<JobListing[]> {
-    const jobListings = await this.db.jobListing.findMany({ take, include: { company: true, locations: true }, where: { id: { gt: cursor }} })
+  async getAll(take: number, cursor?: string): Promise<JobListing[]> {
+    const jobListings = await this.db.jobListing.findMany({
+      take,
+      include: { company: true, locations: true },
+      where: { id: { gt: cursor } },
+    })
 
     return await jobListings.map(this.flattenJobListingLocations)
   }
 
   async getLocations(): Promise<string[]> {
     const allLocations = await this.db.jobListingLocation.findMany({
-      distinct: "name"
+      distinct: "name",
     })
 
-    return allLocations.map(loc => loc.name)
+    return allLocations.map((loc) => loc.name)
   }
 
   // Takes the locations attribute and turns it from { name: "...", ...}[] to just "..."[]
-  private flattenJobListingLocations<V extends {name: string}, T extends {locations: V[]}>({locations, ...obj}: T): Omit<T, "locations"> & {locations: string[]} {
-    return {...obj, locations: locations.map(({ name }) => name)}
+  private flattenJobListingLocations<V extends { name: string }, T extends { locations: V[] }>({
+    locations,
+    ...obj
+  }: T): Omit<T, "locations"> & { locations: string[] } {
+    return { ...obj, locations: locations.map(({ name }) => name) }
   }
 }

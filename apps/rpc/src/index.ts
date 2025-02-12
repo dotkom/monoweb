@@ -1,4 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3"
+import { createPrisma } from "@dotkomonline/db"
 import {
   type AppRouter,
   type CreateContextOptions,
@@ -13,7 +14,6 @@ import { ManagementClient } from "auth0"
 import fastify from "fastify"
 import Stripe from "stripe"
 import { env } from "./env"
-import { createPrisma } from "@dotkomonline/db"
 
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = env.OAUTH_AUDIENCES.split(",")

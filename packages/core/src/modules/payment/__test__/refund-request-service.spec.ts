@@ -91,7 +91,7 @@ describe("RefundRequestService", () => {
       ...refundRequestPayloadExtended,
       status: "PENDING",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
@@ -110,7 +110,7 @@ describe("RefundRequestService", () => {
       ...refundRequestPayloadExtended,
       status: "APPROVED",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId)
@@ -122,14 +122,14 @@ describe("RefundRequestService", () => {
       ...refundRequestPayloadExtended,
       status: "PENDING",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "APPROVED",
       handledById: userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined)
 
@@ -146,14 +146,14 @@ describe("RefundRequestService", () => {
       ...refundRequestPayloadExtended,
       status: "REJECTED",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "APPROVED",
       handledById: userId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined)
 
@@ -170,7 +170,7 @@ describe("RefundRequestService", () => {
       ...refundRequestPayloadExtended,
       status: "REJECTED",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)
@@ -182,7 +182,7 @@ describe("RefundRequestService", () => {
       ...refundRequestPayloadExtended,
       status: "APPROVED",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)

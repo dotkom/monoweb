@@ -1,10 +1,4 @@
-import type {
-  UserId,
-  WaitlistAttendee,
-  WaitlistAttendeeId,
-  WaitlistAttendeeWrite,
-} from "@dotkomonline/types"
-import type { z } from "zod"
+import type { UserId, WaitlistAttendee, WaitlistAttendeeId, WaitlistAttendeeWrite } from "@dotkomonline/types"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"

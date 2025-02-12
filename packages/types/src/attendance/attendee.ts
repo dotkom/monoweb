@@ -1,6 +1,6 @@
+import { dbSchemas } from "@dotkomonline/db"
 import { z } from "zod"
 import type { User } from "../user"
-import { dbSchemas } from "@dotkomonline/db"
 
 export const ExtraChoice = z.object({
   questionId: z.string(),
@@ -12,7 +12,7 @@ export const ExtraChoice = z.object({
 export const ExtrasChoicesSchema = z.array(ExtraChoice)
 
 export const AttendeeSchema = dbSchemas.AttendeeSchema.extend({
-  extrasChoices: ExtrasChoicesSchema
+  extrasChoices: ExtrasChoicesSchema,
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.partial({

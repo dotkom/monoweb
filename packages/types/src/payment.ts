@@ -16,7 +16,7 @@ export const ProductPaymentProviderWriteSchema = ProductPaymentProviderSchema
 export type ProductPaymentProviderWrite = z.infer<typeof ProductPaymentProviderWriteSchema>
 
 export const ProductSchema = dbSchemas.ProductSchema.extend({
-  paymentProviders: z.array(PaymentProviderSchema)
+  paymentProviders: z.array(PaymentProviderSchema),
 })
 
 export type ProductId = Product["id"]

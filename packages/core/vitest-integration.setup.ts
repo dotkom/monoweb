@@ -34,11 +34,13 @@ afterAll(async () => {
 })
 
 beforeEach(async () => {
-  console.log("Starting transaction for test")
-  dbClient.$queryRaw`BEGIN TRANSACTION`
+  console.log("before:", await core.jobListingService.getLocations())
+
+  await dbClient.$queryRaw`BEGIN TRANSACTION;`
 })
 
 afterEach(async () => {
-  console.log("Rolling back transaction for test")
-  dbClient.$queryRaw`ROLLBACK`
+  await dbClient.$queryRaw`ROLLBACK;`
+
+  console.log("after:", await core.jobListingService.getLocations())
 })

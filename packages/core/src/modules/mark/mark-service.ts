@@ -1,5 +1,4 @@
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
 import { MarkNotFoundError } from "./mark-error"
 import type { MarkRepository } from "./mark-repository"
 
