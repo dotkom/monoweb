@@ -6,9 +6,7 @@ import { protectedProcedure, t } from "../../trpc"
 export const personalMarkRouter = t.router({
   getByUser: protectedProcedure
     .input(z.object({ id: UserSchema.shape.id }))
-    .query(async ({ input, ctx }) =>
-      ctx.personalMarkService.getPersonalMarksForUserId(input.id)
-    ),
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksForUserId(input.id)),
   getByMark: protectedProcedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id)),

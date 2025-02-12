@@ -1,5 +1,11 @@
 import type { DBClient } from "@dotkomonline/db"
-import type { InterestGroup, InterestGroupId, InterestGroupMember, InterestGroupWrite, UserId } from "@dotkomonline/types"
+import type {
+  InterestGroup,
+  InterestGroupId,
+  InterestGroupMember,
+  InterestGroupWrite,
+  UserId,
+} from "@dotkomonline/types"
 
 export interface InterestGroupRepository {
   getById(id: InterestGroupId): Promise<InterestGroup | null>
@@ -14,7 +20,7 @@ export interface InterestGroupRepository {
 }
 
 export class InterestGroupRepositoryImpl implements InterestGroupRepository {
-  constructor(private readonly db: DBClient) {} 
+  constructor(private readonly db: DBClient) {}
 
   async getById(id: InterestGroupId): Promise<InterestGroup | null> {
     return await this.db.interestGroup.findUnique({ where: { id } })
@@ -45,10 +51,10 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
   }
 
   async addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember> {
-    return await this.db.interestGroupMember.create({ data: { interestGroupId, userId }})
+    return await this.db.interestGroupMember.create({ data: { interestGroupId, userId } })
   }
 
   async removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void> {
-    await this.db.interestGroupMember.delete({ where: { interestGroupId, userId }})
+    await this.db.interestGroupMember.delete({ where: { interestGroupId, userId } })
   }
 }

@@ -1,4 +1,3 @@
-import { PaginateInputSchema } from "@dotkomonline/core"
 import { CompanySchema, EventSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
@@ -23,10 +22,8 @@ export const eventCompanyRouter = t.router({
   get: publicProcedure
     .input(
       z.object({
-        id: EventSchema.shape.id
+        id: EventSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) =>
-      ctx.eventCompanyService.getCompaniesByEventId(input.id)
-    ),
+    .query(async ({ input, ctx }) => ctx.eventCompanyService.getCompaniesByEventId(input.id)),
 })

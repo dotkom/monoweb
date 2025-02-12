@@ -24,8 +24,7 @@ export const articleRouter = t.router({
   getBySlug: publicProcedure
     .input(ArticleSchema.shape.slug)
     .query(async ({ input, ctx }) => await ctx.articleService.getBySlug(input)),
-  getTags: publicProcedure
-    .query(async ({ ctx }) => await ctx.articleService.getTags()),
+  getTags: publicProcedure.query(async ({ ctx }) => await ctx.articleService.getTags()),
   addTag: protectedProcedure
     .input(
       z.object({
