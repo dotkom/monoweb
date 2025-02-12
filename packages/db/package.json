@@ -27,6 +27,7 @@
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/tsconfig": "workspace:*",
     "@types/pg": "^8.10.9",
+    "prisma": "^6.3.1",
     "typescript": "^5.4.5"
   }
 }
