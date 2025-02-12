@@ -1,11 +1,12 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "../../query"
 
 export interface ProductRepository {
   create(data: ProductWrite): Promise<Product>
   update(id: ProductId, data: ProductWrite): Promise<Product>
   getById(id: string): Promise<Product | null>
-  getAll(take: number): Promise<Product[]>
+  getAll(page: Pageable): Promise<Product[]>
   delete(id: ProductId): Promise<void>
   undelete(id: ProductId): Promise<void>
 }
@@ -25,8 +26,8 @@ export class ProductRepositoryImpl implements ProductRepository {
     return await this.db.product.findUnique({ where: { id }, include: { paymentProviders: true } })
   }
 
-  async getAll(take: number): Promise<Product[]> {
-    return await this.db.product.findMany({ take, include: { paymentProviders: true } })
+  async getAll(page: Pageable): Promise<Product[]> {
+    return await this.db.product.findMany({ include: { paymentProviders: true }, ...pageQuery(page) })
   }
 
   async delete(id: ProductId): Promise<void> {

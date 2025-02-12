@@ -1,13 +1,14 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Article, ArticleId, ArticleSlug, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "../../query"
 
 export interface ArticleRepository {
   create(input: ArticleWrite): Promise<Article>
   update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
-  getAll(take: number, offset?: number): Promise<Article[]>
+  getAll(page: Pageable): Promise<Article[]>
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
-  getByTags(tags: ArticleTagName[], take: number, offset?: number): Promise<Article[]>
+  getByTags(tags: ArticleTagName[], page: Pageable): Promise<Article[]>
 }
 
 export class ArticleRepositoryImpl implements ArticleRepository {
@@ -21,8 +22,8 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return await this.db.article.update({ where: { id }, data: input })
   }
 
-  async getAll(take: number, offset?: number): Promise<Article[]> {
-    return await this.db.article.findMany({ take, skip: offset })
+  async getAll(page: Pageable): Promise<Article[]> {
+    return await this.db.article.findMany({ ...pageQuery(page)  })
   }
 
   async getById(id: ArticleId): Promise<Article | null> {
@@ -33,10 +34,8 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return await this.db.article.findUnique({ where: { slug } })
   }
 
-  async getByTags(tags: ArticleTagName[], take: number, offset?: number): Promise<Article[]> {
+  async getByTags(tags: ArticleTagName[], page: Pageable): Promise<Article[]> {
     return await this.db.article.findMany({
-      take,
-      skip: offset,
       where: {
         tags: {
           some: {
@@ -46,6 +45,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
           },
         },
       },
+      ...pageQuery(page),
     })
   }
 }

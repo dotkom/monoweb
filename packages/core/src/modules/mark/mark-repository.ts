@@ -1,8 +1,9 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "../../query"
 export interface MarkRepository {
   getById(id: MarkId): Promise<Mark | null>
-  getAll(take: number): Promise<Mark[]>
+  getAll(page: Pageable): Promise<Mark[]>
   create(markInsert: MarkWrite): Promise<Mark>
   update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | null>
   delete(id: MarkId): Promise<Mark | null>
@@ -15,8 +16,8 @@ export class MarkRepositoryImpl implements MarkRepository {
     return await this.db.mark.findUnique({ where: { id } })
   }
 
-  async getAll(take: number): Promise<Mark[]> {
-    return await this.db.mark.findMany({ take })
+  async getAll(page: Pageable): Promise<Mark[]> {
+    return await this.db.mark.findMany({ ...pageQuery(page) })
   }
 
   async create(data: MarkWrite): Promise<Mark> {

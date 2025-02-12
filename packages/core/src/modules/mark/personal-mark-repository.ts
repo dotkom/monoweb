@@ -1,10 +1,11 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "../../query"
 
 export interface PersonalMarkRepository {
-  getByMarkId(markId: MarkId, take: number): Promise<PersonalMark[]>
-  getAllByUserId(userId: UserId, take: number): Promise<PersonalMark[]>
-  getAllMarksByUserId(userId: UserId, take: number): Promise<Mark[]>
+  getByMarkId(markId: MarkId): Promise<PersonalMark[]>
+  getAllByUserId(userId: UserId): Promise<PersonalMark[]>
+  getAllMarksByUserId(userId: UserId): Promise<Mark[]>
   addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
   removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null>
   getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null>
@@ -14,18 +15,18 @@ export interface PersonalMarkRepository {
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
   constructor(private readonly db: DBClient) {}
 
-  async getAllByUserId(userId: UserId, take: number): Promise<PersonalMark[]> {
-    return await this.db.personalMark.findMany({ where: { userId }, take })
+  async getAllByUserId(userId: UserId): Promise<PersonalMark[]> {
+    return await this.db.personalMark.findMany({ where: { userId } })
   }
 
-  async getAllMarksByUserId(userId: UserId, take: number): Promise<Mark[]> {
-    const personalMarks = await this.db.personalMark.findMany({ where: { userId }, take, select: { mark: true } })
+  async getAllMarksByUserId(userId: UserId): Promise<Mark[]> {
+    const personalMarks = await this.db.personalMark.findMany({ where: { userId }, select: { mark: true } })
 
     return personalMarks.map((personalMark) => personalMark.mark)
   }
 
-  async getByMarkId(markId: MarkId, take: number): Promise<PersonalMark[]> {
-    return await this.db.personalMark.findMany({ where: { markId }, take })
+  async getByMarkId(markId: MarkId): Promise<PersonalMark[]> {
+    return await this.db.personalMark.findMany({ where: { markId } })
   }
 
   async addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {

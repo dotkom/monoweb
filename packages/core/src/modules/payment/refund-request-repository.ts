@@ -1,5 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "../../query"
 
 export interface RefundRequestRepository {
   create(data: RefundRequestWrite): Promise<RefundRequest>
@@ -7,7 +8,7 @@ export interface RefundRequestRepository {
   delete(id: RefundRequestId): Promise<void>
   getById(id: RefundRequestId): Promise<RefundRequest | null>
   getByPaymentId(paymentId: PaymentId): Promise<RefundRequest | null>
-  getAll(take: number): Promise<RefundRequest[]>
+  getAll(page: Pageable): Promise<RefundRequest[]>
 }
 
 export class RefundRequestRepositoryImpl implements RefundRequestRepository {
@@ -33,7 +34,7 @@ export class RefundRequestRepositoryImpl implements RefundRequestRepository {
     return await this.db.refundRequest.findUnique({ where: { paymentId } })
   }
 
-  async getAll(take: number): Promise<RefundRequest[]> {
-    return await this.db.refundRequest.findMany({ take })
+  async getAll(page: Pageable): Promise<RefundRequest[]> {
+    return await this.db.refundRequest.findMany({ ...pageQuery(page) })
   }
 }

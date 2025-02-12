@@ -1,9 +1,10 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
+import { Pageable, pageQuery } from "../../query"
 
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | null>
-  getAll(take: number, cursor?: JobListingId): Promise<JobListing[]>
+  getAll(page: Pageable): Promise<JobListing[]>
   createJobListing(values: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
   getLocations(): Promise<string[]>
@@ -83,11 +84,10 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     return this.flattenJobListingLocations(jobListing)
   }
 
-  async getAll(take: number, cursor?: string): Promise<JobListing[]> {
+  async getAll(page: Pageable): Promise<JobListing[]> {
     const jobListings = await this.db.jobListing.findMany({
-      take,
       include: { company: true, locations: true },
-      where: { id: { gt: cursor } },
+      ...pageQuery(page)
     })
 
     return await jobListings.map(this.flattenJobListingLocations)
