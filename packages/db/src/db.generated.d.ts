@@ -154,6 +154,11 @@ export interface InterestGroup {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface InterestGroupMember {
+  interestGroupId: string;
+  userId: string;
+}
+
 export interface JobListing {
   applicationEmail: string | null;
   applicationLink: string | null;
@@ -307,6 +312,7 @@ export interface DB {
   eventCommittee: EventCommittee;
   eventCompany: EventCompany;
   interestGroup: InterestGroup;
+  interestGroupMember: InterestGroupMember;
   jobListing: JobListing;
   jobListingLocation: JobListingLocation;
   jobListingLocationLink: JobListingLocationLink;

@@ -23,8 +23,8 @@ export const AttendeeSchema = z.object({
   extrasChoices: ExtrasChoices,
   registeredAt: z.date(),
 
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.partial({
