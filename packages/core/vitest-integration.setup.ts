@@ -1,5 +1,5 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import { type DBClient, createPrisma, migrateTestDatabase } from "@dotkomonline/db"
+import { type DBClient, createPrisma } from "@dotkomonline/db"
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import type { ManagementClient } from "auth0"
 import { afterAll, afterEach, beforeAll, beforeEach } from "vitest"
@@ -46,7 +46,7 @@ export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 beforeAll(async () => {
   const dbUrl = await getTestContainerDatabase()
 
-  await migrateTestDatabase(dbUrl)
+  // await migrateTestDatabase(dbUrl)
 
   dbClient = await createPrisma(dbUrl)
   core = await createServiceLayerForTesting()
