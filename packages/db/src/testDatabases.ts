@@ -1,3 +1,4 @@
+// biome-ignore lint/style/useNodejsImportProtocol: Cannot import with node path on vercel
 import { spawn } from "child_process"
 
 const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
