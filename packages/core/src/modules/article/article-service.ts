@@ -1,5 +1,5 @@
 import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
-import type { Cursor, Pageable } from "../../query"
+import type { Pageable } from "../../query"
 import { ArticleNotFoundError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"

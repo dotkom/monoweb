@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface OfflineRepository {
   getById(id: OfflineId): Promise<Offline | null>

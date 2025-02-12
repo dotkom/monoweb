@@ -6,7 +6,7 @@ import type {
   EventWrite,
   WebEventDetail,
 } from "@dotkomonline/types"
-import type { Cursor, Pageable } from "../../query"
+import type { Pageable } from "../../query"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"

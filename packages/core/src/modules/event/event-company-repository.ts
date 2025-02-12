@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface EventCompanyRepository {
   createCompany(id: EventId, company: CompanyId): Promise<void>
@@ -29,9 +29,9 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
   async getEventsByCompanyId(companyId: string, page: Pageable): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
-        companies: { some: { companyId } }
+        companies: { some: { companyId } },
       },
-      ...pageQuery(page)
+      ...pageQuery(page),
     })
   }
 }

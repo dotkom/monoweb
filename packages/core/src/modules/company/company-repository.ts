@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface CompanyRepository {
   getById(id: CompanyId): Promise<Company | null>

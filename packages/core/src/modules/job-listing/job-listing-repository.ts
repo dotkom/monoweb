@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | null>
@@ -87,7 +87,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
   async getAll(page: Pageable): Promise<JobListing[]> {
     const jobListings = await this.db.jobListing.findMany({
       include: { company: true, locations: true },
-      ...pageQuery(page)
+      ...pageQuery(page),
     })
 
     return await jobListings.map(this.flattenJobListingLocations)

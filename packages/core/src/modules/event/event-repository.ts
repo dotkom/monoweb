@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Event, EventId, EventWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface EventRepository {
   create(data: EventWrite): Promise<Event>
@@ -56,7 +56,7 @@ export class EventRepositoryImpl implements EventRepository {
           some: { committeeId },
         },
       },
-      ...pageQuery(page)
+      ...pageQuery(page),
     })
   }
 

@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 export interface MarkRepository {
   getById(id: MarkId): Promise<Mark | null>
   getAll(page: Pageable): Promise<Mark[]>

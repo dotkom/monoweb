@@ -1,5 +1,4 @@
 import type { Company, CompanyId, EventId } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
 import type { EventCompanyRepository } from "./event-company-repository"
 
 export interface EventCompanyService {

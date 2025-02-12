@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Article, ArticleId, ArticleSlug, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface ArticleRepository {
   create(input: ArticleWrite): Promise<Article>
@@ -23,7 +23,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   async getAll(page: Pageable): Promise<Article[]> {
-    return await this.db.article.findMany({ ...pageQuery(page)  })
+    return await this.db.article.findMany({ ...pageQuery(page) })
   }
 
   async getById(id: ArticleId): Promise<Article | null> {

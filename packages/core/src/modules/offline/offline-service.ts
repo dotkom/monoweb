@@ -1,5 +1,5 @@
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import type { Cursor, Pageable } from "../../query"
+import type { Pageable } from "../../query"
 import type { S3Repository } from "../external/s3-repository"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"

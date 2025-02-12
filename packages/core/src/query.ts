@@ -13,7 +13,7 @@ export function pageQuery(page: Pageable) {
     cursor: { id: page.cursor },
     orderBy: { id: "desc" as const },
     skip: page.cursor ? 1 : 0,
-  };
+  }
 }
 
 export type Pageable = z.infer<typeof PaginateInputSchema>

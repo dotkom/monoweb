@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface ProductRepository {
   create(data: ProductWrite): Promise<Product>

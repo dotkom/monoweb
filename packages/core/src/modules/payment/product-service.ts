@@ -1,5 +1,5 @@
 import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
-import type { Cursor, Pageable } from "../../query"
+import type { Pageable } from "../../query"
 import { ProductNotFoundError } from "./product-error"
 import type { ProductRepository } from "./product-repository"
 

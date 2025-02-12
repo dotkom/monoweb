@@ -80,7 +80,9 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   // Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed
-  private parseExtras<T extends { extras: JsonValue }>(unparsedObj: T): Omit<T, "extras"> & { extras: Extras[] | null } {
+  private parseExtras<T extends { extras: JsonValue }>(
+    unparsedObj: T
+  ): Omit<T, "extras"> & { extras: Extras[] | null } {
     const { extras, ...attendance } = unparsedObj
 
     return { ...attendance, extras: ExtrasSchema.parse(extras) }

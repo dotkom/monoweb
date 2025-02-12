@@ -1,7 +1,7 @@
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
+import type { Pageable } from "../../query"
 import { MarkNotFoundError } from "./mark-error"
 import type { MarkRepository } from "./mark-repository"
-import { Pageable } from "../../query"
 
 export interface MarkService {
   getMark(id: MarkId): Promise<Mark>

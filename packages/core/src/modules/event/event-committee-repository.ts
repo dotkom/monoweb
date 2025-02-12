@@ -13,7 +13,8 @@ export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
 
   async getAllEventCommittees(eventId: EventId): Promise<Committee[]> {
     const eventCommittees = await this.db.eventCommittee.findMany({
-      where: { eventId }, select: { committee: true }
+      where: { eventId },
+      select: { committee: true },
     })
 
     return eventCommittees.map((eventCommitee) => eventCommitee.committee)

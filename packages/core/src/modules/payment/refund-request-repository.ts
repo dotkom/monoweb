@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { PaymentId, RefundRequest, RefundRequestId, RefundRequestWrite } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface RefundRequestRepository {
   create(data: RefundRequestWrite): Promise<RefundRequest>

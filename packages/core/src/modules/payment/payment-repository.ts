@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Payment, PaymentId, PaymentWrite, ProductId, UserId } from "@dotkomonline/types"
-import { Pageable, pageQuery } from "../../query"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface PaymentRepository {
   create(data: PaymentWrite): Promise<Payment | null>

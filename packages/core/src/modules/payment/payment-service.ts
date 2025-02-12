@@ -1,7 +1,7 @@
 import type { Payment, PaymentProvider, Product, ProductId, UserId } from "@dotkomonline/types"
 import type Stripe from "stripe"
 import { IllegalStateError } from "../../error"
-import type { Cursor, Pageable } from "../../query"
+import type { Pageable } from "../../query"
 import type { EventRepository } from "../event/event-repository"
 import {
   InvalidPaymentStatusError,
