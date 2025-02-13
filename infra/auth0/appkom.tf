@@ -144,7 +144,7 @@ resource "auth0_client" "appkom_veldedighet" {
   allowed_origins = []
   app_type        = "spa"
   callbacks = {
-    "dev" = ["http://localhost:3000/api/auth/callback/auth0k"]
+    "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
     "stg" = ["https://charitystream-orcin.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://onlove.no/api/auth/callback/auth0"]
   }[terraform.workspace]
