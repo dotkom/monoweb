@@ -377,6 +377,7 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
+    auth0_client.appkom_veldedighet.client_id
   ]
 }
 
@@ -395,6 +396,7 @@ resource "auth0_connection_clients" "feide" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
+    auth0_client.appkom_veldedighet.client_id
   ]
 }
 
