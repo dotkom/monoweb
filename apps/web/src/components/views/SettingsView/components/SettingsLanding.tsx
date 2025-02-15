@@ -57,13 +57,13 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
           <TextInput
             width="flex-1 mb-2 mx-1"
             placeholder="Fornavn"
-            defaultValue={user.firstName ?? ""}
+            defaultValue={user.firstName ?? undefined}
             {...register("firstName")}
           />
           <TextInput
             width="flex-1 mx-1"
             placeholder="Etternavn"
-            defaultValue={user.lastName ?? ""}
+            defaultValue={user.lastName ?? undefined}
             {...register("lastName")}
           />
         </div>
@@ -74,7 +74,7 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
             width="w-full"
             maxLength={12}
             placeholder="Telefon"
-            defaultValue={user.phone ?? ""}
+            defaultValue={user.phone ?? undefined}
             {...register("phone")}
           />
         </div>
