@@ -74,12 +74,12 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.parseExtras(attendance)
   }
 
-  // Prisma requires distinction between database null and json null, so here we choose database null
+  /** Prisma requires distinction between database null and json null, so here we choose database null */
   private correctNullTypes<T extends { extras?: unknown }>(data: T) {
     return { ...data, extras: data.extras === null ? Prisma.DbNull : data.extras }
   }
 
-  // Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed
+  /** Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed */
   private parseExtras<T extends { extras: JsonValue }>(
     unparsedObj: T
   ): Omit<T, "extras"> & { extras: Extras[] | null } {
