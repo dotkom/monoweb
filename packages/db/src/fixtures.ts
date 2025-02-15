@@ -16,6 +16,10 @@ if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
 }
 
+if (process.env.DATABASE_URL.includes("prod")) {
+  throw new Error("Tried adding fixtures to a production database")
+}
+
 const db = createPrisma(process.env.DATABASE_URL)
 
 const companies = await db.company.createManyAndReturn({ data: getCompanyFixtures() })
