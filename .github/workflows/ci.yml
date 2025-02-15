@@ -65,9 +65,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
-      - name: Generate prisma types
-        run: pnpm generate
-
       - name: Type Check
         run: pnpm type-check
 
