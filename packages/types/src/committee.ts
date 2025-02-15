@@ -1,8 +1,8 @@
 import type { z } from "zod"
 
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 
-export const CommitteeSchema = dbSchemas.CommitteeSchema.extend({})
+export const CommitteeSchema = schemas.CommitteeSchema.extend({})
 
 export type CommitteeId = Committee["id"]
 export type Committee = z.infer<typeof CommitteeSchema>

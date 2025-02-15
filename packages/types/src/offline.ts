@@ -1,7 +1,7 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import type { z } from "zod"
 
-export const OfflineSchema = dbSchemas.OfflineSchema.extend({})
+export const OfflineSchema = schemas.OfflineSchema.extend({})
 
 export const OfflineWriteSchema = OfflineSchema.partial({
   id: true,

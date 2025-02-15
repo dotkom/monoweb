@@ -1,7 +1,7 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import type { z } from "zod"
 
-export const PersonalMarkSchema = dbSchemas.PersonalMarkSchema.extend({})
+export const PersonalMarkSchema = schemas.PersonalMarkSchema.extend({})
 
 export type PersonalMark = z.infer<typeof PersonalMarkSchema>
 

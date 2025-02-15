@@ -1,7 +1,7 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import type { z } from "zod"
 
-export const WaitlistAttendeeSchema = dbSchemas.WaitlistAttendeeSchema.extend({})
+export const WaitlistAttendeeSchema = schemas.WaitlistAttendeeSchema.extend({})
 
 export const WaitlistAttendeeWriteSchema = WaitlistAttendeeSchema.omit({
   id: true,

@@ -1,7 +1,7 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import type { z } from "zod"
 
-export const ArticleTagSchema = dbSchemas.ArticleTagSchema.extend({})
+export const ArticleTagSchema = schemas.ArticleTagSchema.extend({})
 
 export type ArticleTagName = ArticleTag["name"]
 export type ArticleTag = z.infer<typeof ArticleTagSchema>
@@ -9,7 +9,7 @@ export type ArticleTag = z.infer<typeof ArticleTagSchema>
 export const ArticleTagWrite = ArticleTagSchema
 export type ArticleTagWrite = z.infer<typeof ArticleTagWrite>
 
-export const ArticleSchema = dbSchemas.ArticleSchema.extend({})
+export const ArticleSchema = schemas.ArticleSchema.extend({})
 
 export type ArticleSlug = Article["slug"]
 export type ArticleId = Article["id"]

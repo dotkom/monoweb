@@ -1,4 +1,4 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import { z } from "zod"
 import type { User } from "../user"
 
@@ -11,7 +11,7 @@ export const ExtraChoice = z.object({
 
 export const ExtrasChoicesSchema = z.array(ExtraChoice)
 
-export const AttendeeSchema = dbSchemas.AttendeeSchema.extend({
+export const AttendeeSchema = schemas.AttendeeSchema.extend({
   extrasChoices: ExtrasChoicesSchema,
 })
 

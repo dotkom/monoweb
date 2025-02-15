@@ -1,7 +1,7 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import { z } from "zod"
 
-export const ProductPaymentProviderSchema = dbSchemas.ProductPaymentProviderSchema.extend({})
+export const ProductPaymentProviderSchema = schemas.ProductPaymentProviderSchema.extend({})
 
 export type ProductPaymentProvider = z.infer<typeof ProductPaymentProviderSchema>
 
@@ -15,7 +15,7 @@ export const ProductPaymentProviderWriteSchema = ProductPaymentProviderSchema
 
 export type ProductPaymentProviderWrite = z.infer<typeof ProductPaymentProviderWriteSchema>
 
-export const ProductSchema = dbSchemas.ProductSchema.extend({
+export const ProductSchema = schemas.ProductSchema.extend({
   paymentProviders: z.array(PaymentProviderSchema),
 })
 
@@ -32,7 +32,7 @@ export const ProductWriteSchema = ProductSchema.omit({
 
 export type ProductWrite = z.infer<typeof ProductWriteSchema>
 
-export const PaymentSchema = dbSchemas.PaymentSchema.extend({})
+export const PaymentSchema = schemas.PaymentSchema.extend({})
 
 export type PaymentId = Payment["id"]
 export type Payment = z.infer<typeof PaymentSchema>
@@ -47,7 +47,7 @@ export const PaymentWriteSchema = PaymentSchema.partial({
 
 export type PaymentWrite = z.infer<typeof PaymentWriteSchema>
 
-export const RefundRequestSchema = dbSchemas.RefundRequestSchema.extend({})
+export const RefundRequestSchema = schemas.RefundRequestSchema.extend({})
 
 export type RefundRequestId = RefundRequest["id"]
 export type RefundRequest = z.infer<typeof RefundRequestSchema>

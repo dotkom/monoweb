@@ -1,8 +1,8 @@
 import type { z } from "zod"
 
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 
-export const NotificationPermissionsSchema = dbSchemas.NotificationPermissionsSchema.extend({})
+export const NotificationPermissionsSchema = schemas.NotificationPermissionsSchema.extend({})
 
 export type NotificationPermissions = z.infer<typeof NotificationPermissionsSchema>
 

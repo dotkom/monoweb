@@ -1,11 +1,11 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import { z } from "zod"
 
 export const YearCriteriaSchema = z.array(z.number())
 
 export type YearCriteria = z.infer<typeof YearCriteriaSchema>
 
-export const AttendancePoolSchema = dbSchemas.AttendancePoolSchema.extend({
+export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({
   numAttendees: z.number(),
   yearCriteria: YearCriteriaSchema,
 })

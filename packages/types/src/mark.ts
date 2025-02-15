@@ -1,7 +1,7 @@
-import { dbSchemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db"
 import type { z } from "zod"
 
-export const MarkSchema = dbSchemas.MarkSchema.extend({})
+export const MarkSchema = schemas.MarkSchema.extend({})
 
 export type MarkId = Mark["id"]
 export type Mark = z.infer<typeof MarkSchema>
