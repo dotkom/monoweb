@@ -387,8 +387,8 @@ model InterestGroup {
   description     String
   link            String?
   isActive        Boolean  @default(true)
-  longDescription String   @default("")
-  joinInfo        String   @default("")
+  longDescription String?
+  joinInfo        String?
   members         InterestGroupMember[]
 }
 

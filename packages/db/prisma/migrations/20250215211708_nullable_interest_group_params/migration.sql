@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "InterestGroup" ALTER COLUMN "longDescription" DROP NOT NULL,
+ALTER COLUMN "longDescription" DROP DEFAULT,
+ALTER COLUMN "joinInfo" DROP NOT NULL,
+ALTER COLUMN "joinInfo" DROP DEFAULT;
