@@ -368,6 +368,7 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
 # has to be imported on new tenant
 resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
+
   enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
@@ -431,6 +432,12 @@ resource "auth0_connection" "username_password_authentication" {
     mfa {
       active                 = true
       return_enroll_settings = true
+    }
+
+    authentication_methods {
+      passkey {
+        enabled = true
+      }
     }
     password_complexity_options {
       min_length = 8
