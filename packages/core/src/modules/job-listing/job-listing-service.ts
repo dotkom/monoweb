@@ -25,6 +25,8 @@ export class JobListingServiceImpl implements JobListingService {
   }
 
   async create(data: JobListingWrite): Promise<JobListing> {
+    this.validateWriteModel(data)
+
     return await this.jobListingRepository.createJobListing(data)
   }
 
@@ -45,10 +47,12 @@ export class JobListingServiceImpl implements JobListingService {
       input.start && input.end && isAfter(input.end, input.start),
       new InvalidEndDateError("end date cannot be before start date")
     )
-    assert(
-      input.deadline && input.start && isBefore(input.deadline, input.start),
-      new InvalidDeadlineError("deadline cannot be after start date")
-    )
+    if (input.deadline && input.start) {
+      assert(
+        isBefore(input.deadline, input.start),
+        new InvalidDeadlineError("deadline cannot be after start date")
+      )
+    }
   }
 
   async getLocations(): Promise<string[]> {
