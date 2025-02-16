@@ -1,3 +1,6 @@
+// biome-ignore lint/style/useNodejsImportProtocol: Cannot import with node path on vercel
+import { spawn } from "node:child_process"
+import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import { createPrisma } from "."
 
 const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
@@ -9,7 +12,6 @@ const DB_PASSWORD = "owpassword"
 const DB_NAME = "test"
 
 async function getTestContainerDatabase() {
-  const PostgreSqlContainer = (await import("@testcontainers/postgresql")).PostgreSqlContainer
   const container = await new PostgreSqlContainer(POSTGRES_IMAGE)
     .withUsername(DB_USERNAME)
     .withPassword(DB_PASSWORD)
@@ -20,10 +22,8 @@ async function getTestContainerDatabase() {
   return `postgresql://${DB_USERNAME}:${DB_PASSWORD}@${container.getHost()}:${container.getFirstMappedPort()}/${DB_NAME}`
 }
 
-async function migrateTestDatabase(dbUrl: string) {
-  const spawn = (await import("node:child_process")).spawn
-
-  return await new Promise<void>(async (resolve, reject) => {
+function migrateTestDatabase(dbUrl: string) {
+  return new Promise<void>(async (resolve, reject) => {
     const proc = spawn(
       PRISMA_BIN_PATH,
       ["migrate", "reset", "--force", "--skip-generate", "--schema", SCHEMA_FILE_PATH],

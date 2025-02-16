@@ -4,7 +4,7 @@ import type { ManagementClient } from "auth0"
 import { afterAll, afterEach, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import { type StripeAccount, createServiceLayer } from "./src"
-import { getTestClient } from "@dotkomonline/db"
+import { getTestClient } from "@dotkomonline/db/src/testDatabases"
 
 export async function createServiceLayerForTesting() {
   const s3Client = mockDeep<S3Client>()
