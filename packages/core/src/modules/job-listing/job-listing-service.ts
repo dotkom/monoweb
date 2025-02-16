@@ -48,10 +48,7 @@ export class JobListingServiceImpl implements JobListingService {
       new InvalidEndDateError("end date cannot be before start date")
     )
     if (input.deadline && input.start) {
-      assert(
-        isBefore(input.deadline, input.start),
-        new InvalidDeadlineError("deadline cannot be after start date")
-      )
+      assert(isBefore(input.deadline, input.start), new InvalidDeadlineError("deadline cannot be after start date"))
     }
   }
 

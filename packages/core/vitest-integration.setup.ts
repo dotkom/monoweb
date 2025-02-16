@@ -1,10 +1,10 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import { type DBClient, createPrisma } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
+import { getTestClient } from "@dotkomonline/db/src/testDatabases"
 import type { ManagementClient } from "auth0"
-import { afterAll, afterEach, beforeEach } from "vitest"
+import { afterAll, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import { type StripeAccount, createServiceLayer } from "./src"
-import { getTestClient } from "@dotkomonline/db/src/testDatabases"
 
 export async function createServiceLayerForTesting() {
   const s3Client = mockDeep<S3Client>()
@@ -28,6 +28,6 @@ afterAll(async () => {
 })
 
 beforeEach(async () => {
-  dbClient = await getTestClient();
+  dbClient = await getTestClient()
   core = await createServiceLayerForTesting()
 })

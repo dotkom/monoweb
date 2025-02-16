@@ -23,7 +23,7 @@ async function getTestContainerDatabase() {
 }
 
 function migrateTestDatabase(dbUrl: string) {
-  return new Promise<void>(async (resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const proc = spawn(
       PRISMA_BIN_PATH,
       ["migrate", "reset", "--force", "--skip-generate", "--schema", SCHEMA_FILE_PATH],
@@ -49,7 +49,7 @@ function migrateTestDatabase(dbUrl: string) {
 export async function getTestClient() {
   const dbUrl = await getTestContainerDatabase()
 
-  await migrateTestDatabase(dbUrl);
+  await migrateTestDatabase(dbUrl)
 
   return createPrisma(dbUrl)
 }
