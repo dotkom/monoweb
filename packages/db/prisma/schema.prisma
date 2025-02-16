@@ -79,6 +79,8 @@ model OwUser {
   InterestGroupsMemberships InterestGroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
+
+  @@map("ow_user")
 }
 
 model Company {
@@ -94,6 +96,8 @@ model Company {
   image       String?
   events      EventCompany[]
   JobListing  JobListing[]
+
+  @@map("company")
 }
 
 model Committee {
@@ -104,6 +108,8 @@ model Committee {
   email       String           @default("kontakt@online.ntnu.no")
   image       String?
   events      EventCommittee[]
+
+  @@map("committee")
 }
 
 model Attendance {
@@ -118,6 +124,8 @@ model Attendance {
   attendees          Attendee[]
   waitlist           WaitlistAttendee[]
   events             Event[]
+
+  @@map("attendance")
 }
 
 model AttendancePool {
@@ -133,6 +141,8 @@ model AttendancePool {
   type         String
   attendees    Attendee[]
   waitlist     WaitlistAttendee[]
+
+  @@map("attendance_pool")
 }
 
 model WaitlistAttendee {
@@ -150,6 +160,8 @@ model WaitlistAttendee {
   attendancePool   AttendancePool? @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
   name             String
+
+  @@map("waitlist_attendee")
 }
 
 model Attendee {
@@ -169,6 +181,8 @@ model Attendee {
   lastName         String?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
+
+  @@map("attendee")
 }
 
 model Event {
@@ -191,6 +205,8 @@ model Event {
   type            EventType
   companies       EventCompany[]
   committees      EventCommittee[]
+
+  @@map("event")
 }
 
 model EventCompany {
@@ -200,6 +216,8 @@ model EventCompany {
   company   Company @relation(fields: [companyId], references: [id])
 
   @@id([eventId, companyId])
+
+  @@map("event_company")
 }
 
 model Mark {
@@ -211,6 +229,8 @@ model Mark {
   details   String?
   duration  Int
   users     PersonalMark[]
+
+  @@map("mark")
 }
 
 model PersonalMark {
@@ -220,6 +240,8 @@ model PersonalMark {
   userId String
 
   @@id([markId, userId])
+
+  @@map("personal_mark")
 }
 
 model Product {
@@ -234,6 +256,8 @@ model Product {
   refundRequiresApproval Boolean                  @default(true)
   payments               Payment[]
   paymentProviders       ProductPaymentProvider[]
+
+  @@map("product")
 }
 
 model Payment {
@@ -249,6 +273,8 @@ model Payment {
   paymentProviderOrderId   String?
   status                   PaymentStatus
   refundRequest            RefundRequest?
+
+  @@map("payment")
 }
 
 model ProductPaymentProvider {
@@ -258,6 +284,8 @@ model ProductPaymentProvider {
   paymentProviderId String
 
   @@id([productId, paymentProviderId])
+
+  @@map("product_payment_provider")
 }
 
 model RefundRequest {
@@ -272,6 +300,8 @@ model RefundRequest {
   status      RefundRequestStatus @default(PENDING)
   handledBy   OwUser?             @relation("HandledBy", fields: [handledById], references: [id])
   handledById String?
+
+  @@map("refund_request")
 }
 
 model PrivacyPermissions {
@@ -286,6 +316,8 @@ model PrivacyPermissions {
   phoneVisible      Boolean  @default(false)
   addressVisible    Boolean  @default(false)
   attendanceVisible Boolean  @default(false)
+
+  @@map("privacy_permissions")
 }
 
 model NotificationPermissions {
@@ -302,6 +334,8 @@ model NotificationPermissions {
   receipts                    Boolean  @default(true)
   registrationByAdministrator Boolean  @default(true)
   registrationStart           Boolean  @default(true)
+
+  @@map("notification_permissions")
 }
 
 model EventCommittee {
@@ -311,6 +345,8 @@ model EventCommittee {
   event       Event     @relation(fields: [eventId], references: [id])
 
   @@id([committeeId, eventId])
+
+  @@map("event_committee")
 }
 
 model JobListing {
@@ -330,6 +366,8 @@ model JobListing {
   applicationEmail String?
   deadlineAsap     Boolean
   locations        JobListingLocation[]
+
+  @@map("job_listing")
 }
 
 model JobListingLocation {
@@ -339,6 +377,8 @@ model JobListingLocation {
   jobListingId String
 
   @@id([name, jobListingId])
+
+  @@map("job_listing_location")
 }
 
 model Offline {
@@ -349,6 +389,8 @@ model Offline {
   published DateTime
   fileUrl   String?
   imageUrl  String?
+
+  @@map("offline")
 }
 
 model Article {
@@ -363,11 +405,15 @@ model Article {
   excerpt      String
   content      String
   tags         ArticleTagLink[]
+
+  @@map("article")
 }
 
 model ArticleTag {
   name     String           @id
   articles ArticleTagLink[]
+
+  @@map("article_tag")
 }
 
 model ArticleTagLink {
@@ -377,6 +423,8 @@ model ArticleTagLink {
   tagName   String
 
   @@id([articleId, tagName])
+
+  @@map("article_tag_link")
 }
 
 model InterestGroup {
@@ -390,6 +438,8 @@ model InterestGroup {
   longDescription String?
   joinInfo        String?
   members         InterestGroupMember[]
+
+  @@map("interest_group")
 }
 
 model InterestGroupMember {
@@ -400,4 +450,6 @@ model InterestGroupMember {
   user            OwUser      @relation(fields: [userId], references: [id])
 
   @@id([interestGroupId])
+
+  @@map("interest_group_member")
 }
