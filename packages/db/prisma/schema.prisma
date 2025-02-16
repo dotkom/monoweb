@@ -84,12 +84,12 @@ model OwUser {
 model Company {
   id          String         @id @default(uuid())
   createdAt   DateTime       @default(now())
-  name        String         @db.VarChar(100)
+  name        String
   description String
-  phone       String?        @db.VarChar(69)
-  email       String         @db.VarChar(69)
-  website     String         @db.VarChar(100)
-  location    String?        @db.VarChar(100)
+  phone       String?
+  email       String
+  website     String
+  location    String?
   type        CompanyType
   image       String?
   events      EventCompany[]
@@ -99,7 +99,7 @@ model Company {
 model Committee {
   id          String           @id @default(uuid())
   createdAt   DateTime         @default(now())
-  name        String           @db.VarChar(100)
+  name        String
   description String           @default("")
   email       String           @default("kontakt@online.ntnu.no")
   image       String?
@@ -175,16 +175,16 @@ model Event {
   id              String           @id @default(uuid())
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  title           String           @db.VarChar(255)
+  title           String
   start           DateTime
   end             DateTime
   status          EventStatus
   public          Boolean
   description     String?
-  subtitle        String?          @db.VarChar(255)
-  imageUrl        String?          @db.VarChar(255)
-  locationTitle   String           @db.VarChar(255)
-  locationAddress String?          @db.VarChar(255)
+  subtitle        String?
+  imageUrl        String?
+  locationTitle   String
+  locationAddress String?
   locationLink    String?
   attendance      Attendance?      @relation(fields: [attendanceId], references: [id])
   attendanceId    String?
@@ -204,10 +204,10 @@ model EventCompany {
 
 model Mark {
   id        String         @id @default(uuid())
-  title     String         @db.VarChar(255)
+  title     String
   updatedAt DateTime       @updatedAt
   createdAt DateTime       @default(now())
-  category  String         @db.VarChar(255)
+  category  String
   details   String?
   duration  Int
   users     PersonalMark[]
@@ -318,7 +318,7 @@ model JobListing {
   createdAt        DateTime             @default(now())
   company          Company              @relation(fields: [companyId], references: [id])
   companyId        String
-  title            String               @db.VarChar(100)
+  title            String
   ingress          String
   description      String
   start            DateTime
@@ -326,8 +326,8 @@ model JobListing {
   featured         Boolean
   deadline         DateTime?
   employment       EmploymentType
-  applicationLink  String?              @db.VarChar(200)
-  applicationEmail String?              @db.VarChar(254)
+  applicationLink  String?
+  applicationEmail String?
   deadlineAsap     Boolean
   locations        JobListingLocation[]
 }
