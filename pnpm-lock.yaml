@@ -745,6 +745,9 @@ importers:
       '@prisma/client':
         specifier: ^6.3.1
         version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
+      '@testcontainers/postgresql':
+        specifier: ^10.18.0
+        version: 10.18.0
       pg:
         specifier: ^8.13.0
         version: 8.13.1
