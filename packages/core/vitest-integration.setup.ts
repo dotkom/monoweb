@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { DBClient } from "@dotkomonline/db"
-import { getTestClient } from "@dotkomonline/db/src/testDatabases"
+import { getTestClient } from "@dotkomonline/db/src/test-databases"
 import type { ManagementClient } from "auth0"
 import { afterAll, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"

@@ -4,7 +4,7 @@ generator client {
 
 generator zod {
   provider = "zod-prisma-types"
-  output   = "../src/generatedSchemas"
+  output   = "../src/schemas"
 
   useMultipleFiles = true
   createInputTypes = false
@@ -22,6 +22,8 @@ enum EventStatus {
   PUBLIC
   NO_LIMIT
   ATTENDANCE
+
+  @@map("event_status")
 }
 
 enum EventType {
@@ -29,33 +31,45 @@ enum EventType {
   ACADEMIC
   COMPANY
   BEDPRES
+
+  @@map("event_type")
 }
 
 enum PaymentProvider {
   STRIPE
+
+  @@map("payment_provider")
 }
 
 enum ProductType {
   EVENT
+
+  @@map("product_type")
 }
 
 enum PaymentStatus {
   UNPAID
   PAID
   REFUNDED
+
+  @@map("payment_status")
 }
 
 enum RefundRequestStatus {
   PENDING
   APPROVED
   REJECTED
+
+  @@map("refund_request_status")
 }
 
 enum CompanyType {
-  Consulting
-  Research
-  Development
-  Other
+  CONSULTING
+  RESEARCH
+  DEVELOPMENT
+  OTHER
+
+  @@map("company_type")
 }
 
 enum EmploymentType {
@@ -63,6 +77,8 @@ enum EmploymentType {
   FULLTIME
   SUMMER_INTERNSHIP
   OTHER
+
+  @@map("employment_type")
 }
 
 model OwUser {

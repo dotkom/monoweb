@@ -1,26 +1,26 @@
 -- CreateEnum
-CREATE TYPE "EventStatus" AS ENUM ('TBA', 'PUBLIC', 'NO_LIMIT', 'ATTENDANCE');
+CREATE TYPE "event_status" AS ENUM ('TBA', 'PUBLIC', 'NO_LIMIT', 'ATTENDANCE');
 
 -- CreateEnum
-CREATE TYPE "EventType" AS ENUM ('SOCIAL', 'ACADEMIC', 'COMPANY', 'BEDPRES');
+CREATE TYPE "event_type" AS ENUM ('SOCIAL', 'ACADEMIC', 'COMPANY', 'BEDPRES');
 
 -- CreateEnum
-CREATE TYPE "PaymentProvider" AS ENUM ('STRIPE');
+CREATE TYPE "payment_provider" AS ENUM ('STRIPE');
 
 -- CreateEnum
-CREATE TYPE "ProductType" AS ENUM ('EVENT');
+CREATE TYPE "product_type" AS ENUM ('EVENT');
 
 -- CreateEnum
-CREATE TYPE "PaymentStatus" AS ENUM ('UNPAID', 'PAID', 'REFUNDED');
+CREATE TYPE "payment_status" AS ENUM ('UNPAID', 'PAID', 'REFUNDED');
 
 -- CreateEnum
-CREATE TYPE "RefundRequestStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+CREATE TYPE "refund_request_status" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- CreateEnum
-CREATE TYPE "CompanyType" AS ENUM ('Consulting', 'Research', 'Development', 'Other');
+CREATE TYPE "company_type" AS ENUM ('CONSULTING', 'RESEARCH', 'DEVELOPMENT', 'OTHER');
 
 -- CreateEnum
-CREATE TYPE "EmploymentType" AS ENUM ('PARTTIME', 'FULLTIME', 'SUMMER_INTERNSHIP', 'OTHER');
+CREATE TYPE "employment_type" AS ENUM ('PARTTIME', 'FULLTIME', 'SUMMER_INTERNSHIP', 'OTHER');
 
 -- CreateTable
 CREATE TABLE "ow_user" (
@@ -41,7 +41,7 @@ CREATE TABLE "company" (
     "email" TEXT NOT NULL,
     "website" TEXT NOT NULL,
     "location" TEXT,
-    "type" "CompanyType" NOT NULL,
+    "type" "company_type" NOT NULL,
     "image" TEXT,
 
     CONSTRAINT "company_pkey" PRIMARY KEY ("id")
@@ -129,7 +129,7 @@ CREATE TABLE "event" (
     "title" TEXT NOT NULL,
     "start" TIMESTAMP(3) NOT NULL,
     "end" TIMESTAMP(3) NOT NULL,
-    "status" "EventStatus" NOT NULL,
+    "status" "event_status" NOT NULL,
     "public" BOOLEAN NOT NULL,
     "description" TEXT,
     "subtitle" TEXT,
@@ -138,7 +138,7 @@ CREATE TABLE "event" (
     "locationAddress" TEXT,
     "locationLink" TEXT,
     "attendanceId" TEXT,
-    "type" "EventType" NOT NULL,
+    "type" "event_type" NOT NULL,
 
     CONSTRAINT "event_pkey" PRIMARY KEY ("id")
 );
@@ -177,7 +177,7 @@ CREATE TABLE "product" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "type" "ProductType" NOT NULL,
+    "type" "product_type" NOT NULL,
     "objectId" TEXT,
     "amount" INTEGER NOT NULL,
     "deletedAt" TIMESTAMP(3),
@@ -197,7 +197,7 @@ CREATE TABLE "payment" (
     "paymentProviderId" TEXT NOT NULL,
     "paymentProviderSessionId" TEXT NOT NULL,
     "paymentProviderOrderId" TEXT,
-    "status" "PaymentStatus" NOT NULL,
+    "status" "payment_status" NOT NULL,
 
     CONSTRAINT "payment_pkey" PRIMARY KEY ("id")
 );
@@ -205,7 +205,7 @@ CREATE TABLE "payment" (
 -- CreateTable
 CREATE TABLE "product_payment_provider" (
     "productId" TEXT NOT NULL,
-    "paymentProvider" "PaymentProvider" NOT NULL,
+    "paymentProvider" "payment_provider" NOT NULL,
     "paymentProviderId" TEXT NOT NULL,
 
     CONSTRAINT "product_payment_provider_pkey" PRIMARY KEY ("productId","paymentProviderId")
@@ -219,7 +219,7 @@ CREATE TABLE "refund_request" (
     "paymentId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "reason" TEXT NOT NULL,
-    "status" "RefundRequestStatus" NOT NULL DEFAULT 'PENDING',
+    "status" "refund_request_status" NOT NULL DEFAULT 'PENDING',
     "handledById" TEXT,
 
     CONSTRAINT "refund_request_pkey" PRIMARY KEY ("id")
@@ -279,7 +279,7 @@ CREATE TABLE "job_listing" (
     "end" TIMESTAMP(3) NOT NULL,
     "featured" BOOLEAN NOT NULL,
     "deadline" TIMESTAMP(3),
-    "employment" "EmploymentType" NOT NULL,
+    "employment" "employment_type" NOT NULL,
     "applicationLink" TEXT,
     "applicationEmail" TEXT,
     "deadlineAsap" BOOLEAN NOT NULL,

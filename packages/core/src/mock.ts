@@ -24,7 +24,7 @@ export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWri
   email: "foo@example.net",
   location: "Oslo",
   phone: "+47 123 45 678",
-  type: "Consulting",
+  type: "CONSULTING",
   ...defaults,
 })
 

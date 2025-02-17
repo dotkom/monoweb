@@ -17,7 +17,7 @@ describe("EventCompanyService", () => {
     id: randomUUID(),
     name: "Bekk",
     phone: "+47 123 45 678",
-    type: "Consulting",
+    type: "CONSULTING",
     website: "https://bekk.no",
     location: "Oslo & Trondheim",
     image: null,

@@ -9,7 +9,7 @@ export const getCompanyFixtures: () => Prisma.CompanyCreateManyInput[] = () => [
     email: "bekk@bekk.no",
     website: "https://bekk.no",
     location: "Oslo & Trondheim",
-    type: "Consulting",
+    type: "CONSULTING",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/md/6a826628-9ebf-426e-9966-625513779427.png",
   },
@@ -21,7 +21,7 @@ export const getCompanyFixtures: () => Prisma.CompanyCreateManyInput[] = () => [
     email: "test@jrc.no",
     website: "https://www.jrc.no/",
     location: "Trondheim",
-    type: "Consulting",
+    type: "CONSULTING",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/md/8b65f23a-94a4-4b24-a997-bb051b9c831a.png",
   },
