@@ -52,8 +52,8 @@ CREATE TABLE "committee" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL DEFAULT '',
-    "email" TEXT NOT NULL DEFAULT 'kontakt@online.ntnu.no',
+    "description" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "image" TEXT,
 
     CONSTRAINT "committee_pkey" PRIMARY KEY ("id")
