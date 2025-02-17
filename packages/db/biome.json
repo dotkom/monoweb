@@ -1,10 +1,10 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
-    "ignore": ["src/generated/**/*"]
+    "ignore": ["src/schemas/**/*"]
   },
   "files": {
-    "ignore": ["src/generated/**/*"]
+    "ignore": ["src/schemas/**/*"]
   },
   "extends": ["../../biome.json"]
 }
