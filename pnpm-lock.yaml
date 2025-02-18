@@ -10658,15 +10658,6 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-<<<<<<< HEAD
-  '@types/jsdom@21.1.7':
-    dependencies:
-      '@types/node': 22.13.4
-      '@types/tough-cookie': 4.0.5
-      parse5: 7.1.2
-
-=======
->>>>>>> 4bba0466 (Remove unused dependency on jsdom)
   '@types/jsonwebtoken@9.0.8':
     dependencies:
       '@types/ms': 2.1.0
