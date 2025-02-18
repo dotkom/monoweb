@@ -13,7 +13,7 @@ export default function InterestGroupDetailsLayout({
   const { data, isLoading } = trpc.interestGroup.get.useQuery(id)
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             interestGroup: data,

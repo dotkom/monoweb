@@ -1,6 +1,5 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import type { ArticleId, ArticleTagName } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
 
 export interface ArticleTagLinkRepository {
   add(article: ArticleId, tag: ArticleTagName): Promise<void>
@@ -8,20 +7,13 @@ export interface ArticleTagLinkRepository {
 }
 
 export class ArticleTagLinkRepositoryImpl implements ArticleTagLinkRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async add(article: ArticleId, tag: ArticleTagName): Promise<void> {
-    await this.db
-      .insertInto("articleTagLink")
-      .values({ tag, article })
-      .onConflict((eb) => eb.doNothing())
-      .execute()
+  async add(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
+    await this.db.articleTagLink.create({ data: { articleId, tagName } })
   }
 
-  async remove(article: ArticleId, tag: ArticleTagName): Promise<void> {
-    await this.db
-      .deleteFrom("articleTagLink")
-      .where((eb) => eb.and([eb("tag", "=", tag), eb("article", "=", article)]))
-      .execute()
+  async remove(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
+    await this.db.articleTagLink.delete({ where: { articleId_tagName: { articleId, tagName } } })
   }
 }

@@ -1,5 +1,5 @@
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
+import type { Pageable } from "../../query"
 import type { S3Repository } from "../external/s3-repository"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"
@@ -12,8 +12,8 @@ export interface PresignedPost {
 }
 
 export interface OfflineService {
-  get(id: OfflineId): Promise<Offline>
-  getAll(take: number, cursor?: Cursor): Promise<Offline[]>
+  get(id: OfflineId): Promise<Offline | null>
+  getAll(page: Pageable): Promise<Offline[]>
   create(payload: OfflineWrite): Promise<Offline>
   update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline>
   createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost>
@@ -31,7 +31,7 @@ export class OfflineServiceImpl implements OfflineService {
    *
    * @throws {OfflineNotFoundError} if the offline does not exist
    */
-  async get(id: OfflineId): Promise<Offline> {
+  async get(id: OfflineId): Promise<Offline | null> {
     const offline = await this.offlineRepository.getById(id)
     if (offline === undefined) {
       throw new OfflineNotFoundError(id)
@@ -39,8 +39,8 @@ export class OfflineServiceImpl implements OfflineService {
     return offline
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Offline[]> {
-    const offlines = await this.offlineRepository.getAll(take, cursor)
+  async getAll(page: Pageable): Promise<Offline[]> {
+    const offlines = await this.offlineRepository.getAll(page)
     return offlines
   }
 

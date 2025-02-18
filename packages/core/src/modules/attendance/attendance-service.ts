@@ -152,7 +152,9 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   async getAllWaitlistAttendeesOrdered(attendanceId: AttendanceId): Promise<WaitlistAttendee[]> {
     const waitlistAttendeesUnordered = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
-    return waitlistAttendeesUnordered.sort((a, b) => a.registeredAt.getTime() - b.registeredAt.getTime())
+    return waitlistAttendeesUnordered.sort(
+      (a, b) => (a.registeredAt ?? new Date()).getTime() - (b.registeredAt ?? new Date()).getTime()
+    )
   }
 
   async merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]) {

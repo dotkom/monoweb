@@ -13,7 +13,7 @@ export default function JobListingDetailsLayout({
   const { data, isLoading } = trpc.jobListing.get.useQuery(id)
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             jobListing: data,

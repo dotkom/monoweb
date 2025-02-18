@@ -1,8 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client"
 
-// export const companies: Insertable<Database["company"]>[] = [
-export const getCompanyFixtures: () => Insertable<Database["company"]>[] = () => [
+export const getCompanyFixtures: () => Prisma.CompanyCreateManyInput[] = () => [
   {
     createdAt: new Date("2023-02-28 17:23:45.329666+00"),
     name: "Bekk",
@@ -11,7 +9,7 @@ export const getCompanyFixtures: () => Insertable<Database["company"]>[] = () =>
     email: "bekk@bekk.no",
     website: "https://bekk.no",
     location: "Oslo & Trondheim",
-    type: "Consulting",
+    type: "CONSULTING",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/md/6a826628-9ebf-426e-9966-625513779427.png",
   },
@@ -23,7 +21,7 @@ export const getCompanyFixtures: () => Insertable<Database["company"]>[] = () =>
     email: "test@jrc.no",
     website: "https://www.jrc.no/",
     location: "Trondheim",
-    type: "Consulting",
+    type: "CONSULTING",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/md/8b65f23a-94a4-4b24-a997-bb051b9c831a.png",
   },

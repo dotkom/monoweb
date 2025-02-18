@@ -1,43 +1,30 @@
-import type { Database } from "@dotkomonline/db"
-import { type Company, type CompanyId, CompanySchema, type CompanyWrite } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
-
-export const mapToCompany = (payload: Selectable<Database["company"]>): Company => CompanySchema.parse(payload)
+import type { DBClient } from "@dotkomonline/db"
+import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface CompanyRepository {
-  getById(id: CompanyId): Promise<Company | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Company[]>
+  getById(id: CompanyId): Promise<Company | null>
+  getAll(page: Pageable): Promise<Company[]>
   create(values: CompanyWrite): Promise<Company>
   update(id: CompanyId, data: CompanyWrite): Promise<Company>
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async getById(id: string): Promise<Company | undefined> {
-    const company = await this.db.selectFrom("company").selectAll().where("id", "=", id).executeTakeFirst()
-    return company ? mapToCompany(company) : undefined
+  async getById(id: string): Promise<Company | null> {
+    return await this.db.company.findUnique({ where: { id } })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Company[]> {
-    const query = orderedQuery(this.db.selectFrom("company").selectAll().limit(take), cursor)
-    const companies = await query.execute()
-    return companies.map(mapToCompany)
+  async getAll(page: Pageable): Promise<Company[]> {
+    return await this.db.company.findMany({ ...pageQuery(page) })
   }
 
   async create(data: CompanyWrite): Promise<Company> {
-    const company = await this.db.insertInto("company").values(data).returningAll().executeTakeFirstOrThrow()
-    return mapToCompany(company)
+    return await this.db.company.create({ data })
   }
 
   async update(id: CompanyId, data: Omit<CompanyWrite, "id">): Promise<Company> {
-    const company = await this.db
-      .updateTable("company")
-      .set(data)
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToCompany(company)
+    return await this.db.company.update({ where: { id }, data })
   }
 }

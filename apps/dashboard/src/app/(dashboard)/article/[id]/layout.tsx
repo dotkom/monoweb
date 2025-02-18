@@ -13,7 +13,7 @@ export default function ArticleDetailsLayout({
   const { data, isLoading } = trpc.article.get.useQuery(id)
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             article: data,

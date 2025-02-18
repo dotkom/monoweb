@@ -1,112 +1,74 @@
-import type { Database } from "@dotkomonline/db"
-import {
-  type Payment,
-  type PaymentId,
-  PaymentSchema,
-  type PaymentWrite,
-  type ProductId,
-  type UserId,
-} from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
-
-const mapToPayment = (data: Selectable<Database["payment"]>) => PaymentSchema.parse(data)
+import type { DBClient } from "@dotkomonline/db"
+import type { Payment, PaymentId, PaymentWrite, ProductId, UserId } from "@dotkomonline/types"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface PaymentRepository {
-  create(data: PaymentWrite): Promise<Payment | undefined>
+  create(data: PaymentWrite): Promise<Payment | null>
   update(id: PaymentId, data: Partial<PaymentWrite>): Promise<Payment>
   updateByPaymentProviderSessionId(paymentProviderSessionId: string, data: Partial<PaymentWrite>): Promise<Payment>
-  getById(id: PaymentId): Promise<Payment | undefined>
-  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Payment[]>
-  getAllByUserId(id: UserId, take: number, cursor?: Cursor): Promise<Payment[]>
-  getAllByProductId(id: ProductId, take: number, cursor?: Cursor): Promise<Payment[]>
+  getById(id: PaymentId): Promise<Payment | null>
+  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | null>
+  getAll(page: Pageable): Promise<Payment[]>
+  getAllByUserId(id: UserId, page: Pageable): Promise<Payment[]>
+  getAllByProductId(id: ProductId, page: Pageable): Promise<Payment[]>
   delete(id: PaymentId): Promise<void>
   deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void>
 }
 
 export class PaymentRepositoryImpl implements PaymentRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async create(data: PaymentWrite): Promise<Payment | undefined> {
-    const payment = await this.db.insertInto("payment").values(data).returningAll().executeTakeFirstOrThrow()
-
-    return mapToPayment(payment)
+  async create(data: PaymentWrite): Promise<Payment | null> {
+    return await this.db.payment.create({ data })
   }
 
   async update(id: PaymentId, data: Partial<Omit<PaymentWrite, "id">>): Promise<Payment> {
-    const payment = await this.db
-      .updateTable("payment")
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-
-    return mapToPayment(payment)
+    return await this.db.payment.update({ where: { id }, data })
   }
 
   async updateByPaymentProviderSessionId(
     paymentProviderSessionId: string,
     data: Partial<Omit<PaymentWrite, "id">>
   ): Promise<Payment> {
-    const payment = await this.db
-      .updateTable("payment")
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
-      .where("paymentProviderSessionId", "=", paymentProviderSessionId)
-      .returningAll()
-      .executeTakeFirstOrThrow()
+    const payments = await this.db.payment.updateManyAndReturn({
+      data,
+      where: {
+        paymentProviderSessionId,
+      },
+    })
 
-    return mapToPayment(payment)
+    if (payments.length !== 1) {
+      throw new Error("Expected one payment from specific payment provider session id")
+    }
+
+    return payments[0]
   }
 
-  async getById(id: PaymentId): Promise<Payment | undefined> {
-    const payment = await this.db.selectFrom("payment").selectAll().where("id", "=", id).executeTakeFirst()
-
-    return payment ? mapToPayment(payment) : undefined
+  async getById(id: PaymentId): Promise<Payment | null> {
+    return await this.db.payment.findUnique({ where: { id } })
   }
 
-  async getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | undefined> {
-    const payment = await this.db
-      .selectFrom("payment")
-      .selectAll()
-      .where("paymentProviderOrderId", "=", paymentProviderOrderId)
-      .executeTakeFirst()
-
-    return payment ? mapToPayment(payment) : undefined
+  async getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | null> {
+    return await this.db.payment.findFirst({ where: { paymentProviderOrderId } })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Payment[]> {
-    const query = orderedQuery(this.db.selectFrom("payment").selectAll().limit(take), cursor)
-    const payments = await query.execute()
-    return payments.map(mapToPayment)
+  async getAll(page: Pageable): Promise<Payment[]> {
+    return await this.db.payment.findMany({ ...pageQuery(page) })
   }
 
-  async getAllByUserId(id: UserId, take: number, cursor?: Cursor): Promise<Payment[]> {
-    const query = orderedQuery(this.db.selectFrom("payment").selectAll().where("userId", "=", id).limit(take), cursor)
-    const payments = await query.execute()
-    return payments.map(mapToPayment)
+  async getAllByUserId(userId: UserId, page: Pageable): Promise<Payment[]> {
+    return this.db.payment.findMany({ where: { userId }, ...pageQuery(page) })
   }
 
-  async getAllByProductId(id: ProductId, take: number, cursor?: Cursor): Promise<Payment[]> {
-    const query = orderedQuery(
-      this.db.selectFrom("payment").selectAll().where("productId", "=", id).limit(take),
-      cursor
-    )
-    const payments = await query.execute()
-    return payments.map(mapToPayment)
+  async getAllByProductId(productId: ProductId, page: Pageable): Promise<Payment[]> {
+    return this.db.payment.findMany({ where: { productId }, ...pageQuery(page) })
   }
 
   async delete(id: PaymentId): Promise<void> {
-    await this.db.deleteFrom("payment").where("id", "=", id).execute()
+    await this.db.payment.delete({ where: { id } })
   }
 
   async deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void> {
-    await this.db.deleteFrom("payment").where("paymentProviderSessionId", "=", paymentProviderSessionId).execute()
+    await this.db.payment.deleteMany({ where: { paymentProviderSessionId } })
   }
 }

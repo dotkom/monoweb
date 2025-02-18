@@ -1,41 +1,29 @@
-import type { Database } from "@dotkomonline/db"
-import { type Committee, type CommitteeId, CommitteeSchema, type CommitteeWrite } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Collection, type Pageable, paginatedQuery } from "../../query"
-
-export const mapToCommittee = (payload: Selectable<Database["committee"]>): Committee => CommitteeSchema.parse(payload)
+import type { DBClient } from "@dotkomonline/db"
+import type { Committee, CommitteeId, CommitteeWrite } from "@dotkomonline/types"
 
 export interface CommitteeRepository {
-  getById(id: CommitteeId): Promise<Committee | undefined>
-  getAll(pageable: Pageable): Promise<Collection<Committee>>
-  getAllIds(): Promise<CommitteeId[]>
   create(values: CommitteeWrite): Promise<Committee>
+  getById(id: CommitteeId): Promise<Committee | null>
+  getAll(): Promise<Committee[]>
+  getAllIds(): Promise<CommitteeId[]>
 }
 
 export class CommitteeRepositoryImpl implements CommitteeRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   async getById(id: CommitteeId) {
-    const committee = await this.db.selectFrom("committee").selectAll().where("id", "=", id).executeTakeFirst()
-    return committee ? mapToCommittee(committee) : undefined
+    return await this.db.committee.findUnique({ where: { id } })
   }
 
-  async getAll(pageable: Pageable) {
-    return await paginatedQuery(this.db.selectFrom("committee").selectAll(), pageable, mapToCommittee)
+  async getAll() {
+    return await this.db.committee.findMany({})
   }
 
-  async create(values: CommitteeWrite) {
-    const committee = await this.db
-      .insertInto("committee")
-      .values(values)
-      .returningAll()
-      // It should not be possible for this to throw, since there are no
-      // restrictions on creating committees, as name is not unique.
-      .executeTakeFirstOrThrow()
-    return mapToCommittee(committee)
+  async create(data: CommitteeWrite) {
+    return await this.db.committee.create({ data })
   }
 
   async getAllIds() {
-    return (await this.db.selectFrom("committee").select("id").execute()).map((row) => row.id)
+    return (await this.db.committee.findMany({ select: { id: true } })).map((commitee) => commitee.id)
   }
 }

@@ -1,29 +1,19 @@
 import type { Company } from "@dotkomonline/types"
 import { addDays, addMinutes } from "date-fns"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { type CleanupFunction, createServiceLayerForTesting } from "../../../../vitest-integration.setup"
+import { beforeEach, describe, expect, it } from "vitest"
+import { core } from "../../../../vitest-integration.setup"
 import { getCompanyMock, getJobListingMock } from "../../../mock"
-import type { ServiceLayer } from "../../core"
 import { InvalidDeadlineError, InvalidEndDateError } from "../job-listing-error"
 
-describe("job-listings", () => {
-  let core: ServiceLayer
+describe("job-listings", async () => {
   let company: Company
-  let cleanup: CleanupFunction
 
   beforeEach(async () => {
-    const context = await createServiceLayerForTesting("job-listing")
-    core = context.core
-    cleanup = context.cleanup
     company = await core.companyService.createCompany(getCompanyMock())
   })
 
-  afterEach(async () => {
-    await cleanup()
-  })
-
   it("can create new job listings", async () => {
-    const jobListing = await core.jobListingService.createJobListing(getJobListingMock(company.id))
+    const jobListing = await core.jobListingService.create(getJobListingMock(company.id))
 
     const match = await core.jobListingService.getById(jobListing.id)
     expect(match).toEqual(jobListing)
@@ -31,7 +21,7 @@ describe("job-listings", () => {
 
   it("should fail if the start date is after the end date", async () => {
     await expect(
-      core.jobListingService.createJobListing(
+      core.jobListingService.create(
         getJobListingMock(company.id, {
           start: addDays(new Date(), 2),
           end: new Date(),
@@ -42,7 +32,7 @@ describe("job-listings", () => {
 
   it("should fail if the deadline is after job start", async () => {
     await expect(
-      core.jobListingService.createJobListing(
+      core.jobListingService.create(
         getJobListingMock(company.id, {
           start: addMinutes(new Date(), 1),
           end: addDays(new Date(), 1),
@@ -53,13 +43,13 @@ describe("job-listings", () => {
   })
 
   it("should be able to update locations by diffing", async () => {
-    const jobListing = await core.jobListingService.createJobListing(
+    const jobListing = await core.jobListingService.create(
       getJobListingMock(company.id, {
         locations: ["Oslo", "Trondheim"],
       })
     )
     const newLocations = ["Trondheim", "Bergen"]
-    const updated = await core.jobListingService.updateJobListingById(jobListing.id, {
+    const updated = await core.jobListingService.update(jobListing.id, {
       ...getJobListingMock(company.id),
       locations: newLocations,
     })
@@ -69,7 +59,7 @@ describe("job-listings", () => {
   })
 
   it("performing a diff which leaves a tag unused deletes the unused tag", async () => {
-    const jobListing = await core.jobListingService.createJobListing(
+    const jobListing = await core.jobListingService.create(
       getJobListingMock(company.id, {
         locations: ["Oslo", "Trondheim"],
       })
@@ -79,7 +69,7 @@ describe("job-listings", () => {
     expect(allLocations).toContain("Oslo")
 
     const newLocations = ["Trondheim"]
-    const updated = await core.jobListingService.updateJobListingById(jobListing.id, {
+    const updated = await core.jobListingService.update(jobListing.id, {
       ...getJobListingMock(company.id),
       locations: newLocations,
     })

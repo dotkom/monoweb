@@ -2,7 +2,11 @@
   "name": "monorepo",
   "version": "1.0.0",
   "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
-  "keywords": ["online", "ntnu", "student-association"],
+  "keywords": [
+    "online",
+    "ntnu",
+    "student-association"
+  ],
   "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "bugs": {
@@ -25,11 +29,10 @@
     "test": "turbo run test",
     "test:it": "turbo run test:it",
     "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
-    "migrate": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate",
-    "migrate-down": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate -- down",
-    "migrate-down-all": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate",
-    "migrate-with-fixtures": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate latest --with-fixtures",
-    "migrate-with-sample-data": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate -- latest --sample-data",
+    "prisma": "pnpm -F @dotkomonline/db prisma",
+    "migrate": "pnpm -F @dotkomonline/db migrate",
+    "generate": "pnpm -F @dotkomonline/db generate",
+    "migrate-with-fixtures": "pnpm -F @dotkomonline/db migrate-with-fixtures",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
@@ -37,7 +40,10 @@
     "docker:login:public": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws",
     "shell": "pnpm --filter=@dotkomonline/shell start"
   },
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "packageManager": "pnpm@9.15.5",
   "engines": {
     "node": ">=20.12.2",

@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client"
 
-export const getEventFixtures: (attendanceIds: string[]) => Insertable<Database["event"]>[] = (attendanceIds) => [
+export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateManyInput[] = (attendanceIds) => [
   {
     attendanceId: attendanceIds[0],
     createdAt: new Date("2023-02-22 13:30:04.713+00"),

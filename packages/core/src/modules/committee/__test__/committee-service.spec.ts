@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto"
 import type { Committee } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { CommitteeNotFoundError } from "../committee-error"
 import { CommitteeRepositoryImpl } from "../committee-repository"
 import { CommitteeServiceImpl } from "../committee-service"
 
 describe("CommitteeService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const committeeRepository = new CommitteeRepositoryImpl(db)
   const committeeService = new CommitteeServiceImpl(committeeRepository)
 
@@ -27,7 +27,7 @@ describe("CommitteeService", () => {
 
   it("does not find non-existent committees", async () => {
     const id = randomUUID()
-    vi.spyOn(committeeRepository, "getById").mockResolvedValueOnce(undefined)
+    vi.spyOn(committeeRepository, "getById").mockResolvedValueOnce(null)
     await expect(async () => committeeService.getCommittee(id)).rejects.toThrowError(CommitteeNotFoundError)
   })
 })

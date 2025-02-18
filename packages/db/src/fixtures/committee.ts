@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client"
 
-export const getCommitteeFixtures: () => Insertable<Database["committee"]>[] = () => [
+export const getCommitteeFixtures: () => Prisma.CommitteeCreateManyInput[] = () => [
   {
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     name: "Dotkom",

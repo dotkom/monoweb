@@ -1,89 +1,66 @@
-import type { Database } from "@dotkomonline/db"
-import { type Event, type EventId, EventSchema } from "@dotkomonline/types"
-import type { Insertable, Kysely, Selectable, Updateable } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
-
-export const mapToEvent = (data: Selectable<Database["event"]>) => {
-  return EventSchema.parse(data)
-}
-
-export type EventInsert = Insertable<Database["event"]>
-export type EventUpdate = Updateable<Database["event"]>
+import type { DBClient } from "@dotkomonline/db"
+import type { Event, EventId, EventWrite } from "@dotkomonline/types"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface EventRepository {
-  create(data: EventInsert): Promise<Event>
-  update(id: EventId, data: EventUpdate): Promise<Event>
-  getAll(take: number, cursor?: Cursor): Promise<Event[]>
+  create(data: EventWrite): Promise<Event>
+  update(id: EventId, data: Partial<EventWrite>): Promise<Event>
+  getAll(page: Pageable): Promise<Event[]>
   getAllByUserAttending(userId: string): Promise<Event[]>
-  getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
-  getById(id: string): Promise<Event | undefined>
+  getAllByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
+  getById(id: string): Promise<Event | null>
   addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async addAttendance(eventId: EventId, attendanceId: string) {
-    const insert = await this.db
-      .updateTable("event")
-      .returningAll()
-      .where("id", "=", eventId)
-      .set({ attendanceId })
-      .executeTakeFirstOrThrow()
-
-    return insert ? mapToEvent(insert) : null
+  async addAttendance(id: EventId, attendanceId: string) {
+    return await this.db.event.update({ where: { id }, data: { attendanceId } })
   }
 
-  async create(data: EventInsert): Promise<Event> {
-    const event = await this.db.insertInto("event").values(data).returningAll().executeTakeFirstOrThrow()
-    return mapToEvent(event)
+  async create(data: EventWrite): Promise<Event> {
+    return await this.db.event.create({ data })
   }
 
-  async update(id: EventId, data: EventUpdate): Promise<Event> {
-    const event = await this.db
-      .updateTable("event")
-      .set({ ...data, updatedAt: new Date() })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToEvent(event)
+  async update(id: EventId, data: Partial<EventWrite>): Promise<Event> {
+    return await this.db.event.update({ where: { id }, data })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Event[]> {
-    const query = orderedQuery(this.db.selectFrom("event").selectAll().limit(take), cursor)
-    const events = await query.execute()
-    return events.map((e) => mapToEvent(e))
+  async getAll(page: Pageable): Promise<Event[]> {
+    return await this.db.event.findMany({ ...pageQuery(page) })
   }
 
   async getAllByUserAttending(userId: string): Promise<Event[]> {
-    const eventsResult = await this.db
-      .selectFrom("attendance")
-      .leftJoin("attendancePool", "attendancePool.attendanceId", "attendance.id")
-      .leftJoin("attendee", "attendee.attendancePoolId", "attendee.attendancePoolId")
-      .innerJoin("event", "event.attendanceId", "attendance.id")
-      .selectAll("event")
-      .where("attendee.userId", "=", userId)
-      .execute()
-    return eventsResult.map(mapToEvent)
+    return await this.db.event.findMany({
+      where: {
+        attendance: {
+          pools: {
+            some: {
+              attendees: {
+                some: {
+                  userId,
+                },
+              },
+            },
+          },
+        },
+      },
+    })
   }
 
-  async getAllByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("eventCommittee")
-        .where("committeeId", "=", committeeId)
-        .innerJoin("event", "event.id", "eventCommittee.eventId")
-        .selectAll("event")
-        .limit(take),
-      cursor
-    )
-
-    const events = await query.execute()
-    return events.map((e) => mapToEvent(e))
+  async getAllByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]> {
+    return await this.db.event.findMany({
+      where: {
+        committees: {
+          some: { committeeId },
+        },
+      },
+      ...pageQuery(page),
+    })
   }
 
-  async getById(id: string): Promise<Event | undefined> {
-    const event = await this.db.selectFrom("event").where("id", "=", id).selectAll().executeTakeFirst()
-    return event === undefined ? undefined : mapToEvent(event)
+  async getById(id: string): Promise<Event | null> {
+    return await this.db.event.findUnique({ where: { id } })
   }
 }

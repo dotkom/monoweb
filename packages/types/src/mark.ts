@@ -1,14 +1,7 @@
-import { z } from "zod"
+import { schemas } from "@dotkomonline/db"
+import type { z } from "zod"
 
-export const MarkSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  title: z.string(),
-  category: z.string(),
-  details: z.string(),
-  duration: z.number(),
-})
+export const MarkSchema = schemas.MarkSchema.extend({})
 
 export type MarkId = Mark["id"]
 export type Mark = z.infer<typeof MarkSchema>

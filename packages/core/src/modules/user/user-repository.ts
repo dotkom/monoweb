@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
-import type { Kysely } from "kysely"
 import { z } from "zod"
 
 export interface UserRepository {
@@ -22,26 +21,28 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     lastName: auth0User.family_name,
     email: auth0User.email,
     image: auth0User.picture,
-    address: z.string().safeParse(appMetadata.address).data,
-    allergies: z.string().safeParse(appMetadata.allergies).data,
-    rfid: z.string().safeParse(appMetadata.rfid).data,
+    biography: z.string().safeParse(appMetadata.biography).data ?? null,
+    address: z.string().safeParse(appMetadata.address).data ?? null,
+    allergies: z.string().safeParse(appMetadata.allergies).data ?? null,
+    rfid: z.string().safeParse(appMetadata.rfid).data ?? null,
     compiled: z.boolean().default(false).parse(appMetadata.compiled),
-    gender: GenderSchema.safeParse(appMetadata.gender).data,
-    phone: z.string().safeParse(appMetadata.phone).data,
+    gender: GenderSchema.safeParse(appMetadata.gender).data ?? null,
+    phone: z.string().safeParse(appMetadata.phone).data ?? null,
   }
 }
 
 const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate => ({
   email: user.email,
   name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : undefined,
-  given_name: user.firstName,
-  family_name: user.lastName,
+  given_name: user.firstName ?? undefined,
+  family_name: user.lastName ?? undefined,
   picture: user.image ?? undefined,
   connection: "Username-Password-Authentication",
   password: password,
   app_metadata: {
     rfid: user.rfid,
     allergies: user.allergies,
+    biography: user.biography,
     compiled: user.compiled,
     address: user.address,
     gender: user.gender,
@@ -72,7 +73,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
 export class UserRepositoryImpl implements UserRepository {
   constructor(
     private readonly client: ManagementClient,
-    private readonly db: Kysely<Database>
+    private readonly db: DBClient
   ) {}
 
   async create(data: Omit<User, "id">, password: string): Promise<User> {
@@ -96,11 +97,17 @@ export class UserRepositoryImpl implements UserRepository {
       throw new Error("Failed to fetch user after registration")
     }
 
-    await this.db
-      .insertInto("owUser")
-      .values({ id: auth0Id })
-      .onConflict((conflict) => conflict.doNothing())
-      .execute()
+    await this.db.owUser.upsert({
+      where: {
+        id: auth0Id,
+      },
+      update: {
+        id: auth0Id,
+      },
+      create: {
+        id: auth0Id,
+      },
+    })
 
     return user
   }

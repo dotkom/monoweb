@@ -1,18 +1,14 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
-import type { InsertedIds } from "../fixture"
+import type { Prisma } from "@prisma/client"
 
 const employments = {
-  fulltime: "Fulltid",
-  parttime: "Deltid",
-  internship: "Sommerjobb/internship",
-  other: "Annet",
+  fulltime: "FULLTIME",
+  parttime: "PARTTIME",
+  internship: "SUMMER_INTERNSHIP",
+  other: "OTHER",
 } as const
 
 // export const jobListings: Insertable<Database["jobListing"]>[] = [
-export const getJobListingFixtures: (companyId: InsertedIds["company"]) => Insertable<Database["jobListing"]>[] = (
-  companyIds
-) => [
+export const getJobListingFixtures: (companyIds: string[]) => Prisma.JobListingCreateManyInput[] = (companyIds) => [
   {
     companyId: companyIds[0],
     title: "Job at Bekk",
@@ -249,32 +245,13 @@ export const getJobListingFixtures: (companyId: InsertedIds["company"]) => Inser
   },
 ]
 
-export const getJobListingLocationFixtures: () => Insertable<Database["jobListingLocation"]>[] = () => [
-  { name: "Fredrikstad" },
-  { name: "Tromsø" },
-  { name: "Bodø" },
-  { name: "Oslo" },
-  { name: "Trondheim" },
-]
-
-export const getJobListingLocationLinkFixtures: (
-  jobListingIds: string[],
-  locationIds: string[]
-) => Insertable<Database["jobListingLocationLink"]>[] = (jobListingIds, locationIds) => [
-  {
-    jobListingId: jobListingIds[0],
-    locationId: locationIds[0],
-  },
-  {
-    jobListingId: jobListingIds[0],
-    locationId: locationIds[1],
-  },
-  {
-    jobListingId: jobListingIds[0],
-    locationId: locationIds[1],
-  },
-  {
-    jobListingId: jobListingIds[0],
-    locationId: locationIds[1],
-  },
+export const getJobListingLocationFixtures = (jobListingIds: string[]): Prisma.JobListingLocationCreateManyInput[] => [
+  { jobListingId: jobListingIds[0], name: "Fredrikstad" },
+  { jobListingId: jobListingIds[0], name: "Tromsø" },
+  { jobListingId: jobListingIds[0], name: "Bodø" },
+  { jobListingId: jobListingIds[0], name: "Oslo" },
+  { jobListingId: jobListingIds[0], name: "Trondheim" },
+  { jobListingId: jobListingIds[1], name: "Bodø" },
+  { jobListingId: jobListingIds[1], name: "Oslo" },
+  { jobListingId: jobListingIds[1], name: "Trondheim" },
 ]

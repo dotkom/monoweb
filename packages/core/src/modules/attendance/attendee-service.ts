@@ -25,10 +25,10 @@ export interface AttendeeService {
   getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId): Promise<AttendancePool | null>
   canRegisterForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date): Promise<void>
   canDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
+  updateExtraChoices(id: AttendanceId, choices: ExtrasChoices): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
@@ -132,6 +132,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       // Create waitlist attendee
       return await this.waitlistAttendeeService.create({
         attendanceId: attendancePool.attendanceId,
+        attendancePoolId: attendancePool.id,
+        position: null,
         userId,
         isPunished: false,
         registeredAt: new Date(),
@@ -199,7 +201,9 @@ export class AttendeeServiceImpl implements AttendeeService {
     if (numAttendees === attendancePool.capacity) {
       await this.waitlistAttendeeService.create({
         attendanceId,
+        attendancePoolId: attendancePool.id,
         userId,
+        position: null,
         isPunished: false,
         registeredAt: new Date(),
         studyYear: -69,

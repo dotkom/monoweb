@@ -1,7 +1,6 @@
-import type { Database } from "@dotkomonline/db"
-import type { Insertable } from "kysely"
+import type { Prisma } from "@prisma/client"
 
-export const getInterestGroupFixtures: () => Insertable<Database["interestGroup"]>[] = () => [
+export const getInterestGroupFixtures: () => Prisma.InterestGroupCreateManyInput[] = () => [
   {
     updatedAt: new Date("2023-01-25 19:58:43.138389+00"),
     name: "testWithLink",

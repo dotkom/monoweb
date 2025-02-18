@@ -29,7 +29,7 @@ The monorepo is organized as follows:
 - `packages/`: Contains all the libraries
 - `apps/`: Contains all the applications
 - `docs/`: Contains the documentation
-- `tools/`: Internal developer tools, such as the Monoweb Database Migrator
+- `tools/`: Internal developer tools, such as the Monoweb Shell CLI
 
 We use [PNPM workspaces](https://pnpm.io/workspaces) along with [Turborepo](https://turbo.build/repo/docs) to manage the
 monorepo. All dependencies for all libraries and applications are managed by PNPM.
