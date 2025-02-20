@@ -1,6 +1,7 @@
 import type { UserId, WaitlistAttendee, WaitlistAttendeeId, WaitlistAttendeeWrite } from "@dotkomonline/types"
+import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
-import type { AttendancePoolRepository } from "./attendance-pool-repository"
+import type { AttendanceRepository } from "./attendance-repository"
 import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 export interface WaitlistAttendeService {
@@ -13,15 +14,19 @@ export interface WaitlistAttendeService {
 export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
   constructor(
     private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository
+    private readonly attendanceRepository: AttendanceRepository
   ) {
     this.waitlistAttendeeRepository = waitlistAttendeeRepository
   }
 
   async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
-    const pools = await this.attendancePoolRepository.getByAttendanceId(obj.attendanceId)
+    const attendance = await this.attendanceRepository.getById(obj.attendanceId)
 
-    const pool = pools.find((pool) => pool.yearCriteria.includes(obj.studyYear))
+    if (attendance === null) {
+      throw new AttendanceNotFound(obj.attendanceId)
+    }
+
+    const pool = attendance.pools.find((pool) => pool.yearCriteria.includes(obj.studyYear))
 
     if (!pool) {
       throw new AttendancePoolNotFoundError(obj.attendanceId)

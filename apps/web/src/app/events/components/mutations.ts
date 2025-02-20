@@ -4,7 +4,7 @@ export const useUnregisterMutation = () => {
   const utils = trpc.useUtils()
   return trpc.event.attendance.deregisterForEvent.useMutation({
     onSuccess: async () => {
-      await Promise.all([utils.event.getWebEventDetailData.refetch(), utils.event.attendance.getAttendee.refetch()])
+      await Promise.all([utils.event.getAttendanceEventDetail.refetch(), utils.event.attendance.getAttendee.refetch()])
     },
     onError: (error) => {
       console.error(error)
@@ -21,7 +21,7 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
 
   const mutation = trpc.event.attendance.registerForEvent.useMutation({
     onSuccess: async () => {
-      await Promise.all([utils.event.getWebEventDetailData.refetch(), utils.event.attendance.getAttendee.refetch()])
+      await Promise.all([utils.event.getAttendanceEventDetail.refetch(), utils.event.attendance.getAttendee.refetch()])
       onSuccess()
     },
     onError: (error) => {
@@ -32,12 +32,12 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
   return mutation
 }
 
-export const useSetExtrasChoicesMutation = () => {
+export const useSetQuestionsChoicesMutation = () => {
   const utils = trpc.useUtils()
 
-  return trpc.event.attendance.setExtrasChoices.useMutation({
-    onSuccess: (data) => {
-      utils.event.getWebEventDetailData.invalidate()
+  return trpc.event.attendance.updateQuestionResponses.useMutation({
+    onSuccess: () => {
+      utils.event.getAttendanceEventDetail.invalidate()
     },
     onError: (error) => {
       alert("Noe gikk galt")

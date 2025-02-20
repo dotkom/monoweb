@@ -4,13 +4,6 @@ import { trpc } from "../../../trpc"
 import { openAttendanceRegisteredModal } from "../modals/attendance-registered-modal"
 import { openAlreadyAttendedModal } from "../modals/error-attendance-registered-modal"
 
-export const usePoolsGetQuery = (id: AttendanceId) => {
-  const { data: pools = [], ...query } = trpc.event.attendance.getPoolsByAttendanceId.useQuery({
-    id,
-  })
-  return { pools, ...query }
-}
-
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
   const { data, isLoading } = trpc.event.attendance.getAttendance.useQuery(
     {
