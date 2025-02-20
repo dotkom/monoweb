@@ -1,10 +1,11 @@
-import { type Prisma, PrismaClient } from "@prisma/client"
-import type { DefaultArgs } from "@prisma/client/runtime/library"
+import { PrismaClient } from "@prisma/client"
 
 export * as schemas from "./schemas"
 
-export type DBClient = PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
-export const createPrisma = (databaseUrl: string): DBClient =>
+export const createPrisma = (databaseUrl: string) => (
   new PrismaClient({
     datasourceUrl: databaseUrl,
   })
+)
+
+export type DBClient = ReturnType<typeof createPrisma>

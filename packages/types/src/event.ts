@@ -1,4 +1,4 @@
-import type { z } from "zod"
+import { z } from "zod"
 
 import { schemas } from "@dotkomonline/db"
 
@@ -11,6 +11,7 @@ export const EventSchema = schemas.EventSchema.extend({})
 
 export type Event = z.infer<typeof EventSchema>
 export type EventId = Event["id"]
+export type EventWithAttendanceSummarySchema = z.infer<typeof EventSchema>
 
 export const EventWriteSchema = EventSchema.omit({
   id: true,
@@ -26,26 +27,9 @@ export const AttendanceEventSchema = EventSchema.extend({
 
 export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
 
-export type DashboardEventDetail = {
+export type AttendanceEventDetail = {
   event: Event
-  eventCommittees: Committee[]
+  committees: Committee[]
+  companies: Company[]
   attendance: Attendance | null
-  pools: AttendancePool[] | null
-  hasAttendance: boolean
 }
-
-export type WebEventDetail =
-  | {
-      hasAttendance: false
-      event: Event
-      eventCommittees: Committee[]
-      eventCompanies: Company[]
-    }
-  | {
-      hasAttendance: true
-      event: Event
-      eventCommittees: Committee[]
-      attendance: Attendance
-      pools: AttendancePool[]
-      eventCompanies: Company[]
-    }

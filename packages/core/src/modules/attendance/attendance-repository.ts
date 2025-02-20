@@ -1,64 +1,95 @@
 import type { DBClient } from "@dotkomonline/db"
+import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool } from "@prisma/client";
 import {
   type Attendance,
   type AttendanceId,
+  type AttendancePool,
   type AttendanceWrite,
   type AttendeeId,
-  type Extras,
-  ExtrasSchema,
+  AttendancePoolId,
+  AttendancePoolWrite,
+  AttendanceQuestionSchema,
+  YearCriteriaSchema,
 } from "@dotkomonline/types"
-import { Prisma } from "@prisma/client"
-import type { JsonValue } from "@prisma/client/runtime/library"
+import { z } from "zod"
 
 export interface AttendanceRepository {
   create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<Attendance | null>
   getById(id: AttendanceId): Promise<Attendance | null>
   getByAttendeeId(id: AttendeeId): Promise<Attendance | null>
-  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
+  update(data: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
   getAll(): Promise<Attendance[]>
+  getPool(id: AttendancePoolId): Promise<AttendancePool | null>
+  createPool(data: AttendancePoolWrite): Promise<AttendancePool>
+  deletePool(id: AttendancePoolId): Promise<AttendancePool>
+  updatePool(id: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   constructor(private readonly db: DBClient) {}
 
-  async getAll() {
-    const attendances = await this.db.attendance.findMany({})
+  private includePoolAttendeeCount = {
+    _count: {
+      select: {
+        attendees: true
+      }
+    }
+  }
+  
+  private includePools = {
+    pools: {
+      include: this.includePoolAttendeeCount
+    }
+  }
 
-    return attendances.map(this.parseExtras)
+  async getAll() {
+    const attendances = await this.db.attendance.findMany({
+      include: this.includePools
+    })
+
+    return attendances.map(this.mapAttendance)
   }
 
   async create(data: AttendanceWrite) {
     const createdAttendance = await this.db.attendance.create({
-      data: this.correctNullTypes(data),
+      data,
+      include: this.includePools
     })
 
-    return this.parseExtras(createdAttendance)
+    return this.mapAttendance(createdAttendance)
   }
 
   async update(data: Partial<AttendanceWrite>, id: AttendanceId) {
     const updatedAttendance = await this.db.attendance.update({
-      data: this.correctNullTypes(data),
+      data,
       where: { id },
+      include: this.includePools
     })
 
-    return this.parseExtras(updatedAttendance)
+    return this.mapAttendance(updatedAttendance)
   }
 
   async delete(id: AttendanceId) {
-    const deletedAttendance = await this.db.attendance.delete({ where: { id } })
-    return this.parseExtras(deletedAttendance)
+    const deletedAttendance = await this.db.attendance.delete({
+      where: { id },
+      include: this.includePools
+    })
+    return this.mapAttendance(deletedAttendance)
   }
 
   async getById(id: AttendanceId) {
-    const attendance = await this.db.attendance.findUnique({ where: { id } })
+    const attendance = await this.db.attendance.findUnique({
+      where: { id },
+      include: this.includePools
+    })
 
     if (!attendance) return null
 
-    return this.parseExtras(attendance)
+    return this.mapAttendance(attendance)
   }
 
-  async getByAttendeeId(id: AttendeeId) {
+  async getByAttendeeId(id: AttendeeId): Promise<Attendance | null> {
     const attendance = await this.db.attendance.findFirst({
       where: {
         attendees: {
@@ -67,24 +98,60 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
           },
         },
       },
+      include: this.includePools,
     })
 
     if (attendance === null) return null
 
-    return this.parseExtras(attendance)
+    return this.mapAttendance(attendance)
   }
 
-  /** Prisma requires distinction between database null and json null, so here we choose database null */
-  private correctNullTypes<T extends { extras?: unknown }>(data: T) {
-    return { ...data, extras: data.extras === null ? Prisma.DbNull : data.extras }
+  async createPool(data: AttendancePoolWrite) {
+    const createdPool = await this.db.attendancePool.create({
+      data,
+      include: this.includePoolAttendeeCount
+    })
+
+    return this.mapAttendancePool(createdPool)
   }
 
-  /** Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed */
-  private parseExtras<T extends { extras: JsonValue }>(
-    unparsedObj: T
-  ): Omit<T, "extras"> & { extras: Extras[] | null } {
-    const { extras, ...attendance } = unparsedObj
+  async deletePool(id: AttendancePoolId) {
+    const deletedPool = await this.db.attendancePool.delete({
+      where: { id },
+      include: this.includePoolAttendeeCount
+    })
 
-    return { ...attendance, extras: ExtrasSchema.parse(extras) }
+    return this.mapAttendancePool(deletedPool)
+  }
+
+  async updatePool(id: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+    const updatedPool = await this.db.attendancePool.update({
+      where: { id },
+      data,
+      include: this.includePoolAttendeeCount
+    });
+
+    return this.mapAttendancePool(updatedPool)
+  }
+
+  async getPool(id: AttendancePoolId) {
+    const pool = await this.db.attendancePool.findUnique({ where: { id }, include: this.includePoolAttendeeCount})
+
+    if (pool === null)
+      return null
+
+    return this.mapAttendancePool(pool)
+  }
+
+  /** Parses the questions with AttendanceQuestionSchema and maps the pools */
+  private mapAttendance({ questions, pools, ...attendance }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
+    return { ...attendance, questions: z.array(AttendanceQuestionSchema).parse(questions), pools: pools.map(this.mapAttendancePool)}
+  }
+
+  /** Renames _count on the prisma response for an attendee to numAttendees and parses the yearCriteria */
+  private mapAttendancePool({ _count: { attendees: numAttendees }, yearCriteria, ...attendee }: UnmappedAttendancePool): AttendancePool {
+    return { numAttendees, ...attendee, yearCriteria: YearCriteriaSchema.parse(yearCriteria) }
   }
 }
+
+type UnmappedAttendancePool = DBAttendancePool & { _count: { attendees: number } };

@@ -3,10 +3,11 @@ import type {
   AttendanceId,
   AttendancePool,
   AttendanceWrite,
-  ExtraResults,
-  Extras,
+  AttendanceQuestionResponse,
+  AttendanceQuestion,
   UserId,
   WaitlistAttendee,
+  AttendanceQuestionResults as AttendanceQuestionResult,
 } from "@dotkomonline/types"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
@@ -14,13 +15,13 @@ import {
   AttendanceDeletionError,
   AttendanceNotFound,
   AttendanceValidationError,
-  ExtrasUpdateAfterRegistrationStartError,
+  QuestionResponseUpdateAfterRegistrationStartError,
   InvalidParametersError,
 } from "./attendance-error"
-import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -28,8 +29,8 @@ export interface AttendanceService {
   getById(id: AttendanceId): Promise<Attendance | null>
   update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
   merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
-  updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
-  getExtrasResults(attendanceId: AttendanceId): Promise<ExtraResults[] | null>
+  updateQuestions(id: AttendanceId, questions: AttendanceQuestion[], now?: Date): Promise<Attendance | null>
+  getQuestionResults(attendanceId: AttendanceId): Promise<AttendanceQuestionResult[] | null>
   getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId): Promise<AttendancePool | null>
 }
 
@@ -38,60 +39,33 @@ export class AttendanceServiceImpl implements AttendanceService {
     private readonly attendanceRepository: AttendanceRepository,
     private readonly attendeeRepository: AttendeeRepository,
     private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository,
     private readonly userService: UserService
   ) {}
 
-  async getExtrasResults(attendanceId: AttendanceId) {
+  async getQuestionResults(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
+
     if (!attendance) {
       throw new AttendanceNotFound(attendanceId)
     }
 
-    if (attendance.extras === null) {
-      return null
-    }
-
     const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const extrasResults: ExtraResults[] = []
+    const allQuestionResponses = attendees.flatMap(attendee => attendee.questionResponses);
 
-    for (const extra of attendance.extras) {
-      const totalCount = attendees.filter((attendee) =>
-        attendee.extrasChoices.some((choice) => choice.questionId === extra.id)
-      ).length
+    return attendance.questions.map(question => {
+      const questionResponses = allQuestionResponses.filter(response => response.questionId === question.id);
 
-      extrasResults.push({
-        id: extra.id,
-        name: extra.name,
-        totalCount,
-        choices: extra.choices.map((choice) => ({
+      return {
+        id: question.id,
+        name: question.name,
+        totalCount: questionResponses.length,
+        choices: question.choices.map(choice => ({
           id: choice.id,
           name: choice.name,
-          count: attendees.filter((attendee) =>
-            attendee.extrasChoices.some(
-              (extraChoice) => extraChoice.questionId === extra.id && extraChoice.choiceId === choice.id
-            )
-          ).length,
-        })),
-      })
-    }
-
-    for (const attendee of attendees) {
-      for (const extraChoice of attendee.extrasChoices) {
-        const extraIndex = extrasResults.findIndex((extra) => extra.name === extraChoice.questionId)
-        if (extraIndex >= 0) {
-          const choiceIndex = extrasResults[extraIndex].choices.findIndex(
-            (choice) => choice.id === extraChoice.choiceId
-          )
-          if (choiceIndex >= 0) {
-            extrasResults[extraIndex].totalCount++
-            extrasResults[extraIndex].choices[choiceIndex].count++
-          }
-        }
+          count: questionResponses.filter(response => response.choiceId === choice.id).length
+        }))
       }
-    }
-
-    return extrasResults
+    });
   }
 
   async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
@@ -99,7 +73,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     return attendance
   }
 
-  async updateExtras(id: AttendanceId, extras: Extras[], now: Date = new Date()) {
+  async updateQuestions(id: AttendanceId, questions: AttendanceQuestion[], now: Date = new Date()) {
     const attendance = await this.attendanceRepository.getById(id)
 
     if (!attendance) {
@@ -107,13 +81,13 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     if (attendance.registerStart < now) {
-      throw new ExtrasUpdateAfterRegistrationStartError()
+      throw new QuestionResponseUpdateAfterRegistrationStartError()
     }
 
     return this.attendanceRepository.update(
       {
         ...attendance,
-        extras,
+        questions,
       },
       id
     )
@@ -163,18 +137,16 @@ export class AttendanceServiceImpl implements AttendanceService {
       throw new AttendanceNotFound(attendanceId)
     }
 
-    const pools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
-
     // Check that the year criteria of the merge pool contains all of the year criteria of the pools being merged
-    const combinedCriteria = Array.from(new Set(pools.flatMap((pool) => pool.yearCriteria)))
+    const combinedCriteria = Array.from(new Set(attendance.pools.flatMap((pool) => pool.yearCriteria)))
     if (!combinedCriteria.every((criteria) => yearCriteria.includes(criteria))) {
       throw new InvalidParametersError(
         `Merge pool must contain the combined year criteria of the pools being merged: (${combinedCriteria.join(",")})`
       )
     }
 
-    const combinedCapacity = pools.reduce((acc, pool) => acc + pool.capacity, 0)
-    const mergePool = await this.attendancePoolRepository.create({
+    const combinedCapacity = attendance.pools.reduce((acc, pool) => acc + pool.capacity, 0)
+    const mergePool = await this.attendanceRepository.createPool({
       attendanceId,
       capacity: combinedCapacity,
       yearCriteria: yearCriteria,
@@ -187,14 +159,14 @@ export class AttendanceServiceImpl implements AttendanceService {
     const waitlistAttendees = await this.getAllWaitlistAttendeesOrdered(attendanceId)
 
     await Promise.all(
-      attendees.map((attendee) => this.attendeeRepository.update({ attendancePoolId: mergePool.id }, attendee.id))
+      attendees.map((attendee) => this.attendeeRepository.update(attendee.id, { attendancePoolId: mergePool.id }))
     )
     await Promise.all(
       waitlistAttendees.map((waitlistAttendee, i) =>
         this.waitlistAttendeeRepository.update(waitlistAttendee.id, { attendancePoolId: mergePool.id, position: i })
       )
     )
-    await Promise.all(pools.map((pool) => this.attendancePoolRepository.delete(pool.id)))
+    await Promise.all(attendance.pools.map((pool) => this.attendanceRepository.delete(pool.id)))
   }
 
   async getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId) {
@@ -204,12 +176,18 @@ export class AttendanceServiceImpl implements AttendanceService {
       throw new UserNotFoundError(userId)
     }
 
-    const userAttendablePool = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
+    const attendance = await this.attendanceRepository.getById(attendanceId)
+
+    if (!attendance) {
+      throw new AttendancePoolNotFoundError(attendanceId)
+    }
+
     const userAttendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
 
     if (userAttendee) {
       return null
     }
-    return userAttendablePool.find((pool) => pool.yearCriteria.includes(-69)) ?? null
+
+    return attendance.pools.find((pool) => pool.yearCriteria.includes(-69)) ?? null
   }
 }

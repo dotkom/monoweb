@@ -5,18 +5,18 @@ import {
   type Attendee,
   type AttendeeId,
   type AttendeeWrite,
-  type ExtrasChoices,
-  ExtrasChoicesSchema,
+  type AttendanceQuestionResponse,
+  AttendeeQuestionResponsesSchema,
   type UserId,
 } from "@dotkomonline/types"
-import type { JsonValue } from "@prisma/client/runtime/library"
+import { JsonValue } from "@prisma/client/runtime/library"
+import { AttendeeWriteError } from "./attendee-error"
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
   delete(id: AttendeeId): Promise<Attendee | null>
   getById(id: AttendeeId): Promise<Attendee | null>
-  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee | null>
-  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee | null>
+  update(id: AttendeeId, obj: Partial<AttendeeWrite>): Promise<Attendee | null>
   getByAttendanceId(id: AttendanceId): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
@@ -30,19 +30,21 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     if (user === null) return null
 
-    return this.parseExtrasChoices(user)
+    return this.parseQuestionResponses(user)
   }
 
   async create(data: AttendeeWrite): Promise<Attendee> {
+    this.validateWrite(data)
+
     const createdUser = await this.db.attendee.create({ data })
 
-    return this.parseExtrasChoices(createdUser)
+    return this.parseQuestionResponses(createdUser)
   }
 
   async delete(id: AttendeeId) {
     const deletedUser = await this.db.attendee.delete({ where: { id } })
 
-    return this.parseExtrasChoices(deletedUser)
+    return this.parseQuestionResponses(deletedUser)
   }
 
   async getById(id: AttendeeId): Promise<Attendee | null> {
@@ -50,37 +52,45 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     if (user === null) return null
 
-    return this.parseExtrasChoices(user)
+    return this.parseQuestionResponses(user)
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
     const attendees = await this.db.attendee.findMany({ where: { attendanceId } })
 
-    return attendees.map(this.parseExtrasChoices)
+    return attendees.map(this.parseQuestionResponses)
   }
 
   async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
     const attendees = await this.db.attendee.findMany({ where: { attendancePoolId } })
 
-    return attendees.map(this.parseExtrasChoices)
+    return attendees.map(this.parseQuestionResponses)
   }
 
-  async update(data: Partial<AttendeeWrite>, id: AttendeeId) {
-    const updatedUser = await this.db.attendee.update({ where: { id }, data })
+  async update(id: AttendeeId, data: Partial<AttendeeWrite>) {
+    this.validateWrite(data)
 
-    return this.parseExtrasChoices(updatedUser)
+    const updatedUserResult = await this.db.attendee.updateManyAndReturn({ where: { id }, data })
+
+    if (updatedUserResult.length === 0)
+      return null
+
+    return this.parseQuestionResponses(updatedUserResult[0])
   }
 
-  // TODO: Remove this, this is not necessary
-  async updateExtraChoices(id: AttendeeId, extrasChoices: ExtrasChoices): Promise<Attendee | null> {
-    return this.update({ extrasChoices }, id)
+  private validateWrite(data: Partial<AttendeeWrite>) {
+    if (data.questionResponses) {
+      const questionResponseParseResult = AttendeeQuestionResponsesSchema.safeParse(data.questionResponses)
+
+      if (!questionResponseParseResult.success) {
+        throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field questionResponses")
+      }
+    }
   }
 
-  private parseExtrasChoices<T extends { extrasChoices: JsonValue }>(
-    unparsedObj: T
-  ): Omit<T, "extrasChoices"> & { extrasChoices: ExtrasChoices } {
-    const { extrasChoices, ...obj } = unparsedObj
-
-    return { ...obj, extrasChoices: ExtrasChoicesSchema.parse(extrasChoices) }
+  private parseQuestionResponses<T extends { questionResponses: JsonValue }>(
+    { questionResponses, ...obj}: T
+  ): Omit<T, "questionResponses"> & { questionResponses: AttendanceQuestionResponse[] } {
+    return { ...obj, questionResponses: AttendeeQuestionResponsesSchema.parse(questionResponses) }
   }
 }

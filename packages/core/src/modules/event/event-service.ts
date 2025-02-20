@@ -1,14 +1,12 @@
 import type {
+  AttendanceEventDetail,
   AttendanceWrite,
-  DashboardEventDetail,
   Event,
   EventId,
   EventWrite,
-  WebEventDetail,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import { AttendanceNotFound } from "../attendance/attendance-error"
-import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { EventCommitteeService } from "./event-committee-service"
 import type { EventCompanyService } from "./event-company-service.js"
@@ -23,15 +21,13 @@ export interface EventService {
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
-  getWebDetail(id: EventId): Promise<WebEventDetail>
-  getDashboardDetail(id: EventId): Promise<DashboardEventDetail>
+  getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail>
 }
 
 export class EventServiceImpl implements EventService {
   constructor(
     private readonly eventRepository: EventRepository,
     private readonly attendanceService: AttendanceService,
-    private readonly attendancePoolService: AttendancePoolService,
     private readonly eventCommitteeService: EventCommitteeService,
     private readonly eventCompanyService: EventCompanyService
   ) {}
@@ -81,66 +77,17 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getDashboardDetail(id: EventId): Promise<DashboardEventDetail> {
+  async getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail> {
     const event = await this.getEventById(id)
-    const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
-
-    if (event.attendanceId !== null) {
-      const attendance = await this.attendanceService.getById(event.attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(event.attendanceId)
-      }
-
-      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
-
-      return {
-        event,
-        eventCommittees,
-        attendance,
-        pools,
-        hasAttendance: true,
-      }
-    }
+    const committees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
+    const companies = await this.eventCompanyService.getCompaniesByEventId(event.id)
+    const attendance = event.attendanceId ? await this.attendanceService.getById(event.attendanceId) : null
 
     return {
       event,
-      eventCommittees: eventCommittees,
-      attendance: null,
-      pools: null,
-      hasAttendance: false,
-    }
-  }
-
-  async getWebDetail(id: EventId): Promise<WebEventDetail> {
-    const event = await this.getEventById(id)
-    const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
-    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
-
-    console.log(`event ${id}: ${event.title} and attendandeId: ${event.attendanceId}`)
-
-    if (!event.attendanceId) {
-      return {
-        hasAttendance: false,
-        event,
-        eventCommittees: eventCommittees,
-        eventCompanies,
-      }
-    }
-
-    const attendance = await this.attendanceService.getById(event.attendanceId)
-    if (!attendance) {
-      throw new Error("Attendance not found")
-    }
-
-    const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
-
-    return {
-      hasAttendance: true,
-      event,
-      eventCommittees,
+      committees,
+      companies,
       attendance,
-      pools,
-      eventCompanies,
     }
   }
 }
