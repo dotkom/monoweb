@@ -9,7 +9,7 @@ import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
   const session = await getServerSession(authOptions)
-  const eventDetail = await server.event.getWebEventDetailData.query(id)
+  const eventDetail = await server.event.getAttendanceEventDetail.query(id)
 
   return (
     <div className="mt-8 flex flex-col gap-8">
@@ -17,11 +17,11 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
       <div className="flex w-full flex-col md:flex-row">
         <EventDescriptionAndByline
           event={eventDetail.event}
-          committees={eventDetail.eventCommittees}
-          companies={eventDetail.eventCompanies}
+          committees={eventDetail.committees}
+          companies={eventDetail.companies}
         />
         <div className="flex-1 flex-col">
-          {eventDetail.hasAttendance && <AttendanceCard sessionUser={session?.user} initialEventDetail={eventDetail} />}
+          {eventDetail.attendance !== null && <AttendanceCard sessionUser={session?.user} initialEventDetail={eventDetail} />}
           <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>

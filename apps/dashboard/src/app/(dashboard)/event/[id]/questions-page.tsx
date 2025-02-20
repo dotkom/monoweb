@@ -1,18 +1,18 @@
-import type { Attendance, ExtraResults } from "@dotkomonline/types"
+import type { Attendance, AttendanceQuestionResults } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
 import type { FC } from "react"
 import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import {
   useAddAttendanceMutation,
-  useUpdateExtrasMutation,
+  useUpdateAttendanceMutation
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
-import { useCreateAttendanceExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
-import { useEditExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
+import { useCreateAttendanceQuestionsModal } from "../../../../modules/event/modals/create-event-questions-modal"
+import { useEditQuestionsModal } from "../../../../modules/event/modals/edit-event-questions-modal"
 import { trpc } from "../../../../trpc"
 import { useEventDetailsContext } from "./provider"
 
-export const ExtrasPage: FC = () => {
+export const QuestionsPage: FC = () => {
   const { attendance } = useEventDetailsContext()
   const { event } = useEventDetailsContext()
 
@@ -20,7 +20,7 @@ export const ExtrasPage: FC = () => {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <ExtrasPageDetail attendance={attendance} />
+  return <QuestionsPageDetail attendance={attendance} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
@@ -30,7 +30,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
-      extras: [],
+      questions: [],
     },
     label: "Opprett",
     onSubmit: (values) => {
@@ -48,53 +48,55 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
 interface Props {
   attendance: Attendance
 }
-export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
-  const openCreate = useCreateAttendanceExtrasModal({
+export const QuestionsPageDetail: FC<Props> = ({ attendance }) => {
+  const openCreate = useCreateAttendanceQuestionsModal({
     attendance,
   })
 
-  const openEdit = useEditExtrasModal({
+  const openEdit = useEditQuestionsModal({
     attendance,
   })
 
-  const edit = useUpdateExtrasMutation()
+  const edit = useUpdateAttendanceMutation()
 
-  const { data: results = [], isLoading: resultsIsLoading } = trpc.attendance.getExtrasResults.useQuery({
+  const { data: results = [], isLoading: resultsIsLoading } = trpc.attendance.getQuestionsResults.useQuery({
     attendanceId: attendance.id,
   })
 
   const deleteAlternative = (id: string) => {
-    const newChoices = attendance.extras?.filter((alt) => alt.id !== id)
+    const newChoices = attendance.questions?.filter((alt) => alt.id !== id)
     edit.mutate({
       id: attendance.id,
-      extras: newChoices ?? [],
+      attendance: {
+        questions: newChoices ?? [],
+      }
     })
   }
 
-  const extrasResults = resultsIsLoading ? (
+  const questionsResults = resultsIsLoading ? (
     <p>Laster...</p>
   ) : results === null ? (
     <div>Ingen valg</div>
   ) : (
-    <AttendanceExtrasTable results={results} />
+    <AttendanceQuestionsTable results={results} />
   )
 
   return (
     <Box>
       <Box>
         <Title order={3}>Valg</Title>
-        {!attendance.extras?.length && <p>Ingen valg er lagt til</p>}
+        {!attendance.questions?.length && <p>Ingen valg er lagt til</p>}
         <Box>
-          {attendance.extras?.map((extra) => (
-            <Paper key={extra.id} withBorder p={"md"} mt={"md"}>
-              <ActionIcon variant="outline" onClick={() => openEdit(extra)} mr="md">
+          {attendance.questions?.map((question) => (
+            <Paper key={question.id} withBorder p={"md"} mt={"md"}>
+              <ActionIcon variant="outline" onClick={() => openEdit(question)} mr="md">
                 <Icon icon="tabler:edit" />
               </ActionIcon>
-              <ActionIcon variant="outline" onClick={() => deleteAlternative(extra.id)} color="red">
+              <ActionIcon variant="outline" onClick={() => deleteAlternative(question.id)} color="red">
                 <Icon icon="tabler:trash" />
               </ActionIcon>
-              <h3>{extra.name}</h3>
-              {extra.choices.map((choice) => (
+              <h3>{question.name}</h3>
+              {question.choices.map((choice) => (
                 <div key={choice.id}>
                   <p>{choice.name}</p>
                 </div>
@@ -110,17 +112,17 @@ export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
       <Divider mt="xl" mb="xl" />
       <Box>
         <Title order={3}> Resultater</Title>
-        {extrasResults}
+        {questionsResults}
       </Box>
     </Box>
   )
 }
 
-interface AttendanceExtrasTableProps {
-  results: ExtraResults[]
+interface AttendanceQuestionsTableProps {
+  results: AttendanceQuestionResults[]
 }
 
-function AttendanceExtrasTable({ results }: AttendanceExtrasTableProps) {
+function AttendanceQuestionsTable({ results }: AttendanceQuestionsTableProps) {
   return (
     <div>
       {results.map((result, index) => (

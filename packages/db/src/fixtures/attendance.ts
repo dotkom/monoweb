@@ -7,7 +7,7 @@ export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
     deregisterDeadline: new Date("2023-02-22 13:30:04.713+00"),
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     updatedAt: new Date("2023-02-22 13:30:04.713+00"),
-    extras: [
+    questions: [
       {
         id: "0",
         name: "Hva vil du ha til mat?",
@@ -52,6 +52,6 @@ export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
     deregisterDeadline: new Date("2023-02-23 11:03:49.289+00"),
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
-    extras: Prisma.DbNull,
+    questions: []
   },
 ]

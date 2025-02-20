@@ -8,7 +8,7 @@ import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
-import { ExtrasPage } from "./extras-page"
+import { QuestionsPage } from "./questions-page"
 import { useEventDetailsContext } from "./provider"
 import { WaitlistPage } from "./waitlist-page"
 
@@ -62,8 +62,8 @@ const SIDEBAR_LINKS = [
   {
     icon: "tabler:calendar-event",
     label: "Valg",
-    slug: "extras",
-    component: ExtrasPage,
+    slug: "questions",
+    component: QuestionsPage,
   },
 ]
 

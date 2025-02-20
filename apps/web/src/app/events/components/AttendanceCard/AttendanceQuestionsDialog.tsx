@@ -1,23 +1,23 @@
-import type { Extras, ExtrasChoices } from "@dotkomonline/types"
+import { AttendanceQuestion, AttendanceQuestionResponse } from "@dotkomonline/types"
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
 import { useFieldArray, useForm } from "react-hook-form"
 
-interface ChooseExtrasDialogProps {
+interface AttendanceQuestionsDialog {
   open: boolean
-  extras: Extras[]
-  onSubmit: (choices: ExtrasChoices) => void
+  questions: AttendanceQuestion[]
+  onSubmit: (choices: AttendanceQuestionResponse[]) => void
   setOpen: (open: boolean) => void
-  defaultValues: ExtrasChoices | null
+  defaultValues: AttendanceQuestionResponse[]
 }
 
-export function ChooseExtrasDialog({ open, extras, onSubmit, setOpen, defaultValues }: ChooseExtrasDialogProps) {
+export function AttendanceQuestionsDialog({ open, questions, onSubmit, setOpen, defaultValues }: AttendanceQuestionsDialog) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild />
       <AlertDialogContent>
         <h4>Dette arrangementet har valg.</h4>
         <Form
-          extras={extras}
+          questions={questions}
           onSubmit={onSubmit}
           defaultValues={defaultValues ? { choices: defaultValues } : undefined}
         />
@@ -36,17 +36,17 @@ type FormValues = {
 }
 
 interface FormProps {
-  extras: Extras[]
-  onSubmit: (choices: ExtrasChoices) => void
+  questions: AttendanceQuestion[]
+  onSubmit: (choices: AttendanceQuestionResponse[]) => void
   defaultValues?: FormValues
 }
-export default function Form({ extras, onSubmit, defaultValues }: FormProps) {
+export default function Form({ questions: responses, onSubmit, defaultValues }: FormProps) {
   const defaultValues_: FormValues = defaultValues ?? {
-    choices: extras.map((extra) => ({
-      questionId: extra.id,
-      choiceId: extra.choices[0].id,
-      choiceName: extra.choices[0].name,
-      questionName: extra.name,
+    choices: responses.map((question) => ({
+      questionId: question.id,
+      choiceId: question.choices[0].id,
+      choiceName: question.choices[0].name,
+      questionName: question.name,
     })),
   }
   const {
@@ -62,10 +62,10 @@ export default function Form({ extras, onSubmit, defaultValues }: FormProps) {
   })
 
   const onSubmit_ = (data: FormValues) => {
-    const choices: ExtrasChoices = data.choices.map((extra) => ({
-      ...extra,
+    const choices = data.choices.map((question) => ({
+      ...question,
       choiceName:
-        extras.find((e) => e.id === extra.questionId)?.choices.find((c) => c.id === extra.choiceId)?.name ?? "",
+        responses.find((e) => e.id === question.questionId)?.choices.find((c) => c.id === question.choiceId)?.name ?? "",
     }))
 
     onSubmit(choices)
@@ -77,7 +77,7 @@ export default function Form({ extras, onSubmit, defaultValues }: FormProps) {
         {fields.map((field, index) => {
           return (
             <div key={field.id} className="w-full">
-              <label className="font-bold" htmlFor={`extras[${index}].choiceId`}>
+              <label className="font-bold" htmlFor={`questions[${index}].choiceId`}>
                 {field.questionName}
               </label>
               <div className="w-full bg-[#fff] p-[0.5px]">
@@ -87,7 +87,7 @@ export default function Form({ extras, onSubmit, defaultValues }: FormProps) {
                   })}
                   className="block mt-1 mb-2 w-full text-xl"
                 >
-                  {extras[index].choices.map((choice) => (
+                  {responses[index].choices.map((choice) => (
                     <option key={choice.id} value={choice.id}>
                       {choice.name}
                     </option>

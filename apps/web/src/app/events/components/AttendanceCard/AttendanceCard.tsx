@@ -1,23 +1,23 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
+import type { Attendance, AttendanceEventDetail } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
-import { useRegisterMutation, useSetExtrasChoicesMutation, useUnregisterMutation } from "../mutations"
-import ChooseExtrasForm from "./ChooseExtrasDialog"
+import { useRegisterMutation, useSetQuestionsChoicesMutation, useUnregisterMutation } from "../mutations"
+import ChooseQuestionsForm from "./AttendanceQuestionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
 
 interface AttendanceCardProps {
   sessionUser?: Session["user"]
-  initialEventDetail: WebEventDetail
+  initialEventDetail: AttendanceEventDetail
 }
 
 export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEventDetail }) => {
-  const { data: eventDetail, ...eventDetailQuery } = trpc.event.getWebEventDetailData.useQuery(
+  const { data: eventDetail, ...eventDetailQuery } = trpc.event.getAttendanceEventDetail.useQuery(
     initialEventDetail.event.id,
     {
       enabled: Boolean(sessionUser),
@@ -25,14 +25,14 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
     }
   )
 
-  if (!eventDetail || !eventDetail.hasAttendance) {
+  if (!eventDetail || eventDetail.attendance === null) {
     return null
   }
 
   return (
     <AttendanceCardInner
       sessionUser={sessionUser}
-      eventDetail={eventDetail}
+      attendance={eventDetail.attendance}
       refetchEventDetail={eventDetailQuery.refetch}
     />
   )
@@ -40,37 +40,37 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
 
 interface InnerAttendanceCardProps {
   sessionUser?: Session["user"]
-  eventDetail: Extract<WebEventDetail, { hasAttendance: true }>
+  attendance: Attendance,
   refetchEventDetail: () => void
 }
 
-export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, refetchEventDetail }) => {
+export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, attendance, refetchEventDetail }) => {
   const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
     {
-      attendanceId: eventDetail.attendance.id,
+      attendanceId: attendance.id,
       userId: sessionUser?.id ?? "",
     },
     {
-      enabled: Boolean(sessionUser) && eventDetail.hasAttendance,
+      enabled: Boolean(sessionUser),
     }
   )
 
   const [, setExtraDialogOpen] = useState(false)
-  const setExtrasChoices = useSetExtrasChoicesMutation()
+  const setQuestionsChoices = useSetQuestionsChoicesMutation()
 
   const { data: user } = trpc.user.getMe.useQuery()
 
-  const handleGatherExtrasChoices = () => {
-    if (eventDetail.attendance.extras !== null) {
+  const handleGatherQuestionResponses = () => {
+    if (attendance.questions.length > 0) {
       setExtraDialogOpen(true)
     }
   }
 
   const attendedPool = attendee?.attendancePoolId
-    ? eventDetail.pools.find((pool) => pool.id === attendee.attendancePoolId)
+    ? attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
     : null
 
-  const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
+  const registerMutation = useRegisterMutation({ onSuccess: handleGatherQuestionResponses })
   const unregisterMutation = useUnregisterMutation()
   const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading
 
@@ -117,7 +117,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
         {attendee !== undefined && (
           <RegistrationButton
             attendee={attendee}
-            attendance={eventDetail.attendance}
+            attendance={attendance}
             registerForAttendance={registerForAttendance}
             unregisterForAttendance={unregisterForAttendance}
             isLoading={registerLoading}
@@ -126,12 +126,12 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
         )}
       </div>
 
-      {attendee && eventDetail.attendance.extras !== null && (
+      {attendee && attendance.questions.length > 0 && (
         <div className="w-full">
-          <ChooseExtrasForm
-            extras={eventDetail.attendance.extras}
-            onSubmit={(choices: ExtrasChoices) => {
-              setExtrasChoices.mutate({
+          <ChooseQuestionsForm
+            questions={attendance.questions}
+            onSubmit={(choices) => {
+              setQuestionsChoices.mutate({
                 id: attendee.id,
                 choices,
               })

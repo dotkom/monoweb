@@ -2,13 +2,13 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { useMergeAttendanceMutation } from "../mutations/use-attendance-mutations"
-import { usePoolsGetQuery } from "../queries/use-get-queries"
+import { useAttendanceGetQuery } from "../queries/use-get-queries"
 
 interface MergePoolsModalProps {
   attendanceId: string
 }
-export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ context, id, innerProps }) => {
-  const { pools } = usePoolsGetQuery(innerProps.attendanceId)
+export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ context, id, innerProps: { attendanceId } }) => {
+  const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const onClose = () => context.closeModal(id)
   const mergeAttendanceMut = useMergeAttendanceMutation()
 
@@ -16,11 +16,11 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ c
     mergeAttendanceMut.mutate({
       title: "Generell påmelding",
       yearCriteria: values.yearCriteria,
-      attendanceId: innerProps.attendanceId,
+      attendanceId: attendanceId,
     })
   }
 
-  const disabledYears = [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+  const disabledYears = attendance ? [...new Set(attendance.pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))] : []
 
   return (
     <div>
@@ -36,7 +36,7 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ c
       <PoolForm
         defaultValues={{
           yearCriteria: disabledYears,
-          capacity: pools.reduce((acc, pool) => acc + pool.capacity, 0),
+          capacity: attendance?.pools.reduce((acc, pool) => acc + pool.capacity, 0) ?? 0,
           title: "Generell påmelding",
           isVisible: true,
         }}

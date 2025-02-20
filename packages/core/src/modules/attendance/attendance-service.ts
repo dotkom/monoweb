@@ -8,6 +8,8 @@ import type {
   UserId,
   WaitlistAttendee,
   AttendanceQuestionResults as AttendanceQuestionResult,
+  AttendancePoolWrite,
+  AttendancePoolId,
 } from "@dotkomonline/types"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
@@ -27,11 +29,15 @@ export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance | null>
-  update(obj: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance | null>
+  update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance | null>
   merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
   updateQuestions(id: AttendanceId, questions: AttendanceQuestion[], now?: Date): Promise<Attendance | null>
   getQuestionResults(attendanceId: AttendanceId): Promise<AttendanceQuestionResult[] | null>
   getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId): Promise<AttendancePool | null>
+
+  createPool(data: AttendancePoolWrite): Promise<AttendancePool>
+  deletePool(poolId: AttendancePoolId): Promise<AttendancePool>
+  updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
@@ -68,7 +74,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     });
   }
 
-  async update(obj: Partial<AttendanceWrite>, id: AttendanceId) {
+  async update(id: AttendanceId, obj: Partial<AttendanceWrite>) {
     const attendance = await this.attendanceRepository.update(obj, id)
     return attendance
   }
@@ -189,5 +195,17 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     return attendance.pools.find((pool) => pool.yearCriteria.includes(-69)) ?? null
+  }
+
+  async createPool(data: AttendancePoolWrite) {
+    return await this.attendanceRepository.createPool(data)
+  }
+
+  async deletePool(poolId: AttendancePoolId) {
+    return await this.attendanceRepository.deletePool(poolId)
+  }
+
+  async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+    return await this.attendanceRepository.updatePool(poolId, data)
   }
 }

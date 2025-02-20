@@ -11,9 +11,9 @@ import { EditPoolModal } from "../modules/attendance/modals/edit-pool-modal"
 import { CreateManualUserAttendModal } from "../modules/attendance/modals/manual-user-attend-modal"
 import { MergePoolsModal } from "../modules/attendance/modals/merge-pools-modal"
 import { CreateCompanyModal } from "../modules/company/modals/create-company-modal"
-import { CreateAttendanceExtrasModal } from "../modules/event/modals/create-event-extras-modal"
+import { CreateAttendanceQuestionsModal } from "../modules/event/modals/create-event-questions-modal"
 import { CreateEventModal } from "../modules/event/modals/create-event-modal"
-import { UpdateAttendanceExtrasModal } from "../modules/event/modals/edit-event-extras-modal"
+import { UpdateAttendanceQuestionsModal } from "../modules/event/modals/edit-event-questions-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "../modules/offline/modals/create-offline-modal"
 
@@ -26,8 +26,8 @@ const modals = {
   "jobListing/create": CreateJobListingModal,
   "company/create": CreateCompanyModal,
   "offline/create": CreateOfflineModal,
-  "attendance/extras/create": CreateAttendanceExtrasModal,
-  "attendance/extras/update": UpdateAttendanceExtrasModal,
+  "attendance/questions/create": CreateAttendanceQuestionsModal,
+  "attendance/questions/update": UpdateAttendanceQuestionsModal,
   "article/create": CreateArticleModal,
   "interestGroup/create": CreateInterestGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,

@@ -39,14 +39,7 @@ const stripeAccounts = {
     webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
 }
-const prisma = createPrisma(env.DATABASE_URL).$extends({
-  name: "a",
-  query: {
-    event: {
-
-    }
-  }
-})
+const prisma = createPrisma(env.DATABASE_URL)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
