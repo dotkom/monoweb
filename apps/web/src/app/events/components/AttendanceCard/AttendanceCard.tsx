@@ -55,14 +55,14 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     }
   )
 
-  const [, setExtraDialogOpen] = useState(false)
+  const [, setQuestionsDialogOpen] = useState(false)
   const setQuestionsChoices = useSetQuestionsChoicesMutation()
 
   const { data: user } = trpc.user.getMe.useQuery()
 
   const handleGatherQuestionResponses = () => {
     if (attendance.questions.length > 0) {
-      setExtraDialogOpen(true)
+      setQuestionsDialogOpen(true)
     }
   }
 
@@ -135,7 +135,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
                 id: attendee.id,
                 choices,
               })
-              setExtraDialogOpen(false)
+              setQuestionsDialogOpen(false)
             }}
           />
         </div>

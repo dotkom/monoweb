@@ -147,7 +147,7 @@ export const attendanceRouter = t.router({
     )
     .query(async ({ input, ctx }) => ctx.waitlistAttendeService.getByAttendanceId(input.id)),
 
-  getExtrasResults: protectedProcedure
+  getQuestionResponseResults: protectedProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
