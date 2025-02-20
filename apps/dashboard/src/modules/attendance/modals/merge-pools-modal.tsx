@@ -7,7 +7,11 @@ import { useAttendanceGetQuery } from "../queries/use-get-queries"
 interface MergePoolsModalProps {
   attendanceId: string
 }
-export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ context, id, innerProps: { attendanceId } }) => {
+export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({
+  context,
+  id,
+  innerProps: { attendanceId },
+}) => {
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const onClose = () => context.closeModal(id)
   const mergeAttendanceMut = useMergeAttendanceMutation()
@@ -20,7 +24,9 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({ c
     })
   }
 
-  const disabledYears = attendance ? [...new Set(attendance.pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))] : []
+  const disabledYears = attendance
+    ? [...new Set(attendance.pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+    : []
 
   return (
     <div>

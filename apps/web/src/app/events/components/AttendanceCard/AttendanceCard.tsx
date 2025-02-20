@@ -40,7 +40,7 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
 
 interface InnerAttendanceCardProps {
   sessionUser?: Session["user"]
-  attendance: Attendance,
+  attendance: Attendance
   refetchEventDetail: () => void
 }
 

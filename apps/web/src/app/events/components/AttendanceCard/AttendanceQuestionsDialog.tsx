@@ -1,4 +1,4 @@
-import { AttendanceQuestion, AttendanceQuestionResponse } from "@dotkomonline/types"
+import type { AttendanceQuestion, AttendanceQuestionResponse } from "@dotkomonline/types"
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
 import { useFieldArray, useForm } from "react-hook-form"
 
@@ -10,7 +10,13 @@ interface AttendanceQuestionsDialog {
   defaultValues: AttendanceQuestionResponse[]
 }
 
-export function AttendanceQuestionsDialog({ open, questions, onSubmit, setOpen, defaultValues }: AttendanceQuestionsDialog) {
+export function AttendanceQuestionsDialog({
+  open,
+  questions,
+  onSubmit,
+  setOpen,
+  defaultValues,
+}: AttendanceQuestionsDialog) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild />
@@ -65,7 +71,8 @@ export default function Form({ questions: responses, onSubmit, defaultValues }: 
     const choices = data.choices.map((question) => ({
       ...question,
       choiceName:
-        responses.find((e) => e.id === question.questionId)?.choices.find((c) => c.id === question.choiceId)?.name ?? "",
+        responses.find((e) => e.id === question.questionId)?.choices.find((c) => c.id === question.choiceId)?.name ??
+        "",
     }))
 
     onSubmit(choices)

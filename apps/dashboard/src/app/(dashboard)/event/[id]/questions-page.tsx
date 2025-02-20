@@ -5,7 +5,7 @@ import type { FC } from "react"
 import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import {
   useAddAttendanceMutation,
-  useUpdateAttendanceMutation
+  useUpdateAttendanceMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useCreateAttendanceQuestionsModal } from "../../../../modules/event/modals/create-event-questions-modal"
 import { useEditQuestionsModal } from "../../../../modules/event/modals/edit-event-questions-modal"
@@ -69,7 +69,7 @@ export const QuestionsPageDetail: FC<Props> = ({ attendance }) => {
       id: attendance.id,
       attendance: {
         questions: newChoices ?? [],
-      }
+      },
     })
   }
 

@@ -1,8 +1,8 @@
 import type { UserId, WaitlistAttendee, WaitlistAttendeeId, WaitlistAttendeeWrite } from "@dotkomonline/types"
-import { AttendancePoolNotFoundError } from "./attendance-pool-error"
-import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
-import { AttendanceRepository } from "./attendance-repository"
 import { AttendanceNotFound } from "./attendance-error"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
+import type { AttendanceRepository } from "./attendance-repository"
+import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 export interface WaitlistAttendeService {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>

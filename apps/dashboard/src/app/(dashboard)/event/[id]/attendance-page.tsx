@@ -10,7 +10,6 @@ import {
   useUpdateAttendanceMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useEventDetailsContext } from "./provider"
-import { useAttendanceGetQuery } from "src/modules/attendance/queries/use-get-queries"
 
 export const AttendancePage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -30,7 +29,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
-      questions: []
+      questions: [],
     },
     label: "Opprett",
     onSubmit: (values) => {
@@ -69,7 +68,7 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
 
   const PoolsForm = usePoolsForm({
     attendanceId: attendance.id,
-    pools: attendance.pools
+    pools: attendance.pools,
   })
 
   return (

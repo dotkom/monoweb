@@ -7,7 +7,11 @@ import { useAttendanceGetQuery } from "../queries/use-get-queries"
 interface CreatePoolModalProps {
   attendanceId: string
 }
-export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ context, id, innerProps: { attendanceId } }) => {
+export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
+  context,
+  id,
+  innerProps: { attendanceId },
+}) => {
   const { mutate: createPool } = useCreatePoolMutation()
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const onClose = () => context.closeModal(id)
@@ -21,9 +25,11 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ c
       type: "NORMAL",
     })
   }
-  const pools = attendance?.pools;
+  const pools = attendance?.pools
 
-  const disabledYears = pools ? [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))] : []
+  const disabledYears = pools
+    ? [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+    : []
 
   return pools ? (
     <PoolForm

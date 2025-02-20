@@ -15,7 +15,11 @@ const FormSchema = z.object({
   poolId: z.string(),
 })
 
-export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({ context, id, innerProps: { attendanceId, userId } }) => {
+export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
+  context,
+  id,
+  innerProps: { attendanceId, userId },
+}) => {
   const { mutate: createAttendee } = useRegisterForEventMutation()
 
   const { data: attendance } = useAttendanceGetQuery(attendanceId)

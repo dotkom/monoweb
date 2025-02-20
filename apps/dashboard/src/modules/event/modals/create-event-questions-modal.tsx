@@ -1,8 +1,8 @@
 import type { Attendance } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { QuestionsForm, type QuestionsFormValues } from "../../../components/molecules/QuestionsForm/QuestionsForm"
 import { useUpdateAttendanceMutation } from "src/modules/attendance/mutations/use-attendance-mutations"
+import { QuestionsForm, type QuestionsFormValues } from "../../../components/molecules/QuestionsForm/QuestionsForm"
 
 export const CreateAttendanceQuestionsModal: FC<ContextModalProps<{ attendance: Attendance }>> = ({
   context,
@@ -34,7 +34,7 @@ export const CreateAttendanceQuestionsModal: FC<ContextModalProps<{ attendance: 
       id: innerProps.attendance.id,
       attendance: {
         questions: newQuestions,
-      }
+      },
     })
 
     context.closeModal(id)
@@ -43,7 +43,7 @@ export const CreateAttendanceQuestionsModal: FC<ContextModalProps<{ attendance: 
   return <QuestionsForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />
 }
 
-export const useCreateAttendanceQuestionsModal  =
+export const useCreateAttendanceQuestionsModal =
   ({ attendance }: { attendance: Attendance }) =>
   () =>
     modals.openContextModal({

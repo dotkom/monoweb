@@ -2,14 +2,14 @@ import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
+  type AttendanceQuestionResponse,
   type Attendee,
   type AttendeeId,
-  type AttendeeWrite,
-  type AttendanceQuestionResponse,
   AttendeeQuestionResponsesSchema,
+  type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"
-import { JsonValue } from "@prisma/client/runtime/library"
+import type { JsonValue } from "@prisma/client/runtime/library"
 import { AttendeeWriteError } from "./attendee-error"
 
 export interface AttendeeRepository {
@@ -72,8 +72,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const updatedUserResult = await this.db.attendee.updateManyAndReturn({ where: { id }, data })
 
-    if (updatedUserResult.length === 0)
-      return null
+    if (updatedUserResult.length === 0) return null
 
     return this.parseQuestionResponses(updatedUserResult[0])
   }
@@ -88,9 +87,10 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     }
   }
 
-  private parseQuestionResponses<T extends { questionResponses: JsonValue }>(
-    { questionResponses, ...obj}: T
-  ): Omit<T, "questionResponses"> & { questionResponses: AttendanceQuestionResponse[] } {
+  private parseQuestionResponses<T extends { questionResponses: JsonValue }>({
+    questionResponses,
+    ...obj
+  }: T): Omit<T, "questionResponses"> & { questionResponses: AttendanceQuestionResponse[] } {
     return { ...obj, questionResponses: AttendeeQuestionResponsesSchema.parse(questionResponses) }
   }
 }

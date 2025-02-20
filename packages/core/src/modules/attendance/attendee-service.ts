@@ -14,12 +14,12 @@ import { IllegalStateError } from "../../error"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
+import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { WaitlistAttendeService } from "./waitlist-attendee-service"
-import { AttendanceNotFound } from "./attendance-error"
 
 export interface AttendeeService {
   getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId): Promise<AttendancePool | null>
@@ -122,7 +122,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       registeredAt: registrationTime,
       firstName: user.firstName,
       lastName: user.lastName,
-      questionResponses: []
+      questionResponses: [],
     })
 
     if (attendancePool.numAttendees === attendancePool.capacity) {

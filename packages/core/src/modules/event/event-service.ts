@@ -1,12 +1,5 @@
-import type {
-  AttendanceEventDetail,
-  AttendanceWrite,
-  Event,
-  EventId,
-  EventWrite,
-} from "@dotkomonline/types"
+import type { AttendanceEventDetail, AttendanceWrite, Event, EventId, EventWrite } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
-import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { EventCommitteeService } from "./event-committee-service"
 import type { EventCompanyService } from "./event-company-service.js"

@@ -5,7 +5,7 @@ import { AttendanceQuestionSchema } from "./attendance-questions"
 
 export const AttendanceSchema = schemas.AttendanceSchema.extend({
   pools: z.array(AttendancePoolSchema),
-  questions: z.array(AttendanceQuestionSchema)
+  questions: z.array(AttendanceQuestionSchema),
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({

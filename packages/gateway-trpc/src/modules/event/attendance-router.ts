@@ -1,7 +1,6 @@
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
-  AttendanceQuestionResponseSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
   AttendeeQuestionResponsesSchema,
@@ -67,11 +66,11 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id, new Date())),
-  
+
   getQuestionsResults: protectedProcedure
     .input(
       z.object({
-        attendanceId: AttendanceSchema.shape.id
+        attendanceId: AttendanceSchema.shape.id,
       })
     )
     .query(async ({ input, ctx }) => ctx.attendanceService.getQuestionResults(input.attendanceId)),

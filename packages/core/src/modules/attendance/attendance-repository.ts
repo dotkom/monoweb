@@ -1,16 +1,16 @@
 import type { DBClient } from "@dotkomonline/db"
-import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool } from "@prisma/client";
 import {
   type Attendance,
   type AttendanceId,
   type AttendancePool,
+  type AttendancePoolId,
+  type AttendancePoolWrite,
+  AttendanceQuestionSchema,
   type AttendanceWrite,
   type AttendeeId,
-  AttendancePoolId,
-  AttendancePoolWrite,
-  AttendanceQuestionSchema,
   YearCriteriaSchema,
 } from "@dotkomonline/types"
+import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool } from "@prisma/client"
 import { z } from "zod"
 
 export interface AttendanceRepository {
@@ -32,20 +32,20 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   private includePoolAttendeeCount = {
     _count: {
       select: {
-        attendees: true
-      }
-    }
+        attendees: true,
+      },
+    },
   }
-  
+
   private includePools = {
     pools: {
-      include: this.includePoolAttendeeCount
-    }
+      include: this.includePoolAttendeeCount,
+    },
   }
 
   async getAll() {
     const attendances = await this.db.attendance.findMany({
-      include: this.includePools
+      include: this.includePools,
     })
 
     return attendances.map(this.mapAttendance)
@@ -54,7 +54,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async create(data: AttendanceWrite) {
     const createdAttendance = await this.db.attendance.create({
       data,
-      include: this.includePools
+      include: this.includePools,
     })
 
     return this.mapAttendance(createdAttendance)
@@ -64,7 +64,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const updatedAttendance = await this.db.attendance.update({
       data,
       where: { id },
-      include: this.includePools
+      include: this.includePools,
     })
 
     return this.mapAttendance(updatedAttendance)
@@ -73,7 +73,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async delete(id: AttendanceId) {
     const deletedAttendance = await this.db.attendance.delete({
       where: { id },
-      include: this.includePools
+      include: this.includePools,
     })
     return this.mapAttendance(deletedAttendance)
   }
@@ -81,7 +81,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async getById(id: AttendanceId) {
     const attendance = await this.db.attendance.findUnique({
       where: { id },
-      include: this.includePools
+      include: this.includePools,
     })
 
     if (!attendance) return null
@@ -109,7 +109,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async createPool(data: AttendancePoolWrite) {
     const createdPool = await this.db.attendancePool.create({
       data,
-      include: this.includePoolAttendeeCount
+      include: this.includePoolAttendeeCount,
     })
 
     return this.mapAttendancePool(createdPool)
@@ -118,7 +118,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async deletePool(id: AttendancePoolId) {
     const deletedPool = await this.db.attendancePool.delete({
       where: { id },
-      include: this.includePoolAttendeeCount
+      include: this.includePoolAttendeeCount,
     })
 
     return this.mapAttendancePool(deletedPool)
@@ -128,30 +128,41 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const updatedPool = await this.db.attendancePool.update({
       where: { id },
       data,
-      include: this.includePoolAttendeeCount
-    });
+      include: this.includePoolAttendeeCount,
+    })
 
     return this.mapAttendancePool(updatedPool)
   }
 
   async getPool(id: AttendancePoolId) {
-    const pool = await this.db.attendancePool.findUnique({ where: { id }, include: this.includePoolAttendeeCount})
+    const pool = await this.db.attendancePool.findUnique({ where: { id }, include: this.includePoolAttendeeCount })
 
-    if (pool === null)
-      return null
+    if (pool === null) return null
 
     return this.mapAttendancePool(pool)
   }
 
   /** Parses the questions with AttendanceQuestionSchema and maps the pools */
-  private mapAttendance({ questions, pools, ...attendance }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
-    return { ...attendance, questions: z.array(AttendanceQuestionSchema).parse(questions), pools: pools.map(this.mapAttendancePool)}
+  private mapAttendance({
+    questions,
+    pools,
+    ...attendance
+  }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
+    return {
+      ...attendance,
+      questions: z.array(AttendanceQuestionSchema).parse(questions),
+      pools: pools.map(this.mapAttendancePool),
+    }
   }
 
   /** Renames _count on the prisma response for an attendee to numAttendees and parses the yearCriteria */
-  private mapAttendancePool({ _count: { attendees: numAttendees }, yearCriteria, ...attendee }: UnmappedAttendancePool): AttendancePool {
+  private mapAttendancePool({
+    _count: { attendees: numAttendees },
+    yearCriteria,
+    ...attendee
+  }: UnmappedAttendancePool): AttendancePool {
     return { numAttendees, ...attendee, yearCriteria: YearCriteriaSchema.parse(yearCriteria) }
   }
 }
 
-type UnmappedAttendancePool = DBAttendancePool & { _count: { attendees: number } };
+type UnmappedAttendancePool = DBAttendancePool & { _count: { attendees: number } }

@@ -87,13 +87,13 @@ export const useUpdateQuestionResponsesMutation = () => {
     onSuccess: (data) => {
       notification.complete({
         title: "Svar oppdatert",
-        message: "Svar er oppdatert"
+        message: "Svar er oppdatert",
       })
     },
     onError: (err) => {
       notification.fail({
         title: "Feil oppsto",
-        message: "En feil oppsto under oppdatering av svar"
+        message: "En feil oppsto under oppdatering av svar",
       })
     },
   })

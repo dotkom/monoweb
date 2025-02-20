@@ -2,14 +2,13 @@ import type {
   Attendance,
   AttendanceId,
   AttendancePool,
-  AttendanceWrite,
-  AttendanceQuestionResponse,
+  AttendancePoolId,
+  AttendancePoolWrite,
   AttendanceQuestion,
+  AttendanceQuestionResults as AttendanceQuestionResult,
+  AttendanceWrite,
   UserId,
   WaitlistAttendee,
-  AttendanceQuestionResults as AttendanceQuestionResult,
-  AttendancePoolWrite,
-  AttendancePoolId,
 } from "@dotkomonline/types"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
@@ -17,13 +16,13 @@ import {
   AttendanceDeletionError,
   AttendanceNotFound,
   AttendanceValidationError,
-  QuestionResponseUpdateAfterRegistrationStartError,
   InvalidParametersError,
+  QuestionResponseUpdateAfterRegistrationStartError,
 } from "./attendance-error"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
-import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -56,22 +55,22 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const allQuestionResponses = attendees.flatMap(attendee => attendee.questionResponses);
+    const allQuestionResponses = attendees.flatMap((attendee) => attendee.questionResponses)
 
-    return attendance.questions.map(question => {
-      const questionResponses = allQuestionResponses.filter(response => response.questionId === question.id);
+    return attendance.questions.map((question) => {
+      const questionResponses = allQuestionResponses.filter((response) => response.questionId === question.id)
 
       return {
         id: question.id,
         name: question.name,
         totalCount: questionResponses.length,
-        choices: question.choices.map(choice => ({
+        choices: question.choices.map((choice) => ({
           id: choice.id,
           name: choice.name,
-          count: questionResponses.filter(response => response.choiceId === choice.id).length
-        }))
+          count: questionResponses.filter((response) => response.choiceId === choice.id).length,
+        })),
       }
-    });
+    })
   }
 
   async update(id: AttendanceId, obj: Partial<AttendanceWrite>) {

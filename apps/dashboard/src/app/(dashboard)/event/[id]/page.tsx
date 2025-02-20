@@ -8,8 +8,8 @@ import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
-import { QuestionsPage } from "./questions-page"
 import { useEventDetailsContext } from "./provider"
+import { QuestionsPage } from "./questions-page"
 import { WaitlistPage } from "./waitlist-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>

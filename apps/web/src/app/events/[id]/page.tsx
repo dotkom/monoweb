@@ -21,7 +21,9 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
           companies={eventDetail.companies}
         />
         <div className="flex-1 flex-col">
-          {eventDetail.attendance !== null && <AttendanceCard sessionUser={session?.user} initialEventDetail={eventDetail} />}
+          {eventDetail.attendance !== null && (
+            <AttendanceCard sessionUser={session?.user} initialEventDetail={eventDetail} />
+          )}
           <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>

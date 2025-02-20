@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
 
 export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
   {
@@ -52,6 +52,6 @@ export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
     deregisterDeadline: new Date("2023-02-23 11:03:49.289+00"),
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
     updatedAt: new Date("2023-02-23 11:03:49.289+00"),
-    questions: []
+    questions: [],
   },
 ]
