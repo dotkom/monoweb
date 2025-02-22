@@ -16,7 +16,7 @@
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@hookform/error-message": "^2.0.1",
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^4.0.0",
     "@iconify/react": "^4.1.1",
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.3",
