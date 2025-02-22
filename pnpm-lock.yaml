@@ -464,8 +464,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7
       '@next/env':
-        specifier: ^14.2.14
-        version: 14.2.24
+        specifier: ^15.0.0
+        version: 15.1.7
       '@portabletext/react':
         specifier: ^3.0.11
         version: 3.2.1(react@18.3.1)
@@ -2435,9 +2435,6 @@ packages:
   '@mswjs/interceptors@0.37.5':
     resolution: {integrity: sha512-AAwRb5vXFcY4L+FvZ7LZusDuZ0vEe0Zm8ohn1FM6/X7A3bj4mqmkAcGRWuvC2JwSygNwHAAmMnAI73vPHeqsHA==}
     engines: {node: '>=18'}
-
-  '@next/env@14.2.24':
-    resolution: {integrity: sha512-LAm0Is2KHTNT6IT16lxT+suD0u+VVfYNQqM+EJTKuFRRuY2z+zj01kueWXPCxbMBDt0B5vONYzabHGUNbZYAhA==}
 
   '@next/env@15.1.6':
     resolution: {integrity: sha512-d9AFQVPEYNr+aqokIiPLNK/MTyt3DWa/dpKveiAaVccUadFbhFEvY6FXYX2LJO2Hv7PHnLBu2oWwB4uBuHjr/w==}
@@ -9264,8 +9261,6 @@ snapshots:
       is-node-process: 1.2.0
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
-
-  '@next/env@14.2.24': {}
 
   '@next/env@15.1.6': {}
 
