@@ -2,7 +2,7 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { useUpdatePoolMutation } from "../mutations/use-pool-mutations"
-import { usePoolsGetQuery } from "../queries/use-get-queries"
+import { useAttendanceGetQuery } from "../queries/use-get-queries"
 
 interface EditPoolModalProps {
   poolId: string
@@ -10,10 +10,17 @@ interface EditPoolModalProps {
   defaultValues: PoolFormSchema
 }
 
-export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({ context, id, innerProps }) => {
-  const { pools } = usePoolsGetQuery(innerProps.attendanceId)
+export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
+  context,
+  id,
+  innerProps: { attendanceId, poolId, defaultValues },
+}) => {
+  const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const { mutate: updatePool } = useUpdatePoolMutation()
-  const disabledYears = [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+
+  const disabledYears = attendance
+    ? [...new Set(attendance.pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+    : []
 
   const onSubmit = (values: PoolFormSchema) => {
     context.closeModal(id)
@@ -24,18 +31,18 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({ conte
         yearCriteria: values.yearCriteria,
         isVisible: values.isVisible,
       },
-      id: innerProps.poolId,
+      id: poolId,
     })
   }
 
   const onClose = () => context.closeModal(id)
-  return pools ? (
+  return attendance ? (
     <PoolForm
       defaultValues={{
-        yearCriteria: innerProps.defaultValues.yearCriteria,
-        capacity: innerProps.defaultValues.capacity,
-        title: innerProps.defaultValues.title,
-        isVisible: innerProps.defaultValues.isVisible,
+        yearCriteria: defaultValues.yearCriteria,
+        capacity: defaultValues.capacity,
+        title: defaultValues.title,
+        isVisible: defaultValues.isVisible,
       }}
       onClose={onClose}
       onSubmit={onSubmit}
