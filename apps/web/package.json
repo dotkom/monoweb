@@ -26,7 +26,7 @@
     "@aws-sdk/client-s3": "^3.665.0",
     "@aws-sdk/s3-presigned-post": "^3.665.0",
     "@fadi-ui/react-country-flag": "^1.0.7",
-    "@next/env": "^14.2.14",
+    "@next/env": "^15.0.0",
     "@portabletext/react": "^3.0.11",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-avatar": "^1.1.1",

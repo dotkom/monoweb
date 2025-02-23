@@ -14,11 +14,11 @@ terraform {
     }
     doppler = {
       source  = "DopplerHQ/doppler"
-      version = "~> 1.13.0"
+      version = "~> 1.14.0"
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "~> 1.12.0"
+      version = "~> 1.13.0"
     }
   }
 }
