@@ -3,8 +3,8 @@ import {
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
-  AttendeeSelectionResponsesSchema,
   AttendeeSchema,
+  AttendeeSelectionResponsesSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
