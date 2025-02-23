@@ -135,7 +135,7 @@ model Attendance {
   registerStart      DateTime
   deregisterDeadline DateTime
   registerEnd        DateTime
-  questions          Json               @default("[]")
+  selections         Json               @default("[]")
   pools              AttendancePool[]
   attendees          Attendee[]
   waitlist           WaitlistAttendee[]
@@ -191,7 +191,7 @@ model Attendee {
   attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
   registeredAt     DateTime
-  questionResponses Json          @default("[]")
+  selectionResponses Json           @default("[]") @map("selectionResponses")
   attended         Boolean        @default(false)
   firstName        String?
   lastName         String?

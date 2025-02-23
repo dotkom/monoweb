@@ -75,9 +75,9 @@ export const useUpdateEventAttendanceMutation = () => {
   })
 }
 
-export const useUpdateQuestionResponsesMutation = () => {
+export const useUpdateSelectionResponsesMutation = () => {
   const notification = useQueryNotification()
-  return trpc.attendance.updateQuestionResponses.useMutation({
+  return trpc.attendance.updateSelectionResponses.useMutation({
     onMutate: () => {
       notification.loading({
         title: "Oppdaterer svar...",

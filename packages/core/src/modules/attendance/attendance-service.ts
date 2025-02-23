@@ -4,8 +4,8 @@ import type {
   AttendancePool,
   AttendancePoolId,
   AttendancePoolWrite,
-  AttendanceQuestion,
-  AttendanceQuestionResults as AttendanceQuestionResult,
+  AttendanceSelection,
+  AttendanceSelectionResults as AttendanceSelectionResult,
   AttendanceWrite,
   UserId,
   WaitlistAttendee,
@@ -17,7 +17,7 @@ import {
   AttendanceNotFound,
   AttendanceValidationError,
   InvalidParametersError,
-  QuestionResponseUpdateAfterRegistrationStartError,
+  SelectionResponseUpdateAfterRegistrationStartError,
 } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
@@ -30,8 +30,8 @@ export interface AttendanceService {
   getById(id: AttendanceId): Promise<Attendance | null>
   update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance | null>
   merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
-  updateQuestions(id: AttendanceId, questions: AttendanceQuestion[], now?: Date): Promise<Attendance | null>
-  getQuestionResults(attendanceId: AttendanceId): Promise<AttendanceQuestionResult[] | null>
+  updateSelections(id: AttendanceId, selections: AttendanceSelection[], now?: Date): Promise<Attendance | null>
+  getSelectionResults(attendanceId: AttendanceId): Promise<AttendanceSelectionResult[] | null>
   getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId): Promise<AttendancePool | null>
 
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
@@ -47,7 +47,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     private readonly userService: UserService
   ) {}
 
-  async getQuestionResults(attendanceId: AttendanceId) {
+  async getSelectionResults(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
     if (!attendance) {
@@ -55,19 +55,19 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const allQuestionResponses = attendees.flatMap((attendee) => attendee.questionResponses)
+    const allSelectionResponses = attendees.flatMap((attendee) => attendee.selectionResponses)
 
-    return attendance.questions.map((question) => {
-      const questionResponses = allQuestionResponses.filter((response) => response.questionId === question.id)
+    return attendance.selections.map((selection) => {
+      const selectionResponses = allSelectionResponses.filter((response) => response.selectionId === selection.id)
 
       return {
-        id: question.id,
-        name: question.name,
-        totalCount: questionResponses.length,
-        choices: question.choices.map((choice) => ({
-          id: choice.id,
-          name: choice.name,
-          count: questionResponses.filter((response) => response.choiceId === choice.id).length,
+        id: selection.id,
+        name: selection.name,
+        totalCount: selectionResponses.length,
+        options: selection.options.map((option) => ({
+          id: option.id,
+          name: option.name,
+          count: selectionResponses.filter((response) => response.optionId === option.id).length,
         })),
       }
     })
@@ -78,7 +78,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     return attendance
   }
 
-  async updateQuestions(id: AttendanceId, questions: AttendanceQuestion[], now: Date = new Date()) {
+  async updateSelections(id: AttendanceId, selections: AttendanceSelection[], now: Date = new Date()) {
     const attendance = await this.attendanceRepository.getById(id)
 
     if (!attendance) {
@@ -86,13 +86,13 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     if (attendance.registerStart < now) {
-      throw new QuestionResponseUpdateAfterRegistrationStartError()
+      throw new SelectionResponseUpdateAfterRegistrationStartError()
     }
 
     return this.attendanceRepository.update(
       {
         ...attendance,
-        questions,
+        selections,
       },
       id
     )

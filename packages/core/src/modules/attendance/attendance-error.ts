@@ -25,8 +25,8 @@ export class InvalidParametersError extends ApplicationError {
   }
 }
 
-export class QuestionResponseUpdateAfterRegistrationStartError extends ApplicationError {
+export class SelectionResponseUpdateAfterRegistrationStartError extends ApplicationError {
   constructor() {
-    super(PROBLEM_DETAILS.BadRequest, "If you need to modify questions after registration has started contact dotkom")
+    super(PROBLEM_DETAILS.BadRequest, "If you need to modify selections after registration has started contact dotkom")
   }
 }

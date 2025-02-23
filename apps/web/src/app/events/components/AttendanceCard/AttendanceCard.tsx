@@ -6,8 +6,8 @@ import { Icon } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
-import { useRegisterMutation, useSetQuestionsChoicesMutation, useUnregisterMutation } from "../mutations"
-import ChooseQuestionsForm from "./AttendanceQuestionsDialog"
+import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMutation } from "../mutations"
+import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
 
@@ -55,14 +55,14 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     }
   )
 
-  const [, setQuestionsDialogOpen] = useState(false)
-  const setQuestionsChoices = useSetQuestionsChoicesMutation()
+  const [, setSelectionsDialogOpen] = useState(false)
+  const setSelectionsOptions = useSetSelectionsOptionsMutation()
 
   const { data: user } = trpc.user.getMe.useQuery()
 
-  const handleGatherQuestionResponses = () => {
-    if (attendance.questions.length > 0) {
-      setQuestionsDialogOpen(true)
+  const handleGatherSelectionResponses = () => {
+    if (attendance.selections.length > 0) {
+      setSelectionsDialogOpen(true)
     }
   }
 
@@ -70,7 +70,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
     ? attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
     : null
 
-  const registerMutation = useRegisterMutation({ onSuccess: handleGatherQuestionResponses })
+  const registerMutation = useRegisterMutation({ onSuccess: handleGatherSelectionResponses })
   const unregisterMutation = useUnregisterMutation()
   const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading
 
@@ -126,16 +126,16 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
         )}
       </div>
 
-      {attendee && attendance.questions.length > 0 && (
+      {attendee && attendance.selections.length > 0 && (
         <div className="w-full">
-          <ChooseQuestionsForm
-            questions={attendance.questions}
-            onSubmit={(choices) => {
-              setQuestionsChoices.mutate({
+          <ChooseSelectionsForm
+            selections={attendance.selections}
+            onSubmit={(options) => {
+              setSelectionsOptions.mutate({
                 id: attendee.id,
-                choices,
+                options,
               })
-              setQuestionsDialogOpen(false)
+              setSelectionsDialogOpen(false)
             }}
           />
         </div>

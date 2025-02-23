@@ -67,7 +67,7 @@ CREATE TABLE "attendance" (
     "registerStart" TIMESTAMP(3) NOT NULL,
     "deregisterDeadline" TIMESTAMP(3) NOT NULL,
     "registerEnd" TIMESTAMP(3) NOT NULL,
-    "questions" JSONB,
+    "selections" JSONB,
 
     CONSTRAINT "attendance_pkey" PRIMARY KEY ("id")
 );
@@ -113,7 +113,7 @@ CREATE TABLE "attendee" (
     "userId" TEXT NOT NULL,
     "attendancePoolId" TEXT NOT NULL,
     "registeredAt" TIMESTAMP(3) NOT NULL,
-    "questionsChoices" JSONB,
+    "selectionsOptions" JSONB,
     "attended" BOOLEAN NOT NULL DEFAULT false,
     "firstName" TEXT,
     "lastName" TEXT,

@@ -1,11 +1,11 @@
 import { schemas } from "@dotkomonline/db"
 import { z } from "zod"
 import { AttendancePoolSchema } from "./attendance-pool"
-import { AttendanceQuestionSchema } from "./attendance-questions"
+import { AttendanceSelectionSchema } from "./attendance-selections"
 
 export const AttendanceSchema = schemas.AttendanceSchema.extend({
   pools: z.array(AttendancePoolSchema),
-  questions: z.array(AttendanceQuestionSchema),
+  selections: z.array(AttendanceSelectionSchema),
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({

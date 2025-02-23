@@ -5,7 +5,7 @@ import {
   type AttendancePool,
   type AttendancePoolId,
   type AttendancePoolWrite,
-  AttendanceQuestionSchema,
+  AttendanceSelectionSchema,
   type AttendanceWrite,
   type AttendeeId,
   YearCriteriaSchema,
@@ -142,15 +142,15 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.mapAttendancePool(pool)
   }
 
-  /** Parses the questions with AttendanceQuestionSchema and maps the pools */
+  /** Parses the selections with AttendanceSelectionSchema and maps the pools */
   private mapAttendance({
-    questions,
+    selections,
     pools,
     ...attendance
   }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
     return {
       ...attendance,
-      questions: z.array(AttendanceQuestionSchema).parse(questions),
+      selections: z.array(AttendanceSelectionSchema).parse(selections),
       pools: pools.map(this.mapAttendancePool),
     }
   }

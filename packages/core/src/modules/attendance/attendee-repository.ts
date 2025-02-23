@@ -2,10 +2,10 @@ import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
-  type AttendanceQuestionResponse,
+  type AttendanceSelectionResponse,
   type Attendee,
   type AttendeeId,
-  AttendeeQuestionResponsesSchema,
+  AttendeeSelectionResponsesSchema,
   type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"
@@ -30,7 +30,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     if (user === null) return null
 
-    return this.parseQuestionResponses(user)
+    return this.parseSelectionResponses(user)
   }
 
   async create(data: AttendeeWrite): Promise<Attendee> {
@@ -38,13 +38,13 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const createdUser = await this.db.attendee.create({ data })
 
-    return this.parseQuestionResponses(createdUser)
+    return this.parseSelectionResponses(createdUser)
   }
 
   async delete(id: AttendeeId) {
     const deletedUser = await this.db.attendee.delete({ where: { id } })
 
-    return this.parseQuestionResponses(deletedUser)
+    return this.parseSelectionResponses(deletedUser)
   }
 
   async getById(id: AttendeeId): Promise<Attendee | null> {
@@ -52,19 +52,19 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     if (user === null) return null
 
-    return this.parseQuestionResponses(user)
+    return this.parseSelectionResponses(user)
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
     const attendees = await this.db.attendee.findMany({ where: { attendanceId } })
 
-    return attendees.map(this.parseQuestionResponses)
+    return attendees.map(this.parseSelectionResponses)
   }
 
   async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
     const attendees = await this.db.attendee.findMany({ where: { attendancePoolId } })
 
-    return attendees.map(this.parseQuestionResponses)
+    return attendees.map(this.parseSelectionResponses)
   }
 
   async update(id: AttendeeId, data: Partial<AttendeeWrite>) {
@@ -74,23 +74,23 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     if (updatedUserResult.length === 0) return null
 
-    return this.parseQuestionResponses(updatedUserResult[0])
+    return this.parseSelectionResponses(updatedUserResult[0])
   }
 
   private validateWrite(data: Partial<AttendeeWrite>) {
-    if (data.questionResponses) {
-      const questionResponseParseResult = AttendeeQuestionResponsesSchema.safeParse(data.questionResponses)
+    if (data.selectionResponses) {
+      const selectionResponseParseResult = AttendeeSelectionResponsesSchema.safeParse(data.selectionResponses)
 
-      if (!questionResponseParseResult.success) {
-        throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field questionResponses")
+      if (!selectionResponseParseResult.success) {
+        throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
       }
     }
   }
 
-  private parseQuestionResponses<T extends { questionResponses: JsonValue }>({
-    questionResponses,
+  private parseSelectionResponses<T extends { selectionResponses: JsonValue }>({
+    selectionResponses,
     ...obj
-  }: T): Omit<T, "questionResponses"> & { questionResponses: AttendanceQuestionResponse[] } {
-    return { ...obj, questionResponses: AttendeeQuestionResponsesSchema.parse(questionResponses) }
+  }: T): Omit<T, "selectionResponses"> & { selectionResponses: AttendanceSelectionResponse[] } {
+    return { ...obj, selectionResponses: AttendeeSelectionResponsesSchema.parse(selectionResponses) }
   }
 }

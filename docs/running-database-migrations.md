@@ -22,7 +22,7 @@ pnpm migrate
 
 ## Running migrations for Production or Staging
 
-- Database credentials for the database in question. These are stored in Doppler
+- Database credentials for the database in selection. These are stored in Doppler
   if you are a Dotkom member. If you're not a member, you will have to wait for
   someone to do it.
 - You have [downloaded the AWS eu-north-1 Certificate Authority][aws-rds-ca]

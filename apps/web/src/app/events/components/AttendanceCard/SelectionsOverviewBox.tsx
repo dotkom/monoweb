@@ -4,10 +4,10 @@ import type { FC } from "react"
 
 interface Props {
   attendee: Attendee | null
-  handleGatherQuestionsChoices: () => void
+  handleGatherSelectionsOptions: () => void
 }
 
-export const QuestionsOverviewBox: FC<Props> = ({ attendee, handleGatherQuestionsChoices }) => {
+export const SelectionsOverviewBox: FC<Props> = ({ attendee, handleGatherSelectionsOptions }) => {
   return (
     <div className="mt-4">
       <h4 className="text-md font-bold">Dine valg</h4>
@@ -19,15 +19,15 @@ export const QuestionsOverviewBox: FC<Props> = ({ attendee, handleGatherQuestion
           </tr>
         </thead>
         <tbody>
-          {attendee?.questionResponses?.map((response) => (
-            <tr key={response.questionId}>
-              <td className="text-left">{response.questionName}</td>
-              <td className="text-left">{response.choiceName}</td>
+          {attendee?.selectionResponses?.map((response) => (
+            <tr key={response.selectionId}>
+              <td className="text-left">{response.selectionName}</td>
+              <td className="text-left">{response.optionName}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <Button className="mt-2 w-32" variant={"outline"} onClick={handleGatherQuestionsChoices}>
+      <Button className="mt-2 w-32" variant={"outline"} onClick={handleGatherSelectionsOptions}>
         Endre
       </Button>
     </div>

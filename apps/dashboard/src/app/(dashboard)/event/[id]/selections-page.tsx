@@ -1,4 +1,4 @@
-import type { Attendance, AttendanceQuestionResults } from "@dotkomonline/types"
+import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
 import type { FC } from "react"
@@ -7,12 +7,12 @@ import {
   useAddAttendanceMutation,
   useUpdateAttendanceMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
-import { useCreateAttendanceQuestionsModal } from "../../../../modules/event/modals/create-event-questions-modal"
-import { useEditQuestionsModal } from "../../../../modules/event/modals/edit-event-questions-modal"
+import { useCreateAttendanceSelectionsModal } from "../../../../modules/event/modals/create-event-selections-modal"
+import { useEditSelectionsModal } from "../../../../modules/event/modals/edit-event-selections-modal"
 import { trpc } from "../../../../trpc"
 import { useEventDetailsContext } from "./provider"
 
-export const QuestionsPage: FC = () => {
+export const SelectionsPage: FC = () => {
   const { attendance } = useEventDetailsContext()
   const { event } = useEventDetailsContext()
 
@@ -20,7 +20,7 @@ export const QuestionsPage: FC = () => {
     return <NoAttendanceFallback eventId={event.id} />
   }
 
-  return <QuestionsPageDetail attendance={attendance} />
+  return <SelectionsPageDetail attendance={attendance} />
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
@@ -30,7 +30,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
-      questions: [],
+      selections: [],
     },
     label: "Opprett",
     onSubmit: (values) => {
@@ -48,57 +48,57 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
 interface Props {
   attendance: Attendance
 }
-export const QuestionsPageDetail: FC<Props> = ({ attendance }) => {
-  const openCreate = useCreateAttendanceQuestionsModal({
+export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
+  const openCreate = useCreateAttendanceSelectionsModal({
     attendance,
   })
 
-  const openEdit = useEditQuestionsModal({
+  const openEdit = useEditSelectionsModal({
     attendance,
   })
 
   const edit = useUpdateAttendanceMutation()
 
-  const { data: results = [], isLoading: resultsIsLoading } = trpc.attendance.getQuestionsResults.useQuery({
+  const { data: results = [], isLoading: resultsIsLoading } = trpc.attendance.getSelectionsResults.useQuery({
     attendanceId: attendance.id,
   })
 
   const deleteAlternative = (id: string) => {
-    const newChoices = attendance.questions?.filter((alt) => alt.id !== id)
+    const newOptions = attendance.selections?.filter((alt) => alt.id !== id)
     edit.mutate({
       id: attendance.id,
       attendance: {
-        questions: newChoices ?? [],
+        selections: newOptions ?? [],
       },
     })
   }
 
-  const questionsResults = resultsIsLoading ? (
+  const selectionsResults = resultsIsLoading ? (
     <p>Laster...</p>
   ) : results === null ? (
     <div>Ingen valg</div>
   ) : (
-    <AttendanceQuestionsTable results={results} />
+    <AttendanceSelectionsTable results={results} />
   )
 
   return (
     <Box>
       <Box>
         <Title order={3}>Valg</Title>
-        {!attendance.questions?.length && <p>Ingen valg er lagt til</p>}
+        {!attendance.selections?.length && <p>Ingen valg er lagt til</p>}
         <Box>
-          {attendance.questions?.map((question) => (
-            <Paper key={question.id} withBorder p={"md"} mt={"md"}>
-              <ActionIcon variant="outline" onClick={() => openEdit(question)} mr="md">
+          {attendance.selections?.map((selection) => (
+            <Paper key={selection.id} withBorder p={"md"} mt={"md"}>
+              <ActionIcon variant="outline" onClick={() => openEdit(selection)} mr="md">
                 <Icon icon="tabler:edit" />
               </ActionIcon>
-              <ActionIcon variant="outline" onClick={() => deleteAlternative(question.id)} color="red">
+              <ActionIcon variant="outline" onClick={() => deleteAlternative(selection.id)} color="red">
                 <Icon icon="tabler:trash" />
               </ActionIcon>
-              <h3>{question.name}</h3>
-              {question.choices.map((choice) => (
-                <div key={choice.id}>
-                  <p>{choice.name}</p>
+              <h3>{selection.name}</h3>
+              {selection.options.map((option) => (
+                <div key={option.id}>
+                  <p>{option.name}</p>
                 </div>
               ))}
             </Paper>
@@ -112,17 +112,17 @@ export const QuestionsPageDetail: FC<Props> = ({ attendance }) => {
       <Divider mt="xl" mb="xl" />
       <Box>
         <Title order={3}> Resultater</Title>
-        {questionsResults}
+        {selectionsResults}
       </Box>
     </Box>
   )
 }
 
-interface AttendanceQuestionsTableProps {
-  results: AttendanceQuestionResults[]
+interface AttendanceSelectionsTableProps {
+  results: AttendanceSelectionResults[]
 }
 
-function AttendanceQuestionsTable({ results }: AttendanceQuestionsTableProps) {
+function AttendanceSelectionsTable({ results }: AttendanceSelectionsTableProps) {
   return (
     <div>
       {results.map((result, index) => (
@@ -138,10 +138,10 @@ function AttendanceQuestionsTable({ results }: AttendanceQuestionsTableProps) {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {result.choices.map((choice) => (
-                <Table.Tr key={choice.id}>
-                  <Table.Td>{choice.name}</Table.Td>
-                  <Table.Td>{choice.count}</Table.Td>
+              {result.options.map((option) => (
+                <Table.Tr key={option.id}>
+                  <Table.Td>{option.name}</Table.Td>
+                  <Table.Td>{option.count}</Table.Td>
                 </Table.Tr>
               ))}
             </Table.Tbody>

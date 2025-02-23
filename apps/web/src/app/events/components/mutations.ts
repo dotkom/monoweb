@@ -32,10 +32,10 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
   return mutation
 }
 
-export const useSetQuestionsChoicesMutation = () => {
+export const useSetSelectionsOptionsMutation = () => {
   const utils = trpc.useUtils()
 
-  return trpc.event.attendance.updateQuestionResponses.useMutation({
+  return trpc.event.attendance.updateSelectionResponses.useMutation({
     onSuccess: () => {
       utils.event.getAttendanceEventDetail.invalidate()
     },

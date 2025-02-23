@@ -2,7 +2,7 @@ import type {
   AttendanceId,
   AttendancePool,
   AttendancePoolId,
-  AttendanceQuestionResponse,
+  AttendanceSelectionResponse,
   Attendee,
   AttendeeId,
   AttendeeWrite,
@@ -28,7 +28,7 @@ export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  updateQuestionResponses(id: AttendanceId, responses: AttendanceQuestionResponse[]): Promise<Attendee>
+  updateSelectionResponses(id: AttendanceId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
@@ -81,8 +81,8 @@ export class AttendeeServiceImpl implements AttendeeService {
     return { attendee, user, alreadyAttended: false }
   }
 
-  async updateQuestionResponses(id: AttendeeId, questionResponses: AttendanceQuestionResponse[]) {
-    const attendee = await this.attendeeRepository.update(id, { questionResponses })
+  async updateSelectionResponses(id: AttendeeId, selectionResponses: AttendanceSelectionResponse[]) {
+    const attendee = await this.attendeeRepository.update(id, { selectionResponses })
 
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
@@ -122,7 +122,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       registeredAt: registrationTime,
       firstName: user.firstName,
       lastName: user.lastName,
-      questionResponses: [],
+      selectionResponses: [],
     })
 
     if (attendancePool.numAttendees === attendancePool.capacity) {
@@ -214,7 +214,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attendancePoolId: attendancePool.id,
       userId,
       attended: false,
-      questionResponses: [],
+      selectionResponses: [],
       attendanceId,
       registeredAt: registrationTime,
       firstName: user.firstName ?? "Anonym",

@@ -3,7 +3,7 @@ import {
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
-  AttendeeQuestionResponsesSchema,
+  AttendeeSelectionResponsesSchema,
   AttendeeSchema,
   UserSchema,
 } from "@dotkomonline/types"
@@ -67,13 +67,13 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id, new Date())),
 
-  getQuestionsResults: protectedProcedure
+  getSelectionsResults: protectedProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getQuestionResults(input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionResults(input.attendanceId)),
 
   registerAttendance: protectedProcedure
     .input(
@@ -94,14 +94,14 @@ export const attendanceRouter = t.router({
       async ({ input, ctx }) => await ctx.attendeeService.handleQrCodeRegistration(input.userId, input.attendanceId)
     ),
 
-  updateQuestionResponses: protectedProcedure
+  updateSelectionResponses: protectedProcedure
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
-        choices: AttendeeQuestionResponsesSchema,
+        options: AttendeeSelectionResponsesSchema,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateQuestionResponses(input.id, input.choices)),
+    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateSelectionResponses(input.id, input.options)),
 
   getAttendees: protectedProcedure
     .input(
@@ -146,11 +146,11 @@ export const attendanceRouter = t.router({
     )
     .query(async ({ input, ctx }) => ctx.waitlistAttendeService.getByAttendanceId(input.id)),
 
-  getQuestionResponseResults: protectedProcedure
+  getSelectionResponseResults: protectedProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getQuestionResults(input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionResults(input.attendanceId)),
 })
