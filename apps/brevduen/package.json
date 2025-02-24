@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
+    "@dotkomonline/config": "workspace:*",
     "@types/aws-lambda": "^8.10.129",
     "@types/node": "^22.0.0",
     "tsup": "^8.3.0",

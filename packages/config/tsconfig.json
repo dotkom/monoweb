@@ -1,3 +1,23 @@
 {
-  "extends": "../../packages/tsconfig/tsconfig.json"
+  "noErrorTruncation": true,
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "stripInternal": true,
+
+    "noEmit": true
+  }
 }

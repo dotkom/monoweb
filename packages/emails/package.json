@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
+    "@dotkomonline/config": "workspace:*",
     "@types/react": "^18.3.11",
     "react-email": "^1.9.5",
     "typescript": "^5.4.5"

@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
+    "@dotkomonline/config": "workspace:*",
     "@testcontainers/postgresql": "^10.18.0",
     "@dotkomonline/types": "workspace:*",
     "@types/node": "^22.0.0",
