@@ -1,0 +1,23 @@
+{
+  "name": "@dotkomonline/cli",
+  "type": "module",
+  "scripts": {
+    "start": "tsx ./src/index.ts",
+    "lint": "biome check . --write",
+    "lint-check": "biome check ."
+  },
+  "dependencies": {
+    "@aws-sdk/client-ecs": "^3.665.0",
+    "@aws-sdk/client-ec2": "^3.665.0",
+    "@dotkomonline/logger": "workspace:*",
+    "commander": "^13.1.0",
+    "inquirer": "^12.4.2",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.2",
+    "@types/node": "^22.0.0",
+    "tsx": "^3.14.0",
+    "typescript": "^5.4.5"
+  }
+}
