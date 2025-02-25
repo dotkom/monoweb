@@ -1,6 +1,6 @@
 import type { z } from "zod"
 
-import { schemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db/schemas"
 
 import { type Attendance, AttendanceSchema } from "./attendance/attendance"
 import type { AttendancePool } from "./attendance/attendance-pool"

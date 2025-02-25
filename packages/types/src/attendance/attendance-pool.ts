@@ -1,4 +1,4 @@
-import { schemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 
 export const YearCriteriaSchema = z.array(z.number())

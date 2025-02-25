@@ -2,11 +2,7 @@
   "name": "monorepo",
   "version": "1.0.0",
   "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
-  "keywords": [
-    "online",
-    "ntnu",
-    "student-association"
-  ],
+  "keywords": ["online", "ntnu", "student-association"],
   "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "bugs": {
@@ -37,13 +33,11 @@
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
+    "docker:build": "turbo run docker:build",
     "docker:login:public": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws",
     "shell": "pnpm --filter=@dotkomonline/shell start"
   },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "workspaces": ["packages/*", "apps/*"],
   "packageManager": "pnpm@9.15.5",
   "engines": {
     "node": ">=20.12.2",

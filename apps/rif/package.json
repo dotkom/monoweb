@@ -9,7 +9,7 @@
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
-    "docker:build": "docker build --platform linux/amd64 -t rif:latest -f Dockerfile ../..",
+    "docker:build": "docker build --platform linux/amd64 -t rif:latest -f Dockerfile --progress plain ../..",
     "docker:push:prod": "docker tag rif:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/rif:latest && docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/rif:latest"
   },
   "dependencies": {
