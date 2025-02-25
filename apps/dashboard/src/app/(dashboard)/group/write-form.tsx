@@ -1,6 +1,6 @@
 import { GroupWriteSchema } from "@dotkomonline/types"
-import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "src/app/form"
 import { z } from "zod"
+import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
 const GROUP_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
   imageUrl: null,
