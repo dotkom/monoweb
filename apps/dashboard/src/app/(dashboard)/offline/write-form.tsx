@@ -43,12 +43,12 @@ export const useOfflineWriteForm = ({
       file: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
-        existingFileUrl: defaultValues.fileUrl ?? undefined,
+        existingfileurl: defaultValues.fileUrl ?? undefined,
       }),
       image: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
-        existingFileUrl: defaultValues.imageUrl ?? undefined,
+        existingfileurl: defaultValues.imageUrl ?? undefined,
       }),
     },
   })

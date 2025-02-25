@@ -4,6 +4,8 @@ import type { GroupType } from "@prisma/client"
 
 export interface GroupRepository {
   create(values: GroupWrite): Promise<Group>
+  update(id: GroupId, data: Partial<GroupWrite>): Promise<Group>
+  delete(id: GroupId): Promise<void>
   getById(id: GroupId): Promise<Group | null>
   getAll(): Promise<Group[]>
   getAllByType(type: GroupType): Promise<Group[]>
@@ -28,6 +30,14 @@ export class GroupRepositoryImpl implements GroupRepository {
 
   async create(data: GroupWrite) {
     return await this.db.group.create({ data })
+  }
+
+  async update(id: GroupId, data: Partial<GroupWrite>): Promise<Group> {
+    return await this.db.group.update({ where: { id }, data })
+  }
+
+  async delete(id: GroupId): Promise<void> {
+    await this.db.group.delete({ where: { id } })
   }
 
   async getAllIds() {

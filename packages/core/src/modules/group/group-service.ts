@@ -8,6 +8,8 @@ export interface GroupService {
   getGroups(): Promise<Group[]>
   getGroupsByType(type: GroupType): Promise<Group[]>
   createGroup(payload: GroupWrite): Promise<Group>
+  updateGroup(id: GroupId, values: Partial<GroupWrite>): Promise<Group>
+  deleteGroup(id: GroupId): Promise<void>
   getAllGroupIds(): Promise<GroupId[]>
   getAllGroupIdsByType(type: GroupType): Promise<GroupId[]>
 }
@@ -45,19 +47,27 @@ export class GroupServiceImpl implements GroupService {
     return await this.groupRepository.create(payload)
   }
 
+  async updateGroup(id: GroupId, values: Partial<GroupWrite>): Promise<Group> {
+    return await this.groupRepository.update(id, values)
+  }
+
+  async deleteGroup(id: GroupId): Promise<void> {
+    await this.groupRepository.delete(id)
+  }
+
   async getGroups() {
-    return this.groupRepository.getAll()
+    return await this.groupRepository.getAll()
   }
 
   async getGroupsByType(type: GroupType) {
-    return this.groupRepository.getAllByType(type)
+    return await this.groupRepository.getAllByType(type)
   }
 
   async getAllGroupIds() {
-    return this.groupRepository.getAllIds()
+    return await this.groupRepository.getAllIds()
   }
 
   async getAllGroupIdsByType(type: GroupType) {
-    return this.groupRepository.getAllIdsByType(type)
+    return await this.groupRepository.getAllIdsByType(type)
   }
 }
