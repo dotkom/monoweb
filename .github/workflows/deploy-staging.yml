@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     name: Build container services
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
