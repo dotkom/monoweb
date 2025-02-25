@@ -2,6 +2,7 @@ name: Monoweb Staging Deployment
 
 on:
   push:
+  pull_request:
 #    branches:
 #      - main
 
