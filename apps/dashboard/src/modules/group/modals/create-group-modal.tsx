@@ -6,7 +6,7 @@ import { useQueryNotification } from "src/app/notifications"
 import { useS3UploadFile } from "src/modules/offline/use-s3-upload-file"
 import { useCreateGroupMutation } from "../mutations/use-create-group-mutation"
 
-export const CreateGroupModal: FC<ContextModalProps> = ({ context, id }) => {
+export const CreateGroupModal: FC<ContextModalProps> = async ({ context, id }) => {
   const close = () => context.closeModal(id)
   const create = useCreateGroupMutation()
 
@@ -15,29 +15,29 @@ export const CreateGroupModal: FC<ContextModalProps> = ({ context, id }) => {
   const handleUpload = async (file?: File) => (file?.name ? await upload(file) : null)
 
   const FormComponent = useGroupWriteForm({
-    onSubmit: async (data) => {
+    onSubmit: (data) => {
       let imageUrl = null
 
-      try {
-        imageUrl = await handleUpload(data.image)
-      } catch (e) {
-        notification.fail({
-          message: "Kunne ikke laste opp bilde",
-          title: "Feil",
+      handleUpload(data.image)
+        .then((uploadedImage) => {
+          imageUrl = uploadedImage
+
+          const groupToCreate: GroupWrite = {
+            name: data.name,
+            description: data.description,
+            email: data.email,
+            type: data.type,
+            image: imageUrl,
+          }
+
+          create.mutate({
+            ...groupToCreate,
+          })
         })
-      }
+        .catch((e) => {
+          notification.fail({ message: "Kunne ikke laste opp bilde", title: "Feil" })
+        })
 
-      const groupToCreate: GroupWrite = {
-        name: data.name,
-        description: data.description,
-        email: data.email,
-        type: data.type,
-        image: imageUrl,
-      }
-
-      create.mutate({
-        ...groupToCreate,
-      })
       close()
     },
   })

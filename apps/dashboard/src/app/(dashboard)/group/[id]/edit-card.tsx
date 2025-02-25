@@ -32,31 +32,27 @@ export const GroupEditCard: FC = () => {
   const router = useRouter()
   const FormComponent = useGroupWriteForm({
     label: "Oppdater gruppe",
-    onSubmit: async (data) => {
+    onSubmit: (data) => {
       let imageUrl = null
 
-      try {
-        imageUrl = await handleUpload(data.image)
-      } catch (e) {
-        notification.fail({
-          message: "Kunne ikke laste opp bilde",
-          title: "Feil",
+      handleUpload(data.image)
+        .then((uploadedImage) => {
+          imageUrl = uploadedImage
+
+          const groupToUpdate: GroupWrite = {
+            name: data.name,
+            description: data.description,
+            email: data.email,
+            type: data.type,
+            image: imageUrl,
+          }
+
+          edit.mutate({ id: group.id, values: groupToUpdate })
+          router.push("/group/")
         })
-      }
-
-      const groupToUpdate: GroupWrite = {
-        name: data.name,
-        description: data.description,
-        email: data.email,
-        type: data.type,
-        image: imageUrl,
-      }
-
-      edit.mutate({
-        id: group.id,
-        values: groupToUpdate,
-      })
-      router.push("/group/")
+        .catch((e) => {
+          notification.fail({ message: "Kunne ikke laste opp bilde", title: "Feil" })
+        })
     },
     defaultValues: { ...group, imageUrl: group.image ?? null },
   })
