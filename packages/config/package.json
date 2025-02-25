@@ -12,11 +12,11 @@
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
-    "typography.css"
+    "typography.css",
+    "tsconfig.json"
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
     "@radix-ui/colors": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
     "postcss": "^8.4.31",
