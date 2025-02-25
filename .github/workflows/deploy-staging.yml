@@ -1,0 +1,26 @@
+name: Monoweb Staging Deployment
+
+on:
+  push:
+#    branches:
+#      - main
+
+jobs:
+  deploy:
+    name: Build container services
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Build `apps/brevduen`
+        run: docker build -t brevduen:latest -f apps/brevduen/Dockerfile .
+
+      - name: Build `apps/invoicification`
+        run: docker build -t invoicification:latest -f apps/invoicification/Dockerfile .
+
+      - name: Build `apps/rif`
+        run: docker build -t rif:latest -f apps/rif/Dockerfile .
+
+      - name: Build `apps/rpc`
+        run: docker build -t rpc:latest -f apps/rpc/Dockerfile .\
