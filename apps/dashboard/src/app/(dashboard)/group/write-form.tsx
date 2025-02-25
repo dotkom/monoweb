@@ -8,7 +8,7 @@ const GROUP_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
 }
 
 interface UseGroupWriteFormProps {
-  onSubmit(data: FormValidationSchema): void
+  onSubmit(data: FormValidationSchema): Promise<void>
   defaultValues?: Partial<FormValidationSchema>
   label?: string
 }
