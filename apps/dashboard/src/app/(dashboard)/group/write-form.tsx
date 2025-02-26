@@ -1,23 +1,13 @@
-import { GroupWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
-import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
+import { type GroupWrite, GroupWriteSchema } from "@dotkomonline/types"
+import { createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
-const GROUP_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {
-  imageUrl: null,
-  image: null,
-}
+const GROUP_FORM_DEFAULT_VALUES: Partial<GroupWrite> = {}
 
 interface UseGroupWriteFormProps {
-  onSubmit(data: FormValidationSchema): void
-  defaultValues?: Partial<FormValidationSchema>
+  onSubmit(data: GroupWrite): void
+  defaultValues?: Partial<GroupWrite>
   label?: string
 }
-
-export const FormValidationSchema = GroupWriteSchema.extend({
-  imageUrl: z.string().nullable(),
-  image: z.any().optional(),
-})
-type FormValidationSchema = z.infer<typeof FormValidationSchema>
 
 export const useGroupWriteForm = ({
   onSubmit,
@@ -25,7 +15,7 @@ export const useGroupWriteForm = ({
   defaultValues = GROUP_FORM_DEFAULT_VALUES,
 }: UseGroupWriteFormProps) =>
   useFormBuilder({
-    schema: FormValidationSchema,
+    schema: GroupWriteSchema,
     defaultValues: defaultValues,
     onSubmit,
     label,
@@ -47,11 +37,8 @@ export const useGroupWriteForm = ({
         withAsterisk: true,
         required: true,
       }),
-      image: createFileInput({
-        label: "Bilde",
-        placeholder: "Last opp",
-        existingfileurl: defaultValues.imageUrl ?? undefined,
-        withAsterisk: false,
+      image: createTextInput({
+        label: "Bilde-url",
       }),
       type: createSelectInput({
         label: "Type",
