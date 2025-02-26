@@ -1,23 +1,3 @@
-import {
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
-  CodeToggle,
-  CreateLink,
-  ListsToggle,
-  MDXEditor,
-  type MDXEditorProps,
-  Separator,
-  UndoRedo,
-  frontmatterPlugin,
-  headingsPlugin,
-  linkDialogPlugin,
-  linkPlugin,
-  listsPlugin,
-  markdownShortcutPlugin,
-  thematicBreakPlugin,
-  toolbarPlugin,
-} from "@mdxeditor/editor"
-import "@mdxeditor/editor/style.css"
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
@@ -45,6 +25,25 @@ import {
   type TextareaProps,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CodeToggle,
+  CreateLink,
+  ListsToggle,
+  MDXEditor,
+  type MDXEditorProps,
+  Separator,
+  UndoRedo,
+  frontmatterPlugin,
+  headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+} from "@mdxeditor/editor"
 import type { FC } from "react"
 import {
   type Control,
@@ -308,7 +307,7 @@ export function createRichTextInput<F extends FieldValues>({
                   onChange={(value) => {
                     field.onChange(value)
                     if (onChange) {
-                      onChange(value)
+                      onChange(value, false)
                     }
                   }}
                 />

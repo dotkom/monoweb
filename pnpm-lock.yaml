@@ -457,6 +457,9 @@ importers:
       '@fadi-ui/react-country-flag':
         specifier: ^1.0.7
         version: 1.0.7
+      '@mdxeditor/editor':
+        specifier: ^3.24.0
+        version: 3.24.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yjs@13.6.23)
       '@next/env':
         specifier: ^15.0.0
         version: 15.1.7
