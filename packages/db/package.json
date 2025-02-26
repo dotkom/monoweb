@@ -29,6 +29,7 @@
     "@dotkomonline/config": "workspace:*",
     "@types/pg": "^8.10.9",
     "prisma": "^6.3.1",
+    "tsx": "^4.19.3",
     "typescript": "^5.4.5"
   }
 }
