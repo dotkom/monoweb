@@ -98,6 +98,9 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     const jobListings = await this.db.jobListing.findMany({
       where: {
         start: {
+          lte: new Date(),
+        },
+        end: {
           gte: new Date(),
         },
       },
