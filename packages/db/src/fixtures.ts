@@ -1,10 +1,10 @@
 import { createPrisma } from "."
 import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
-import { getCommitteeFixtures } from "./fixtures/committee"
-import { getEventCommitteeFixtures } from "./fixtures/committee-organizer"
 import { getCompanyFixtures } from "./fixtures/company"
 import { getEventFixtures } from "./fixtures/event"
+import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
+import { getGroupFixtures } from "./fixtures/group"
 import { getInterestGroupFixtures } from "./fixtures/interest-group"
 import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
 import { getMarkFixtures } from "./fixtures/mark"
@@ -23,7 +23,7 @@ if (process.env.DATABASE_URL.includes("prod")) {
 const db = createPrisma(process.env.DATABASE_URL)
 
 const companies = await db.company.createManyAndReturn({ data: getCompanyFixtures() })
-const committees = await db.committee.createManyAndReturn({ data: getCommitteeFixtures() })
+const groups = await db.group.createManyAndReturn({ data: getGroupFixtures() })
 const attendances = await db.attendance.createManyAndReturn({ data: getAttendanceFixtures() })
 const events = await db.event.createManyAndReturn({ data: getEventFixtures(attendances.map((a) => a.id)) })
 await db.attendancePool.createManyAndReturn({ data: getPoolFixtures(attendances.map((a) => a.id)) })
@@ -46,10 +46,10 @@ await db.interestGroup.createMany({
   data: getInterestGroupFixtures(),
 })
 
-await db.eventCommittee.createManyAndReturn({
-  data: getEventCommitteeFixtures(
+await db.eventHostingGroup.createManyAndReturn({
+  data: getEventHostingGroupFixtures(
     events.map((e) => e.id),
-    committees.map((c) => c.id)
+    groups.map((c) => c.id)
   ),
 })
 

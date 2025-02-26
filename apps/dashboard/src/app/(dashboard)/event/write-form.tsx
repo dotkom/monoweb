@@ -1,6 +1,6 @@
 import { EventWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { useCommitteeAllQuery } from "../../../modules/committee/queries/use-committee-all-query"
+import { useGroupAllQuery } from "../../../modules/group/queries/use-group-all-query"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -19,7 +19,7 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   imageUrl: null,
   locationAddress: null,
   subtitle: null,
-  committeeIds: [],
+  hostingGroupIds: [],
   public: false,
   status: "TBA",
   title: "",
@@ -34,7 +34,7 @@ interface UseEventWriteFormProps {
 }
 
 export const EventWriteFormValidationSchema = EventWriteSchema.extend({
-  committeeIds: z.array(z.string()),
+  hostingGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEvent(data)
   for (const issue of issues) {
@@ -45,7 +45,7 @@ export const EventWriteFormValidationSchema = EventWriteSchema.extend({
 type FormValidationResult = z.infer<typeof EventWriteFormValidationSchema>
 
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
-  const { committees } = useCommitteeAllQuery()
+  const { groups } = useGroupAllQuery()
   return useFormBuilder({
     schema: EventWriteFormValidationSchema,
     defaultValues: EVENT_FORM_DEFAULT_VALUES,
@@ -81,10 +81,10 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeIds: createMultipleSelectInput({
+      hostingGroupIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
-        data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
+        data: groups.map((group) => ({ value: group.id, label: group.name })),
       }),
       status: createSelectInput({
         label: "Event status",

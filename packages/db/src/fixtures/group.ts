@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client"
 
-export const getCommitteeFixtures: () => Prisma.CommitteeCreateManyInput[] = () => [
+export const getGroupFixtures: () => Prisma.GroupCreateManyInput[] = () => [
   {
     createdAt: new Date("2023-02-22 13:30:04.713+00"),
     name: "Dotkom",
@@ -9,6 +9,7 @@ export const getCommitteeFixtures: () => Prisma.CommitteeCreateManyInput[] = () 
     email: "dotkom@online.ntnu.no",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0990ab67-0f5b-4c4d-95f1-50a5293335a5.png",
+    type: "COMMITTEE",
   },
   {
     createdAt: new Date("2023-02-23 11:03:49.289+00"),
@@ -18,6 +19,7 @@ export const getCommitteeFixtures: () => Prisma.CommitteeCreateManyInput[] = () 
     email: "bedkom@online.ntnu.no",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/974b88bd-de01-4b59-856f-f53d9bb600a0.png",
+    type: "COMMITTEE",
   },
   {
     createdAt: new Date("2023-02-25 11:03:49.289+00"),
@@ -27,6 +29,7 @@ export const getCommitteeFixtures: () => Prisma.CommitteeCreateManyInput[] = () 
     email: "arrkom@online.ntnu.no",
     image:
       "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/xs/0954f3de-da25-44eb-b3a9-7dbba7e23f25.png",
+    type: "COMMITTEE",
   },
   {
     createdAt: new Date("2023-02-15 11:03:49.289+00"),
@@ -34,5 +37,22 @@ export const getCommitteeFixtures: () => Prisma.CommitteeCreateManyInput[] = () 
     email: "hovedstyret@online.ntnu.no",
     description:
       "Hovedstyret velges av linjeforeningens medlemmer på generalforsamlingen i løpet av vårsemesteret og sitter ett år frem i tid. Styret består av leder, nestleder, økonomiansvarlig og alle styremedlemmene.\n\nHovedstyret er først og fremst en møteplass for koordinering av de forskjellige komiteene. Styret driver også med økonomistyring og annet administrativt arbeid.\n\nHovedstyret er også linjeforeningens ansikt utad, og opprettholder kontakten med fakultet, institutt og representerer Online ved forskjellige anledninger.",
+    type: "COMMITTEE",
+  },
+  {
+    createdAt: new Date("2023-02-10 11:03:49.289+00"),
+    name: "Ekskom",
+    email: "ekskom@online.ntnu.no",
+    description:
+      "Ekskursjonskomiteens hovedmål er å planlegge og gjennomføre ekskursjoner for studenter ved linjeforeningen Online, spesielt rettet mot studenter i 3. året eller høyere.",
+    type: "NODECOMMITTEE",
+  },
+  {
+    createdAt: new Date("2022-02-10 11:03:49.289+00"),
+    name: "Realfagskjelleren",
+    email: "styret@realfagskjelleren.no",
+    description:
+      "Kjelleren arrangerer lavterskel arrangementer hvor alle er velkomne, til vanlig er det åpent hver Fredag hvor en etter en tung uke kan ta seg en rolig tur for å slappe av og møte andre medstudenter. I tillegg pleier det å arrangeres andre fester nå og da hvor igjen alle er velkomne.",
+    type: "OTHERGROUP",
   },
 ]

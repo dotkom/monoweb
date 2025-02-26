@@ -257,14 +257,14 @@ export function createTextInput<F extends FieldValues>({
 export function createFileInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
-  existingFileUrl?: string
+  existingfileurl?: string
 }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     return (
       <Box>
         <Text>{props.label}</Text>
-        {props.existingFileUrl ? (
-          <Anchor href={props.existingFileUrl} mb="sm" display="block">
+        {props.existingfileurl ? (
+          <Anchor href={props.existingfileurl} mb="sm" display="block">
             Link til ressurs
           </Anchor>
         ) : (

@@ -37,11 +37,10 @@ const navigations = [
     ],
   },
   {
-    label: "Komiteer",
+    label: "Grupper",
     icon: "tabler:campfire",
     children: [
-      { label: "Komiteer", href: "/committee" },
-      { label: "Nodekomiteer", href: "/node-committee" },
+      { label: "Grupper", href: "/group" },
       { label: "Interessegrupper", href: "/interest-group" },
       { label: "Komitesøknader", href: "/committee-application" },
     ],

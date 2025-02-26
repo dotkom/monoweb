@@ -1,28 +1,28 @@
 import type { FC } from "react"
-import { useCommitteeAllQuery } from "../../../../modules/committee/queries/use-committee-all-query"
-import { useEditEventWithCommitteesMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-comittees"
+import { useEditEventWithGroupsMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-groups"
+import { useGroupAllQuery } from "../../../../modules/group/queries/use-group-all-query"
 import { useEventEditForm } from "../edit-form"
 import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {
-  const { event, eventCommittees } = useEventDetailsContext()
-  const edit = useEditEventWithCommitteesMutation()
-  const { committees } = useCommitteeAllQuery()
+  const { event, eventHostingGroups } = useEventDetailsContext()
+  const edit = useEditEventWithGroupsMutation()
+  const { groups } = useGroupAllQuery()
 
   const defaultValues = {
     ...event,
-    committeeIds: eventCommittees.map((committee) => committee.id),
+    groupIds: eventHostingGroups.map((group) => group.id),
   }
 
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
-    committees,
+    hostingGroups: groups,
     onSubmit: (data) => {
-      const { committeeIds, ...event } = data
+      const { hostingGroupIds, ...event } = data
       edit.mutate({
         id: data.id,
         event,
-        committees: committeeIds,
+        groups: hostingGroupIds,
       })
     },
     defaultValues,
