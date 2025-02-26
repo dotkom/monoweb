@@ -16,9 +16,9 @@ export const jobListingRouter = t.router({
     )
     .mutation(async ({ input: { id, input }, ctx }) => ctx.jobListingService.update(id, input)),
   all: t.procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.jobListingService.getAll(input)),
-  current: t.procedure
+  active: t.procedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.jobListingService.getCurrent(input)),
+    .query(async ({ input, ctx }) => ctx.jobListingService.getActive(input)),
   get: t.procedure
     .input(JobListingSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.jobListingService.getById(input)),

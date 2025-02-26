@@ -8,7 +8,7 @@ import type { JobListingRepository } from "./job-listing-repository"
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing | null>
   getAll(page: Pageable): Promise<JobListing[]>
-  getCurrent(page: Pageable): Promise<JobListing[]>
+  getActive(page: Pageable): Promise<JobListing[]>
   create(payload: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, payload: Partial<JobListingWrite>): Promise<JobListing>
   getLocations(): Promise<string[]>
@@ -24,8 +24,8 @@ export class JobListingServiceImpl implements JobListingService {
   async getAll(page: Pageable): Promise<JobListing[]> {
     return await this.jobListingRepository.getAll(page)
   }
-  async getCurrent(page: Pageable): Promise<JobListing[]> {
-    return await this.jobListingRepository.getCurrent(page)
+  async getActive(page: Pageable): Promise<JobListing[]> {
+    return await this.jobListingRepository.getActive(page)
   }
 
   async create(data: JobListingWrite): Promise<JobListing> {
