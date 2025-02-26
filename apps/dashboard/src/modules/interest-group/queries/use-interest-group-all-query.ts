@@ -5,5 +5,5 @@ export const useInterestGroupAllQuery = () => {
   if (data === undefined || query.isLoading) {
     return { interestGroups: [], ...query }
   }
-  return { interestGroups: data.data, ...query }
+  return { interestGroups: data, ...query }
 }

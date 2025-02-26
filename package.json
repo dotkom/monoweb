@@ -28,12 +28,11 @@
     "lint-check": "turbo run lint-check",
     "test": "turbo run test",
     "test:it": "turbo run test:it",
-    "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run -- pnpm run dev",
-    "migrate": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate",
-    "migrate-down": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- down",
-    "migrate-down-all": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate",
-    "migrate-with-fixtures": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate latest --with-fixtures",
-    "migrate-with-sample-data": "pnpm -rc -F @dotkomonline/migrator exec doppler run -- pnpm run migrate -- latest --sample-data",
+    "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
+    "prisma": "pnpm -F @dotkomonline/db prisma",
+    "migrate": "pnpm -F @dotkomonline/db migrate",
+    "generate": "pnpm -F @dotkomonline/db generate",
+    "migrate-with-fixtures": "pnpm -F @dotkomonline/db migrate-with-fixtures",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
@@ -45,10 +44,10 @@
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "pnpm@9.0.4",
+  "packageManager": "pnpm@9.15.5",
   "engines": {
     "node": ">=20.12.2",
-    "pnpm": ">=9.0.0"
+    "pnpm": ">=9.15.5"
   },
   "devDependencies": {
     "turbo": "^2.3.4",

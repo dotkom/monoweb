@@ -193,6 +193,62 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   }
 }
 
+resource "auth0_client" "voting" {
+  cross_origin_auth = true
+  cross_origin_loc = "https://vedtatt.online.ntnu.no/"
+  app_type = "spa"
+  allowed_origins = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000"
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no",
+    ]
+  }[terraform.workspace]
+  web_origins = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000"
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no",
+    ]
+  }[terraform.workspace]
+  callbacks = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no",
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
+    ]
+  }[terraform.workspace]
+  grant_types                   = ["authorization_code", "refresh_token"]
+  name                          = "Vedtatt Klone${local.name_suffix[terraform.workspace]}"
+  organization_require_behavior = "no_prompt"
+  is_first_party                = true
+  oidc_conformant               = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
 data "auth0_client" "vengeful_vineyard_frontend" {
   client_id = auth0_client.vengeful_vineyard_frontend.client_id
 }
@@ -206,6 +262,7 @@ locals {
     appkom-opptakssystem = data.auth0_client.appkom_opptak
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
+    appkom-veldedighet   = data.auth0_client.appkom_veldedighet
   }
 
   monoweb = {
@@ -335,6 +392,7 @@ resource "auth0_client" "auth0_account_management_api_management_client" {
 # has to be imported on new tenant
 resource "auth0_connection_clients" "username_password_authentication" {
   connection_id = auth0_connection.username_password_authentication.id
+
   enabled_clients = [
     auth0_client.onlineweb_frontend.client_id,
     auth0_client.onlineweb4.client_id,
@@ -344,6 +402,8 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
+    auth0_client.appkom_veldedighet.client_id,
+    auth0_client.voting.client_id
   ]
 }
 
@@ -362,6 +422,8 @@ resource "auth0_connection_clients" "feide" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
+    auth0_client.appkom_veldedighet.client_id,
+    auth0_client.voting.client_id
   ]
 }
 
@@ -394,6 +456,12 @@ resource "auth0_connection" "username_password_authentication" {
     mfa {
       active                 = true
       return_enroll_settings = true
+    }
+
+    authentication_methods {
+      passkey {
+        enabled = true
+      }
     }
     password_complexity_options {
       min_length = 8
@@ -506,9 +574,9 @@ resource "auth0_client" "monoweb_web" {
   allowed_logout_urls = []
   allowed_origins     = []
   app_type            = "regular_web"
-  # you go here if you decline an auth grant
+  # you go here if you decline an auth grant, cannot be http
   initiate_login_uri = {
-    "dev" = "http://localhost:3000/api/auth/callback/auth0"
+    "dev" = null
     "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]

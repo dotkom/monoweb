@@ -11,10 +11,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "winston": "^3.13.0"
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*"
+    "@dotkomonline/config": "workspace:*",
+    "typescript": "^5.4.5"
   }
 }

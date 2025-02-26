@@ -1,18 +1,15 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
   type Attendee,
   type AttendeeId,
-  AttendeeSchema,
   type AttendeeWrite,
   type ExtrasChoices,
+  ExtrasChoicesSchema,
   type UserId,
 } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { withInsertJsonValue } from "../../query"
-
-const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
+import type { JsonValue } from "@prisma/client/runtime/library"
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
@@ -26,85 +23,64 @@ export interface AttendeeRepository {
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    const res = await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .leftJoin("attendancePool", "attendancePool.id", "attendee.attendancePoolId")
-      .where("userId", "=", userId)
-      .where("attendancePool.attendanceId", "=", attendanceId)
-      .executeTakeFirst()
+    const user = await this.db.attendee.findFirst({ where: { userId, attendanceId } })
 
-    return res ? mapToAttendee(res) : null
+    if (user === null) return null
+
+    return this.parseExtrasChoices(user)
   }
 
-  async create(obj: AttendeeWrite): Promise<Attendee> {
-    return mapToAttendee(
-      await this.db
-        .insertInto("attendee")
-        .values(withInsertJsonValue(obj, "extrasChoices"))
-        .returningAll()
-        .executeTakeFirstOrThrow()
-    )
+  async create(data: AttendeeWrite): Promise<Attendee> {
+    const createdUser = await this.db.attendee.create({ data })
+
+    return this.parseExtrasChoices(createdUser)
   }
 
   async delete(id: AttendeeId) {
-    const res = await this.db.deleteFrom("attendee").where("id", "=", id).returningAll().executeTakeFirst()
-    return res ? mapToAttendee(res) : null
+    const deletedUser = await this.db.attendee.delete({ where: { id } })
+
+    return this.parseExtrasChoices(deletedUser)
   }
 
-  async getById(id: AttendeeId): Promise<Attendee> {
-    return mapToAttendee(
-      await this.db.selectFrom("attendee").selectAll("attendee").where("id", "=", id).executeTakeFirstOrThrow()
-    )
+  async getById(id: AttendeeId): Promise<Attendee | null> {
+    const user = await this.db.attendee.findUnique({ where: { id } })
+
+    if (user === null) return null
+
+    return this.parseExtrasChoices(user)
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
-    return await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .where("attendance.id", "=", attendanceId)
-      .groupBy("attendee.id")
-      .execute()
-      .then((res) => res.map(mapToAttendee))
+    const attendees = await this.db.attendee.findMany({ where: { attendanceId } })
+
+    return attendees.map(this.parseExtrasChoices)
   }
 
-  async getByAttendancePoolId(id: AttendancePoolId) {
-    return await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .where("attendancePool.id", "=", id)
-      .groupBy("attendee.id")
-      .execute()
-      .then((res) => res.map(mapToAttendee))
+  async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
+    const attendees = await this.db.attendee.findMany({ where: { attendancePoolId } })
+
+    return attendees.map(this.parseExtrasChoices)
   }
 
-  async update(obj: AttendeeWrite, id: AttendeeId) {
-    const res = await this.db
-      .updateTable("attendee")
-      .set(withInsertJsonValue(obj, "extrasChoices"))
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
+  async update(data: Partial<AttendeeWrite>, id: AttendeeId) {
+    const updatedUser = await this.db.attendee.update({ where: { id }, data })
 
-    return res ? mapToAttendee(res) : null
+    return this.parseExtrasChoices(updatedUser)
   }
 
-  async updateExtraChoices(id: AttendeeId, choices: ExtrasChoices) {
-    const res = await this.db
-      .updateTable("attendee")
-      .set({
-        extrasChoices: JSON.stringify(choices),
-      })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
+  // TODO: Remove this, this is not necessary
+  async updateExtraChoices(id: AttendeeId, extrasChoices: ExtrasChoices): Promise<Attendee | null> {
+    return this.update({ extrasChoices }, id)
+  }
 
-    return res ? mapToAttendee(res) : null
+  private parseExtrasChoices<T extends { extrasChoices: JsonValue }>(
+    unparsedObj: T
+  ): Omit<T, "extrasChoices"> & { extrasChoices: ExtrasChoices } {
+    const { extrasChoices, ...obj } = unparsedObj
+
+    return { ...obj, extrasChoices: ExtrasChoicesSchema.parse(extrasChoices) }
   }
 }

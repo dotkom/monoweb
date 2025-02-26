@@ -9,7 +9,7 @@ export interface CompanyEventService {
 export class CompanyEventServiceImpl implements CompanyEventService {
   constructor(private readonly companyEventRepository: CompanyEventRepository) {}
 
-  async getEventsByCompanyId(company: CompanyId, take: number, cursor?: Cursor): Promise<Event[]> {
-    return this.companyEventRepository.getEventsByCompanyId(company, take, cursor)
+  async getEventsByCompanyId(company: CompanyId): Promise<Event[]> {
+    return this.companyEventRepository.getEventsByCompanyId(company)
   }
 }

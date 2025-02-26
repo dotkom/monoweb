@@ -31,5 +31,5 @@ export const refundRequestRouter = t.router({
     .query(async ({ input, ctx }) => ctx.refundRequestService.getRefundRequestById(input)),
   all: protectedProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.refundRequestService.getRefundRequests(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => ctx.refundRequestService.getRefundRequests(input)),
 })

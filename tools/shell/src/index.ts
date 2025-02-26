@@ -1,9 +1,9 @@
 import repl from "node:repl"
 import { type ServiceLayerOptions, createServiceLayer } from "@dotkomonline/core"
-import { createKysely } from "@dotkomonline/db"
+import { createPrisma } from "@dotkomonline/db"
 import { env } from "./env"
 
-const kysely = createKysely(env.DATABASE_URL)
+const prisma = createPrisma(env.DATABASE_URL)
 // biome-ignore lint/suspicious/noExplicitAny: we don't provide s3 support for shell just yet
 const s3Client = new Proxy<ServiceLayerOptions["s3Client"]>({} as any, {})
 // biome-ignore lint/suspicious/noExplicitAny: we don't provide auth0 support for shell just yet
@@ -13,7 +13,7 @@ const stripeAccounts = new Proxy<ServiceLayerOptions["stripeAccounts"]>({} as an
 const s3BucketName = `shell-invalid-s3-bucket-${crypto.randomUUID()}`
 
 const core = await createServiceLayer({
-  db: kysely,
+  db: prisma,
   s3Client,
   managementClient: auth0Client,
   s3BucketName,

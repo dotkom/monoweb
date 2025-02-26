@@ -1,18 +1,13 @@
+import { schemas } from "@dotkomonline/db"
 import { z } from "zod"
 
 export const YearCriteriaSchema = z.array(z.number())
 
-export const AttendancePoolSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  capacity: z.number(),
-  attendanceId: z.string().uuid(),
-  yearCriteria: YearCriteriaSchema,
+export type YearCriteria = z.infer<typeof YearCriteriaSchema>
+
+export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({
   numAttendees: z.number(),
-  title: z.string().min(1),
-  isVisible: z.boolean(),
-  type: z.enum(["NORMAL", "MERGE"]),
+  yearCriteria: YearCriteriaSchema,
 })
 
 export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({

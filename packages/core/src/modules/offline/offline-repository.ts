@@ -1,44 +1,30 @@
-import type { Database } from "@dotkomonline/db"
-import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
+import type { DBClient } from "@dotkomonline/db"
+import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface OfflineRepository {
-  getById(id: OfflineId): Promise<Offline | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Offline[]>
+  getById(id: OfflineId): Promise<Offline | null>
+  getAll(page: Pageable): Promise<Offline[]>
   create(values: OfflineWrite): Promise<Offline>
   update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline>
 }
 
-const mapToOffline = (offline: unknown): Offline => OfflineSchema.parse(offline)
-
 export class OfflineRepositoryImpl implements OfflineRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   async create(data: OfflineWrite): Promise<Offline> {
-    const offline = await this.db.insertInto("offline").values(data).returningAll().executeTakeFirstOrThrow()
-    return offline
+    return await this.db.offline.create({ data })
   }
 
   async update(id: OfflineId, data: Partial<OfflineWrite>): Promise<Offline> {
-    const result = await this.db
-      .updateTable("offline")
-      .set({ ...data, updatedAt: new Date() })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return result
+    return await this.db.offline.update({ where: { id }, data })
   }
 
-  async getById(id: string): Promise<Offline | undefined> {
-    const offline = await this.db.selectFrom("offline").selectAll().where("offline.id", "=", id).executeTakeFirst()
-    return offline ? mapToOffline(offline) : undefined
+  async getById(id: string): Promise<Offline | null> {
+    return await this.db.offline.findUnique({ where: { id } })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Offline[]> {
-    const query = this.db.selectFrom("offline").selectAll().limit(take)
-    const ordered = orderedQuery(query, cursor)
-    const offlines = await ordered.execute()
-    return offlines.map(mapToOffline)
+  async getAll(page: Pageable): Promise<Offline[]> {
+    return await this.db.offline.findMany({ ...pageQuery(page) })
   }
 }
