@@ -6,7 +6,7 @@ import { useQueryNotification } from "src/app/notifications"
 import { useS3UploadFile } from "src/modules/offline/use-s3-upload-file"
 import { useCreateGroupMutation } from "../mutations/use-create-group-mutation"
 
-export const CreateGroupModal: FC<ContextModalProps> = async ({ context, id }) => {
+export const CreateGroupModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)
   const create = useCreateGroupMutation()
 
