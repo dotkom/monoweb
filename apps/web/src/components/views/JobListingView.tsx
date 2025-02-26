@@ -4,9 +4,9 @@ import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
-import remarkHtml from 'remark-html'
-import remarkParse from 'remark-parse'
-import {unified} from 'unified'
+import remarkHtml from "remark-html"
+import remarkParse from "remark-parse"
+import { unified } from "unified"
 
 interface JobListingViewProps {
   jobListing: JobListing
@@ -31,10 +31,7 @@ export const JobListingView: FC<JobListingViewProps> = async (props: JobListingV
     deadline,
   } = props.jobListing
 
-  const descriptionHtml = await unified()
-    .use(remarkParse)
-    .use(remarkHtml)
-    .process(description);
+  const descriptionHtml = await unified().use(remarkParse).use(remarkHtml).process(description)
 
   return (
     <div className="mx-auto mt-10 flex w-10/12 justify-between">

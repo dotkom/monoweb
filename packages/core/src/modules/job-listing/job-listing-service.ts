@@ -2,13 +2,7 @@ import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/ty
 import { isAfter, isBefore } from "date-fns"
 import assert from "../../assert"
 import type { Cursor } from "../../query"
-import {
-  InvalidDeadlineError,
-  InvalidEndDateError,
-  InvalidStartDateError,
-  JobListingNotFoundError,
-  MissingLocationError,
-} from "./job-listing-error"
+import { InvalidDeadlineError, InvalidEndDateError, JobListingNotFoundError } from "./job-listing-error"
 import type { JobListingLocationLinkRepository } from "./job-listing-location-link-repository"
 import type { JobListingLocationRepository } from "./job-listing-location-repository"
 import type { JobListingRepository } from "./job-listing-repository"
