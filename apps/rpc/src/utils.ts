@@ -9,7 +9,7 @@ export async function verifyAwsCredentials() {
 
     // GetCallerIdentity is the lightest-weight operation to verify credentials
     const identity = await stsClient.send(new GetCallerIdentityCommand({}))
-    console.info(`AWS credentials verified successfully. Using identity: \n${identity.Arn}`)
+    console.debug(`AWS credentials verified successfully. Using identity: \n${identity.Arn}`)
   } catch (error) {
     console.warn(
       "WARNING: Unable to verify AWS credentials. Functionality involving aws services, e.g. uploading files, will fail."
