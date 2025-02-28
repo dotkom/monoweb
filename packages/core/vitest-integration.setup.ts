@@ -16,7 +16,6 @@ export async function createServiceLayerForTesting() {
     s3Client,
     managementClient,
     stripeAccounts,
-    s3BucketName: crypto.randomUUID(),
   })
 }
 
