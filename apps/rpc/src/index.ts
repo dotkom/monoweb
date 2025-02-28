@@ -14,14 +14,17 @@ import { ManagementClient } from "auth0"
 import fastify from "fastify"
 import Stripe from "stripe"
 import { env } from "./env"
+import { verifyAwsCredentials } from "./utils"
 
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = env.OAUTH_AUDIENCES.split(",")
 
 const jwtService = new JwtService(env.OAUTH_ISSUER, oauthAudiences)
+
 const s3Client = new S3Client({
   region: env.AWS_REGION,
 })
+
 const auth0Client = new ManagementClient({
   domain: env.MANAGEMENT_TENANT_DOMAIN_ID,
   clientId: env.MANAGEMENT_OAUTH_CLIENT_ID,
@@ -91,6 +94,8 @@ server.register(fastifyTRPCPlugin, {
 server.get("/health", (_, res) => {
   res.send({ status: "ok" })
 })
+
+verifyAwsCredentials()
 
 await server.listen({ port: 4444, host: "0.0.0.0" })
 console.info("Started RPC server on http://0.0.0.0:4444")
