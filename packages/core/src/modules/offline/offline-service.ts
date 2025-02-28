@@ -45,8 +45,9 @@ export class OfflineServiceImpl implements OfflineService {
   }
 
   async createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    const key = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}-${filename}`
-    const maxSizeMB = 25 // This is gmail max size for attachments, and a common max size of attachments.
+    const uuid = crypto.randomUUID()
+    const key = `${Date.now()}-${uuid}-${filename}`
+    const maxSizeMB = 25 // Kind of arbitrary, but this is gmail max size for attachments so I figured its a sane max size.
 
     return this.s3Repository.createPresignedPost(key, mimeType, maxSizeMB)
   }
