@@ -16,6 +16,7 @@ export async function createServiceLayerForTesting() {
     s3Client,
     managementClient,
     stripeAccounts,
+    s3BucketName: "test-bucket-non-existing", // We are not testing s3 upload functionality, so this value is not used.
   })
 }
 
