@@ -13,7 +13,11 @@ export interface EventRepository {
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async addAttendance(id: EventId, attendanceId: string) {
     return await this.db.event.update({ where: { id }, data: { attendanceId } })

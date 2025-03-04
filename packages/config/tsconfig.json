@@ -18,6 +18,8 @@
     "skipLibCheck": true,
     "stripInternal": true,
 
-    "noEmit": true
+    "noEmit": true,
+
+    "erasableSyntaxOnly": true
   }
 }

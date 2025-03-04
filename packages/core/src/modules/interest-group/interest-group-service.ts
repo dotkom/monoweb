@@ -20,7 +20,11 @@ export interface InterestGroupService {
 }
 
 export class InterestGroupServiceImpl implements InterestGroupService {
-  constructor(private readonly interestGroupRepository: InterestGroupRepository) {}
+  private readonly interestGroupRepository: InterestGroupRepository
+
+  constructor(interestGroupRepository: InterestGroupRepository) {
+    this.interestGroupRepository = interestGroupRepository
+  }
 
   async getById(id: InterestGroupId): Promise<InterestGroup | null> {
     return this.interestGroupRepository.getById(id)

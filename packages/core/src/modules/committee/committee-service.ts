@@ -10,7 +10,11 @@ export interface CommitteeService {
 }
 
 export class CommitteeServiceImpl implements CommitteeService {
-  constructor(private readonly committeeRepository: CommitteeRepository) {}
+  private readonly committeeRepository: CommitteeRepository
+
+  constructor(committeeRepository: CommitteeRepository) {
+    this.committeeRepository = committeeRepository
+  }
 
   /**
    * Get a committee by its id

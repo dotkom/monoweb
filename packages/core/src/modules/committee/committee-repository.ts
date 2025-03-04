@@ -9,7 +9,11 @@ export interface CommitteeRepository {
 }
 
 export class CommitteeRepositoryImpl implements CommitteeRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getById(id: CommitteeId) {
     return await this.db.committee.findUnique({ where: { id } })

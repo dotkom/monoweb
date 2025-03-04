@@ -6,10 +6,13 @@ export interface S3Repository {
 }
 
 export class S3RepositoryImpl implements S3Repository {
-  public constructor(
-    private readonly s3Client: S3Client,
-    private readonly s3BucketName: string
-  ) {}
+  private readonly s3Client: S3Client
+  private readonly s3BucketName: string
+
+  public constructor(s3Client: S3Client, s3BucketName: string) {
+    this.s3Client = s3Client
+    this.s3BucketName = s3BucketName
+  }
 
   async createPresignedPost(key: string, mimeType: string, maxSizeMB: number): Promise<PresignedPost> {
     return _createPresignedPost(this.s3Client, {

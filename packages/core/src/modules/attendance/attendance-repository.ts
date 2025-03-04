@@ -20,7 +20,11 @@ export interface AttendanceRepository {
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getAll() {
     const attendances = await this.db.attendance.findMany({})

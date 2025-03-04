@@ -15,7 +15,11 @@ export interface JobListingService {
 }
 
 export class JobListingServiceImpl implements JobListingService {
-  constructor(private readonly jobListingRepository: JobListingRepository) {}
+  private readonly jobListingRepository: JobListingRepository
+
+  constructor(jobListingRepository: JobListingRepository) {
+    this.jobListingRepository = jobListingRepository
+  }
 
   async getById(id: JobListingId): Promise<JobListing | null> {
     return await this.jobListingRepository.getById(id)
