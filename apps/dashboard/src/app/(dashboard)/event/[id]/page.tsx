@@ -8,8 +8,8 @@ import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
-import { ExtrasPage } from "./extras-page"
 import { useEventDetailsContext } from "./provider"
+import { SelectionsPage } from "./selections-page"
 import { WaitlistPage } from "./waitlist-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
@@ -62,8 +62,8 @@ const SIDEBAR_LINKS = [
   {
     icon: "tabler:calendar-event",
     label: "Valg",
-    slug: "extras",
-    component: ExtrasPage,
+    slug: "selections",
+    component: SelectionsPage,
   },
 ]
 
