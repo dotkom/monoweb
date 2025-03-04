@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -o -- tsx watch src/index.ts",
-    "build": "tsup src/index.ts",
+    "docker:build": "docker build --platform linux/amd64 -t rpc:latest -f Dockerfile --progress plain ../..",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
@@ -29,8 +29,6 @@
     "@types/node": "^22.0.0",
     "dotenv-cli": "^8.0.0",
     "tslib": "^2.6.2",
-    "tsup": "^8.3.0",
-    "tsx": "^4.15.6",
     "typescript": "^5.8"
   }
 }

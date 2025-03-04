@@ -45,10 +45,5 @@ jobs:
       - name: Lint
         run: pnpm lint-check
 
-      - name: Build
-        run: |
-          pnpm run -F @dotkomonline/brevduen \
-            -F @dotkomonline/invoicification \
-            -F @dotkomonline/rif \
-            -F @dotkomonline/rpc \
-            build
+      - name: Build docker images
+        run: pnpm run docker:build

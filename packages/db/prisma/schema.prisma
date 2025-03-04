@@ -6,7 +6,7 @@ generator zod {
   provider = "zod-prisma-types"
   output   = "../src/schemas"
 
-  useMultipleFiles = true
+  useMultipleFiles = false
   createInputTypes = false
   addIncludeType   = false
   addSelectType    = false
