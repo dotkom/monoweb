@@ -1,0 +1,31 @@
+name: Staging deployment
+on:
+  push:
+    branches:
+      - main
+  # remove
+  pull_request:
+
+permissions:
+  id-token: write   
+  contents: read
+jobs:
+  deploy-rpc:
+    name: Deploy monoweb/rpc
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRPCCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          content: .
+          file: apps/rpc/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/rpc:latest
+          push: true
