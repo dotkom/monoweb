@@ -52,6 +52,6 @@
   "devDependencies": {
     "turbo": "^2.3.4",
     "turbo-ignore": "^2.3.4",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8"
   }
 }
