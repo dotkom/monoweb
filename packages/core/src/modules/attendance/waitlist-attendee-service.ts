@@ -11,11 +11,15 @@ export interface WaitlistAttendeService {
 }
 
 export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
+  private readonly waitlistAttendeeRepository: WaitlistAttendeRepository
+  private readonly attendancePoolRepository: AttendancePoolRepository
+
   constructor(
-    private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository
+    waitlistAttendeeRepository: WaitlistAttendeRepository,
+    attendancePoolRepository: AttendancePoolRepository
   ) {
     this.waitlistAttendeeRepository = waitlistAttendeeRepository
+    this.attendancePoolRepository = attendancePoolRepository
   }
 
   async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {

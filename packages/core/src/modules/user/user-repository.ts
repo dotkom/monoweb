@@ -71,10 +71,13 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
 }
 
 export class UserRepositoryImpl implements UserRepository {
-  constructor(
-    private readonly client: ManagementClient,
-    private readonly db: DBClient
-  ) {}
+  private readonly client: ManagementClient
+  private readonly db: DBClient
+
+  constructor(client: ManagementClient, db: DBClient) {
+    this.client = client
+    this.db = db
+  }
 
   async create(data: Omit<User, "id">, password: string): Promise<User> {
     const response = await this.client.users.create(mapUserToAuth0UserCreate(data, password))

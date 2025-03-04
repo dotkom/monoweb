@@ -9,11 +9,12 @@ import {
 export class JwtService {
   private jwks: GetKeyFunction<JWTHeaderParameters, FlattenedJWSInput> | null = null
   private readonly jwksUrl: URL
+  private readonly issuer: string
+  private readonly audiences: string[]
 
-  public constructor(
-    private readonly issuer: string,
-    private readonly audiences: string[]
-  ) {
+  public constructor(issuer: string, audiences: string[]) {
+    this.issuer = issuer
+    this.audiences = audiences
     const issuerWithoutTrailingSlash = issuer.replace(/\/$/, "")
     this.jwksUrl = new URL(`${issuerWithoutTrailingSlash}/.well-known/jwks.json`)
   }

@@ -9,7 +9,11 @@ export interface EventCommitteeRepository {
 }
 
 export class EventCommitteeRepositoryImpl implements EventCommitteeRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getAllEventCommittees(eventId: EventId): Promise<Committee[]> {
     const eventCommittees = await this.db.eventCommittee.findMany({

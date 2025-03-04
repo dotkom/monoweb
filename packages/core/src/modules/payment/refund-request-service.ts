@@ -20,12 +20,22 @@ export interface RefundRequestService {
 }
 
 export class RefundRequestServiceImpl implements RefundRequestService {
+  private readonly refundRequestRepository: RefundRequestRepository
+  private readonly paymentRepository: PaymentRepository
+  private readonly productRepository: ProductRepository
+  private readonly paymentService: PaymentService
+
   constructor(
-    private readonly refundRequestRepository: RefundRequestRepository,
-    private readonly paymentRepository: PaymentRepository,
-    private readonly productRepository: ProductRepository,
-    private readonly paymentService: PaymentService
-  ) {}
+    refundRequestRepository: RefundRequestRepository,
+    paymentRepository: PaymentRepository,
+    productRepository: ProductRepository,
+    paymentService: PaymentService
+  ) {
+    this.refundRequestRepository = refundRequestRepository
+    this.paymentRepository = paymentRepository
+    this.productRepository = productRepository
+    this.paymentService = paymentService
+  }
 
   /**
    * Create a refund request for a payment

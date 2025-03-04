@@ -10,7 +10,11 @@ export interface MarkRepository {
 }
 
 export class MarkRepositoryImpl implements MarkRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getById(id: MarkId): Promise<Mark | null> {
     return await this.db.mark.findUnique({ where: { id } })

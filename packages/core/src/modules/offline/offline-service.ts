@@ -14,10 +14,13 @@ export interface OfflineService {
 }
 
 export class OfflineServiceImpl implements OfflineService {
-  constructor(
-    private readonly offlineRepository: OfflineRepository,
-    private readonly s3Repository: S3Repository
-  ) {}
+  private readonly offlineRepository: OfflineRepository
+  private readonly s3Repository: S3Repository
+
+  constructor(offlineRepository: OfflineRepository, s3Repository: S3Repository) {
+    this.offlineRepository = offlineRepository
+    this.s3Repository = s3Repository
+  }
 
   /**
    * Get an offline by its id

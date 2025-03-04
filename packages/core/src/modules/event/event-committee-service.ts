@@ -8,7 +8,11 @@ export interface EventCommitteeService {
 }
 
 export class EventCommitteeServiceImpl implements EventCommitteeService {
-  constructor(private readonly committeeOrganizerRepository: EventCommitteeRepository) {}
+  private readonly committeeOrganizerRepository: EventCommitteeRepository
+
+  constructor(committeeOrganizerRepository: EventCommitteeRepository) {
+    this.committeeOrganizerRepository = committeeOrganizerRepository
+  }
 
   async getCommitteesForEvent(eventId: EventId): Promise<Committee[]> {
     const committees = await this.committeeOrganizerRepository.getAllCommittees(eventId)

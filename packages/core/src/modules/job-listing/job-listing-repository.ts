@@ -12,7 +12,11 @@ export interface JobListingRepository {
 }
 
 export class JobListingRepositoryImpl implements JobListingRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async createJobListing({ companyId, locations, ...rest }: JobListingWrite): Promise<JobListing> {
     const jobListing = await this.db.jobListing.create({

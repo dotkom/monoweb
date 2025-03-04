@@ -10,7 +10,11 @@ export interface EventCompanyRepository {
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async createCompany(eventId: EventId, companyId: CompanyId) {
     await this.db.eventCompany.create({ data: { eventId, companyId } })

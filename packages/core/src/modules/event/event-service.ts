@@ -28,13 +28,25 @@ export interface EventService {
 }
 
 export class EventServiceImpl implements EventService {
+  private readonly eventRepository: EventRepository
+  private readonly attendanceService: AttendanceService
+  private readonly attendancePoolService: AttendancePoolService
+  private readonly eventCommitteeService: EventCommitteeService
+  private readonly eventCompanyService: EventCompanyService
+
   constructor(
-    private readonly eventRepository: EventRepository,
-    private readonly attendanceService: AttendanceService,
-    private readonly attendancePoolService: AttendancePoolService,
-    private readonly eventCommitteeService: EventCommitteeService,
-    private readonly eventCompanyService: EventCompanyService
-  ) {}
+    eventRepository: EventRepository,
+    attendanceService: AttendanceService,
+    attendancePoolService: AttendancePoolService,
+    eventCommitteeService: EventCommitteeService,
+    eventCompanyService: EventCompanyService
+  ) {
+    this.eventRepository = eventRepository
+    this.attendanceService = attendanceService
+    this.attendancePoolService = attendancePoolService
+    this.eventCommitteeService = eventCommitteeService
+    this.eventCompanyService = eventCompanyService
+  }
 
   async addAttendance(eventId: EventId, obj: AttendanceWrite) {
     const attendance = await this.attendanceService.create(obj)
