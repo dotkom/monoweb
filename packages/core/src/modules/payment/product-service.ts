@@ -1,12 +1,12 @@
 import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Pageable } from "../../query"
 import { ProductNotFoundError } from "./product-error"
 import type { ProductRepository } from "./product-repository"
 
 export interface ProductService {
   createProduct(productCreate: ProductWrite): Promise<Product>
   getProductById(id: ProductId): Promise<Product>
-  getProducts(take: number, cursor?: Cursor): Promise<Product[]>
+  getProducts(page: Pageable): Promise<Product[]>
 }
 
 export class ProductServiceImpl implements ProductService {
@@ -30,8 +30,8 @@ export class ProductServiceImpl implements ProductService {
     return product
   }
 
-  async getProducts(take: number, cursor?: Cursor): Promise<Product[]> {
-    const products = await this.productRepository.getAll(take, cursor)
+  async getProducts(page: Pageable): Promise<Product[]> {
+    const products = await this.productRepository.getAll(page)
     return products
   }
 }

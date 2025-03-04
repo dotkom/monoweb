@@ -12,7 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@iconify-icon/react": "^1.0.8",
+    "@iconify-icon/react": "^2.0.0",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
@@ -34,8 +34,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
-    "@dotkomonline/tsconfig": "workspace:*",
-    "@ladle/react": "^4.0.3",
+    "@ladle/react": "^5.0.0",
     "@types/react": "^18.3.11",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",

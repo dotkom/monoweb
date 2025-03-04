@@ -1,68 +1,33 @@
-import { type Database, createKysely, createMigrator } from "@dotkomonline/db"
-import { type Environment, createEnvironment } from "@dotkomonline/env"
-import { PostgreSqlContainer, type StartedPostgreSqlContainer } from "@testcontainers/postgresql"
-import { type Kysely, sql } from "kysely"
-import { afterAll, beforeAll } from "vitest"
+import type { S3Client } from "@aws-sdk/client-s3"
+import type { DBClient } from "@dotkomonline/db"
+import { getTestClient } from "@dotkomonline/db/src/test-databases"
+import type { ManagementClient } from "auth0"
+import { afterAll, beforeEach } from "vitest"
+import { mockDeep } from "vitest-mock-extended"
+import { type StripeAccount, createServiceLayer } from "./src"
 
-let container: StartedPostgreSqlContainer
-let host: Kysely<Database>
+export async function createServiceLayerForTesting() {
+  const s3Client = mockDeep<S3Client>()
+  const managementClient = mockDeep<ManagementClient>()
+  const stripeAccounts = mockDeep<Record<string, StripeAccount>>()
 
-async function runMigrations(env: Environment, dbName: string) {
-  const db = createKyselyForDatabase(env, dbName)
-  const migrator = createMigrator(db, new URL("node_modules/@dotkomonline/db/src/migrations", import.meta.url))
-  await migrator.migrateToLatest().catch(console.warn)
-  await db.destroy()
-}
-
-function createKyselyForDatabase(env: Environment, dbName: string): Kysely<Database> {
-  return createKysely({
-    ...env,
-    DATABASE_URL: `postres://local:local@${container.getHost()}:${container.getFirstMappedPort()}/${dbName}`,
+  return await createServiceLayer({
+    db: dbClient,
+    s3Client,
+    managementClient,
+    stripeAccounts,
+    s3BucketName: "test-bucket-non-existing", // We are not testing s3 upload functionality, so this value is not used.
   })
 }
 
-async function createTestDatabase(dbName: string) {
-  try {
-    await host.executeQuery(sql`drop database if exists ${sql.ref(dbName)}`.compile(host))
-    await host.executeQuery(sql`create database ${sql.ref(dbName)}`.compile(host))
-  } catch (e) {
-    console.error("Error resetting database")
-    console.error(e)
-  }
-}
-
-export type CleanupFunction = () => Promise<void>
-
-export async function createServiceLayerForTesting(env: Environment, database: string) {
-  await createTestDatabase(database)
-  await runMigrations(env, database)
-  const kysely = createKyselyForDatabase(env, database)
-
-  return {
-    kysely,
-    cleanup: async () => {
-      await kysely.destroy()
-    },
-  }
-}
-
-beforeAll(async () => {
-  container = await new PostgreSqlContainer("public.ecr.aws/z5h0l8j6/dotkom/pgx-ulid:0.1.3")
-    .withExposedPorts(5432)
-    .withUsername("local")
-    .withPassword("local")
-    .withDatabase("main")
-    .withReuse()
-    .start()
-
-  process.env.DATABASE_URL = container.getConnectionUri()
-  host = createKysely(createEnvironment())
-}, 30000)
+let dbClient: DBClient
+export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 
 afterAll(async () => {
-  await host.destroy()
+  if (dbClient !== undefined) await dbClient.$disconnect()
 })
 
-process.on("beforeExit", async () => {
-  // await container.stop()
+beforeEach(async () => {
+  dbClient = await getTestClient()
+  core = await createServiceLayerForTesting()
 })

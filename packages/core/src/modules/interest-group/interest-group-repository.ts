@@ -1,58 +1,60 @@
-import type { Database } from "@dotkomonline/db"
-import {
-  type InterestGroup,
-  type InterestGroupId,
-  InterestGroupSchema,
-  type InterestGroupWrite,
+import type { DBClient } from "@dotkomonline/db"
+import type {
+  InterestGroup,
+  InterestGroupId,
+  InterestGroupMember,
+  InterestGroupWrite,
+  UserId,
 } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Collection, type Pageable, paginatedQuery } from "../../utils/db-utils"
 
 export interface InterestGroupRepository {
-  getById(id: InterestGroupId): Promise<InterestGroup | undefined>
-  getAll(pageable: Pageable): Promise<Collection<InterestGroup>>
+  getById(id: InterestGroupId): Promise<InterestGroup | null>
+  getAll(): Promise<InterestGroup[]>
   create(values: InterestGroupWrite): Promise<InterestGroup>
   update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
-}
-
-function mapToInterestGroup(interestGroup: Selectable<Database["interestGroup"]>): InterestGroup {
-  return InterestGroupSchema.parse(interestGroup)
+  getAllMembers(id: InterestGroupId): Promise<InterestGroupMember[]>
+  getAllByMember(userId: UserId): Promise<InterestGroup[]>
+  addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
+  removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
 }
 
 export class InterestGroupRepositoryImpl implements InterestGroupRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
-  async getById(id: InterestGroupId): Promise<InterestGroup | undefined> {
-    const interestGroup = await this.db.selectFrom("interestGroup").selectAll().where("id", "=", id).executeTakeFirst()
-    return interestGroup ? mapToInterestGroup(interestGroup) : undefined
+  async getById(id: InterestGroupId): Promise<InterestGroup | null> {
+    return await this.db.interestGroup.findUnique({ where: { id } })
   }
 
-  async getAll(pageable: Pageable): Promise<Collection<InterestGroup>> {
-    const res = paginatedQuery(this.db.selectFrom("interestGroup").selectAll(), pageable, mapToInterestGroup)
-    return res
+  async getAll(): Promise<InterestGroup[]> {
+    return await this.db.interestGroup.findMany({})
   }
 
-  async create(values: InterestGroupWrite): Promise<InterestGroup> {
-    const interestGroup = await this.db
-      .insertInto("interestGroup")
-      .values({ ...values, createdAt: new Date(), updatedAt: new Date() })
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToInterestGroup(interestGroup)
+  async create(data: InterestGroupWrite): Promise<InterestGroup> {
+    return await this.db.interestGroup.create({ data })
   }
 
-  async update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup> {
-    const interestGroup = await this.db
-      .updateTable("interestGroup")
-      .set({ ...values, updatedAt: new Date() })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToInterestGroup(interestGroup)
+  async update(id: InterestGroupId, data: Partial<InterestGroupWrite>): Promise<InterestGroup> {
+    return await this.db.interestGroup.update({ where: { id }, data })
   }
 
   async delete(id: InterestGroupId): Promise<void> {
-    await this.db.deleteFrom("interestGroup").where("id", "=", id).execute()
+    await this.db.interestGroup.delete({ where: { id } })
+  }
+
+  async getAllMembers(interestGroupId: InterestGroupId): Promise<InterestGroupMember[]> {
+    return await this.db.interestGroupMember.findMany({ where: { interestGroupId } })
+  }
+
+  async getAllByMember(userId: UserId): Promise<InterestGroup[]> {
+    return await this.db.interestGroup.findMany({ where: { members: { some: { userId } } } })
+  }
+
+  async addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember> {
+    return await this.db.interestGroupMember.create({ data: { interestGroupId, userId } })
+  }
+
+  async removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void> {
+    await this.db.interestGroupMember.delete({ where: { interestGroupId, userId } })
   }
 }

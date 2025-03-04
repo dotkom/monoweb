@@ -2,9 +2,7 @@ import { JWT } from "google-auth-library"
 import { GoogleSpreadsheet } from "google-spreadsheet"
 import { z } from "zod"
 import type { FormSchema } from "./app/form-schema"
-
-const serviceAccount = process.env.INTEREST_FORM_SERVICE_ACCOUNT ?? "__NO_SERVICE_ACCOUNT_PROVIDED__"
-const spreadsheetId = process.env.INTEREST_FORM_SPREADSHEET_ID ?? "__NO_SPREADSHEET_ID_PROVIDED__"
+import { env } from "./env"
 
 const serviceAccountSchema = z.object({
   type: z.literal("service_account"),
@@ -20,7 +18,7 @@ const serviceAccountSchema = z.object({
 })
 
 const authenticate = (): JWT => {
-  const json = JSON.parse(atob(serviceAccount))
+  const json = JSON.parse(atob(env.SERVICE_ACCOUNT))
   const result = serviceAccountSchema.safeParse(json)
   if (!result.success) {
     throw new Error("Invalid service account")
@@ -35,7 +33,7 @@ const authenticate = (): JWT => {
 
 export const createSpreadsheetRow = async (form: FormSchema) => {
   const jwt = authenticate()
-  const spreadsheet = new GoogleSpreadsheet(spreadsheetId, jwt)
+  const spreadsheet = new GoogleSpreadsheet(env.SPREADSHEET_ID, jwt)
   await spreadsheet.loadInfo()
 
   const sheet = spreadsheet.sheetsByIndex.at(0)

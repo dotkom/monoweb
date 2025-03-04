@@ -9,7 +9,7 @@ import {
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useCreateAttendanceExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
-import { trpc } from "../../../../utils/trpc"
+import { trpc } from "../../../../trpc"
 import { useEventDetailsContext } from "./provider"
 
 export const ExtrasPage: FC = () => {

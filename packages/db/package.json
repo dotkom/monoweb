@@ -10,18 +10,26 @@
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
-    "generate-types": "dotenv -e ../../.env -- kysely-codegen --out-file ./src/db.generated.d.ts --camel-case --dialect postgres"
+    "prisma": "prisma",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "postinstall": "prisma generate",
+    "migrate-with-fixtures": "prisma migrate dev && tsx src/fixtures.ts"
   },
   "dependencies": {
-    "@dotkomonline/env": "workspace:*",
-    "kysely": "^0.27.0",
-    "pg": "^8.11.3"
+    "@dotkomonline/logger": "workspace:*",
+    "@prisma/client": "^6.3.1",
+    "@testcontainers/postgresql": "^10.18.0",
+    "pg": "^8.13.0",
+    "zod": "^3.24.1",
+    "zod-prisma-types": "^3.2.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
+    "@dotkomonline/config": "workspace:*",
     "@types/pg": "^8.10.9",
-    "kysely-codegen": "^0.16.0",
+    "prisma": "^6.3.1",
+    "tsx": "^4.19.3",
     "typescript": "^5.4.5"
   }
 }

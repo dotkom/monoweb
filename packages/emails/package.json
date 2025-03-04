@@ -12,15 +12,15 @@
   },
   "main": "src/index.ts",
   "dependencies": {
-    "@react-email/components": "^0.0.25",
+    "@react-email/components": "^0.0.33",
     "@react-email/render": "^0.0.17",
-    "@react-email/tailwind": "^0.0.19",
+    "@react-email/tailwind": "^0.1.0",
     "react": "^18.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
+    "@dotkomonline/config": "workspace:*",
     "@types/react": "^18.3.11",
     "react-email": "^1.9.5",
     "typescript": "^5.4.5"

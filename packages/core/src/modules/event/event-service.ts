@@ -1,14 +1,12 @@
 import type {
-  Attendance,
-  AttendancePool,
   AttendanceWrite,
-  Committee,
-  Company,
+  DashboardEventDetail,
   Event,
   EventId,
   EventWrite,
+  WebEventDetail,
 } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Pageable } from "../../query"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"
@@ -17,37 +15,13 @@ import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
 import type { EventRepository } from "./event-repository.js"
 
-type DashboardEventDetail = {
-  event: Event
-  eventCommittees: Committee[]
-  attendance: Attendance | null
-  pools: AttendancePool[] | null
-  hasAttendance: boolean
-}
-
-type WebEventDetail =
-  | {
-      hasAttendance: false
-      event: Event
-      eventCommittees: Committee[]
-      eventCompanies: Company[]
-    }
-  | {
-      hasAttendance: true
-      event: Event
-      eventCommittees: Committee[]
-      attendance: Attendance
-      pools: AttendancePool[]
-      eventCompanies: Company[]
-    }
-
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
   updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: EventId): Promise<Event>
-  getEvents(take: number, cursor?: Cursor): Promise<Event[]>
+  getEvents(page: Pageable): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
-  getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
   getWebDetail(id: EventId): Promise<WebEventDetail>
   getDashboardDetail(id: EventId): Promise<DashboardEventDetail>
@@ -74,8 +48,8 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEvents(take: number, cursor?: Cursor): Promise<Event[]> {
-    const events = await this.eventRepository.getAll(take, cursor)
+  async getEvents(page: Pageable): Promise<Event[]> {
+    const events = await this.eventRepository.getAll(page)
     return events
   }
 
@@ -84,8 +58,8 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCommitteeId(committeeId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    const events = await this.eventRepository.getAllByCommitteeId(committeeId, take, cursor)
+  async getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByCommitteeId(committeeId, page)
     return events
   }
 
@@ -140,7 +114,9 @@ export class EventServiceImpl implements EventService {
   async getWebDetail(id: EventId): Promise<WebEventDetail> {
     const event = await this.getEventById(id)
     const eventCommittees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
-    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id, 999)
+    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
+
+    console.log(`event ${id}: ${event.title} and attendandeId: ${event.attendanceId}`)
 
     if (!event.attendanceId) {
       return {

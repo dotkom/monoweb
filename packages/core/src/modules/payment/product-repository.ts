@@ -1,89 +1,40 @@
-import type { Database } from "@dotkomonline/db"
-import type { DB } from "@dotkomonline/db/src/db.generated"
-import { type Product, type ProductId, ProductSchema, type ProductWrite } from "@dotkomonline/types"
-import { type Kysely, type Selectable, sql } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
-
-const mapToProduct = (data: Selectable<Database["product"]>) => ProductSchema.parse({ paymentProviders: [], ...data })
+import type { DBClient } from "@dotkomonline/db"
+import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface ProductRepository {
   create(data: ProductWrite): Promise<Product>
-  update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product>
-  getById(id: string): Promise<Product | undefined>
-  getAll(take: number, cursor?: Cursor): Promise<Product[]>
+  update(id: ProductId, data: ProductWrite): Promise<Product>
+  getById(id: string): Promise<Product | null>
+  getAll(page: Pageable): Promise<Product[]>
   delete(id: ProductId): Promise<void>
   undelete(id: ProductId): Promise<void>
 }
 
 export class ProductRepositoryImpl implements ProductRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   async create(data: ProductWrite): Promise<Product> {
-    const product = await this.db.insertInto("product").values(data).returningAll().executeTakeFirstOrThrow()
-
-    return mapToProduct(product)
+    return await this.db.product.create({ data, include: { paymentProviders: true } })
   }
 
-  async update(id: ProductId, data: Omit<ProductWrite, "id">): Promise<Product> {
-    const product = await this.db
-      .updateTable("product")
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-
-    return mapToProduct(product)
+  async update(id: ProductId, data: ProductWrite): Promise<Product> {
+    return await this.db.product.update({ where: { id }, data, include: { paymentProviders: true } })
   }
 
-  async getById(id: string): Promise<Product | undefined> {
-    const product = await this.db
-      .selectFrom("product")
-      .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
-      .selectAll("product")
-      .select(
-        sql<
-          DB["productPaymentProvider"][]
-        >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
-          "paymentProviders"
-        )
-      )
-      .groupBy("product.id")
-      .where("id", "=", id)
-      .executeTakeFirst()
-
-    return product ? mapToProduct(product) : undefined
+  async getById(id: string): Promise<Product | null> {
+    return await this.db.product.findUnique({ where: { id }, include: { paymentProviders: true } })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Product[]> {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("product")
-        .leftJoin("productPaymentProvider", "product.id", "productPaymentProvider.productId")
-        .selectAll("product")
-        .select(
-          sql<
-            DB["productPaymentProvider"][]
-          >`COALESCE(json_agg(product_payment_provider) FILTER (WHERE product_payment_provider.product_id IS NOT NULL), '[]')`.as(
-            "paymentProviders"
-          )
-        )
-        .groupBy("product.id")
-        .limit(take),
-      cursor
-    )
-    const products = await query.execute()
-    return products.map(mapToProduct)
+  async getAll(page: Pageable): Promise<Product[]> {
+    return await this.db.product.findMany({ include: { paymentProviders: true }, ...pageQuery(page) })
   }
 
   async delete(id: ProductId): Promise<void> {
-    // Soft delete since we don't want payments to ever be deleted or miss context
-    await this.db.updateTable("product").set({ deletedAt: new Date() }).where("id", "=", id).execute()
+    await this.db.product.update({ data: { deletedAt: new Date() }, where: { id } })
   }
 
   async undelete(id: ProductId): Promise<void> {
-    await this.db.updateTable("product").set({ deletedAt: null }).where("id", "=", id).execute()
+    await this.db.product.update({ data: { deletedAt: null }, where: { id } })
   }
 }

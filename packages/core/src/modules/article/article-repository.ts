@@ -1,87 +1,51 @@
-import type { Database } from "@dotkomonline/db"
-import {
-  type Article,
-  type ArticleId,
-  ArticleSchema,
-  type ArticleSlug,
-  type ArticleTagName,
-  type ArticleWrite,
-} from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
-
-export const mapToArticle = (payload: Selectable<Database["articles"]>) => ArticleSchema.parse(payload)
+import type { DBClient } from "@dotkomonline/db"
+import type { Article, ArticleId, ArticleSlug, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface ArticleRepository {
   create(input: ArticleWrite): Promise<Article>
   update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
-  getAll(take: number, cursor?: Cursor): Promise<Article[]>
-  getById(id: ArticleId): Promise<Article | undefined>
-  getBySlug(slug: ArticleSlug): Promise<Article | undefined>
-  getByTags(tags: ArticleTagName[], take: number, cursor?: Cursor): Promise<Article[]>
+  getAll(page: Pageable): Promise<Article[]>
+  getById(id: ArticleId): Promise<Article | null>
+  getBySlug(slug: ArticleSlug): Promise<Article | null>
+  getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
 }
 
 export class ArticleRepositoryImpl implements ArticleRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  constructor(private readonly db: DBClient) {}
 
   async create(input: ArticleWrite): Promise<Article> {
-    const article = await this.db
-      .insertInto("articles")
-      .values({ ...input })
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToArticle(article)
+    return await this.db.article.create({ data: input })
   }
 
   async update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
-    const article = await this.db
-      .updateTable("articles")
-      .set({ ...input, updatedAt: new Date() })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToArticle(article)
+    return await this.db.article.update({ where: { id }, data: input })
   }
 
-  async getAll(take: number, cursor?: Cursor): Promise<Article[]> {
-    const query = orderedQuery(this.db.selectFrom("articles").selectAll().limit(take), cursor)
-    const articles = await query.execute()
-    return articles.map(mapToArticle)
+  async getAll(page: Pageable): Promise<Article[]> {
+    return await this.db.article.findMany({ ...pageQuery(page) })
   }
 
-  async getById(id: ArticleId): Promise<Article | undefined> {
-    const article = await this.db.selectFrom("articles").selectAll().where("id", "=", id).executeTakeFirst()
-    return article ? mapToArticle(article) : undefined
+  async getById(id: ArticleId): Promise<Article | null> {
+    return await this.db.article.findUnique({ where: { id } })
   }
 
-  async getBySlug(slug: ArticleSlug): Promise<Article | undefined> {
-    const article = await this.db.selectFrom("articles").selectAll().where("slug", "=", slug).executeTakeFirst()
-    return article ? mapToArticle(article) : undefined
+  async getBySlug(slug: ArticleSlug): Promise<Article | null> {
+    return await this.db.article.findUnique({ where: { slug } })
   }
 
-  async getByTags(tags: ArticleTagName[], take: number, cursor?: Cursor): Promise<Article[]> {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("articles")
-        .distinct()
-        .innerJoin("articleTagLink", "articles.id", "articleTagLink.article")
-        .select([
-          "articles.id",
-          "articles.createdAt",
-          "articles.updatedAt",
-          "articles.title",
-          "articles.author",
-          "articles.photographer",
-          "articles.imageUrl",
-          "articles.slug",
-          "articles.excerpt",
-          "articles.content",
-        ])
-        .where("articleTagLink.tag", "in", tags)
-        .limit(take),
-      cursor
-    )
-    const articles = await query.execute()
-    return articles.map(mapToArticle)
+  async getByTags(tags: ArticleTagName[], page: Pageable): Promise<Article[]> {
+    return await this.db.article.findMany({
+      where: {
+        tags: {
+          some: {
+            tagName: {
+              in: tags,
+            },
+          },
+        },
+      },
+      ...pageQuery(page),
+    })
   }
 }

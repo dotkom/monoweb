@@ -1,14 +1,13 @@
 import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
 import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
-import type { Cursor } from "../../utils/db-utils"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
 
 export interface PersonalMarkService {
-  getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getPersonalMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
+  getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]>
+  getPersonalMarksForUserId(userId: UserId): Promise<PersonalMark[]>
+  getMarksForUserId(userId: UserId): Promise<Mark[]>
   addPersonalMarkToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
   removePersonalMarkFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
   countUsersByMarkId(markId: MarkId): Promise<number>
@@ -22,18 +21,18 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
     private readonly markService: MarkService
   ) {}
 
-  async getPersonalMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, take, cursor)
+  async getPersonalMarksForUserId(userId: UserId): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getAllByUserId(userId)
     return personalMarks
   }
 
-  async getMarksForUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]> {
-    const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId, take, cursor)
+  async getMarksForUserId(userId: UserId): Promise<Mark[]> {
+    const personalMarks = await this.personalMarkRepository.getAllMarksByUserId(userId)
     return personalMarks
   }
 
-  async getPersonalMarksByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    const personalMarks = await this.personalMarkRepository.getByMarkId(markId, take, cursor)
+  async getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]> {
+    const personalMarks = await this.personalMarkRepository.getByMarkId(markId)
     return personalMarks
   }
 
@@ -62,7 +61,7 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   async getExpiryDateForUserId(userId: UserId): Promise<Date | null> {
-    const personalMarks = await this.personalMarkRepository.getAllByUserId(userId, 1000)
+    const personalMarks = await this.personalMarkRepository.getAllByUserId(userId)
     const marks = await Promise.all(personalMarks.map(async (mark) => this.markService.getMark(mark.markId)))
     const expiryDate = this.calculateExpiryDate(marks)
     return expiryDate

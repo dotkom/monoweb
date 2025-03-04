@@ -1,16 +1,16 @@
-import { getServerClient } from "@/utils/trpc/serverClient"
+import { JobListingView } from "@/components/views/JobListingView"
+import { server } from "@/utils/trpc/server"
 import { notFound } from "next/navigation"
-import { JobListingView } from "../../../components/views/JobListingView"
 
 interface JobListingProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-const JobListingPage = async ({ params: { id } }: JobListingProps) => {
-  const serverClient = await getServerClient()
-  const data = await serverClient.jobListing.get(id)
+const JobListingPage = async ({ params }: JobListingProps) => {
+  const { id } = await params
+  const data = await server.jobListing.get.query(id)
   if (!data) {
     return notFound()
   }

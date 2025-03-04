@@ -59,7 +59,7 @@ export const eventRouter = t.router({
 
   // TODO: N+1 query, eventCommitteeService and eventService should probably be merged
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
-    const events = await ctx.eventService.getEvents(input.take, input.cursor)
+    const events = await ctx.eventService.getEvents(input)
     const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
 
     const results = await Promise.all(committees)
@@ -71,8 +71,8 @@ export const eventRouter = t.router({
   }),
 
   // TODO: N+1 query, eventCommitteeService and eventService should probably be merged
-  recommended: publicProcedure.query(async ({ ctx }) => {
-    const events = await ctx.eventService.getEvents(4)
+  recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+    const events = await ctx.eventService.getEvents(input)
     const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
 
     const results = await Promise.all(committees)
@@ -93,9 +93,7 @@ export const eventRouter = t.router({
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
   allByCommittee: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) =>
-      ctx.eventService.getEventsByCommitteeId(input.id, input.paginate.take, input.paginate.cursor)
-    ),
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByCommitteeId(input.id, input.paginate)),
   getWebEventDetailData: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.eventService.getWebDetail(input)),

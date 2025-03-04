@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { Event, Payment, Product } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import Stripe from "stripe"
 import { describe, vi } from "vitest"
 import { EventRepositoryImpl } from "../../event/event-repository"
@@ -197,7 +197,7 @@ const stripeResponseRefundPayload: Stripe.Response<Stripe.Refund> = {
 }
 
 describe("PaymentService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const paymentRepository = new PaymentRepositoryImpl(db)
   const productRepository = new ProductRepositoryImpl(db)
   const eventRepository = new EventRepositoryImpl(db)
@@ -257,7 +257,7 @@ describe("PaymentService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(productPayloadExtended)
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(eventPayloadExtended)
     vi.spyOn(stripe.checkout.sessions, "create").mockResolvedValueOnce(stripeResponseCheckoutSessionPayloadExtended)
-    vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(undefined)
+    vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(null)
     expect(
       await paymentService.createStripeCheckoutSessionForProductId(
         productPayloadExtended.id,
@@ -318,7 +318,7 @@ describe("PaymentService", () => {
       isRefundable: true,
       refundRequiresApproval: true,
     })
-    vi.spyOn(refundRequestRepository, "getByPaymentId").mockResolvedValueOnce(undefined)
+    vi.spyOn(refundRequestRepository, "getByPaymentId").mockResolvedValueOnce(null)
 
     const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
     await expect(call).rejects.toThrow(RefundRequestNotFoundError)

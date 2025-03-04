@@ -1,5 +1,6 @@
 resource "auth0_client" "appkom_opptak" {
   allowed_clients = []
+    cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
     "stg" = ["http://localhost:3000"]
@@ -41,6 +42,7 @@ data "auth0_client" "appkom_opptak" {
 }
 
 resource "auth0_client" "appkom_autobank" {
+  cross_origin_auth = false
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
@@ -76,6 +78,7 @@ data "auth0_client" "appkom_autobank" {
 
 resource "auth0_client" "appkom_events_app" {
   description     = "Appkom sin Online Events app"
+    cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   allowed_clients = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000"]
@@ -128,4 +131,39 @@ resource "auth0_client" "appkom_events_app" {
 
 data "auth0_client" "appkom_events_app" {
   client_id = auth0_client.appkom_events_app.client_id
+}
+
+resource "auth0_client" "appkom_veldedighet" {
+  cross_origin_auth = false
+  allowed_clients = []
+  allowed_logout_urls = {
+    "dev" = ["http://localhost:3000/"]
+    "stg" = ["https://charitystream-orcin.vercel.app/"]
+    "prd" = ["https://onlove.no/"]
+  }[terraform.workspace]
+  allowed_origins = []
+  app_type        = "spa"
+  callbacks = {
+    "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+    "stg" = ["https://charitystream-orcin.vercel.app/api/auth/callback/auth0"]
+    "prd" = ["https://onlove.no/api/auth/callback/auth0"]
+  }[terraform.workspace]
+  grant_types = ["authorization_code", "refresh_token"]
+  name        = "Veldedighet${local.name_suffix[terraform.workspace]}"
+
+  is_first_party  = true
+  oidc_conformant = true
+
+  refresh_token {
+    rotation_type   = "rotating"
+    expiration_type = "expiring"
+  }
+
+  jwt_configuration {
+    alg = "RS256"
+  }
+}
+
+data "auth0_client" "appkom_veldedighet" {
+  client_id = auth0_client.appkom_veldedighet.client_id
 }
