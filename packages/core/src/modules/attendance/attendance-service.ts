@@ -34,13 +34,25 @@ export interface AttendanceService {
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
+  private readonly attendanceRepository: AttendanceRepository
+  private readonly attendeeRepository: AttendeeRepository
+  private readonly waitlistAttendeeRepository: WaitlistAttendeRepository
+  private readonly attendancePoolRepository: AttendancePoolRepository
+  private readonly userService: UserService
+
   constructor(
-    private readonly attendanceRepository: AttendanceRepository,
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository,
-    private readonly userService: UserService
-  ) {}
+    attendanceRepository: AttendanceRepository,
+    attendeeRepository: AttendeeRepository,
+    waitlistAttendeeRepository: WaitlistAttendeRepository,
+    attendancePoolRepository: AttendancePoolRepository,
+    userService: UserService
+  ) {
+    this.attendanceRepository = attendanceRepository
+    this.attendeeRepository = attendeeRepository
+    this.waitlistAttendeeRepository = waitlistAttendeeRepository
+    this.attendancePoolRepository = attendancePoolRepository
+    this.userService = userService
+  }
 
   async getExtrasResults(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
@@ -152,7 +164,9 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   async getAllWaitlistAttendeesOrdered(attendanceId: AttendanceId): Promise<WaitlistAttendee[]> {
     const waitlistAttendeesUnordered = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
-    return waitlistAttendeesUnordered.sort((a, b) => a.registeredAt.getTime() - b.registeredAt.getTime())
+    return waitlistAttendeesUnordered.sort(
+      (a, b) => (a.registeredAt ?? new Date()).getTime() - (b.registeredAt ?? new Date()).getTime()
+    )
   }
 
   async merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]) {

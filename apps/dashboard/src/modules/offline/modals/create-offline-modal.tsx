@@ -2,7 +2,6 @@ import type { OfflineWrite } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useOfflineWriteForm } from "../../../app/(dashboard)/offline/write-form"
-import { useQueryNotification } from "../../../app/notifications"
 import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"
 import { useS3UploadFile } from "../use-s3-upload-file"
 
@@ -10,39 +9,15 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)
   const create = useCreateOfflineMutation()
   const upload = useS3UploadFile()
-  const notification = useQueryNotification()
-
-  const handleUpload = async (file?: File) => (file?.name ? await upload(file) : null)
 
   const FormComponent = useOfflineWriteForm({
     onSubmit: async (data) => {
-      let fileUrl = null
-      let imageUrl = null
-
-      try {
-        fileUrl = await handleUpload(data.file)
-      } catch (e) {
-        notification.fail({
-          title: "Feil",
-          message: "Kunne ikke laste opp fil. ",
-        })
-      }
-
-      try {
-        imageUrl = await handleUpload(data.image)
-      } catch (e) {
-        notification.fail({
-          message: "Kunne ikke laste opp bilde",
-          title: "Feil",
-        })
-      }
-
       const toSave: OfflineWrite = {
         title: data.title,
         published: data.published,
         id: data.id,
-        fileUrl,
-        imageUrl,
+        fileUrl: data.fileUrl,
+        imageUrl: data.imageUrl,
       }
 
       create.mutate({

@@ -20,7 +20,7 @@ function showLocations(locations: string[]) {
 }
 const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAdListItemProps) => {
   const color =
-    jobListing.employment === "Sommerjobb/internship" ? "amber" : jobListing.employment === "Fulltid" ? "red" : "blue"
+    jobListing.employment === "SUMMER_INTERNSHIP" ? "amber" : jobListing.employment === "FULLTIME" ? "red" : "blue"
 
   return (
     <Link

@@ -1,7 +1,5 @@
 # Monoweb 
 
-<!-- lorem ipsum -->
-
 Monoweb is the next-generation web application for Online. This monorepo contains all the source code for the
 applications that power the Online web experience.
 
@@ -12,17 +10,14 @@ applications, you can use the following commands:
 
 Terminal 1:
 ```bash
-doppler login
-doppler setup # Press Y on every prompt
-
 git clone https://github.com/dotkom/monoweb
 cd monoweb
 
-docker compose up # 'docker compose up -d' can also run instead to skip 2 terminal windows
-```
+doppler login
+doppler setup # Press Y on every prompt
 
-Terminal 2 (in monoweb folder):
-```bash
+docker compose up -d
+
 pnpm install
 pnpm migrate # Only needs to be run once to set up the database
 pnpm dev

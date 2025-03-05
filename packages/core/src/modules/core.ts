@@ -1,5 +1,5 @@
 import type { S3Client } from "@aws-sdk/client-s3"
-import type { KyselyDatabase } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import type { ManagementClient } from "auth0"
 import type Stripe from "stripe"
 import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article-repository"
@@ -32,14 +32,6 @@ import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
-import {
-  type JobListingLocationLinkRepository,
-  JobListingLocationLinkRepositoryImpl,
-} from "./job-listing/job-listing-location-link-repository"
-import {
-  type JobListingLocationRepository,
-  JobListingLocationRepositoryImpl,
-} from "./job-listing/job-listing-location-repository"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { type JobListingService, JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
@@ -82,7 +74,7 @@ export type StripeAccount = {
 }
 
 export interface ServiceLayerOptions {
-  db: KyselyDatabase
+  db: DBClient
   s3Client: S3Client
   s3BucketName: string
   stripeAccounts: Record<string, StripeAccount>
@@ -92,18 +84,14 @@ export interface ServiceLayerOptions {
 export const createServiceLayer = async ({
   db,
   s3Client,
-  s3BucketName,
   managementClient,
   stripeAccounts,
+  s3BucketName,
 }: ServiceLayerOptions) => {
-  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
+  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
-  const jobListingLocationRepository: JobListingLocationRepository = new JobListingLocationRepositoryImpl(db)
-  const jobListingLocationLinkRepository: JobListingLocationLinkRepository = new JobListingLocationLinkRepositoryImpl(
-    db
-  )
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
@@ -140,11 +128,7 @@ export const createServiceLayer = async ({
 
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
   const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
-  const jobListingService: JobListingService = new JobListingServiceImpl(
-    jobListingRepository,
-    jobListingLocationRepository,
-    jobListingLocationLinkRepository
-  )
+  const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
     attendanceRepository,
@@ -200,7 +184,7 @@ export const createServiceLayer = async ({
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository, s3BucketName)
+  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,

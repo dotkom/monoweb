@@ -12,7 +12,7 @@ export const productRouter = t.router({
     .query(async ({ input, ctx }) => ctx.productService.getProductById(input)),
   all: protectedProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.productService.getProducts(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => ctx.productService.getProducts(input)),
   addPaymentProvider: protectedProcedure
     .input(ProductPaymentProviderWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.productPaymentProviderService.addPaymentProvider(input)),

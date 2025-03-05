@@ -1,9 +1,7 @@
-import { z } from "zod"
+import { schemas } from "@dotkomonline/db/schemas"
+import type { z } from "zod"
 
-export const EventCommitteeSchema = z.object({
-  committeeId: z.string(),
-  eventId: z.string(),
-})
+export const EventCommitteeSchema = schemas.EventCommitteeSchema.extend({})
 
 export type EventCommittee = z.infer<typeof EventCommitteeSchema>
 

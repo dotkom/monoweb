@@ -25,16 +25,15 @@
     "test": "turbo run test",
     "test:it": "turbo run test:it",
     "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
-    "migrate": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate",
-    "migrate-down": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate -- down",
-    "migrate-down-all": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate",
-    "migrate-with-fixtures": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate latest --with-fixtures",
-    "migrate-with-sample-data": "pnpm -rc -F @dotkomonline/migrator exec doppler run --preserve-env pnpm run migrate -- latest --sample-data",
+    "prisma": "pnpm -F @dotkomonline/db prisma",
+    "migrate": "pnpm -F @dotkomonline/db migrate",
+    "generate": "pnpm -F @dotkomonline/db generate",
+    "migrate-with-fixtures": "pnpm -F @dotkomonline/db migrate-with-fixtures",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
-    "docker:login:public": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws",
+    "docker:build": "turbo run docker:build",
     "shell": "pnpm --filter=@dotkomonline/shell start"
   },
   "workspaces": ["packages/*", "apps/*"],
@@ -46,6 +45,6 @@
   "devDependencies": {
     "turbo": "^2.3.4",
     "turbo-ignore": "^2.3.4",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8"
   }
 }

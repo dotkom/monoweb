@@ -17,7 +17,12 @@ ENV DOCKER_BUILD=1
 
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
-RUN pnpm install --ignore-scripts
+COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
+
+# Must enable scripts here for Prisma codegen to build
+RUN apk update && apk add --no-cache python3 gcc g++ make
+RUN pnpm install
+
 COPY --from=builder /app/out/full .
 RUN turbo run build --filter @dotkomonline/dashboard
 

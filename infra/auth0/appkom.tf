@@ -47,14 +47,14 @@ resource "auth0_client" "appkom_autobank" {
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
     "stg" = ["https://autobank-frontend.vercel.app/"]
-    "prd" = []
+    "prd" = ["https://autobank-frontend.vercel.app/"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "spa"
   callbacks = {
     "dev" = ["http://localhost:3000/authentication/callback"]
     "stg" = ["https://autobank-frontend.vercel.app/authentication/callback"]
-    "prd" = []
+    "prd" = ["https://autobank-frontend.vercel.app/authentication/callback"]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
   name        = "Autobank${local.name_suffix[terraform.workspace]}"
@@ -139,14 +139,14 @@ resource "auth0_client" "appkom_veldedighet" {
   allowed_logout_urls = {
     "dev" = ["http://localhost:3000/"]
     "stg" = ["https://charitystream-orcin.vercel.app/"]
-    "prd" = []
+    "prd" = ["https://onlove.no/"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "spa"
   callbacks = {
-    "dev" = ["http://localhost:3000/authentication/callback"]
-    "stg" = ["https://charitystream-orcin.vercel.app/authentication/callback"]
-    "prd" = []
+    "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
+    "stg" = ["https://charitystream-orcin.vercel.app/api/auth/callback/auth0"]
+    "prd" = ["https://onlove.no/api/auth/callback/auth0"]
   }[terraform.workspace]
   grant_types = ["authorization_code", "refresh_token"]
   name        = "Veldedighet${local.name_suffix[terraform.workspace]}"

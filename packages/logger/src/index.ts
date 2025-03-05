@@ -35,8 +35,8 @@ export const getLogger = (path: string) =>
           format.printf((msg) =>
             formatMessage({
               level: msg.level,
-              message: msg.message,
-              timestamp: msg.timestamp,
+              message: msg.message as string,
+              timestamp: msg.timestamp as string,
               path,
             })
           )

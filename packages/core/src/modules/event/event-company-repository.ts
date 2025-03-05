@@ -1,66 +1,41 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
-import { type Cursor, orderedQuery } from "../../query"
-import { mapToCompany } from "../company/company-repository"
-import { mapToEvent } from "./event-repository"
+import { type Pageable, pageQuery } from "../../query"
 
 export interface EventCompanyRepository {
   createCompany(id: EventId, company: CompanyId): Promise<void>
   deleteCompany(id: EventId, company: CompanyId): Promise<void>
-  getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor): Promise<Company[]>
-  getEventsByCompanyId(id: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>
+  getCompaniesByEventId(id: EventId): Promise<Company[]>
+  getEventsByCompanyId(id: CompanyId, page: Pageable): Promise<Event[]>
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  private readonly db: DBClient
 
-  async createCompany(id: EventId, company: CompanyId) {
-    await this.db
-      .insertInto("eventCompany")
-      .values({
-        eventId: id,
-        companyId: company,
-      })
-      .onConflict((eb) => eb.columns(["eventId", "companyId"]).doNothing())
-      .returningAll()
-      .executeTakeFirst()
+  constructor(db: DBClient) {
+    this.db = db
   }
 
-  async deleteCompany(id: EventId, company: CompanyId) {
-    await this.db
-      .deleteFrom("eventCompany")
-      .where("companyId", "=", company)
-      .where("eventId", "=", id)
-      .returningAll()
-      .executeTakeFirst()
+  async createCompany(eventId: EventId, companyId: CompanyId) {
+    await this.db.eventCompany.create({ data: { eventId, companyId } })
   }
 
-  async getCompaniesByEventId(id: EventId, take: number, cursor?: Cursor) {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("eventCompany")
-        .where("eventId", "=", id)
-        .innerJoin("company", "company.id", "eventCompany.companyId")
-        .selectAll("company")
-        .limit(take),
-      cursor
-    )
-    const companies = await query.execute()
-    return companies.map(mapToCompany)
+  async deleteCompany(eventId: EventId, companyId: CompanyId) {
+    await this.db.eventCompany.delete({ where: { eventId_companyId: { eventId, companyId } } })
   }
 
-  async getEventsByCompanyId(companyId: string, take: number, cursor?: Cursor): Promise<Event[]> {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("event")
-        .leftJoin("eventCompany", "eventCompany.eventId", "event.id")
-        .selectAll("event")
-        .where("eventCompany.companyId", "=", companyId)
-        .limit(take),
-      cursor
-    )
-    const events = await query.execute()
-    return events.map(mapToEvent)
+  async getCompaniesByEventId(eventId: EventId) {
+    const eventCompanies = await this.db.eventCompany.findMany({ where: { eventId }, include: { company: true } })
+
+    return eventCompanies.map((eventCompany) => eventCompany.company)
+  }
+
+  async getEventsByCompanyId(companyId: string, page: Pageable): Promise<Event[]> {
+    return await this.db.event.findMany({
+      where: {
+        companies: { some: { companyId } },
+      },
+      ...pageQuery(page),
+    })
   }
 }

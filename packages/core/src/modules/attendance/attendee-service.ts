@@ -25,10 +25,10 @@ export interface AttendeeService {
   getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId): Promise<AttendancePool | null>
   canRegisterForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date): Promise<void>
   canDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
+  updateExtraChoices(id: AttendanceId, choices: ExtrasChoices): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
@@ -37,13 +37,25 @@ export interface AttendeeService {
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
+  private readonly attendeeRepository: AttendeeRepository
+  private readonly attendancePoolRepository: AttendancePoolRepository
+  private readonly attendanceRespository: AttendanceRepository
+  private readonly userService: UserService
+  private readonly waitlistAttendeeService: WaitlistAttendeService
+
   constructor(
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository,
-    private readonly attendanceRespository: AttendanceRepository,
-    private readonly userService: UserService,
-    private readonly waitlistAttendeeService: WaitlistAttendeService
-  ) {}
+    attendeeRepository: AttendeeRepository,
+    attendancePoolRepository: AttendancePoolRepository,
+    attendanceRespository: AttendanceRepository,
+    userService: UserService,
+    waitlistAttendeeService: WaitlistAttendeService
+  ) {
+    this.attendeeRepository = attendeeRepository
+    this.attendancePoolRepository = attendancePoolRepository
+    this.attendanceRespository = attendanceRespository
+    this.userService = userService
+    this.waitlistAttendeeService = waitlistAttendeeService
+  }
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)
@@ -132,6 +144,8 @@ export class AttendeeServiceImpl implements AttendeeService {
       // Create waitlist attendee
       return await this.waitlistAttendeeService.create({
         attendanceId: attendancePool.attendanceId,
+        attendancePoolId: attendancePool.id,
+        position: null,
         userId,
         isPunished: false,
         registeredAt: new Date(),
@@ -199,7 +213,9 @@ export class AttendeeServiceImpl implements AttendeeService {
     if (numAttendees === attendancePool.capacity) {
       await this.waitlistAttendeeService.create({
         attendanceId,
+        attendancePoolId: attendancePool.id,
         userId,
+        position: null,
         isPunished: false,
         registeredAt: new Date(),
         studyYear: -69,

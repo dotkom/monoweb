@@ -1,76 +1,50 @@
-import type { Database } from "@dotkomonline/db"
-import {
-  type UserId,
-  type WaitlistAttendee,
-  type WaitlistAttendeeId,
-  WaitlistAttendeeSchema,
-  type WaitlistAttendeeWrite,
+import type { DBClient } from "@dotkomonline/db"
+import type {
+  AttendanceId,
+  AttendancePoolId,
+  UserId,
+  WaitlistAttendee,
+  WaitlistAttendeeId,
+  WaitlistAttendeeWrite,
 } from "@dotkomonline/types"
-import type { Kysely } from "kysely"
-
-const mapToWaitlistAttendee = (obj: unknown): WaitlistAttendee => WaitlistAttendeeSchema.parse(obj)
 
 export interface WaitlistAttendeRepository {
-  create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
+  create(data: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
   update(id: WaitlistAttendeeId, obj: Partial<WaitlistAttendeeWrite>): Promise<WaitlistAttendee | null>
   delete(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
-  getByAttendanceId(id: string): Promise<WaitlistAttendee[]>
-  getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
+  getByAttendanceId(id: AttendanceId): Promise<WaitlistAttendee[]>
+  getByUserId(userId: UserId): Promise<WaitlistAttendee[] | null>
   getByPoolId(poolId: string): Promise<WaitlistAttendee[]>
 }
 
 export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  private readonly db: DBClient
 
-  async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
-    return mapToWaitlistAttendee(
-      await this.db.insertInto("waitlistAttendee").values(obj).returningAll().executeTakeFirstOrThrow()
-    )
+  constructor(db: DBClient) {
+    this.db = db
   }
 
-  async update(id: WaitlistAttendeeId, obj: Partial<WaitlistAttendeeWrite>) {
-    const res = await this.db
-      .updateTable("waitlistAttendee")
-      .set(obj)
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
+  async create(data: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
+    return await this.db.waitlistAttendee.create({ data })
+  }
 
-    return res ? mapToWaitlistAttendee(res) : null
+  async update(id: WaitlistAttendeeId, data: Partial<WaitlistAttendeeWrite>) {
+    return await this.db.waitlistAttendee.update({ where: { id }, data })
   }
 
   async delete(id: WaitlistAttendeeId) {
-    const res = await this.db.deleteFrom("waitlistAttendee").where("id", "=", id).executeTakeFirst()
-    return res ? mapToWaitlistAttendee(res) : null
+    return await this.db.waitlistAttendee.delete({ where: { id } })
   }
 
-  async getByAttendanceId(id: string) {
-    const res = await this.db
-      .selectFrom("waitlistAttendee")
-      .selectAll("waitlistAttendee")
-      .where("attendanceId", "=", id)
-      .execute()
-
-    return res.map(mapToWaitlistAttendee)
+  async getByAttendanceId(attendanceId: AttendanceId) {
+    return await this.db.waitlistAttendee.findMany({ where: { attendanceId } })
   }
 
-  async getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId) {
-    const res = await this.db
-      .selectFrom("waitlistAttendee")
-      .selectAll("waitlistAttendee")
-      .where("userId", "=", userId)
-      .where("id", "=", waitlistAttendeeId)
-      .executeTakeFirst()
-    return res ? mapToWaitlistAttendee(res) : null
+  async getByUserId(userId: UserId) {
+    return await this.db.waitlistAttendee.findMany({ where: { userId } })
   }
 
-  async getByPoolId(poolId: string) {
-    const res = await this.db
-      .selectFrom("waitlistAttendee")
-      .selectAll("waitlistAttendee")
-      .where("attendancePoolId", "=", poolId)
-      .execute()
-
-    return res.map(mapToWaitlistAttendee)
+  async getByPoolId(attendancePoolId: AttendancePoolId) {
+    return await this.db.waitlistAttendee.findMany({ where: { attendancePoolId } })
   }
 }

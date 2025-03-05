@@ -1,18 +1,22 @@
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
+import type { Pageable } from "../../query"
 import { MarkNotFoundError } from "./mark-error"
 import type { MarkRepository } from "./mark-repository"
 
 export interface MarkService {
   getMark(id: MarkId): Promise<Mark>
-  getMarks(limit: number, cursor?: Cursor): Promise<Mark[]>
+  getMarks(page: Pageable): Promise<Mark[]>
   createMark(payload: MarkWrite): Promise<Mark>
   updateMark(id: MarkId, payload: MarkWrite): Promise<Mark>
   deleteMark(id: MarkId): Promise<Mark>
 }
 
 export class MarkServiceImpl implements MarkService {
-  constructor(private readonly markRepository: MarkRepository) {}
+  private readonly markRepository: MarkRepository
+
+  constructor(markRepository: MarkRepository) {
+    this.markRepository = markRepository
+  }
 
   /**
    * Get a mark by its id
@@ -27,8 +31,8 @@ export class MarkServiceImpl implements MarkService {
     return mark
   }
 
-  async getMarks(limit: number, cursor?: Cursor): Promise<Mark[]> {
-    const marks = await this.markRepository.getAll(limit, cursor)
+  async getMarks(page: Pageable): Promise<Mark[]> {
+    const marks = await this.markRepository.getAll(page)
     return marks
   }
 

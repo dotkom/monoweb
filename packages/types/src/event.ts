@@ -1,30 +1,16 @@
-import { z } from "zod"
+import type { z } from "zod"
+
+import { schemas } from "@dotkomonline/db/schemas"
+
 import { type Attendance, AttendanceSchema } from "./attendance/attendance"
 import type { AttendancePool } from "./attendance/attendance-pool"
 import type { Committee } from "./committee"
 import type { Company } from "./company"
 
-export const EventSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  title: z.string().min(1),
-  start: z.date(),
-  end: z.date(),
-  status: z.enum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
-  type: z.enum(["SOCIAL", "COMPANY", "BEDPRES", "ACADEMIC"]),
-  public: z.boolean(),
-  description: z.string().nullable(),
-  subtitle: z.string().nullable(),
-  imageUrl: z.string().nullable(),
-  locationAddress: z.string().nullable(),
-  locationLink: z.string().nullable(),
-  locationTitle: z.string(),
-  attendanceId: z.string().nullable(),
-})
+export const EventSchema = schemas.EventSchema.extend({})
 
-export type EventId = Event["id"]
 export type Event = z.infer<typeof EventSchema>
+export type EventId = Event["id"]
 
 export const EventWriteSchema = EventSchema.omit({
   id: true,

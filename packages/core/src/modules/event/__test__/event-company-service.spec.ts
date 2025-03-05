@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto"
 import type { Company } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "../event-company-repository"
 import { type EventCompanyService, EventCompanyServiceImpl } from "../event-company-service"
 
 describe("EventCompanyService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
   const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
 
@@ -17,7 +17,7 @@ describe("EventCompanyService", () => {
     id: randomUUID(),
     name: "Bekk",
     phone: "+47 123 45 678",
-    type: "Consulting",
+    type: "CONSULTING",
     website: "https://bekk.no",
     location: "Oslo & Trondheim",
     image: null,
@@ -34,7 +34,7 @@ describe("EventCompanyService", () => {
   it("gets all companies related to an event", async () => {
     const id = randomUUID()
     vi.spyOn(eventCompanyRepository, "getCompaniesByEventId").mockResolvedValueOnce([bekk])
-    const companies = await eventCompanyService.getCompaniesByEventId(id, 20, undefined)
+    const companies = await eventCompanyService.getCompaniesByEventId(id)
     expect(companies).toEqual([bekk])
     expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id, 20, undefined)
   })

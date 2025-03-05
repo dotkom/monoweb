@@ -1,11 +1,9 @@
-import { AttendanceSchema } from "@dotkomonline/types"
+import { AttendanceWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
 import { createDateTimeInput, useFormBuilder } from "../../../../app/form"
 
 // Define the schema without the omitted fields
-const AttendanceFormSchema = AttendanceSchema.omit({
-  id: true,
-}).superRefine((val, ctx) => {
+const AttendanceFormSchema = AttendanceWriteSchema.superRefine((val, ctx) => {
   if (val.registerStart > val.registerEnd) {
     const message = "Påmeldingsstart må være før påmeldingsslutt"
     const code = "custom"
