@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -o -- tsx watch src/index.ts",
-    "docker:build": "docker build --platform linux/amd64 -t rpc:latest -f Dockerfile --progress plain ../..",
+    "docker:build": "docker build -t rpc:latest -f Dockerfile --progress plain ../..",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
