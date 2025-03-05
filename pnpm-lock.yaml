@@ -390,6 +390,9 @@ importers:
       stripe:
         specifier: ^13.11.0
         version: 13.11.0
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
       zod:
         specifier: ^3.22.4
         version: 3.24.2
