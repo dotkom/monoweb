@@ -69,6 +69,9 @@ export const useJobListingWriteForm = ({
       featured: createCheckboxInput({
         label: "Fremhevet",
       }),
+      hidden: createCheckboxInput({
+        label: "Gjemt",
+      }),
       deadline: createDateTimeInput({
         label: "Søknadsfrist",
       }),

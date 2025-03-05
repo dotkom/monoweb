@@ -376,6 +376,7 @@ model JobListing {
   start            DateTime
   end              DateTime
   featured         Boolean
+  hidden           Boolean
   deadline         DateTime?
   employment       EmploymentType
   applicationLink  String?
