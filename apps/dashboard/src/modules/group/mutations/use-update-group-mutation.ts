@@ -1,20 +1,20 @@
 import { useQueryNotification } from "src/app/notifications"
 import { trpc } from "src/trpc"
 
-export const useUpdateInterestGroupMutation = () => {
+export const useUpdateGroupMutation = () => {
   const notification = useQueryNotification()
 
-  return trpc.interestGroup.update.useMutation({
+  return trpc.group.update.useMutation({
     onMutate: () => {
       notification.loading({
         title: "Oppdaterer",
-        message: "Interessegruppen blir oppdatert.",
+        message: "Gruppen blir oppdatert.",
       })
     },
     onSuccess: (data) => {
       notification.complete({
         title: "Oppdatert",
-        message: `Interessegruppen "${data.name}" har blitt oppdatert.`,
+        message: `Gruppen "${data.name}" har blitt oppdatert.`,
       })
     },
     onError: (err) => {

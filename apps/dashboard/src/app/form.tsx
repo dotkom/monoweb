@@ -1,6 +1,7 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
+  Anchor,
   Box,
   Button,
   Checkbox,
@@ -254,13 +255,24 @@ export function createTextInput<F extends FieldValues>({
 
 export function createFileInput<F extends FieldValues>({
   ...props
-}: Omit<FileInputProps, "error">): InputProducerResult<F> {
+}: Omit<FileInputProps, "error"> & {
+  existingfileurl?: string
+}): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
     const upload = useS3UploadFile()
 
     return (
       <Box>
         <Text>{props.label}</Text>
+        {props.existingfileurl ? (
+          <Anchor href={props.existingfileurl} mb="sm" display="block">
+            Link til ressurs
+          </Anchor>
+        ) : (
+          <Text mb="sm" fs="italic">
+            Ingen fil lastet opp
+          </Text>
+        )}
         <Controller
           control={control}
           name={name}
