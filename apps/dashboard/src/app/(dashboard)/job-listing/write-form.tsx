@@ -56,8 +56,6 @@ export const useJobListingWriteForm = ({
       description: createRichTextInput({
         label: "Beskrivelse",
         placeholder: "Detaljert beskrivelse av stillingen...",
-        withAsterisk: true,
-        rows: 30,
       }),
       start: createDateTimeInput({
         label: "Startdato",
