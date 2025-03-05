@@ -184,7 +184,7 @@ const EventCalendarItem = ({ event, classNames }: EventCalendarItemProps) => {
   const theme = getEventTheme(event, isActive);
 
   return (
-    <HoverCard>
+    <HoverCard openDelay={50} closeDelay={50}>
       <HoverCardTrigger asChild>
         <Link
           href={`/events/${event.id}`}
