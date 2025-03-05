@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3002 --turbo",
     "build": "next build",
-    "docker:build": "docker build --platform linux/amd64 -t dashboard:latest -f Dockerfile --progress plain ../..",
+    "docker:build": "docker build -t dashboard:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
