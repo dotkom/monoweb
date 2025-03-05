@@ -1,13 +1,13 @@
 "use client"
 
-import * as React from "react"
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
+import * as React from "react"
 
 const HoverCard = HoverCardPrimitive.Root
 const HoverCardTrigger = HoverCardPrimitive.Trigger
 
 export function cn(...classes: (string | undefined | false)[]) {
-    return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(" ")
 }
 
 const HoverCardContent = React.forwardRef<
