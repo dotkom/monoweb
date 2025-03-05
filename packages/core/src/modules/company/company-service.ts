@@ -11,7 +11,11 @@ export interface CompanyService {
 }
 
 export class CompanyServiceImpl implements CompanyService {
-  constructor(private readonly companyRepository: CompanyRepository) {}
+  private readonly companyRepository: CompanyRepository
+
+  constructor(companyRepository: CompanyRepository) {
+    this.companyRepository = companyRepository
+  }
 
   /**
    * Get a company by its id

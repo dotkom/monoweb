@@ -1,20 +1,25 @@
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
-import { isAfter, isBefore } from "date-fns"
+import { isAfter } from "date-fns"
 import assert from "../../assert"
 import type { Pageable } from "../../query"
-import { InvalidDeadlineError, InvalidEndDateError } from "./job-listing-error"
+import { InvalidEndDateError } from "./job-listing-error"
 import type { JobListingRepository } from "./job-listing-repository"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing | null>
   getAll(page: Pageable): Promise<JobListing[]>
+  getActive(page: Pageable): Promise<JobListing[]>
   create(payload: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, payload: Partial<JobListingWrite>): Promise<JobListing>
   getLocations(): Promise<string[]>
 }
 
 export class JobListingServiceImpl implements JobListingService {
-  constructor(private readonly jobListingRepository: JobListingRepository) {}
+  private readonly jobListingRepository: JobListingRepository
+
+  constructor(jobListingRepository: JobListingRepository) {
+    this.jobListingRepository = jobListingRepository
+  }
 
   async getById(id: JobListingId): Promise<JobListing | null> {
     return await this.jobListingRepository.getById(id)
@@ -22,6 +27,9 @@ export class JobListingServiceImpl implements JobListingService {
 
   async getAll(page: Pageable): Promise<JobListing[]> {
     return await this.jobListingRepository.getAll(page)
+  }
+  async getActive(page: Pageable): Promise<JobListing[]> {
+    return await this.jobListingRepository.getActive(page)
   }
 
   async create(data: JobListingWrite): Promise<JobListing> {
@@ -40,16 +48,12 @@ export class JobListingServiceImpl implements JobListingService {
    * Validate a write model for inconsistencies
    *
    * @throws {InvalidEndDateError} if the end date is before the start date
-   * @throws {InvalidDeadlineError} if the deadline is after the start date
    */
   private validateWriteModel(input: Partial<JobListingWrite>): void {
     assert(
       input.start && input.end && isAfter(input.end, input.start),
       new InvalidEndDateError("end date cannot be before start date")
     )
-    if (input.deadline && input.start) {
-      assert(isBefore(input.deadline, input.start), new InvalidDeadlineError("deadline cannot be after start date"))
-    }
   }
 
   async getLocations(): Promise<string[]> {

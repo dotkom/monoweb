@@ -87,11 +87,11 @@ export interface ServiceLayerOptions {
 export const createServiceLayer = async ({
   db,
   s3Client,
-  s3BucketName,
   managementClient,
   stripeAccounts,
+  s3BucketName,
 }: ServiceLayerOptions) => {
-  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
+  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const groupRepository: GroupRepository = new GroupRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
@@ -189,7 +189,7 @@ export const createServiceLayer = async ({
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository, s3BucketName)
+  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,

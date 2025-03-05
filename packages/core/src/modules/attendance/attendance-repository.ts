@@ -1,4 +1,4 @@
-import type { DBClient } from "@dotkomonline/db"
+import { type DBClient, PrismaRuntime } from "@dotkomonline/db"
 import {
   type Attendance,
   type AttendanceId,
@@ -7,7 +7,6 @@ import {
   type Extras,
   ExtrasSchema,
 } from "@dotkomonline/types"
-import { Prisma } from "@prisma/client"
 import type { JsonValue } from "@prisma/client/runtime/library"
 
 export interface AttendanceRepository {
@@ -20,7 +19,11 @@ export interface AttendanceRepository {
 }
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getAll() {
     const attendances = await this.db.attendance.findMany({})
@@ -76,7 +79,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
   /** Prisma requires distinction between database null and json null, so here we choose database null */
   private correctNullTypes<T extends { extras?: unknown }>(data: T) {
-    return { ...data, extras: data.extras === null ? Prisma.DbNull : data.extras }
+    return { ...data, extras: data.extras === null ? PrismaRuntime.DbNull : data.extras }
   }
 
   /** Takes an object with unparsed JSON value yearCriteria and returns it with yearCriteria parsed */

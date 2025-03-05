@@ -1,4 +1,4 @@
-import { schemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db/schemas"
 import type { z } from "zod"
 
 export const PrivacyPermissionsSchema = schemas.PrivacyPermissionsSchema.extend({})

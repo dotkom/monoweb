@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3002 --turbo",
     "build": "next build",
+    "docker:build": "docker build -t dashboard:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
@@ -60,6 +61,6 @@
     "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^3.3.5",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8"
   }
 }

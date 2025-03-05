@@ -12,7 +12,11 @@ export interface MarkService {
 }
 
 export class MarkServiceImpl implements MarkService {
-  constructor(private readonly markRepository: MarkRepository) {}
+  private readonly markRepository: MarkRepository
+
+  constructor(markRepository: MarkRepository) {
+    this.markRepository = markRepository
+  }
 
   /**
    * Get a mark by its id

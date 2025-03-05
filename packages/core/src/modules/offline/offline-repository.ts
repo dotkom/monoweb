@@ -10,7 +10,11 @@ export interface OfflineRepository {
 }
 
 export class OfflineRepositoryImpl implements OfflineRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async create(data: OfflineWrite): Promise<Offline> {
     return await this.db.offline.create({ data })

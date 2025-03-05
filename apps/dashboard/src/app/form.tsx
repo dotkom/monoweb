@@ -6,7 +6,6 @@ import {
   Button,
   Checkbox,
   type CheckboxProps,
-  FileInput,
   type FileInputProps,
   Flex,
   MultiSelect,
@@ -37,7 +36,7 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
-
+import { useS3UploadFile } from "../modules/offline/use-s3-upload-file"
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
@@ -260,6 +259,8 @@ export function createFileInput<F extends FieldValues>({
   existingfileurl?: string
 }): InputProducerResult<F> {
   return function FormFileInput({ name, state, control }) {
+    const upload = useS3UploadFile()
+
     return (
       <Box>
         <Text>{props.label}</Text>
@@ -276,13 +277,19 @@ export function createFileInput<F extends FieldValues>({
           control={control}
           name={name}
           render={({ field }) => (
-            <FileInput
-              {...props}
-              value={field.value}
-              onChange={(value) => field.onChange({ target: { value } })}
-              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-              label=""
-            />
+            <div>
+              <Text>Fil: {field.value ?? "Ingen fil lastet opp"}</Text>
+              <input
+                type="file"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0] || null
+                  if (!file) return
+                  const result = await upload(file)
+
+                  field.onChange(result)
+                }}
+              />
+            </div>
           )}
         />
       </Box>

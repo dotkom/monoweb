@@ -18,11 +18,19 @@ export interface ArticleService {
 }
 
 export class ArticleServiceImpl implements ArticleService {
+  private readonly articleRepository: ArticleRepository
+  private readonly articleTagRepository: ArticleTagRepository
+  private readonly articleTagLinkRepository: ArticleTagLinkRepository
+
   constructor(
-    private readonly articleRepository: ArticleRepository,
-    private readonly articleTagRepository: ArticleTagRepository,
-    private readonly articleTagLinkRepository: ArticleTagLinkRepository
-  ) {}
+    articleRepository: ArticleRepository,
+    articleTagRepository: ArticleTagRepository,
+    articleTagLinkRepository: ArticleTagLinkRepository
+  ) {
+    this.articleRepository = articleRepository
+    this.articleTagRepository = articleTagRepository
+    this.articleTagLinkRepository = articleTagLinkRepository
+  }
 
   async create(input: ArticleWrite): Promise<Article> {
     return await this.articleRepository.create(input)

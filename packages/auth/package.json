@@ -11,8 +11,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dotkomonline/core": "workspace:*",
-    "@dotkomonline/db": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@trpc/client": "^10.45.2",
     "superjson": "^2.0.0",
@@ -24,6 +22,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8"
   }
 }

@@ -8,7 +8,11 @@ export interface EventCompanyService {
 }
 
 export class EventCompanyServiceImpl implements EventCompanyService {
-  constructor(private readonly eventCompanyRepository: EventCompanyRepository) {}
+  private readonly eventCompanyRepository: EventCompanyRepository
+
+  constructor(eventCompanyRepository: EventCompanyRepository) {
+    this.eventCompanyRepository = eventCompanyRepository
+  }
 
   async createCompany(id: EventId, company: CompanyId) {
     const companies = await this.eventCompanyRepository.createCompany(id, company)
