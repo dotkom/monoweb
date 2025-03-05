@@ -14,7 +14,11 @@ export interface GroupRepository {
 }
 
 export class GroupRepositoryImpl implements GroupRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getById(id: GroupId) {
     return await this.db.group.findUnique({ where: { id } })

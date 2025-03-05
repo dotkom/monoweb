@@ -9,7 +9,11 @@ export interface EventHostingGroupRepository {
 }
 
 export class EventHostingGroupRepositoryImpl implements EventHostingGroupRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getAllEventHostingGroups(eventId: EventId): Promise<Group[]> {
     const eventHostingGroups = await this.db.eventHostingGroup.findMany({

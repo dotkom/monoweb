@@ -8,7 +8,11 @@ export interface EventHostingGroupService {
 }
 
 export class EventHostingGroupServiceImpl implements EventHostingGroupService {
-  constructor(private readonly eventHostingGroupRepository: EventHostingGroupRepository) {}
+  private readonly eventHostingGroupRepository: EventHostingGroupRepository
+
+  constructor(eventHostingGroupRepository: EventHostingGroupRepository) {
+    this.eventHostingGroupRepository = eventHostingGroupRepository
+  }
 
   async getGroupsForEvent(eventId: EventId): Promise<Group[]> {
     const groups = await this.eventHostingGroupRepository.getAllGroups(eventId)

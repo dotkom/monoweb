@@ -15,7 +15,11 @@ export interface GroupService {
 }
 
 export class GroupServiceImpl implements GroupService {
-  constructor(private readonly groupRepository: GroupRepository) {}
+  private readonly groupRepository: GroupRepository
+
+  constructor(groupRepository: GroupRepository) {
+    this.groupRepository = groupRepository
+  }
 
   /**
    * Get a group by its id

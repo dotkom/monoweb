@@ -165,8 +165,8 @@ export const createServiceLayer = async ({
     eventRepository,
     attendanceService,
     attendancePoolService,
-    eventHostingGroupService,
-    eventCompanyService
+    eventCompanyService,
+    eventHostingGroupService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
@@ -211,7 +211,7 @@ export const createServiceLayer = async ({
     refundRequestService,
     markService,
     personalMarkService,
-    eventHostingGroupService: eventHostingGroupService,
+    eventHostingGroupService,
     jobListingService,
     offlineService,
     articleService,
