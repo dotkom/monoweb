@@ -29,3 +29,18 @@ jobs:
           file: apps/rpc/Dockerfile
           tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/rpc:latest
           push: true
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-rpc',
+                targets: 'module.rpc_evergreen_service',
+              },
+            });
