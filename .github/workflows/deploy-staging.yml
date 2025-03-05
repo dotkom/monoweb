@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - main
-  # remove
-  pull_request:
 
 permissions:
   id-token: write   
