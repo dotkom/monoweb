@@ -1,0 +1,12 @@
+#!/usr/bin/env just --justfile
+export PATH := "./node_modules/.bin:" + env_var('PATH')
+PROJECT_NAME := "kvittering"
+
+build env:
+  docker build --platform linux/amd64 -t {{PROJECT_NAME}}:latest -f Dockerfile ../..
+
+push env:
+  docker tag {{PROJECT_NAME}}:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
+  docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
+
+release env: (build env) (push env)

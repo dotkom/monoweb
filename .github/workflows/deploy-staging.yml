@@ -8,6 +8,66 @@ permissions:
   id-token: write   
   contents: read
 jobs:
+  deploy-kvittering-backend:
+    name: Deploy monoweb/kvittering-backend
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRPCCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/kvittering-backend/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/kvittering-backend:latest
+          push: true
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-rpc',
+                targets: 'module.rpc_evergreen_service',
+              },
+            });
+  deploy-kvittering-frontend:
+    name: Deploy monoweb/kvittering-frontend
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRPCCIRole
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Install dependencies
+        working-directory: apps/kvittering-frontend
+        run: pnpm install
+      - name: Run upload script
+        working-directory: apps/kvittering-frontend
+        run: cd apps/kvittering-frontend && bash upload.sh
+
   deploy-rpc:
     name: Deploy monoweb/rpc
     runs-on: ubuntu-24.04
