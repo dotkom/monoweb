@@ -2,7 +2,7 @@
   "name": "@dotkomonline/monorepo",
   "version": "1.0.0",
   "description": "Monoweb is the next-generation web application for Online. This is the monorepo source.",
-  "keywords": ["online", "ntnu", "student-association"],
+  "keywords": ["online", "dotkom", "ntnu", "student-association"],
   "homepage": "https://online.ntnu.no",
   "author": "Dotkom <dotkom@online.ntnu> (https://online.ntnu.no)",
   "bugs": {
