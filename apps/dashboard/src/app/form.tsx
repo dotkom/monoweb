@@ -305,9 +305,22 @@ export function createRichTextInput<F extends FieldValues>({
                     markdownShortcutPlugin(),
                   ]}
                   onChange={(value) => {
-                    field.onChange(value)
+                    const modifiedValue = value
+                      .split("\n")
+                      .reduce((acc, line, index, array) => {
+                        if (line.trim() === "" && array[index - 1]?.trim() === "" && array[index + 1]?.trim() !== "") {
+                          acc.push("&#x20;" as never)
+                        } else {
+                          acc.push(line as never)
+                        }
+                        return acc
+                      }, [])
+                      .join("\n")
+
+                    field.onChange(modifiedValue)
+
                     if (onChange) {
-                      onChange(value, false)
+                      onChange(modifiedValue, false)
                     }
                   }}
                 />
