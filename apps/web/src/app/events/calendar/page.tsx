@@ -1,6 +1,5 @@
 import { getCalendarArray } from "@/components/organisms/EventCalendar/getCalendarArray"
 import EventCalendar from "@/components/organisms/EventCalendar"
-import { Icon } from "@dotkomonline/ui"
 import { server } from "@/utils/trpc/server";
 
 const EventPage = async () => {
