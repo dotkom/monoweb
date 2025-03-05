@@ -16,7 +16,6 @@ export default function Page() {
       requestsCompanyPresentation: false,
       requestsCourseEvent: false,
       requestsInstagramTakeover: false,
-      requestsTechTalksParticipation: false,
       requestsExcursionParticipation: false,
       requestsCollaborationEvent: false,
     },
@@ -24,7 +23,6 @@ export default function Page() {
   const dispatch = useSubmitMutation()
   const onSubmit = (data: FormSchema) => {
     dispatch.mutate(data)
-    form.reset()
   }
 
   return (

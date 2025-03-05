@@ -1,8 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../packages/config/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "types": ["node"]
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }

@@ -1,98 +1,50 @@
-import type { Database } from "@dotkomonline/db"
-import { type Mark, type MarkId, type PersonalMark, PersonalMarkSchema, type UserId } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { type Cursor, orderedQuery } from "../../utils/db-utils"
-import { mapToMark } from "./mark-repository"
-
-export const mapToPersonalMark = (payload: Selectable<Database["personalMark"]>): PersonalMark =>
-  PersonalMarkSchema.parse(payload)
+import type { DBClient } from "@dotkomonline/db"
+import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
 
 export interface PersonalMarkRepository {
-  getByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getAllByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]>
-  getAllMarksByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]>
+  getByMarkId(markId: MarkId): Promise<PersonalMark[]>
+  getAllByUserId(userId: UserId): Promise<PersonalMark[]>
+  getAllMarksByUserId(userId: UserId): Promise<Mark[]>
   addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
-  removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
-  getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined>
+  removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null>
+  getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null>
   countUsersByMarkId(markId: MarkId): Promise<number>
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  private readonly db: DBClient
 
-  async getAllByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("personalMark")
-        .leftJoin("mark", "personalMark.markId", "mark.id")
-        .selectAll("personalMark")
-        .where("userId", "=", userId)
-        .limit(take),
-      cursor
-    )
-    const marks = await query.execute()
-    return marks.map(mapToPersonalMark)
+  constructor(db: DBClient) {
+    this.db = db
   }
 
-  async getAllMarksByUserId(userId: UserId, take: number, cursor?: Cursor): Promise<Mark[]> {
-    const query = orderedQuery(
-      this.db
-        .selectFrom("mark")
-        .leftJoin("personalMark", "mark.id", "personalMark.markId")
-        .selectAll("mark")
-        .where("personalMark.userId", "=", userId)
-        .limit(take),
-      cursor
-    )
-    const marks = await query.execute()
-    return marks.map(mapToMark)
+  async getAllByUserId(userId: UserId): Promise<PersonalMark[]> {
+    return await this.db.personalMark.findMany({ where: { userId } })
   }
 
-  async getByMarkId(markId: MarkId, take: number, cursor?: Cursor): Promise<PersonalMark[]> {
-    const query = orderedQuery(
-      this.db.selectFrom("personalMark").selectAll().where("markId", "=", markId).limit(take),
-      cursor
-    )
-    const personalMarks = await query.execute()
-    return personalMarks.map(mapToPersonalMark)
+  async getAllMarksByUserId(userId: UserId): Promise<Mark[]> {
+    const personalMarks = await this.db.personalMark.findMany({ where: { userId }, select: { mark: true } })
+
+    return personalMarks.map((personalMark) => personalMark.mark)
+  }
+
+  async getByMarkId(markId: MarkId): Promise<PersonalMark[]> {
+    return await this.db.personalMark.findMany({ where: { markId } })
   }
 
   async addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
-    const personalMark = await this.db
-      .insertInto("personalMark")
-      .values({ userId, markId })
-      .returningAll()
-      .executeTakeFirstOrThrow()
-    return mapToPersonalMark(personalMark)
+    return await this.db.personalMark.create({ data: { userId, markId } })
   }
 
-  async removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined> {
-    const personalMark = await this.db
-      .deleteFrom("personalMark")
-      .where("userId", "=", userId)
-      .where("markId", "=", markId)
-      .returningAll()
-      .executeTakeFirst()
-    return personalMark ? mapToPersonalMark(personalMark) : undefined
+  async removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null> {
+    return await this.db.personalMark.delete({ where: { markId_userId: { userId, markId } } })
   }
 
-  async getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | undefined> {
-    const personalMark = await this.db
-      .selectFrom("personalMark")
-      .selectAll()
-      .where("userId", "=", userId)
-      .where("markId", "=", markId)
-      .executeTakeFirst()
-    return personalMark ? mapToPersonalMark(personalMark) : undefined
+  async getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null> {
+    return await this.db.personalMark.findUnique({ where: { markId_userId: { userId, markId } } })
   }
 
   async countUsersByMarkId(markId: MarkId): Promise<number> {
-    const result = await this.db
-      .selectFrom("personalMark")
-      .select((mark) => mark.fn.count("userId").as("count"))
-      .where("markId", "=", markId)
-      .executeTakeFirst()
-
-    return Number(result?.count) || 0
+    return await this.db.personalMark.count({ where: { markId } })
   }
 }

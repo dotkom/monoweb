@@ -12,7 +12,6 @@ const Props = z.object({
   requestsCompanyPresentation: z.boolean(),
   requestsCourseEvent: z.boolean(),
   requestsInstagramTakeover: z.boolean(),
-  requestsTechTalksParticipation: z.boolean(),
   requestsExcursionParticipation: z.boolean(),
   requestsCollaborationEvent: z.boolean(),
   requestsFemalesInTechEvent: z.boolean(),
@@ -35,7 +34,6 @@ export default function InterestFormForCompanyEmail({
   requestsCompanyPresentation = true,
   requestsCourseEvent = false,
   requestsInstagramTakeover = false,
-  requestsTechTalksParticipation = true,
   requestsExcursionParticipation = true,
   requestsCollaborationEvent = false,
   requestsFemalesInTechEvent = false,
@@ -67,7 +65,6 @@ export default function InterestFormForCompanyEmail({
               <InterestRow name="Bedriftspresentasjon" requested={requestsCompanyPresentation} />
               <InterestRow name="Kurs" requested={requestsCourseEvent} />
               <InterestRow name="Instagram takeover" requested={requestsInstagramTakeover} />
-              <InterestRow name="Tech Talks" requested={requestsTechTalksParticipation} />
               <InterestRow name="IT-ekskursjonen" requested={requestsExcursionParticipation} />
               <InterestRow
                 name="Samarbeidsarrangement med andre linjeforeninger"

@@ -10,7 +10,7 @@ interface JoblistingProps {
   jobListings: JobListing[]
 }
 
-const employmentType = ["Deltid", "Fulltid", "Sommerjobb/internship", "Annet"] as const
+const employmentType = ["PARTTIME", "FULLTIME", "SUMMER_INTERNSHIP", "OTHER"] as const
 export type EmploymentType = (typeof employmentType)[number]
 export interface EmploymentCheckbox {
   name: EmploymentType
@@ -32,10 +32,10 @@ const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")
   const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
-    { name: "Deltid", checked: false },
-    { name: "Fulltid", checked: false },
-    { name: "Sommerjobb/internship", checked: false },
-    { name: "Annet", checked: false },
+    { name: "PARTTIME", checked: false },
+    { name: "FULLTIME", checked: false },
+    { name: "SUMMER_INTERNSHIP", checked: false },
+    { name: "OTHER", checked: false },
   ])
   const [chosenSort, setChosenSort] = useState<SortOption>("Frist")
 
@@ -59,7 +59,7 @@ const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
           </div>
         </div>
       </div>
-      <div className="mb-10 mt-10 flex flex-row gap-x-12">
+      <div className="mb-10 mt-10 flex flex-col xl:flex-row gap-x-12">
         <CompanyFiltersContainer
           chosenLocation={chosenLocation}
           setChosenLocation={setChosenLocation}

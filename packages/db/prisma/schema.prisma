@@ -1,0 +1,471 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "zod-prisma-types"
+  output   = "../src/schemas"
+
+  useMultipleFiles = false
+  createInputTypes = false
+  addIncludeType   = false
+  addSelectType    = false
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EventStatus {
+  TBA
+  PUBLIC
+  NO_LIMIT
+  ATTENDANCE
+
+  @@map("event_status")
+}
+
+enum EventType {
+  SOCIAL
+  ACADEMIC
+  COMPANY
+  BEDPRES
+
+  @@map("event_type")
+}
+
+enum PaymentProvider {
+  STRIPE
+
+  @@map("payment_provider")
+}
+
+enum ProductType {
+  EVENT
+
+  @@map("product_type")
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+
+  @@map("payment_status")
+}
+
+enum RefundRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("refund_request_status")
+}
+
+enum CompanyType {
+  CONSULTING
+  RESEARCH
+  DEVELOPMENT
+  OTHER
+
+  @@map("company_type")
+}
+
+enum EmploymentType {
+  PARTTIME
+  FULLTIME
+  SUMMER_INTERNSHIP
+  OTHER
+
+  @@map("employment_type")
+}
+
+model OwUser {
+  id                        String                   @id
+  Attendee                  Attendee[]
+  WaitlistAttendee          WaitlistAttendee[]
+  Payment                   Payment[]
+  // Updated relations with explicit names
+  RequestedRefunds          RefundRequest[]          @relation("RequestedBy")
+  HandledRefunds            RefundRequest[]          @relation("HandledBy")
+  PrivacyPermissions        PrivacyPermissions?
+  NotificationPermissions   NotificationPermissions?
+  PersonalMark              PersonalMark[]
+  InterestGroupsMemberships InterestGroupMember[]
+  privacyPermissionsId      String?                  @unique
+  notificationPermissionsId String?                  @unique
+
+  @@map("ow_user")
+}
+
+model Company {
+  id          String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  name        String
+  description String
+  phone       String?
+  email       String
+  website     String
+  location    String?
+  type        CompanyType
+  image       String?
+  events      EventCompany[]
+  JobListing  JobListing[]
+
+  @@map("company")
+}
+
+model Committee {
+  id          String           @id @default(uuid())
+  createdAt   DateTime         @default(now())
+  name        String
+  description String
+  email       String
+  image       String?
+  events      EventCommittee[]
+
+  @@map("committee")
+}
+
+model Attendance {
+  id                 String             @id @default(uuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  registerStart      DateTime
+  deregisterDeadline DateTime
+  registerEnd        DateTime
+  extras             Json?
+  pools              AttendancePool[]
+  attendees          Attendee[]
+  waitlist           WaitlistAttendee[]
+  events             Event[]
+
+  @@map("attendance")
+}
+
+model AttendancePool {
+  id           String             @id @default(uuid())
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  title        String
+  attendance   Attendance         @relation(fields: [attendanceId], references: [id])
+  attendanceId String
+  yearCriteria Json
+  capacity     Int
+  isVisible    Boolean
+  type         String
+  attendees    Attendee[]
+  waitlist     WaitlistAttendee[]
+
+  @@map("attendance_pool")
+}
+
+model WaitlistAttendee {
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  attendance       Attendance?     @relation(fields: [attendanceId], references: [id])
+  attendanceId     String
+  user             OwUser?         @relation(fields: [userId], references: [id])
+  userId           String?
+  position         Int?
+  isPunished       Boolean?
+  registeredAt     DateTime?
+  studyYear        Int
+  attendancePool   AttendancePool? @relation(fields: [attendancePoolId], references: [id])
+  attendancePoolId String
+  name             String
+
+  @@map("waitlist_attendee")
+}
+
+model Attendee {
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  attendance       Attendance     @relation(fields: [attendanceId], references: [id])
+  attendanceId     String
+  user             OwUser         @relation(fields: [userId], references: [id])
+  userId           String
+  attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
+  attendancePoolId String
+  registeredAt     DateTime
+  extrasChoices    Json?
+  attended         Boolean        @default(false)
+  firstName        String?
+  lastName         String?
+
+  @@unique([attendanceId, userId], name: "attendee_unique")
+
+  @@map("attendee")
+}
+
+model Event {
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  title           String
+  start           DateTime
+  end             DateTime
+  status          EventStatus
+  public          Boolean
+  description     String?
+  subtitle        String?
+  imageUrl        String?
+  locationTitle   String
+  locationAddress String?
+  locationLink    String?
+  attendance      Attendance?      @relation(fields: [attendanceId], references: [id])
+  attendanceId    String?
+  type            EventType
+  companies       EventCompany[]
+  committees      EventCommittee[]
+
+  @@map("event")
+}
+
+model EventCompany {
+  eventId   String
+  companyId String
+  event     Event   @relation(fields: [eventId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
+
+  @@id([eventId, companyId])
+
+  @@map("event_company")
+}
+
+model Mark {
+  id        String         @id @default(uuid())
+  title     String
+  updatedAt DateTime       @updatedAt
+  createdAt DateTime       @default(now())
+  category  String
+  details   String?
+  duration  Int
+  users     PersonalMark[]
+
+  @@map("mark")
+}
+
+model PersonalMark {
+  mark   Mark   @relation(fields: [markId], references: [id])
+  markId String
+  user   OwUser @relation(fields: [userId], references: [id])
+  userId String
+
+  @@id([markId, userId])
+
+  @@map("personal_mark")
+}
+
+model Product {
+  id                     String                   @id @default(uuid())
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  type                   ProductType
+  objectId               String?                  @unique
+  amount                 Int
+  deletedAt              DateTime?
+  isRefundable           Boolean                  @default(true)
+  refundRequiresApproval Boolean                  @default(true)
+  payments               Payment[]
+  paymentProviders       ProductPaymentProvider[]
+
+  @@map("product")
+}
+
+model Payment {
+  id                       String         @id @default(uuid())
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
+  product                  Product        @relation(fields: [productId], references: [id])
+  productId                String
+  user                     OwUser         @relation(fields: [userId], references: [id])
+  userId                   String
+  paymentProviderId        String
+  paymentProviderSessionId String
+  paymentProviderOrderId   String?
+  status                   PaymentStatus
+  refundRequest            RefundRequest?
+
+  @@map("payment")
+}
+
+model ProductPaymentProvider {
+  product           Product         @relation(fields: [productId], references: [id])
+  productId         String
+  paymentProvider   PaymentProvider
+  paymentProviderId String
+
+  @@id([productId, paymentProviderId])
+
+  @@map("product_payment_provider")
+}
+
+model RefundRequest {
+  id          String              @id @default(uuid())
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  payment     Payment             @relation(fields: [paymentId], references: [id])
+  paymentId   String              @unique
+  user        OwUser              @relation("RequestedBy", fields: [userId], references: [id])
+  userId      String
+  reason      String
+  status      RefundRequestStatus @default(PENDING)
+  handledBy   OwUser?             @relation("HandledBy", fields: [handledById], references: [id])
+  handledById String?
+
+  @@map("refund_request")
+}
+
+model PrivacyPermissions {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              OwUser   @relation(fields: [userId], references: [id])
+  userId            String   @unique
+  profileVisible    Boolean  @default(true)
+  usernameVisible   Boolean  @default(true)
+  emailVisible      Boolean  @default(false)
+  phoneVisible      Boolean  @default(false)
+  addressVisible    Boolean  @default(false)
+  attendanceVisible Boolean  @default(false)
+
+  @@map("privacy_permissions")
+}
+
+model NotificationPermissions {
+  id                          String   @id @default(uuid())
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+  user                        OwUser   @relation(fields: [userId], references: [id])
+  userId                      String   @unique
+  applications                Boolean  @default(true)
+  newArticles                 Boolean  @default(true)
+  standardNotifications       Boolean  @default(true)
+  groupMessages               Boolean  @default(true)
+  markRulesUpdates            Boolean  @default(true)
+  receipts                    Boolean  @default(true)
+  registrationByAdministrator Boolean  @default(true)
+  registrationStart           Boolean  @default(true)
+
+  @@map("notification_permissions")
+}
+
+model EventCommittee {
+  committeeId String
+  eventId     String
+  committee   Committee @relation(fields: [committeeId], references: [id])
+  event       Event     @relation(fields: [eventId], references: [id])
+
+  @@id([committeeId, eventId])
+
+  @@map("event_committee")
+}
+
+model JobListing {
+  id               String               @id @default(uuid())
+  createdAt        DateTime             @default(now())
+  company          Company              @relation(fields: [companyId], references: [id])
+  companyId        String
+  title            String
+  ingress          String
+  description      String
+  start            DateTime
+  end              DateTime
+  featured         Boolean
+  deadline         DateTime?
+  employment       EmploymentType
+  applicationLink  String?
+  applicationEmail String?
+  deadlineAsap     Boolean
+  locations        JobListingLocation[]
+
+  @@map("job_listing")
+}
+
+model JobListingLocation {
+  name         String
+  createdAt    DateTime   @default(now())
+  jobListing   JobListing @relation(fields: [jobListingId], references: [id])
+  jobListingId String
+
+  @@id([name, jobListingId])
+
+  @@map("job_listing_location")
+}
+
+model Offline {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  published DateTime
+  fileUrl   String?
+  imageUrl  String?
+
+  @@map("offline")
+}
+
+model Article {
+  id           String           @id @default(uuid())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  title        String
+  author       String
+  photographer String
+  imageUrl     String
+  slug         String           @unique
+  excerpt      String
+  content      String
+  tags         ArticleTagLink[]
+
+  @@map("article")
+}
+
+model ArticleTag {
+  name     String           @id
+  articles ArticleTagLink[]
+
+  @@map("article_tag")
+}
+
+model ArticleTagLink {
+  article   Article    @relation(fields: [articleId], references: [id])
+  articleId String
+  tag       ArticleTag @relation(fields: [tagName], references: [name])
+  tagName   String
+
+  @@id([articleId, tagName])
+
+  @@map("article_tag_link")
+}
+
+model InterestGroup {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  name            String
+  description     String
+  link            String?
+  isActive        Boolean  @default(true)
+  longDescription String?
+  joinInfo        String?
+  members         InterestGroupMember[]
+
+  @@map("interest_group")
+}
+
+model InterestGroupMember {
+  interestGroupId String
+  interestGroup InterestGroup @relation(fields: [interestGroupId], references: [id])
+
+  userId          String
+  user            OwUser      @relation(fields: [userId], references: [id])
+
+  @@id([interestGroupId])
+
+  @@map("interest_group_member")
+}

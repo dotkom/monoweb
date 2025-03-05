@@ -1,37 +1,28 @@
-import {
-  type UserId,
-  type WaitlistAttendee,
-  type WaitlistAttendeeId,
-  WaitlistAttendeeWriteSchema,
-} from "@dotkomonline/types"
-import type { z } from "zod"
+import type { UserId, WaitlistAttendee, WaitlistAttendeeId, WaitlistAttendeeWrite } from "@dotkomonline/types"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
-export const CreateWaitlistSchema = WaitlistAttendeeWriteSchema.omit({
-  attendancePoolId: true,
-  position: true,
-})
-
-type CreateWaitlist = z.infer<typeof CreateWaitlistSchema>
-
 export interface WaitlistAttendeService {
-  create(obj: CreateWaitlist): Promise<WaitlistAttendee>
+  create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
   delete(id: WaitlistAttendeeId): Promise<void>
-  getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
+  getByUserId(userId: UserId): Promise<WaitlistAttendee[] | null>
   getByAttendanceId(id: string): Promise<WaitlistAttendee[] | null>
 }
 
 export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
+  private readonly waitlistAttendeeRepository: WaitlistAttendeRepository
+  private readonly attendancePoolRepository: AttendancePoolRepository
+
   constructor(
-    private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository
+    waitlistAttendeeRepository: WaitlistAttendeRepository,
+    attendancePoolRepository: AttendancePoolRepository
   ) {
     this.waitlistAttendeeRepository = waitlistAttendeeRepository
+    this.attendancePoolRepository = attendancePoolRepository
   }
 
-  async create(obj: CreateWaitlist): Promise<WaitlistAttendee> {
+  async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
     const pools = await this.attendancePoolRepository.getByAttendanceId(obj.attendanceId)
 
     const pool = pools.find((pool) => pool.yearCriteria.includes(obj.studyYear))
@@ -55,8 +46,8 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
     await this.waitlistAttendeeRepository.delete(id)
   }
 
-  async getByUserId(userId: UserId, waitlistAttendeeId: WaitlistAttendeeId): Promise<WaitlistAttendee | null> {
-    return this.waitlistAttendeeRepository.getByUserId(userId, waitlistAttendeeId)
+  async getByUserId(userId: UserId): Promise<WaitlistAttendee[] | null> {
+    return this.waitlistAttendeeRepository.getByUserId(userId)
   }
 
   async getByAttendanceId(id: string): Promise<WaitlistAttendee[]> {

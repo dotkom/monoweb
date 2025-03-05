@@ -33,7 +33,7 @@ const GenericSearch = <T,>({
     }
   }
 
-  const placeholderText = placeholder !== null ? placeholder ?? "Search..." : undefined
+  const placeholderText = placeholder !== null ? (placeholder ?? "Search...") : undefined
 
   const data = items.map(dataMapper)
 

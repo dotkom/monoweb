@@ -1,4 +1,4 @@
-import type { AttendanceId, AttendeeId, AttendeeUser } from "@dotkomonline/types"
+import type { AttendanceId, Attendee, AttendeeId } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
@@ -37,7 +37,7 @@ export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
 
   const { attendees } = useEventAttendeesGetQuery(attendanceId)
 
-  const columnHelper = createColumnHelper<AttendeeUser>()
+  const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((attendee) => attendee, {
@@ -45,12 +45,8 @@ export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
         header: () => "Bruker",
         cell: (info) => {
           const attendee = info.getValue()
-          // return `${attendee.user.givenName} ${attendee.user.familyName}`
-          return `${attendee.user.name}`
+          return `${attendee.firstName} ${attendee.lastName}`
         },
-      }),
-      columnHelper.accessor("user.studyYear", {
-        header: () => "Klassetrinn",
       }),
       columnHelper.accessor((attendee) => attendee, {
         id: "attend",

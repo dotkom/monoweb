@@ -1,7 +1,7 @@
 import type { Payment, PaymentProvider, Product, ProductId, UserId } from "@dotkomonline/types"
 import type Stripe from "stripe"
 import { IllegalStateError } from "../../error"
-import type { Cursor } from "../../utils/db-utils"
+import type { Pageable } from "../../query"
 import type { EventRepository } from "../event/event-repository"
 import {
   InvalidPaymentStatusError,
@@ -30,7 +30,7 @@ export interface PaymentService {
   findStripeSdkByPublicKey(publicKey: string): Stripe | null
   findWebhookSecretByPublicKey(publicKey: string): string | null
   getPaymentProviders(): (PaymentProvider & { paymentAlias: string })[]
-  getPayments(take: number, cursor?: Cursor): Promise<Payment[]>
+  getPayments(page: Pageable): Promise<Payment[]>
   createStripeCheckoutSessionForProductId(
     productId: ProductId,
     stripePublicKey: string,
@@ -47,13 +47,25 @@ export interface PaymentService {
 }
 
 export class PaymentServiceImpl implements PaymentService {
+  private readonly paymentRepository: PaymentRepository
+  private readonly productRepository: ProductRepository
+  private readonly eventRepository: EventRepository
+  private readonly refundRequestRepository: RefundRequestRepository
+  private readonly stripeAccounts: Record<string, StripeAccount>
+
   constructor(
-    private readonly paymentRepository: PaymentRepository,
-    private readonly productRepository: ProductRepository,
-    private readonly eventRepository: EventRepository,
-    private readonly refundRequestRepository: RefundRequestRepository,
-    private readonly stripeAccounts: Record<string, StripeAccount>
-  ) {}
+    paymentRepository: PaymentRepository,
+    productRepository: ProductRepository,
+    eventRepository: EventRepository,
+    refundRequestRepository: RefundRequestRepository,
+    stripeAccounts: Record<string, StripeAccount>
+  ) {
+    this.paymentRepository = paymentRepository
+    this.productRepository = productRepository
+    this.eventRepository = eventRepository
+    this.refundRequestRepository = refundRequestRepository
+    this.stripeAccounts = stripeAccounts
+  }
 
   findStripeSdkByPublicKey(publicKey: string): Stripe | null {
     return Object.values(this.stripeAccounts).find((account) => account.publicKey === publicKey)?.stripe ?? null
@@ -71,8 +83,8 @@ export class PaymentServiceImpl implements PaymentService {
     }))
   }
 
-  async getPayments(take: number, cursor?: Cursor): Promise<Payment[]> {
-    return this.paymentRepository.getAll(take, cursor)
+  async getPayments(page: Pageable): Promise<Payment[]> {
+    return this.paymentRepository.getAll(page)
   }
 
   /**
@@ -195,14 +207,16 @@ export class PaymentServiceImpl implements PaymentService {
     paymentProviderOrderId: string | undefined,
     checkRefundRequest = true
   ): Promise<{ payment: Payment; product: Product }> {
-    let payment: Payment | undefined
+    let payment: Payment | null
     if (paymentId) {
       payment = await this.paymentRepository.getById(paymentId)
     } else if (paymentProviderOrderId) {
       payment = await this.paymentRepository.getByPaymentProviderOrderId(paymentProviderOrderId)
+    } else {
+      throw new Error("Please provide either paymentId or paymentProviderId")
     }
 
-    if (!payment) {
+    if (payment === null) {
       // Non-null assertion used because TypeScript is unable to deduce that
       // both paymentId and paymentProviderOrderId cannot be undefined at this
       // point.

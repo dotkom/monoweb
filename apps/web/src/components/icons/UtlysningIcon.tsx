@@ -12,7 +12,6 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
       strokeLinejoin: "round",
       strokeMiterlimit: 1.5,
     }}
-    width="1em"
     height="1em"
     {...props}
   >
@@ -27,8 +26,7 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
       d="m80.609 60.505 11.902-31.869 73.396.144 10.643 31.652"
       style={{
         fill: "none",
-        stroke: "#000",
-        strokeWidth: "8.88px",
+        strokeWidth: "6px",
       }}
     />
     <ellipse
@@ -37,24 +35,22 @@ const SvgUtlysningIcon = (props: SVGProps<SVGSVGElement>) => (
       rx={5.705}
       ry={12.59}
       style={{
-        stroke: "#000",
-        strokeWidth: ".99px",
+        strokeWidth: "6px",
       }}
     />
     <path
       d="M23.002 111.505v115.859h209.996V111.505l14.482-7.242V60.816H8.52v43.447l14.482 7.242Z"
       style={{
         fill: "none",
-        stroke: "#000",
-        strokeWidth: "8.88px",
+        strokeWidth: "6px",
       }}
     />
     <path
       d="m23.002 111.505 79.654 25.344v25.344L128 183.917l25.344-21.724v-28.965l79.654-21.723-79.654 21.723v-21.723h-50.688v25.344"
       style={{
         fill: "none",
-        stroke: "#000",
-        strokeWidth: "8.88px",
+
+        strokeWidth: "6px",
       }}
     />
   </svg>

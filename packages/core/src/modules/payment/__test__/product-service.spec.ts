@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto"
 import type { Product } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { ProductNotFoundError } from "../product-error"
 import { ProductRepositoryImpl } from "./../product-repository"
 import { ProductServiceImpl } from "./../product-service"
 
+// biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
 export const productPayload: Omit<Product, "id"> = {
   createdAt: new Date(2022, 1, 1),
   updatedAt: new Date(2022, 1, 1),
@@ -19,7 +20,7 @@ export const productPayload: Omit<Product, "id"> = {
 }
 
 describe("ProductService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const productRepository = new ProductRepositoryImpl(db)
   const productService = new ProductServiceImpl(productRepository)
 
@@ -33,7 +34,7 @@ describe("ProductService", () => {
 
   it("finds products by id", async () => {
     const id = randomUUID()
-    vi.spyOn(productRepository, "getById").mockResolvedValueOnce(undefined)
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce(null)
     const missing = productService.getProductById(id)
     await expect(missing).rejects.toThrow(ProductNotFoundError)
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ id, ...productPayload })

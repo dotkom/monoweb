@@ -6,15 +6,16 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dotkomonline/env": "workspace:*",
-    "winston": "^3.13.0"
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4"
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/config": "workspace:*",
+    "typescript": "^5.8"
   }
 }

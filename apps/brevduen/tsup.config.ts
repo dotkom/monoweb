@@ -6,7 +6,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   format: "esm",
-  target: "node18",
+  target: "node22",
   platform: "node",
   noExternal: [/(.*)/],
   banner: {

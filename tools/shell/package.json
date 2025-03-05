@@ -3,16 +3,17 @@
   "type": "module",
   "scripts": {
     "start": "tsx ./src/index.ts",
-    "lint": "biome check . --apply",
+    "lint": "biome check . --write",
     "lint-check": "biome check ."
   },
   "dependencies": {
     "@dotkomonline/db": "workspace:*",
-    "@dotkomonline/core": "workspace:*"
+    "@dotkomonline/core": "workspace:*",
+    "@dotkomonline/environment": "workspace:*"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "^1.9.2",
     "tsx": "^3.14.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8"
   }
 }

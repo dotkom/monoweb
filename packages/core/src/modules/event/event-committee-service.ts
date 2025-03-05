@@ -8,21 +8,25 @@ export interface EventCommitteeService {
 }
 
 export class EventCommitteeServiceImpl implements EventCommitteeService {
-  constructor(private readonly committeeOrganizerRepository: EventCommitteeRepository) {}
+  private readonly committeeOrganizerRepository: EventCommitteeRepository
+
+  constructor(committeeOrganizerRepository: EventCommitteeRepository) {
+    this.committeeOrganizerRepository = committeeOrganizerRepository
+  }
 
   async getCommitteesForEvent(eventId: EventId): Promise<Committee[]> {
-    const committees = await this.committeeOrganizerRepository.getAllCommittees(eventId, 999)
+    const committees = await this.committeeOrganizerRepository.getAllCommittees(eventId)
     return committees
   }
 
   async getEventCommitteesForEvent(eventId: EventId): Promise<Committee[]> {
-    const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId, 999)
+    const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId)
     return eventCommittees
   }
 
   async setEventCommittees(eventId: EventId, committees: CommitteeId[]): Promise<EventCommittee[]> {
     // Fetch all committees associated with the event
-    const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId, 999)
+    const eventCommittees = await this.committeeOrganizerRepository.getAllEventCommittees(eventId)
     const currentCommitteeIds = eventCommittees.map((committee) => committee.id)
 
     // Identify committees to add and remove

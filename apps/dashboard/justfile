@@ -1,0 +1,11 @@
+#!/usr/bin/env just --justfile
+export PATH := "./node_modules/.bin:" + env_var('PATH')
+
+build env:
+  docker build --platform linux/amd64 -t dashboard:latest -f Dockerfile ../..
+
+push env:
+  docker tag dashboard:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/dashboard:latest
+  docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/dashboard:latest
+
+release env: (build env) (push env)

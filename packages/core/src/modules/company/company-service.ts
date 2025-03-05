@@ -1,17 +1,21 @@
 import type { Company, CompanyId, CompanyWrite } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Pageable } from "../../query"
 import { CompanyNotFoundError } from "./company-error"
 import type { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
   getCompany(id: CompanyId): Promise<Company>
-  getCompanies(take: number, cursor?: Cursor): Promise<Company[]>
+  getCompanies(page: Pageable): Promise<Company[]>
   createCompany(payload: CompanyWrite): Promise<Company>
   updateCompany(id: CompanyId, payload: Omit<CompanyWrite, "id">): Promise<Company>
 }
 
 export class CompanyServiceImpl implements CompanyService {
-  constructor(private readonly companyRepository: CompanyRepository) {}
+  private readonly companyRepository: CompanyRepository
+
+  constructor(companyRepository: CompanyRepository) {
+    this.companyRepository = companyRepository
+  }
 
   /**
    * Get a company by its id
@@ -26,8 +30,8 @@ export class CompanyServiceImpl implements CompanyService {
     return company
   }
 
-  async getCompanies(take: number, cursor?: Cursor): Promise<Company[]> {
-    const companies = await this.companyRepository.getAll(take, cursor)
+  async getCompanies(page: Pageable): Promise<Company[]> {
+    const companies = await this.companyRepository.getAll(page)
     return companies
   }
 

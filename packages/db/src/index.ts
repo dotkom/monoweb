@@ -1,31 +1,15 @@
-import { type Environment, env } from "@dotkomonline/env"
-import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
-import pg from "pg"
-import type { DB } from "./db.generated"
+import { createRequire } from "node:module"
+import type { Prisma, PrismaClient } from "@prisma/client"
+import type { DefaultArgs } from "@prisma/client/runtime/library"
 
-export { createMigrator } from "./migrator"
+const require = createRequire(import.meta.url)
+const { Prisma: _Prisma, PrismaClient: _PrismaClient } = require("@prisma/client")
+export type * from "@prisma/client"
 
-export type Database = DB
-
-declare global {
-  let kysely: Kysely<Database> | undefined
-}
-
-export const createKysely = (env: Environment) =>
-  new Kysely<Database>({
-    dialect: new PostgresDialect({
-      pool: new pg.Pool({
-        connectionString: env.DATABASE_URL,
-      }),
-    }),
-    plugins: [new CamelCasePlugin()],
+export const PrismaRuntime = _Prisma
+export const PrismaClientRuntime = _PrismaClient
+export type DBClient = PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
+export const createPrisma = (databaseUrl: string): DBClient =>
+  new _PrismaClient({
+    datasourceUrl: databaseUrl,
   })
-
-// @ts-expect-error: does not like re-declaring global
-// biome-ignore lint/suspicious/noRedeclare: error
-export const kysely = global.kysely || createKysely(env)
-
-if (env.NODE_ENV !== "production") {
-  // @ts-expect-error: does not like re-declaring global
-  global.kysely = kysely
-}

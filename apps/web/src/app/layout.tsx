@@ -5,6 +5,7 @@ import { cn } from "@dotkomonline/ui"
 import { Fraunces, Poppins } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../styles/globals.css"
+import { Providers } from "./providers"
 
 export const metadata = {
   title: "Onlineweb 5",
@@ -16,10 +17,13 @@ const fraunces = Fraunces({ subsets: ["latin"], weight: ["400", "500", "600", "7
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
+    <html lang="en" suppressHydrationWarning>
       <body className={cn(fraunces.variable, poppins.variable, "h-full w-full")}>
         <QueryProvider>
-          <MainLayout>{children}</MainLayout>
+          <Providers>
+            <MainLayout>{children}</MainLayout>
+          </Providers>
         </QueryProvider>
       </body>
     </html>

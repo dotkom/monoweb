@@ -4,18 +4,22 @@ import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const userRouter = t.router({
-  all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.userService.getAll(input.take)),
+  all: publicProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.userService.getAll(input.take, 0)),
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
-  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getByAuth0Id(ctx.auth.userId)),
+  registerAndGet: protectedProcedure
+    .input(UserSchema.shape.id)
+    .mutation(async ({ input, ctx }) => ctx.userService.registerAndGet(input)),
+  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.principal)),
   update: protectedProcedure
     .input(
       z.object({
-        data: UserWriteSchema,
+        id: UserSchema.shape.id,
+        input: UserWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input: changes, ctx }) =>
-      ctx.auth0SynchronizationService.updateUserInAuth0AndLocalDb(changes.data)
-    ),
+    .mutation(async ({ input: changes, ctx }) => ctx.userService.update(changes.id, changes.input)),
   getPrivacyPermissionssByUserId: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => ctx.userService.getPrivacyPermissionsByUserId(input)),
@@ -28,6 +32,6 @@ export const userRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => ctx.userService.updatePrivacyPermissionsForUserId(input.id, input.data)),
   searchByFullName: protectedProcedure
-    .input(z.object({ searchQuery: z.string(), paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.userService.searchByFullName(input.searchQuery, input.paginate.take)),
+    .input(z.object({ searchQuery: z.string() }))
+    .query(async ({ input, ctx }) => ctx.userService.searchForUser(input.searchQuery, 30, 0)),
 })

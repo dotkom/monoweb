@@ -24,9 +24,3 @@ export class MissingLocationError extends ApplicationError {
     super(PROBLEM_DETAILS.UnprocessableContent, "The location is missing")
   }
 }
-
-export class InvalidDeadlineError extends ApplicationError {
-  constructor(reason: string) {
-    super(PROBLEM_DETAILS.UnprocessableContent, `The deadline is invalid: ${reason}`)
-  }
-}

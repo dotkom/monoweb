@@ -1,5 +1,5 @@
-@import url(@dotkomonline/config/tailwind.css);
-@import url(@dotkomonline/config/typography.css);
+@import url("@dotkomonline/config/tailwind.css");
+@import url("@dotkomonline/config/typography.css");
 
 @layer base {
   html {
@@ -17,5 +17,9 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  body[data-scroll-locked][data-scroll-locked] {
+    overflow: auto !important;
   }
 }

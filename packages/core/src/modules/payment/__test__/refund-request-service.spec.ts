@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
-import type { RefundRequest } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import type { RefundRequestWrite } from "@dotkomonline/types"
+import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { IllegalStateError } from "../../../error"
 import { EventRepositoryImpl } from "../../event/event-repository"
@@ -14,18 +14,17 @@ import { RefundRequestServiceImpl } from "../refund-request-service"
 import { paymentPayload } from "./payment-service.spec"
 import { productPayload } from "./product-service.spec"
 
-export const refundRequestPayload: Omit<RefundRequest, "id"> = {
-  createdAt: new Date(2022, 1, 1),
-  updatedAt: new Date(2022, 1, 1),
+// biome-ignore lint/suspicious/noExportsInTest: this is shared across multiple tests
+export const refundRequestPayload: RefundRequestWrite = {
   paymentId: randomUUID(),
   userId: randomUUID(),
   reason: "I want my money back",
   status: "PENDING",
-  handledBy: null,
+  handledById: null,
 }
 
 describe("RefundRequestService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const refundRequestRepository = new RefundRequestRepositoryImpl(db)
   const paymentRepository = new PaymentRepositoryImpl(db)
   const productRepository = new ProductRepositoryImpl(db)
@@ -91,6 +90,8 @@ describe("RefundRequestService", () => {
     vi.spyOn(refundRequestRepository, "create").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "PENDING",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.createRefundRequest(paymentPayloadExtended.id, userId, "Test reason")
@@ -108,6 +109,8 @@ describe("RefundRequestService", () => {
     vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "APPROVED",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.approveRefundRequest(refundRequestPayloadExtended.id, userId)
@@ -118,11 +121,15 @@ describe("RefundRequestService", () => {
     vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "PENDING",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
     vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "APPROVED",
-      handledBy: userId,
+      handledById: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
     vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined)
 
@@ -138,11 +145,15 @@ describe("RefundRequestService", () => {
     vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "REJECTED",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
     vi.spyOn(refundRequestRepository, "update").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "APPROVED",
-      handledBy: userId,
+      handledById: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
     vi.spyOn(paymentService, "refundPaymentById").mockResolvedValueOnce(undefined)
 
@@ -158,6 +169,8 @@ describe("RefundRequestService", () => {
     vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "REJECTED",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)
@@ -168,6 +181,8 @@ describe("RefundRequestService", () => {
     vi.spyOn(refundRequestRepository, "getById").mockResolvedValueOnce({
       ...refundRequestPayloadExtended,
       status: "APPROVED",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
 
     const call = refundRequestService.rejectRefundRequest(refundRequestPayloadExtended.id, userId)

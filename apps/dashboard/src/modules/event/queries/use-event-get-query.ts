@@ -1,5 +1,5 @@
 import type { EventId } from "@dotkomonline/types"
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../../trpc"
 
 export const useEventDetailsGetQuery = (id: EventId) => {
   const { data, ...query } = trpc.event.getDashboardEventDetailData.useQuery(id)

@@ -1,13 +1,13 @@
 import { randomUUID } from "node:crypto"
 import type { Mark } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { MarkRepositoryImpl } from "../mark-repository"
 import { MarkServiceImpl } from "../mark-service"
 import { PersonalMarkRepositoryImpl } from "../personal-mark-repository"
 import { PersonalMarkServiceImpl } from "../personal-mark-service"
 
 describe("PersonalMarkDateCalculation", () => {
-  const db = vi.mocked(Kysely.prototype, true)
+  const db = vi.mocked(PrismaClient.prototype, true)
 
   const personalMarkRepository = new PersonalMarkRepositoryImpl(db)
   const markRepository = new MarkRepositoryImpl(db)

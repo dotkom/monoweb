@@ -9,6 +9,7 @@ import {
 } from "@dotkomonline/emails"
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Handler } from "aws-lambda"
 import { ZodError, z } from "zod"
+import { env } from "./env.js"
 
 const ses = new SESClient()
 
@@ -42,7 +43,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
   if (!xEmailToken) {
     return { statusCode: 401, body: "Missing API Token" }
   }
-  if (xEmailToken !== process.env.EMAIL_TOKEN) {
+  if (xEmailToken !== env.EMAIL_TOKEN) {
     return { statusCode: 403, body: "Invalid API Token" }
   }
   try {
@@ -78,10 +79,13 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
     return { statusCode: 201 }
   } catch (err) {
     if (err instanceof ZodError) {
-      return { statusCode: 400, body: "Provided arguments don't match email input schema" }
+      return { statusCode: 400, body: `Provided arguments don't match email input schema: ${err.message}` }
     }
     if (err instanceof InvalidTemplateArguments) {
-      return { statusCode: 400, body: "Arguments provided to template don't match the template's arguments" }
+      return {
+        statusCode: 400,
+        body: `Arguments provided to template don't match the template's argument schema: ${err.message}`,
+      }
     }
     console.error(err)
     return { statusCode: 500 }

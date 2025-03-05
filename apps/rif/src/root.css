@@ -1,5 +1,5 @@
-@import url(@dotkomonline/config/tailwind.css);
-@import url(@dotkomonline/config/typography.css);
+@import url("@dotkomonline/config/tailwind.css");
+@import url("@dotkomonline/config/typography.css");
 
 @layer base {
   html {
