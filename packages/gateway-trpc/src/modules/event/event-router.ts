@@ -94,17 +94,17 @@ export const eventRouter = t.router({
   allByCommittee: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByCommitteeId(input.id, input.paginate)),
-  getAttendanceEventDetail: publicProcedure
+  getAttendanceEvent: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.eventService.getAttendanceDetail(input)),
   addAttendance: protectedProcedure
     .input(
       z.object({
-        obj: AttendanceWriteSchema.partial(),
+        values: AttendanceWriteSchema.partial(),
         eventId: EventSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.obj)),
+    .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.values)),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
 })

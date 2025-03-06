@@ -4,36 +4,21 @@ import type {
   AttendancePool,
   AttendancePoolId,
   AttendancePoolWrite,
-  AttendanceSelection,
-  AttendanceSelectionResults as AttendanceSelectionResult,
   AttendanceWrite,
-  UserId,
-  WaitlistAttendee,
+  AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
-import { UserNotFoundError } from "../user/user-error"
-import type { UserService } from "../user/user-service"
-import {
-  AttendanceDeletionError,
-  AttendanceNotFound,
-  AttendanceValidationError,
-  InvalidParametersError,
-  SelectionResponseUpdateAfterRegistrationStartError,
-} from "./attendance-error"
-import { AttendancePoolNotFoundError } from "./attendance-pool-error"
+import { addHours } from "date-fns"
+import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
-import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
-  getById(id: AttendanceId): Promise<Attendance | null>
-  update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance | null>
-  merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
-  updateSelections(id: AttendanceId, selections: AttendanceSelection[], now?: Date): Promise<Attendance | null>
-  getSelectionResults(attendanceId: AttendanceId): Promise<AttendanceSelectionResult[] | null>
-  getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId): Promise<AttendancePool | null>
-
+  getById(id: AttendanceId): Promise<Attendance>
+  update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance>
+  mergeAttendancePools(attendanceId: AttendanceId): Promise<void>
+  getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[] | null>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(poolId: AttendancePoolId): Promise<AttendancePool>
   updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
@@ -42,12 +27,10 @@ export interface AttendanceService {
 export class AttendanceServiceImpl implements AttendanceService {
   constructor(
     private readonly attendanceRepository: AttendanceRepository,
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly userService: UserService
+    private readonly attendeeRepository: AttendeeRepository
   ) {}
 
-  async getSelectionResults(attendanceId: AttendanceId) {
+  async getSelectionsResponseSummary(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
     if (!attendance) {
@@ -55,7 +38,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const allSelectionResponses = attendees.flatMap((attendee) => attendee.selectionResponses)
+    const allSelectionResponses = attendees.flatMap((attendee) => attendee.selections)
 
     return attendance.selections.map((selection) => {
       const selectionResponses = allSelectionResponses.filter((response) => response.selectionId === selection.id)
@@ -73,46 +56,16 @@ export class AttendanceServiceImpl implements AttendanceService {
     })
   }
 
-  async update(id: AttendanceId, obj: Partial<AttendanceWrite>) {
-    const attendance = await this.attendanceRepository.update(obj, id)
-    return attendance
-  }
-
-  async updateSelections(id: AttendanceId, selections: AttendanceSelection[], now: Date = new Date()) {
-    const attendance = await this.attendanceRepository.getById(id)
-
-    if (!attendance) {
-      throw new AttendanceNotFound(id)
-    }
-
-    if (attendance.registerStart < now) {
-      throw new SelectionResponseUpdateAfterRegistrationStartError()
-    }
-
-    return this.attendanceRepository.update(
-      {
-        ...attendance,
-        selections,
-      },
-      id
-    )
-  }
-
-  /**
-   * Creates a new attendance record.
-   * Validates dates according to the following rules:
-   * registerStart < registerEnd
-   *
-   */
   async create(obj: AttendanceWrite) {
-    // registerStart < registerEnd
     if (obj.registerStart > obj.registerEnd) {
       throw new AttendanceValidationError("Register start must be before register end")
     }
 
-    const attendance = await this.attendanceRepository.create(obj)
+    return await this.attendanceRepository.create(obj)
+  }
 
-    return attendance
+  async getById(id: AttendanceId) {
+    return this.attendanceRepository.getById(id)
   }
 
   async delete(id: AttendanceId) {
@@ -125,75 +78,17 @@ export class AttendanceServiceImpl implements AttendanceService {
     await this.attendanceRepository.delete(id)
   }
 
-  async getById(id: AttendanceId) {
-    return this.attendanceRepository.getById(id)
-  }
-
-  async getAllWaitlistAttendeesOrdered(attendanceId: AttendanceId): Promise<WaitlistAttendee[]> {
-    const waitlistAttendeesUnordered = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
-    return waitlistAttendeesUnordered.sort(
-      (a, b) => (a.registeredAt ?? new Date()).getTime() - (b.registeredAt ?? new Date()).getTime()
-    )
-  }
-
-  async merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]) {
-    const attendance = await this.attendanceRepository.getById(attendanceId)
-    if (attendance === null) {
-      throw new AttendanceNotFound(attendanceId)
+  async update(id: AttendanceId, data: Partial<AttendanceWrite>) {
+    if (data.registerStart || data.registerEnd) {
+      const existingData = await this.getById(id)
+      if ((data.registerStart || existingData.registerStart) > (data.registerEnd || existingData.registerEnd)) {
+        throw new AttendanceValidationError("Register start must be before register end")
+      }
     }
 
-    // Check that the year criteria of the merge pool contains all of the year criteria of the pools being merged
-    const combinedCriteria = Array.from(new Set(attendance.pools.flatMap((pool) => pool.yearCriteria)))
-    if (!combinedCriteria.every((criteria) => yearCriteria.includes(criteria))) {
-      throw new InvalidParametersError(
-        `Merge pool must contain the combined year criteria of the pools being merged: (${combinedCriteria.join(",")})`
-      )
-    }
+    const attendance = await this.attendanceRepository.update(data, id)
 
-    const combinedCapacity = attendance.pools.reduce((acc, pool) => acc + pool.capacity, 0)
-    const mergePool = await this.attendanceRepository.createPool({
-      attendanceId,
-      capacity: combinedCapacity,
-      yearCriteria: yearCriteria,
-      title: mergePoolTitle,
-      isVisible: true,
-      type: "MERGE",
-    })
-
-    const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const waitlistAttendees = await this.getAllWaitlistAttendeesOrdered(attendanceId)
-
-    await Promise.all(
-      attendees.map((attendee) => this.attendeeRepository.update(attendee.id, { attendancePoolId: mergePool.id }))
-    )
-    await Promise.all(
-      waitlistAttendees.map((waitlistAttendee, i) =>
-        this.waitlistAttendeeRepository.update(waitlistAttendee.id, { attendancePoolId: mergePool.id, position: i })
-      )
-    )
-    await Promise.all(attendance.pools.map((pool) => this.attendanceRepository.delete(pool.id)))
-  }
-
-  async getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId) {
-    const user = await this.userService.getById(userId)
-
-    if (!user) {
-      throw new UserNotFoundError(userId)
-    }
-
-    const attendance = await this.attendanceRepository.getById(attendanceId)
-
-    if (!attendance) {
-      throw new AttendancePoolNotFoundError(attendanceId)
-    }
-
-    const userAttendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
-
-    if (userAttendee) {
-      return null
-    }
-
-    return attendance.pools.find((pool) => pool.yearCriteria.includes(-69)) ?? null
+    return attendance
   }
 
   async createPool(data: AttendancePoolWrite) {
@@ -201,10 +96,53 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async deletePool(poolId: AttendancePoolId) {
+    if (await this.attendeeRepository.poolHasAttendees(poolId)) {
+      throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
+    }
+
     return await this.attendanceRepository.deletePool(poolId)
   }
 
   async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+    const pool = await this.attendanceRepository.getPoolById(poolId)
+
+    if (data.capacity && pool.numAttendees > data.capacity) {
+      throw new AttendanceValidationError("Cannot change pool capacity to less than the reserved spots")
+    }
+
     return await this.attendanceRepository.updatePool(poolId, data)
+  }
+
+  private canPoolMerge(pool: AttendancePool, attendance: Attendance, mergeTime: Date) {
+    if (pool.mergeDelayHours === null) {
+      return true
+    }
+
+    return addHours(attendance.registerStart, pool.mergeDelayHours) > mergeTime
+  }
+
+  async mergeAttendancePools(attendanceId: AttendanceId, mergeTime = new Date()) {
+    const attendance = await this.attendanceRepository.getById(attendanceId)
+
+    const poolsToMerge = attendance.pools.filter((pool) => this.canPoolMerge(pool, attendance, mergeTime))
+
+    if (poolsToMerge.length === 0) {
+      return
+    }
+
+    const mergedPool = await this.attendanceRepository.createPool({
+      attendanceId,
+      title: "Merged pool",
+      mergeDelayHours: null,
+      yearCriteria: poolsToMerge.flatMap((pool) => pool.yearCriteria),
+      capacity: poolsToMerge.reduce((sum, pool) => sum + pool.capacity, 0),
+    })
+
+    const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)
+    await this.attendeeRepository.moveFromMultiplePoolsToPool(poolsToMergeIds, mergedPool.id)
+
+    for (const pool of poolsToMerge) {
+      await this.attendanceRepository.deletePool(pool.id)
+    }
   }
 }

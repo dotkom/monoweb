@@ -1,13 +1,16 @@
 import type { Prisma } from "@prisma/client"
+import { addHours } from "date-fns"
+
+const now = new Date()
 
 export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateManyInput[] = (attendanceIds) => [
   {
     attendanceId: attendanceIds[0],
-    createdAt: new Date("2023-02-22 13:30:04.713+00"),
-    updatedAt: new Date("2023-02-22 13:30:04.713+00"),
+    createdAt: now,
+    updatedAt: now,
     title: "Kurs i å lage fixtures",
-    start: new Date("2023-02-17 00:00:00+00"),
-    end: new Date("2023-02-22 01:33:00+00"),
+    start: addHours(now, 4),
+    end: addHours(now, 8),
     status: "PUBLIC",
     type: "SOCIAL",
     public: true,

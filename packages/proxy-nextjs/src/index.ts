@@ -32,11 +32,11 @@ export function createProxyRoute(opts: ProxyOptions): (request: NextRequest) => 
       duplex: request.method !== "GET" ? "half" : undefined,
     })
 
-    logger.info("proxying endpoint request: %s %s", req.method, req.url)
+    logger.debug("proxying endpoint request: %s %s", req.method, req.url)
     const response = await fetch(req)
     const responseHeaders = new Headers()
     headers.set("Content-Type", response.headers.get("Content-Type") ?? "application/json")
-    logger.info("proxying endpoint response: %s %s", response.status, response.statusText)
+    logger.debug("proxying endpoint response: %s %s", response.status, response.statusText)
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,

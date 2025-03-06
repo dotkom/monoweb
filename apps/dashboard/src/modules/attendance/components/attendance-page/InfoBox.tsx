@@ -3,13 +3,7 @@ import { Box, Table } from "@mantine/core"
 import type { FC } from "react"
 import { formatPoolYearCriterias } from "./utils"
 
-export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
-  const all = [0, 1, 2, 3, 4, 5]
-
-  const notIncluded = (ranges: number[][]): number[] => {
-    const flat = ranges.flat()
-    return all.filter((num) => !flat.includes(num))
-  }
+export const AttendancePoolsSection: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
   return (
     <Box>
       <Table>
@@ -28,7 +22,6 @@ export const InfoBox: FC<{ pools: AttendancePool[] }> = ({ pools }) => {
           </Table.Tr>
           <Table.Tr>
             <Table.Td>Grupper som ikke vil få tilgang til arrangement</Table.Td>
-            <Table.Td>{notIncluded(pools.map(({ yearCriteria }) => yearCriteria)).join(", ")}</Table.Td>
           </Table.Tr>
         </Table.Thead>
       </Table>

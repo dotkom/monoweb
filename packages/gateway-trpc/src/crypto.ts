@@ -21,7 +21,6 @@ export class JwtService {
   public async verify(accessToken: string) {
     this.jwks ??= createRemoteJWKSet(this.jwksUrl, {
       // Auth0 gives a max-age=15 and stale-while-revalidate=15 header. We will cache the JWKS for 30 seconds at a time.
-      cacheMaxAge: 30000,
     })
     return jwtVerify(accessToken, this.jwks, {
       clockTolerance: "5s",

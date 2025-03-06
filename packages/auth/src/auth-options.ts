@@ -41,6 +41,7 @@ export interface AuthOptions {
   auth0Issuer: string
   jwtSecret: string
   rpcHost: string
+  cookieName?: string
 }
 
 export const getAuthOptions = ({
@@ -49,6 +50,7 @@ export const getAuthOptions = ({
   auth0Issuer: oidcIssuer,
   jwtSecret,
   rpcHost,
+  cookieName,
 }: AuthOptions): NextAuthOptions => ({
   secret: jwtSecret,
   providers: [

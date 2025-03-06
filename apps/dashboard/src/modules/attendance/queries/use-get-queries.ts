@@ -23,13 +23,6 @@ export const useEventAttendeesGetQuery = (id: AttendanceId) => {
   return { attendees, ...query }
 }
 
-export const useWaitlistAttendeesGetQuery = (id: AttendanceId) => {
-  const { data: attendees = [], ...query } = trpc.attendance.getWaitlist.useQuery({
-    id,
-  })
-  return { attendees, ...query }
-}
-
 export const useHandleQrCodeRegistration = () => {
   const notification = useQueryNotification()
   const mutation = trpc.event.attendance.handleQrCodeRegistration.useMutation({

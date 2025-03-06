@@ -2,7 +2,6 @@ import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
-import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
 import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
 import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
 import {
@@ -33,7 +32,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
     },
     label: "Opprett",
     onSubmit: (values) => {
-      mutation.mutate({ eventId, obj: values })
+      mutation.mutate({ eventId, values })
     },
   })
 
@@ -75,20 +74,15 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
     <Box>
       <Box>
         <Title mb={10} order={3}>
-          Generelt
+          Påmeldingstid
         </Title>
         <AttendanceForm />
       </Box>
       <Divider my={32} />
       <Box>
-        <Title mb={10} order={3}>
-          Reserverte plasser
-        </Title>
-        <InfoBox pools={attendance.pools || []} />
-      </Box>
-      <Box>
-        <PoolsForm />
+        <Title order={3}>Påmeldingsgrupper</Title>
         <PoolBox pools={attendance.pools || []} attendanceId={attendance.id} />
+        <PoolsForm />
       </Box>
     </Box>
   )

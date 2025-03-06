@@ -742,6 +742,9 @@ importers:
       '@testcontainers/postgresql':
         specifier: ^10.18.0
         version: 10.18.0
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       pg:
         specifier: ^8.13.0
         version: 8.13.1

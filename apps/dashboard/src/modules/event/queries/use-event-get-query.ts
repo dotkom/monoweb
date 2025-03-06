@@ -2,6 +2,6 @@ import type { EventId } from "@dotkomonline/types"
 import { trpc } from "../../../trpc"
 
 export const useEventDetailsGetQuery = (id: EventId) => {
-  const { data, ...query } = trpc.event.getAttendanceEventDetail.useQuery(id)
+  const { data, ...query } = trpc.event.getAttendanceEvent.useQuery(id)
   return { data, ...query }
 }
