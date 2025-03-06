@@ -194,9 +194,29 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
 }
 
 resource "auth0_client" "voting" {
-  cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
+  cross_origin_auth = true
   cross_origin_loc = "https://vedtatt.online.ntnu.no/"
   app_type = "spa"
+  allowed_origins = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000"
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no",
+    ]
+  }[terraform.workspace]
+  web_origins = {
+    "dev" = [
+      "http://localhost:3000",
+      "http://localhost:8000"
+    ]
+    "stg" = []
+    "prd" = [
+      "https://vedtatt.online.ntnu.no",
+    ]
+  }[terraform.workspace]
   callbacks = {
     "dev" = [
       "http://localhost:3000",
@@ -206,7 +226,11 @@ resource "auth0_client" "voting" {
     ]
     "stg" = []
     "prd" = [
-      "https://vedtatt.online.ntnu.no"
+      "https://vedtatt.online.ntnu.no",
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:3000/docs/oauth2-redirect",
+      "http://localhost:8000/docs/oauth2-redirect",
     ]
   }[terraform.workspace]
   grant_types                   = ["authorization_code", "refresh_token"]
@@ -540,6 +564,8 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
   client_id = auth0_client.onlineweb4.client_id
   scopes = [
     "update:users",
+    "read:users",
+    "read:user_idp_tokens",
     "create:user_tickets", # to send verification emails
   ]
 }

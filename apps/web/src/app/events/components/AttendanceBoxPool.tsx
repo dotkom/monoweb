@@ -27,13 +27,15 @@ export const AttendancePoolInfoBox: FC<Props> = ({ pool, user, attendee, attenda
 
   return (
     <CardWithTitle title={poolTitle(pool)} className={clsx(canAttend ? "col-span-2" : "col-span-1")}>
-      {pool.capacity > 0 ? <>
-        <p className={canAttend ? "text-3xl" : "text-xl"}>
-          {pool.numAttendees}/{pool.capacity}
-        </p>
+      {pool.capacity > 0 ? (
+        <>
+          <p className={canAttend ? "text-3xl" : "text-xl"}>
+            {pool.numAttendees}/{pool.capacity}
+          </p>
 
-        { canAttend && <p>{ attendee ? "Du er påmeldt" : "Du er ikke påmeldt" }</p> }
-      </> : (
+          {canAttend && <p>{attendee ? "Du er påmeldt" : "Du er ikke påmeldt"}</p>}
+        </>
+      ) : (
         <p className={clsx(canAttend ? "text-xl" : "text-lg", "py-2")}>
           {canAttend && pool.mergeDelayHours
             ? `Ledige plasser åpner ${formatDate(addHours(attendance.registerStart, pool.mergeDelayHours))}`

@@ -1,6 +1,6 @@
 import type { z } from "zod"
 
-import { schemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db/schemas"
 
 export const InterestGroupSchema = schemas.InterestGroupSchema.extend({})
 

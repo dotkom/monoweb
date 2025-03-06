@@ -12,29 +12,20 @@ interface ModalProps {
 }
 
 const FormSchema = z.object({
-  poolId: z.string(),
+  attendancePoolId: z.string(),
 })
 
 export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
-  context,
-  id,
   innerProps: { attendanceId, userId },
 }) => {
   const { mutate: createAttendee } = useRegisterForEventMutation()
 
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
 
-  const onSubmit = (userId: string, attendancePoolId: string) => {
-    createAttendee({
-      attendancePoolId: attendancePoolId,
-      userId: userId,
-    })
-  }
-
   const Form = useFormBuilder({
     schema: FormSchema,
     fields: {
-      poolId: createSelectInput({
+      attendancePoolId: createSelectInput({
         label: "Påmeldingsgruppe",
         data: attendance?.pools.map((pool) => ({
           label: pool.title,
@@ -43,9 +34,9 @@ export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
       }),
     },
     label: "Meld på bruker",
-    onSubmit: (values) => {
+    onSubmit: ({ attendancePoolId }) => {
       try {
-        onSubmit(userId, values.poolId)
+        createAttendee({ attendancePoolId, attendanceId, userId })
       } catch (e) {
         notifyFail({
           title: "Oops!",

@@ -67,6 +67,18 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id)),
 
+  adminRegisterForEvent: protectedProcedure
+    .input(
+      z.object({
+        attendanceId: AttendanceSchema.shape.id,
+        attendancePoolId: AttendanceSchema.shape.id,
+        userId: UserSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendeeService.registerForEvent(input.userId, input.attendanceId, input.attendancePoolId)
+    ),
+
   getSelectionsResults: protectedProcedure
     .input(
       z.object({

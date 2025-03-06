@@ -25,10 +25,13 @@ export interface AttendanceService {
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
-  constructor(
-    private readonly attendanceRepository: AttendanceRepository,
-    private readonly attendeeRepository: AttendeeRepository
-  ) {}
+  private readonly attendanceRepository: AttendanceRepository
+  private readonly attendeeRepository: AttendeeRepository
+
+  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository) {
+    this.attendanceRepository = attendanceRepository
+    this.attendeeRepository = attendeeRepository
+  }
 
   async getSelectionsResponseSummary(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)

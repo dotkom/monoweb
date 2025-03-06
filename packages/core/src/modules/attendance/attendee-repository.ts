@@ -28,7 +28,11 @@ export interface AttendeeRepository {
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getByUserId(userId: UserId, attendanceId: AttendanceId) {
     const user = await this.db.attendee.findFirst({ where: { userId, attendanceId } })

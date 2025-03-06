@@ -4,7 +4,7 @@ import { trpc } from "../../../trpc"
 export const useRegisterForEventMutation = () => {
   const notification = useQueryNotification()
 
-  return trpc.event.attendance.registerForEvent.useMutation({
+  return trpc.event.attendance.adminRegisterForEvent.useMutation({
     onMutate: () => {
       notification.loading({
         title: "Melder på bruker",

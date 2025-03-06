@@ -45,7 +45,7 @@ export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
         header: () => "Bruker",
         cell: (info) => {
           const attendee = info.getValue()
-          return `${attendee.userFirstName} ${attendee.userLastName}`
+          return `${attendee.displayName}`
         },
       }),
       columnHelper.accessor((attendee) => attendee, {

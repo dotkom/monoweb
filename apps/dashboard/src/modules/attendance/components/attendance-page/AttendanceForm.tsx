@@ -43,5 +43,3 @@ export const useAttendanceForm = ({ onSubmit, defaultValues, label }: Attendance
       }),
     },
   })
-
-export default useAttendanceForm

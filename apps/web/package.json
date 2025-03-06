@@ -26,7 +26,7 @@
     "@aws-sdk/client-s3": "^3.665.0",
     "@aws-sdk/s3-presigned-post": "^3.665.0",
     "@fadi-ui/react-country-flag": "^1.0.7",
-    "@next/env": "^14.2.14",
+    "@next/env": "^15.0.0",
     "@portabletext/react": "^3.0.11",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -61,7 +61,6 @@
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
-    "@dotkomonline/tsconfig": "workspace:*",
     "@types/cors": "^2.8.17",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.11",
@@ -71,6 +70,6 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8"
   }
 }

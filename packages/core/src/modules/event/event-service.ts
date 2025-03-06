@@ -1,9 +1,9 @@
 import type { AttendanceEventDetail, AttendanceWrite, Event, EventId, EventWrite } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import type { AttendanceService } from "../attendance/attendance-service"
-import type { EventCommitteeService } from "./event-committee-service"
 import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
+import type { EventHostingGroupService } from "./event-hosting-group-service"
 import type { EventRepository } from "./event-repository.js"
 
 export interface EventService {
@@ -12,18 +12,28 @@ export interface EventService {
   getEventById(id: EventId): Promise<Event>
   getEvents(page: Pageable): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
-  getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
+  getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
   getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail>
 }
 
 export class EventServiceImpl implements EventService {
+  private readonly eventRepository: EventRepository
+  private readonly attendanceService: AttendanceService
+  private readonly eventCompanyService: EventCompanyService
+  private readonly eventHostingGroupService: EventHostingGroupService
+
   constructor(
-    private readonly eventRepository: EventRepository,
-    private readonly attendanceService: AttendanceService,
-    private readonly eventCommitteeService: EventCommitteeService,
-    private readonly eventCompanyService: EventCompanyService
-  ) {}
+    eventRepository: EventRepository,
+    attendanceService: AttendanceService,
+    eventCompanyService: EventCompanyService,
+    eventHostingGroupService: EventHostingGroupService
+  ) {
+    this.eventRepository = eventRepository
+    this.attendanceService = attendanceService
+    this.eventCompanyService = eventCompanyService
+    this.eventHostingGroupService = eventHostingGroupService
+  }
 
   async addAttendance(eventId: EventId, obj: AttendanceWrite) {
     const attendance = await this.attendanceService.create(obj)
@@ -47,8 +57,8 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]> {
-    const events = await this.eventRepository.getAllByCommitteeId(committeeId, page)
+  async getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]> {
+    const events = await this.eventRepository.getAllByHostingGroupId(groupId, page)
     return events
   }
 
@@ -72,15 +82,15 @@ export class EventServiceImpl implements EventService {
 
   async getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail> {
     const event = await this.getEventById(id)
-    const committees = await this.eventCommitteeService.getCommitteesForEvent(event.id)
-    const companies = await this.eventCompanyService.getCompaniesByEventId(event.id)
+    const eventHostingGroups = await this.eventHostingGroupService.getHostingGroupsForEvent(event.id)
+    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
     const attendance = event.attendanceId ? await this.attendanceService.getById(event.attendanceId) : null
 
     return {
       event,
-      committees,
-      companies,
       attendance,
+      eventHostingGroups,
+      eventCompanies,
     }
   }
 }

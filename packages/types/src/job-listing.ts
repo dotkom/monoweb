@@ -1,4 +1,4 @@
-import { schemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import { CompanySchema } from "./company"
 

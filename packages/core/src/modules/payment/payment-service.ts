@@ -47,13 +47,25 @@ export interface PaymentService {
 }
 
 export class PaymentServiceImpl implements PaymentService {
+  private readonly paymentRepository: PaymentRepository
+  private readonly productRepository: ProductRepository
+  private readonly eventRepository: EventRepository
+  private readonly refundRequestRepository: RefundRequestRepository
+  private readonly stripeAccounts: Record<string, StripeAccount>
+
   constructor(
-    private readonly paymentRepository: PaymentRepository,
-    private readonly productRepository: ProductRepository,
-    private readonly eventRepository: EventRepository,
-    private readonly refundRequestRepository: RefundRequestRepository,
-    private readonly stripeAccounts: Record<string, StripeAccount>
-  ) {}
+    paymentRepository: PaymentRepository,
+    productRepository: ProductRepository,
+    eventRepository: EventRepository,
+    refundRequestRepository: RefundRequestRepository,
+    stripeAccounts: Record<string, StripeAccount>
+  ) {
+    this.paymentRepository = paymentRepository
+    this.productRepository = productRepository
+    this.eventRepository = eventRepository
+    this.refundRequestRepository = refundRequestRepository
+    this.stripeAccounts = stripeAccounts
+  }
 
   findStripeSdkByPublicKey(publicKey: string): Stripe | null {
     return Object.values(this.stripeAccounts).find((account) => account.publicKey === publicKey)?.stripe ?? null

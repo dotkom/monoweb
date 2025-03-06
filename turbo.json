@@ -34,34 +34,21 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "**/dist"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["**/dist"]
     },
     "build:prod": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"]
     },
     "build:storybook": {
-      "outputs": [
-        "storybook-static/**"
-      ]
+      "outputs": ["storybook-static/**"]
     },
     "type-check": {
       "outputs": []
     },
     "test": {
-      "dependsOn": [
-        "lint",
-        "type-check"
-      ],
+      "dependsOn": ["lint", "type-check"],
       "outputs": []
     },
     "test:it": {
@@ -77,15 +64,14 @@
       "cache": false
     },
     "migrate": {
-      "env": [
-        "DATABASE_URL"
-      ],
+      "env": ["DATABASE_URL"],
       "cache": false,
       "dependsOn": []
     },
     "clean": {
       "cache": false
     },
+    "docker:build": {},
     "storybook": {
       "outputs": [],
       "cache": false

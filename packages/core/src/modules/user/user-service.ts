@@ -25,11 +25,19 @@ export interface UserService {
 }
 
 export class UserServiceImpl implements UserService {
+  private readonly userRepository: UserRepository
+  private readonly privacyPermissionsRepository: PrivacyPermissionsRepository
+  private readonly notificationPermissionsRepository: NotificationPermissionsRepository
+
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly privacyPermissionsRepository: PrivacyPermissionsRepository,
-    private readonly notificationPermissionsRepository: NotificationPermissionsRepository
-  ) {}
+    userRepository: UserRepository,
+    privacyPermissionsRepository: PrivacyPermissionsRepository,
+    notificationPermissionsRepository: NotificationPermissionsRepository
+  ) {
+    this.userRepository = userRepository
+    this.privacyPermissionsRepository = privacyPermissionsRepository
+    this.notificationPermissionsRepository = notificationPermissionsRepository
+  }
 
   async registerAndGet(auth0Id: string) {
     return this.userRepository.registerAndGet(auth0Id)

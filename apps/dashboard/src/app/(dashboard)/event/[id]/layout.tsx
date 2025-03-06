@@ -17,7 +17,7 @@ export default function EventDetailsLayout({
         ? null
         : {
             event: data.event,
-            eventCommittees: data.committees,
+            eventHostingGroups: data.eventHostingGroups,
             attendance: data.attendance,
           },
     [data, isLoading]

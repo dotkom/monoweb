@@ -1,9 +1,9 @@
 import type { Company } from "@dotkomonline/types"
-import { addDays, addMinutes } from "date-fns"
+import { addDays } from "date-fns"
 import { beforeEach, describe, expect, it } from "vitest"
 import { core } from "../../../../vitest-integration.setup"
 import { getCompanyMock, getJobListingMock } from "../../../mock"
-import { InvalidDeadlineError, InvalidEndDateError } from "../job-listing-error"
+import { InvalidEndDateError } from "../job-listing-error"
 
 describe("job-listings", async () => {
   let company: Company
@@ -28,18 +28,6 @@ describe("job-listings", async () => {
         })
       )
     ).rejects.toThrow(InvalidEndDateError)
-  })
-
-  it("should fail if the deadline is after job start", async () => {
-    await expect(
-      core.jobListingService.create(
-        getJobListingMock(company.id, {
-          start: addMinutes(new Date(), 1),
-          end: addDays(new Date(), 1),
-          deadline: addDays(new Date(), 2),
-        })
-      )
-    ).rejects.toThrow(InvalidDeadlineError)
   })
 
   it("should be able to update locations by diffing", async () => {

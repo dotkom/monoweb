@@ -3,20 +3,20 @@ import { Tailwind } from "@react-email/tailwind"
 import { z } from "zod"
 import { type TemplateProps, createTemplate } from "../template"
 
-export enum InvoiceRelation {
-  COMPANY_PRESENTATION = "Bedriftspresentasjon",
-  COURSE_EVENT = "Kurs",
-  OFFLINE_ADVERTISEMENT = "Annonse i Offline",
-  JOB_LISTING = "Jobbannonse",
-  EXCURSION_PARTICIPATION = "ITEX",
-  OTHER = "Annet",
-}
+export const InvoiceRelation = {
+  COMPANY_PRESENTATION: "Bedriftspresentasjon",
+  COURSE_EVENT: "Kurs",
+  OFFLINE_ADVERTISEMENT: "Annonse i Offline",
+  JOB_LISTING: "Jobbannonse",
+  EXCURSION_PARTICIPATION: "ITEX",
+  OTHER: "Annet",
+} as const
 
-export enum DeliveryMethod {
-  EMAIL = "E-post",
-  POST = "Post",
-  EHF = "EHF",
-}
+export const DeliveryMethod = {
+  EMAIL: "E-post",
+  POST: "Post",
+  EHF: "EHF",
+} as const
 
 const Props = z.object({
   companyName: z.string().min(1, "Bedriftsnavnet kan ikke være tomt"),

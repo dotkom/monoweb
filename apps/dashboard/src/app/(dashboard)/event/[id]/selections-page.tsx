@@ -2,7 +2,7 @@ import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
 import type { FC } from "react"
-import AttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
+import { useAttendanceForm } from "src/modules/attendance/components/attendance-page/AttendanceForm"
 import {
   useAddAttendanceMutation,
   useUpdateAttendanceMutation,
@@ -26,10 +26,23 @@ export const SelectionsPage: FC = () => {
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
   const mutation = useAddAttendanceMutation()
 
+  const AttendanceForm = useAttendanceForm({
+    defaultValues: {
+      registerStart: new Date(),
+      registerEnd: new Date(),
+      deregisterDeadline: new Date(),
+      selections: [],
+    },
+    label: "Opprett",
+    onSubmit: (values) => {
+      mutation.mutate({ eventId, values })
+    },
+  })
+
   return (
     <Box>
       <Title order={5}>Ingen påmelding</Title>
-      <AttendanceForm label="Opprett" onSubmit={(values) => mutation.mutate({ eventId, values })} />
+      <AttendanceForm />
     </Box>
   )
 }

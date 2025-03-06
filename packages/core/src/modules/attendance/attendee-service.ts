@@ -1,4 +1,3 @@
-import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePool,
@@ -37,12 +36,19 @@ export interface AttendeeService {
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
+  private readonly attendeeRepository: AttendeeRepository
+  private readonly attendanceRepository: AttendanceRepository
+  private readonly userService: UserService
+
   constructor(
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly attendanceRepository: AttendanceRepository,
-    private readonly userService: UserService,
-    private readonly db: DBClient
-  ) {}
+    attendeeRepository: AttendeeRepository,
+    attendanceRepository: AttendanceRepository,
+    userService: UserService
+  ) {
+    this.attendeeRepository = attendeeRepository
+    this.attendanceRepository = attendanceRepository
+    this.userService = userService
+  }
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)

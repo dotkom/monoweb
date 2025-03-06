@@ -8,7 +8,6 @@ export const authOptions = getAuthOptions({
   auth0Issuer: env.OAUTH_ISSUER,
   jwtSecret: env.NEXTAUTH_SECRET,
   rpcHost: env.RPC_HOST,
-  cookieName: env.NEXTAUTH_COOKIE_NAME,
 })
 
 export default NextAuth(authOptions)
