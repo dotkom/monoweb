@@ -22,17 +22,18 @@ function CardWithTitle({ title, children, className, ...props }: ComponentProps<
   )
 }
 
-export const AttendanceBoxPool: FC<Props> = ({ pool, user, attendee, attendance }) => {
+export const AttendancePoolInfoBox: FC<Props> = ({ pool, user, attendee, attendance }) => {
   const canAttend = user && canUserAttendPool(pool, user)
 
   return (
     <CardWithTitle title={poolTitle(pool)} className={clsx(canAttend ? "col-span-2" : "col-span-1")}>
-      {pool.capacity > 0 ? (
+      {pool.capacity > 0 ? <>
         <p className={canAttend ? "text-3xl" : "text-xl"}>
           {pool.numAttendees}/{pool.capacity}
-          {canAttend && <p>{attendee ? "Du er påmeldt" : "Du er ikke påmeldt"}</p>}
         </p>
-      ) : (
+
+        { canAttend && <p>{ attendee ? "Du er påmeldt" : "Du er ikke påmeldt" }</p> }
+      </> : (
         <p className={clsx(canAttend ? "text-xl" : "text-lg", "py-2")}>
           {canAttend && pool.mergeDelayHours
             ? `Ledige plasser åpner ${formatDate(addHours(attendance.registerStart, pool.mergeDelayHours))}`

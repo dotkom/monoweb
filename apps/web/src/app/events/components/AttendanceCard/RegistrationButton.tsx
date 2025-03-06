@@ -50,7 +50,7 @@ export const RegistrationButton: FC<Props> = ({
         <GenericRegistrationButton
           loading={isLoading}
           actionText="Meld meg på"
-          infoText={`Stenger ${formatDate(registerEnd)}`}
+          infoText={`Stenger ${formatDate(registerEnd, { includeTime: true })}`}
           color="green"
           onClick={registerForAttendance}
         />

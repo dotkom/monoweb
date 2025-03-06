@@ -4,7 +4,7 @@ import { trpc } from "@/utils/trpc/client"
 import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useState } from "react"
-import { AttendanceBoxPool } from "../AttendanceBoxPool"
+import { AttendancePoolInfoBox } from "../AttendanceBoxPool"
 import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesPopup"
@@ -24,7 +24,7 @@ export const AttendanceCard = ({
   const { data: attendee, isLoading: attendeeLoading } = trpc.attendance.getAttendee.useQuery(
     {
       // biome-ignore lint/style/noNonNullAssertion: Only enabled when user is defined
-      userId: user!.id,
+      userId: user?.id ?? "",
       attendanceId: initialData.attendance.id,
     },
     { initialData: initialData.attendee, enabled: user !== undefined }
@@ -67,7 +67,7 @@ export const AttendanceCard = ({
 
       <div className="grid gap-4 grid-cols-2">
         {pools.map((pool) => (
-          <AttendanceBoxPool
+          <AttendancePoolInfoBox
             key={pool.id}
             user={user ?? null}
             pool={pool}
