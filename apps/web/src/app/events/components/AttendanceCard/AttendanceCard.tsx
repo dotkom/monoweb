@@ -23,8 +23,8 @@ export const AttendanceCard = ({
 
   const { data: attendee, isLoading: attendeeLoading } = trpc.attendance.getAttendee.useQuery(
     {
-      // biome-ignore: lint/style/noNonNullAssertion
-      userId: user?.id,
+      // biome-ignore lint/style/noNonNullAssertion: Only enabled when user is defined
+      userId: user!.id,
       attendanceId: initialData.attendance.id,
     },
     { initialData: initialData.attendee, enabled: user !== undefined }
