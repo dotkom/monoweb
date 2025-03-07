@@ -1,9 +1,7 @@
-# This can be used for deploying the application locally and not through CI. 
-# Can be useful e.g. when first setting up infra and you need an image in ECR to set up the rest of the infra.
-
-#!/usr/bin/env just --justfile
-export PATH := "./node_modules/.bin:" + env_var('PATH')
 PROJECT_NAME := "kvittering-backend"
+
+
+# ---- Running locally ------
 
 # To run with email, see src/core/get_and_validate_env.py for the correct env vars to set
 run:
@@ -15,7 +13,11 @@ run:
     -e EMAIL_ENABLED=false \
     {{PROJECT_NAME}}:latest
 
-# For building/deploying to aws environments:
+
+# ---- DEPLOYMENT RELATED ------
+
+# This can be used for deploying the application locally and not through CI. 
+# Can be useful e.g. when first setting up infra and you need an image in ECR to set up the rest of the infra.
 build env:
   docker build --platform linux/amd64 -t {{PROJECT_NAME}}:latest -f Dockerfile ../..
 

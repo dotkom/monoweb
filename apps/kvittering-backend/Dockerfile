@@ -6,11 +6,6 @@ WORKDIR /app
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
-ADD https://astral.sh/uv/install.sh /uv-installer.sh
-RUN sh /uv-installer.sh && rm /uv-installer.sh
-ENV PATH="/root/.local/bin/:$PATH"
-
 COPY apps/kvittering-backend/pyproject.toml /app/pyproject.toml
 COPY apps/kvittering-backend/uv.lock /app/uv.lock
 

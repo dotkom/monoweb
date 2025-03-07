@@ -19,18 +19,17 @@ logger = logging.getLogger(__name__)
 
 env = get_and_validate_env()
 
-sentry_sdk.init(
-    # not sensitive so its ok to hardcode for now
-    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000", 
-    send_default_pii=True,
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-
-)
-
 # Determine environment (production, development, etc.)
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "prod").lower()
 IS_PRODUCTION = ENVIRONMENT == "prod"
+
+sentry_sdk.init(
+    # not sensitive so its ok to hardcode for now
+    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000" if IS_PRODUCTION else None, 
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
 
 logger.info(f"Running in {ENVIRONMENT} mode")
 
