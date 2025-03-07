@@ -12,7 +12,9 @@ run:
     -e STORAGE_BUCKET=kvittering-archive.online.ntnu.no \
     -e EMAIL_ENABLED=false \
     {{PROJECT_NAME}}:latest
-
+  
+lint:
+  ruff check . --fix
 
 # ---- DEPLOYMENT RELATED ------
 

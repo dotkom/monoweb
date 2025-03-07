@@ -26,11 +26,11 @@ class Env:
         # --- With default values ---
         env["AWS_REGION"] = os.environ.get("AWS_REGION", "eu-north-1")
 
-        if not env["ENVIRONMENT"] in ["dev", "prod"]:
+        if env["ENVIRONMENT"] not in ["dev", "prod"]:
             raise ValueError("ENVIRONMENT must be 'dev' or 'prod'")
 
         # --- Validate env ---
-        if not env["EMAIL_ENABLED"] in ["true", "false"]:
+        if env["EMAIL_ENABLED"] not in ["true", "false"]:
             raise ValueError("EMAIL_ENABLED must be 'true' or 'false'")
 
         if not env["STORAGE_BUCKET"]:

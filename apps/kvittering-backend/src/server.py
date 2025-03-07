@@ -1,4 +1,3 @@
-import json
 import boto3
 from datetime import datetime
 import uuid
@@ -10,7 +9,6 @@ from core.environment_variables import Env
 from core.email_service import EmailService
 from core.utils import extract_s3_key_from_url
 from botocore.config import Config
-import os
 import sentry_sdk
 
 import logging

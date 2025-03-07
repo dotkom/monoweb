@@ -2,7 +2,7 @@ import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from typing import Dict, Any, Union, List, Optional
+from typing import List
 import boto3
 from core.data_types import FormData
 from core.utils import get_current_date_string, format_amount

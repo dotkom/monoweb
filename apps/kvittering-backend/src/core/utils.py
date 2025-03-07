@@ -1,8 +1,7 @@
 from urllib.parse import urlparse
 
 import io
-from typing import Dict, List, Any, Optional
-import boto3
+from typing import List
 
 import reportlab.lib.pagesizes as pagesizes
 from reportlab.pdfgen import canvas

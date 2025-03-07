@@ -17,7 +17,7 @@ class PdfGeneratorService:
 
     def __init__(self, s3_client=None, env=None):
         """Initialize the PdfGeneratorService with optional dependency injection."""
-        self.s3_client = s3_client or boto3.client("s3", region_name="eu-north-1")
+        self.s3_client = s3_client
         self.env = env
 
     def _create_table_document(self, form_data: FormData) -> bytes:
