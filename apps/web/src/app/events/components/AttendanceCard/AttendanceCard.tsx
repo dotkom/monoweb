@@ -1,8 +1,9 @@
 "use client"
 
-import { trpc } from "@/utils/trpc/client"
+import { useTRPC } from "@/utils/trpc/client"
 import type { ExtrasChoices, WebEventDetail } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
+import { useQuery } from "@tanstack/react-query"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
@@ -17,13 +18,12 @@ interface AttendanceCardProps {
 }
 
 export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEventDetail }) => {
-  const { data: eventDetail, ...eventDetailQuery } = trpc.event.getWebEventDetailData.useQuery(
-    initialEventDetail.event.id,
-    {
-      enabled: Boolean(sessionUser),
-      initialData: initialEventDetail,
-    }
-  )
+  const trpc = useTRPC()
+  const { data: eventDetail, ...eventDetailQuery } = useQuery({
+    ...trpc.event.getWebEventDetailData.queryOptions(initialEventDetail.event.id),
+    enabled: sessionUser !== undefined,
+    initialData: initialEventDetail,
+  })
 
   if (!eventDetail || !eventDetail.hasAttendance) {
     return null
@@ -45,20 +45,23 @@ interface InnerAttendanceCardProps {
 }
 
 export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, refetchEventDetail }) => {
-  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
-    {
-      attendanceId: eventDetail.attendance.id,
-      userId: sessionUser?.id ?? "",
-    },
-    {
-      enabled: Boolean(sessionUser) && eventDetail.hasAttendance,
-    }
+  const trpc = useTRPC()
+  const { data: attendee } = useQuery(
+    trpc.event.attendance.getAttendee.queryOptions(
+      {
+        attendanceId: eventDetail.attendance.id,
+        userId: sessionUser?.id ?? "",
+      },
+      {
+        enabled: Boolean(sessionUser) && eventDetail.hasAttendance,
+      }
+    )
   )
 
   const [, setExtraDialogOpen] = useState(false)
   const setExtrasChoices = useSetExtrasChoicesMutation()
 
-  const { data: user } = trpc.user.getMe.useQuery()
+  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
 
   const handleGatherExtrasChoices = () => {
     if (eventDetail.attendance.extras !== null) {
@@ -72,7 +75,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
 
   const registerMutation = useRegisterMutation({ onSuccess: handleGatherExtrasChoices })
   const unregisterMutation = useUnregisterMutation()
-  const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading
+  const registerLoading = registerMutation.isPending || unregisterMutation.isPending
 
   const userIsRegistered = Boolean(attendee)
 
