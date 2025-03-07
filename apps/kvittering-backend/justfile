@@ -3,7 +3,7 @@ PROJECT_NAME := "kvittering-backend"
 
 # ---- Running locally ------
 
-# To run with email, see src/core/get_and_validate_env.py for the correct env vars to set
+# To run with email, see src/core/environment_variables.py for the correct env vars to set
 run:
   docker build -t {{PROJECT_NAME}}:latest -f Dockerfile ../.. && \
   docker run \

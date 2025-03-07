@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from core.pdf_generator_service import PdfGeneratorService
 from core.data_types import FormData
-from core.get_and_validate_env import get_and_validate_env
+from core.environment_variables import Env
 from core.email_service import EmailService
 from core.utils import extract_s3_key_from_url
 from botocore.config import Config
@@ -18,11 +18,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-env = get_and_validate_env()
+env = Env.load_env()
 
-# Determine environment (production, development, etc.)
-ENVIRONMENT = os.environ.get("ENVIRONMENT", "prod").lower()
-IS_PRODUCTION = ENVIRONMENT == "prod"
+IS_PRODUCTION = env.ENVIRONMENT == "prod"
 
 sentry_sdk.init(
     # not sensitive so its ok to hardcode for now
@@ -34,9 +32,7 @@ sentry_sdk.init(
     profiles_sample_rate=1.0,
 )
 
-logger.info(f"Running in {ENVIRONMENT} mode")
-
-AWS_REGION = os.environ.get("AWS_REGION", "eu-north-1")
+logger.info(f"Running in {env.ENVIRONMENT} mode")
 
 PORT = 5000
 
@@ -45,9 +41,9 @@ CORS(app)
 
 
 s3_client = boto3.client(
-    "s3", region_name=AWS_REGION, config=Config(signature_version="s3v4")
+    "s3", region_name=env.AWS_REGION, config=Config(signature_version="s3v4")
 )
-ses_client = boto3.client("ses", region_name=AWS_REGION)
+ses_client = boto3.client("ses", region_name=env.AWS_REGION)
 
 pdf_generator_service = PdfGeneratorService(s3_client=s3_client, env=env)
 
