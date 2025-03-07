@@ -20,7 +20,11 @@ export interface AttendancePoolRepository {
 }
 
 export class AttendancePoolRepositoryImpl implements AttendancePoolRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async get(id: AttendancePoolId) {
     const poolData = await this.db.attendancePool.findUnique({

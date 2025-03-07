@@ -1,10 +1,10 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { trpc } from "../../../trpc"
 
-export const useEditEventWithCommitteesMutation = () => {
+export const useEditEventWithGroupsMutation = () => {
   const notification = useQueryNotification()
 
-  return trpc.event.editWithCommittees.useMutation({
+  return trpc.event.editWithGroups.useMutation({
     onMutate: () => {
       notification.loading({
         title: "Oppdaterer arrangement...",

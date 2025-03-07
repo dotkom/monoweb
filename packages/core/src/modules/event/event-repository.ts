@@ -7,13 +7,17 @@ export interface EventRepository {
   update(id: EventId, data: Partial<EventWrite>): Promise<Event>
   getAll(page: Pageable): Promise<Event[]>
   getAllByUserAttending(userId: string): Promise<Event[]>
-  getAllByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
+  getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getById(id: string): Promise<Event | null>
   addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async addAttendance(id: EventId, attendanceId: string) {
     return await this.db.event.update({ where: { id }, data: { attendanceId } })
@@ -49,11 +53,11 @@ export class EventRepositoryImpl implements EventRepository {
     })
   }
 
-  async getAllByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]> {
+  async getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
-        committees: {
-          some: { committeeId },
+        hostingGroups: {
+          some: { groupId },
         },
       },
       ...pageQuery(page),

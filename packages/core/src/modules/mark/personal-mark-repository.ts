@@ -12,7 +12,11 @@ export interface PersonalMarkRepository {
 }
 
 export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getAllByUserId(userId: UserId): Promise<PersonalMark[]> {
     return await this.db.personalMark.findMany({ where: { userId } })

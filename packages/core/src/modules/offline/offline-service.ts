@@ -1,15 +1,9 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { Offline, OfflineId, OfflineWrite } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import type { S3Repository } from "../external/s3-repository"
 import { OfflineNotFoundError } from "./offline-error"
 import type { OfflineRepository } from "./offline-repository"
-
-type Fields = Record<string, string>
-
-export interface PresignedPost {
-  url: string
-  fields: Fields
-}
 
 export interface OfflineService {
   get(id: OfflineId): Promise<Offline | null>
@@ -20,11 +14,13 @@ export interface OfflineService {
 }
 
 export class OfflineServiceImpl implements OfflineService {
-  constructor(
-    private readonly offlineRepository: OfflineRepository,
-    private readonly s3Repository: S3Repository,
-    private readonly s3BucketName: string
-  ) {}
+  private readonly offlineRepository: OfflineRepository
+  private readonly s3Repository: S3Repository
+
+  constructor(offlineRepository: OfflineRepository, s3Repository: S3Repository) {
+    this.offlineRepository = offlineRepository
+    this.s3Repository = s3Repository
+  }
 
   /**
    * Get an offline by its id
@@ -40,22 +36,22 @@ export class OfflineServiceImpl implements OfflineService {
   }
 
   async getAll(page: Pageable): Promise<Offline[]> {
-    const offlines = await this.offlineRepository.getAll(page)
-    return offlines
+    return this.offlineRepository.getAll(page)
   }
 
   async create(payload: OfflineWrite): Promise<Offline> {
-    const offline = await this.offlineRepository.create(payload)
-    return offline
+    return this.offlineRepository.create(payload)
   }
 
   async update(id: OfflineId, payload: Partial<OfflineWrite>): Promise<Offline> {
-    const offline = await this.offlineRepository.update(id, payload)
-    return offline
+    return this.offlineRepository.update(id, payload)
   }
 
   async createPresignedPost(filename: string, mimeType: string): Promise<PresignedPost> {
-    // 60 MB file limit
-    return this.s3Repository.createPresignedPost(this.s3BucketName, `offlines/${filename}`, mimeType, 60)
+    const uuid = crypto.randomUUID()
+    const key = `${Date.now()}-${uuid}-${filename}`
+    const maxSizeMB = 25 // Kind of arbitrary, but this is gmail max size for attachments so I figured its a sane max size.
+
+    return this.s3Repository.createPresignedPost(key, mimeType, maxSizeMB)
   }
 }

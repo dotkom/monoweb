@@ -10,7 +10,11 @@ export interface ProductService {
 }
 
 export class ProductServiceImpl implements ProductService {
-  constructor(private readonly productRepository: ProductRepository) {}
+  private readonly productRepository: ProductRepository
+
+  constructor(productRepository: ProductRepository) {
+    this.productRepository = productRepository
+  }
 
   async createProduct(productCreate: ProductWrite): Promise<Product> {
     const product = await this.productRepository.create(productCreate)

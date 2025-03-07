@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { DBClient } from "@dotkomonline/db"
-import { getTestClient } from "@dotkomonline/db/src/test-databases"
+import { getPrismaClientForTest } from "@dotkomonline/db/test-harness"
 import type { ManagementClient } from "auth0"
 import { afterAll, beforeEach } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
@@ -16,7 +16,7 @@ export async function createServiceLayerForTesting() {
     s3Client,
     managementClient,
     stripeAccounts,
-    s3BucketName: crypto.randomUUID(),
+    s3BucketName: "test-bucket-non-existing", // We are not testing s3 upload functionality, so this value is not used.
   })
 }
 
@@ -28,6 +28,6 @@ afterAll(async () => {
 })
 
 beforeEach(async () => {
-  dbClient = await getTestClient()
+  dbClient = await getPrismaClientForTest()
   core = await createServiceLayerForTesting()
 })

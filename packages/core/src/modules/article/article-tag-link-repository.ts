@@ -7,7 +7,11 @@ export interface ArticleTagLinkRepository {
 }
 
 export class ArticleTagLinkRepositoryImpl implements ArticleTagLinkRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async add(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
     await this.db.articleTagLink.create({ data: { articleId, tagName } })

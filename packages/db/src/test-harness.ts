@@ -1,5 +1,5 @@
 // biome-ignore lint/style/useNodejsImportProtocol: Cannot import with node path on vercel
-import { spawn } from "node:child_process"
+import { spawn } from "child_process"
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import { createPrisma } from "."
 
@@ -46,10 +46,8 @@ function migrateTestDatabase(dbUrl: string) {
   })
 }
 
-export async function getTestClient() {
+export async function getPrismaClientForTest() {
   const dbUrl = await getTestContainerDatabase()
-
   await migrateTestDatabase(dbUrl)
-
   return createPrisma(dbUrl)
 }

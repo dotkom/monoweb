@@ -6,7 +6,11 @@ export interface CompanyEventRepository {
 }
 
 export class CompanyEventRepositoryImpl implements CompanyEventRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getEventsByCompanyId(companyId: CompanyId) {
     return this.db.event.findMany({ where: { companies: { some: { companyId } } } })

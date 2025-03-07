@@ -8,7 +8,11 @@ export interface PrivacyPermissionsRepository {
 }
 
 export class PrivacyPermissionsRepositoryImpl implements PrivacyPermissionsRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getByUserId(userId: UserId): Promise<PrivacyPermissions | null> {
     return await this.db.privacyPermissions.findUnique({ where: { userId } })

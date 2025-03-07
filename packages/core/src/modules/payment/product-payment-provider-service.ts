@@ -14,7 +14,11 @@ export interface ProductPaymentProviderService {
 }
 
 export class ProductPaymentProviderServiceImpl implements ProductPaymentProviderService {
-  constructor(private readonly productPaymentProviderRepository: ProductPaymentProviderRepository) {}
+  private readonly productPaymentProviderRepository: ProductPaymentProviderRepository
+
+  constructor(productPaymentProviderRepository: ProductPaymentProviderRepository) {
+    this.productPaymentProviderRepository = productPaymentProviderRepository
+  }
 
   async addPaymentProvider(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null> {
     return await this.productPaymentProviderRepository.create(data)

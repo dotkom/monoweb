@@ -7,36 +7,10 @@ on:
     types: [opened, synchronize]
   merge_group:
 
-env:
-  DASHBOARD_AUTH0_CLIENT_ID: ${{ secrets.DASHBOARD_AUTH0_CLIENT_ID }}
-  DASHBOARD_AUTH0_CLIENT_SECRET: ${{ secrets.DASHBOARD_AUTH0_CLIENT_SECRET }}
-  DASHBOARD_AUTH0_ISSUER: ${{ secrets.DASHBOARD_AUTH0_ISSUER }}
-  WEB_AUTH0_CLIENT_ID: ${{ secrets.WEB_AUTH0_CLIENT_ID }}
-  WEB_AUTH0_CLIENT_SECRET: ${{ secrets.WEB_AUTH0_CLIENT_SECRET }}
-  WEB_AUTH0_ISSUER: ${{ secrets.WEB_AUTH0_ISSUER }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  TRIKOM_STRIPE_PUBLIC_KEY: ${{ secrets.TRIKOM_STRIPE_PUBLIC_KEY }}
-  TRIKOM_STRIPE_SECRET_KEY: ${{ secrets.TRIKOM_STRIPE_SECRET_KEY }}
-  TRIKOM_STRIPE_WEBHOOK_SECRET: ${{ secrets.TRIKOM_STRIPE_WEBHOOK_SECRET }}
-  FAGKOM_STRIPE_PUBLIC_KEY: ${{ secrets.FAGKOM_STRIPE_PUBLIC_KEY }}
-  FAGKOM_STRIPE_SECRET_KEY: ${{ secrets.FAGKOM_STRIPE_SECRET_KEY }}
-  FAGKOM_STRIPE_WEBHOOK_SECRET: ${{ secrets.FAGKOM_STRIPE_WEBHOOK_SECRET }}
-  S3_BUCKET_MONOWEB: ${{ secrets.S3_BUCKET_MONOWEB }}
-  GTX_AUTH0_CLIENT_ID: ${{ secrets.GTX_AUTH0_CLIENT_ID }}
-  GTX_AUTH0_CLIENT_SECRET: ${{ secrets.GTX_AUTH0_CLIENT_SECRET }}
-  GTX_AUTH0_ISSUER: ${{ secrets.GTX_AUTH0_ISSUER }}
-  RPC_HOST: ${{ secrets.RPC_HOST }}
-  RPC_ALLOWED_ORIGINS: ${{ secrets.RPC_ALLOWED_ORIGINS }}
-
 jobs:
   build:
     name: Build and Test
     timeout-minutes: 15
-    # env:
-    #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-    #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -59,7 +33,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
         with:
-          node-version: 20.12.2
+          node-version: 22.14.0
           cache: 'pnpm'
  
       - name: Install dependencies
@@ -71,13 +45,5 @@ jobs:
       - name: Lint
         run: pnpm lint-check
 
-      - name: Build
-        # TODO: Building Next.js apps that do server-side fetching doesn't have the
-        #       right variables at the moment. This is easily fixable but I don't
-        #       have the capacity right now.
-        run: |
-          pnpm run -F @dotkomonline/brevduen \
-            -F @dotkomonline/invoicification \
-            -F @dotkomonline/rif \
-            -F @dotkomonline/rpc \
-            build
+      - name: Build docker images
+        run: pnpm run docker:build

@@ -8,7 +8,7 @@ export const useUpdateInterestGroupMutation = () => {
     onMutate: () => {
       notification.loading({
         title: "Oppdaterer",
-        message: "Interessegruppern blir oppdatert.",
+        message: "Interessegruppen blir oppdatert.",
       })
     },
     onSuccess: (data) => {

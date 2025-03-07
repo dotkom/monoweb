@@ -16,10 +16,13 @@ export interface PersonalMarkService {
 }
 
 export class PersonalMarkServiceImpl implements PersonalMarkService {
-  constructor(
-    private readonly personalMarkRepository: PersonalMarkRepository,
-    private readonly markService: MarkService
-  ) {}
+  private readonly personalMarkRepository: PersonalMarkRepository
+  private readonly markService: MarkService
+
+  constructor(personalMarkRepository: PersonalMarkRepository, markService: MarkService) {
+    this.personalMarkRepository = personalMarkRepository
+    this.markService = markService
+  }
 
   async getPersonalMarksForUserId(userId: UserId): Promise<PersonalMark[]> {
     const personalMarks = await this.personalMarkRepository.getAllByUserId(userId)

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3002 --turbo",
     "build": "next build",
+    "docker:build": "docker build -t dashboard:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
@@ -22,7 +23,7 @@
     "@dotkomonline/utils": "workspace:*",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^4.0.0",
-    "@iconify/react": "^4.1.1",
+    "@iconify/react": "^5.0.0",
     "@mantine/core": "^7.13.2",
     "@mantine/dates": "^7.13.2",
     "@mantine/hooks": "^7.13.2",
@@ -61,6 +62,6 @@
     "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^3.3.5",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8"
   }
 }

@@ -20,7 +20,11 @@ export interface InterestGroupRepository {
 }
 
 export class InterestGroupRepositoryImpl implements InterestGroupRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getById(id: InterestGroupId): Promise<InterestGroup | null> {
     return await this.db.interestGroup.findUnique({ where: { id } })

@@ -17,7 +17,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
       <div className="flex w-full flex-col md:flex-row">
         <EventDescriptionAndByline
           event={eventDetail.event}
-          committees={eventDetail.eventCommittees}
+          groups={eventDetail.eventHostingGroups}
           companies={eventDetail.eventCompanies}
         />
         <div className="flex-1 flex-col">

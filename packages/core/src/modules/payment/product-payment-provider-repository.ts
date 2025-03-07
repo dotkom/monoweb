@@ -14,7 +14,11 @@ export interface ProductPaymentProviderRepository {
 }
 
 export class ProductPaymentProviderRepositoryImpl implements ProductPaymentProviderRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async create(data: ProductPaymentProviderWrite): Promise<ProductPaymentProvider | null> {
     return await this.db.productPaymentProvider.create({ data })

@@ -17,10 +17,13 @@ export interface AttendancePoolService {
 }
 
 export class AttendancePoolServiceImpl implements AttendancePoolService {
-  constructor(
-    private readonly attendancePoolRepository: AttendancePoolRepository,
-    private readonly attendeeService: AttendeeService
-  ) {}
+  private readonly attendancePoolRepository: AttendancePoolRepository
+  private readonly attendeeService: AttendeeService
+
+  constructor(attendancePoolRepository: AttendancePoolRepository, attendeeService: AttendeeService) {
+    this.attendancePoolRepository = attendancePoolRepository
+    this.attendeeService = attendeeService
+  }
 
   async getByAttendanceId(id: AttendanceId) {
     return this.attendancePoolRepository.getByAttendanceId(id)

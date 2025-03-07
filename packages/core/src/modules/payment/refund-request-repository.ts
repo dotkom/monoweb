@@ -12,7 +12,11 @@ export interface RefundRequestRepository {
 }
 
 export class RefundRequestRepositoryImpl implements RefundRequestRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async create(data: RefundRequestWrite): Promise<RefundRequest> {
     return await this.db.refundRequest.create({ data })
