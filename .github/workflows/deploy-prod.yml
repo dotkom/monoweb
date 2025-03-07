@@ -31,6 +31,7 @@ jobs:
         run: pnpm install
       - name: Build frontend
         working-directory: apps/kvittering-frontend
+        run: pnpm build
       - name: Deploy to S3
         run: |
           aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
