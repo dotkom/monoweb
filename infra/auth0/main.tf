@@ -564,6 +564,8 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
   client_id = auth0_client.onlineweb4.client_id
   scopes = [
     "update:users",
+    "read:users",
+    "read:user_idp_tokens",
     "create:user_tickets", # to send verification emails
   ]
 }
