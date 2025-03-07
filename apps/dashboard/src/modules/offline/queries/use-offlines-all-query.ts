@@ -1,6 +1,9 @@
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useOfflineAllQuery = () => {
-  const { data: offlines = [], ...query } = trpc.offline.all.useQuery({ take: 999 })
+  const trpc = useTRPC()
+  const { data: offlines = [], ...query } = useQuery(trpc.offline.all.queryOptions({ take: 999 }))
   return { offlines, ...query }
 }

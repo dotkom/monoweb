@@ -1,7 +1,10 @@
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useGroupAllQuery = () => {
-  const { data, ...query } = trpc.group.all.useQuery()
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery(trpc.group.all.queryOptions())
   if (data === undefined || query.isLoading) {
     return { groups: [], ...query }
   }

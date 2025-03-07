@@ -1,27 +1,32 @@
 import { useQueryNotification } from "src/app/notifications"
-import { trpc } from "src/trpc"
+import { useTRPC } from "src/trpc"
+
+import { useMutation } from "@tanstack/react-query"
 
 export const useUpdateGroupMutation = () => {
+  const trpc = useTRPC()
   const notification = useQueryNotification()
 
-  return trpc.group.update.useMutation({
-    onMutate: () => {
-      notification.loading({
-        title: "Oppdaterer",
-        message: "Gruppen blir oppdatert.",
-      })
-    },
-    onSuccess: (data) => {
-      notification.complete({
-        title: "Oppdatert",
-        message: `Gruppen "${data.name}" har blitt oppdatert.`,
-      })
-    },
-    onError: (err) => {
-      notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under oppdatering: ${err.toString()}.`,
-      })
-    },
-  })
+  return useMutation(
+    trpc.group.update.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppdaterer",
+          message: "Gruppen blir oppdatert.",
+        })
+      },
+      onSuccess: (data) => {
+        notification.complete({
+          title: "Oppdatert",
+          message: `Gruppen "${data.name}" har blitt oppdatert.`,
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under oppdatering: ${err.toString()}.`,
+        })
+      },
+    })
+  )
 }
