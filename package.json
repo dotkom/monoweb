@@ -39,7 +39,7 @@
   "workspaces": ["packages/*", "apps/*"],
   "packageManager": "pnpm@9.15.5",
   "engines": {
-    "node": ">=20.12.2",
+    "node": ">=22.0.0",
     "pnpm": ">=9.15.5"
   },
   "devDependencies": {
