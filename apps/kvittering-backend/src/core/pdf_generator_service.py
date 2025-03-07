@@ -1,7 +1,9 @@
 import io
 
+import boto3
 import reportlab.lib.pagesizes as pagesizes
 from reportlab.pdfgen import canvas
+from core.environment_variables import Env
 
 from core.data_types import FormData
 from core.utils import (
@@ -15,7 +17,7 @@ from core.utils import (
 class PdfGeneratorService:
     """Service for creating PDF tables and documents from form data."""
 
-    def __init__(self, s3_client=None, env=None):
+    def __init__(self, s3_client: boto3.client, env: Env):
         """Initialize the PdfGeneratorService with optional dependency injection."""
         self.s3_client = s3_client
         self.env = env
@@ -88,7 +90,9 @@ class PdfGeneratorService:
     def _get_image_from_s3(self, attachment_url: str) -> bytes:
         """Get an image from S3."""
         key = extract_s3_key_from_url(attachment_url)
-        response = self.s3_client.get_object(Bucket=self.env["STORAGE_BUCKET"], Key=key)
+        response = self.s3_client.get_object(
+            Bucket=self.env.STORAGE_BUCKET, Key=key
+        )
         return response["Body"].read()
 
     def generate_pdf_from_form(self, form: FormData) -> bytes:

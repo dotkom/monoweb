@@ -64,14 +64,6 @@ def error():
 def health():
     return jsonify({"message": "OK"})
 
-
-@app.route("/list_buckets", methods=["GET"])
-def list_buckets():
-    s3_client = boto3.client("s3")
-    bucket_names = [bucket["Name"] for bucket in s3_client.list_buckets()["Buckets"]]
-    return jsonify({"message": "OK", "data": bucket_names})
-
-
 @app.route("/generate_presigned_post", methods=["POST", "OPTIONS"])
 def generate_presigned_post():
     """Generate a presigned POST URL for S3 file upload"""
@@ -88,7 +80,7 @@ def generate_presigned_post():
         ]
 
         presigned_post = s3_client.generate_presigned_post(
-            Bucket=env["STORAGE_BUCKET"],
+            Bucket=env.STORAGE_BUCKET,
             Key=key,
             Conditions=conditions,
             ExpiresIn=3600,  # URL expires in 1 hour
@@ -123,7 +115,7 @@ def generate_pdf():
         pdf = pdf_generator_service.generate_pdf_from_form(form_data)
         key = f"pdfs/{datetime.now().strftime('%Y-%m-%d')}-{uuid.uuid4()}.pdf"
         s3_client.put_object(
-            Bucket=env["STORAGE_BUCKET"],
+            Bucket=env.STORAGE_BUCKET,
             Key=key,
             Body=pdf,
             ContentType="application/pdf",
@@ -132,7 +124,7 @@ def generate_pdf():
         # create presigned url for pdf
         presigned_url = s3_client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": env["STORAGE_BUCKET"], "Key": key},
+            Params={"Bucket": env.STORAGE_BUCKET, "Key": key},
             ExpiresIn=3600,
         )
 
@@ -155,7 +147,7 @@ def send_email():
     try:
         body = request.json
 
-        if env["EMAIL_ENABLED"] == "false":
+        if not env.EMAIL_ENABLED:
             return jsonify({"message": "Email is disabled", "data": {}}), 200
 
         pdf_url = body.get("pdf_url")
@@ -163,12 +155,12 @@ def send_email():
         form_data = FormData.from_json(form_data_dict)
 
         logger.info(
-            f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env['SENDER_EMAIL']}, Recipient: {env['RECIPIENT_EMAIL']}, CC: {env['CC_RECIPIENT_EMAILS']}"
+            f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env.SENDER_EMAIL}, Recipient: {env.RECIPIENT_EMAIL}, CC: {env.CC_RECIPIENT_EMAILS}"
         )
 
         # Extract the key from the S3 URL
         pdf_key = extract_s3_key_from_url(pdf_url)
-        s3_response = s3_client.get_object(Bucket=env["STORAGE_BUCKET"], Key=pdf_key)
+        s3_response = s3_client.get_object(Bucket=env.STORAGE_BUCKET, Key=pdf_key)
         pdf_data = s3_response["Body"].read()
 
         logger.info(f"PDF data length: {len(pdf_data)} bytes")
@@ -176,9 +168,9 @@ def send_email():
         email_service.send_email(
             pdf_data,
             form_data,
-            env["SENDER_EMAIL"],
-            env["RECIPIENT_EMAIL"],
-            env["CC_RECIPIENT_EMAILS"],
+            env.SENDER_EMAIL,
+            env.RECIPIENT_EMAIL,
+            env.CC_RECIPIENT_EMAILS,
         )
 
         return jsonify({"message": "PDF sent successfully", "data": {}}), 200
