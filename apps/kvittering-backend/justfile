@@ -1,0 +1,30 @@
+PROJECT_NAME := "kvittering-backend"
+
+
+# ---- Running locally ------
+
+# To run with email, see src/core/environment_variables.py for the correct env vars to set
+run:
+  docker build -t {{PROJECT_NAME}}:latest -f Dockerfile ../.. && \
+  docker run \
+    -p 5000:5000 \
+    -e ENVIRONMENT=dev \
+    -e STORAGE_BUCKET=kvittering-archive.online.ntnu.no \
+    -e EMAIL_ENABLED=false \
+    {{PROJECT_NAME}}:latest
+  
+lint:
+  ruff check . --fix
+
+# ---- DEPLOYMENT RELATED ------
+
+# This can be used for deploying the application locally and not through CI. 
+# Can be useful e.g. when first setting up infra and you need an image in ECR to set up the rest of the infra.
+build env:
+  docker build --platform linux/amd64 -t {{PROJECT_NAME}}:latest -f Dockerfile ../..
+
+push env:
+  docker tag {{PROJECT_NAME}}:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
+  docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
+
+release env: (build env) (push env)

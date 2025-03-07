@@ -1,0 +1,19 @@
+[project]
+name = "lambda-python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.37.4",
+    "cryptography>=44.0.2",
+    "dotenv>=0.9.9",
+    "flask>=3.1.0",
+    "flask-cors>=5.0.1",
+    "pyjwt>=2.10.1",
+    "pypdf2>=3.0.1",
+    "reportlab>=4.3.1",
+    "requests>=2.32.3",
+    "sentry-sdk[flask]>=2.22.0",
+    "urllib3>=2.3.0",
+]
