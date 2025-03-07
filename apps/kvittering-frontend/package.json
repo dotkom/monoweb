@@ -1,0 +1,46 @@
+{
+	"name": "@dotkomonline/kvittering-frontend",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"lint": "biome check --write --unsafe .",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@hookform/resolvers": "^4.1.2",
+		"@radix-ui/react-label": "^2.1.2",
+		"@radix-ui/react-radio-group": "^1.2.3",
+		"@radix-ui/react-select": "^2.1.6",
+		"@radix-ui/react-slot": "^1.1.2",
+		"@sentry/browser": "^9.4.0",
+		"@sentry/react": "^9.4.0",
+		"browser-image-compression": "^2.0.2",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.475.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-dropzone": "^14.3.8",
+		"react-hook-form": "^7.54.2",
+		"sonner": "^2.0.1",
+		"tailwindcss-animate": "^1.0.7",
+		"zod": "^3.24.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^22.0.0",
+		"@types/react": "^19.0.8",
+		"@types/react-dom": "^19.0.3",
+		"@vitejs/plugin-react": "4.3.4",
+		"autoprefixer": "^10.4.20",
+		"globals": "^15.14.0",
+		"postcss": "^8.5.1",
+		"tailwind-merge": "^3.0.1",
+		"tailwindcss": "^3.4.14",
+		"typescript": "^5.8",
+		"vite": "6.2.0"
+	}
+}
