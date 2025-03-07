@@ -88,8 +88,8 @@ importers:
         specifier: ^4.0.0
         version: 4.1.1(react-hook-form@7.54.2(react@18.3.1))
       '@iconify/react':
-        specifier: ^4.1.1
-        version: 4.1.1(react@18.3.1)
+        specifier: ^5.0.0
+        version: 5.2.0(react@18.3.1)
       '@mantine/core':
         specifier: ^7.13.2
         version: 7.17.0(@mantine/hooks@7.17.0(react@18.3.1))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -215,8 +215,8 @@ importers:
         specifier: ^4.0.0
         version: 4.1.1(react-hook-form@7.54.2(react@18.3.1))
       '@iconify/react':
-        specifier: ^4.1.1
-        version: 4.1.1(react@18.3.1)
+        specifier: ^5.0.0
+        version: 5.2.0(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -288,8 +288,8 @@ importers:
         specifier: ^4.0.0
         version: 4.1.1(react-hook-form@7.54.2(react@18.3.1))
       '@iconify/react':
-        specifier: ^4.1.1
-        version: 4.1.1(react@18.3.1)
+        specifier: ^5.0.0
+        version: 5.2.0(react@18.3.1)
       '@radix-ui/react-toast':
         specifier: ^1.2.2
         version: 1.2.6(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2247,8 +2247,8 @@ packages:
     peerDependencies:
       react: '>=16'
 
-  '@iconify/react@4.1.1':
-    resolution: {integrity: sha512-jed14EjvKjee8mc0eoscGxlg7mSQRkwQG3iX3cPBCO7UlOjz0DtlvTqxqEcHUJGh+z1VJ31Yhu5B9PxfO0zbdg==}
+  '@iconify/react@5.2.0':
+    resolution: {integrity: sha512-7Sdjrqq3fkkQNks9SY3adGC37NQTHsBJL2PRKlQd455PoDi9s+Es9AUTY+vGLFOYs5yO9w9yCE42pmxCwG26WA==}
     peerDependencies:
       react: '>=16'
 
@@ -9297,7 +9297,7 @@ snapshots:
       iconify-icon: 2.3.0
       react: 18.3.1
 
-  '@iconify/react@4.1.1(react@18.3.1)':
+  '@iconify/react@5.2.0(react@18.3.1)':
     dependencies:
       '@iconify/types': 2.0.0
       react: 18.3.1
