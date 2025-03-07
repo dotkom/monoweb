@@ -4,7 +4,12 @@ import reportlab.lib.pagesizes as pagesizes
 from reportlab.pdfgen import canvas
 
 from core.data_types import FormData
-from core.utils import get_current_date_string, format_amount, extract_s3_key_from_url, append_images_to_pdf
+from core.utils import (
+    get_current_date_string,
+    format_amount,
+    extract_s3_key_from_url,
+    append_images_to_pdf,
+)
 
 
 class PdfGeneratorService:
@@ -57,22 +62,22 @@ class PdfGeneratorService:
         comments = str(form_data.comments)
         y_position = 800 - 320
         char_limit = 40  # Character limit per line
-        
+
         # Split by explicit newlines first
         for paragraph in comments.split("\n"):
             # Split long lines at approximately char_limit characters
             i = 0
             while i < len(paragraph):
-                line = paragraph[i:i+char_limit]
+                line = paragraph[i : i + char_limit]
                 if y_position < 100:  # Prevent overflow at bottom of page
                     break
                 pdf.drawString(100, y_position, line)
                 y_position -= 20
                 i += char_limit
-            
+
             # Add an extra line break between paragraphs
             y_position -= 5
-            
+
             if y_position < 100:  # Check if we've run out of space
                 break
 
@@ -90,7 +95,10 @@ class PdfGeneratorService:
         """Generate a PDF from the form data."""
         try:
             table = self._create_table_document(form)
-            images = [self._get_image_from_s3(attachment.url) for attachment in form.attachments]
+            images = [
+                self._get_image_from_s3(attachment.url)
+                for attachment in form.attachments
+            ]
             complete_pdf = append_images_to_pdf(table, images)
             return complete_pdf
         except Exception as e:

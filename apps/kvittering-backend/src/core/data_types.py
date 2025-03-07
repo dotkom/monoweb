@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class Attachment:
     """Attachment for the PDF generator."""
@@ -37,12 +38,19 @@ class FormData:
 
     @classmethod
     def from_json(cls, json_data: Dict[str, Any]) -> "FormData":
-        required_fields = ["full_name", "email", "committee", "type", "amount", "intent"]
+        required_fields = [
+            "full_name",
+            "email",
+            "committee",
+            "type",
+            "amount",
+            "intent",
+        ]
         logger.info(f"Received JSON data: {json_data}")
         missing_fields = [field for field in required_fields if field not in json_data]
         if missing_fields:
             raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
-        
+
         logger.info(f"Received JSON data: {json_data}")
         return cls(
             full_name=json_data.get("full_name", ""),

@@ -11,38 +11,39 @@ from PyPDF2 import PdfReader, PdfWriter
 
 from datetime import datetime
 
+
 def extract_s3_key_from_url(url: str) -> str:
     """
     Extract the S3 key from an S3 URL.
-    
-    Example: 
+
+    Example:
     Input: "https://s3.eu-north-1.amazonaws.com/receipt-archive.online.ntnu.no/bilde.png"
     Output: "bilde.png"
-    
+
     Args:
         url: The S3 URL to extract the key from
-        
+
     Returns:
         The S3 key (path after bucket name)
     """
     parsed = urlparse(url)
     # Remove leading slash if present
-    path = parsed.path.lstrip('/')
+    path = parsed.path.lstrip("/")
     # Split at first slash to separate bucket from key
-    _, key = path.split('/', 1)
+    _, key = path.split("/", 1)
     return key
 
 
-        
 def get_current_date_string() -> str:
     """Get the current date as a string in ISO 8601 date format."""
     return datetime.now().strftime("%Y-%m-%d")
 
+
 def format_amount(amount: float) -> str:
-        """Format decimal amounts to 2 decimals, integers to 0 decimals."""
-        if amount.is_integer():
-            return f"{int(amount)}"
-        return f"{amount:.2f}"
+    """Format decimal amounts to 2 decimals, integers to 0 decimals."""
+    if amount.is_integer():
+        return f"{int(amount)}"
+    return f"{amount:.2f}"
 
 
 def _image_to_pdf(img_bytes: bytes) -> PdfReader:
@@ -71,6 +72,7 @@ def _image_to_pdf(img_bytes: bytes) -> PdfReader:
 
     img_buffer.seek(0)
     return PdfReader(img_buffer)
+
 
 def append_images_to_pdf(pdf_data: bytes, images_to_append: List[bytes]) -> bytes:
     """Merge attachments with the main PDF."""

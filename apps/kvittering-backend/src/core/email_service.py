@@ -12,24 +12,24 @@ logger = logging.getLogger(__name__)
 
 class EmailService:
     """Class for handling email sending operations."""
-    
+
     def __init__(self, ses_client=None):
         """Initialize the EmailSender with an optional SES client.
-        
+
         Args:
             ses_client: An AWS SES client. If None, a default client will be created.
         """
         self.ses_client = ses_client or self._create_default_ses_client()
-    
+
     @staticmethod
     def _create_default_ses_client():
         """Create and return a default Amazon SES client."""
         try:
-            return boto3.client('ses', region_name="eu-north-1")
+            return boto3.client("ses", region_name="eu-north-1")
         except Exception as e:
             logger.error(f"Failed to create SES client: {str(e)}")
             raise Exception(f"Could not initialize email service: {str(e)}")
-    
+
     @staticmethod
     def get_formatted_text(form: FormData) -> str:
         """Format the email body text."""
@@ -47,11 +47,17 @@ Ekstra informasjon:
     def get_file_name(form: FormData) -> str:
         """Generate a filename for the PDF attachment."""
         return f"[{get_current_date_string()}]-{form.intent}-{format_amount(form.amount)}-kvitteringsskjema.pdf"
-    
-    def send_email(self, pdf_data: bytes, form_data: FormData, sender_email: str, 
-                  recipient_email: str, cc_list: List[str]) -> None:
+
+    def send_email(
+        self,
+        pdf_data: bytes,
+        form_data: FormData,
+        sender_email: str,
+        recipient_email: str,
+        cc_list: List[str],
+    ) -> None:
         """Send an email with PDF attachment using Amazon SES.
-        
+
         Args:
             pdf_data: The PDF data to attach
             form_data: The form data to include in the email
@@ -78,32 +84,31 @@ Ekstra informasjon:
         # Add PDF attachment
         attachment = MIMEApplication(pdf_data)
         attachment.add_header(
-            "Content-Disposition", f'attachment; filename="{self.get_file_name(form_data)}"'
+            "Content-Disposition",
+            f'attachment; filename="{self.get_file_name(form_data)}"',
         )
         msg.attach(attachment)
 
         # Get the raw email message
         raw_message = msg.as_string()
-        
+
         # All recipients for SES
         all_recipients = [recipient_email] + cc_list
-        
+
         logger.info(f"""Preparing to send email via SES:
         From: {sender_email}
         To: {recipient_email}
         Cc: {', '.join(cc_list)}
         Subject: {msg['Subject']}
         """)
-        
+
         # Send the email using SES
         response = self.ses_client.send_raw_email(
             Source=sender_email,
             Destinations=all_recipients,
-            RawMessage={
-                'Data': raw_message
-            }
+            RawMessage={"Data": raw_message},
         )
-        
+
         logger.info(
             f"Email sent successfully via SES to {recipient_email} with {len(cc_list)} CC recipients. Message ID: {response.get('MessageId')}"
         )
