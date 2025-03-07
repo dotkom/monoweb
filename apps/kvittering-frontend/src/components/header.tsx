@@ -7,7 +7,7 @@ export const Header = () => {
 				className="w-[26rem] max-w-[100vw] box-border p-6"
 			/>
 			<h2 className="text-white text-center tracking-wider mb-4">
-				Kvitteringsskjema
+				Kvitteringsskjema TEST
 			</h2>
 		</header>
 	);

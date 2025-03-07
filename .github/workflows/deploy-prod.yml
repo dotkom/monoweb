@@ -2,7 +2,7 @@ name: Production deployment
 on:
   push:
     branches:
-      - main
+      - kvittering-frontend-2
 
 permissions:
   id-token: write   
