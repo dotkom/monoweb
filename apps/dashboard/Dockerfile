@@ -4,7 +4,7 @@ FROM base AS builder
 WORKDIR /app
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g pnpm@9.15.7 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY apps ./apps
 COPY packages ./packages
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
@@ -15,7 +15,7 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.15.7 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
 COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
 
