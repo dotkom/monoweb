@@ -14,5 +14,9 @@ RUN uv sync
 
 COPY apps/kvittering-backend/src /app/src
 
+RUN groupadd -r kvittering && useradd -r -g kvittering kvittering
+RUN chown -R kvittering:kvittering /app
+USER kvittering
+
 EXPOSE 5000
 CMD ["uv", "run", "src/server.py"]
