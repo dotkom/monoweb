@@ -535,9 +535,6 @@ importers:
       react-hook-form:
         specifier: ^7.48.2
         version: 7.54.2(react@18.3.1)
-      react-icons:
-        specifier: ^4.12.0
-        version: 4.12.0(react@18.3.1)
       superjson:
         specifier: ^2.0.0
         version: 2.2.2
@@ -6657,11 +6654,6 @@ packages:
     peerDependencies:
       react: '>=16.8.1'
       react-dom: '>=16.8.1'
-
-  react-icons@4.12.0:
-    resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
-    peerDependencies:
-      react: '*'
 
   react-inspector@6.0.2:
     resolution: {integrity: sha512-x+b7LxhmHXjHoU/VrFAzw5iutsILRoYyDq97EDYdFpPLcvqtEzk4ZSZSQjnFPbr5T57tLXnHcqFYoN1pI6u8uQ==}
@@ -14515,10 +14507,6 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-
-  react-icons@4.12.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
 
   react-inspector@6.0.2(react@18.3.1):
     dependencies:
