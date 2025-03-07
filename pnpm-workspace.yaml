@@ -2,3 +2,6 @@ packages:
   - apps/*
   - packages/*
   - tools/*
+
+  - '!apps/monoweb-kvittering-backend' # python app
+  - '!apps/monoweb-kvittering-frontend' # does not use any monorepo packages as of now, so we exclude it
