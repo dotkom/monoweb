@@ -4,10 +4,12 @@ import App from "./App.tsx";
 import "@/styles/globals.css";
 import * as Sentry from "@sentry/react";
 
-// Initialize Sentry before doing anything else
-console.log("Initializing Sentry");
+const IS_PRODUCTION = import.meta.env.MODE === "production";
+
 Sentry.init({
-	dsn: "https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000",
+	dsn: IS_PRODUCTION
+		? "https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000"
+		: undefined,
 	integrations: [
 		Sentry.replayIntegration({
 			maskAllText: false,
