@@ -12,8 +12,6 @@ Sentry.init({
 		: undefined,
 	integrations: [
 		Sentry.replayIntegration({
-			maskAllText: false,
-			blockAllMedia: false,
 			unblock: [".sentry-unblock, [data-sentry-unblock]"],
 			unmask: [".sentry-unmask, [data-sentry-unmask]"],
 			onError: (event) => {
