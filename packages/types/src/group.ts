@@ -16,3 +16,11 @@ export const GroupWriteSchema = GroupSchema.partial({
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
+
+export const GroupMemberSchema = schemas.GroupMemberSchema.extend({})
+
+export type GroupMember = z.infer<typeof GroupMemberSchema>
+
+export const GroupMemberWriteSchema = GroupMemberSchema
+
+export type GroupMemberWrite = z.infer<typeof GroupMemberWriteSchema>
