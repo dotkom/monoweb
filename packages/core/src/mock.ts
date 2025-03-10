@@ -38,6 +38,7 @@ export const getJobListingMock = (companyId: string, defaults: Partial<JobListin
   start: addWeeks(addYears(new Date(), 1), 2),
   end: addWeeks(addYears(new Date(), 1), 4),
   featured: false,
+  hidden: false,
   deadline: addWeeks(new Date(), 2),
   employment: "FULLTIME",
   applicationLink: "https://example.com",
