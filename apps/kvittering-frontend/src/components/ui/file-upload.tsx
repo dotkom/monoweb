@@ -209,7 +209,7 @@ export const FileUploader = forwardRef<
 						console.log("compressedFile", compressedFile);
 
 						// open the compressedFile in a new tab
-						window.open(compressedFile.downloadLink, "_blank");
+						// window.open(compressedFile.downloadLink, "_blank");
 
 						const urlPromise = toast.promise(
 							uploadFileToS3(compressedFile.compressedFile),
