@@ -185,6 +185,7 @@ export default function ReceiptForm() {
 			body: JSON.stringify({
 				pdf_url: pdfUrl,
 				form_data: formData,
+				test_mode: isTestMode ? "true" : "false",
 			}),
 		});
 
@@ -240,6 +241,7 @@ export default function ReceiptForm() {
 
 	return (
 		<div className="space-y-8 max-w-3xl mx-auto py-10">
+			{isTestMode && <h3>Test mode</h3>}
 			<Button
 				variant="outline"
 				className={clsx(

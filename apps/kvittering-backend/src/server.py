@@ -161,6 +161,7 @@ def send_email():
         form_data_dict = body.get("form_data")
         form_data = FormData.from_json(form_data_dict)
 
+
         logger.info(
             f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env.SENDER_EMAIL}, Recipient: {env.RECIPIENT_EMAIL}, CC: {env.CC_RECIPIENT_EMAILS}"
         )
@@ -170,14 +171,23 @@ def send_email():
         s3_response = s3_client.get_object(Bucket=env.STORAGE_BUCKET, Key=pdf_key)
         pdf_data = s3_response["Body"].read()
 
-        logger.info(f"PDF data length: {len(pdf_data)} bytes")
+
+        test_mode = body.get("test_mode", "false")
+        sender_email = env.SENDER_EMAIL
+        recipient_email = env.RECIPIENT_EMAIL
+        cc_recipient_emails = env.CC_RECIPIENT_EMAILS
+
+        if test_mode == "true":
+            sender_email = env.TEST_SENDER_EMAIL
+            recipient_email = env.TEST_RECIPIENT_EMAIL
+            cc_recipient_emails = env.TEST_CC_RECIPIENT_EMAILS
 
         email_service.send_email(
             pdf_data,
             form_data,
-            env.SENDER_EMAIL,
-            env.RECIPIENT_EMAIL,
-            env.CC_RECIPIENT_EMAILS,
+            sender_email,
+            recipient_email,
+            cc_recipient_emails,
         )
 
         return jsonify({"message": "PDF sent successfully", "data": {}}), 200
