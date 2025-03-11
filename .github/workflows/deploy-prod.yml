@@ -24,7 +24,7 @@ jobs:
           version: 9.15.7
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0-13265982013
+          node-version: 22.14.0
           cache: 'pnpm'
       - name: Install dependencies
         working-directory: apps/kvittering-frontend
