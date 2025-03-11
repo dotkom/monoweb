@@ -174,24 +174,6 @@ export const FileUploader = forwardRef<
 					rejectedFiles,
 				});
 
-				// check for heic files
-				const heicFiles = files.filter((file) => file.type === "image/heic");
-				if (heicFiles.length > 0) {
-					toast.error(
-						"Bro, ikke HEIC fil a plis. Trykk på de tre prikkene og eksporter til 'filer', og last opp derifra",
-					);
-					return;
-				}
-
-				if (
-					files.some(
-						(file) => file.type !== "image/png" && file.type !== "image/jpeg",
-					)
-				) {
-					toast.error("Kun mulig å laste opp png eller jpeg per nå");
-					return;
-				}
-
 				if (!files) {
 					toast.error("file error , probably too big");
 					return;
@@ -203,10 +185,17 @@ export const FileUploader = forwardRef<
 					newValues.splice(0, newValues.length);
 				}
 
+				function onProgress(progress: number) {
+					console.log(`compression progress: ${progress}%`);
+				}
+
+				// MAX 1 MB file
+				const maxSizeMB = 1 * 1024 * 1024;
+
 				for (const file of files) {
 					try {
 						const compressedFilePromise = toast.promise(
-							compressImageWithLibrary(file, 500),
+							compressImageWithLibrary(file, maxSizeMB, onProgress),
 							{
 								loading:
 									"Komprimerer bilde... (kan ta typ 20sek hvis du lastet opp et sykt stort bilde)",
@@ -217,11 +206,19 @@ export const FileUploader = forwardRef<
 
 						const compressedFile = await compressedFilePromise.unwrap();
 
-						const urlPromise = toast.promise(uploadFileToS3(compressedFile), {
-							loading: "Laster opp fil...",
-							success: `${file.name} ble lastet opp`,
-							error: "Feil ved opplasting. Prøv igjen!",
-						});
+						console.log("compressedFile", compressedFile);
+
+						// open the compressedFile in a new tab
+						window.open(compressedFile.downloadLink, "_blank");
+
+						const urlPromise = toast.promise(
+							uploadFileToS3(compressedFile.compressedFile),
+							{
+								loading: "Laster opp fil...",
+								success: `${file.name} ble lastet opp`,
+								error: "Feil ved opplasting. Prøv igjen!",
+							},
+						);
 
 						const url = await urlPromise.unwrap();
 

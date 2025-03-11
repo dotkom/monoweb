@@ -1,4 +1,5 @@
 import imageCompression from "browser-image-compression";
+import heic2any from "heic2any";
 
 /**
  * Compresses an image file to be under the specified maximum size in bytes
@@ -124,26 +125,43 @@ export async function compressImage(
 // https://www.npmjs.com/package/browser-image-compression
 export async function compressImageWithLibrary(
 	file: File,
-	maxSizeBytes: number,
-): Promise<File> {
-	const imageFile = file;
+	maxSizeBytes: number = 1024 * 1024 * 10,
+	onProgress?: (progress: number) => void,
+): Promise<{ compressedFile: File; downloadLink: string }> {
+	let imageFile: Blob | Blob[] | File = file;
 	console.log("originalFile instanceof Blob", imageFile instanceof Blob); // true
 	console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
 
 	const options = {
 		maxSizeMB: maxSizeBytes / 1024 / 1024,
-		maxWidthOrHeight: 1920,
+		maxWidthOrHeight: 1000,
 		useWebWorker: true,
+		onProgress: onProgress,
+		fileType: "image/jpeg",
 	};
+
+	console.log(file.name);
 	try {
-		const compressedFile = await imageCompression(imageFile, options);
+		if (
+			file.name.toUpperCase().endsWith(".HEIC") ||
+			file.name.endsWith(".HEIF")
+		) {
+			console.log("Converting HEIC/HEIF to JPEG...");
+			imageFile = await heic2any({ blob: imageFile, toType: "image/jpeg" });
+			console.log("Conversion completed:", file);
+		}
+
+		const compressedFile = await imageCompression(imageFile as File, options);
 		console.log(
 			"compressedFile instanceof Blob",
 			compressedFile instanceof Blob,
 		); // true
 		console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
 
-		return compressedFile;
+		// Create a download link for the compressed file
+		const downloadLink = URL.createObjectURL(compressedFile);
+
+		return { compressedFile, downloadLink };
 	} catch (error) {
 		console.log(error);
 		throw error;

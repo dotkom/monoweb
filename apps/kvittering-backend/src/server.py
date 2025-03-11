@@ -22,9 +22,7 @@ IS_PRODUCTION = env.ENVIRONMENT == "prod"
 
 sentry_sdk.init(
     # not sensitive so its ok to hardcode for now
-    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000"
-    if IS_PRODUCTION
-    else None,
+    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000" if IS_PRODUCTION else None,
     send_default_pii=True,
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
@@ -48,6 +46,15 @@ pdf_generator_service = PdfGeneratorService(s3_client=s3_client, env=env)
 email_service = EmailService(ses_client=ses_client)
 
 MAX_SIZE_MB = 25
+
+# hei1iiiiiii
+curr = 0
+
+@app.route("/counter")
+def counter():
+    global curr
+    curr += 1
+    return jsonify({"message": f"Counter: {curr}"})
 
 
 @app.route("/", methods=["GET"])

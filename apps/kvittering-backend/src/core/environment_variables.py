@@ -15,6 +15,17 @@ class Env:
     RECIPIENT_EMAIL: Optional[str] = ""
     CC_RECIPIENT_EMAILS: List[str] = field(default_factory=list)
 
+    def to_dict(self):
+        return {
+            "ENVIRONMENT": self.ENVIRONMENT,
+            "STORAGE_BUCKET": self.STORAGE_BUCKET,
+            "EMAIL_ENABLED": self.EMAIL_ENABLED,
+            "SENDER_EMAIL": self.SENDER_EMAIL,
+            "RECIPIENT_EMAIL": self.RECIPIENT_EMAIL,
+            "CC_RECIPIENT_EMAILS": self.CC_RECIPIENT_EMAILS,
+            "AWS_REGION": self.AWS_REGION,
+        }
+
     @classmethod
     def load_env(cls):
         env = {}
