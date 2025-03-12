@@ -10,6 +10,7 @@ from core.email_service import EmailService
 from core.utils import extract_s3_key_from_url
 from botocore.config import Config
 import sentry_sdk
+import secrets
 
 import logging
 
@@ -22,7 +23,9 @@ IS_PRODUCTION = env.ENVIRONMENT == "prod"
 
 sentry_sdk.init(
     # not sensitive so its ok to hardcode for now
-    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000" if IS_PRODUCTION else None,
+    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000"
+    if IS_PRODUCTION
+    else None,
     send_default_pii=True,
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
@@ -50,6 +53,7 @@ MAX_SIZE_MB = 25
 # hei1iiiiiii
 curr = 0
 
+
 @app.route("/counter")
 def counter():
     global curr
@@ -71,6 +75,7 @@ def error():
 def health():
     return jsonify({"message": "OK"})
 
+
 @app.route("/generate_presigned_post", methods=["POST", "OPTIONS"])
 def generate_presigned_post():
     """Generate a presigned POST URL for S3 file upload"""
@@ -88,9 +93,9 @@ def generate_presigned_post():
 
         presigned_post = s3_client.generate_presigned_post(
             Bucket=env.STORAGE_BUCKET,
-            Key=key,
+            Key=key + secrets.token_hex(8),
             Conditions=conditions,
-            ExpiresIn=3600,  # URL expires in 1 hour
+            ExpiresIn=3600,
         )
 
         return jsonify(
@@ -161,7 +166,6 @@ def send_email():
         form_data_dict = body.get("form_data")
         form_data = FormData.from_json(form_data_dict)
 
-
         logger.info(
             f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env.SENDER_EMAIL}, Recipient: {env.RECIPIENT_EMAIL}, CC: {env.CC_RECIPIENT_EMAILS}"
         )
@@ -170,7 +174,6 @@ def send_email():
         pdf_key = extract_s3_key_from_url(pdf_url)
         s3_response = s3_client.get_object(Bucket=env.STORAGE_BUCKET, Key=pdf_key)
         pdf_data = s3_response["Body"].read()
-
 
         test_mode = body.get("test_mode", "false")
         sender_email = env.SENDER_EMAIL

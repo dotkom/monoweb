@@ -90,9 +90,7 @@ class PdfGeneratorService:
     def _get_image_from_s3(self, attachment_url: str) -> bytes:
         """Get an image from S3."""
         key = extract_s3_key_from_url(attachment_url)
-        response = self.s3_client.get_object(
-            Bucket=self.env.STORAGE_BUCKET, Key=key
-        )
+        response = self.s3_client.get_object(Bucket=self.env.STORAGE_BUCKET, Key=key)
         return response["Body"].read()
 
     def generate_pdf_from_form(self, form: FormData) -> bytes:
