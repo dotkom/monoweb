@@ -95,7 +95,7 @@ jobs:
               workflow_id: 'apply.yml',
               ref: 'main',
               inputs: {
-                environment: 'prd',
+                environment: 'prod',
                 project: 'kvittering-backend',
                 targets: 'module.evergreen_service',
               },
