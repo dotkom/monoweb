@@ -174,6 +174,13 @@ export const FileUploader = forwardRef<
 					rejectedFiles,
 				});
 
+				if (acceptedFiles.some((file) => file.type.includes("pdf"))) {
+					toast.error(
+						"Man kan ikke laste opp PDF filer enda, men det fikses snart. Ta screenshot av pdf eller konverter på en annen måte og last opp bildet. ",
+					);
+					return;
+				}
+
 				if (!files) {
 					toast.error("file error , probably too big");
 					return;
