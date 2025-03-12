@@ -227,6 +227,7 @@ export default function ReceiptForm() {
 					url,
 					mime_type: files?.find((file) => file.url === url)?.file.type ?? "",
 				})),
+				start_time: new Date(window.sessionStorage.getItem("startTime")!),
 			};
 
 			const pdfUrlPromise = toast.promise(generatePdf(formData), {
@@ -251,6 +252,10 @@ export default function ReceiptForm() {
 			Sentry.captureMessage("An error ocurred in onSubmit", "error");
 		}
 	}
+	
+	const oldStartTime = window.sessionStorage.getItem("startTime");
+	const currentSessionTime = oldStartTime ? new Date(oldStartTime) : new Date();
+	window.sessionStorage.setItem("startTime", currentSessionTime.toISOString());
 
 	return (
 		<div className="space-y-8 max-w-3xl mx-auto py-10">

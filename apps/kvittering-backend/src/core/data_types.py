@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import List, Dict, Any
 import logging
 
@@ -35,6 +36,7 @@ class FormData:
     intent: str
     comments: str
     attachments: List[Attachment]
+    start_time: datetime | None
 
     @classmethod
     def from_json(cls, json_data: Dict[str, Any]) -> "FormData":
@@ -66,6 +68,7 @@ class FormData:
                 Attachment(url=attachment["url"], mime_type=attachment["mime_type"])
                 for attachment in json_data.get("attachments", [])
             ],
+            start_time=datetime.fromisoformat(json_data.get("start_time")),
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -81,6 +84,7 @@ class FormData:
             "intent": self.intent,
             "comments": self.comments,
             "attachments": self.attachments,
+            "start_time": self.start_time,
         }
 
 
@@ -105,8 +109,10 @@ class FormDataFactory:
         amount: float = 100.0,
         intent: str = "Test Intent",
         comments: str = "Test Comments",
-        attachments: List[Attachment] = [AttachmentFactory.create()],
+        attachments: List[Attachment] | None = None,
+        start_time=None,
     ) -> FormData:
+        attachments = attachments or [AttachmentFactory.create()]
         return FormData(
             full_name=full_name,
             email=email,
@@ -118,4 +124,5 @@ class FormDataFactory:
             intent=intent,
             comments=comments,
             attachments=attachments,
+            start_time=start_time,
         )
