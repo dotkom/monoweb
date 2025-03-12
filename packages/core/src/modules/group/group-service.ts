@@ -1,4 +1,4 @@
-import type { Group, GroupId, GroupType, GroupWrite } from "@dotkomonline/types"
+import type { Group, GroupId, GroupMember, GroupMemberWrite, GroupType, GroupWrite, UserId } from "@dotkomonline/types"
 import { GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
@@ -12,6 +12,10 @@ export interface GroupService {
   deleteGroup(id: GroupId): Promise<void>
   getAllGroupIds(): Promise<GroupId[]>
   getAllGroupIdsByType(type: GroupType): Promise<GroupId[]>
+  getMembers(id: GroupId): Promise<GroupMember[]>
+  getGroupsByMember(userId: UserId): Promise<Group[]>
+  addMember(data: GroupMemberWrite): Promise<GroupMember>
+  removeMember(userId: UserId, groupId: GroupId): Promise<void>
 }
 
 export class GroupServiceImpl implements GroupService {
@@ -73,5 +77,21 @@ export class GroupServiceImpl implements GroupService {
 
   async getAllGroupIdsByType(type: GroupType) {
     return await this.groupRepository.getAllIdsByType(type)
+  }
+
+  async getMembers(id: GroupId): Promise<GroupMember[]> {
+    return await this.groupRepository.getMembers(id)
+  }
+
+  async getGroupsByMember(userId: UserId): Promise<Group[]> {
+    return await this.groupRepository.getAllByMember(userId)
+  }
+
+  async addMember(data: GroupMemberWrite): Promise<GroupMember> {
+    return await this.groupRepository.addMember(data)
+  }
+
+  async removeMember(userId: UserId, groupId: GroupId): Promise<void> {
+    await this.groupRepository.removeMember(userId, groupId)
   }
 }

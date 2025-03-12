@@ -1,5 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import type { Group, GroupId, GroupWrite } from "@dotkomonline/types"
+import type { Group, GroupId, GroupMember, GroupMemberWrite, GroupWrite, UserId } from "@dotkomonline/types"
 import type { GroupType } from "@prisma/client"
 
 export interface GroupRepository {
@@ -11,6 +11,10 @@ export interface GroupRepository {
   getAllByType(type: GroupType): Promise<Group[]>
   getAllIds(): Promise<GroupId[]>
   getAllIdsByType(type: GroupType): Promise<GroupId[]>
+  getMembers(id: GroupId): Promise<GroupMember[]>
+  getAllByMember(userId: UserId): Promise<Group[]>
+  addMember(data: GroupMemberWrite): Promise<GroupMember>
+  removeMember(userId: UserId, groupId: GroupId): Promise<void>
 }
 
 export class GroupRepositoryImpl implements GroupRepository {
@@ -50,5 +54,21 @@ export class GroupRepositoryImpl implements GroupRepository {
 
   async getAllIdsByType(type: GroupType) {
     return (await this.db.group.findMany({ where: { type: type }, select: { id: true } })).map((group) => group.id)
+  }
+
+  async getMembers(id: GroupId): Promise<GroupMember[]> {
+    return await this.db.groupMember.findMany({ where: { groupId: id } })
+  }
+
+  async getAllByMember(userId: UserId): Promise<Group[]> {
+    return await this.db.group.findMany({ where: { members: { some: { userId } } } })
+  }
+
+  async addMember(data: GroupMemberWrite): Promise<GroupMember> {
+    return await this.db.groupMember.create({ data: data })
+  }
+
+  async removeMember(userId: UserId, groupId: GroupId): Promise<void> {
+    await this.db.groupMember.delete({ where: { userId: userId, groupId: groupId } })
   }
 }
