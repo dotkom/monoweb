@@ -527,14 +527,14 @@ resource "auth0_client" "onlineweb4" {
   cross_origin_loc = "https://old.online.ntnu.no/*"
   allowed_clients = []
   allowed_logout_urls = {
-    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
+    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "stg" = ["https://dev.online.ntnu.no"]
     "prd" = ["https://old.online.ntnu.no"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "regular_web"
   callbacks = {
-    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
+    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "stg" = ["https://dev.online.ntnu.no/auth0/callback/"]
     "prd" = ["https://old.online.ntnu.no/auth0/callback/"]
   }[terraform.workspace]
