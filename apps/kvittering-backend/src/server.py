@@ -93,7 +93,7 @@ def generate_presigned_post():
 
         presigned_post = s3_client.generate_presigned_post(
             Bucket=env.STORAGE_BUCKET,
-            Key=key + secrets.token_hex(8),
+            Key=secrets.token_hex(8) + "-" + key,
             Conditions=conditions,
             ExpiresIn=3600,
         )
