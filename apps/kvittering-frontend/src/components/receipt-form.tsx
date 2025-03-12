@@ -26,9 +26,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import clsx from "clsx";
 import { CloudUpload, Paperclip } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import { toast } from "sonner";
 import * as z from "zod";
 import type { ApiFormData } from "../lib/api";
@@ -43,7 +45,7 @@ const formSchema = z
 		responsibleCommittee: z.string(),
 		intent: z.string().min(1),
 		comments: z.string(),
-		file: z.array(z.string()),
+		attachments: z.array(z.string()),
 	})
 	.refine(
 		(data) => {
@@ -86,12 +88,20 @@ const GROUPS = [
 	"Onlinepotten",
 ];
 
-export default function ReceiptForm() {
-	// Create a test file for development/testing purposes
-	const isTestMode =
-		typeof window !== "undefined" && window.location.pathname.includes("test");
+function formIsEmpty(values: z.infer<typeof formSchema>) {
+	return (
+		values.name === "" &&
+		values.email === "" &&
+		values.amount === undefined &&
+		values.intent === "" &&
+		values.comments === "" &&
+		values.attachments.length === 0
+	);
+}
 
-	// Create a mock file only in browser environment
+export default function ReceiptForm() {
+	const isTestMode = window.location.pathname.includes("test");
+
 	const testFile: UploadedFile = {
 		file: new File(["test content"], "bilde.png", { type: "image/png" }),
 		url: "https://s3.eu-north-1.amazonaws.com/receipt-archive.online.ntnu.no/bilde.png",
@@ -107,6 +117,7 @@ export default function ReceiptForm() {
 		maxSize: 1024 * 1024 * 50,
 		multiple: true,
 	};
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: isTestMode
@@ -119,9 +130,26 @@ export default function ReceiptForm() {
 					responsibleCommittee: "Hovedstyret",
 					intent: "test",
 					comments: "test",
-					file: [testFile.url], // Add default file URL to the form values
+					attachments: [testFile.url],
 				}
-			: undefined,
+			: {
+					email: "",
+					name: "",
+					cardNumber: undefined,
+					accountNumber: "",
+					amount: undefined,
+					responsibleCommittee: "",
+					intent: "",
+					comments: "",
+					attachments: [],
+				},
+	});
+
+	useFormPersist("storageKey", {
+		watch: form.watch,
+		setValue: form.setValue,
+		storage: window.localStorage,
+		exclude: ["amount", "intent", "comments", "attachments"],
 	});
 
 	async function generatePdf(formData: ApiFormData) {
@@ -157,6 +185,7 @@ export default function ReceiptForm() {
 			body: JSON.stringify({
 				pdf_url: pdfUrl,
 				form_data: formData,
+				test_mode: isTestMode ? "true" : "false",
 			}),
 		});
 
@@ -180,7 +209,7 @@ export default function ReceiptForm() {
 				amount: values.amount,
 				intent: values.intent,
 				comments: values.comments,
-				attachments: values.file.map((url) => ({
+				attachments: values.attachments.map((url) => ({
 					url,
 					mime_type: files?.find((file) => file.url === url)?.file.type ?? "",
 				})),
@@ -211,7 +240,30 @@ export default function ReceiptForm() {
 	}
 
 	return (
-		<div>
+		<div className="space-y-8 max-w-3xl mx-auto py-10">
+			{isTestMode && <h3>Test mode</h3>}
+			<Button
+				variant="outline"
+				className={clsx(
+					"mx-auto",
+					formIsEmpty(form.getValues()) ? "hidden" : "",
+				)}
+				onClick={() => {
+					form.setValue("name", "");
+					form.setValue("email", "");
+					form.setValue("amount", 0);
+					form.setValue("intent", "");
+					form.setValue("comments", "");
+					form.setValue("accountNumber", "");
+					form.setValue("cardNumber", "");
+					form.setValue("responsibleCommittee", "");
+					form.setValue("attachments", []);
+					setFiles(null);
+					setPdfUrl(null);
+				}}
+			>
+				Tøm skjema
+			</Button>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit, (errors) => {
@@ -220,21 +272,30 @@ export default function ReceiptForm() {
 							`Validation error med formen (sjekk console): ${JSON.stringify(errors)}`,
 						);
 					})}
-					className="space-y-8 max-w-3xl mx-auto py-10"
 				>
 					<FormField
 						control={form.control}
 						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Navn</FormLabel>
-								<FormControl>
-									<Input placeholder="Ditt fulle navn" type="text" {...field} />
-								</FormControl>
-								<FormDescription>Skriv inn ditt fulle navn</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
+						render={({ field }) => {
+							return (
+								<FormItem>
+									<FormLabel>Navn</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Ditt fulle navn"
+											type="text"
+											value={field.value}
+											onChange={(e) => {
+												field.onChange(e.target.value);
+												form.setValue("name", e.target.value);
+											}}
+										/>
+									</FormControl>
+									<FormDescription>Skriv inn ditt fulle navn</FormDescription>
+									<FormMessage />
+								</FormItem>
+							);
+						}}
 					/>
 
 					<FormField
@@ -248,6 +309,11 @@ export default function ReceiptForm() {
 										placeholder="din.epost@online.ntnu.no"
 										type="email"
 										{...field}
+										value={field.value}
+										onChange={(e) => {
+											field.onChange(e.target.value);
+											form.setValue("email", e.target.value);
+										}}
 									/>
 								</FormControl>
 								<FormDescription>Online-mail hvis du har</FormDescription>
@@ -409,7 +475,7 @@ export default function ReceiptForm() {
 
 					<FormField
 						control={form.control}
-						name="file"
+						name="attachments"
 						render={() => (
 							<FormItem>
 								<FormLabel>Last opp kvittering</FormLabel>
@@ -419,7 +485,7 @@ export default function ReceiptForm() {
 										onValueChange={(files) => {
 											setFiles(files);
 											form.setValue(
-												"file",
+												"attachments",
 												files?.map((file) => file.url) ?? [],
 											);
 										}}
@@ -439,7 +505,7 @@ export default function ReceiptForm() {
 													&nbsp; eller dra og slipp
 												</p>
 												<p className="text-xs text-gray-500 dark:text-gray-400">
-													SVG, PNG, JPG eller PDF
+													Bare bilder
 												</p>
 											</div>
 										</FileInput>
@@ -458,7 +524,7 @@ export default function ReceiptForm() {
 								</FormControl>
 								<FormDescription>
 									Last opp bilde eller scan av kvitteringen (maks 25MB per fil).
-									Kun jpeg og png støttes.
+									Du kan laste opp rett fra iphone
 								</FormDescription>
 								<FormMessage />
 							</FormItem>

@@ -22,4 +22,4 @@ RUN chown -R kvittering:kvittering /app
 USER kvittering
 
 EXPOSE 5000
-CMD ["uv", "run", "src/server.py"]
+ENTRYPOINT ["uv", "run", "src/server.py"]

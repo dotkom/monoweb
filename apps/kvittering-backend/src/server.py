@@ -22,9 +22,7 @@ IS_PRODUCTION = env.ENVIRONMENT == "prod"
 
 sentry_sdk.init(
     # not sensitive so its ok to hardcode for now
-    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000"
-    if IS_PRODUCTION
-    else None,
+    dsn="https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000" if IS_PRODUCTION else None,
     send_default_pii=True,
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
@@ -48,6 +46,15 @@ pdf_generator_service = PdfGeneratorService(s3_client=s3_client, env=env)
 email_service = EmailService(ses_client=ses_client)
 
 MAX_SIZE_MB = 25
+
+# hei1iiiiiii
+curr = 0
+
+@app.route("/counter")
+def counter():
+    global curr
+    curr += 1
+    return jsonify({"message": f"Counter: {curr}"})
 
 
 @app.route("/", methods=["GET"])
@@ -154,6 +161,7 @@ def send_email():
         form_data_dict = body.get("form_data")
         form_data = FormData.from_json(form_data_dict)
 
+
         logger.info(
             f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env.SENDER_EMAIL}, Recipient: {env.RECIPIENT_EMAIL}, CC: {env.CC_RECIPIENT_EMAILS}"
         )
@@ -163,14 +171,23 @@ def send_email():
         s3_response = s3_client.get_object(Bucket=env.STORAGE_BUCKET, Key=pdf_key)
         pdf_data = s3_response["Body"].read()
 
-        logger.info(f"PDF data length: {len(pdf_data)} bytes")
+
+        test_mode = body.get("test_mode", "false")
+        sender_email = env.SENDER_EMAIL
+        recipient_email = env.RECIPIENT_EMAIL
+        cc_recipient_emails = env.CC_RECIPIENT_EMAILS
+
+        if test_mode == "true":
+            sender_email = env.TEST_SENDER_EMAIL
+            recipient_email = env.TEST_RECIPIENT_EMAIL
+            cc_recipient_emails = env.TEST_CC_RECIPIENT_EMAILS
 
         email_service.send_email(
             pdf_data,
             form_data,
-            env.SENDER_EMAIL,
-            env.RECIPIENT_EMAIL,
-            env.CC_RECIPIENT_EMAILS,
+            sender_email,
+            recipient_email,
+            cc_recipient_emails,
         )
 
         return jsonify({"message": "PDF sent successfully", "data": {}}), 200

@@ -28,3 +28,10 @@ push env:
   docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
 
 release env: (build env) (push env)
+
+get-it-in-prod:
+  bash -c "assume dotkom && \
+    aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com && \
+    just release prod && \
+    cd ~/h/code/dotkom/terraform-monorepo/prod/monoweb-kvittering-backend && \
+    terraform apply -auto-approve -target=module.evergreen_service"
