@@ -1,3 +1,4 @@
+from zoneinfo import ZoneInfo
 import boto3
 from datetime import datetime
 import uuid
@@ -36,7 +37,7 @@ sentry_sdk.init(
 
 logger.info(f"Running in {env.ENVIRONMENT} mode")
 
-PORT = 5000
+PORT = 5069
 
 app = Flask(__name__)
 CORS(app)
@@ -156,6 +157,25 @@ def generate_pdf():
     except Exception as e:
         return jsonify({"message": "Error", "data": {"error": str(e)}}), 500
 
+def report_completion_time(start_time: datetime | None):
+    if not start_time:
+        return
+
+    try:
+        boto3.client("cloudwatch", region_name=env.AWS_REGION).put_metric_data(
+            Namespace="Kvittering",
+            MetricData=[
+                {
+                    "MetricName": "CompletionTime",
+                    "Timestamp": datetime.now(),
+                    "Value": (datetime.now(ZoneInfo("Europe/Oslo")) - start_time).total_seconds(),
+                    "Unit": "Seconds",
+                }
+            ],
+        )
+    except Exception as e:
+        logger.error(f"Failed to report completion time: {str(e)}", exc_info=True)
+
 
 @app.route("/send_email", methods=["POST", "OPTIONS"])
 def send_email():
@@ -176,6 +196,8 @@ def send_email():
         logger.info(
             f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env.SENDER_EMAIL}, Recipient: {env.RECIPIENT_EMAIL}, CC: {env.CC_RECIPIENT_EMAILS}"
         )
+
+        report_completion_time(form_data.start_time)
 
         # Extract the key from the S3 URL
         pdf_key = extract_s3_key_from_url(pdf_url)
