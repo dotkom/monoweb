@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as Sentry from "@sentry/react";
 import clsx from "clsx";
 import { CloudUpload, Paperclip } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -243,8 +244,7 @@ export default function ReceiptForm() {
 			console.log("emailPromise", emailPromise);
 			await emailPromise.unwrap();
 		} catch (error) {
-			console.error("Form submission error", error);
-			toast.error("Failed to submit the form. Please try again.");
+			Sentry.captureMessage("An error ocurred in onSubmit", "error");
 		}
 	}
 
