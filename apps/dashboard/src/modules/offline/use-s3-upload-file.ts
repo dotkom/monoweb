@@ -1,16 +1,17 @@
-import type { File } from "../../../stubs/file/File"
-import { s3UploadFile } from "../../utils/s3-upload-file"
-import { trpc } from "../../utils/trpc"
+import { uploadFileToS3PresignedUrl } from "../../s3"
+import { useTRPC } from "../../trpc"
+
+import { useMutation } from "@tanstack/react-query"
 
 export const useS3UploadFile = () => {
-  const presignedPostMut = trpc.offline.createPresignedPost.useMutation()
+  const trpc = useTRPC()
+  const presignedPostMut = useMutation(trpc.offline.createPresignedPost.mutationOptions())
 
   return async (file: File) => {
     const presignedPost = await presignedPostMut.mutateAsync({
       filename: `${file.name}`,
       mimeType: file.type,
     })
-    const fileToStore = await s3UploadFile(file, presignedPost.fields, presignedPost.url)
-    return fileToStore
+    return await uploadFileToS3PresignedUrl(file, presignedPost.fields, presignedPost.url)
   }
 }

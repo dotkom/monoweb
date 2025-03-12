@@ -1,38 +1,49 @@
 import { useQueryGenericMutationNotification } from "../../../app/notifications"
-import { trpc } from "../../../utils/trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useMutation } from "@tanstack/react-query"
 
 export const useDeletePoolMutation = () => {
+  const trpc = useTRPC()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "delete",
   })
 
-  return trpc.event.attendance.deletePool.useMutation({
-    onError: fail,
-    onMutate: loading,
-    onSuccess: complete,
-  })
+  return useMutation(
+    trpc.event.attendance.deletePool.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: complete,
+    })
+  )
 }
 
 export const useCreatePoolMutation = () => {
+  const trpc = useTRPC()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "create",
   })
 
-  return trpc.event.attendance.createPool.useMutation({
-    onError: fail,
-    onMutate: loading,
-    onSuccess: complete,
-  })
+  return useMutation(
+    trpc.event.attendance.createPool.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: complete,
+    })
+  )
 }
 
 export const useUpdatePoolMutation = () => {
+  const trpc = useTRPC()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "update",
   })
 
-  return trpc.event.attendance.updatePool.useMutation({
-    onError: fail,
-    onMutate: loading,
-    onSuccess: complete,
-  })
+  return useMutation(
+    trpc.event.attendance.updatePool.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: complete,
+    })
+  )
 }

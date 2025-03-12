@@ -1,20 +1,19 @@
 import { z } from "zod"
 
-export enum InvoiceRelation {
-  COMPANY_PRESENTATION = "Bedriftspresentasjon",
-  COURSE_EVENT = "Kurs",
-  OFFLINE_ADVERTISEMENT = "Annonse i Offline",
-  JOB_LISTING = "Jobbannonse",
-  TECH_TALKS_PARTICIPATION = "Tech Talks",
-  EXCURSION_PARTICIPATION = "ITEX",
-  OTHER = "Annet",
-}
+export const InvoiceRelation = {
+  COMPANY_PRESENTATION: "Bedriftspresentasjon",
+  COURSE_EVENT: "Kurs",
+  OFFLINE_ADVERTISEMENT: "Annonse i Offline",
+  JOB_LISTING: "Jobbannonse",
+  EXCURSION_PARTICIPATION: "ITEX",
+  OTHER: "Annet",
+} as const
 
-export enum DeliveryMethod {
-  EMAIL = "E-post",
-  POST = "Post",
-  EHF = "EHF",
-}
+export const DeliveryMethod = {
+  EMAIL: "E-post",
+  POST: "Post",
+  EHF: "EHF",
+} as const
 
 export const formSchema = z.object({
   companyName: z.string().min(1, "Bedriftsnavnet kan ikke være tomt"),

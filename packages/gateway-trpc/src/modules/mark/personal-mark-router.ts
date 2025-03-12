@@ -5,13 +5,11 @@ import { protectedProcedure, t } from "../../trpc"
 
 export const personalMarkRouter = t.router({
   getByUser: protectedProcedure
-    .input(z.object({ id: UserSchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) =>
-      ctx.personalMarkService.getPersonalMarksForUserId(input.id, input.paginate.take, input.paginate.cursor)
-    ),
+    .input(z.object({ id: UserSchema.shape.id }))
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksForUserId(input.id)),
   getByMark: protectedProcedure
     .input(z.object({ id: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id, input.paginate.take)),
+    .query(async ({ input, ctx }) => ctx.personalMarkService.getPersonalMarksByMarkId(input.id)),
   addToUser: protectedProcedure
     .input(PersonalMarkSchema)
     .mutation(async ({ input, ctx }) => ctx.personalMarkService.addPersonalMarkToUserId(input.userId, input.markId)),

@@ -1,7 +1,10 @@
 import type { EventId } from "@dotkomonline/types"
-import { trpc } from "../../../utils/trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useEventDetailsGetQuery = (id: EventId) => {
-  const { data, ...query } = trpc.event.getDashboardEventDetailData.useQuery(id)
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery(trpc.event.getDashboardEventDetailData.queryOptions(id))
   return { data, ...query }
 }

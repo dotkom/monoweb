@@ -1,11 +1,15 @@
 import type {
   Attendance,
   AttendanceId,
+  AttendancePool,
   AttendanceWrite,
   ExtraResults,
   Extras,
+  UserId,
   WaitlistAttendee,
 } from "@dotkomonline/types"
+import { UserNotFoundError } from "../user/user-error"
+import type { UserService } from "../user/user-service"
 import {
   AttendanceDeletionError,
   AttendanceNotFound,
@@ -26,15 +30,29 @@ export interface AttendanceService {
   merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]): Promise<void>
   updateExtras(id: AttendanceId, extras: Extras[], now?: Date): Promise<Attendance | null>
   getExtrasResults(attendanceId: AttendanceId): Promise<ExtraResults[] | null>
+  getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId): Promise<AttendancePool | null>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
+  private readonly attendanceRepository: AttendanceRepository
+  private readonly attendeeRepository: AttendeeRepository
+  private readonly waitlistAttendeeRepository: WaitlistAttendeRepository
+  private readonly attendancePoolRepository: AttendancePoolRepository
+  private readonly userService: UserService
+
   constructor(
-    private readonly attendanceRepository: AttendanceRepository,
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository
-  ) {}
+    attendanceRepository: AttendanceRepository,
+    attendeeRepository: AttendeeRepository,
+    waitlistAttendeeRepository: WaitlistAttendeRepository,
+    attendancePoolRepository: AttendancePoolRepository,
+    userService: UserService
+  ) {
+    this.attendanceRepository = attendanceRepository
+    this.attendeeRepository = attendeeRepository
+    this.waitlistAttendeeRepository = waitlistAttendeeRepository
+    this.attendancePoolRepository = attendancePoolRepository
+    this.userService = userService
+  }
 
   async getExtrasResults(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
@@ -146,7 +164,9 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   async getAllWaitlistAttendeesOrdered(attendanceId: AttendanceId): Promise<WaitlistAttendee[]> {
     const waitlistAttendeesUnordered = await this.waitlistAttendeeRepository.getByAttendanceId(attendanceId)
-    return waitlistAttendeesUnordered.sort((a, b) => a.registeredAt.getTime() - b.registeredAt.getTime())
+    return waitlistAttendeesUnordered.sort(
+      (a, b) => (a.registeredAt ?? new Date()).getTime() - (b.registeredAt ?? new Date()).getTime()
+    )
   }
 
   async merge(attendanceId: AttendanceId, mergePoolTitle: string, yearCriteria: number[]) {
@@ -187,5 +207,21 @@ export class AttendanceServiceImpl implements AttendanceService {
       )
     )
     await Promise.all(pools.map((pool) => this.attendancePoolRepository.delete(pool.id)))
+  }
+
+  async getAttendablePoolByUserId(attendanceId: AttendanceId, userId: UserId) {
+    const user = await this.userService.getById(userId)
+
+    if (!user) {
+      throw new UserNotFoundError(userId)
+    }
+
+    const userAttendablePool = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
+    const userAttendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+
+    if (userAttendee) {
+      return null
+    }
+    return userAttendablePool.find((pool) => pool.yearCriteria.includes(-69)) ?? null
   }
 }

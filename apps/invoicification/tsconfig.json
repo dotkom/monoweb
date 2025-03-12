@@ -1,5 +1,5 @@
 {
-  "extends": "../../packages/tsconfig/tsconfig.json",
+  "extends": "../../packages/config/tsconfig.json",
   "include": [
     "next-env.d.ts",
     "./**/*.ts",
@@ -18,6 +18,8 @@
         "name": "next"
       }
     ],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "allowJs": true,
+    "resolveJsonModule": true
   }
 }

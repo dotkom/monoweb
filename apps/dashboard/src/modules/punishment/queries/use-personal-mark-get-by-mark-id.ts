@@ -1,9 +1,14 @@
 import type { MarkId } from "@dotkomonline/types"
-import { trpc } from "../../../utils/trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const usePersonalMarkGetByMarkId = (markId: MarkId) => {
-  const { data: personalMarks = [], ...query } = trpc.personalMark.getByMark.useQuery({
-    id: markId,
-  })
+  const trpc = useTRPC()
+  const { data: personalMarks = [], ...query } = useQuery(
+    trpc.personalMark.getByMark.queryOptions({
+      id: markId,
+    })
+  )
   return { personalMarks, ...query }
 }

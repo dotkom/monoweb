@@ -1,9 +1,7 @@
-import { S3Client } from "@aws-sdk/client-s3"
-import type { Database } from "@dotkomonline/db"
-import { env } from "@dotkomonline/env"
-import { ManagementClient } from "auth0"
-import type { Kysely } from "kysely"
-import Stripe from "stripe"
+import type { S3Client } from "@aws-sdk/client-s3"
+import type { DBClient } from "@dotkomonline/db"
+import type { ManagementClient } from "auth0"
+import type Stripe from "stripe"
 import { type ArticleRepository, ArticleRepositoryImpl } from "./article/article-repository"
 import { type ArticleService, ArticleServiceImpl } from "./article/article-service"
 import { type ArticleTagLinkRepository, ArticleTagLinkRepositoryImpl } from "./article/article-tag-link-repository"
@@ -19,30 +17,24 @@ import {
   WaitlistAttendeRepositoryImpl,
 } from "./attendance/waitlist-attendee-repository"
 import { type WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
-import { type CommitteeRepository, CommitteeRepositoryImpl } from "./committee/committee-repository"
-import { type CommitteeService, CommitteeServiceImpl } from "./committee/committee-service"
 import { type CompanyEventRepository, CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { type CompanyEventService, CompanyEventServiceImpl } from "./company/company-event-service"
 import { type CompanyRepository, CompanyRepositoryImpl } from "./company/company-repository"
 import { type CompanyService, CompanyServiceImpl } from "./company/company-service"
-import { type EventCommitteeRepository, EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
-import { type EventCommitteeService, EventCommitteeServiceImpl } from "./event/event-committee-service"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event/event-company-repository"
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
+import {
+  type EventHostingGroupRepository,
+  EventHostingGroupRepositoryImpl,
+} from "./event/event-hosting-group-repository"
+import { type EventHostingGroupService, EventHostingGroupServiceImpl } from "./event/event-hosting-group-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
-import { type Auth0Repository, Auth0RepositoryImpl } from "./external/auth0-repository"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { type GroupRepository, GroupRepositoryImpl } from "./group/group-repository"
+import { type GroupService, GroupServiceImpl } from "./group/group-service"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
-import {
-  type JobListingLocationLinkRepository,
-  JobListingLocationLinkRepositoryImpl,
-} from "./job-listing/job-listing-location-link-repository"
-import {
-  type JobListingLocationRepository,
-  JobListingLocationRepositoryImpl,
-} from "./job-listing/job-listing-location-repository"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { type JobListingService, JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
@@ -65,7 +57,6 @@ import { type ProductRepository, ProductRepositoryImpl } from "./payment/product
 import { type ProductService, ProductServiceImpl } from "./payment/product-service"
 import { type RefundRequestRepository, RefundRequestRepositoryImpl } from "./payment/refund-request-repository"
 import { type RefundRequestService, RefundRequestServiceImpl } from "./payment/refund-request-service"
-import { type Auth0SynchronizationService, Auth0SynchronizationServiceImpl } from "./user/auth0-synchronization-service"
 import {
   type NotificationPermissionsRepository,
   NotificationPermissionsRepositoryImpl,
@@ -79,49 +70,37 @@ import { type UserService, UserServiceImpl } from "./user/user-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
-export interface ServerLayerOptions {
-  db: Kysely<Database>
+export type StripeAccount = {
+  stripe: Stripe
+  publicKey: string
+  webhookSecret: string
 }
 
-export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
-  const s3Client = new S3Client({
-    region: env.AWS_REGION,
-  })
-  const auth0ManagementClient = new ManagementClient({
-    domain: "onlineweb.eu.auth0.com",
-    clientSecret: env.GTX_AUTH0_CLIENT_SECRET,
-    clientId: env.GTX_AUTH0_CLIENT_ID,
-  })
-  const trikomStripeSdk = new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
-  const fagkomStripeSdk = new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" })
-  const stripeAccounts = {
-    trikom: {
-      stripe: trikomStripeSdk,
-      publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
-    },
-    fagkom: {
-      stripe: fagkomStripeSdk,
-      publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
-      webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
-    },
-  }
+export interface ServiceLayerOptions {
+  db: DBClient
+  s3Client: S3Client
+  s3BucketName: string
+  stripeAccounts: Record<string, StripeAccount>
+  managementClient: ManagementClient
+}
 
-  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
-  const auth0Repository: Auth0Repository = new Auth0RepositoryImpl(auth0ManagementClient)
+export const createServiceLayer = async ({
+  db,
+  s3Client,
+  managementClient,
+  stripeAccounts,
+  s3BucketName,
+}: ServiceLayerOptions) => {
+  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
-  const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
+  const groupRepository: GroupRepository = new GroupRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
-  const jobListingLocationRepository: JobListingLocationRepository = new JobListingLocationRepositoryImpl(db)
-  const jobListingLocationLinkRepository: JobListingLocationLinkRepository = new JobListingLocationLinkRepositoryImpl(
-    db
-  )
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
-  const committeeOrganizerRepository: EventCommitteeRepository = new EventCommitteeRepositoryImpl(db)
+  const eventHostingGroupRepository: EventHostingGroupRepository = new EventHostingGroupRepositoryImpl(db)
 
-  const userRepository: UserRepository = new UserRepositoryImpl(db)
+  const userRepository: UserRepository = new UserRepositoryImpl(managementClient, db)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
   const attendancePoolRepository: AttendancePoolRepository = new AttendancePoolRepositoryImpl(db)
@@ -150,24 +129,18 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     notificationPermissionsRepository
   )
 
-  const auth0SynchronizationService: Auth0SynchronizationService = new Auth0SynchronizationServiceImpl(
-    userService,
-    auth0Repository
+  const eventHostingGroupService: EventHostingGroupService = new EventHostingGroupServiceImpl(
+    eventHostingGroupRepository
   )
-
-  const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
-  const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
-  const jobListingService: JobListingService = new JobListingServiceImpl(
-    jobListingRepository,
-    jobListingLocationRepository,
-    jobListingLocationLinkRepository
-  )
+  const groupService: GroupService = new GroupServiceImpl(groupRepository)
+  const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
     attendanceRepository,
     attendeeRepository,
     waitlistAttendeRepository,
-    attendancePoolRepository
+    attendancePoolRepository,
+    userService
   )
 
   const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(
@@ -192,8 +165,8 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     eventRepository,
     attendanceService,
     attendancePoolService,
-    eventCommitteeService,
-    eventCompanyService
+    eventCompanyService,
+    eventHostingGroupService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
@@ -228,7 +201,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
   return {
     userService,
     eventService,
-    committeeService,
+    groupService,
     companyService,
     companyEventService,
     eventCompanyService,
@@ -238,7 +211,7 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     refundRequestService,
     markService,
     personalMarkService,
-    eventCommitteeService,
+    eventHostingGroupService,
     jobListingService,
     offlineService,
     articleService,
@@ -249,6 +222,5 @@ export const createServiceLayer = async ({ db }: ServerLayerOptions) => {
     attendeeService,
     interestGroupRepository,
     interestGroupService,
-    auth0SynchronizationService,
   }
 }

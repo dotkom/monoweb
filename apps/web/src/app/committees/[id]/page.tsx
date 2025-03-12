@@ -1,18 +1,13 @@
 import { CommitteeView } from "@/components/views/CommitteeView"
-import { getServerClient, getUnauthorizedServerClient } from "@/utils/trpc/serverClient"
+import { server } from "@/utils/trpc/server"
 
-export const generateStaticParams = async () => {
-  const serverClient = await getUnauthorizedServerClient()
-  const committeeIds = await serverClient.committee.allIds()
-  return committeeIds.map((id) => ({ id }))
-}
+const CommitteePage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
+  const committee = await server.group.getByType.query({ groupId: id, type: "COMMITTEE" })
+  const committeeEvents = await server.event.allByGroup.query({ id })
+  const members = await server.group.getMembers.query(id)
 
-const CommitteePage = async ({ params: { id } }: { params: { id: string } }) => {
-  const serverClient = await getServerClient()
-  const committee = await serverClient.committee.get(id)
-  const committeeEvents = await serverClient.event.allByCommittee({ id })
-
-  return <CommitteeView committee={committee} events={committeeEvents} />
+  return <CommitteeView committee={committee} events={committeeEvents} members={members} />
 }
 
 export default CommitteePage

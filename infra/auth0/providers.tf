@@ -5,20 +5,20 @@ terraform {
     region = "eu-north-1"
   }
 
-  required_version = "~> 1.9.0"
+  required_version = "~> 1.11.0"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.33"
+      version = "~> 5.86"
     }
     doppler = {
       source  = "DopplerHQ/doppler"
-      version = "~> 1.9.0"
+      version = "~> 1.15.0"
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "~> 1.4.0"
+      version = "~> 1.14.0"
     }
   }
 }

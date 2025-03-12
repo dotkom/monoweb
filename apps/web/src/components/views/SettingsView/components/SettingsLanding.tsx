@@ -1,8 +1,11 @@
-import AvatarImgChange from "@/app/settings/components/ChangeAvatar"
-import { CountryCodeSelect } from "@/app/settings/components/CountryCodeSelect"
-import { TextInput, Textarea } from "@dotkomonline/ui"
+"use client"
+import { useTRPC } from "@/utils/trpc/client"
+import type { User } from "@dotkomonline/types"
+import { Button, TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
+import { useForm } from "react-hook-form"
+
+import { useMutation } from "@tanstack/react-query"
 
 interface FormInputProps {
   title: string
@@ -10,40 +13,96 @@ interface FormInputProps {
 }
 
 const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
-  <div className="w-full border-t-[1px] border-slate-7 flex py-8 justify-between px-4">
+  <div className="w-full border-t-[1px] first-of-type:border-0 first-of-type:pt-0 border-slate-7 flex pt-16 justify-between px-4">
     <div className="w-1/4">{title}:</div>
     <div className="flex-1 flex justify-center">{children}</div>
   </div>
 )
 
+type EditableFields = Pick<User, "firstName" | "lastName" | "biography" | "allergies" | "gender" | "phone">
+
 const Landing: NextPage<{ user: User }> = ({ user }) => {
+  const trpc = useTRPC()
+  const { register, handleSubmit } = useForm<EditableFields>({
+    defaultValues: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      biography: user.biography,
+      allergies: user.allergies,
+      gender: user.gender,
+      phone: user.phone,
+    },
+  })
+
+  const updateUserMutation = useMutation(trpc.user.update.mutationOptions())
+
+  function handleSubmitForm(data: EditableFields) {
+    updateUserMutation.mutate({
+      id: user.id,
+      input: data,
+    })
+
+    return false
+  }
+
   return (
-    <div className="flex w-full flex-col space-y-4">
+    <form onSubmit={handleSubmit(handleSubmitForm)} className="flex flex-col space-y-4 pb-4">
+      {/*
       <div className="flex flex-col items-center justify-evenly space-y-4 mb-4">
         <AvatarImgChange {...user} />
       </div>
+      */}
+      <FormInput title="Epost">
+        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} disabled />
+      </FormInput>
       <FormInput title="Navn">
         <div className="w-full flex flex-wrap justify-center ">
-          <TextInput width="flex-1 mb-2 mx-1" placeholder="Fornavn" defaultValue={user.givenName} />
-          <TextInput width="flex-1 mx-1" placeholder="Etternavn" defaultValue={user.familyName} />
+          <TextInput
+            width="flex-1 mb-2 mx-1"
+            placeholder="Fornavn"
+            defaultValue={user.firstName ?? undefined}
+            {...register("firstName")}
+          />
+          <TextInput
+            width="flex-1 mx-1"
+            placeholder="Etternavn"
+            defaultValue={user.lastName ?? undefined}
+            {...register("lastName")}
+          />
         </div>
-      </FormInput>
-      <FormInput title="Epost">
-        <TextInput width="flex-1" placeholder="Epost" defaultValue={user.email} />
       </FormInput>
       <FormInput title="Telefon">
         <div className="w-full flex space-x-2">
-          <CountryCodeSelect />
-          <TextInput width="w-full" maxLength={8} />
+          <TextInput
+            width="w-full"
+            maxLength={12}
+            placeholder="Telefon"
+            defaultValue={user.phone ?? undefined}
+            {...register("phone")}
+          />
         </div>
       </FormInput>
+      {/*
       <FormInput title="Bio">
-        <Textarea placeholder="Din råkule bio" />
+        <Textarea placeholder="Din råkule bio" {...register("biography")} />
       </FormInput>
+      */}
       <FormInput title="Allergier">
-        <Textarea placeholder="Dine allergier" />
+        <Textarea placeholder="Dine allergier" {...register("allergies")} />
       </FormInput>
-    </div>
+      <FormInput title="Kjønn">
+        <div className="w-full">
+          <select {...register("gender")} defaultValue={user.gender ?? undefined} className="px-4 py-2">
+            <option value="male">Mann</option>
+            <option value="female">Kvinne</option>
+            <option value="other">Annet</option>
+          </select>
+        </div>
+      </FormInput>
+      <Button type="submit" className="px-8" loading={updateUserMutation.isPending}>
+        Lagre
+      </Button>
+    </form>
   )
 }
 

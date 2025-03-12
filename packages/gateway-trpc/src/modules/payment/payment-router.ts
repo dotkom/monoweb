@@ -11,7 +11,7 @@ export const paymentRouter = t.router({
   getPaymentProviders: protectedProcedure.query(({ ctx }) => ctx.paymentService.getPaymentProviders()),
   all: protectedProcedure
     .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.paymentService.getPayments(input.take, input.cursor)),
+    .query(async ({ input, ctx }) => ctx.paymentService.getPayments(input)),
   createStripeCheckoutSession: protectedProcedure
     .input(
       z.object({
@@ -27,7 +27,7 @@ export const paymentRouter = t.router({
         input.stripePublicKey,
         input.successRedirectUrl,
         input.cancelRedirectUrl,
-        ctx.auth.userId
+        ctx.principal
       )
     ),
   refundPayment: protectedProcedure

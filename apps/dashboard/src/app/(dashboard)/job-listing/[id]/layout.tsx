@@ -1,15 +1,21 @@
 "use client"
-
 import { Loader } from "@mantine/core"
-import { type PropsWithChildren, useMemo } from "react"
-import { trpc } from "../../../../utils/trpc"
+import { type PropsWithChildren, use, useMemo } from "react"
+import { useTRPC } from "../../../../trpc"
 import { JobListingDetailsContext } from "./provider"
 
-export default function JobListingDetailsLayout({ children, params }: PropsWithChildren<{ params: { id: string } }>) {
-  const { data, isLoading } = trpc.jobListing.get.useQuery(params.id)
+import { useQuery } from "@tanstack/react-query"
+
+export default function JobListingDetailsLayout({
+  children,
+  params,
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const trpc = useTRPC()
+  const { id } = use(params)
+  const { data, isLoading } = useQuery(trpc.jobListing.get.queryOptions(id))
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             jobListing: data,

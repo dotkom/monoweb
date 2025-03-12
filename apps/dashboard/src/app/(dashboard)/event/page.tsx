@@ -1,18 +1,19 @@
 "use client"
-import type { Committee, Event } from "@dotkomonline/types"
+
+import type { Event, Group } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
-import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
+import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
 import { GenericTable } from "../../../components/GenericTable"
-import EventCommittees from "../../../components/molecules/company-name/event-committees"
+import EventHostingGroups from "../../../components/molecules/company-name/event-hosting-groups"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 
 type TableColumns = Event & {
-  committees: Committee[]
+  groups: Group[]
 }
 
 export default function EventPage() {
@@ -29,9 +30,9 @@ export default function EventPage() {
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue()),
       }),
-      columnHelper.accessor("committees", {
+      columnHelper.accessor("groups", {
         header: () => "Arrangør",
-        cell: (info) => <EventCommittees committees={info.getValue()} />,
+        cell: (info) => <EventHostingGroups hostingGroups={info.getValue()} />,
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
@@ -59,7 +60,7 @@ export default function EventPage() {
     <Skeleton visible={isEventsLoading}>
       <Stack>
         <GenericTable table={table} />
-        <Group justify="space-between">
+        <GroupContainer justify="space-between">
           <Button onClick={open}>Opprett arrangement</Button>
           <ButtonGroup>
             <Button variant="subtle">
@@ -69,7 +70,7 @@ export default function EventPage() {
               <Icon icon="tabler:caret-right" />
             </Button>
           </ButtonGroup>
-        </Group>
+        </GroupContainer>
       </Stack>
     </Skeleton>
   )

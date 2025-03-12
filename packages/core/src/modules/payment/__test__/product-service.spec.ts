@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { Product } from "@dotkomonline/types"
-import { Kysely } from "kysely"
+import { PrismaClient } from "@prisma/client"
 import { describe, vi } from "vitest"
 import { ProductNotFoundError } from "../product-error"
 import { ProductRepositoryImpl } from "./../product-repository"
@@ -20,7 +20,7 @@ export const productPayload: Omit<Product, "id"> = {
 }
 
 describe("ProductService", () => {
-  const db = vi.mocked(Kysely.prototype)
+  const db = vi.mocked(PrismaClient.prototype)
   const productRepository = new ProductRepositoryImpl(db)
   const productService = new ProductServiceImpl(productRepository)
 
@@ -34,7 +34,7 @@ describe("ProductService", () => {
 
   it("finds products by id", async () => {
     const id = randomUUID()
-    vi.spyOn(productRepository, "getById").mockResolvedValueOnce(undefined)
+    vi.spyOn(productRepository, "getById").mockResolvedValueOnce(null)
     const missing = productService.getProductById(id)
     await expect(missing).rejects.toThrow(ProductNotFoundError)
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ id, ...productPayload })

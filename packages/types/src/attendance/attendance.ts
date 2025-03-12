@@ -1,3 +1,4 @@
+import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 
 export const ExtraSchema = z.object({
@@ -29,16 +30,14 @@ export const ExtrasSchema = z.array(ExtraSchema).nullable()
 
 export type Extras = z.infer<typeof ExtraSchema>
 
-export const AttendanceSchema = z.object({
-  id: z.string().ulid(),
-  registerStart: z.date(),
-  registerEnd: z.date(),
-  deregisterDeadline: z.date(),
+export const AttendanceSchema = schemas.AttendanceSchema.extend({
   extras: ExtrasSchema,
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({
   id: true,
+  updatedAt: true,
+  createdAt: true,
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>

@@ -9,8 +9,10 @@ import {
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useCreateAttendanceExtrasModal } from "../../../../modules/event/modals/create-event-extras-modal"
 import { useEditExtrasModal } from "../../../../modules/event/modals/edit-event-extras-modal"
-import { trpc } from "../../../../utils/trpc"
+import { useTRPC } from "../../../../trpc"
 import { useEventDetailsContext } from "./provider"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const ExtrasPage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -49,6 +51,7 @@ interface Props {
   attendance: Attendance
 }
 export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
+  const trpc = useTRPC()
   const openCreate = useCreateAttendanceExtrasModal({
     attendance,
   })
@@ -59,9 +62,11 @@ export const ExtrasPageDetail: FC<Props> = ({ attendance }) => {
 
   const edit = useUpdateExtrasMutation()
 
-  const { data: results = [], isLoading: resultsIsLoading } = trpc.attendance.getExtrasResults.useQuery({
-    attendanceId: attendance.id,
-  })
+  const { data: results = [], isLoading: resultsIsLoading } = useQuery(
+    trpc.attendance.getExtrasResults.queryOptions({
+      attendanceId: attendance.id,
+    })
+  )
 
   const deleteAlternative = (id: string) => {
     const newChoices = attendance.extras?.filter((alt) => alt.id !== id)

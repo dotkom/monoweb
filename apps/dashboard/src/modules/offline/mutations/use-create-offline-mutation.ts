@@ -1,30 +1,35 @@
 import { useRouter } from "next/navigation"
 import { useQueryNotification } from "../../../app/notifications"
-import { trpc } from "../../../utils/trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useMutation } from "@tanstack/react-query"
 
 export const useCreateOfflineMutation = () => {
+  const trpc = useTRPC()
   const router = useRouter()
   const notification = useQueryNotification()
-  return trpc.offline.create.useMutation({
-    onMutate: () => {
-      notification.loading({
-        title: "Oppretter...",
-        message: "Vellykkett opprettelse. Du blir sendt til ressursen.",
-      })
-    },
-    onSuccess: (data) => {
-      notification.complete({
-        title: "Opprettet",
-        message: "Ressursen har blitt opprettet.",
-      })
+  return useMutation(
+    trpc.offline.create.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppretter...",
+          message: "Vellykkett opprettelse. Du blir sendt til ressursen.",
+        })
+      },
+      onSuccess: (data) => {
+        notification.complete({
+          title: "Opprettet",
+          message: "Ressursen har blitt opprettet.",
+        })
 
-      router.push(`/offline/${data.id}`)
-    },
-    onError: (err) => {
-      notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under opprettelsen: ${err.toString()}.`,
-      })
-    },
-  })
+        router.push(`/offline/${data.id}`)
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under opprettelsen: ${err.toString()}.`,
+        })
+      },
+    })
+  )
 }

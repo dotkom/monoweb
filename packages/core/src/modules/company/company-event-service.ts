@@ -1,5 +1,5 @@
 import type { CompanyId, Event } from "@dotkomonline/types"
-import type { Cursor } from "../../utils/db-utils"
+import type { Cursor } from "../../query"
 import type { CompanyEventRepository } from "./company-event-repository" // Note: you might need to create or rename this file based on previous changes.
 
 export interface CompanyEventService {
@@ -7,9 +7,13 @@ export interface CompanyEventService {
 }
 
 export class CompanyEventServiceImpl implements CompanyEventService {
-  constructor(private readonly companyEventRepository: CompanyEventRepository) {}
+  private readonly companyEventRepository: CompanyEventRepository
 
-  async getEventsByCompanyId(company: CompanyId, take: number, cursor?: Cursor): Promise<Event[]> {
-    return this.companyEventRepository.getEventsByCompanyId(company, take, cursor)
+  constructor(companyEventRepository: CompanyEventRepository) {
+    this.companyEventRepository = companyEventRepository
+  }
+
+  async getEventsByCompanyId(company: CompanyId): Promise<Event[]> {
+    return this.companyEventRepository.getEventsByCompanyId(company)
   }
 }

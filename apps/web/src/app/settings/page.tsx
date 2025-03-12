@@ -1,15 +1,23 @@
+"use client"
 import { SettingsLanding } from "@/components/views/SettingsView/components"
-import { getServerSession } from "next-auth"
+import { useTRPC } from "@/utils/trpc/client"
 import { redirect } from "next/navigation"
 
-const SettingsPage = async () => {
-  const session = await getServerSession()
+import { useQuery } from "@tanstack/react-query"
 
-  if (session === null) {
+const SettingsPage = () => {
+  const trpc = useTRPC()
+  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
+
+  if (user === null) {
     redirect("/")
   }
 
-  return <SettingsLanding user={session.user} />
+  if (user === undefined) {
+    return <div>Loading...</div>
+  }
+
+  return <SettingsLanding user={user} />
 }
 
 export default SettingsPage

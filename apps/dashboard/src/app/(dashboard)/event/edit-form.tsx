@@ -1,4 +1,4 @@
-import { type Committee, EventSchema } from "@dotkomonline/types"
+import { EventSchema, type Group } from "@dotkomonline/types"
 import { z } from "zod"
 import {
   createCheckboxInput,
@@ -15,13 +15,13 @@ interface UseEventEditFormProps {
   onSubmit(data: FormValidationResult): void
   defaultValues?: Partial<FormValidationResult>
   label?: string
-  committees: Committee[]
+  hostingGroups: Group[]
 }
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 const FormValidationSchema = EventSchema.extend({
-  committeeIds: z.array(z.string()),
+  hostingGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEvent(data)
   for (const issue of issues) {
@@ -30,7 +30,7 @@ const FormValidationSchema = EventSchema.extend({
 })
 
 export const useEventEditForm = ({
-  committees,
+  hostingGroups,
   onSubmit,
   label = "Opprett arrangement",
   defaultValues,
@@ -78,10 +78,10 @@ export const useEventEditForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeIds: createMultipleSelectInput({
+      hostingGroupIds: createMultipleSelectInput({
         label: "Arrangør",
         placeholder: "Arrkom",
-        data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
+        data: hostingGroups.map((group) => ({ value: group.id, label: group.name })),
       }),
       status: createSelectInput({
         label: "Event status",
