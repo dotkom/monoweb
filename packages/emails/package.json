@@ -22,7 +22,7 @@
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
     "@types/react": "^18.3.11",
-    "react-email": "^1.9.5",
+    "react-email": "^3.0.0",
     "typescript": "^5.8"
   }
 }
