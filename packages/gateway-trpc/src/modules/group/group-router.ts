@@ -1,4 +1,4 @@
-import { GroupSchema, GroupWriteSchema } from "@dotkomonline/types"
+import { GroupMemberSchema, GroupMemberWriteSchema, GroupSchema, GroupWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, t } from "../../trpc"
 
@@ -27,4 +27,16 @@ export const groupRouter = t.router({
   delete: protectedProcedure
     .input(GroupSchema.shape.id)
     .mutation(async ({ input, ctx }) => await ctx.groupService.deleteGroup(input)),
+  getMembers: t.procedure
+    .input(GroupMemberSchema.shape.userId)
+    .query(async ({ input, ctx }) => ctx.groupService.getMembers(input)),
+  allByMember: t.procedure
+    .input(GroupMemberSchema.shape.userId)
+    .query(async ({ input, ctx }) => ctx.groupService.getGroupsByMember(input)),
+  addMember: t.procedure
+    .input(GroupMemberWriteSchema)
+    .mutation(async ({ input, ctx }) => ctx.groupService.addMember(input)),
+  removeMember: protectedProcedure
+    .input(z.object({ groupId: GroupMemberSchema.shape.groupId, userId: GroupMemberSchema.shape.userId }))
+    .mutation(async ({ input, ctx }) => await ctx.groupService.removeMember(input.userId, input.groupId)),
 })

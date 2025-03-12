@@ -1,27 +1,32 @@
 import { useQueryNotification } from "../../../app/notifications"
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useMutation } from "@tanstack/react-query"
 
 export const useEditJobListingMutation = () => {
+  const trpc = useTRPC()
   const notification = useQueryNotification()
 
-  return trpc.jobListing.edit.useMutation({
-    onMutate: () => {
-      notification.loading({
-        title: "Oppdaterer stillingsannonse...",
-        message: "Stillingsannonsen blir oppdatert.",
-      })
-    },
-    onSuccess: (data) => {
-      notification.complete({
-        title: "Stillingsannonse oppdatert",
-        message: `Stillingsannonsen "${data.title}" har blitt oppdatert.`,
-      })
-    },
-    onError: (err) => {
-      notification.fail({
-        title: "Feil oppsto",
-        message: `En feil oppsto under oppdatering av stillingsannonsen: ${err.toString()}.`,
-      })
-    },
-  })
+  return useMutation(
+    trpc.jobListing.edit.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppdaterer stillingsannonse...",
+          message: "Stillingsannonsen blir oppdatert.",
+        })
+      },
+      onSuccess: (data) => {
+        notification.complete({
+          title: "Stillingsannonse oppdatert",
+          message: `Stillingsannonsen "${data.title}" har blitt oppdatert.`,
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under oppdatering av stillingsannonsen: ${err.toString()}.`,
+        })
+      },
+    })
+  )
 }

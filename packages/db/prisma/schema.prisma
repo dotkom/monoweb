@@ -101,6 +101,7 @@ model OwUser {
   NotificationPermissions   NotificationPermissions?
   PersonalMark              PersonalMark[]
   InterestGroupsMemberships InterestGroupMember[]
+  GroupMemberships          GroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
 
@@ -125,16 +126,30 @@ model Company {
 }
 
 model Group {
-  id          String           @id @default(uuid())
-  createdAt   DateTime         @default(now())
-  name        String
-  description String
-  email       String
-  image       String?
-  events      EventHostingGroup[]
-  type        GroupType
+  id                String           @id @default(uuid())
+  createdAt         DateTime         @default(now())
+  name              String
+  description       String
+  email             String
+  image             String?
+  longDescription   String?
+  events            EventHostingGroup[]
+  type              GroupType
+  members           GroupMember[]
 
   @@map("group")
+}
+
+model GroupMember {
+  groupId   String
+  group     Group     @relation(fields: [groupId], references: [id])
+
+  userId    String
+  user      OwUser    @relation(fields: [userId], references: [id])
+
+  @@id([groupId])
+
+  @@map("group_member")
 }
 
 model Attendance {

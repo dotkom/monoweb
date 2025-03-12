@@ -17,7 +17,7 @@
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/types": "workspace:^",
-    "@trpc/react-query": "^10.45.2",
+    "@trpc/react-query": "11.0.0-rc.828",
     "ical-generator": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "next-auth": "^4.24.8",

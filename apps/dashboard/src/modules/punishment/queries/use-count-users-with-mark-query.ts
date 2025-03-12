@@ -1,7 +1,10 @@
 import type { MarkId } from "@dotkomonline/types"
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useMarkCountUsersQuery = (id: MarkId) => {
-  const { data, ...query } = trpc.personalMark.countUsersWithMark.useQuery({ id })
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery(trpc.personalMark.countUsersWithMark.queryOptions({ id }))
   return { data, ...query }
 }

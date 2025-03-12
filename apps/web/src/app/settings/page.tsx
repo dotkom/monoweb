@@ -1,11 +1,13 @@
 "use client"
-
 import { SettingsLanding } from "@/components/views/SettingsView/components"
-import { trpc } from "@/utils/trpc/client"
+import { useTRPC } from "@/utils/trpc/client"
 import { redirect } from "next/navigation"
 
+import { useQuery } from "@tanstack/react-query"
+
 const SettingsPage = () => {
-  const { data: user } = trpc.user.getMe.useQuery()
+  const trpc = useTRPC()
+  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
 
   if (user === null) {
     redirect("/")

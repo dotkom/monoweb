@@ -1,6 +1,9 @@
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useEventAllQuery = () => {
-  const { data: events = [], ...query } = trpc.event.all.useQuery({ take: 50 })
+  const trpc = useTRPC()
+  const { data: events = [], ...query } = useQuery(trpc.event.all.queryOptions({ take: 50 }))
   return { events, ...query }
 }
