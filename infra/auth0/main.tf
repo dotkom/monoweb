@@ -527,14 +527,14 @@ resource "auth0_client" "onlineweb4" {
   cross_origin_loc = "https://old.online.ntnu.no/*"
   allowed_clients = []
   allowed_logout_urls = {
-    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
+    "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
     "stg" = ["https://dev.online.ntnu.no"]
     "prd" = ["https://old.online.ntnu.no"]
   }[terraform.workspace]
   allowed_origins = []
   app_type        = "regular_web"
   callbacks = {
-    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
+    "dev" = ["http://localhost:8000/auth0/callback/", "http://127.0.0.1:8000/auth0/callback/"]
     "stg" = ["https://dev.online.ntnu.no/auth0/callback/"]
     "prd" = ["https://old.online.ntnu.no/auth0/callback/"]
   }[terraform.workspace]
@@ -584,7 +584,7 @@ resource "auth0_client" "monoweb_web" {
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0"]
+    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
 
@@ -615,7 +615,7 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0"]
+      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "prd" = [
         "https://dashboard.online.ntnu.no/api/auth/callback/auth0", 
         "https://online.ntnu.no/api/auth/callback/auth0"
