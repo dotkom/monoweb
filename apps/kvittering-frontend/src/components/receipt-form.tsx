@@ -48,7 +48,9 @@ const formSchema = z
 		responsibleCommittee: z.string(),
 		intent: z.string().min(1),
 		comments: z.string(),
-		attachments: z.array(z.string()),
+		attachments: z.array(z.string()).refine((val) => val.length > 0, {
+			message: "Må laste opp minst en fil",
+		}),
 	})
 	.refine(
 		(data) => {
@@ -279,9 +281,6 @@ export default function ReceiptForm() {
 				<form
 					onSubmit={form.handleSubmit(onSubmit, (errors) => {
 						console.error("Form validation errors:", errors);
-						toast.error(
-							`Validation error med formen (sjekk console): ${JSON.stringify(errors)}`,
-						);
 					})}
 				>
 					<FormField
