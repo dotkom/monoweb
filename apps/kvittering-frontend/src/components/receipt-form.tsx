@@ -28,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
 import { CloudUpload, Paperclip } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useFormPersist from "react-hook-form-persist";
 import { toast } from "sonner";
@@ -59,6 +59,8 @@ const formSchema = z
 			path: ["cardNumber"],
 		},
 	);
+
+type FormData = z.infer<typeof formSchema>;
 
 const GROUPS = [
 	"Applikasjonskomiteen",
@@ -102,6 +104,36 @@ function formIsEmpty(values: z.infer<typeof formSchema>) {
 export default function ReceiptForm() {
 	const isTestMode = window.location.pathname.includes("test");
 
+	useEffect(() => {
+		if (!isTestMode) {
+			return;
+		}
+
+		localStorage.setItem("storageKey", "");
+
+		const testData: FormData = {
+			email: "test@test.com",
+			name: "test",
+			cardNumber: undefined,
+			accountNumber: "1234567890",
+			amount: 100,
+			responsibleCommittee: "Hovedstyret",
+			intent: "test",
+			comments: "test",
+			attachments: [testFile.url],
+		};
+
+		form.setValue("email", testData.email);
+		form.setValue("name", testData.name);
+		form.setValue("cardNumber", testData.cardNumber);
+		form.setValue("accountNumber", testData.accountNumber);
+		form.setValue("amount", testData.amount);
+		form.setValue("responsibleCommittee", testData.responsibleCommittee);
+		form.setValue("intent", testData.intent);
+		form.setValue("comments", testData.comments);
+		form.setValue("attachments", testData.attachments);
+	}, [isTestMode]);
+
 	const testFile: UploadedFile = {
 		file: new File(["test content"], "bilde.png", { type: "image/png" }),
 		url: "https://s3.eu-north-1.amazonaws.com/receipt-archive.online.ntnu.no/bilde.png",
@@ -120,29 +152,6 @@ export default function ReceiptForm() {
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: isTestMode
-			? {
-					email: "test@test.com",
-					name: "test",
-					cardNumber: undefined,
-					accountNumber: "1234567890",
-					amount: 100,
-					responsibleCommittee: "Hovedstyret",
-					intent: "test",
-					comments: "test",
-					attachments: [testFile.url],
-				}
-			: {
-					email: "",
-					name: "",
-					cardNumber: undefined,
-					accountNumber: "",
-					amount: undefined,
-					responsibleCommittee: "",
-					intent: "",
-					comments: "",
-					attachments: [],
-				},
 	});
 
 	useFormPersist("storageKey", {
@@ -408,10 +417,7 @@ export default function ReceiptForm() {
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Ansvarlig enhet</FormLabel>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
+								<Select onValueChange={field.onChange} value={field.value}>
 									<FormControl>
 										<SelectTrigger>
 											<SelectValue placeholder="Velg komité eller gruppe" />
