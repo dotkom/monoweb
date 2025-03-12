@@ -38,17 +38,15 @@ async function getTokenServerside() {
 }
 
 export const server = trpc.createTRPCProxyClient<AppRouter>({
-  transformer: superjson,
   links: [
     trpc.httpLink({
+      transformer: superjson,
       url: `${env.RPC_HOST}/api/trpc`,
       headers: async () => {
         const token = await getTokenServerside()
-
-        if (token) {
+        if (token !== null) {
           return { Authorization: `Bearer ${token.accessToken}` }
         }
-
         return {}
       },
     }),

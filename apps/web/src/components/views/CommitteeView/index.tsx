@@ -1,13 +1,15 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { Committee, Event } from "@dotkomonline/types"
+import type { GroupMember } from "@dotkomonline/db"
+import type { Event, Group } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
 interface CommitteeViewProps {
-  committee: Committee
+  committee: Group
   events: Event[]
+  members: GroupMember[]
 }
 
 export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
@@ -35,6 +37,16 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
                 </a>
               </div>
             ))}
+          </div>
+
+          {/* TODO: Redesign later */}
+          <div>
+            Members
+            <ul>
+              {props.members.map((member) => (
+                <li key={member.userId}>{member.userId}</li>
+              ))}
+            </ul>
           </div>
         </div>
         <p>{description}</p>

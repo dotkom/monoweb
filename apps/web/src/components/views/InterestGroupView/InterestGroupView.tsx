@@ -1,7 +1,6 @@
 "use client"
-
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { trpc } from "@/utils/trpc/client"
+import { useTRPC } from "@/utils/trpc/client"
 import type { InterestGroup, InterestGroupId, InterestGroupMember, User } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import type { Session } from "next-auth"
@@ -9,20 +8,26 @@ import Link from "next/link"
 import type { FC } from "react"
 import SkeletonInterestGroupView from "./SkeletonInterestGroupView"
 
+import { useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+
 interface InterestGroupViewProps {
   sessionUser?: Session["user"]
   interestGroupId: InterestGroupId
 }
 
 export const InterestGroupView: FC<InterestGroupViewProps> = (props: InterestGroupViewProps) => {
+  const trpc = useTRPC()
   const { sessionUser, interestGroupId } = props
 
-  const userQuery = trpc.user.getMe.useQuery(undefined, {
-    enabled: Boolean(sessionUser),
-  })
+  const userQuery = useQuery(
+    trpc.user.getMe.queryOptions(undefined, {
+      enabled: Boolean(sessionUser),
+    })
+  )
 
-  const interestGroupQuery = trpc.interestGroup.get.useQuery(interestGroupId)
-  const membersQuery = trpc.interestGroup.getMembers.useQuery(interestGroupId)
+  const interestGroupQuery = useQuery(trpc.interestGroup.get.queryOptions(interestGroupId))
+  const membersQuery = useQuery(trpc.interestGroup.getMembers.queryOptions(interestGroupId))
 
   const interestGroup = interestGroupQuery.data
   const members = membersQuery.data
@@ -52,27 +57,32 @@ interface InnerInterestGroupViewProps {
 }
 
 const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInterestGroupViewProps) => {
+  const trpc = useTRPC()
   const { interestGroup, members, user, refetchMembers } = props
 
   const isInGroup = user && members.some((member) => member.userId === user.id)
 
-  const addMember = trpc.interestGroup.addMember.useMutation({
-    onSuccess: () => {
-      refetchMembers()
-    },
-    onError: (error) => {
-      console.error("Failed to join:", error.message)
-    },
-  })
+  const addMember = useMutation(
+    trpc.interestGroup.addMember.mutationOptions({
+      onSuccess: () => {
+        refetchMembers()
+      },
+      onError: (error) => {
+        console.error("Failed to join:", error.message)
+      },
+    })
+  )
 
-  const removeMember = trpc.interestGroup.removeMember.useMutation({
-    onSuccess: () => {
-      refetchMembers()
-    },
-    onError: (error) => {
-      console.error("Failed to leave:", error.message)
-    },
-  })
+  const removeMember = useMutation(
+    trpc.interestGroup.removeMember.mutationOptions({
+      onSuccess: () => {
+        refetchMembers()
+      },
+      onError: (error) => {
+        console.error("Failed to leave:", error.message)
+      },
+    })
+  )
 
   const joinInterestGroup = () => {
     if (user) {
@@ -110,11 +120,11 @@ const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInt
           )}
           <div className="mt-8">
             {isInGroup ? (
-              <Button onClick={leaveInterestGroup} disabled={addMember.isLoading || !user}>
+              <Button onClick={leaveInterestGroup} disabled={addMember.isPending || !user}>
                 Leave
               </Button>
             ) : (
-              <Button onClick={joinInterestGroup} disabled={addMember.isLoading || !user}>
+              <Button onClick={joinInterestGroup} disabled={addMember.isPending || !user}>
                 Join
               </Button>
             )}

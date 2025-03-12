@@ -19,5 +19,6 @@ export const useCreateJobListingModal = () => () =>
   modals.openContextModal({
     modal: "jobListing/create",
     title: "Opprett ny stillingsannonse",
+    size: "lg",
     innerProps: {},
   })

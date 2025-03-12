@@ -81,6 +81,14 @@ enum EmploymentType {
   @@map("employment_type")
 }
 
+enum GroupType {
+  COMMITTEE
+  NODECOMMITTEE
+  OTHERGROUP
+
+  @@map("group_type")
+}
+
 model OwUser {
   id                        String                   @id
   Attendee                  Attendee[]
@@ -93,6 +101,7 @@ model OwUser {
   NotificationPermissions   NotificationPermissions?
   PersonalMark              PersonalMark[]
   InterestGroupsMemberships InterestGroupMember[]
+  GroupMemberships          GroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
 
@@ -116,16 +125,30 @@ model Company {
   @@map("company")
 }
 
-model Committee {
+model Group {
   id          String           @id @default(uuid())
   createdAt   DateTime         @default(now())
   name        String
   description String
   email       String
   image       String?
-  events      EventCommittee[]
+  events      EventHostingGroup[]
+  type        GroupType
+  members     GroupMember[]
 
-  @@map("committee")
+  @@map("group")
+}
+
+model GroupMember {
+  groupId   String
+  group     Group     @relation(fields: [groupId], references: [id])
+
+  userId    String
+  user      OwUser    @relation(fields: [userId], references: [id])
+
+  @@id([groupId])
+
+  @@map("group_member")
 }
 
 model Attendance {
@@ -220,7 +243,7 @@ model Event {
   attendanceId    String?
   type            EventType
   companies       EventCompany[]
-  committees      EventCommittee[]
+  hostingGroups   EventHostingGroup[]
 
   @@map("event")
 }
@@ -354,15 +377,15 @@ model NotificationPermissions {
   @@map("notification_permissions")
 }
 
-model EventCommittee {
-  committeeId String
-  eventId     String
-  committee   Committee @relation(fields: [committeeId], references: [id])
-  event       Event     @relation(fields: [eventId], references: [id])
+model EventHostingGroup {
+  groupId        String
+  eventId        String
+  group          Group @relation(fields: [groupId], references: [id])
+  event          Event @relation(fields: [eventId], references: [id])
 
-  @@id([committeeId, eventId])
+  @@id([groupId, eventId])
 
-  @@map("event_committee")
+  @@map("event_hosting_group")
 }
 
 model JobListing {
