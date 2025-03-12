@@ -42,7 +42,9 @@ const formSchema = z
 		email: z.string().min(1),
 		accountNumber: z.string().optional(),
 		cardNumber: z.string().optional(),
-		amount: z.number(),
+		amount: z.string().refine((val) => !Number.isNaN(Number(val)), {
+			message: "Beløp må være et tall",
+		}),
 		responsibleCommittee: z.string(),
 		intent: z.string().min(1),
 		comments: z.string(),
@@ -117,7 +119,7 @@ export default function ReceiptForm() {
 			name: "test",
 			cardNumber: undefined,
 			accountNumber: "1234567890",
-			amount: 100,
+			amount: "100",
 			responsibleCommittee: "Hovedstyret",
 			intent: "test",
 			comments: "test",
@@ -216,7 +218,7 @@ export default function ReceiptForm() {
 				type: values.cardNumber ? "card" : "account",
 				card_number: values.cardNumber || "",
 				account: values.accountNumber || "",
-				amount: values.amount,
+				amount: Number(values.amount),
 				intent: values.intent,
 				comments: values.comments,
 				attachments: values.attachments.map((url) => ({
@@ -260,7 +262,7 @@ export default function ReceiptForm() {
 				onClick={() => {
 					form.setValue("name", "");
 					form.setValue("email", "");
-					form.setValue("amount", 0);
+					form.setValue("amount", "");
 					form.setValue("intent", "");
 					form.setValue("comments", "");
 					form.setValue("accountNumber", "");
@@ -393,17 +395,7 @@ export default function ReceiptForm() {
 							<FormItem>
 								<FormLabel>Beløp</FormLabel>
 								<FormControl>
-									<Input
-										{...field}
-										placeholder="Beløp i NOK"
-										type="number"
-										onChange={(e) => {
-											const value = e.target.value;
-											if (value === "" || !Number.isNaN(Number(value))) {
-												field.onChange(Number(value));
-											}
-										}}
-									/>
+									<Input {...field} placeholder="Beløp i NOK" type="string" />
 								</FormControl>
 								<FormDescription>Totalbeløp for kvitteringen</FormDescription>
 								<FormMessage />
