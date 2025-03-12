@@ -53,7 +53,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
     if (!template.name) {
       return { statusCode: 400, body: "Unknown template name" }
     }
-    const html = template(request.arguments)
+    const html = await template(request.arguments)
     const command = new SendEmailCommand({
       Source: request.source,
       ReplyToAddresses: request.replyTo,
