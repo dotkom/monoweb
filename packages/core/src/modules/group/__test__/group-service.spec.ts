@@ -15,6 +15,7 @@ describe("GroupService", () => {
       name: "Dotkom",
       createdAt: new Date(),
       description: "Dotkom gjør ting",
+      longDescription: "Ting skjer",
       email: "dotkom@online.ntnu.no",
       image: null,
       type: "COMMITTEE",
