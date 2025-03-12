@@ -22,7 +22,7 @@ const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
     paused: !scannerOpen,
   })
 
-  if (scannerOpen) {
+  if (scannerOpen && ref === null) {
     return (
       <div>
         <Button onClick={() => setScannerOpen(false)}>Lukk scanner</Button>
