@@ -1,6 +1,7 @@
-import type { Committee, CommitteeId, CommitteeWrite } from "@dotkomonline/types"
+import type { Committee, CommitteeId, CommitteeWrite, UserId } from "@dotkomonline/types"
 import { CommitteeNotFoundError } from "./committee-error"
 import type { CommitteeRepository } from "./committee-repository"
+import { AuditlogRepository } from "../auditlog/auditlog-repository"
 
 export interface CommitteeService {
   getCommittee(id: CommitteeId): Promise<Committee>
@@ -10,7 +11,10 @@ export interface CommitteeService {
 }
 
 export class CommitteeServiceImpl implements CommitteeService {
-  constructor(private readonly committeeRepository: CommitteeRepository) {}
+  constructor(
+    private readonly committeeRepository: CommitteeRepository,
+    private readonly auditlogRepository: AuditlogRepository
+  ) {}
 
   /**
    * Get a committee by its id

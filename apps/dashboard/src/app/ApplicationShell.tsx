@@ -62,6 +62,13 @@ const navigations = [
       { label: "Medlemskap", href: "/membership" },
     ],
   },
+  {
+    label: "Auditlog",
+    icon: "tabler:contract",
+    children: [
+      { label: "Auditlog", href: "/auditlog" },
+    ],
+  },
 ] as const
 
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {

@@ -5,7 +5,18 @@ import { protectedProcedure, publicProcedure, t } from "../../trpc"
 export const interestGroupRouter = t.router({
   create: protectedProcedure
     .input(InterestGroupWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.interestGroupService.create(input)),
+    .mutation(async ({ input, ctx }) => {
+      
+      const result = await ctx.interestGroupService.create(input, ctx.principal)
+      await ctx.AuditlogService.create({
+        userId: ctx.principal,
+        action: "CREATE",
+        recordId: result.id,
+        modelName: "Interest Group",
+        changes: null,
+      })
+    } 
+    ),
   all: publicProcedure.query(async ({ ctx }) => await ctx.interestGroupService.getAll()),
   get: publicProcedure
     .input(InterestGroupSchema.shape.id)

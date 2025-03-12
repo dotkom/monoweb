@@ -81,6 +81,13 @@ enum EmploymentType {
   @@map("employment_type")
 }
 
+enum action {
+  CREATE
+  UPDATE
+  DELETE
+
+  @@map("action")
+}
 model OwUser {
   id                        String                   @id
   Attendee                  Attendee[]
@@ -95,6 +102,7 @@ model OwUser {
   InterestGroupsMemberships InterestGroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
+  logs                     Auditlog[]
 
   @@map("ow_user")
 }
@@ -468,4 +476,21 @@ model InterestGroupMember {
   @@id([interestGroupId])
 
   @@map("interest_group_member")
+}
+
+
+model Auditlog {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  action     action
+  
+  userId     String
+  firstName  String
+  lastName   String
+  recordId   String    // Stores the affected model's ID
+  modelName  String    // Stores the model name (e.g., "InterestGroup")
+
+  user       OwUser   @relation(fields: [userId], references: [id])
+
+  @@map("auditlog")
 }

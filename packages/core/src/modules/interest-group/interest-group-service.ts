@@ -6,11 +6,12 @@ import type {
   UserId,
 } from "@dotkomonline/types"
 import type { InterestGroupRepository } from "./interest-group-repository"
+import { AuditlogService } from "../auditlog/auditlog-service"
 
 export interface InterestGroupService {
   getById(id: InterestGroupId): Promise<InterestGroup | null>
   getAll(): Promise<InterestGroup[]>
-  create(values: InterestGroupWrite): Promise<InterestGroup>
+  create(values: InterestGroupWrite,userId: UserId): Promise<InterestGroup>
   update(id: InterestGroupId, values: InterestGroupWrite): Promise<InterestGroup>
   delete(id: InterestGroupId): Promise<void>
   getMembers(id: InterestGroupId): Promise<InterestGroupMember[]>
@@ -20,7 +21,10 @@ export interface InterestGroupService {
 }
 
 export class InterestGroupServiceImpl implements InterestGroupService {
-  constructor(private readonly interestGroupRepository: InterestGroupRepository) {}
+  constructor(
+    private readonly interestGroupRepository: InterestGroupRepository,
+    private readonly auditlogService: AuditlogService
+  ) {}
 
   async getById(id: InterestGroupId): Promise<InterestGroup | null> {
     return this.interestGroupRepository.getById(id)
@@ -31,7 +35,15 @@ export class InterestGroupServiceImpl implements InterestGroupService {
   }
 
   async create(values: InterestGroupWrite): Promise<InterestGroup> {
-    return this.interestGroupRepository.create(values)
+    const interestGroup = await this.interestGroupRepository.create(values)
+    await this.auditlogService.create({
+      action: "CREATE",
+      recordId: interestGroup.id,
+      modelName: "Interest Group",
+      changes: null,
+      userId: values.userId,
+    })
+  return interestGroup
   }
 
   async update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup> {

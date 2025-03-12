@@ -32,6 +32,8 @@ import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
+import { type AuditlogRepository, AuditlogRepositoryImpl } from "./auditlog/auditlog-repository"
+import { type AuditlogService, AuditlogServiceImpl } from "./auditlog/auditlog-service"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { type JobListingService, JobListingServiceImpl } from "./job-listing/job-listing-service"
 import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
@@ -125,9 +127,10 @@ export const createServiceLayer = async ({
     privacyPermissionsRepository,
     notificationPermissionsRepository
   )
-
+  const AuditlogRepository: AuditlogRepository = new AuditlogRepositoryImpl(db)
+  const AuditlogService: AuditlogService = new AuditlogServiceImpl(AuditlogRepository)
   const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
-  const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
+  const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository, AuditlogRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
@@ -190,8 +193,9 @@ export const createServiceLayer = async ({
     articleTagRepository,
     articleTagLinkRepository
   )
+
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
-  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
+  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository, AuditlogRepository)
 
   return {
     userService,
@@ -217,5 +221,7 @@ export const createServiceLayer = async ({
     attendeeService,
     interestGroupRepository,
     interestGroupService,
+    AuditlogRepository,
+    AuditlogService
   }
 }

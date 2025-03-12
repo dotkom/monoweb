@@ -34,6 +34,15 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       },
     })
 
+    // Log the creation to the audit log
+    await this.db.auditlog.create({
+      data: {
+        action: "CREATE",  // Action type
+        userId: "admin123",  // Ideally, this comes from the current session/user
+        recordId: jobListing.id,  // The ID of the created Job Listing
+        modelName: "JobListing",  // Model name (JobListing in this case)
+      },
+    });
     return this.flattenJobListingLocations(jobListing)
   }
 
