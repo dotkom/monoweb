@@ -126,15 +126,16 @@ model Company {
 }
 
 model Group {
-  id          String           @id @default(uuid())
-  createdAt   DateTime         @default(now())
-  name        String
-  description String
-  email       String
-  image       String?
-  events      EventHostingGroup[]
-  type        GroupType
-  members     GroupMember[]
+  id                String           @id @default(uuid())
+  createdAt         DateTime         @default(now())
+  name              String
+  description       String
+  email             String
+  image             String?
+  longDescription   String?
+  events            EventHostingGroup[]
+  type              GroupType
+  members           GroupMember[]
 
   @@map("group")
 }
