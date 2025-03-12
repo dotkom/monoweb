@@ -476,8 +476,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
       '@fastify/cors':
-        specifier: ^10.0.2
-        version: 10.1.0
+        specifier: ^11.0.0
+        version: 11.0.0
       '@trpc/server':
         specifier: 11.0.0-rc.828
         version: 11.0.0-rc.828(typescript@5.8.2)
@@ -2339,8 +2339,8 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@fastify/cors@10.1.0':
-    resolution: {integrity: sha512-MZyBCBJtII60CU9Xme/iE4aEy8G7QpzGR8zkdXZkDFt7ElEMachbE61tfhAG/bvSaULlqlf0huMT12T7iqEmdQ==}
+  '@fastify/cors@11.0.0':
+    resolution: {integrity: sha512-41Bx0LVGr2a6DnnhDN/SgfDlTRNZtEs8niPxyoymV6Hw09AIdz/9Rn/0Fpu+pBOs6kviwS44JY2mB8NcU2qSAA==}
 
   '@fastify/error@4.0.0':
     resolution: {integrity: sha512-OO/SA8As24JtT1usTUTKgGH7uLvhfwZPwlptRi2Dp5P4KKmJI3gvsZ8MIHnNwDs4sLf/aai5LzTyl66xr7qMxA==}
@@ -9857,7 +9857,7 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fastify/cors@10.1.0':
+  '@fastify/cors@11.0.0':
     dependencies:
       fastify-plugin: 5.0.1
       mnemonist: 0.40.0
