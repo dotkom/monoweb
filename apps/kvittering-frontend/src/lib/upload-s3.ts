@@ -1,8 +1,12 @@
-export const uploadFileToS3 = async (file: File) => {
+export const uploadFileToS3 = async (
+	fileBlob: File,
+	fileName: string,
+	mimeType: string,
+) => {
 	const body = {
 		route: "presigned_post",
-		key: `${file.name}`,
-		mime_type: file.type,
+		key: fileName,
+		mime_type: mimeType,
 	};
 
 	const resp = await fetch(
@@ -21,7 +25,8 @@ export const uploadFileToS3 = async (file: File) => {
 	const presignedPost = response.data;
 
 	const url = await uploadFileToS3PresignedUrl(
-		file,
+		fileBlob,
+		mimeType,
 		presignedPost.fields,
 		presignedPost.url,
 	);
@@ -30,7 +35,8 @@ export const uploadFileToS3 = async (file: File) => {
 };
 
 async function uploadFileToS3PresignedUrl(
-	file: File,
+	fileBlob: File,
+	mimeType: string,
 	fields: Record<string, string>,
 	url: string,
 ): Promise<string> {
@@ -40,8 +46,8 @@ async function uploadFileToS3PresignedUrl(
 			formData.append(key, value);
 		}
 
-		formData.append("Content-Type", file.type);
-		formData.append("file", file);
+		formData.append("Content-Type", mimeType);
+		formData.append("file", fileBlob);
 
 		const response = await fetch(url, {
 			method: "POST",

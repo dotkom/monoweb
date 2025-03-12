@@ -46,7 +46,7 @@ Ekstra informasjon:
     @staticmethod
     def get_file_name(form: FormData) -> str:
         """Generate a filename for the PDF attachment."""
-        return f"[{get_current_date_string()}]-{form.intent}-{format_amount(form.amount)}-kvitteringsskjema.pdf"
+        return f"[{get_current_date_string()}]-{format_amount(form.amount)}-kvitteringsskjema.pdf"
 
     def send_email(
         self,

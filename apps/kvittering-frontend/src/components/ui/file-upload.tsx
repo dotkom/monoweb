@@ -197,8 +197,7 @@ export const FileUploader = forwardRef<
 						const compressedFilePromise = toast.promise(
 							compressImageWithLibrary(file, maxSizeMB, onProgress),
 							{
-								loading:
-									"Komprimerer bilde... (kan ta typ 20sek hvis du lastet opp et sykt stort bilde)",
+								loading: "Komprimerer bilde...",
 								success: "Bilde komprimert",
 								error: "Feil ved komprimering. Prøv igjen!",
 							},
@@ -211,8 +210,14 @@ export const FileUploader = forwardRef<
 						// open the compressedFile in a new tab
 						// window.open(compressedFile.downloadLink, "_blank");
 
+						const randomFileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.jpg`;
+
 						const urlPromise = toast.promise(
-							uploadFileToS3(compressedFile.compressedFile),
+							uploadFileToS3(
+								compressedFile.blob as File,
+								randomFileName,
+								"image/jpeg",
+							),
 							{
 								loading: "Laster opp fil...",
 								success: `${file.name} ble lastet opp`,

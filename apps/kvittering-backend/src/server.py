@@ -11,6 +11,9 @@ from core.utils import extract_s3_key_from_url
 from botocore.config import Config
 import sentry_sdk
 import secrets
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import logging
 
@@ -91,9 +94,13 @@ def generate_presigned_post():
             ["starts-with", "$Content-Type", ""],
         ]
 
+        generated_key = secrets.token_hex(8) + "-" + key
+
+        logger.info(f"Generating presigned post for {generated_key}")
+
         presigned_post = s3_client.generate_presigned_post(
             Bucket=env.STORAGE_BUCKET,
-            Key=secrets.token_hex(8) + "-" + key,
+            Key=generated_key,
             Conditions=conditions,
             ExpiresIn=3600,
         )
