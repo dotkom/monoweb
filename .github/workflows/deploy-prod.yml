@@ -2,7 +2,7 @@ name: Production deployment
 on:
   push:
     branches:
-      - main
+      - kvittering-doppler
 
 permissions:
   id-token: write   
@@ -95,8 +95,8 @@ jobs:
               workflow_id: 'apply.yml',
               ref: 'main',
               inputs: {
-                environment: 'prod',
-                project: 'monoweb-kvittering-backend',
+                environment: 'prd',
+                project: 'kvittering-backend',
                 targets: 'module.evergreen_service',
               },
             });

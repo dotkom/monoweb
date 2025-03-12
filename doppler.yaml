@@ -17,3 +17,9 @@ setup:
   - project: monoweb-web
     config: dev_personal
     path: apps/web
+  - project: monoweb-kvittering-frontend
+    config: dev_personal
+    path: apps/kvittering-frontend
+  - project: monoweb-kvittering-backend
+    config: dev_personal
+    path: apps/kvittering-backend

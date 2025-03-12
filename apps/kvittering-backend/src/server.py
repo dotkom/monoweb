@@ -12,10 +12,9 @@ from botocore.config import Config
 import sentry_sdk
 import secrets
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
-
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -77,7 +76,6 @@ def error():
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"message": "OK"})
-
 
 @app.route("/generate_presigned_post", methods=["POST", "OPTIONS"])
 def generate_presigned_post():
@@ -171,7 +169,28 @@ def send_email():
 
         pdf_url = body.get("pdf_url")
         form_data_dict = body.get("form_data")
+        session_start_time = body.get("session_start_time")
+        submit_time = body.get("submit_time")
+
+        session_data = s3_client.get_object(
+            Bucket=env.STORAGE_BUCKET,
+            Key="sessions.csv",
+        )
+
         form_data = FormData.from_json(form_data_dict)
+
+        session_start_time = datetime.fromisoformat(session_start_time)
+        submit_time = datetime.fromisoformat(submit_time)
+
+        total_time_taken = submit_time - session_start_time
+
+        row = f"{session_start_time},{submit_time},{total_time_taken},{form_data.responsible_committee}"
+
+        s3_client.put_object(
+            Bucket=env.STORAGE_BUCKET,
+            Key="sessions.csv",
+            Body=f"{session_start_time},{submit_time},{total_time_taken}",
+        )
 
         logger.info(
             f"PDF URL: {pdf_url}, Form data: {form_data}, Sender: {env.SENDER_EMAIL}, Recipient: {env.RECIPIENT_EMAIL}, CC: {env.CC_RECIPIENT_EMAILS}"
