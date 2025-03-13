@@ -2,8 +2,7 @@ name: Production deployment
 on:
   push:
     branches:
-      - main
-
+      - 03-13-fetch_doppler_secrets_for_kvittering-frontend_on_deploy
 permissions:
   id-token: write   
   contents: read
@@ -12,10 +11,33 @@ jobs:
     name: Deploy monoweb/kvittering-frontend
     runs-on: ubuntu-24.04
     steps:
+      # Setup and authenticate aws
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebProdKvitteringFrontendCIRole
+
+      # Setup and authenticate Doppler
+      - name: Install dependencies
+        run: npm install @actions/core@1.6.0 @actions/http-client
+      - name: Get OIDC Token
+        uses: actions/github-script@v6
+        id: get-oidc-token
+        with:
+          script: |
+            const gh = require('@actions/core')
+            const id_token = await gh.getIDToken()
+            core.setOutput('oidc_token', id_token)
+      - uses: dopplerhq/cli-action@v2
+      # Identity comes from the configured doppler account identity 
+      # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
+      - run: |
+          doppler oidc login \
+            --api-host https://api.doppler.com \
+            --scope=. \ 
+            --identity=2c64100e-5052-4a75-ac12-e03eb8575e70
+            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+      - run: doppler setup -p kvittering-frontend -c prod
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -31,7 +53,7 @@ jobs:
         run: pnpm install
       - name: Build frontend
         working-directory: apps/kvittering-frontend
-        run: pnpm build
+        run: doppler run -- pnpm build
       - name: Deploy to S3
         run: |
           aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
