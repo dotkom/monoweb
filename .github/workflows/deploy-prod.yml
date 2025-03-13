@@ -28,19 +28,12 @@ jobs:
           node-version: 22.14.0
           cache: 'pnpm'
           
-      - name: Install dependencies for OIDC
-        run: |
-          mkdir -p /tmp/oidc-deps
-          cd /tmp/oidc-deps
-          npm init -y
-          npm install @actions/core@1.6.0 @actions/http-client
       - name: Get OIDC Token
         uses: actions/github-script@v6
         id: get-oidc-token
         with:
           script: |
-            const gh = require('@actions/core')
-            const id_token = await gh.getIDToken()
+            const id_token = await core.getIDToken()
             core.setOutput('oidc_token', id_token)
       - uses: dopplerhq/cli-action@v2
 
