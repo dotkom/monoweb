@@ -584,7 +584,7 @@ resource "auth0_client" "monoweb_web" {
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0"]
+    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
 
@@ -615,7 +615,7 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0"]
+      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "prd" = [
         "https://dashboard.online.ntnu.no/api/auth/callback/auth0", 
         "https://online.ntnu.no/api/auth/callback/auth0"
