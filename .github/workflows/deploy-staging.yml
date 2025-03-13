@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - users/junlarsen/add_staging_deploy_of_dashboard
 
 permissions:
   id-token: write   
