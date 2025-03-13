@@ -19,12 +19,11 @@ RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
 COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
 
-# Must enable scripts here for Prisma codegen to build
-RUN apk update && apk add --no-cache python3 gcc g++ make
-RUN pnpm install
+RUN pnpm install --ignore-scripts
+RUN pnpm generate
 
 # Install for production
-RUN pnpm install --production
+RUN pnpm install --production --ignore-scripts
 
 FROM base AS runner
 WORKDIR /app
