@@ -1,5 +1,5 @@
 // Always import Sentry instrumentation at the top of the entrypoint
-import "./sentry.ts"
+import "./sentry"
 
 import { S3Client } from "@aws-sdk/client-s3"
 import { createPrisma } from "@dotkomonline/db"
