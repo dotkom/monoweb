@@ -273,7 +273,7 @@ export default function ReceiptForm() {
 				<br />
 				Ikke fiksa enda:
 				<br />- Kan ikke enda laste opp PDF'er. Ta en screenshot av PDF'en og
-				laste opp bildet i steden. Planen er å fikse snart
+				laste opp bildet i steden. 
 			</div>
 			<Button
 				variant="outline"
