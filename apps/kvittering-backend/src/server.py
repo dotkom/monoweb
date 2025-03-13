@@ -77,7 +77,7 @@ def error():
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"message": "OK"})
+    return jsonify({"message": "OK"}), 200
 
 
 @app.route("/generate_presigned_post", methods=["POST", "OPTIONS"])

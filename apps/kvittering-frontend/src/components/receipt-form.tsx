@@ -212,6 +212,8 @@ export default function ReceiptForm() {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log("onSubmit", values);
+		const startTime = new Date(window.sessionStorage.getItem("startTime"));
+		if()
 		try {
 			const formData: ApiFormData = {
 				full_name: values.name,
@@ -273,7 +275,7 @@ export default function ReceiptForm() {
 				<br />
 				Ikke fiksa enda:
 				<br />- Kan ikke enda laste opp PDF'er. Ta en screenshot av PDF'en og
-				laste opp bildet i steden. 
+				laste opp bildet i steden.
 			</div>
 			<Button
 				variant="outline"
