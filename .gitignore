@@ -51,3 +51,6 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# Sentry local clirc files
+.sentryclirc
