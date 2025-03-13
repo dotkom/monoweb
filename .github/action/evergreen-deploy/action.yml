@@ -1,0 +1,62 @@
+name: Evergreen Service Deployment
+description: Update the deployment of an Evergreen service
+inputs:
+  iam-credential-role:
+    description: AWS IAM Role to assume for OIDC Authentication
+    required: true
+  dockerfile:
+    description: Path to Dockerfile to build
+    required: true
+  docker-platforms:
+    description: Docker platforms to build for. Defaults to only linux/amd64
+    default: linux/amd64
+    required: true
+  docker-context:
+    description: Docker build context directory. Defaults to root
+    default: "."
+    required: true
+  docker-tag:
+    description: Docker image tag to create
+    required: true
+  environment:
+    description: Application environment to deploy
+    required: true
+  project:
+    description: Terraform project to target
+    required: true
+  targets:
+    description: Terraform targets to apply
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-north-1
+        role-to-assume: ${{ inputs.iam-credential-role }}
+    - uses: aws-actions/amazon-ecr-login@v2
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - uses: docker/build-push-action@v6
+      with:
+        platforms: ${{ inputs.docker-platforms }}
+        context: ${{ inputs.docker-context }}
+        file: ${{ inputs.dockerfile }}
+        tags: ${{ inputs.docker-tag }}
+        push: true
+    - uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'dotkom',
+            repo: 'terraform-monorepo',
+            workflow_id: 'apply.yml',
+            ref: 'main',
+            inputs: {
+              environment: '${{ inputs.environment }}',
+              project: '${{ inputs.project }}',
+              targets: '${{ inputs.targets }}',
+            },
+          });
