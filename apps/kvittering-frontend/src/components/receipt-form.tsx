@@ -252,7 +252,7 @@ export default function ReceiptForm() {
 			Sentry.captureMessage("An error ocurred in onSubmit", "error");
 		}
 	}
-	
+
 	const oldStartTime = window.sessionStorage.getItem("startTime");
 	const currentSessionTime = oldStartTime ? new Date(oldStartTime) : new Date();
 	window.sessionStorage.setItem("startTime", currentSessionTime.toISOString());

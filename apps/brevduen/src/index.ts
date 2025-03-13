@@ -1,3 +1,6 @@
+// Always import Sentry instrumentation at the top of the entrypoint
+import "./sentry"
+
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 import {
   HelloWorldTemplate,
@@ -7,9 +10,10 @@ import {
   InvoiceFormForBedKomTemplate,
   type Template,
 } from "@dotkomonline/emails"
-import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Handler } from "aws-lambda"
+import { getLogger } from "@dotkomonline/logger"
+import fastify from "fastify"
 import { ZodError, z } from "zod"
-import { env } from "./env.js"
+import { env } from "./env"
 
 const ses = new SESClient()
 
@@ -38,20 +42,29 @@ const requestSchema = z.object({
   replyTo: z.array(z.string().email()),
 })
 
-export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> = async (event) => {
-  const xEmailToken = event.headers["x-email-token"]
-  if (!xEmailToken) {
-    return { statusCode: 401, body: "Missing API Token" }
+const server = fastify()
+const logger = getLogger("brevduen")
+
+server.get("/health", (_, res) => {
+  res.send({ status: "ok" })
+})
+
+server.post("/integrations/email", async (req, res) => {
+  const xEmailToken = req.headers["x-email-token"]
+  if (Array.isArray(xEmailToken) || xEmailToken === undefined) {
+    logger.warn("blocked unauthenticated http request")
+    return res.status(401).send({ error: "Missing API Token " })
   }
   if (xEmailToken !== env.EMAIL_TOKEN) {
-    return { statusCode: 403, body: "Invalid API Token" }
+    logger.warn(`blocked unauthorized http request with token: ${xEmailToken}`)
+    return res.status(403).send({ error: "Invalid API Token" })
   }
+
   try {
-    const json = JSON.parse(event.body ?? "{}")
-    const request = requestSchema.parse(json)
+    const request = requestSchema.parse(req.body)
     const template = templateMap[request.template]
     if (!template.name) {
-      return { statusCode: 400, body: "Unknown template name" }
+      return res.status(400).send({ error: "Unknown template name" })
     }
     const html = await template(request.arguments)
     const command = new SendEmailCommand({
@@ -75,19 +88,22 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
         },
       },
     })
+    logger.info("sending email %o", command.input)
     await ses.send(command)
-    return { statusCode: 201 }
+    return res.status(201).send()
   } catch (err) {
     if (err instanceof ZodError) {
-      return { statusCode: 400, body: `Provided arguments don't match email input schema: ${err.message}` }
+      return res.status(400).send({ error: `Provided arguments don't match email input schema: ${err.message}` })
     }
     if (err instanceof InvalidTemplateArguments) {
-      return {
-        statusCode: 400,
-        body: `Arguments provided to template don't match the template's argument schema: ${err.message}`,
-      }
+      return res.status(400).send({
+        error: `Arguments provided to template don't match the template's argument schema: ${err.message}`,
+      })
     }
-    console.error(err)
-    return { statusCode: 500 }
+    logger.error("internal server error in AWS SES request: %o", err)
+    return res.status(500).send()
   }
-}
+})
+
+await server.listen({ port: 4433, host: "0.0.0.0" })
+logger.info("started brevduen server on http://0.0.0.0:4433")

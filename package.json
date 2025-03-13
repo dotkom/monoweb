@@ -17,7 +17,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif build",
+    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif -F @dotkomonline/emails build",
     "build:brevduen": "pnpm run -F @dotkomonline/brevduen build",
     "build:dashboard": "pnpm run -F @dotkomonline/dashboard build",
     "build:invoicification": "pnpm run -F @dotkomonline/invoicification build",
