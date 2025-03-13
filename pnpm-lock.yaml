@@ -503,8 +503,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1
       stripe:
-        specifier: ^13.11.0
-        version: 13.11.0
+        specifier: ^17.0.0
+        version: 17.7.0
       zod:
         specifier: ^3.22.4
         version: 3.24.2
@@ -794,8 +794,8 @@ importers:
         specifier: ^15.1.6
         version: 15.1.6(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       stripe:
-        specifier: ^13.11.0
-        version: 13.11.0
+        specifier: ^17.0.0
+        version: 17.7.0
       zod:
         specifier: ^3.22.4
         version: 3.24.2
@@ -951,8 +951,8 @@ importers:
         specifier: ^4.24.8
         version: 4.24.11(next@15.2.2(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       stripe:
-        specifier: ^13.11.0
-        version: 13.11.0
+        specifier: ^17.0.0
+        version: 17.7.0
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.3
@@ -5207,10 +5207,6 @@ packages:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
 
-  es-define-property@1.0.0:
-    resolution: {integrity: sha512-jxayLKShrEqqzJ0eumQbVhTYQM27CfT1T35+gCgDFoL82JLsXqTJ76zv6A0YLOgEnLUMvLzsDsGIrl8NFpT2gQ==}
-    engines: {node: '>= 0.4'}
-
   es-define-property@1.0.1:
     resolution: {integrity: sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==}
     engines: {node: '>= 0.4'}
@@ -5471,10 +5467,6 @@ packages:
   get-func-name@2.0.2:
     resolution: {integrity: sha512-8vXOvuE167CtIc3OyItco7N/dpRtBbYOsPsXCz7X/PMnlGjYjSGuZJgM1Y7mmew7BKf9BqvLX2tnOVy1BBUsxQ==}
 
-  get-intrinsic@1.2.4:
-    resolution: {integrity: sha512-5uYhsJH8VJBTv7oslg4BznJYhDoRI6waYCxMmCdnTrcCrHA/fCFKoTFz2JKKE0HdDFUF7/oQuhzumXJK7paBRQ==}
-    engines: {node: '>= 0.4'}
-
   get-intrinsic@1.3.0:
     resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
     engines: {node: '>= 0.4'}
@@ -5563,14 +5555,6 @@ packages:
 
   has-property-descriptors@1.0.2:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
-
-  has-proto@1.0.3:
-    resolution: {integrity: sha512-SJ1amZAJUiZS+PhsVLf5tGydlaVB8EdFpaSO4gmiUKUOxk8qzn5AIy4ZeJUmh22znIdk/uMAUT2pl3FxzVUH+Q==}
-    engines: {node: '>= 0.4'}
-
-  has-symbols@1.0.3:
-    resolution: {integrity: sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==}
-    engines: {node: '>= 0.4'}
 
   has-symbols@1.1.0:
     resolution: {integrity: sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==}
@@ -7375,8 +7359,8 @@ packages:
   strip-literal@2.1.1:
     resolution: {integrity: sha512-631UJ6O00eNGfMiWG78ck80dfBab8X6IVFB51jZK5Icd7XAs60Z5y7QdSd/wGIklnWvRbUNloVzhOKKmutxQ6Q==}
 
-  stripe@13.11.0:
-    resolution: {integrity: sha512-yPxVJxUzP1QHhHeFnYjJl48QwDS1+5befcL7ju7+t+i88D5r0rbsL+GkCCS6zgcU+TiV5bF9eMGcKyJfLf8BZQ==}
+  stripe@17.7.0:
+    resolution: {integrity: sha512-aT2BU9KkizY9SATf14WhhYVv2uOapBWX0OFWF4xvcj1mPaNotlSc2CsxpS4DS46ZueSppmCF5BX1sNYBtwBvfw==}
     engines: {node: '>=12.*'}
 
   strnum@1.1.2:
@@ -12645,7 +12629,7 @@ snapshots:
 
   call-bind@1.0.7:
     dependencies:
-      es-define-property: 1.0.0
+      es-define-property: 1.0.1
       es-errors: 1.3.0
       function-bind: 1.1.2
       get-intrinsic: 1.3.0
@@ -13105,10 +13089,6 @@ snapshots:
 
   entities@4.5.0: {}
 
-  es-define-property@1.0.0:
-    dependencies:
-      get-intrinsic: 1.3.0
-
   es-define-property@1.0.1: {}
 
   es-errors@1.3.0: {}
@@ -13495,14 +13475,6 @@ snapshots:
 
   get-func-name@2.0.2: {}
 
-  get-intrinsic@1.2.4:
-    dependencies:
-      es-errors: 1.3.0
-      function-bind: 1.1.2
-      has-proto: 1.0.3
-      has-symbols: 1.0.3
-      hasown: 2.0.2
-
   get-intrinsic@1.3.0:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -13611,10 +13583,6 @@ snapshots:
   has-property-descriptors@1.0.2:
     dependencies:
       es-define-property: 1.0.1
-
-  has-proto@1.0.3: {}
-
-  has-symbols@1.0.3: {}
 
   has-symbols@1.1.0: {}
 
@@ -15849,7 +15817,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.7
       es-errors: 1.3.0
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.3.0
       object-inspect: 1.13.2
 
   siginfo@2.0.0: {}
@@ -16016,7 +15984,7 @@ snapshots:
     dependencies:
       js-tokens: 9.0.1
 
-  stripe@13.11.0:
+  stripe@17.7.0:
     dependencies:
       '@types/node': 22.13.10
       qs: 6.13.0
