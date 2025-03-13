@@ -35,7 +35,7 @@ jobs:
           doppler oidc login \
             --api-host https://api.doppler.com \
             --scope=. \
-            --identity=2c64100e-5052-4a75-ac12-e03eb8575e70 \
+            --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
             --token=${{ steps.get-oidc-token.outputs.oidc_token }}
       - run: doppler setup -p kvittering-frontend -c prod
       - uses: actions/checkout@v4
