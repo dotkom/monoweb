@@ -29,7 +29,11 @@ jobs:
           cache: 'pnpm'
           
       - name: Install dependencies for OIDC
-        run: npm install @actions/core@1.6.0 @actions/http-client
+        run: |
+          mkdir -p /tmp/oidc-deps
+          cd /tmp/oidc-deps
+          npm init -y
+          npm install @actions/core@1.6.0 @actions/http-client
       - name: Get OIDC Token
         uses: actions/github-script@v6
         id: get-oidc-token
