@@ -155,6 +155,11 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
     "http://localhost:3000"
   ]
   app_type = "spa"
+  allowed_logout_urls = {
+    "dev" = ["http://localhost:3000"]
+    "stg" = ["https://staging.vinstraff.no"]
+    "prd" = ["https://vinstraff.no"]
+  }[terraform.workspace]
   callbacks = {
     "dev" = [
       "http://localhost:3000",
