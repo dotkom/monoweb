@@ -487,6 +487,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
+      '@dotkomonline/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       '@fastify/cors':
         specifier: ^11.0.0
         version: 11.0.0
