@@ -10,15 +10,17 @@ import {
   appRouter,
   createContext,
 } from "@dotkomonline/gateway-trpc"
+import { getLogger } from "@dotkomonline/logger"
 import fastifyCors from "@fastify/cors"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import { ManagementClient } from "auth0"
 import fastify from "fastify"
 import Stripe from "stripe"
+import { verifyIdentityCredenetials } from "./aws"
 import { env } from "./env"
-import { verifyAwsCredentials } from "./utils"
 
+const logger = getLogger("rpc")
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = env.OAUTH_AUDIENCES.split(",")
 
@@ -84,10 +86,10 @@ server.register(fastifyTRPCPlugin, {
     router: appRouter,
     createContext: createFastifyContext,
     onError: ({ path, error }) => {
-      console.error(`Error in tRPC handler on path '${path}':`, error)
+      logger.error(`Error in tRPC handler on path '${path}': %o`, error)
       if (error.cause instanceof AggregateError) {
         for (const err of error.cause.errors) {
-          console.error(`  AggregateError Child in tRPC handler on path '${path}':`, err)
+          logger.error(`  AggregateError Child in tRPC handler on path '${path}': %o`, err)
         }
       }
     },
@@ -98,7 +100,6 @@ server.get("/health", (_, res) => {
   res.send({ status: "ok" })
 })
 
-verifyAwsCredentials()
-
+await verifyIdentityCredenetials()
 await server.listen({ port: 4444, host: "0.0.0.0" })
-console.info("Started RPC server on http://0.0.0.0:4444")
+logger.info("Started RPC server on http://0.0.0.0:4444")
