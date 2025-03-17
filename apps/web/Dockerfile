@@ -1,6 +1,7 @@
 FROM node:22-alpine AS base
 
 ARG NEXT_PUBLIC_ORIGIN
+ARG RPC_HOST
 
 FROM base AS builder
 WORKDIR /app
@@ -29,6 +30,7 @@ WORKDIR /app
 
 COPY --from=builder /app/out/full .
 
+ENV RPC_HOST ${RPC_HOST}
 ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
 RUN turbo run build --filter @dotkomonline/web
 
