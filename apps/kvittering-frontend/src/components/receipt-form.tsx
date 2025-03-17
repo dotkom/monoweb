@@ -227,6 +227,7 @@ export default function ReceiptForm() {
 					url,
 					mime_type: files?.find((file) => file.url === url)?.file.type ?? "",
 				})),
+				// biome-ignore lint: Will never be undefined
 				start_time: new Date(window.sessionStorage.getItem("startTime")!),
 			};
 
