@@ -40,7 +40,7 @@ const links: MenuLink[] = [
         description: "Online sitt Kvitteringskjema",
       },
       { title: "Faktura", href: "https://faktura.online.ntnu.no/", description: "Faktura" },
-      { title: "Interesseskjema", href: "/company-info", description: "Interesert?" },
+      { title: "Interesseskjema", href: "https://interesse.online.ntnu.no/", description: "Interesert?" },
     ],
   },
 ]
