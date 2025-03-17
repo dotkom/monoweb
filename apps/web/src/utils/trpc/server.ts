@@ -2,39 +2,36 @@ import { env } from "@/env"
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import * as trpc from "@trpc/client"
 import { getToken } from "next-auth/jwt"
-import type { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers"
-import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 import type { RequestCookies } from "next/dist/server/web/spec-extension/cookies"
 import { cookies, headers } from "next/headers"
 import type { NextRequest } from "next/server"
 import superjson from "superjson"
 
-/*
-This hack is needed because some genius at next auth decided to make the only api to get the token from jwt require a request object
-https://github.com/nextauthjs/next-auth/blob/31ead6df29c508b8177f6e088cd4f11f3a341886/packages/core/src/jwt.ts#L141
-
-Discussion:
-https://github.com/nextauthjs/next-auth/issues/7913
-
-This can be replaced by auth() in next-auth 5, but it is still in beta
-*/
+/**
+ * Get the Auth0-issued JWT token on the server side.
+ *
+ * This is a slight hack because Next does not give you access to the request
+ * on the server, so we emulate a "fake" request that gives next-auth just
+ * enough data to get the token from cookies/headers
+ *
+ * This function also has to account for the edge case during SSG where there
+ * are no headers or cookies available at all
+ */
 async function getTokenServerside() {
-  let reqHeaders: ReadonlyHeaders
-  let reqCookies: ReadonlyRequestCookies
-
-  // If we in for example static generation, we don't have headers or cookies available.
+  // If we are in SSG, we do not have a token available at all
   try {
-    reqHeaders = await headers()
-    reqCookies = await cookies()
-  } catch (e) {
+    const requestHeaders = await headers()
+    const requestCookies = await cookies()
+    // TODO: Maybe we should just construct NextRequest and encode the cookies
+    //  ourselves?
+    const request = {
+      headers: requestHeaders,
+      cookies: requestCookies as unknown as RequestCookies,
+    } as NextRequest
+    return await getToken({ req: request, secret: env.AUTH_SECRET })
+  } catch {
     return null
   }
-  return await getToken({
-    req: {
-      headers: reqHeaders,
-      cookies: reqCookies as unknown as RequestCookies,
-    } as NextRequest,
-  })
 }
 
 export const server = trpc.createTRPCProxyClient<AppRouter>({

@@ -1,10 +1,9 @@
+import { auth } from "@/auth"
 import { SettingsPassword } from "@/components/views/SettingsView/components"
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 
 const PasswordPage = async () => {
-  const session = await getServerSession()
-
+  const session = await auth()
   if (session === null) {
     redirect("/")
   }
