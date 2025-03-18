@@ -769,6 +769,9 @@ importers:
       '@trpc/client':
         specifier: 11.0.0-rc.828
         version: 11.0.0-rc.828(@trpc/server@11.0.0-rc.828(typescript@5.8.2))(typescript@5.8.2)
+      jose:
+        specifier: ^6.0.0
+        version: 6.0.10
       next:
         specifier: ^15.1.6
         version: 15.2.2(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

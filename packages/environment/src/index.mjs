@@ -17,7 +17,9 @@ export function createEnvironment(variables, env = process.env) {
   const environment = schema.safeParse(env)
   const skipValidation = process.env.DOCKER_BUILD === "1" || process.env.CI !== undefined
   if (skipValidation) {
-    return environment.data ?? {}
+    // If we did successfully parse, we might as well return them. Otherwise, we're just going to hand the raw
+    // environment variables back.
+    return environment.data ?? env
   }
   if (!environment.success) {
     throw new Error(

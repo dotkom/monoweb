@@ -281,12 +281,12 @@ jobs:
       - run: doppler setup -p monoweb-web -c staging
       # Configure build arguments
       - run: |
-          OAUTH_CLIENT_ID=$(doppler secrets get OAUTH_CLIENT_ID --json | jq '.OAUTH_CLIENT_ID.computed')
-          OAUTH_CLIENT_SECRET=$(doppler secrets get OAUTH_CLIENT_SECRET --json | jq '.OAUTH_CLIENT_SECRET.computed')
-          OAUTH_ISSUER=$(doppler secrets get OAUTH_ISSUER --json | jq '.OAUTH_ISSUER.computed')
-          AUTH_SECRET=$(doppler secrets get AUTH_SECRET --json | jq '.AUTH_SECRET.computed')
-          NEXT_PUBLIC_ORIGIN=$(doppler secrets get NEXT_PUBLIC_ORIGIN --json | jq '.NEXT_PUBLIC_ORIGIN.computed')
-          RPC_HOST=$(doppler secrets get RPC_HOST --json | jq '.RPC_HOST.computed')
+          OAUTH_CLIENT_ID=$(doppler secrets get OAUTH_CLIENT_ID --json | jq -r '.OAUTH_CLIENT_ID.computed')
+          OAUTH_CLIENT_SECRET=$(doppler secrets get OAUTH_CLIENT_SECRET --json | jq -r '.OAUTH_CLIENT_SECRET.computed')
+          OAUTH_ISSUER=$(doppler secrets get OAUTH_ISSUER --json | jq -r '.OAUTH_ISSUER.computed')
+          AUTH_SECRET=$(doppler secrets get AUTH_SECRET --json | jq -r '.AUTH_SECRET.computed')
+          NEXT_PUBLIC_ORIGIN=$(doppler secrets get NEXT_PUBLIC_ORIGIN --json | jq -r '.NEXT_PUBLIC_ORIGIN.computed')
+          RPC_HOST=$(doppler secrets get RPC_HOST --json | jq -r '.RPC_HOST.computed')
 
           echo "::add-mask::$OAUTH_CLIENT_ID"
           echo "::add-mask::$OAUTH_CLIENT_SECRET"
