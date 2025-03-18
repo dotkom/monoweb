@@ -1,10 +1,9 @@
+import { auth } from "@/auth"
 import ProfilePoster from "@/components/views/ProfileView"
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 
 const ProfilePage = async () => {
-  const session = await getServerSession()
-
+  const session = await auth()
   if (session === null) {
     redirect("/")
   }

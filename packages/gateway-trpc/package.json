@@ -14,17 +14,12 @@
     "coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@trpc/server": "11.0.0-rc.828",
     "superjson": "^2.0.0",
     "jose": "^6.0.0",
     "zod": "^3.22.4"
-  },
-  "peerDependencies": {
-    "next": "^15.1.6",
-    "next-auth": "^4.24.8"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

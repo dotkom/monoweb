@@ -1,6 +1,5 @@
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { getServerSession } from "next-auth"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
 import { EventDescriptionAndByline } from "../components/EventDescriptionAndByline"
 import { EventHeader } from "../components/EventHeader"
@@ -8,7 +7,7 @@ import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 
 const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   const eventDetail = await server.event.getWebEventDetailData.query(id)
 
   return (

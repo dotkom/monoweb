@@ -20,7 +20,7 @@
     "@trpc/react-query": "11.0.0-rc.828",
     "ical-generator": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "next-auth": "^4.24.8",
+    "next-auth": "5.0.0-beta.25",
     "stripe": "^13.11.0"
   },
   "peerDependencies": {

@@ -13,7 +13,7 @@
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
     "next": "^15.1.6",
-    "next-auth": "^4.24.8"
+    "next-auth": "5.0.0-beta.25"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3"

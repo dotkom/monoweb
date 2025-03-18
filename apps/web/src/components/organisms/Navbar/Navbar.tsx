@@ -1,5 +1,5 @@
+import { auth } from "@/auth"
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { getServerSession } from "next-auth"
 import Link from "next/link"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
@@ -46,7 +46,7 @@ const links: MenuLink[] = [
 ]
 
 export const Navbar = async () => {
-  const session = await getServerSession()
+  const session = await auth()
 
   return (
     <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">

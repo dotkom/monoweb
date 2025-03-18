@@ -1,11 +1,10 @@
 import { Card, Container, Flex, Text, Title } from "@mantine/core"
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
-import { authOptions } from "../pages/api/auth/[...nextauth]"
+import { auth } from "../auth"
 import { SignInButton } from "./SignInButton"
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   if (session !== null) {
     redirect("/event")
   }
