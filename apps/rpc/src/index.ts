@@ -1,5 +1,5 @@
 // Always import Sentry instrumentation at the top of the entrypoint
-import "./sentry"
+import "./instrumentation"
 
 import { S3Client } from "@aws-sdk/client-s3"
 import { createPrisma } from "@dotkomonline/db"
@@ -21,9 +21,9 @@ import { verifyIdentityCredenetials } from "./aws"
 import { env } from "./env"
 
 const logger = getLogger("rpc")
+
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
 const oauthAudiences = env.OAUTH_AUDIENCES.split(",")
-
 const jwtService = new JwtService(env.OAUTH_ISSUER, oauthAudiences)
 
 const s3Client = new S3Client({
