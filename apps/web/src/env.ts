@@ -13,6 +13,11 @@ export const env = createEnvironment(
     NEXT_PUBLIC_ORIGIN: variable.default("http://localhost:3000"),
     RPC_HOST: variable,
     SIGNING_KEY: variable,
+    // These should only be set in production
+    SENTRY_DSN: variable.optional(),
+    OTEL_EXPORTER_OTLP_PROTOCOL: variable.optional(),
+    OTEL_EXPORTER_OTLP_ENDPOINT: variable.optional(),
+    OTEL_EXPORTER_OTLP_HEADERS: variable.optional(),
   },
   {
     ...process.env,
