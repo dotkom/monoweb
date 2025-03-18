@@ -11,6 +11,19 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@opentelemetry/api-logs": "^0.200.0",
+    "@opentelemetry/api-metrics": "^0.33.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.200.0",
+    "@opentelemetry/exporter-metrics-otlp-proto": "^0.200.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.200.0",
+    "@opentelemetry/instrumentation-winston": "^0.44.1",
+    "@opentelemetry/resources": "^2.0.0",
+    "@opentelemetry/sdk-logs": "^0.200.0",
+    "@opentelemetry/sdk-metrics": "^2.0.0",
+    "@opentelemetry/sdk-node": "^0.200.0",
+    "@opentelemetry/sdk-trace-node": "^2.0.0",
+    "@opentelemetry/semantic-conventions": "^1.30.0",
+    "@opentelemetry/winston-transport": "^0.10.1",
     "winston": "^3.17.0"
   },
   "devDependencies": {
