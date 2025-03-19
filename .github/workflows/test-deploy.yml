@@ -47,6 +47,9 @@ jobs:
       - name: Install dependencies
         working-directory: apps/splash-2025
         run: pnpm install
+      - name: See projects
+        working-directory: apps/splash-2025
+        run: doppler projects
       - name: Build frontend
         working-directory: apps/splash-2025
         run: doppler run -p monoweb-splash-frontend -c prod -- pnpm build
