@@ -2,7 +2,7 @@ name: Production deployment
 on:
   push:
     branches:
-      - deployment-splash
+      - 03-19-set_up_continous_deployment_for_splash
 permissions:
   id-token: write   
   contents: read
