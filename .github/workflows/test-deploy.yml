@@ -49,7 +49,7 @@ jobs:
         run: pnpm install
       - name: Build frontend
         working-directory: apps/splash-2025
-        run: doppler run -p monoweb-splash-frontend -c prod -- pnpm build
+        run: doppler run -p monoweb-splash-frontend -c prd -- pnpm build
         
       - name: Deploy to S3
         run: |
