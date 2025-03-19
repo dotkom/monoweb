@@ -1,4 +1,3 @@
-const isStandaloneBuild = process.env.DOCKER_BUILD !== undefined
 /**
  * @type {import('next').NextConfig}
  */
@@ -22,7 +21,7 @@ const config = {
     "@dotkomonline/types",
     "@dotkomonline/ui",
   ],
-  ...(isStandaloneBuild ? { output: "standalone" } : {}),
+  output: "standalone",
 }
 
 export default config
