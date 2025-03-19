@@ -9,7 +9,7 @@ set -e
 pnpm build
 
 # Configuration - CHANGE THESE VALUES
-BUCKET_NAME="kvittering.online.ntnu.no"  # Must be globally unique
+BUCKET_NAME="splash.online.ntnu.no"  # Must be globally unique
 REGION="eu-north-1"                  # AWS region
 DIST_DIR="dist"
 
