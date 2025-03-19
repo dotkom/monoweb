@@ -1,6 +1,6 @@
 export const Header = () => {
 	return (
-		<header className="bg-onlineBlue flex justify-center w-full">
+		<header className="bg-brand flex justify-center w-full">
 			<a href="https://online.ntnu.no" className="flex flex-col text-white">
 				<img src="" alt="" />
 				Tilbake til hovedsiden
