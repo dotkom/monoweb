@@ -4,7 +4,7 @@ function App() {
 	return (
 		<div>
 			<Header />
-			<main>Team onboarding ftw</main>
+			<main>Team onboarding ftw 1</main>
 		</div>
 	);
 }

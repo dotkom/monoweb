@@ -624,9 +624,6 @@ importers:
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      '@fadi-ui/react-country-flag':
-        specifier: ^1.0.7
-        version: 1.0.7
       '@mdxeditor/editor':
         specifier: ^3.24.0
         version: 3.26.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yjs@13.6.23)
@@ -2280,9 +2277,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@fadi-ui/react-country-flag@1.0.7':
-    resolution: {integrity: sha512-UO+mSApJ9tKcTFo/XN8SPkko+KAWoiJRAOuY2CHAHrH0x7tBaCO8rXiTVpN70jR2sEuhDIsOn604kElRRJxRNg==}
 
   '@fastify/ajv-compiler@4.0.2':
     resolution: {integrity: sha512-Rkiu/8wIjpsf46Rr+Fitd3HRP+VsxUFDDeag0hs9L0ksfnwx2g7SPQQTFL0E8Qv+rfXzQOxBJnjUB9ITUDjfWQ==}
@@ -9455,11 +9449,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.0':
     optional: true
-
-  '@fadi-ui/react-country-flag@1.0.7':
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   '@fastify/ajv-compiler@4.0.2':
     dependencies:
