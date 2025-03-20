@@ -9,6 +9,7 @@ export const env = createEnvironment(
     // Behind a proxy (e.g AWS ALB) the Host header will be the proxy's host, so
     // we tell AuthJs to trust the X-Forwarded-Host header instead.
     AUTH_TRUST_HOST: variable.optional(),
+    AUTH_URL: variable.optional(),
     NEXT_PUBLIC_ORIGIN: variable.default("http://localhost:3000"),
     RPC_HOST: variable,
     SIGNING_KEY: variable,
