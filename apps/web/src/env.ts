@@ -11,6 +11,7 @@ export const env = createEnvironment(
     AUTH_TRUST_HOST: variable.optional(),
     NEXT_PUBLIC_ORIGIN: variable.default("http://localhost:3000"),
     RPC_HOST: variable,
+    SIGNING_KEY: variable,
   },
   {
     ...process.env,
