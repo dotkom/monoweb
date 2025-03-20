@@ -35,6 +35,9 @@
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.5.3"
   },
+  "peerDependencies": {
+    "next": "^15"
+  },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
