@@ -1,4 +1,5 @@
 import { type User, UserSchema } from "@dotkomonline/types"
+import { createRemoteJWKSet, jwtVerify } from "jose"
 import type { DefaultSession, NextAuthConfig } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
@@ -27,61 +28,77 @@ export interface AuthOptions {
 }
 
 export const createAuthConfig = ({
-  auth0ClientId: oidcClientId,
-  auth0ClientSecret: oidcClientSecret,
-  auth0Issuer: oidcIssuer,
+  auth0ClientId,
+  auth0ClientSecret,
+  auth0Issuer,
   jwtSecret,
   rpcHost,
-}: AuthOptions): NextAuthConfig => ({
-  secret: jwtSecret,
-  providers: [
-    Auth0Provider({
-      clientId: oidcClientId,
-      clientSecret: oidcClientSecret,
-      issuer: oidcIssuer,
-      profile: (profile) => ({
-        id: profile.sub,
-        name: profile.name,
-        email: profile.email,
-        image: profile.picture,
-      }),
-      authorization: {
-        params: {
-          scope: "openid profile email offline_access",
+}: AuthOptions): NextAuthConfig => {
+  const issuerWithoutTrailingSlash = auth0Issuer.replace(/\/$/, "")
+  const jwksUrl = new URL("/.well-known/jwks.json", issuerWithoutTrailingSlash)
+  const jwks = createRemoteJWKSet(jwksUrl, {
+    // Auth0 gives a max-age=15 and stale-while-revalidate=15 header. We will cache the JWKS for 30 seconds at a time.
+    cacheMaxAge: 30000,
+  })
+
+  return {
+    secret: jwtSecret,
+    providers: [
+      Auth0Provider({
+        clientId: auth0ClientId,
+        clientSecret: auth0ClientSecret,
+        issuer: auth0Issuer,
+        profile: (profile) => ({
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }),
+        authorization: {
+          params: {
+            scope: "openid profile email offline_access",
+          },
         },
-      },
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, account }): Promise<JWT> {
-      if (account?.access_token) {
-        token.accessToken = account.access_token
-      }
-      if (account?.refresh_token) {
-        token.refreshToken = account.refresh_token
-      }
-      return token
+      }),
+    ],
+    session: {
+      strategy: "jwt",
     },
-    async session({ session, token }) {
-      if (token.sub && token.accessToken) {
+    callbacks: {
+      async jwt({ token, account }): Promise<JWT> {
+        if (account?.access_token) {
+          token.accessToken = account.access_token
+        }
+        if (account?.refresh_token) {
+          token.refreshToken = account.refresh_token
+        }
+        return token
+      },
+      async session({ session, token }) {
+        if (token.accessToken === undefined) {
+          return session
+        }
         const trpcProxyServer = createServer(rpcHost, token.accessToken)
-        // TODO: This might fail if the user is doing federated sign in through
-        //  feide, in which case the sub is the Feide sub, not auth0 sub,
-        //  perhaps, we should derive sub from `accessToken` instead?
         try {
-          const user = await trpcProxyServer.mutation("user.registerAndGet", token.sub)
+          const jwt = await jwtVerify(token.accessToken, jwks, {
+            clockTolerance: "5s",
+            algorithms: ["RS256"],
+            // Auth0's issuer contains a trailing slash, but Next Auth does not
+            issuer: `${auth0Issuer}/`,
+            // audience: this.audiences,
+            typ: "JWT",
+          })
+          const user = await trpcProxyServer.mutation("user.registerAndGet", jwt.payload.sub)
           session.user = {
             ...UserSchema.parse(user),
             emailVerified: null,
           }
-        } catch (e) {
-          console.error("user does not have valid auth0 sub", e)
+        } catch (err) {
+          // TODO: replace with logger
+          console.error("failed to verify access token", err)
         }
-      }
-      return session
+        return session
+      },
     },
-  },
-})
+  }
+}

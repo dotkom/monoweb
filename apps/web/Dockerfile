@@ -26,7 +26,7 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@9.15.5 --ignore-scripts
 COPY --from=builder /app/out/json .
 COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
 RUN pnpm install --ignore-scripts
@@ -45,7 +45,7 @@ ENV AUTH_SECRET ${AUTH_SECRET}
 ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
 ENV RPC_HOST ${RPC_HOST}
 
-RUN turbo run build --filter @dotkomonline/web
+RUN pnpm run --filter @dotkomonline/web build
 
 FROM base AS runner
 WORKDIR /app
