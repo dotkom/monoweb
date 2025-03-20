@@ -33,7 +33,11 @@ const links: MenuLink[] = [
   {
     title: "For bedrifter",
     items: [
-      { title: "Kontakt", href: "/company-info", description: "Kontakt Linjeforening" },
+      {
+        title: "Samarbeid med Online",
+        href: "/for-bedrifter",
+        description: "Utforsk linjeforeningens tilbud og ta kontakt",
+      },
       {
         title: "Kvitteringskjema",
         href: "https://kvittering.online.ntnu.no/",
