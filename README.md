@@ -19,7 +19,7 @@ doppler setup # Press Y on every prompt
 docker compose up -d
 
 pnpm install
-pnpm migrate # Only needs to be run once to set up the database
+pnpm migrate:dev # Only needs to be run once to set up the database
 pnpm dev
 ```
 
