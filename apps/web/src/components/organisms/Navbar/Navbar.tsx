@@ -49,7 +49,7 @@ export const Navbar = async () => {
   const session = await auth()
 
   return (
-    <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
+    <header className="mx-auto w-full max-w-screen-xl px-2 sm:px-10">
       <div className="border-blue-12/20 flex h-16 border-b">
         <MobileNavigation links={links} />
         <Link href="/" className="flex items-center">
