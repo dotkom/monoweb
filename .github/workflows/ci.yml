@@ -115,7 +115,7 @@ jobs:
           context: .
           file: apps/brevduen/Dockerfile
           tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/brevduen:latest
-          push: ${{ env.GH_IS_DEPLOYING_STAGING }
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
       - uses: actions/github-script@v7
         if: env.GH_IS_DEPLOYING_STAGING
         with:
