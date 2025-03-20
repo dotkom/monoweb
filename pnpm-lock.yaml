@@ -1127,6 +1127,12 @@ importers:
 
   packages/ui:
     dependencies:
+      '@fontsource/fraunces':
+        specifier: ^5.2.5
+        version: 5.2.5
+      '@fontsource/poppins':
+        specifier: ^5.2.5
+        version: 5.2.5
       '@iconify-icon/react':
         specifier: ^2.0.0
         version: 2.3.0(react@18.3.1)
@@ -2320,6 +2326,12 @@ packages:
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
+
+  '@fontsource/fraunces@5.2.5':
+    resolution: {integrity: sha512-+OmG4NKrnYhnIvQ9SAMnDi933DQHKcgQ3BOVs1jRFasLvge0m69ItX3yapb2lPKKnrAi1haG89GuUeKK/ItdmA==}
+
+  '@fontsource/poppins@5.2.5':
+    resolution: {integrity: sha512-1S3k45pZOz2jqGPPqKw0in3uxFwnB+d5jSU8Tp9YwH/dIJptE3jdkQbYN0QD861GtuOpn6QhPW/yKt1w7hVRBQ==}
 
   '@hookform/error-message@2.0.1':
     resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
@@ -9468,6 +9480,10 @@ snapshots:
       tabbable: 6.2.0
 
   '@floating-ui/utils@0.2.9': {}
+
+  '@fontsource/fraunces@5.2.5': {}
+
+  '@fontsource/poppins@5.2.5': {}
 
   '@hookform/error-message@2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.54.2(react@18.3.1))(react@18.3.1)':
     dependencies:
