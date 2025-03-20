@@ -8,8 +8,6 @@
     "build": "next build",
     "docker:build": "docker build -t web:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
-    "storybook": "start-storybook -p 6007",
-    "build-storybook": "build-storybook",
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit"

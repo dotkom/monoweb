@@ -8,6 +8,7 @@
     "OAUTH_ISSUER",
     "AUTH_SECRET",
     "AUTH_TRUST_HOST",
+    "AUTH_URL",
     "DATABASE_URL",
     "FAGKOM_STRIPE_PUBLIC_KEY",
     "FAGKOM_STRIPE_SECRET_KEY",
@@ -47,17 +48,17 @@
     "dev": {
       "cache": false
     },
-    "migrate": {
+    "migrate:dev": {
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "dependsOn": []
+    },
+    "migrate:dev-with-fixtures": {
       "env": ["DATABASE_URL"],
       "cache": false,
       "dependsOn": []
     },
     "clean": {
-      "cache": false
-    },
-    "docker:build": {},
-    "storybook": {
-      "outputs": [],
       "cache": false
     }
   },
