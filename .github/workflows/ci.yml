@@ -145,6 +145,46 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
       - uses: aws-actions/amazon-ecr-login@v2
+      # Dashboard requires build-time secrets from Doppler
+      - uses: actions/github-script@v6
+        id: get-oidc-token
+        with:
+          script: |
+            const id_token = await core.getIDToken()
+            core.setOutput('oidc_token', id_token)
+      - uses: dopplerhq/cli-action@v2
+      # Identity comes from the configured doppler account identity
+      # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
+      - run: |
+          doppler oidc login \
+            --api-host https://api.doppler.com \
+            --scope=. \
+            --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
+            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+      - run: doppler setup -p monoweb-dashboard -c staging
+      # Configure build arguments
+      - run: |
+          OAUTH_CLIENT_ID=$(doppler secrets get OAUTH_CLIENT_ID --json | jq -r '.OAUTH_CLIENT_ID.computed')
+          OAUTH_CLIENT_SECRET=$(doppler secrets get OAUTH_CLIENT_SECRET --json | jq -r '.OAUTH_CLIENT_SECRET.computed')
+          OAUTH_ISSUER=$(doppler secrets get OAUTH_ISSUER --json | jq -r '.OAUTH_ISSUER.computed')
+          AUTH_SECRET=$(doppler secrets get AUTH_SECRET --json | jq -r '.AUTH_SECRET.computed')
+          NEXT_PUBLIC_ORIGIN=$(doppler secrets get NEXT_PUBLIC_ORIGIN --json | jq -r '.NEXT_PUBLIC_ORIGIN.computed')
+          RPC_HOST=$(doppler secrets get RPC_HOST --json | jq -r '.RPC_HOST.computed')
+
+          echo "::add-mask::$OAUTH_CLIENT_ID"
+          echo "::add-mask::$OAUTH_CLIENT_SECRET"
+          echo "::add-mask::$OAUTH_ISSUER"
+          echo "::add-mask::$AUTH_SECRET"
+          echo "::add-mask::$NEXT_PUBLIC_ORIGIN"
+          echo "::add-mask::$RPC_HOST"
+
+          echo BUILD_ARG_OAUTH_CLIENT_ID="$OAUTH_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_OAUTH_CLIENT_SECRET="$OAUTH_CLIENT_SECRET" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_OAUTH_ISSUER="$OAUTH_ISSUER" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_AUTH_SECRET="$AUTH_SECRET" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_NEXT_PUBLIC_ORIGIN="$NEXT_PUBLIC_ORIGIN" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_RPC_HOST="$RPC_HOST" >> $GITHUB_OUTPUT
+        id: set-build-args
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -155,6 +195,13 @@ jobs:
           file: apps/dashboard/Dockerfile
           tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/dashboard:latest
           push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+          build-args: |
+            OAUTH_CLIENT_ID=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_ID }}
+            OAUTH_CLIENT_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_SECRET }}
+            OAUTH_ISSUER=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_ISSUER }}
+            AUTH_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_AUTH_SECRET }}
+            NEXT_PUBLIC_ORIGIN=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_ORIGIN }}
+            RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_RPC_HOST }}
       - uses: actions/github-script@v7
         if: env.GH_IS_DEPLOYING_STAGING
         with:
