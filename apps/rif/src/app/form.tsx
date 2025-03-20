@@ -65,7 +65,11 @@ export const Form: FC = () => {
         <Label>
           Bedriftsnavn
           <TextInput placeholder="Bedrift AS" {...register("companyName")} />
-          <ErrorMessage name="companyName" errors={formState.errors} render={CustomErrorMessage} />
+          <ErrorMessage
+            name="companyName"
+            errors={formState.errors}
+            render={({ message }) => <CustomErrorMessage message={message} />}
+          />
         </Label>
       </Section>
 
@@ -77,19 +81,31 @@ export const Form: FC = () => {
         <Label>
           Navn
           <TextInput placeholder="Ola Nordmann" {...register("contactName")} />
-          <ErrorMessage name="contactName" errors={formState.errors} render={CustomErrorMessage} />
+          <ErrorMessage
+            name="contactName"
+            errors={formState.errors}
+            render={({ message }) => <CustomErrorMessage message={message} />}
+          />
         </Label>
 
         <Label>
           E-postadresse
           <TextInput placeholder="ola.nordmann@bedrift.no" type="email" {...register("contactEmail")} />
-          <ErrorMessage name="contactEmail" errors={formState.errors} render={CustomErrorMessage} />
+          <ErrorMessage
+            name="contactEmail"
+            errors={formState.errors}
+            render={({ message }) => <CustomErrorMessage message={message} />}
+          />
         </Label>
 
         <Label>
           Telefonnummer
           <TextInput placeholder="+47 444 99 555" type="tel" {...register("contactTel")} />
-          <ErrorMessage name="contactTel" errors={formState.errors} render={CustomErrorMessage} />
+          <ErrorMessage
+            name="contactTel"
+            errors={formState.errors}
+            render={({ message }) => <CustomErrorMessage message={message} />}
+          />
         </Label>
       </Section>
 
