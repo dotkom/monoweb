@@ -1,49 +1,173 @@
-name: CI
+# The main development/staging integration pipeline
+#
+# It is responsible for verifying linting, type checking, and building packages
+# in the entire monorepo.
+#
+# It will also deploy the applications to their staging environments if all
+# checks pass AND the pipeline is triggered by a push to the main branch.
 
+name: Integration Pipeline (staging)
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   pull_request:
-    types: [opened, synchronize]
-  merge_group:
+    types:
+      - opened
+      - synchronize
+  workflow_dispatch:
 
+# Determine if staging should be deployed based on the event that triggered the
+# pipeline. We only want to deploy staging when a push to the main branch occurs.
+env:
+  GH_IS_DEPLOYING_STAGING: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+permissions:
+  id-token: write   
+  contents: read
 jobs:
-  build:
-    name: Build and Test
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
+  # The "check" job is responsible for verifying the minimum requirements to
+  # build all the packages in the monorepo.
+  check:
+    name: Verify build requirements
+    runs-on: ubuntu-24.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
- 
-      - name: Cache turbo build setup
-        uses: actions/cache@v4
+          fetch-depth: 1
+      - uses: actions/cache@v4
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
         with:
           version: 9.15.5
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22.14.0
           cache: 'pnpm'
- 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+        name: Install dependencies from pnpm lockfile
+      - run: pnpm lint-check
+        name: Run linting and formatting checks
+      - run: pnpm type-check
+        name: Run TypeScript type checker
 
-      - name: Type Check
-        run: pnpm type-check
+  # Job for building and optionally deploying the apps/rpc application
+  deploy-rpc:
+    name: Deploy monoweb/rpc
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRPCCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/rpc/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/rpc:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-rpc',
+                targets: 'module.rpc_evergreen_service',
+              },
+            });
 
-      - name: Lint
-        run: pnpm lint-check
+  # Job for building and optionally deploying the apps/brevduen application
+  deploy-brevduen:
+    name: Deploy monoweb/brevduen
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingBrevduenCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/brevduen/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/brevduen:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-brevduen',
+                targets: 'module.brevduen_evergreen_service',
+              },
+            });
 
-      - name: Build docker images
-        run: pnpm run docker:build
+  # Job for building and optionally deploying the apps/dashboard application
+  deploy-dashboard:
+    name: Deploy monoweb/dashboard
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/dashboard/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/dashboard:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-dashboard',
+                targets: 'module.dashboard_evergreen_service',
+              },
+            });
