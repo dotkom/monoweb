@@ -1,7 +1,6 @@
 import type { AttendancePool } from "@dotkomonline/types"
 import { Box, Button } from "@mantine/core"
 import { openCreatePoolModal } from "../../modals/create-pool-modal"
-import { openMergePoolsModal } from "../../modals/merge-pools-modal"
 
 interface EventAttendanceProps {
   attendanceId: string
@@ -18,15 +17,6 @@ export function usePoolsForm({ attendanceId, pools }: EventAttendanceProps) {
           })}
         >
           Opprett ny påmeldingsgruppe
-        </Button>
-        <Button
-          mt={16}
-          ml={16}
-          onClick={openMergePoolsModal({
-            attendanceId,
-          })}
-        >
-          Slå sammen påmeldingsgrupper
         </Button>
       </Box>
     )

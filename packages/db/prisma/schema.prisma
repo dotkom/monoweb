@@ -1,5 +1,7 @@
 generator client {
   provider = "prisma-client-js"
+
+  previewFeatures = ["typedSql"]
 }
 
 generator zod {

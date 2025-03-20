@@ -1,4 +1,10 @@
-import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type AttendancePool,
+  type Attendee,
+  type User,
+  canUserRegisterForPool,
+} from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
 import { addHours } from "date-fns"
@@ -23,7 +29,7 @@ function CardWithTitle({ title, children, className, ...props }: ComponentProps<
 }
 
 export const AttendancePoolInfoBox: FC<Props> = ({ pool, user, attendee, attendance }) => {
-  const canAttend = user && canUserAttendPool(pool, user)
+  const canAttend = user && canUserRegisterForPool(pool, user)
 
   return (
     <CardWithTitle title={poolTitle(pool)} className={clsx(canAttend ? "col-span-2" : "col-span-1")}>

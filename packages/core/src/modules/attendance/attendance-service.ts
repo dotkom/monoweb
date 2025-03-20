@@ -107,9 +107,9 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
-    const pool = await this.attendanceRepository.getPoolById(poolId)
+    const capacityUsed = await this.attendeeRepository.countAttendeesInPool(poolId)
 
-    if (data.capacity && pool.numAttendees > data.capacity) {
+    if (data.capacity && capacityUsed > data.capacity) {
       throw new AttendanceValidationError("Cannot change pool capacity to less than the reserved spots")
     }
 

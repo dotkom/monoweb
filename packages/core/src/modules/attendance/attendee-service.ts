@@ -10,7 +10,7 @@ import {
   type UserId,
   canDeregisterForAttendance as attendanceOpenForDeregistration,
   canRegisterForAttendance as attendanceOpenForRegistration,
-  canUserAttendPool,
+  canUserRegisterForPool,
 } from "@dotkomonline/types"
 import { addHours } from "date-fns"
 import { AttendeeNotFoundError } from "../event/attendee-error"
@@ -115,7 +115,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     // TODO: Use user service to get membership grade
     const userGrade = 1
 
-    if (!canUserAttendPool(attendancePool, user)) {
+    if (!canUserRegisterForPool(attendancePool, user)) {
       throw new AttendancePoolValidationError("User does not qualify for pool")
     }
 

@@ -1,13 +1,13 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
+import { PoolForm } from "../components/PoolForm/PoolForm"
 import { useUpdatePoolMutation } from "../mutations/use-pool-mutations"
 import { useAttendanceGetQuery } from "../queries/use-get-queries"
 
 interface EditPoolModalProps {
   poolId: string
   attendanceId: string
-  defaultValues: PoolFormSchema
+  defaultValues: PoolForm
 }
 
 export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
@@ -20,26 +20,15 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
 
   const disabledYears = attendance ? [...new Set(attendance.pools.flatMap(({ yearCriteria }) => yearCriteria))] : []
 
-  const onSubmit = (values: PoolFormSchema) => {
+  const onSubmit = (input: PoolForm) => {
     context.closeModal(id)
-    updatePool({
-      input: {
-        capacity: values.capacity,
-        title: values.title,
-        yearCriteria: values.yearCriteria,
-      },
-      id: poolId,
-    })
+    updatePool({ input, id: poolId })
   }
 
   const onClose = () => context.closeModal(id)
   return attendance ? (
     <PoolForm
-      defaultValues={{
-        yearCriteria: defaultValues.yearCriteria,
-        capacity: defaultValues.capacity,
-        title: defaultValues.title,
-      }}
+      defaultValues={defaultValues}
       onClose={onClose}
       onSubmit={onSubmit}
       disabledYears={disabledYears}
@@ -57,7 +46,6 @@ export const openEditPoolModal =
       innerProps: {
         attendanceId,
         defaultValues,
-        mode: "update",
         poolId,
       },
     })

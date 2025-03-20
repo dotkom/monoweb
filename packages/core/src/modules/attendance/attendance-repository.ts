@@ -175,11 +175,11 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   private validateAttendancePool({
-    _count: { attendees: numAttendees },
+    _count: { attendees: capacityUsed },
     yearCriteria,
     ...attendee
   }: UnmappedAttendancePool): AttendancePool {
-    return { numAttendees, yearCriteria: YearCriteriaSchema.parse(yearCriteria), ...attendee }
+    return { capacityUsed, yearCriteria: YearCriteriaSchema.parse(yearCriteria), ...attendee }
   }
 }
 

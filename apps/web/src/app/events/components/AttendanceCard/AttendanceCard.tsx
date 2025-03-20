@@ -1,7 +1,13 @@
 "use client"
 
 import { trpc } from "@/utils/trpc/client"
-import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
+import {
+  type Attendance,
+  type AttendancePool,
+  type Attendee,
+  type User,
+  canUserRegisterForPool,
+} from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useState } from "react"
 import { AttendancePoolInfoBox } from "../AttendanceBoxPool"
@@ -41,7 +47,7 @@ export const AttendanceCard = ({
       return 1
     }
 
-    if (user && canUserAttendPool(pool, user)) {
+    if (user && canUserRegisterForPool(pool, user)) {
       return 0
     }
 
@@ -49,7 +55,7 @@ export const AttendanceCard = ({
   }
 
   const pools = attendance.pools.sort((a, b) => poolSortKey(b) - poolSortKey(a))
-  const attendablePool = user && pools.find((pool) => canUserAttendPool(pool, user))
+  const attendablePool = user && pools.find((pool) => canUserRegisterForPool(pool, user))
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 

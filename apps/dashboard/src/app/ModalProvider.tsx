@@ -34,7 +34,13 @@ const modals = {
   "group/create": CreateGroupModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
-} as const
+}
+
+declare module "@mantine/modals" {
+  export interface MantineModalsOverride {
+    modals: typeof modals
+  }
+}
 
 export const ModalProvider: FC<PropsWithChildren> = ({ children }) => (
   <ModalsProvider modals={modals}>{children}</ModalsProvider>

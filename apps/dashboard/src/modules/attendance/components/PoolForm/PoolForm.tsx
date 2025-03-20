@@ -10,10 +10,10 @@ import {
 import { notifyFail } from "../../../../app/notifications"
 
 export interface PoolFormProps {
-  onSubmit(values: PoolFormSchema): void
+  onSubmit(values: PoolForm): void
   disabledYears: number[]
   onClose(): void
-  defaultValues: PoolFormSchema
+  defaultValues: PoolForm
   mode: "create" | "update"
 }
 
@@ -21,8 +21,9 @@ export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   capacity: z.number(),
   title: z.string().min(1),
+  mergeDelayHours: z.number(),
 })
-export type PoolFormSchema = z.infer<typeof PoolFormSchema>
+export type PoolForm = z.infer<typeof PoolFormSchema>
 
 export const usePoolForm = (props: PoolFormProps) => {
   const yearLabels = ["1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
@@ -40,6 +41,9 @@ export const usePoolForm = (props: PoolFormProps) => {
       }),
       capacity: createNumberInput({
         label: "Kapasitet",
+      }),
+      mergeDelayHours: createNumberInput({
+        label: "Timer til åpning",
       }),
     },
     label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",

@@ -24,7 +24,9 @@ export interface AttendeeRepository {
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
   poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
   checkCapacityAndReserve(attendeeId: AttendeeId): Promise<void>
+
   moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId): Promise<void>
+  countAttendeesInPool(poolId: AttendancePoolId): Promise<number>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
@@ -95,6 +97,10 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const updatedAttendee = await this.db.attendee.update({ where: { id }, data })
 
     return this.parseSelectionResponses(updatedAttendee)
+  }
+
+  async countAttendeesInPool(attendancePoolId: AttendancePoolId) {
+    return await this.db.attendee.count({ where: { attendancePoolId } })
   }
 
   async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {

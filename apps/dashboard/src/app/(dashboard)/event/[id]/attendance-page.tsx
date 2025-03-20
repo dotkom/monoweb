@@ -1,5 +1,5 @@
-import type { Attendance } from "@dotkomonline/types"
-import { Box, Divider, Title } from "@mantine/core"
+import type { AttendanceDetails } from "@dotkomonline/types"
+import { Box, Divider, Text, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
@@ -45,7 +45,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
 }
 
 interface EventAttendanceProps {
-  attendance: Attendance
+  attendance: AttendanceDetails
 }
 const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
   const updateAttendanceMut = useUpdateAttendanceMutation()
@@ -81,7 +81,11 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
       <Divider my={32} />
       <Box>
         <Title order={3}>Påmeldingsgrupper</Title>
-        <PoolBox pools={attendance.pools || []} attendanceId={attendance.id} />
+        {attendance.pools.length === 0 ? (
+          <Text fs="italic">Ingen påmeldingsgrupper</Text>
+        ) : (
+          <PoolBox pools={attendance.pools} />
+        )}
         <PoolsForm />
       </Box>
     </Box>

@@ -1,6 +1,6 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
+import { PoolForm } from "../components/PoolForm/PoolForm"
 import { useMergeAttendanceMutation } from "../mutations/use-attendance-mutations"
 import { useAttendanceGetQuery } from "../queries/use-get-queries"
 
@@ -16,7 +16,7 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({
   const onClose = () => context.closeModal(id)
   const mergeAttendanceMut = useMergeAttendanceMutation()
 
-  const onSubmit = (values: PoolFormSchema) => {
+  const onSubmit = (values: PoolForm) => {
     mergeAttendanceMut.mutate({
       attendanceId: attendanceId,
     })
@@ -40,6 +40,7 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({
           yearCriteria: disabledYears,
           capacity: attendance?.pools.reduce((acc, pool) => acc + pool.capacity, 0) ?? 0,
           title: "Generell påmelding",
+          mergeDelayHours: 0,
         }}
         onClose={onClose}
         mode="create"

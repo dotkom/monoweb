@@ -32,11 +32,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     >
       <div className="flex items-center justify-center">
         {(loading || props.icon) && (
-          <i className="mr-1 flex">
+          <i className="mr-1 flex absolute">
             {loading ? <Icon width={16} icon="tabler:loader-2" className="animate-spin" /> : props.icon}
           </i>
         )}
-        <span className="text-inherit">{props.children}</span>
+        <span className={cn("text-inherit", loading ? "invisible" : "visible")}>{props.children}</span>
       </div>
     </button>
   )
@@ -46,7 +46,7 @@ Button.displayName = "Button"
 
 export const buttonStyles = cva(
   [
-    "cursor-pointer appearance-none rounded-md px-4 py-2 font-semibold",
+    "cursor-pointer appearance-none rounded-md px-4 py-2 font-semibold relative",
     "focus:ring-2 focus:ring-slate-11 focus:outline-none",
     "transition-transform",
     "hover:-translate-y-[1px] active:translate-y-[2px]",

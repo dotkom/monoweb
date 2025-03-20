@@ -93,7 +93,7 @@ function GenericRegistrationButton({
       {...props}
     >
       {
-        <span className={clsx("flex flex-col items-center w-max", loading ? "invisible" : "visible")}>
+        <span className={clsx("flex flex-col items-center w-max")}>
           <>
             <span className="block uppercase">{actionText}</span>
             <span className="block font-medium text-xs">{infoText}</span>

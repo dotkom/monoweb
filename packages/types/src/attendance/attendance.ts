@@ -1,11 +1,15 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { AttendancePoolSchema } from "./attendance-pool"
+import { AttendancePoolDetailsSchema, AttendancePoolSchema } from "./attendance-pool"
 import { AttendanceSelectionSchema } from "./attendance-selections"
 
 export const AttendanceSchema = schemas.AttendanceSchema.extend({
   pools: z.array(AttendancePoolSchema),
   selections: z.array(AttendanceSelectionSchema),
+})
+
+export const AttendanceDetailsSchema = AttendanceSchema.extend({
+  pools: z.array(AttendancePoolDetailsSchema),
 })
 
 export const AttendanceWriteSchema = AttendanceSchema.omit({
@@ -16,6 +20,7 @@ export const AttendanceWriteSchema = AttendanceSchema.omit({
 })
 
 export type Attendance = z.infer<typeof AttendanceSchema>
+export type AttendanceDetails = z.infer<typeof AttendanceSchema>
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
 export type AttendanceId = Attendance["id"]
 
