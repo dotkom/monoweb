@@ -1,4 +1,4 @@
-import { Button } from "../Button"
+import { Button } from "../Button/Button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,7 +38,7 @@ export function AlertDialogDemo() {
   )
 }
 
-export function Desctructive() {
+export function Destructive() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -54,7 +54,7 @@ export function Desctructive() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction desctructive>Delete</AlertDialogAction>
+          <AlertDialogAction destructive>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
