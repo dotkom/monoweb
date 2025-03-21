@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form"
 
 import { useMutation } from "@tanstack/react-query"
 
+import type { JSX } from "react"
+
 interface FormInputProps {
   title: string
   children?: JSX.Element

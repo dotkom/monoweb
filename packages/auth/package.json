@@ -16,10 +16,7 @@
     "@trpc/client": "11.0.0-rc.828",
     "jose": "^6.0.0",
     "superjson": "^2.0.0",
-    "next": "^15.1.6",
-    "next-auth": "5.0.0-beta.25",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "next-auth": "5.0.0-beta.25"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

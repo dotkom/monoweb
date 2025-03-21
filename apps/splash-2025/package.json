@@ -13,8 +13,8 @@
 	"dependencies": {
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
 		"tailwindcss-animate": "^1.0.7",
 		"zod": "^3.22.4"
 	},
@@ -22,8 +22,8 @@
 		"@biomejs/biome": "1.9.4",
 		"@dotkomonline/config": "workspace:*",
 		"@types/node": "^22.0.0",
-		"@types/react": "^18.3.11",
-		"@types/react-dom": "^18.3.0",
+		"@types/react": "^19.0.12",
+		"@types/react-dom": "^19.0.4",
 		"@vitejs/plugin-react": "4.3.4",
 		"autoprefixer": "^10.4.16",
 		"postcss": "^8.4.31",
