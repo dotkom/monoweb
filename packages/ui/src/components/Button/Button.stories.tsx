@@ -6,31 +6,14 @@ import { Button, type ButtonProps } from "./Button"
 const Template: Story<ButtonProps> = (props) => <Button {...props}>{props.children}</Button>
 
 Template.args = {
-  variant: "brand",
+  variant: "solid",
+  color: "brand",
   children: "Click me",
-}
-
-export const Gradient = Template.bind({})
-Gradient.args = {
-  ...Template.args,
-  variant: "gradient",
-}
-
-export const Link = Template.bind({})
-Link.args = {
-  ...Template.args,
-  variant: "link",
-}
-
-export const Outline = Template.bind({})
-Outline.args = {
-  ...Template.args,
-  variant: "outline",
 }
 
 export const Sizes: Story = () => {
   return (
-    <div>
+    <div className="flex gap-4">
       <Button size="sm">Click me!</Button>
       <Button size="md">Click me!</Button>
       <Button size="lg">Click me!</Button>
@@ -39,59 +22,53 @@ export const Sizes: Story = () => {
 }
 
 export const Solid: Story = () => (
-  <div className="max-w-screen-lg space-y-4">
+  <div className="flex gap-4">
+    <Button variant="solid" color="brand">
+      Brand
+    </Button>
+    <Button variant="solid" color="gradient">
+      Gradient
+    </Button>
     <Button variant="solid" color="blue">
-      Click me!
+      Blue
     </Button>
     <Button variant="solid" color="red">
-      Click me!
+      Red
     </Button>
     <Button variant="solid" color="amber">
-      Click me!
+      Amber
     </Button>
     <Button variant="solid" color="green">
-      Click me!
+      Green
     </Button>
-    <Button variant="solid" color="slate">
-      Click me!
-    </Button>
-  </div>
-)
-export const Subtle: Story = () => (
-  <div className="max-w-screen-lg space-y-4">
-    <Button variant="subtle" color="blue">
-      Click me!
-    </Button>
-    <Button variant="subtle" color="red">
-      Click me!
-    </Button>
-    <Button variant="subtle" color="amber">
-      Click me!
-    </Button>
-    <Button variant="subtle" color="green">
-      Click me!
-    </Button>
-    <Button variant="subtle" color="slate">
-      Click me!
+    <Button variant="solid" color="indigo">
+      Indigo
     </Button>
   </div>
 )
-export const Light: Story = () => (
-  <div className="max-w-screen-lg space-y-4">
-    <Button variant="light" color="blue">
-      Click me!
+
+export const Outlined: Story = () => (
+  <div className="flex gap-4">
+    <Button variant="outline" color="brand">
+      Brand
     </Button>
-    <Button variant="light" color="red">
-      Click me!
+    <Button variant="outline" color="gradient">
+      Gradient
     </Button>
-    <Button variant="light" color="amber">
-      Click me!
+    <Button variant="outline" color="blue">
+      Blue
     </Button>
-    <Button variant="light" color="green">
-      Click me!
+    <Button variant="outline" color="red">
+      Red
     </Button>
-    <Button variant="light" color="slate">
-      Click me!
+    <Button variant="outline" color="amber">
+      Amber
+    </Button>
+    <Button variant="outline" color="green">
+      Green
+    </Button>
+    <Button variant="outline" color="indigo">
+      Indigo
     </Button>
   </div>
 )
@@ -105,17 +82,8 @@ Disabled.args = {
 
 export const WithIcon = () => (
   <div>
-    <Button color="blue" variant="light" icon={<Icon icon="tabler:adjustments" width={16} />}>
-      Settings
-    </Button>
     <Button color="blue" variant="solid" icon={<Icon icon="tabler:mail" width={16} />}>
       Mail
     </Button>
   </div>
 )
-
-export const Loading: Story = Template.bind({})
-Loading.args = {
-  children: "Submitting form",
-  loading: true,
-}
