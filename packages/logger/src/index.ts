@@ -1,5 +1,7 @@
+import { OpenTelemetryTransportV3 } from "@opentelemetry/winston-transport"
 import winston, { format } from "winston"
 export type { Logger } from "winston"
+export * from "./opentelemetry"
 
 interface Message {
   level: string
@@ -42,5 +44,6 @@ export const getLogger = (path: string) =>
           )
         ),
       }),
+      new OpenTelemetryTransportV3(),
     ],
   })
