@@ -3,9 +3,11 @@ import {
   AttendanceWriteSchema,
   CompanySchema,
   EventHostingGroupSchema,
+  EventInterestGroupSchema,
   EventSchema,
   EventWriteSchema,
   GroupSchema,
+  InterestGroupSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -22,14 +24,17 @@ export const eventRouter = t.router({
       z.object({
         event: EventWriteSchema,
         groupIds: z.array(EventHostingGroupSchema.shape.groupId),
+        interestGroupIds: z.array(EventInterestGroupSchema.shape.interestGroupId),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.eventService.createEvent(input.event)
       const groups = await ctx.eventHostingGroupService.setEventHostingGroups(event.id, input.groupIds)
+      const interestGroups = await ctx.eventService.setEventInterestGroups(event.id, input.interestGroupIds)
       return {
         ...event,
         groups,
+        interestGroups,
       }
     }),
   edit: protectedProcedure
@@ -50,11 +55,13 @@ export const eventRouter = t.router({
         id: EventSchema.shape.id,
         event: EventWriteSchema,
         groups: z.array(EventHostingGroupSchema.shape.groupId),
+        interestGroups: z.array(EventInterestGroupSchema.shape.interestGroupId),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.eventService.updateEvent(input.id, input.event)
       await ctx.eventHostingGroupService.setEventHostingGroups(input.id, input.groups)
+      await ctx.eventService.setEventInterestGroups(input.id, input.interestGroups)
       return event
     }),
 
@@ -62,12 +69,15 @@ export const eventRouter = t.router({
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
     const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
+    const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
 
-    const results = await Promise.all(groups)
+    const groupResults = await Promise.all(groups)
+    const interestGroupResults = await Promise.all(interestGroups)
 
     return events.map((event, i) => ({
       ...event,
-      groups: results[i],
+      groups: groupResults[i],
+      interestGroups: interestGroupResults[i],
     }))
   }),
 
@@ -75,12 +85,15 @@ export const eventRouter = t.router({
   recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
     const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
+    const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
 
-    const results = await Promise.all(groups)
+    const groupResults = await Promise.all(groups)
+    const interestGroupResults = await Promise.all(interestGroups)
 
     return events.map((event, i) => ({
       ...event,
-      groups: results[i],
+      groups: groupResults[i],
+      interestGroups: interestGroupResults[i],
     }))
   }),
 
@@ -95,6 +108,9 @@ export const eventRouter = t.router({
   allByGroup: publicProcedure
     .input(z.object({ id: GroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByGroupId(input.id, input.paginate)),
+  allByInterestGroup: publicProcedure
+    .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
   getWebEventDetailData: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.eventService.getWebDetail(input)),

@@ -24,16 +24,21 @@ export const useInterestGroupWriteForm = ({
         label: "Navn",
         placeholder: "Interessegruppe",
         withAsterisk: true,
+        required: true,
       }),
       description: createTextareaInput({
         label: "Kort beskrivelse",
         withAsterisk: true,
+        required: true,
         rows: 5,
       }),
       longDescription: createTextareaInput({
         label: "Lang beskrivelse",
         withAsterisk: false,
         rows: 5,
+      }),
+      image: createTextInput({
+        label: "Bilde-url",
       }),
       joinInfo: createTextareaInput({
         label: "Hvordan bli med",

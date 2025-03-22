@@ -1,4 +1,5 @@
 import { EventWriteSchema } from "@dotkomonline/types"
+import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { z } from "zod"
 import { useGroupAllQuery } from "../../../modules/group/queries/use-group-all-query"
 import {
@@ -20,6 +21,7 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   locationAddress: null,
   subtitle: null,
   hostingGroupIds: [],
+  interestGroupIds: [],
   public: false,
   status: "TBA",
   title: "",
@@ -35,6 +37,7 @@ interface UseEventWriteFormProps {
 
 export const EventWriteFormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
+  interestGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEvent(data)
   for (const issue of issues) {
@@ -46,6 +49,7 @@ type FormValidationResult = z.infer<typeof EventWriteFormValidationSchema>
 
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
+  const { interestGroups } = useInterestGroupAllQuery()
   return useFormBuilder({
     schema: EventWriteFormValidationSchema,
     defaultValues: EVENT_FORM_DEFAULT_VALUES,
@@ -82,9 +86,14 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         withAsterisk: true,
       }),
       hostingGroupIds: createMultipleSelectInput({
-        label: "Arrangør",
+        label: "Arrangerende komité",
         placeholder: "Arrkom",
         data: groups.map((group) => ({ value: group.id, label: group.name })),
+      }),
+      interestGroupIds: createMultipleSelectInput({
+        label: "Arrangerende interessegruppe",
+        placeholder: "Stipendsushi",
+        data: interestGroups.map((interestGroup) => ({ value: interestGroup.id, label: interestGroup.name })),
       }),
       status: createSelectInput({
         label: "Event status",

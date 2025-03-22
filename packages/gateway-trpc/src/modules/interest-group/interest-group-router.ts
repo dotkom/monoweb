@@ -1,4 +1,4 @@
-import { InterestGroupSchema, InterestGroupWriteSchema, UserSchema } from "@dotkomonline/types"
+import { EventSchema, InterestGroupSchema, InterestGroupWriteSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
 import { protectedProcedure, publicProcedure, t } from "../../trpc"
 
@@ -35,4 +35,7 @@ export const interestGroupRouter = t.router({
     .mutation(
       async ({ input, ctx }) => await ctx.interestGroupService.removeMember(input.interestGroupId, input.userId)
     ),
+  allByEventId: publicProcedure
+    .input(EventSchema.shape.id)
+    .query(async ({ input, ctx }) => await ctx.interestGroupService.getAllByEventId(input)),
 })

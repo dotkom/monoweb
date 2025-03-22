@@ -18,6 +18,7 @@ export default function EventDetailsLayout({
         : {
             event: data.event,
             eventHostingGroups: data.eventHostingGroups,
+            eventInterestGroups: data.eventInterestGroups,
             attendance: data.attendance,
           },
     [data, isLoading]

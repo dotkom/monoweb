@@ -135,6 +135,9 @@ export const createServiceLayer = async ({
   const groupService: GroupService = new GroupServiceImpl(groupRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
+  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
+  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
+
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
     attendanceRepository,
     attendeeRepository,
@@ -166,7 +169,8 @@ export const createServiceLayer = async ({
     attendanceService,
     attendancePoolService,
     eventCompanyService,
-    eventHostingGroupService
+    eventHostingGroupService,
+    interestGroupService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
@@ -195,8 +199,6 @@ export const createServiceLayer = async ({
     articleTagRepository,
     articleTagLinkRepository
   )
-  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
-  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
   return {
     userService,

@@ -16,7 +16,7 @@ const EventHostingGroups: FC<Props> = ({ hostingGroups }) => {
     <>
       {hostingGroups.map((hostingGroup, i) => (
         <React.Fragment key={hostingGroup.id}>
-          <Anchor component={Link} size="sm" href={`/committee/${hostingGroup.id}`}>
+          <Anchor component={Link} size="sm" href={`/group/${hostingGroup.id}`}>
             {hostingGroup.name}
           </Anchor>
           {i < hostingGroups.length - 1 && ", "}

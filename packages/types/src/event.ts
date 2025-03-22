@@ -6,6 +6,7 @@ import { type Attendance, AttendanceSchema } from "./attendance/attendance"
 import type { AttendancePool } from "./attendance/attendance-pool"
 import type { Company } from "./company"
 import type { Group } from "./group"
+import type { InterestGroup } from "./interest-group"
 
 export const EventSchema = schemas.EventSchema.extend({})
 
@@ -29,6 +30,7 @@ export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
 export type DashboardEventDetail = {
   event: Event
   eventHostingGroups: Group[]
+  eventInterestGroups: InterestGroup[]
   attendance: Attendance | null
   pools: AttendancePool[] | null
   hasAttendance: boolean
@@ -39,12 +41,14 @@ export type WebEventDetail =
       hasAttendance: false
       event: Event
       eventHostingGroups: Group[]
+      eventInterestGroups: InterestGroup[]
       eventCompanies: Company[]
     }
   | {
       hasAttendance: true
       event: Event
       eventHostingGroups: Group[]
+      eventInterestGroups: InterestGroup[]
       attendance: Attendance
       pools: AttendancePool[]
       eventCompanies: Company[]
