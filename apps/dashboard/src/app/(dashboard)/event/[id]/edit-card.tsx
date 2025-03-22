@@ -1,28 +1,33 @@
 import type { FC } from "react"
+import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { useEditEventWithGroupsMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-groups"
 import { useGroupAllQuery } from "../../../../modules/group/queries/use-group-all-query"
 import { useEventEditForm } from "../edit-form"
 import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {
-  const { event, eventHostingGroups } = useEventDetailsContext()
+  const { event, eventHostingGroups, eventInterestGroups } = useEventDetailsContext()
   const edit = useEditEventWithGroupsMutation()
   const { groups } = useGroupAllQuery()
+  const { interestGroups } = useInterestGroupAllQuery()
 
   const defaultValues = {
     ...event,
-    groupIds: eventHostingGroups.map((group) => group.id),
+    hostingGroupIds: eventHostingGroups.map((group) => group.id),
+    interestGroupIds: eventInterestGroups.map((interestGroup) => interestGroup.id),
   }
 
   const FormComponent = useEventEditForm({
     label: "Oppdater arrangement",
     hostingGroups: groups,
+    interestGroups: interestGroups,
     onSubmit: (data) => {
-      const { hostingGroupIds, ...event } = data
+      const { hostingGroupIds, interestGroupIds, ...event } = data
       edit.mutate({
         id: data.id,
         event,
         groups: hostingGroupIds,
+        interestGroups: interestGroupIds,
       })
     },
     defaultValues,
