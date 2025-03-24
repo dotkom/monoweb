@@ -21,7 +21,7 @@
     "stripe": "^13.11.0"
   },
   "peerDependencies": {
-    "next": "^15.1.6"
+    "next": "^15"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

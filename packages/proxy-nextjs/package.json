@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "next": "^15.1.6",
     "next-auth": "5.0.0-beta.25"
+  },
+  "peerDependencies": {
+    "next": "^15"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3"

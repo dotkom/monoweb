@@ -25,9 +25,6 @@
     "stripe": "^13.11.0",
     "zod": "^3.22.4"
   },
-  "peerDependencies": {
-    "next": "^15.1.6"
-  },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
