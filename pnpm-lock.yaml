@@ -629,7 +629,7 @@ importers:
         version: 3.26.0(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(yjs@13.6.23)
       '@next/env':
         specifier: ^15.0.0
-        version: 15.2.2
+        version: 15.2.3
       '@radix-ui/colors':
         specifier: ^3.0.0
         version: 3.0.0
@@ -6336,8 +6336,8 @@ packages:
   lexical@0.27.1:
     resolution: {integrity: sha512-EXlRE/NQO9quKFuz4Z2pu5f48oF8LZOAw0YpN0RmGQx2CbqmEi7SIgO+d+NUKVx9Qs1vX0DL5S7GJpvpZBOE3w==}
 
-  lib0@0.2.99:
-    resolution: {integrity: sha512-vwztYuUf1uf/1zQxfzRfO5yzfNKhTtgOByCruuiQQxWQXnPb8Itaube5ylofcV0oM0aKal9Mv+S1s1Ky0UYP1w==}
+  lib0@0.2.100:
+    resolution: {integrity: sha512-ACQmtZ8cRD7/SpBEzBP88KrgrjOnhfcOANhhk8ASv+HFEvBSHOprxur3vuhmNw4YLq29y4Yen4jU0jHpIqVYWw==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -14423,7 +14423,7 @@ snapshots:
 
   lexical@0.27.1: {}
 
-  lib0@0.2.99:
+  lib0@0.2.100:
     dependencies:
       isomorphic.js: 0.2.5
 
@@ -16875,7 +16875,7 @@ snapshots:
 
   yjs@13.6.23:
     dependencies:
-      lib0: 0.2.99
+      lib0: 0.2.100
 
   ylru@1.4.0: {}
 
