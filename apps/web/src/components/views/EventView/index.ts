@@ -1,1 +1,1 @@
-export { EventDescriptionAndByline, SkeletonEventDescriptionAndByline } from "./EventDescriptionAndByline" 
+export { EventDescriptionAndByline, SkeletonEventDescriptionAndByline } from "./EventDescriptionAndByline"

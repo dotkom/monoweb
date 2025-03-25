@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
+import { EventDescriptionAndByline } from "@/components/views/EventView"
 import { server } from "@/utils/trpc/server"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
-import { EventDescriptionAndByline } from "@/components/views/EventView"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 

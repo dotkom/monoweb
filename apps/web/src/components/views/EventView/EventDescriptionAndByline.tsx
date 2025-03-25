@@ -1,9 +1,17 @@
 "use client"
 
 import type { Company, Event, Group } from "@dotkomonline/types"
-import { frontmatterPlugin, headingsPlugin, linkDialogPlugin, linkPlugin, listsPlugin, MDXEditor, thematicBreakPlugin } from "@mdxeditor/editor"
+import {
+  MDXEditor,
+  frontmatterPlugin,
+  headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  thematicBreakPlugin,
+} from "@mdxeditor/editor"
 import Image from "next/image"
-import React, { type FC } from "react"
+import type { FC } from "react"
 
 interface Props {
   event: Event
@@ -25,22 +33,21 @@ export const EventDescriptionAndByline: FC<Props> = ({ event, groups, companies 
   return (
     <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]">
       <div className="flex flex-row gap-8">{[...groupList, ...companyList]}</div>
-            <MDXEditor
-              readOnly
-              markdown={event.description || ""}
-              plugins={[
-                listsPlugin(),
-                headingsPlugin(),
-                linkPlugin(),
-                linkDialogPlugin(),
-                thematicBreakPlugin(),
-                frontmatterPlugin(),
-              ]}
-            />
-      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl">
-      </p>
+      <MDXEditor
+        readOnly
+        markdown={event.description || ""}
+        plugins={[
+          listsPlugin(),
+          headingsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          thematicBreakPlugin(),
+          frontmatterPlugin(),
+        ]}
+      />
+      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl"></p>
     </div>
   )
 }
 
-export const SkeletonEventDescriptionAndByline = () => <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]" /> 
+export const SkeletonEventDescriptionAndByline = () => <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]" />

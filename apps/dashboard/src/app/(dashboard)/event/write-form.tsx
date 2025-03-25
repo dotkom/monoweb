@@ -8,7 +8,6 @@ import {
   createRichTextInput,
   createSelectInput,
   createTextInput,
-  createTextareaInput,
   useFormBuilder,
 } from "../../form"
 import { validateEvent } from "./event-form-validation"
