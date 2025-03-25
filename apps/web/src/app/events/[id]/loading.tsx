@@ -1,4 +1,4 @@
-import { SkeletonEventDescriptionAndByline } from "../components/EventDescriptionAndByline"
+import { SkeletonEventDescriptionAndByline } from "@/components/views/EventView"
 import { SkeletonEventHeader } from "../components/EventHeader"
 
 export default () => (
