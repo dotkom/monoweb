@@ -45,7 +45,7 @@ export const EventDescriptionAndByline: FC<Props> = ({ event, groups, companies 
           frontmatterPlugin(),
         ]}
       />
-      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl"></p>
+      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl" />
     </div>
   )
 }
