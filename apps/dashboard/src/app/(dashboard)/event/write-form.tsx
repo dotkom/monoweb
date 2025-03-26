@@ -5,9 +5,9 @@ import {
   createCheckboxInput,
   createDateTimeInput,
   createMultipleSelectInput,
+  createRichTextInput,
   createSelectInput,
   createTextInput,
-  createTextareaInput,
   useFormBuilder,
 } from "../../form"
 import { validateEvent } from "./event-form-validation"
@@ -62,9 +62,11 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         placeholder:
           "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!!",
       }),
-      description: createTextareaInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
         placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
+        markdown: "",
+        required: true,
       }),
       locationAddress: createTextInput({
         label: "Sted",
