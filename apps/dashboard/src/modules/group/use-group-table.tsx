@@ -32,7 +32,7 @@ export const useGroupTable = ({ data }: Props) => {
         header: () => "Bilde",
         cell: (info) => {
           const val = info.getValue()
-          if (val === null) {
+          if (!val) {
             return "Ingen bilde"
           }
           return (

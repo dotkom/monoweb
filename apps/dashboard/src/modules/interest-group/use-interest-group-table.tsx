@@ -22,6 +22,20 @@ export const useInterestGroupTable = ({ data }: Props) => {
         header: () => "Kort beskrivelse",
         cell: (info) => info.getValue(),
       }),
+      columnHelper.accessor("image", {
+        header: () => "Bilde",
+        cell: (info) => {
+          const val = info.getValue()
+          if (!val) {
+            return "Ingen bilde"
+          }
+          return (
+            <Anchor target="_blank" href={val} rel="noopenere">
+              Link
+            </Anchor>
+          )
+        },
+      }),
       columnHelper.accessor("link", {
         header: () => "Wiki Link",
         cell: (info) => {
