@@ -53,8 +53,7 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={"Kommende arrangementer"} events={props.events} />
-        <EventList title={"Tidligere arrangementer"} events={props.events} />{" "}
+        <EventList events={props.events} />
         {/* TODO: Separate logic for earlier eventlist later */}
       </div>
     </EntryDetailLayout>

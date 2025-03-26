@@ -51,8 +51,10 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={"Kommende arrangementer"} events={props.events} />
-        <EventList title={"Åpne jobbtilbud"} events={props.events} /> {/* TODO: Separate listings list later */}
+        <h2>Kommende arrangementer</h2>
+        <EventList events={props.events} />
+        <h2>Tidligere arrangement</h2>
+        nope... {/* TODO: Separate listings list later */}
       </div>
     </EntryDetailLayout>
   )

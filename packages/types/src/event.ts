@@ -13,6 +13,8 @@ export const EventSchema = schemas.EventSchema.extend({})
 export type Event = z.infer<typeof EventSchema>
 export type EventId = Event["id"]
 
+export type EventType = schemas.EventTypeType
+
 export const EventWriteSchema = EventSchema.omit({
   id: true,
   createdAt: true,
