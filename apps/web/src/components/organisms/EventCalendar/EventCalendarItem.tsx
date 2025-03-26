@@ -1,16 +1,15 @@
 "use client"
 
-import type { Event } from "@dotkomonline/types"
+import type { Event, EventType } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
+import { cn } from "@dotkomonline/ui"
 import Link from "next/link"
 
 interface EventCalendarItemProps {
   event: Event
-  classNames?: string
+  className?: string
 }
-
-type EventType = "SOCIAL" | "BEDPRES" | "ACADEMIC" | "COMPANY"
 
 interface EventTypeConfig {
   colors: {
@@ -179,7 +178,7 @@ function getEventTheme(event: Event, isActive: boolean): EventTheme {
   }
 }
 
-const EventCalendarItem = ({ event, classNames }: EventCalendarItemProps) => {
+const EventCalendarItem = ({ event, className }: EventCalendarItemProps) => {
   const isActive = new Date() < event.end
   const theme = getEventTheme(event, isActive)
 
@@ -188,31 +187,33 @@ const EventCalendarItem = ({ event, classNames }: EventCalendarItemProps) => {
       <HoverCardTrigger asChild>
         <Link
           href={`/events/${event.id}`}
-          className={`
-            ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem]
-            text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden
-            relative
-            ${theme.item.base}
-            ${classNames || ""}
-          `}
+          className={cn(
+            "ml-[2px] mr-[1px] my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 cursor-pointer overflow-hidden relative",
+            theme.item.base,
+            className || ""
+          )}
         >
           <div className="relative">
             <span className="block text-nowrap text-clip font-semibold sm:font-medium leading-8">{event.title}</span>
             <div
-              className={`absolute inset-y-0 right-0 w-5 bg-gradient-to-r from-transparent ${theme.item.gradient} pointer-events-none`}
+              className={cn(
+                "absolute inset-y-0 right-0 w-5 bg-gradient-to-r from-transparent pointer-events-none",
+                theme.item.gradient
+              )}
             />
           </div>
         </Link>
       </HoverCardTrigger>
       <HoverCardContent
-        className={`
-          border-2 border-transparent transition-colors duration-300
-          ${theme.card.bg} ${theme.card.borderHover}
-        `}
+        className={cn(
+          "border-2 border-transparent transition-colors duration-300 max-w-80 min-w-60 w-full",
+          theme.card.bg,
+          theme.card.borderHover
+        )}
         sideOffset={3}
       >
         <Link href={`/events/${event.id}`}>
-          <div className={`p-4 ${theme.card.text}`}>
+          <div className={cn("p-4", theme.card.text)}>
             <p className="text-l font-semibold mb-2">{event.title}</p>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
@@ -226,7 +227,7 @@ const EventCalendarItem = ({ event, classNames }: EventCalendarItemProps) => {
                 <span className="text-sm truncate">{event.locationTitle}</span>
               </div>
             </div>
-            <div className="flex justify-between items-center mt-2">
+            <div className="flex justify-between items-center gap-2 mt-2">
               <div className="flex gap-2 items-center text-sm">
                 <Icon icon="tabler:users" width={16} height={16} />
                 <span>3/40</span>
@@ -234,11 +235,11 @@ const EventCalendarItem = ({ event, classNames }: EventCalendarItemProps) => {
               {theme.badge && (
                 <div>
                   <span
-                    className={`
-                    inline-block px-3 py-1 text-sm rounded-full font-semibold 
-                    ${theme.badge.bg}
-                    ${theme.badge.text}
-                  `}
+                    className={cn(
+                      "inline-block px-3 py-1 text-sm rounded-full font-semibold",
+                      theme.badge.bg,
+                      theme.badge.text
+                    )}
                   >
                     {theme.badge.displayName}
                   </span>
