@@ -2,13 +2,10 @@
 
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
 import * as React from "react"
+import { cn } from "../../utils"
 
 const HoverCard = HoverCardPrimitive.Root
 const HoverCardTrigger = HoverCardPrimitive.Trigger
-
-export function cn(...classes: (string | undefined | false)[]) {
-  return classes.filter(Boolean).join(" ")
-}
 
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
