@@ -1,4 +1,15 @@
+"use client"
+
 import type { Company, Event, Group, InterestGroup } from "@dotkomonline/types"
+import {
+  MDXEditor,
+  frontmatterPlugin,
+  headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  thematicBreakPlugin,
+} from "@mdxeditor/editor"
 import Image from "next/image"
 import type { FC } from "react"
 
@@ -24,7 +35,19 @@ export const EventDescriptionAndByline: FC<Props> = ({ event, groups, interestGr
   return (
     <div className="mr-10 w-full flex flex-col gap-8 md:w-[60%]">
       <div className="flex flex-row gap-8">{[...groupList, ...interestGroupList, ...companyList]}</div>
-      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl">{event.description}</p>
+      <MDXEditor
+        readOnly
+        markdown={event.description || ""}
+        plugins={[
+          listsPlugin(),
+          headingsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          thematicBreakPlugin(),
+          frontmatterPlugin(),
+        ]}
+      />
+      <p className="bg-slate-2 p-5 text-[18px] rounded-2xl" />
     </div>
   )
 }
