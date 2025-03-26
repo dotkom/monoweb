@@ -21,6 +21,7 @@ const config = {
     "@dotkomonline/types",
     "@dotkomonline/ui",
   ],
+  output: "standalone",
 }
 
 export default config

@@ -9,7 +9,6 @@ node_modules/
 .envrc
 !.env.example
 .pnp.*
-build-storybook.log
 package-lock.json
 # IDE specific
 .idea
@@ -23,7 +22,6 @@ coverage/
 .vscode
 .DS_Store
 
-storybook-static/
 .react-email
 
 ### Terraform ###
@@ -51,3 +49,6 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# Sentry local clirc files
+.sentryclirc

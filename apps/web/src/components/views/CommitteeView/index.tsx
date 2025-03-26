@@ -13,7 +13,7 @@ interface CommitteeViewProps {
 }
 
 export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
-  const { name, image, email, description } = props.committee
+  const { name, image, email, longDescription } = props.committee
 
   const icons = [{ icon: "material-symbols:mail", text: email, href: `mailto:${email}` }]
 
@@ -49,7 +49,7 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
             </ul>
           </div>
         </div>
-        <p>{description}</p>
+        <p>{longDescription}</p>
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">

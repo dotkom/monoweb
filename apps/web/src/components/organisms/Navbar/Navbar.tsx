@@ -1,5 +1,5 @@
+import { auth } from "@/auth"
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import { getServerSession } from "next-auth"
 import Link from "next/link"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
@@ -33,23 +33,27 @@ const links: MenuLink[] = [
   {
     title: "For bedrifter",
     items: [
-      { title: "Kontakt", href: "/company-info", description: "Kontakt Linjeforening" },
+      {
+        title: "Samarbeid med Online",
+        href: "/for-bedrifter",
+        description: "Utforsk linjeforeningens tilbud og ta kontakt",
+      },
       {
         title: "Kvitteringskjema",
         href: "https://kvittering.online.ntnu.no/",
         description: "Online sitt Kvitteringskjema",
       },
       { title: "Faktura", href: "https://faktura.online.ntnu.no/", description: "Faktura" },
-      { title: "Interesseskjema", href: "/company-info", description: "Interesert?" },
+      { title: "Interesseskjema", href: "https://interesse.online.ntnu.no/", description: "Interesert?" },
     ],
   },
 ]
 
 export const Navbar = async () => {
-  const session = await getServerSession()
+  const session = await auth()
 
   return (
-    <header className="mx-auto w-full max-w-screen-xl px-4 sm:px-9">
+    <header className="mx-auto w-full max-w-screen-xl px-2 sm:px-10">
       <div className="border-blue-12/20 flex h-16 border-b">
         <MobileNavigation links={links} />
         <Link href="/" className="flex items-center">

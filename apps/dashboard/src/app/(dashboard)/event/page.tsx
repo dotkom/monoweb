@@ -1,19 +1,21 @@
 "use client"
 
-import type { Event, Group } from "@dotkomonline/types"
+import type { Event, Group, InterestGroup } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
+import EventInterestGroups from "src/components/molecules/EventOrganizerGroups/event-interest-groups"
 import { GenericTable } from "../../../components/GenericTable"
-import EventHostingGroups from "../../../components/molecules/company-name/event-hosting-groups"
+import EventHostingGroups from "../../../components/molecules/EventOrganizerGroups/event-hosting-groups"
 import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
 import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 
 type TableColumns = Event & {
   groups: Group[]
+  interestGroups: InterestGroup[]
 }
 
 export default function EventPage() {
@@ -31,8 +33,12 @@ export default function EventPage() {
         cell: (info) => formatDate(info.getValue()),
       }),
       columnHelper.accessor("groups", {
-        header: () => "Arrangør",
+        header: () => "Arrangerende komité",
         cell: (info) => <EventHostingGroups hostingGroups={info.getValue()} />,
+      }),
+      columnHelper.accessor("interestGroups", {
+        header: () => "Arrangerende interessegruppe",
+        cell: (info) => <EventInterestGroups interestGroups={info.getValue()} />,
       }),
       columnHelper.accessor("type", {
         header: () => "Type",

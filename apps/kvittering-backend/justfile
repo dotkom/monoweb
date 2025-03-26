@@ -1,33 +1,38 @@
 PROJECT_NAME := "kvittering-backend"
 
 
-# ---- Running locally ------
-
-# To run with email, see src/core/environment_variables.py for the correct env vars to set
+# ---- Development related ------
 run:
-  docker build -t {{PROJECT_NAME}}:latest -f Dockerfile ../.. && \
+  doppler run --config dev_personal --project monoweb-kvittering-backend --  uv run src/server.py
+
+run-docker:
+  just setup-env dev_personal
+  docker build -t {{PROJECT_NAME}}:latest -f Dockerfile ../..
   docker run \
     -p 5000:5000 \
-    -e ENVIRONMENT=dev \
-    -e STORAGE_BUCKET=kvittering-archive.online.ntnu.no \
-    -e EMAIL_ENABLED=false \
+    --env-file .env.docker \
     {{PROJECT_NAME}}:latest
+  just cleanup-env
   
 lint:
   ruff check . --fix
 
-# ---- DEPLOYMENT RELATED ------
+# ---- Deployment related ------
 
 # This can be used for deploying the application locally and not through CI. 
 # Can be useful e.g. when first setting up infra and you need an image in ECR to set up the rest of the infra.
-build env:
+build config:
+  just setup-env {{config}}
   docker build --platform linux/amd64 -t {{PROJECT_NAME}}:latest -f Dockerfile ../..
+  just cleanup-env
 
-push env:
-  docker tag {{PROJECT_NAME}}:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
-  docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{env}}/{{PROJECT_NAME}}:latest
+push config:
+  just setup-env {{config}}
+  docker tag {{PROJECT_NAME}}:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{config}}/{{PROJECT_NAME}}:latest
+  docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/{{config}}/{{PROJECT_NAME}}:latest
+  just cleanup-env
 
-release env: (build env) (push env)
+release config: (build config) (push config)
 
 get-it-in-prod:
   bash -c "assume dotkom && \
@@ -35,3 +40,9 @@ get-it-in-prod:
     just release prod && \
     cd ~/h/code/dotkom/terraform-monorepo/prod/monoweb-kvittering-backend && \
     terraform apply -auto-approve -target=module.evergreen_service"
+
+setup-env config='dev_personal':
+  doppler secrets download --no-file --format env --project monoweb-kvittering-backend --config {{config}} > .env.docker
+
+cleanup-env:
+  rm .env.docker

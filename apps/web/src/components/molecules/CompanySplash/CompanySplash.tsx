@@ -21,7 +21,7 @@ export default async (props: ComponentPropsWithoutRef<"div">) => {
           evaluering og bruk av datasystemer. For mer informasjon om studiet, se NTNU sine offisielle nettsider for
           bachelor og master.
         </p>
-        <Link href="/company-info">
+        <Link href="https://interesse.online.ntnu.no">
           <Button>Bedriftskontakt</Button>
         </Link>
       </div>
