@@ -3,7 +3,7 @@
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import * as React from "react"
 import { cn } from "../../utils"
-import { buttonStyles, getColorStyles } from "../Button/Button"
+import { Button } from "../Button/Button"
 
 const AlertDialog = AlertDialogPrimitive.Root
 
@@ -74,29 +74,17 @@ AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayNam
 
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> & { desctructive?: boolean }
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action
-    ref={ref}
-    {...props}
-    className={cn(
-      buttonStyles({ size: "md", variant: props.desctructive ? "solid" : "brand" }),
-      props.desctructive && getColorStyles("solid", "red"),
-      className
-    )}
-  />
+  Omit<React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>, "color"> & { destructive?: boolean }
+>(({ className, destructive, ...props }, ref) => (
+  <Button element={AlertDialogPrimitive.Action} {...props} ref={ref} color={destructive ? "red" : undefined} />
 ))
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
+  Omit<React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>, "color">
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Cancel
-    ref={ref}
-    className={cn(buttonStyles({ variant: "subtle", size: "md" }), getColorStyles("subtle", "slate"), className)}
-    {...props}
-  />
+  <Button element={AlertDialogPrimitive.Cancel} {...props} variant="outline" ref={ref} />
 ))
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
