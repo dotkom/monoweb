@@ -1,0 +1,16 @@
+name: Get GitHub OpenID Connect token
+description: Query the GitHub API for the OpenID Connect token for the current caller
+outputs:
+  token:
+    description: The OIDC token
+    value: ${{ steps.get-oidc-token.outputs.oidc_token }}
+runs:
+  using: composite
+  steps:
+    - name: Get OIDC Token
+      id: get-oidc-token
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const id_token = await core.getIDToken()
+          core.setOutput('oidc_token', id_token)

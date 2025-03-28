@@ -145,13 +145,8 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      # Dashboard requires build-time secrets from Doppler
-      - uses: actions/github-script@v6
+      - uses: .github/actions/github-oidc-token
         id: get-oidc-token
-        with:
-          script: |
-            const id_token = await core.getIDToken()
-            core.setOutput('oidc_token', id_token)
       - uses: dopplerhq/cli-action@v2
       # Identity comes from the configured doppler account identity
       # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
@@ -309,13 +304,8 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      # Web requires build-time secrets from Doppler
-      - uses: actions/github-script@v6
+      - uses: .github/actions/github-oidc-token
         id: get-oidc-token
-        with:
-          script: |
-            const id_token = await core.getIDToken()
-            core.setOutput('oidc_token', id_token)
       - uses: dopplerhq/cli-action@v2
       # Identity comes from the configured doppler account identity
       # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
