@@ -145,7 +145,7 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      - uses: .github/actions/github-oidc-token
+      - uses: ./.github/actions/github-oidc-token
         id: get-oidc-token
       - uses: dopplerhq/cli-action@v2
       # Identity comes from the configured doppler account identity
@@ -304,7 +304,7 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      - uses: .github/actions/github-oidc-token
+      - uses: ./.github/actions/github-oidc-token
         id: get-oidc-token
       - uses: dopplerhq/cli-action@v2
       # Identity comes from the configured doppler account identity
