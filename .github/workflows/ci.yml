@@ -62,14 +62,14 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRPCCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
@@ -101,14 +101,14 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingBrevduenCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
@@ -140,6 +140,9 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
@@ -155,7 +158,7 @@ jobs:
             --api-host https://api.doppler.com \
             --scope=. \
             --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
-            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+            --token=${{ steps.get-oidc-token.outputs.token }}
       - run: doppler setup -p monoweb-dashboard -c staging
       # Configure build arguments
       - run: |
@@ -180,9 +183,6 @@ jobs:
           echo BUILD_ARG_NEXT_PUBLIC_ORIGIN="$NEXT_PUBLIC_ORIGIN" >> $GITHUB_OUTPUT
           echo BUILD_ARG_RPC_HOST="$RPC_HOST" >> $GITHUB_OUTPUT
         id: set-build-args
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
@@ -221,14 +221,14 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingInvoicificationCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
@@ -260,14 +260,14 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRifCIRole
       - uses: aws-actions/amazon-ecr-login@v2
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
@@ -299,6 +299,9 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
@@ -314,7 +317,7 @@ jobs:
             --api-host https://api.doppler.com \
             --scope=. \
             --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
-            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+            --token=${{ steps.get-oidc-token.outputs.token }}
       - run: doppler setup -p monoweb-web -c staging
       # Configure build arguments
       - run: |
@@ -339,9 +342,6 @@ jobs:
           echo BUILD_ARG_NEXT_PUBLIC_ORIGIN="$NEXT_PUBLIC_ORIGIN" >> $GITHUB_OUTPUT
           echo BUILD_ARG_RPC_HOST="$RPC_HOST" >> $GITHUB_OUTPUT
         id: set-build-args
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64

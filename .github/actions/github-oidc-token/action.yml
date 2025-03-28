@@ -3,7 +3,7 @@ description: Query the GitHub API for the OpenID Connect token for the current c
 outputs:
   token:
     description: The OIDC token
-    value: ${{ steps.get-oidc-token.outputs.oidc_token }}
+    value: ${{ steps.get-oidc-token.outputs.token }}
 runs:
   using: composite
   steps:
@@ -13,4 +13,4 @@ runs:
       with:
         script: |
           const id_token = await core.getIDToken()
-          core.setOutput('oidc_token', id_token)
+          core.setOutput('token', id_token)
