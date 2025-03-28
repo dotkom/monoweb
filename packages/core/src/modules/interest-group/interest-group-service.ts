@@ -1,4 +1,5 @@
 import type {
+  EventId,
   InterestGroup,
   InterestGroupId,
   InterestGroupMember,
@@ -17,10 +18,15 @@ export interface InterestGroupService {
   getByMember(userId: UserId): Promise<InterestGroup[]>
   addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
   removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
+  getAllByEventId(eventId: EventId): Promise<InterestGroup[]>
 }
 
 export class InterestGroupServiceImpl implements InterestGroupService {
-  constructor(private readonly interestGroupRepository: InterestGroupRepository) {}
+  private readonly interestGroupRepository: InterestGroupRepository
+
+  constructor(interestGroupRepository: InterestGroupRepository) {
+    this.interestGroupRepository = interestGroupRepository
+  }
 
   async getById(id: InterestGroupId): Promise<InterestGroup | null> {
     return this.interestGroupRepository.getById(id)
@@ -28,6 +34,10 @@ export class InterestGroupServiceImpl implements InterestGroupService {
 
   async getAll(): Promise<InterestGroup[]> {
     return this.interestGroupRepository.getAll()
+  }
+
+  async getAllByEventId(eventId: EventId): Promise<InterestGroup[]> {
+    return this.interestGroupRepository.getAllByEventId(eventId)
   }
 
   async create(values: InterestGroupWrite): Promise<InterestGroup> {

@@ -1,4 +1,12 @@
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger, Button, Icon } from "@dotkomonline/ui"
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Button,
+  Icon,
+} from "@dotkomonline/ui"
 
 interface ViewAttendeesDialogButtonProps {
   attendeeListOpen: boolean
@@ -11,8 +19,9 @@ const ViewAttendeesDialogButton = ({ attendeeListOpen, setAttendeeListOpen }: Vi
       <Button className="w-full rounded-lg uppercase bg-blue-10 h-100">Vis påmeldte</Button>
     </AlertDialogTrigger>
     <AlertDialogContent className="w-full relative">
-      <AlertDialogCancel asChild className="absolute top-0 right-0">
-        <Button className="rounded-lg uppercase bg-blue-10 h-100">
+      <AlertDialogTitle>Vis påmeldte</AlertDialogTitle>
+      <AlertDialogCancel asChild className="absolute top-4 right-2">
+        <Button className="rounded-lg uppercase h-100">
           <Icon className="text-lg" icon="tabler:x" />
         </Button>
       </AlertDialogCancel>

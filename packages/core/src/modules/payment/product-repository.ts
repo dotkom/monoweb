@@ -12,7 +12,11 @@ export interface ProductRepository {
 }
 
 export class ProductRepositoryImpl implements ProductRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async create(data: ProductWrite): Promise<Product> {
     return await this.db.product.create({ data, include: { paymentProviders: true } })

@@ -37,12 +37,22 @@ export interface AttendeeService {
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
+  private readonly attendeeRepository: AttendeeRepository
+  private readonly attendanceRespository: AttendanceRepository
+  private readonly userService: UserService
+  private readonly waitlistAttendeeService: WaitlistAttendeService
+
   constructor(
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly attendanceRespository: AttendanceRepository,
-    private readonly userService: UserService,
-    private readonly waitlistAttendeeService: WaitlistAttendeService
-  ) {}
+    attendeeRepository: AttendeeRepository,
+    attendanceRespository: AttendanceRepository,
+    userService: UserService,
+    waitlistAttendeeService: WaitlistAttendeService
+  ) {
+    this.attendeeRepository = attendeeRepository
+    this.attendanceRespository = attendanceRespository
+    this.userService = userService
+    this.waitlistAttendeeService = waitlistAttendeeService
+  }
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)

@@ -6,7 +6,7 @@ generator zod {
   provider = "zod-prisma-types"
   output   = "../src/schemas"
 
-  useMultipleFiles = true
+  useMultipleFiles = false
   createInputTypes = false
   addIncludeType   = false
   addSelectType    = false
@@ -81,6 +81,14 @@ enum EmploymentType {
   @@map("employment_type")
 }
 
+enum GroupType {
+  COMMITTEE
+  NODECOMMITTEE
+  OTHERGROUP
+
+  @@map("group_type")
+}
+
 model OwUser {
   id                        String                   @id
   Attendee                  Attendee[]
@@ -93,6 +101,7 @@ model OwUser {
   NotificationPermissions   NotificationPermissions?
   PersonalMark              PersonalMark[]
   InterestGroupsMemberships InterestGroupMember[]
+  GroupMemberships          GroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
 
@@ -116,16 +125,31 @@ model Company {
   @@map("company")
 }
 
-model Committee {
-  id          String           @id @default(uuid())
-  createdAt   DateTime         @default(now())
-  name        String
-  description String
-  email       String
-  image       String?
-  events      EventCommittee[]
+model Group {
+  id                String           @id @default(uuid())
+  createdAt         DateTime         @default(now())
+  name              String
+  description       String
+  email             String
+  image             String?
+  longDescription   String?
+  events            EventHostingGroup[]
+  type              GroupType
+  members           GroupMember[]
 
-  @@map("committee")
+  @@map("group")
+}
+
+model GroupMember {
+  groupId   String
+  group     Group     @relation(fields: [groupId], references: [id])
+
+  userId    String
+  user      OwUser    @relation(fields: [userId], references: [id])
+
+  @@id([groupId])
+
+  @@map("group_member")
 }
 
 model Attendance {
@@ -220,7 +244,8 @@ model Event {
   attendanceId    String?
   type            EventType
   companies       EventCompany[]
-  committees      EventCommittee[]
+  hostingGroups   EventHostingGroup[]
+  interestGroups  EventInterestGroup[]
 
   @@map("event")
 }
@@ -354,15 +379,15 @@ model NotificationPermissions {
   @@map("notification_permissions")
 }
 
-model EventCommittee {
-  committeeId String
-  eventId     String
-  committee   Committee @relation(fields: [committeeId], references: [id])
-  event       Event     @relation(fields: [eventId], references: [id])
+model EventHostingGroup {
+  groupId        String
+  eventId        String
+  group          Group @relation(fields: [groupId], references: [id])
+  event          Event @relation(fields: [eventId], references: [id])
 
-  @@id([committeeId, eventId])
+  @@id([groupId, eventId])
 
-  @@map("event_committee")
+  @@map("event_hosting_group")
 }
 
 model JobListing {
@@ -376,6 +401,7 @@ model JobListing {
   start            DateTime
   end              DateTime
   featured         Boolean
+  hidden           Boolean
   deadline         DateTime?
   employment       EmploymentType
   applicationLink  String?
@@ -453,19 +479,32 @@ model InterestGroup {
   isActive        Boolean  @default(true)
   longDescription String?
   joinInfo        String?
+  image           String?
   members         InterestGroupMember[]
+  events          EventInterestGroup[]
 
   @@map("interest_group")
 }
 
 model InterestGroupMember {
   interestGroupId String
-  interestGroup InterestGroup @relation(fields: [interestGroupId], references: [id])
-
-  userId          String
-  user            OwUser      @relation(fields: [userId], references: [id])
+  interestGroup   InterestGroup  @relation(fields: [interestGroupId], references: [id])
+ 
+  userId          String 
+  user            OwUser         @relation(fields: [userId], references: [id])
 
   @@id([interestGroupId])
 
   @@map("interest_group_member")
+}
+
+model EventInterestGroup {
+  eventId           String
+  interestGroupId   String
+  event             Event         @relation(fields: [eventId], references: [id])
+  interestGroup     InterestGroup @relation(fields: [interestGroupId], references: [id])
+
+  @@id([eventId, interestGroupId])
+
+  @@map("event_interest_group")
 }

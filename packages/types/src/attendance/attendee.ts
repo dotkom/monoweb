@@ -1,4 +1,4 @@
-import { schemas } from "@dotkomonline/db"
+import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import type { User } from "../user"
 import { AttendanceSelectionResponseSchema } from "./attendance-selections"

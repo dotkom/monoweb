@@ -9,8 +9,10 @@ import {
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useCreateAttendanceSelectionsModal } from "../../../../modules/event/modals/create-event-selections-modal"
 import { useEditSelectionsModal } from "../../../../modules/event/modals/edit-event-selections-modal"
-import { trpc } from "../../../../trpc"
 import { useEventDetailsContext } from "./provider"
+import {useTRPC} from "../../../../trpc";
+import {useQuery} from "@tanstack/react-query";
+
 
 export const SelectionsPage: FC = () => {
   const { attendance } = useEventDetailsContext()
@@ -49,6 +51,7 @@ interface Props {
   attendance: Attendance
 }
 export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
+  const trpc = useTRPC()
   const openCreate = useCreateAttendanceSelectionsModal({
     attendance,
   })
@@ -58,10 +61,11 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
   })
 
   const edit = useUpdateAttendanceMutation()
-
-  const { data: results = [], isLoading: resultsIsLoading } = trpc.attendance.getSelectionsResults.useQuery({
-    attendanceId: attendance.id,
-  })
+  const { data: results = [], isLoading: resultsIsLoading } = useQuery(
+    trpc.attendance.getSelectionsResults.queryOptions({
+      attendanceId: attendance.id,
+    })
+  )
 
   const deleteAlternative = (id: string) => {
     const newOptions = attendance.selections?.filter((alt) => alt.id !== id)

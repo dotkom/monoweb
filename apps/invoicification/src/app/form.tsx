@@ -39,13 +39,21 @@ export const Form: FC = () => {
       <Label>
         Organisasjonsnummer, uten mellomrom
         <TextInput placeholder="992548045" {...register("organizationNumber")} pattern="[0-9]{9}" />
-        <ErrorMessage name="organizationNumber" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="organizationNumber"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <Label>
         Bedriftsnavn
         <TextInput placeholder="Bedrift AS" {...register("companyName")} />
-        <ErrorMessage name="companyName" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="companyName"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <legend>
@@ -55,19 +63,31 @@ export const Form: FC = () => {
       <Label>
         Navn
         <TextInput placeholder="Ola Nordmann" {...register("contactName")} />
-        <ErrorMessage name="contactName" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="contactName"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <Label>
         E-post adresse
         <TextInput placeholder="ola.nordmann@bedrift.no" type="email" {...register("contactEmail")} />
-        <ErrorMessage name="contactEmail" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="contactEmail"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <Label>
         Telefonnummer
         <TextInput placeholder="+47 444 99 55" type="tel" {...register("contactTel")} />
-        <ErrorMessage name="contactTel" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="contactTel"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <legend>
@@ -87,7 +107,11 @@ export const Form: FC = () => {
             }))}
           />
         </div>
-        <ErrorMessage name="invoiceRelation" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="invoiceRelation"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <legend>
@@ -107,19 +131,31 @@ export const Form: FC = () => {
             }))}
           />
         </div>
-        <ErrorMessage name="preferredDeliveryMethod" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="preferredDeliveryMethod"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <Label>
         Ønsker PO-nummer
         <TextInput placeholder="Ingen preferanse" {...register("preferredPurchaseOrderNumber")} />
-        <ErrorMessage name="preferredPurchaseOrderNumber" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="preferredPurchaseOrderNumber"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <Label>
         Ønsker spesiell antall dager til forfallsdato
         <TextInput type="number" placeholder="Ingen preferanse" {...register("preferredDueDateLength")} />
-        <ErrorMessage name="preferredDueDateLength" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="preferredDueDateLength"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
 
       <legend>
@@ -128,7 +164,11 @@ export const Form: FC = () => {
       <Label>
         Ekstra informasjon, spørsmål eller kommentarer
         <Textarea {...register("comment")} />
-        <ErrorMessage name="comment" errors={formState.errors} render={CustomErrorMessage} />
+        <ErrorMessage
+          name="comment"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Label>
     </Section>
   )

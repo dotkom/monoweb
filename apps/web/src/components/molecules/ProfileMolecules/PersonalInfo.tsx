@@ -21,7 +21,7 @@ const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
       </Avatar>
       <p className="text-lg">{user.name}</p>
       <p className="text-lg text-slate-10">{user.email}</p>
-      <Button variant="gradient" className="self-auto">
+      <Button color="gradient" className="self-auto">
         <Link href="/settings">Profil Innstillinger</Link>
       </Button>
       {/* <ChangeAvatar {...user} /> */}

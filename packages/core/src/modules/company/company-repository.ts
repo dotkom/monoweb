@@ -10,7 +10,11 @@ export interface CompanyRepository {
 }
 
 export class CompanyRepositoryImpl implements CompanyRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getById(id: string): Promise<Company | null> {
     return await this.db.company.findUnique({ where: { id } })

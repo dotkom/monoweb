@@ -11,7 +11,11 @@ export interface NotificationPermissionsRepository {
 }
 
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async getByUserId(userId: UserId): Promise<NotificationPermissions | null> {
     return await this.db.notificationPermissions.findUnique({ where: { userId } })

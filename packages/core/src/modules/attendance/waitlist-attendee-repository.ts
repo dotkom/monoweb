@@ -18,7 +18,11 @@ export interface WaitlistAttendeRepository {
 }
 
 export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async create(data: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
     return await this.db.waitlistAttendee.create({ data })

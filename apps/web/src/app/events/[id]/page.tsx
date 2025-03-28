@@ -1,14 +1,13 @@
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { auth } from "@/auth"
+import { EventDescriptionAndByline } from "@/components/views/EventView"
 import { server } from "@/utils/trpc/server"
-import { getServerSession } from "next-auth"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
-import { EventDescriptionAndByline } from "../components/EventDescriptionAndByline"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
 
 const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   const eventDetail = await server.event.getAttendanceEventDetail.query(id)
 
   return (
@@ -17,7 +16,8 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
       <div className="flex w-full flex-col md:flex-row">
         <EventDescriptionAndByline
           event={eventDetail.event}
-          committees={eventDetail.committees}
+          groups={eventDetail.eventHostingGroups}
+          interestGroups={eventDetail.eventInterestGroups}
           companies={eventDetail.companies}
         />
         <div className="flex-1 flex-col">

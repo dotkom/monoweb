@@ -2,9 +2,12 @@ import { PaginateInputSchema } from "@dotkomonline/core"
 import {
   AttendanceWriteSchema,
   CompanySchema,
-  EventCommitteeSchema,
+  EventHostingGroupSchema,
+  EventInterestGroupSchema,
   EventSchema,
   EventWriteSchema,
+  GroupSchema,
+  InterestGroupSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -20,15 +23,18 @@ export const eventRouter = t.router({
     .input(
       z.object({
         event: EventWriteSchema,
-        committeeIds: z.array(EventCommitteeSchema.shape.committeeId),
+        groupIds: z.array(EventHostingGroupSchema.shape.groupId),
+        interestGroupIds: z.array(EventInterestGroupSchema.shape.interestGroupId),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.eventService.createEvent(input.event)
-      const committees = await ctx.eventCommitteeService.setEventCommittees(event.id, input.committeeIds)
+      const groups = await ctx.eventHostingGroupService.setEventHostingGroups(event.id, input.groupIds)
+      const interestGroups = await ctx.eventService.setEventInterestGroups(event.id, input.interestGroupIds)
       return {
         ...event,
-        committees,
+        groups,
+        interestGroups,
       }
     }),
   edit: protectedProcedure
@@ -43,43 +49,51 @@ export const eventRouter = t.router({
       return event
     }),
 
-  editWithCommittees: protectedProcedure
+  editWithGroups: protectedProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
         event: EventWriteSchema,
-        committees: z.array(EventCommitteeSchema.shape.committeeId),
+        groups: z.array(EventHostingGroupSchema.shape.groupId),
+        interestGroups: z.array(EventInterestGroupSchema.shape.interestGroupId),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const event = await ctx.eventService.updateEvent(input.id, input.event)
-      await ctx.eventCommitteeService.setEventCommittees(input.id, input.committees)
+      await ctx.eventHostingGroupService.setEventHostingGroups(input.id, input.groups)
+      await ctx.eventService.setEventInterestGroups(input.id, input.interestGroups)
       return event
     }),
 
-  // TODO: N+1 query, eventCommitteeService and eventService should probably be merged
+  // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
-    const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
+    const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
+    const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
 
-    const results = await Promise.all(committees)
+    const groupResults = await Promise.all(groups)
+    const interestGroupResults = await Promise.all(interestGroups)
 
     return events.map((event, i) => ({
       ...event,
-      committees: results[i],
+      groups: groupResults[i],
+      interestGroups: interestGroupResults[i],
     }))
   }),
 
-  // TODO: N+1 query, eventCommitteeService and eventService should probably be merged
+  // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
   recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
-    const committees = events.map(async (e) => ctx.eventCommitteeService.getEventCommitteesForEvent(e.id))
+    const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
+    const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
 
-    const results = await Promise.all(committees)
+    const groupResults = await Promise.all(groups)
+    const interestGroupResults = await Promise.all(interestGroups)
 
     return events.map((event, i) => ({
       ...event,
-      committees: results[i],
+      groups: groupResults[i],
+      interestGroups: interestGroupResults[i],
     }))
   }),
 
@@ -91,9 +105,12 @@ export const eventRouter = t.router({
   allByUserId: publicProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
-  allByCommittee: publicProcedure
-    .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) => ctx.eventService.getEventsByCommitteeId(input.id, input.paginate)),
+  allByGroup: publicProcedure
+    .input(z.object({ id: GroupSchema.shape.id, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByGroupId(input.id, input.paginate)),
+  allByInterestGroup: publicProcedure
+    .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
+    .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
   getAttendanceEventDetail: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.eventService.getAttendanceDetail(input)),

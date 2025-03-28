@@ -1,5 +1,5 @@
-import type { DBClient } from "@dotkomonline/db"
-import type { Event, EventId, EventWrite } from "@dotkomonline/types"
+import type { DBClient, EventInterestGroup } from "@dotkomonline/db"
+import type { Event, EventId, EventWrite, InterestGroupId } from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface EventRepository {
@@ -7,13 +7,20 @@ export interface EventRepository {
   update(id: EventId, data: Partial<EventWrite>): Promise<Event>
   getAll(page: Pageable): Promise<Event[]>
   getAllByUserAttending(userId: string): Promise<Event[]>
-  getAllByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]>
+  getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]>
+  getAllByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
   getById(id: string): Promise<Event | null>
   addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
+  addEventToInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<EventInterestGroup>
+  removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<void>
 }
 
 export class EventRepositoryImpl implements EventRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async addAttendance(id: EventId, attendanceId: string) {
     return await this.db.event.update({ where: { id }, data: { attendanceId } })
@@ -49,11 +56,11 @@ export class EventRepositoryImpl implements EventRepository {
     })
   }
 
-  async getAllByCommitteeId(committeeId: string, page: Pageable): Promise<Event[]> {
+  async getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
-        committees: {
-          some: { committeeId },
+        hostingGroups: {
+          some: { groupId },
         },
       },
       ...pageQuery(page),
@@ -62,5 +69,24 @@ export class EventRepositoryImpl implements EventRepository {
 
   async getById(id: string): Promise<Event | null> {
     return await this.db.event.findUnique({ where: { id } })
+  }
+
+  async getAllByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]> {
+    return await this.db.event.findMany({
+      where: {
+        interestGroups: {
+          some: { interestGroupId },
+        },
+      },
+      ...pageQuery(page),
+    })
+  }
+
+  async addEventToInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<EventInterestGroup> {
+    return await this.db.eventInterestGroup.create({ data: { interestGroupId, eventId } })
+  }
+
+  async removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<void> {
+    await this.db.eventInterestGroup.delete({ where: { eventId_interestGroupId: { interestGroupId, eventId } } })
   }
 }

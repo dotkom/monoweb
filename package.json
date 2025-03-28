@@ -17,41 +17,36 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif build",
-    "build:brevduen": "pnpm run -F @dotkomonline/brevduen build",
-    "build:dashboard": "pnpm run -F @dotkomonline/dashboard build",
-    "build:invoicification": "pnpm run -F @dotkomonline/invoicification build",
-    "build:rif": "pnpm run -F @dotkomonline/rif build",
-    "build:rpc": "pnpm run -F @dotkomonline/rpc build",
-    "build:web": "pnpm run -F @dotkomonline/web build",
+    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif -F @dotkomonline/emails build",
     "lint": "pnpm run -r lint",
     "lint-check": "turbo run lint-check",
     "test": "turbo run test",
     "test:it": "turbo run test:it",
-    "dev": "pnpm -rc -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
+    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
-    "migrate": "pnpm -F @dotkomonline/db migrate",
     "generate": "pnpm -F @dotkomonline/db generate",
-    "migrate-with-fixtures": "pnpm -F @dotkomonline/db migrate-with-fixtures",
+    "migrate:dev": "pnpm -F @dotkomonline/db migrate",
+    "migrate:dev-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate dev && pnpm -F @dotkomonline/db apply-fixtures",
+    "migrate:deploy": "pnpm -F @dotkomonline/db prisma migrate deploy",
+    "migrate:deploy-with-fixtures": "pnpm -F @dotkomonline/db prisma migrate deploy && pnpm -F @dotkomonline/db apply-fixtures",
     "storybook": "turbo run storybook --filter=storybook",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
-    "docker:login:public": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws",
-    "shell": "pnpm --filter=@dotkomonline/shell start"
+    "shell": "pnpm -F @dotkomonline/shell start"
   },
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "pnpm@9.15.5",
+  "packageManager": "pnpm@9.15.9",
   "engines": {
-    "node": ">=20.12.2",
+    "node": ">=22.0.0",
     "pnpm": ">=9.15.5"
   },
   "devDependencies": {
-    "turbo": "^2.3.4",
-    "turbo-ignore": "^2.3.4",
-    "typescript": "^5.7.3"
+    "turbo": "^2.4.4",
+    "turbo-ignore": "^2.4.4",
+    "typescript": "^5.8"
   }
 }

@@ -11,19 +11,16 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dotkomonline/core": "workspace:*",
-    "@dotkomonline/db": "workspace:*",
+    "@auth/core": "^0.37.2",
     "@dotkomonline/types": "workspace:*",
-    "@trpc/client": "^10.45.2",
+    "@trpc/client": "11.0.0-rc.828",
+    "jose": "^6.0.0",
     "superjson": "^2.0.0",
-    "next": "^15.1.6",
-    "next-auth": "^4.24.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "next-auth": "5.0.0-beta.25"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@dotkomonline/tsconfig": "workspace:*",
-    "typescript": "^5.4.5"
+    "@dotkomonline/config": "workspace:*",
+    "typescript": "^5.8"
   }
 }

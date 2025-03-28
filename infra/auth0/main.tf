@@ -155,6 +155,11 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
     "http://localhost:3000"
   ]
   app_type = "spa"
+  allowed_logout_urls = {
+    "dev" = ["http://localhost:3000"]
+    "stg" = ["https://staging.vinstraff.no"]
+    "prd" = ["https://vinstraff.no"]
+  }[terraform.workspace]
   callbacks = {
     "dev" = [
       "http://localhost:3000",
@@ -564,6 +569,8 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
   client_id = auth0_client.onlineweb4.client_id
   scopes = [
     "update:users",
+    "read:users",
+    "read:user_idp_tokens",
     "create:user_tickets", # to send verification emails
   ]
 }
@@ -577,12 +584,12 @@ resource "auth0_client" "monoweb_web" {
   # you go here if you decline an auth grant, cannot be http
   initiate_login_uri = {
     "dev" = null
-    "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
+    "stg" = "https://staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0"]
+    "stg" = ["https://staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
 
@@ -613,7 +620,7 @@ resource "auth0_client" "monoweb_dashboard" {
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
-      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0"]
+      "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "prd" = [
         "https://dashboard.online.ntnu.no/api/auth/callback/auth0", 
         "https://online.ntnu.no/api/auth/callback/auth0"

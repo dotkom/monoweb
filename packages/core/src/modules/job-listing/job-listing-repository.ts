@@ -5,13 +5,18 @@ import { type Pageable, pageQuery } from "../../query"
 export interface JobListingRepository {
   getById(id: JobListingId): Promise<JobListing | null>
   getAll(page: Pageable): Promise<JobListing[]>
+  getActive(page: Pageable): Promise<JobListing[]>
   createJobListing(values: JobListingWrite): Promise<JobListing>
   update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
   getLocations(): Promise<string[]>
 }
 
 export class JobListingRepositoryImpl implements JobListingRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async createJobListing({ companyId, locations, ...rest }: JobListingWrite): Promise<JobListing> {
     const jobListing = await this.db.jobListing.create({
@@ -86,6 +91,24 @@ export class JobListingRepositoryImpl implements JobListingRepository {
 
   async getAll(page: Pageable): Promise<JobListing[]> {
     const jobListings = await this.db.jobListing.findMany({
+      include: { company: true, locations: true },
+      ...pageQuery(page),
+    })
+
+    return await jobListings.map(this.flattenJobListingLocations)
+  }
+
+  async getActive(page: Pageable): Promise<JobListing[]> {
+    const jobListings = await this.db.jobListing.findMany({
+      where: {
+        start: {
+          lte: new Date(),
+        },
+        end: {
+          gte: new Date(),
+        },
+        hidden: false,
+      },
       include: { company: true, locations: true },
       ...pageQuery(page),
     })

@@ -1,8 +1,8 @@
 "use client"
 
-import { trpc } from "@/utils/trpc/client"
-import type { Attendance, AttendanceEventDetail } from "@dotkomonline/types"
+import { useTRPC } from "@/utils/trpc/client"
 import { Icon } from "@dotkomonline/ui"
+import { useQuery } from "@tanstack/react-query"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
@@ -10,6 +10,7 @@ import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMuta
 import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
+import {Attendance, AttendanceEventDetail} from "@dotkomonline/types";
 
 interface AttendanceCardProps {
   sessionUser?: Session["user"]
@@ -17,13 +18,12 @@ interface AttendanceCardProps {
 }
 
 export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEventDetail }) => {
-  const { data: eventDetail, ...eventDetailQuery } = trpc.event.getAttendanceEventDetail.useQuery(
-    initialEventDetail.event.id,
-    {
-      enabled: Boolean(sessionUser),
-      initialData: initialEventDetail,
-    }
-  )
+  const trpc = useTRPC()
+  const { data: eventDetail, ...eventDetailQuery } = useQuery({
+    ...trpc.event.getAttendanceEventDetail.queryOptions(initialEventDetail.event.id),
+    enabled: sessionUser !== undefined,
+    initialData: initialEventDetail,
+  })
 
   if (!eventDetail || eventDetail.attendance === null) {
     return null
@@ -31,6 +31,7 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
 
   return (
     <AttendanceCardInner
+      eventDetail={eventDetail}
       sessionUser={sessionUser}
       attendance={eventDetail.attendance}
       refetchEventDetail={eventDetailQuery.refetch}
@@ -41,24 +42,29 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
 interface InnerAttendanceCardProps {
   sessionUser?: Session["user"]
   attendance: Attendance
+  // TODO: Directly use query instead here
   refetchEventDetail: () => void
+  eventDetail: AttendanceEventDetail
 }
 
-export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, attendance, refetchEventDetail }) => {
-  const { data: attendee } = trpc.event.attendance.getAttendee.useQuery(
-    {
-      attendanceId: attendance.id,
-      userId: sessionUser?.id ?? "",
-    },
-    {
-      enabled: Boolean(sessionUser),
-    }
+export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, attendance, refetchEventDetail }) => {
+  const trpc = useTRPC()
+  const { data: attendee } = useQuery(
+    trpc.event.attendance.getAttendee.queryOptions(
+      {
+        attendanceId: eventDetail.attendance?.id ?? "",
+        userId: sessionUser?.id ?? "",
+      },
+      {
+        enabled: Boolean(sessionUser) && eventDetail.attendance !== null,
+      }
+    )
   )
 
   const [, setSelectionsDialogOpen] = useState(false)
   const setSelectionsOptions = useSetSelectionsOptionsMutation()
 
-  const { data: user } = trpc.user.getMe.useQuery()
+  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
 
   const handleGatherSelectionResponses = () => {
     if (attendance.selections.length > 0) {
@@ -72,7 +78,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser,
 
   const registerMutation = useRegisterMutation({ onSuccess: handleGatherSelectionResponses })
   const unregisterMutation = useUnregisterMutation()
-  const registerLoading = registerMutation.isLoading || unregisterMutation.isLoading
+  const registerLoading = registerMutation.isPending || unregisterMutation.isPending
 
   const userIsRegistered = Boolean(attendee)
 

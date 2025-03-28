@@ -11,23 +11,26 @@ import { type AttendanceService, AttendanceServiceImpl } from "./attendance/atte
 import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
 import { type AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
 import {
-  type WaitlistAttendeRepository,
+  type WaitlistAttendeeRepository,
   WaitlistAttendeRepositoryImpl,
 } from "./attendance/waitlist-attendee-repository"
 import { type WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
-import { type CommitteeRepository, CommitteeRepositoryImpl } from "./committee/committee-repository"
-import { type CommitteeService, CommitteeServiceImpl } from "./committee/committee-service"
 import { type CompanyEventRepository, CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { type CompanyEventService, CompanyEventServiceImpl } from "./company/company-event-service"
 import { type CompanyRepository, CompanyRepositoryImpl } from "./company/company-repository"
 import { type CompanyService, CompanyServiceImpl } from "./company/company-service"
-import { type EventCommitteeRepository, EventCommitteeRepositoryImpl } from "./event/event-committee-repository"
-import { type EventCommitteeService, EventCommitteeServiceImpl } from "./event/event-committee-service"
 import { type EventCompanyRepository, EventCompanyRepositoryImpl } from "./event/event-company-repository"
 import { type EventCompanyService, EventCompanyServiceImpl } from "./event/event-company-service"
+import {
+  type EventHostingGroupRepository,
+  EventHostingGroupRepositoryImpl,
+} from "./event/event-hosting-group-repository"
+import { type EventHostingGroupService, EventHostingGroupServiceImpl } from "./event/event-hosting-group-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
 import { type S3Repository, S3RepositoryImpl } from "./external/s3-repository"
+import { type GroupRepository, GroupRepositoryImpl } from "./group/group-repository"
+import { type GroupService, GroupServiceImpl } from "./group/group-service"
 import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./interest-group/interest-group-repository"
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
@@ -82,23 +85,23 @@ export interface ServiceLayerOptions {
 export const createServiceLayer = async ({
   db,
   s3Client,
-  s3BucketName,
   managementClient,
   stripeAccounts,
+  s3BucketName,
 }: ServiceLayerOptions) => {
-  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client)
+  const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
-  const committeeRepository: CommitteeRepository = new CommitteeRepositoryImpl(db)
+  const groupRepository: GroupRepository = new GroupRepositoryImpl(db)
   const jobListingRepository: JobListingRepository = new JobListingRepositoryImpl(db)
   const companyRepository: CompanyRepository = new CompanyRepositoryImpl(db)
   const companyEventRepository: CompanyEventRepository = new CompanyEventRepositoryImpl(db)
   const eventCompanyRepository: EventCompanyRepository = new EventCompanyRepositoryImpl(db)
-  const committeeOrganizerRepository: EventCommitteeRepository = new EventCommitteeRepositoryImpl(db)
+  const eventHostingGroupRepository: EventHostingGroupRepository = new EventHostingGroupRepositoryImpl(db)
 
   const userRepository: UserRepository = new UserRepositoryImpl(managementClient, db)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
-  const waitlistAttendeRepository: WaitlistAttendeRepository = new WaitlistAttendeRepositoryImpl(db)
+  const waitlistAttendeRepository: WaitlistAttendeeRepository = new WaitlistAttendeRepositoryImpl(db)
   const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
 
   const productRepository: ProductRepository = new ProductRepositoryImpl(db)
@@ -123,9 +126,14 @@ export const createServiceLayer = async ({
     notificationPermissionsRepository
   )
 
-  const eventCommitteeService: EventCommitteeService = new EventCommitteeServiceImpl(committeeOrganizerRepository)
-  const committeeService: CommitteeService = new CommitteeServiceImpl(committeeRepository)
+  const eventHostingGroupService: EventHostingGroupService = new EventHostingGroupServiceImpl(
+    eventHostingGroupRepository
+  )
+  const groupService: GroupService = new GroupServiceImpl(groupRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
+
+  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
+  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
     attendanceRepository,
@@ -150,8 +158,9 @@ export const createServiceLayer = async ({
   const eventService: EventService = new EventServiceImpl(
     eventRepository,
     attendanceService,
-    eventCommitteeService,
-    eventCompanyService
+    eventCompanyService,
+    eventHostingGroupService,
+    interestGroupService
   )
   const companyService: CompanyService = new CompanyServiceImpl(companyRepository)
   const companyEventService: CompanyEventService = new CompanyEventServiceImpl(companyEventRepository)
@@ -174,19 +183,17 @@ export const createServiceLayer = async ({
   )
   const markService: MarkService = new MarkServiceImpl(markRepository)
   const personalMarkService: PersonalMarkService = new PersonalMarkServiceImpl(personalMarkRepository, markService)
-  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository, s3BucketName)
+  const offlineService: OfflineService = new OfflineServiceImpl(offlineRepository, s3Repository)
   const articleService: ArticleService = new ArticleServiceImpl(
     articleRepository,
     articleTagRepository,
     articleTagLinkRepository
   )
-  const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
-  const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
   return {
     userService,
     eventService,
-    committeeService,
+    groupService,
     companyService,
     companyEventService,
     eventCompanyService,
@@ -196,7 +203,7 @@ export const createServiceLayer = async ({
     refundRequestService,
     markService,
     personalMarkService,
-    eventCommitteeService,
+    eventHostingGroupService,
     jobListingService,
     offlineService,
     articleService,

@@ -12,7 +12,11 @@ export interface ArticleRepository {
 }
 
 export class ArticleRepositoryImpl implements ArticleRepository {
-  constructor(private readonly db: DBClient) {}
+  private readonly db: DBClient
+
+  constructor(db: DBClient) {
+    this.db = db
+  }
 
   async create(input: ArticleWrite): Promise<Article> {
     return await this.db.article.create({ data: input })

@@ -1,16 +1,18 @@
 "use client"
-
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use, useMemo } from "react"
-import { trpc } from "../../../../trpc"
+import { useTRPC } from "../../../../trpc"
 import { UserDetailsContext } from "./provider"
+
+import { useQuery } from "@tanstack/react-query"
 
 export default function UserDetailsLayout({
   children,
   params,
 }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const trpc = useTRPC()
   const id = decodeURIComponent(use(params).id)
-  const { data, isLoading } = trpc.user.get.useQuery(id)
+  const { data, isLoading } = useQuery(trpc.user.get.queryOptions(id))
   const value = useMemo(
     () =>
       data === undefined || isLoading

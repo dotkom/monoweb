@@ -1,6 +1,18 @@
+"use client"
+
 import type { JobListing } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
+import {
+  MDXEditor,
+  frontmatterPlugin,
+  headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  thematicBreakPlugin,
+} from "@mdxeditor/editor"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -82,16 +94,30 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
         )}
       </div>
       <div className="w-2/3">
-        <div className="border-amber-9 ml-8 mt-2 border-l-[1px] pl-4 mb-10">
+        <div className="border-amber-9 ml-[38px] mt-2 border-l-[1px] pl-4 mb-10">
           <p className="m-0 text-4xl font-bold">{company.name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div className="[&>*]:border-amber-9 mb-12 ml-8 flex flex-col [&>*]:border-l-[1px] [&>*]:pl-4 [&>h2]:m-0 [&>h2]:border-b-0">
-          {description.split("\n").map((paragraph) => (
-            <p key={paragraph.slice(0, 10)} className={paragraph ? "" : "my-2"}>
-              {paragraph}
-            </p>
-          ))}
+        <div
+          className="[&_[dir='ltr']]:text-white
+                      [&_[dir='ltr']]:border-amber-9
+                        [&_[dir='ltr']]:border-l-[1px]
+                        [&_[dir='ltr']]:pl-4
+                        mb-12 ml-8 flex flex-col"
+        >
+          <MDXEditor
+            readOnly
+            markdown={description}
+            plugins={[
+              listsPlugin(),
+              headingsPlugin(),
+              linkPlugin(),
+              linkDialogPlugin(),
+              thematicBreakPlugin(),
+              frontmatterPlugin(),
+              markdownShortcutPlugin(),
+            ]}
+          />
         </div>
       </div>
     </div>

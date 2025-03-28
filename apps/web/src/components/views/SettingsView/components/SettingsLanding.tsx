@@ -1,9 +1,13 @@
 "use client"
-import { trpc } from "@/utils/trpc/client"
+import { useTRPC } from "@/utils/trpc/client"
 import type { User } from "@dotkomonline/types"
 import { Button, TextInput, Textarea } from "@dotkomonline/ui"
 import type { NextPage } from "next"
 import { useForm } from "react-hook-form"
+
+import { useMutation } from "@tanstack/react-query"
+
+import type { JSX } from "react"
 
 interface FormInputProps {
   title: string
@@ -20,6 +24,7 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
 type EditableFields = Pick<User, "firstName" | "lastName" | "biography" | "allergies" | "gender" | "phone">
 
 const Landing: NextPage<{ user: User }> = ({ user }) => {
+  const trpc = useTRPC()
   const { register, handleSubmit } = useForm<EditableFields>({
     defaultValues: {
       firstName: user.firstName,
@@ -31,7 +36,7 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
     },
   })
 
-  const updateUserMutation = trpc.user.update.useMutation()
+  const updateUserMutation = useMutation(trpc.user.update.mutationOptions())
 
   function handleSubmitForm(data: EditableFields) {
     updateUserMutation.mutate({
@@ -96,7 +101,7 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
           </select>
         </div>
       </FormInput>
-      <Button type="submit" className="px-8" loading={updateUserMutation.isLoading}>
+      <Button type="submit" className="px-8" loading={updateUserMutation.isPending}>
         Lagre
       </Button>
     </form>

@@ -2,7 +2,7 @@ import type { UserId, WaitlistAttendee, WaitlistAttendeeId, WaitlistAttendeeWrit
 import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+import type { WaitlistAttendeeRepository } from "./waitlist-attendee-repository"
 
 export interface WaitlistAttendeService {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
@@ -12,11 +12,15 @@ export interface WaitlistAttendeService {
 }
 
 export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
+  private readonly waitlistAttendeeRepository: WaitlistAttendeeRepository
+  private readonly attendanceRepository: AttendanceRepository
+
   constructor(
-    private readonly waitlistAttendeeRepository: WaitlistAttendeRepository,
-    private readonly attendanceRepository: AttendanceRepository
+    waitlistAttendeeRepository: WaitlistAttendeeRepository,
+    attendanceRepository: AttendanceRepository
   ) {
     this.waitlistAttendeeRepository = waitlistAttendeeRepository
+    this.attendanceRepository = attendanceRepository
   }
 
   async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {

@@ -1,10 +1,15 @@
 import type { CompanyId } from "@dotkomonline/types"
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useCompanyEventsAllQuery = (id: CompanyId) => {
-  const { data: companyEvents = [], ...query } = trpc.company.event.get.useQuery({
-    id,
-  })
+  const trpc = useTRPC()
+  const { data: companyEvents = [], ...query } = useQuery(
+    trpc.company.event.get.queryOptions({
+      id,
+    })
+  )
 
   return { companyEvents, ...query }
 }

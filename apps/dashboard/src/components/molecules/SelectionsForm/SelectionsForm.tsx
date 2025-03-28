@@ -83,7 +83,7 @@ export const SelectionsForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => 
                   </Button>
                 </Flex>
                 {errors.alternatives?.[index]?.value && (
-                  <Text size="xs" c="red">
+                  <Text size="sm" c="red">
                     {errors.alternatives[index]?.value?.message ?? "Ukjent feil"}
                   </Text>
                 )}
