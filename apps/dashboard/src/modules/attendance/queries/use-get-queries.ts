@@ -1,10 +1,10 @@
 import type { AttendanceId } from "@dotkomonline/types"
+import { useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { useQueryNotification } from "src/app/notifications"
 import { useTRPC } from "../../../trpc"
 import { openAttendanceRegisteredModal } from "../modals/attendance-registered-modal"
 import { openAlreadyAttendedModal } from "../modals/error-attendance-registered-modal"
-import { useQuery } from "@tanstack/react-query"
-import { useMutation } from "@tanstack/react-query"
 
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
   const trpc = useTRPC()

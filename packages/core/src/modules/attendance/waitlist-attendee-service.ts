@@ -15,10 +15,7 @@ export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
   private readonly waitlistAttendeeRepository: WaitlistAttendeeRepository
   private readonly attendanceRepository: AttendanceRepository
 
-  constructor(
-    waitlistAttendeeRepository: WaitlistAttendeeRepository,
-    attendanceRepository: AttendanceRepository
-  ) {
+  constructor(waitlistAttendeeRepository: WaitlistAttendeeRepository, attendanceRepository: AttendanceRepository) {
     this.waitlistAttendeeRepository = waitlistAttendeeRepository
     this.attendanceRepository = attendanceRepository
   }

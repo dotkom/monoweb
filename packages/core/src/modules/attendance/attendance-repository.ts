@@ -148,10 +148,10 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
   /** Parses the selections with AttendanceSelectionSchema and maps the pools */
   private mapAttendance({
-                          selections,
-                          pools,
-                          ...attendance
-                        }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
+    selections,
+    pools,
+    ...attendance
+  }: DBAttendance & { pools: UnmappedAttendancePool[] }): Attendance {
     return {
       ...attendance,
       selections: z.array(AttendanceSelectionSchema).parse(selections),
@@ -161,10 +161,10 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
   /** Renames _count on the prisma response for an attendee to numAttendees and parses the yearCriteria */
   private mapAttendancePool({
-                              _count: { attendees: numAttendees },
-                              yearCriteria,
-                              ...attendee
-                            }: UnmappedAttendancePool): AttendancePool {
+    _count: { attendees: numAttendees },
+    yearCriteria,
+    ...attendee
+  }: UnmappedAttendancePool): AttendancePool {
     return { numAttendees, ...attendee, yearCriteria: YearCriteriaSchema.parse(yearCriteria) }
   }
 }

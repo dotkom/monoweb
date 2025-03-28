@@ -11,8 +11,8 @@ import { type AttendanceService, AttendanceServiceImpl } from "./attendance/atte
 import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
 import { type AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
 import {
-  type WaitlistAttendeeRepository,
   WaitlistAttendeRepositoryImpl,
+  type WaitlistAttendeeRepository,
 } from "./attendance/waitlist-attendee-repository"
 import { type WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
 import { type CompanyEventRepository, CompanyEventRepositoryImpl } from "./company/company-event-repository"

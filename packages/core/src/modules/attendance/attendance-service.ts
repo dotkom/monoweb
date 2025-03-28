@@ -7,6 +7,8 @@ import type {
   AttendanceSelection,
   AttendanceSelectionResults as AttendanceSelectionResult,
   AttendanceWrite,
+  UserId,
+  WaitlistAttendee,
 } from "@dotkomonline/types"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
@@ -20,7 +22,7 @@ import {
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
-import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+import type { WaitlistAttendeeRepository } from "./waitlist-attendee-repository"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -40,13 +42,13 @@ export interface AttendanceService {
 export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendanceRepository: AttendanceRepository
   private readonly attendeeRepository: AttendeeRepository
-  private readonly waitlistAttendeeRepository: WaitlistAttendeRepository
+  private readonly waitlistAttendeeRepository: WaitlistAttendeeRepository
   private readonly userService: UserService
 
   constructor(
     attendanceRepository: AttendanceRepository,
     attendeeRepository: AttendeeRepository,
-    waitlistAttendeeRepository: WaitlistAttendeRepository,
+    waitlistAttendeeRepository: WaitlistAttendeeRepository,
     userService: UserService
   ) {
     this.attendanceRepository = attendanceRepository

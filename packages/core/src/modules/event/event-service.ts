@@ -14,7 +14,6 @@ import type { EventCompanyService } from "./event-company-service.js"
 import { EventNotFoundError } from "./event-error"
 import type { EventHostingGroupService } from "./event-hosting-group-service"
 import type { EventRepository } from "./event-repository.js"
-import {AttendanceNotFound} from "../attendance/attendance-error";
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
@@ -106,7 +105,6 @@ export class EventServiceImpl implements EventService {
 
     const eventHostingGroups = await this.eventHostingGroupService.getHostingGroupsForEvent(event.id)
     const eventInterestGroups = await this.interestGroupService.getAllByEventId(event.id)
-
 
     return {
       event,

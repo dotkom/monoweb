@@ -1,6 +1,7 @@
 import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
+import { useQuery } from "@tanstack/react-query"
 import type { FC } from "react"
 import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
 import {
@@ -9,10 +10,8 @@ import {
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useCreateAttendanceSelectionsModal } from "../../../../modules/event/modals/create-event-selections-modal"
 import { useEditSelectionsModal } from "../../../../modules/event/modals/edit-event-selections-modal"
+import { useTRPC } from "../../../../trpc"
 import { useEventDetailsContext } from "./provider"
-import {useTRPC} from "../../../../trpc";
-import {useQuery} from "@tanstack/react-query";
-
 
 export const SelectionsPage: FC = () => {
   const { attendance } = useEventDetailsContext()

@@ -1,6 +1,7 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
+import type { Attendance, AttendanceEventDetail } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import type { Session } from "next-auth"
@@ -10,7 +11,6 @@ import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMuta
 import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
-import {Attendance, AttendanceEventDetail} from "@dotkomonline/types";
 
 interface AttendanceCardProps {
   sessionUser?: Session["user"]
@@ -47,7 +47,12 @@ interface InnerAttendanceCardProps {
   eventDetail: AttendanceEventDetail
 }
 
-export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({ sessionUser, eventDetail, attendance, refetchEventDetail }) => {
+export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
+  sessionUser,
+  eventDetail,
+  attendance,
+  refetchEventDetail,
+}) => {
   const trpc = useTRPC()
   const { data: attendee } = useQuery(
     trpc.event.attendance.getAttendee.queryOptions(
