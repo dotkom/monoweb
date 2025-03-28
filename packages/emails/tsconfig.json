@@ -1,10 +1,13 @@
 {
   "extends": "../../packages/config/tsconfig.json",
-  "exclude": [],
+  "exclude": ["dist"],
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "react-jsx",
-    "incremental": true
+    "incremental": true,
+    "outDir": "dist",
+    "noEmit": false,
+    "declaration": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }

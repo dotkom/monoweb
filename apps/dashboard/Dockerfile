@@ -1,5 +1,16 @@
 FROM node:22-alpine AS base
 
+# Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
+# runtime variables to be available at build-time.
+#
+# These build arguments loosely mirror the src/env.ts file
+ARG OAUTH_CLIENT_ID
+ARG OAUTH_CLIENT_SECRET
+ARG OAUTH_ISSUER
+ARG AUTH_SECRET
+ARG NEXT_PUBLIC_ORIGIN
+ARG RPC_HOST
+
 FROM base AS builder
 WORKDIR /app
 
@@ -15,16 +26,25 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
+RUN npm install -g pnpm@9.15.5 --ignore-scripts
 COPY --from=builder /app/out/json .
 COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
+RUN pnpm install --ignore-scripts
 
-# Must enable scripts here for Prisma codegen to build
-RUN apk update && apk add --no-cache python3 gcc g++ make
-RUN pnpm install
+# Generate prisma types
+WORKDIR /app/packages/db
+RUN pnpm run generate
+WORKDIR /app
+
+ENV OAUTH_CLIENT_ID ${OAUTH_CLIENT_ID}
+ENV OAUTH_CLIENT_SECRET ${OAUTH_CLIENT_SECRET}
+ENV OAUTH_ISSUER ${OAUTH_ISSUER}
+ENV AUTH_SECRET ${AUTH_SECRET}
+ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
+ENV RPC_HOST ${RPC_HOST}
 
 COPY --from=builder /app/out/full .
-RUN turbo run build --filter @dotkomonline/dashboard
+RUN pnpm run --filter @dotkomonline/dashboard build
 
 FROM base AS runner
 WORKDIR /app

@@ -1,12 +1,12 @@
-import { type Committee, EventSchema } from "@dotkomonline/types"
+import { EventSchema, type Group, type InterestGroup } from "@dotkomonline/types"
 import { z } from "zod"
 import {
   createCheckboxInput,
   createDateTimeInput,
   createMultipleSelectInput,
+  createRichTextInput,
   createSelectInput,
   createTextInput,
-  createTextareaInput,
   useFormBuilder,
 } from "../../form"
 import { validateEvent } from "./event-form-validation"
@@ -15,13 +15,15 @@ interface UseEventEditFormProps {
   onSubmit(data: FormValidationResult): void
   defaultValues?: Partial<FormValidationResult>
   label?: string
-  committees: Committee[]
+  hostingGroups: Group[]
+  interestGroups: InterestGroup[]
 }
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
 const FormValidationSchema = EventSchema.extend({
-  committeeIds: z.array(z.string()),
+  hostingGroupIds: z.array(z.string()),
+  interestGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
   const issues = validateEvent(data)
   for (const issue of issues) {
@@ -30,7 +32,8 @@ const FormValidationSchema = EventSchema.extend({
 })
 
 export const useEventEditForm = ({
-  committees,
+  hostingGroups,
+  interestGroups,
   onSubmit,
   label = "Opprett arrangement",
   defaultValues,
@@ -51,10 +54,11 @@ export const useEventEditForm = ({
         placeholder:
           "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!!",
       }),
-      description: createTextareaInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
         placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-        rows: 20,
+        markdown: "true",
+        required: true,
       }),
       locationTitle: createTextInput({
         label: "Tittel på lokasjon",
@@ -78,10 +82,15 @@ export const useEventEditForm = ({
         label: "Sluttidspunkt",
         withAsterisk: true,
       }),
-      committeeIds: createMultipleSelectInput({
-        label: "Arrangør",
+      hostingGroupIds: createMultipleSelectInput({
+        label: "Arrangerende komité",
         placeholder: "Arrkom",
-        data: committees.map((committee) => ({ value: committee.id, label: committee.name })),
+        data: hostingGroups.map((group) => ({ value: group.id, label: group.name })),
+      }),
+      interestGroupIds: createMultipleSelectInput({
+        label: "Arrangerende interessegruppe",
+        placeholder: "Stipendsushi",
+        data: interestGroups.map((interestGroup) => ({ value: interestGroup.id, label: interestGroup.name })),
       }),
       status: createSelectInput({
         label: "Event status",

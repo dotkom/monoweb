@@ -107,6 +107,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
         end: {
           gte: new Date(),
         },
+        hidden: false,
       },
       include: { company: true, locations: true },
       ...pageQuery(page),

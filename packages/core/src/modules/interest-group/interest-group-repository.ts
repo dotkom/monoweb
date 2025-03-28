@@ -1,5 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import type {
+  EventId,
   InterestGroup,
   InterestGroupId,
   InterestGroupMember,
@@ -17,6 +18,7 @@ export interface InterestGroupRepository {
   getAllByMember(userId: UserId): Promise<InterestGroup[]>
   addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
   removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
+  getAllByEventId(eventId: EventId): Promise<InterestGroup[]>
 }
 
 export class InterestGroupRepositoryImpl implements InterestGroupRepository {
@@ -60,5 +62,15 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
 
   async removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void> {
     await this.db.interestGroupMember.delete({ where: { interestGroupId, userId } })
+  }
+
+  async getAllByEventId(eventId: EventId): Promise<InterestGroup[]> {
+    return await this.db.interestGroup.findMany({
+      where: {
+        events: {
+          some: { eventId },
+        },
+      },
+    })
   }
 }

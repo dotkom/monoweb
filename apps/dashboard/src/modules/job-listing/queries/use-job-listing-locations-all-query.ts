@@ -1,6 +1,9 @@
-import { trpc } from "../../../trpc"
+import { useTRPC } from "../../../trpc"
+
+import { useQuery } from "@tanstack/react-query"
 
 export const useJobListingAllLocationsQuery = () => {
-  const { data: locations = [], ...query } = trpc.jobListing.getLocations.useQuery({ take: 999 })
+  const trpc = useTRPC()
+  const { data: locations = [], ...query } = useQuery(trpc.jobListing.getLocations.queryOptions({ take: 999 }))
   return { locations, ...query }
 }

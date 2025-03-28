@@ -1,13 +1,8 @@
-const colors = require("@radix-ui/colors")
-
 const createColorScale = (name) => {
-  const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [
-    step,
-    `hsl(var(--color-${name}-${step}, ${colors[`${name}Dark`][`${name}${step}`]}) / <alpha-value>)`,
-  ])
+  const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [step, `var(--${name}-${step})`])
 
   // Give the default the third step on the scale
-  entries.push(["DEFAULT", `hsl(var(--color-${name}-3, ${colors[`${name}Dark`][`${name}3`]}) / <alpha-value>)`])
+  entries.push(["DEFAULT", `var(--${name}-3)`])
   return Object.fromEntries(entries)
 }
 
@@ -18,6 +13,8 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     colors: {
+      brand: createColorScale("brand"),
+      accent: createColorScale("accent"),
       slate: createColorScale("slate"),
       blue: createColorScale("blue"),
       amber: createColorScale("amber"),
@@ -30,23 +27,14 @@ module.exports = {
         fraunces: ["var(--font-fraunces, 'Fraunces')"],
         poppins: ["var(--font-poppins, 'Poppins')"],
         mono: ["Roboto Mono", "monospace"],
-        sans: ['"Inter var"', "sans-serif"],
       },
       colors: {
         inherit: "inherit",
         current: "current",
         transparent: "transparent",
         white: "#ffffee",
-        background: "var(--color-background)", //#asjkdl
-        foreground: "hsl(var(--color-slate-12) / <alpha-value>)",
-        accent: "#FFEDB3",
-        brand: {
-          lighter: "#1277A5",
-          light: "#106A93",
-          DEFAULT: "#0d5474",
-          dark: "#0A425C",
-          darker: "#083549",
-        },
+        background: "var(--color-background)",
+        foreground: "var(--slate-12)",
       },
       keyframes: {
         "accordion-down": {
@@ -63,7 +51,7 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       ringColor: {
-        DEFAULT: "var(--color-blue-7)",
+        DEFAULT: "var(--blue-7)",
       },
       borderRadius: {
         md: "4px",

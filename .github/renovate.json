@@ -4,7 +4,15 @@
   "extends": [
     "config:recommended"
   ],
+  "schedule": [
+    "* 0-3 * * 1"
+  ],
   "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/", 
+      "automerge": true
+    },
     {
       "enabled": false,
       "matchPackageNames": [

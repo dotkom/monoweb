@@ -17,14 +17,11 @@
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/types": "workspace:^",
-    "@trpc/react-query": "^10.45.2",
-    "ical-generator": "^5.0.1",
-    "jsonwebtoken": "^9.0.2",
-    "next-auth": "^4.24.8",
+    "@trpc/react-query": "11.0.0-rc.828",
     "stripe": "^13.11.0"
   },
   "peerDependencies": {
-    "next": "^15.1.6"
+    "next": "^15"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
