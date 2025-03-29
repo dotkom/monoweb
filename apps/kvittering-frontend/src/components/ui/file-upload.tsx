@@ -23,7 +23,7 @@ import {
 } from "react-dropzone";
 import { toast } from "sonner";
 import { compressImageWithLibrary } from "../../lib/compress-img";
-import { convertPdfToImage } from "../../lib/convert-pdf-to-image";
+import { convertPdfToLongImage } from "../../lib/convert-pdf-to-image";
 import { uploadFileToS3 } from "../../lib/upload-s3";
 
 type DirectionOptions = "rtl" | "ltr" | undefined;
@@ -201,14 +201,24 @@ export const FileUploader = forwardRef<
 
 						// Convert PDF to image if it's a PDF file
 						if (file.type.includes("pdf")) {
-							const pdfToImagePromise = toast.promise(convertPdfToImage(file), {
-								loading: "Konverterer PDF til bilde...",
-								success: "PDF konvertert til bilde",
-								error: "Feil ved konvertering av PDF. Prøv igjen!",
-							});
+							const pdfToImagePromise = toast.promise(
+								convertPdfToLongImage(file),
+								{
+									loading: "Konverterer PDF til bilde...",
+									success: "PDF konvertert til bilde",
+									error: "Feil ved konvertering av PDF. Prøv igjen!",
+								},
+							);
 
 							const convertedBlob = await pdfToImagePromise.unwrap();
 							fileBlob = convertedBlob as Blob;
+
+							// open image in new tab
+							window.open(URL.createObjectURL(fileBlob), "_blank");
+
+							// console log the size of the file in MB
+							console.log("file size", fileBlob.size / 1024 / 1024);
+
 							fileToProcess = new File(
 								[fileBlob],
 								file.name.replace(".pdf", ".jpg"),

@@ -16,6 +16,15 @@ export async function compressImageWithLibrary(
 	console.log("originalFile instanceof Blob", imageFile instanceof Blob); // true
 	console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
 
+	const currentSize = imageFile.size / 1024 / 1024;
+
+	if (currentSize <= maxSizeBytes) {
+		return {
+			blob: imageFile,
+			downloadLink: URL.createObjectURL(imageFile),
+		};
+	}
+
 	const options = {
 		maxSizeMB: maxSizeBytes / 1024 / 1024,
 		maxWidthOrHeight: 1000,
