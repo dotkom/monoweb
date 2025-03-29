@@ -1,6 +1,4 @@
 import * as pdfjsLib from "pdfjs-dist";
-// Directly import the PDF.js worker
-
 import { GlobalWorkerOptions } from "pdfjs-dist";
 
 GlobalWorkerOptions.workerSrc = new URL(
@@ -8,62 +6,120 @@ GlobalWorkerOptions.workerSrc = new URL(
 	import.meta.url,
 ).toString();
 
-/**
- * Converts the first page of a PDF file to an image (JPEG)
- * Uses PDF.js to render the PDF to a canvas and then convert to an image blob
- *
- * @param pdfFile - The PDF file to convert
- * @returns A Promise that resolves to a Blob containing the image
- */
-export async function convertPdfToImage(pdfFile: File): Promise<Blob> {
+export interface PdfToLongImageOptions {
+	onProgress?: (percent: number) => void;
+}
+
+export async function convertPdfToLongImage(
+	pdfFile: File,
+	pages?: number | number[] | null,
+	options: PdfToLongImageOptions = {},
+): Promise<Blob> {
 	try {
-		// Read the PDF file
+		const { onProgress } = options;
+		const scale = 3.0;
+
 		const arrayBuffer = await pdfFile.arrayBuffer();
 		const pdfData = new Uint8Array(arrayBuffer);
-
-		// Load the PDF document
 		const pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+		const numPages = pdfDoc.numPages;
 
-		// Get the first page
-		const page = await pdfDoc.getPage(1);
+		let pagesToRender: number[] = [];
 
-		// Create a canvas to render the PDF page
-		const viewport = page.getViewport({ scale: 1.5 });
-		const canvas = document.createElement("canvas");
-		const context = canvas.getContext("2d");
-
-		if (!context) {
-			throw new Error("Canvas context could not be created");
+		if (pages === undefined || pages === null) {
+			pagesToRender = Array.from({ length: numPages }, (_, i) => i + 1);
+		} else if (typeof pages === "number") {
+			if (pages < 1 || pages > numPages) {
+				throw new Error(`Page ${pages} is out of range (1-${numPages})`);
+			}
+			pagesToRender = [pages];
+		} else {
+			pagesToRender = pages.filter((p) => p >= 1 && p <= numPages);
+			if (pagesToRender.length === 0) {
+				throw new Error("No valid pages specified");
+			}
 		}
 
-		// Set canvas dimensions to match the page viewport
-		canvas.height = viewport.height;
-		canvas.width = viewport.width;
+		const pageCanvases: {
+			canvas: HTMLCanvasElement;
+			height: number;
+			width: number;
+		}[] = [];
+		let totalHeight = 0;
+		let maxWidth = 0;
 
-		// Render the PDF page to the canvas
-		const renderContext = {
-			canvasContext: context,
-			viewport: viewport,
-		};
+		for (let i = 0; i < pagesToRender.length; i++) {
+			const pageNum = pagesToRender[i];
+			const page = await pdfDoc.getPage(pageNum);
 
-		await page.render(renderContext).promise;
+			const viewport = page.getViewport({ scale });
+			const canvas = document.createElement("canvas");
+			const context = canvas.getContext("2d", { alpha: false });
 
-		// Convert the canvas to a blob
+			if (!context) {
+				throw new Error("Canvas context could not be created");
+			}
+
+			canvas.height = viewport.height;
+			canvas.width = viewport.width;
+
+			await page.render({
+				canvasContext: context,
+				viewport: viewport,
+			}).promise;
+
+			pageCanvases.push({
+				canvas,
+				height: canvas.height,
+				width: canvas.width,
+			});
+
+			totalHeight += canvas.height;
+			maxWidth = Math.max(maxWidth, canvas.width);
+
+			if (onProgress) {
+				onProgress(Math.round(((i + 1) / pagesToRender.length) * 100));
+			}
+		}
+
+		const finalCanvas = document.createElement("canvas");
+		finalCanvas.width = maxWidth;
+		finalCanvas.height = totalHeight;
+
+		const finalContext = finalCanvas.getContext("2d", {
+			alpha: false,
+			willReadFrequently: false,
+		});
+
+		if (!finalContext) {
+			throw new Error("Final canvas context could not be created");
+		}
+
+		finalContext.fillStyle = "white";
+		finalContext.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+		finalContext.imageSmoothingEnabled = true;
+		finalContext.imageSmoothingQuality = "high";
+
+		let yOffset = 0;
+		for (const { canvas, height, width } of pageCanvases) {
+			const xOffset = Math.floor((maxWidth - width) / 2);
+			finalContext.drawImage(canvas, xOffset, yOffset);
+			yOffset += height;
+		}
+
 		return new Promise<Blob>((resolve, reject) => {
-			canvas.toBlob(
-				(blob) => {
-					if (blob) {
-						resolve(blob);
-					} else {
-						reject(new Error("Failed to convert canvas to blob"));
-					}
-				},
-				"image/jpeg",
-				0.9,
-			); // 0.9 quality, high but with some compression
+			const format = "image/png";
+			finalCanvas.toBlob((blob) => {
+				if (blob) {
+					resolve(blob);
+				} else {
+					reject(new Error("Failed to convert canvas to blob"));
+				}
+			}, format);
 		});
 	} catch (error) {
-		console.error("Error converting PDF to image:", error);
+		console.error("Error converting PDF to long image:", error);
 		throw error;
 	}
 }
