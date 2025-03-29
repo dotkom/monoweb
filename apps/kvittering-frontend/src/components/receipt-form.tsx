@@ -271,10 +271,6 @@ export default function ReceiptForm() {
 				Per nå er det noen endringer fra det gamle skjemaet:
 				<br />- Det funker nå å laste opp filer rett fra iphone (.heic-filer)
 				<br />
-				<br />
-				Ikke fiksa enda:
-				<br />- Kan ikke enda laste opp PDF'er. Ta en screenshot av PDF'en og
-				laste opp bildet i steden. Planen er å fikse snart
 			</div>
 			<Button
 				variant="outline"
@@ -522,9 +518,6 @@ export default function ReceiptForm() {
 													</span>
 													&nbsp; eller dra og slipp
 												</p>
-												<p className="text-xs text-gray-500 dark:text-gray-400">
-													Bare bilder
-												</p>
 											</div>
 										</FileInput>
 										<FileUploaderContent>
@@ -541,7 +534,6 @@ export default function ReceiptForm() {
 									</FileUploader>
 								</FormControl>
 								<FormDescription>
-									Last opp bilde eller scan av kvitteringen (maks 25MB per fil).
 									Du kan laste opp rett fra iphone
 								</FormDescription>
 								<FormMessage />

@@ -23,6 +23,7 @@ import {
 } from "react-dropzone";
 import { toast } from "sonner";
 import { compressImageWithLibrary } from "../../lib/compress-img";
+import { convertPdfToImage } from "../../lib/convert-pdf-to-image";
 import { uploadFileToS3 } from "../../lib/upload-s3";
 
 type DirectionOptions = "rtl" | "ltr" | undefined;
@@ -89,6 +90,7 @@ export const FileUploader = forwardRef<
 		const {
 			accept = {
 				"image/*": [".jpg", ".jpeg", ".png", ".heic"],
+				"application/pdf": [".pdf"],
 			},
 			maxFiles = 1,
 			maxSize = 50 * 1024 * 1024,
@@ -174,13 +176,6 @@ export const FileUploader = forwardRef<
 					rejectedFiles,
 				});
 
-				if (acceptedFiles.some((file) => file.type.includes("pdf"))) {
-					toast.error(
-						"Man kan ikke laste opp PDF filer enda, men det fikses snart. Ta screenshot av pdf eller konverter på en annen måte og last opp bildet. ",
-					);
-					return;
-				}
-
 				if (!files) {
 					toast.error("file error , probably too big");
 					return;
@@ -196,13 +191,34 @@ export const FileUploader = forwardRef<
 					console.log(`compression progress: ${progress}%`);
 				}
 
-				// MAX 1 MB file
-				const maxSizeMB = 1 * 1024 * 1024;
+				// MAX 5 MB file
+				const maxSizeMB = 5 * 1024 * 1024;
 
 				for (const file of files) {
 					try {
+						let fileToProcess = file;
+						let fileBlob: Blob = file;
+
+						// Convert PDF to image if it's a PDF file
+						if (file.type.includes("pdf")) {
+							const pdfToImagePromise = toast.promise(convertPdfToImage(file), {
+								loading: "Konverterer PDF til bilde...",
+								success: "PDF konvertert til bilde",
+								error: "Feil ved konvertering av PDF. Prøv igjen!",
+							});
+
+							const convertedBlob = await pdfToImagePromise.unwrap();
+							fileBlob = convertedBlob as Blob;
+							fileToProcess = new File(
+								[fileBlob],
+								file.name.replace(".pdf", ".jpg"),
+								{ type: "image/jpeg" },
+							);
+						}
+
+						// Compress the image
 						const compressedFilePromise = toast.promise(
-							compressImageWithLibrary(file, maxSizeMB, onProgress),
+							compressImageWithLibrary(fileToProcess, maxSizeMB, onProgress),
 							{
 								loading: "Komprimerer bilde...",
 								success: "Bilde komprimert",
@@ -213,9 +229,6 @@ export const FileUploader = forwardRef<
 						const compressedFile = await compressedFilePromise.unwrap();
 
 						console.log("compressedFile", compressedFile);
-
-						// open the compressedFile in a new tab
-						// window.open(compressedFile.downloadLink, "_blank");
 
 						const randomFileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.jpg`;
 
