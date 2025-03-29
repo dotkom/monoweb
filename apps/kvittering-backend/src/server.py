@@ -37,7 +37,7 @@ sentry_sdk.init(
 
 logger.info(f"Running in {env.ENVIRONMENT} mode")
 
-PORT = 5069
+PORT = 5000
 
 app = Flask(__name__)
 CORS(app)
