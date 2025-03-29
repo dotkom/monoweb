@@ -1,16 +1,13 @@
 import type {
+  AttendanceEventDetail,
   AttendanceWrite,
-  DashboardEventDetail,
   Event,
   EventId,
   EventInterestGroup,
   EventWrite,
   InterestGroupId,
-  WebEventDetail,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
-import { AttendanceNotFound } from "../attendance/attendance-error"
-import type { AttendancePoolService } from "../attendance/attendance-pool-service"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { InterestGroupService } from "../interest-group/interest-group-service"
 import type { EventCompanyService } from "./event-company-service.js"
@@ -27,15 +24,13 @@ export interface EventService {
   getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
-  getWebDetail(id: EventId): Promise<WebEventDetail>
-  getDashboardDetail(id: EventId): Promise<DashboardEventDetail>
+  getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail>
   setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]>
 }
 
 export class EventServiceImpl implements EventService {
   private readonly eventRepository: EventRepository
   private readonly attendanceService: AttendanceService
-  private readonly attendancePoolService: AttendancePoolService
   private readonly eventCompanyService: EventCompanyService
   private readonly eventHostingGroupService: EventHostingGroupService
   private readonly interestGroupService: InterestGroupService
@@ -43,14 +38,12 @@ export class EventServiceImpl implements EventService {
   constructor(
     eventRepository: EventRepository,
     attendanceService: AttendanceService,
-    attendancePoolService: AttendancePoolService,
     eventCompanyService: EventCompanyService,
     eventHostingGroupService: EventHostingGroupService,
     interestGroupService: InterestGroupService
   ) {
     this.eventRepository = eventRepository
     this.attendanceService = attendanceService
-    this.attendancePoolService = attendancePoolService
     this.eventCompanyService = eventCompanyService
     this.eventHostingGroupService = eventHostingGroupService
     this.interestGroupService = interestGroupService
@@ -102,76 +95,23 @@ export class EventServiceImpl implements EventService {
   }
 
   async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-    const event = await this.eventRepository.update(id, eventUpdate)
-    return event
+    return await this.eventRepository.update(id, eventUpdate)
   }
 
-  async getDashboardDetail(id: EventId): Promise<DashboardEventDetail> {
+  async getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail> {
     const event = await this.getEventById(id)
+    const companies = await this.eventCompanyService.getCompaniesByEventId(event.id)
+    const attendance = event.attendanceId ? await this.attendanceService.getById(event.attendanceId) : null
+
     const eventHostingGroups = await this.eventHostingGroupService.getHostingGroupsForEvent(event.id)
     const eventInterestGroups = await this.interestGroupService.getAllByEventId(event.id)
 
-    if (event.attendanceId !== null) {
-      const attendance = await this.attendanceService.getById(event.attendanceId)
-      if (!attendance) {
-        throw new AttendanceNotFound(event.attendanceId)
-      }
-
-      const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
-
-      return {
-        event,
-        eventHostingGroups,
-        eventInterestGroups,
-        attendance,
-        pools,
-        hasAttendance: true,
-      }
-    }
-
     return {
       event,
-      eventHostingGroups,
-      eventInterestGroups,
-      attendance: null,
-      pools: null,
-      hasAttendance: false,
-    }
-  }
-
-  async getWebDetail(id: EventId): Promise<WebEventDetail> {
-    const event = await this.getEventById(id)
-    const eventHostingGroups = await this.eventHostingGroupService.getHostingGroupsForEvent(event.id)
-    const eventInterestGroups = await this.interestGroupService.getAllByEventId(event.id)
-    const eventCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
-
-    console.log(`event ${id}: ${event.title} and attendandeId: ${event.attendanceId}`)
-
-    if (!event.attendanceId) {
-      return {
-        hasAttendance: false,
-        event,
-        eventHostingGroups,
-        eventInterestGroups,
-        eventCompanies,
-      }
-    }
-
-    const attendance = await this.attendanceService.getById(event.attendanceId)
-    if (!attendance) {
-      throw new Error("Attendance not found")
-    }
-
-    const pools = await this.attendancePoolService.getByAttendanceId(attendance.id)
-
-    return {
-      hasAttendance: true,
-      event,
-      eventHostingGroups,
-      eventInterestGroups,
+      companies,
       attendance,
-      pools,
-      eventCompanies,
+      eventHostingGroups,
+      eventInterestGroups,
     }
   }
 

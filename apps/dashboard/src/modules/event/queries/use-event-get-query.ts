@@ -5,6 +5,6 @@ import { useQuery } from "@tanstack/react-query"
 
 export const useEventDetailsGetQuery = (id: EventId) => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery(trpc.event.getDashboardEventDetailData.queryOptions(id))
+  const { data, ...query } = useQuery(trpc.event.getAttendanceEventDetail.queryOptions(id))
   return { data, ...query }
 }

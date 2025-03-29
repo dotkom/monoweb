@@ -1,7 +1,8 @@
 import type { UserId, WaitlistAttendee, WaitlistAttendeeId, WaitlistAttendeeWrite } from "@dotkomonline/types"
+import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
-import type { AttendancePoolRepository } from "./attendance-pool-repository"
-import type { WaitlistAttendeRepository } from "./waitlist-attendee-repository"
+import type { AttendanceRepository } from "./attendance-repository"
+import type { WaitlistAttendeeRepository } from "./waitlist-attendee-repository"
 
 export interface WaitlistAttendeService {
   create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
@@ -11,21 +12,22 @@ export interface WaitlistAttendeService {
 }
 
 export class WaitlistAttendeServiceImpl implements WaitlistAttendeService {
-  private readonly waitlistAttendeeRepository: WaitlistAttendeRepository
-  private readonly attendancePoolRepository: AttendancePoolRepository
+  private readonly waitlistAttendeeRepository: WaitlistAttendeeRepository
+  private readonly attendanceRepository: AttendanceRepository
 
-  constructor(
-    waitlistAttendeeRepository: WaitlistAttendeRepository,
-    attendancePoolRepository: AttendancePoolRepository
-  ) {
+  constructor(waitlistAttendeeRepository: WaitlistAttendeeRepository, attendanceRepository: AttendanceRepository) {
     this.waitlistAttendeeRepository = waitlistAttendeeRepository
-    this.attendancePoolRepository = attendancePoolRepository
+    this.attendanceRepository = attendanceRepository
   }
 
   async create(obj: WaitlistAttendeeWrite): Promise<WaitlistAttendee> {
-    const pools = await this.attendancePoolRepository.getByAttendanceId(obj.attendanceId)
+    const attendance = await this.attendanceRepository.getById(obj.attendanceId)
 
-    const pool = pools.find((pool) => pool.yearCriteria.includes(obj.studyYear))
+    if (attendance === null) {
+      throw new AttendanceNotFound(obj.attendanceId)
+    }
+
+    const pool = attendance.pools.find((pool) => pool.yearCriteria.includes(obj.studyYear))
 
     if (!pool) {
       throw new AttendancePoolNotFoundError(obj.attendanceId)

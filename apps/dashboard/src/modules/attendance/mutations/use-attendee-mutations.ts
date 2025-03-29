@@ -85,3 +85,30 @@ export const useUpdateEventAttendanceMutation = () => {
     })
   )
 }
+
+export const useUpdateSelectionResponsesMutation = () => {
+  const notification = useQueryNotification()
+  const trpc = useTRPC()
+  return useMutation(
+    trpc.attendance.updateSelectionResponses.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppdaterer svar...",
+          message: "Brukerens svar blir oppdatert.",
+        })
+      },
+      onSuccess: (data) => {
+        notification.complete({
+          title: "Svar oppdatert",
+          message: "Svar er oppdatert",
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: "En feil oppsto under oppdatering av svar",
+        })
+      },
+    })
+  )
+}
