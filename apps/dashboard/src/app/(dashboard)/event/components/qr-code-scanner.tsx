@@ -2,7 +2,7 @@ import type { AttendanceId } from "@dotkomonline/types"
 import { Button } from "@mantine/core"
 import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
-import { useHandleQrCodeRegistration } from "../../queries/use-get-queries"
+import { useHandleQrCodeRegistration } from "../queries"
 
 interface QrCodeScannerProps {
   attendanceId: AttendanceId

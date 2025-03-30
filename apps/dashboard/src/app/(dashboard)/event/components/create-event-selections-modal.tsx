@@ -1,7 +1,7 @@
 import type { Attendance } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
-import { useUpdateAttendanceMutation } from "src/modules/attendance/mutations/use-attendance-mutations"
+import { useUpdateAttendanceMutation } from "../mutations"
 import { SelectionsForm, type SelectionsFormValues } from "./selection-form"
 
 export const CreateAttendanceSelectionsModal: FC<ContextModalProps<{ attendance: Attendance }>> = ({

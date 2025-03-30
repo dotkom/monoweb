@@ -1,6 +1,6 @@
 import { AttendanceWriteSchema } from "@dotkomonline/types"
 import type { z } from "zod"
-import { createDateTimeInput, useFormBuilder } from "../../../../app/form"
+import { createDateTimeInput, useFormBuilder } from "../../../form"
 
 // Define the schema without the omitted fields
 const AttendanceFormSchema = AttendanceWriteSchema.superRefine((val, ctx) => {
@@ -43,5 +43,3 @@ export const useAttendanceForm = ({ onSubmit, defaultValues, label }: Attendance
       }),
     },
   })
-
-export default useAttendanceForm

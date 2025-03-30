@@ -3,14 +3,11 @@ import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
 import { useQuery } from "@tanstack/react-query"
 import type { FC } from "react"
-import useAttendanceForm from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
-import {
-  useAddAttendanceMutation,
-  useUpdateAttendanceMutation,
-} from "../../../../modules/attendance/mutations/use-attendance-mutations"
 import { useTRPC } from "../../../../trpc"
+import { useAttendanceForm } from "../components/attendance-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
+import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventDetailsContext } from "./provider"
 
 export const SelectionsPage: FC = () => {

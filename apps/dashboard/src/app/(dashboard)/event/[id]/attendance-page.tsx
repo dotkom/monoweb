@@ -1,14 +1,11 @@
 import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
-import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
-import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
-import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
-import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
-import {
-  useAddAttendanceMutation,
-  useUpdateAttendanceMutation,
-} from "../../../../modules/attendance/mutations/use-attendance-mutations"
+import { InfoBox } from "../components/InfoBox"
+import { useAttendanceForm } from "../components/attendance-form"
+import { PoolBox } from "../components/pools-box"
+import { usePoolsForm } from "../components/pools-form"
+import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventDetailsContext } from "./provider"
 
 export const AttendancePage: FC = () => {
