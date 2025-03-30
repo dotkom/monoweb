@@ -12,14 +12,12 @@ import { EditPoolModal } from "../modules/attendance/modals/edit-pool-modal"
 import { CreateManualUserAttendModal } from "../modules/attendance/modals/manual-user-attend-modal"
 import { MergePoolsModal } from "../modules/attendance/modals/merge-pools-modal"
 import { CreateCompanyModal } from "../modules/company/modals/create-company-modal"
-import { CreateEventModal } from "../modules/event/modals/create-event-modal"
-import { CreateAttendanceSelectionsModal } from "../modules/event/modals/create-event-selections-modal"
-import { UpdateAttendanceSelectionsModal } from "../modules/event/modals/edit-event-selections-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "../modules/offline/modals/create-offline-modal"
+import { CreateAttendanceSelectionsModal } from "./(dashboard)/event/components/create-event-selections-modal"
+import { UpdateAttendanceSelectionsModal } from "./(dashboard)/event/components/edit-event-selections-modal"
 
 const modals = {
-  "event/create": CreateEventModal,
   "event/attendance/attendee/create": CreateManualUserAttendModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,

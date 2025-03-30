@@ -8,9 +8,9 @@ import {
   useAddAttendanceMutation,
   useUpdateAttendanceMutation,
 } from "../../../../modules/attendance/mutations/use-attendance-mutations"
-import { useCreateAttendanceSelectionsModal } from "../../../../modules/event/modals/create-event-selections-modal"
-import { useEditSelectionsModal } from "../../../../modules/event/modals/edit-event-selections-modal"
 import { useTRPC } from "../../../../trpc"
+import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
+import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
 import { useEventDetailsContext } from "./provider"
 
 export const SelectionsPage: FC = () => {

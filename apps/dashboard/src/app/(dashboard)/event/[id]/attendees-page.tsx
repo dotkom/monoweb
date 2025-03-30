@@ -4,7 +4,7 @@ import type { FC } from "react"
 import QrCodeScanner from "src/modules/attendance/components/attendance-page/QrCodeScanner"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { openCreateManualUserAttendModal } from "../../../../modules/attendance/modals/manual-user-attend-modal"
-import { AllAttendeesTable } from "../all-users-table"
+import { AllAttendeesTable } from "../components/all-users-table"
 import { useEventDetailsContext } from "./provider"
 
 export const AttendeesPage: FC = () => {

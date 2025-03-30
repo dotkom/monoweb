@@ -1,8 +1,8 @@
 import type { FC } from "react"
 import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
-import { useEditEventWithGroupsMutation } from "../../../../modules/event/mutations/use-edit-event-mutation-groups"
 import { useGroupAllQuery } from "../../../../modules/group/queries/use-group-all-query"
-import { useEventEditForm } from "../edit-form"
+import { useEventEditForm } from "../components/edit-form"
+import { useEditEventWithGroupsMutation } from "../mutations"
 import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {

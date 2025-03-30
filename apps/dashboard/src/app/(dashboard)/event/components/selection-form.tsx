@@ -3,9 +3,9 @@ import { Icon } from "@iconify/react"
 import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
 import type { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
+import { ActionSelect } from "src/components/molecules/ActionSelect/ActionSelect"
 import { z } from "zod"
-import { ActionSelect } from "../ActionSelect/ActionSelect"
-import { templates } from "./templates"
+import { templates } from "../templates"
 
 type TemplateKey = keyof typeof templates
 
