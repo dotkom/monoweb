@@ -1,8 +1,8 @@
 const createColorScale = (name) => {
   const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [step, `var(--${name}-${step})`])
 
-  // Give the default the third step on the scale
-  entries.push(["DEFAULT", `var(--${name}-3)`])
+  // Set the default to the ninth step
+  entries.push(["DEFAULT", `var(--${name}-9)`])
   return Object.fromEntries(entries)
 }
 
