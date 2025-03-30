@@ -1,8 +1,8 @@
-const createColorScale = (name, defaultStep) => {
+const createColorScale = (name) => {
   const entries = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((step) => [step, `var(--${name}-${step})`])
 
-  // Set the default to the third step unless a default step is given
-  entries.push(["DEFAULT", `var(--${name}-${defaultStep ?? 3})`])
+  // Set the default to the ninth step
+  entries.push(["DEFAULT", `var(--${name}-9)`])
   return Object.fromEntries(entries)
 }
 
@@ -13,7 +13,7 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     colors: {
-      brand: createColorScale("brand", 9),
+      brand: createColorScale("brand"),
       accent: createColorScale("accent"),
       slate: createColorScale("slate"),
       blue: createColorScale("blue"),
