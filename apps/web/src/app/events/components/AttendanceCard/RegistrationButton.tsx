@@ -52,7 +52,11 @@ export const RegistrationButton: FC<Props> = ({
 
   const className = clsx(
     "w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left disabled:opacity-100",
-    attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "bg-slate-4 text-slate-8" : attendee ? "bg-red-5 hover:bg-red-6" : "bg-green-4 hover:bg-green-5",
+    attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline
+      ? "bg-slate-4 text-slate-8"
+      : attendee
+        ? "bg-red-5 hover:bg-red-6"
+        : "bg-green-4 hover:bg-green-5"
   )
 
   return (
@@ -63,11 +67,16 @@ export const RegistrationButton: FC<Props> = ({
       variant="solid"
       icon={buttonIcon}
     >
-      <Icon className="text-lg" icon={`tabler:${attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "lock-plus" : attendee ? "user-minus" : "user-plus"}`} />
       {isLoading ? (
         <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
       ) : (
-        <>{buttonStatusText}</>
+        <>
+          {buttonStatusText}
+          <Icon
+            className="text-lg"
+            icon={`tabler:${attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "lock-plus" : attendee ? "user-minus" : "user-plus"}`}
+          />
+        </>
       )}
     </Button>
   )
