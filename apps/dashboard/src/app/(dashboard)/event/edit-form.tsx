@@ -3,7 +3,7 @@ import { z } from "zod"
 import {
   createCheckboxInput,
   createDateTimeInput,
-  createFileInput,
+  createImageInput,
   createMultipleSelectInput,
   createRichTextInput,
   createSelectInput,
@@ -72,7 +72,7 @@ export const useEventEditForm = ({
       locationLink: createTextInput({
         label: "Lenke til kart",
       }),
-      imageUrl: createFileInput({
+      imageUrl: createImageInput({
         label: "Bilde",
         placeholder: "Last opp",
       }),
