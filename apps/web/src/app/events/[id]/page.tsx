@@ -23,7 +23,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
 
   const hostingGroups = eventDetail.eventHostingGroups.map(mapToImageAndName)
   const hostingInterestGroups = eventDetail.eventInterestGroups.map(mapToImageAndName)
-  const companyList = eventDetail.eventCompanies.map(mapToImageAndName)
+  const companyList = eventDetail.companies.map(mapToImageAndName)
   const organizers = [...companyList, ...hostingGroups, ...hostingInterestGroups]
 
   return (

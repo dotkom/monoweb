@@ -123,18 +123,16 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
       <h2 className="border-none">Påmelding</h2>
       <AttendanceBoxPool pool={attendedPool} isAttending={userIsRegistered} />
 
-      <div className="flex flex-row gap-3">
+      <div className="flex flex-col gap-3">
         <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
-        {attendee !== undefined && (
-          <RegistrationButton
-            attendee={attendee}
-            attendance={attendance}
-            registerForAttendance={registerForAttendance}
-            unregisterForAttendance={unregisterForAttendance}
-            isLoading={registerLoading}
-            enabled={false}
-          />
-        )}
+        <RegistrationButton
+          attendee={attendee}
+          attendance={attendance}
+          registerForAttendance={registerForAttendance}
+          unregisterForAttendance={unregisterForAttendance}
+          isLoading={registerLoading}
+          enabled={false}
+        />
       </div>
 
       {attendee && attendance.selections.length > 0 && (
@@ -153,18 +151,13 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
       )}
 
       <div className="flex flex-row gap-3">
-        <p className="text-xs text-slate-9">Avmeldingsfrist 12:00 23.09.2024</p>
-      </div>
-      <div className="flex flex-row gap-3">
-        <a href="/profile">
-          <p className="text-xs text-slate-9">
-            <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
-            Oppdater matallergier
-          </p>
+        <a href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-9">
+          <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
+          Oppdater matallergier
         </a>
-        <p className="text-xs text-slate-9">
+        <p className="flex flex-row gap-1 items-center text-sm text-slate-9">
           <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
-          Arrangementbregler
+          Arrangementregler
         </p>
       </div>
     </section>
