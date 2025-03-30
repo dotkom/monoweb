@@ -5,6 +5,7 @@ import { useGroupAllQuery } from "../../../modules/group/queries/use-group-all-q
 import {
   createCheckboxInput,
   createDateTimeInput,
+  createFileInput,
   createMultipleSelectInput,
   createRichTextInput,
   createSelectInput,
@@ -76,8 +77,9 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Sted",
         placeholder: "Åre",
       }),
-      imageUrl: createTextInput({
-        label: "Bildelenke",
+      imageUrl: createFileInput({
+        label: "Bilde",
+        placeholder: "Last opp",
       }),
       start: createDateTimeInput({
         label: "Starttidspunkt",
