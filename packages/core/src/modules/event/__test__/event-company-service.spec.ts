@@ -16,6 +16,7 @@ describe("EventCompanyService", () => {
     email: "bekk@bekk.no",
     id: randomUUID(),
     name: "Bekk",
+    slug: "bekk",
     phone: "+47 123 45 678",
     type: "CONSULTING",
     website: "https://bekk.no",
@@ -36,7 +37,7 @@ describe("EventCompanyService", () => {
     vi.spyOn(eventCompanyRepository, "getCompaniesByEventId").mockResolvedValueOnce([bekk])
     const companies = await eventCompanyService.getCompaniesByEventId(id)
     expect(companies).toEqual([bekk])
-    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id, 20, undefined)
+    expect(eventCompanyRepository.getCompaniesByEventId).toHaveBeenCalledWith(id)
   })
 
   it("deletes companies from an event", async () => {

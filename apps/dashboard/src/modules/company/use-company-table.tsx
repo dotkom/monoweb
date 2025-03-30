@@ -5,7 +5,6 @@ import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { CompanyName } from "../../components/molecules/company-name/company-name"
 
 interface Props {
   data: Company[]
@@ -15,10 +14,14 @@ export const useCompanyTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<Company>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((evt) => evt, {
-        id: "name",
+      columnHelper.accessor((company) => company, {
+        id: "title",
         header: () => "Bedrift",
-        cell: (info) => <CompanyName company={info.getValue()} />,
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/company/${info.getValue().slug}`}>
+            {info.getValue().name}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("email", {
         id: "email",
@@ -43,15 +46,6 @@ export const useCompanyTable = ({ data }: Props) => {
           }
           return null
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/company/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]

@@ -28,6 +28,11 @@ export const useCompanyWriteForm = ({
         placeholder: "Bekk",
         withAsterisk: true,
       }),
+      slug: createTextInput({
+        label: "Slug",
+        placeholder: "bekk",
+        withAsterisk: true,
+      }),
       description: createTextareaInput({
         label: "Beskrivelse",
         placeholder: "Bekk er et konsulentselskap fylt med action og moro!",
