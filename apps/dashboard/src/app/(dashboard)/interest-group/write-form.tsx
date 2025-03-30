@@ -1,5 +1,5 @@
 import { type InterestGroupWrite, InterestGroupWriteSchema } from "@dotkomonline/types"
-import { createCheckboxInput, createTextInput, createTextareaInput, useFormBuilder } from "src/app/form"
+import { createCheckboxInput, createFileInput, createTextInput, createTextareaInput, useFormBuilder } from "src/app/form"
 
 const INTEREST_GROUP_FORM_DEFAULT_VALUES: Partial<InterestGroupWrite> = {}
 
@@ -37,8 +37,9 @@ export const useInterestGroupWriteForm = ({
         withAsterisk: false,
         rows: 5,
       }),
-      image: createTextInput({
-        label: "Bilde-url",
+      image: createFileInput({
+        label: "Bilde",
+        placeholder: "Last opp",
       }),
       joinInfo: createTextareaInput({
         label: "Hvordan bli med",
