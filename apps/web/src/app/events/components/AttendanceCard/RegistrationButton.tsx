@@ -55,8 +55,8 @@ export const RegistrationButton: FC<Props> = ({
     attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline
       ? "bg-slate-4 text-slate-8"
       : attendee
-        ? "bg-red-5 hover:bg-red-6"
-        : "bg-green-4 hover:bg-green-5"
+        ? "bg-red-6 hover:bg-red-7"
+        : "bg-green-6 hover:bg-green-7"
   )
 
   return (
@@ -71,11 +71,11 @@ export const RegistrationButton: FC<Props> = ({
         <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
       ) : (
         <>
-          {buttonStatusText}
           <Icon
             className="text-lg"
             icon={`tabler:${attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "lock-plus" : attendee ? "user-minus" : "user-plus"}`}
           />
+          {buttonStatusText}
         </>
       )}
     </Button>
