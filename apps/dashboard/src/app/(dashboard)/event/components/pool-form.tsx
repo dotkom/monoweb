@@ -7,8 +7,8 @@ import {
   createNumberInput,
   createTextInput,
   useFormBuilder,
-} from "../../../../app/form"
-import { notifyFail } from "../../../../app/notifications"
+} from "../../../form"
+import { notifyFail } from "../../../notifications"
 
 export interface PoolFormProps {
   onSubmit(values: PoolFormSchema): void

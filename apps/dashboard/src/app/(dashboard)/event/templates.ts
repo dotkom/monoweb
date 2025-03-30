@@ -1,4 +1,4 @@
-import type { SelectionsFormValues } from "./SelectionsForm"
+import type { SelectionsFormValues } from "./components/selection-form"
 
 export const templates: Record<string, SelectionsFormValues> = {
   "Pizza / sushi": {

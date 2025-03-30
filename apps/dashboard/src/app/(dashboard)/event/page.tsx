@@ -10,8 +10,8 @@ import { useMemo } from "react"
 import EventInterestGroups from "src/components/molecules/EventOrganizerGroups/event-interest-groups"
 import { GenericTable } from "../../../components/GenericTable"
 import EventHostingGroups from "../../../components/molecules/EventOrganizerGroups/event-hosting-groups"
-import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
-import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
+
+import { useEventAllQuery } from "./queries"
 
 type TableColumns = Event & {
   groups: Group[]
@@ -20,8 +20,6 @@ type TableColumns = Event & {
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
-  const open = useCreateEventModal()
-
   const columnHelper = createColumnHelper<TableColumns>()
   const columns = useMemo(
     () => [
@@ -64,7 +62,9 @@ export default function EventPage() {
       <Stack>
         <GenericTable table={table} />
         <GroupContainer justify="space-between">
-          <Button onClick={open}>Opprett arrangement</Button>
+          <Button component={Link} href="/event/register">
+            Nytt arrangement
+          </Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />

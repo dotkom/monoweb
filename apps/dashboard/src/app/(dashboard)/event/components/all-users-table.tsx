@@ -2,12 +2,10 @@ import type { AttendanceId, Attendee, AttendeeId } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
-import { useEventAttendeesGetQuery } from "src/modules/attendance/queries/use-get-queries"
-import { GenericTable } from "../../../components/GenericTable"
-import {
-  useDeregisterForEventMutation,
-  useUpdateEventAttendanceMutation,
-} from "../../../modules/attendance/mutations/use-attendee-mutations"
+import { GenericTable } from "../../../../components/GenericTable"
+import { useEventAttendeesGetQuery } from "../queries"
+
+import { useDeregisterForEventMutation, useUpdateEventAttendanceMutation } from "../mutations"
 
 interface CustomCheckboxProps {
   attendeeId: AttendeeId

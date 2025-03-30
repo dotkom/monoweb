@@ -1,10 +1,10 @@
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { z } from "zod"
-import { createSelectInput, useFormBuilder } from "../../../app/form"
-import { notifyFail } from "../../../app/notifications"
-import { useRegisterForEventMutation } from "../mutations/use-attendee-mutations"
-import { useAttendanceGetQuery } from "../queries/use-get-queries"
+import { createSelectInput, useFormBuilder } from "../../../form"
+import { notifyFail } from "../../../notifications"
+import { useRegisterForEventMutation } from "../mutations"
+import { useAttendanceGetQuery } from "../queries"
 
 interface ModalProps {
   userId: string

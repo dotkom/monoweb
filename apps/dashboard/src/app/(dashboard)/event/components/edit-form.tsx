@@ -9,8 +9,8 @@ import {
   createSelectInput,
   createTextInput,
   useFormBuilder,
-} from "../../form"
-import { validateEvent } from "./event-form-validation"
+} from "../../../form"
+import { validateEvent } from "../event-form-validation"
 
 interface UseEventEditFormProps {
   onSubmit(data: FormValidationResult): void

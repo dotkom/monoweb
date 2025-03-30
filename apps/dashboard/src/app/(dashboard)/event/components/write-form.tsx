@@ -1,7 +1,7 @@
 import { EventWriteSchema } from "@dotkomonline/types"
 import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { z } from "zod"
-import { useGroupAllQuery } from "../../../modules/group/queries/use-group-all-query"
+import { useGroupAllQuery } from "../../../../modules/group/queries/use-group-all-query"
 import {
   createCheckboxInput,
   createDateTimeInput,
@@ -11,8 +11,8 @@ import {
   createSelectInput,
   createTextInput,
   useFormBuilder,
-} from "../../form"
-import { validateEvent } from "./event-form-validation"
+} from "../../../form"
+import { validateEvent } from "../event-form-validation"
 
 const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   start: new Date(),
