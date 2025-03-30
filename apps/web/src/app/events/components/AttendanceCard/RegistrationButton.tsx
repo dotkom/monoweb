@@ -2,12 +2,12 @@ import type { Attendance, Attendee } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
-import type { FC, ReactElement } from "react"
+import type { FC } from "react"
 import { getAttendanceDetails } from "../../utils"
 
 interface Props {
   attendance: Attendance
-  attendee: Attendee | null
+  attendee: Attendee | undefined | null
   registerForAttendance: () => void
   unregisterForAttendance: () => void
   isLoading: boolean
@@ -26,7 +26,6 @@ export const RegistrationButton: FC<Props> = ({
 }) => {
   const attendanceDetails = getAttendanceDetails(attendance)
 
-  let changeRegisteredStateButton: ReactElement<typeof Button>
   let eventAttendanceStatusText: string
 
   switch (attendanceDetails.status) {
@@ -50,30 +49,35 @@ export const RegistrationButton: FC<Props> = ({
   const buttonIcon = null
 
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  const color =
-    attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "slate" : attendee ? "red" : "green"
+
+  const className = clsx(
+    "w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left disabled:opacity-100",
+    attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline
+      ? "bg-slate-4 text-slate-8"
+      : attendee
+        ? "bg-red-6 hover:bg-red-7"
+        : "bg-green-6 hover:bg-green-7"
+  )
 
   return (
     <Button
-      className={clsx("w-full text-white rounded-lg h-fit p-2 text-left disabled:opacity-100")}
+      className={className}
       onClick={attendee ? unregisterForAttendance : registerForAttendance}
       disabled={!enabled}
-      color={color}
       variant="solid"
       icon={buttonIcon}
     >
-      {
-        <span className="flex flex-col items-center w-max">
-          {isLoading ? (
-            <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
-          ) : (
-            <>
-              <span className="block uppercase">{buttonStatusText}</span>
-              <span className="block font-medium text-xs">{eventAttendanceStatusText}</span>
-            </>
-          )}
-        </span>
-      }
+      {isLoading ? (
+        <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
+      ) : (
+        <>
+          <Icon
+            className="text-lg"
+            icon={`tabler:${attendanceDetails.status === "NotOpened" || isPastDeregisterDeadline ? "lock-plus" : attendee ? "user-minus" : "user-plus"}`}
+          />
+          {buttonStatusText}
+        </>
+      )}
     </Button>
   )
 }

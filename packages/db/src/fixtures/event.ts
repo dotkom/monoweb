@@ -48,7 +48,7 @@ export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateMa
     
     There will be a joint departure from Gløshaugen on January 11.
     
-    Any questions regarding the event should be sent to: arrkom@online.ntnu.no`,
+    Any selections regarding the event should be sent to: arrkom@online.ntnu.no`,
     subtitle:
       "Tidspunktet for Åreturen 2023 er endelig satt, og det er bare å gjøre seg klar for ÅREts høydepunkt!! Datoene for ÅREts tur blir 11. - 14. januar! 🏂🏂",
     imageUrl:

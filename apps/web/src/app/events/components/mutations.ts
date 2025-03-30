@@ -1,7 +1,6 @@
 import { useTRPC } from "@/utils/trpc/client"
 
-import { useMutation } from "@tanstack/react-query"
-import { useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useUnregisterMutation = () => {
   const trpc = useTRPC()
@@ -10,7 +9,7 @@ export const useUnregisterMutation = () => {
     trpc.event.attendance.deregisterForEvent.mutationOptions({
       onSuccess: async () => {
         await Promise.all([
-          queryClient.refetchQueries(trpc.event.getWebEventDetailData.queryFilter()),
+          queryClient.refetchQueries(trpc.event.getAttendanceEventDetail.queryFilter()),
           queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
         ])
       },
@@ -29,11 +28,11 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  const mutation = useMutation(
+  return useMutation(
     trpc.event.attendance.registerForEvent.mutationOptions({
       onSuccess: async () => {
         await Promise.all([
-          queryClient.refetchQueries(trpc.event.getWebEventDetailData.queryFilter()),
+          queryClient.refetchQueries(trpc.event.getAttendanceEventDetail.queryFilter()),
           queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
         ])
         onSuccess()
@@ -43,18 +42,16 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
       },
     })
   )
-
-  return mutation
 }
 
-export const useSetExtrasChoicesMutation = () => {
+export const useSetSelectionsOptionsMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
   return useMutation(
-    trpc.event.attendance.setExtrasChoices.mutationOptions({
+    trpc.event.attendance.updateSelectionResponses.mutationOptions({
       onSuccess: (data) => {
-        queryClient.invalidateQueries(trpc.event.getWebEventDetailData.queryFilter())
+        queryClient.invalidateQueries(trpc.event.getAttendanceEventDetail.queryFilter())
       },
       onError: (error) => {
         alert("Noe gikk galt")

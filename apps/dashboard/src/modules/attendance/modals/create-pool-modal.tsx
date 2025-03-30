@@ -2,27 +2,34 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { PoolForm, type PoolFormSchema } from "../components/PoolForm/PoolForm"
 import { useCreatePoolMutation } from "../mutations/use-pool-mutations"
-import { usePoolsGetQuery } from "../queries/use-get-queries"
+import { useAttendanceGetQuery } from "../queries/use-get-queries"
 
 interface CreatePoolModalProps {
   attendanceId: string
 }
-export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({ context, id, innerProps }) => {
+export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
+  context,
+  id,
+  innerProps: { attendanceId },
+}) => {
   const { mutate: createPool } = useCreatePoolMutation()
-  const { pools } = usePoolsGetQuery(innerProps.attendanceId)
+  const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const onClose = () => context.closeModal(id)
   const onSubmit = (values: PoolFormSchema) => {
     createPool({
       capacity: values.capacity,
       yearCriteria: values.yearCriteria,
-      attendanceId: innerProps.attendanceId,
+      attendanceId: attendanceId,
       title: values.title,
       isVisible: values.isVisible,
       type: "NORMAL",
     })
   }
+  const pools = attendance?.pools
 
-  const disabledYears = [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+  const disabledYears = pools
+    ? [...new Set(pools.filter((pool) => pool.isVisible).flatMap(({ yearCriteria }) => yearCriteria))]
+    : []
 
   return pools ? (
     <PoolForm

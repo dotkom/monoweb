@@ -13,7 +13,7 @@ export class AttendeeDeregistrationError extends ApplicationError {
   }
 }
 
-export class UpdateAttendeeError extends ApplicationError {
+export class AttendeeWriteError extends ApplicationError {
   constructor(detail: string) {
     super(PROBLEM_DETAILS.BadRequest, detail)
   }

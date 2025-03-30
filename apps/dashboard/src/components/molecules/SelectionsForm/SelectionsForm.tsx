@@ -4,36 +4,36 @@ import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
 import type { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
-import { ActionSelect } from "../../../components/molecules/ActionSelect/ActionSelect"
+import { ActionSelect } from "../ActionSelect/ActionSelect"
 import { templates } from "./templates"
 
 type TemplateKey = keyof typeof templates
 
 const FormValuesSchema = z.object({
-  question: z.string(),
+  selection: z.string(),
   alternatives: z.array(z.object({ value: z.string().min(1, "Dette feltet er påkrevd") })),
 })
 
-export type ExtrasFormValues = z.infer<typeof FormValuesSchema>
+export type SelectionsFormValues = z.infer<typeof FormValuesSchema>
 
 interface Props {
-  onSubmit(data: ExtrasFormValues): void
-  defaultAlternatives: ExtrasFormValues
+  onSubmit(data: SelectionsFormValues): void
+  defaultAlternatives: SelectionsFormValues
 }
 
-const templateChoices: { value: TemplateKey; label: TemplateKey }[] = Object.keys(templates).map((key) => ({
+const templateOptions: { value: TemplateKey; label: TemplateKey }[] = Object.keys(templates).map((key) => ({
   value: key,
   label: key,
 }))
 
-export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
+export const SelectionsForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
   const {
     register,
     control,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<ExtrasFormValues>({
+  } = useForm<SelectionsFormValues>({
     defaultValues: defaultAlternatives,
     mode: "onSubmit",
     resolver: zodResolver(FormValuesSchema),
@@ -51,10 +51,10 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         buttonProps={{
           w: "100%",
         }}
-        data={templateChoices}
+        data={templateOptions}
         onChange={(value) => {
           const template = templates[value]
-          setValue("question", template.question)
+          setValue("selection", template.selection)
           setValue("alternatives", template.alternatives)
         }}
       />
@@ -62,7 +62,7 @@ export const ExtrasForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box>
             <InputLabel>Spørsmål</InputLabel>
-            <TextInput {...register("question")} title="Spørsmål" placeholder="Hvilken mat vil du ha?" />
+            <TextInput {...register("selection")} title="Spørsmål" placeholder="Hvilken mat vil du ha?" />
           </Box>
           <Box mt="md">
             <InputLabel>Svaralternativer</InputLabel>
