@@ -3,8 +3,8 @@
 import { Icon } from "@iconify/react"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { useRouter } from "next/navigation"
+import { CompanyEventsPage } from "./company-page"
 import { CompanyEditCard } from "./edit-card"
-import { CompanyEventsPage } from "./events-page"
 import { useCompanyDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [

@@ -3,8 +3,8 @@ import { Anchor, Box, Text, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { type FC, useMemo } from "react"
-import { useCompanyEventsAllQuery } from "src/modules/company/queries/use-company-events-all-query"
 import { GenericTable } from "../../../../components/GenericTable"
+import { useCompanyEventsAllQuery } from "../queries"
 import { useCompanyDetailsContext } from "./provider"
 
 export const CompanyEventsPage: FC = () => {

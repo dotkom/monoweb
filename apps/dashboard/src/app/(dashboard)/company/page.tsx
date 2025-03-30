@@ -2,14 +2,13 @@
 
 import { Icon } from "@iconify/react"
 import { Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
+import Link from "next/link"
 import { GenericTable } from "../../../components/GenericTable"
-import { useCreateCompanyModal } from "../../../modules/company/modals/create-company-modal"
-import { useCompanyAllQuery } from "../../../modules/company/queries/use-company-all-query"
-import { useCompanyTable } from "../../../modules/company/use-company-table"
+import { useCompanyTable } from "./components/use-company-table"
+import { useCompanyAllQuery } from "./queries"
 
 export default function CompanyPage() {
   const { companies, isLoading: isCompaniesLoading } = useCompanyAllQuery()
-  const open = useCreateCompanyModal()
   const table = useCompanyTable({ data: companies })
 
   return (
@@ -17,7 +16,9 @@ export default function CompanyPage() {
       <Stack>
         <GenericTable table={table} />
         <Group justify="space-between">
-          <Button onClick={open}>Opprett bedrift</Button>
+          <Button component={Link} href="/company/register">
+            Ny bedrift
+          </Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />
