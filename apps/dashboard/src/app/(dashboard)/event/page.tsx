@@ -25,8 +25,14 @@ export default function EventPage() {
   const columnHelper = createColumnHelper<TableColumns>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("title", {
+      columnHelper.accessor((event) => event, {
+        id: "title",
         header: () => "Arrangementnavn",
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
+            {info.getValue().title}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("start", {
         header: () => "Startdato",
@@ -42,15 +48,6 @@ export default function EventPage() {
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]
