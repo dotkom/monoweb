@@ -34,6 +34,7 @@ import { useForm } from "react-hook-form";
 import useFormPersist from "react-hook-form-persist";
 import { toast } from "sonner";
 import * as z from "zod";
+import { alertFormSubmission } from "../lib/alert";
 import type { ApiFormData } from "../lib/api";
 
 const formSchema = z
@@ -211,7 +212,9 @@ export default function ReceiptForm() {
 	}
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log("onSubmit", values);
+		alertFormSubmission(
+			`${values.name} har sendt inn kvitteringsskjema med ${values.attachments.length} filer`,
+		);
 		try {
 			const formData: ApiFormData = {
 				full_name: values.name,
@@ -234,7 +237,12 @@ export default function ReceiptForm() {
 			const pdfUrlPromise = toast.promise(generatePdf(formData), {
 				loading: "Genererer PDF...",
 				success: "PDF generert",
-				error: "Feil ved generering av PDF",
+				error: () => {
+					alertFormSubmission(
+						`${values.name} har feilet ved generering av PDF`,
+					);
+					return "Feil ved generering av PDF";
+				},
 			});
 
 			const pdfUrl = await pdfUrlPromise.unwrap();
@@ -244,7 +252,12 @@ export default function ReceiptForm() {
 			const emailPromise = toast.promise(sendEmail(pdfUrl, formData), {
 				loading: "Sender email til Bankkom...",
 				success: "Email sendt til Bankkom",
-				error: "Feil ved sending av email",
+				error: () => {
+					alertFormSubmission(
+						`${values.name} har feilet ved sending av email til Bankkom`,
+					);
+					return "Feil ved sending av email til Bankkom";
+				},
 			});
 
 			console.log("emailPromise", emailPromise);
