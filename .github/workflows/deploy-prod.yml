@@ -85,37 +85,37 @@ jobs:
             --region "eu-north-1"
       - name: Invalidate CloudFront cache
         run: aws cloudfront create-invalidation --distribution-id E60JFQ13PM11R --paths '/*'
-  deploy-kvittering-backend:
-    name: Deploy monoweb/kvittering-backend
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-north-1
-          role-to-assume: arn:aws:iam::891459268445:role/MonowebProdKvitteringBackendCIRole
-      - uses: aws-actions/amazon-ecr-login@v2
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64
-          context: .
-          file: apps/kvittering-backend/Dockerfile
-          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/kvittering-backend:latest
-          push: true
-      - uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: 'dotkom',
-              repo: 'terraform-monorepo',
-              workflow_id: 'apply.yml',
-              ref: 'main',
-              inputs: {
-                environment: 'prod',
-                project: 'monoweb-kvittering-backend',
-                targets: 'module.evergreen_service',
-              },
-            });
+  # deploy-kvittering-backend:
+  #   name: Deploy monoweb/kvittering-backend
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-north-1
+  #         role-to-assume: arn:aws:iam::891459268445:role/MonowebProdKvitteringBackendCIRole
+  #     - uses: aws-actions/amazon-ecr-login@v2
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 1
+  #     - uses: docker/build-push-action@v6
+  #       with:
+  #         platforms: linux/amd64
+  #         context: .
+  #         file: apps/kvittering-backend/Dockerfile
+  #         tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/kvittering-backend:latest
+  #         push: true
+  #     - uses: actions/github-script@v7
+  #       with:
+  #         github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+  #         script: |
+  #           await github.rest.actions.createWorkflowDispatch({
+  #             owner: 'dotkom',
+  #             repo: 'terraform-monorepo',
+  #             workflow_id: 'apply.yml',
+  #             ref: 'main',
+  #             inputs: {
+  #               environment: 'prod',
+  #               project: 'monoweb-kvittering-backend',
+  #               targets: 'module.evergreen_service',
+  #             },
+  #           });
