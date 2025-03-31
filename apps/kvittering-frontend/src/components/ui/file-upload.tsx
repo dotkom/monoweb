@@ -192,7 +192,7 @@ export const FileUploader = forwardRef<
 				}
 
 				// MAX 5 MB file
-				const maxSizeMB = 2;
+				const maxSizeMB = 1;
 
 				for (const file of files) {
 					try {
