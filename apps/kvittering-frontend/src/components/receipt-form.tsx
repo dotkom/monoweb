@@ -150,7 +150,7 @@ export default function ReceiptForm() {
 	const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
 	const dropZoneConfig = {
-		maxFiles: 5,
+		maxFiles: 20,
 		maxSize: 1024 * 1024 * 50,
 		multiple: true,
 	};
