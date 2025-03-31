@@ -2,7 +2,7 @@ name: Production deployment
 on:
   push:
     branches:
-      - main
+      - 03-31-fix_bug_in_compression
 permissions:
   id-token: write   
   contents: read
@@ -119,80 +119,3 @@ jobs:
                 targets: 'module.evergreen_service',
               },
             });
-  deploy-splash-frontend:
-    name: Deploy monoweb/splash-2025
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-north-1
-          role-to-assume: arn:aws:iam::891459268445:role/MonowebProdSplashFrontendCIRole
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 9.15.7
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.14.0
-          cache: 'pnpm'
-          
-      - name: Get OIDC Token
-        uses: actions/github-script@v6
-        id: get-oidc-token
-        with:
-          script: |
-            const id_token = await core.getIDToken()
-            core.setOutput('oidc_token', id_token)
-      - uses: dopplerhq/cli-action@v2
-      # Identity comes from the configured doppler account identity 
-      # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
-      - run: |
-          doppler oidc login \
-            --api-host https://api.doppler.com \
-            --scope=. \
-            --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
-            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
-      - name: Install dependencies
-        run: pnpm install
-      - name: Build frontend
-        working-directory: apps/splash-2025
-        run: doppler run -p monoweb-splash-frontend -c prd -- pnpm build
-        
-      - name: Deploy to S3
-        run: |
-          aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
-            --exclude "*" \
-            --include "*.html" \
-            --content-type "text/html" \
-            --region "eu-north-1"
-          
-          aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
-            --exclude "*" \
-            --include "*.css" \
-            --content-type "text/css" \
-            --region "eu-north-1"
-          
-          aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
-            --exclude "*" \
-            --include "*.js" \
-            --content-type "application/javascript" \
-            --region "eu-north-1"
-          
-          aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
-            --exclude "*" \
-            --include "*.svg" \
-            --content-type "image/svg+xml" \
-            --region "eu-north-1"
-          
-          aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
-            --exclude "*.html" \
-            --exclude "*.css" \
-            --exclude "*.js" \
-            --exclude "*.svg" \
-            --region "eu-north-1"
-      - name: Invalidate CloudFront cache
-        run: aws cloudfront create-invalidation --distribution-id E3J930LEDCHBY3 --paths '/*'
