@@ -7,9 +7,7 @@ import * as Sentry from "@sentry/react";
 const IS_PRODUCTION = import.meta.env.MODE === "production";
 
 Sentry.init({
-	dsn: IS_PRODUCTION
-		? import.meta.env.VITE_SENTRY_DSN
-		: undefined,
+	dsn: IS_PRODUCTION ? import.meta.env.VITE_SENTRY_DSN : undefined,
 	integrations: [
 		Sentry.replayIntegration({
 			unblock: [".sentry-unblock, [data-sentry-unblock]"],
