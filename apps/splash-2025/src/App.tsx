@@ -1,5 +1,7 @@
 import { Cloud } from "./components/cloud";
+import { Footer } from "./components/footer";
 import { Header } from "./components/header";
+import { SponsorPlaceholderIcon } from "./components/icons";
 
 function App() {
 	return (
@@ -7,9 +9,10 @@ function App() {
 			<Header />
 
 			<main>
-				Team onboarding ftw 1
 				<Cloud />
 			</main>
+
+			<Footer sponsorLogo={<SponsorPlaceholderIcon />} />
 		</div>
 	);
 }
