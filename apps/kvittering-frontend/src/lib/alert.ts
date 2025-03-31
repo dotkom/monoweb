@@ -1,10 +1,5 @@
-// curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
-
-const slackWebhookUrl =
-	"https://hooks.slack.com/services/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";
-
 export function alertFormSubmission(message: string) {
-	fetch(slackWebhookUrl, {
+	fetch(import.meta.env.VITE_SLACK_ALERT_WEBHOOK_URL, {
 		method: "POST",
 		body: JSON.stringify({ text: message }),
 	});

@@ -8,7 +8,7 @@ const IS_PRODUCTION = import.meta.env.MODE === "production";
 
 Sentry.init({
 	dsn: IS_PRODUCTION
-		? "https://ce333be780ecceb0975d83342bacedba@o93837.ingest.us.sentry.io/4508931842048000"
+		? import.meta.env.VITE_SENTRY_DSN
 		: undefined,
 	integrations: [
 		Sentry.replayIntegration({
