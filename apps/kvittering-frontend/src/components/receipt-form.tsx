@@ -261,17 +261,6 @@ export default function ReceiptForm() {
 	return (
 		<div className="space-y-8 max-w-3xl mx-auto py-10">
 			{isTestMode && <h3>Test mode</h3>}
-			<div>
-				Dotkom har skrevet om kvitteringsskjemaet da det gamle
-				kvitteringsskjemaet var gammelt og vanskelig og endre. <br />
-				<br />
-				Hvis du møter på noen problemer er den kjappeste måten og få det fiksa å
-				sende melding på online-slacken til Henrik Skog :)
-				<br />
-				Per nå er det noen endringer fra det gamle skjemaet:
-				<br />- Det funker nå å laste opp filer rett fra iphone (.heic-filer)
-				<br />
-			</div>
 			<Button
 				variant="outline"
 				className={clsx(
