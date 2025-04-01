@@ -4,6 +4,7 @@ import { type Pageable, pageQuery } from "../../query"
 
 export interface CompanyRepository {
   getById(id: CompanyId): Promise<Company | null>
+  getBySlug(slug: string): Promise<Company | null>
   getAll(page: Pageable): Promise<Company[]>
   create(values: CompanyWrite): Promise<Company>
   update(id: CompanyId, data: CompanyWrite): Promise<Company>
@@ -18,6 +19,10 @@ export class CompanyRepositoryImpl implements CompanyRepository {
 
   async getById(id: string): Promise<Company | null> {
     return await this.db.company.findUnique({ where: { id } })
+  }
+
+  async getBySlug(slug: string): Promise<Company | null> {
+    return await this.db.company.findUnique({ where: { slug } })
   }
 
   async getAll(page: Pageable): Promise<Company[]> {

@@ -112,6 +112,7 @@ model Company {
   id          String         @id @default(uuid())
   createdAt   DateTime       @default(now())
   name        String
+  slug        String         @unique
   description String
   phone       String?
   email       String
