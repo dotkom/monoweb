@@ -1,18 +1,18 @@
-export const Cloud = () => {
+export const Debug_info = () => {
 	return (
 		<div>
-			<div className="relative mt-60">
+			<div className="relative mt-20 md:mt-60">
 				<img
-					src="/online-logo.png"
+					src="/Online_bla_o.svg"
 					alt="Online logo"
-					className="absolute left-[68%] top-[40%] transform -translate-x-1/2 z-10 size-80 p-7"
+					className="absolute left-[68%] top-[40%] transform -translate-x-1/2 z-10 w-20 xl:w-60 lg:w-48 md:w-40"
 				/>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 1440 319"
-					className="relative"
+					className="relative w-full"
 				>
-					<title>Sky</title>
+					<title>Debug Info</title>
 					<path
 						fill="white"
 						fill-opacity="1"
@@ -24,9 +24,9 @@ export const Cloud = () => {
 					/>
 				</svg>
 			</div>
-			<div className="relative bg-[#FFFF] p-10 flex flex-col text-left px-40">
-				<h1 className="text-2xl font-bold m-4">Har du opplevd noe ugreit?</h1>
-				<p className="mb-10 text-2xl">
+			<div className="relative bg-[#FFFF] p-4 md:p-10 flex flex-col text-left md:px-20 max-sm: px-10">
+				<h1 className="text-xl md:text-2xl font-bold m-6 md:m-4">Har du opplevd noe ugreit?</h1>
+				<p className="mb-4 md:mb-10 text-base md:text-2xl">
 					Online har et eget uavhengig organ for varslingssaker som kan hjelpe
 					med alt. Vi ønsker at alle skal ha det bra og føle seg trygge. Derfor
 					håper vi at du tar kontakt dersom du har opplevd noe ubehagelig under
@@ -40,17 +40,24 @@ export const Cloud = () => {
 				<div className="flex flex-row justify-center items-center">
 					<button
 						type="button"
-						className="bg-[#2D5A77] text-white px-14 py-10 rounded-2xl hover:bg-[#234761] transition-colors m-7 text-2xl"
-					>
+						className="bg-[#2D5A77] text-white px-6 md:px-14 py-4 md:py-10 rounded-xl md:rounded-2xl hover:bg-[#234761] transition-colors m-2 md:m-7 text-base md:text-2xl">
 						Ta kontakt her
 					</button>
 				</div>
 			</div>
 			<div>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 321">
-					<title>Sky</title>
-					<path fill="white" fill-opacity="10" d="M0,160L1440,96L1440,0L0,0Z" />
-				</svg>
+            <svg
+                
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 1440 320"
+                >
+                    <title>Debug Info</title>
+                    <path 
+                        fill="white" 
+                        fill-opacity="1" 
+                        d="M0,32L1440,0L1440,0L0,0Z"
+                    />
+                </svg>
 			</div>
 		</div>
 	);

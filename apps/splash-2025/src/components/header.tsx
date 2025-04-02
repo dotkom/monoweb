@@ -1,6 +1,6 @@
 export const Header = () => {
 	return (
-		<header className="w-full sticky top-0 text-white p-10 flex justify-center">
+		<header className="w-full sticky top-0 text-white p-10 flex justify-center z-50">
 			<a
 				href="https://online.ntnu.no"
 				className="absolute mx-[5%] top-0 left-0 group"
