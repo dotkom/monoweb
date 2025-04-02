@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { SoMeLinks } from "./someLinks";
 import { FooterWave } from "./icons";
+import { SoMeLinks } from "./someLinks";
 
 export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
 	return (
@@ -22,7 +22,10 @@ export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
 			{sponsorLogo && (
 				<div className="overflow-hidden">
 					<div className="bg-[#C1842E] ">
-						<FooterWave color="#F9B759" className="h-[100%] w-[135%] relative left-[-30%]" />
+						<FooterWave
+							color="#F9B759"
+							className="h-[100%] w-[135%] relative left-[-30%]"
+						/>
 					</div>
 					<div className="bg-[#F9B759] flex justify-center p-10">
 						{sponsorLogo}
