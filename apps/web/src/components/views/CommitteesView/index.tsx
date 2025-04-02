@@ -1,10 +1,4 @@
 import { CommitteeList } from "@/components/organisms/CommitteeList"
-import type { Event, Group } from "@dotkomonline/types"
-
-interface CommitteesViewProps {
-  committee: Group
-  events: Event[]
-}
 
 export const CommitteesView = async () => {
   return (
