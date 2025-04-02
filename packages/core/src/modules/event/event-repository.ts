@@ -5,7 +5,7 @@ import { type Pageable, pageQuery } from "../../query"
 export interface EventRepository {
   create(data: EventWrite): Promise<Event>
   update(id: EventId, data: Partial<EventWrite>): Promise<Event>
-  getAll(page: Pageable, filter?: EventFilter): Promise<Event[]>
+  getAll(page?: Pageable, filter?: EventFilter): Promise<Event[]>
   getAllByUserAttending(userId: string): Promise<Event[]>
   getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getAllByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
@@ -34,9 +34,9 @@ export class EventRepositoryImpl implements EventRepository {
     return await this.db.event.update({ where: { id }, data })
   }
 
-  async getAll(page: Pageable, filter: EventFilter): Promise<Event[]> {
+  async getAll(page?: Pageable, filter?: EventFilter): Promise<Event[]> {
     return await this.db.event.findMany({
-      ...pageQuery(page),
+      ...pageQuery(page ?? { take: 100 }),
 
       where: {
         OR: filter?.query

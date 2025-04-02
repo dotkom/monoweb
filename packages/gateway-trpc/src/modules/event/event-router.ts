@@ -72,10 +72,10 @@ export const eventRouter = t.router({
       z.object({
         page: PaginateInputSchema,
         filter: EventFilterSchema.optional(),
-      })
+      }).optional()
     )
     .query(async ({ input, ctx }) => {
-      const events = await ctx.eventService.getEvents(input.page, input.filter)
+      const events = await ctx.eventService.getEvents(input?.page, input?.filter)
       const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
       const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
       const companies = events.map(async (e) => ctx.companyEventService.getCompaniesByEventId(e.id))
