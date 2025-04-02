@@ -7,16 +7,27 @@ export const Linjeforening_info = () => {
 				</h2>
 				<p className="mb-4 md:mb-10 text-base md:text-2xl">
 					Online er linjeforeningen for alle som studerer informatikk. Gå videre
-					til <a href="https://online.ntnu.no/" className="underline text-accent-9">hovednettsiden</a> for å lage brukerkonto og bli medlem.
+					til{" "}
+					<a href="https://online.ntnu.no/" className="underline text-accent-9">
+						hovednettsiden
+					</a>{" "}
+					for å lage brukerkonto og bli medlem.
 					<br />
 					Er det noe du lurer på om linjeforeningen Online? En kjapp innføring i
-					dette kan du finne på <a href="https://wiki.online.ntnu.no/info/sosialt-og-okonomisk/ditt-liv-som-onliner/" className="underline text-accent-9">wikien</a>.
+					dette kan du finne på{" "}
+					<a
+						href="https://wiki.online.ntnu.no/info/sosialt-og-okonomisk/ditt-liv-som-onliner/"
+						className="underline text-accent-9"
+					>
+						wikien
+					</a>
+					.
 					<br />
 					Har du lyst til å gjøre studietiden enda bedre? Som komitemedlem i
 					Online blir du del av en familie du aldri vil glemme. Vi tilbyr
 					utfordrende og spennende verv i et meget sosialt miljø med stor
-					takhøyde. 
-                    <br />
+					takhøyde.
+					<br />
 					Les mer om de ulike komiteene og send inn din søknad på opptakssiden
 					vår i lenken under.
 				</p>
