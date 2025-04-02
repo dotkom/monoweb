@@ -2,7 +2,8 @@ export const Linjeforening_info = () => {
 	return (
 		<div>
 			<div className="relative text-white p-4 md:p-10 flex flex-col text-left md:px-20 max-sm: px-10">
-				<h2 className="text-xl md:text-2xl font-bold m-6 md:m-4">
+				<h2 className="text-xl md:text-2xl font-bold my-6 md:my-4">
+					{" "}
 					Bli aktiv i linjeforeningen!
 				</h2>
 				<p className="mb-4 md:mb-10 text-base md:text-2xl">

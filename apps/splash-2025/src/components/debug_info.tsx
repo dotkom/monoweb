@@ -25,7 +25,7 @@ export const Debug_info = () => {
 				</svg>
 			</div>
 			<div className="relative bg-[#FFFF] p-4 md:p-10 flex flex-col text-left md:px-20 max-sm: px-10">
-				<h1 className="text-xl font-bold md:text-2xl m-6 md:m-4">
+				<h1 className="text-xl md:text-2xl font-bold my-6 md:my-4">
 					Har du opplevd noe ugreit?
 				</h1>
 				<p className="mb-4 md:mb-10 text-base md:text-2xl">
