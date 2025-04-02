@@ -11,7 +11,7 @@ interface CommitteeViewProps {
   members: GroupMember[]
 }
 
-export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
+const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
   const { name, image, email, longDescription } = props.committee
 
   const icons = [{ icon: "material-symbols:mail", text: email, href: `mailto:${email}` }]
@@ -23,7 +23,6 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
           <OnlineIcon className="w-5/12 mx-auto max-w-[150px] min-w-[120px]" />
           {image && (
             <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
-              {/* <Image src={image} alt="Committee logo" fill style={{ objectFit: "contain" }} className="w-full" /> */}
             </div>
           )}
 
