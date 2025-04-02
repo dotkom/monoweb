@@ -5,6 +5,7 @@ import { cn } from "@dotkomonline/ui"
 import { Fraunces, Poppins } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../styles/globals.css"
+import "@mdxeditor/editor/style.css"
 import { Providers } from "./providers"
 
 export const metadata = {

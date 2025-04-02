@@ -1,19 +1,21 @@
 "use client"
-
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use, useMemo } from "react"
-import { trpc } from "../../../../trpc"
+import { useTRPC } from "../../../../trpc"
 import { InterestGroupDetailsContext } from "./provider"
+
+import { useQuery } from "@tanstack/react-query"
 
 export default function InterestGroupDetailsLayout({
   children,
   params,
 }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const trpc = useTRPC()
   const { id } = use(params)
-  const { data, isLoading } = trpc.interestGroup.get.useQuery(id)
+  const { data, isLoading } = useQuery(trpc.interestGroup.get.queryOptions(id))
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             interestGroup: data,

@@ -1,47 +1,31 @@
+import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import { CompanySchema } from "./company"
 
-export const JobListingSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  company: CompanySchema.pick({ id: true, name: true, image: true }),
-  title: z.string().max(1000).min(1),
-  ingress: z.string().min(1),
-  description: z.string().min(1),
-  start: z.date(),
-  end: z.date(),
-  featured: z.boolean(),
-  deadline: z.date().nullable(),
-  employment: z.enum(["Fulltid", "Deltid", "Sommerjobb/internship", "Annet"]),
-  applicationLink: z.string().nullable(),
-  applicationEmail: z.string().nullable(),
-  deadlineAsap: z.boolean(),
+export const JobListingLocationSchema = schemas.JobListingLocationSchema.extend({})
+export const JobListingLocationWriteSchema = JobListingLocationSchema.omit({
+  createdAt: true,
+})
+
+export type JobListingLocation = z.infer<typeof JobListingLocationSchema>
+export type JobListingLocationId = JobListingLocation["name"]
+export type JobListingLocationWrite = z.infer<typeof JobListingLocationWriteSchema>
+
+export const JobListingSchema = schemas.JobListingSchema.omit({
+  companyId: true,
+}).extend({
+  company: CompanySchema,
   locations: z.array(z.string()),
 })
 
-export const JobListingWriteSchema = JobListingSchema.partial({
+export const JobListingWriteSchema = JobListingSchema.omit({
   id: true,
-  company: true,
   createdAt: true,
+  company: true,
+}).extend({
+  companyId: z.string().uuid(),
 })
-  .extend({
-    companyId: z.string().uuid(),
-  })
-  .strict()
 
 export type JobListing = z.infer<typeof JobListingSchema>
 export type JobListingId = JobListing["id"]
 export type JobListingWrite = z.infer<typeof JobListingWriteSchema>
-
-export const JobListingLocationSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-})
-
-export const JobListingLocationWriteSchema = JobListingLocationSchema.partial({
-  id: true,
-})
-
-export type JobListingLocation = z.infer<typeof JobListingLocationSchema>
-export type JobListingLocationId = JobListingLocation["id"]
-export type JobListingLocationWrite = z.infer<typeof JobListingLocationWriteSchema>

@@ -11,7 +11,6 @@ architecture, the tools used, and the local development process.
   - [Tools](#tools)
   - [Local Development](#local-development)
     - [Required Environment Variables](#required-environment-variables)
-    - [Running with your own PostgreSQL database](#running-with-your-own-postgresql-database)
     - [What runs where?](#what-runs-where)
   - [Testing](#testing)
     - [Integration tests](#integration-tests)
@@ -29,7 +28,7 @@ The monorepo is organized as follows:
 - `packages/`: Contains all the libraries
 - `apps/`: Contains all the applications
 - `docs/`: Contains the documentation
-- `tools/`: Internal developer tools, such as the Monoweb Database Migrator
+- `tools/`: Internal developer tools, such as the Monoweb Shell CLI
 
 We use [PNPM workspaces](https://pnpm.io/workspaces) along with [Turborepo](https://turbo.build/repo/docs) to manage the
 monorepo. All dependencies for all libraries and applications are managed by PNPM.
@@ -81,19 +80,16 @@ applications, you can use the following commands:
 
 Terminal 1:
 ```bash
-doppler login
-doppler setup # Press Y on every prompt
-
 git clone https://github.com/dotkom/monoweb
 cd monoweb
 
-docker compose up # 'docker compose up -d' can also run instead to skip 2 terminal windows
-```
+doppler login
+doppler setup # Press Y on every prompt
 
-Terminal 2 (in monoweb folder):
-```bash
+docker compose up -d
+
 pnpm install
-pnpm migrate # Only needs to be run once to set up the database
+pnpm migrate
 pnpm dev
 ```
 
@@ -103,12 +99,6 @@ These are the environment variables that are required to run the applications. B
 you do not have access to Doppler:
 
 Please consult the example [.env.example](.env.example) file for the environment variables necessary.
-
-### Running with your own PostgreSQL database
-
-> Running your own database instance requires [Docker](#tools) and [Docker Compose](#tools) to be installed.
-
-To start the database run `docker compose up`.
 
 ### What runs where?
 

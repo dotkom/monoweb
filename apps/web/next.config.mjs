@@ -13,14 +13,7 @@ const config = {
       },
     ],
   },
-  transpilePackages: [
-    "@dotkomonline/auth",
-    "@dotkomonline/db",
-    "@dotkomonline/gateway-edge-nextjs",
-    "@dotkomonline/gateway-trpc",
-    "@dotkomonline/types",
-    "@dotkomonline/ui",
-  ],
+  output: "standalone",
 }
 
 export default config

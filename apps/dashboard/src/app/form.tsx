@@ -1,14 +1,14 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  Anchor,
-  Box,
   Button,
   Checkbox,
   type CheckboxProps,
   FileInput,
   type FileInputProps,
   Flex,
+  Image,
+  Input,
   MultiSelect,
   type MultiSelectProps,
   NumberInput,
@@ -17,13 +17,31 @@ import {
   type SelectProps,
   TagsInput,
   type TagsInputProps,
-  Text,
   TextInput,
   type TextInputProps,
   Textarea,
   type TextareaProps,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CodeToggle,
+  CreateLink,
+  ListsToggle,
+  MDXEditor,
+  type MDXEditorProps,
+  Separator,
+  UndoRedo,
+  frontmatterPlugin,
+  headingsPlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+} from "@mdxeditor/editor"
 import type { FC } from "react"
 import {
   type Control,
@@ -37,6 +55,7 @@ import {
   useForm,
 } from "react-hook-form"
 import type { z } from "zod"
+import { useS3UploadFile } from "../modules/offline/use-s3-upload-file"
 
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
@@ -240,6 +259,79 @@ export function createTextareaInput<F extends FieldValues>({
   }
 }
 
+export function createRichTextInput<F extends FieldValues>({
+  onChange,
+  required,
+  label,
+  ...props
+}: Omit<MDXEditorProps, "error"> & { required: boolean; label: string }): InputProducerResult<F> {
+  return function RichTextInput({ name, control }) {
+    return (
+      <>
+        <Input.Wrapper>
+          <Input.Label required={required}>{label}</Input.Label>
+
+          <div style={{ border: "1px solid lightgrey", borderRadius: "4px", padding: 0 }}>
+            <Controller
+              control={control}
+              name={name}
+              render={({ field }) => (
+                <MDXEditor
+                  {...props}
+                  markdown={field?.value ?? ""}
+                  plugins={[
+                    toolbarPlugin({
+                      toolbarContents: () => (
+                        <>
+                          <UndoRedo />
+                          <Separator />
+                          <BoldItalicUnderlineToggles />
+                          <ListsToggle />
+                          <CodeToggle />
+                          <Separator />
+                          <BlockTypeSelect />
+                          <CreateLink />
+                          <Separator />
+                        </>
+                      ),
+                    }),
+                    listsPlugin(),
+                    headingsPlugin(),
+                    linkPlugin(),
+                    linkDialogPlugin(),
+                    thematicBreakPlugin(),
+                    frontmatterPlugin(),
+                    markdownShortcutPlugin(),
+                  ]}
+                  onChange={(value) => {
+                    const modifiedValue = value
+                      .split("\n")
+                      .reduce((acc, line, index, array) => {
+                        if (line.trim() === "" && array[index - 1]?.trim() === "" && array[index + 1]?.trim() !== "") {
+                          acc.push("&#x20;" as never)
+                        } else {
+                          acc.push(line as never)
+                        }
+                        return acc
+                      }, [])
+                      .join("\n")
+
+                    field.onChange(modifiedValue)
+
+                    if (onChange) {
+                      onChange(modifiedValue, false)
+                    }
+                  }}
+                />
+              )}
+            />
+          </div>
+        </Input.Wrapper>
+      </>
+    )
+  }
+}
+
 export function createTextInput<F extends FieldValues>({
   ...props
 }: Omit<TextInputProps, "error">): InputProducerResult<F> {
@@ -254,38 +346,66 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
+export function createImageInput<F extends FieldValues>({
+  ...props
+}: Omit<FileInputProps, "error"> & {
+  existingImageUrl?: string
+}): InputProducerResult<F> {
+  return function FormImageInput({ name, control }) {
+    const upload = useS3UploadFile()
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <>
+            <FileInput
+              {...props}
+              accept="image/png,image/jpeg,image/jpg"
+              placeholder={field.value ?? props.existingImageUrl ?? "Klikk for å velge fil"}
+              onChange={async (file) => {
+                if (file === null) {
+                  return
+                }
+                const result = await upload(file)
+                field.onChange(result)
+              }}
+            />
+            {(field.value ?? props.existingImageUrl) && (
+              <Image radius="sm" src={field.value ?? props.existingImageUrl} />
+            )}
+          </>
+        )}
+      />
+    )
+  }
+}
+
 export function createFileInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
   existingFileUrl?: string
 }): InputProducerResult<F> {
-  return function FormFileInput({ name, state, control }) {
+  return function FormFileInput({ name, control }) {
+    const upload = useS3UploadFile()
     return (
-      <Box>
-        <Text>{props.label}</Text>
-        {props.existingFileUrl ? (
-          <Anchor href={props.existingFileUrl} mb="sm" display="block">
-            Link til ressurs
-          </Anchor>
-        ) : (
-          <Text mb="sm" fs="italic">
-            Ingen fil lastet opp
-          </Text>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <FileInput
+            {...props}
+            placeholder={field.value ?? props.existingFileUrl ?? "Klikk for å velge fil"}
+            onChange={async (file) => {
+              if (file === null) {
+                return
+              }
+              const result = await upload(file)
+              field.onChange(result)
+            }}
+          />
         )}
-        <Controller
-          control={control}
-          name={name}
-          render={({ field }) => (
-            <FileInput
-              {...props}
-              value={field.value}
-              onChange={(value) => field.onChange({ target: { value } })}
-              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-              label=""
-            />
-          )}
-        />
-      </Box>
+      />
     )
   }
 }

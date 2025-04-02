@@ -16,6 +16,6 @@ export const env = createEnvironment({
   MANAGEMENT_OAUTH_CLIENT_ID: variable,
   MANAGEMENT_OAUTH_CLIENT_SECRET: variable,
   MANAGEMENT_TENANT_DOMAIN_ID: variable,
-  // AWS RDS Certificate Authority, if you are connecting to RDS.
-  AWS_RDS_CERTIFICATE_AUTHORITY: variable.optional(),
+  // Sentry DSN should only be set in production
+  SENTRY_DSN: variable.optional(),
 })

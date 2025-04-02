@@ -1,110 +1,100 @@
-import type { Database } from "@dotkomonline/db"
+import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
+  type AttendanceSelectionResponse,
   type Attendee,
   type AttendeeId,
-  AttendeeSchema,
+  AttendeeSelectionResponsesSchema,
   type AttendeeWrite,
-  type ExtrasChoices,
   type UserId,
 } from "@dotkomonline/types"
-import type { Kysely, Selectable } from "kysely"
-import { withInsertJsonValue } from "../../query"
-
-const mapToAttendee = (payload: Selectable<Database["attendee"]>): Attendee => AttendeeSchema.parse(payload)
+import type { JsonValue } from "@prisma/client/runtime/library"
+import { AttendeeWriteError } from "./attendee-error"
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
   delete(id: AttendeeId): Promise<Attendee | null>
   getById(id: AttendeeId): Promise<Attendee | null>
-  update(obj: Partial<AttendeeWrite>, id: AttendeeId): Promise<Attendee | null>
-  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee | null>
+  update(id: AttendeeId, obj: Partial<AttendeeWrite>): Promise<Attendee | null>
   getByAttendanceId(id: AttendanceId): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
-  constructor(private readonly db: Kysely<Database>) {}
+  private readonly db: DBClient
 
-  async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    const res = await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .leftJoin("attendancePool", "attendancePool.id", "attendee.attendancePoolId")
-      .where("userId", "=", userId)
-      .where("attendancePool.attendanceId", "=", attendanceId)
-      .executeTakeFirst()
-
-    return res ? mapToAttendee(res) : null
+  constructor(db: DBClient) {
+    this.db = db
   }
 
-  async create(obj: AttendeeWrite): Promise<Attendee> {
-    return mapToAttendee(
-      await this.db
-        .insertInto("attendee")
-        .values(withInsertJsonValue(obj, "extrasChoices"))
-        .returningAll()
-        .executeTakeFirstOrThrow()
-    )
+  async getByUserId(userId: UserId, attendanceId: AttendanceId) {
+    const user = await this.db.attendee.findFirst({ where: { userId, attendanceId } })
+
+    if (user === null) return null
+
+    return this.parseSelectionResponses(user)
+  }
+
+  async create(data: AttendeeWrite): Promise<Attendee> {
+    this.validateWrite(data)
+
+    const createdUser = await this.db.attendee.create({ data })
+
+    return this.parseSelectionResponses(createdUser)
   }
 
   async delete(id: AttendeeId) {
-    const res = await this.db.deleteFrom("attendee").where("id", "=", id).returningAll().executeTakeFirst()
-    return res ? mapToAttendee(res) : null
+    const deletedUser = await this.db.attendee.delete({ where: { id } })
+
+    return this.parseSelectionResponses(deletedUser)
   }
 
-  async getById(id: AttendeeId): Promise<Attendee> {
-    return mapToAttendee(
-      await this.db.selectFrom("attendee").selectAll("attendee").where("id", "=", id).executeTakeFirstOrThrow()
-    )
+  async getById(id: AttendeeId): Promise<Attendee | null> {
+    const user = await this.db.attendee.findUnique({ where: { id } })
+
+    if (user === null) return null
+
+    return this.parseSelectionResponses(user)
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
-    return await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .leftJoin("attendance", "attendance.id", "attendancePool.attendanceId")
-      .where("attendance.id", "=", attendanceId)
-      .groupBy("attendee.id")
-      .execute()
-      .then((res) => res.map(mapToAttendee))
+    const attendees = await this.db.attendee.findMany({ where: { attendanceId } })
+
+    return attendees.map(this.parseSelectionResponses)
   }
 
-  async getByAttendancePoolId(id: AttendancePoolId) {
-    return await this.db
-      .selectFrom("attendee")
-      .selectAll("attendee")
-      .leftJoin("attendancePool", "attendee.attendancePoolId", "attendancePool.id")
-      .where("attendancePool.id", "=", id)
-      .groupBy("attendee.id")
-      .execute()
-      .then((res) => res.map(mapToAttendee))
+  async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
+    const attendees = await this.db.attendee.findMany({ where: { attendancePoolId } })
+
+    return attendees.map(this.parseSelectionResponses)
   }
 
-  async update(obj: AttendeeWrite, id: AttendeeId) {
-    const res = await this.db
-      .updateTable("attendee")
-      .set(withInsertJsonValue(obj, "extrasChoices"))
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
+  async update(id: AttendeeId, data: Partial<AttendeeWrite>) {
+    this.validateWrite(data)
 
-    return res ? mapToAttendee(res) : null
+    const updatedUserResult = await this.db.attendee.updateManyAndReturn({ where: { id }, data })
+
+    if (updatedUserResult.length === 0) return null
+
+    return this.parseSelectionResponses(updatedUserResult[0])
   }
 
-  async updateExtraChoices(id: AttendeeId, choices: ExtrasChoices) {
-    const res = await this.db
-      .updateTable("attendee")
-      .set({
-        extrasChoices: JSON.stringify(choices),
-      })
-      .where("id", "=", id)
-      .returningAll()
-      .executeTakeFirst()
+  private validateWrite(data: Partial<AttendeeWrite>) {
+    if (data.selectionResponses) {
+      const selectionResponseParseResult = AttendeeSelectionResponsesSchema.safeParse(data.selectionResponses)
 
-    return res ? mapToAttendee(res) : null
+      if (!selectionResponseParseResult.success) {
+        throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
+      }
+    }
+  }
+
+  private parseSelectionResponses<T extends { selectionResponses: JsonValue }>({
+    selectionResponses,
+    ...obj
+  }: T): Omit<T, "selectionResponses"> & { selectionResponses: AttendanceSelectionResponse[] } {
+    return { ...obj, selectionResponses: AttendeeSelectionResponsesSchema.parse(selectionResponses) }
   }
 }

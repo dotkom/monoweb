@@ -1,6 +1,6 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { Committee, Event } from "@dotkomonline/types"
+import type { Event, Group, GroupMember } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
@@ -10,12 +10,13 @@ import Link from "next/link"
 import { CommitteeList } from "@/components/organisms/CommitteeList"
 
 interface CommitteeViewProps {
-  committee: Committee
+  committee: Group
   events: Event[]
+  members: GroupMember[]
 }
 
 export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
-  const { name, image, email, description } = props.committee
+  const { name, image, email, longDescription } = props.committee
 
   const icons = [{ icon: "material-symbols:mail", text: email, href: `mailto:${email}` }]
 
@@ -41,13 +42,22 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
               </div>
             ))}
           </div>
+
+          {/* TODO: Redesign later */}
+          <div>
+            Members
+            <ul>
+              {props.members.map((member) => (
+                <li key={member.userId}>{member.userId}</li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <p>{description}</p>
+        <p>{longDescription}</p>
       </div>
       {/* TODO: Redesign later */}
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList title={"Kommende arrangementer"} events={props.events} />
-        <EventList title={"Tidligere arrangementer"} events={props.events} />{" "}
+        <EventList events={props.events} />
         {/* TODO: Separate logic for earlier eventlist later */}
       </div>
     </EntryDetailLayout>

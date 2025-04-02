@@ -5,6 +5,8 @@ import type { NextRequest } from "next/server"
 export interface ProxyOptions {
   mountPath: string
   apiEndpoint: string
+  /** AUTH_SECRET encryption secret */
+  secret: string
 }
 
 export function createProxyRoute(opts: ProxyOptions): (request: NextRequest) => Promise<Response> {
@@ -18,7 +20,7 @@ export function createProxyRoute(opts: ProxyOptions): (request: NextRequest) => 
       endpoint.searchParams.append(key, value)
     }
 
-    const token = await getToken({ req: request })
+    const token = await getToken({ req: request, secret: opts.secret })
     const headers = new Headers(request.headers)
     if (token !== null) {
       headers.set("Authorization", `Bearer ${token.accessToken}`)

@@ -1,4 +1,4 @@
-// Expected response: 204 No Content. Returns resource URL if successful.
+// Expected response: 204 No Content
 export async function uploadFileToS3PresignedUrl(
   file: File,
   fields: Record<string, string>,
@@ -18,19 +18,13 @@ export async function uploadFileToS3PresignedUrl(
       body: formData, // No headers needed, fetch adds the correct one for FormData
     })
 
-    // check for 204 No Content
-    if (response.status !== 204) {
-      throw new Error(`File upload failed: ${response.statusText}`)
+    // S3 returns a Location header with the url of the uploaded file
+    const location = response.headers.get("Location")
+    if (!location) {
+      throw new Error("File upload failed: No location header")
     }
 
-    const resourceURL = response.headers.get("Location")
-
-    if (resourceURL === null) {
-      console.error("Full response headers:", [...response.headers.entries()])
-      throw new Error("File upload failed: No resource URL returned")
-    }
-
-    return resourceURL
+    return location
   } catch (e) {
     throw new Error(`File upload failed: ${e}`)
   }

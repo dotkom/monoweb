@@ -1,8 +1,8 @@
 import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
-import { createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
+import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
-  type: "Consulting",
+  type: "CONSULTING",
   image: null,
 }
 
@@ -28,6 +28,11 @@ export const useCompanyWriteForm = ({
         placeholder: "Bekk",
         withAsterisk: true,
       }),
+      slug: createTextInput({
+        label: "Slug",
+        placeholder: "bekk",
+        withAsterisk: true,
+      }),
       description: createTextareaInput({
         label: "Beskrivelse",
         placeholder: "Bekk er et konsulentselskap fylt med action og moro!",
@@ -50,10 +55,10 @@ export const useCompanyWriteForm = ({
         placeholder: "Velg en",
         withAsterisk: true,
         data: [
-          { value: "Consulting", label: "Konsulentfirma" },
-          { value: "Research", label: "Forskning" },
-          { value: "Development", label: "In-house" },
-          { value: "Other", label: "Annet" },
+          { value: "CONSULTING", label: "Konsulentfirma" },
+          { value: "RESEARCH", label: "Forskning" },
+          { value: "DEVELOPMENT", label: "In-house" },
+          { value: "OTHER", label: "Annet" },
         ],
       }),
       phone: createTextInput({
@@ -65,8 +70,9 @@ export const useCompanyWriteForm = ({
         label: "Lokasjon",
         placeholder: "Oslo",
       }),
-      image: createTextInput({
-        label: "Bildelenke til logo",
+      image: createFileInput({
+        label: "Bilde",
+        placeholder: "Last opp",
       }),
     },
   })

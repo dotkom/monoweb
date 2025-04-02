@@ -1,10 +1,10 @@
 import OnlineIcon from "@/components/atoms/OnlineIcon"
-import type { Committee } from "@dotkomonline/types"
+import type { Group } from "@dotkomonline/types"
 import Link from "next/link"
 import type { FC } from "react"
 
 export interface CommitteeListItemProps {
-  committee: Committee
+  committee: Group
 }
 
 const CommitteeListItem: FC<CommitteeListItemProps> = (props: CommitteeListItemProps) => (

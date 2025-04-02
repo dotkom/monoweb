@@ -17,9 +17,13 @@ ENV DOCKER_BUILD=1
 
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/json .
+COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
+
 RUN pnpm install --ignore-scripts
-COPY --from=builder /app/out/full .
-RUN turbo run build --filter @dotkomonline/rpc
+RUN pnpm generate
+
+# Install for production
+RUN pnpm install --production --ignore-scripts
 
 FROM base AS runner
 WORKDIR /app
@@ -34,7 +38,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 rpc
 USER rpc
 
-COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/dist/index.js ./
-COPY --from=installer --chown=nodejs:rpc --chmod=755 /app/apps/rpc/package.json ./
+COPY --from=installer --chown=rpc:nodejs --chmod=755 /app .
+COPY --from=builder --chown=rpc:nodejs --chmod=755 /app/out/full .
 
-CMD node index.js
+CMD node --loader ./apps/rpc/runtime.mjs --experimental-strip-types ./apps/rpc/src/index.ts

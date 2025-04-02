@@ -1,16 +1,8 @@
-import { z } from "zod"
+import type { z } from "zod"
 
-export const InterestGroupSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  name: z.string(),
-  description: z.string(),
-  link: z.string().nullable(), //slack link
-  isActive: z.boolean(),
-  longDescription: z.string(),
-  joinInfo: z.string(),
-})
+import { schemas } from "@dotkomonline/db/schemas"
+
+export const InterestGroupSchema = schemas.InterestGroupSchema.extend({})
 
 export type InterestGroup = z.infer<typeof InterestGroupSchema>
 export type InterestGroupId = InterestGroup["id"]
@@ -22,3 +14,11 @@ export const InterestGroupWriteSchema = InterestGroupSchema.omit({
 })
 
 export type InterestGroupWrite = z.infer<typeof InterestGroupWriteSchema>
+
+export const EventInterestGroupSchema = schemas.EventInterestGroupSchema.extend({})
+
+export type EventInterestGroup = z.infer<typeof EventInterestGroupSchema>
+
+export const EventInterestGroupWriteSchema = EventInterestGroupSchema
+
+export type EventInterestGroupWrite = z.infer<typeof EventInterestGroupWriteSchema>

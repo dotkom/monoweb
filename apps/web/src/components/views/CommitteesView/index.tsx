@@ -1,6 +1,6 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { Committee, Event } from "@dotkomonline/types"
+import type { Group, Event } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
@@ -10,7 +10,7 @@ import Link from "next/link"
 import { CommitteeList } from "@/components/organisms/CommitteeList"
 
 interface CommitteesViewProps {
-  committee: Committee
+  committee: Group
   events: Event[]
 }
 

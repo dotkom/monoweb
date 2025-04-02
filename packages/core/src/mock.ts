@@ -8,28 +8,28 @@ export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   lastName: "Test",
   allergies: "",
   gender: "other",
-  phone: undefined,
-  address: undefined,
+  phone: null,
+  address: null,
   compiled: false,
-  rfid: undefined,
-  biography: undefined,
+  rfid: null,
+  biography: null,
   ...defaults,
 })
 
 export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWrite => ({
   name: "Bekk",
+  slug: "bekk",
   image: "https://example.com/logo.png",
   website: "https://example.com",
   description: "This is a test company",
   email: "foo@example.net",
   location: "Oslo",
   phone: "+47 123 45 678",
-  type: "Consulting",
+  type: "CONSULTING",
   ...defaults,
 })
 
 export const getJobListingMock = (companyId: string, defaults: Partial<JobListingWrite> = {}): JobListingWrite => ({
-  createdAt: new Date(),
   companyId,
   title: "Core Developer",
   ingress:
@@ -39,8 +39,9 @@ export const getJobListingMock = (companyId: string, defaults: Partial<JobListin
   start: addWeeks(addYears(new Date(), 1), 2),
   end: addWeeks(addYears(new Date(), 1), 4),
   featured: false,
+  hidden: false,
   deadline: addWeeks(new Date(), 2),
-  employment: "Fulltid",
+  employment: "FULLTIME",
   applicationLink: "https://example.com",
   applicationEmail: "hello@example.com",
   deadlineAsap: false,

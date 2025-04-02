@@ -1,25 +1,9 @@
 import { type User, UserSchema } from "@dotkomonline/types"
-import type { DefaultSession, NextAuthOptions } from "next-auth"
+import { createRemoteJWKSet, jwtVerify } from "jose"
+import type { DefaultSession, NextAuthConfig } from "next-auth"
 import type { DefaultJWT, JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
 import { createServer } from "./trpc"
-
-interface Auth0IdTokenClaims {
-  sub: string
-  given_name: string
-  family_name: string
-  nickname: string
-  name: string
-  picture: string
-  updated_at: string
-  email: string
-  email_verified: boolean
-  iss: string
-  aud: string
-  iat: number
-  exp: number
-  sid: string
-}
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -43,55 +27,78 @@ export interface AuthOptions {
   rpcHost: string
 }
 
-export const getAuthOptions = ({
-  auth0ClientId: oidcClientId,
-  auth0ClientSecret: oidcClientSecret,
-  auth0Issuer: oidcIssuer,
+export const createAuthConfig = ({
+  auth0ClientId,
+  auth0ClientSecret,
+  auth0Issuer,
   jwtSecret,
   rpcHost,
-}: AuthOptions): NextAuthOptions => ({
-  secret: jwtSecret,
-  providers: [
-    Auth0Provider({
-      clientId: oidcClientId,
-      clientSecret: oidcClientSecret,
-      issuer: oidcIssuer,
-      profile: (profile: Auth0IdTokenClaims) => ({
-        id: profile.sub,
-        name: profile.name,
-        email: profile.email,
-        image: profile.picture,
-      }),
-      authorization: {
-        params: {
-          scope: "openid profile email offline_access",
+}: AuthOptions): NextAuthConfig => {
+  const issuerWithoutTrailingSlash = auth0Issuer.replace(/\/$/, "")
+  const jwksUrl = new URL("/.well-known/jwks.json", issuerWithoutTrailingSlash)
+  const jwks = createRemoteJWKSet(jwksUrl, {
+    // Auth0 gives a max-age=15 and stale-while-revalidate=15 header. We will cache the JWKS for 30 seconds at a time.
+    cacheMaxAge: 30000,
+  })
+
+  return {
+    secret: jwtSecret,
+    providers: [
+      Auth0Provider({
+        clientId: auth0ClientId,
+        clientSecret: auth0ClientSecret,
+        issuer: auth0Issuer,
+        profile: (profile) => ({
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }),
+        authorization: {
+          params: {
+            scope: "openid profile email offline_access",
+          },
         },
+      }),
+    ],
+    session: {
+      strategy: "jwt",
+    },
+    callbacks: {
+      async jwt({ token, account }): Promise<JWT> {
+        if (account?.access_token) {
+          token.accessToken = account.access_token
+        }
+        if (account?.refresh_token) {
+          token.refreshToken = account.refresh_token
+        }
+        return token
       },
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, account }): Promise<JWT> {
-      if (account?.access_token) {
-        token.accessToken = account.access_token
-      }
-      if (account?.refresh_token) {
-        token.refreshToken = account.refresh_token
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (token.sub && token.accessToken) {
+      async session({ session, token }) {
+        if (token.accessToken === undefined) {
+          return session
+        }
         const trpcProxyServer = createServer(rpcHost, token.accessToken)
-
-        const user = await trpcProxyServer.mutation("user.registerAndGet", token.sub)
-
-        session.user = UserSchema.parse(user)
-      }
-
-      return session
+        try {
+          const jwt = await jwtVerify(token.accessToken, jwks, {
+            clockTolerance: "5s",
+            algorithms: ["RS256"],
+            // Auth0's issuer contains a trailing slash, but Next Auth does not
+            issuer: `${auth0Issuer}/`,
+            // audience: this.audiences,
+            typ: "JWT",
+          })
+          const user = await trpcProxyServer.mutation("user.registerAndGet", jwt.payload.sub)
+          session.user = {
+            ...UserSchema.parse(user),
+            emailVerified: null,
+          }
+        } catch (err) {
+          // TODO: replace with logger
+          console.error("failed to verify access token", err)
+        }
+        return session
+      },
     },
-  },
-})
+  }
+}

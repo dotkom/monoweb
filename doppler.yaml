@@ -1,22 +1,28 @@
 setup:
   - project: monoweb-brevduen
-    config: dev
+    config: dev_personal
     path: apps/brevduen
   - project: monoweb-dashboard
-    config: dev
+    config: dev_personal
     path: apps/dashboard
   - project: monoweb-invoicification
-    config: dev
+    config: dev_personal
     path: apps/invoicification
   - project: monoweb-rif
-    config: dev
+    config: dev_personal
     path: apps/rif
   - project: monoweb-rpc
-    config: dev
+    config: dev_personal
     path: apps/rpc
   - project: monoweb-web
-    config: dev
+    config: dev_personal
     path: apps/web
-  - project: monoweb-migrator
-    config: dev
-    path: tools/migrator
+  - project: monoweb-kvittering-backend
+    config: dev_personal
+    path: apps/kvittering-backend
+  - project: monoweb-kvittering-frontend
+    config: dev_personal
+    path: apps/kvittering-frontend
+  - project: monoweb-web
+    config: dev_personal
+    path: packages/ui

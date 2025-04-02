@@ -2,10 +2,10 @@ import type {
   AttendanceId,
   AttendancePool,
   AttendancePoolId,
+  AttendanceSelectionResponse,
   Attendee,
   AttendeeId,
   AttendeeWrite,
-  ExtrasChoices,
   QrCodeRegistrationAttendee,
   UserId,
   WaitlistAttendee,
@@ -14,8 +14,8 @@ import { IllegalStateError } from "../../error"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
+import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
-import type { AttendancePoolRepository } from "./attendance-pool-repository"
 import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
@@ -25,10 +25,10 @@ export interface AttendeeService {
   getAttendableAttendancePool(userId: UserId, attendanceId: AttendanceId): Promise<AttendancePool | null>
   canRegisterForEvent(userId: UserId, attendancePoolId: AttendanceId, registrationTime: Date): Promise<void>
   canDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
-  updateExtraChoices(id: AttendeeId, choices: ExtrasChoices): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, time: Date): Promise<Attendee | WaitlistAttendee>
   deregisterForEvent(id: AttendeeId, time: Date): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, time: Date): Promise<void>
+  updateSelectionResponses(id: AttendanceId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
@@ -37,13 +37,22 @@ export interface AttendeeService {
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
+  private readonly attendeeRepository: AttendeeRepository
+  private readonly attendanceRespository: AttendanceRepository
+  private readonly userService: UserService
+  private readonly waitlistAttendeeService: WaitlistAttendeService
+
   constructor(
-    private readonly attendeeRepository: AttendeeRepository,
-    private readonly attendancePoolRepository: AttendancePoolRepository,
-    private readonly attendanceRespository: AttendanceRepository,
-    private readonly userService: UserService,
-    private readonly waitlistAttendeeService: WaitlistAttendeService
-  ) {}
+    attendeeRepository: AttendeeRepository,
+    attendanceRespository: AttendanceRepository,
+    userService: UserService,
+    waitlistAttendeeService: WaitlistAttendeService
+  ) {
+    this.attendeeRepository = attendeeRepository
+    this.attendanceRespository = attendanceRespository
+    this.userService = userService
+    this.waitlistAttendeeService = waitlistAttendeeService
+  }
 
   async create(obj: AttendeeWrite) {
     return this.attendeeRepository.create(obj)
@@ -58,7 +67,7 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async updateAttended(attended: boolean, id: AttendeeId) {
-    const attendee = await this.attendeeRepository.update({ attended }, id)
+    const attendee = await this.attendeeRepository.update(id, { attended })
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
     }
@@ -77,13 +86,13 @@ export class AttendeeServiceImpl implements AttendeeService {
     if (attendee.attended === true) {
       return { attendee, user, alreadyAttended: true }
     }
-    await this.attendeeRepository.update({ attended: true }, attendee.id)
+    await this.attendeeRepository.update(attendee.id, { attended: true })
 
     return { attendee, user, alreadyAttended: false }
   }
 
-  async updateExtraChoices(id: AttendanceId, choices: ExtrasChoices) {
-    const attendee = await this.attendeeRepository.updateExtraChoices(id, choices)
+  async updateSelectionResponses(id: AttendeeId, selectionResponses: AttendanceSelectionResponse[]) {
+    const attendee = await this.attendeeRepository.update(id, { selectionResponses })
 
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
@@ -105,7 +114,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     this.canRegisterForEvent(userId, attendancePoolId, registrationTime)
 
     const user = await this.userService.getById(userId)
-    const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
+    const attendancePool = await this.attendanceRespository.getPool(attendancePoolId)
 
     if (attendancePool === null) {
       throw new AttendancePoolNotFoundError(attendancePoolId)
@@ -119,19 +128,19 @@ export class AttendeeServiceImpl implements AttendeeService {
       attendancePoolId,
       userId,
       attended: false,
-      extrasChoices: [],
       attendanceId: attendancePool.attendanceId,
       registeredAt: registrationTime,
       firstName: user.firstName,
       lastName: user.lastName,
+      selectionResponses: [],
     })
 
-    const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
-
-    if (numAttendees === attendancePool.capacity) {
+    if (attendancePool.numAttendees === attendancePool.capacity) {
       // Create waitlist attendee
       return await this.waitlistAttendeeService.create({
         attendanceId: attendancePool.attendanceId,
+        attendancePoolId: attendancePool.id,
+        position: null,
         userId,
         isPunished: false,
         registeredAt: new Date(),
@@ -153,7 +162,7 @@ export class AttendeeServiceImpl implements AttendeeService {
    */
   async canRegisterForEvent(userId: UserId, attendancePoolId: AttendancePoolId, registrationTime: Date): Promise<void> {
     const user = await this.userService.getById(userId)
-    const attendancePool = await this.attendancePoolRepository.get(attendancePoolId)
+    const attendancePool = await this.attendanceRespository.getPool(attendancePoolId)
 
     if (attendancePool === null) {
       throw new AttendancePoolNotFoundError(attendancePoolId)
@@ -194,12 +203,12 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new AttendeeRegistrationError("Attendance has ended")
     }
 
-    const numAttendees = await this.attendancePoolRepository.getNumAttendees(attendancePool.id)
-
-    if (numAttendees === attendancePool.capacity) {
+    if (attendancePool.numAttendees === attendancePool.capacity) {
       await this.waitlistAttendeeService.create({
         attendanceId,
+        attendancePoolId: attendancePool.id,
         userId,
+        position: null,
         isPunished: false,
         registeredAt: new Date(),
         studyYear: -69,
@@ -207,7 +216,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       })
     }
 
-    if (numAttendees > attendancePool.capacity) {
+    if (attendancePool.numAttendees > attendancePool.capacity) {
       throw new IllegalStateError("Pool has more attendees than the capacity")
     }
 
@@ -215,7 +224,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attendancePoolId: attendancePool.id,
       userId,
       attended: false,
-      extrasChoices: [],
+      selectionResponses: [],
       attendanceId,
       registeredAt: registrationTime,
       firstName: user.firstName ?? "Anonym",
@@ -248,9 +257,13 @@ export class AttendeeServiceImpl implements AttendeeService {
       throw new UserNotFoundError(userId)
     }
 
-    const attendancePools = await this.attendancePoolRepository.getByAttendanceId(attendanceId)
+    const attendance = await this.attendanceRespository.getById(attendanceId)
 
-    return attendancePools.find((pool) => pool.yearCriteria.includes(-69)) ?? null
+    if (attendance === null) {
+      throw new AttendanceNotFound(attendanceId)
+    }
+
+    return attendance.pools.find((pool) => pool.yearCriteria.includes(-69)) ?? null
   }
 
   /**

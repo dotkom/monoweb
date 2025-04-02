@@ -1,18 +1,7 @@
-import { z } from "zod"
+import { schemas } from "@dotkomonline/db/schemas"
+import type { z } from "zod"
 
-export const CompanySchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  name: z.string().max(50).min(1),
-  description: z.string().min(1),
-  email: z.string().email().min(1),
-  website: z.string().min(1),
-  type: z.enum(["Consulting", "Research", "Development", "Other"]),
-
-  location: z.string().nullable(),
-  image: z.string().nullable(),
-  phone: z.string().nullable(),
-})
+export const CompanySchema = schemas.CompanySchema.extend({})
 
 export type CompanyId = Company["id"]
 export type Company = z.infer<typeof CompanySchema>

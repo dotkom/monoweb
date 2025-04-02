@@ -5,7 +5,7 @@ import type { z } from "zod"
 export class InvalidTemplateArguments extends Error {}
 
 export interface Template<T extends Record<string, unknown>> {
-  (args: z.infer<z.ZodSchema<T>>): string
+  (args: z.infer<z.ZodSchema<T>>): Promise<string>
   displayName: string
 }
 
@@ -14,12 +14,12 @@ export function createTemplate<T extends Record<string, unknown>>(
   schema: z.ZodSchema<T>,
   Component: FC<z.infer<typeof schema>>
 ): Template<T> {
-  const handler = (args: z.infer<typeof schema>) => {
+  const handler = async (args: z.infer<typeof schema>) => {
     const result = schema.safeParse(args)
     if (!result.success) {
       throw new InvalidTemplateArguments(`Invalid arguments passed to email template: ${result.error.message}`)
     }
-    return render(<Component {...args} />)
+    return await render(<Component {...args} />)
   }
   handler.displayName = name
   return handler

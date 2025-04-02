@@ -8,8 +8,7 @@ export const CreateJobListingModal: FC<ContextModalProps> = ({ context, id }) =>
   const create = useCreateJobListingMutation()
   const FormComponent = useJobListingWriteForm({
     onSubmit: (data) => {
-      const createdAt = new Date()
-      create.mutate({ ...data, createdAt })
+      create.mutate(data)
       close()
     },
   })
@@ -20,5 +19,6 @@ export const useCreateJobListingModal = () => () =>
   modals.openContextModal({
     modal: "jobListing/create",
     title: "Opprett ny stillingsannonse",
+    size: "lg",
     innerProps: {},
   })

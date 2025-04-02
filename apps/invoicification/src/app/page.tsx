@@ -44,8 +44,8 @@ export default function Page() {
         <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>
           <Form />
 
-          <Button type="submit" disabled={dispatch.isLoading}>
-            {dispatch.isLoading ? (
+          <Button type="submit" disabled={dispatch.isPending}>
+            {dispatch.isPending ? (
               <Icon className="animate-spin" icon="tabler:loader-2" />
             ) : (
               "Send inn fakturainformasjon"

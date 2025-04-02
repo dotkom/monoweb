@@ -1,15 +1,23 @@
-import { trpc } from "@/utils/trpc/client"
+import { useTRPC } from "@/utils/trpc/client"
+
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useUnregisterMutation = () => {
-  const utils = trpc.useUtils()
-  return trpc.event.attendance.deregisterForEvent.useMutation({
-    onSuccess: async () => {
-      await Promise.all([utils.event.getWebEventDetailData.refetch(), utils.event.attendance.getAttendee.refetch()])
-    },
-    onError: (error) => {
-      console.error(error)
-    },
-  })
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  return useMutation(
+    trpc.event.attendance.deregisterForEvent.mutationOptions({
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.refetchQueries(trpc.event.getAttendanceEventDetail.queryFilter()),
+          queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
+        ])
+      },
+      onError: (error) => {
+        console.error(error)
+      },
+    })
+  )
 }
 
 interface UseRegisterMutationInput {
@@ -17,31 +25,38 @@ interface UseRegisterMutationInput {
 }
 
 export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => {
-  const utils = trpc.useUtils()
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
-  const mutation = trpc.event.attendance.registerForEvent.useMutation({
-    onSuccess: async () => {
-      await Promise.all([utils.event.getWebEventDetailData.refetch(), utils.event.attendance.getAttendee.refetch()])
-      onSuccess()
-    },
-    onError: (error) => {
-      console.error(error)
-    },
-  })
-
-  return mutation
+  return useMutation(
+    trpc.event.attendance.registerForEvent.mutationOptions({
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.refetchQueries(trpc.event.getAttendanceEventDetail.queryFilter()),
+          queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
+        ])
+        onSuccess()
+      },
+      onError: (error) => {
+        console.error(error)
+      },
+    })
+  )
 }
 
-export const useSetExtrasChoicesMutation = () => {
-  const utils = trpc.useUtils()
+export const useSetSelectionsOptionsMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
-  return trpc.event.attendance.setExtrasChoices.useMutation({
-    onSuccess: (data) => {
-      utils.event.getWebEventDetailData.invalidate()
-    },
-    onError: (error) => {
-      alert("Noe gikk galt")
-      console.error(error)
-    },
-  })
+  return useMutation(
+    trpc.event.attendance.updateSelectionResponses.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(trpc.event.getAttendanceEventDetail.queryFilter())
+      },
+      onError: (error) => {
+        alert("Noe gikk galt")
+        console.error(error)
+      },
+    })
+  )
 }

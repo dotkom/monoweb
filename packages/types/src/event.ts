@@ -1,30 +1,19 @@
 import { z } from "zod"
+
+import { schemas } from "@dotkomonline/db/schemas"
+
 import { type Attendance, AttendanceSchema } from "./attendance/attendance"
-import type { AttendancePool } from "./attendance/attendance-pool"
-import type { Committee } from "./committee"
 import type { Company } from "./company"
+import type { Group } from "./group"
+import type { InterestGroup } from "./interest-group"
 
-export const EventSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  title: z.string().min(1),
-  start: z.date(),
-  end: z.date(),
-  status: z.enum(["TBA", "PUBLIC", "NO_LIMIT", "ATTENDANCE"]),
-  type: z.enum(["SOCIAL", "COMPANY", "BEDPRES", "ACADEMIC"]),
-  public: z.boolean(),
-  description: z.string().nullable(),
-  subtitle: z.string().nullable(),
-  imageUrl: z.string().nullable(),
-  locationAddress: z.string().nullable(),
-  locationLink: z.string().nullable(),
-  locationTitle: z.string(),
-  attendanceId: z.string().nullable(),
-})
+export const EventSchema = schemas.EventSchema.extend({})
 
-export type EventId = Event["id"]
 export type Event = z.infer<typeof EventSchema>
+export type EventId = Event["id"]
+export type EventWithAttendanceSummarySchema = z.infer<typeof EventSchema>
+
+export type EventType = schemas.EventTypeType
 
 export const EventWriteSchema = EventSchema.omit({
   id: true,
@@ -40,26 +29,17 @@ export const AttendanceEventSchema = EventSchema.extend({
 
 export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
 
-export type DashboardEventDetail = {
+export type AttendanceEventDetail = {
   event: Event
-  eventCommittees: Committee[]
+  companies: Company[]
+  eventHostingGroups: Group[]
+  eventInterestGroups: InterestGroup[]
   attendance: Attendance | null
-  pools: AttendancePool[] | null
-  hasAttendance: boolean
 }
 
-export type WebEventDetail =
-  | {
-      hasAttendance: false
-      event: Event
-      eventCommittees: Committee[]
-      eventCompanies: Company[]
-    }
-  | {
-      hasAttendance: true
-      event: Event
-      eventCommittees: Committee[]
-      attendance: Attendance
-      pools: AttendancePool[]
-      eventCompanies: Company[]
-    }
+export const EventFilterSchema = z.object({
+  query: z.string().optional(),
+  before: z.date().optional(),
+  after: z.date().optional(),
+})
+export type EventFilter = z.infer<typeof EventFilterSchema>
