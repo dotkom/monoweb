@@ -1,8 +1,8 @@
 import { Debug_info } from "./components/debug_info";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
-import { Linjeforening_info } from "./components/linjeforening_info";
 import { SponsorPlaceholderIcon } from "./components/icons";
+import { Linjeforening_info } from "./components/linjeforening_info";
 
 function App() {
 	return (
