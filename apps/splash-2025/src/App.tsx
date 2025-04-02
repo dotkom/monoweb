@@ -14,7 +14,7 @@ function App() {
 				<Hero />
 				<Debug_info />
 				<div className="bg-brand">
-				<Linjeforening_info />
+					<Linjeforening_info />
 				</div>
 			</main>
 
