@@ -1,5 +1,7 @@
 import { Debug_info } from "./components/debug_info";
+import { Footer } from "./components/footer";
 import { Header } from "./components/header";
+import { SponsorPlaceholderIcon } from "./components/icons";
 import { Linjeforening_info } from "./components/linjeforening_info";
 
 function App() {
@@ -9,10 +11,11 @@ function App() {
 			<Header />
 
 			<main>
-				Team onboarding ftw 1
 				<Debug_info />
 				<Linjeforening_info />
 			</main>
+
+			<Footer sponsorLogo={<SponsorPlaceholderIcon />} />
 		</div>
 	);
 }
