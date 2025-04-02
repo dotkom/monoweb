@@ -13,6 +13,7 @@ describe("CompanyService", () => {
   it("creates a new company", async () => {
     const company: Omit<Company, "id"> = {
       name: "Duckmouse",
+      slug: "duckmouse",
       description: "We sell computer-mouses with ducks inside of them",
       email: "coolguys@company.com",
       phone: "+47 123 45 678",
@@ -31,7 +32,7 @@ describe("CompanyService", () => {
   it("fails on unknown id", async () => {
     const unknownID = randomUUID()
     vi.spyOn(companyRepository, "getById").mockResolvedValueOnce(null)
-    await expect(companyService.getCompany(unknownID)).rejects.toThrow(CompanyNotFoundError)
+    await expect(companyService.getCompanyById(unknownID)).rejects.toThrow(CompanyNotFoundError)
     expect(companyRepository.getById).toHaveBeenCalledWith(unknownID)
   })
 })

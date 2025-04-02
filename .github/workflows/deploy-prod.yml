@@ -195,4 +195,4 @@ jobs:
             --exclude "*.svg" \
             --region "eu-north-1"
       - name: Invalidate CloudFront cache
-        run: aws cloudfront create-invalidation --distribution-id E60JFQ13PM11R --paths '/*'
+        run: aws cloudfront create-invalidation --distribution-id E3J930LEDCHBY3 --paths '/*'

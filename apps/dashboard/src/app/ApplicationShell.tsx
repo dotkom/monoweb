@@ -95,6 +95,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             label={navigation.label}
             leftSection={<Icon icon={navigation.icon} />}
             childrenOffset={28}
+            defaultOpened
           >
             {navigation.children.map((child) => (
               <NavLink component={Link} key={child.label} label={child.label} href={child.href} />
