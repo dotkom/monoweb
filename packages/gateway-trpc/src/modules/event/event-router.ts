@@ -78,30 +78,36 @@ export const eventRouter = t.router({
       const events = await ctx.eventService.getEvents(input.page, input.filter)
       const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
       const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
+      const companies = events.map(async (e) => ctx.companyEventService.getCompaniesByEventId(e.id))
 
-      const groupResults = await Promise.all(groups)
-      const interestGroupResults = await Promise.all(interestGroups)
+    const groupResults = await Promise.all(groups)
+    const interestGroupResults = await Promise.all(interestGroups)
+    const companyResults = await Promise.all(companies)
 
-      return events.map((event, i) => ({
-        ...event,
-        groups: groupResults[i],
-        interestGroups: interestGroupResults[i],
-      }))
-    }),
+    return events.map((event, i) => ({
+      ...event,
+      groups: groupResults[i],
+      interestGroups: interestGroupResults[i],
+      companies: companyResults[i],
+    }))
+  }),
 
   // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
   recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
     const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
     const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
+    const companies = events.map(async (e) => ctx.companyEventService.getCompaniesByEventId(e.id))
 
     const groupResults = await Promise.all(groups)
     const interestGroupResults = await Promise.all(interestGroups)
+    const companyResults = await Promise.all(companies)
 
     return events.map((event, i) => ({
       ...event,
       groups: groupResults[i],
       interestGroups: interestGroupResults[i],
+      companies: companyResults[i],
     }))
   }),
 
