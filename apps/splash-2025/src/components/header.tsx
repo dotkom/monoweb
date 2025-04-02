@@ -23,7 +23,7 @@ export const Header = () => {
 					</p>
 				</div>
 				<div
-					className={`border-b-[2.5rem] border-b-transparent border-x-[4rem] border-x-[] ${borderColor}`}
+					className={`border-b-[2.5rem] border-b-transparent border-x-[4rem] ${borderColor}`}
 				/>
 			</a>
 		</header>
