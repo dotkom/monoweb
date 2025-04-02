@@ -13,7 +13,9 @@ function App() {
 			<main>
 				<Hero />
 				<Debug_info />
-				<Linjeforening_info />
+				<div className="bg-brand h-screen">
+					<Linjeforening_info />
+				</div>
 			</main>
 
 			<Footer sponsorLogo={<SponsorPlaceholderIcon />} />

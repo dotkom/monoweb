@@ -48,7 +48,7 @@ export const Debug_info = () => {
 					</button>
 				</div>
 			</div>
-			<div>
+			<div className="bg-brand">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<title>Debug Info</title>
 					<path fill="white" fill-opacity="1" d="M0,32L1440,0L1440,0L0,0Z" />
