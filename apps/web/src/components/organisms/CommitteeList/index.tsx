@@ -12,5 +12,3 @@ export const CommitteeList = async () => {
     </div>
   )
 }
-
-export default CommitteeList

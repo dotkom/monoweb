@@ -11,8 +11,8 @@ interface CommitteeViewProps {
   members: GroupMember[]
 }
 
-const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
-  const { name, image, email, longDescription } = props.committee
+export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
+  const { name, email, longDescription } = props.committee
 
   const icons = [{ icon: "material-symbols:mail", text: email, href: `mailto:${email}` }]
 
@@ -21,11 +21,6 @@ const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
       <div className="grid gap-x-12 gap-y-6 sm:grid-cols-[18rem_minmax(100px,_1fr)] md:grid-cols-[24rem_minmax(100px,_1fr)]">
         <div className="border-blue-7 flex h-fit flex-col gap-y-3 rounded-lg border-none sm:gap-y-2">
           <OnlineIcon className="w-5/12 mx-auto max-w-[150px] min-w-[120px]" />
-          {image && (
-            <div className="relative mb-4 h-64 w-full overflow-hidden rounded-lg bg-[#fff]">
-            </div>
-          )}
-
           <div className="text-blue-12 flex flex-col gap-y-2 px-1 text-lg">
             {icons.map(({ icon, text, href }) => (
               <div key={icon} className="flex items-center gap-x-2">
@@ -58,4 +53,3 @@ const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps) => {
     </EntryDetailLayout>
   )
 }
-export default CommitteeView
