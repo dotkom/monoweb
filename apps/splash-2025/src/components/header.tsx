@@ -3,7 +3,7 @@ export const Header = () => {
 		<header className="w-full fixed top-0 text-white p-10 flex justify-center z-50">
 			<a
 				href="https://online.ntnu.no"
-				className="absolute mx-[5%] top-0 left-0 group"
+				className="absolute mx-10 md:mx-20 top-0 left-0 group"
 			>
 				<div className="bg-brand items-center py-6 pt-1 flex flex-col text-center font-bold">
 					<img
