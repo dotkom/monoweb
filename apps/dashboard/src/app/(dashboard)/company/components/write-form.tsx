@@ -1,5 +1,5 @@
 import { type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
-import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
+import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../../form"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   type: "CONSULTING",

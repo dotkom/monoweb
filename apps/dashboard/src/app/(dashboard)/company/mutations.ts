@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation"
-import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
+import { useQueryNotification } from "../../notifications"
 
 import { useMutation } from "@tanstack/react-query"
 
@@ -29,8 +29,34 @@ export const useCreateCompanyMutation = () => {
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av bedriften: ${err.toString()}.`,
         })
+      },
+    })
+  )
+}
 
-        // TODO: send error to sentry/other service so we can catch it
+export const useEditCompanyMutation = () => {
+  const trpc = useTRPC()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.company.edit.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppdaterer bedrift...",
+          message: "Bedriften blir oppdatert.",
+        })
+      },
+      onSuccess: (data) => {
+        notification.complete({
+          title: "Bedrift oppdatert",
+          message: `Bedriften "${data.name}" har blitt oppdatert.`,
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under oppdatering av bedriften: ${err.toString()}.`,
+        })
       },
     })
   )

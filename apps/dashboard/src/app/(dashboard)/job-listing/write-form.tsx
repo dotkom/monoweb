@@ -10,8 +10,8 @@ import {
   useFormBuilder,
 } from "src/app/form"
 import type { z } from "zod"
-import { useCompanyAllQuery } from "../../../modules/company/queries/use-company-all-query"
 import { useJobListingAllLocationsQuery } from "../../../modules/job-listing/queries/use-job-listing-locations-all-query"
+import { useCompanyAllQuery } from "../company/queries"
 
 const JOBLISTING_FORM_DEFAULT_VALUES: Partial<FormValidationSchema> = {}
 

@@ -7,7 +7,6 @@ import { AlreadyAttendedModal } from "src/app/(dashboard)/event/components/error
 import { CreateGroupModal } from "src/modules/group/modals/create-group-modal"
 import { CreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
 import { CreateArticleModal } from "../modules/article/modals/create-article-modal"
-import { CreateCompanyModal } from "../modules/company/modals/create-company-modal"
 import { CreateJobListingModal } from "../modules/job-listing/modals/create-job-listing-modal"
 import { CreateOfflineModal } from "../modules/offline/modals/create-offline-modal"
 import { CreateAttendanceSelectionsModal } from "./(dashboard)/event/components/create-event-selections-modal"
@@ -23,7 +22,6 @@ const modals = {
   "event/attendance/pool/update": EditPoolModal,
   "event/attendance/pool/merge": MergePoolsModal,
   "jobListing/create": CreateJobListingModal,
-  "company/create": CreateCompanyModal,
   "offline/create": CreateOfflineModal,
   "attendance/selections/create": CreateAttendanceSelectionsModal,
   "attendance/selections/update": UpdateAttendanceSelectionsModal,

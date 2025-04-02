@@ -1,7 +1,7 @@
 import { CompanyWriteSchema } from "@dotkomonline/types"
 import type { FC } from "react"
-import { useEditCompanyMutation } from "../../../../modules/company/mutations/use-edit-company-mutation"
-import { useCompanyWriteForm } from "../write-form"
+import { useCompanyWriteForm } from "../components/write-form"
+import { useEditCompanyMutation } from "../mutations"
 import { useCompanyDetailsContext } from "./provider"
 
 export const CompanyEditCard: FC = () => {
