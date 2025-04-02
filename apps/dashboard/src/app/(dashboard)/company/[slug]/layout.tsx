@@ -1,4 +1,5 @@
 "use client"
+
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
 import { useTRPC } from "../../../../trpc"
@@ -9,10 +10,10 @@ import { useQuery } from "@tanstack/react-query"
 export default function CompanyDetailsLayout({
   children,
   params,
-}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+}: PropsWithChildren<{ params: Promise<{ slug: string }> }>) {
   const trpc = useTRPC()
-  const { id } = use(params)
-  const { data, isLoading } = useQuery(trpc.company.get.queryOptions(id))
+  const { slug } = use(params)
+  const { data, isLoading } = useQuery(trpc.company.getBySlug.queryOptions(slug))
   return (
     <>
       {isLoading || !data ? (

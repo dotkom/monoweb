@@ -1,4 +1,4 @@
-import type { z } from "zod"
+import { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
 
@@ -36,3 +36,10 @@ export type AttendanceEventDetail = {
   eventInterestGroups: InterestGroup[]
   attendance: Attendance | null
 }
+
+export const EventFilterSchema = z.object({
+  query: z.string().optional(),
+  before: z.date().optional(),
+  after: z.date().optional(),
+})
+export type EventFilter = z.infer<typeof EventFilterSchema>

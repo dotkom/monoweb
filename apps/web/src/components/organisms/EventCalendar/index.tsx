@@ -13,8 +13,15 @@ interface CalendarProps {
 }
 
 const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
-  // TODO: get all events between two given dates (start and end of month inc. days from adjesent months to fill first and last week)
-  const events = await server.event.all.query({ take: 50 })
+  const events = await server.event.all.query({
+    page: {
+      take: 100,
+    },
+    filter: {
+      after: new Date(year, month, 1),
+      before: new Date(year, month + 1, 0),
+    },
+  })
 
   const cal = getCalendarArray(year, month, events)
 

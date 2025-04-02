@@ -12,7 +12,7 @@ import {
   createTextInput,
   useFormBuilder,
 } from "../../../form"
-import { validateEvent } from "../event-form-validation"
+import { validateEventWrite } from "../validation"
 
 const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   start: new Date(),
@@ -40,7 +40,7 @@ export const EventWriteFormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
   interestGroupIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
-  const issues = validateEvent(data)
+  const issues = validateEventWrite(data)
   for (const issue of issues) {
     ctx.addIssue(issue)
   }

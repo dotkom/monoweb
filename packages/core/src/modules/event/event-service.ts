@@ -2,6 +2,7 @@ import type {
   AttendanceEventDetail,
   AttendanceWrite,
   Event,
+  EventFilter,
   EventId,
   EventInterestGroup,
   EventWrite,
@@ -19,7 +20,7 @@ export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
   updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
   getEventById(id: EventId): Promise<Event>
-  getEvents(page: Pageable): Promise<Event[]>
+  getEvents(page?: Pageable, filter?: EventFilter): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
@@ -61,8 +62,8 @@ export class EventServiceImpl implements EventService {
     return event
   }
 
-  async getEvents(page: Pageable): Promise<Event[]> {
-    const events = await this.eventRepository.getAll(page)
+  async getEvents(page?: Pageable, filter?: EventFilter): Promise<Event[]> {
+    const events = await this.eventRepository.getAll(page, filter)
     return events
   }
 
