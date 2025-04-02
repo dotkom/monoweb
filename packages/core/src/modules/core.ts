@@ -68,7 +68,7 @@ import {
 import { type UserRepository, UserRepositoryImpl } from "./user/user-repository"
 import { type UserService, UserServiceImpl } from "./user/user-service"
 
-export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
+export type ServiceLayer = ReturnType<typeof createServiceLayer>
 
 export type StripeAccount = {
   stripe: Stripe
@@ -84,7 +84,7 @@ export interface ServiceLayerOptions {
   managementClient: ManagementClient
 }
 
-export const createServiceLayer = async ({
+export const createServiceLayer = ({
   db,
   s3Client,
   managementClient,
