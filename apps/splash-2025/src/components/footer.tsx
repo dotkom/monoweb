@@ -4,7 +4,7 @@ import { SoMeLinks } from "./someLinks";
 
 export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
 	return (
-		<footer className="text-white">
+		<footer className="text-white bg-brand">
 			<div className="overflow-hidden">
 				<FooterWave color="#C1842E" className="size-[135%]" />
 			</div>

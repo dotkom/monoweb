@@ -12,7 +12,9 @@ function App() {
 
 			<main>
 				<Debug_info />
+				<div className="bg-brand h-screen">
 				<Linjeforening_info />
+				</div>
 			</main>
 
 			<Footer sponsorLogo={<SponsorPlaceholderIcon />} />
