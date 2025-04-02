@@ -19,7 +19,7 @@ export const SoMeLinks = () => {
 		<ul className="mx-8 gap-4 flex sm:justify-center">
 			{links.map((link) => (
 				<a href={link.url} key={link.key}>
-					<li className="size-24 cursor-pointer">{link.icon}</li>
+					<li className="size-24 cursor-pointer flex justify-center items-center">{link.icon}</li>
 				</a>
 			))}
 		</ul>
