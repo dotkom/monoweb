@@ -18,3 +18,4 @@ export const AttendanceWriteSchema = AttendanceSchema.omit({
 export type Attendance = z.infer<typeof AttendanceSchema>
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
 export type AttendanceId = Attendance["id"]
+export type AttendanceStatus = "NotOpened" | "Open" | "Closed" | "Full"
