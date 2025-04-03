@@ -32,7 +32,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
       <div className="flex w-full flex-col md:flex-row">
         <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
           {organizers.length && <div className="flex flex-row space-x-1">{organizers}</div>}
-          <div className="bg-slate-2 p-5 text-[18px] rounded-2xl">
+          <div className="text-[18px] rounded-2xl">
             <p>{eventDetail.event.description}</p>
           </div>
         </section>
