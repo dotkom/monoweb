@@ -91,11 +91,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
-  const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus>("NotOpened")
-
-  useEffect(() => {
-    setAttendanceStatus(getAttendanceStatus(attendance))
-  }, [attendance])
+  const attendanceStatus = getAttendanceStatus(attendance)
 
   const registerForAttendance = async () => {
     if (!attendedPool) {
