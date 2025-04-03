@@ -4,13 +4,12 @@ import { useTRPC } from "@/utils/trpc/client"
 import type { Attendance, AttendanceEventDetail, AttendanceStatus } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 import type { Session } from "next-auth"
 import { type FC, useEffect, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMutation } from "../mutations"
 import { getAttendanceStatus } from "../utils"
+import AttendanceDateInfo from "./AttendanceDateInfo"
 import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
@@ -93,35 +92,10 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus>("NotOpened")
-  const [isAttendanceStartInPast, setIsAttendanceStartInPast] = useState(false)
-  const [isAttendanceStartInSameYear, setIsAttendanceStartInSameYear] = useState(false)
-  const [isAttendanceClosedInPast, setIsAttendanceClosedInPast] = useState(false)
-  const [isAttendanceClosedInSameYear, setIsAttendanceClosedInSameYear] = useState(false)
-  const [isDeregisterDeadlineInSameYear, setIsDeregisterDeadlineInSameYear] = useState(false)
 
   useEffect(() => {
     setAttendanceStatus(getAttendanceStatus(attendance))
-    setIsAttendanceStartInPast(attendance.registerStart < new Date())
-    setIsAttendanceStartInSameYear(new Date(attendance.registerStart).getFullYear() === new Date().getFullYear())
-    setIsAttendanceClosedInPast(attendance.registerEnd < new Date())
-    setIsAttendanceClosedInSameYear(new Date(attendance.registerEnd).getFullYear() === new Date().getFullYear())
-    setIsDeregisterDeadlineInSameYear(
-      new Date(attendance.deregisterDeadline).getFullYear() === new Date().getFullYear()
-    )
   }, [attendance])
-
-  const getFormatString = (isInSameYear: boolean) => (isInSameYear ? "dd. MMMM" : "dd.MM.yyyy")
-  const registerStartDate = formatDate(attendance.registerStart, getFormatString(isAttendanceStartInSameYear), {
-    locale: nb,
-  })
-  const registerEndDate = formatDate(attendance.registerEnd, getFormatString(isAttendanceClosedInSameYear), {
-    locale: nb,
-  })
-  const deregisterDeadlineDate = formatDate(
-    attendance.deregisterDeadline,
-    getFormatString(isDeregisterDeadlineInSameYear),
-    { locale: nb }
-  )
 
   const registerForAttendance = async () => {
     if (!attendedPool) {
@@ -156,39 +130,20 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
     <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-6 gap-3">
       <h2 className="border-none">Påmelding</h2>
 
-      <div className="flex flex-row justify-between space-x-8">
-        <div>
-          <p className="text-slate-9 text-lg">{isAttendanceStartInPast ? "Åpnet" : "Åpner"}</p>
-          <p className="text-slate-9 text-sm">{registerStartDate}</p>
-          <p className="text-slate-9 text-sm">kl. {formatDate(attendance.registerStart, "HH:mm", { locale: nb })}</p>
-        </div>
-        <div>
-          <p className="text-slate-9 text-lg">{isAttendanceClosedInPast ? "Lukket" : "Lukker"}</p>
-          <p className="text-slate-9 text-sm">{registerEndDate}</p>
-          <p className="text-slate-9 text-sm">kl. {formatDate(attendance.registerEnd, "HH:mm", { locale: nb })}</p>
-        </div>
-        <div>
-          <p className="text-slate-9 text-lg">Avmeldingsfrist</p>
-          <p className="text-slate-9 text-sm">{deregisterDeadlineDate}</p>
-          <p className="text-slate-9 text-sm">
-            kl. {formatDate(attendance.deregisterDeadline, "HH:mm", { locale: nb })}
-          </p>
-        </div>
-      </div>
+      <AttendanceDateInfo attendance={attendance} />
 
       <AttendanceBoxPool pool={attendedPool} isAttending={userIsRegistered} />
 
-      <div className="flex flex-col gap-3">
-        <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
-        <RegistrationButton
-          attendee={attendee}
-          attendance={attendance}
-          registerForAttendance={registerForAttendance}
-          unregisterForAttendance={unregisterForAttendance}
-          isLoading={registerLoading}
-          status={attendanceStatus}
-        />
-      </div>
+      <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
+
+      <RegistrationButton
+        attendee={attendee}
+        attendance={attendance}
+        registerForAttendance={registerForAttendance}
+        unregisterForAttendance={unregisterForAttendance}
+        isLoading={registerLoading}
+        status={attendanceStatus}
+      />
 
       {attendee && attendance.selections.length > 0 && (
         <div className="w-full">
