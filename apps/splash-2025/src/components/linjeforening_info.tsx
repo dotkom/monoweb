@@ -33,7 +33,7 @@ export const Linjeforening_info = () => {
 					vår i lenken under.
 				</p>
 			</div>
-			<div className="flex flex-row justify-center items-center mb-80">
+			<div className="flex flex-row justify-center items-center pb-20">
 				<button
 					type="button"
 					className=" border border-white text-white px-6 

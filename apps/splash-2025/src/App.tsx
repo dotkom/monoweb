@@ -13,7 +13,7 @@ function App() {
 			<main>
 				<Hero />
 				<Debug_info />
-				<div className="bg-brand h-screen">
+				<div className="bg-brand">
 					<Linjeforening_info />
 				</div>
 			</main>
