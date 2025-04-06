@@ -22,7 +22,7 @@ export const auth = createAuthenticationHandler(oauth2Service, {
   redirectUrl: `${env.NEXT_PUBLIC_ORIGIN}/api/auth/callback/auth0`,
   scopes: [OAuthScopes.Profile, OAuthScopes.Email, OAuthScopes.OpenID, OAuthScopes.OfflineAccess],
   host: env.NEXT_PUBLIC_ORIGIN,
-  homeUrl: env.NEXT_PUBLIC_ORIGIN,
+  homeUrl: `${env.NEXT_PUBLIC_ORIGIN}/event`,
   signingKey: env.AUTH_SECRET,
   logger: oauth2Logger,
   async onSignIn(session) {
