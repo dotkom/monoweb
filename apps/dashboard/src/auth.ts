@@ -1,14 +1,14 @@
 import type { AppRouter } from "@dotkomonline/gateway-trpc"
 import { getLogger } from "@dotkomonline/logger"
 import { OAuth2Service, OAuthScopes } from "@dotkomonline/oauth2"
+import { JwtService } from "@dotkomonline/oauth2/jwt"
 import { createAuthenticationHandler } from "@dotkomonline/oauth2/nextjs"
 import * as trpc from "@trpc/client"
-import { createRemoteJWKSet, jwtVerify } from "jose"
 import superjson from "superjson"
 import { env } from "./env"
 
 const oauth2Logger = getLogger("dashboard:oauth2")
-
+const jwtService = new JwtService(env.OAUTH_ISSUER, [])
 const oauth2Service = new OAuth2Service(
   oauth2Logger,
   fetch,
@@ -17,8 +17,6 @@ const oauth2Service = new OAuth2Service(
   env.OAUTH_CLIENT_SECRET,
   env.NEXT_PUBLIC_ORIGIN
 )
-
-const jwks = createRemoteJWKSet(new URL(`${env.OAUTH_ISSUER}/.well-known/jwks.json`))
 
 export const auth = createAuthenticationHandler(oauth2Service, {
   redirectUrl: `${env.NEXT_PUBLIC_ORIGIN}/api/auth/callback/auth0`,
@@ -40,14 +38,7 @@ export const auth = createAuthenticationHandler(oauth2Service, {
       ],
     })
     try {
-      const jwt = await jwtVerify(session.accessToken, jwks, {
-        clockTolerance: "5s",
-        algorithms: ["RS256"],
-        // Auth0's issuer contains a trailing slash, but Next Auth does not
-        issuer: `${env.OAUTH_ISSUER}/`,
-        // audience: this.audiences,
-        typ: "JWT",
-      })
+      const jwt = await jwtService.verify(session.accessToken)
       if (!jwt.payload.sub) {
         throw new Error("No sub in JWT")
       }

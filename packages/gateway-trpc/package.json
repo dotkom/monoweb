@@ -16,8 +16,8 @@
   "dependencies": {
     "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/oauth2": "workspace:*",
     "@trpc/server": "11.0.0-rc.828",
-    "jose": "^6.0.0",
     "superjson": "^2.0.0",
     "zod": "^3.22.4"
   },

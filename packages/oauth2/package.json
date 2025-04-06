@@ -15,6 +15,10 @@
     "./react": {
       "import": "./src/react.tsx",
       "types": "./src/react.tsx"
+    },
+    "./jwt": {
+      "import": "./src/jwt.ts",
+      "types": "./src/jwt.ts"
     }
   },
   "scripts": {

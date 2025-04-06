@@ -40,7 +40,6 @@
     "@trpc/tanstack-react-query": "11.0.0-rc.828",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
-    "jose": "^6.0.10",
     "next": "^15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
