@@ -1,0 +1,55 @@
+{
+  "name": "@dotkomonline/oauth2",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./nextjs": {
+      "import": "./src/nextjs.ts",
+      "types": "./src/nextjs.ts"
+    },
+    "./react": {
+      "import": "./src/react.tsx",
+      "types": "./src/react.tsx"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "biome check . --write",
+    "lint-check": "biome check .",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dotkomonline/logger": "workspace:*",
+    "jose": "^6.0.0",
+    "oauth4webapi": "^3.4.0",
+    "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "next": "^15",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.3",
+    "@dotkomonline/config": "workspace:*",
+    "typescript": "^5.8",
+    "vitest": "^3.1.1",
+    "vitest-mock-extended": "^3.1.0"
+  }
+}
