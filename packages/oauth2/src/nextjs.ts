@@ -44,6 +44,7 @@ export type AuthenticationHandlerOptions = {
   host: string
   signingKey: string
   logger: Logger
+  onSignIn?: (session: Session) => Awaited<void> | void
 }
 
 /**
@@ -96,14 +97,14 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
         }
         const tokenSet = await service.getTokenSet(opts.redirectUrl, input.data.code, expectedVerifier.value)
         const userInfo = await service.getUserInfo(tokenSet.accessToken)
-        const jwt = await createSession(
-          {
-            ...userInfo,
-            accessToken: tokenSet.accessToken,
-            refreshToken: tokenSet.refreshToken,
-          },
-          opts.signingKey
-        )
+        const session = {
+          ...userInfo,
+          accessToken: tokenSet.accessToken,
+          refreshToken: tokenSet.refreshToken,
+        } satisfies Session
+        const jwt = await createSession(session, opts.signingKey)
+        // If the caller has provided a callback, call it with the session.
+        await opts.onSignIn?.(session)
         cookieHandle.set(service.getOAuth2SessionCookieName(), jwt, {
           path: "/",
           httpOnly: true,
