@@ -18,7 +18,6 @@
     "@dotkomonline/auth": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
-    "@dotkomonline/gateway-edge-nextjs": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/proxy-nextjs": "workspace:*",
     "@dotkomonline/types": "workspace:*",
