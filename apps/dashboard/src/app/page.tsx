@@ -1,6 +1,6 @@
 import { Button, Card, Container, Flex, Text, Title } from "@mantine/core"
 import { redirect } from "next/navigation"
-import {auth} from "../auth";
+import { auth } from "../auth"
 
 export default async function DashboardPage() {
   const session = await auth.getServerSession()
