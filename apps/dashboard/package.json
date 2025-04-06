@@ -19,7 +19,6 @@
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/oauth2": "workspace:*",
-    "@dotkomonline/proxy-nextjs": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
