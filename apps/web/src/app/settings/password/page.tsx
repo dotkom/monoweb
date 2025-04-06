@@ -3,7 +3,7 @@ import { SettingsPassword } from "@/components/views/SettingsView/components"
 import { redirect } from "next/navigation"
 
 const PasswordPage = async () => {
-  const session = await auth()
+  const session = await auth.getServerSession()
   if (session === null) {
     redirect("/")
   }

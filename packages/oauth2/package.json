@@ -19,6 +19,10 @@
     "./jwt": {
       "import": "./src/jwt.ts",
       "types": "./src/jwt.ts"
+    },
+    "./session": {
+      "import": "./src/session.ts",
+      "types": "./src/session.ts"
     }
   },
   "scripts": {

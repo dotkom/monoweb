@@ -1,10 +1,10 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
+import type { Session } from "@dotkomonline/oauth2/session"
 import type { Attendance, AttendanceEventDetail } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
-import type { Session } from "next-auth"
 import { type FC, useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMutation } from "../mutations"
@@ -13,15 +13,15 @@ import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
 
 interface AttendanceCardProps {
-  sessionUser?: Session["user"]
+  session: Session | null
   initialEventDetail: AttendanceEventDetail
 }
 
-export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEventDetail }) => {
+export const AttendanceCard: FC<AttendanceCardProps> = ({ session, initialEventDetail }) => {
   const trpc = useTRPC()
   const { data: eventDetail, ...eventDetailQuery } = useQuery({
     ...trpc.event.getAttendanceEventDetail.queryOptions(initialEventDetail.event.id),
-    enabled: sessionUser !== undefined,
+    enabled: session !== undefined,
     initialData: initialEventDetail,
   })
 
@@ -32,7 +32,7 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
   return (
     <AttendanceCardInner
       eventDetail={eventDetail}
-      sessionUser={sessionUser}
+      session={session}
       attendance={eventDetail.attendance}
       refetchEventDetail={eventDetailQuery.refetch}
     />
@@ -40,7 +40,7 @@ export const AttendanceCard: FC<AttendanceCardProps> = ({ sessionUser, initialEv
 }
 
 interface InnerAttendanceCardProps {
-  sessionUser?: Session["user"]
+  session: Session | null
   attendance: Attendance
   // TODO: Directly use query instead here
   refetchEventDetail: () => void
@@ -48,7 +48,7 @@ interface InnerAttendanceCardProps {
 }
 
 export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
-  sessionUser,
+  session,
   eventDetail,
   attendance,
   refetchEventDetail,
@@ -58,10 +58,10 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
     trpc.event.attendance.getAttendee.queryOptions(
       {
         attendanceId: eventDetail.attendance?.id ?? "",
-        userId: sessionUser?.id ?? "",
+        userId: session?.sub ?? "",
       },
       {
-        enabled: Boolean(sessionUser) && eventDetail.attendance !== null,
+        enabled: Boolean(session) && eventDetail.attendance !== null,
       }
     )
   )
@@ -94,7 +94,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
       throw new Error("Tried to register user for attendance without a group")
     }
 
-    if (!sessionUser || !user) {
+    if (!session || !user) {
       throw new Error("Tried to register user without session")
     }
 

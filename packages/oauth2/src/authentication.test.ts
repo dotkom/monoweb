@@ -22,8 +22,8 @@ describe("OAuth2Service", () => {
   })
 
   it("should create a new state variables each time", async () => {
-    const v1 = await oauthService.createAuthorizeUrl({ scopes: [] })
-    const v2 = await oauthService.createAuthorizeUrl({ scopes: [] })
+    const v1 = await oauthService.createAuthorizeUrl({ redirectUrl: "https://local.host", scopes: [] })
+    const v2 = await oauthService.createAuthorizeUrl({ redirectUrl: "https://local.host", scopes: [] })
     expect(v1.state).not.toBe(v2.state)
     expect(v1.verifier).not.toBe(v2.verifier)
     expect(v1.nonce).not.toBe(v2.nonce)
@@ -38,6 +38,7 @@ describe("OAuth2Service", () => {
 
   it("should properly join scopes together", async () => {
     const { url } = await oauthService.createAuthorizeUrl({
+      redirectUrl: "https://local.host",
       scopes: [OAuthScopes.Profile, OAuthScopes.OfflineAccess],
     })
     expect(url.searchParams.get("scope")).toBe("profile offline_access")

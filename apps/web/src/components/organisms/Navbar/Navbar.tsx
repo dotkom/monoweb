@@ -55,7 +55,7 @@ const links: MenuLink[] = [
 ]
 
 export const Navbar = async () => {
-  const session = await auth()
+  const session = await auth.getServerSession()
 
   return (
     <header className="mx-auto w-full max-w-screen-xl px-2 sm:px-10">
@@ -66,7 +66,7 @@ export const Navbar = async () => {
         </Link>
         <MainNavigation links={links} />
         <div className="flex flex-grow items-center justify-end md:flex-grow-0">
-          <ProfileMenu initialData={session} />
+          <ProfileMenu />
         </div>
       </div>
     </header>
