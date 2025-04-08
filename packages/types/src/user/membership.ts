@@ -12,11 +12,11 @@ export const MembershipSchema = z.object({
 export type Membership = z.infer<typeof MembershipSchema>
 export type MembershipType = Membership["type"]
 
-export function membershipValid(membership: Membership) {
-  return membershipGrade(membership) !== null || membership.type === "KNIGHT"
+export function isMembershipValid(membership: Membership) {
+  return getMembershipGrade(membership) !== null || membership.type === "KNIGHT"
 }
 
-export function membershipGrade(membership: Membership): number | null {
+export function getMembershipGrade(membership: Membership): number | null {
   const currentAcademicYear = getAcademicYear(new Date())
   const yearsSinceMembershipStart = currentAcademicYear - membership.start_year
 

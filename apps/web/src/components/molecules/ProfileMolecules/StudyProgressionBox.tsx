@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import StudentProgress from "../StudentProgress/StudentProgress"
 import type { Membership, User } from "@dotkomonline/types"
-import { membershipGrade } from "@dotkomonline/types"
+import { getMembershipGrade } from "@dotkomonline/types"
 
 function memberDescription(membership: Membership) {
   switch (membership.type) {
@@ -26,7 +26,7 @@ const StudyProgressionBox: FC<StudyProgressionBoxProps> = ({ className, user }) 
     return null
   }
 
-  const grade = membershipGrade(user.membership);
+  const grade = getMembershipGrade(user.membership);
 
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className ?? ""}`}>

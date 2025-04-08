@@ -8,16 +8,12 @@ import type {
   UserId,
   UserWrite,
 } from "@dotkomonline/types"
-import { getAcademicYear } from "@dotkomonline/utils"
 import type { FeideGroup, FeideGroupsRepository } from "../external/feide-groups-repository"
-import type {
-  NTNUStudyplanRepository,
-  StudyplanCourse,
-} from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
 import type { UserRepository } from "./user-repository"
-import { UserNoFeideTokenError } from "./user-error"
+import { NTNUStudyplanRepository, StudyplanCourse } from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
+import { getAcademicYear } from "@dotkomonline/utils"
 
 export interface UserService {
   getById(id: UserId): Promise<User | null>
@@ -74,41 +70,25 @@ export class UserServiceImpl implements UserService {
   }
 
   async refreshMembership(userId: UserId): Promise<Membership | null> {
-    const { user, accessToken } = await this.userRepository.getWithFeideAccessTokenById(userId)
+    const { user, accessToken } = await this.userRepository.getByIdWithFeideAccessToken(userId)
 
-    if (!user) {
-      throw new Error("Could not find user to refresh membership for")
-    }
+    console.log("Calculating membership for user:", user)
+
+    console.log("FEIDE token:", accessToken)
 
     if (!accessToken) {
-      throw new UserNoFeideTokenError("User does not have a FEIDE access token")
+      throw new Error("User does not have a FEIDE access token")
     }
 
     const { studyProgrammes, studySpecializations, courses } =
       await this.feideGroupsRepository.getStudentInformation(accessToken)
 
-    const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
-    const existingMembership = user.membership;
+    console.log("Study programmes:", studyProgrammes)
+    console.log("Study specializations:", studySpecializations)
 
-    if (!defaultMembership) {
-      return existingMembership ?? null;
-    }
+    const membership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
 
-    // Use the calculated membership if the user does not already have one 
-    if (!existingMembership) {
-      await this.userRepository.update(userId, { membership: defaultMembership })
-
-      return defaultMembership
-    }
-
-    // Replace bachelor memberships with master memberships
-    if (existingMembership.type === "BACHELOR" && defaultMembership.type === "MASTER") {
-      await this.userRepository.update(userId, { membership: defaultMembership })
-
-      return defaultMembership
-    }
-
-    return defaultMembership
+    return membership
   }
 
   private async calculateDefaultMembership(
@@ -116,87 +96,81 @@ export class UserServiceImpl implements UserService {
     studySpecializations: FeideGroup[],
     courses: FeideGroup[]
   ): Promise<Membership | null> {
-    const masterProgramme = studyProgrammes.find((programme) => ONLINE_MASTER_PROGRAMMES.includes(programme.code))
-    const bachelorProgramme = studyProgrammes.find((programme) => ONLINE_BACHELOR_PROGRAMMES.includes(programme.code))
+    const masterProgramme = studyProgrammes.find((programme) => ONLINE_MASTER_PROGRAMMES.includes(programme.code));
+    const bachelorProgramme = studyProgrammes.find((programme) => ONLINE_BACHELOR_PROGRAMMES.includes(programme.code));
 
     // Master programmes take precedence over bachelor programmes
-    const relevantProgramme = masterProgramme ?? bachelorProgramme
+    const relevantProgramme = masterProgramme ?? bachelorProgramme;
 
     if (!relevantProgramme) {
       return null
     }
 
-    const programmeLength = masterProgramme ? 2 : 3
-    const estimatedStudyGrade = await this.estimateStudyGrade(relevantProgramme.code, programmeLength, courses)
-    const estimatedStartYear = getAcademicYear(new Date()) - estimatedStudyGrade + 1;
- 
+    const studyLength = masterProgramme ? 2 : 3;
+    // Get the newest study plan we can be sure is complete
+    const studyplanYear = getAcademicYear(new Date()) - studyLength;
+    const studyplanCourses = await this.ntnuStudyplanRepository.getStudyplanCourses(relevantProgramme.code, studyplanYear);
+
+    const estimatedEstudyYear = await this.estimateStudyGrade(studyplanCourses, courses);
+
     if (masterProgramme) {
       return {
         type: "MASTER",
-        start_year: estimatedStartYear,
+        start_year: estimatedEstudyYear,
         specialization: studySpecializations.length > 0 ? studySpecializations[0].code : undefined,
       }
     }
 
     return {
       type: "BACHELOR",
-      start_year: estimatedStartYear,
+      start_year: estimatedEstudyYear,
     }
   }
 
   // This function takes a list of courses from the study plan and a list of courses taken by the user, and estimates the grade level of the user (klassetrinn)
-  private async estimateStudyGrade(programmeCode: string, programmeLength: number, coursesTaken: FeideGroup[]): Promise<number> {
-    // Get the newest study plan we can be sure is complete
-    const studyplanYear = getAcademicYear(new Date()) - programmeLength
-    const studyplanCourses = await this.ntnuStudyplanRepository.getStudyplanCourses(
-      programmeCode,
-      studyplanYear
-    )
-
+  async estimateStudyGrade(studyplanCourses: StudyplanCourse[], coursesTaken: FeideGroup[]): Promise<number> {
     // Sum up how much each course from the study plan indicates each grade level in the study plan
     // Example: { TDT4100: { "1": 7.5 } }, Object oriented programming indicates a first year (grade 1) with 7.5 credits indication strength
-    const courseGradeIndications: Record<string, { grade: number; credits: number }> = {}
+    const courseGradeIndications: Record<string, { grade: number; credits: number }> = {};
 
     for (const course of studyplanCourses) {
       // Use 7.5 credits if not specified or zero
-      const courseCredits = Number.parseFloat(course.credit ?? "7.5")
+      const courseCredits = parseFloat(course.credit ?? "7.5");
 
       console.log(course)
 
-      courseGradeIndications[course.code] = { grade: course.year, credits: courseCredits }
+      courseGradeIndications[course.code] = { grade: course.year, credits: courseCredits };
     }
 
     console.log("Course year indications:", courseGradeIndications)
 
-    const totalGradeIndications: Record<number, number> = {}
+    const totalGradeIndications: Record<number, number> = {};
 
     for (const course of coursesTaken) {
       if (!courseGradeIndications[course.code]) {
-        continue
+        continue;
       }
 
       if (!course.finished) {
-        continue
+        continue;
       }
 
-      const yearSinceTakenCourse = getAcademicYear(new Date()) - getAcademicYear(course.finished)
+      const yearSinceTakenCourse = getAcademicYear(new Date()) - getAcademicYear(course.finished);
 
-      const { grade, credits } = courseGradeIndications[course.code]
+      const { grade, credits } = courseGradeIndications[course.code];
 
-      const indicatedGrade = grade + yearSinceTakenCourse
+      const indicatedGrade = grade + yearSinceTakenCourse;
 
-      console.log(`Course ${course.code} indicates grade ${indicatedGrade} with ${credits} credits`)
+      console.log(`Course ${course.code} indicates grade ${indicatedGrade} with ${credits} credits`);
 
-      totalGradeIndications[indicatedGrade] = (totalGradeIndications[indicatedGrade] ?? 0) + credits
+      totalGradeIndications[indicatedGrade] = (totalGradeIndications[indicatedGrade] ?? 0) + credits;
     }
 
-    const indicatedGrade = Number.parseInt(
-      Object.entries(totalGradeIndications).reduce((a, b) => (a[1] > b[1] ? a : b))[0]
-    )
+    const indicatedGrade = parseInt(Object.entries(totalGradeIndications).reduce((a, b) => (a[1] > b[1] ? a : b))[0]);
 
-    console.log("Grade indication:", totalGradeIndications)
+    console.log("Grade indication:", totalGradeIndications);
 
-    return indicatedGrade
+    return indicatedGrade;
   }
 
   // https://auth0.com/docs/manage-users/user-search/user-search-query-syntax

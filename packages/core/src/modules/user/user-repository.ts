@@ -1,5 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import { GenderSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, MembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
 import { z } from "zod"
 
@@ -9,7 +9,7 @@ export interface UserRepository {
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   create(data: UserWrite, password: string): Promise<User>
-  getWithFeideAccessTokenById(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
+  getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
   registerAndGet(auth0Id: string): Promise<User>
 }
 
@@ -29,7 +29,7 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     compiled: z.boolean().default(false).parse(appMetadata.compiled),
     gender: GenderSchema.safeParse(appMetadata.gender).data ?? null,
     phone: z.string().safeParse(appMetadata.phone).data ?? null,
-    membership: MembershipSchema.safeParse(appMetadata.membership).data,
+    membership: MembershipSchema.safeParse(appMetadata.membership).data ?? null,
   }
 }
 
@@ -132,7 +132,7 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  async getWithFeideAccessTokenById(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
+  async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
     const user = await this.client.users.get({ id })
 
     if (user.status !== 200) {

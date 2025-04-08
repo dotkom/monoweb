@@ -9,7 +9,6 @@ export const UserSchema = z.object({
   lastName: z.string().nullable().default(null),
   compiled: z.boolean().default(false),
   email: z.string().email(),
-  image: z.string().nullable(),
   image: z.string().nullable().default(null),
   biography: z.string().nullable().default(null),
   phone: z.string().nullable().default(null),
@@ -18,7 +17,7 @@ export const UserSchema = z.object({
   allergies: z.string().nullable().default(null),
   address: z.string().nullable().default(null),
 
-  membership: MembershipSchema.optional(),
+  membership: MembershipSchema.nullable().default(null),
 })
 
 export const UserWriteSchema = UserSchema.omit({
