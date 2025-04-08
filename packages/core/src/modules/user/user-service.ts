@@ -74,7 +74,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async refreshMembership(userId: UserId): Promise<Membership | null> {
-    const { user, accessToken } = await this.userRepository.getByIdWithFeideAccessToken(userId)
+    const { user, accessToken } = await this.userRepository.getWithFeideAccessTokenById(userId)
 
     if (!user) {
       throw new Error("Could not find user to refresh membership for")

@@ -9,7 +9,7 @@ export interface UserRepository {
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   create(data: UserWrite, password: string): Promise<User>
-  getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
+  getWithFeideAccessTokenById(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
   registerAndGet(auth0Id: string): Promise<User>
 }
 
@@ -132,7 +132,7 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
+  async getWithFeideAccessTokenById(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
     const user = await this.client.users.get({ id })
 
     if (user.status !== 200) {
