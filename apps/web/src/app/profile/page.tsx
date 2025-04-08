@@ -3,14 +3,14 @@ import ProfilePoster from "@/components/views/ProfileView"
 import { redirect } from "next/navigation"
 
 const ProfilePage = async () => {
-  const session = await auth()
+  const session = await auth.getServerSession()
   if (session === null) {
     redirect("/")
   }
 
   return (
     <>
-      <ProfilePoster user={session.user} />
+      <ProfilePoster user={session} />
     </>
   )
 }

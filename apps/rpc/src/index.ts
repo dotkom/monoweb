@@ -3,14 +3,9 @@ import "./sentry"
 
 import { S3Client } from "@aws-sdk/client-s3"
 import { createPrisma } from "@dotkomonline/db"
-import {
-  type AppRouter,
-  type CreateContextOptions,
-  JwtService,
-  appRouter,
-  createContext,
-} from "@dotkomonline/gateway-trpc"
+import { type AppRouter, type CreateContextOptions, appRouter, createContext } from "@dotkomonline/gateway-trpc"
 import { getLogger } from "@dotkomonline/logger"
+import { JwtService } from "@dotkomonline/oauth2/jwt"
 import fastifyCors from "@fastify/cors"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"

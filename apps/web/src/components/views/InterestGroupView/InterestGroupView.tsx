@@ -1,9 +1,10 @@
 "use client"
+
 import OnlineIcon from "@/components/atoms/OnlineIcon"
 import { useTRPC } from "@/utils/trpc/client"
+import type { Session } from "@dotkomonline/oauth2/session"
 import type { InterestGroup, InterestGroupId, InterestGroupMember, User } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
-import type { Session } from "next-auth"
 import Link from "next/link"
 import type { FC } from "react"
 import SkeletonInterestGroupView from "./SkeletonInterestGroupView"
@@ -12,17 +13,17 @@ import { useQuery } from "@tanstack/react-query"
 import { useMutation } from "@tanstack/react-query"
 
 interface InterestGroupViewProps {
-  sessionUser?: Session["user"]
+  session: Session | null
   interestGroupId: InterestGroupId
 }
 
 export const InterestGroupView: FC<InterestGroupViewProps> = (props: InterestGroupViewProps) => {
   const trpc = useTRPC()
-  const { sessionUser, interestGroupId } = props
+  const { session, interestGroupId } = props
 
   const userQuery = useQuery(
     trpc.user.getMe.queryOptions(undefined, {
-      enabled: Boolean(sessionUser),
+      enabled: Boolean(session),
     })
   )
 
@@ -32,7 +33,7 @@ export const InterestGroupView: FC<InterestGroupViewProps> = (props: InterestGro
   const interestGroup = interestGroupQuery.data
   const members = membersQuery.data
 
-  const isLoading = (userQuery.isLoading && sessionUser) || interestGroupQuery.isLoading || membersQuery.isLoading
+  const isLoading = (userQuery.isLoading && session) || interestGroupQuery.isLoading || membersQuery.isLoading
   const isError = !interestGroup || !members
 
   return isLoading ? (

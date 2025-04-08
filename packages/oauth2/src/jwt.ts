@@ -6,10 +6,14 @@ import {
   jwtVerify,
 } from "jose"
 
+/**
+ * JWT Service for verifying JWTs from Auth0.
+ */
 export class JwtService {
   private jwks: GetKeyFunction<JWTHeaderParameters, FlattenedJWSInput> | null = null
   private readonly jwksUrl: URL
   private readonly issuer: string
+  // TODO: Add audience support
   private readonly audiences: string[]
 
   public constructor(issuer: string, audiences: string[]) {

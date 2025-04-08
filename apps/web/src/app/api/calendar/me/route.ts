@@ -5,13 +5,12 @@ import { env } from "@/env"
 import { SignJWT } from "jose"
 import { type NextRequest, NextResponse } from "next/server"
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
-  void req
-  const session = await auth()
+export async function GET(_: NextRequest): Promise<NextResponse> {
+  const session = await auth.getServerSession()
   if (session === null) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
-  const token = await new SignJWT({ sub: session.user.id })
+  const token = await new SignJWT({ sub: session.sub })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setIssuer(CALENDAR_ISSUER)

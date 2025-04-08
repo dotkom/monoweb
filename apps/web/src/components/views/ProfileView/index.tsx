@@ -1,8 +1,8 @@
 import ProfileInfoBox from "@/components/organisms/ProfileComponents/ProfileInfoBox"
+import type { Session } from "@dotkomonline/oauth2/session"
 import type { NextPage } from "next"
-import type { User } from "next-auth"
 
-const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
+const ProfilePoster: NextPage<{ user: Session }> = ({ user }) => {
   return (
     <>
       <div className="border-slate-7 left-0 z-0 w-full border-b">

@@ -16,7 +16,7 @@ const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
     }),
     httpBatchLink({
       transformer: superjson,
-      url: `${env.NEXT_PUBLIC_ORIGIN}/api/trpc`,
+      url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
       async fetch(url, options) {
         return fetch(url, {
           ...options,
