@@ -36,5 +36,5 @@ export const userRouter = t.router({
     .query(async ({ input, ctx }) => ctx.userService.searchForUser(input.searchQuery, 30, 0)),
   refreshMembership: protectedProcedure.mutation(async ({ ctx }) => {
     return await ctx.userService.refreshMembership(ctx.principal)
-  })
+  }),
 })

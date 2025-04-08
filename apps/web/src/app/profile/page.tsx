@@ -3,10 +3,10 @@
 import ProfilePoster from "@/components/views/ProfileView"
 import { useTRPC } from "@/utils/trpc/client"
 import { Button } from "@dotkomonline/ui"
-import {useMutation, useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query"
 
 const ProfilePage = () => {
-  const trpc = useTRPC();
+  const trpc = useTRPC()
   const { data: user } = useQuery(trpc.user.getMe.queryOptions())
   const { mutate: refreshMembership, data: membership } = useMutation(trpc.user.refreshMembership.mutationOptions())
 

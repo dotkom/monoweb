@@ -1,6 +1,6 @@
 "use client"
 
-import { User } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@dotkomonline/ui"
 import Link from "next/link"
 import type { FC } from "react"

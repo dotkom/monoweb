@@ -9,6 +9,6 @@ export class UserNotFoundError extends ApplicationError {
 
 export class UserNoFeideTokenError extends ApplicationError {
   constructor(id: string) {
-    super(PROBLEM_DETAILS.BadRequest, `User with ID:${id} does not have a stored FEIDE token`);
+    super(PROBLEM_DETAILS.BadRequest, `User with ID:${id} does not have a stored FEIDE token`)
   }
 }

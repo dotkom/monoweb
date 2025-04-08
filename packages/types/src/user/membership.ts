@@ -1,5 +1,5 @@
-import { z } from "zod"
 import { getAcademicYear } from "@dotkomonline/utils"
+import { z } from "zod"
 
 export const MembershipTypeSchema = z.enum(["BACHELOR", "MASTER", "SOCIAL", "PHD", "KNIGHT"])
 
@@ -22,19 +22,16 @@ export function getMembershipGrade(membership: Membership): number | null {
 
   switch (membership.type) {
     case "BACHELOR":
-      if (yearsSinceMembershipStart > 4)
-        return null
+      if (yearsSinceMembershipStart > 4) return null
 
       return Math.min(1 + yearsSinceMembershipStart, 3)
 
     case "MASTER":
-      if (yearsSinceMembershipStart > 3)
-        return null
+      if (yearsSinceMembershipStart > 3) return null
 
       return Math.min(4 + yearsSinceMembershipStart, 5)
     case "SOCIAL":
-      if (yearsSinceMembershipStart > 5)
-        return null
+      if (yearsSinceMembershipStart > 5) return null
       return Math.min(1 + yearsSinceMembershipStart, 5)
     case "PHD":
       return 6
