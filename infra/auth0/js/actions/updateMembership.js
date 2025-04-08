@@ -9,6 +9,4 @@ exports.onExecutePostLogin = async (event, api) => {
   if (event.connection.id !== event.secrets.FEIDE_CONNECTION_ID) {
     return;
   }
-
-  
 };
