@@ -56,15 +56,24 @@ export type AuthenticationHandlerOptions = {
 export function createAuthenticationHandler(service: OAuth2Service, opts: AuthenticationHandlerOptions) {
   return {
     /** Begin the OAuth2 authorization code flow */
-    authorize: async function authorize(_: NextRequest): Promise<NextResponse> {
+    authorize: async function authorize(request: NextRequest): Promise<NextResponse> {
+      const searchParams = request.nextUrl.searchParams
+
       const { url, state, nonce, verifier } = await service.createAuthorizeUrl({
         redirectUrl: opts.redirectUrl,
         scopes: opts.scopes,
+        connection: searchParams.get("connection") ?? undefined,
       })
       const cookieHandle = await cookies()
       createShortLivedCookie(service, cookieHandle, service.getOAuth2StateCookieName(), state)
       createShortLivedCookie(service, cookieHandle, service.getOAuth2VerifierCookieName(), verifier)
       createShortLivedCookie(service, cookieHandle, service.getOAuth2NonceCookieName(), nonce)
+
+      const redirectAfter = searchParams.get("redirectAfter")
+      if (redirectAfter !== null) {
+        createShortLivedCookie(service, cookieHandle, service.getOAuth2RedirectCookieName(), redirectAfter)
+      }
+
       return NextResponse.redirect(url)
     },
     /** Handle callback post-authorization from Auth0 */
@@ -72,6 +81,7 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       const cookieHandle = await cookies()
       try {
         // Attempt to parse the state and code from the request.
+        console.log(request.nextUrl.searchParams)
         const input = await CallbackEndpointInput.safeParseAsync({
           code: request.nextUrl.searchParams.get("code"),
           state: request.nextUrl.searchParams.get("state"),
@@ -113,6 +123,13 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
           domain: getHostname(service.getHost()),
           secure: service.isClientOnHttps(),
         })
+
+        const redirectAfter = cookieHandle.get(service.getOAuth2RedirectCookieName())
+        if (redirectAfter !== undefined) {
+          cookieHandle.delete(service.getOAuth2RedirectCookieName())
+          return NextResponse.redirect(new URL(redirectAfter.value, opts.host))
+        }
+
         return NextResponse.redirect(opts.homeUrl)
       } catch (error) {
         opts.logger.error("error occured in callback: %O", error)

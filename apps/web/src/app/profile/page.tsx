@@ -1,24 +1,14 @@
-"use client"
-
 import ProfilePoster from "@/components/views/ProfileView"
 import { useTRPC } from "@/utils/trpc/client"
+import { server } from "@/utils/trpc/server"
 import { Button } from "@dotkomonline/ui"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-const ProfilePage = () => {
-  const trpc = useTRPC()
-  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
-  const { mutate: refreshMembership, data: membership } = useMutation(trpc.user.refreshMembership.mutationOptions())
+const ProfilePage = async () => {
+  const user = await server.user.getMe.query()
 
   return (
-    <>
-      {user && <ProfilePoster user={user} />}
-      <Button className="mt-8" onClick={() => refreshMembership()}>
-        Oppdater medlemsskap
-      </Button>
-      <pre>{JSON.stringify(membership, null, 2)}</pre>
-      <div className="h-screen" />
-    </>
+    <ProfilePoster user={user} />
   )
 }
 

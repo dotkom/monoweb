@@ -1,3 +1,3 @@
 import { auth } from "../../../../auth"
 
-export const GET = auth.authorize
+export const GET = auth.authorize()

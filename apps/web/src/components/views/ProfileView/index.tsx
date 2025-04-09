@@ -4,7 +4,7 @@ import type { NextPage } from "next"
 
 const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
   return (
-    <>
+    <div className="min-h-screen">
       <div className="border-slate-7 left-0 z-0 w-full border-b">
         <div className="flex flex-row gap-96 py-5">
           <div className="flex flex-col">
@@ -15,7 +15,7 @@ const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
       </div>
 
       <ProfileInfoBox user={user} />
-    </>
+    </div>
   )
 }
 

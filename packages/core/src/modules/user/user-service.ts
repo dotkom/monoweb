@@ -28,8 +28,7 @@ export interface UserService {
     data: Partial<Omit<PrivacyPermissionsWrite, "userId">>
   ): Promise<PrivacyPermissions>
   update(userId: UserId, data: Partial<UserWrite>): Promise<User>
-  refreshMembership(userId: UserId): Promise<Membership | null>
-  registerAndGet(auth0Id: string): Promise<User>
+  register(auth0Id: string): Promise<void>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT", "MIT"]
@@ -56,42 +55,23 @@ export class UserServiceImpl implements UserService {
     this.ntnuStudyplanRepository = ntnuStudyplanRepository
   }
 
-  async registerAndGet(auth0Id: string) {
-    return this.userRepository.registerAndGet(auth0Id)
-  }
+  async register(auth0Id: string) {
+    const { user, feideAccessToken } = await this.userRepository.getByIdWithFeideAccessToken(auth0Id)
 
-  async getById(auth0Id: string) {
-    return this.userRepository.getById(auth0Id)
-  }
+    await this.userRepository.register(auth0Id)
 
-  async update(userId: UserId, data: Partial<UserWrite>): Promise<User> {
-    return this.userRepository.update(userId, data)
-  }
+    if (feideAccessToken) {
+      const { studyProgrammes, studySpecializations, courses } =
+        await this.feideGroupsRepository.getStudentInformation(feideAccessToken)
 
-  async getAll(limit: number, offset: number): Promise<User[]> {
-    return await this.userRepository.getAll(limit, offset)
-  }
+      const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
 
-  async refreshMembership(userId: UserId): Promise<Membership | null> {
-    const { user, accessToken } = await this.userRepository.getByIdWithFeideAccessToken(userId)
-
-    console.log("Calculating membership for user:", user)
-
-    console.log("FEIDE token:", accessToken)
-
-    if (!accessToken) {
-      throw new Error("User does not have a FEIDE access token")
+      if (this.shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
+        await this.userRepository.update(auth0Id, {
+          membership: defaultMembership,
+        })
+      }
     }
-
-    const { studyProgrammes, studySpecializations, courses } =
-      await this.feideGroupsRepository.getStudentInformation(accessToken)
-
-    console.log("Study programmes:", studyProgrammes)
-    console.log("Study specializations:", studySpecializations)
-
-    const membership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
-
-    return membership
   }
 
   private async calculateDefaultMembership(
@@ -117,19 +97,20 @@ export class UserServiceImpl implements UserService {
       studyplanYear
     )
 
-    const estimatedEstudyYear = await this.estimateStudyGrade(studyplanCourses, courses)
+    const estimatedStudyGrade = await this.estimateStudyGrade(studyplanCourses, courses)
+    const estimatedStudyYear = getAcademicYear(new Date()) - estimatedStudyGrade + 1
 
     if (masterProgramme) {
       return {
         type: "MASTER",
-        start_year: estimatedEstudyYear,
+        start_year: estimatedStudyYear,
         specialization: studySpecializations.length > 0 ? studySpecializations[0].code : undefined,
       }
     }
 
     return {
       type: "BACHELOR",
-      start_year: estimatedEstudyYear,
+      start_year: estimatedStudyYear,
     }
   }
 
@@ -179,6 +160,38 @@ export class UserServiceImpl implements UserService {
     console.log("Grade indication:", totalGradeIndications)
 
     return indicatedGrade
+  }
+
+  shouldReplaceMembership(currentMembership: Membership | null, newMembership: Membership | null) {
+    if (!newMembership) {
+      return false
+    }
+
+    if (!currentMembership) {
+      return true
+    }
+
+    if (currentMembership.type === "BACHELOR" && newMembership.type === "MASTER") {
+      return true
+    }
+
+    if (currentMembership.type === "SOCIAL") {
+      return true
+    }
+
+    return false
+  }
+
+  async getById(auth0Id: string) {
+    return this.userRepository.getById(auth0Id)
+  }
+
+  async update(userId: UserId, data: Partial<UserWrite>): Promise<User> {
+    return this.userRepository.update(userId, data)
+  }
+
+  async getAll(limit: number, offset: number): Promise<User[]> {
+    return await this.userRepository.getAll(limit, offset)
   }
 
   // https://auth0.com/docs/manage-users/user-search/user-search-query-syntax

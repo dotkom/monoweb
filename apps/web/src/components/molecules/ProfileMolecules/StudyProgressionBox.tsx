@@ -1,9 +1,11 @@
-import type { Membership, User } from "@dotkomonline/types"
+import type { Membership } from "@dotkomonline/types"
 import { getMembershipGrade } from "@dotkomonline/types"
 import type { FC } from "react"
 import StudentProgress from "../StudentProgress/StudentProgress"
+import Link from "next/link"
+import { Button } from "@dotkomonline/ui"
 
-function memberDescription(membership: Membership) {
+function membershipDescription(membership: Membership) {
   switch (membership.type) {
     case "BACHELOR":
       return "Bachelor"
@@ -16,25 +18,32 @@ function memberDescription(membership: Membership) {
   }
 }
 
-type StudyProgressionBoxProps = {
-  className?: string
-  user: User
+type MembershipBoxProps = {
+  membership: Membership | null
 }
 
-const StudyProgressionBox: FC<StudyProgressionBoxProps> = ({ className, user }) => {
-  if (!user.membership) {
-    return null
+const MembershipBox: FC<MembershipBoxProps> = ({ membership }) => {
+  if (membership === null) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 h-full">
+        <p className="text-3xl">Ingen medlemsskap</p>
+ 
+        <Link href="/api/auth/authorize?connection=FEIDE&redirectAfter=/profile">
+          <Button color="gradient">
+            Bekreft med FEIDE
+          </Button>
+        </Link>
+      </div>
+    )
   }
-
-  const grade = getMembershipGrade(user.membership)
+  const grade = getMembershipGrade(membership)
 
   return (
-    <div className={`flex flex-col items-center justify-center gap-3 ${className ?? ""}`}>
-      {grade && <p className="text-3xl">{grade}. klasse</p>}
-      <p className="text-3xl">{memberDescription(user.membership)}</p>
-      <div className="transform scale-90">{grade && <StudentProgress year={grade} />}</div>
+    <div className={"flex flex-col items-center justify-center gap-3"}>
+      { grade && <p className="text-3xl">{grade}. klasse</p> }
+      <p className="text-3xl">{membershipDescription(membership)}</p>
     </div>
   )
 }
 
-export default StudyProgressionBox
+export default MembershipBox

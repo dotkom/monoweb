@@ -10,7 +10,7 @@ export const userRouter = t.router({
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
   registerAndGet: protectedProcedure
     .input(UserSchema.shape.id)
-    .mutation(async ({ input, ctx }) => ctx.userService.registerAndGet(input)),
+    .mutation(async ({ input, ctx }) => ctx.userService.register(input)),
   getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.principal)),
   update: protectedProcedure
     .input(
@@ -34,7 +34,4 @@ export const userRouter = t.router({
   searchByFullName: protectedProcedure
     .input(z.object({ searchQuery: z.string() }))
     .query(async ({ input, ctx }) => ctx.userService.searchForUser(input.searchQuery, 30, 0)),
-  refreshMembership: protectedProcedure.mutation(async ({ ctx }) => {
-    return await ctx.userService.refreshMembership(ctx.principal)
-  }),
 })

@@ -9,8 +9,8 @@ export interface UserRepository {
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
   create(data: UserWrite, password: string): Promise<User>
-  getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }>
-  registerAndGet(auth0Id: string): Promise<User>
+  getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; feideAccessToken: string | null }>
+  register(auth0Id: string): Promise<void>
 }
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
@@ -98,12 +98,7 @@ export class UserRepositoryImpl implements UserRepository {
     return user
   }
 
-  async registerAndGet(auth0Id: string): Promise<User> {
-    const user = await this.getById(auth0Id)
-    if (user === null) {
-      throw new Error("Failed to fetch user after registration")
-    }
-
+  async register(auth0Id: string): Promise<void> {
     await this.db.owUser.upsert({
       where: {
         id: auth0Id,
@@ -115,8 +110,6 @@ export class UserRepositoryImpl implements UserRepository {
         id: auth0Id,
       },
     })
-
-    return user
   }
 
   async getById(id: UserId): Promise<User> {
@@ -132,20 +125,20 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; accessToken: string | null }> {
+  async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; feideAccessToken: string | null }> {
     const user = await this.client.users.get({ id })
 
     if (user.status !== 200) {
-      return { user: null, accessToken: null }
+      return { user: null, feideAccessToken: null }
     }
 
     for (const identity of user.data.identities) {
       if (identity.connection === "FEIDE") {
-        return { user: mapAuth0UserToUser(user.data), accessToken: identity.access_token }
+        return { user: mapAuth0UserToUser(user.data), feideAccessToken: identity.access_token }
       }
     }
 
-    return { user: mapAuth0UserToUser(user.data), accessToken: null }
+    return { user: mapAuth0UserToUser(user.data), feideAccessToken: null }
   }
 
   async getAll(limit: number, page: number): Promise<User[]> {
