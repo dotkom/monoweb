@@ -44,20 +44,8 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
   const registerMutation = useRegisterMutation({})
   const deregisterMutation = useDeregisterMutation()
 
-  function poolSortKey(pool: AttendancePool) {
-    if (attendee && pool.id === attendee.attendanceId) {
-      return 1
-    }
-
-    if (user && canUserAttendPool(pool, user)) {
-      return 0
-    }
-
-    return -1
-  }
-
-  const pools = attendance.pools.sort((a, b) => poolSortKey(b) - poolSortKey(a))
-  const attendablePool = user && pools.find((pool) => canUserAttendPool(pool, user))
+  const attendablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
+  const nonAttendablePools = attendance.pools.filter((pool) => pool.id !== attendablePool?.id).sort((a, b) => b.capacity - a.capacity)
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
@@ -73,8 +61,6 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
 
   const isLoading = attendanceLoading || attendeeLoading || deregisterMutation.isPending || registerMutation.isPending
 
-  const smallPools = attendance.pools.filter((pool) => pool.id !== attendablePool?.id)
-
   return (
     <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
       <h2 className="border-none">Påmelding</h2>
@@ -83,8 +69,8 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
 
       <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} />
 
-      {smallPools.length > 0 && (
-        <div className="flex flex-row gap-4">{smallPools.map((pool) => AttendanceBoxPoolSmall({ pool }))}</div>
+      {nonAttendablePools.length > 0 && (
+        <div className="flex flex-row gap-4">{nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}</div>
       )}
 
       <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
