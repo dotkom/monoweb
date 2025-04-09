@@ -135,6 +135,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
       <RegistrationButton
         attendee={attendee}
         attendance={attendance}
+        pool={attendedPool}
         registerForAttendance={registerForAttendance}
         unregisterForAttendance={unregisterForAttendance}
         isLoading={registerLoading}
