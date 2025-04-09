@@ -13,6 +13,7 @@ import {
 export default function EventDescription({ description }: { description: string }) {
   return (
     <MDXEditor
+      trim
       readOnly
       markdown={description}
       plugins={[

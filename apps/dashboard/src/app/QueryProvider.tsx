@@ -38,7 +38,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
             if (session !== null) {
               headers.append("Authorization", `Bearer ${session.accessToken}`)
             }
-  
+
             return fetch(url, {
               ...options,
               credentials: "include",

@@ -1,127 +1,79 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
-import type { Session } from "@dotkomonline/oauth2/session"
-import type { Attendance, AttendanceEventDetail } from "@dotkomonline/types"
+import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
-import { type FC, useState } from "react"
+import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMutation } from "../mutations"
 import { AttendanceBoxPool } from "./AttendanceBoxPool"
 import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
 import AttendanceDateInfo from "./AttendanceDateInfo"
-import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
+import { useDeregisterMutation, useRegisterMutation } from "./mutations"
 
-interface AttendanceCardProps {
-  session: Session | null
-  initialEventDetail: AttendanceEventDetail
+interface Props {
+  initialAttendance: Attendance
+  user?: User
+  initialAttendee: Attendee | null
 }
 
-export const AttendanceCard: FC<AttendanceCardProps> = ({ session, initialEventDetail }) => {
+export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Props) => {
   const trpc = useTRPC()
-  const { data: eventDetail, ...eventDetailQuery } = useQuery({
-    ...trpc.event.getAttendanceEventDetail.queryOptions(initialEventDetail.event.id),
-    enabled: session !== undefined,
-    initialData: initialEventDetail,
-  })
-
-  if (!eventDetail || eventDetail.attendance === null) {
-    return null
-  }
-
-  return (
-    <AttendanceCardInner
-      eventDetail={eventDetail}
-      session={session}
-      attendance={eventDetail.attendance}
-      refetchEventDetail={eventDetailQuery.refetch}
-    />
-  )
-}
-
-interface InnerAttendanceCardProps {
-  session: Session | null
-  attendance: Attendance
-  // TODO: Directly use query instead here
-  refetchEventDetail: () => void
-  eventDetail: AttendanceEventDetail
-}
-
-export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
-  session,
-  eventDetail,
-  attendance,
-  refetchEventDetail,
-}) => {
-  const trpc = useTRPC()
-  const { data: attendee } = useQuery(
-    trpc.event.attendance.getAttendee.queryOptions(
+  const { data: attendance, isLoading: attendanceLoading } = useQuery(
+    trpc.attendance.getAttendance.queryOptions(
       {
-        attendanceId: eventDetail.attendance?.id ?? "",
-        userId: session?.sub ?? "",
+        id: initialAttendance.id,
       },
-      {
-        enabled: Boolean(session) && eventDetail.attendance !== null,
-      }
+      { initialData: initialAttendance, enabled: user !== undefined }
     )
   )
 
-  const [, setSelectionsDialogOpen] = useState(false)
-  const setSelectionsOptions = useSetSelectionsOptionsMutation()
+  const { data: attendee, isLoading: attendeeLoading } = useQuery(
+    trpc.attendance.getAttendee.queryOptions(
+      {
+        // biome-ignore lint/style/noNonNullAssertion: Disabled when user is undefined
+        userId: user?.id!,
+        attendanceId: attendance?.id,
+      },
+      { initialData: initialAttendee, enabled: user !== undefined }
+    )
+  )
 
-  const { data: user } = useQuery(trpc.user.getMe.queryOptions())
+  const registerMutation = useRegisterMutation({})
+  const deregisterMutation = useDeregisterMutation()
 
-  const handleGatherSelectionResponses = () => {
-    if (attendance.selections.length > 0) {
-      setSelectionsDialogOpen(true)
+  function poolSortKey(pool: AttendancePool) {
+    if (attendee && pool.id === attendee.attendanceId) {
+      return 1
     }
+
+    if (user && canUserAttendPool(pool, user)) {
+      return 0
+    }
+
+    return -1
   }
 
-  const attendedPool = attendee?.attendancePoolId
-    ? attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-    : null
-
-  const registerMutation = useRegisterMutation({ onSuccess: handleGatherSelectionResponses })
-  const unregisterMutation = useUnregisterMutation()
-  const registerLoading = registerMutation.isPending || unregisterMutation.isPending
-
-  const userIsRegistered = Boolean(attendee)
+  const pools = attendance.pools.sort((a, b) => poolSortKey(b) - poolSortKey(a))
+  const attendablePool = user && pools.find((pool) => canUserAttendPool(pool, user))
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const attendanceStatus = getAttendanceStatus(attendance)
 
-  const registerForAttendance = async () => {
-    if (!attendedPool) {
-      throw new Error("Tried to register user for attendance without a group")
-    }
+  const registerForAttendance = async () =>
+    attendablePool &&
+    attendee &&
+    registerMutation.mutate({ attendanceId: attendance.id, attendancePoolId: attendablePool.id })
 
-    if (!session || !user) {
-      throw new Error("Tried to register user without session")
-    }
+  const deregisterForAttendance = () =>
+    attendablePool && attendee && deregisterMutation.mutate({ attendanceId: attendance.id })
 
-    registerMutation.mutate({
-      attendancePoolId: attendedPool.id,
-      userId: user.id,
-    })
+  const isLoading = attendanceLoading || attendeeLoading || deregisterMutation.isPending || registerMutation.isPending
 
-    refetchEventDetail()
-  }
-
-  const unregisterForAttendance = async () => {
-    if (!attendee) {
-      throw new Error("Tried to unregister user that is not registered")
-    }
-
-    unregisterMutation.mutate({
-      id: attendee.id,
-    })
-
-    refetchEventDetail()
-  }
+  const smallPools = attendance.pools.filter((pool) => pool.id !== attendablePool?.id)
 
   return (
     <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
@@ -129,14 +81,10 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
 
       <AttendanceDateInfo attendance={attendance} />
 
-      <AttendanceBoxPool pool={attendedPool} isAttending={userIsRegistered} />
+      <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} />
 
-      {attendance.pools.length > 1 && (
-        <div className="flex flex-row gap-4">
-          {attendance.pools
-            .filter((pool) => pool.id !== attendedPool?.id && pool.isVisible)
-            .map((pool) => AttendanceBoxPoolSmall({ pool }))}
-        </div>
+      {smallPools.length > 0 && (
+        <div className="flex flex-row gap-4">{smallPools.map((pool) => AttendanceBoxPoolSmall({ pool }))}</div>
       )}
 
       <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
@@ -144,27 +92,12 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
       <RegistrationButton
         attendee={attendee}
         attendance={attendance}
-        pool={attendedPool}
+        pool={attendablePool}
         registerForAttendance={registerForAttendance}
-        unregisterForAttendance={unregisterForAttendance}
-        isLoading={registerLoading}
+        unregisterForAttendance={deregisterForAttendance}
+        isLoading={isLoading}
         status={attendanceStatus}
       />
-
-      {attendee && attendance.selections.length > 0 && (
-        <div className="w-full mt-4 mb-2">
-          <ChooseSelectionsForm
-            selections={attendance.selections}
-            onSubmit={(options) => {
-              setSelectionsOptions.mutate({
-                id: attendee.id,
-                options,
-              })
-              setSelectionsDialogOpen(false)
-            }}
-          />
-        </div>
-      )}
 
       <div className="flex flex-row gap-4">
         <a href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11">

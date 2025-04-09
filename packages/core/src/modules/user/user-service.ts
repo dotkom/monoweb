@@ -12,7 +12,7 @@ import type { PrivacyPermissionsRepository } from "./privacy-permissions-reposit
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
-  getById(id: UserId): Promise<User | null>
+  getById(id: UserId): Promise<User>
   getAll(limit: number, offset: number): Promise<User[]>
   searchForUser(query: string, limit: number, offset: number): Promise<User[]>
   getPrivacyPermissionsByUserId(id: string): Promise<PrivacyPermissions>

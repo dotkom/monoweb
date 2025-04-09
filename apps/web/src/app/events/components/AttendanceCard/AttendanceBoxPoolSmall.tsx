@@ -6,10 +6,6 @@ interface Props {
 }
 
 export const AttendanceBoxPoolSmall = ({ pool }: Props) => {
-  if (!pool.isVisible) {
-    return null
-  }
-
   const unprioritizedIcon = <Icon icon="tabler:arrow-down" className="text-slate-8" />
   const isUnprioritized = pool.capacity === 0
 

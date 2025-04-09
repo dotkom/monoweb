@@ -14,16 +14,18 @@ interface FormProps {
   selections: AttendanceSelection[]
   onSubmit: (options: AttendanceSelectionResponse[]) => void
   defaultValues?: FormValues
+  isLoading?: boolean
 }
 export default function Form({ selections: responses, onSubmit, defaultValues: submittedDefaultValues }: FormProps) {
   const defaultValues: FormValues = submittedDefaultValues ?? {
-    options: responses.map((selection) => ({
-      selectionId: selection.id,
-      optionId: selection.options[0].id,
-      optionName: selection.options[0].name,
-      selectionName: selection.name,
+    options: responses.map((option) => ({
+      selectionId: option.id,
+      optionId: option.options[0].id,
+      optionName: option.options[0].name,
+      selectionName: option.name,
     })),
   }
+
   const {
     register,
     control,
@@ -37,14 +39,7 @@ export default function Form({ selections: responses, onSubmit, defaultValues: s
   })
 
   const onSubmit_ = (data: FormValues) => {
-    const options = data.options.map((selection) => ({
-      ...selection,
-      optionName:
-        responses.find((e) => e.id === selection.selectionId)?.options.find((c) => c.id === selection.optionId)?.name ??
-        "",
-    }))
-
-    onSubmit(options)
+    onSubmit(data.options)
   }
 
   return (

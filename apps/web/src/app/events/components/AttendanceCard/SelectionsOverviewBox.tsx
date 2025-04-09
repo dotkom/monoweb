@@ -19,7 +19,7 @@ export const SelectionsOverviewBox: FC<Props> = ({ attendee, handleGatherSelecti
           </tr>
         </thead>
         <tbody>
-          {attendee?.selectionResponses?.map((response) => (
+          {attendee?.selections?.map((response) => (
             <tr key={response.selectionId}>
               <td className="text-left">{response.selectionName}</td>
               <td className="text-left">{response.optionName}</td>

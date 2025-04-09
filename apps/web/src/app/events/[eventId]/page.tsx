@@ -16,10 +16,14 @@ const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   </Link>
 )
 
-const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
+const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
+  const { eventId } = await params
   const session = await auth.getServerSession()
-  const eventDetail = await server.event.getAttendanceEventDetail.query(id)
+  const eventDetail = await server.event.getAttendanceEventDetail.query(eventId)
+  const attendee =
+    eventDetail.attendance &&
+    session?.sub != null &&
+    (await server.attendance.getAttendee.query({ attendanceId: eventDetail.attendance.id, userId: session.sub }))
 
   const hostingGroups = eventDetail.eventHostingGroups.map(mapToImageAndName)
   const hostingInterestGroups = eventDetail.eventInterestGroups.map(mapToImageAndName)
@@ -31,11 +35,17 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
       <EventHeader event={eventDetail.event} />
       <div className="flex w-full flex-col md:flex-row">
         <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
-          {organizers.length && <div className="flex flex-row space-x-1">{organizers}</div>}
+          {organizers.length > 0 ? (
+            <div className="flex flex-row space-x-1">{organizers}</div>
+          ) : (
+            <p>Ingen organiserere</p>
+          )}
           <EventDescription description={eventDetail.event.description ?? ""} />
         </section>
         <div className="flex-1 flex-col">
-          {eventDetail.attendance !== null && <AttendanceCard session={session} initialEventDetail={eventDetail} />}
+          {eventDetail.attendance !== null && session !== null && (
+            <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendee={attendee} />
+          )}
           <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>
