@@ -133,11 +133,11 @@ export const eventRouter = t.router({
   addAttendance: protectedProcedure
     .input(
       z.object({
-        obj: AttendanceWriteSchema.partial(),
+        values: AttendanceWriteSchema.partial(),
         eventId: EventSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.obj)),
+    .mutation(async ({ input, ctx }) => ctx.eventService.addAttendance(input.eventId, input.values)),
   attendance: attendanceRouter,
   company: eventCompanyRouter,
 })

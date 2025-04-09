@@ -16,15 +16,21 @@ const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   </Link>
 )
 
-const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
-  const session = await auth.getServerSession()
-  const eventDetail = await server.event.getAttendanceEventDetail.query(id)
+const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
+  const { eventId } = await params
+
+  const eventDetail = await server.event.getAttendanceEventDetail.query(eventId)
 
   const hostingGroups = eventDetail.eventHostingGroups.map(mapToImageAndName)
   const hostingInterestGroups = eventDetail.eventInterestGroups.map(mapToImageAndName)
   const companyList = eventDetail.companies.map(mapToImageAndName)
   const organizers = [...companyList, ...hostingGroups, ...hostingInterestGroups]
+
+  const user = await server.user.getMe.query();
+  const attendee = eventDetail.attendance ? await server.attendance.getAttendee.query({
+    attendanceId: eventDetail!.attendance.id,
+    userId: user?.id,
+  }) : null
 
   return (
     <div className="mt-8 flex flex-col gap-8">
@@ -37,7 +43,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
           </div>
         </section>
         <div className="flex-1 flex-col">
-          {eventDetail.attendance !== null && <AttendanceCard session={session} initialEventDetail={eventDetail} />}
+          {eventDetail.attendance !== null && <AttendanceCard user={user} initialAttendance={eventDetail.attendance} initialAttendee={attendee} />}
           <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>

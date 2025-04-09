@@ -25,7 +25,7 @@ const formatMessage = ({ level, message, timestamp, path }: Message) => {
 
 export const getLogger = (path: string) =>
   winston.createLogger({
-    level: "silly",
+    level: "info",
     transports: [
       new winston.transports.Console({
         format: format.combine(

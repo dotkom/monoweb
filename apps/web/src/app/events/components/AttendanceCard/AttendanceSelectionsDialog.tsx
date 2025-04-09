@@ -1,5 +1,6 @@
 import type { AttendanceSelection, AttendanceSelectionResponse } from "@dotkomonline/types"
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
+import clsx from "clsx"
 import { useFieldArray, useForm } from "react-hook-form"
 
 interface AttendanceSelectionsDialog {
@@ -45,16 +46,19 @@ interface FormProps {
   selections: AttendanceSelection[]
   onSubmit: (options: AttendanceSelectionResponse[]) => void
   defaultValues?: FormValues
+  isLoading?: boolean
 }
-export default function Form({ selections: responses, onSubmit, defaultValues }: FormProps) {
+
+export default function Form({ selections, isLoading, onSubmit, defaultValues }: FormProps) {
   const defaultValues_: FormValues = defaultValues ?? {
-    options: responses.map((selection) => ({
+    options: selections.map((selection) => ({
       selectionId: selection.id,
       optionId: selection.options[0].id,
       optionName: selection.options[0].name,
       selectionName: selection.name,
     })),
   }
+
   const {
     register,
     control,
@@ -71,8 +75,8 @@ export default function Form({ selections: responses, onSubmit, defaultValues }:
     const options = data.options.map((selection) => ({
       ...selection,
       optionName:
-        responses.find((e) => e.id === selection.selectionId)?.options.find((c) => c.id === selection.optionId)?.name ??
-        "",
+        selections.find((e) => e.id === selection.selectionId)?.options.find((c) => c.id === selection.optionId)
+          ?.name ?? "",
     }))
 
     onSubmit(options)
@@ -92,9 +96,10 @@ export default function Form({ selections: responses, onSubmit, defaultValues }:
                   {...register(`options.${index}.optionId` as const, {
                     required: true,
                   })}
-                  className="block mt-1 mb-2 w-full text-xl"
+                  className={clsx("block mt-1 mb-2 w-full text-xl")}
+                  disabled={isLoading}
                 >
-                  {responses[index].options.map((option) => (
+                  {selections[index].options.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.name}
                     </option>

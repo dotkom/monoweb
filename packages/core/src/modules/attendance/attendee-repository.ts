@@ -1,25 +1,30 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBClient, DBContext } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
-  type AttendanceSelectionResponse,
   type Attendee,
   type AttendeeId,
+  AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
+  type AttendeeSelectionResponse,
   AttendeeSelectionResponsesSchema,
   type AttendeeWrite,
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
+import { AttendeeNotFoundError } from "../event/attendee-error"
 import { AttendeeWriteError } from "./attendee-error"
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
-  delete(id: AttendeeId): Promise<Attendee | null>
-  getById(id: AttendeeId): Promise<Attendee | null>
-  update(id: AttendeeId, obj: Partial<AttendeeWrite>): Promise<Attendee | null>
+  delete(id: AttendeeId): Promise<Attendee>
+  getById(id: AttendeeId): Promise<Attendee>
+  update(id: AttendeeId, obj: Partial<AttendeeWrite>): Promise<Attendee>
   getByAttendanceId(id: AttendanceId): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
+  poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
+  checkCapacityAndReserve(attendeeId: AttendeeId): Promise<void>
+  moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId): Promise<void>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
@@ -37,6 +42,17 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parseSelectionResponses(user)
   }
 
+  async poolHasAttendees(attendancePoolId: AttendancePoolId): Promise<boolean> {
+    return (await this.db.attendee.count({ where: { attendancePoolId } })) > 0
+  }
+
+  async moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId) {
+    await this.db.attendee.updateMany({
+      where: { attendancePoolId: { in: oldPoolIds } },
+      data: { attendancePoolId: newPoolId },
+    })
+  }
+
   async create(data: AttendeeWrite): Promise<Attendee> {
     this.validateWrite(data)
 
@@ -51,10 +67,12 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parseSelectionResponses(deletedUser)
   }
 
-  async getById(id: AttendeeId): Promise<Attendee | null> {
+  async getById(id: AttendeeId): Promise<Attendee> {
     const user = await this.db.attendee.findUnique({ where: { id } })
 
-    if (user === null) return null
+    if (user === null) {
+      throw new AttendeeNotFoundError(id)
+    }
 
     return this.parseSelectionResponses(user)
   }
@@ -74,16 +92,21 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   async update(id: AttendeeId, data: Partial<AttendeeWrite>) {
     this.validateWrite(data)
 
-    const updatedUserResult = await this.db.attendee.updateManyAndReturn({ where: { id }, data })
+    const updatedAttendee = await this.db.attendee.update({ where: { id }, data })
 
-    if (updatedUserResult.length === 0) return null
+    return this.parseSelectionResponses(updatedAttendee)
+  }
 
-    return this.parseSelectionResponses(updatedUserResult[0])
+  async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {
+    const result: number =
+      await tx.$queryRaw`SELECT count(*) FROM attendee WHERE "attendancePoolId" = ${attendancePoolId} FOR UPDATE`
+
+    return result
   }
 
   private validateWrite(data: Partial<AttendeeWrite>) {
-    if (data.selectionResponses) {
-      const selectionResponseParseResult = AttendeeSelectionResponsesSchema.safeParse(data.selectionResponses)
+    if (data.selections) {
+      const selectionResponseParseResult = AttendeeSelectionOptionSchema.safeParse(data.selections)
 
       if (!selectionResponseParseResult.success) {
         throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
@@ -91,10 +114,21 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     }
   }
 
-  private parseSelectionResponses<T extends { selectionResponses: JsonValue }>({
-    selectionResponses,
+  private parseSelectionResponses<T extends { selections: JsonValue }>({
+    selections,
     ...obj
-  }: T): Omit<T, "selectionResponses"> & { selectionResponses: AttendanceSelectionResponse[] } {
-    return { ...obj, selectionResponses: AttendeeSelectionResponsesSchema.parse(selectionResponses) }
+  }: T): Omit<T, "selections"> & { selections: AttendeeSelectionResponse } {
+    return { ...obj, selections: AttendeeSelectionResponsesSchema.parse(selections) }
+  }
+
+  async checkCapacityAndReserve(id: AttendeeId) {
+    await this.db.attendee.updateMany({
+      where: {
+        id,
+      },
+      data: {
+        reserved: true,
+      },
+    })
   }
 }

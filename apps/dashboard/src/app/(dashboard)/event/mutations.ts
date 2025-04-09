@@ -148,6 +148,34 @@ export const useUpdatePoolMutation = () => {
   )
 }
 
+export const useAdminForEventMutation = () => {
+  const trpc = useTRPC()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.event.attendance.adminRegisterForEvent.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Melder på bruker",
+          message: "Brukeren blir meldt på arrangementet.",
+        })
+      },
+      onSuccess: (data) => {
+        notification.complete({
+          title: "Påmelding vellykket",
+          message: "Bruker ble påmeldt arrangementet.",
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under påmelding: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
 export const useRegisterForEventMutation = () => {
   const trpc = useTRPC()
   const notification = useQueryNotification()

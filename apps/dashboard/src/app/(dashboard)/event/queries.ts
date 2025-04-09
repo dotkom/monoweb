@@ -52,16 +52,6 @@ export const useEventAttendeesGetQuery = (id: AttendanceId) => {
   return { attendees, ...query }
 }
 
-export const useWaitlistAttendeesGetQuery = (id: AttendanceId) => {
-  const trpc = useTRPC()
-  const { data: attendees = [], ...query } = useQuery(
-    trpc.attendance.getWaitlist.queryOptions({
-      id,
-    })
-  )
-  return { attendees, ...query }
-}
-
 export const useHandleQrCodeRegistration = () => {
   const trpc = useTRPC()
   const notification = useQueryNotification()

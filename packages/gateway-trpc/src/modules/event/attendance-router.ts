@@ -40,24 +40,36 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => ctx.attendanceService.deletePool(input.id)),
 
-  registerForEvent: protectedProcedure
+  adminRegisterForEvent: protectedProcedure
     .input(
       z.object({
-        userId: UserSchema.shape.id,
         attendancePoolId: AttendancePoolSchema.shape.id,
+        attendanceId: AttendanceSchema.shape.id,
+        userId: UserSchema.shape.id,
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.registerForEvent(input.userId, input.attendancePoolId, new Date())
+      ctx.attendeeService.registerForEvent(input.userId, input.attendanceId, input.attendancePoolId)
+    ),
+
+  registerForEvent: protectedProcedure
+    .input(
+      z.object({
+        attendancePoolId: AttendancePoolSchema.shape.id,
+        attendanceId: AttendanceSchema.shape.id,
+      })
+    )
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendeeService.registerForEvent(ctx.principal, input.attendanceId, input.attendancePoolId)
     ),
 
   deregisterForEvent: protectedProcedure
     .input(
       z.object({
-        id: AttendeeSchema.shape.id,
+        attendanceId: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(input.id, new Date())),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(ctx.principal, input.attendanceId)),
 
   adminDeregisterForEvent: protectedProcedure
     .input(
@@ -65,7 +77,7 @@ export const attendanceRouter = t.router({
         id: AttendeeSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id, new Date())),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id)),
 
   getSelectionsResults: protectedProcedure
     .input(
@@ -73,7 +85,7 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionResults(input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionsResponseSummary(input.attendanceId)),
 
   registerAttendance: protectedProcedure
     .input(
@@ -118,6 +130,7 @@ export const attendanceRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => ctx.attendanceService.getById(input.id)),
+
   updateAttendance: protectedProcedure
     .input(
       z.object({
@@ -130,21 +143,9 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
-        yearCriteria: z.array(z.number()),
-        title: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) =>
-      ctx.attendanceService.merge(input.attendanceId, input.title, input.yearCriteria)
-    ),
-
-  getWaitlist: protectedProcedure
-    .input(
-      z.object({
-        id: AttendanceSchema.shape.id,
-      })
-    )
-    .query(async ({ input, ctx }) => ctx.waitlistAttendeService.getByAttendanceId(input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendanceService.mergeAttendancePools(input.attendanceId)),
 
   getSelectionResponseResults: protectedProcedure
     .input(
@@ -152,5 +153,5 @@ export const attendanceRouter = t.router({
         attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionResults(input.attendanceId)),
+    .query(async ({ input, ctx }) => ctx.attendanceService.getSelectionsResponseSummary(input.attendanceId)),
 })
