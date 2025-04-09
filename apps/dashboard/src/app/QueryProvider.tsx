@@ -11,11 +11,6 @@ import { TRPCProvider } from "../trpc"
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
-  const headers = new Headers()
-
-  if (session !== null) {
-    headers.append("Authorization", `Bearer ${session.accessToken}`)
-  }
 
   const [queryClient] = useState(
     () =>
@@ -38,7 +33,13 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
         async fetch(url, options) {
           try {
-            return await fetch(url, {
+            const headers = new Headers(options?.headers)
+
+            if (session !== null) {
+              headers.append("Authorization", `Bearer ${session.accessToken}`)
+            }
+  
+            return fetch(url, {
               ...options,
               credentials: "include",
               headers,

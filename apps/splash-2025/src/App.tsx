@@ -4,6 +4,7 @@ import { Header } from "./components/header";
 import { Hero } from "./components/hero";
 import { SponsorPlaceholderIcon } from "./components/icons";
 import { Linjeforening_info } from "./components/linjeforening_info";
+import { HeroData } from "./data/hero";
 
 function App() {
 	return (
@@ -11,7 +12,7 @@ function App() {
 			<Header />
 
 			<main>
-				<Hero />
+				<Hero {...HeroData} />
 				<Debug_info />
 				<div className="bg-brand h-screen">
 					<Linjeforening_info />
