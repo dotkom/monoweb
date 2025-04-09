@@ -1,12 +1,7 @@
 import { Box } from "@mantine/core"
 import type { FC } from "react"
 import { z } from "zod"
-import {
-  createLabelledCheckboxGroupInput,
-  createNumberInput,
-  createTextInput,
-  useFormBuilder,
-} from "../../../form"
+import { createLabelledCheckboxGroupInput, createNumberInput, createTextInput, useFormBuilder } from "../../../form"
 import { notifyFail } from "../../../notifications"
 
 export interface PoolFormProps {

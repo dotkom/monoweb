@@ -33,7 +33,7 @@ export const validateEventWrite = (event: EventWrite): z.ZodIssue[] => {
     issues.push({ code: "custom", message: "Sluttidspunkt må være i fremtiden", path: ["end"] })
   }
 
-  if (isBefore(event.start, event.end)) {
+  if (isBefore(event.end, event.start)) {
     issues.push({ code: "custom", message: "Sluttidspunkt må være etter starttidspunkt", path: ["end"] })
   }
 
