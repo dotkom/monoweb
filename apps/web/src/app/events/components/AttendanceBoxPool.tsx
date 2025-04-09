@@ -1,4 +1,5 @@
 import type { AttendancePool } from "@dotkomonline/types"
+import clsx from "clsx"
 import type { FC } from "react"
 
 interface Props {
@@ -21,9 +22,16 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending }) => {
   }
 
   return (
-    <div className="flex flex-col w-full bg-slate-3 rounded-2xl">
-      <div className="px-8 pt-2 pb-1 bg-slate-5 rounded-t-2xl text-center text-sm font-bold">{pool.title}</div>
-      <div className="px-8 py-4 rounded-b-2xl flex flex-col gap-2 items-center justify-center min-h-[6rem]">
+    <div className={clsx("flex flex-col w-full rounded-lg", isAttending ? "bg-green-4" : "bg-slate-3")}>
+      <div
+        className={clsx(
+          "px-8 py-3 rounded-t-lg text-center text-sm font-bold",
+          isAttending ? "bg-green-5" : "bg-slate-5"
+        )}
+      >
+        {pool.title}
+      </div>
+      <div className="px-8 py-4 rounded-b-lg flex flex-col gap-2 items-center justify-center min-h-[6rem]">
         <p className="text-3xl">
           {pool.numAttendees}/{pool.capacity}
         </p>

@@ -1,5 +1,5 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
-import { Button, HoverCard, HoverCardContent, HoverCardTrigger, Icon } from "@dotkomonline/ui"
+import { Button, Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
 import clsx from "clsx"
 import type { FC } from "react"
 
@@ -29,23 +29,33 @@ export const RegistrationButton: FC<Props> = ({
 
   let disabledText = null
 
-  if (isLoading) {
-    disabledText = "Laster..."
-  } else if (status === "NotOpened") {
+  if (status === "NotOpened") {
     disabledText = "Påmeldinger har ikke åpnet"
   } else if (status === "Closed" && !attendee) {
     disabledText = "Påmeldingen er stengt"
   } else if (!pool && !attendee) {
     disabledText = "Du har ingen påmeldingsgruppe"
-  } else if (isPastDeregisterDeadline) {
+  } else if (isPastDeregisterDeadline && !attendee) {
     disabledText = "Avmeldingsfristen har utløpt"
   }
 
   const disabled = Boolean(disabledText)
 
   const className = clsx(
-    "w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left",
+    "flex flex-row gap-2 items-center w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left disabled:opacity-100",
     disabled ? "bg-slate-4 text-slate-8" : attendee ? "bg-red-8 hover:bg-red-9" : "bg-green-8 hover:bg-green-9"
+  )
+
+  const buttonContent = isLoading ? (
+    <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
+  ) : (
+    <div className="flex flex-row gap-2 items-center text-slate-9">
+      <Icon
+        className="text-lg"
+        icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`}
+      />
+      <p>{buttonText}</p>
+    </div>
   )
 
   const registrationButton = (
@@ -56,28 +66,28 @@ export const RegistrationButton: FC<Props> = ({
       variant="solid"
       icon={buttonIcon}
     >
-      {isLoading ? (
-        <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
-      ) : (
-        <>
-          <Icon className="text-lg" icon={`tabler:${disabled ? "lock-plus" : attendee ? "user-minus" : "user-plus"}`} />
-          {buttonText}
-        </>
-      )}
+      {buttonContent}
     </Button>
   )
 
+  if (!disabledText) {
+    return registrationButton
+  }
+
   return (
-    <HoverCard openDelay={150} closeDelay={50}>
-      <HoverCardTrigger asChild>
-        <div>{registrationButton}</div>
-      </HoverCardTrigger>
-      <HoverCardContent
-        className="border-none bg-slate-5 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
-        sideOffset={3}
-      >
-        {disabledText}
-      </HoverCardContent>
-    </HoverCard>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {/* This div is needed to make the tooltip work with the button since it is disabled */}
+          <div>{registrationButton}</div>
+        </TooltipTrigger>
+        <TooltipContent
+          className="border-none bg-slate-1 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
+          sideOffset={-10}
+        >
+          {disabledText}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }

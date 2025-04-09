@@ -19,5 +19,6 @@ export * from "./components/Accordion"
 export * from "./components/Select"
 export * from "./components/HoverCard"
 export * from "./components/Tabs"
+export * from "./components/Tooltip"
 
 export * from "./utils"

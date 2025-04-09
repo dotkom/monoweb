@@ -123,7 +123,7 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
   }
 
   return (
-    <section className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] mb-8 p-6 gap-4">
+    <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
       <h2 className="border-none">Påmelding</h2>
 
       <AttendanceDateInfo attendance={attendance} />
