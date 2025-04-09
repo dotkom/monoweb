@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(fraunces.variable, poppins.variable, "h-full w-full")}>
+      <body className={cn(fraunces.variable, poppins.variable, "w-full h-screen")}>
         <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider>

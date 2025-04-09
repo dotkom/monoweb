@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "zod": "^3.22.4",
+    "@dotkomonline/utils": "workspace:*",
     "@dotkomonline/db": "workspace:*"
   },
   "devDependencies": {

@@ -1,18 +1,10 @@
-import { auth } from "@/auth"
 import ProfilePoster from "@/components/views/ProfileView"
-import { redirect } from "next/navigation"
+import { server } from "@/utils/trpc/server"
 
 const ProfilePage = async () => {
-  const session = await auth.getServerSession()
-  if (session === null) {
-    redirect("/")
-  }
+  const user = await server.user.getMe.query()
 
-  return (
-    <>
-      <ProfilePoster user={session} />
-    </>
-  )
+  return <ProfilePoster user={user} />
 }
 
 export default ProfilePage
