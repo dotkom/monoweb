@@ -34,10 +34,23 @@
       },
       "style": {
         "noDefaultExport": "error"
+      },
+      "performance": {
+        "noBarrelFile": "error"
       }
     }
   },
   "overrides": [
+    {
+      "include": ["src/index.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
     {
       "include": [
         "default.tsx",

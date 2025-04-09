@@ -4,7 +4,7 @@ import { cva } from "cva"
 import * as React from "react"
 import { cn } from "../../utils"
 import { AlertIcon } from "../Alert/AlertIcon"
-import { Label } from "../Label"
+import { Label } from "../Label/Label"
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string

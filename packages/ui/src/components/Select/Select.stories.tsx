@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectViewport,
-} from "./index"
+} from "./Select"
 
 export const Default = () => (
   <Select>

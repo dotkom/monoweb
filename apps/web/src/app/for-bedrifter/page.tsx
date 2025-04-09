@@ -1,4 +1,7 @@
-import { BedpressIcon, ItexIcon, OfflineIcon, UtlysningIcon } from "@/components/icons"
+import { BedpressIcon } from "@/components/icons/BedpressIcon"
+import { ItexIcon } from "@/components/icons/ItexIcon"
+import { OfflineIcon } from "@/components/icons/OfflineIcon"
+import { UtlysningIcon } from "@/components/icons/UtlysningIcon"
 import { Button, Circle, Text, Title } from "@dotkomonline/ui"
 import { type FC, Fragment } from "react"
 

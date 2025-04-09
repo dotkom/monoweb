@@ -1,5 +1,5 @@
 import type { Story } from "@ladle/react"
-import { Icon } from "../Icon"
+import { Icon } from "../Icon/Icon"
 
 import { Button, type ButtonProps } from "./Button"
 

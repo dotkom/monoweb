@@ -1,5 +1,5 @@
 import type { Story } from "@ladle/react"
-import { Label } from "../Label"
+import { Label } from "../Label/Label"
 import { Toggle, type ToggleProps } from "./Toggle"
 
 export default {

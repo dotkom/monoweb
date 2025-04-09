@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "."
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs"
 
 export default {
   title: "Tabs",
