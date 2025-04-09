@@ -11,11 +11,6 @@ import { TRPCProvider } from "./client"
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
-  const headers = new Headers()
-
-  if (session !== null) {
-    headers.append("Authorization", `Bearer ${session.accessToken}`)
-  }
 
   const trpcConfig: CreateTRPCClientOptions<AppRouter> = {
     links: [
@@ -27,6 +22,12 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         transformer: superjson,
         url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
         async fetch(url, options) {
+          const headers = new Headers(options?.headers)
+
+          if (session !== null) {
+            headers.append("Authorization", `Bearer ${session.accessToken}`)
+          }
+
           return fetch(url, {
             ...options,
             credentials: "include",
