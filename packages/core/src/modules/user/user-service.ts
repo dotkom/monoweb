@@ -67,7 +67,7 @@ export class UserServiceImpl implements UserService {
 
   private async refreshMembership(feideAccessToken: string, user: User | null, auth0Id: string) {
     const { studyProgrammes, studySpecializations, courses } =
-    await this.feideGroupsRepository.getStudentInformation(feideAccessToken)
+      await this.feideGroupsRepository.getStudentInformation(feideAccessToken)
 
     const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
 
@@ -108,7 +108,7 @@ export class UserServiceImpl implements UserService {
       return {
         type: "MASTER",
         start_year: estimatedStudyYear,
-        specialization: studySpecializations?.[0].code
+        specialization: studySpecializations?.[0].code,
       }
     }
 

@@ -63,9 +63,7 @@ export class NTNUGroupsRepositoryImpl implements NTNUGroupsRepository {
       .filter((group) => group.type === "fc:fs:str")
       .map(this.feideGroupToNTNUGroup)
 
-    const studyProgrammes = responseGroups
-      .filter((group) => group.type === "fc:fs:prg")
-      .map(this.feideGroupToNTNUGroup)
+    const studyProgrammes = responseGroups.filter((group) => group.type === "fc:fs:prg").map(this.feideGroupToNTNUGroup)
 
     return {
       courses,
