@@ -16,10 +16,8 @@ WORKDIR /app
 ENV DOCKER_BUILD=1
 
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
-COPY --from=builder /app/out/json .
-
-RUN pnpm install --ignore-scripts
 COPY --from=builder /app/out/full .
+RUN pnpm install --ignore-scripts
 
 RUN pnpm run -F @dotkomonline/emails build
 

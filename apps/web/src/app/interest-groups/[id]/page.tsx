@@ -3,9 +3,9 @@ import InterestGroupView from "@/components/views/InterestGroupView/InterestGrou
 
 const InterestPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
-  const session = await auth()
+  const session = await auth.getServerSession()
 
-  return <InterestGroupView interestGroupId={id} sessionUser={session?.user} />
+  return <InterestGroupView interestGroupId={id} session={session} />
 }
 
 export default InterestPage

@@ -22,6 +22,7 @@ import {
 	useDropzone,
 } from "react-dropzone";
 import { toast } from "sonner";
+import { alertFormSubmission } from "../../lib/alert";
 import { compressImageWithLibrary } from "../../lib/compress-img";
 import { convertPdfToLongImage } from "../../lib/convert-pdf-to-image";
 import { uploadFileToS3 } from "../../lib/upload-s3";
@@ -192,7 +193,7 @@ export const FileUploader = forwardRef<
 				}
 
 				// MAX 5 MB file
-				const maxSizeMB = 2;
+				const maxSizeMB = 1;
 
 				for (const file of files) {
 					try {
@@ -206,7 +207,12 @@ export const FileUploader = forwardRef<
 								{
 									loading: "Konverterer PDF til bilde...",
 									success: "PDF konvertert til bilde",
-									error: "Feil ved konvertering av PDF. Prøv igjen!",
+									error: () => {
+										alertFormSubmission(
+											"Feil ved konvertering av PDF til bilde",
+										);
+										return "Feil ved konvertering av PDF. Prøv igjen!";
+									},
 								},
 							);
 
@@ -232,7 +238,10 @@ export const FileUploader = forwardRef<
 							{
 								loading: "Komprimerer bilde...",
 								success: "Bilde komprimert",
-								error: "Feil ved komprimering. Prøv igjen!",
+								error: () => {
+									alertFormSubmission("Feil ved komprimering");
+									return "Feil ved komprimering. Prøv igjen!";
+								},
 							},
 						);
 
@@ -251,7 +260,10 @@ export const FileUploader = forwardRef<
 							{
 								loading: "Laster opp fil...",
 								success: `${file.name} ble lastet opp`,
-								error: "Feil ved opplasting. Prøv igjen!",
+								error: () => {
+									alertFormSubmission("Feil ved opplasting");
+									return "Feil ved opplasting. Prøv igjen!";
+								},
 							},
 						);
 

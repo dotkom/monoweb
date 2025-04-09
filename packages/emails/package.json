@@ -18,7 +18,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-email/components": "^0.0.34",
+    "@react-email/components": "^0.0.36",
     "@react-email/render": "^1.0.0",
     "@react-email/tailwind": "^1.0.0",
     "react": "^19.0.0",

@@ -31,8 +31,14 @@ export function Button<E extends ElementType>({
   const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
   return (
     <Component className={classes} ref={ref} {...props}>
-      {icon}
-      {children}
+      {icon ? (
+        <div className="inline-flex items-center justify-center gap-1">
+          {icon}
+          {children}
+        </div>
+      ) : (
+        children
+      )}
     </Component>
   )
 }
