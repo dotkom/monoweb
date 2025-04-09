@@ -78,6 +78,7 @@ export type AuthorizeUrlOptions = {
    */
   redirectUrl: string
   scopes: OAuthScope[]
+  connection?: string
 }
 
 export interface TokenSet {
@@ -127,7 +128,7 @@ export class OAuth2Service {
    *
    * https://auth0.com/docs/authenticate/protocols/oauth#authorization-endpoint
    */
-  async createAuthorizeUrl({ redirectUrl, scopes }: AuthorizeUrlOptions): Promise<AuthorizeUrlResult> {
+  async createAuthorizeUrl({ redirectUrl, scopes, connection }: AuthorizeUrlOptions): Promise<AuthorizeUrlResult> {
     const verifier = oauth.generateRandomCodeVerifier()
     const challenge = await oauth.calculatePKCECodeChallenge(verifier)
     const state = oauth.generateRandomState()
@@ -147,6 +148,10 @@ export class OAuth2Service {
     url.searchParams.set("code_challenge", challenge)
     url.searchParams.set("code_challenge_method", "S256")
     url.searchParams.set("nonce", nonce)
+
+    if (connection) {
+      url.searchParams.set("connection", connection)
+    }
 
     return {
       url,
@@ -305,6 +310,10 @@ export class OAuth2Service {
   /** Get the name of the OAuth2 nonce cookie */
   getOAuth2NonceCookieName(): string {
     return this.isClientOnHttps() ? "__Secure-monoweb-oidc-nonce" : "monoweb-oidc-nonce"
+  }
+
+  getOAuth2RedirectCookieName(): string {
+    return this.isClientOnHttps() ? "__Secure-monoweb-redirect" : "monoweb-redirect"
   }
 
   getOAuth2SessionCookieName(): string {

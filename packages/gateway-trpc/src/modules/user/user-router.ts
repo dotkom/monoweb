@@ -10,7 +10,7 @@ export const userRouter = t.router({
   get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
   registerAndGet: protectedProcedure
     .input(UserSchema.shape.id)
-    .mutation(async ({ input, ctx }) => ctx.userService.registerAndGet(input)),
+    .mutation(async ({ input, ctx }) => ctx.userService.register(input)),
   getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.principal)),
   update: protectedProcedure
     .input(

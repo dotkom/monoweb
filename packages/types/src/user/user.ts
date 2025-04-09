@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { MembershipSchema } from "./membership"
 
 export const GenderSchema = z.enum(["male", "female", "other"])
 
@@ -15,6 +16,8 @@ export const UserSchema = z.object({
   rfid: z.string().nullable().default(null),
   allergies: z.string().nullable().default(null),
   address: z.string().nullable().default(null),
+
+  membership: MembershipSchema.nullable().default(null),
 })
 
 export const UserWriteSchema = UserSchema.omit({
