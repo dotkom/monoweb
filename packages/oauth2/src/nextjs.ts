@@ -81,7 +81,6 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       const cookieHandle = await cookies()
       try {
         // Attempt to parse the state and code from the request.
-        console.log(request.nextUrl.searchParams)
         const input = await CallbackEndpointInput.safeParseAsync({
           code: request.nextUrl.searchParams.get("code"),
           state: request.nextUrl.searchParams.get("state"),

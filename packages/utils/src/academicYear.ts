@@ -1,8 +1,8 @@
 export const getAcademicYear = (date: Date): number => {
   const year = date.getFullYear()
 
-  const passedAugust = date.getMonth() > 7
-  if (!passedAugust) {
+  const pastAugust = date.getMonth() > 7
+  if (!pastAugust) {
     return year - 1
   }
 

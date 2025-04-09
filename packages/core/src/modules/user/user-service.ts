@@ -134,10 +134,13 @@ export class UserServiceImpl implements UserService {
     const totalGradeIndications: Record<number, number> = {}
 
     for (const course of coursesTaken) {
+      // If the course is not in the study plan, we ignore it
       if (!courseGradeIndications[course.code]) {
         continue
       }
 
+      // This might mean the user is currently taking the course, but it also may be wrong as the feide api does not reliably track finished date
+      // Therefore we ignore it
       if (!course.finished) {
         continue
       }
@@ -151,6 +154,7 @@ export class UserServiceImpl implements UserService {
       totalGradeIndications[indicatedGrade] = (totalGradeIndications[indicatedGrade] ?? 0) + credits
     }
 
+    // Find the key with highest value - JS has ZERO nice utility functions :(
     const indicatedGrade = Number.parseInt(
       Object.entries(totalGradeIndications).reduce((a, b) => (a[1] > b[1] ? a : b))[0]
     )
