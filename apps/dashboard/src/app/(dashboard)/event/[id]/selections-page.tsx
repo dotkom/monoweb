@@ -23,16 +23,17 @@ export const SelectionsPage: FC = () => {
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
   const mutation = useAddAttendanceMutation()
+
   const AttendanceForm = useAttendanceForm({
+    label: "Opprett",
     defaultValues: {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
       selections: [],
     },
-    label: "Opprett",
     onSubmit: (values) => {
-      mutation.mutate({ eventId, obj: values })
+      mutation.mutate({ eventId, values })
     },
   })
 

@@ -30,3 +30,15 @@ export class SelectionResponseUpdateAfterRegistrationStartError extends Applicat
     super(PROBLEM_DETAILS.BadRequest, "If you need to modify selections after registration has started contact dotkom")
   }
 }
+
+export class AttendanceNotOpenError extends ApplicationError {
+  constructor() {
+    super(PROBLEM_DETAILS.BadRequest, "This attendance is not open")
+  }
+}
+
+export class AttendanceDeregisterClosedError extends ApplicationError {
+  constructor() {
+    super(PROBLEM_DETAILS.BadRequest, "The deregister deadline has passed")
+  }
+}

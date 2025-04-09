@@ -10,11 +10,6 @@ import { type AttendanceRepository, AttendanceRepositoryImpl } from "./attendanc
 import { type AttendanceService, AttendanceServiceImpl } from "./attendance/attendance-service"
 import { type AttendeeRepository, AttendeeRepositoryImpl } from "./attendance/attendee-repository"
 import { type AttendeeService, AttendeeServiceImpl } from "./attendance/attendee-service"
-import {
-  WaitlistAttendeRepositoryImpl,
-  type WaitlistAttendeeRepository,
-} from "./attendance/waitlist-attendee-repository"
-import { type WaitlistAttendeService, WaitlistAttendeServiceImpl } from "./attendance/waitlist-attendee-service"
 import { type CompanyEventRepository, CompanyEventRepositoryImpl } from "./company/company-event-repository"
 import { type CompanyEventService, CompanyEventServiceImpl } from "./company/company-event-service"
 import { type CompanyRepository, CompanyRepositoryImpl } from "./company/company-repository"
@@ -106,7 +101,6 @@ export const createServiceLayer = async ({
   const userRepository: UserRepository = new UserRepositoryImpl(managementClient, db)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
-  const waitlistAttendeRepository: WaitlistAttendeeRepository = new WaitlistAttendeRepositoryImpl(db)
   const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
 
   const productRepository: ProductRepository = new ProductRepositoryImpl(db)
@@ -142,26 +136,15 @@ export const createServiceLayer = async ({
   const groupService: GroupService = new GroupServiceImpl(groupRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
+  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, attendeeRepository)
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
-
-  const attendanceService: AttendanceService = new AttendanceServiceImpl(
-    attendanceRepository,
-    attendeeRepository,
-    waitlistAttendeRepository,
-    userService
-  )
-
-  const waitlistAttendeService: WaitlistAttendeService = new WaitlistAttendeServiceImpl(
-    waitlistAttendeRepository,
-    attendanceRepository
-  )
 
   const attendeeService: AttendeeService = new AttendeeServiceImpl(
     attendeeRepository,
     attendanceRepository,
     userService,
-    waitlistAttendeService
+    db
   )
 
   const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
@@ -219,7 +202,6 @@ export const createServiceLayer = async ({
     articleService,
     attendanceService,
     attendanceRepository,
-    waitlistAttendeService,
     attendeeService,
     interestGroupRepository,
     interestGroupService,

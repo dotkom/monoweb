@@ -4,7 +4,7 @@ import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserU
 import { z } from "zod"
 
 export interface UserRepository {
-  getById(id: UserId): Promise<User | null>
+  getById(id: UserId): Promise<User>
   getAll(limit: number, page: number): Promise<User[]>
   update(id: UserId, data: Partial<UserWrite>): Promise<User>
   searchForUser(query: string, limit: number, page: number): Promise<User[]>
@@ -119,14 +119,14 @@ export class UserRepositoryImpl implements UserRepository {
     return user
   }
 
-  async getById(id: UserId): Promise<User | null> {
+  async getById(id: UserId): Promise<User> {
     const user = await this.client.users.get({ id: id })
 
     switch (user.status) {
       case 200:
         return mapAuth0UserToUser(user.data)
       case 404:
-        return null
+        throw new Error(`Could not find user ${id}`)
       default:
         throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
     }
