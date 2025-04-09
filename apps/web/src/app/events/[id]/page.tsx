@@ -7,6 +7,7 @@ import Link from "next/link"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import { EventDescriptionAndByline } from "@/components/views/EventView"
 
 const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   // TODO: Href link to all events by committee or company
@@ -32,9 +33,12 @@ const EventDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
       <div className="flex w-full flex-col md:flex-row">
         <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
           {organizers.length && <div className="flex flex-row space-x-1">{organizers}</div>}
-          <div className="text-[18px] rounded-2xl">
-            <p>{eventDetail.event.description}</p>
-          </div>
+          <EventDescriptionAndByline
+            event={eventDetail.event}
+            groups={eventDetail.eventHostingGroups}
+            interestGroups={eventDetail.eventInterestGroups}
+            companies={eventDetail.companies}
+          />
         </section>
         <div className="flex-1 flex-col">
           {eventDetail.attendance !== null && <AttendanceCard session={session} initialEventDetail={eventDetail} />}
