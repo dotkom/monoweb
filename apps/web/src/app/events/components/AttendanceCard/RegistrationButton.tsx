@@ -42,14 +42,16 @@ export const RegistrationButton: FC<Props> = ({
   const disabled = Boolean(disabledText)
 
   const className = clsx(
-    "flex flex-row gap-2 items-center w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left disabled:opacity-100",
-    disabled ? "bg-slate-4 text-slate-8" : attendee ? "bg-red-8 hover:bg-red-9" : "bg-green-8 hover:bg-green-9"
+    "flex flex-row gap-2 items-center w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left opacity-100 disabled:opacity-100",
+    disabled ? "bg-slate-4 text-slate-8" : attendee ? "bg-red-7 hover:bg-red-8" : "bg-green-7 hover:bg-green-8"
   )
 
   const buttonContent = isLoading ? (
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
   ) : (
-    <div className="flex flex-row gap-2 items-center text-slate-9">
+    <div className={clsx("flex flex-row gap-2 items-center",
+      disabled ? "text-slate-9" : "text-slate-12"
+    )}>
       <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
       <p>{buttonText}</p>
     </div>
