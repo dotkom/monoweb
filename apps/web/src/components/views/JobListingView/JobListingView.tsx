@@ -1,9 +1,10 @@
 "use client"
+
 import type { SortOption } from "@/components/molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 import type { JobListing } from "@dotkomonline/types"
 import { type FC, useMemo, useState } from "react"
-import CompanyAdListItem from "../../molecules/CompanyAdListItem"
-import CompanyFiltersContainer from "../../molecules/CompanyFiltersContainer"
+import { CompanyAdListItem } from "../../molecules/CompanyAdListItem/CompanyAdListItem"
+import { CompanyFiltersContainer } from "../../molecules/CompanyFiltersContainer/CompanyFiltersContainer"
 import { filterJobListings, sortDates } from "./JobListingFilterFunctions"
 
 interface JoblistingProps {
@@ -28,7 +29,7 @@ const getLocations = (jobListings: JobListing[]) => {
   return Array.from(locations)
 }
 
-const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
+export const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
   const [chosenLocation, setChosenLocation] = useState<string>("Alle")
   const [searchName, setSearchName] = useState<string>("")
   const [chosenEmployments, setChosenEmployments] = useState<EmploymentCheckbox[]>([
@@ -84,5 +85,3 @@ const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
     </div>
   )
 }
-
-export default JobListingView

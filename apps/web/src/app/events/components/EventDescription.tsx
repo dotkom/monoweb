@@ -10,7 +10,7 @@ import {
   thematicBreakPlugin,
 } from "@mdxeditor/editor"
 
-export default function EventDescription({ description }: { description: string }) {
+export function EventDescription({ description }: { description: string }) {
   return (
     <MDXEditor
       trim

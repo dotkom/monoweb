@@ -1,13 +1,13 @@
 "use client"
 
-import OnlineIcon from "@/components/atoms/OnlineIcon"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { useTRPC } from "@/utils/trpc/client"
 import type { Session } from "@dotkomonline/oauth2/session"
 import type { InterestGroup, InterestGroupId, InterestGroupMember, User } from "@dotkomonline/types"
 import { Button } from "@dotkomonline/ui"
 import Link from "next/link"
 import type { FC } from "react"
-import SkeletonInterestGroupView from "./SkeletonInterestGroupView"
+import { SkeletonInterestGroupView } from "./SkeletonInterestGroupView"
 
 import { useQuery } from "@tanstack/react-query"
 import { useMutation } from "@tanstack/react-query"
@@ -148,5 +148,3 @@ const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInt
     </div>
   )
 }
-
-export default InterestGroupView

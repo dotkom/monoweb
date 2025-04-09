@@ -16,7 +16,11 @@ interface FormProps {
   defaultValues?: FormValues
   isLoading?: boolean
 }
-export default function Form({ selections: responses, onSubmit, defaultValues: submittedDefaultValues }: FormProps) {
+export function AttendanceSelectionsDialogForm({
+  selections: responses,
+  onSubmit,
+  defaultValues: submittedDefaultValues,
+}: FormProps) {
   const defaultValues: FormValues = submittedDefaultValues ?? {
     options: responses.map((option) => ({
       selectionId: option.id,

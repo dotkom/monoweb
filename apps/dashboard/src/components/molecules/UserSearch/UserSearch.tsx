@@ -1,7 +1,7 @@
 import type { User } from "@dotkomonline/types"
 import { type FC, useState } from "react"
 import { useSearchUsersQuery } from "../../../modules/user/queries"
-import GenericSearch from "../../GenericSearch"
+import { GenericSearch } from "../../GenericSearch"
 
 interface UserSearchProps {
   onSubmit(data: User): void

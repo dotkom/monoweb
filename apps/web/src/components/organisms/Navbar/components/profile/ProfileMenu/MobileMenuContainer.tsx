@@ -4,9 +4,9 @@ import { Icon } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import ProfileMenuItem from "./SettingsMenuItem"
+import { SettingsMenuItem } from "./SettingsMenuItem"
 
-const MobileMenuContainer = () => {
+export const MobileMenuContainer = () => {
   const currentSlug = usePathname()
   const currentLink = settingsItems.find((item) => item.slug === currentSlug)
   const [open, setOpen] = useState(false)
@@ -42,7 +42,7 @@ const MobileMenuContainer = () => {
             <div className="bg-indigo-1 shadow-slate-8 flex w-screen flex-col rounded-lg p-3 shadow-sm md:hidden">
               {settingsItems.map((item) => (
                 <Popover.Close key={item.title}>
-                  <ProfileMenuItem menuItem={item} />
+                  <SettingsMenuItem menuItem={item} />
                 </Popover.Close>
               ))}
             </div>
@@ -52,5 +52,3 @@ const MobileMenuContainer = () => {
     </div>
   )
 }
-
-export default MobileMenuContainer

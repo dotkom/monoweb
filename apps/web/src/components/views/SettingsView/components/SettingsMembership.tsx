@@ -1,6 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button } from "@dotkomonline/ui"
 
-const ProfileMembership = () => (
+export const ProfileMembership = () => (
   <div className="my-10">
     <h2>Medlemsskap</h2>
     <p className="mt-5">
@@ -65,5 +65,3 @@ const ProfileMembership = () => (
     </Accordion>
   </div>
 )
-
-export default ProfileMembership

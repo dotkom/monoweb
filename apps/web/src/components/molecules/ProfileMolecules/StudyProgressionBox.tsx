@@ -21,7 +21,7 @@ type MembershipBoxProps = {
   membership: Membership | null
 }
 
-const MembershipBox: FC<MembershipBoxProps> = ({ membership }) => {
+export const MembershipBox: FC<MembershipBoxProps> = ({ membership }) => {
   if (membership === null) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 h-full">
@@ -42,5 +42,3 @@ const MembershipBox: FC<MembershipBoxProps> = ({ membership }) => {
     </div>
   )
 }
-
-export default MembershipBox

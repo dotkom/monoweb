@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 
-const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
+export const OfflineIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 -15 270 300"
     xmlns="http://www.w3.org/2000/svg"
@@ -23,5 +23,3 @@ const SvgOfflineIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default SvgOfflineIcon

@@ -10,7 +10,7 @@ type PersonalInfoProps = {
   className?: string
 }
 
-const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
+export const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <Avatar className="w-40 h-auto opacity-60">
@@ -28,5 +28,3 @@ const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
     </div>
   )
 }
-
-export default PersonalInfo

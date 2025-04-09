@@ -13,7 +13,10 @@ interface ViewAttendeesDialogButtonProps {
   setAttendeeListOpen: (open: boolean) => void
 }
 
-const ViewAttendeesDialogButton = ({ attendeeListOpen, setAttendeeListOpen }: ViewAttendeesDialogButtonProps) => (
+export const ViewAttendeesDialogButton = ({
+  attendeeListOpen,
+  setAttendeeListOpen,
+}: ViewAttendeesDialogButtonProps) => (
   <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
     <AlertDialogTrigger asChild>
       <Button className="w-full text-black rounded-lg bg-slate-4 hover:bg-slate-5 h-fit min-h-[4rem]">
@@ -32,5 +35,3 @@ const ViewAttendeesDialogButton = ({ attendeeListOpen, setAttendeeListOpen }: Vi
     </AlertDialogContent>
   </AlertDialog>
 )
-
-export default ViewAttendeesDialogButton

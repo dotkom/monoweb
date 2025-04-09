@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import InterestGroupView from "@/components/views/InterestGroupView/InterestGroupView"
+import { InterestGroupView } from "@/components/views/InterestGroupView/InterestGroupView"
 
 const InterestPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params

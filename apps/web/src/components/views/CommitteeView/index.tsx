@@ -1,4 +1,4 @@
-import OnlineIcon from "@/components/atoms/OnlineIcon"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
 import type { Event, Group, GroupMember } from "@dotkomonline/types"

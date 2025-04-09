@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 
-const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
+export const TechTalksIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 20 256 205"
     xmlns="http://www.w3.org/2000/svg"
@@ -72,5 +72,3 @@ const SvgTecktalksIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default SvgTecktalksIcon
