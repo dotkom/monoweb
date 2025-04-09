@@ -75,8 +75,11 @@ export interface NTNUStudyplanRepository {
   getStudyplanCourses(code: string, year: number): Promise<StudyplanCourse[]>
 }
 
+/*
+This repository gathers information about what courses are in, and what year they are in to be used to estimate a student's class grade
+This is not a documented API, so it might not be reliable. In case it fails we have a fallback to static data for relevant study programmes
+*/
 export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
-  // This is not a documented API, so it might not be reliable. In case it fails we have a fallback to static data for some study programs
   private readonly endpoint = "https://www.ntnu.no/web/studier/studieplan"
 
   async getStudyplan(code: string, year: number): Promise<z.infer<typeof StudyplanSchema>> {
@@ -121,6 +124,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
         courses.push({
           code: course.code,
           name: course.name,
+          // periodNumber is semester, calculate year from it (1st semester is year 1, 2nd semester is year 1, 3rd semester is year 2, etc)
           year: Math.floor((Number.parseInt(periodNumber) + 1) / 2),
           direction: direction.code && direction.name ? { code: direction.code, name: direction.name } : null,
           planCode: course.studyChoice.code,

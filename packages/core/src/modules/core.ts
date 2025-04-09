@@ -23,7 +23,7 @@ import {
 import { type EventHostingGroupService, EventHostingGroupServiceImpl } from "./event/event-hosting-group-service"
 import { type EventRepository, EventRepositoryImpl } from "./event/event-repository"
 import { type EventService, EventServiceImpl } from "./event/event-service"
-import { type FeideGroupsRepository, FeideGroupsRepositoryImpl } from "./external/feide-groups-repository"
+import { type NTNUGroupsRepository, NTNUGroupsRepositoryImpl } from "./external/feide-groups-repository"
 import {
   type NTNUStudyplanRepository,
   NTNUStudyplanRepositoryImpl,
@@ -119,7 +119,7 @@ export const createServiceLayer = async ({
   const articleTagRepository: ArticleTagRepository = new ArticleTagRepositoryImpl(db)
   const articleTagLinkRepository: ArticleTagLinkRepository = new ArticleTagLinkRepositoryImpl(db)
 
-  const feideGroupsRepository: FeideGroupsRepository = new FeideGroupsRepositoryImpl()
+  const feideGroupsRepository: NTNUGroupsRepository = new NTNUGroupsRepositoryImpl()
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
 
   const userService: UserService = new UserServiceImpl(

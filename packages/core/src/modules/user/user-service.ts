@@ -9,7 +9,7 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
-import type { FeideGroup, FeideGroupsRepository } from "../external/feide-groups-repository"
+import type { NTNUGroup, NTNUGroupsRepository } from "../external/feide-groups-repository"
 import type {
   NTNUStudyplanRepository,
   StudyplanCourse,
@@ -38,14 +38,14 @@ export class UserServiceImpl implements UserService {
   private readonly userRepository: UserRepository
   private readonly privacyPermissionsRepository: PrivacyPermissionsRepository
   private readonly notificationPermissionsRepository: NotificationPermissionsRepository
-  private readonly feideGroupsRepository: FeideGroupsRepository
+  private readonly feideGroupsRepository: NTNUGroupsRepository
   private readonly ntnuStudyplanRepository: NTNUStudyplanRepository
 
   constructor(
     userRepository: UserRepository,
     privacyPermissionsRepository: PrivacyPermissionsRepository,
     notificationPermissionsRepository: NotificationPermissionsRepository,
-    feideGroupsRepository: FeideGroupsRepository,
+    feideGroupsRepository: NTNUGroupsRepository,
     ntnuStudyplanRepository: NTNUStudyplanRepository
   ) {
     this.userRepository = userRepository
@@ -61,23 +61,27 @@ export class UserServiceImpl implements UserService {
     await this.userRepository.register(auth0Id)
 
     if (feideAccessToken) {
-      const { studyProgrammes, studySpecializations, courses } =
-        await this.feideGroupsRepository.getStudentInformation(feideAccessToken)
+      await this.refreshMembership(feideAccessToken, user, auth0Id)
+    }
+  }
 
-      const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
+  private async refreshMembership(feideAccessToken: string, user: User | null, auth0Id: string) {
+    const { studyProgrammes, studySpecializations, courses } =
+    await this.feideGroupsRepository.getStudentInformation(feideAccessToken)
 
-      if (this.shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
-        await this.userRepository.update(auth0Id, {
-          membership: defaultMembership,
-        })
-      }
+    const defaultMembership = await this.calculateDefaultMembership(studyProgrammes, studySpecializations, courses)
+
+    if (this.shouldReplaceMembership(user?.membership ?? null, defaultMembership)) {
+      await this.userRepository.update(auth0Id, {
+        membership: defaultMembership,
+      })
     }
   }
 
   private async calculateDefaultMembership(
-    studyProgrammes: FeideGroup[],
-    studySpecializations: FeideGroup[],
-    courses: FeideGroup[]
+    studyProgrammes: NTNUGroup[],
+    studySpecializations: NTNUGroup[],
+    courses: NTNUGroup[]
   ): Promise<Membership | null> {
     const masterProgramme = studyProgrammes.find((programme) => ONLINE_MASTER_PROGRAMMES.includes(programme.code))
     const bachelorProgramme = studyProgrammes.find((programme) => ONLINE_BACHELOR_PROGRAMMES.includes(programme.code))
@@ -104,7 +108,7 @@ export class UserServiceImpl implements UserService {
       return {
         type: "MASTER",
         start_year: estimatedStudyYear,
-        specialization: studySpecializations.length > 0 ? studySpecializations[0].code : undefined,
+        specialization: studySpecializations?.[0].code
       }
     }
 
@@ -115,7 +119,7 @@ export class UserServiceImpl implements UserService {
   }
 
   // This function takes a list of courses from the study plan and a list of courses taken by the user, and estimates the grade level of the user (klassetrinn)
-  async estimateStudyGrade(studyplanCourses: StudyplanCourse[], coursesTaken: FeideGroup[]): Promise<number> {
+  async estimateStudyGrade(studyplanCourses: StudyplanCourse[], coursesTaken: NTNUGroup[]): Promise<number> {
     // Sum up how much each course from the study plan indicates each grade level in the study plan
     // Example: { TDT4100: { "1": 7.5 } }, Object oriented programming indicates a first year (grade 1) with 7.5 credits indication strength
     const courseGradeIndications: Record<string, { grade: number; credits: number }> = {}
@@ -124,12 +128,8 @@ export class UserServiceImpl implements UserService {
       // Use 7.5 credits if not specified or zero
       const courseCredits = Number.parseFloat(course.credit ?? "7.5")
 
-      console.log(course)
-
       courseGradeIndications[course.code] = { grade: course.year, credits: courseCredits }
     }
-
-    console.log("Course year indications:", courseGradeIndications)
 
     const totalGradeIndications: Record<number, number> = {}
 
@@ -148,16 +148,12 @@ export class UserServiceImpl implements UserService {
 
       const indicatedGrade = grade + yearSinceTakenCourse
 
-      console.log(`Course ${course.code} indicates grade ${indicatedGrade} with ${credits} credits`)
-
       totalGradeIndications[indicatedGrade] = (totalGradeIndications[indicatedGrade] ?? 0) + credits
     }
 
     const indicatedGrade = Number.parseInt(
       Object.entries(totalGradeIndications).reduce((a, b) => (a[1] > b[1] ? a : b))[0]
     )
-
-    console.log("Grade indication:", totalGradeIndications)
 
     return indicatedGrade
   }

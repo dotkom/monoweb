@@ -1,20 +1,18 @@
 import { z } from "zod"
 
-type GroupType = "subject" | "studyProgramme" | "studySpecialisation"
-
-export type FeideGroup = {
+export type NTNUGroup = {
   name: string
   code: string
   finished?: Date
 }
 
 export type StudentInformation = {
-  courses: FeideGroup[]
-  studyProgrammes: FeideGroup[]
-  studySpecializations: FeideGroup[]
+  courses: NTNUGroup[]
+  studyProgrammes: NTNUGroup[]
+  studySpecializations: NTNUGroup[]
 }
 
-export interface FeideGroupsRepository {
+export interface NTNUGroupsRepository {
   getStudentInformation(accessToken: string): Promise<StudentInformation>
 }
 
@@ -33,10 +31,12 @@ const FeideResponseGroupSchema = z.object({
     .optional(),
 })
 
-export class FeideGroupsRepositoryImpl implements FeideGroupsRepository {
+/* This repository gathers information about a student from the feide groups api */
+export class NTNUGroupsRepositoryImpl implements NTNUGroupsRepository {
+  // https://docs.feide.no/reference/apis/groups_api/index.html
   private readonly baseUrl = "https://groups-api.dataporten.no/groups"
 
-  private responseGroupToFeideGroup(group: z.infer<typeof FeideResponseGroupSchema>): FeideGroup {
+  private feideGroupToNTNUGroup(group: z.infer<typeof FeideResponseGroupSchema>): NTNUGroup {
     return {
       name: group.displayName,
       code: group.id.split(":")[5],
@@ -57,15 +57,15 @@ export class FeideGroupsRepositoryImpl implements FeideGroupsRepository {
 
     const responseGroups = z.array(FeideResponseGroupSchema).parse(await response.json())
 
-    const courses = responseGroups.filter((group) => group.type === "fc:fs:emne").map(this.responseGroupToFeideGroup)
+    const courses = responseGroups.filter((group) => group.type === "fc:fs:emne").map(this.feideGroupToNTNUGroup)
 
     const studySpecializations = responseGroups
       .filter((group) => group.type === "fc:fs:str")
-      .map(this.responseGroupToFeideGroup)
+      .map(this.feideGroupToNTNUGroup)
 
     const studyProgrammes = responseGroups
       .filter((group) => group.type === "fc:fs:prg")
-      .map(this.responseGroupToFeideGroup)
+      .map(this.feideGroupToNTNUGroup)
 
     return {
       courses,
