@@ -6337,8 +6337,8 @@ packages:
   lexical@0.27.1:
     resolution: {integrity: sha512-EXlRE/NQO9quKFuz4Z2pu5f48oF8LZOAw0YpN0RmGQx2CbqmEi7SIgO+d+NUKVx9Qs1vX0DL5S7GJpvpZBOE3w==}
 
-  lib0@0.2.101:
-    resolution: {integrity: sha512-LljA6+Ehf0Z7YnxhgSAvspzWALjW4wlWdN/W4iGiqYc1KvXQgOVXWI0xwlwqozIL5WRdKeUW2gq0DLhFsY+Xlw==}
+  lib0@0.2.102:
+    resolution: {integrity: sha512-g70kydI0I1sZU0ChO8mBbhw0oUW/8U0GHzygpvEIx8k+jgOpqnTSb/E+70toYVqHxBhrERD21TwD5QcZJQ40ZQ==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -14332,7 +14332,7 @@ snapshots:
 
   lexical@0.27.1: {}
 
-  lib0@0.2.101:
+  lib0@0.2.102:
     dependencies:
       isomorphic.js: 0.2.5
 
@@ -16697,7 +16697,7 @@ snapshots:
 
   yjs@13.6.23:
     dependencies:
-      lib0: 0.2.101
+      lib0: 0.2.102
 
   ylru@1.4.0: {}
 
