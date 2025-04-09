@@ -32,7 +32,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, user, attendee, attendance 
           <p className={canAttend ? "text-3xl" : "text-xl"}>
             {pool.numAttendees}/{pool.capacity}
           </p>
-          { canAttend && <p>{attendee ? "Du er påmeldt" : "Du er ikke påmeldt"}</p> }
+          {canAttend && <p>{attendee ? "Du er påmeldt" : "Du er ikke påmeldt"}</p>}
         </>
       ) : (
         <p className={clsx(canAttend ? "text-xl" : "text-lg", "py-2")}>

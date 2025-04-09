@@ -57,9 +57,11 @@ const ViewAttendeesDialogButton = ({
   setAttendeeListOpen,
 }: ViewAttendeesDialogButtonProps) => {
   const trpc = useTRPC()
-  const { data: attendees } = useQuery(trpc.attendance.getAttendees.queryOptions({
-    id: attendanceId,
-  }))
+  const { data: attendees } = useQuery(
+    trpc.attendance.getAttendees.queryOptions({
+      id: attendanceId,
+    })
+  )
 
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>

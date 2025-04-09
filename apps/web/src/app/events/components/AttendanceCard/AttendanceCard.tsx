@@ -1,37 +1,41 @@
 "use client"
 
+import { useTRPC } from "@/utils/trpc/client"
 import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { AttendanceBoxPool } from "../AttendanceBoxPool"
 import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
+import { RegistrationButton } from "./RegistrationButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesPopup"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
-import { useTRPC } from "@/utils/trpc/client"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { RegistrationButton } from "./RegistrationButton"
 
 export const AttendanceCard = ({
   user,
   initialAttendance,
   initialAttendee,
 }: { initialAttendance: Attendance; user?: User; initialAttendee: Attendee | null }) => {
-  const trpc = useTRPC();
-  const { data: attendance, isLoading: attendanceLoading } = useQuery(trpc.attendance.getAttendance.queryOptions(
-    {
-      id: initialAttendance.id,
-    },
-    { initialData: initialAttendance, enabled: user !== undefined }
-  ))
+  const trpc = useTRPC()
+  const { data: attendance, isLoading: attendanceLoading } = useQuery(
+    trpc.attendance.getAttendance.queryOptions(
+      {
+        id: initialAttendance.id,
+      },
+      { initialData: initialAttendance, enabled: user !== undefined }
+    )
+  )
 
-  const { data: attendee, isLoading: attendeeLoading } = useQuery(trpc.attendance.getAttendee.queryOptions(
-    {
-      // biome-ignore: lint/style/noNonNullAssertion
-      userId: user?.id!,
-      attendanceId: attendance?.id,
-    },
-    { initialData: initialAttendee, enabled: user !== undefined }
-  ))
+  const { data: attendee, isLoading: attendeeLoading } = useQuery(
+    trpc.attendance.getAttendee.queryOptions(
+      {
+        // biome-ignore lint/style/noNonNullAssertion: Disabled when user is undefined
+        userId: user?.id!,
+        attendanceId: attendance?.id,
+      },
+      { initialData: initialAttendee, enabled: user !== undefined }
+    )
+  )
 
   const [, setSelectionsDialogOpen] = useState(false)
   const updateSelectionsMutation = useMutation(trpc.attendance.updateSelectionResponses.mutationOptions({}))

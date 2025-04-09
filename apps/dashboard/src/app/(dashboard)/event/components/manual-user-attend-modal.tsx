@@ -3,7 +3,7 @@ import type { FC } from "react"
 import { z } from "zod"
 import { createSelectInput, useFormBuilder } from "../../../form"
 import { notifyFail } from "../../../notifications"
-import { useAdminForEventMutation as useAdminRegisterForEventMutation, useRegisterForEventMutation } from "../mutations"
+import { useAdminForEventMutation as useAdminRegisterForEventMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
 
 interface ModalProps {

@@ -1,4 +1,3 @@
-import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import type { Company, InterestGroup } from "@dotkomonline/types"
 import type { Group } from "@dotkomonline/types"
@@ -26,11 +25,13 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   const companyList = eventDetail.companies.map(mapToImageAndName)
   const organizers = [...companyList, ...hostingGroups, ...hostingInterestGroups]
 
-  const user = await server.user.getMe.query();
-  const attendee = eventDetail.attendance ? await server.attendance.getAttendee.query({
-    attendanceId: eventDetail!.attendance.id,
-    userId: user?.id,
-  }) : null
+  const user = await server.user.getMe.query()
+  const attendee = eventDetail.attendance
+    ? await server.attendance.getAttendee.query({
+        attendanceId: eventDetail.attendance.id,
+        userId: user?.id,
+      })
+    : null
 
   return (
     <div className="mt-8 flex flex-col gap-8">
@@ -43,7 +44,9 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           </div>
         </section>
         <div className="flex-1 flex-col">
-          {eventDetail.attendance !== null && <AttendanceCard user={user} initialAttendance={eventDetail.attendance} initialAttendee={attendee} />}
+          {eventDetail.attendance !== null && (
+            <AttendanceCard user={user} initialAttendance={eventDetail.attendance} initialAttendee={attendee} />
+          )}
           <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>

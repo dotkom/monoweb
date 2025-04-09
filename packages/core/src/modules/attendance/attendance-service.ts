@@ -28,10 +28,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendanceRepository: AttendanceRepository
   private readonly attendeeRepository: AttendeeRepository
 
-  constructor(
-    attendanceRepository: AttendanceRepository,
-    attendeeRepository: AttendeeRepository
-  ) {
+  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository) {
     this.attendanceRepository = attendanceRepository
     this.attendeeRepository = attendeeRepository
   }
