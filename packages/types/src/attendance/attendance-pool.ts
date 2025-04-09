@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import { getMembershipGrade, User } from ".."
+import { type User, getMembershipGrade } from ".."
 
 export const YearCriteriaSchema = z.array(z.number())
 

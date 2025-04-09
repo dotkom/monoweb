@@ -16,8 +16,8 @@ const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
       <Avatar className="w-40 h-auto opacity-60">
         <AvatarImage src={user.image ?? undefined} alt="UserAvatar" />
         <AvatarFallback className="w-40 h-40">
-          { user.firstName && user.firstName[0] }
-          { user.lastName && user.lastName[0] }
+          {user.firstName?.[0]}
+          {user.lastName?.[0]}
         </AvatarFallback>
       </Avatar>
       <p className="text-lg text-slate-10">{user.email}</p>
