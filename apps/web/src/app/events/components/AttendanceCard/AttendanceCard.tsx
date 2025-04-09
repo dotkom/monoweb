@@ -1,7 +1,7 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
-import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
+import { type Attendance, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
@@ -45,16 +45,16 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
   const deregisterMutation = useDeregisterMutation()
 
   const attendablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
-  const nonAttendablePools = attendance.pools.filter((pool) => pool.id !== attendablePool?.id).sort((a, b) => b.capacity - a.capacity)
+  const nonAttendablePools = attendance.pools
+    .filter((pool) => pool.id !== attendablePool?.id)
+    .sort((a, b) => b.capacity - a.capacity)
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
   const attendanceStatus = getAttendanceStatus(attendance)
 
   const registerForAttendance = async () =>
-    attendablePool &&
-    attendee &&
-    registerMutation.mutate({ attendanceId: attendance.id, attendancePoolId: attendablePool.id })
+    attendablePool && registerMutation.mutate({ attendanceId: attendance.id, attendancePoolId: attendablePool.id })
 
   const deregisterForAttendance = () =>
     attendablePool && attendee && deregisterMutation.mutate({ attendanceId: attendance.id })

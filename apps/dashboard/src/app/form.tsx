@@ -91,29 +91,29 @@ interface CheckboxGroupsProps {
   selected: number[]
   setSelected(value: number[]): void
   disabledOptions?: number[]
-  labels: string[]
+  entries: { label: string; key: number }[]
 }
 
-const CheckboxGroup = ({ selected, disabledOptions, setSelected, labels }: CheckboxGroupsProps) => {
-  const onChange = (idx: number) => () => {
-    if (selected.includes(idx)) {
-      setSelected(selected.filter((val) => val !== idx))
+const CheckboxGroup = ({ selected, disabledOptions, setSelected, entries }: CheckboxGroupsProps) => {
+  const onChange = (key: number) => () => {
+    if (selected.includes(key)) {
+      setSelected(selected.filter((val) => val !== key))
     } else {
-      setSelected([...selected, idx])
+      setSelected([...selected, key])
     }
   }
 
   return (
     <table>
-      {labels.map((label, idx) => (
+      {entries.map(({ label, key }) => (
         <tbody key={label}>
           <tr>
             <td width="100">{label}</td>
             <td>
               <Checkbox
-                checked={selected.includes(idx)}
-                disabled={disabledOptions?.includes(idx)}
-                onChange={onChange(idx)}
+                checked={selected.includes(key)}
+                disabled={disabledOptions?.includes(key)}
+                onChange={onChange(key)}
               />
             </td>
           </tr>

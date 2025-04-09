@@ -19,11 +19,15 @@ const mapToImageAndName = (item: Group | Company | InterestGroup) => (
 const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params
   const session = await auth.getServerSession()
+  const user = await server.user.getMe.query()
   const eventDetail = await server.event.getAttendanceEventDetail.query(eventId)
   const attendee =
-    eventDetail.attendance &&
-    session?.sub != null &&
-    (await server.attendance.getAttendee.query({ attendanceId: eventDetail.attendance.id, userId: session.sub }))
+    eventDetail.attendance && session?.sub != null
+      ? await server.attendance.getAttendee.query({
+          attendanceId: eventDetail.attendance.id,
+          userId: session.sub,
+        })
+      : null
 
   const hostingGroups = eventDetail.eventHostingGroups.map(mapToImageAndName)
   const hostingInterestGroups = eventDetail.eventInterestGroups.map(mapToImageAndName)
@@ -44,7 +48,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
         </section>
         <div className="flex-1 flex-col">
           {eventDetail.attendance !== null && session !== null && (
-            <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendee={attendee} />
+            <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendee={attendee} user={user} />
           )}
           <TimeLocationBox event={eventDetail.event} />
         </div>
