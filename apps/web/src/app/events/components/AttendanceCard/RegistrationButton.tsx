@@ -50,10 +50,7 @@ export const RegistrationButton: FC<Props> = ({
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
   ) : (
     <div className="flex flex-row gap-2 items-center text-slate-9">
-      <Icon
-        className="text-lg"
-        icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`}
-      />
+      <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
       <p>{buttonText}</p>
     </div>
   )

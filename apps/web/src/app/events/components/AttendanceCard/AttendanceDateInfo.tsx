@@ -33,7 +33,7 @@ const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
   const formatTime = (date: Date) => formatDate(date, "HH:mm", { locale: nb })
 
   const renderDateBlock = (label: string, dateStr: string, time: string) => (
-    <div className="text-slate-9">
+    <div className="text-slate-12">
       <p>{label}</p>
       <p className="text-sm">{dateStr}</p>
       <p className="text-sm">kl. {time}</p>

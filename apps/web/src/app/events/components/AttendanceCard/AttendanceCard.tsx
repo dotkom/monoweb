@@ -6,9 +6,10 @@ import { Icon } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import type { Session } from "next-auth"
 import { type FC, useState } from "react"
-import { AttendanceBoxPool } from "./AttendanceBoxPool"
-import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMutation } from "../mutations"
 import { getAttendanceStatus } from "../attendanceStatus"
+import { useRegisterMutation, useSetSelectionsOptionsMutation, useUnregisterMutation } from "../mutations"
+import { AttendanceBoxPool } from "./AttendanceBoxPool"
+import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
 import AttendanceDateInfo from "./AttendanceDateInfo"
 import ChooseSelectionsForm from "./AttendanceSelectionsDialog"
 import { RegistrationButton } from "./RegistrationButton"
@@ -130,6 +131,14 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
 
       <AttendanceBoxPool pool={attendedPool} isAttending={userIsRegistered} />
 
+      {attendance.pools.length > 1 && (
+        <div className="flex flex-row gap-4">
+          {attendance.pools
+            .filter((pool) => pool.id !== attendedPool?.id && pool.isVisible)
+            .map((pool) => AttendanceBoxPoolSmall({ pool }))}
+        </div>
+      )}
+
       <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
 
       <RegistrationButton
@@ -158,11 +167,11 @@ export const AttendanceCardInner: FC<InnerAttendanceCardProps> = ({
       )}
 
       <div className="flex flex-row gap-4">
-        <a href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-11">
+        <a href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11">
           <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
           Oppdater matallergier
         </a>
-        <p className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-11 cursor-pointer">
+        <p className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
           <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
           Arrangementregler
         </p>
