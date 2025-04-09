@@ -1,6 +1,6 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import type { User } from "../user"
+import { getMembershipGrade, User } from ".."
 
 export const YearCriteriaSchema = z.array(z.number())
 
@@ -29,6 +29,19 @@ export const AttendancePoolWithoutAttendeeCount = AttendancePoolSchema.omit({
 export type AttendancePoolWithoutAttendeeCount = z.infer<typeof AttendancePoolWithoutAttendeeCount>
 
 export function canUserAttendPool(pool: AttendancePool, user: User) {
-  // TODO: Replace with actual year
-  return pool.yearCriteria.includes(1)
+  if (pool.yearCriteria.length > 0) {
+    if (user.membership === null) {
+      return false
+    }
+
+    const grade = getMembershipGrade(user.membership)
+
+    if (grade === null) {
+      return false
+    }
+
+    return pool.yearCriteria.includes(grade)
+  }
+
+  return true
 }

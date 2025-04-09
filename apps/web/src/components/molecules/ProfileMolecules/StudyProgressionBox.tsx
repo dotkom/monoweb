@@ -1,7 +1,6 @@
 import type { Membership } from "@dotkomonline/types"
 import { getMembershipGrade } from "@dotkomonline/types"
 import type { FC } from "react"
-import StudentProgress from "../StudentProgress/StudentProgress"
 import Link from "next/link"
 import { Button } from "@dotkomonline/ui"
 
