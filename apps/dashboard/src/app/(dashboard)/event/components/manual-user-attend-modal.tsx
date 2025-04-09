@@ -3,7 +3,7 @@ import type { FC } from "react"
 import { z } from "zod"
 import { createSelectInput, useFormBuilder } from "../../../form"
 import { notifyFail } from "../../../notifications"
-import { useRegisterForEventMutation } from "../mutations"
+import { useAdminForEventMutation as useAdminRegisterForEventMutation, useRegisterForEventMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
 
 interface ModalProps {
@@ -20,13 +20,14 @@ export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   id,
   innerProps: { attendanceId, userId },
 }) => {
-  const { mutate: createAttendee } = useRegisterForEventMutation()
+  const { mutate: createAttendee } = useAdminRegisterForEventMutation()
 
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
 
   const onSubmit = (userId: string, attendancePoolId: string) => {
     createAttendee({
       attendancePoolId: attendancePoolId,
+      attendanceId: attendanceId,
       userId: userId,
     })
   }

@@ -231,6 +231,24 @@ export function createDateTimeInput<F extends FieldValues>({
   }
 }
 
+function FormDateTimeInput<F extends FieldValues>({ control, name, state, ...props }: InputFieldContext<F>) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <DateTimePicker
+          {...props}
+          defaultValue={new Date()}
+          value={field.value}
+          onChange={field.onChange}
+          error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        />
+      )}
+    />
+  )
+}
+
 export function createCheckboxInput<F extends FieldValues>({
   ...props
 }: Omit<CheckboxProps, "error">): InputProducerResult<F> {

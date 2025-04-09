@@ -1,8 +1,7 @@
-import { Box, Button } from "@mantine/core"
+import { Box } from "@mantine/core"
 import type { FC } from "react"
 import { z } from "zod"
 import {
-  createCheckboxInput,
   createLabelledCheckboxGroupInput,
   createNumberInput,
   createTextInput,
@@ -22,12 +21,11 @@ export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
   capacity: z.number(),
   title: z.string().min(1),
-  isVisible: z.boolean(),
 })
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
 export const usePoolForm = (props: PoolFormProps) => {
-  const yearLabels = ["sosialt", "1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse", "PHD"]
+  const yearLabels = ["1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
 
   const Form = useFormBuilder({
     schema: PoolFormSchema,
@@ -42,9 +40,6 @@ export const usePoolForm = (props: PoolFormProps) => {
       }),
       capacity: createNumberInput({
         label: "Kapasitet",
-      }),
-      isVisible: createCheckboxInput({
-        label: "Synlig på OW",
       }),
     },
     label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",
@@ -69,9 +64,6 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
   return (
     <Box>
       <Form />
-      <Button onClick={props.onClose} mt={16} color="gray">
-        Lukk
-      </Button>
     </Box>
   )
 }
