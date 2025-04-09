@@ -1,13 +1,13 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  Anchor,
-  Box,
   Button,
   Checkbox,
   type CheckboxProps,
+  FileInput,
   type FileInputProps,
   Flex,
+  Image,
   Input,
   MultiSelect,
   type MultiSelectProps,
@@ -17,7 +17,6 @@ import {
   type SelectProps,
   TagsInput,
   type TagsInputProps,
-  Text,
   TextInput,
   type TextInputProps,
   Textarea,
@@ -57,6 +56,7 @@ import {
 } from "react-hook-form"
 import type { z } from "zod"
 import { useS3UploadFile } from "../modules/offline/use-s3-upload-file"
+
 interface InputFieldContext<T extends FieldValues> {
   name: FieldValue<T>
   register: UseFormRegister<T>
@@ -346,46 +346,66 @@ export function createTextInput<F extends FieldValues>({
   }
 }
 
+export function createImageInput<F extends FieldValues>({
+  ...props
+}: Omit<FileInputProps, "error"> & {
+  existingImageUrl?: string
+}): InputProducerResult<F> {
+  return function FormImageInput({ name, control }) {
+    const upload = useS3UploadFile()
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <>
+            <FileInput
+              {...props}
+              accept="image/png,image/jpeg,image/jpg"
+              placeholder={field.value ?? props.existingImageUrl ?? "Klikk for å velge fil"}
+              onChange={async (file) => {
+                if (file === null) {
+                  return
+                }
+                const result = await upload(file)
+                field.onChange(result)
+              }}
+            />
+            {(field.value ?? props.existingImageUrl) && (
+              <Image radius="sm" src={field.value ?? props.existingImageUrl} />
+            )}
+          </>
+        )}
+      />
+    )
+  }
+}
+
 export function createFileInput<F extends FieldValues>({
   ...props
 }: Omit<FileInputProps, "error"> & {
-  existingfileurl?: string
+  existingFileUrl?: string
 }): InputProducerResult<F> {
-  return function FormFileInput({ name, state, control }) {
+  return function FormFileInput({ name, control }) {
     const upload = useS3UploadFile()
-
     return (
-      <Box>
-        <Text>{props.label}</Text>
-        {props.existingfileurl ? (
-          <Anchor href={props.existingfileurl} mb="sm" display="block">
-            Link til ressurs
-          </Anchor>
-        ) : (
-          <Text mb="sm" fs="italic">
-            Ingen fil lastet opp
-          </Text>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <FileInput
+            {...props}
+            placeholder={field.value ?? props.existingFileUrl ?? "Klikk for å velge fil"}
+            onChange={async (file) => {
+              if (file === null) {
+                return
+              }
+              const result = await upload(file)
+              field.onChange(result)
+            }}
+          />
         )}
-        <Controller
-          control={control}
-          name={name}
-          render={({ field }) => (
-            <div>
-              <Text>Fil: {field.value ?? "Ingen fil lastet opp"}</Text>
-              <input
-                type="file"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0] || null
-                  if (!file) return
-                  const result = await upload(file)
-
-                  field.onChange(result)
-                }}
-              />
-            </div>
-          )}
-        />
-      </Box>
+      />
     )
   }
 }

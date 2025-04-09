@@ -5,11 +5,10 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { type FC, useMemo } from "react"
 import { z } from "zod"
 import { GenericTable } from "../../../../components/GenericTable"
-import { useCompanyAllQuery } from "../../../../modules/company/queries/use-company-all-query"
-import { useAddCompanyToEventMutation } from "../../../../modules/event/mutations/use-add-company-to-event-mutation"
-import { useRemoveCompanyFromEventMutation } from "../../../../modules/event/mutations/use-remove-company-from-event-mutation"
-import { useEventCompanyGetQuery } from "../../../../modules/event/queries/use-event-company-get-query"
 import { createSelectInput, useFormBuilder } from "../../../form"
+import { useCompanyAllQuery } from "../../company/queries"
+import { useAddCompanyToEventMutation, useRemoveCompanyFromEventMutation } from "../mutations"
+import { useEventCompanyGetQuery } from "../queries"
 import { useEventDetailsContext } from "./provider"
 
 export const EventCompaniesPage: FC = () => {

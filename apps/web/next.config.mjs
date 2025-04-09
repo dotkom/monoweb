@@ -1,4 +1,3 @@
-const isStandaloneBuild = process.env.DOCKER_BUILD !== undefined
 /**
  * @type {import('next').NextConfig}
  */
@@ -14,15 +13,7 @@ const config = {
       },
     ],
   },
-  transpilePackages: [
-    "@dotkomonline/auth",
-    "@dotkomonline/db",
-    "@dotkomonline/gateway-edge-nextjs",
-    "@dotkomonline/gateway-trpc",
-    "@dotkomonline/types",
-    "@dotkomonline/ui",
-  ],
-  ...(isStandaloneBuild ? { output: "standalone" } : {}),
+  output: "standalone",
 }
 
 export default config

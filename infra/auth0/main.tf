@@ -578,20 +578,26 @@ resource "auth0_client" "monoweb_web" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
   cross_origin_loc = "https://web.online.ntnu.no/*"
   allowed_clients     = []
-  allowed_logout_urls = []
   allowed_origins     = []
   app_type            = "regular_web"
   # you go here if you decline an auth grant, cannot be http
   initiate_login_uri = {
     "dev" = null
-    "stg" = "https://web.staging.online.ntnu.no/api/auth/callback/auth0"
+    "stg" = "https://staging.online.ntnu.no/api/auth/callback/auth0"
     "prd" = "https://web.online.ntnu.no/api/auth/callback/auth0"
   }[terraform.workspace]
   callbacks = {
     "dev" = ["http://localhost:3000/api/auth/callback/auth0"]
-    "stg" = ["https://web.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
+    "stg" = ["https://staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
     "prd" = ["https://web.online.ntnu.no/api/auth/callback/auth0"]
   }[terraform.workspace]
+  allowed_logout_urls = concat(
+    {
+      "dev" = ["http://localhost:3000"]
+      "stg" = ["https://staging.online.ntnu.no"]
+      "prd" = ["https://web.online.ntnu.no"]
+    }[terraform.workspace]
+  )
 
   grant_types     = ["authorization_code", "refresh_token"]
   is_first_party  = true
@@ -626,6 +632,13 @@ resource "auth0_client" "monoweb_dashboard" {
         "https://online.ntnu.no/api/auth/callback/auth0"
       ]
   }[terraform.workspace])
+  allowed_logout_urls = concat(
+    {
+      "dev" = ["http://localhost:3002"]
+      "stg" = ["https://dashboard.staging.online.ntnu.no"]
+      "prd" = ["https://dashboard.online.ntnu.no"]
+    }[terraform.workspace]
+  )
   grant_types     = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
   name            = "Monoweb Dashboard${local.name_suffix[terraform.workspace]}"
   oidc_conformant = true

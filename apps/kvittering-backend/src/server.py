@@ -37,7 +37,7 @@ sentry_sdk.init(
 
 logger.info(f"Running in {env.ENVIRONMENT} mode")
 
-PORT = 5069
+PORT = 5000
 
 app = Flask(__name__)
 CORS(app)
@@ -207,7 +207,7 @@ def send_email():
         test_mode = body.get("test_mode", "false")
         sender_email = env.SENDER_EMAIL
         recipient_email = env.RECIPIENT_EMAIL
-        cc_recipient_emails = env.CC_RECIPIENT_EMAILS
+        cc_recipient_emails = env.CC_RECIPIENT_EMAILS + [form_data.email]
 
         if test_mode == "true":
             sender_email = env.TEST_SENDER_EMAIL

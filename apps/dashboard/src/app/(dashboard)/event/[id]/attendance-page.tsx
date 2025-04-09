@@ -1,15 +1,11 @@
 import type { Attendance } from "@dotkomonline/types"
 import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
-import { useAttendanceForm } from "../../../../modules/attendance/components/attendance-page/AttendanceForm"
-import { InfoBox } from "../../../../modules/attendance/components/attendance-page/InfoBox"
-import { PoolBox } from "../../../../modules/attendance/components/attendance-page/PoolsBox"
-import { usePoolsForm } from "../../../../modules/attendance/components/attendance-page/PoolsForm"
-import {
-  useAddAttendanceMutation,
-  useUpdateAttendanceMutation,
-} from "../../../../modules/attendance/mutations/use-attendance-mutations"
-import { usePoolsGetQuery } from "../../../../modules/attendance/queries/use-get-queries"
+import { InfoBox } from "../components/InfoBox"
+import { useAttendanceForm } from "../components/attendance-form"
+import { PoolBox } from "../components/pools-box"
+import { usePoolsForm } from "../components/pools-form"
+import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
 import { useEventDetailsContext } from "./provider"
 
 export const AttendancePage: FC = () => {
@@ -30,7 +26,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       registerStart: new Date(),
       registerEnd: new Date(),
       deregisterDeadline: new Date(),
-      extras: null,
+      selections: [],
     },
     label: "Opprett",
     onSubmit: (values) => {
@@ -50,8 +46,6 @@ interface EventAttendanceProps {
   attendance: Attendance
 }
 const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
-  const { pools } = usePoolsGetQuery(attendance.id)
-
   const updateAttendanceMut = useUpdateAttendanceMutation()
 
   const AttendanceForm = useAttendanceForm({
@@ -71,7 +65,7 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
 
   const PoolsForm = usePoolsForm({
     attendanceId: attendance.id,
-    pools,
+    pools: attendance.pools,
   })
 
   return (
@@ -87,11 +81,11 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
         <Title mb={10} order={3}>
           Reserverte plasser
         </Title>
-        <InfoBox pools={pools || []} />
+        <InfoBox pools={attendance.pools || []} />
       </Box>
       <Box>
         <PoolsForm />
-        <PoolBox pools={pools || []} attendanceId={attendance.id} />
+        <PoolBox pools={attendance.pools || []} attendanceId={attendance.id} />
       </Box>
     </Box>
   )

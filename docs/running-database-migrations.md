@@ -3,8 +3,7 @@
 This document describes how to run the migrations for local or remote databases.
 
 The process is slightly different for the remote `staging` and `production`
-databases, because you need to provide the Certificate Authority file for RDS so
-that node-postgres can verify the certificate.
+databases, because you credentials which are stored in Doppler.
 
 ## Running migrations for Local Development
 
@@ -17,7 +16,8 @@ that node-postgres can verify the certificate.
 # If using the docker compose, these are the credentials used.
 export DATABASE_URL="postgres://ow:owpassword123@localhost:5432/ow"
 
-pnpm migrate
+pnpm migrate:dev
+pnpm migrate:dev-with-fixtures
 ```
 
 ## Running migrations for Production or Staging
@@ -25,14 +25,13 @@ pnpm migrate
 - Database credentials for the database in question. These are stored in Doppler
   if you are a Dotkom member. If you're not a member, you will have to wait for
   someone to do it.
-- You have [downloaded the AWS eu-north-1 Certificate Authority][aws-rds-ca]
-  from the RDS documentation.
 
 ```bash
 export AWS_RDS_CERTIFICATE_AUTHORITY=$(cat "path/to/eu-north-1-bundle.pem")
 export DATABASE_URL="postgres://..."
 
-pnpm migrate
+pnpm migrate:deploy
+pnpm migrate:deploy-with-fixtures
 ```
 
 [aws-rds-ca]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html#UsingWithRDS.SSL.CertificatesAllRegions

@@ -18,6 +18,7 @@ export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
 
 export const getCompanyMock = (defaults: Partial<CompanyWrite> = {}): CompanyWrite => ({
   name: "Bekk",
+  slug: "bekk",
   image: "https://example.com/logo.png",
   website: "https://example.com",
   description: "This is a test company",

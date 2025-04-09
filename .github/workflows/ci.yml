@@ -1,49 +1,392 @@
-name: CI
+# The main development/staging integration pipeline
+#
+# It is responsible for verifying linting, type checking, and building packages
+# in the entire monorepo.
+#
+# It will also deploy the applications to their staging environments if all
+# checks pass AND the pipeline is triggered by a push to the main branch.
 
+name: Integration Pipeline (staging)
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   pull_request:
-    types: [opened, synchronize]
-  merge_group:
+    types:
+      - opened
+      - synchronize
+  workflow_dispatch:
 
+# Determine if staging should be deployed based on the event that triggered the
+# pipeline. We only want to deploy staging when a push to the main branch occurs.
+env:
+  GH_IS_DEPLOYING_STAGING: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+permissions:
+  id-token: write   
+  contents: read
 jobs:
-  build:
-    name: Build and Test
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
+  # The "check" job is responsible for verifying the minimum requirements to
+  # build all the packages in the monorepo.
+  check:
+    name: Verify build requirements
+    runs-on: ubuntu-24.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
- 
-      - name: Cache turbo build setup
-        uses: actions/cache@v4
+          fetch-depth: 1
+      - uses: actions/cache@v4
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
         with:
           version: 9.15.5
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22.14.0
           cache: 'pnpm'
- 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+        name: Install dependencies from pnpm lockfile
+      - run: pnpm lint-check
+        name: Run linting and formatting checks
+      - run: pnpm type-check
+        name: Run TypeScript type checker
 
-      - name: Type Check
-        run: pnpm type-check
+  # Job for building and optionally deploying the apps/rpc application
+  deploy-rpc:
+    name: Deploy monoweb/rpc
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRPCCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/rpc/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/rpc:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-rpc',
+                targets: 'module.rpc_evergreen_service',
+              },
+            });
 
-      - name: Lint
-        run: pnpm lint-check
+  # Job for building and optionally deploying the apps/brevduen application
+  deploy-brevduen:
+    name: Deploy monoweb/brevduen
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingBrevduenCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/brevduen/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/brevduen:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-brevduen',
+                targets: 'module.brevduen_evergreen_service',
+              },
+            });
 
-      - name: Build docker images
-        run: pnpm run docker:build
+  # Job for building and optionally deploying the apps/dashboard application
+  deploy-dashboard:
+    name: Deploy monoweb/dashboard
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      # Dashboard requires build-time secrets from Doppler
+      - uses: actions/github-script@v6
+        id: get-oidc-token
+        with:
+          script: |
+            const id_token = await core.getIDToken()
+            core.setOutput('oidc_token', id_token)
+      - uses: dopplerhq/cli-action@v2
+      # Identity comes from the configured doppler account identity
+      # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
+      - run: |
+          doppler oidc login \
+            --api-host https://api.doppler.com \
+            --scope=. \
+            --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
+            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+      - run: doppler setup -p monoweb-dashboard -c staging
+      # Configure build arguments
+      - run: |
+          OAUTH_CLIENT_ID=$(doppler secrets get OAUTH_CLIENT_ID --json | jq -r '.OAUTH_CLIENT_ID.computed')
+          OAUTH_CLIENT_SECRET=$(doppler secrets get OAUTH_CLIENT_SECRET --json | jq -r '.OAUTH_CLIENT_SECRET.computed')
+          OAUTH_ISSUER=$(doppler secrets get OAUTH_ISSUER --json | jq -r '.OAUTH_ISSUER.computed')
+          AUTH_SECRET=$(doppler secrets get AUTH_SECRET --json | jq -r '.AUTH_SECRET.computed')
+          NEXT_PUBLIC_ORIGIN=$(doppler secrets get NEXT_PUBLIC_ORIGIN --json | jq -r '.NEXT_PUBLIC_ORIGIN.computed')
+          NEXT_PUBLIC_API_URL=$(doppler secrets get NEXT_PUBLIC_API_URL --json | jq -r '.NEXT_PUBLIC_API_URL.computed')
+          RPC_HOST=$(doppler secrets get RPC_HOST --json | jq -r '.RPC_HOST.computed')
+
+          echo "::add-mask::$OAUTH_CLIENT_ID"
+          echo "::add-mask::$OAUTH_CLIENT_SECRET"
+          echo "::add-mask::$OAUTH_ISSUER"
+          echo "::add-mask::$AUTH_SECRET"
+          echo "::add-mask::$NEXT_PUBLIC_ORIGIN"
+          echo "::add-mask::$NEXT_PUBLIC_API_URL"
+          echo "::add-mask::$RPC_HOST"
+
+          echo BUILD_ARG_OAUTH_CLIENT_ID="$OAUTH_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_OAUTH_CLIENT_SECRET="$OAUTH_CLIENT_SECRET" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_OAUTH_ISSUER="$OAUTH_ISSUER" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_AUTH_SECRET="$AUTH_SECRET" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_NEXT_PUBLIC_ORIGIN="$NEXT_PUBLIC_ORIGIN" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_RPC_HOST="$RPC_HOST" >> $GITHUB_OUTPUT
+        id: set-build-args
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/dashboard/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/dashboard:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+          build-args: |
+            OAUTH_CLIENT_ID=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_ID }}
+            OAUTH_CLIENT_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_SECRET }}
+            OAUTH_ISSUER=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_ISSUER }}
+            AUTH_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_AUTH_SECRET }}
+            NEXT_PUBLIC_API_URL=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_ORIGIN=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_ORIGIN }}
+            RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_RPC_HOST }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-dashboard',
+                targets: 'module.dashboard_evergreen_service',
+              },
+            });
+
+  # Job for building and optionally deploying the apps/invoicification application
+  deploy-invoicification:
+    name: Deploy monoweb/invoicification
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingInvoicificationCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/invoicification/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/invoicification:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-invoicification',
+                targets: 'module.invoicification_evergreen_service',
+              },
+            });
+
+  # Job for building and optionally deploying the apps/rif application
+  deploy-rif:
+    name: Deploy monoweb/rif
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingRifCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/rif/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/rif:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-rif',
+                targets: 'module.rif_evergreen_service',
+              },
+            });
+
+  # Job for building and optionally deploying the apps/web application
+  deploy-web:
+    name: Deploy monoweb/web
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-to-assume: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
+      - uses: aws-actions/amazon-ecr-login@v2
+      # Web requires build-time secrets from Doppler
+      - uses: actions/github-script@v6
+        id: get-oidc-token
+        with:
+          script: |
+            const id_token = await core.getIDToken()
+            core.setOutput('oidc_token', id_token)
+      - uses: dopplerhq/cli-action@v2
+      # Identity comes from the configured doppler account identity
+      # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
+      - run: |
+          doppler oidc login \
+            --api-host https://api.doppler.com \
+            --scope=. \
+            --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
+            --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+      - run: doppler setup -p monoweb-web -c staging
+      # Configure build arguments
+      - run: |
+          OAUTH_CLIENT_ID=$(doppler secrets get OAUTH_CLIENT_ID --json | jq -r '.OAUTH_CLIENT_ID.computed')
+          OAUTH_CLIENT_SECRET=$(doppler secrets get OAUTH_CLIENT_SECRET --json | jq -r '.OAUTH_CLIENT_SECRET.computed')
+          OAUTH_ISSUER=$(doppler secrets get OAUTH_ISSUER --json | jq -r '.OAUTH_ISSUER.computed')
+          AUTH_SECRET=$(doppler secrets get AUTH_SECRET --json | jq -r '.AUTH_SECRET.computed')
+          NEXT_PUBLIC_ORIGIN=$(doppler secrets get NEXT_PUBLIC_ORIGIN --json | jq -r '.NEXT_PUBLIC_ORIGIN.computed')
+          NEXT_PUBLIC_API_URL=$(doppler secrets get NEXT_PUBLIC_API_URL --json | jq -r '.NEXT_PUBLIC_API_URL.computed')
+          RPC_HOST=$(doppler secrets get RPC_HOST --json | jq -r '.RPC_HOST.computed')
+
+          echo "::add-mask::$OAUTH_CLIENT_ID"
+          echo "::add-mask::$OAUTH_CLIENT_SECRET"
+          echo "::add-mask::$OAUTH_ISSUER"
+          echo "::add-mask::$AUTH_SECRET"
+          echo "::add-mask::$NEXT_PUBLIC_ORIGIN"
+          echo "::add-mask::$NEXT_PUBLIC_API_URL"
+          echo "::add-mask::$RPC_HOST"
+
+          echo BUILD_ARG_OAUTH_CLIENT_ID="$OAUTH_CLIENT_ID" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_OAUTH_CLIENT_SECRET="$OAUTH_CLIENT_SECRET" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_OAUTH_ISSUER="$OAUTH_ISSUER" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_AUTH_SECRET="$AUTH_SECRET" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_NEXT_PUBLIC_ORIGIN="$NEXT_PUBLIC_ORIGIN" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_RPC_HOST="$RPC_HOST" >> $GITHUB_OUTPUT
+        id: set-build-args
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: apps/web/Dockerfile
+          tags: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web:latest
+          push: ${{ env.GH_IS_DEPLOYING_STAGING }}
+          build-args: |
+            OAUTH_CLIENT_ID=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_ID }}
+            OAUTH_CLIENT_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_SECRET }}
+            OAUTH_ISSUER=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_ISSUER }}
+            AUTH_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_AUTH_SECRET }}
+            NEXT_PUBLIC_ORIGIN=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_ORIGIN }}
+            NEXT_PUBLIC_API_URL=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_API_URL }}
+            RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_RPC_HOST }}
+      - uses: actions/github-script@v7
+        if: env.GH_IS_DEPLOYING_STAGING
+        with:
+          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dotkom',
+              repo: 'terraform-monorepo',
+              workflow_id: 'apply.yml',
+              ref: 'main',
+              inputs: {
+                environment: 'staging',
+                project: 'monoweb-web',
+                targets: 'module.web_evergreen_service',
+              },
+            });

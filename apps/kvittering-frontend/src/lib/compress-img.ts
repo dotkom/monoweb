@@ -9,7 +9,7 @@ type CompressedFile = {
 // https://www.npmjs.com/package/browser-image-compression
 export async function compressImageWithLibrary(
 	file: File,
-	maxSizeBytes: number = 1024 * 1024 * 10,
+	maxSizeMB: number,
 	onProgress?: (progress: number) => void,
 ): Promise<CompressedFile> {
 	let imageFile: Blob | Blob[] | File = file;
@@ -17,12 +17,14 @@ export async function compressImageWithLibrary(
 	console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
 
 	const options = {
-		maxSizeMB: maxSizeBytes / 1024 / 1024,
-		maxWidthOrHeight: 1000,
+		maxSizeMB,
 		useWebWorker: true,
 		onProgress: onProgress,
 		fileType: "image/jpeg",
 	};
+
+	// console log download link
+	console.log("downloadLink", URL.createObjectURL(imageFile));
 
 	console.log(file.name);
 	try {

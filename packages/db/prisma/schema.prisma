@@ -112,6 +112,7 @@ model Company {
   id          String         @id @default(uuid())
   createdAt   DateTime       @default(now())
   name        String
+  slug        String         @unique
   description String
   phone       String?
   email       String
@@ -159,7 +160,7 @@ model Attendance {
   registerStart      DateTime
   deregisterDeadline DateTime
   registerEnd        DateTime
-  extras             Json?
+  selections         Json               @default("[]")
   pools              AttendancePool[]
   attendees          Attendee[]
   waitlist           WaitlistAttendee[]
@@ -215,7 +216,7 @@ model Attendee {
   attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
   registeredAt     DateTime
-  extrasChoices    Json?
+  selectionResponses Json           @default("[]") @map("selectionResponses")
   attended         Boolean        @default(false)
   firstName        String?
   lastName         String?
@@ -245,6 +246,7 @@ model Event {
   type            EventType
   companies       EventCompany[]
   hostingGroups   EventHostingGroup[]
+  interestGroups  EventInterestGroup[]
 
   @@map("event")
 }
@@ -478,19 +480,32 @@ model InterestGroup {
   isActive        Boolean  @default(true)
   longDescription String?
   joinInfo        String?
+  image           String?
   members         InterestGroupMember[]
+  events          EventInterestGroup[]
 
   @@map("interest_group")
 }
 
 model InterestGroupMember {
   interestGroupId String
-  interestGroup InterestGroup @relation(fields: [interestGroupId], references: [id])
-
-  userId          String
-  user            OwUser      @relation(fields: [userId], references: [id])
+  interestGroup   InterestGroup  @relation(fields: [interestGroupId], references: [id])
+ 
+  userId          String 
+  user            OwUser         @relation(fields: [userId], references: [id])
 
   @@id([interestGroupId])
 
   @@map("interest_group_member")
+}
+
+model EventInterestGroup {
+  eventId           String
+  interestGroupId   String
+  event             Event         @relation(fields: [eventId], references: [id])
+  interestGroup     InterestGroup @relation(fields: [interestGroupId], references: [id])
+
+  @@id([eventId, interestGroupId])
+
+  @@map("event_interest_group")
 }

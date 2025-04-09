@@ -14,3 +14,11 @@ export const InterestGroupWriteSchema = InterestGroupSchema.omit({
 })
 
 export type InterestGroupWrite = z.infer<typeof InterestGroupWriteSchema>
+
+export const EventInterestGroupSchema = schemas.EventInterestGroupSchema.extend({})
+
+export type EventInterestGroup = z.infer<typeof EventInterestGroupSchema>
+
+export const EventInterestGroupWriteSchema = EventInterestGroupSchema
+
+export type EventInterestGroupWrite = z.infer<typeof EventInterestGroupWriteSchema>

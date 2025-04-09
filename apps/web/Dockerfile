@@ -1,6 +1,15 @@
 FROM node:22-alpine AS base
 
+# Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
+# runtime variables to be available at build-time.
+#
+# These build arguments loosely mirror the src/env.ts file
+ARG OAUTH_CLIENT_ID
+ARG OAUTH_CLIENT_SECRET
+ARG OAUTH_ISSUER
+ARG AUTH_SECRET
 ARG NEXT_PUBLIC_ORIGIN
+ARG NEXT_PUBLIC_API_URL
 ARG RPC_HOST
 
 FROM base AS builder
@@ -18,9 +27,8 @@ WORKDIR /app
 
 ENV DOCKER_BUILD=1
 
-RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
-COPY --from=builder /app/out/json .
-COPY --from=builder /app/out/full/packages/db/prisma/schema.prisma packages/db/prisma/schema.prisma
+RUN npm install -g pnpm@9.15.5 --ignore-scripts
+COPY --from=builder /app/out/full .
 RUN pnpm install --ignore-scripts
 
 # Generate prisma types
@@ -30,9 +38,14 @@ WORKDIR /app
 
 COPY --from=builder /app/out/full .
 
-ENV RPC_HOST ${RPC_HOST}
+ENV OAUTH_CLIENT_ID ${OAUTH_CLIENT_ID}
+ENV OAUTH_CLIENT_SECRET ${OAUTH_CLIENT_SECRET}
+ENV OAUTH_ISSUER ${OAUTH_ISSUER}
+ENV AUTH_SECRET ${AUTH_SECRET}
 ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
-RUN turbo run build --filter @dotkomonline/web
+ENV RPC_HOST ${RPC_HOST}
+
+RUN pnpm run --filter @dotkomonline/web build
 
 FROM base AS runner
 WORKDIR /app

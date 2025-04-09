@@ -1,5 +1,6 @@
 "use client"
 
+import { useSession } from "@dotkomonline/oauth2/react"
 import {
   Avatar,
   AvatarFallback,
@@ -22,47 +23,31 @@ import {
   Icon,
   cn,
 } from "@dotkomonline/ui"
-import type { Session } from "next-auth"
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import type { FC, PropsWithChildren } from "react"
 import { Fragment } from "react"
 import { navigationMenuTriggerStyle } from "./NavigationMenu"
 
-export const ProfileMenu = ({
-  initialData,
-}: {
-  initialData: Session | null
-}) => {
-  return (
-    <SessionProvider session={initialData}>
-      <InnerProfileMenu />
-    </SessionProvider>
-  )
-}
-
-const InnerProfileMenu = () => {
-  const { status } = useSession()
-
-  if (status === "loading") {
-    return <Icon icon="tabler:loader-2" className="animate-spin" />
-  }
-
-  if (status === "unauthenticated") {
+export const ProfileMenu = () => {
+  const session = useSession()
+  if (session === null) {
     return (
       <>
         <Button
-          variant="subtle"
+          element="a"
+          variant="outline"
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
-          onClick={async () => signIn("auth0")}
+          href="/api/auth/authorize"
         >
           Log in
         </Button>
         <Button
-          variant="gradient"
+          element="a"
+          color="gradient"
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          onClick={async () => signIn("auth0")}
+          href="/api/auth/logout"
         >
           Sign up
         </Button>
@@ -74,10 +59,7 @@ const InnerProfileMenu = () => {
     <button type="button">
       <AvatarDropdown>
         <Avatar>
-          <AvatarImage
-            src="https://www.nicepng.com/png/detail/9-92047_pickle-rick-transparent-rick-and-morty-pickle-rick.png"
-            alt="@rick"
-          />
+          <AvatarImage src={session.picture} alt="@rick" />
           <AvatarFallback>PR</AvatarFallback>
         </Avatar>
       </AvatarDropdown>
@@ -139,39 +121,42 @@ const linkGroups: LinkDetail[][] = [
   ],
 ]
 
-const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-    <DropdownMenuContent className="w-60">
-      <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
-      {linkGroups.map((group, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
-        <Fragment key={i}>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {group.map((link) => (
-              <DropdownMenuItem key={link.label}>
-                <Link className="w-full" href={link.href ?? "#"}>
-                  <Icon icon={link.icon} className="mr-2 h-4 w-4" />
-                  <span>{link.label}</span>
-                  {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </Fragment>
-      ))}
-      <DropdownMenuSeparator />
-      <ThemeMenuSub />
-      <DropdownMenuSeparator />
-      <DropdownMenuItem className="cursor-pointer" onClick={async () => signOut()}>
-        <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
-        <span>Log out</span>
-        <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-)
+const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
+  const router = useRouter()
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+      <DropdownMenuContent className="w-60">
+        <DropdownMenuLabel>Min bruker</DropdownMenuLabel>
+        {linkGroups.map((group, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: This is a static list
+          <Fragment key={i}>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {group.map((link) => (
+                <DropdownMenuItem key={link.label}>
+                  <Link className="w-full" href={link.href ?? "#"}>
+                    <Icon icon={link.icon} className="mr-2 h-4 w-4" />
+                    <span>{link.label}</span>
+                    {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </Fragment>
+        ))}
+        <DropdownMenuSeparator />
+        <ThemeMenuSub />
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/api/auth/logout")}>
+          <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 const ThemeMenuSub = () => {
   const { setTheme, theme } = useTheme()

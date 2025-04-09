@@ -1,6 +1,6 @@
 "use client"
 
-import type { Event, Group } from "@dotkomonline/types"
+import type { Company, Event, Group, InterestGroup } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"
@@ -8,43 +8,47 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import Link from "next/link"
 import { useMemo } from "react"
 import { GenericTable } from "../../../components/GenericTable"
-import EventHostingGroups from "../../../components/molecules/company-name/event-hosting-groups"
-import { useCreateEventModal } from "../../../modules/event/modals/create-event-modal"
-import { useEventAllQuery } from "../../../modules/event/queries/use-event-all-query"
 
-type TableColumns = Event & {
+import { EventHostingGroupList } from "./components/event-hosting-group-list"
+import { useEventAllQuery } from "./queries"
+
+type EventTableColumns = Event & {
   groups: Group[]
+  interestGroups: InterestGroup[]
+  companies: Company[]
 }
 
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
-  const open = useCreateEventModal()
-
-  const columnHelper = createColumnHelper<TableColumns>()
+  const columnHelper = createColumnHelper<EventTableColumns>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("title", {
+      columnHelper.accessor((event) => event, {
+        id: "title",
         header: () => "Arrangementnavn",
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
+            {info.getValue().title}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("start", {
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue()),
       }),
-      columnHelper.accessor("groups", {
-        header: () => "Arrangør",
-        cell: (info) => <EventHostingGroups hostingGroups={info.getValue()} />,
+      columnHelper.accessor((event) => event, {
+        id: "organizers",
+        header: () => "Arrangører",
+        cell: (info) => (
+          <EventHostingGroupList
+            groups={info.getValue().groups}
+            interestGroups={info.getValue().interestGroups}
+            companies={info.getValue().companies}
+          />
+        ),
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]
@@ -61,7 +65,9 @@ export default function EventPage() {
       <Stack>
         <GenericTable table={table} />
         <GroupContainer justify="space-between">
-          <Button onClick={open}>Opprett arrangement</Button>
+          <Button component={Link} href="/event/register">
+            Nytt arrangement
+          </Button>
           <ButtonGroup>
             <Button variant="subtle">
               <Icon icon="tabler:caret-left" />

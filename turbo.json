@@ -3,16 +3,13 @@
   "globalEnv": [
     "S3_BUCKET_MONOWEB",
     "NODE_ENV",
-    "WEB_AUTH0_CLIENT_ID",
-    "WEB_AUTH0_CLIENT_SECRET",
-    "WEB_AUTH0_ISSUER",
-    "DASHBOARD_AUTH0_CLIENT_ID",
-    "DASHBOARD_AUTH0_CLIENT_SECRET",
-    "DASHBOARD_AUTH0_ISSUER",
+    "OAUTH_CLIENT_ID",
+    "OAUTH_CLIENT_SECRET",
+    "OAUTH_ISSUER",
     "AUTH_SECRET",
+    "AUTH_TRUST_HOST",
+    "AUTH_URL",
     "DATABASE_URL",
-    "VERCEL_URL",
-    "PORT",
     "FAGKOM_STRIPE_PUBLIC_KEY",
     "FAGKOM_STRIPE_SECRET_KEY",
     "FAGKOM_STRIPE_WEBHOOK_SECRET",
@@ -24,11 +21,6 @@
     "AWS_ACCESS_KEY_ID",
     "EMAIL_TOKEN",
     "EMAIL_ENDPOINT",
-    "INTEREST_FORM_SERVICE_ACCOUNT",
-    "INTEREST_FORM_SPREADSHEET_ID",
-    "GTX_AUTH0_CLIENT_ID",
-    "GTX_AUTH0_CLIENT_SECRET",
-    "GTX_AUTH0_ISSUER",
     "RPC_ALLOWED_ORIGINS",
     "RPC_HOST"
   ],
@@ -36,13 +28,6 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["**/dist"]
-    },
-    "build:prod": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**"]
-    },
-    "build:storybook": {
-      "outputs": ["storybook-static/**"]
     },
     "type-check": {
       "outputs": []
@@ -63,17 +48,17 @@
     "dev": {
       "cache": false
     },
-    "migrate": {
+    "migrate:dev": {
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "dependsOn": []
+    },
+    "migrate:dev-with-fixtures": {
       "env": ["DATABASE_URL"],
       "cache": false,
       "dependsOn": []
     },
     "clean": {
-      "cache": false
-    },
-    "docker:build": {},
-    "storybook": {
-      "outputs": [],
       "cache": false
     }
   },

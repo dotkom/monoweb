@@ -22,7 +22,9 @@ import {
 	useDropzone,
 } from "react-dropzone";
 import { toast } from "sonner";
+import { alertFormSubmission } from "../../lib/alert";
 import { compressImageWithLibrary } from "../../lib/compress-img";
+import { convertPdfToLongImage } from "../../lib/convert-pdf-to-image";
 import { uploadFileToS3 } from "../../lib/upload-s3";
 
 type DirectionOptions = "rtl" | "ltr" | undefined;
@@ -89,6 +91,7 @@ export const FileUploader = forwardRef<
 		const {
 			accept = {
 				"image/*": [".jpg", ".jpeg", ".png", ".heic"],
+				"application/pdf": [".pdf"],
 			},
 			maxFiles = 1,
 			maxSize = 50 * 1024 * 1024,
@@ -174,13 +177,6 @@ export const FileUploader = forwardRef<
 					rejectedFiles,
 				});
 
-				if (acceptedFiles.some((file) => file.type.includes("pdf"))) {
-					toast.error(
-						"Man kan ikke laste opp PDF filer enda, men det fikses snart. Ta screenshot av pdf eller konverter på en annen måte og last opp bildet. ",
-					);
-					return;
-				}
-
 				if (!files) {
 					toast.error("file error , probably too big");
 					return;
@@ -196,26 +192,62 @@ export const FileUploader = forwardRef<
 					console.log(`compression progress: ${progress}%`);
 				}
 
-				// MAX 1 MB file
-				const maxSizeMB = 1 * 1024 * 1024;
+				// MAX 5 MB file
+				const maxSizeMB = 1;
 
 				for (const file of files) {
 					try {
+						let fileToProcess = file;
+						let fileBlob: Blob = file;
+
+						// Convert PDF to image if it's a PDF file
+						if (file.type.includes("pdf")) {
+							const pdfToImagePromise = toast.promise(
+								convertPdfToLongImage(file),
+								{
+									loading: "Konverterer PDF til bilde...",
+									success: "PDF konvertert til bilde",
+									error: () => {
+										alertFormSubmission(
+											"Feil ved konvertering av PDF til bilde",
+										);
+										return "Feil ved konvertering av PDF. Prøv igjen!";
+									},
+								},
+							);
+
+							const convertedBlob = await pdfToImagePromise.unwrap();
+							fileBlob = convertedBlob as Blob;
+
+							// open image in new tab
+							window.open(URL.createObjectURL(fileBlob), "_blank");
+
+							// console log the size of the file in MB
+							console.log("file size", fileBlob.size / 1024 / 1024);
+
+							fileToProcess = new File(
+								[fileBlob],
+								file.name.replace(".pdf", ".jpg"),
+								{ type: "image/jpeg" },
+							);
+						}
+
+						// Compress the image
 						const compressedFilePromise = toast.promise(
-							compressImageWithLibrary(file, maxSizeMB, onProgress),
+							compressImageWithLibrary(fileToProcess, maxSizeMB, onProgress),
 							{
 								loading: "Komprimerer bilde...",
 								success: "Bilde komprimert",
-								error: "Feil ved komprimering. Prøv igjen!",
+								error: () => {
+									alertFormSubmission("Feil ved komprimering");
+									return "Feil ved komprimering. Prøv igjen!";
+								},
 							},
 						);
 
 						const compressedFile = await compressedFilePromise.unwrap();
 
 						console.log("compressedFile", compressedFile);
-
-						// open the compressedFile in a new tab
-						// window.open(compressedFile.downloadLink, "_blank");
 
 						const randomFileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.jpg`;
 
@@ -228,7 +260,10 @@ export const FileUploader = forwardRef<
 							{
 								loading: "Laster opp fil...",
 								success: `${file.name} ble lastet opp`,
-								error: "Feil ved opplasting. Prøv igjen!",
+								error: () => {
+									alertFormSubmission("Feil ved opplasting");
+									return "Feil ved opplasting. Prøv igjen!";
+								},
 							},
 						);
 

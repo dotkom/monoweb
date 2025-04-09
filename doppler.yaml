@@ -23,3 +23,6 @@ setup:
   - project: monoweb-kvittering-frontend
     config: dev_personal
     path: apps/kvittering-frontend
+  - project: monoweb-web
+    config: dev_personal
+    path: packages/ui

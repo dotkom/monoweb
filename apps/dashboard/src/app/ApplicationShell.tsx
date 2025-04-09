@@ -7,6 +7,7 @@ import {
   AppShellMain,
   AppShellNavbar,
   Burger,
+  Button,
   Flex,
   Group,
   NavLink,
@@ -15,7 +16,6 @@ import {
 import { useDisclosure } from "@mantine/hooks"
 import Link from "next/link"
 import type { FC, PropsWithChildren } from "react"
-import { SignOutButton } from "./SignOutButton"
 
 const navigations = [
   {
@@ -85,7 +85,9 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             <Title order={2}>Monoweb Admin</Title>
           </Flex>
 
-          <SignOutButton />
+          <Button component="a" variant="outline" href="/api/auth/logout">
+            Logg ut
+          </Button>
         </Group>
       </AppShellHeader>
       <AppShellNavbar p="md">
@@ -95,6 +97,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
             label={navigation.label}
             leftSection={<Icon icon={navigation.icon} />}
             childrenOffset={28}
+            defaultOpened
           >
             {navigation.children.map((child) => (
               <NavLink component={Link} key={child.label} label={child.label} href={child.href} />

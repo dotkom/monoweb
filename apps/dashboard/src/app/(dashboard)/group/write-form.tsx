@@ -1,5 +1,5 @@
 import { type GroupWrite, GroupWriteSchema } from "@dotkomonline/types"
-import { createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
+import { createFileInput, createSelectInput, createTextInput, createTextareaInput, useFormBuilder } from "../../form"
 
 const GROUP_FORM_DEFAULT_VALUES: Partial<GroupWrite> = {}
 
@@ -43,8 +43,9 @@ export const useGroupWriteForm = ({
         withAsterisk: true,
         required: true,
       }),
-      image: createTextInput({
-        label: "Bilde-url",
+      image: createFileInput({
+        label: "Bilde",
+        placeholder: "Last opp",
       }),
       type: createSelectInput({
         label: "Type",

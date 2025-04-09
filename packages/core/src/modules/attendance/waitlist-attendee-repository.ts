@@ -8,7 +8,7 @@ import type {
   WaitlistAttendeeWrite,
 } from "@dotkomonline/types"
 
-export interface WaitlistAttendeRepository {
+export interface WaitlistAttendeeRepository {
   create(data: WaitlistAttendeeWrite): Promise<WaitlistAttendee>
   update(id: WaitlistAttendeeId, obj: Partial<WaitlistAttendeeWrite>): Promise<WaitlistAttendee | null>
   delete(id: WaitlistAttendeeId): Promise<WaitlistAttendee | null>
@@ -17,7 +17,7 @@ export interface WaitlistAttendeRepository {
   getByPoolId(poolId: string): Promise<WaitlistAttendee[]>
 }
 
-export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeRepository {
+export class WaitlistAttendeRepositoryImpl implements WaitlistAttendeeRepository {
   private readonly db: DBClient
 
   constructor(db: DBClient) {

@@ -16,7 +16,10 @@ interface ViewAttendeesDialogButtonProps {
 const ViewAttendeesDialogButton = ({ attendeeListOpen, setAttendeeListOpen }: ViewAttendeesDialogButtonProps) => (
   <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
     <AlertDialogTrigger asChild>
-      <Button className="w-full rounded-lg uppercase bg-blue-10 h-100">Vis påmeldte</Button>
+      <Button className="w-full text-black rounded-lg bg-slate-4 hover:bg-slate-5 h-fit min-h-[4rem]">
+        <Icon className="text-lg" icon="tabler:users" />
+        Vis påmeldte
+      </Button>
     </AlertDialogTrigger>
     <AlertDialogContent className="w-full relative">
       <AlertDialogTitle>Vis påmeldte</AlertDialogTitle>

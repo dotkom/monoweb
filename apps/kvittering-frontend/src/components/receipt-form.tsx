@@ -34,6 +34,7 @@ import { useForm } from "react-hook-form";
 import useFormPersist from "react-hook-form-persist";
 import { toast } from "sonner";
 import * as z from "zod";
+import { alertFormSubmission } from "../lib/alert";
 import type { ApiFormData } from "../lib/api";
 
 const formSchema = z
@@ -150,7 +151,7 @@ export default function ReceiptForm() {
 	const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
 	const dropZoneConfig = {
-		maxFiles: 5,
+		maxFiles: 20,
 		maxSize: 1024 * 1024 * 50,
 		multiple: true,
 	};
@@ -211,7 +212,9 @@ export default function ReceiptForm() {
 	}
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log("onSubmit", values);
+		alertFormSubmission(
+			`${values.name} har sendt inn kvitteringsskjema med ${values.attachments.length} filer`,
+		);
 		try {
 			const formData: ApiFormData = {
 				full_name: values.name,
@@ -234,7 +237,12 @@ export default function ReceiptForm() {
 			const pdfUrlPromise = toast.promise(generatePdf(formData), {
 				loading: "Genererer PDF...",
 				success: "PDF generert",
-				error: "Feil ved generering av PDF",
+				error: () => {
+					alertFormSubmission(
+						`${values.name} har feilet ved generering av PDF`,
+					);
+					return "Feil ved generering av PDF";
+				},
 			});
 
 			const pdfUrl = await pdfUrlPromise.unwrap();
@@ -244,7 +252,12 @@ export default function ReceiptForm() {
 			const emailPromise = toast.promise(sendEmail(pdfUrl, formData), {
 				loading: "Sender email til Bankkom...",
 				success: "Email sendt til Bankkom",
-				error: "Feil ved sending av email",
+				error: () => {
+					alertFormSubmission(
+						`${values.name} har feilet ved sending av email til Bankkom`,
+					);
+					return "Feil ved sending av email til Bankkom";
+				},
 			});
 
 			console.log("emailPromise", emailPromise);
@@ -261,21 +274,6 @@ export default function ReceiptForm() {
 	return (
 		<div className="space-y-8 max-w-3xl mx-auto py-10">
 			{isTestMode && <h3>Test mode</h3>}
-			<div>
-				Dotkom har skrevet om kvitteringsskjemaet da det gamle
-				kvitteringsskjemaet var gammelt og vanskelig og endre. <br />
-				<br />
-				Hvis du møter på noen problemer er den kjappeste måten og få det fiksa å
-				sende melding på online-slacken til Henrik Skog :)
-				<br />
-				Per nå er det noen endringer fra det gamle skjemaet:
-				<br />- Det funker nå å laste opp filer rett fra iphone (.heic-filer)
-				<br />
-				<br />
-				Ikke fiksa enda:
-				<br />- Kan ikke enda laste opp PDF'er. Ta en screenshot av PDF'en og
-				laste opp bildet i steden. Planen er å fikse snart
-			</div>
 			<Button
 				variant="outline"
 				className={clsx(
@@ -522,9 +520,6 @@ export default function ReceiptForm() {
 													</span>
 													&nbsp; eller dra og slipp
 												</p>
-												<p className="text-xs text-gray-500 dark:text-gray-400">
-													Bare bilder
-												</p>
 											</div>
 										</FileInput>
 										<FileUploaderContent>
@@ -541,7 +536,6 @@ export default function ReceiptForm() {
 									</FileUploader>
 								</FormControl>
 								<FormDescription>
-									Last opp bilde eller scan av kvitteringen (maks 25MB per fil).
 									Du kan laste opp rett fra iphone
 								</FormDescription>
 								<FormMessage />

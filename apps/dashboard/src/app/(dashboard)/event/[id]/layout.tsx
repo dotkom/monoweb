@@ -2,7 +2,7 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use, useMemo } from "react"
-import { useEventDetailsGetQuery } from "../../../../modules/event/queries/use-event-get-query"
+import { useEventDetailsGetQuery } from "../queries"
 import { EventDetailsContext } from "./provider"
 
 export default function EventDetailsLayout({
@@ -13,11 +13,12 @@ export default function EventDetailsLayout({
   const { data, isLoading } = useEventDetailsGetQuery(id)
   const value = useMemo(
     () =>
-      data === undefined || isLoading
+      !data || isLoading
         ? null
         : {
             event: data.event,
             eventHostingGroups: data.eventHostingGroups,
+            eventInterestGroups: data.eventInterestGroups,
             attendance: data.attendance,
           },
     [data, isLoading]

@@ -1,18 +1,12 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
 import type { User } from "../user"
+import { AttendanceSelectionResponseSchema } from "./attendance-selections"
 
-export const ExtraChoice = z.object({
-  questionId: z.string(),
-  choiceId: z.string(),
-  choiceName: z.string(),
-  questionName: z.string(),
-})
-
-export const ExtrasChoicesSchema = z.array(ExtraChoice)
+export const AttendeeSelectionResponsesSchema = z.array(AttendanceSelectionResponseSchema)
 
 export const AttendeeSchema = schemas.AttendeeSchema.extend({
-  extrasChoices: ExtrasChoicesSchema,
+  selectionResponses: AttendeeSelectionResponsesSchema,
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.partial({
@@ -24,6 +18,4 @@ export const AttendeeWriteSchema = AttendeeSchema.partial({
 export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
-export type ExtraChoice = z.infer<typeof ExtraChoice>
-export type ExtrasChoices = z.infer<typeof ExtrasChoicesSchema>
 export type QrCodeRegistrationAttendee = { attendee: Attendee; user: User; alreadyAttended: boolean }

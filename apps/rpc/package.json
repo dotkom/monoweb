@@ -17,6 +17,7 @@
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/oauth2": "workspace:*",
     "@fastify/cors": "^11.0.0",
     "@sentry/node": "^9.5.0",
     "@trpc/server": "11.0.0-rc.828",
