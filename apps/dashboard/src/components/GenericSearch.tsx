@@ -10,7 +10,7 @@ interface GenericSearchProps<T> {
   resetOnClick?: boolean
 }
 
-const GenericSearch = <T,>({
+export const GenericSearch = <T,>({
   onSearch,
   onSubmit,
   items,
@@ -62,5 +62,3 @@ const GenericSearch = <T,>({
     />
   )
 }
-
-export default GenericSearch

@@ -1,8 +1,8 @@
-import ProfileInfoBox from "@/components/organisms/ProfileComponents/ProfileInfoBox"
+import { ProfileInfoBox } from "@/components/organisms/ProfileComponents/ProfileInfoBox"
 import type { User } from "@dotkomonline/types"
 import type { NextPage } from "next"
 
-const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
+export const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
   return (
     <div className="min-h-screen">
       <div className="border-slate-7 left-0 z-0 w-full border-b">
@@ -18,5 +18,3 @@ const ProfilePoster: NextPage<{ user: User }> = ({ user }) => {
     </div>
   )
 }
-
-export default ProfilePoster

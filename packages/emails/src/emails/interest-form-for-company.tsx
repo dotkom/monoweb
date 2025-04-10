@@ -26,7 +26,7 @@ const InterestRow: FC<{ name: string; requested: boolean }> = ({ name, requested
   </Row>
 )
 
-export default function InterestFormForCompanyEmail({
+function InterestFormForCompanyEmail({
   companyName = "Bekk",
   contactName = "Ola Nordmann",
   contactEmail = "bekk@bekk.no",

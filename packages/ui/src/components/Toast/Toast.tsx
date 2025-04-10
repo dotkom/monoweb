@@ -11,7 +11,7 @@ export interface ToastProps {
   children: ReactNode
 }
 
-const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
+export const Toast: FC<ToastProps> = ({ monochrome, status, children }) => {
   const styleCheck = monochrome ? "monochrome" : status
   return (
     <div className={base({ color: styleCheck })}>
@@ -53,5 +53,3 @@ const close = cva("w-6 h-6 text-slate-1", {
     },
   },
 })
-
-export default Toast

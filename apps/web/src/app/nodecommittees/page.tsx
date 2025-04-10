@@ -1,7 +1,7 @@
-import NodeCommitteeList from "@/components/organisms/NodeCommitteeList"
+import { NodeCommitteeList } from "@/components/organisms/NodeCommitteeList"
 import Link from "next/link"
 
-const NodeCommitteePage = async () => {
+export default async function NodeCommitteePage() {
   return (
     <div className="my-8">
       <h1 className="mb-5">Nodekomiteer</h1>
@@ -27,5 +27,3 @@ const NodeCommitteePage = async () => {
     </div>
   )
 }
-
-export default NodeCommitteePage

@@ -1,10 +1,10 @@
-import EventsViewToggle from "@/components/molecules/EventsViewToggle"
+import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { server } from "@/utils/trpc/server"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
-import EventCalendarItem from "./EventCalendarItem"
+import { EventCalendarItem } from "./EventCalendarItem"
 import { getCalendarArray } from "./getCalendarArray"
 
 interface CalendarProps {
@@ -12,7 +12,7 @@ interface CalendarProps {
   month: number
 }
 
-const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
+export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   const events = await server.event.all.query({
     page: {
       take: 100,
@@ -159,5 +159,3 @@ const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     </div>
   )
 }
-
-export default EventCalendar

@@ -1,8 +1,8 @@
-import InterestGroupList from "@/components/organisms/InterestGroupList"
+import { InterestGroupList } from "@/components/organisms/InterestGroupList"
 import { Button } from "@dotkomonline/ui"
 import Link from "next/link"
 
-const InterestPage = async () => {
+export default async function InterestPage() {
   return (
     <div className="my-8">
       <h1 className="mb-5">Interessegrupper</h1>
@@ -39,5 +39,3 @@ const InterestPage = async () => {
     </div>
   )
 }
-
-export default InterestPage

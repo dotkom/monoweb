@@ -1,10 +1,8 @@
-import ProfilePoster from "@/components/views/ProfileView"
+import { ProfilePoster } from "@/components/views/ProfileView"
 import { server } from "@/utils/trpc/server"
 
-const ProfilePage = async () => {
+export default async function ProfilePage() {
   const user = await server.user.getMe.query()
 
   return <ProfilePoster user={user} />
 }
-
-export default ProfilePage

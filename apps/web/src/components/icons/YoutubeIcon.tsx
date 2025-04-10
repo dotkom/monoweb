@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 
-const SvgYoutubeIcon = (props: SVGProps<SVGSVGElement>) => (
+export const YoutubeIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     aria-hidden="true"
     data-prefix="fab"
@@ -19,5 +19,3 @@ const SvgYoutubeIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default SvgYoutubeIcon

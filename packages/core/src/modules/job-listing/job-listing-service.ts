@@ -1,6 +1,6 @@
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
 import { isAfter } from "date-fns"
-import assert from "../../assert"
+import { assert } from "../../assert"
 import type { Pageable } from "../../query"
 import { InvalidEndDateError } from "./job-listing-error"
 import type { JobListingRepository } from "./job-listing-repository"

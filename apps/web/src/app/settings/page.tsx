@@ -1,11 +1,12 @@
 "use client"
-import { SettingsLanding } from "@/components/views/SettingsView/components"
+
+import { Landing } from "@/components/views/SettingsView/components/SettingsLanding"
 import { useTRPC } from "@/utils/trpc/client"
 import { redirect } from "next/navigation"
 
 import { useQuery } from "@tanstack/react-query"
 
-const SettingsPage = () => {
+export default function SettingsPage() {
   const trpc = useTRPC()
   const { data: user } = useQuery(trpc.user.getMe.queryOptions())
 
@@ -17,7 +18,5 @@ const SettingsPage = () => {
     return <div>Loading...</div>
   }
 
-  return <SettingsLanding user={user} />
+  return <Landing user={user} />
 }
-
-export default SettingsPage

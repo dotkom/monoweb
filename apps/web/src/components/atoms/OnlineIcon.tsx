@@ -1,9 +1,10 @@
 import type { FC } from "react"
 
-interface IconProps {
+export type OnlineIconProps = {
   className?: string
 }
-const OnlineIcon: FC<IconProps> = ({ className }) => (
+
+export const OnlineIcon: FC<OnlineIconProps> = ({ className }) => (
   <svg
     className={className}
     viewBox="0 0 167 167"
@@ -45,5 +46,3 @@ const OnlineIcon: FC<IconProps> = ({ className }) => (
     </g>
   </svg>
 )
-
-export default OnlineIcon

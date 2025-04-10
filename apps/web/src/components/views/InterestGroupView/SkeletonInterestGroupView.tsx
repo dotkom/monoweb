@@ -1,7 +1,7 @@
 import type { FC } from "react"
 
 // TODO: Temp placeholder, fix
-const SkeletonInterestGroupView: FC = () => {
+export const SkeletonInterestGroupView: FC = () => {
   return (
     <div className="p-14 my-16 mx-auto border-slate-3 rounded-lg border shadow-md w-10/12 h-[400px]">
       <div className="flex md:flex-row flex-col-reverse">
@@ -16,5 +16,3 @@ const SkeletonInterestGroupView: FC = () => {
     </div>
   )
 }
-
-export default SkeletonInterestGroupView

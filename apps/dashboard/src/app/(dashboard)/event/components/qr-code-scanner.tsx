@@ -4,11 +4,11 @@ import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
 import { useHandleQrCodeRegistration } from "../queries"
 
-interface QrCodeScannerProps {
+export type QrCodeScannerProps = {
   attendanceId: AttendanceId
 }
 
-const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
+export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
   const registerAttendance = useHandleQrCodeRegistration()
   const [scannerOpen, setScannerOpen] = useState(false)
   const { ref } = useZxing({
@@ -34,5 +34,3 @@ const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
   }
   return <Button onClick={() => setScannerOpen(true)}>Åpne scanner</Button>
 }
-
-export default QrCodeScanner

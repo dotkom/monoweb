@@ -15,4 +15,3 @@ export const CommitteesView = async () => {
     </div>
   )
 }
-export default CommitteesView

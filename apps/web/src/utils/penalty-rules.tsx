@@ -1,4 +1,4 @@
-const PenaltyRules = () => (
+export const PenaltyRules = () => (
   <div className="mb-8 flex flex-col space-y-4">
     <h4>Hva er en prikk?</h4>
     <p>
@@ -82,5 +82,3 @@ const PenaltyRules = () => (
     </p>
   </div>
 )
-
-export default PenaltyRules

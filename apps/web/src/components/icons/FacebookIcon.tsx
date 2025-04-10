@@ -1,4 +1,4 @@
-const FacebookIcon = () => (
+export const FacebookIcon = () => (
   <svg viewBox="0 0 74 73" fill="none" xmlns="http://www.w3.org/2000/svg">
     <title>Facebook logo</title>
     <rect x="0.432617" width="73.3513" height="73" rx="36.5" fill="#FAB759" />
@@ -8,5 +8,3 @@ const FacebookIcon = () => (
     />
   </svg>
 )
-
-export default FacebookIcon

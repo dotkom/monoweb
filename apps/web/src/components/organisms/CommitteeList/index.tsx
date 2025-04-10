@@ -1,4 +1,4 @@
-import CommitteeListItem from "@/components/molecules/CommitteListItem"
+import { CommitteeListItem } from "@/components/molecules/CommitteListItem"
 import { server } from "@/utils/trpc/server"
 
 export const CommitteeList = async () => {

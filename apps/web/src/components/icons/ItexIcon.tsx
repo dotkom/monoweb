@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 
-const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
+export const ItexIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 -7 256 285"
     xmlns="http://www.w3.org/2000/svg"
@@ -69,5 +69,3 @@ const SvgItexIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default SvgItexIcon

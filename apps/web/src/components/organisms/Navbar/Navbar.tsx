@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import OnlineIcon from "@/components/atoms/OnlineIcon"
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import Link from "next/link"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"

@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 
-const SvgTwitterIcon = (props: SVGProps<SVGSVGElement>) => (
+export const TwitterIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     aria-hidden="true"
     data-prefix="fab"
@@ -19,5 +19,3 @@ const SvgTwitterIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default SvgTwitterIcon
