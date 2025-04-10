@@ -20,7 +20,13 @@ export const PoolFormSchema = z.object({
 export type PoolFormSchema = z.infer<typeof PoolFormSchema>
 
 export const usePoolForm = (props: PoolFormProps) => {
-  const yearLabels = ["1. klasse", "2. klasse", "3. klasse", "4. klasse", "5. klasse"]
+  const yearEntries = [
+    { label: "1. klasse", key: 1 },
+    { label: "2. klasse", key: 2 },
+    { label: "3. klasse", key: 3 },
+    { label: "4. klasse", key: 4 },
+    { label: "5. klasse", key: 5 },
+  ]
 
   const Form = useFormBuilder({
     schema: PoolFormSchema,
@@ -28,7 +34,7 @@ export const usePoolForm = (props: PoolFormProps) => {
     fields: {
       yearCriteria: createLabelledCheckboxGroupInput({
         disabledOptions: props.disabledYears,
-        labels: yearLabels,
+        entries: yearEntries,
       }),
       title: createTextInput({
         label: "Tittel",

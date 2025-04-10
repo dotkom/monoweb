@@ -18,7 +18,9 @@ export const EditPoolModal: FC<ContextModalProps<EditPoolModalProps>> = ({
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
   const { mutate: updatePool } = useUpdatePoolMutation()
 
-  const disabledYears = attendance ? [...new Set(attendance.pools.flatMap(({ yearCriteria }) => yearCriteria))] : []
+  const disabledYears = attendance
+    ? [...new Set(attendance.pools.filter((pool) => pool.id !== poolId).flatMap(({ yearCriteria }) => yearCriteria))]
+    : []
 
   const onSubmit = (values: PoolFormSchema) => {
     context.closeModal(id)

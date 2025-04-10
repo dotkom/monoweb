@@ -1,37 +1,5 @@
 import type { AttendanceSelection, AttendanceSelectionResponse } from "@dotkomonline/types"
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "@dotkomonline/ui"
-import clsx from "clsx"
 import { useFieldArray, useForm } from "react-hook-form"
-
-interface AttendanceSelectionsDialog {
-  open: boolean
-  selections: AttendanceSelection[]
-  onSubmit: (options: AttendanceSelectionResponse[]) => void
-  setOpen: (open: boolean) => void
-  defaultValues: AttendanceSelectionResponse[]
-}
-
-export function AttendanceSelectionsDialog({
-  open,
-  selections,
-  onSubmit,
-  setOpen,
-  defaultValues,
-}: AttendanceSelectionsDialog) {
-  return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild />
-      <AlertDialogContent>
-        <h4>Dette arrangementet har valg.</h4>
-        <Form
-          selections={selections}
-          onSubmit={onSubmit}
-          defaultValues={defaultValues ? { options: defaultValues } : undefined}
-        />
-      </AlertDialogContent>
-    </AlertDialog>
-  )
-}
 
 type FormValues = {
   options: {
@@ -48,14 +16,13 @@ interface FormProps {
   defaultValues?: FormValues
   isLoading?: boolean
 }
-
-export default function Form({ selections, isLoading, onSubmit, defaultValues }: FormProps) {
-  const defaultValues_: FormValues = defaultValues ?? {
-    options: selections.map((selection) => ({
-      selectionId: selection.id,
-      optionId: selection.options[0].id,
-      optionName: selection.options[0].name,
-      selectionName: selection.name,
+export default function Form({ selections: responses, onSubmit, defaultValues: submittedDefaultValues }: FormProps) {
+  const defaultValues: FormValues = submittedDefaultValues ?? {
+    options: responses.map((option) => ({
+      selectionId: option.id,
+      optionId: option.options[0].id,
+      optionName: option.options[0].name,
+      selectionName: option.name,
     })),
   }
 
@@ -64,7 +31,7 @@ export default function Form({ selections, isLoading, onSubmit, defaultValues }:
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({ defaultValues: defaultValues_, mode: "onBlur" })
+  } = useForm<FormValues>({ defaultValues, mode: "onBlur" })
 
   const { fields } = useFieldArray({
     name: "options",
@@ -72,43 +39,33 @@ export default function Form({ selections, isLoading, onSubmit, defaultValues }:
   })
 
   const onSubmit_ = (data: FormValues) => {
-    const options = data.options.map((selection) => ({
-      ...selection,
-      optionName:
-        selections.find((e) => e.id === selection.selectionId)?.options.find((c) => c.id === selection.optionId)
-          ?.name ?? "",
-    }))
-
-    onSubmit(options)
+    onSubmit(data.options)
   }
 
   return (
     <div>
-      <form onChange={handleSubmit(onSubmit_)}>
-        {fields.map((field, index) => {
-          return (
-            <div key={field.id} className="w-full">
-              <label className="font-bold" htmlFor={`selections[${index}].optionId`}>
-                {field.selectionName}
-              </label>
-              <div className="w-full bg-[#fff] p-[0.5px]">
-                <select
-                  {...register(`options.${index}.optionId` as const, {
-                    required: true,
-                  })}
-                  className={clsx("block mt-1 mb-2 w-full text-xl")}
-                  disabled={isLoading}
-                >
-                  {selections[index].options.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+      <form onChange={handleSubmit(onSubmit_)} className="flex flex-col space-y-4">
+        {fields.map((field, index) => (
+          <div key={field.id} className="w-full flex flex-col space-y-1">
+            <label className="text-lg text-slate-9" htmlFor={`selections[${index}].optionId`}>
+              {field.selectionName}
+            </label>
+            <div className="w-full bg-slate-3 pr-2 rounded-lg">
+              <select
+                {...register(`options.${index}.optionId` as const, {
+                  required: true,
+                })}
+                className="w-full bg-slate-3 p-2 rounded-lg text-xl"
+              >
+                {responses[index].options.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </form>
     </div>
   )
