@@ -3,7 +3,7 @@
 import { cva } from "cva"
 import type { FC, ReactNode } from "react"
 import { AlertIcon } from "../Alert/AlertIcon"
-import { Icon } from "../Icon"
+import { Icon } from "../Icon/Icon"
 
 export interface ToastProps {
   monochrome?: boolean

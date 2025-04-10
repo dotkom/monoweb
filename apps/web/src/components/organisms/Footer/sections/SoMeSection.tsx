@@ -1,5 +1,8 @@
+import { FacebookIcon } from "@/components/icons/FacebookIcon"
+import { GitHubIcon } from "@/components/icons/GitHubIcon"
+import { InstagramIcon } from "@/components/icons/InstagramIcon"
+import { SlackIcon } from "@/components/icons/SlackIcon"
 import Link from "next/link"
-import { FacebookIcon, GitHubIcon, InstagramIcon, SlackIcon } from "../../../icons"
 
 export const SoMeSection = () => {
   const links = [

@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from "cva"
 import type { FC } from "react"
 import { cn } from "../../utils"
-import { Icon } from "../Icon"
+import { Icon } from "../Icon/Icon"
 
 interface AlertIconProps extends Required<VariantProps<typeof iconVariant>> {
   className?: string

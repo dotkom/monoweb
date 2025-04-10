@@ -3,7 +3,7 @@
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from "react"
 import { cn } from "../../utils"
-import { Icon } from "../Icon"
+import { Icon } from "../Icon/Icon"
 
 export const Select = SelectPrimitive.Root
 export const SelectValue = SelectPrimitive.Value

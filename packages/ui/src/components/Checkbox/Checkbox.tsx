@@ -3,8 +3,8 @@
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import * as React from "react"
 import { cn } from "../../utils"
-import { Icon } from "../Icon"
-import { Label } from "../Label"
+import { Icon } from "../Icon/Icon"
+import { Label } from "../Label/Label"
 
 export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {
   label?: string
