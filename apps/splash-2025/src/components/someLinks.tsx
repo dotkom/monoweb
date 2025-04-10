@@ -1,4 +1,6 @@
-import { FacebookIcon, InstagramIcon, SlackIcon } from "./icons"
+import { FacebookIcon } from "@/components/icons/FacebookIcon.tsx"
+import { InstagramIcon } from "@/components/icons/InstagramIcon.tsx"
+import { SlackIcon } from "@/components/icons/SlackIcon.tsx"
 
 export const SoMeLinks = () => {
   const links = [

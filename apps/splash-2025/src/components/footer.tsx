@@ -1,5 +1,5 @@
+import { FooterWave } from "@/components/icons/FooterWave.tsx"
 import type { ReactNode } from "react"
-import { FooterWave } from "./icons"
 import { SoMeLinks } from "./someLinks"
 
 export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
