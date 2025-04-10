@@ -11,8 +11,12 @@ export const env = createEnvironment(
     RPC_HOST: variable,
   },
   {
-    ...process.env,
-    NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
-    NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
+    env: {
+      ...process.env,
+      NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
+      NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
+    },
+    // Dashboard should also validate env at build time
+    skipValidation: false,
   }
 )

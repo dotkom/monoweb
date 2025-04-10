@@ -8,6 +8,11 @@ export type AnySpec = Record<
   | import("zod").ZodOptional<import("zod").ZodString>
 >
 
+export type CreateEnvironmentOptions = {
+  env: NodeJS.ProcessEnv
+  skipValidation?: boolean
+}
+
 /**
  * Parse the provided environment variables (or process.env) and return a typed object
  *
@@ -16,7 +21,7 @@ export type AnySpec = Record<
  */
 export declare function createEnvironment<TSpec extends AnySpec>(
   schema: TSpec,
-  env?: NodeJS.ProcessEnv
+  opts: CreateEnvironmentOptions
 ): import("zod").infer<import("zod").ZodObject<TSpec>>
 
 export declare const variable: import("zod").ZodString

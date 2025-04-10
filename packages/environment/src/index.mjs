@@ -3,9 +3,8 @@ import { z } from "zod"
 /**
  * @template T
  * @param variables {Record<T, z.ZodString>}
- * @param env {NodeJS.ProcessEnv}
  */
-export function createEnvironment(variables, env = process.env) {
+export function createEnvironment(variables, opts) {
   const isClient = typeof window !== "undefined"
   let items = variables
   if (isClient) {
@@ -14,9 +13,8 @@ export function createEnvironment(variables, env = process.env) {
   }
   const schema = z.object(items)
 
-  const environment = schema.safeParse(env)
-  const skipValidation = process.env.DOCKER_BUILD === "1" || process.env.CI !== undefined
-  if (skipValidation) {
+  const environment = schema.safeParse(opts.env)
+  if (opts.skipValidation) {
     // If we did successfully parse, we might as well return them. Otherwise, we're just going to hand the raw
     // environment variables back.
     return environment.data ?? env
