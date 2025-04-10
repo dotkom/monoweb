@@ -1,4 +1,4 @@
-import NodeCommitteeListItem from "@/components/molecules/NodeCommitteeListItem"
+import { NodeCommitteeListItem } from "@/components/molecules/NodeCommitteeListItem"
 import { server } from "@/utils/trpc/server"
 
 export const NodeCommitteeList = async () => {
@@ -13,5 +13,3 @@ export const NodeCommitteeList = async () => {
     </div>
   )
 }
-
-export default NodeCommitteeList

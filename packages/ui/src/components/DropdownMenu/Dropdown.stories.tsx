@@ -1,5 +1,5 @@
 import { Button } from "../Button/Button"
-import { Icon } from "../Icon"
+import { Icon } from "../Icon/Icon"
 import {
   DropdownMenu,
   DropdownMenuContent,

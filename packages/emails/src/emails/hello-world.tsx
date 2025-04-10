@@ -7,7 +7,7 @@ const Props = z.object({
   username: z.string().nonempty(),
 })
 
-export default function HelloWorldEmail({ username = "Ola Nordmann" }: TemplateProps<typeof Props>) {
+function HelloWorldEmail({ username = "Ola Nordmann" }: TemplateProps<typeof Props>) {
   return (
     <Html>
       <Head />

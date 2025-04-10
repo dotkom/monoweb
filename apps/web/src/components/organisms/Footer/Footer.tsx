@@ -46,12 +46,10 @@ const footerLinks: FooterLinkType = {
   ],
 }
 
-const Footer = () => (
+export const Footer = () => (
   <footer className="bg-blue flex w-full flex-col py-16 px-2 sm:px-10">
     <SoMeSection />
     <LinksSection links={footerLinks} />
     <ContactSection />
   </footer>
 )
-
-export default Footer

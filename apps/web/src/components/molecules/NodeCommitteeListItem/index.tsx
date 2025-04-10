@@ -2,11 +2,11 @@ import type { Group } from "@dotkomonline/types"
 import Link from "next/link"
 import type { FC } from "react"
 
-export interface nodeCommitteeListItemProps {
+export interface NodeCommitteeListItemProps {
   nodeCommittee: Group
 }
 
-const NodeCommitteeListItem: FC<nodeCommitteeListItemProps> = (props: nodeCommitteeListItemProps) => (
+export const NodeCommitteeListItem: FC<NodeCommitteeListItemProps> = (props: NodeCommitteeListItemProps) => (
   <div className="p-4 py-8 text-center m-1 shadow-md rounded-lg border-slate-3 border min-w-[250px] flex flex-col transform transition duration-300 hover:scale-[1.02] animate-fadeIn">
     {/* <div className="p-4 py-8 text-center m-1 shadow-md rounded-lg border-slate-300 border min-w-[250px] flex flex-col transform transition duration-300 hover:scale-[1.02] animate-fadeIn"> */}
 
@@ -25,5 +25,3 @@ const NodeCommitteeListItem: FC<nodeCommitteeListItemProps> = (props: nodeCommit
     </Link>
   </div>
 )
-
-export default NodeCommitteeListItem

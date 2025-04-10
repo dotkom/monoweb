@@ -1,6 +1,6 @@
 import { Button, TextInput } from "@dotkomonline/ui"
 
-const SettingsPassword = () => (
+export const SettingsPassword = () => (
   <div className="pb-8">
     <p className="text-2xl font-semibold mb-5">Endre passord</p>
     <div className="flex flex-col space-y-6 mb-6">
@@ -11,5 +11,3 @@ const SettingsPassword = () => (
     <Button className="float-right mb-6">Endre passord</Button>
   </div>
 )
-
-export default SettingsPassword

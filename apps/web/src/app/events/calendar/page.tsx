@@ -1,6 +1,6 @@
-import EventCalendar from "@/components/organisms/EventCalendar"
+import { EventCalendar } from "@/components/organisms/EventCalendar"
 
-const EventPage = async () => {
+export default async function EventPage() {
   const now = new Date()
 
   return (
@@ -10,5 +10,3 @@ const EventPage = async () => {
     </>
   )
 }
-
-export default EventPage

@@ -1,4 +1,4 @@
-import InterestGroupListItem from "@/components/molecules/InterestGroupListItem"
+import { InterestGroupListItem } from "@/components/molecules/InterestGroupListItem"
 import { server } from "@/utils/trpc/server"
 
 export const InterestGroupList = async () => {
@@ -13,5 +13,3 @@ export const InterestGroupList = async () => {
     </div>
   )
 }
-
-export default InterestGroupList

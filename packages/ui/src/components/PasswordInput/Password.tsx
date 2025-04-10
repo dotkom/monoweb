@@ -3,7 +3,7 @@
 import { Label } from "@radix-ui/react-label"
 import { cva } from "cva"
 import { forwardRef, useState } from "react"
-import { Icon } from "../Icon"
+import { Icon } from "../Icon/Icon"
 
 export interface PasswordInputProps {
   placeholder?: string

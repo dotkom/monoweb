@@ -7,7 +7,7 @@ interface AttendanceDateInfoProps {
   attendance: Attendance
 }
 
-const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
+export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
   const now = new Date()
 
   const isAttendanceStartInPast = attendance.registerStart < now
@@ -79,5 +79,3 @@ const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
     </div>
   )
 }
-
-export default AttendanceDateInfo

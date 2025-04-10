@@ -8,10 +8,10 @@ import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { AttendanceBoxPool } from "./AttendanceBoxPool"
 import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
-import AttendanceDateInfo from "./AttendanceDateInfo"
+import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { RegistrationButton } from "./RegistrationButton"
-import TicketButton from "./TicketButton"
-import ViewAttendeesDialogButton from "./ViewAttendeesButton"
+import { TicketButton } from "./TicketButton"
+import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
 
 interface Props {

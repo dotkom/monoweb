@@ -1,6 +1,6 @@
-import OtherGroupList from "@/components/organisms/OtherGroupList"
+import { OtherGroupList } from "@/components/organisms/OtherGroupList"
 
-const OtherGroupsPage = async () => {
+export default async function OtherGroupsPage() {
   return (
     <div className="my-8">
       <h1 className="mb-5">Grupper tilknyttet Online</h1>
@@ -14,5 +14,3 @@ const OtherGroupsPage = async () => {
     </div>
   )
 }
-
-export default OtherGroupsPage

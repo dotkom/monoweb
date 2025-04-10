@@ -1,4 +1,4 @@
-import OtherGroupListItem from "@/components/molecules/OtherGroupListItem"
+import { OtherGroupListItem } from "@/components/molecules/OtherGroupListItem"
 import { server } from "@/utils/trpc/server"
 
 export const OtherGroupList = async () => {
@@ -12,5 +12,3 @@ export const OtherGroupList = async () => {
     </div>
   )
 }
-
-export default OtherGroupList

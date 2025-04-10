@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { SettingsPrivacy } from "@/components/views/SettingsView/components"
+import { ProfilePrivacy } from "@/components/views/SettingsView/components/SettingsPrivacy"
 import { redirect } from "next/navigation"
 
 const PrivacyPage = async () => {
@@ -8,7 +8,7 @@ const PrivacyPage = async () => {
     redirect("/")
   }
 
-  return <SettingsPrivacy />
+  return <ProfilePrivacy />
 }
 
 export default PrivacyPage

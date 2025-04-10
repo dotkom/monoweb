@@ -1,6 +1,6 @@
-import PrivacyModule from "./SettingsPrivacyModule"
+import { PrivacyModule } from "./SettingsPrivacyModule"
 
-const ProfilePrivacy = () => (
+export const ProfilePrivacy = () => (
   <div className="my-10 flex w-full flex-col">
     <h2 className="mb-2 w-full flex-auto p-1">Personvern</h2>
     <p className="m-0 w-full flex-auto p-1 text-lg font-normal not-italic">
@@ -9,4 +9,3 @@ const ProfilePrivacy = () => (
     <PrivacyModule />
   </div>
 )
-export default ProfilePrivacy

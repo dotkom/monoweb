@@ -5,9 +5,6 @@ import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
-interface CompanyAdListItemProps {
-  jobListing: JobListing
-}
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
     return <p>Ikke oppgitt</p>
@@ -18,7 +15,12 @@ function showLocations(locations: string[]) {
     </div>
   )
 }
-const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAdListItemProps) => {
+
+export type CompanyAdListItemProps = {
+  jobListing: JobListing
+}
+
+export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAdListItemProps) => {
   const color =
     jobListing.employment === "SUMMER_INTERNSHIP" ? "amber" : jobListing.employment === "FULLTIME" ? "red" : "blue"
 
@@ -79,4 +81,3 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
     </Link>
   )
 }
-export default CompanyAdListItem

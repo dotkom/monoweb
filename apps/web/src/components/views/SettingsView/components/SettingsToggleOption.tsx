@@ -5,7 +5,7 @@ interface PrivacyProps {
   children: ReactNode
 }
 
-const PrivacyOption: FC<PrivacyProps> = ({ children }) => (
+export const PrivacyOption: FC<PrivacyProps> = ({ children }) => (
   // const [isChecked, setIsChecked] = useState<boolean>(false)
 
   <div className="w-full">
@@ -18,5 +18,3 @@ const PrivacyOption: FC<PrivacyProps> = ({ children }) => (
     </div>
   </div>
 )
-
-export default PrivacyOption

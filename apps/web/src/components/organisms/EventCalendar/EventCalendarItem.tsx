@@ -178,7 +178,7 @@ function getEventTheme(event: Event, isActive: boolean): EventTheme {
   }
 }
 
-const EventCalendarItem = ({ event, className }: EventCalendarItemProps) => {
+export const EventCalendarItem = ({ event, className }: EventCalendarItemProps) => {
   const isActive = new Date() < event.end
   const theme = getEventTheme(event, isActive)
 
@@ -252,5 +252,3 @@ const EventCalendarItem = ({ event, className }: EventCalendarItemProps) => {
     </HoverCard>
   )
 }
-
-export default EventCalendarItem

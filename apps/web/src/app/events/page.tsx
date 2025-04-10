@@ -1,4 +1,4 @@
-import EventsViewToggle from "@/components/molecules/EventsViewToggle"
+import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { EventList } from "@/components/organisms/EventList"
 import { server } from "@/utils/trpc/server"
 

@@ -1,8 +1,8 @@
 import { auth } from "@/auth"
-import { SettingsPassword } from "@/components/views/SettingsView/components"
+import { SettingsPassword } from "@/components/views/SettingsView/components/SettingsPassword"
 import { redirect } from "next/navigation"
 
-const PasswordPage = async () => {
+export default async function PasswordPage() {
   const session = await auth.getServerSession()
   if (session === null) {
     redirect("/")
@@ -10,5 +10,3 @@ const PasswordPage = async () => {
 
   return <SettingsPassword />
 }
-
-export default PasswordPage

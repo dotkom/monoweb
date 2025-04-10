@@ -10,7 +10,7 @@ interface TicketButtonProps {
   userId: UserId | null
 }
 
-const TicketButton = ({ userId }: TicketButtonProps) => {
+export const TicketButton = ({ userId }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
 
   const className =
@@ -55,5 +55,3 @@ const TicketButton = ({ userId }: TicketButtonProps) => {
     </div>
   )
 }
-
-export default TicketButton

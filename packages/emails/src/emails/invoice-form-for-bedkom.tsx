@@ -31,7 +31,7 @@ const Props = z.object({
   comment: z.string().nullable(),
 })
 
-export default function InvoiceFormForBedkom({
+function InvoiceFormForBedkom({
   companyName = "Bekk",
   contactName = "Ola Nordmann",
   contactEmail = "bekk@bekk.no",

@@ -1,6 +1,6 @@
 import type { SVGProps } from "react"
 
-const SvgBedpressIcon = (props: SVGProps<SVGSVGElement>) => (
+export const BedpressIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 256 256"
     xmlns="http://www.w3.org/2000/svg"
@@ -76,5 +76,3 @@ const SvgBedpressIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-export default SvgBedpressIcon

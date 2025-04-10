@@ -1,13 +1,13 @@
 import type { FC } from "react"
 
-type QuoteDisplayProps = {
+export type QuoteDisplayProps = {
   quote: string
   name: string
   year: number
   className?: string
 }
 
-const QuoteDisplay: FC<QuoteDisplayProps> = ({ quote, name, year, className }) => {
+export const QuoteDisplay: FC<QuoteDisplayProps> = ({ quote, name, year, className }) => {
   return (
     <div className={`px-16 items-center justify-center ${className}`}>
       <p className="text-slate-10">{quote}</p>
@@ -17,5 +17,3 @@ const QuoteDisplay: FC<QuoteDisplayProps> = ({ quote, name, year, className }) =
     </div>
   )
 }
-
-export default QuoteDisplay

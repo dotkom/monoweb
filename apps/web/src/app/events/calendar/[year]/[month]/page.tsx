@@ -1,4 +1,4 @@
-import EventCalendar from "@/components/organisms/EventCalendar"
+import { EventCalendar } from "@/components/organisms/EventCalendar"
 import { redirect } from "next/navigation"
 
 const EventPage = async ({ params }: { params: Promise<{ year: number; month: number }> }) => {

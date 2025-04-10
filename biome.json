@@ -31,7 +31,51 @@
         "noUnusedImports": {
           "level": "error"
         }
+      },
+      "style": {
+        "noDefaultExport": "error"
+      },
+      "performance": {
+        "noBarrelFile": "error"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["src/index.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": [
+        "default.tsx",
+        "error.tsx",
+        "forbidden.tsx",
+        "layout.tsx",
+        "loading.tsx",
+        "not-found.tsx",
+        "page.tsx",
+        "route.tsx",
+        "template.tsx",
+        "unauthorized.tsx",
+        "*.stories.tsx",
+        ".ladle",
+        "*.config.ts",
+        "*.config.js",
+        "*.config.mjs"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
 }

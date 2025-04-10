@@ -1,4 +1,4 @@
-import JobListingView from "@/components/views/JobListingView/JobListingView"
+import { JobListingView } from "@/components/views/JobListingView/JobListingView"
 import { server } from "@/utils/trpc/server"
 
 const CareerPage = async () => {

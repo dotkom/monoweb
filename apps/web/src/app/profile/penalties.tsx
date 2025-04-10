@@ -1,4 +1,4 @@
-import PenaltyRules from "@/utils/penalty-rules"
+import { PenaltyRules } from "@/utils/penalty-rules"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import { DotFilledIcon } from "@radix-ui/react-icons"
@@ -43,7 +43,7 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
   </Accordion>
 )
 
-const PenaltiesPage = () => (
+export const PenaltiesPage = () => (
   <div className="ml-3 flex flex-col space-y-12">
     <p className="text-slate-10">Oversikt over dine prikker</p>
     <div className="flex flex-col">
@@ -68,5 +68,3 @@ const PenaltiesPage = () => (
     </div>
   </div>
 )
-
-export default PenaltiesPage

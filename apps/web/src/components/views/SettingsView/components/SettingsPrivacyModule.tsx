@@ -1,4 +1,4 @@
-import PersonvernOption from "./SettingsToggleOption"
+import { PrivacyOption } from "./SettingsToggleOption"
 
 export const toggleItems = [
   {
@@ -13,14 +13,12 @@ export const toggleItems = [
   },
 ]
 
-function PrivacyModule() {
+export function PrivacyModule() {
   return (
     <div className="divide-slate-7 my-5 flex w-full flex-col divide-y">
       {toggleItems.map((item) => (
-        <PersonvernOption key={item.key}>{item.optionsText}</PersonvernOption>
+        <PrivacyOption key={item.key}>{item.optionsText}</PrivacyOption>
       ))}
     </div>
   )
 }
-
-export default PrivacyModule

@@ -1,4 +1,5 @@
 "use client"
+
 import { Icon, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -13,7 +14,7 @@ interface SettingsMenuItemProps {
   }
 }
 
-const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
+export const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
   const path = usePathname()
   const { title, slug, icon } = menuItem
 
@@ -38,5 +39,3 @@ const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
     </Link>
   )
 }
-
-export default SettingsMenuItem

@@ -1,11 +1,12 @@
 import { Icon } from "@dotkomonline/ui"
 import Link from "next/link"
+import type { FC } from "react"
 
 interface EventsViewToggleProps {
   active: "list" | "cal"
 }
 
-const EventsViewToggle: React.FC<EventsViewToggleProps> = ({ active }) => {
+export const EventsViewToggle: FC<EventsViewToggleProps> = ({ active }) => {
   return (
     <div className="w-full sm:w-fit text-foreground bg-slate-3 inline-flex items-center justify-center rounded-md p-1 my-4">
       {active === "list" ? (
@@ -39,5 +40,3 @@ const EventsViewToggle: React.FC<EventsViewToggleProps> = ({ active }) => {
     </div>
   )
 }
-
-export default EventsViewToggle

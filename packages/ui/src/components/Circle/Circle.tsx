@@ -15,5 +15,3 @@ export const Circle: FC<CircleProps> = ({ children, size, color }) => (
     {children}
   </div>
 )
-
-export default Circle

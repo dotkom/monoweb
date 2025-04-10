@@ -1,13 +1,12 @@
 "use client"
+
 import { useTRPC } from "@/utils/trpc/client"
 import type { User } from "@dotkomonline/types"
 import { Button, TextInput, Textarea } from "@dotkomonline/ui"
-import type { NextPage } from "next"
-import { useForm } from "react-hook-form"
-
 import { useMutation } from "@tanstack/react-query"
-
+import type { NextPage } from "next"
 import type { JSX } from "react"
+import { useForm } from "react-hook-form"
 
 interface FormInputProps {
   title: string
@@ -23,7 +22,7 @@ const FormInput: React.FC<FormInputProps> = ({ title, children }) => (
 
 type EditableFields = Pick<User, "firstName" | "lastName" | "biography" | "allergies" | "gender" | "phone">
 
-const Landing: NextPage<{ user: User }> = ({ user }) => {
+export const Landing: NextPage<{ user: User }> = ({ user }) => {
   const trpc = useTRPC()
   const { register, handleSubmit } = useForm<EditableFields>({
     defaultValues: {
@@ -107,5 +106,3 @@ const Landing: NextPage<{ user: User }> = ({ user }) => {
     </form>
   )
 }
-
-export default Landing

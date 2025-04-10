@@ -6,7 +6,7 @@ export interface OtherGroupListItemProps {
   otherGroup: Group
 }
 
-const OtherGroupListItem: FC<OtherGroupListItemProps> = ({ otherGroup }) => (
+export const OtherGroupListItem: FC<OtherGroupListItemProps> = ({ otherGroup }) => (
   <div className="p-4 mx-6 py-8 text-center m-1 shadow-md rounded-lg border-slate-3 border min-w-[250px] flex flex-col">
     <div className="w-32 h-32 mx-auto flex items-center justify-center">
       {otherGroup.image && (
@@ -21,5 +21,3 @@ const OtherGroupListItem: FC<OtherGroupListItemProps> = ({ otherGroup }) => (
     </Link>
   </div>
 )
-
-export default OtherGroupListItem

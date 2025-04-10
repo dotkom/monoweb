@@ -15,7 +15,7 @@ interface CompanyFiltersContainer {
 const sortOption = ["Frist", "Opprettet"] as const
 export type SortOption = (typeof sortOption)[number]
 
-const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
+export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFiltersContainer) => (
   <div className="border-slate-3 h-fit xl:w-72 rounded-lg border shadow-b-sm">
     <div className="border-slate-3 flex flex-row justify-between border-b py-4">
       <h4 className="mx-4 my-auto text-lg align-middle">Filter</h4>
@@ -88,5 +88,3 @@ const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: CompanyFilt
     </div>
   </div>
 )
-
-export default CompanyFiltersContainer

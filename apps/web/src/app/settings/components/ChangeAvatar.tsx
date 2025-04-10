@@ -18,7 +18,7 @@ export type AvatarImgChangeProps = {
   session: Session
 }
 
-const AvatarImgChange: FC<AvatarImgChangeProps> = ({ session }) => (
+export const AvatarImgChange: FC<AvatarImgChangeProps> = ({ session }) => (
   <DropdownMenu>
     <DropdownMenuTrigger className="relative border-[1px] rounded-full">
       <Avatar className="w-40 h-auto">
@@ -37,5 +37,3 @@ const AvatarImgChange: FC<AvatarImgChangeProps> = ({ session }) => (
     </DropdownMenuPortal>
   </DropdownMenu>
 )
-
-export default AvatarImgChange

@@ -4,7 +4,7 @@ import type { FC } from "react"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { AllAttendeesTable } from "../components/all-users-table"
 import { openCreateManualUserAttendModal } from "../components/manual-user-attend-modal"
-import QrCodeScanner from "../components/qr-code-scanner"
+import { QrCodeScanner } from "../components/qr-code-scanner"
 import { useEventDetailsContext } from "./provider"
 
 export const AttendeesPage: FC = () => {
