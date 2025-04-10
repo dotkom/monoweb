@@ -164,8 +164,6 @@ jobs:
       - run: doppler setup -p monoweb-dashboard -c staging
       # Configure build arguments
       - run: |
-          echo "BUILD_ARGS<<EOF" >> $GITHUB_OUTPUT
-
           doppler secrets download --no-file --format env | while IFS= read -r line; do
             key="${line%%=*}"
             val="${line#*=}"
@@ -176,8 +174,6 @@ jobs:
             # Add line to the multi-line output
             echo "$line" >> $GITHUB_OUTPUT
           done
-
-          echo "EOF" >> $GITHUB_OUTPUT
         id: set-build-args
       - uses: actions/checkout@v4
         with:
@@ -316,8 +312,6 @@ jobs:
       - run: doppler setup -p monoweb-web -c staging
       # Configure build arguments
       - run: |
-          echo "BUILD_ARGS<<EOF" >> $GITHUB_OUTPUT
-
           doppler secrets download --no-file --format env | while IFS= read -r line; do
             key="${line%%=*}"
             val="${line#*=}"
@@ -328,8 +322,6 @@ jobs:
             # Add line to the multi-line output
             echo "$line" >> $GITHUB_OUTPUT
           done
-
-          echo "EOF" >> $GITHUB_OUTPUT
         id: set-build-args
       - uses: actions/checkout@v4
         with:
