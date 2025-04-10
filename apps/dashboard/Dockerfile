@@ -1,17 +1,5 @@
 FROM node:22-alpine AS base
 
-# Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
-# runtime variables to be available at build-time.
-#
-# These build arguments loosely mirror the src/env.ts file
-ARG OAUTH_CLIENT_ID
-ARG OAUTH_CLIENT_SECRET
-ARG OAUTH_ISSUER
-ARG AUTH_SECRET
-ARG NEXT_PUBLIC_ORIGIN
-ARG NEXT_PUBLIC_API_URL
-ARG RPC_HOST
-
 FROM base AS builder
 WORKDIR /app
 
@@ -35,14 +23,6 @@ RUN pnpm install --ignore-scripts
 WORKDIR /app/packages/db
 RUN pnpm run generate
 WORKDIR /app
-
-ENV OAUTH_CLIENT_ID ${OAUTH_CLIENT_ID}
-ENV OAUTH_CLIENT_SECRET ${OAUTH_CLIENT_SECRET}
-ENV OAUTH_ISSUER ${OAUTH_ISSUER}
-ENV AUTH_SECRET ${AUTH_SECRET}
-ENV NEXT_PUBLIC_ORIGIN ${NEXT_PUBLIC_ORIGIN}
-ENV NEXT_PUBLIC_API_URL ${NEXT_PUBLIC_API_URL}
-ENV RPC_HOST ${RPC_HOST}
 
 COPY --from=builder /app/out/full .
 RUN pnpm run --filter @dotkomonline/dashboard build
