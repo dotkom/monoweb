@@ -28,5 +28,3 @@ export const NodeCommitteeView: FC<NodeCommitteeProps> = (props: NodeCommitteePr
     </div>
   )
 }
-
-export default NodeCommitteeView
