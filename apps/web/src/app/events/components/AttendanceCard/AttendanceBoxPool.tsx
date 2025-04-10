@@ -1,4 +1,4 @@
-import type { AttendancePool, User } from "@dotkomonline/types"
+import type { AttendancePool } from "@dotkomonline/types"
 import clsx from "clsx"
 import type { FC } from "react"
 
