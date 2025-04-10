@@ -8,13 +8,6 @@
 
 name: Integration Pipeline (staging)
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types:
-      - opened
-      - synchronize
   workflow_dispatch:
 
 # Determine if staging should be deployed based on the event that triggered the
