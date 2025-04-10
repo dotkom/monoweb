@@ -1,27 +1,25 @@
-import { Debug_info } from "./components/debug_info";
-import { Footer } from "./components/footer";
-import { Header } from "./components/header";
-import { Hero } from "./components/hero";
-import { SponsorPlaceholderIcon } from "./components/icons";
-import { Linjeforening_info } from "./components/linjeforening_info";
-import { HeroData } from "./data/hero";
+import { DebugInfo } from "./components/DebugInfo.tsx"
+import { LinjeforeningInfo } from "./components/LinjeforeningInfo.tsx"
+import { Footer } from "./components/footer"
+import { Header } from "./components/header"
+import { Hero } from "./components/hero"
+import { SponsorPlaceholderIcon } from "./components/icons/SponsorPlaceholderIcon.tsx"
+import { HeroData } from "./data/hero"
 
-function App() {
-	return (
-		<div className="bg-[#6B1414] min-h-screen">
-			<Header />
+export function App() {
+  return (
+    <div className="bg-[#6B1414] min-h-screen">
+      <Header />
 
-			<main>
-				<Hero {...HeroData} />
-				<Debug_info />
-				<div className="bg-brand h-screen">
-					<Linjeforening_info />
-				</div>
-			</main>
+      <main>
+        <Hero {...HeroData} />
+        <DebugInfo />
+        <div className="bg-brand h-screen">
+          <LinjeforeningInfo />
+        </div>
+      </main>
 
-			<Footer sponsorLogo={<SponsorPlaceholderIcon />} />
-		</div>
-	);
+      <Footer sponsorLogo={<SponsorPlaceholderIcon />} />
+    </div>
+  )
 }
-
-export default App;
