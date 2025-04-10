@@ -10,6 +10,7 @@ import { AttendanceBoxPool } from "./AttendanceBoxPool"
 import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
 import AttendanceDateInfo from "./AttendanceDateInfo"
 import { RegistrationButton } from "./RegistrationButton"
+import TicketButton from "./TicketButton"
 import ViewAttendeesDialogButton from "./ViewAttendeesButton"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
 
@@ -73,7 +74,14 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
         <div className="flex flex-row gap-4">{nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}</div>
       )}
 
-      <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
+      {attendee && user ? (
+        <div className="flex flex-row gap-4">
+          <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
+          <TicketButton userId={user.id} />
+        </div>
+      ) : (
+        <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
+      )}
 
       <RegistrationButton
         attendee={attendee}

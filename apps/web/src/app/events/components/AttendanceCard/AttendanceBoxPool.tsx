@@ -1,4 +1,4 @@
-import type { AttendancePool } from "@dotkomonline/types"
+import type { AttendancePool, User } from "@dotkomonline/types"
 import clsx from "clsx"
 import type { FC } from "react"
 
@@ -25,13 +25,13 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending }) => {
     <div className={clsx("flex flex-col w-full rounded-lg", isAttending ? "bg-green-4" : "bg-slate-3")}>
       <div
         className={clsx(
-          "px-8 py-3 rounded-t-lg text-center text-sm font-bold",
+          "px-4 py-3 rounded-t-lg text-center text-sm font-bold",
           isAttending ? "bg-green-5" : "bg-slate-5"
         )}
       >
         {pool.title}
       </div>
-      <div className="px-8 py-4 rounded-b-lg flex flex-col gap-2 items-center justify-center min-h-[6rem]">
+      <div className="px-4 py-4 rounded-b-lg flex flex-col gap-2 items-center justify-center min-h-[6rem] w-full">
         <p className="text-3xl">
           {pool.numAttendees}/{pool.capacity}
         </p>
