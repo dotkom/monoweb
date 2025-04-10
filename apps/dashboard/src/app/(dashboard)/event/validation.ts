@@ -22,16 +22,6 @@ const isValidMapUrl = (value: string | null) => {
 
 export const validateEventWrite = (event: EventWrite): z.ZodIssue[] => {
   const issues: z.ZodIssue[] = []
-  const localTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone
-  const now = tz.tz(localTimeZone)(Date.now())
-
-  if (isBefore(event.start, now)) {
-    issues.push({ code: "custom", message: "Starttidspunkt må være i fremtiden", path: ["start"] })
-  }
-
-  if (isBefore(event.end, now)) {
-    issues.push({ code: "custom", message: "Sluttidspunkt må være i fremtiden", path: ["end"] })
-  }
 
   if (isBefore(event.end, event.start)) {
     issues.push({ code: "custom", message: "Sluttidspunkt må være etter starttidspunkt", path: ["end"] })
