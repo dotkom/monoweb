@@ -67,8 +67,8 @@ export type StudyplanCourse = {
 }
 
 const STATIC_FALLBACK_DATA: Record<string, Studyplan> = {
-  BIT: (await import("./static-fallback-data/BIT.json")) as Studyplan,
-  MSIT: (await import("./static-fallback-data/MSIT.json")) as Studyplan,
+  BIT: (await import("./static-fallback-data/BIT.json", { with: { type: "json" } })) as Studyplan,
+  MSIT: (await import("./static-fallback-data/MSIT.json", { with: { type: "json" } })) as Studyplan,
 }
 
 export interface NTNUStudyplanRepository {
