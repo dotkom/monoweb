@@ -8,6 +8,7 @@ permissions:
   id-token: write   
   contents: read
   issues: write
+  pull-requests: write
 jobs:
   # The "check" job is responsible for verifying the minimum requirements to
   # build all the packages in the monorepo.
