@@ -12,8 +12,12 @@ export const env = createEnvironment(
     SIGNING_KEY: variable,
   },
   {
-    ...process.env,
-    NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
-    NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
+    env: {
+      ...process.env,
+      NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
+      NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
+    },
+    // Web should also validate env at build time
+    skipValidation: false,
   }
 )

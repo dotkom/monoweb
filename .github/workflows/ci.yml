@@ -339,6 +339,7 @@ jobs:
           NEXT_PUBLIC_ORIGIN=$(doppler secrets get NEXT_PUBLIC_ORIGIN --json | jq -r '.NEXT_PUBLIC_ORIGIN.computed')
           NEXT_PUBLIC_RPC_HOST=$(doppler secrets get NEXT_PUBLIC_RPC_HOST --json | jq -r '.NEXT_PUBLIC_RPC_HOST.computed')
           RPC_HOST=$(doppler secrets get RPC_HOST --json | jq -r '.RPC_HOST.computed')
+          SIGNING_KEY=$(doppler secrets get SIGNING_KEY --json | jq -r '.SIGNING_KEY.computed')
 
           echo "::add-mask::$OAUTH_CLIENT_ID"
           echo "::add-mask::$OAUTH_CLIENT_SECRET"
@@ -347,6 +348,7 @@ jobs:
           echo "::add-mask::$NEXT_PUBLIC_ORIGIN"
           echo "::add-mask::$NEXT_PUBLIC_RPC_HOST"
           echo "::add-mask::$RPC_HOST"
+          echo "::add-mask::$SIGNING_KEY"
 
           echo BUILD_ARG_OAUTH_CLIENT_ID="$OAUTH_CLIENT_ID" >> $GITHUB_OUTPUT
           echo BUILD_ARG_OAUTH_CLIENT_SECRET="$OAUTH_CLIENT_SECRET" >> $GITHUB_OUTPUT
@@ -355,6 +357,7 @@ jobs:
           echo BUILD_ARG_NEXT_PUBLIC_ORIGIN="$NEXT_PUBLIC_ORIGIN" >> $GITHUB_OUTPUT
           echo BUILD_ARG_NEXT_PUBLIC_RPC_HOST="$NEXT_PUBLIC_RPC_HOST" >> $GITHUB_OUTPUT
           echo BUILD_ARG_RPC_HOST="$RPC_HOST" >> $GITHUB_OUTPUT
+          echo BUILD_ARG_SIGNING_KEY="$SIGNING_KEY" >> $GITHUB_OUTPUT
         id: set-build-args
       - uses: actions/checkout@v4
         with:
@@ -374,6 +377,7 @@ jobs:
             NEXT_PUBLIC_ORIGIN=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_ORIGIN }}
             NEXT_PUBLIC_RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_RPC_HOST }}
             RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_RPC_HOST }}
+            SIGNING_KEY=${{ steps.set-build-args.outputs.BUILD_ARG_SIGNING_KEY }}
       - uses: actions/github-script@v7
         if: env.GH_IS_DEPLOYING_STAGING
         with:
