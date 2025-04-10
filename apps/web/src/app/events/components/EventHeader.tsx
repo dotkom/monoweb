@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event }) => {
-  const imageUrl = event.imageUrl || "https://via.placeholder.com/1920x1080"
+  const imageUrl = event.imageUrl || "https://placehold.co/1920x1080/png"
 
   return (
     <section className="flex flex-col gap-8">
