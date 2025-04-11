@@ -19,14 +19,14 @@ runs:
     - uses: ./.github/actions/internal/doppler-secrets
       id: acquire-secrets
       with:
-        project: monoweb-web
-        config: staging
+        project: monoweb-dashboard
+        config: ${{ inputs.environment }}
     - uses: ./.github/actions/internal/docker-build
       id: build
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
-        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/dashboard
+        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-dashboard-ci-role
+        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/dashboard
         git-hash: ${{ github.sha }}
         dockerfile: apps/dashboard/Dockerfile
         build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
@@ -36,9 +36,9 @@ runs:
       id: deploy
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
-        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-staging-dashboard
+        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-dashboard-ci-role
+        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-${{ inputs.environment }}-dashboard
         cluster-name: evergreen-prod-cluster
-        service-name: monoweb-staging-dashboard
-        container-name: monoweb-staging-dashboard
+        service-name: monoweb-${{ inputs.environment }}-dashboard
+        container-name: monoweb-${{ inputs.environment }}-dashboard
         image: ${{ steps.build.outputs.image }}

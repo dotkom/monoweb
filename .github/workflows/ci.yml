@@ -46,13 +46,19 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
-  build-web:
-    name: Build monoweb/web
+  build-brevduen:
+    name: Build monoweb/brevduen
     runs-on: ubuntu-24.04
     needs:
       - check
     steps:
-      - uses: ./.github/actions/build-web
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: 'true'
+      - uses: ./.github/actions/build-brevduen
         with:
           deploy: 'false'
           environment: 'staging'
@@ -63,7 +69,81 @@ jobs:
     needs:
       - check
     steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: 'true'
       - uses: ./.github/actions/build-dashboard
+        with:
+          deploy: 'false'
+          environment: 'staging'
+
+  build-invoicification:
+    name: Build monoweb/invoicification
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: 'true'
+      - uses: ./.github/actions/build-invoicification
+        with:
+          deploy: 'false'
+          environment: 'staging'
+
+  build-rif:
+    name: Build monoweb/rif
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: 'true'
+      - uses: ./.github/actions/build-rif
+        with:
+          deploy: 'false'
+          environment: 'staging'
+
+  build-rpc:
+    name: Build monoweb/rpc
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: 'true'
+      - uses: ./.github/actions/build-rpc
+        with:
+          deploy: 'false'
+          environment: 'staging'
+
+  build-web:
+    name: Build monoweb/web
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: 'true'
+      - uses: ./.github/actions/build-web
         with:
           deploy: 'false'
           environment: 'staging'

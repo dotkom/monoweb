@@ -1,4 +1,4 @@
-name: Build & deploy monoweb/web
+name: Build & deploy monoweb/rif
 inputs:
   deploy:
     description: 'Deploy the built image to AWS ECS'
@@ -19,16 +19,16 @@ runs:
     - uses: ./.github/actions/internal/doppler-secrets
       id: acquire-secrets
       with:
-        project: monoweb-web
+        project: monoweb-rif
         config: ${{ inputs.environment }}
     - uses: ./.github/actions/internal/docker-build
       id: build
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-web-ci-role
-        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/web
+        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-rif-ci-role
+        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/rif
         git-hash: ${{ github.sha }}
-        dockerfile: apps/web/Dockerfile
+        dockerfile: apps/rif/Dockerfile
         build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
@@ -36,9 +36,9 @@ runs:
       id: deploy
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-web-ci-role
-        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-${{ inputs.environment }}-web
+        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-rif-ci-role
+        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-${{ inputs.environment }}-rif
         cluster-name: evergreen-prod-cluster
-        service-name: monoweb-${{ inputs.environment }}-web
-        container-name: monoweb-${{ inputs.environment }}-web
+        service-name: monoweb-${{ inputs.environment }}-rif
+        container-name: monoweb-${{ inputs.environment }}-rif
         image: ${{ steps.build.outputs.image }}
