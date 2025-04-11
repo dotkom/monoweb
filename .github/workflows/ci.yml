@@ -3,7 +3,7 @@
 # It is responsible for verifying linting, type checking, and building packages
 # in the entire monorepo.
 
-name: CI&CD
+name: CI & CD
 on:
   push:
     branches:
