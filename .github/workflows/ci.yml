@@ -79,15 +79,7 @@ jobs:
           aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
           aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web
           git-hash: ${{ github.sha }}
-          build-arguments: |
-            OAUTH_CLIENT_ID=${{ steps.acquire-secrets.outputs.BUILD_ARG_OAUTH_CLIENT_ID }}
-            OAUTH_CLIENT_SECRET=${{ steps.acquire-secrets.outputs.BUILD_ARG_OAUTH_CLIENT_SECRET }}
-            OAUTH_ISSUER=${{ steps.acquire-secrets.outputs.BUILD_ARG_OAUTH_ISSUER }}
-            AUTH_SECRET=${{ steps.acquire-secrets.outputs.BUILD_ARG_AUTH_SECRET }}
-            NEXT_PUBLIC_ORIGIN=${{ steps.acquire-secrets.outputs.BUILD_ARG_NEXT_PUBLIC_ORIGIN }}
-            NEXT_PUBLIC_RPC_HOST=${{ steps.acquire-secrets.outputs.BUILD_ARG_NEXT_PUBLIC_RPC_HOST }}
-            RPC_HOST=${{ steps.acquire-secrets.outputs.BUILD_ARG_RPC_HOST }}
-            SIGNING_KEY=${{ steps.acquire-secrets.outputs.BUILD_ARG_SIGNING_KEY }}
+          build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
       - uses: ./.github/actions/aws-ecs-deploy
         id: deploy
         with:

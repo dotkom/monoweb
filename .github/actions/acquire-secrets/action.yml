@@ -14,7 +14,7 @@ inputs:
 outputs:
   secrets:
     description: The secrets acquired from Doppler
-    value: ${{ steps.export.outputs }}
+    value: ${{ steps.export.outputs.SECRETS }}
 runs:
   using: composite
   steps:
@@ -38,5 +38,8 @@ runs:
       shell: bash
       run: |
         doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
-          jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"\necho \"\(.key)=\(.value.computed)\" >> $GITHUB_OUTPUT") | .[]' | \
+          jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"") | .[]' | \
           bash
+        SECRETS=$(doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
+          jq -r 'to_entries | map("\(.key)=\(.value.computed)") | .[]')
+        echo "SECRETS=${SECRETS}" >> $GITHUB_OUTPUT
