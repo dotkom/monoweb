@@ -68,10 +68,8 @@ jobs:
       - uses: actions/github-script@v7
         id: get-oidc-token
         with:
-          script: |
-            const id_token = await core.getIDToken()
-            core.setOutput('oidc_token', id_token)
-      - uses: dopplerhq/cli-action@v2
+          script: core.setOutput('oidc_token', await core.getIDToken())
+      - uses: dopplerhq/cli-action@v3
       # Identity comes from the configured doppler account identity
       # (see last step https://docs.doppler.com/docs/service-account-identities#configure-the-identity)
       - run: |
