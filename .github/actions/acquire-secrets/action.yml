@@ -1,0 +1,42 @@
+name: Acquire secrets from Doppler
+description: |
+  Acquired the secrets from Doppler and sets them as environment variables.
+  
+  Requires the parent workflow to have `write` permissions for `id-token`. and
+  `read` permissions for `contents`.
+inputs:
+  project:
+    description: The Doppler project to use
+    required: true
+  config:
+    description: The Doppler config to use
+    required: true
+outputs:
+  secrets:
+    description: The secrets acquired from Doppler
+    value: ${{ steps.export.outputs.secrets }}
+runs:
+  using: composite
+  steps:
+    - name: Acquire GitHub OpenID Connect token
+      uses: actions/github-script@v7
+      id: get-oidc-token
+      with:
+        script: core.setOutput('oidc_token', await core.getIDToken())
+    - name: Install Doppler CLI
+      uses: dopplerhq/cli-action@v3
+    - name: Login to Doppler
+      shell: bash
+      run: |
+        doppler oidc login \
+        --api-host https://api.doppler.com \
+        --scope=. \
+        --identity=8f25d2a1-28b9-4f2a-8fb3-115b10f456b2 \
+        --token=${{ steps.get-oidc-token.outputs.oidc_token }}
+    - name: Export secrets from Doppler to GitHub
+      id: export
+      shell: bash
+      run: |
+        doppler secrets --json | \
+          jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"\necho \"\(.key)=\(.value.computed)\" >> $GITHUB_OUTPUT") | .[]' | \
+          bash
