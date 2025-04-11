@@ -37,6 +37,6 @@ runs:
       id: export
       shell: bash
       run: |
-        doppler secrets --json | \
+        doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
           jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"\necho \"\(.key)=\(.value.computed)\" >> $GITHUB_OUTPUT") | .[]' | \
           bash
