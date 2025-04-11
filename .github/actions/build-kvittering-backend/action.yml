@@ -20,8 +20,8 @@ runs:
       id: build
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-kvittering-backend-ci-role
-        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/kvittering-backend
+        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-prod-kvittering-backend-ci-role
+        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/kvittering-backend
         git-hash: ${{ github.sha }}
         dockerfile: apps/kvittering-backend/Dockerfile
         push: ${{ inputs.deploy }}
@@ -30,9 +30,9 @@ runs:
       id: deploy
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-kvittering-backend-ci-role
-        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-${{ inputs.environment }}-kvittering-backend
+        aws-iam-role: arn:aws:iam::891459268445:role/monoweb-prod-kvittering-backend-ci-role
+        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-prod-kvittering-backend
         cluster-name: evergreen-prod-cluster
-        service-name: monoweb-${{ inputs.environment }}-kvittering-backend
-        container-name: monoweb-${{ inputs.environment }}-kvittering-backend
+        service-name: monoweb-prod-kvittering-backend
+        container-name: monoweb-prod-kvittering-backend
         image: ${{ steps.build.outputs.image }}
