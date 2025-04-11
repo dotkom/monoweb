@@ -40,6 +40,7 @@ runs:
         doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
           jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"") | .[]' | \
           bash
-        SECRETS=$(doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
-          jq -r 'to_entries | map("\(.key)=\(.value.computed)") | .[]')
-        echo "SECRETS=${SECRETS}" >> $GITHUB_OUTPUT
+        echo "SECRETS<<EOF" >> $GITHUB_OUTPUT
+        doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
+          jq -r 'to_entries | map("\(.key)=\(.value.computed)") | .[]' >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
