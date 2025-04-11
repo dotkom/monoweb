@@ -64,7 +64,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-brevduen
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: staging
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 

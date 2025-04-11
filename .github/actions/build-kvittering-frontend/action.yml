@@ -38,6 +38,11 @@ runs:
       working-directory: apps/kvittering-frontend
       run: pnpm install && pnpm build
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-north-1
+        role-to-assume: monoweb-kvittering-frontend-ci-role
     - name: Deploy to S3
       if: ${{ inputs.deploy == 'true' }}
       shell: bash
