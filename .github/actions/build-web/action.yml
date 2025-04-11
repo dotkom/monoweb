@@ -35,5 +35,5 @@ runs:
         context: .
         file: apps/web/Dockerfile
         tags: ${{ inputs.repository }}:latest, ${{ inputs.repository }}:git-${{ inputs.git-hash }}
-        build-args: ${ inputs.build-arguments }
+        build-args: ${{ inputs.build-arguments }}
         push: true
