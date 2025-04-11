@@ -1,12 +1,9 @@
-# The main development/staging integration pipeline
+# The main integration pipeline
 #
 # It is responsible for verifying linting, type checking, and building packages
 # in the entire monorepo.
-#
-# It will also deploy the applications to their staging environments if all
-# checks pass AND the pipeline is triggered by a push to the main branch.
 
-name: Integration Pipeline (staging)
+name: Integration Pipeline
 on:
   push:
     branches:
@@ -15,11 +12,6 @@ on:
     types:
       - opened
       - synchronize
-
-# Determine if staging should be deployed based on the event that triggered the
-# pipeline. We only want to deploy staging when a push to the main branch occurs.
-env:
-  GH_IS_DEPLOYING_STAGING: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
 permissions:
   id-token: write   
@@ -54,40 +46,24 @@ jobs:
       - run: pnpm type-check
         name: Run TypeScript type checker
 
-  # Job for building and optionally deploying the apps/web application
-  deploy-web:
-    name: Deploy monoweb/web
+  build-web:
+    name: Build monoweb/web
     runs-on: ubuntu-24.04
     needs:
       - check
     steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
-      - uses: ./.github/actions/acquire-secrets
-        id: acquire-secrets
-        with:
-          project: monoweb-web
-          config: staging
       - uses: ./.github/actions/build-web
-        id: build
         with:
-          aws-region: 'eu-north-1'
-          aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
-          aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web
-          git-hash: ${{ github.sha }}
-          build-arguments: |
-            ${{ steps.acquire-secrets.outputs.secrets }}
-      - uses: ./.github/actions/aws-ecs-deploy
-        id: deploy
+          deploy: 'false'
+          environment: 'staging'
+
+  build-dashboard:
+    name: Build monoweb/dashboard
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - uses: ./.github/actions/build-dashboard
         with:
-          aws-region: 'eu-north-1'
-          aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
-          aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-staging-web
-          cluster-name: evergreen-prod-cluster
-          service-name: monoweb-staging-web
-          container-name: monoweb-staging-web
-          image: ${{ steps.build.outputs.image }}
+          deploy: 'false'
+          environment: 'staging'

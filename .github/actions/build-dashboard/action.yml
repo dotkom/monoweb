@@ -1,4 +1,4 @@
-name: Build & deploy monoweb/web
+name: Build & deploy monoweb/dashboard
 inputs:
   deploy:
     description: 'Deploy the built image to AWS ECS'
@@ -25,10 +25,10 @@ runs:
       id: build
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
-        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web
+        aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
+        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/dashboard
         git-hash: ${{ github.sha }}
-        dockerfile: apps/web/Dockerfile
+        dockerfile: apps/dashboard/Dockerfile
         build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
@@ -36,9 +36,9 @@ runs:
       id: deploy
       with:
         aws-region: 'eu-north-1'
-        aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
-        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-staging-web
+        aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingDashboardCIRole
+        aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-staging-dashboard
         cluster-name: evergreen-prod-cluster
-        service-name: monoweb-staging-web
-        container-name: monoweb-staging-web
+        service-name: monoweb-staging-dashboard
+        container-name: monoweb-staging-dashboard
         image: ${{ steps.build.outputs.image }}
