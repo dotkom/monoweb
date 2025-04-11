@@ -14,7 +14,7 @@ inputs:
 outputs:
   secrets:
     description: The secrets acquired from Doppler
-    value: ${{ steps.export.outputs.secrets }}
+    value: ${{ steps.export.outputs }}
 runs:
   using: composite
   steps:
