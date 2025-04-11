@@ -1,26 +1,29 @@
-import { Button, cn } from "@dotkomonline/ui"
+import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { cookies } from "next/headers"
 import Link from "next/link"
-import type { ComponentPropsWithoutRef } from "react"
 
-export async function CompanySplash(props: ComponentPropsWithoutRef<"div">) {
+export type CompanySplashProps = {
+  className?: string
+}
+
+export async function CompanySplash({ className }: CompanySplashProps) {
   if ((await cookies()).has("companysplashdismissed")) {
     return null
   }
   return (
-    <div {...props} className={cn("flex justify-between pb-10", props.className)}>
+    <div className={cn("flex justify-between mb-10 border-b border-slate-6", className)}>
       <div className="w-full">
-        <h1 className="text-5xl font-semibold lg:text-6xl">
+        <Title className="text-5xl tracking-tight font-semibold lg:text-6xl">
           Online,&nbsp;linjeforeningen
           <br />
           for&nbsp;Informatikk&nbsp;ved&nbsp;NTNU
-        </h1>
-        <p className="py-4 pr-20">
+        </Title>
+        <Text className="py-4 max-w-[80ch]">
           Online er en linjeforening for Informatikkstudentene ved NTNU Gløshaugen. Informatikkstudiet hører til
           Institutt for datateknologi og informatikk (IDI). Dette innebærer blant annet å lære om utvikling, forbedring,
           evaluering og bruk av datasystemer. For mer informasjon om studiet, se NTNU sine offisielle nettsider for
           bachelor og master.
-        </p>
+        </Text>
         <Link href="https://interesse.online.ntnu.no">
           <Button>Bedriftskontakt</Button>
         </Link>

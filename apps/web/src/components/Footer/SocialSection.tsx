@@ -4,7 +4,7 @@ import { InstagramIcon } from "@/components/icons/InstagramIcon"
 import { SlackIcon } from "@/components/icons/SlackIcon"
 import Link from "next/link"
 
-export const SoMeSection = () => {
+export const SocialSection = () => {
   const links = [
     { icon: <SlackIcon />, url: "https://onlinentnu.slack.com/", key: "slack" },
     { icon: <GitHubIcon />, url: "https://github.com/dotkom/monoweb", key: "github" },
@@ -13,7 +13,7 @@ export const SoMeSection = () => {
   ]
 
   return (
-    <ul className="mx-8 mb-4 flex sm:justify-center">
+    <ul className="flex justify-center">
       {links.map((link) => (
         <Link href={link.url} key={link.key}>
           <li className="mx-4 w-16 cursor-pointer">{link.icon}</li>

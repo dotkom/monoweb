@@ -3,21 +3,13 @@ import { settingsItems } from "@/utils/settingsLinks"
 import { Icon } from "@dotkomonline/ui"
 import * as Popover from "@radix-ui/react-popover"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { SettingsMenuItem } from "./SettingsMenuItem"
 
 export const MobileMenuContainer = () => {
   const currentSlug = usePathname()
   const currentLink = settingsItems.find((item) => item.slug === currentSlug)
   const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    if (open) {
-      document.body.classList.add("overflow-hidden")
-    } else {
-      document.body.classList.remove("overflow-hidden")
-    }
-  }, [open])
 
   return (
     <div className="mx-auto flex items-center md:hidden">
@@ -42,7 +34,7 @@ export const MobileMenuContainer = () => {
             <div className="bg-indigo-1 shadow-slate-8 flex w-screen flex-col rounded-lg p-3 shadow-sm md:hidden">
               {settingsItems.map((item) => (
                 <Popover.Close key={item.title}>
-                  <SettingsMenuItem menuItem={item} />
+                  <SettingsMenuItem {...item} />
                 </Popover.Close>
               ))}
             </div>

@@ -1,0 +1,9 @@
+@import url("../node_modules/@dotkomonline/config/tailwind.css");
+
+@layer base {
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

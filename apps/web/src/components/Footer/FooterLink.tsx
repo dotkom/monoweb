@@ -1,22 +1,23 @@
 import { cva } from "cva"
 import Link from "next/link"
+import type { FC } from "react"
 
-interface FooterLinkProps {
+export type FooterLinkProps = {
   label: string
   large?: boolean
   href: string
 }
 
-export const FooterLink = ({ label, href, large = false }: FooterLinkProps) => (
+export const FooterLink: FC<FooterLinkProps> = ({ label, href, large = false }) => (
   <li className={link({ large })}>
     <Link href={href}>{label}</Link>
   </li>
 )
 
-const link = cva("text-slate-12 cursor-pointer", {
+const link = cva("text-white cursor-pointer", {
   variants: {
     large: {
-      true: "text-xl font-bold",
+      true: "text-xl font-bold uppercase",
       false: "text-lg font-medium",
     },
   },
