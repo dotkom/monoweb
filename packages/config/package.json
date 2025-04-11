@@ -12,7 +12,6 @@
     "tailwind-preset.js",
     "postcss-preset.js",
     "tailwind.css",
-    "typography.css",
     "tsconfig.json"
   ],
   "devDependencies": {

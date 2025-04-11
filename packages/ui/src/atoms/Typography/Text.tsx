@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from "cva"
-import type { ComponentPropsWithoutRef, ElementType, PropsWithChildren } from "react"
+import type { ComponentPropsWithRef, ElementType, PropsWithChildren } from "react"
 import { cn } from "../../utils"
 
 export type TextProps<E extends ElementType = "p"> = VariantProps<typeof text> &
@@ -11,7 +11,7 @@ export type TextProps<E extends ElementType = "p"> = VariantProps<typeof text> &
      */
     element?: E
     className?: string
-  } & ComponentPropsWithoutRef<E>
+  } & ComponentPropsWithRef<E>
 
 export function Text<E extends ElementType = "p">({
   children,
@@ -19,12 +19,13 @@ export function Text<E extends ElementType = "p">({
   className,
   size,
   truncate,
+  ref,
   ...props
 }: TextProps<E>) {
   const Component = element ?? "p"
   const classes = cn(text({ size, truncate }), className)
   return (
-    <Component className={classes} {...props}>
+    <Component ref={ref} className={classes} {...props}>
       {children}
     </Component>
   )

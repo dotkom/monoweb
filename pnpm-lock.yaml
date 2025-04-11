@@ -542,6 +542,15 @@ importers:
 
   apps/splash-2025:
     dependencies:
+      '@dotkomonline/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@fontsource/fraunces':
+        specifier: ^5.2.5
+        version: 5.2.5
+      '@fontsource/poppins':
+        specifier: ^5.2.5
+        version: 5.2.5
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1

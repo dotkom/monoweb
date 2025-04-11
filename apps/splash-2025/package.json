@@ -11,6 +11,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dotkomonline/ui": "workspace:*",
+    "@fontsource/fraunces": "^5.2.5",
+    "@fontsource/poppins": "^5.2.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "react": "^19.0.0",
