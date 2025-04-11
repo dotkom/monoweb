@@ -145,5 +145,5 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
         with:
-          deploy: false
+          deploy: true
           environment: staging
