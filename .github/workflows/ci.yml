@@ -15,7 +15,7 @@ on:
 
 env:
   DEPLOYMENT_TARGET_HASH: ${{ github.sha }}
-  DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  DEPLOYMENT_TRIGGER_PUSH: ${{ true }}
 
 permissions:
   id-token: write   
