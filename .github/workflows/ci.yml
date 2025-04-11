@@ -109,10 +109,12 @@ jobs:
         with:
           fetch-depth: 1
       - uses: ./.github/actions/build-web
+        id: build
         with:
+          aws-region: 'eu-north-1'
+          aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
+          aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web
           git-hash: ${{ github.sha }}
-          iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
-          repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web
           build-arguments: |
             OAUTH_CLIENT_ID=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_ID }}
             OAUTH_CLIENT_SECRET=${{ steps.set-build-args.outputs.BUILD_ARG_OAUTH_CLIENT_SECRET }}
@@ -122,19 +124,13 @@ jobs:
             NEXT_PUBLIC_RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_NEXT_PUBLIC_RPC_HOST }}
             RPC_HOST=${{ steps.set-build-args.outputs.BUILD_ARG_RPC_HOST }}
             SIGNING_KEY=${{ steps.set-build-args.outputs.BUILD_ARG_SIGNING_KEY }}
-      - uses: actions/github-script@v7
-        if: env.GH_IS_DEPLOYING_STAGING
+      - uses: ./.github/actions/aws-ecs-deploy
+        id: deploy
         with:
-          github-token: ${{ secrets.TERRAFORM_WORKFLOW_TOKEN }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: 'dotkom',
-              repo: 'terraform-monorepo',
-              workflow_id: 'apply.yml',
-              ref: 'main',
-              inputs: {
-                environment: 'staging',
-                project: 'monoweb-web',
-                targets: 'module.web_evergreen_service',
-              },
-            });
+          aws-region: 'eu-north-1'
+          aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
+          aws-task-definition-arn: arn:aws:ecs:eu-north-1:891459268445:task-definition/monoweb-staging-web
+          cluster-name: evergreen-prod-cluster
+          service-name: monoweb-staging-web
+          container-name: monoweb-staging-web
+          image: ${{ steps.build.outputs.image }}

@@ -7,20 +7,28 @@ inputs:
   build-arguments:
     description: 'Docker build arguments'
     required: false
-  repository:
+  aws-ecr-repository:
     description: 'AWS ECR Repository to push to. Will create :latest and :sha tags'
     required: true
-  iam-role:
+  aws-iam-role:
     description: 'IAM role to assume for AWS ECR push'
     required: true
+  aws-region:
+    description: 'AWS Region to use'
+    required: true
+    default: 'eu-north-1'
+outputs:
+  image:
+    description: 'The Docker tag containing the git hash that was built'
+    value: ${{ inputs.aws-ecr-repository }}:git-${{ inputs.git-hash }}
 runs:
   using: composite
   steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-region: eu-north-1
-        role-to-assume: ${{ inputs.iam-role }}
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: ${{ inputs.aws-iam-role }}
     - name: Login to AWS ECR
       uses: aws-actions/amazon-ecr-login@v2
     - name: Check out provided ref
@@ -34,6 +42,6 @@ runs:
         platforms: linux/amd64
         context: .
         file: apps/web/Dockerfile
-        tags: ${{ inputs.repository }}:latest, ${{ inputs.repository }}:git-${{ inputs.git-hash }}
+        tags: ${{ inputs.aws-ecr-repository }}:latest, ${{ inputs.aws-ecr-repository }}:git-${{ inputs.git-hash }}
         build-args: ${{ inputs.build-arguments }}
         push: true
