@@ -1,0 +1,10 @@
+@import url("@dotkomonline/config/tailwind.css");
+@import url("@fontsource/fraunces");
+@import url("@fontsource/poppins");
+
+@layer base {
+  :root {
+    --font-fraunces: "Fraunces", serif;
+    --font-poppins: "Poppins", sans-serif;
+  }
+}

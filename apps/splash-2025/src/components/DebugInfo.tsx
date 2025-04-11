@@ -1,3 +1,5 @@
+import { Text, Title } from "@dotkomonline/ui"
+
 export const DebugInfo = () => {
   return (
     <div>
@@ -21,15 +23,17 @@ export const DebugInfo = () => {
         </svg>
       </div>
       <div className="relative bg-[#FFFF] p-4 md:p-10 flex flex-col text-left md:px-20 max-sm: px-10">
-        <h1 className="text-xl md:text-2xl font-bold my-6 md:my-4">Har du opplevd noe ugreit?</h1>
-        <p className="mb-4 md:mb-10 text-base md:text-2xl">
+        <Title element="h1" className="text-xl md:text-2xl font-bold my-6 md:my-4">
+          Har du opplevd noe ugreit?
+        </Title>
+        <Text className="mb-4 md:mb-10 text-base md:text-2xl">
           Online har et eget uavhengig organ for varslingssaker som kan hjelpe med alt. Vi ønsker at alle skal ha det
           bra og føle seg trygge. Derfor håper vi at du tar kontakt dersom du har opplevd noe ubehagelig under
           fadderukene. Ser du at noen andre opplever noe ubehagelig er det viktig å huske på at du også har et ansvar
           for å si ifra. Vi tar imot alt, og om du er i tvil er det bare å sende oss en melding. Tar du kontakt med oss
           vil all informasjon behandles strengt konfidensielt. Vi kan bistå med alt fra en uformell prat til å hjelpe
           deg med å oppsøke profesjonell hjelp eller rådgivning.
-        </p>
+        </Text>
         <div className="flex flex-row justify-center items-center">
           <button
             type="button"

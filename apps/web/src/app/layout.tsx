@@ -1,15 +1,14 @@
+import { auth } from "@/auth"
+import { Footer } from "@/components/Footer/Footer"
+import { Navbar } from "@/components/Navbar/Navbar"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
-import "@dotkomonline/config/tailwind.css"
+import { SessionProvider } from "@dotkomonline/oauth2/react"
 import { cn } from "@dotkomonline/ui"
+import { ThemeProvider } from "next-themes"
 import { Fraunces, Poppins } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import "@mdxeditor/editor/style.css"
-import { auth } from "@/auth"
-import { Footer } from "@/components/Footer/Footer"
-import { Navbar } from "@/components/Navbar/Navbar"
-import { SessionProvider } from "@dotkomonline/oauth2/react"
-import { ThemeProvider } from "next-themes"
 
 export const metadata = {
   title: "Onlineweb 5",
