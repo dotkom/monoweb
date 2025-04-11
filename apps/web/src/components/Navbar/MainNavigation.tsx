@@ -11,7 +11,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./NavigationMenu"
-import type { MenuLink } from "./types"
+
+import type { MenuLink } from "@/components/Navbar/Navbar"
 
 export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => (
   <NavigationMenu className="ml-6 hidden w-min flex-1 justify-start md:flex">

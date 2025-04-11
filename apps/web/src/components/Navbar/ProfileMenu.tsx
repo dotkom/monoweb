@@ -41,7 +41,7 @@ export const ProfileMenu = () => {
           className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
           href="/api/auth/authorize"
         >
-          Log in
+          Logg inn
         </Button>
         <Button
           element="a"
@@ -49,7 +49,7 @@ export const ProfileMenu = () => {
           className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
           href="/api/auth/logout"
         >
-          Sign up
+          Bli medlem
         </Button>
       </>
     )
@@ -60,7 +60,7 @@ export const ProfileMenu = () => {
       <AvatarDropdown>
         <Avatar>
           <AvatarImage src={session.picture} alt="@rick" />
-          <AvatarFallback>PR</AvatarFallback>
+          <AvatarFallback>OW</AvatarFallback>
         </Avatar>
       </AvatarDropdown>
     </button>
@@ -70,39 +70,25 @@ export const ProfileMenu = () => {
 interface LinkDetail {
   label: string
   icon: string
-  shortcut?: string
   href?: string
 }
 const linkGroups: LinkDetail[][] = [
   [
     {
       icon: "tabler:user",
-      label: "Profil",
-      shortcut: "⇧⌘P",
-      href: "/profile",
-    },
-    {
-      icon: "tabler:credit-card",
-      label: "Saldo",
-      shortcut: "⌘B",
+      label: "Min profil",
       href: "/profile",
     },
     {
       icon: "tabler:settings",
       label: "Innstillinger",
-      shortcut: "⌘S",
       href: "/settings",
     },
   ],
   [
     {
-      icon: "tabler:device-desktop-analytics",
-      label: "Dashboard",
-    },
-    {
       icon: "tabler:adjustments",
       label: "Adminpanel",
-      shortcut: "⌘+T",
     },
   ],
   [
@@ -138,7 +124,6 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
                   <Link className="w-full" href={link.href ?? "#"}>
                     <Icon icon={link.icon} className="mr-2 h-4 w-4" />
                     <span>{link.label}</span>
-                    {link.shortcut && <DropdownMenuShortcut>{link.shortcut}</DropdownMenuShortcut>}
                   </Link>
                 </DropdownMenuItem>
               ))}
@@ -150,7 +135,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/api/auth/logout")}>
           <Icon icon="tabler:logout" className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>Logg ut</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -158,29 +143,32 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
+const items = [
+  {
+    theme: "light",
+    label: "Lysmodus",
+    icon: "tabler:sun",
+  },
+  {
+    theme: "dark",
+    label: "Nattemodus",
+    icon: "tabler:moon",
+  },
+  {
+    theme: "system",
+    label: "Systempreferanse",
+    icon: "tabler:device-desktop",
+  },
+] as const
+
 const ThemeMenuSub = () => {
   const { setTheme, theme } = useTheme()
-
-  const items: { theme: string; icon: string }[] = [
-    {
-      theme: "light",
-      icon: "tabler:sun",
-    },
-    {
-      theme: "dark",
-      icon: "tabler:moon",
-    },
-    {
-      theme: "system",
-      icon: "tabler:device-desktop",
-    },
-  ]
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
         <Icon icon="tabler:sun" className="mr-2 h-4 w-4" />
-        <span>Theme</span>
+        <span>Fargetema</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
@@ -188,7 +176,7 @@ const ThemeMenuSub = () => {
             {items.map((item) => (
               <DropdownMenuRadioItem className="cursor-pointer" value={item.theme} key={item.theme}>
                 <Icon icon={item.icon} className="mr-2 h-4 w-4" />
-                <span className="capitalize">{item.theme}</span>
+                <span>{item.label}</span>
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>

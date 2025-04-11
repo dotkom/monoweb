@@ -45,7 +45,7 @@ export function Button<E extends ElementType>({
 
 export const button = cva(
   [
-    "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40",
+    "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-40 font-poppins",
     "cursor-pointer appearance-none rounded-md",
     "focus:ring-2 focus:ring-blue-9 focus:outline-none",
     "transition-transform duration-150",

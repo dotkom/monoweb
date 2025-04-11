@@ -3,21 +3,17 @@
 import { Icon, cn } from "@dotkomonline/ui"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type React from "react"
+import type { FC } from "react"
 import { useEffect, useState } from "react"
 
-interface SettingsMenuItemProps {
-  menuItem: {
-    title: string
-    slug: string
-    icon: string
-  }
+export type SettingsMenuItemProps = {
+  title: string
+  slug: string
+  icon: string
 }
 
-export const SettingsMenuItem: React.FC<SettingsMenuItemProps> = ({ menuItem }) => {
+export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon }) => {
   const path = usePathname()
-  const { title, slug, icon } = menuItem
-
   const [isCurrent, setCurrent] = useState("")
 
   useEffect(() => {

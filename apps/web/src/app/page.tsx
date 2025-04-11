@@ -9,9 +9,9 @@ export default async function App() {
   const events = await server.event.recommended.query()
 
   return (
-    <div className="mt-8">
+    <section className="w-full">
       <CompanySplash className="hidden md:flex" />
-      <div className="flex scroll-m-20 justify-between border-b border-b-slate-7 pb-1 tracking-tight transition-colors">
+      <div className="flex scroll-m-20 justify-between pb-1 tracking-tight transition-colors">
         <Link href="/events" className="hidden text-3xl font-semibold hover:underline sm:block">
           Arrangementer
         </Link>
@@ -33,7 +33,6 @@ export default async function App() {
           />
         ))}
       </div>
-      <div className="h-screen" />
-    </div>
+    </section>
   )
 }
