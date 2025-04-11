@@ -13,6 +13,10 @@ on:
       - opened
       - synchronize
 
+concurrency:
+  group: deploy-${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'main-deployment' || github.sha }}
+  cancel-in-progress: true
+
 env:
   DEPLOYMENT_TARGET_HASH: ${{ github.sha }}
   DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
