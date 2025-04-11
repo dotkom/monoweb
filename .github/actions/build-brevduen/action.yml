@@ -26,7 +26,7 @@ runs:
         dockerfile: apps/brevduen/Dockerfile
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
-      if: ${{ inputs.deploy == true }}
+      if: ${{ inputs.deploy }}
       id: deploy
       with:
         aws-region: 'eu-north-1'
