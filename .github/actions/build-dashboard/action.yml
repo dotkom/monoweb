@@ -1,5 +1,8 @@
 name: Build & deploy monoweb/dashboard
 inputs:
+  git-hash:
+    description: 'Git hash to build'
+    required: true
   deploy:
     description: 'Deploy the built image to AWS ECS'
     required: false
@@ -27,7 +30,7 @@ runs:
         aws-region: 'eu-north-1'
         aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-dashboard-ci-role
         aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/dashboard
-        git-hash: ${{ github.sha }}
+        git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/dashboard/Dockerfile
         build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
         push: ${{ inputs.deploy }}

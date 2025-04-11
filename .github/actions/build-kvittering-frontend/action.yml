@@ -1,5 +1,8 @@
 name: Build & deploy monoweb/kvittering-frontend
 inputs:
+  git-hash:
+    description: 'Git hash to build'
+    required: true
   deploy:
     description: 'Deploy the built site to AWS S3'
     required: false
@@ -22,6 +25,7 @@ runs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 1
+        ref: ${{ inputs.git-hash }}
     - uses: pnpm/action-setup@v2
       with:
         version: 9.15.7
@@ -32,7 +36,8 @@ runs:
     - name: Build frontend
       shell: bash
       working-directory: apps/kvittering-frontend
-      run: doppler run -p monoweb-kvittering-frontend -c prd -- pnpm build
+      run: pnpm build
+      env: ${{ steps.acquire-secrets.outputs.secrets }}
 
     - name: Deploy to S3
       if: ${{ inputs.deploy == 'true' }}

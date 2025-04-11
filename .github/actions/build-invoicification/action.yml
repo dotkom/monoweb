@@ -1,5 +1,8 @@
 name: Build & deploy monoweb/invoicification
 inputs:
+  git-hash:
+    description: 'Git hash to build'
+    required: true
   deploy:
     description: 'Deploy the built image to AWS ECS'
     required: false
@@ -22,7 +25,7 @@ runs:
         aws-region: 'eu-north-1'
         aws-iam-role: arn:aws:iam::891459268445:role/monoweb-${{ inputs.environment }}-invoicification-ci-role
         aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/invoicification
-        git-hash: ${{ github.sha }}
+        git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/invoicification/Dockerfile
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy

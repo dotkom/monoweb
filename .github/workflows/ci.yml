@@ -13,6 +13,9 @@ on:
       - opened
       - synchronize
 
+env:
+  DEPLOYMENT_TARGET_HASH: ${{ github.sha }}
+
 permissions:
   id-token: write   
   contents: read
@@ -62,6 +65,7 @@ jobs:
         with:
           deploy: false
           environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-dashboard:
     name: Build monoweb/dashboard
@@ -79,6 +83,7 @@ jobs:
         with:
           deploy: false
           environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-invoicification:
     name: Build monoweb/invoicification
@@ -96,6 +101,7 @@ jobs:
         with:
           deploy: false
           environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-backend:
     name: Build monoweb/kvittering-backend
@@ -112,7 +118,7 @@ jobs:
       - uses: ./.github/actions/build-kvittering-backend
         with:
           deploy: false
-          environment: prod
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-frontend:
     name: Build monoweb/kvittering-frontend
@@ -129,7 +135,7 @@ jobs:
       - uses: ./.github/actions/build-kvittering-frontend
         with:
           deploy: false
-          environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rif:
     name: Build monoweb/rif
@@ -147,6 +153,7 @@ jobs:
         with:
           deploy: false
           environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
     name: Build monoweb/rpc
@@ -164,6 +171,7 @@ jobs:
         with:
           deploy: false
           environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-splash:
     name: Build monoweb/splash-2025
@@ -180,7 +188,7 @@ jobs:
       - uses: ./.github/actions/build-splash-2025
         with:
           deploy: false
-          environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-web:
     name: Build monoweb/web
@@ -198,3 +206,4 @@ jobs:
         with:
           deploy: false
           environment: staging
+          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
