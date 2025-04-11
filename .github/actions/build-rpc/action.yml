@@ -26,7 +26,7 @@ runs:
         dockerfile: apps/rpc/Dockerfile
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
-      if: ${{ inputs.deploy }}
+      if: ${{ inputs.deploy == 'true' }}
       id: deploy
       with:
         aws-region: 'eu-north-1'

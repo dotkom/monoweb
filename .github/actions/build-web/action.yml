@@ -32,7 +32,7 @@ runs:
         build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
-      if: ${{ inputs.deploy }}
+      if: ${{ inputs.deploy == 'true' }}
       id: deploy
       with:
         aws-region: 'eu-north-1'
