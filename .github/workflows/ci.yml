@@ -3,7 +3,7 @@
 # It is responsible for verifying linting, type checking, and building packages
 # in the entire monorepo.
 
-name: Integration Pipeline
+name: CI&CD
 on:
   push:
     branches:
@@ -51,7 +51,7 @@ jobs:
         name: Run TypeScript type checker
 
   build-brevduen:
-    name: Build monoweb/brevduen
+    name: Deploy brevduen
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -69,7 +69,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-dashboard:
-    name: Build monoweb/dashboard
+    name: Deploy dashboard
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -87,7 +87,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-invoicification:
-    name: Build monoweb/invoicification
+    name: Deploy invoicification
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -105,7 +105,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-backend:
-    name: Build monoweb/kvittering-backend
+    name: Deploy kvittering-backend
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -122,7 +122,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-frontend:
-    name: Build monoweb/kvittering-frontend
+    name: Deploy kvittering-frontend
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -139,7 +139,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rif:
-    name: Build monoweb/rif
+    name: Deploy rif
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -157,7 +157,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
-    name: Build monoweb/rpc
+    name: Deploy rpc
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -175,7 +175,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-splash:
-    name: Build monoweb/splash-2025
+    name: Deploy splash-2025
     runs-on: ubuntu-24.04
     needs:
       - check
@@ -192,7 +192,7 @@ jobs:
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-web:
-    name: Build monoweb/web
+    name: Deploy web
     runs-on: ubuntu-24.04
     needs:
       - check
