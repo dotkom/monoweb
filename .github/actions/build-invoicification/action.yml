@@ -15,7 +15,7 @@ runs:
       with:
         fetch-depth: 1
         sparse-checkout: '.github'
-        sparse-checkout-cone-mode: 'true'
+        sparse-checkout-cone-mode: true
     - uses: ./.github/actions/internal/docker-build
       id: build
       with:

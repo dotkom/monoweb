@@ -57,11 +57,11 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
+          sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-brevduen
         with:
-          deploy: 'false'
-          environment: 'staging'
+          deploy: false
+          environment: staging
 
   build-dashboard:
     name: Build monoweb/dashboard
@@ -74,11 +74,11 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
+          sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-dashboard
         with:
-          deploy: 'false'
-          environment: 'staging'
+          deploy: false
+          environment: staging
 
   build-invoicification:
     name: Build monoweb/invoicification
@@ -91,11 +91,11 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
+          sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-invoicification
         with:
-          deploy: 'false'
-          environment: 'staging'
+          deploy: false
+          environment: staging
 
   build-rif:
     name: Build monoweb/rif
@@ -108,11 +108,11 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
+          sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rif
         with:
-          deploy: 'false'
-          environment: 'staging'
+          deploy: false
+          environment: staging
 
   build-rpc:
     name: Build monoweb/rpc
@@ -125,11 +125,11 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
+          sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rpc
         with:
-          deploy: 'false'
-          environment: 'staging'
+          deploy: false
+          environment: staging
 
   build-web:
     name: Build monoweb/web
@@ -142,8 +142,8 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: '.github'
-          sparse-checkout-cone-mode: 'true'
+          sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
         with:
-          deploy: 'false'
-          environment: 'staging'
+          deploy: false
+          environment: staging
