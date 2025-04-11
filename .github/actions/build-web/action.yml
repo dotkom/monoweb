@@ -1,0 +1,39 @@
+name: Docker build for monoweb/web
+description: Docker build support for web, requires GitHub OIDC Token.
+inputs:
+  git-hash:
+    description: 'Git sha256 hash to build'
+    required: true
+  build-arguments:
+    description: 'Docker build arguments'
+    required: false
+  repository:
+    description: 'AWS ECR Repository to push to. Will create :latest and :sha tags'
+    required: true
+  iam-role:
+    description: 'IAM role to assume for AWS ECR push'
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-north-1
+        role-to-assume: ${{ inputs.iam-role }}
+    - name: Login to AWS ECR
+      uses: aws-actions/amazon-ecr-login@v2
+    - name: Check out provided ref
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.git-hash }}
+    - name: Build docker image
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        context: .
+        file: apps/web/Dockerfile
+        tags: ${{ inputs.tag }}:latest, ${{ inputs.tag }}:${{ inputs.git-hash }}
+        build-args: ${ inputs.build-arguments }
+        push: true
