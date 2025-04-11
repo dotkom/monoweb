@@ -15,6 +15,7 @@ on:
 
 env:
   DEPLOYMENT_TARGET_HASH: ${{ github.sha }}
+  DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
 permissions:
   id-token: write   
@@ -81,7 +82,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-dashboard
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: staging
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
@@ -99,7 +100,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-invoicification
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: staging
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
@@ -117,7 +118,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-kvittering-backend
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-frontend:
@@ -134,7 +135,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-kvittering-frontend
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rif:
@@ -151,7 +152,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rif
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: staging
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
@@ -169,7 +170,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rpc
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: staging
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
@@ -187,7 +188,7 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-splash-2025
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-web:
@@ -204,6 +205,6 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
         with:
-          deploy: false
+          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
           environment: staging
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
