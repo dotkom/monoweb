@@ -38,7 +38,7 @@ runs:
       shell: bash
       run: |
         doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
-          jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"") | .[]' | \
+          jq -r 'to_entries | map("echo \"::add-mask::\(.value.computed)\"\necho \(.key)=\(.value.computed) >> $GITHUB_ENV") | .[]' | \
           bash
         echo "SECRETS<<EOF" >> $GITHUB_OUTPUT
         doppler secrets --project "${{ inputs.project }}" --config "${{ inputs.config }}" --json | \
