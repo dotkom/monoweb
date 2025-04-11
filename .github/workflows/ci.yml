@@ -79,7 +79,8 @@ jobs:
           aws-iam-role: arn:aws:iam::891459268445:role/MonowebStagingWebCIRole
           aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/staging/web
           git-hash: ${{ github.sha }}
-          build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
+          build-arguments: |
+            ${{ steps.acquire-secrets.outputs.secrets }}
       - uses: ./.github/actions/aws-ecs-deploy
         id: deploy
         with:
