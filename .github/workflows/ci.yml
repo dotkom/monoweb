@@ -61,8 +61,11 @@ jobs:
     needs:
       - check
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       # Web requires build-time secrets from Doppler
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: get-oidc-token
         with:
           script: |
