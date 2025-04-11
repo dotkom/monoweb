@@ -36,7 +36,7 @@ runs:
     - name: Build frontend
       shell: bash
       working-directory: apps/splash-2025
-      run: pnpm build
+      run: pnpm install && pnpm build
 
     - name: Deploy to S3
       if: ${{ inputs.deploy == 'true' }}
