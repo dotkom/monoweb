@@ -34,6 +34,6 @@ runs:
         platforms: linux/amd64
         context: .
         file: apps/web/Dockerfile
-        tags: ${{ inputs.tag }}:latest, ${{ inputs.tag }}:${{ inputs.git-hash }}
+        tags: ${{ inputs.tag }}:latest, ${{ inputs.tag }}:git-${{ inputs.git-hash }}
         build-args: ${ inputs.build-arguments }
         push: true
