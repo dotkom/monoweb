@@ -1,0 +1,71 @@
+name: Build & deploy monoweb/splash-2025
+inputs:
+  git-hash:
+    description: 'Git hash to build'
+    required: true
+  deploy:
+    description: 'Deploy the built site to AWS S3'
+    required: false
+    default: false
+runs:
+  using: composite
+  steps:
+    - name: Install local GitHub Actions
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        sparse-checkout: '.github'
+        sparse-checkout-cone-mode: true
+    - uses: ./.github/actions/internal/doppler-secrets
+      id: acquire-secrets
+      with:
+        project: monoweb-splash-frontend
+        config: prod
+
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.git-hash }}
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 9.15.7
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22.14.0
+        cache: 'pnpm'
+    - name: Build frontend
+      shell: bash
+      working-directory: apps/splash-2025
+      run: pnpm install && pnpm build
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-north-1
+        role-to-assume: arn:aws:iam::891459268445:role/monoweb-prod-splash-frontend-ci-role
+    - name: Deploy to S3
+      if: ${{ inputs.deploy == 'true' }}
+      shell: bash
+      run: |
+        aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.html" \
+          --content-type "text/html"
+        aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.css" \
+          --content-type "text/css"
+        aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.js" \
+          --content-type "application/javascript"
+        aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.svg" \
+          --content-type "image/svg+xml"
+        aws s3 sync apps/splash-2025/dist "s3://splash.online.ntnu.no" \
+          --exclude "*.html" \
+          --exclude "*.css" \
+          --exclude "*.js" \
+          --exclude "*.svg"
+        aws cloudfront create-invalidation --distribution-id E3J930LEDCHBY3 --paths '/*'

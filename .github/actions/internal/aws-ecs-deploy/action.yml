@@ -1,0 +1,51 @@
+name: Deploy new task definition to AWS ECS
+description: |
+  Render a new task definition with updated images and deploy it to AWS ECS.
+  
+  This is done by acquiring the active task definition for the service,
+  re-rendering it with the new image tags, and then re-deploying the service.
+inputs:
+  service-name:
+    description: The name of the ECS service to deploy to
+    required: true
+  cluster-name:
+    description: The name of the ECS cluster to deploy to
+    required: true
+  container-name:
+    description: The name of the container in the task definition to update
+    required: true
+  image:
+    description: The image tag to use for the container
+    required: true
+  aws-task-definition-arn:
+    description: The ARN of the ECS task definition to deploy
+    required: true
+  aws-region:
+    description: The AWS region to deploy to
+    required: true
+  aws-iam-role:
+    description: The IAM role to assume for AWS ECS deployment
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: ${{ inputs.aws-iam-role }}
+    - name: Render new task definition revision
+      id: render-task-definition
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        container-name: ${{ inputs.container-name }}
+        task-definition-arn: ${{ inputs.aws-task-definition-arn }}
+        image: ${{ inputs.image }}
+    - name: Deploy new task definition
+      id: deploy-task-definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        service: ${{ inputs.service-name }}
+        cluster: ${{ inputs.cluster-name }}
+        task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+        wait-for-service-stability: true
