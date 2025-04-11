@@ -97,6 +97,40 @@ jobs:
           deploy: false
           environment: staging
 
+  build-kvittering-backend:
+    name: Build monoweb/kvittering-backend
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-kvittering-backend
+        with:
+          deploy: false
+          environment: prod
+
+  build-kvittering-frontend:
+    name: Build monoweb/kvittering-frontend
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-kvittering-frontend
+        with:
+          deploy: false
+          environment: staging
+
   build-rif:
     name: Build monoweb/rif
     runs-on: ubuntu-24.04
@@ -131,6 +165,23 @@ jobs:
           deploy: false
           environment: staging
 
+  build-splash:
+    name: Build monoweb/splash-2025
+    runs-on: ubuntu-24.04
+    needs:
+      - check
+    steps:
+      - name: Install local GitHub Actions
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: '.github'
+          sparse-checkout-cone-mode: true
+      - uses: ./.github/actions/build-splash-2025
+        with:
+          deploy: false
+          environment: staging
+
   build-web:
     name: Build monoweb/web
     runs-on: ubuntu-24.04
@@ -145,5 +196,5 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
         with:
-          deploy: true
+          deploy: false
           environment: staging

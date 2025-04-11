@@ -1,0 +1,65 @@
+name: Build & deploy monoweb/kvittering-frontend
+inputs:
+  deploy:
+    description: 'Deploy the built site to AWS S3'
+    required: false
+    default: false
+  environment:
+    description: 'Environment to deploy to. Only required if deploy is true'
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Install local GitHub Actions
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        sparse-checkout: '.github'
+        sparse-checkout-cone-mode: true
+    - uses: ./.github/actions/internal/doppler-secrets
+      id: acquire-secrets
+      with:
+        project: monoweb-kvittering-frontend
+        config: ${{ inputs.environment }}
+
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 9.15.7
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22.14.0
+        cache: 'pnpm'
+    - name: Build frontend
+      shell: bash
+      working-directory: apps/kvittering-frontend
+      run: doppler run -p monoweb-kvittering-frontend -c prd -- pnpm build
+
+    - name: Deploy to S3
+      if: ${{ inputs.deploy == 'true' }}
+      shell: bash
+      run: |
+        aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.html" \
+          --content-type "text/html"
+        aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.css" \
+          --content-type "text/css"
+        aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.js" \
+          --content-type "application/javascript"
+        aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
+          --exclude "*" \
+          --include "*.svg" \
+          --content-type "image/svg+xml"
+        aws s3 sync apps/kvittering-frontend/dist "s3://kvittering.online.ntnu.no" \
+          --exclude "*.html" \
+          --exclude "*.css" \
+          --exclude "*.js" \
+          --exclude "*.svg"
+        aws cloudfront create-invalidation --distribution-id E60JFQ13PM11R --paths '/*'
