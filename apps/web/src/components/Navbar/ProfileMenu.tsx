@@ -1,5 +1,6 @@
 "use client"
 
+import { env } from "@/env"
 import { useSession } from "@dotkomonline/oauth2/react"
 import {
   Avatar,
@@ -71,6 +72,7 @@ interface LinkDetail {
   label: string
   icon: string
   href?: string
+  newTab?: boolean
 }
 const linkGroups: LinkDetail[][] = [
   [
@@ -88,21 +90,28 @@ const linkGroups: LinkDetail[][] = [
   [
     {
       icon: "tabler:adjustments",
-      label: "Adminpanel",
+      label: "Dashboard",
+      href: env.NEXT_PUBLIC_DASHBOARD_URL,
     },
   ],
   [
     {
       icon: "tabler:mail-forward",
       label: "Kontakt oss",
+      href: "mailto:hovedstyret@online.ntnu.no",
+      newTab: true,
     },
     {
       icon: "tabler:spy",
       label: "Opplevd noe ugreit?",
+      href: "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform",
+      newTab: true,
     },
     {
       icon: "tabler:bug",
       label: "Rapporter en feil",
+      href: "mailto:dotkom@online.ntnu.no",
+      newTab: true,
     },
   ],
 ]
@@ -121,7 +130,7 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
             <DropdownMenuGroup>
               {group.map((link) => (
                 <DropdownMenuItem key={link.label}>
-                  <Link className="w-full" href={link.href ?? "#"}>
+                  <Link className="w-full" href={link.href ?? "#"} target={link.newTab ? "_blank" : undefined}>
                     <Icon icon={link.icon} className="mr-2 h-4 w-4" />
                     <span>{link.label}</span>
                   </Link>
