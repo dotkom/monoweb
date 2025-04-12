@@ -5,5 +5,5 @@ export interface HeroProps {
 
 export const HeroData: HeroProps = {
   background: "bg-[url(/bakgrunnsBilde.jpg)]",
-  banner: "./Online_hvit.svg",
+  banner: "./online-logo-darkmode.svg",
 }
