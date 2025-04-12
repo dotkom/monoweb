@@ -3,7 +3,13 @@ import "./sentry"
 
 import { S3Client } from "@aws-sdk/client-s3"
 import { createPrisma } from "@dotkomonline/db"
-import { type AppRouter, type CreateContextOptions, appRouter, createContext } from "@dotkomonline/gateway-trpc"
+import {
+  type AppRouter,
+  type CreateContextOptions,
+  appRouter,
+  createContext,
+  AuthorizationPrincipal
+} from "@dotkomonline/gateway-trpc"
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
 import fastifyCors from "@fastify/cors"
@@ -45,7 +51,7 @@ const stripeAccounts = {
 const prisma = createPrisma(env.DATABASE_URL)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
-  const bearer = req.headers.authorization
+  const authorizationHeader = req.headers.authorization
   const context: Omit<CreateContextOptions, "principal"> = {
     s3Client,
     s3BucketName: env.AWS_S3_BUCKET,
@@ -53,12 +59,19 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
     managementClient: auth0Client,
     db: prisma,
   }
-  if (bearer !== undefined) {
-    const token = bearer.substring("Bearer ".length)
-    const principal = await jwtService.verify(token)
-    return createContext({ principal: principal.payload.sub ?? null, ...context })
+  if (authorizationHeader !== undefined) {
+    const bearer = authorizationHeader.substring("Bearer ".length)
+    const token = await jwtService.verify(bearer)
+    if (token.payload.sub === undefined) {
+      throw new Error("decoded a valid auth0 token with no sub claim");
+    }
+    const principal: AuthorizationPrincipal = {
+      subject: token.payload.sub,
+      // TODO: Populate the scopes once we have them declared in terraform
+      scopes: []
+    };
+    return createContext({ principal, ...context })
   }
-
   return createContext({
     principal: null,
     ...context,

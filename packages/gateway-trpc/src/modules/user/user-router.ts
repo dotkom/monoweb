@@ -1,17 +1,21 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { PrivacyPermissionsWriteSchema, UserSchema, UserWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { protectedProcedure, publicProcedure, requireAuthorizedOrThrow, t } from "../../trpc"
 
 export const userRouter = t.router({
   all: publicProcedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => ctx.userService.getAll(input.take, 0)),
-  get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => ctx.userService.getById(input)),
+  get: publicProcedure.input(UserSchema.shape.id).query(async ({ input, ctx }) => {
+    const user = await ctx.userService.getById(input)
+    requireAuthorizedOrThrow(ctx, "user.get", user)
+    return user
+  }),
   registerAndGet: protectedProcedure
     .input(UserSchema.shape.id)
     .mutation(async ({ input, ctx }) => ctx.userService.register(input)),
-  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.principal)),
+  getMe: protectedProcedure.query(async ({ ctx }) => ctx.userService.getById(ctx.principal.subject)),
   update: protectedProcedure
     .input(
       z.object({
