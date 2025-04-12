@@ -140,6 +140,10 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
       const logoutUrl = await service.createLogoutUrl(opts.host)
       const cookieHandle = await cookies()
       cookieHandle.delete(service.getOAuth2SessionCookieName())
+      cookieHandle.delete(service.getOAuth2StateCookieName())
+      cookieHandle.delete(service.getOAuth2VerifierCookieName())
+      cookieHandle.delete(service.getOAuth2NonceCookieName())
+      cookieHandle.delete(service.getOAuth2RedirectCookieName())
       return NextResponse.redirect(logoutUrl)
     },
     /** Read the current user session */
