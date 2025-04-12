@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3002 --turbo",
-    "build": "next build",
+    "build": "next build --turbo",
     "docker:build": "docker build -t dashboard:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
     "lint": "biome check . --write",
@@ -40,7 +40,7 @@
     "@trpc/tanstack-react-query": "11.0.0-rc.828",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
-    "next": "^15.2.3",
+    "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.48.2",
