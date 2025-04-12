@@ -38,7 +38,7 @@ ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT ${DOPPLER_ENVIRONMENT}
 ENV NEXT_PUBLIC_DOPPLER_CONFIG ${DOPPLER_CONFIG}
 
 RUN pnpm install --ignore-scripts
-RUN turbo run build --filter @dotkomonline/invoicification
+RUN pnpm run --filter @dotkomonline/invoicification build
 
 FROM base AS runner
 WORKDIR /app
