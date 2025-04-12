@@ -12,14 +12,21 @@ on:
     types:
       - opened
       - synchronize
+  workflow_dispatch:
+    inputs:
+      git-hash:
+        description: 'Git hash to release (leave empty to use latest on main)'
+        required: false
+        default: ${{ github.sha }}
 
 concurrency:
   group: deploy-${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'main-deployment' || github.sha }}
   cancel-in-progress: true
 
 env:
-  DEPLOYMENT_TARGET_HASH: ${{ github.sha }}
   DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  DEPLOYMENT_TRIGGER_RELEASE: ${{ github.event_name == 'workflow_dispatch' }}
+  DEPLOYMENT_TARGET_HASH: ${{ github.event.inputs.git-hash || github.sha }}
 
 permissions:
   id-token: write   
@@ -69,7 +76,7 @@ jobs:
       - uses: ./.github/actions/build-brevduen
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: ${{ env.DEPLOYMENT_TRIGGER_RELEASE && 'prod' || 'staging' }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-dashboard:
@@ -87,7 +94,7 @@ jobs:
       - uses: ./.github/actions/build-dashboard
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: ${{ env.DEPLOYMENT_TRIGGER_RELEASE && 'prod' || 'staging' }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-invoicification:
@@ -105,7 +112,7 @@ jobs:
       - uses: ./.github/actions/build-invoicification
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: ${{ env.DEPLOYMENT_TRIGGER_RELEASE && 'prod' || 'staging' }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-backend:
@@ -157,7 +164,7 @@ jobs:
       - uses: ./.github/actions/build-rif
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: ${{ env.DEPLOYMENT_TRIGGER_RELEASE && 'prod' || 'staging' }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
@@ -175,7 +182,7 @@ jobs:
       - uses: ./.github/actions/build-rpc
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: ${{ env.DEPLOYMENT_TRIGGER_RELEASE && 'prod' || 'staging' }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-splash:
@@ -210,5 +217,5 @@ jobs:
       - uses: ./.github/actions/build-web
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: ${{ env.DEPLOYMENT_TRIGGER_RELEASE && 'prod' || 'staging' }}
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
