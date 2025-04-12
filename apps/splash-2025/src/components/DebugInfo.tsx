@@ -5,7 +5,7 @@ export const DebugInfo = () => {
     <div>
       <div className="relative mt-20 md:mt-60">
         <img
-          src="/Online_bla_o.svg"
+          src="/online-logo-o.svg"
           alt="Online logo"
           className="absolute left-[68%] top-[40%] transform -translate-x-1/2 z-10 w-20 xl:w-60 lg:w-48 md:w-40"
         />

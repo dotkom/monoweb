@@ -4,6 +4,7 @@ import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
+import { OnlineLogo } from "../atoms/OnlineLogo"
 
 export type MenuItem = {
   title: string
@@ -100,7 +101,7 @@ export const Navbar: FC = () => {
       <div className="flex mx-auto w-full max-w-screen-xl">
         <MobileNavigation links={links} />
         <Link href="/" className="hidden lg:flex items-center">
-          <OnlineIcon className="fill-brand h-[24px] dark:fill-white" />
+          <OnlineIcon className="h-[24px]" />
         </Link>
         <MainNavigation links={links} />
         <div className="flex flex-grow items-center justify-end md:flex-grow-0">

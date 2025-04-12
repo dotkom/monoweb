@@ -9,10 +9,43 @@ import { Fraunces, Poppins } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import "@mdxeditor/editor/style.css"
+import type { Metadata } from "next"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Onlineweb 5",
   description: "Linjeforeningen Onlines nettsider",
+  icons: {
+    icon: [
+      {
+        url: "/online-logo-o.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/online-logo-o-darkmode.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    shortcut: [
+      {
+        url: "/online-logo-o.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/online-logo-o-darkmode.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    apple: [
+      {
+        url: "/online-logo-o.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/online-logo-o-darkmode.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+  },
 }
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
