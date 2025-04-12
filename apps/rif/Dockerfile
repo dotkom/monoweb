@@ -1,5 +1,12 @@
 FROM node:22-alpine AS base
 
+ARG NEXT_PUBLIC_SENTRY_DSN
+ARG EMAIL_ENDPOINT
+ARG EMAIL_TOKEN
+ARG SERVICE_ACCOUNT
+ARG SPREADSHEET_ID
+ARG SENTRY_DSN
+
 FROM base AS builder
 WORKDIR /app
 
@@ -13,10 +20,16 @@ RUN turbo prune @dotkomonline/rif --docker
 FROM base AS installer
 WORKDIR /app
 
-ENV DOCKER_BUILD=1
-
 RUN npm install -g pnpm@9.15.5 turbo@2.0.14 --ignore-scripts
 COPY --from=builder /app/out/full .
+
+ENV NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+ENV EMAIL_ENDPOINT=${EMAIL_ENDPOINT}
+ENV EMAIL_TOKEN=${EMAIL_TOKEN}
+ENV SERVICE_ACCOUNT=${SERVICE_ACCOUNT}
+ENV SPREADSHEET_ID=${SPREADSHEET_ID}
+ENV SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+
 RUN pnpm install --ignore-scripts
 RUN turbo run build --filter @dotkomonline/rif
 

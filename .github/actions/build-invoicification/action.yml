@@ -19,6 +19,11 @@ runs:
         fetch-depth: 1
         sparse-checkout: '.github'
         sparse-checkout-cone-mode: true
+    - uses: ./.github/actions/internal/doppler-secrets
+      id: acquire-secrets
+      with:
+        project: monoweb-invoicification
+        config: ${{ inputs.environment }}
     - uses: ./.github/actions/internal/docker-build
       id: build
       with:
@@ -27,6 +32,7 @@ runs:
         aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/${{ inputs.environment }}/invoicification
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/invoicification/Dockerfile
+        build-arguments: ${{ steps.acquire-secrets.outputs.secrets }}
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}
