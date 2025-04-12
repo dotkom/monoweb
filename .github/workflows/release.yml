@@ -1,28 +1,24 @@
-# The main integration pipeline
+# Perform a full release of the applications in the monorepo
 #
-# It is responsible for verifying linting, type checking, and building packages
-# in the entire monorepo.
+# This does not account for splash/kvittering as these are deployed directly to prod on push
 
-name: CI & CD
+name: Manual Release
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types:
-      - opened
-      - synchronize
+  workflow_dispatch:
+    inputs:
+      git-hash:
+        description: 'Git hash to release (leave empty to use latest on main)'
+        required: false
 
 concurrency:
-  group: deploy-${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'main-deployment' || github.sha }}
+  group: production
   cancel-in-progress: true
 
 env:
-  DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
   DEPLOYMENT_TARGET_HASH: ${{ github.event.inputs.git-hash || github.sha }}
 
 permissions:
-  id-token: write   
+  id-token: write
   contents: read
 jobs:
   # The "check" job is responsible for verifying the minimum requirements to
@@ -68,8 +64,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-brevduen
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          deploy: true
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-dashboard:
@@ -86,8 +82,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-dashboard
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          deploy: true
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-invoicification:
@@ -104,42 +100,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-invoicification
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-kvittering-backend:
-    name: kvittering-backend
-    runs-on: ubuntu-24.04
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-kvittering-backend
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-kvittering-frontend:
-    name: kvittering-frontend
-    runs-on: ubuntu-24.04
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-kvittering-frontend
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
+          deploy: true
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rif:
@@ -156,8 +118,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rif
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          deploy: true
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
@@ -174,25 +136,8 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-rpc
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
-
-  build-splash:
-    name: splash-2025
-    runs-on: ubuntu-24.04
-    needs:
-      - check
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-splash-2025
-        with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
+          deploy: true
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-web:
@@ -209,6 +154,6 @@ jobs:
           sparse-checkout-cone-mode: true
       - uses: ./.github/actions/build-web
         with:
-          deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          deploy: true
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
