@@ -8,6 +8,15 @@ export type AnySpec = Record<
   | import("zod").ZodOptional<import("zod").ZodString>
 >
 
+export type DopplerEnvironmentSpec = {
+  DOPPLER_PROJECT: import("zod").ZodOptional<import("zod").ZodString>
+  DOPPLER_ENVIRONMENT: import("zod").ZodOptional<import("zod").ZodString>
+  DOPPLER_CONFIG: import("zod").ZodOptional<import("zod").ZodString>
+  NEXT_PUBLIC_DOPPLER_PROJECT: import("zod").ZodOptional<import("zod").ZodString>
+  NEXT_PUBLIC_DOPPLER_ENVIRONMENT: import("zod").ZodOptional<import("zod").ZodString>
+  NEXT_PUBLIC_DOPPLER_CONFIG: import("zod").ZodOptional<import("zod").ZodString>
+}
+
 export type CreateEnvironmentOptions = {
   env: NodeJS.ProcessEnv
   skipValidation?: boolean
@@ -22,6 +31,7 @@ export type CreateEnvironmentOptions = {
 export declare function createEnvironment<TSpec extends AnySpec>(
   schema: TSpec,
   opts: CreateEnvironmentOptions
-): import("zod").infer<import("zod").ZodObject<TSpec>>
+): import("zod").infer<import("zod").ZodObject<TSpec>> &
+  import("zod").infer<import("zod").ZodObject<DopplerEnvironmentSpec>>
 
 export declare const variable: import("zod").ZodString
