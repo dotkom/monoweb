@@ -139,7 +139,14 @@ export function createAuthenticationHandler(service: OAuth2Service, opts: Authen
     logout: async function logout(_: NextRequest): Promise<NextResponse> {
       const logoutUrl = await service.createLogoutUrl(opts.host)
       const cookieHandle = await cookies()
-      cookieHandle.delete(service.getOAuth2SessionCookieName())
+      cookieHandle.set(service.getOAuth2SessionCookieName(), "", {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        expires: new Date(0),
+        domain: getHostname(service.getHost()),
+        secure: service.isClientOnHttps(),
+      })
       return NextResponse.redirect(logoutUrl)
     },
     /** Read the current user session */

@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEPLOYMENT_TRIGGER_PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  DEPLOYMENT_TRIGGER_PUSH: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || true }}
   DEPLOYMENT_TARGET_HASH: ${{ github.event.inputs.git-hash || github.sha }}
 
 permissions:
