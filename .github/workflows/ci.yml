@@ -17,7 +17,6 @@ on:
       git-hash:
         description: 'Git hash to release (leave empty to use latest on main)'
         required: false
-        default: ${{ github.sha }}
 
 concurrency:
   group: deploy-${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'main-deployment' || github.sha }}
