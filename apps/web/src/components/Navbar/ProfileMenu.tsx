@@ -88,7 +88,8 @@ const linkGroups: LinkDetail[][] = [
   [
     {
       icon: "tabler:adjustments",
-      label: "Adminpanel",
+      label: "Dashboard",
+      href: env.NEXT_PUBLIC_DASHBOARD_URL,
     },
   ],
   [

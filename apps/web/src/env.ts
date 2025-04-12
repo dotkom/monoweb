@@ -8,6 +8,7 @@ export const env = createEnvironment(
     AUTH_SECRET: variable,
     NEXT_PUBLIC_ORIGIN: variable,
     NEXT_PUBLIC_RPC_HOST: variable,
+    NEXT_PUBLIC_DASHBOARD_URL: variable,
     RPC_HOST: variable,
     SIGNING_KEY: variable,
   },
@@ -15,6 +16,7 @@ export const env = createEnvironment(
     env: {
       ...process.env,
       NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
+      NEXT_PUBLIC_DASHBOARD_URL: process.env.NEXT_PUBLIC_DASHBOARD_URL,
       NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
     },
     // Web should also validate env at build time
