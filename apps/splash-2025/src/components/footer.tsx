@@ -1,4 +1,5 @@
 import { FooterWave } from "@/components/icons/FooterWave.tsx"
+import { Text, Title } from "@dotkomonline/ui"
 import type { ReactNode } from "react"
 import { SoMeLinks } from "./someLinks"
 
@@ -9,13 +10,15 @@ export const Footer = ({ sponsorLogo }: { sponsorLogo?: ReactNode }) => {
         <FooterWave color="#C1842E" className="size-[135%]" />
       </div>
       <div className="bg-[#C1842E] flex flex-col items-center pb-4">
-        <h5 className="text-4xl m-3 mt-0">Har du noen spørsmål?</h5>
-        <p className="text-xl text-center mx-4">
+        <Title element="h3" className="text-4xl m-3 mt-0">
+          Har du noen spørsmål?
+        </Title>
+        <Text className="text-xl text-center mx-4">
           Dersom du lurer på noe, ikke nøl med å ta kontakt! Du kan nå oss på{" "}
           <a href="mailto:kontakt@online.ntnu.no" className="underline">
             kontakt@online.ntnu.no
           </a>
-        </p>
+        </Text>
         <SoMeLinks />
       </div>
 

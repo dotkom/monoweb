@@ -1,9 +1,11 @@
+import { Text, Title } from "@dotkomonline/ui"
+
 export const LinjeforeningInfo = () => {
   return (
     <div>
       <div className="relative text-white p-4 md:p-10 flex flex-col text-left md:px-20 max-sm: px-10">
-        <h2 className="text-xl md:text-2xl font-bold my-6 md:my-4"> Bli aktiv i linjeforeningen!</h2>
-        <p className="mb-4 md:mb-10 text-base md:text-2xl">
+        <Title className="text-xl md:text-2xl font-bold my-6 md:my-4"> Bli aktiv i linjeforeningen!</Title>
+        <Text className="mb-4 md:mb-10 text-base md:text-2xl">
           Online er linjeforeningen for alle som studerer informatikk. Gå videre til{" "}
           <a href="https://online.ntnu.no/" className="underline text-accent-9">
             hovednettsiden
@@ -23,7 +25,7 @@ export const LinjeforeningInfo = () => {
           vil glemme. Vi tilbyr utfordrende og spennende verv i et meget sosialt miljø med stor takhøyde.
           <br />
           Les mer om de ulike komiteene og send inn din søknad på opptakssiden vår i lenken under.
-        </p>
+        </Text>
       </div>
       <div className="flex flex-row justify-center items-center mb-80">
         <button
