@@ -16,7 +16,7 @@ on:
     inputs:
       git-hash:
         description: 'Git hash to release (leave empty to use latest on main)'
-        required: true
+        required: false
         default: ${{ github.sha }}
 
 concurrency:
