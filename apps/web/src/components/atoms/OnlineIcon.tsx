@@ -1,6 +1,6 @@
-import type { FC } from "react"
-import Image, { type ImageProps } from "next/image"
 import { cn } from "@dotkomonline/ui"
+import Image, { type ImageProps } from "next/image"
+import type { FC } from "react"
 
 export type OnlineIconProps = Omit<ImageProps, "src" | "alt"> & {
   size?: number

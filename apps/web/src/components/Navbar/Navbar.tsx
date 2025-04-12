@@ -4,7 +4,6 @@ import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { OnlineLogo } from "../atoms/OnlineLogo"
 
 export type MenuItem = {
   title: string
