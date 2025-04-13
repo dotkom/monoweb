@@ -72,7 +72,7 @@ interface LinkDetail {
   label: string
   icon: string
   href?: string
-  newTab?: boolean
+  openInNewTab?: boolean
 }
 const linkGroups: LinkDetail[][] = [
   [
@@ -99,19 +99,19 @@ const linkGroups: LinkDetail[][] = [
       icon: "tabler:mail-forward",
       label: "Kontakt oss",
       href: "mailto:hovedstyret@online.ntnu.no",
-      newTab: true,
+      openInNewTab: true,
     },
     {
       icon: "tabler:spy",
       label: "Opplevd noe ugreit?",
       href: "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform",
-      newTab: true,
+      openInNewTab: true,
     },
     {
       icon: "tabler:bug",
       label: "Rapporter en feil",
       href: "mailto:dotkom@online.ntnu.no",
-      newTab: true,
+      openInNewTab: true,
     },
   ],
 ]
