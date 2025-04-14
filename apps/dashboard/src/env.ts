@@ -12,6 +12,8 @@ export const env = createEnvironment(
     NEXT_PUBLIC_ORIGIN: variable,
     NEXT_PUBLIC_RPC_HOST: variable,
     NEXT_PUBLIC_SENTRY_DSN: variable.optional(),
+    // Feature toggle for uploading files to S3. If disabled, uploads are faked and replaced with static URL
+    S3_UPLOAD_ENABLED: variable.default("false"),
   },
   {
     env: {
@@ -19,7 +21,9 @@ export const env = createEnvironment(
       NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
       NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
       NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+      S3_UPLOAD_ENABLED: process.env.S3_UPLOAD_ENABLED,
     },
+
     // Dashboard should also validate env at build time
     skipValidation: false,
   }
