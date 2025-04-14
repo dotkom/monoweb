@@ -23,6 +23,7 @@
     "test": "turbo run test",
     "test:it": "turbo run test:it",
     "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/invoicification -F @dotkomonline/rif exec doppler run --preserve-env pnpm run dev",
+    "dev:core-web": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "prisma": "pnpm -F @dotkomonline/db prisma",
     "generate": "pnpm -F @dotkomonline/db generate",
     "migrate:dev": "pnpm -F @dotkomonline/db migrate",
