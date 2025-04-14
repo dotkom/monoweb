@@ -12,6 +12,7 @@ export const env = createEnvironment(
     NEXT_PUBLIC_ORIGIN: variable,
     NEXT_PUBLIC_RPC_HOST: variable,
     NEXT_PUBLIC_SENTRY_DSN: variable.optional(),
+    S3_UPLOAD_ENABLED: variable,
   },
   {
     env: {
@@ -19,7 +20,12 @@ export const env = createEnvironment(
       NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
       NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
       NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+
+    // Feature toggle for uploading files to S3
+    // Defaulted to false.
+    S3_UPLOAD_ENABLED: process.env.S3_UPLOAD_ENABLED ?? "false", 
     },
+
     // Dashboard should also validate env at build time
     skipValidation: false,
   }

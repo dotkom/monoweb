@@ -8,7 +8,6 @@ import { useS3UploadFile } from "../use-s3-upload-file"
 export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
   const close = () => context.closeModal(id)
   const create = useCreateOfflineMutation()
-  const upload = useS3UploadFile()
 
   const FormComponent = useOfflineWriteForm({
     onSubmit: async (data) => {
