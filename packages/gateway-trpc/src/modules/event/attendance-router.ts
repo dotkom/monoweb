@@ -60,7 +60,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.registerForEvent(ctx.principal, input.attendanceId, input.attendancePoolId)
+      ctx.attendeeService.registerForEvent(ctx.principal.subject, input.attendanceId, input.attendancePoolId)
     ),
 
   deregisterForEvent: protectedProcedure
@@ -69,7 +69,9 @@ export const attendanceRouter = t.router({
         attendanceId: AttendancePoolSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.deregisterForEvent(ctx.principal, input.attendanceId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendeeService.deregisterForEvent(ctx.principal.subject, input.attendanceId)
+    ),
 
   adminDeregisterForEvent: protectedProcedure
     .input(
