@@ -1,8 +1,8 @@
-import type { Event as EventInterface } from "@/data/timelineData"
+import type { EventProps } from "@/data/timelineData"
 import { Text, Title } from "@dotkomonline/ui"
 import type { FC } from "react"
 
-export const Event: FC<EventInterface> = ({ title, startDate, endDate, description }) => {
+export const Event: FC<EventProps> = ({ title, startDate, endDate, description }) => {
   return (
     <div>
       <Title element="h3">{title}</Title>

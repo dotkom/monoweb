@@ -1,15 +1,15 @@
 import { Text } from "@dotkomonline/ui"
 import type { ReactNode } from "react"
 
-export interface Event {
+export type EventProps = {
   title: string
   startDate: Date
   endDate: Date
   description: ReactNode
 }
 
-export interface TimeLineProps {
-  events: Event[] // This means that events is a list of objects with title, date and description
+export type TimeLineProps = {
+  events: EventProps[] // This means that events is a list of objects with title, date and description
 }
 
 const now = Date.now()
