@@ -105,7 +105,7 @@ const ProcessSection: FC = () => {
           <Fragment key={step}>
             <div className="mb-1 w-36 flex flex-col items-center z-10 py-3">
               <Circle size={700 / 15} color="bg-brand-lighter">
-                <span className="text-white font-bold text-background">{index + 1}</span>
+                <span className="text-black font-bold text-background">{index + 1}</span>
               </Circle>
               <span className="text-brand-lighter text-center text-xl font-semibold mt-9 md:mt-14">{step}</span>
             </div>
