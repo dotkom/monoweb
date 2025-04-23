@@ -23,12 +23,10 @@
     "clsx": "^2.0.0",
     "google-auth-library": "^9.6.3",
     "google-spreadsheet": "^4.1.1",
-    "import-in-the-middle": "^1.13.1",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.48.2",
-    "require-in-the-middle": "^7.5.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {

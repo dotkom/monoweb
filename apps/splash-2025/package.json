@@ -16,10 +16,8 @@
     "@fontsource/poppins": "^5.2.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "import-in-the-middle": "^1.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "require-in-the-middle": "^7.5.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"
   },
