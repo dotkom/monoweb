@@ -17,27 +17,31 @@ import { env } from "./env"
 
 const logger = getLogger("rpc")
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
-const oauthAudiences = env.OAUTH_AUDIENCES.split(",")
+const oauthAudiences = env.AUTH0_AUDIENCES.split(",")
 
-const jwtService = new JwtService(env.OAUTH_ISSUER, oauthAudiences)
+const jwtService = new JwtService(env.AUTH0_ISSUER, oauthAudiences)
 
 const s3Client = new S3Client({
   region: env.AWS_REGION,
 })
 
 const auth0Client = new ManagementClient({
-  domain: env.MANAGEMENT_TENANT_DOMAIN_ID,
-  clientId: env.MANAGEMENT_OAUTH_CLIENT_ID,
-  clientSecret: env.MANAGEMENT_OAUTH_CLIENT_SECRET,
+  domain: env.AUTH0_MGMT_TENANT,
+  clientId: env.AUTH0_CLIENT_ID,
+  clientSecret: env.AUTH0_CLIENT_SECRET,
 })
 const stripeAccounts = {
   trikom: {
-    stripe: new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" }),
+    stripe: new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, {
+      apiVersion: "2023-08-16",
+    }),
     publicKey: env.TRIKOM_STRIPE_PUBLIC_KEY,
     webhookSecret: env.TRIKOM_STRIPE_WEBHOOK_SECRET,
   },
   fagkom: {
-    stripe: new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, { apiVersion: "2023-08-16" }),
+    stripe: new Stripe(env.FAGKOM_STRIPE_SECRET_KEY, {
+      apiVersion: "2023-08-16",
+    }),
     publicKey: env.FAGKOM_STRIPE_PUBLIC_KEY,
     webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
@@ -56,7 +60,10 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)
     const principal = await jwtService.verify(token)
-    return createContext({ principal: principal.payload.sub ?? null, ...context })
+    return createContext({
+      principal: principal.payload.sub ?? null,
+      ...context,
+    })
   }
 
   return createContext({

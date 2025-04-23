@@ -17,7 +17,6 @@
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^4.0.0",
     "@iconify/react": "^5.0.0",
-    "@sentry/nextjs": "^9.12.0",
     "@tanstack/react-query": "^5.67.2",
     "clsx": "^2.0.0",
     "next": "^15.3.0",

@@ -4,6 +4,5 @@ import { env } from "./env"
 if (env.SENTRY_DSN !== undefined) {
   Sentry.init({
     dsn: env.SENTRY_DSN,
-    environment: env.DOPPLER_ENVIRONMENT,
   })
 }

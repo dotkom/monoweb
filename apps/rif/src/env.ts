@@ -6,15 +6,9 @@ export const env = createEnvironment(
     EMAIL_TOKEN: variable,
     SERVICE_ACCOUNT: variable,
     SPREADSHEET_ID: variable,
-    SENTRY_DSN: variable.optional(),
-
-    NEXT_PUBLIC_SENTRY_DSN: variable.optional(),
   },
   {
-    env: {
-      ...process.env,
-      NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
-    },
-    skipValidation: false,
+    env: process.env,
+    skipValidation: process.env.DOCKER_BUILD === "1",
   }
 )

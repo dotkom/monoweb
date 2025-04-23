@@ -59,7 +59,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body className={cn(fraunces.variable, poppins.variable)}>
         <SessionProvider session={session}>
           <QueryProvider>
-            <ThemeProvider>
+            <ThemeProvider defaultTheme="light" enableSystem={false} attribute="data-theme">
               <div className="min-h-screen flex flex-col">
                 <Navbar />
                 <main className="flex-grow px-4 lg:px-10 lg:py-6">

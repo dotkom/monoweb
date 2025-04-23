@@ -112,7 +112,7 @@ resource "auth0_resource_server" "online" {
 
 # TODO: feide-log-in
 resource "auth0_connection" "feide" {
-    # Currently only enable in staging:
+  # Currently only enable in staging:
   count = terraform.workspace == "prd" ? 0 : 1
 
   display_name         = "FEIDE"
@@ -150,7 +150,7 @@ resource "auth0_connection" "feide" {
 
 resource "auth0_client" "vengeful_vineyard_frontend" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc = "https://vinstraff.no/*"
+  cross_origin_loc  = "https://vinstraff.no/*"
   allowed_origins = [
     "http://localhost:3000"
   ]
@@ -200,8 +200,8 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
 
 resource "auth0_client" "voting" {
   cross_origin_auth = true
-  cross_origin_loc = "https://vedtatt.online.ntnu.no/"
-  app_type = "spa"
+  cross_origin_loc  = "https://vedtatt.online.ntnu.no/"
+  app_type          = "spa"
   allowed_origins = {
     "dev" = [
       "http://localhost:3000",
@@ -260,7 +260,8 @@ data "auth0_client" "vengeful_vineyard_frontend" {
 
 locals {
   projects = {
-    # key here must be project name
+    # Key here is name of doppler project
+
     vengeful-vineyard    = data.auth0_client.vengeful_vineyard_frontend
     onlineweb4           = data.auth0_client.onlineweb4
     onlineweb-frontend   = data.auth0_client.onlineweb_frontend
@@ -268,13 +269,11 @@ locals {
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
     appkom-veldedighet   = data.auth0_client.appkom_veldedighet
-  }
 
-  monoweb = {
-    web       = data.auth0_client.monoweb_web
-    dashboard = data.auth0_client.monoweb_dashboard
-    gtx       = data.auth0_client.gtx
-    } 
+    monoweb-web       = data.auth0_client.monoweb_web
+    monoweb-dashboard = data.auth0_client.monoweb_dashboard
+    monoweb-rpc       = data.auth0_client.rpc
+  }
 }
 
 resource "doppler_secret" "client_ids" {
@@ -300,7 +299,7 @@ resource "doppler_secret" "mgmt_tenants" {
   project = each.key
   config  = terraform.workspace
   name    = "AUTH0_MGMT_TENANT"
-  value   = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+  value   = data.auth0_tenant.tenant.domain
 }
 
 resource "doppler_secret" "auth0_issuer_rest" {
@@ -312,47 +311,19 @@ resource "doppler_secret" "auth0_issuer_rest" {
   value   = "https://${local.custom_domain}"
 }
 
-# monoweb should be two doppler-projects
-resource "doppler_secret" "client_ids_monoweb" {
-  for_each = local.monoweb
+resource "doppler_secret" "auth0_audiences" {
+  for_each = local.projects
 
-  project = "monoweb"
+  project = each.key
   config  = terraform.workspace
-  name    = "${upper(each.key)}_AUTH0_CLIENT_ID"
-  value   = each.value.client_id
-}
-
-resource "doppler_secret" "client_secrets_monoweb" {
-  for_each = local.monoweb
-
-  project = "monoweb"
-  config  = terraform.workspace
-  name    = "${upper(each.key)}_AUTH0_CLIENT_SECRET"
-  value   = each.value.client_secret
-}
-
-resource "doppler_secret" "auth0_issuer_monoweb" {
-  for_each = local.monoweb
-
-  project = "monoweb"
-  config  = terraform.workspace
-  name    = "${upper(each.key)}_AUTH0_ISSUER"
-  value   = "https://${local.custom_domain}"
-}
-
-resource "doppler_secret" "mgmt_tenants_monoweb" {
-  for_each = local.monoweb
-
-  project = "monoweb"
-  config  = terraform.workspace
-  name    = "${upper(each.key)}_AUTH0_MGMT_TENANT"
-  value   = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+  name    = "AUTH0_AUDIENCES"
+  value   = auth0_resource_server.online.identifier
 }
 
 resource "auth0_client" "onlineweb_frontend" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc = "https://online.ntnu.no/*"
-  app_type = "spa"
+  cross_origin_loc  = "https://online.ntnu.no/*"
+  app_type          = "spa"
   allowed_logout_urls = {
     "dev" = ["http://localhost:8080"]
     "stg" = ["https://*-dotkom.vercel.app", "https://dev.online.ntnu.no"]
@@ -384,9 +355,9 @@ data "auth0_client" "onlineweb_frontend" {
 }
 
 resource "auth0_client" "auth0_account_management_api_management_client" {
-  is_first_party = true
-  app_type       = "non_interactive"
-  name           = "Auth0 Account Management API Management Client"
+  is_first_party    = true
+  app_type          = "non_interactive"
+  name              = "Auth0 Account Management API Management Client"
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
 
   jwt_configuration {
@@ -415,7 +386,7 @@ resource "auth0_connection_clients" "username_password_authentication" {
 resource "auth0_connection_clients" "feide" {
 
   # Currently only enable in staging:
-  count = terraform.workspace == "prd" ? 0 : 1
+  count         = terraform.workspace == "prd" ? 0 : 1
   connection_id = auth0_connection.feide[0].id
 
   enabled_clients = [
@@ -499,28 +470,28 @@ resource "auth0_resource_server" "auth0_management_api" {
   signing_alg = "RS256"
 }
 
-resource "auth0_client" "gtx" {
+resource "auth0_client" "rpc" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  allowed_clients = []
-  allowed_origins = []
-  app_type        = "non_interactive" # this is a machine to machine application
-  grant_types     = ["client_credentials"]
-  name            = "gtx"
-  is_first_party  = true
-  oidc_conformant = true
+  allowed_clients   = []
+  allowed_origins   = []
+  app_type          = "non_interactive" # this is a machine to machine application
+  grant_types       = ["client_credentials"]
+  name              = "rpc"
+  is_first_party    = true
+  oidc_conformant   = true
 
   jwt_configuration {
     alg = "RS256"
   }
 }
 
-data "auth0_client" "gtx" {
-  client_id = auth0_client.gtx.client_id
+data "auth0_client" "rpc" {
+  client_id = auth0_client.rpc.client_id
 }
 
-resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
+resource "auth0_client_grant" "rpc" {
   audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
-  client_id = auth0_client.gtx.client_id
+  client_id = auth0_client.rpc.client_id
   scopes = [
     "read:users",
     "update:users",
@@ -530,8 +501,8 @@ resource "auth0_client_grant" "monoweb_backend_mgmt_grant" {
 
 resource "auth0_client" "onlineweb4" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc = "https://old.online.ntnu.no/*"
-  allowed_clients = []
+  cross_origin_loc  = "https://old.online.ntnu.no/*"
+  allowed_clients   = []
   allowed_logout_urls = {
     "dev" = ["http://localhost:8000", "http://127.0.0.1:8000"]
     "stg" = ["https://dev.online.ntnu.no"]
@@ -575,12 +546,13 @@ resource "auth0_client_grant" "ow4_mgmt_grant" {
     "create:user_tickets", # to send verification emails
   ]
 }
+
 resource "auth0_client" "monoweb_web" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  cross_origin_loc = "https://web.online.ntnu.no/*"
-  allowed_clients     = []
-  allowed_origins     = []
-  app_type            = "regular_web"
+  cross_origin_loc  = "https://web.online.ntnu.no/*"
+  allowed_clients   = []
+  allowed_origins   = []
+  app_type          = "regular_web"
   # you go here if you decline an auth grant, cannot be http
   initiate_login_uri = {
     "dev" = null
@@ -623,13 +595,13 @@ data "auth0_client" "monoweb_web" {
 
 resource "auth0_client" "monoweb_dashboard" {
   cross_origin_auth = true # this is set to avoid breaking client. It was set in auth0 dashboard. Unknown motivation.
-  app_type = "regular_web"
+  app_type          = "regular_web"
   callbacks = concat(
     {
       "dev" = ["http://localhost:3002/api/auth/callback/auth0"]
       "stg" = ["https://dashboard.staging.online.ntnu.no/api/auth/callback/auth0", "https://web-*-dotkom.vercel.app/api/auth/callback/auth0"]
       "prd" = [
-        "https://dashboard.online.ntnu.no/api/auth/callback/auth0", 
+        "https://dashboard.online.ntnu.no/api/auth/callback/auth0",
         "https://online.ntnu.no/api/auth/callback/auth0"
       ]
   }[terraform.workspace])
@@ -869,7 +841,7 @@ resource "auth0_client_grant" "auth0_account_management_api_management_client_ht
 resource "auth0_client" "feide_account_linker" {
   count = terraform.workspace == "prd" ? 0 : 1
 
-  name = "Feide Account Linker"
+  name     = "Feide Account Linker"
   app_type = "non_interactive"
 
   grant_types = [
@@ -877,18 +849,18 @@ resource "auth0_client" "feide_account_linker" {
   ]
 
   jwt_configuration {
-    alg = "RS256"
+    alg                 = "RS256"
     lifetime_in_seconds = 10
   }
 
   oidc_conformant = true
-  is_first_party = true
+  is_first_party  = true
 }
 
 resource "auth0_client_credentials" "feide_account_linker" {
   count = terraform.workspace == "prd" ? 0 : 1
 
-  client_id = auth0_client.feide_account_linker[0].client_id
+  client_id             = auth0_client.feide_account_linker[0].client_id
   authentication_method = "client_secret_post"
 }
 
@@ -896,7 +868,7 @@ resource "auth0_client_grant" "m2m_grant" {
   count = terraform.workspace == "prd" ? 0 : 1
 
   client_id = auth0_client.feide_account_linker[0].client_id
-  audience = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
+  audience  = "https://${data.auth0_tenant.tenant.domain}/api/v2/"
 
   scopes = [
     "read:users",
@@ -907,10 +879,10 @@ resource "auth0_client_grant" "m2m_grant" {
 resource "auth0_action" "feide_account_linking" {
   count = terraform.workspace == "prd" ? 0 : 1
 
-  name = "Feide Account Linking"
+  name    = "Feide Account Linking"
   runtime = "node18"
-  code = file("js/actions/linkFeideAccounts.js")
-  deploy = true
+  code    = file("js/actions/linkFeideAccounts.js")
+  deploy  = true
 
   supported_triggers {
     id      = "post-login"
@@ -918,12 +890,12 @@ resource "auth0_action" "feide_account_linking" {
   }
 
   dependencies {
-    name = "auth0"
+    name    = "auth0"
     version = "latest"
   }
 
   secrets {
-    name = "FEIDE_CONNECTION_ID"
+    name  = "FEIDE_CONNECTION_ID"
     value = auth0_connection.feide[0].id
   }
 
@@ -941,20 +913,20 @@ resource "auth0_action" "feide_account_linking" {
     name  = "CLIENT_SECRET"
     value = auth0_client_credentials.feide_account_linker[0].client_secret
   }
-  
+
   secrets {
     name  = "PRODUCTION"
-    value = "${terraform.workspace == "prd" ? "true" : "false"}"
+    value = terraform.workspace == "prd" ? "true" : "false"
   }
 }
 
 resource "auth0_action" "update_membership" {
   count = terraform.workspace == "prd" ? 0 : 1
 
-  name = "Membership Update"
+  name    = "Membership Update"
   runtime = "node18"
-  code = file("js/actions/updateMembership.js")
-  deploy = true
+  code    = file("js/actions/updateMembership.js")
+  deploy  = true
 
   supported_triggers {
     id      = "post-login"
@@ -962,12 +934,12 @@ resource "auth0_action" "update_membership" {
   }
 
   secrets {
-    name = "FEIDE_CONNECTION_ID"
+    name  = "FEIDE_CONNECTION_ID"
     value = auth0_connection.feide[0].id
   }
 
   secrets {
-    name = "RPC_HOST"
+    name  = "RPC_HOST"
     value = "rpc.staging.online.ntnu.no"
   }
 }
