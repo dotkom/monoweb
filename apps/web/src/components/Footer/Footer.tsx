@@ -7,7 +7,6 @@ export const Footer = () => (
     <div className="max-w-screen-xl px-12 lg:px-24 flex flex-col gap-12">
       <LogoSection />
       <SocialSection />
-      {/*<ContactLinkSection />*/}
       <ContactSection />
     </div>
   </footer>
