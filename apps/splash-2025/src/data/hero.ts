@@ -1,4 +1,4 @@
-export interface HeroProps {
+export type HeroProps = {
   background: string
   banner: string
 }
