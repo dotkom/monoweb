@@ -65,7 +65,7 @@ jobs:
       - uses: ./.github/actions/build-brevduen
         with:
           deploy: true
-          environment: prd
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-dashboard:
@@ -83,7 +83,7 @@ jobs:
       - uses: ./.github/actions/build-dashboard
         with:
           deploy: true
-          environment: prd
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-invoicification:
@@ -101,7 +101,7 @@ jobs:
       - uses: ./.github/actions/build-invoicification
         with:
           deploy: true
-          environment: prd
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rif:
@@ -119,7 +119,7 @@ jobs:
       - uses: ./.github/actions/build-rif
         with:
           deploy: true
-          environment: prd
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
@@ -137,7 +137,7 @@ jobs:
       - uses: ./.github/actions/build-rpc
         with:
           deploy: true
-          environment: prd
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-web:
@@ -155,5 +155,5 @@ jobs:
       - uses: ./.github/actions/build-web
         with:
           deploy: true
-          environment: prd
+          environment: prod
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
