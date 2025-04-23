@@ -9,6 +9,7 @@ export const env = createEnvironment(
     NEXT_PUBLIC_ORIGIN: variable,
     NEXT_PUBLIC_RPC_HOST: variable,
     RPC_HOST: variable,
+    ADMIN_USER_AUTH0_SUBS: variable,
   },
   {
     env: {
