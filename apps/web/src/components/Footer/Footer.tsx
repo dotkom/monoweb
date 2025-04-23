@@ -1,12 +1,13 @@
-import { ContactLinkSection } from "./ContactLinkSection"
 import { ContactSection } from "./ContactSection"
+import { LogoSection } from "./LogoSection"
 import { SocialSection } from "./SocialSection"
 
 export const Footer = () => (
-  <footer className="bg-brand-9 py-16">
-    <div className="mx-auto max-w-screen-xl px-4 lg:px-10 flex items-center flex-col gap-8">
+  <footer className="pt-24 pb-12 text-slate-10">
+    <div className="max-w-screen-xl px-12 lg:px-24 flex flex-col gap-12">
+      <LogoSection />
       <SocialSection />
-      <ContactLinkSection />
+      {/*<ContactLinkSection />*/}
       <ContactSection />
     </div>
   </footer>
