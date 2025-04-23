@@ -48,7 +48,8 @@ export const auth = createAuthenticationHandler(oauth2Service, {
       // In prod a list of auth0 subs is used to allow only specific users to use dashboard.
       const adminUsers = env.ADMIN_USER_AUTH0_SUBS.split(",")
       if (!adminUsers.includes("*") && !adminUsers.includes(jwt.payload.sub)) {
-        throw new Error("Unauthorized: your auth0 sub is not in the ADMIN_USER_AUTH0_SUBS env variable")
+        console.log("Unauthorized: your auth0 sub is not in the ADMIN_USER_AUTH0_SUBS env variable")
+        throw new Error("Unauthorized.")
       }
 
       await client.user.registerAndGet.mutate(jwt.payload.sub)
