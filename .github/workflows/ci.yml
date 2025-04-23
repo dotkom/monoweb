@@ -69,7 +69,7 @@ jobs:
       - uses: ./.github/actions/build-brevduen
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-dashboard:
@@ -87,7 +87,7 @@ jobs:
       - uses: ./.github/actions/build-dashboard
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-invoicification:
@@ -105,7 +105,7 @@ jobs:
       - uses: ./.github/actions/build-invoicification
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-kvittering-backend:
@@ -157,7 +157,7 @@ jobs:
       - uses: ./.github/actions/build-rif
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
@@ -175,7 +175,7 @@ jobs:
       - uses: ./.github/actions/build-rpc
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-splash:
@@ -210,5 +210,5 @@ jobs:
       - uses: ./.github/actions/build-web
         with:
           deploy: ${{ env.DEPLOYMENT_TRIGGER_PUSH }}
-          environment: staging
+          environment: stg
           git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
