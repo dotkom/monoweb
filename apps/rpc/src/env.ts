@@ -20,7 +20,9 @@ export const env = createEnvironment(
     // Sentry DSN should only be set in production
     SENTRY_DSN: variable.optional(),
 
-    // auth0 subs
+    // comma separated auth0 subs, e.g.
+    // "auth0|111111111111111111111111,auth0|222222222222222222222222"
+    // value "*" means all users are admins
     ADMIN_USERS: variable,
   },
   {
