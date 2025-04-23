@@ -13,7 +13,6 @@ export class JwtService {
   private jwks: GetKeyFunction<JWTHeaderParameters, FlattenedJWSInput> | null = null
   private readonly jwksUrl: URL
   private readonly issuer: string
-  // TODO: Add audience support
   private readonly audiences: string[]
 
   public constructor(issuer: string, audiences: string[]) {
@@ -32,7 +31,7 @@ export class JwtService {
       algorithms: ["RS256"],
       // Auth0's issuer contains a trailing slash, but Next Auth does not
       issuer: `${this.issuer}/`,
-      // audience: this.audiences,
+      audience: this.audiences,
       typ: "JWT",
     })
   }
