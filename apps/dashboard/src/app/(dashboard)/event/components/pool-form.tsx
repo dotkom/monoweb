@@ -4,13 +4,15 @@ import { z } from "zod"
 import { createLabelledCheckboxGroupInput, createNumberInput, createTextInput, useFormBuilder } from "../../../form"
 import { notifyFail } from "../../../notifications"
 
-export interface PoolFormProps {
+export type PoolFormProps = {
   onSubmit(values: PoolFormSchema): void
-  disabledYears: number[]
   onClose(): void
   defaultValues: PoolFormSchema
   mode: "create" | "update"
-}
+} & (
+  | { disabledYears: number[]; enabledYears?: undefined }
+  | { enabledYears: number[]; disabledYears?: undefined }
+)
 
 export const PoolFormSchema = z.object({
   yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn!"),
@@ -28,12 +30,16 @@ export const usePoolForm = (props: PoolFormProps) => {
     { label: "5. klasse", key: 5 },
   ]
 
+  const disabledOptions = props.enabledYears !== undefined
+    ? yearEntries.filter(entry => !props.enabledYears.includes(entry.key)).map(({key}) => key)
+    : props.disabledYears
+
   const Form = useFormBuilder({
     schema: PoolFormSchema,
     defaultValues: props.defaultValues,
     fields: {
       yearCriteria: createLabelledCheckboxGroupInput({
-        disabledOptions: props.disabledYears,
+        disabledOptions,
         entries: yearEntries,
       }),
       title: createTextInput({

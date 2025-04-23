@@ -71,7 +71,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
       <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} />
 
       {nonAttendablePools.length > 0 && (
-        <div className="flex flex-row gap-4">{nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}</div>
+        <div className="grid grid-cols-3 gap-4">{nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool, attendanceStart: attendance.registerStart }))}</div>
       )}
 
       {attendee && user ? (
