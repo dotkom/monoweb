@@ -20,7 +20,7 @@ runs:
       id: acquire-secrets
       with:
         project: monoweb-kvittering-frontend
-        config: prod
+        config: prd
 
     - uses: actions/checkout@v4
       with:
