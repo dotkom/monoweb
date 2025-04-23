@@ -1,14 +1,14 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, t } from "../../trpc"
+import { adminProcedure, t } from "../../trpc"
 import { companyEventRouter } from "./company-event-router"
 
 export const companyRouter = t.router({
-  create: t.procedure
+  create: adminProcedure
     .input(CompanyWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.companyService.createCompany(input)),
-  edit: protectedProcedure
+  edit: adminProcedure
     .input(
       z.object({
         id: CompanySchema.shape.id,
