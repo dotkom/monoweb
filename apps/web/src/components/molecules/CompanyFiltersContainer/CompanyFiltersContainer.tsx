@@ -15,7 +15,7 @@ interface CompanyFiltersContainer {
 const sortOption = ["Frist", "Opprettet"] as const
 export type SortOption = (typeof sortOption)[number]
 
-const translationJobTypes = {
+export const translationJobTypes = {
   PARTTIME: "Deltid",
   FULLTIME: "Heltid",
   SUMMER_INTERNSHIP: "Sommerjobb",

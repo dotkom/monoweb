@@ -4,6 +4,7 @@ import { formatRelativeTime } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { translationJobTypes } from "../CompanyFiltersContainer/CompanyFiltersContainer"
 
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
@@ -26,7 +27,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
 
   return (
     <Link
-      href={`/career/${jobListing.id}`}
+      href={`/karriere/${jobListing.id}`}
       className="border-slate-3 flex h-56 items-center justify-between rounded-lg border px-6 py-2"
       target="_blank"
       rel="noopener noreferrer"
@@ -58,7 +59,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
             <div className="flex flex-col items-end gap-1">
               <div className="text-right">
                 <Badge color={color} variant="light">
-                  {jobListing.employment}
+                  {translationJobTypes[jobListing.employment]}
                 </Badge>
               </div>
               <div className="flex flex-row text-right">
