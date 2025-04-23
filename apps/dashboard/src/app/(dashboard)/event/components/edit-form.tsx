@@ -1,4 +1,5 @@
 import { EventSchema, type Group, type InterestGroup } from "@dotkomonline/types"
+import type { ReactNode } from "react"
 import { z } from "zod"
 import {
   createCheckboxInput,
@@ -18,6 +19,7 @@ interface UseEventEditFormProps {
   label?: string
   hostingGroups: Group[]
   interestGroups: InterestGroup[]
+  extraButtons?: ReactNode
 }
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
@@ -38,12 +40,14 @@ export const useEventEditForm = ({
   onSubmit,
   label = "Opprett arrangement",
   defaultValues,
+  extraButtons,
 }: UseEventEditFormProps) =>
   useFormBuilder({
     schema: FormValidationSchema,
     defaultValues,
     onSubmit,
     label,
+    extraButtons,
     fields: {
       title: createTextInput({
         label: "Arrangementnavn",

@@ -27,6 +27,7 @@ export interface EventService {
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
   getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail>
   setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]>
+  deleteEvent(id: EventId): Promise<void>
 }
 
 export class EventServiceImpl implements EventService {
@@ -141,5 +142,9 @@ export class EventServiceImpl implements EventService {
       eventId,
       interestGroupId: interestGroupId,
     }))
+  }
+
+  async deleteEvent(id: EventId): Promise<void> {
+    await this.eventRepository.delete(id)
   }
 }

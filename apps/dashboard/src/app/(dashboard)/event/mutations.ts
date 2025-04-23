@@ -318,3 +318,32 @@ export const useUpdateSelectionResponsesMutation = () => {
     })
   )
 }
+
+export const useDeleteEventMutation = () => {
+  const trpc = useTRPC()
+  const router = useRouter()
+  const notification = useQueryNotification()
+  return useMutation(
+    trpc.event.delete.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Sletter arrangement...",
+          message: "Arrangementet blir slettet.",
+        })
+      },
+      onSuccess: () => {
+        notification.complete({
+          title: "Arrangement slettet",
+          message: "Arrangementet har blitt slettet.",
+        })
+        router.push("/event")
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under sletting av arrangementet: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}

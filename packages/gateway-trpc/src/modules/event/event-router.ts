@@ -38,6 +38,9 @@ export const eventRouter = t.router({
         interestGroups,
       }
     }),
+  delete: adminProcedure.input(EventSchema.shape.id).mutation(async ({ input, ctx }) => {
+    await ctx.eventService.deleteEvent(input)
+  }),
   edit: adminProcedure
     .input(
       z.object({
