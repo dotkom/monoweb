@@ -79,7 +79,7 @@ export const RegistrationButton: FC<Props> = ({
           <div>{registrationButton}</div>
         </TooltipTrigger>
         <TooltipContent
-          className="border-none bg-slate-1 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
+          className="border-none text-center bg-slate-1 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
           sideOffset={-10}
         >
           {disabledText}
