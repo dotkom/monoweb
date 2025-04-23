@@ -50,10 +50,14 @@ export const ContactSection: FC = () => (
       <div>
         <Text>992 548 045 (org. nr.)</Text>
         <Text>
-          <Link href="mailto:kontakt@online.ntnu.no">kontakt@online.ntnu.no</Link>
+          <Link href="mailto:kontakt@online.ntnu.no" className="hover:underline">
+            kontakt@online.ntnu.no
+          </Link>
         </Text>
         <Text>
-          <Link href="mailto:okonomi@online.ntnu.no">okonomi@online.ntnu.no</Link>
+          <Link href="mailto:okonomi@online.ntnu.no" className="hover:underline">
+            okonomi@online.ntnu.no
+          </Link>
         </Text>
         <Text>+47 986 69 907</Text>
       </div>

@@ -34,7 +34,7 @@ export const SocialSection = () => {
   return (
     <div className="inline-grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-start md:flex md:flex-row md:gap-12">
       {links.map((link) => (
-        <Link href={link.url} key={link.key} className="flex flex-row gap-2 items-center">
+        <Link href={link.url} key={link.key} className="flex flex-row gap-2 items-center hover:underline">
           {link.icon}{" "}
           <Text element="p" className="text-lg">
             {link.key}
