@@ -141,7 +141,7 @@ const OfferSection: FC = () => {
         <Title className="mb-4">Stillingsutlysning</Title>
         <Text>
           Vi har en{" "}
-          <a href="/career" className="underline">
+          <a href="/karriere" className="underline">
             karriereside
           </a>{" "}
           på våre nettsider der vi legger ut stillingsannonser for bedrifter som ønsker det. Send en mail til

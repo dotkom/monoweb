@@ -52,7 +52,7 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
         <p>{ingress}</p>
 
         <div className="bg-slate-12 mx-auto mb-14 mt-10 h-[0.5px] w-full" />
-        <Link href="/career">
+        <Link href="/karriere">
           <div className="flex items-center">
             <Icon icon="mdi:arrow-left" className="text-blue-9" width={20} height={20} />
             <p className="m-0 border-0 pl-2 text-base text-blue-500"> ANDRE MULIGHETER</p>
