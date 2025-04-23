@@ -46,7 +46,12 @@ export const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
         .filter((jobListing) =>
           filterJobListings(jobListing, chosenLocation, chosenEmployments, searchName, chosenSort)
         )
-        .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2, chosenSort)),
+        .sort((jobListing1, jobListing2) => sortDates(jobListing1, jobListing2, chosenSort))
+        .sort((jobListing1, jobListing2) => {
+          if (jobListing1.featured && !jobListing2.featured) return -1
+          if (!jobListing1.featured && jobListing2.featured) return 1
+          return 0
+        }),
     [props.jobListings, chosenLocation, chosenEmployments, searchName, chosenSort]
   )
 
