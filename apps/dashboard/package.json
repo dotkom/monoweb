@@ -41,11 +41,13 @@
     "@trpc/tanstack-react-query": "11.0.0-rc.828",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
+    "import-in-the-middle": "^1.13.1",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.48.2",
     "react-zxing": "^2.1.0",
+    "require-in-the-middle": "^7.5.2",
     "superjson": "^2.0.0",
     "zod": "^3.22.4"
   },

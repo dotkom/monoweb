@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "heic2any": "^0.0.4",
+    "import-in-the-middle": "^1.13.1",
     "lucide-react": "^0.479.0",
     "pdfjs-dist": "^5.0.375",
     "react": "^19.0.0",
@@ -29,6 +30,7 @@
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.48.2",
     "react-hook-form-persist": "^3.0.0",
+    "require-in-the-middle": "^7.5.2",
     "sonner": "^2.0.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"
