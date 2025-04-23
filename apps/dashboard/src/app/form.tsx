@@ -7,6 +7,7 @@ import {
   FileInput,
   type FileInputProps,
   Flex,
+  Group,
   Image,
   Input,
   MultiSelect,
@@ -21,7 +22,6 @@ import {
   type TextInputProps,
   Textarea,
   type TextareaProps,
-  Group,
 } from "@mantine/core"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import {

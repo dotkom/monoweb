@@ -1,11 +1,11 @@
+import { Button } from "@mantine/core"
+import { modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
 import { useGroupAllQuery } from "../../../../modules/group/queries/use-group-all-query"
 import { useEventEditForm } from "../components/edit-form"
 import { useDeleteEventMutation, useEditEventWithGroupsMutation } from "../mutations"
 import { useEventDetailsContext } from "./provider"
-import { Button, Group } from "@mantine/core"
-import { modals } from "@mantine/modals"
 
 export const EventEditCard: FC = () => {
   const { event, eventHostingGroups, eventInterestGroups } = useEventDetailsContext()

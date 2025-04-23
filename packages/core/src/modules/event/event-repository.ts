@@ -13,6 +13,7 @@ export interface EventRepository {
   addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
   addEventToInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<EventInterestGroup>
   removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<void>
+  delete(id: EventId): Promise<void>
 }
 
 export class EventRepositoryImpl implements EventRepository {
@@ -121,5 +122,9 @@ export class EventRepositoryImpl implements EventRepository {
 
   async removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<void> {
     await this.db.eventInterestGroup.delete({ where: { eventId_interestGroupId: { interestGroupId, eventId } } })
+  }
+
+  async delete(id: EventId): Promise<void> {
+    await this.db.event.delete({ where: { id } })
   }
 }
