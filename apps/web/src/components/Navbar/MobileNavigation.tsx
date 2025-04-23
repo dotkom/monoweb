@@ -18,7 +18,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
         </div>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content className="h-screen w-screen border-slate-6 border-t bg-brand-1 animate-in fade-in-20 px-4 mt-2">
+        <Popover.Content className="h-screen w-screen border-t bg-brand-6 animate-in fade-in-20 px-4 mt-2">
           <nav className="flex flex-col gap-1">
             {links.map((link) => (
               <Fragment key={link.title}>

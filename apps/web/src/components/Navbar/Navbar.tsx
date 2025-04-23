@@ -96,11 +96,11 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   return (
-    <header className="border-slate-6 border-b px-4 py-2 lg:px-10">
-      <div className="flex mx-auto w-full max-w-screen-xl">
+    <header className="px-4 lg:px-10 mt-4">
+      <div className="flex flex-row w-full max-w-screen-xl px-6 py-3 rounded-2xl bg-blue-2">
         <MobileNavigation links={links} />
         <Link href="/" className="hidden lg:flex items-center">
-          <OnlineIcon className="h-[24px]" />
+          <OnlineIcon className="h-[2.5rem]" />
         </Link>
         <MainNavigation links={links} />
         <div className="flex flex-grow items-center justify-end md:flex-grow-0">
