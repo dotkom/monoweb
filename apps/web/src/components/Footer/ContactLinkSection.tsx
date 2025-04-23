@@ -13,7 +13,7 @@ const links = {
     },
     {
       label: "Karriere",
-      href: "/career",
+      href: "/karriere",
     },
     {
       label: "Wiki",
