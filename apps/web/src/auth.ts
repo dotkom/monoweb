@@ -8,7 +8,7 @@ import superjson from "superjson"
 import { env } from "./env"
 
 const oauth2Logger = getLogger("dashboard:oauth2")
-const jwtService = new JwtService(env.AUTH0_ISSUER, env.AUTH0_AUDIENCES.split(","))
+const jwtService = new JwtService(env.AUTH0_ISSUER, env.AUTH0_AUDIENCES.split(",").map(s => s.trim()))
 const oauth2Service = new OAuth2Service(
   oauth2Logger,
   fetch,
