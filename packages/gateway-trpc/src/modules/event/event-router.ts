@@ -12,7 +12,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, t } from "../../trpc"
+import { adminProcedure, publicProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 
@@ -95,7 +95,7 @@ export const eventRouter = t.router({
     }),
 
   // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
-  recommended: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+  recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
     const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
     const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
@@ -127,7 +127,7 @@ export const eventRouter = t.router({
   allByInterestGroup: adminProcedure
     .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
-  getAttendanceEventDetail: adminProcedure
+  getAttendanceEventDetail: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.eventService.getAttendanceDetail(input)),
   addAttendance: adminProcedure
