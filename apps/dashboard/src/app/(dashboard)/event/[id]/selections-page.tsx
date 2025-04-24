@@ -63,7 +63,7 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
       {
         attendanceId: attendance.id,
       },
-      { initialData: [] }
+      { initialData: [] as AttendanceSelectionResults[] }
     )
   )
 

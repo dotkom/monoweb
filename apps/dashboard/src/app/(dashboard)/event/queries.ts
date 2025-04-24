@@ -1,4 +1,4 @@
-import type { AttendanceId, EventId } from "@dotkomonline/types"
+import type { AttendanceId, EventId, Attendee, Company } from "@dotkomonline/types"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useTRPC } from "../../../trpc"
 import { useQueryNotification } from "../../notifications"
@@ -18,7 +18,7 @@ export const useEventCompanyGetQuery = (id: EventId) => {
       {
         id,
       },
-      { initialData: [] }
+      { initialData: [] as Company[] }
     )
   )
   return { eventCompanies, ...query }
@@ -52,7 +52,7 @@ export const useEventAttendeesGetQuery = (id: AttendanceId) => {
       {
         id,
       },
-      { initialData: [] }
+      { initialData: [] as Attendee[] }
     )
   )
   return { attendees, ...query }
