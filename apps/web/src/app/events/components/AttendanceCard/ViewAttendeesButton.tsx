@@ -6,6 +6,8 @@ import {
   AlertDialogTrigger,
   Button,
   Icon,
+  Text,
+  Title,
 } from "@dotkomonline/ui"
 
 interface ViewAttendeesDialogButtonProps {
@@ -21,7 +23,7 @@ export const ViewAttendeesDialogButton = ({
     <AlertDialogTrigger asChild>
       <Button className="w-full text-black rounded-lg bg-slate-4 hover:bg-slate-5 h-fit min-h-[4rem]">
         <Icon className="text-lg" icon="tabler:users" />
-        Vis påmeldte
+        <Text className="font-medium">Vis påmeldte</Text>
       </Button>
     </AlertDialogTrigger>
     <AlertDialogContent className="w-full relative">
@@ -31,7 +33,9 @@ export const ViewAttendeesDialogButton = ({
           <Icon className="text-lg" icon="tabler:x" />
         </Button>
       </AlertDialogCancel>
-      <h4 className="important:mt-0">Påmeldte</h4>
+      <Title element="h4" className="font-poppins font-semibold">
+        Påmeldte
+      </Title>
     </AlertDialogContent>
   </AlertDialog>
 )

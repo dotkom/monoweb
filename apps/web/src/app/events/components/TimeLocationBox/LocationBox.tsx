@@ -1,5 +1,5 @@
 import type { Event } from "@dotkomonline/types"
-import { Icon } from "@dotkomonline/ui"
+import { Icon, Text } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { LocationLink } from "./LocationLink"
 
@@ -16,8 +16,8 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
         <Icon icon="tabler:map-pin" width={24} height={24} />
       </div>
       <div className="flex flex-1 flex-col justify-center">
-        <div className="font-medium text-lg">{locationTitle}</div>
-        <div className="text-base">{locationAddress}</div>
+        <Text className="text-lg">{locationTitle}</Text>
+        <Text>{locationAddress}</Text>
       </div>
       {locationLink && <LocationLink link={locationLink} />}
     </div>
