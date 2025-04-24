@@ -38,11 +38,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   private includePoolAttendeeCount = {
     _count: {
       select: {
-        attendees: {
-          where: {
-            reserved: true,
-          },
-        },
+        attendees: true,
       },
     },
   }
@@ -175,11 +171,13 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   }
 
   private validateAttendancePool({
-    _count: { attendees: numAttendees },
+    _count: { attendees: totalAttendees },
     yearCriteria,
     ...attendee
   }: UnmappedAttendancePool): AttendancePool {
-    return { numAttendees, yearCriteria: YearCriteriaSchema.parse(yearCriteria), ...attendee }
+    const numAttendees = Math.min(totalAttendees, attendee.capacity)
+    const numUnreservedAttendees = Math.max(0, totalAttendees - numAttendees)
+    return { numAttendees, numUnreservedAttendees, yearCriteria: YearCriteriaSchema.parse(yearCriteria), ...attendee }
   }
 }
 

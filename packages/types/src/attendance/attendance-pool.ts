@@ -9,6 +9,7 @@ export type YearCriteria = z.infer<typeof YearCriteriaSchema>
 
 export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({
   numAttendees: z.number(),
+  numUnreservedAttendees: z.number(),
   yearCriteria: YearCriteriaSchema,
 })
 
@@ -17,6 +18,7 @@ export const AttendancePoolWriteSchema = AttendancePoolSchema.omit({
   createdAt: true,
   updatedAt: true,
   numAttendees: true,
+  numUnreservedAttendees: true,
 })
 
 export type AttendancePool = z.infer<typeof AttendancePoolSchema>
@@ -25,6 +27,7 @@ export type AttendancePoolId = AttendancePool["id"]
 
 export const AttendancePoolWithoutAttendeeCount = AttendancePoolSchema.omit({
   numAttendees: true,
+  numUnreservedAttendees: true,
 })
 
 export type AttendancePoolWithoutAttendeeCount = z.infer<typeof AttendancePoolWithoutAttendeeCount>
