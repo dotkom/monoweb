@@ -12,15 +12,15 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { adminProcedure, t } from "../../trpc"
 import { attendanceRouter } from "./attendance-router"
 import { eventCompanyRouter } from "./event-company-router"
 
 export const eventRouter = t.router({
-  get: protectedProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
+  get: adminProcedure.input(EventSchema.shape.id).query(async ({ input, ctx }) => {
     return ctx.eventService.getEventById(input)
   }),
-  create: protectedProcedure
+  create: adminProcedure
     .input(
       z.object({
         event: EventWriteSchema,
@@ -38,7 +38,7 @@ export const eventRouter = t.router({
         interestGroups,
       }
     }),
-  edit: protectedProcedure
+  edit: adminProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
@@ -50,7 +50,7 @@ export const eventRouter = t.router({
       return event
     }),
 
-  editWithGroups: protectedProcedure
+  editWithGroups: adminProcedure
     .input(
       z.object({
         id: EventSchema.shape.id,
@@ -67,7 +67,7 @@ export const eventRouter = t.router({
     }),
 
   // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
-  all: publicProcedure
+  all: adminProcedure
     .input(
       z
         .object({
@@ -95,7 +95,7 @@ export const eventRouter = t.router({
     }),
 
   // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
-  recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+  recommended: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
     const events = await ctx.eventService.getEvents(input)
     const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
     const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
@@ -113,24 +113,24 @@ export const eventRouter = t.router({
     }))
   }),
 
-  allByCompany: publicProcedure
+  allByCompany: adminProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) =>
       ctx.companyEventService.getEventsByCompanyId(input.id, input.paginate.take, input.paginate.cursor)
     ),
-  allByUserId: publicProcedure
+  allByUserId: adminProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
-  allByGroup: publicProcedure
+  allByGroup: adminProcedure
     .input(z.object({ id: GroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByGroupId(input.id, input.paginate)),
-  allByInterestGroup: publicProcedure
+  allByInterestGroup: adminProcedure
     .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
-  getAttendanceEventDetail: publicProcedure
+  getAttendanceEventDetail: adminProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.eventService.getAttendanceDetail(input)),
-  addAttendance: protectedProcedure
+  addAttendance: adminProcedure
     .input(
       z.object({
         values: AttendanceWriteSchema.partial(),

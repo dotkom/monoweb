@@ -50,13 +50,17 @@ const prisma = createPrisma(env.DATABASE_URL)
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
+  const adminPrincipals = env.ADMIN_USERS.split(",").map((sub) => sub.trim())
+
   const context: Omit<CreateContextOptions, "principal"> = {
     s3Client,
     s3BucketName: env.AWS_S3_BUCKET,
     stripeAccounts,
     managementClient: auth0Client,
     db: prisma,
+    adminPrincipals,
   }
+
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)
     const principal = await jwtService.verify(token)

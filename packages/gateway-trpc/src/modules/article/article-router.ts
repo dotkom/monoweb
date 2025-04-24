@@ -1,13 +1,13 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { adminProcedure, publicProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({
-  create: protectedProcedure
+  create: adminProcedure
     .input(ArticleWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.articleService.create(input)),
-  edit: protectedProcedure
+  edit: adminProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -25,7 +25,7 @@ export const articleRouter = t.router({
     .input(ArticleSchema.shape.slug)
     .query(async ({ input, ctx }) => await ctx.articleService.getBySlug(input)),
   getTags: publicProcedure.query(async ({ ctx }) => await ctx.articleService.getTags()),
-  addTag: protectedProcedure
+  addTag: adminProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
@@ -33,7 +33,7 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => await ctx.articleService.addTag(input.id, input.tag)),
-  removeTag: protectedProcedure
+  removeTag: adminProcedure
     .input(
       z.object({
         id: ArticleSchema.shape.id,
