@@ -8,12 +8,13 @@ import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
 import { EventDescription } from "../components/EventDescription"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import { Text } from "@dotkomonline/ui"
 
 const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   // TODO: Href link to all events by committee or company
   <Link href="/" key={item.name} className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg hover:bg-slate-2">
     {item.image && <Image src={item.image} alt={item.name} width={22} height={22} />}
-    <p>{item.name}</p>
+    <Text>{item.name}</Text>
   </Link>
 )
 
@@ -43,7 +44,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           {organizers.length > 0 ? (
             <div className="flex flex-row space-x-1">{organizers}</div>
           ) : (
-            <p>Ingen organiserere</p>
+            <Text>Ingen organiserere</Text>
           )}
           <EventDescription description={eventDetail.event.description ?? ""} />
         </section>

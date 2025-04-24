@@ -2,6 +2,7 @@ import type { Event } from "@dotkomonline/types"
 import type { FC } from "react"
 import { LocationBox } from "./LocationBox"
 import { TimeBox } from "./TimeBox"
+import { Title } from "@dotkomonline/ui"
 
 interface TimeLocationBoxProps {
   event: Event
@@ -10,8 +11,8 @@ interface TimeLocationBoxProps {
 export const TimeLocationBox: FC<TimeLocationBoxProps> = ({ event }) => {
   return (
     <div className="flex flex-col bg-slate-2 rounded-3xl min-h-[6rem] p-6 gap-3">
-      <h2 className="border-none">Oppmøte</h2>
-      <div className="text-xs flex flex-col gap-6">
+      <Title element="h2" className="font-poppins font-semibold text-2xl">Oppmøte</Title>
+      <div className="flex flex-col gap-6">
         <TimeBox event={event} />
         <LocationBox event={event} />
       </div>
