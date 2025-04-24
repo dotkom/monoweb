@@ -20,7 +20,7 @@ const mapToImageAndName = (item: Group | Company | InterestGroup) => (
 const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params
   const session = await auth.getServerSession()
-  const user = await server.user.getMe.query()
+  const user = session ? await server.user.getMe.query() : null
   const eventDetail = await server.event.getAttendanceEventDetail.query(eventId)
   const attendee =
     eventDetail.attendance && session?.sub != null
