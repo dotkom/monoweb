@@ -1,4 +1,4 @@
-import type { CompanyId, Event, Company } from "@dotkomonline/types"
+import type { Company, CompanyId, Event } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 import { useTRPC } from "../../../trpc"
 

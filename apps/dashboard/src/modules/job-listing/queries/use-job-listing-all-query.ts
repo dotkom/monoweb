@@ -1,6 +1,6 @@
 import type { JobListing } from "@dotkomonline/types"
-import { useTRPC } from "../../../trpc"
 import { useQuery } from "@tanstack/react-query"
+import { useTRPC } from "../../../trpc"
 
 export const useJobListingAllQuery = () => {
   const trpc = useTRPC()
