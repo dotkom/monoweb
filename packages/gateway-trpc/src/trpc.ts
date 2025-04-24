@@ -19,7 +19,24 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
   return next({ ctx: { principal } })
 })
 
+const isAdmin = t.middleware(async ({ ctx, next }) => {
+  const principal = ctx.principal
+  if (principal === null) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" })
+  }
+
+  const adminPrincipals = ctx.adminPrincipals
+
+  if (adminPrincipals.includes("*") || adminPrincipals.includes(principal)) {
+    return next({ ctx: { principal } })
+  }
+
+  throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authorized" })
+})
+
 export const router = t.router
 export const publicProcedure = t.procedure
-export const protectedProcedure = t.procedure.use(isAuthed)
+export const protectedProcedure = publicProcedure.use(isAuthed)
+export const adminProcedure = protectedProcedure.use(isAdmin)
+
 export const createCallerFactory = t.createCallerFactory

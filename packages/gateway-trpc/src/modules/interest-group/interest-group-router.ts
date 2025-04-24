@@ -1,16 +1,16 @@
 import { EventSchema, InterestGroupSchema, InterestGroupWriteSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, t } from "../../trpc"
+import { adminProcedure, t } from "../../trpc"
 
 export const interestGroupRouter = t.router({
-  create: protectedProcedure
+  create: adminProcedure
     .input(InterestGroupWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.create(input)),
-  all: publicProcedure.query(async ({ ctx }) => await ctx.interestGroupService.getAll()),
-  get: publicProcedure
+  all: adminProcedure.query(async ({ ctx }) => await ctx.interestGroupService.getAll()),
+  get: adminProcedure
     .input(InterestGroupSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getById(input)),
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: InterestGroupSchema.shape.id,
@@ -18,24 +18,24 @@ export const interestGroupRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.update(input.id, input.values)),
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(InterestGroupSchema.shape.id)
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.delete(input)),
-  getByMember: publicProcedure
+  getByMember: adminProcedure
     .input(UserSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getByMember(input)),
-  getMembers: publicProcedure
+  getMembers: adminProcedure
     .input(InterestGroupSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getMembers(input)),
-  addMember: protectedProcedure
+  addMember: adminProcedure
     .input(z.object({ interestGroupId: InterestGroupSchema.shape.id, userId: UserSchema.shape.id }))
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.addMember(input.interestGroupId, input.userId)),
-  removeMember: protectedProcedure
+  removeMember: adminProcedure
     .input(z.object({ interestGroupId: InterestGroupSchema.shape.id, userId: UserSchema.shape.id }))
     .mutation(
       async ({ input, ctx }) => await ctx.interestGroupService.removeMember(input.interestGroupId, input.userId)
     ),
-  allByEventId: publicProcedure
+  allByEventId: adminProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getAllByEventId(input)),
 })

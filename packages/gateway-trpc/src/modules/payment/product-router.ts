@@ -1,22 +1,20 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { ProductPaymentProviderWriteSchema, ProductSchema, ProductWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { protectedProcedure, t } from "../../trpc"
+import { adminProcedure, t } from "../../trpc"
 
 export const productRouter = t.router({
-  create: protectedProcedure
+  create: adminProcedure
     .input(ProductWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.productService.createProduct(input)),
-  get: protectedProcedure
+  get: adminProcedure
     .input(ProductSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.productService.getProductById(input)),
-  all: protectedProcedure
-    .input(PaginateInputSchema)
-    .query(async ({ input, ctx }) => ctx.productService.getProducts(input)),
-  addPaymentProvider: protectedProcedure
+  all: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.productService.getProducts(input)),
+  addPaymentProvider: adminProcedure
     .input(ProductPaymentProviderWriteSchema)
     .mutation(async ({ input, ctx }) => ctx.productPaymentProviderService.addPaymentProvider(input)),
-  deletePaymentProvider: protectedProcedure
+  deletePaymentProvider: adminProcedure
     .input(
       z.object({
         productId: ProductSchema.shape.id,
@@ -26,10 +24,10 @@ export const productRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       ctx.productPaymentProviderService.deletePaymentProvider(input.productId, input.paymentProviderId)
     ),
-  getPaymentProvidersByProductId: protectedProcedure
+  getPaymentProvidersByProductId: adminProcedure
     .input(ProductSchema.shape.id)
     .query(async ({ input, ctx }) => ctx.productPaymentProviderService.getAllByProductId(input)),
-  hasPaymentProviderId: protectedProcedure
+  hasPaymentProviderId: adminProcedure
     .input(
       z.object({
         productId: ProductSchema.shape.id,
