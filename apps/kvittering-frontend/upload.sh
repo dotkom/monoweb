@@ -96,4 +96,4 @@ elif command -v start &> /dev/null; then
     start "${WEBSITE_URL}"
 fi 
 
-aws cloudfront create-invalidation --distribution-id E60JFQ13PM11R --paths '/*'
+aws cloudfront create-invalidation --distribution-id E2N69L93VKLW9F --paths '/*'
