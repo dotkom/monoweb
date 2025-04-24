@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import { type Attendance, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
-import { Icon } from "@dotkomonline/ui"
+import { Icon, Text, Title } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -13,6 +13,7 @@ import { RegistrationButton } from "./RegistrationButton"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
+import Link from "next/link"
 
 interface Props {
   initialAttendance: Attendance
@@ -64,7 +65,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
 
   return (
     <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
-      <h2 className="border-none">Påmelding</h2>
+      <Title element="h2" className="font-poppins font-semibold text-2xl">Påmelding</Title>
 
       <AttendanceDateInfo attendance={attendance} />
 
@@ -94,14 +95,14 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
       />
 
       <div className="flex flex-row gap-4">
-        <a href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11">
+        <Link href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11">
           <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
-          Oppdater matallergier
-        </a>
-        <p className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
+          <Text>Oppdater matallergier</Text>
+        </Link>
+        <Text className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
           <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
           Arrangementregler
-        </p>
+        </Text>
       </div>
     </section>
   )

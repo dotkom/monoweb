@@ -21,7 +21,7 @@ export const EventHeader: FC<Props> = ({ event }) => {
         style={{ objectFit: "cover" }}
         className="h-[30rem] w-full rounded-2xl bg-slate-5"
       />
-      <Title className="text-4xl">{event.title}</Title>
+      <Title element="h1" className="text-4xl">{event.title}</Title>
     </section>
   )
 }

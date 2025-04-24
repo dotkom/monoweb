@@ -1,4 +1,5 @@
 import type { AttendancePool } from "@dotkomonline/types"
+import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import type { FC } from "react"
 
@@ -12,10 +13,10 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending }) => {
     return (
       <div className="flex flex-col w-full bg-slate-3 rounded-lg">
         <div className="px-8 pt-2 pb-2 bg-slate-5 rounded-t-lg text-center text-sm uppercase font-bold">
-          Ingen gruppe
+          <Text>Ingen gruppe</Text>
         </div>
         <div className="px-8 py-4 flex flex-col items-center justify-center min-h-[6rem]">
-          <p>Du kan ikke melde deg på dette arrangementet</p>
+          <Text>Du kan ikke melde deg på dette arrangementet</Text>
         </div>
       </div>
     )
@@ -29,13 +30,13 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending }) => {
           isAttending ? "bg-green-5" : "bg-slate-5"
         )}
       >
-        {pool.title}
+        <Text className="font-semibold">{pool.title}</Text>
       </div>
       <div className="px-4 py-4 rounded-b-lg flex flex-col gap-2 items-center justify-center min-h-[6rem] w-full">
-        <p className="text-3xl">
+        <Text className="text-3xl">
           {pool.numAttendees}/{pool.capacity}
-        </p>
-        <p>{isAttending ? "Du er påmeldt" : "Du er ikke påmeldt"}</p>
+        </Text>
+        <Text>{isAttending ? "Du er påmeldt" : "Du er ikke påmeldt"}</Text>
       </div>
     </div>
   )
