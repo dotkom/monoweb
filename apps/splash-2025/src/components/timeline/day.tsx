@@ -10,7 +10,7 @@ export const Day: FC<TimeLineProps> = ({ events }) => {
 
   return (
     <div className="text-white">
-      <Title element="h2">{day}</Title>
+      <Title element="h2">{day.replace(/^./, day[0].toUpperCase())}</Title>
       {events.map((e) => (
         <Event {...e} key={`event-${e.title}`} />
       ))}
