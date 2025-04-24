@@ -4,6 +4,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { type Attendance, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { AttendanceBoxPool } from "./AttendanceBoxPool"
@@ -13,7 +14,6 @@ import { RegistrationButton } from "./RegistrationButton"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
-import Link from "next/link"
 
 interface Props {
   initialAttendance: Attendance
@@ -65,7 +65,9 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
 
   return (
     <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
-      <Title element="h2" className="font-poppins font-semibold text-2xl">Påmelding</Title>
+      <Title element="h2" className="font-poppins font-semibold text-2xl">
+        Påmelding
+      </Title>
 
       <AttendanceDateInfo attendance={attendance} />
 

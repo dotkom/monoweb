@@ -33,7 +33,9 @@ export const ViewAttendeesDialogButton = ({
           <Icon className="text-lg" icon="tabler:x" />
         </Button>
       </AlertDialogCancel>
-      <Title element="h4" className="font-poppins font-semibold">Påmeldte</Title>
+      <Title element="h4" className="font-poppins font-semibold">
+        Påmeldte
+      </Title>
     </AlertDialogContent>
   </AlertDialog>
 )

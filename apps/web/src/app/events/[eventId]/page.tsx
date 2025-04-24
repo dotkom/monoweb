@@ -2,13 +2,13 @@ import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import type { Company, InterestGroup } from "@dotkomonline/types"
 import type { Group } from "@dotkomonline/types"
+import { Text } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
 import { EventDescription } from "../components/EventDescription"
 import { EventHeader } from "../components/EventHeader"
 import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
-import { Text } from "@dotkomonline/ui"
 
 const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   // TODO: Href link to all events by committee or company

@@ -34,7 +34,9 @@ export const TicketButton = ({ userId }: TicketButtonProps) => {
       </div>
       <div className="flex flex-col items-center">
         <div className="flex flex-col pt-20">
-          <Title element="h1" className="text-2xl font-semibold font-poppins">Din billett</Title>
+          <Title element="h1" className="text-2xl font-semibold font-poppins">
+            Din billett
+          </Title>
           <Text className="text-lg">Dette er din billett til arrangementet</Text>
         </div>
         <div className="pt-10">
