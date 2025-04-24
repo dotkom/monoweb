@@ -60,10 +60,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider defaultTheme="light" enableSystem={false} attribute="data-theme">
-              <div className="min-h-screen flex flex-col">
+              <div className="min-h-screen flex flex-col mx-auto w-full max-w-screen-xl">
                 <Navbar />
                 <main className="flex-grow px-4 lg:px-10 lg:py-6">
-                  <div className="mx-auto w-full max-w-screen-xl">{children}</div>
+                  <div className="">{children}</div>
                 </main>
                 <Footer />
               </div>
