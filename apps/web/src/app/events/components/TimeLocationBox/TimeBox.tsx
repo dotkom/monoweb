@@ -1,5 +1,5 @@
 import type { Event } from "@dotkomonline/types"
-import { Icon } from "@dotkomonline/ui"
+import { Icon, Text } from "@dotkomonline/ui"
 import { IntlFormats } from "@dotkomonline/utils"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
@@ -34,23 +34,23 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
         <Icon icon="tabler:clock" width={24} height={24} />
       </div>
       <div className="flex flex-1 flex-col">
-        <span className="flex flex-row gap-[2ch] items-center">
-          <span className="flex flex-col">
-            <span className="text-lg font-medium">{date.start}</span>
-            <span className="text-base">
+        <div className="flex flex-row gap-[2ch] items-center">
+          <div className="flex flex-col">
+            <Text>{date.start}</Text>
+            <Text>
               {time.start} {!multipleDays ? ` - ${time.end}` : null}
-            </span>
-          </span>
+            </Text>
+          </div>
           {multipleDays && (
             <>
               <Icon icon={"tabler:arrow-right"} className="text-2xl" />
-              <span className="flex flex-col">
-                <span className="text-lg font-medium">{date.end}</span>
-                <span className="text-base">{time.end}</span>
-              </span>
+              <div className="flex flex-col">
+                <Text>{date.end}</Text>
+                <Text>{time.end}</Text>
+              </div>
             </>
           )}
-        </span>
+        </div>
       </div>
       <div className="flex items-center">
         <ActionLink
