@@ -18,10 +18,9 @@ datasource db {
 }
 
 enum EventStatus {
-  TBA
+  DRAFT
   PUBLIC
-  NO_LIMIT
-  ATTENDANCE
+  DELETED
 
   @@map("event_status")
 }
