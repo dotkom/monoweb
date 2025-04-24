@@ -28,7 +28,7 @@ const getQueuePosition = (
   const index = attendees.filter((attendee) => !attendee.reserved).indexOf(attendee)
 
   if (index === -1) {
-    return undefined
+    return null
   }
 
   return index + 1

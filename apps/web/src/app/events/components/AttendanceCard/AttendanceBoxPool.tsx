@@ -6,7 +6,7 @@ import type { FC } from "react"
 interface Props {
   pool: AttendancePool | undefined | null
   isAttending: boolean
-  queuePosition?: number
+  queuePosition: number | undefined | null
 }
 
 export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition }) => {
