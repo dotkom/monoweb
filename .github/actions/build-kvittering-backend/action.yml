@@ -21,7 +21,7 @@ runs:
       with:
         aws-region: 'eu-north-1'
         aws-iam-role: arn:aws:iam::891459268445:role/monoweb-prd-kvittering-backend-ci-role
-        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prod/kvittering-backend
+        aws-ecr-repository: 891459268445.dkr.ecr.eu-north-1.amazonaws.com/monoweb/prd/kvittering-backend
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/kvittering-backend/Dockerfile
         push: ${{ inputs.deploy }}
