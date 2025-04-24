@@ -1,7 +1,7 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
-import { type Attendance, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
+import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
 import { Icon, Text, Title } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
@@ -15,13 +15,32 @@ import { TicketButton } from "./TicketButton"
 import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
 
-interface Props {
-  initialAttendance: Attendance
-  user?: User
-  initialAttendee: Attendee | null
+const getQueuePosition = (
+  attendee: Attendee | undefined,
+  attendees: Attendee[] | undefined,
+  attendablePool: AttendancePool | undefined
+) => {
+  if (!attendee || !attendees || !attendablePool) {
+    return undefined
+  }
+
+  // This requires attendees are be sorted by reserveTime ascending
+  const index = attendees.filter((attendee) => !attendee.reserved).indexOf(attendee)
+
+  if (index === -1) {
+    return undefined
+  }
+
+  return index + 1
 }
 
-export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Props) => {
+interface Props {
+  initialAttendance: Attendance
+  initialAttendees: Attendee[]
+  user?: User
+}
+
+export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Props) => {
   const trpc = useTRPC()
   const { data: attendance, isLoading: attendanceLoading } = useQuery(
     trpc.attendance.getAttendance.queryOptions(
@@ -32,16 +51,16 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
     )
   )
 
-  const { data: attendee, isLoading: attendeeLoading } = useQuery(
-    trpc.attendance.getAttendee.queryOptions(
+  const { data: attendees, isLoading: attendeesLoading } = useQuery(
+    trpc.attendance.getAttendees.queryOptions(
       {
-        // biome-ignore lint/style/noNonNullAssertion: Disabled when user is undefined
-        userId: user?.id!,
-        attendanceId: attendance?.id,
+        id: attendance?.id,
       },
-      { initialData: initialAttendee, enabled: user !== undefined }
+      { initialData: initialAttendees, enabled: user !== undefined }
     )
   )
+
+  const attendee = user && attendees?.find((attendee) => attendee.userId === user.id)
 
   const registerMutation = useRegisterMutation({})
   const deregisterMutation = useDeregisterMutation()
@@ -61,7 +80,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
   const deregisterForAttendance = () =>
     attendablePool && attendee && deregisterMutation.mutate({ attendanceId: attendance.id })
 
-  const isLoading = attendanceLoading || attendeeLoading || deregisterMutation.isPending || registerMutation.isPending
+  const isLoading = attendanceLoading || attendeesLoading || deregisterMutation.isPending || registerMutation.isPending
 
   return (
     <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
@@ -71,10 +90,16 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendee }: Pro
 
       <AttendanceDateInfo attendance={attendance} />
 
-      <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} />
+      <AttendanceBoxPool
+        pool={attendablePool}
+        isAttending={Boolean(attendee)}
+        queuePosition={getQueuePosition(attendee, attendees, attendablePool)}
+      />
 
       {nonAttendablePools.length > 0 && (
-        <div className="flex flex-row gap-4">{nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}</div>
+        <div className="grid grid-cols-2 gap-4">
+          {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
+        </div>
       )}
 
       {attendee && user ? (

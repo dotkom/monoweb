@@ -26,6 +26,7 @@ export const RegistrationButton: FC<Props> = ({
   const buttonIcon = null
 
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
+  const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
 
   let disabledText = null
 
@@ -43,7 +44,13 @@ export const RegistrationButton: FC<Props> = ({
 
   const className = clsx(
     "flex flex-row gap-2 items-center w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left opacity-100 disabled:opacity-100",
-    disabled ? "bg-slate-4 text-slate-8" : attendee ? "bg-red-7 hover:bg-red-8" : "bg-green-7 hover:bg-green-8"
+    disabled
+      ? "bg-slate-4 text-slate-8"
+      : attendee
+        ? "bg-red-7 hover:bg-red-8"
+        : isPoolFull
+          ? "bg-yellow-5 hover:bg-yellow-6"
+          : "bg-green-7 hover:bg-green-8"
   )
 
   const buttonContent = isLoading ? (
