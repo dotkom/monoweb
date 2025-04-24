@@ -4,16 +4,19 @@ import { useTRPC } from "../../../trpc"
 
 export const useCompanyAllQuery = () => {
   const trpc = useTRPC()
-  const { data: companies = [], ...query } = useQuery(trpc.company.all.queryOptions({ take: 999 }))
+  const { data: companies, ...query } = useQuery(trpc.company.all.queryOptions({ take: 999 }, { initialData: [] }))
   return { companies, ...query }
 }
 
 export const useCompanyEventsAllQuery = (id: CompanyId) => {
   const trpc = useTRPC()
-  const { data: companyEvents = [], ...query } = useQuery(
-    trpc.company.event.get.queryOptions({
-      id,
-    })
+  const { data: companyEvents, ...query } = useQuery(
+    trpc.company.event.get.queryOptions(
+      {
+        id,
+      },
+      { initialData: [] }
+    )
   )
 
   return { companyEvents, ...query }
