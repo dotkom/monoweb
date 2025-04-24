@@ -11,7 +11,7 @@ export const getLinkType = (link: string | null): { type: "google-maps" | "mazem
     }
   }
 
-  if (link.includes("google")) {
+  if (link.includes("google") || link.includes("goo.gl")) {
     return {
       type: "google-maps",
       href: link,
