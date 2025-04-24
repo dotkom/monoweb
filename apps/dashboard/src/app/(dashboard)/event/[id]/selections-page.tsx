@@ -58,10 +58,13 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
   })
 
   const edit = useUpdateAttendanceMutation()
-  const { data: results = [], isLoading: resultsIsLoading } = useQuery(
-    trpc.attendance.getSelectionsResults.queryOptions({
-      attendanceId: attendance.id,
-    })
+  const { data: results, isLoading: resultsIsLoading } = useQuery(
+    trpc.attendance.getSelectionsResults.queryOptions(
+      {
+        attendanceId: attendance.id,
+      },
+      { initialData: [] }
+    )
   )
 
   const deleteAlternative = (id: string) => {
