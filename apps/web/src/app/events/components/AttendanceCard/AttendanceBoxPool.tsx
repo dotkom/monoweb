@@ -25,6 +25,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition 
 
   const isAttendingAndReserved = isAttending && queuePosition === null
   const isAttendingAndNotReserved = isAttending && queuePosition !== null
+  const poolHasQueue = pool.numUnreservedAttendees > 0
 
   return (
     <div
@@ -42,7 +43,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition 
         <Text className="font-semibold">{pool.title}</Text>
       </div>
       <div className="px-4 py-4 rounded-b-lg flex flex-col gap-2 items-center justify-center min-h-[6rem] w-full">
-        <Text className={clsx("text-3xl px-2 py-1", isAttendingAndReserved && "bg-green-5 rounded-lg")}>
+        <Text className={clsx("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
           {pool.numAttendees}/{pool.capacity}
         </Text>
         {pool.numUnreservedAttendees > 0 && (
