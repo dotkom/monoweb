@@ -21,7 +21,7 @@ const getQueuePosition = (
   attendablePool: AttendancePool | undefined
 ) => {
   if (!attendee || !attendees || !attendablePool) {
-    return undefined
+    return null
   }
 
   // This requires attendees are be sorted by reserveTime ascending
