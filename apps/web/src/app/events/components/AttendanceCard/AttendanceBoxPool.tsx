@@ -3,6 +3,27 @@ import { Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 import type { FC } from "react"
 
+const getAttendanceStatusText = (
+  isAttendingAndReserved: boolean,
+  isAttendingAndNotReserved: boolean,
+  queuePosition: number | null
+) => {
+  if (isAttendingAndReserved) {
+    return "Du er påmeldt"
+  }
+
+  if (isAttendingAndNotReserved) {
+    // Should never happen, but just in case
+    if (!queuePosition) {
+      return "Du er i køen"
+    }
+
+    return `Du er ${queuePosition}. i køen`
+  }
+
+  return "Du er ikke påmeldt"
+}
+
 interface Props {
   pool: AttendancePool | undefined | null
   isAttending: boolean
@@ -51,15 +72,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition 
             +{pool.numUnreservedAttendees} i kø
           </Text>
         )}
-        <Text>
-          {isAttendingAndReserved
-            ? "Du er påmeldt"
-            : isAttendingAndNotReserved
-              ? queuePosition
-                ? `Du er ${queuePosition}. i køen`
-                : "Du er i køen"
-              : "Du er ikke påmeldt"}
-        </Text>
+        <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
       </div>
     </div>
   )
