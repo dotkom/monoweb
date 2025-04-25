@@ -1,7 +1,7 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, t } from "../../trpc"
+import { adminProcedure, publicProcedure, t } from "../../trpc"
 
 export const offlineRouter = t.router({
   create: adminProcedure.input(OfflineWriteSchema).mutation(async ({ input, ctx }) => ctx.offlineService.create(input)),
@@ -13,8 +13,8 @@ export const offlineRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) => ctx.offlineService.update(changes.id, changes.input)),
-  all: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.offlineService.getAll(input)),
-  get: adminProcedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.get(input)),
+  all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.offlineService.getAll(input)),
+  get: publicProcedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.get(input)),
   createPresignedPost: adminProcedure
     .input(
       z.object({
