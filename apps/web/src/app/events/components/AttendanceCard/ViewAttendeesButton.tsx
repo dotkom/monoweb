@@ -1,4 +1,4 @@
-import type { Attendee } from "@dotkomonline/types"
+import type { Attendee, User } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,12 +16,14 @@ interface ViewAttendeesDialogButtonProps {
   attendeeListOpen: boolean
   setAttendeeListOpen: (open: boolean) => void
   attendees: Attendee[]
+  userId: User["id"] | undefined
 }
 
 export const ViewAttendeesDialogButton = ({
   attendeeListOpen,
   setAttendeeListOpen,
   attendees,
+  userId,
 }: ViewAttendeesDialogButtonProps) => {
   const reservedAttendees = attendees?.filter((attendee) => attendee.reserved)
   const waitlistAttendees = attendees?.filter((attendee) => !attendee.reserved)
@@ -55,7 +57,7 @@ export const ViewAttendeesDialogButton = ({
           <div className="flex flex-col gap-2">
             <Title className="font-poppins font-normal text-lg">Påmeldte</Title>
             {reservedAttendees !== undefined && (
-              <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} />
+              <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
             )}
           </div>
 
@@ -64,7 +66,7 @@ export const ViewAttendeesDialogButton = ({
               <hr className="border border-slate-4" />
               <div className="flex flex-col gap-2">
                 <Title className="font-poppins font-normal text-lg">Venteliste</Title>
-                <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} />
+                <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
               </div>
             </>
           )}
