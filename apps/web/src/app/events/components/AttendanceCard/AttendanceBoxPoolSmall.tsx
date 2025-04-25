@@ -19,9 +19,14 @@ export const AttendanceBoxPoolSmall = ({ pool }: Props) => {
       ) : (
         <Text className="text-sm font-normal">{pool.title}</Text>
       )}
+
       <Text className="text-lg">
         {pool.numAttendees}/{pool.capacity}
       </Text>
+
+      {pool.numUnreservedAttendees > 0 && (
+        <Text className="text-sm font-normal text-slate-10">+{pool.numUnreservedAttendees} i kø</Text>
+      )}
     </div>
   )
 }

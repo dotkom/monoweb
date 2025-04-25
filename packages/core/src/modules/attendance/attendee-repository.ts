@@ -79,13 +79,13 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
-    const attendees = await this.db.attendee.findMany({ where: { attendanceId } })
+    const attendees = await this.db.attendee.findMany({ where: { attendanceId }, orderBy: { reserveTime: "asc" } })
 
     return attendees.map(this.parseSelectionResponses)
   }
 
   async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
-    const attendees = await this.db.attendee.findMany({ where: { attendancePoolId } })
+    const attendees = await this.db.attendee.findMany({ where: { attendancePoolId }, orderBy: { reserveTime: "asc" } })
 
     return attendees.map(this.parseSelectionResponses)
   }
