@@ -26,6 +26,8 @@ export const ViewAttendeesDialogButton = ({
   const reservedAttendees = attendees?.filter((attendee) => attendee.reserved)
   const waitlistAttendees = attendees?.filter((attendee) => !attendee.reserved)
 
+  const maxAttendees = Math.max(reservedAttendees?.length ?? 0, waitlistAttendees?.length ?? 0)
+
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>
@@ -52,7 +54,9 @@ export const ViewAttendeesDialogButton = ({
         <div className="flex flex-col gap-4 max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
             <Title className="font-poppins font-normal text-lg">Påmeldte</Title>
-            {reservedAttendees !== undefined && <AttendeeList attendees={reservedAttendees} />}
+            {reservedAttendees !== undefined && (
+              <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} />
+            )}
           </div>
 
           {waitlistAttendees && waitlistAttendees.length > 0 && (
@@ -60,7 +64,7 @@ export const ViewAttendeesDialogButton = ({
               <hr className="border border-slate-4" />
               <div className="flex flex-col gap-2">
                 <Title className="font-poppins font-normal text-lg">Venteliste</Title>
-                <AttendeeList attendees={waitlistAttendees} />
+                <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} />
               </div>
             </>
           )}
