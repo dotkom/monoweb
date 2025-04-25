@@ -8,7 +8,7 @@ import {
   UserSchema,
 } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, protectedProcedure, t } from "../../trpc"
+import { adminProcedure, protectedProcedure, publicProcedure, t } from "../../trpc"
 
 export const attendanceRouter = t.router({
   getAttendee: protectedProcedure
@@ -116,7 +116,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateSelectionResponses(input.id, input.options)),
 
-  getAttendees: protectedProcedure
+  getAttendees: publicProcedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
