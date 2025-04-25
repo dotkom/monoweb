@@ -4,15 +4,26 @@ import clsx from "clsx"
 
 interface AttendeeListProps {
   attendees: Attendee[]
+  maxNumberOfAttendees: number
   userId: User["id"] | undefined
 }
 
-export const AttendeeList = ({ attendees, userId }: AttendeeListProps) => {
+export const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: AttendeeListProps) => {
   if (!attendees.length) {
     return <Text className="text-slate-10 text-sm">Ingen påmeldte</Text>
   }
-  return attendees.map((attendee: Attendee) => (
-    <div key={attendee.id} className="flex items-center justify-between">
+
+  return attendees.map((attendee: Attendee, index) => (
+    <div key={attendee.id} className="flex flex-row gap-2 items-center">
+      <Text
+        className={clsx(
+          "text-slate-8 text-right text-sm font-mono",
+          `min-w-[${maxNumberOfAttendees.toString().length + 1}ch]`
+        )}
+      >
+        {index + 1}.
+      </Text>
+
       <div
         className={clsx(
           "flex items-center gap-4 px-3 py-1.5 rounded-lg w-full",
