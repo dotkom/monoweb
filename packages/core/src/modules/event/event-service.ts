@@ -1,5 +1,5 @@
 import type {
-  AttendanceEventDetail,
+  EventDetail,
   AttendanceWrite,
   Event,
   EventFilter,
@@ -25,7 +25,7 @@ export interface EventService {
   getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
-  getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail>
+  getAttendanceDetail(id: EventId): Promise<EventDetail>
   setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]>
 }
 
@@ -99,7 +99,7 @@ export class EventServiceImpl implements EventService {
     return await this.eventRepository.update(id, eventUpdate)
   }
 
-  async getAttendanceDetail(id: EventId): Promise<AttendanceEventDetail> {
+  async getAttendanceDetail(id: EventId): Promise<EventDetail> {
     const event = await this.getEventById(id)
     const companies = await this.eventCompanyService.getCompaniesByEventId(event.id)
     const attendance = event.attendanceId ? await this.attendanceService.getById(event.attendanceId) : null
