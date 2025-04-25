@@ -49,7 +49,7 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.registerForEvent(input.userId, input.attendanceId, input.attendancePoolId)
+      ctx.attendeeService.adminRegisterForEvent(input.userId, input.attendanceId, input.attendancePoolId)
     ),
 
   registerForEvent: protectedProcedure
