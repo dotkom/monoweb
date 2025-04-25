@@ -1,3 +1,4 @@
+import { useTRPC } from "@/utils/trpc/client"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,9 +10,8 @@ import {
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { AttendeeList } from "./AttendeeList"
-import { useTRPC } from "@/utils/trpc/client"
 import { useQuery } from "@tanstack/react-query"
+import { AttendeeList } from "./AttendeeList"
 
 interface ViewAttendeesDialogButtonProps {
   attendeeListOpen: boolean
