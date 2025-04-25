@@ -116,8 +116,7 @@ export const attendanceRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateSelectionResponses(input.id, input.options)),
 
-  // currently only used by dashbaord, thus admin
-  getAttendees: adminProcedure
+  getAttendees: protectedProcedure
     .input(
       z.object({
         id: AttendanceSchema.shape.id,
