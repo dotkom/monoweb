@@ -119,7 +119,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attendancePoolId,
       attendanceId: attendancePool.attendanceId,
 
-      displayName: (user.firstName && user.lastName) ?? user.email,
+      displayName: user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.email,
       userGrade: user.membership ? getMembershipGrade(user.membership) : null,
 
       reserveTime: registerTime,
@@ -164,7 +164,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       attendancePoolId,
       attendanceId: attendancePool.attendanceId,
 
-      displayName: (user.firstName && user.lastName) ?? user.email,
+      displayName: user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.email,
       userGrade: user.membership ? getMembershipGrade(user.membership) : null,
 
       reserveTime,
