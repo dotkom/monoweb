@@ -13,9 +13,14 @@ export const AttendeeList = ({ attendees, userId }: AttendeeListProps) => {
   }
   return attendees.map((attendee: Attendee) => (
     <div key={attendee.id} className="flex items-center justify-between">
-      <div className={clsx("flex items-center gap-4 px-3 py-1.5 rounded-lg w-full", attendee.userId === userId && "bg-blue-3")}>
+      <div
+        className={clsx(
+          "flex items-center gap-4 px-3 py-1.5 rounded-lg w-full",
+          attendee.userId === userId && "bg-blue-3"
+        )}
+      >
         <Avatar className="h-10 w-10">
-          <AvatarFallback className={attendee.userId === userId  ? "bg-blue-6" : "bg-slate-6"}>
+          <AvatarFallback className={attendee.userId === userId ? "bg-blue-6" : "bg-slate-6"}>
             <Icon className="text-lg" icon="tabler:user" />
           </AvatarFallback>
         </Avatar>
