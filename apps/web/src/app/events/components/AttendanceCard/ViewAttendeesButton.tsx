@@ -52,29 +52,33 @@ export const ViewAttendeesDialogButton = ({
         className="flex flex-col gap-4 w-full bg-slate-2 outline outline-slate-4 max-w-2xl p-4 rounded-lg"
         onOutsideClick={() => setAttendeeListOpen(false)}
       >
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <AlertDialogTitle asChild>
-              <Title className="font-poppins font-medium text-xl">Påmeldte</Title>
-            </AlertDialogTitle>
-            <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Icon className="text-lg" icon="tabler:x" />
-              </Button>
-            </AlertDialogCancel>
-          </div>
-          {reservedAttendees !== undefined && <AttendeeList attendees={reservedAttendees} />}
+        <div className="flex items-center justify-between">
+          <AlertDialogTitle asChild>
+            <Title className="font-poppins font-semibold text-xl">Påmeldingsliste</Title>
+          </AlertDialogTitle>
+          <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Icon className="text-lg" icon="tabler:x" />
+            </Button>
+          </AlertDialogCancel>
         </div>
 
-        {waitlistAttendees && waitlistAttendees.length > 0 && (
-          <>
-            <hr className="border border-slate-4" />
-            <div className="flex flex-col gap-2">
-              <Title className="font-poppins font-medium text-xl">Venteliste</Title>
-              <AttendeeList attendees={waitlistAttendees} />
-            </div>
-          </>
-        )}
+        <div className="flex flex-col gap-4 max-h-[75dvh] overflow-y-auto">
+          <div className="flex flex-col gap-2">
+            <Title className="font-poppins font-normal text-lg">Påmeldte</Title>
+            {reservedAttendees !== undefined && <AttendeeList attendees={reservedAttendees} />}
+          </div>
+
+          {waitlistAttendees && waitlistAttendees.length > 0 && (
+            <>
+              <hr className="border border-slate-4" />
+              <div className="flex flex-col gap-2">
+                <Title className="font-poppins font-medium text-lg">Venteliste</Title>
+                <AttendeeList attendees={waitlistAttendees} />
+              </div>
+            </>
+          )}
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   )
