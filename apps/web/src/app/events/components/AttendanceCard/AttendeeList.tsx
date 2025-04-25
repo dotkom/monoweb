@@ -20,7 +20,7 @@ export const AttendeeList = ({ attendees }: AttendeeListProps) => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <Text className="font-medium">{attendee.displayName}</Text>
+              <Text>{attendee.displayName}</Text>
               <Text size="sm" className="text-slate-10">
                 {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
               </Text>
