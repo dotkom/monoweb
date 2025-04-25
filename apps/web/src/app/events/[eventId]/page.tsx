@@ -25,7 +25,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   const eventDetail = await server.event.getAttendanceEventDetail.query(eventId)
   const attendees = eventDetail.attendance
     ? await server.attendance.getAttendees.query({
-        id: eventDetail.attendance.id,
+        attendanceId: eventDetail.attendance.id,
       })
     : []
 
