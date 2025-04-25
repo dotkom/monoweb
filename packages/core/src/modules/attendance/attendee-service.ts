@@ -26,6 +26,7 @@ import type { AttendeeRepository } from "./attendee-repository"
 
 export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
+  adminRegisterForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   deregisterForEvent(userId: string, attendanceId: string): Promise<void>
   adminDeregisterForEvent(id: AttendeeId): Promise<void>
   updateSelectionResponses(id: AttendanceId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
@@ -98,6 +99,32 @@ export class AttendeeServiceImpl implements AttendeeService {
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
     }
+
+    return attendee
+  }
+
+  async adminRegisterForEvent(userId: UserId, attendanceId: AttendancePoolId, attendancePoolId: AttendanceId) {
+    const user = await this.userService.getById(userId)
+    const attendance = await this.attendanceRepository.getById(attendanceId)
+    const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
+
+    if (attendancePool === undefined) {
+      throw new AttendancePoolNotFoundError("Tried to register to unknown attendance pool")
+    }
+
+    const registerTime = new Date()
+
+    const attendee = await this.attendeeRepository.create({
+      userId,
+      attendancePoolId,
+      attendanceId: attendancePool.attendanceId,
+
+      displayName: (user.firstName && user.lastName) ?? user.email,
+      userGrade: user.membership ? getMembershipGrade(user.membership) : null,
+
+      reserveTime: registerTime,
+      reserved: true,
+    })
 
     return attendee
   }
