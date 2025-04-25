@@ -25,8 +25,7 @@ export const ComingEvent: React.FC<ComingEventProps> = (props) => (
           width={320}
           height={180}
           style={{ width: 320, height: 180 }}
-          // downscale image 50% to fit in the space
-          className="rounded-xl border-2 border-slate-4 object-cover w-full h-full"
+          className="rounded-xl border-2 border-slate-4 object-cover aspect-[16/9]"
         />
         <Badge color="green" variant="solid" className="absolute bottom-2 left-2">
           {props.tag}
