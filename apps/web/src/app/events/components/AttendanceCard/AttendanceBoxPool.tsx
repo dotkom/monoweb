@@ -23,8 +23,8 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition 
     )
   }
 
-  const isAttendingAndReserved = isAttending && queuePosition === undefined
-  const isAttendingAndNotReserved = isAttending && queuePosition !== undefined
+  const isAttendingAndReserved = isAttending && queuePosition === null
+  const isAttendingAndNotReserved = isAttending && queuePosition !== null
 
   return (
     <div
