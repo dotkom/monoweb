@@ -55,7 +55,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
       <div className="flex items-center">
         <ActionLink
           href={gcalLink}
-          iconHref="https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/Google_Calendar_icon_(2020).svg.png"
+          iconHref="https://i.imgur.com/cR1K7Bg.png"
           label="Kalender"
         />
       </div>
