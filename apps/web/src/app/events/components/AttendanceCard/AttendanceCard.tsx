@@ -108,6 +108,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
             attendeeListOpen={attendeeListOpen}
             setAttendeeListOpen={setAttendeeListOpen}
             attendees={attendees}
+            userId={user.id}
           />
           <TicketButton userId={user.id} />
         </div>
@@ -116,6 +117,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
           attendeeListOpen={attendeeListOpen}
           setAttendeeListOpen={setAttendeeListOpen}
           attendees={attendees}
+          userId={user?.id}
         />
       )}
 
