@@ -16,7 +16,12 @@ const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolea
   }
 }
 
-const getDisabledText = (status: AttendanceStatus, attendee: boolean, pool: boolean, isPastDeregisterDeadline: boolean) => {
+const getDisabledText = (
+  status: AttendanceStatus,
+  attendee: boolean,
+  pool: boolean,
+  isPastDeregisterDeadline: boolean
+) => {
   switch (true) {
     case status === "NotOpened":
       return "Påmeldinger har ikke åpnet"
