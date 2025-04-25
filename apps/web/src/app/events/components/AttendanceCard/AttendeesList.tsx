@@ -11,8 +11,8 @@ export const AttendeesList = ({ attendanceId }: AttendeesListProps) => {
   const trpc = useTRPC()
   const { data: attendees = [] } = useQuery(trpc.attendance.getAttendees.queryOptions({ id: attendanceId }))
 
-  if (!attendees) {
-    return null
+  if (!attendees.length) {
+    return (<Text className="text-slate-10 text-sm">Ingen påmeldte</Text>)
   }
 
   // TODO: Implement proper VIP logic to identify the VIP attendee
