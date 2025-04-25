@@ -9,17 +9,20 @@ export const t = initTRPC.context<Context>().create({
   },
 })
 
-const isAuthed = t.middleware(async ({ ctx, next }) => {
+const isAuthed = t.middleware(async ({ ctx, next, path }) => {
   const principal = ctx.principal
 
   if (principal === null) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" })
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: `${principal} is not authorized for protectedProcedure ${path}`,
+    })
   }
 
   return next({ ctx: { principal } })
 })
 
-const isAdmin = t.middleware(async ({ ctx, next }) => {
+const isAdmin = t.middleware(async ({ ctx, next, path }) => {
   const principal = ctx.principal
   if (principal === null) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" })
@@ -31,7 +34,7 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
     return next({ ctx: { principal } })
   }
 
-  throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authorized" })
+  throw new TRPCError({ code: "UNAUTHORIZED", message: `${principal} is not authorized for adminProcedure ${path}` })
 })
 
 export const router = t.router
