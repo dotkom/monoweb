@@ -45,12 +45,12 @@ export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
   return { data, isLoading }
 }
 
-export const useEventAttendeesGetQuery = (id: AttendanceId) => {
+export const useEventAttendeesGetQuery = (attendanceId: AttendanceId) => {
   const trpc = useTRPC()
   const { data: attendees, ...query } = useQuery(
     trpc.event.attendance.getAttendees.queryOptions(
       {
-        id,
+        attendanceId,
       },
       { initialData: [] as Attendee[] }
     )
