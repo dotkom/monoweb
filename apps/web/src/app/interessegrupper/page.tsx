@@ -1,6 +1,6 @@
-import { InterestGroupList } from "@/components/organisms/InterestGroupList";
-import { Button } from "@dotkomonline/ui";
-import Link from "next/link";
+import { InterestGroupList } from "@/components/organisms/InterestGroupList"
+import { Button } from "@dotkomonline/ui"
+import Link from "next/link"
 
 export default async function InterestPage() {
   return (
@@ -8,17 +8,21 @@ export default async function InterestPage() {
       <div className="border-slate-7 border-b">
         <div className="flex flex-col py-5">
           <p className="mt-4 text-3xl font-bold border-b-0">Interessegrupper</p>
-          <p className="text-slate-11 pt-2">På denne siden finner du informasjon om alle de forskjellige interessegruppene i Online. Ser du noe som ser
-            interessant ut? Ta kontakt og møt noen med samme interesser som deg. Interessegruppene i Online er grupper for
-            alle mulige slags interesser. Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett en
-            interessegruppe!</p>
-          <p className="text-slate-11 pt-2">Mer informasjon om hvordan dette gjøres finnes{" "}
+          <p className="text-slate-11 pt-2">
+            På denne siden finner du informasjon om alle de forskjellige interessegruppene i Online. Ser du noe som ser
+            interessant ut? Ta kontakt og møt noen med samme interesser som deg. Interessegruppene i Online er grupper
+            for alle mulige slags interesser. Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett
+            en interessegruppe!
+          </p>
+          <p className="text-slate-11 pt-2">
+            Mer informasjon om hvordan dette gjøres finnes{" "}
             <Link
               className="hover:underline text-blue-8"
               href={"https://wiki.online.ntnu.no/info/innsikt-og-interface/interessegrupper/"}
             >
               her.
-            </Link></p>
+            </Link>
+          </p>
         </div>
       </div>
 
