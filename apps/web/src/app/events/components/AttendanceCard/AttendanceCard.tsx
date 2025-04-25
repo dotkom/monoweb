@@ -107,7 +107,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
           <ViewAttendeesDialogButton
             attendeeListOpen={attendeeListOpen}
             setAttendeeListOpen={setAttendeeListOpen}
-            attendanceId={attendance.id}
+            attendees={attendees}
           />
           <TicketButton userId={user.id} />
         </div>
@@ -115,7 +115,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         <ViewAttendeesDialogButton
           attendeeListOpen={attendeeListOpen}
           setAttendeeListOpen={setAttendeeListOpen}
-          attendanceId={attendance.id}
+          attendees={attendees}
         />
       )}
 
