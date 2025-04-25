@@ -1,13 +1,13 @@
 import { EventSchema, InterestGroupSchema, InterestGroupWriteSchema, UserSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, t } from "../../trpc"
+import { adminProcedure, publicProcedure, t } from "../../trpc"
 
 export const interestGroupRouter = t.router({
   create: adminProcedure
     .input(InterestGroupWriteSchema)
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.create(input)),
-  all: adminProcedure.query(async ({ ctx }) => await ctx.interestGroupService.getAll()),
-  get: adminProcedure
+  all: publicProcedure.query(async ({ ctx }) => await ctx.interestGroupService.getAll()),
+  get: publicProcedure
     .input(InterestGroupSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getById(input)),
   update: adminProcedure
@@ -21,10 +21,10 @@ export const interestGroupRouter = t.router({
   delete: adminProcedure
     .input(InterestGroupSchema.shape.id)
     .mutation(async ({ input, ctx }) => await ctx.interestGroupService.delete(input)),
-  getByMember: adminProcedure
+  getByMember: publicProcedure
     .input(UserSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getByMember(input)),
-  getMembers: adminProcedure
+  getMembers: publicProcedure
     .input(InterestGroupSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getMembers(input)),
   addMember: adminProcedure
@@ -35,7 +35,7 @@ export const interestGroupRouter = t.router({
     .mutation(
       async ({ input, ctx }) => await ctx.interestGroupService.removeMember(input.interestGroupId, input.userId)
     ),
-  allByEventId: adminProcedure
+  allByEventId: publicProcedure
     .input(EventSchema.shape.id)
     .query(async ({ input, ctx }) => await ctx.interestGroupService.getAllByEventId(input)),
 })
