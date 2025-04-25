@@ -1,7 +1,7 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
 import { t } from "../../trpc"
-import { adminProcedure } from "./../../trpc"
+import { adminProcedure } from "../../trpc"
 import { personalMarkRouter } from "./personal-mark-router"
 
 export const markRouter = t.router({

@@ -1,7 +1,7 @@
 import { PaginateInputSchema } from "@dotkomonline/core"
 import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
 import { z } from "zod"
-import { adminProcedure, t } from "../../trpc"
+import { adminProcedure, publicProcedure, t } from "../../trpc"
 import { companyEventRouter } from "./company-event-router"
 
 export const companyRouter = t.router({
@@ -16,11 +16,13 @@ export const companyRouter = t.router({
       })
     )
     .mutation(async ({ input: changes, ctx }) => ctx.companyService.updateCompany(changes.id, changes.input)),
-  all: t.procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.companyService.getCompanies(input)),
-  getById: t.procedure
+  all: publicProcedure
+    .input(PaginateInputSchema)
+    .query(async ({ input, ctx }) => ctx.companyService.getCompanies(input)),
+  getById: publicProcedure
     .input(CompanySchema.shape.id)
     .query(async ({ input, ctx }) => ctx.companyService.getCompanyById(input)),
-  getBySlug: t.procedure
+  getBySlug: publicProcedure
     .input(CompanySchema.shape.slug)
     .query(async ({ input, ctx }) => ctx.companyService.getCompanyBySlug(input)),
   event: companyEventRouter,
