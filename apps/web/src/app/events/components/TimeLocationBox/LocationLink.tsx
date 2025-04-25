@@ -32,7 +32,7 @@ export const LocationLink: FC<LocationLinkProps> = ({ link: _link }) => {
     return (
       <ActionLink
         href={link.href}
-        iconHref="https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/google_maps.png"
+        iconHref="https://i.imgur.com/pnBc6G2.png"
         label="Kart"
       />
     )
@@ -41,7 +41,7 @@ export const LocationLink: FC<LocationLinkProps> = ({ link: _link }) => {
     return (
       <ActionLink
         href={link.href}
-        iconHref="https://s3.eu-north-1.amazonaws.com/cdn.staging.online.ntnu.no/60018c08c5bbb7e94657a8b2_M-06.png"
+        iconHref="https://i.imgur.com/3wfhVXd.png"
         label="Mazemap"
       />
     )
