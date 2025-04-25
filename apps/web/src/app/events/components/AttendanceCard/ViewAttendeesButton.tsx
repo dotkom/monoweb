@@ -28,9 +28,9 @@ export const ViewAttendeesDialogButton = ({
         <Text className="font-medium">Vis påmeldte</Text>
       </Button>
     </AlertDialogTrigger>
-    <AlertDialogContent className="w-full max-w-2xl p-4" onOutsideClick={() => setAttendeeListOpen(false)}>
+    <AlertDialogContent className="w-full max-w-2xl p-4 rounded-lg" onOutsideClick={() => setAttendeeListOpen(false)}>
       <div className="flex items-center justify-between">
-        <AlertDialogTitle className="font-semibold font-xl">Påmeldte</AlertDialogTitle>
+        <AlertDialogTitle className="font-semibold text-2xl">Påmeldte</AlertDialogTitle>
         <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Icon className="text-lg" icon="tabler:x" />
