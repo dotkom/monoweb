@@ -20,7 +20,7 @@ export const AttendeesList = ({ attendanceId }: AttendeesListProps) => {
   const nonVipAttendees = attendees
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 max-h-[75dvh] overflow-y-auto">
       {/* VIP section - to be implemented
       {vipAttendee && (
         <div className="flex flex-col gap-2">
