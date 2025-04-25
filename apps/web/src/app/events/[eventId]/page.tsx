@@ -23,12 +23,11 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   const session = await auth.getServerSession()
   const user = session ? await server.user.getMe.query() : undefined
   const eventDetail = await server.event.getAttendanceEventDetail.query(eventId)
-  const attendees =
-    eventDetail.attendance && session?.sub != null
-      ? await server.attendance.getAttendees.query({
-          id: eventDetail.attendance.id,
-        })
-      : []
+  const attendees = eventDetail.attendance
+    ? await server.attendance.getAttendees.query({
+        id: eventDetail.attendance.id,
+      })
+    : []
 
   const hostingGroups = eventDetail.eventHostingGroups.map(mapToImageAndName)
   const hostingInterestGroups = eventDetail.eventInterestGroups.map(mapToImageAndName)
@@ -48,7 +47,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           <EventDescription description={eventDetail.event.description ?? ""} />
         </section>
         <div className="flex-1 flex-col">
-          {eventDetail.attendance !== null && session !== null && (
+          {eventDetail.attendance !== null && (
             <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendees={attendees} user={user} />
           )}
           <TimeLocationBox event={eventDetail.event} />
