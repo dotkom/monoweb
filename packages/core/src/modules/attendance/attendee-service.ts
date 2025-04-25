@@ -184,6 +184,18 @@ export class AttendeeServiceImpl implements AttendeeService {
     }
 
     await this.attendeeRepository.delete(attendee.id)
+
+    const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+    const poolIsFull = attendedPool && attendedPool.numAttendees >= attendedPool.capacity
+
+    if (attendee.reserved && poolIsFull) {
+      const nextUnreservedAttendee = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(attendedPool.id)
+      attendedPool.numAttendees -= 1
+
+      if (nextUnreservedAttendee && nextUnreservedAttendee.reserveTime <= new Date()) {
+        await this.tryReserve(nextUnreservedAttendee.id, attendedPool)
+      }
+    }
   }
 
   async adminDeregisterForEvent(id: AttendeeId) {
