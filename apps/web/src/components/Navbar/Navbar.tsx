@@ -1,10 +1,10 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { env } from "@/env"
 import Link from "next/link"
 import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { env } from "@/env"
 
 export type MenuItem = {
   title: string
