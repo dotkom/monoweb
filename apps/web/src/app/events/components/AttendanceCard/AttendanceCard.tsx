@@ -104,11 +104,19 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
 
       {attendee && user ? (
         <div className="flex flex-row gap-4">
-          <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
+          <ViewAttendeesDialogButton
+            attendeeListOpen={attendeeListOpen}
+            setAttendeeListOpen={setAttendeeListOpen}
+            attendanceId={attendance.id}
+          />
           <TicketButton userId={user.id} />
         </div>
       ) : (
-        <ViewAttendeesDialogButton attendeeListOpen={attendeeListOpen} setAttendeeListOpen={setAttendeeListOpen} />
+        <ViewAttendeesDialogButton
+          attendeeListOpen={attendeeListOpen}
+          setAttendeeListOpen={setAttendeeListOpen}
+          attendanceId={attendance.id}
+        />
       )}
 
       <RegistrationButton
