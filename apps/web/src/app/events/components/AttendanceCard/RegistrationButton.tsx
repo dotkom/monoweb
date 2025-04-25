@@ -1,5 +1,5 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
-import { Button, Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
+import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
 import clsx from "clsx"
 import type { FC } from "react"
 
@@ -51,7 +51,7 @@ export const RegistrationButton: FC<Props> = ({
   ) : (
     <div className={clsx("flex flex-row gap-2 items-center", disabled ? "text-slate-9" : "text-slate-12")}>
       <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
-      <p>{buttonText}</p>
+      <Text className="font-medium">{buttonText}</Text>
     </div>
   )
 
@@ -63,7 +63,7 @@ export const RegistrationButton: FC<Props> = ({
       variant="solid"
       icon={buttonIcon}
     >
-      {buttonContent}
+      <Text className="font-medium">{buttonContent}</Text>
     </Button>
   )
 
@@ -82,7 +82,7 @@ export const RegistrationButton: FC<Props> = ({
           className="border-none text-center bg-slate-1 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
           sideOffset={-10}
         >
-          {disabledText}
+          <Text className="font-medium">{disabledText}</Text>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

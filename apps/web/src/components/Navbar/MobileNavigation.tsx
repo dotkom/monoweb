@@ -18,28 +18,34 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
         </div>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content className="h-screen w-screen border-slate-6 border-t bg-brand-1 animate-in fade-in-20 px-4 mt-2">
-          <nav className="flex flex-col gap-1">
+        <Popover.Content className="w-screen border-t bg-slate-1 animate-in fade-in-20 p-6 mt-8">
+          <nav className="flex flex-col gap-4">
             {links.map((link) => (
               <Fragment key={link.title}>
-                <Link
-                  href={"href" in link ? link.href : "#"}
-                  className={cn("inline-flex text-lg font-semibold text-slate-12", "href" in link && "font-normal")}
-                >
-                  {link.title}
-                </Link>
+                <Popover.Close asChild>
+                  <Link
+                    href={"href" in link ? link.href : "#"}
+                    className={cn(
+                      "inline-flex py-2 text-lg font-semibold text-slate-12 hover:bg-slate-2 rounded-md px-2 transition-colors",
+                      "href" in link && "font-normal"
+                    )}
+                  >
+                    {link.title}
+                  </Link>
+                </Popover.Close>
                 {"items" in link &&
                   link.items.map((link) => (
-                    <Link
-                      key={link.title}
-                      href={"href" in link ? link.href : "#"}
-                      className={cn(
-                        "ml-4 inline-flex text-lg font-semibold text-slate-12",
-                        "href" in link && "font-normal"
-                      )}
-                    >
-                      {link.title}
-                    </Link>
+                    <Popover.Close asChild key={link.title}>
+                      <Link
+                        href={"href" in link ? link.href : "#"}
+                        className={cn(
+                          "ml-4 inline-flex py-2 text-base font-medium text-slate-12 hover:bg-slate-2 rounded-md px-2 transition-colors",
+                          "href" in link && "font-normal"
+                        )}
+                      >
+                        {link.title}
+                      </Link>
+                    </Popover.Close>
                   ))}
               </Fragment>
             ))}

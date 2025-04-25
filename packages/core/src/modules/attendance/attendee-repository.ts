@@ -21,6 +21,7 @@ export interface AttendeeRepository {
   update(id: AttendeeId, obj: Partial<AttendeeWrite>): Promise<Attendee>
   getByAttendanceId(id: AttendanceId): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
+  getFirstUnreservedByAttendancePoolId(id: AttendancePoolId): Promise<Attendee | null>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
   poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
   checkCapacityAndReserve(attendeeId: AttendeeId): Promise<void>
@@ -87,6 +88,17 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const attendees = await this.db.attendee.findMany({ where: { attendancePoolId } })
 
     return attendees.map(this.parseSelectionResponses)
+  }
+
+  async getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId) {
+    const attendee = await this.db.attendee.findFirst({
+      where: { attendancePoolId, reserved: false },
+      orderBy: { reserveTime: "asc" },
+    })
+
+    if (attendee === null) return null
+
+    return this.parseSelectionResponses(attendee)
   }
 
   async update(id: AttendeeId, data: Partial<AttendeeWrite>) {

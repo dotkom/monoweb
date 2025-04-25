@@ -1,4 +1,5 @@
 import type { Event } from "@dotkomonline/types"
+import { Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
@@ -20,7 +21,9 @@ export const EventHeader: FC<Props> = ({ event }) => {
         style={{ objectFit: "cover" }}
         className="h-[30rem] w-full rounded-2xl bg-slate-5"
       />
-      <h1>{event.title}</h1>
+      <Title element="h1" className="text-4xl">
+        {event.title}
+      </Title>
     </section>
   )
 }

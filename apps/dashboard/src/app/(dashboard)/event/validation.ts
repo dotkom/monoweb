@@ -13,7 +13,11 @@ const isValidMapUrl = (value: string | null) => {
   // it invalid.
   try {
     const url = new URL(value)
-    return url.hostname === "maps.google.com" || url.hostname === "use.mazemap.com"
+    return (
+      url.hostname === "use.mazemap.com" ||
+      url.hostname === "maps.app.goo.gl" ||
+      (url.href.startsWith("https://www.google.") && url.pathname.startsWith("/maps/place/"))
+    )
   } catch (e) {
     return false
   }

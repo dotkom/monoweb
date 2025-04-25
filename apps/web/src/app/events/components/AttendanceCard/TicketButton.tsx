@@ -1,7 +1,7 @@
 "use client"
 
 import type { UserId } from "@dotkomonline/types"
-import { Button, Icon } from "@dotkomonline/ui"
+import { Button, Icon, Text, Title } from "@dotkomonline/ui"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
@@ -20,7 +20,7 @@ export const TicketButton = ({ userId }: TicketButtonProps) => {
     return (
       <Button onClick={() => setOpen(true)} className={className}>
         <Icon icon="tabler:ticket" className="text-lg" />
-        Vis billett
+        <Text className="font-medium">Vis billett</Text>
       </Button>
     )
   }
@@ -32,25 +32,29 @@ export const TicketButton = ({ userId }: TicketButtonProps) => {
           <Cross2Icon width={20} height={20} />
         </Button>
       </div>
-      <div className="flex flex-col items-center pt-20">
-        <h1 className="text-2xl font-bold">Din billett</h1>
-        <p className="text-lg">Dette er din billett til arrangementet</p>
-      </div>
-      <div className="flex flex-col items-center pt-10">
-        {userId && (
-          <QRCodeSVG
-            value={userId}
-            size={256}
-            imageSettings={{
-              src: "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/680/",
-              x: undefined,
-              y: undefined,
-              height: 60,
-              width: 60,
-              excavate: true,
-            }}
-          />
-        )}
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col pt-20">
+          <Title element="h1" className="text-2xl font-semibold font-poppins">
+            Din billett
+          </Title>
+          <Text className="text-lg">Dette er din billett til arrangementet</Text>
+        </div>
+        <div className="pt-10">
+          {userId && (
+            <QRCodeSVG
+              value={userId}
+              size={256}
+              imageSettings={{
+                src: "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/680/",
+                x: undefined,
+                y: undefined,
+                height: 60,
+                width: 60,
+                excavate: true,
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   )

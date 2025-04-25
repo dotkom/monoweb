@@ -1,4 +1,5 @@
 import type { Attendance } from "@dotkomonline/types"
+import { Text } from "@dotkomonline/ui"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import React from "react"
@@ -34,9 +35,9 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
 
   const renderDateBlock = (label: string, dateStr: string, time: string) => (
     <div className="text-slate-12">
-      <p>{label}</p>
-      <p className="text-sm">{dateStr}</p>
-      <p className="text-sm">kl. {time}</p>
+      <Text>{label}</Text>
+      <Text className="text-sm">{dateStr}</Text>
+      <Text className="text-sm">kl. {time}</Text>
     </div>
   )
 
