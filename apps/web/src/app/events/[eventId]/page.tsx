@@ -43,7 +43,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           {organizers.length > 0 ? (
             <div className="flex flex-row space-x-1">{organizers}</div>
           ) : (
-            <Text>Ingen organiserere</Text>
+            <Text className="text-slate-10">Ingen arrangører</Text>
           )}
           <EventDescription description={eventDetail.event.description ?? ""} />
         </section>
