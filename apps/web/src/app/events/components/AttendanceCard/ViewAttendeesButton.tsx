@@ -1,4 +1,3 @@
-import { useTRPC } from "@/utils/trpc/client"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,33 +9,19 @@ import {
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { useQuery } from "@tanstack/react-query"
 import { AttendeeList } from "./AttendeeList"
 
 interface ViewAttendeesDialogButtonProps {
   attendeeListOpen: boolean
   setAttendeeListOpen: (open: boolean) => void
-  attendanceId: string
+  attendees: Attendee[]
 }
 
 export const ViewAttendeesDialogButton = ({
   attendeeListOpen,
   setAttendeeListOpen,
-  attendanceId,
+  attendees,
 }: ViewAttendeesDialogButtonProps) => {
-  const trpc = useTRPC()
-
-  const { data: attendees, isLoading } = useQuery(
-    trpc.attendance.getAttendees.queryOptions(
-      {
-        attendanceId,
-      },
-      {
-        enabled: attendeeListOpen,
-      }
-    )
-  )
-
   const reservedAttendees = attendees?.filter((attendee) => attendee.reserved)
   const waitlistAttendees = attendees?.filter((attendee) => !attendee.reserved)
 
@@ -73,7 +58,7 @@ export const ViewAttendeesDialogButton = ({
             <>
               <hr className="border border-slate-4" />
               <div className="flex flex-col gap-2">
-                <Title className="font-poppins font-medium text-lg">Venteliste</Title>
+                <Title className="font-poppins font-normal text-lg">Venteliste</Title>
                 <AttendeeList attendees={waitlistAttendees} />
               </div>
             </>
