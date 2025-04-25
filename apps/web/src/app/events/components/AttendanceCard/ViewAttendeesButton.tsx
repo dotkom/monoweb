@@ -1,3 +1,4 @@
+import type { Attendee } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
