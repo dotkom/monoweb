@@ -57,9 +57,7 @@ export const AttendeesList = ({ attendanceId }: AttendeesListProps) => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <Text className="font-medium">
-                {attendee.displayName}
-              </Text>
+              <Text className="font-medium">{attendee.displayName}</Text>
               <Text size="sm" className="text-slate-10">
                 {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
               </Text>
