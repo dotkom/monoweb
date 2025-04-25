@@ -16,7 +16,7 @@ export const OtherGroupListItem: FC<OtherGroupListItemProps> = ({ otherGroup }) 
 
     <h2 className="!text-3xl border-none !mt-4">{otherGroup.name}</h2>
     <p className="mt-2 mb-6 text-left px-3">{otherGroup.description}</p>
-    <Link className="mt-auto text-xl hover:underline" href={`other-groups/${otherGroup.id}`}>
+    <Link className="mt-auto text-xl hover:underline" href={`andre-grupper/${otherGroup.id}`}>
       Les mer
     </Link>
   </div>
