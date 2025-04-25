@@ -1,4 +1,4 @@
-import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, AttendanceStatus, Attendee } from "@dotkomonline/types"
 import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
 import clsx from "clsx"
 import type { FC } from "react"
@@ -16,7 +16,7 @@ const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolea
   }
 }
 
-const getDisabledText = (status: string, attendee: boolean, pool: boolean, isPastDeregisterDeadline: boolean) => {
+const getDisabledText = (status: AttendanceStatus, attendee: boolean, pool: boolean, isPastDeregisterDeadline: boolean) => {
   switch (true) {
     case status === "NotOpened":
       return "Påmeldinger har ikke åpnet"
@@ -24,7 +24,7 @@ const getDisabledText = (status: string, attendee: boolean, pool: boolean, isPas
       return "Påmeldingen er stengt"
     case !pool && !attendee:
       return "Du har ingen påmeldingsgruppe"
-    case isPastDeregisterDeadline && !attendee:
+    case status === "Closed" && isPastDeregisterDeadline && !attendee:
       return "Avmeldingsfristen har utløpt"
     default:
       return null
@@ -38,7 +38,7 @@ interface Props {
   unregisterForAttendance: () => void
   pool: AttendancePool | undefined | null
   isLoading: boolean
-  status: "NotOpened" | "Open" | "Closed" | "Full"
+  status: AttendanceStatus
 }
 
 export const RegistrationButton: FC<Props> = ({
