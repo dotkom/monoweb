@@ -119,10 +119,10 @@ export const attendanceRouter = t.router({
   getAttendees: publicProcedure
     .input(
       z.object({
-        id: AttendanceSchema.shape.id,
+        attendanceId: AttendanceSchema.shape.id,
       })
     )
-    .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.id)),
+    .query(async ({ input, ctx }) => ctx.attendeeService.getByAttendanceId(input.attendanceId)),
 
   getAttendance: publicProcedure
     .input(

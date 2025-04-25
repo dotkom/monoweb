@@ -54,7 +54,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const { data: attendees, isLoading: attendeesLoading } = useQuery(
     trpc.attendance.getAttendees.queryOptions(
       {
-        id: attendance?.id,
+        attendanceId: attendance?.id,
       },
       { initialData: initialAttendees, enabled: user !== undefined }
     )
