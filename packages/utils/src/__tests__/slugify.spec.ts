@@ -7,7 +7,9 @@ it("Adequately slugifies some event titles", () => {
 
   // http://localhost:3000/events/Ekskom_Generalforsamling_-_Var_2025/b317ec9b-d073-4f0d-9f9d-2b39d2759a27
   // http://localhost:3000/events/ekskom_generalforsamling_-_var_2025/b317ec9b-d073-4f0d-9f9d-2b39d2759a27
-  expect(slugify("[Ekskom] Generalforsamling - Vår 2025")).toMatchInlineSnapshot(`"ekskom_generalforsamling_-_var_2025"`)
+  expect(slugify("[Ekskom] Generalforsamling - Vår 2025")).toMatchInlineSnapshot(
+    `"ekskom_generalforsamling_-_var_2025"`
+  )
 
   // => we prefer using lower case, easier to read when it's all lowercase IMO
 })

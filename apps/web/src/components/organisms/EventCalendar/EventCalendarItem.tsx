@@ -1,10 +1,10 @@
 "use client"
 
-import { slugify } from "@dotkomonline/utils"
 import type { Event, EventType } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"
 import { cn } from "@dotkomonline/ui"
+import { slugify } from "@dotkomonline/utils"
 import Link from "next/link"
 
 interface EventCalendarItemProps {
