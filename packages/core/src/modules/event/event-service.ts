@@ -1,7 +1,7 @@
 import type {
-  EventDetail,
   AttendanceWrite,
   Event,
+  EventDetail,
   EventFilter,
   EventId,
   EventInterestGroup,

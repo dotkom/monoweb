@@ -1,7 +1,7 @@
 "use client"
 
 import { Loader } from "@mantine/core"
-import { type PropsWithChildren, use, useMemo } from "react"
+import { type PropsWithChildren, use } from "react"
 import { useEventDetailsGetQuery } from "../queries"
 import { EventDetailsContext } from "./provider"
 
