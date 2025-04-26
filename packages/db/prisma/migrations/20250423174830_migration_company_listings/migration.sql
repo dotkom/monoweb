@@ -30,7 +30,7 @@ ALTER COLUMN "email" DROP NOT NULL;
 --     COALESCE(quote_literal(site), 'NULL') || ', ' ||
 --     'NULL, ' ||  -- location is always NULL
 --     quote_literal('UNKNOWN') || ', ' ||
---     COALESCE(quote_literal('https://github.com/image/' || image_id), 'NULL') || ', ' ||
+--     COALESCE(quote_literal('https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/bedriftslogo/' || image_id), 'NULL') || ', ' ||
 --     COALESCE(quote_literal(REPLACE(name, ' ', '_') || '_' || id), 'NULL') ||
 --   ');'
 -- FROM companyprofile_company;
