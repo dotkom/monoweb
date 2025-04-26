@@ -17,19 +17,21 @@ ALTER COLUMN "email" DROP NOT NULL;
 -- Query for copy of Company query
 -- SELECT 
 --   'INSERT INTO company (id, "createdAt", name, description, phone, email, website, location, type, image, slug) VALUES (' ||
---     id || ', ' ||
+--     companyprofile_company.id || ', ' ||
 --     COALESCE(quote_literal(created_date), 'NULL') || ', ' ||
---     COALESCE(quote_literal(name), 'NULL') || ', ' ||
+--     COALESCE(quote_literal(companyprofile_company.name), 'NULL') || ', ' ||
 --     COALESCE(quote_literal(long_description), 'NULL') || ', ' ||
 --     COALESCE(quote_literal(phone_number), 'NULL') || ', ' ||
 --     COALESCE(quote_literal(email_address), 'NULL') || ', ' ||
 --     COALESCE(quote_literal(site), 'NULL') || ', ' ||
 --     'NULL, ' ||  -- location is always NULL
 --     quote_literal('UNKNOWN') || ', ' ||
---     COALESCE(quote_literal('https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/bedriftslogo/' || image_id), 'NULL') || ', ' ||
---     COALESCE(quote_literal(REPLACE(name, ' ', '_') || '_' || id), 'NULL') ||
+--     COALESCE(quote_literal('https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/' || gallery_responsiveimage.image_original), 'NULL') || ', ' ||
+--     COALESCE(quote_literal(REPLACE(companyprofile_company.name, ' ', '_') || '_' || companyprofile_company.id), 'NULL') ||
 --   ');'
--- FROM companyprofile_company;
+-- FROM companyprofile_company
+-- JOIN gallery_responsiveimage
+--   ON companyprofile_company.image_id = gallery_responsiveimage.id;
 
 
 -- Query for copy of job listings query
