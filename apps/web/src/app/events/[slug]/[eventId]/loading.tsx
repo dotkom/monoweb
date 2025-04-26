@@ -1,4 +1,4 @@
-import { SkeletonEventHeader } from "../components/EventHeader"
+import { SkeletonEventHeader } from "../../components/EventHeader"
 
 export default () => (
   <div className="mt-8 flex flex-col gap-8">
