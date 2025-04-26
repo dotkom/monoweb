@@ -2,6 +2,8 @@ import { PaginateInputSchema } from "@dotkomonline/core"
 import {
   AttendanceWriteSchema,
   CompanySchema,
+  type EventDetail,
+  EventDetailSchema,
   EventFilterSchema,
   EventHostingGroupSchema,
   EventInterestGroupSchema,
@@ -66,52 +68,33 @@ export const eventRouter = t.router({
       return event
     }),
 
-  // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
   all: publicProcedure
-    .input(
-      z
-        .object({
-          page: PaginateInputSchema,
-          filter: EventFilterSchema.optional(),
-        })
-        .optional()
-    )
+    .input(z.object({ page: PaginateInputSchema, filter: EventFilterSchema }).optional())
+    .output(z.array(EventDetailSchema))
     .query(async ({ input, ctx }) => {
       const events = await ctx.eventService.getEvents(input?.page, input?.filter)
       const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
       const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
       const companies = events.map(async (e) => ctx.companyEventService.getCompaniesByEventId(e.id))
+      const attendances = events.map(async (e) =>
+        e.attendanceId ? ctx.attendanceService.getById(e.attendanceId) : null
+      )
 
       const groupResults = await Promise.all(groups)
       const interestGroupResults = await Promise.all(interestGroups)
       const companyResults = await Promise.all(companies)
+      const attendanceResults = await Promise.all(attendances)
 
-      return events.map((event, i) => ({
-        ...event,
-        groups: groupResults[i],
-        interestGroups: interestGroupResults[i],
-        companies: companyResults[i],
-      }))
+      return events.map(
+        (event, i): EventDetail => ({
+          event,
+          hostingGroups: groupResults[i],
+          hostingInterestGroups: interestGroupResults[i],
+          hostingCompanies: companyResults[i],
+          attendance: attendanceResults[i],
+        })
+      )
     }),
-
-  // TODO: N+1 query, eventHostingGroupService and eventService should probably be merged
-  recommended: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
-    const events = await ctx.eventService.getEvents(input)
-    const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
-    const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
-    const companies = events.map(async (e) => ctx.companyEventService.getCompaniesByEventId(e.id))
-
-    const groupResults = await Promise.all(groups)
-    const interestGroupResults = await Promise.all(interestGroups)
-    const companyResults = await Promise.all(companies)
-
-    return events.map((event, i) => ({
-      ...event,
-      groups: groupResults[i],
-      interestGroups: interestGroupResults[i],
-      companies: companyResults[i],
-    }))
-  }),
 
   allByCompany: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
@@ -127,9 +110,10 @@ export const eventRouter = t.router({
   allByInterestGroup: publicProcedure
     .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
-  getAttendanceEventDetail: publicProcedure
+  getEventDetail: publicProcedure
     .input(EventSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.eventService.getAttendanceDetail(input)),
+    .output(EventDetailSchema)
+    .query(async ({ input, ctx }) => ctx.eventService.getEventDetail(input)),
   addAttendance: adminProcedure
     .input(
       z.object({

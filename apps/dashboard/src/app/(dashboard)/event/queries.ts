@@ -7,7 +7,7 @@ import { openAlreadyAttendedModal } from "./components/error-attendance-register
 
 export const useEventAllQuery = () => {
   const trpc = useTRPC()
-  const { data: events, ...query } = useQuery(trpc.event.all.queryOptions({ page: { take: 50 } }, { initialData: [] }))
+  const { data: events, ...query } = useQuery(trpc.event.all.queryOptions(undefined, { initialData: [] }))
   return { events, ...query }
 }
 
@@ -26,8 +26,8 @@ export const useEventCompanyGetQuery = (id: EventId) => {
 
 export const useEventDetailsGetQuery = (id: EventId) => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery(trpc.event.getAttendanceEventDetail.queryOptions(id))
-  return { data, ...query }
+
+  return useQuery(trpc.event.getEventDetail.queryOptions(id))
 }
 
 export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {

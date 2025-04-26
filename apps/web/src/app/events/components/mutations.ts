@@ -9,7 +9,7 @@ export const useUnregisterMutation = () => {
     trpc.event.attendance.deregisterForEvent.mutationOptions({
       onSuccess: async () => {
         await Promise.all([
-          queryClient.refetchQueries(trpc.event.getAttendanceEventDetail.queryFilter()),
+          queryClient.refetchQueries(trpc.event.getEventDetail.queryFilter()),
           queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
         ])
       },
@@ -32,7 +32,7 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
     trpc.event.attendance.registerForEvent.mutationOptions({
       onSuccess: async () => {
         await Promise.all([
-          queryClient.refetchQueries(trpc.event.getAttendanceEventDetail.queryFilter()),
+          queryClient.refetchQueries(trpc.event.getEventDetail.queryFilter()),
           queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
         ])
         onSuccess()
@@ -51,7 +51,7 @@ export const useSetSelectionsOptionsMutation = () => {
   return useMutation(
     trpc.event.attendance.updateSelectionResponses.mutationOptions({
       onSuccess: (data) => {
-        queryClient.invalidateQueries(trpc.event.getAttendanceEventDetail.queryFilter())
+        queryClient.invalidateQueries(trpc.event.getEventDetail.queryFilter())
       },
       onError: (error) => {
         alert("Noe gikk galt")

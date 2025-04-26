@@ -1,48 +1,49 @@
 import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
+import type { EventDetail } from "@dotkomonline/types"
 import { Badge } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import type React from "react"
 
 interface ComingEventProps {
-  img: string | null
-  title: string
-  tag: string
-  attending: number
-  max_attending: number
-  date: string
-  info_link: string
+  eventDetail: EventDetail
 }
 
-// TODO: mye relative og absolute her.... too bad!
-export const ComingEvent: React.FC<ComingEventProps> = (props) => (
-  <Link href={props.info_link}>
-    <div className="mt-2 flex flex-col">
-      <div className="relative">
-        <Image
-          src={props.img ? props.img : EventImagePlaceholder}
-          alt={props.title}
-          width={320}
-          height={180}
-          style={{ width: 320, height: 180 }}
-          className="rounded-xl border-2 border-slate-4 object-cover aspect-[16/9]"
-        />
-        <Badge color="green" variant="solid" className="absolute bottom-2 left-2">
-          {props.tag}
-        </Badge>
-      </div>
-      <div className="">
-        <span>
-          <span>{/* PLACEHOLDER */}</span>
+export const EventCard: React.FC<ComingEventProps> = ({
+  eventDetail: {
+    event: { id, imageUrl, title, type, start },
+    attendance,
+  },
+}) => {
+  const numAttendees = attendance?.pools?.reduce((prev, pool) => prev + pool.numAttendees, 0)
+  const capacity = attendance?.pools?.reduce((prev, pool) => prev + pool.capacity, 0)
+
+  return (
+    <Link href={`/events/${id}`}>
+      <div className="mt-2 flex flex-col">
+        <div className="relative">
+          <Image
+            src={imageUrl ? imageUrl : EventImagePlaceholder}
+            alt={title}
+            width={320}
+            height={180}
+            style={{ width: 320, height: 180 }}
+            className="rounded-xl border-2 border-slate-4 object-cover aspect-[16/9]"
+          />
+          <Badge color="green" variant="solid" className="absolute bottom-2 left-2">
+            {type}
+          </Badge>
+        </div>
+        <div className="">
           <div>
-            <p className="m-0">{props.title}</p>
-            <p className="m-0">{props.date}</p>
+            <p className="m-0">{title}</p>
+            <p className="m-0">{start.toDateString()}</p>
             <p className="m-0">
-              {props.attending}/{props.max_attending}
+              {numAttendees}/{capacity}
             </p>
           </div>
-        </span>
+        </div>
       </div>
-    </div>
-  </Link>
-)
+    </Link>
+  )
+}

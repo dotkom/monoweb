@@ -1,12 +1,11 @@
-import { ComingEvent } from "@/components/molecules/ComingEvent/ComingEvent"
+import { EventCard } from "@/components/molecules/ComingEvent/ComingEvent"
 import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { server } from "@/utils/trpc/server"
 import { Button } from "@dotkomonline/ui"
-import { formatDate } from "@dotkomonline/utils"
 import Link from "next/link"
 
 export default async function App() {
-  const events = await server.event.recommended.query()
+  const events = await server.event.all.query()
 
   return (
     <section className="w-full">
@@ -20,17 +19,8 @@ export default async function App() {
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {events.map((event) => (
-          <ComingEvent
-            title={event.title}
-            img={event.imageUrl ?? ""}
-            tag={event.type}
-            max_attending={10}
-            attending={5}
-            date={formatDate(event.start, { relativeDateThresholdDays: 7 })}
-            info_link={`/events/${event.id}`}
-            key={event.id}
-          />
+        {events.map((eventDetail) => (
+          <EventCard eventDetail={eventDetail} key={eventDetail.event.id} />
         ))}
       </div>
     </section>

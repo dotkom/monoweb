@@ -23,7 +23,11 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
     },
   })
 
-  const cal = getCalendarArray(year, month, events)
+  const cal = getCalendarArray(
+    year,
+    month,
+    events.map(({ event }) => event)
+  )
 
   const weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
   const months = [
