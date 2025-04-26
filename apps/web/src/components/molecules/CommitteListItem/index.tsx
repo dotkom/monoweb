@@ -12,7 +12,7 @@ export const CommitteeListItem: FC<CommitteeListItemProps> = (props: CommitteeLi
     <OnlineIcon className="w-5/12 mx-auto max-w-[150px] min-w-[120px]" />
     <h2 className="!text-3xl border-none !mt-4">{props.committee.name}</h2>
     <p className="mt-2 mb-6 text-left px-3">{props.committee.description}</p>
-    <Link className="mt-auto text-xl hover:underline" href={`committees/${props.committee.id}`}>
+    <Link className="mt-auto text-xl hover:underline" href={`komiteer/${props.committee.id}`}>
       Les mer
     </Link>
   </div>

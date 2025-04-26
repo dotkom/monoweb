@@ -15,7 +15,7 @@ export const NodeCommitteeListItem: FC<NodeCommitteeListItemProps> = (props: Nod
     />
     <h2 className="!text-3xl border-none !mt-4">{props.nodeCommittee.name}</h2>
     <p className="mt-2 mb-6 text-left px-3">{props.nodeCommittee.description}</p>
-    <Link className="mt-auto text-xl hover:underline" href={`node-committees/${props.nodeCommittee.id}`}>
+    <Link className="mt-auto text-xl hover:underline" href={`nodekomiteer/${props.nodeCommittee.id}`}>
       Les mer
     </Link>
   </div>
