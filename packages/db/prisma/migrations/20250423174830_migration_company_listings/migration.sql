@@ -6,11 +6,7 @@ ALTER TABLE "company" ALTER COLUMN "description" DROP NOT NULL,
 ALTER COLUMN "email" DROP NOT NULL;
 
 
-
--- Quick Migration: RUN the Job_listing.sql and Company.sql to migrate
-
-
--- Manual Migration BELLOW:
+-- Manual DATA Migration BELLOW:
 
 -- After running the queries, copy the results, do this to apply results:
 -- Ctr + F -> Replace "I with I 
