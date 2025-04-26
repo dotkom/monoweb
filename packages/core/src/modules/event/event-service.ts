@@ -25,7 +25,7 @@ export interface EventService {
   getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
   addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
-  getAttendanceDetail(id: EventId): Promise<EventDetail>
+  getEventDetail(id: EventId): Promise<EventDetail>
   setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]>
 }
 
@@ -99,20 +99,20 @@ export class EventServiceImpl implements EventService {
     return await this.eventRepository.update(id, eventUpdate)
   }
 
-  async getAttendanceDetail(id: EventId): Promise<EventDetail> {
+  async getEventDetail(id: EventId): Promise<EventDetail> {
     const event = await this.getEventById(id)
-    const companies = await this.eventCompanyService.getCompaniesByEventId(event.id)
+    const hostingCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
     const attendance = event.attendanceId ? await this.attendanceService.getById(event.attendanceId) : null
 
-    const eventHostingGroups = await this.eventHostingGroupService.getHostingGroupsForEvent(event.id)
-    const eventInterestGroups = await this.interestGroupService.getAllByEventId(event.id)
+    const hostingGroups = await this.eventHostingGroupService.getHostingGroupsForEvent(event.id)
+    const hostingInterestGroups = await this.interestGroupService.getAllByEventId(event.id)
 
     return {
       event,
-      companies,
       attendance,
-      eventHostingGroups,
-      eventInterestGroups,
+      hostingCompanies,
+      hostingGroups,
+      hostingInterestGroups,
     }
   }
 

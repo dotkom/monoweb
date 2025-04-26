@@ -2,7 +2,7 @@ import { PaginateInputSchema } from "@dotkomonline/core"
 import {
   AttendanceWriteSchema,
   CompanySchema,
-  EventDetail,
+  type EventDetail,
   EventDetailSchema,
   EventFilterSchema,
   EventHostingGroupSchema,
@@ -69,10 +69,10 @@ export const eventRouter = t.router({
     }),
 
   all: publicProcedure
-    .input(PaginateInputSchema)
+    .input(z.object({ page: PaginateInputSchema, filter: EventFilterSchema }).optional())
     .output(z.array(EventDetailSchema))
     .query(async ({ input, ctx }) => {
-      const events = await ctx.eventService.getEvents(input)
+      const events = await ctx.eventService.getEvents(input?.page, input?.filter)
       const groups = events.map(async (e) => ctx.eventHostingGroupService.getHostingGroupsForEvent(e.id))
       const interestGroups = events.map(async (e) => ctx.interestGroupService.getAllByEventId(e.id))
       const companies = events.map(async (e) => ctx.companyEventService.getCompaniesByEventId(e.id))
@@ -110,9 +110,10 @@ export const eventRouter = t.router({
   allByInterestGroup: publicProcedure
     .input(z.object({ id: InterestGroupSchema.shape.id, paginate: PaginateInputSchema }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByInterestGroupId(input.id, input.paginate)),
-  getAttendanceEventDetail: publicProcedure
+  getEventDetail: publicProcedure
     .input(EventSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.eventService.getAttendanceDetail(input)),
+    .output(EventDetailSchema)
+    .query(async ({ input, ctx }) => ctx.eventService.getEventDetail(input)),
   addAttendance: adminProcedure
     .input(
       z.object({

@@ -2,10 +2,10 @@ import { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
 
-import { type Attendance, AttendanceSchema } from "./attendance/attendance"
-import { CompanySchema, type Company } from "./company"
-import { GroupSchema, type Group } from "./group"
-import { InterestGroupSchema, type InterestGroup } from "./interest-group"
+import { AttendanceSchema } from "./attendance/attendance"
+import { CompanySchema } from "./company"
+import { GroupSchema } from "./group"
+import { InterestGroupSchema } from "./interest-group"
 
 export const EventSchema = schemas.EventSchema.extend({})
 
