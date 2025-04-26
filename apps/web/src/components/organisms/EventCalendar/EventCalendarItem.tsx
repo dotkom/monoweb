@@ -1,6 +1,6 @@
 "use client"
 
-import { slugify } from "@/utils/slugs"
+import { slugify } from "@dotkomonline/utils"
 import type { Event, EventType } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dotkomonline/ui"

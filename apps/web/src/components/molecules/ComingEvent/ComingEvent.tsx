@@ -1,5 +1,5 @@
+import { slugify } from "@dotkomonline/utils"
 import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
-import { slugify } from "@/utils/slugs"
 import type { EventDetail } from "@dotkomonline/types"
 import { Badge } from "@dotkomonline/ui"
 import Image from "next/image"

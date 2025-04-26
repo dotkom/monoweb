@@ -1,4 +1,4 @@
-import { slugify } from "@/utils/slugs"
+import { slugify } from "@dotkomonline/utils"
 import Link from "next/link"
 import type { FC } from "react"
 
