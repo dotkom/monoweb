@@ -1,5 +1,6 @@
 import { GroupList } from "@/components/organisms/GroupList"
 import { server } from "@/utils/trpc/server"
+import { Text, Title } from "@dotkomonline/ui"
 import Link from "next/link"
 
 export default async function NodeCommitteePage() {
@@ -9,16 +10,18 @@ export default async function NodeCommitteePage() {
     <div>
       <div className="border-slate-7 border-b">
         <div className="flex flex-col py-5">
-          <p className="mt-4 text-3xl font-bold border-b-0">Nodekomiteer</p>
-          <p className="text-slate-11 pt-2">
+          <Title element="h1" className="mt-4 text-3xl">
+            Nodekomiteer
+          </Title>
+          <Text className="pt-2">
             På denne siden finner du informasjon om alle de forskjellige nodekomiteene i Online.
-          </p>
-          <p className="text-slate-11 pt-2">
+          </Text>
+          <Text className="pt-2">
             En nodekomite er periodebaserte underkomiteer av kjernekomiteene i Online. Dette vil si at nodekomiteene og
             deres medlemmer bare er aktive under visse perioder, og ikke kontinuerlig slik som kjernekomiteene.
             Hovedoppgaven til nodekomiteene er å organisere og gjennomføre sentrale hendelser i linjeforeningen Online.
-          </p>
-          <p className="text-slate-11 pt-2">
+          </Text>
+          <Text className="text-slate-11 pt-2">
             Mer informasjon finnes{" "}
             <Link
               className="hover:underline text-blue-8"
@@ -26,10 +29,10 @@ export default async function NodeCommitteePage() {
             >
               her.
             </Link>
-          </p>
+          </Text>
         </div>
       </div>
-      <div className="mt-12">
+      <div className="mt-8">
         <GroupList groups={nodeCommittees} baseLink="nodekomiteer" />
       </div>
     </div>
