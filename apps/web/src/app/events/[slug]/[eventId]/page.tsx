@@ -5,10 +5,10 @@ import type { Group } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
-import { AttendanceCard } from "../components/AttendanceCard/AttendanceCard"
-import { EventDescription } from "../components/EventDescription"
-import { EventHeader } from "../components/EventHeader"
-import { TimeLocationBox } from "../components/TimeLocationBox/TimeLocationBox"
+import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
+import { EventDescription } from "../../components/EventDescription"
+import { EventHeader } from "../../components/EventHeader"
+import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
 
 const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   // TODO: Href link to all events by committee or company
