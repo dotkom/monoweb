@@ -23,7 +23,7 @@ export const JobListingWriteSchema = JobListingSchema.omit({
   createdAt: true,
   company: true,
 }).extend({
-  companyId: z.string().uuid(),
+  companyId: z.string(),
 })
 
 export type JobListing = z.infer<typeof JobListingSchema>
