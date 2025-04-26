@@ -1,4 +1,3 @@
-import repl from "node:repl"
 import { type ServiceLayerOptions, createServiceLayer } from "@dotkomonline/core"
 import { createPrisma } from "@dotkomonline/db"
 import { env } from "./env"
@@ -20,4 +19,4 @@ const core = await createServiceLayer({
   stripeAccounts,
 })
 
-export {core, prisma}
+export { core, prisma }

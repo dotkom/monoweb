@@ -1,6 +1,6 @@
+import { prisma } from "../services"
 // @ts-ignore data.json is gitignored
-import data from "./data.json" assert { type: "json" };
-import { prisma } from "../services";
+import data from "./data.json" assert { type: "json" }
 
 // see migrating-from-ow4.md for more information
 
@@ -14,5 +14,3 @@ for (const item of data) {
     },
   })
 }
-
-export {};
