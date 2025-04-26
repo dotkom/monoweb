@@ -67,6 +67,7 @@ enum CompanyType {
   RESEARCH
   DEVELOPMENT
   OTHER
+  UNKNOWN
 
   @@map("company_type")
 }
@@ -110,9 +111,9 @@ model Company {
   createdAt   DateTime       @default(now())
   name        String
   slug        String         @unique
-  description String
+  description String?
   phone       String?
-  email       String
+  email       String?
   website     String
   location    String?
   type        CompanyType
