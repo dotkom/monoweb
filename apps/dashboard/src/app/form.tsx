@@ -289,14 +289,14 @@ export function createRichTextInput<F extends FieldValues>({
         <Input.Wrapper>
           <Input.Label required={required}>{label}</Input.Label>
 
-          <div style={{ border: "1px solid lightgrey", borderRadius: "4px", padding: 0 }}>
+          <div style={{ border: "1px solid lightgrey", borderRadius: "8px", padding: 0 }}>
             <Controller
               control={control}
               name={name}
               render={({ field }) => (
                 <MDXEditor
                   {...props}
-                  markdown={field?.value ?? ""}
+                  markdown={field.value}
                   plugins={[
                     toolbarPlugin({
                       toolbarContents: () => (
@@ -321,25 +321,7 @@ export function createRichTextInput<F extends FieldValues>({
                     frontmatterPlugin(),
                     markdownShortcutPlugin(),
                   ]}
-                  onChange={(value) => {
-                    const modifiedValue = value
-                      .split("\n")
-                      .reduce((acc, line, index, array) => {
-                        if (line.trim() === "" && array[index - 1]?.trim() === "" && array[index + 1]?.trim() !== "") {
-                          acc.push("&#x20;" as never)
-                        } else {
-                          acc.push(line as never)
-                        }
-                        return acc
-                      }, [])
-                      .join("\n")
-
-                    field.onChange(modifiedValue)
-
-                    if (onChange) {
-                      onChange(modifiedValue, false)
-                    }
-                  }}
+                  onChange={field.onChange}
                 />
               )}
             />
