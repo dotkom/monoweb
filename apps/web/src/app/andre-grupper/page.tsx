@@ -1,6 +1,9 @@
-import { OtherGroupList } from "@/components/organisms/OtherGroupList"
+import { GroupList } from "@/components/organisms/GroupList"
+import { server } from "@/utils/trpc/server"
 
 export default async function OtherGroupsPage() {
+  const otherGroups = await server.group.allByType.query("OTHERGROUP")
+
   return (
     <div>
       <div className="border-slate-7 border-b">
@@ -14,7 +17,7 @@ export default async function OtherGroupsPage() {
       </div>
 
       <div className="mt-12">
-        <OtherGroupList />
+        <GroupList groups={otherGroups} baseLink="andre-grupper" />
       </div>
     </div>
   )

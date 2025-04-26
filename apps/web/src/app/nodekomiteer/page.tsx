@@ -1,7 +1,10 @@
-import { NodeCommitteeList } from "@/components/organisms/NodeCommitteeList"
+import { GroupList } from "@/components/organisms/GroupList"
+import { server } from "@/utils/trpc/server"
 import Link from "next/link"
 
 export default async function NodeCommitteePage() {
+  const nodeCommittees = await server.group.allByType.query("NODECOMMITTEE")
+
   return (
     <div>
       <div className="border-slate-7 border-b">
@@ -27,7 +30,7 @@ export default async function NodeCommitteePage() {
         </div>
       </div>
       <div className="mt-12">
-        <NodeCommitteeList />
+        <GroupList groups={nodeCommittees} baseLink="nodekomiteer" />
       </div>
     </div>
   )

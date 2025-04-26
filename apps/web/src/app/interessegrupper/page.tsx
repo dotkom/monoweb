@@ -1,8 +1,11 @@
-import { InterestGroupList } from "@/components/organisms/InterestGroupList"
+import { GroupList } from "@/components/organisms/GroupList"
+import { server } from "@/utils/trpc/server"
 import { Button } from "@dotkomonline/ui"
 import Link from "next/link"
 
 export default async function InterestPage() {
+  const interestGroups = await server.interestGroup.all.query()
+
   return (
     <div>
       <div className="border-slate-7 border-b">
@@ -37,11 +40,11 @@ export default async function InterestPage() {
             "https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
           }
         >
-          <Button>Søk om støtte</Button>
+          <Button className="mr-4 mt-4">Søk om støtte</Button>
         </Link>
       </div>
       <div className="mt-12">
-        <InterestGroupList />
+        <GroupList groups={interestGroups} baseLink="interessegrupper" />
       </div>
     </div>
   )
