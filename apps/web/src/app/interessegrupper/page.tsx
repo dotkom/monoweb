@@ -1,20 +1,25 @@
-import { InterestGroupList } from "@/components/organisms/InterestGroupList"
-import { Button } from "@dotkomonline/ui"
+import { GroupList } from "@/components/organisms/GroupList"
+import { server } from "@/utils/trpc/server"
+import { Button, Text, Title } from "@dotkomonline/ui"
 import Link from "next/link"
 
 export default async function InterestPage() {
+  const interestGroups = await server.interestGroup.all.query()
+
   return (
     <div>
       <div className="border-slate-7 border-b">
         <div className="flex flex-col py-5">
-          <p className="mt-4 text-3xl font-bold border-b-0">Interessegrupper</p>
-          <p className="text-slate-11 pt-2">
+          <Title element="h1" className="mt-4 text-3xl">
+            Interessegrupper
+          </Title>
+          <Text className="pt-2">
             På denne siden finner du informasjon om alle de forskjellige interessegruppene i Online. Ser du noe som ser
             interessant ut? Ta kontakt og møt noen med samme interesser som deg. Interessegruppene i Online er grupper
             for alle mulige slags interesser. Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett
             en interessegruppe!
-          </p>
-          <p className="text-slate-11 pt-2">
+          </Text>
+          <Text className="text-slate-11 pt-2">
             Mer informasjon om hvordan dette gjøres finnes{" "}
             <Link
               className="hover:underline text-blue-8"
@@ -22,7 +27,7 @@ export default async function InterestPage() {
             >
               her.
             </Link>
-          </p>
+          </Text>
         </div>
       </div>
 
@@ -37,11 +42,11 @@ export default async function InterestPage() {
             "https://docs.google.com/forms/d/e/1FAIpQLScr27q7C4gDvzHXajydznfFxPs7JaGpgYrNX4RPiVRvUHXVGg/viewform?pli=1"
           }
         >
-          <Button>Søk om støtte</Button>
+          <Button className="mr-4 mt-4">Søk om støtte</Button>
         </Link>
       </div>
-      <div className="mt-12">
-        <InterestGroupList />
+      <div className="mt-8">
+        <GroupList groups={interestGroups} baseLink="interessegrupper" />
       </div>
     </div>
   )
