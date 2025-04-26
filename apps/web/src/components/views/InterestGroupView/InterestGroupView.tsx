@@ -99,7 +99,7 @@ const InterestGroupViewInner: FC<InnerInterestGroupViewProps> = (props: InnerInt
 
   return (
     <div className="p-14 my-16 mx-auto border-slate-3 rounded-lg border shadow-md w-10/12 ">
-      <Link className="bg-transparent p-0 hover:underline mb-4" href={"/interest-groups"}>
+      <Link className="bg-transparent p-0 hover:underline mb-4" href={"/interessegrupper"}>
         {"<"} Tilbake
       </Link>
       <div className="flex md:flex-row flex-col-reverse">

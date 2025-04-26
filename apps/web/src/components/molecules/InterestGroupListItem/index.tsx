@@ -15,7 +15,7 @@ export const InterestGroupListItem: FC<InterestGroupListItemProps> = (props: Int
       {!props.interestGroup.isActive && <p>[inaktiv]</p>}
     </h2>
     <p className="mt-2 mb-6 text-left px-3">{props.interestGroup.description}</p>
-    <Link className="mt-auto text-xl hover:underline" href={`interest-groups/${props.interestGroup.id}`}>
+    <Link className="mt-auto text-xl hover:underline" href={`interessegrupper/${props.interestGroup.id}`}>
       Les mer
     </Link>
   </div>
