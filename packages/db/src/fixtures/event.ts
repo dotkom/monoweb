@@ -30,7 +30,7 @@ export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateMa
     title: "Åre 2024",
     start: new Date("2023-02-23 11:40:00+00"),
     end: new Date("2023-02-23 11:03:38.63+00"),
-    status: "NO_LIMIT",
+    status: "PUBLIC",
     type: "SOCIAL",
     public: false,
     description: `Her kommer påmeldingen til å gå fort, så sett alarmen klar og vær rask!:)

@@ -98,10 +98,9 @@ export const useEventEditForm = ({
         label: "Event status",
         placeholder: "Velg en",
         data: [
-          { value: "TBA", label: "TBA" },
-          { value: "PUBLIC", label: "Public" },
-          { value: "NO_LIMIT", label: "No Limit" },
-          { value: "ATTENDANCE", label: "Attendance" },
+          { value: "DRAFT", label: "Utkast" },
+          { value: "PUBLIC", label: "Publisert" },
+          { value: "DELETED", label: "Slettet" },
         ],
         withAsterisk: true,
       }),
