@@ -1,5 +1,5 @@
 import { prisma } from "../services"
-// @ts-ignore data.json is gitignored
+// @ts-ignore data.json is not in source control
 import data from "./data.json" assert { type: "json" }
 
 // see migrating-from-ow4.md for more information
