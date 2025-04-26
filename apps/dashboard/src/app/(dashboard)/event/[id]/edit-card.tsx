@@ -6,15 +6,15 @@ import { useEditEventWithGroupsMutation } from "../mutations"
 import { useEventDetailsContext } from "./provider"
 
 export const EventEditCard: FC = () => {
-  const { event, eventHostingGroups, eventInterestGroups } = useEventDetailsContext()
+  const { event, hostingGroups, hostingInterestGroups } = useEventDetailsContext()
   const edit = useEditEventWithGroupsMutation()
   const { groups } = useGroupAllQuery()
   const { interestGroups } = useInterestGroupAllQuery()
 
   const defaultValues = {
     ...event,
-    hostingGroupIds: eventHostingGroups.map((group) => group.id),
-    interestGroupIds: eventInterestGroups.map((interestGroup) => interestGroup.id),
+    hostingGroupIds: hostingGroups.map((group) => group.id),
+    interestGroupIds: hostingInterestGroups.map((interestGroup) => interestGroup.id),
   }
 
   const FormComponent = useEventEditForm({

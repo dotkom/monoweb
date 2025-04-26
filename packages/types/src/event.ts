@@ -2,10 +2,10 @@ import { z } from "zod"
 
 import { schemas } from "@dotkomonline/db/schemas"
 
-import { type Attendance, AttendanceSchema } from "./attendance/attendance"
-import type { Company } from "./company"
-import type { Group } from "./group"
-import type { InterestGroup } from "./interest-group"
+import { AttendanceSchema } from "./attendance/attendance"
+import { CompanySchema } from "./company"
+import { GroupSchema } from "./group"
+import { InterestGroupSchema } from "./interest-group"
 
 export const EventSchema = schemas.EventSchema.extend({})
 
@@ -23,19 +23,15 @@ export const EventWriteSchema = EventSchema.omit({
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 
-export const AttendanceEventSchema = EventSchema.extend({
-  attendance: AttendanceSchema,
+export const EventDetailSchema = z.object({
+  event: EventSchema,
+  hostingCompanies: z.array(CompanySchema),
+  hostingGroups: z.array(GroupSchema),
+  hostingInterestGroups: z.array(InterestGroupSchema),
+  attendance: AttendanceSchema.nullable(),
 })
 
-export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
-
-export type AttendanceEventDetail = {
-  event: Event
-  companies: Company[]
-  eventHostingGroups: Group[]
-  eventInterestGroups: InterestGroup[]
-  attendance: Attendance | null
-}
+export type EventDetail = z.infer<typeof EventDetailSchema>
 
 export const EventFilterSchema = z.object({
   query: z.string().optional(),

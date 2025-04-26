@@ -86,7 +86,9 @@ export const RegistrationButton: FC<Props> = ({
       variant="solid"
       icon={buttonIcon}
     >
-      <Text element="div" className="font-medium">{buttonContent}</Text>
+      <Text element="div" className="font-medium">
+        {buttonContent}
+      </Text>
     </Button>
   )
 
