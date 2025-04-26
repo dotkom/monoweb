@@ -1,21 +1,32 @@
 import { expect, it } from "vitest"
 import { slugify } from "../slugify"
 
+it("Adequately slugifies some event titles", () => {
+  // http://localhost:3000/events/17._mai_frokost/b317ec9b-d073-4f0d-9f9d-2b39d2759a27
+  expect(slugify("17. mai frokost")).toMatchInlineSnapshot(`"17._mai_frokost"`)
+
+  // http://localhost:3000/events/Ekskom_Generalforsamling_-_Var_2025/b317ec9b-d073-4f0d-9f9d-2b39d2759a27
+  // http://localhost:3000/events/ekskom_generalforsamling_-_var_2025/b317ec9b-d073-4f0d-9f9d-2b39d2759a27
+  expect(slugify("[Ekskom] Generalforsamling - Vår 2025")).toMatchInlineSnapshot(`"ekskom_generalforsamling_-_var_2025"`)
+
+  // => we prefer using lower case, easier to read when it's all lowercase IMO
+})
+
 it("handles basic text with spaces", () => {
-  expect(slugify("Hello World")).toMatchInlineSnapshot(`"Hello_World"`)
-  expect(slugify("Multiple   Spaces   Here")).toMatchInlineSnapshot(`"Multiple_Spaces_Here"`)
+  expect(slugify("Hello World")).toMatchInlineSnapshot(`"hello_world"`)
+  expect(slugify("Multiple   Spaces   Here")).toMatchInlineSnapshot(`"multiple_spaces_here"`)
 })
 
 it("handles special characters", () => {
-  expect(slugify("Hello! World?")).toMatchInlineSnapshot(`"Hello!_World"`)
-  expect(slugify("Special@#$%^&*()")).toMatchInlineSnapshot(`"Special@dollarpercentand*()"`)
-  expect(slugify("Comma,Dot.Semicolon;")).toMatchInlineSnapshot(`"CommaDot.Semicolon"`)
+  expect(slugify("Hello! World?")).toMatchInlineSnapshot(`"hello!_world"`)
+  expect(slugify("Special@#$%^&*()")).toMatchInlineSnapshot(`"special@dollarpercentand*()"`)
+  expect(slugify("Comma,Dot.Semicolon;")).toMatchInlineSnapshot(`"commadot.semicolon"`)
 })
 
 it("handles numbers and mixed content", () => {
-  expect(slugify("Hello123")).toMatchInlineSnapshot(`"Hello123"`)
-  expect(slugify("123Hello")).toMatchInlineSnapshot(`"123Hello"`)
-  expect(slugify("Mix3d Numb3rs")).toMatchInlineSnapshot(`"Mix3d_Numb3rs"`)
+  expect(slugify("Hello123")).toMatchInlineSnapshot(`"hello123"`)
+  expect(slugify("123Hello")).toMatchInlineSnapshot(`"123hello"`)
+  expect(slugify("Mix3d Numb3rs")).toMatchInlineSnapshot(`"mix3d_numb3rs"`)
 })
 
 it("handles accents and diacritics", () => {
@@ -25,15 +36,15 @@ it("handles accents and diacritics", () => {
 })
 
 it("handles case sensitivity", () => {
-  expect(slugify("UPPERCASE")).toMatchInlineSnapshot(`"UPPERCASE"`)
+  expect(slugify("UPPERCASE")).toMatchInlineSnapshot(`"uppercase"`)
   expect(slugify("lowercase")).toMatchInlineSnapshot(`"lowercase"`)
-  expect(slugify("MiXeDcAsE")).toMatchInlineSnapshot(`"MiXeDcAsE"`)
+  expect(slugify("MiXeDcAsE")).toMatchInlineSnapshot(`"mixedcase"`)
 })
 
 it("handles Norwegian characters", () => {
   expect(slugify("ærlig")).toMatchInlineSnapshot(`"aerlig"`)
   expect(slugify("blåbær")).toMatchInlineSnapshot(`"blabaer"`)
   expect(slugify("kølle")).toMatchInlineSnapshot(`"kolle"`)
-  expect(slugify("Ålesund")).toMatchInlineSnapshot(`"Alesund"`)
+  expect(slugify("Ålesund")).toMatchInlineSnapshot(`"alesund"`)
   expect(slugify("smørbrød")).toMatchInlineSnapshot(`"smorbrod"`)
 })
