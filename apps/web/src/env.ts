@@ -12,6 +12,7 @@ export const env = createEnvironment(
     NEXT_PUBLIC_ORIGIN: variable,
     NEXT_PUBLIC_RPC_HOST: variable,
     NEXT_PUBLIC_DASHBOARD_URL: variable,
+    NEXT_PUBLIC_HOME_URL: variable.default("/"),
   },
   {
     env: {
@@ -19,6 +20,7 @@ export const env = createEnvironment(
       NEXT_PUBLIC_ORIGIN: process.env.NEXT_PUBLIC_ORIGIN,
       NEXT_PUBLIC_DASHBOARD_URL: process.env.NEXT_PUBLIC_DASHBOARD_URL,
       NEXT_PUBLIC_RPC_HOST: process.env.NEXT_PUBLIC_RPC_HOST,
+      NEXT_PUBLIC_HOME_URL: process.env.NEXT_PUBLIC_HOME_URL,
     },
     // Web should also validate env at build time
     skipValidation: false,
