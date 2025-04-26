@@ -82,6 +82,9 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
 
   const isLoading = attendanceLoading || attendeesLoading || deregisterMutation.isPending || registerMutation.isPending
 
+  const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
+  const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
+
   return (
     <section className="flex flex-col bg-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
       <Title element="h2" className="font-poppins font-semibold text-2xl">
@@ -90,11 +93,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
 
       <AttendanceDateInfo attendance={attendance} />
 
-      <AttendanceBoxPool
-        pool={attendablePool}
-        isAttending={Boolean(attendee)}
-        queuePosition={getQueuePosition(attendee, attendees, attendablePool)}
-      />
+      <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} queuePosition={queuePosition} />
 
       {nonAttendablePools.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
@@ -110,7 +109,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
             attendees={attendees}
             userId={user.id}
           />
-          <TicketButton userId={user.id} />
+          {isAttendingAndReserved && <TicketButton userId={user.id} />}
         </div>
       ) : (
         <ViewAttendeesDialogButton
