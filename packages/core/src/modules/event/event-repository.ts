@@ -39,6 +39,7 @@ export class EventRepositoryImpl implements EventRepository {
       ...pageQuery(page ?? { take: 100 }),
 
       where: {
+        status: { not: "DELETED" },
         OR: filter?.query
           ? [
               {
@@ -74,6 +75,8 @@ export class EventRepositoryImpl implements EventRepository {
   async getAllByUserAttending(userId: string): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
+        status: { not: "DELETED" },
+
         attendance: {
           pools: {
             some: {
@@ -92,6 +95,7 @@ export class EventRepositoryImpl implements EventRepository {
   async getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
+        status: { not: "DELETED" },
         hostingGroups: {
           some: { groupId },
         },
@@ -101,12 +105,13 @@ export class EventRepositoryImpl implements EventRepository {
   }
 
   async getById(id: string): Promise<Event | null> {
-    return await this.db.event.findUnique({ where: { id } })
+    return await this.db.event.findUnique({ where: { id, status: { not: "DELETED" } } })
   }
 
   async getAllByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
+        status: { not: "DELETED" },
         interestGroups: {
           some: { interestGroupId },
         },
