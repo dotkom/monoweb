@@ -19,7 +19,7 @@ export const EventHeader: FC<Props> = ({ event }) => {
         height="0"
         sizes="100%"
         style={{ objectFit: "cover" }}
-        className="h-[30rem] w-full rounded-2xl bg-slate-5"
+        className="w-full rounded-2xl bg-slate-5 aspect-[16/9] md:aspect-[24/9]"
       />
       <Title element="h1" className="text-4xl">
         {event.title}
