@@ -1,10 +1,10 @@
 import EventImagePlaceholder from "@/assets/EventImagePlaceholder.svg"
 import type { EventDetail } from "@dotkomonline/types"
 import { Badge } from "@dotkomonline/ui"
+import { slugify } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type React from "react"
-
 interface ComingEventProps {
   eventDetail: EventDetail
 }
@@ -19,7 +19,7 @@ export const EventCard: React.FC<ComingEventProps> = ({
   const capacity = attendance?.pools?.reduce((prev, pool) => prev + pool.capacity, 0)
 
   return (
-    <Link href={`/events/${id}`}>
+    <Link href={`/events/${slugify(title)}/${id}`}>
       <div className="mt-2 flex flex-col">
         <div className="relative">
           <Image

@@ -14,5 +14,9 @@
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
     "typescript": "^5.8"
+  },
+  "dependencies": {
+    "slugify": "^1.6.6",
+    "vitest": "^3.1.1"
   }
 }

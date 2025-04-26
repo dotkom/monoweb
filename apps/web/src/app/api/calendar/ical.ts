@@ -1,10 +1,11 @@
 import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
+import { slugify } from "@dotkomonline/utils"
 import type { ICalEventData } from "ical-generator"
 
 /** Map a domain Event to an icalendar event */
 export function createCalendarEvent(event: Event) {
-  const url = new URL(`/events/${event.id}`, env.NEXT_PUBLIC_ORIGIN)
+  const url = new URL(`/events/${slugify(event.title)}/${event.id}`, env.NEXT_PUBLIC_ORIGIN)
   return {
     start: event.start,
     end: event.end,
