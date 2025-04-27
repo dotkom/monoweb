@@ -1,6 +1,6 @@
 "use client"
 
-import type { Company, Event, Group, InterestGroup } from "@dotkomonline/types"
+import type { EventDetail } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"
@@ -12,27 +12,21 @@ import { GenericTable } from "../../../components/GenericTable"
 import { EventHostingGroupList } from "./components/event-hosting-group-list"
 import { useEventAllQuery } from "./queries"
 
-type EventTableColumns = Event & {
-  groups: Group[]
-  interestGroups: InterestGroup[]
-  companies: Company[]
-}
-
 export default function EventPage() {
   const { events, isLoading: isEventsLoading } = useEventAllQuery()
-  const columnHelper = createColumnHelper<EventTableColumns>()
+  const columnHelper = createColumnHelper<EventDetail>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((event) => event, {
-        id: "title",
+        id: "event.title",
         header: () => "Arrangementnavn",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
-            {info.getValue().title}
+          <Anchor component={Link} size="sm" href={`/event/${info.getValue().event.id}`}>
+            {info.getValue().event.title}
           </Anchor>
         ),
       }),
-      columnHelper.accessor("start", {
+      columnHelper.accessor("event.start", {
         header: () => "Startdato",
         cell: (info) => formatDate(info.getValue()),
       }),
@@ -41,13 +35,13 @@ export default function EventPage() {
         header: () => "Arrangører",
         cell: (info) => (
           <EventHostingGroupList
-            groups={info.getValue().groups}
-            interestGroups={info.getValue().interestGroups}
-            companies={info.getValue().companies}
+            groups={info.getValue().hostingGroups}
+            interestGroups={info.getValue().hostingInterestGroups}
+            companies={info.getValue().hostingCompanies}
           />
         ),
       }),
-      columnHelper.accessor("type", {
+      columnHelper.accessor("event.type", {
         header: () => "Type",
       }),
     ],
