@@ -53,17 +53,26 @@ export const ViewAttendeesDialogButton = ({
           </AlertDialogCancel>
         </div>
 
-        <div className="flex flex-col gap-8 px-4 pb-4 rounded-lg max-h-[75dvh] overflow-y-auto">
+        <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
-            <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md">Påmeldte</Title>
+            <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">
+              Påmeldte
+            </Title>
             {reservedAttendees !== undefined && (
-              <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
+              <AttendeeList
+                attendees={reservedAttendees}
+                maxNumberOfAttendees={maxAttendees}
+                userId={userId}
+                marginOnLastItem
+              />
             )}
           </div>
 
           {waitlistAttendees && waitlistAttendees.length > 0 && (
             <div className="flex flex-col gap-2">
-              <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md">Venteliste</Title>
+              <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">
+                Venteliste
+              </Title>
               <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
             </div>
           )}
