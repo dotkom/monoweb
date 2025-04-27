@@ -2,6 +2,21 @@ import type { Attendee, User } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, Icon, Text } from "@dotkomonline/ui"
 import clsx from "clsx"
 
+const getMinWidth = (maxNumberOfAttendees: number) => {
+  switch (maxNumberOfAttendees.toString().length) {
+    case 1:
+      return "min-w-[2ch]"
+    case 2:
+      return "min-w-[3ch]"
+    case 3:
+      return "min-w-[4ch]"
+    case 4:
+      return "min-w-[5ch]"
+    default:
+      return "min-w-[6ch]"
+  }
+}
+
 interface AttendeeListProps {
   attendees: Attendee[]
   maxNumberOfAttendees: number
@@ -14,11 +29,11 @@ export const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: Attend
   }
 
   return attendees.map((attendee: Attendee, index) => (
-    <div key={attendee.id} className="flex flex-row gap-2 items-center">
+    <div key={attendee.id} className="flex flex-row gap-1 items-center">
       <Text
         className={clsx(
           "text-slate-8 text-right text-sm font-mono",
-          `min-w-[${maxNumberOfAttendees.toString().length + 1}ch]`
+          getMinWidth(maxNumberOfAttendees),
         )}
       >
         {index + 1}.
@@ -26,7 +41,7 @@ export const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: Attend
 
       <div
         className={clsx(
-          "flex items-center gap-4 px-3 py-1.5 rounded-lg w-full",
+          "flex items-center gap-4 p-1.5 rounded-lg w-full",
           attendee.userId === userId && "bg-blue-3"
         )}
       >
