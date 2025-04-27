@@ -8,8 +8,10 @@ const EventPage = async () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Title element="h1" className="font-semibold font-poppins text-3xl">Arrangementer</Title>
-      
+      <Title element="h1" className="font-semibold font-poppins text-3xl">
+        Arrangementer
+      </Title>
+
       <div className="flex flex-col gap-4">
         <EventsViewToggle active="list" />
         <EventList events={events.map(({ event }) => event)} />
