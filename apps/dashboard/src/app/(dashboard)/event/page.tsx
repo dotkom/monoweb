@@ -1,6 +1,6 @@
 "use client"
 
-import type { Company, Event, EventDetail, Group, InterestGroup } from "@dotkomonline/types"
+import type { EventDetail } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"

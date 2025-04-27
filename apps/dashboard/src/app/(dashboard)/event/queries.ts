@@ -1,4 +1,4 @@
-import type { EventDetail, AttendanceId, Attendee, Company, EventId } from "@dotkomonline/types"
+import type { AttendanceId, Attendee, Company, EventDetail, EventId } from "@dotkomonline/types"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useTRPC } from "../../../trpc"
 import { useQueryNotification } from "../../notifications"
