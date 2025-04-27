@@ -1,5 +1,5 @@
-import { useQueryGenericMutationNotification, useQueryNotification } from "@/notifications"
-import { useTRPC } from "@/trpc"
+import { useQueryGenericMutationNotification, useQueryNotification } from "@/lib/notifications"
+import { useTRPC } from "@/lib/trpc"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 

@@ -1,4 +1,4 @@
-import { notifyFail } from "@/notifications"
+import { notifyFail } from "@/lib/notifications"
 import type { AttendancePool } from "@dotkomonline/types"
 import { Box, Button, Card, Flex, Grid, Text, Title } from "@mantine/core"
 import type { FC } from "react"

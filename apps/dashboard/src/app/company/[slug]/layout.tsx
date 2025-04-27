@@ -1,6 +1,6 @@
 "use client"
 
-import { useTRPC } from "@/trpc"
+import { useTRPC } from "@/lib/trpc"
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
 import { CompanyDetailsContext } from "./provider"

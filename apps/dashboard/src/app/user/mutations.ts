@@ -1,5 +1,5 @@
-import { useQueryGenericMutationNotification } from "@/notifications"
-import { useTRPC } from "@/trpc"
+import { useQueryGenericMutationNotification } from "@/lib/notifications"
+import { useTRPC } from "@/lib/trpc"
 import { useMutation } from "@tanstack/react-query"
 
 export const useUpdateUserMutation = () => {

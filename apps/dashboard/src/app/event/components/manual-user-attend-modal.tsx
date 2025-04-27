@@ -1,6 +1,6 @@
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
-import { notifyFail } from "@/notifications"
+import { notifyFail } from "@/lib/notifications"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { z } from "zod"

@@ -1,4 +1,4 @@
-import { useTRPC } from "@/trpc"
+import { useTRPC } from "@/lib/trpc"
 import type { Attendance, AttendanceSelectionResults } from "@dotkomonline/types"
 import { Icon } from "@iconify/react"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"

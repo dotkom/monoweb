@@ -1,3 +1,3 @@
-import { auth } from "@/auth"
+import { auth } from "@/lib/auth"
 
 export const GET = auth.logout

@@ -1,8 +1,8 @@
 import type { AttendanceId, EventId } from "@dotkomonline/types"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-import { useQueryNotification } from "@/notifications"
-import { useTRPC } from "@/trpc"
+import { useQueryNotification } from "@/lib/notifications"
+import { useTRPC } from "@/lib/trpc"
 import { openAttendanceRegisteredModal } from "./components/attendance-registered-modal"
 import { openAlreadyAttendedModal } from "./components/error-attendance-registered-modal"
 

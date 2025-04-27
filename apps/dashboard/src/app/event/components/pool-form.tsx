@@ -2,7 +2,7 @@ import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGro
 import { useFormBuilder } from "@/components/forms/Form"
 import { createNumberInput } from "@/components/forms/NumberInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { notifyFail } from "@/notifications"
+import { notifyFail } from "@/lib/notifications"
 import { Box } from "@mantine/core"
 import type { FC } from "react"
 import { z } from "zod"
