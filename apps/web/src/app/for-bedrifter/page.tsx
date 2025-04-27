@@ -7,7 +7,7 @@ import { type FC, Fragment } from "react"
 
 export default async function Page() {
   return (
-    <main className="flex flex-col gap-16 items-center py-8">
+    <main className="flex flex-col gap-16 items-center">
       <HeroSection />
       <InterestSection />
       <ProductSection />

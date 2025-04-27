@@ -58,10 +58,10 @@ export const JobListingView: FC<JoblistingProps> = (props: JoblistingProps) => {
   return (
     <div>
       <div className="border-slate-7 left-0 z-0 w-full border-b">
-        <div className="flex flex-row gap-96 py-5">
-          <div className="flex flex-col">
-            <p className="mt-4 text-3xl font-bold border-b-0">Karrieremuligheter</p>
-            <p className="text-slate-9 pt-2">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
+        <div className="flex flex-row gap-96">
+          <div className="flex flex-col gap-2">
+            <p className="text-3xl font-bold border-b-0">Karrieremuligheter</p>
+            <p className="text-slate-9">Ser du etter en jobb? Ta en titt på disse karrieremulighetene</p>
           </div>
         </div>
       </div>
