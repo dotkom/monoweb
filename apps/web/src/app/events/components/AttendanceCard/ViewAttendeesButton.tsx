@@ -39,36 +39,33 @@ export const ViewAttendeesDialogButton = ({
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
-        className="flex flex-col gap-4 w-full bg-slate-2 outline outline-slate-4 max-w-2xl p-4 rounded-lg"
+        className="flex flex-col gap-4 w-full p-0 bg-slate-2 drop-shadow-lg max-w-2xl rounded-lg"
         onOutsideClick={() => setAttendeeListOpen(false)}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <AlertDialogTitle asChild>
-            <Title className="font-poppins font-semibold text-xl">Påmeldingsliste</Title>
+            <Title className="font-poppins font-semibold text-2xl">Påmeldingsliste</Title>
           </AlertDialogTitle>
           <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Icon className="text-lg" icon="tabler:x" />
+            <Button size="icon" className="h-8 w-8 border-none">
+              <Icon className="text-xl" icon="tabler:x" />
             </Button>
           </AlertDialogCancel>
         </div>
 
-        <div className="flex flex-col gap-4 max-h-[75dvh] overflow-y-auto">
+        <div className="flex flex-col gap-8 px-4 pb-4 rounded-lg max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
-            <Title className="font-poppins font-normal text-lg">Påmeldte</Title>
+            <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md">Påmeldte</Title>
             {reservedAttendees !== undefined && (
               <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
             )}
           </div>
 
           {waitlistAttendees && waitlistAttendees.length > 0 && (
-            <>
-              <hr className="border border-slate-4" />
-              <div className="flex flex-col gap-2">
-                <Title className="font-poppins font-normal text-lg">Venteliste</Title>
-                <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
-              </div>
-            </>
+            <div className="flex flex-col gap-2">
+              <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md">Venteliste</Title>
+              <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
+            </div>
           )}
         </div>
       </AlertDialogContent>
