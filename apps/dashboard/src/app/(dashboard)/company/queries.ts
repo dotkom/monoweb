@@ -4,7 +4,9 @@ import { useTRPC } from "../../../trpc"
 
 export const useCompanyAllQuery = () => {
   const trpc = useTRPC()
-  const { data: companies, ...query } = useQuery(trpc.company.all.queryOptions({ take: 999 }, { initialData: [] }))
+  const { data: companies, ...query } = useQuery(
+    trpc.company.all.queryOptions({ take: 999 }, { initialData: [] as Company[] })
+  )
   return { companies: companies as Company[], ...query }
 }
 
