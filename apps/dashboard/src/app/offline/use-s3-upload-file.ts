@@ -1,8 +1,8 @@
+import { env } from "@/lib/env"
+import { uploadFileToS3PresignedUrl } from "@/lib/s3"
+import { useTRPC } from "@/lib/trpc"
 import { notifications } from "@mantine/notifications"
 import { useMutation } from "@tanstack/react-query"
-import { env } from "../../env"
-import { uploadFileToS3PresignedUrl } from "../../s3"
-import { useTRPC } from "../../trpc"
 
 const TEST_MODE_IMG_URL = "https://s3.eu-north-1.amazonaws.com/cdn.online.ntnu.no/img1.jpeg"
 

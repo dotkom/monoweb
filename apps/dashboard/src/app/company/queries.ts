@@ -1,4 +1,4 @@
-import { useTRPC } from "@/trpc"
+import { useTRPC } from "@/lib/trpc"
 import type { Company, CompanyId, Event } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 

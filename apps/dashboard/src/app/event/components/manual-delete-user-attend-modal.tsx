@@ -1,5 +1,5 @@
 import { createCheckboxInput, useFormBuilder } from "@/app/form"
-import { notifyFail } from "@/notifications"
+import { notifyFail } from "@/lib/notifications"
 import type { AttendeeId } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"

@@ -1,9 +1,9 @@
 "use client"
+
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
-import { CompanyDetailsContext } from "./provider"
-
 import { useCompanyByIdQuery } from "../queries"
+import { CompanyDetailsContext } from "./provider"
 
 export default function CompanyDetailsLayout({
   children,

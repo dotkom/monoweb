@@ -3,7 +3,7 @@ import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { ArticleDetailsContext } from "./provider"
 
-import { useTRPC } from "@/trpc"
+import { useTRPC } from "@/lib/trpc"
 import { useQuery } from "@tanstack/react-query"
 
 export default function ArticleDetailsLayout({

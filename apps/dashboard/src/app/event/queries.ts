@@ -1,7 +1,7 @@
 import type { AttendanceId, EventId } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 
-import { useTRPC } from "@/trpc"
+import { useTRPC } from "@/lib/trpc"
 
 export const useEventAllQuery = () => {
   const trpc = useTRPC()
