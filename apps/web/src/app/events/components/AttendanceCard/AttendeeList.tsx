@@ -30,20 +30,12 @@ export const AttendeeList = ({ attendees, maxNumberOfAttendees, userId }: Attend
 
   return attendees.map((attendee: Attendee, index) => (
     <div key={attendee.id} className="flex flex-row gap-1 items-center">
-      <Text
-        className={clsx(
-          "text-slate-8 text-right text-sm font-mono",
-          getMinWidth(maxNumberOfAttendees),
-        )}
-      >
+      <Text className={clsx("text-slate-8 text-right text-sm font-mono", getMinWidth(maxNumberOfAttendees))}>
         {index + 1}.
       </Text>
 
       <div
-        className={clsx(
-          "flex items-center gap-4 p-1.5 rounded-lg w-full",
-          attendee.userId === userId && "bg-blue-3"
-        )}
+        className={clsx("flex items-center gap-4 p-1.5 rounded-lg w-full", attendee.userId === userId && "bg-blue-3")}
       >
         <Avatar className="h-10 w-10">
           <AvatarFallback className={attendee.userId === userId ? "bg-blue-6" : "bg-slate-6"}>
