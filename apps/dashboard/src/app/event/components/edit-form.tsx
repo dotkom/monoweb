@@ -55,8 +55,6 @@ export const useEventEditForm = ({
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
-        placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-        markdown: "true",
         required: true,
       }),
       locationTitle: createTextInput({

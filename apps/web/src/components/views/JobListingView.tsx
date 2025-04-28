@@ -3,25 +3,16 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
-import {
-  MDXEditor,
-  frontmatterPlugin,
-  headingsPlugin,
-  linkDialogPlugin,
-  linkPlugin,
-  listsPlugin,
-  markdownShortcutPlugin,
-  thematicBreakPlugin,
-} from "@mdxeditor/editor"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { RenderedContent } from "../molecules/RenderedContent/RenderedContent"
 
 interface JobListingViewProps {
   jobListing: JobListing
 }
 
-export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewProps) => {
+export const JobListingView: FC<JobListingViewProps> = ({ jobListing }: JobListingViewProps) => {
   const {
     title,
     applicationEmail,
@@ -38,7 +29,7 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
     locations,
     start,
     deadline,
-  } = props.jobListing
+  } = jobListing
 
   return (
     <div className="mx-auto mt-10 flex w-10/12 justify-between">
@@ -98,34 +89,14 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <p className="m-0 text-4xl font-bold">{company.name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div className="ml-[26px]">
-          <div
-            className="
-                [&_ul]:list-disc
-                [&_ul]:pl-10
-                [&_ol]:list-decimal
-                [&_ol]:pl-10
-                [&_[dir='ltr']]:text-black
-              [&_[dir='ltr']]:dark:text-white
-                [&_[dir='ltr']:not(ul):not(ol):not(li)]:border-amber-9
-                [&_[dir='ltr']:not(ul):not(ol):not(li)]:border-l-[1px]
-                [&_[dir='ltr']:not(ul):not(ol):not(li)]:pl-5
-              "
-          >
-            <MDXEditor
-              readOnly
-              markdown={description}
-              plugins={[
-                listsPlugin(),
-                headingsPlugin(),
-                linkPlugin(),
-                linkDialogPlugin(),
-                thematicBreakPlugin(),
-                frontmatterPlugin(),
-                markdownShortcutPlugin(),
-              ]}
-            />
-          </div>
+        <div
+          className="[&_[dir='ltr']]:text-white
+                      [&_[dir='ltr']]:border-amber-9
+                        [&_[dir='ltr']]:border-l-[1px]
+                        [&_[dir='ltr']]:pl-4
+                        mb-12 ml-8 flex flex-col"
+        >
+          <RenderedContent content={description} />
         </div>
       </div>
     </div>
