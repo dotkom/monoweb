@@ -10,7 +10,7 @@ interface TimeLocationBoxProps {
 
 export const TimeLocationBox: FC<TimeLocationBoxProps> = ({ event }) => {
   return (
-    <div className="flex flex-col border-2 border-slate-2 rounded-xl min-h-[6rem] p-6 gap-3">
+    <div className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] p-6 gap-3">
       <Title element="h2" className="font-poppins font-semibold text-2xl">
         Oppmøte
       </Title>

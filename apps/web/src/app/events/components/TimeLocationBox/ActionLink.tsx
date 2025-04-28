@@ -9,11 +9,11 @@ interface Props {
 }
 
 export const ActionLink = ({ href, iconHref, label }: Props) => (
-    <TooltipProvider>
-  <Tooltip>
+  <TooltipProvider>
+    <Tooltip delayDuration={100}>
       <TooltipTrigger>
         <Link
-          className={clsx("border border-slate-3 p-1.5 rounded-lg flex items-center")}
+          className={clsx("border border-slate-3 hover:bg-slate-2 p-1.5 rounded-lg flex items-center")}
           href={href}
           target="_blank"
           rel="noreferrer"
@@ -24,6 +24,6 @@ export const ActionLink = ({ href, iconHref, label }: Props) => (
       <TooltipContent>
         <Text>Test</Text>
       </TooltipContent>
-  </Tooltip>
-    </TooltipProvider>
+    </Tooltip>
+  </TooltipProvider>
 )

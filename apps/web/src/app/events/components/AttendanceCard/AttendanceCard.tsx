@@ -86,7 +86,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
-    <section className="flex flex-col border-2 border-slate-2 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
+    <section className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
       <Title element="h2" className="font-poppins font-semibold text-2xl">
         Påmelding
       </Title>
