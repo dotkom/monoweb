@@ -1,7 +1,7 @@
-import { cn } from "@dotkomonline/ui"
 import DOMPurify from "isomorphic-dompurify"
+import { cn } from "../../utils"
 
-export function RenderedContent({ content, className }: { content: string; className?: string }) {
+export function RichText({ content, className }: { content: string; className?: string }) {
   return (
     <div
       className={cn("prose font-poppins", className)}
