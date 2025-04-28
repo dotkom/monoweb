@@ -12,7 +12,11 @@ import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBo
 
 const mapToImageAndName = (item: Group | Company | InterestGroup) => (
   // TODO: Href link to all events by committee or company
-  <Link href="/" key={item.name} className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg hover:bg-slate-2">
+  <Link
+    href="/"
+    key={item.name}
+    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-slate-3 hover:bg-slate-2"
+  >
     {item.image && <Image src={item.image} alt={item.name} width={22} height={22} />}
     <Text>{item.name}</Text>
   </Link>
@@ -40,7 +44,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
       <div className="flex w-full flex-col md:flex-row">
         <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
           {organizers.length > 0 ? (
-            <div className="flex flex-row space-x-1">{organizers}</div>
+            <div className="flex flex-row space-x-2">{organizers}</div>
           ) : (
             <Text className="text-slate-10">Ingen arrangører</Text>
           )}

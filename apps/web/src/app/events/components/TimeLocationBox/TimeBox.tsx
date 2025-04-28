@@ -53,7 +53,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
         </div>
       </div>
       <div className="flex items-center">
-        <ActionLink href={gcalLink} iconHref="https://i.imgur.com/cR1K7Bg.png" label="Kalender" />
+        <ActionLink href={gcalLink} label="Se på Google Calendar" />
       </div>
     </div>
   )
