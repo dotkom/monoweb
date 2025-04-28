@@ -4,11 +4,10 @@ import Link from "next/link.js"
 
 interface Props {
   href: string
-  iconHref: string
   label: string
 }
 
-export const ActionLink = ({ href, iconHref, label }: Props) => (
+export const ActionLink = ({ href, label }: Props) => (
   <TooltipProvider>
     <Tooltip delayDuration={100}>
       <TooltipTrigger>
@@ -21,8 +20,8 @@ export const ActionLink = ({ href, iconHref, label }: Props) => (
           <Icon icon="tabler:arrow-up-right" width={24} height={24} />
         </Link>
       </TooltipTrigger>
-      <TooltipContent>
-        <Text>Test</Text>
+      <TooltipContent className="bg-white border border-slate-5">
+        <Text>{label}</Text>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>

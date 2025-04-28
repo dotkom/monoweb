@@ -29,9 +29,9 @@ export const LocationLink: FC<LocationLinkProps> = ({ link: _link }) => {
   if (!link) return null
 
   if (link.type === "google-maps") {
-    return <ActionLink href={link.href} iconHref="https://i.imgur.com/pnBc6G2.png" label="Kart" />
+    return <ActionLink href={link.href} label="Se på Google Maps" />
   }
   if (link.type === "mazemap") {
-    return <ActionLink href={link.href} iconHref="https://i.imgur.com/3wfhVXd.png" label="Mazemap" />
+    return <ActionLink href={link.href} label="Se på Mazemap" />
   }
 }
