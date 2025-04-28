@@ -1,5 +1,6 @@
+import { Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
 import clsx from "clsx"
-import Image from "next/image"
+import Link from "next/link.js"
 
 interface Props {
   href: string
@@ -8,13 +9,21 @@ interface Props {
 }
 
 export const ActionLink = ({ href, iconHref, label }: Props) => (
-  <a
-    className={clsx("flex bg-slate-4 p-3 rounded-lg items-center min-w-24 gap-[2ch]")}
-    href={href}
-    target="_blank"
-    rel="noreferrer"
-  >
-    <Image src={iconHref} alt={label} height={0} width={0} className="h-5 w-auto" />
-    <span className="flex-1 font-semibold">{label}</span>
-  </a>
+    <TooltipProvider>
+  <Tooltip>
+      <TooltipTrigger>
+        <Link
+          className={clsx("border border-slate-3 p-1.5 rounded-lg flex items-center")}
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Icon icon="tabler:arrow-up-right" width={24} height={24} />
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent>
+        <Text>Test</Text>
+      </TooltipContent>
+  </Tooltip>
+    </TooltipProvider>
 )
