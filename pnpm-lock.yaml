@@ -1179,6 +1179,9 @@ importers:
       cva:
         specifier: npm:class-variance-authority@^0.7.0
         version: class-variance-authority@0.7.0
+      isomorphic-dompurify:
+        specifier: ^2.24.0
+        version: 2.24.0
       next:
         specifier: ^15
         version: 15.2.2(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

@@ -1,5 +1,5 @@
-import { RenderedContent } from "@/components/molecules/RenderedContent/RenderedContent"
+import { RichText } from "@/components/molecules/RichText/RichText"
 
 export function EventDescription({ description }: { description: string }) {
-  return <RenderedContent content={description} />
+  return <RichText content={description} />
 }
