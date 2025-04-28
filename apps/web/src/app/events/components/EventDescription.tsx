@@ -1,5 +1,5 @@
-import { Text } from "@dotkomonline/ui"
+import { RenderedContent } from "@/components/molecules/RenderedContent/RenderedContent"
 
 export function EventDescription({ description }: { description: string }) {
-  return <Text className="whitespace-pre-line">{description}</Text>
+  return <RenderedContent content={description} />
 }

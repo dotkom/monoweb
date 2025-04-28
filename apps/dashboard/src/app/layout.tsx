@@ -2,7 +2,6 @@ import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/c
 import "@mantine/core/styles.css"
 import "@mantine/dates/styles.css"
 import "@mantine/notifications/styles.css"
-import "@mdxeditor/editor/style.css"
 import { Login } from "@/components/views/Login"
 import { auth } from "@/lib/auth"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
