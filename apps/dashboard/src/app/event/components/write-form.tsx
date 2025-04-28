@@ -67,8 +67,6 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
-        placeholder: "Mer informasjon og påmelding kommer når arrangementet nærmer seg!",
-        markdown: "",
         required: true,
       }),
       locationAddress: createTextInput({

@@ -3,19 +3,10 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Button, Icon } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
-import {
-  MDXEditor,
-  frontmatterPlugin,
-  headingsPlugin,
-  linkDialogPlugin,
-  linkPlugin,
-  listsPlugin,
-  markdownShortcutPlugin,
-  thematicBreakPlugin,
-} from "@mdxeditor/editor"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
+import { RenderedContent } from "../molecules/RenderedContent/RenderedContent"
 
 interface JobListingViewProps {
   jobListing: JobListing
@@ -105,19 +96,7 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
                         [&_[dir='ltr']]:pl-4
                         mb-12 ml-8 flex flex-col"
         >
-          <MDXEditor
-            readOnly
-            markdown={description}
-            plugins={[
-              listsPlugin(),
-              headingsPlugin(),
-              linkPlugin(),
-              linkDialogPlugin(),
-              thematicBreakPlugin(),
-              frontmatterPlugin(),
-              markdownShortcutPlugin(),
-            ]}
-          />
+          <RenderedContent content={description} />
         </div>
       </div>
     </div>

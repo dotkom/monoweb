@@ -1,5 +1,4 @@
 import { useTRPC } from "@/lib/trpc"
-import type { Mark } from "@dotkomonline/types"
 
 import { useQuery } from "@tanstack/react-query"
 

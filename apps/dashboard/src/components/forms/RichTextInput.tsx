@@ -1,77 +1,57 @@
+"use client"
+
 import { Input } from "@mantine/core"
-import {
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
-  CodeToggle,
-  CreateLink,
-  ListsToggle,
-  MDXEditor,
-  type MDXEditorProps,
-  Separator,
-  UndoRedo,
-  frontmatterPlugin,
-  headingsPlugin,
-  linkDialogPlugin,
-  linkPlugin,
-  listsPlugin,
-  markdownShortcutPlugin,
-  thematicBreakPlugin,
-  toolbarPlugin,
-} from "@mdxeditor/editor"
+import { RichTextEditor, type RichTextEditorProps } from "@mantine/tiptap"
+import Underline from "@tiptap/extension-underline"
+import { useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
 import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "./types"
+import "@mantine/tiptap/styles.css"
 
 export function createRichTextInput<F extends FieldValues>({
   onChange,
   required,
   label,
   ...props
-}: Omit<MDXEditorProps, "error"> & { required: boolean; label: string }): InputProducerResult<F> {
+}: Omit<RichTextEditorProps, "error" | "children" | "editor"> & {
+  required: boolean
+  label: string
+}): InputProducerResult<F> {
   return function RichTextInput({ name, control }) {
     return (
-      <>
-        <Input.Wrapper>
-          <Input.Label required={required}>{label}</Input.Label>
+      <Input.Wrapper>
+        <Input.Label required={required}>{label}</Input.Label>
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => {
+            const editor = useEditor({
+              extensions: [StarterKit, Underline],
+              content: field.value,
+              immediatelyRender: false,
+              onUpdate: (value) => field.onChange(value.editor.getHTML()),
+            })
 
-          <div style={{ border: "1px solid lightgrey", borderRadius: "8px", padding: 0 }}>
-            <Controller
-              control={control}
-              name={name}
-              render={({ field }) => (
-                <MDXEditor
-                  {...props}
-                  markdown={field.value}
-                  plugins={[
-                    toolbarPlugin({
-                      toolbarContents: () => (
-                        <>
-                          <UndoRedo />
-                          <Separator />
-                          <BoldItalicUnderlineToggles />
-                          <ListsToggle />
-                          <CodeToggle />
-                          <Separator />
-                          <BlockTypeSelect />
-                          <CreateLink />
-                          <Separator />
-                        </>
-                      ),
-                    }),
-                    listsPlugin(),
-                    headingsPlugin(),
-                    linkPlugin(),
-                    linkDialogPlugin(),
-                    thematicBreakPlugin(),
-                    frontmatterPlugin(),
-                    markdownShortcutPlugin(),
-                  ]}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-        </Input.Wrapper>
-      </>
+            return (
+              <RichTextEditor {...props} editor={editor} variant="subtle">
+                <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Bold />
+                    <RichTextEditor.Italic />
+                    <RichTextEditor.Underline />
+                    <RichTextEditor.Strikethrough />
+                    <RichTextEditor.ClearFormatting />
+                    <RichTextEditor.Highlight />
+                    <RichTextEditor.Code />
+                  </RichTextEditor.ControlsGroup>
+                </RichTextEditor.Toolbar>
+                <RichTextEditor.Content />
+              </RichTextEditor>
+            )
+          }}
+        />
+      </Input.Wrapper>
     )
   }
 }

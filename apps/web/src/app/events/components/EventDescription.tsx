@@ -1,5 +1,5 @@
-import { Text } from "@dotkomonline/ui"
+import { RichText } from "@/components/molecules/RichText/RichText"
 
 export function EventDescription({ description }: { description: string }) {
-  return <Text className="whitespace-pre-line">{description}</Text>
+  return <RichText content={description} />
 }
