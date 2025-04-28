@@ -1,4 +1,4 @@
-import type { AttendanceId, Attendee, Company, EventId } from "@dotkomonline/types"
+import type { AttendanceId, EventId } from "@dotkomonline/types"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useTRPC } from "../../../trpc"
 import { useQueryNotification } from "../../notifications"
@@ -7,20 +7,21 @@ import { openAlreadyAttendedModal } from "./components/error-attendance-register
 
 export const useEventAllQuery = () => {
   const trpc = useTRPC()
-  const { data: events, ...query } = useQuery(trpc.event.all.queryOptions(undefined, { initialData: [] }))
+  const { data: events, ...query } = useQuery({
+    ...trpc.event.all.queryOptions(),
+    initialData: [],
+  })
   return { events, ...query }
 }
 
 export const useEventCompanyGetQuery = (id: EventId) => {
   const trpc = useTRPC()
-  const { data: eventCompanies, ...query } = useQuery(
-    trpc.event.company.get.queryOptions(
-      {
-        id,
-      },
-      { initialData: [] as Company[] }
-    )
-  )
+  const { data: eventCompanies, ...query } = useQuery({
+    ...trpc.event.company.get.queryOptions({
+      id,
+    }),
+    initialData: [],
+  })
   return { eventCompanies, ...query }
 }
 
@@ -47,14 +48,12 @@ export const useAttendanceGetQuery = (id: AttendanceId, enabled?: boolean) => {
 
 export const useEventAttendeesGetQuery = (attendanceId: AttendanceId) => {
   const trpc = useTRPC()
-  const { data: attendees, ...query } = useQuery(
-    trpc.event.attendance.getAttendees.queryOptions(
-      {
-        attendanceId,
-      },
-      { initialData: [] as Attendee[] }
-    )
-  )
+  const { data: attendees, ...query } = useQuery({
+    ...trpc.event.attendance.getAttendees.queryOptions({
+      attendanceId,
+    }),
+    initialData: [],
+  })
   return { attendees, ...query }
 }
 
