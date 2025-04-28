@@ -29,7 +29,7 @@ const getDisabledText = (
       return "Påmeldingen er stengt"
     case !pool && !attendee:
       return "Du har ingen påmeldingsgruppe"
-    case status === "Closed" && isPastDeregisterDeadline && !attendee:
+    case status === "Closed" && isPastDeregisterDeadline && attendee:
       return "Avmeldingsfristen har utløpt"
     default:
       return null
