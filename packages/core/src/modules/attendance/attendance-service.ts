@@ -122,10 +122,9 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     if (data?.capacity && data.capacity > pool.capacity) {
-      const newCapacity = data.capacity - pool.capacity
       const attendees = await this.attendeeService.getByAttendancePoolId(poolId) // These are in order of reserveTime
 
-      const attendeesThatAreNowReserved = attendees.slice(pool.capacity, pool.capacity + newCapacity)
+      const attendeesThatAreNowReserved = attendees.slice(pool.capacity, data.capacity)
       for (const attendee of attendeesThatAreNowReserved) {
         const result = await this.attendeeService.tryReserve(attendee.id, pool)
         if (result === false) {
