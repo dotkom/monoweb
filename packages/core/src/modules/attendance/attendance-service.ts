@@ -11,7 +11,7 @@ import { addHours } from "date-fns"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
-import { AttendeeService } from "./attendee-service"
+import type { AttendeeService } from "./attendee-service"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -30,7 +30,11 @@ export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendeeRepository: AttendeeRepository
   private readonly attendeeService: AttendeeService
 
-  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository, attendeeService: AttendeeService) {
+  constructor(
+    attendanceRepository: AttendanceRepository,
+    attendeeRepository: AttendeeRepository,
+    attendeeService: AttendeeService
+  ) {
     this.attendanceRepository = attendanceRepository
     this.attendeeRepository = attendeeRepository
     this.attendeeService = attendeeService
@@ -112,7 +116,6 @@ export class AttendanceServiceImpl implements AttendanceService {
   async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
     const pool = await this.attendanceRepository.getPoolById(poolId)
 
-
     // FIXME: refactor into own method for changing capacity to make this easier to manage.
     if (data.capacity && pool.numAttendees > data.capacity) {
       throw new AttendanceValidationError("Cannot change pool capacity to less than the reserved spots")
@@ -128,7 +131,6 @@ export class AttendanceServiceImpl implements AttendanceService {
         if (result === false) {
           throw new AttendanceValidationError("Failed to reserve attendees")
         }
-        
       }
     }
 
