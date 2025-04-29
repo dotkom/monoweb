@@ -11,6 +11,7 @@ import { addHours } from "date-fns"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
+import { AttendeeService } from "./attendee-service"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -27,10 +28,12 @@ export interface AttendanceService {
 export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendanceRepository: AttendanceRepository
   private readonly attendeeRepository: AttendeeRepository
+  private readonly attendeeService: AttendeeService
 
-  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository) {
+  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository, attendeeService: AttendeeService) {
     this.attendanceRepository = attendanceRepository
     this.attendeeRepository = attendeeRepository
+    this.attendeeService = attendeeService
   }
 
   async getSelectionsResponseSummary(attendanceId: AttendanceId) {
@@ -109,8 +112,24 @@ export class AttendanceServiceImpl implements AttendanceService {
   async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
     const pool = await this.attendanceRepository.getPoolById(poolId)
 
+
+    // FIXME: refactor into own method for changing capacity to make this easier to manage.
     if (data.capacity && pool.numAttendees > data.capacity) {
       throw new AttendanceValidationError("Cannot change pool capacity to less than the reserved spots")
+    }
+
+    if (data?.capacity && data.capacity > pool.capacity) {
+      const newCapacity = data.capacity - pool.capacity
+      const attendees = await this.attendeeService.getByAttendancePoolId(poolId) // These are in order of reserveTime
+
+      const attendeesThatAreNowReserved = attendees.slice(pool.capacity, pool.capacity + newCapacity)
+      for (const attendee of attendeesThatAreNowReserved) {
+        const result = await this.attendeeService.tryReserve(attendee.id, pool)
+        if (result === false) {
+          throw new AttendanceValidationError("Failed to reserve attendees")
+        }
+        
+      }
     }
 
     return await this.attendanceRepository.updatePool(poolId, data)
