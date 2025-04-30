@@ -13408,7 +13408,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.14
       tinyrainbow: 2.0.0
-      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.16.0)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.16.0)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.43.1)(tsx@4.19.4)(yaml@2.8.0)
+      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.43.1)(tsx@4.19.4)(yaml@2.8.0)
 
   '@vitest/utils@3.1.4':
     dependencies:
@@ -17654,7 +17654,7 @@ snapshots:
     dependencies:
       ts-essentials: 10.0.2(typescript@5.8.3)
       typescript: 5.8.3
-      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.16.0)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.16.0)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.43.1)(tsx@4.19.4)(yaml@2.8.0)
+      vitest: 3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.43.1)(tsx@4.19.4)(yaml@2.8.0)
 
   vitest@3.1.4(@types/debug@4.1.12)(@types/node@22.15.29)(@vitest/ui@3.1.4)(jiti@2.4.2)(jsdom@26.1.0)(msw@2.7.0(@types/node@22.15.29)(typescript@5.8.3))(sugarss@5.0.0(postcss@8.5.6))(terser@5.43.1)(tsx@4.19.4)(yaml@2.8.0):
     dependencies:
