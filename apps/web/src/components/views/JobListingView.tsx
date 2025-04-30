@@ -98,26 +98,31 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <p className="m-0 text-4xl font-bold">{company.name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div
-          className="[&_[dir='ltr']]:text-white
-                      [&_[dir='ltr']]:border-amber-9
-                        [&_[dir='ltr']]:border-l-[1px]
-                        [&_[dir='ltr']]:pl-4
-                        mb-12 ml-8 flex flex-col"
-        >
-          <MDXEditor
-            readOnly
-            markdown={description}
-            plugins={[
-              listsPlugin(),
-              headingsPlugin(),
-              linkPlugin(),
-              linkDialogPlugin(),
-              thematicBreakPlugin(),
-              frontmatterPlugin(),
-              markdownShortcutPlugin(),
-            ]}
-          />
+        <div className="ml-8">
+          <div className="border-amber-9 border-l-[1px] pl-4">
+            <div
+              className="[&_[dir='ltr']]:text-black
+                        [&_[dir='ltr']]:dark:text-white
+                        [&_ul]:list-disc
+                        [&_ol]:list-decimal
+                        [&_li]:ml-6
+                        mb-12 flex flex-col"
+            >
+              <MDXEditor
+                readOnly
+                markdown={description}
+                plugins={[
+                  listsPlugin(),
+                  headingsPlugin(),
+                  linkPlugin(),
+                  linkDialogPlugin(),
+                  thematicBreakPlugin(),
+                  frontmatterPlugin(),
+                  markdownShortcutPlugin(),
+                ]}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
