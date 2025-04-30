@@ -30,6 +30,7 @@ const EVENT_FORM_DEFAULT_VALUES: FormValidationResult = {
   attendanceId: null,
   locationLink: null,
   locationTitle: "",
+  splashVisible: false,
 }
 
 interface UseEventWriteFormProps {
@@ -120,6 +121,9 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       }),
       public: createCheckboxInput({
         label: "Offentlig arrangement",
+      }),
+      splashVisible: createCheckboxInput({
+        label: "Synlig på splashen"
       }),
     },
   })
