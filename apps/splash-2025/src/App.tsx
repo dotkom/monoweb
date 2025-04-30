@@ -1,10 +1,5 @@
-import { DebugInfo } from "./components/DebugInfo.tsx"
-import { LinjeforeningInfo } from "./components/LinjeforeningInfo.tsx"
-import { Footer } from "./components/footer"
+import { Cloud } from "./components/cloud"
 import { Header } from "./components/header"
-import { Hero } from "./components/hero"
-import { SponsorPlaceholderIcon } from "./components/icons/SponsorPlaceholderIcon.tsx"
-import { HeroData } from "./data/hero"
 
 export function App() {
   return (
@@ -12,14 +7,9 @@ export function App() {
       <Header />
 
       <main>
-        <Hero {...HeroData} />
-        <DebugInfo />
-        <div className="bg-brand h-screen">
-          <LinjeforeningInfo />
-        </div>
+        Team onboarding ftw 1
+        <Cloud />
       </main>
-
-      <Footer sponsorLogo={<SponsorPlaceholderIcon />} />
     </div>
   )
 }
