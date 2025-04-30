@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@dotkomonline/ui": "workspace:*",
+    "@dotkomonline/types": "workspace:*",
     "@fontsource/fraunces": "^5.2.5",
     "@fontsource/poppins": "^5.2.5",
     "class-variance-authority": "^0.7.0",

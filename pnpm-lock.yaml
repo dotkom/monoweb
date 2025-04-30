@@ -545,6 +545,9 @@ importers:
       '@dotkomonline/gateway-trpc':
         specifier: workspace:*
         version: link:../../packages/gateway-trpc
+      '@dotkomonline/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
