@@ -1226,12 +1226,6 @@ importers:
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
-      commander:
-        specifier: ^13.1.0
-        version: 13.1.0
-      commander-completion:
-        specifier: ^1.0.1
-        version: 1.0.1
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.2
@@ -5465,9 +5459,6 @@ packages:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
     engines: {node: '>=12'}
 
-  clone@0.1.19:
-    resolution: {integrity: sha512-IO78I0y6JcSpEPHzK4obKdsL7E7oLdRVDVOLwr2Hkbjsb+Eoz0dxW6tef0WizoKu0gLC4oZSZuEF4U2K6w1WQw==}
-
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
@@ -5534,10 +5525,6 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
-  commander-completion@1.0.1:
-    resolution: {integrity: sha512-vB9PaGRqUgrVRkibVFnd4VTx7gPt+/SxJr8vYi1KWDMl00tEHQOfakmntCVx/TX7ZZxKF7XgVti4/iUVhbxdLA==}
-    engines: {node: '>= 4.0.0'}
-
   commander@11.1.0:
     resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
     engines: {node: '>=16'}
@@ -5546,20 +5533,12 @@ packages:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
     engines: {node: '>=18'}
 
-  commander@13.1.0:
-    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
-    engines: {node: '>=18'}
-
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
   commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
-
-  completion@1.0.3:
-    resolution: {integrity: sha512-uptx4YCEYMtsq20x8X0LzuEALa+BAAFbByOSMInlDfiP7dw/8YuQSE2zbdr9yc2MvtCN/yKhO/cd4bNx7N1stg==}
-    engines: {node: '>= 0.8.0'}
 
   compress-commons@6.0.2:
     resolution: {integrity: sha512-6FqVXeETqWPoGcfzrXb37E50NP0LXT8kAMu5ooZayhWWdgEY4lBEEcbQNXtkuKQsGduxiIcI4gOTsxTmuq/bSg==}
@@ -6594,10 +6573,6 @@ packages:
   lilconfig@3.1.3:
     resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
     engines: {node: '>=14'}
-
-  line-info@0.2.0:
-    resolution: {integrity: sha512-2EapVhnSTnRbRyvr27GmCJM9BouIM8YVzm2LhEZ9JT9emzeoSxDea+wJ72/uCGR5oOQSq5mveStDQecCp3mJjw==}
-    engines: {node: '>= 0.8.0'}
 
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
@@ -13463,8 +13438,6 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  clone@0.1.19: {}
-
   clone@1.0.4: {}
 
   clsx@2.0.0: {}
@@ -13533,25 +13506,14 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
-  commander-completion@1.0.1:
-    dependencies:
-      completion: 1.0.3
-
   commander@11.1.0: {}
 
   commander@12.1.0: {}
-
-  commander@13.1.0: {}
 
   commander@2.20.3:
     optional: true
 
   commander@4.1.1: {}
-
-  completion@1.0.3:
-    dependencies:
-      clone: 0.1.19
-      line-info: 0.2.0
 
   compress-commons@6.0.2:
     dependencies:
@@ -14849,8 +14811,6 @@ snapshots:
       set-cookie-parser: 2.7.1
 
   lilconfig@3.1.3: {}
-
-  line-info@0.2.0: {}
 
   lines-and-columns@1.2.4: {}
 
