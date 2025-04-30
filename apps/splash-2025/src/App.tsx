@@ -5,9 +5,7 @@ import { Footer } from "./components/footer"
 import { Header } from "./components/header"
 import { Hero } from "./components/hero"
 import { SponsorPlaceholderIcon } from "./components/icons/SponsorPlaceholderIcon.tsx"
-import { Timeline } from "./components/timeline/timeline.tsx"
 import { HeroData } from "./data/hero"
-import { mockTimeline } from "./data/timelineData.tsx"
 
 export function App() {
   return (
@@ -18,7 +16,6 @@ export function App() {
         <Hero {...HeroData} />
         <Events />
         <DebugInfo />
-        <Timeline events={mockTimeline.events} />
         <div className="bg-brand h-screen">
           <LinjeforeningInfo />
         </div>

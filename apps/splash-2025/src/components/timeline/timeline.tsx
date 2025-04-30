@@ -1,7 +1,7 @@
 import type { Event } from "@dotkomonline/types"
+import { Title } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { Day } from "./day"
-import { Title } from "@dotkomonline/ui"
 
 export type TimelineProps = {
   events: Event[]

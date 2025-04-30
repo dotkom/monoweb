@@ -1,7 +1,7 @@
-import type { TimelineProps } from "./timeline"
 import { Title } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { Event } from "./event"
+import type { TimelineProps } from "./timeline"
 
 export const Day: FC<TimelineProps> = ({ events }) => {
   const day = new Intl.DateTimeFormat("no-nb", { weekday: "long", month: "long", day: "2-digit" }).format(
