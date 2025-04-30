@@ -241,6 +241,7 @@ model Event {
   companies       EventCompany[]
   hostingGroups   EventHostingGroup[]
   interestGroups  EventInterestGroup[]
+  splashVisible   Boolean          @default(false)
 
   @@map("event")
 }
