@@ -1,7 +1,7 @@
 import type { Event } from "@dotkomonline/types"
+import { Text, Title } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { Day } from "./day"
-import { Title } from "@dotkomonline/ui"
 
 export type TimelineProps = {
   events: Event[]
@@ -13,9 +13,11 @@ export const Timeline: FC<TimelineProps> = ({ events }) => {
   return (
     <div className="md:px-20 max-sm:px-10 text-white">
       <Title size="lg">Program</Title>
-      {days.map((day) => (
-        <Day {...day} key={day.events[0].start.toDateString()} />
-      ))}
+      {events.length === 0 ? (
+        <Text>Ingen events</Text>
+      ) : (
+        days.map((day) => <Day {...day} key={day.events[0].start.toDateString()} />)
+      )}
     </div>
   )
 }

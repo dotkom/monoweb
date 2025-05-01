@@ -117,7 +117,7 @@ export const useEventEditForm = ({
         label: "Offentlig arrangement",
       }),
       splashVisible: createCheckboxInput({
-        label: "Synlig på splashen"
+        label: "Synlig på splashen",
       }),
     },
   })

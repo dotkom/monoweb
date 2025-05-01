@@ -42,6 +42,7 @@ const eventPayload: Omit<Event, "id"> = {
   status: "PUBLIC",
   type: "COMPANY",
   attendanceId: randomUUID(),
+  splashVisible: false,
 }
 
 // from https://stripe.com/docs/api

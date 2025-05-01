@@ -123,7 +123,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Offentlig arrangement",
       }),
       splashVisible: createCheckboxInput({
-        label: "Synlig på splashen"
+        label: "Synlig på splashen",
       }),
     },
   })
