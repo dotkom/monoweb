@@ -1,6 +1,5 @@
 import type { AttendancePool } from "@dotkomonline/types"
-import { Icon, Text } from "@dotkomonline/ui"
-import clsx from "clsx"
+import { Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
 import type { FC } from "react"
 
@@ -26,7 +25,7 @@ const getAttendanceStatusText = (
 }
 
 const Card: FC<{
-  classNames?: { outer?: string; inner?: string; header?: string }
+  classNames?: { outer?: string; inner?: string; title?: string }
   title?: string
   children: React.ReactNode
 }> = ({ classNames: className, children, title }) => {
@@ -35,15 +34,15 @@ const Card: FC<{
   const baseInnerClassName = "flex flex-grow flex-col gap-2 p-4 items-center text-center justify-center w-full"
 
   if (!title) {
-    return <section className={clsx(baseOuterClassName, baseInnerClassName, className?.inner)}>{children}</section>
+    return <section className={cn(baseOuterClassName, baseInnerClassName, className?.inner)}>{children}</section>
   }
 
   return (
-    <section className={clsx(baseOuterClassName, className?.outer)}>
-      <div className={clsx(baseHeaderClassName, className?.header)}>
+    <section className={cn(baseOuterClassName, className?.outer)}>
+      <div className={cn(baseHeaderClassName, className?.title)}>
         <Text className="font-semibold">{title}</Text>
       </div>
-      <div className={clsx(baseInnerClassName, "rounded-b-lg", className?.inner)}>{children}</div>
+      <div className={cn(baseInnerClassName, "rounded-b-lg", className?.inner)}>{children}</div>
     </section>
   )
 }
@@ -96,15 +95,15 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition,
     <Card
       classNames={{
         outer: isAttendingAndReserved ? "bg-green-4" : isAttendingAndNotReserved ? "bg-yellow-4" : "bg-slate-3",
-        inner: isAttendingAndReserved ? "bg-green-5" : isAttendingAndNotReserved ? "bg-yellow-5" : "bg-slate-5",
+        title: isAttendingAndReserved ? "bg-green-5" : isAttendingAndNotReserved ? "bg-yellow-5" : "bg-slate-5",
       }}
       title={pool.title}
     >
-      <Text className={clsx("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
+      <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
         {pool.numAttendees}/{pool.capacity}
       </Text>
       {pool.numUnreservedAttendees > 0 && (
-        <Text className={clsx("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
+        <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
           +{pool.numUnreservedAttendees} i kø
         </Text>
       )}
