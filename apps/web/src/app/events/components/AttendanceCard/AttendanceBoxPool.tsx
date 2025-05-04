@@ -65,7 +65,7 @@ export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition,
     )
   }
 
-  if (!hasMembership) {
+  if (!hasMembership && !isAttending) {
     return (
       <Card>
         <Text>Du har ikke registert medlemskap</Text>
