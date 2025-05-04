@@ -41,7 +41,7 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   return (
     <div className="flex flex-col gap-8">
       <EventHeader event={eventDetail.event} />
-      <div className="flex w-full flex-col md:flex-row">
+      <div className="flex w-full flex-col gap-8 md:flex-row md:gap-0">
         <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
           {organizers.length > 0 ? (
             <div className="flex flex-row space-x-2">{organizers}</div>

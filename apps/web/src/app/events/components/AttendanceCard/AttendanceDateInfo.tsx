@@ -34,10 +34,10 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
   const formatTime = (date: Date) => formatDate(date, "HH:mm", { locale: nb })
 
   const renderDateBlock = (label: string, dateStr: string, time: string) => (
-    <div className="text-slate-12">
-      <Text>{label}</Text>
-      <Text className="text-sm">{dateStr}</Text>
-      <Text className="text-sm">kl. {time}</Text>
+    <div className="flex flex-row gap-2 text-slate-12 text-base sm:flex-col sm:gap-0 sm:text-sm">
+      <Text className="text-base">{label}</Text>
+      <Text>{dateStr}</Text>
+      <Text>kl. {time}</Text>
     </div>
   )
 
@@ -70,11 +70,13 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
   const sortedElements = dateBlocks.sort((a, b) => a.date.getTime() - b.date.getTime())
 
   return (
-    <div className="flex flex-row justify-between items-center space-x-4">
+    <div className="flex flex-col justify-between sm:flex-row sm:items-center sm:space-x-4">
       {sortedElements.map(({ element, key }, index) => (
         <React.Fragment key={key}>
           {element}
-          {index < sortedElements.length - 1 && <span className="flex-grow h-0.5 rounded-full bg-slate-7" />}
+          {index < sortedElements.length - 1 && (
+            <span className="flex-grow h-0.5 rounded-full bg-slate-7 invisible sm:visible" />
+          )}
         </React.Fragment>
       ))}
     </div>

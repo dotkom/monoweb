@@ -96,9 +96,14 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
       <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} queuePosition={queuePosition} />
 
       {nonAttendablePools.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
-          {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
-        </div>
+        <section className="flex flex-col gap-3 p-3 border border-slate-5 rounded-xl">
+          <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
+            Andre grupper
+          </Title>
+          <div className="grid grid-cols-2 gap-3">
+            {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
+          </div>
+        </section>
       )}
 
       {attendee && user ? (
