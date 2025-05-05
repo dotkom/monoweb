@@ -1,7 +1,7 @@
 import type { AttendancePool } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
 
 const getAttendanceStatusText = (
   isAttendingAndReserved: boolean,
@@ -24,30 +24,32 @@ const getAttendanceStatusText = (
   return "Du er ikke påmeldt"
 }
 
-const Card: FC<{
+interface CardProps {
   classNames?: { outer?: string; inner?: string; title?: string }
   title?: string
-  children: React.ReactNode
-}> = ({ classNames: className, children, title }) => {
+  children: ReactNode
+}
+
+const Card: FC<CardProps> = ({ classNames, children, title }) => {
   const baseOuterClassName = "flex flex-col w-full min-h-[8rem] bg-slate-3 rounded-lg"
   const baseHeaderClassName = "px-4 py-3 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
   const baseInnerClassName = "flex flex-grow flex-col gap-2 p-4 items-center text-center justify-center w-full"
 
   if (!title) {
-    return <section className={cn(baseOuterClassName, baseInnerClassName, className?.inner)}>{children}</section>
+    return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
   }
 
   return (
-    <section className={cn(baseOuterClassName, className?.outer)}>
-      <div className={cn(baseHeaderClassName, className?.title)}>
+    <section className={cn(baseOuterClassName, classNames?.outer)}>
+      <div className={cn(baseHeaderClassName, classNames?.title)}>
         <Text className="font-semibold">{title}</Text>
       </div>
-      <div className={cn(baseInnerClassName, "rounded-b-lg", className?.inner)}>{children}</div>
+      <div className={cn(baseInnerClassName, "rounded-b-lg", classNames?.inner)}>{children}</div>
     </section>
   )
 }
 
-interface Props {
+interface AttendanceBoxPoolProps {
   pool: AttendancePool | undefined | null
   isAttending: boolean
   isLoggedIn: boolean
@@ -55,7 +57,13 @@ interface Props {
   hasMembership?: boolean
 }
 
-export const AttendanceBoxPool: FC<Props> = ({ pool, isAttending, queuePosition, isLoggedIn, hasMembership }) => {
+export const AttendanceBoxPool: FC<AttendanceBoxPoolProps> = ({
+  pool,
+  isAttending,
+  queuePosition,
+  isLoggedIn,
+  hasMembership,
+}) => {
   if (!isLoggedIn) {
     return (
       <Card>
