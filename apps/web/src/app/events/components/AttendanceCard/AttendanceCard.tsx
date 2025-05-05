@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import { type Attendance, type AttendancePool, type Attendee, type User, canUserAttendPool } from "@dotkomonline/types"
-import { Icon, Text, Title } from "@dotkomonline/ui"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Collapsible, CollapsibleContent, CollapsibleTrigger, Icon, Text, Title, cn } from "@dotkomonline/ui"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
@@ -11,7 +11,6 @@ import { AttendanceBoxPool } from "./AttendanceBoxPool"
 import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { RegistrationButton } from "./RegistrationButton"
-import { TicketButton } from "./TicketButton"
 import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
 import { useDeregisterMutation, useRegisterMutation } from "./mutations"
 
@@ -85,7 +84,6 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const hasMembership = Boolean(user?.membership)
 
   const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
-  const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
     <section className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] p-4 sm:p-6 gap-4">
@@ -95,55 +93,49 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
 
       <AttendanceDateInfo attendance={attendance} />
 
-      <AttendanceBoxPool
-        pool={attendablePool}
-        isAttending={Boolean(attendee)}
-        queuePosition={queuePosition}
-        isLoggedIn={isLoggedIn}
-        hasMembership={hasMembership}
+      <div className="flex flex-col gap-2">
+        <AttendanceBoxPool
+          pool={attendablePool}
+          isAttending={Boolean(attendee)}
+          queuePosition={queuePosition}
+          userId={user?.id}
+          isLoggedIn={isLoggedIn}
+          hasMembership={hasMembership}
+        />
+
+        <RegistrationButton
+          attendee={attendee}
+          attendance={attendance}
+          pool={attendablePool}
+          registerForAttendance={registerForAttendance}
+          unregisterForAttendance={deregisterForAttendance}
+          isLoading={isLoading}
+          status={attendanceStatus}
+          isLoggedIn={isLoggedIn}
+          hasMembership={hasMembership}
+        />
+      </div>
+
+      <ViewAttendeesDialogButton
+        attendeeListOpen={attendeeListOpen}
+        setAttendeeListOpen={setAttendeeListOpen}
+        attendees={attendees}
+        userId={user?.id}
       />
 
       {nonAttendablePools.length > 0 && (
-        <section className="flex flex-col gap-3 p-3 border border-slate-5 rounded-xl">
-          <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
-            Andre grupper
-          </Title>
-          <div className="grid grid-cols-2 gap-3">
-            {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
-          </div>
-        </section>
+        <Collapsible className="w-full flex flex-col gap-2 p-3 border border-slate-5 rounded-lg">
+          <CollapsibleTrigger className="flex flex-row gap-1 w-[calc(100% + 1.5rem)] rounded-lg m-[-0.75rem] p-4 hover:bg-slate-2 justify-center items-center">
+            <Icon icon="tabler:users-group" className="text-lg" />
+            <Text className="font-medium">Vis grupper</Text>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="w-full mt-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
-
-      {attendee && user ? (
-        <div className="flex flex-col-reverse gap-4 sm:flex-row">
-          <ViewAttendeesDialogButton
-            attendeeListOpen={attendeeListOpen}
-            setAttendeeListOpen={setAttendeeListOpen}
-            attendees={attendees}
-            userId={user.id}
-          />
-          {isAttendingAndReserved && <TicketButton userId={user.id} />}
-        </div>
-      ) : (
-        <ViewAttendeesDialogButton
-          attendeeListOpen={attendeeListOpen}
-          setAttendeeListOpen={setAttendeeListOpen}
-          attendees={attendees}
-          userId={user?.id}
-        />
-      )}
-
-      <RegistrationButton
-        attendee={attendee}
-        attendance={attendance}
-        pool={attendablePool}
-        registerForAttendance={registerForAttendance}
-        unregisterForAttendance={deregisterForAttendance}
-        isLoading={isLoading}
-        isLoggedIn={isLoggedIn}
-        hasMembership={hasMembership}
-        status={attendanceStatus}
-      />
 
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
         <Link href="/profile" className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11">

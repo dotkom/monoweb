@@ -2,6 +2,7 @@ import type { AttendancePool } from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
+import { TicketButton } from "./TicketButton"
 
 const getAttendanceStatusText = (
   isAttendingAndReserved: boolean,
@@ -55,6 +56,7 @@ interface AttendanceBoxPoolProps {
   isLoggedIn: boolean
   queuePosition: number | null
   hasMembership?: boolean
+  userId?: string
 }
 
 export const AttendanceBoxPool: FC<AttendanceBoxPoolProps> = ({
@@ -63,6 +65,7 @@ export const AttendanceBoxPool: FC<AttendanceBoxPoolProps> = ({
   queuePosition,
   isLoggedIn,
   hasMembership,
+  userId,
 }) => {
   if (!isLoggedIn) {
     return (
@@ -107,15 +110,19 @@ export const AttendanceBoxPool: FC<AttendanceBoxPoolProps> = ({
       }}
       title={pool.title}
     >
-      <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
-        {pool.numAttendees}/{pool.capacity}
-      </Text>
-      {pool.numUnreservedAttendees > 0 && (
-        <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
-          +{pool.numUnreservedAttendees} i kø
+      <div className="flex flex-col gap-2 items-center justify-center min-h-[6rem]">
+        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
+          {pool.numAttendees}/{pool.capacity}
         </Text>
-      )}
-      <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+        {pool.numUnreservedAttendees > 0 && (
+          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
+            +{pool.numUnreservedAttendees} i kø
+          </Text>
+        )}
+        <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+      </div>
+
+      {userId && isAttendingAndReserved && <TicketButton userId={userId} />}
     </Card>
   )
 }
