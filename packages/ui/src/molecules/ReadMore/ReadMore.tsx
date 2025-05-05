@@ -59,7 +59,7 @@ export const ReadMore = ({
     const delta = previousHeight - newHeight
 
     if (delta > 0) {
-      window.scrollBy({ top: -delta, behavior: "smooth" })
+      window.scrollBy({ top: -delta })
     }
 
     setPreviousHeight(0)
