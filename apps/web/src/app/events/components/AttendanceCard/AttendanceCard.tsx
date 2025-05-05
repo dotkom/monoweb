@@ -108,7 +108,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
           <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
             Andre grupper
           </Title>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
           </div>
         </section>
