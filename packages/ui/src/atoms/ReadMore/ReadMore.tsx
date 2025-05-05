@@ -76,16 +76,8 @@ export const ReadMore = ({
   return (
     <Collapsible ref={containerRef} open={open} onOpenChange={setOpen} className={cn(outerClassName)}>
       <CollapsibleContent forceMount>
-          <Text
-            className={cn(
-              "mb-2 whitespace-pre-line overflow-hidden",
-              lineClamp,
-              textClassName
-            )}
-          >
-            {text}
-          </Text>
-        </CollapsibleContent>
+        <Text className={cn("mb-2 whitespace-pre-line overflow-hidden", lineClamp, textClassName)}>{text}</Text>
+      </CollapsibleContent>
       <CollapsibleTrigger
         asChild
         onClick={handleToggle}
