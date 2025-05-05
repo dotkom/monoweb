@@ -1,9 +1,9 @@
 "use client"
 
 import { useLayoutEffect, useRef, useState } from "react"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
+import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../Collapsible/Collapsible"
-import { Text } from "../Typography/Text"
 
 const getLineClamp = (number: number) => {
   switch (number) {
