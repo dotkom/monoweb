@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react"
 import { cn } from "../../utils"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../Collapsible/Collapsible"
 import { Text } from "../Typography/Text"
 
 const getLineClamp = (number: number) => {
@@ -18,18 +19,6 @@ const getLineClamp = (number: number) => {
       return "line-clamp-5"
     case 6:
       return "line-clamp-6"
-    case 7:
-      return "line-clamp-7"
-    case 8:
-      return "line-clamp-8"
-    case 9:
-      return "line-clamp-9"
-    case 10:
-      return "line-clamp-10"
-    case 11:
-      return "line-clamp-11"
-    case 12:
-      return "line-clamp-12"
     default:
       return "line-clamp-3"
   }
@@ -55,43 +44,55 @@ export const ReadMore = ({
   outerClassName,
 }: ReadMoreProps) => {
   const [open, setOpen] = useState(false)
-  const lineClamp = open ? "line-clamp-none" : getLineClamp(lines)
 
+  const [previousHeight, setPreviousHeight] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const prevHeightRef = useRef<number>(0)
 
-  const handleToggle = () => {
-    if (open && containerRef.current) {
-      prevHeightRef.current = containerRef.current.getBoundingClientRect().height
-    }
-    setOpen((o) => !o)
-  }
+  const lineClamp = !open && getLineClamp(lines)
 
   useLayoutEffect(() => {
-    if (open || !prevHeightRef.current || !containerRef.current) {
+    if (open || previousHeight === null || !containerRef.current) {
       return
     }
 
     const newHeight = containerRef.current.getBoundingClientRect().height
-    const delta = prevHeightRef.current - newHeight
+    const delta = previousHeight - newHeight
 
     if (delta > 0) {
       window.scrollBy({ top: -delta, behavior: "smooth" })
     }
 
-    prevHeightRef.current = 0
-  }, [open])
+    setPreviousHeight(0)
+  }, [open, previousHeight])
+
+  const handleToggle = () => {
+    if (open && containerRef.current) {
+      setPreviousHeight(containerRef.current.getBoundingClientRect().height)
+    }
+
+    setOpen(!open)
+  }
 
   return (
-    <div ref={containerRef} className={cn(outerClassName)}>
-      <Text className={cn("whitespace-pre-line", lineClamp, textClassName)}>{text}</Text>
-      <button
-        type="button"
+    <Collapsible ref={containerRef} open={open} onOpenChange={setOpen} className={cn(outerClassName)}>
+      <CollapsibleContent forceMount>
+          <Text
+            className={cn(
+              "mb-2 whitespace-pre-line overflow-hidden",
+              lineClamp,
+              textClassName
+            )}
+          >
+            {text}
+          </Text>
+        </CollapsibleContent>
+      <CollapsibleTrigger
+        asChild
         onClick={handleToggle}
-        className={cn("mt-2 text-slate-10 hover:underline", buttonClassName)}
+        className={cn("cursor-pointer text-slate-10 hover:text-slate-12", buttonClassName)}
       >
         <Text>{open ? readLessText : readMoreText}</Text>
-      </button>
-    </div>
+      </CollapsibleTrigger>
+    </Collapsible>
   )
 }

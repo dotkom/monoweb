@@ -13,6 +13,7 @@ export * from "./atoms/Typography/Title"
 export * from "./atoms/Typography/Text"
 export * from "./atoms/Select/Select"
 export * from "./atoms/Tooltip/Tooltip"
+export * from "./atoms/Collapsible/Collapsible"
 
 export * from "./molecules/Accordion/Accordion"
 export * from "./molecules/Alert/Alert"

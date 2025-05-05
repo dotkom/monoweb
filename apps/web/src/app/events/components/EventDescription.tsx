@@ -8,7 +8,7 @@ export function EventDescription({ description }: { description: string | null }
   return (
     <>
       <div className="sm:hidden">
-        <ReadMore text={description} lines={5} />
+        <ReadMore text={description} lines={6} />
       </div>
 
       <div className="hidden sm:block">
