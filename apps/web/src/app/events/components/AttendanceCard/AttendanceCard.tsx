@@ -82,6 +82,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
 
   const isLoading = attendanceLoading || attendeesLoading || deregisterMutation.isPending || registerMutation.isPending
   const isLoggedIn = Boolean(user)
+  const hasMembership = Boolean(user?.membership)
 
   const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
@@ -99,7 +100,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         isAttending={Boolean(attendee)}
         queuePosition={queuePosition}
         isLoggedIn={isLoggedIn}
-        hasMembership={user?.membership != null}
+        hasMembership={hasMembership}
       />
 
       {nonAttendablePools.length > 0 && (
@@ -135,6 +136,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         unregisterForAttendance={deregisterForAttendance}
         isLoading={isLoading}
         isLoggedIn={isLoggedIn}
+        hasMembership={hasMembership}
         status={attendanceStatus}
       />
 
