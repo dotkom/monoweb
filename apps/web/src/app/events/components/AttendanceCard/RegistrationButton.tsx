@@ -20,20 +20,18 @@ const getDisabledText = (
   status: AttendanceStatus,
   attendee: boolean,
   pool: boolean,
-  isPastDeregisterDeadline: boolean
+  isPastDeregisterDeadline: boolean,
+  isLoggedIn: boolean,
+  hasMembership?: boolean
 ) => {
-  switch (true) {
-    case status === "NotOpened":
-      return "Påmeldinger har ikke åpnet"
-    case status === "Closed" && !attendee:
-      return "Påmeldingen er stengt"
-    case !pool && !attendee:
-      return "Du har ingen påmeldingsgruppe"
-    case status === "Closed" && isPastDeregisterDeadline && attendee:
-      return "Avmeldingsfristen har utløpt"
-    default:
-      return null
-  }
+  if (!isLoggedIn) return "Du må være innlogget for å melde deg på"
+  if (!hasMembership) return "Du må ha registrert medlemskap for å melde deg på"
+  if (status === "NotOpened") return "Påmeldinger har ikke åpnet"
+  if (status === "Closed" && !attendee) return "Påmeldingen er stengt"
+  if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
+  if (status === "Closed" && isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
+
+  return null
 }
 
 interface Props {
@@ -43,6 +41,8 @@ interface Props {
   unregisterForAttendance: () => void
   pool: AttendancePool | undefined | null
   isLoading: boolean
+  isLoggedIn: boolean
+  hasMembership?: boolean
   status: AttendanceStatus
 }
 
@@ -53,6 +53,8 @@ export const RegistrationButton: FC<Props> = ({
   unregisterForAttendance,
   pool,
   isLoading,
+  isLoggedIn,
+  hasMembership,
   status,
 }) => {
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
@@ -61,7 +63,14 @@ export const RegistrationButton: FC<Props> = ({
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
   const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
 
-  const disabledText = getDisabledText(status, Boolean(attendee), Boolean(pool), isPastDeregisterDeadline)
+  const disabledText = getDisabledText(
+    status,
+    Boolean(attendee),
+    Boolean(pool),
+    isPastDeregisterDeadline,
+    isLoggedIn,
+    hasMembership
+  )
   const disabled = Boolean(disabledText)
 
   const className = clsx(
