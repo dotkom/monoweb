@@ -1,9 +1,19 @@
-import { Text } from "@dotkomonline/ui"
+import { ReadMore, Text } from "@dotkomonline/ui"
 
-export function EventDescription({ description }: { description: string | null }) {
+export function EventDescription({ description }: { description?: string | null }) {
   if (!description) {
     return <Text className="text-slate-10">Ingen beskrivelse</Text>
   }
 
-  return <Text className="whitespace-pre-line">{description}</Text>
+  return (
+    <>
+      <div className="sm:hidden">
+        <ReadMore text={description} lines={6} />
+      </div>
+
+      <div className="hidden sm:block">
+        <Text className="whitespace-pre-line">{description}</Text>
+      </div>
+    </>
+  )
 }
