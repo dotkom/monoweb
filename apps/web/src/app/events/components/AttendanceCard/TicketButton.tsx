@@ -14,7 +14,7 @@ export const TicketButton = ({ userId }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
 
   const className =
-    "flex flex-row gap-2 items-center w-full bg-slate-4 hover:bg-slate-5 text-black rounded-lg h-fit min-h-[4rem] p-2 text-left opacity-100 disabled:opacity-100"
+    "flex flex-row gap-2 items-center w-full bg-slate-3 hover:bg-slate-4 text-black rounded-lg h-fit min-h-[4rem] p-2 text-left opacity-100 disabled:opacity-100"
 
   if (!open) {
     return (

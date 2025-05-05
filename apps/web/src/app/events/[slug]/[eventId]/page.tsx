@@ -41,16 +41,17 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
   return (
     <div className="flex flex-col gap-8">
       <EventHeader event={eventDetail.event} />
-      <div className="flex w-full flex-col gap-8 md:flex-row md:gap-0">
-        <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
+      <div className="flex w-full flex-col gap-8 md:flex-row">
+        <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
           {organizers.length > 0 ? (
-            <div className="flex flex-row space-x-2">{organizers}</div>
+            <div className="flex flex-row gap-2">{organizers}</div>
           ) : (
             <Text className="text-slate-10">Ingen arrangører</Text>
           )}
-          <EventDescription description={eventDetail.event.description ?? ""} />
-        </section>
-        <div className="flex-1 flex-col">
+          <EventDescription description={eventDetail.event.description} />
+        </div>
+
+        <div className="flex flex-1 flex-col gap-4">
           {eventDetail.attendance !== null && (
             <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendees={attendees} user={user} />
           )}
