@@ -63,7 +63,14 @@ export const RegistrationButton: FC<Props> = ({
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
   const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
 
-  const disabledText = getDisabledText(status, Boolean(attendee), Boolean(pool), isPastDeregisterDeadline, isLoggedIn, hasMembership)
+  const disabledText = getDisabledText(
+    status,
+    Boolean(attendee),
+    Boolean(pool),
+    isPastDeregisterDeadline,
+    isLoggedIn,
+    hasMembership
+  )
   const disabled = Boolean(disabledText)
 
   const className = clsx(
