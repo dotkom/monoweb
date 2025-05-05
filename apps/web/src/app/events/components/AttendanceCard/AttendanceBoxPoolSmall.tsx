@@ -10,14 +10,14 @@ export const AttendanceBoxPoolSmall = ({ pool }: Props) => {
   const isUnprioritized = pool.capacity === 0
 
   return (
-    <div className="flex flex-col w-full min-w-[5ch] p-2 bg-slate-3 rounded-lg text-center items-center" key={pool.id}>
+    <div className="flex flex-col w-full min-w-[5ch] p-2 bg-slate-2 rounded-lg text-center items-center" key={pool.id}>
       {isUnprioritized ? (
         <div className="flex flex-row gap-1 text-sm">
           <Text className="font-normal">{pool.title}</Text>
           {unprioritizedIcon}
         </div>
       ) : (
-        <Text className="text-sm font-normal">{pool.title}</Text>
+        <Text className="text-sm font-medium">{pool.title}</Text>
       )}
 
       <Text className="text-lg">

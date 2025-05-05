@@ -86,7 +86,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
-    <section className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
+    <section className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] p-4 sm:p-6 gap-4">
       <Title element="h2" className="font-poppins font-semibold text-2xl">
         Påmelding
       </Title>
@@ -96,13 +96,18 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
       <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} queuePosition={queuePosition} />
 
       {nonAttendablePools.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
-          {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
-        </div>
+        <section className="flex flex-col gap-3 p-3 border border-slate-5 rounded-xl">
+          <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
+            Andre grupper
+          </Title>
+          <div className="grid grid-cols-2 gap-3">
+            {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
+          </div>
+        </section>
       )}
 
       {attendee && user ? (
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-col-reverse gap-4 sm:flex-row">
           <ViewAttendeesDialogButton
             attendeeListOpen={attendeeListOpen}
             setAttendeeListOpen={setAttendeeListOpen}
@@ -130,12 +135,12 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         status={attendanceStatus}
       />
 
-      <div className="flex flex-row gap-4">
-        <Link href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11">
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <Link href="/profile" className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11">
           <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
           <Text>Oppdater matallergier</Text>
         </Link>
-        <Text className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
+        <Text className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
           <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
           Arrangementregler
         </Text>
