@@ -14,15 +14,15 @@ export type ButtonSize = (typeof BUTTON_SIZES)[number]
 
 export const button = cva(
   [
-    "font-poppins cursor-pointer appearance-none rounded-md transition-all",
+    "font-poppins cursor-pointer appearance-none rounded-md transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
-    "light:text-black dark:text-white"
+    "dark:text-white"
   ],
   {
     variants: {
       size: {
         sm: "text-sm px-3 py-1",
-        md: "text-md px-3.5 py-1.5",
+        md: "text-base px-3.5 py-1.5",
         lg: "text-lg px-4 py-1.5",
       },
       variant: {
@@ -30,6 +30,7 @@ export const button = cva(
         outline: "border",
         pill: "rounded-full",
         text: "px-1 py-0.5",
+        unstyled: "p-0 text-[length:inherit] dark:text-inherit bg-transparent border-0 rounded-none transition-none disabled:opacity-100",
       },
       color: {
         light: "",
@@ -372,8 +373,9 @@ export function Button<E extends ElementType>({
   const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
   return (
     <Component className={classes} ref={ref} {...props}>
-      {icon}
+      {variant !== "unstyled" && icon}
       {children}
+      {variant !== "unstyled" && iconRight}
     </Component>
   )
 }
