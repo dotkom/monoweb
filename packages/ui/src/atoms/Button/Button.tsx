@@ -16,7 +16,7 @@ export const button = cva(
   [
     "font-poppins cursor-pointer appearance-none rounded-md transition-colors",
     "disabled:opacity-50 disabled:cursor-not-allowed",
-    "dark:text-white"
+    "dark:text-white",
   ],
   {
     variants: {
@@ -30,7 +30,10 @@ export const button = cva(
         outline: "border",
         pill: "rounded-full",
         text: "px-1 py-0.5",
-        unstyled: "p-0 text-[length:inherit] dark:text-inherit bg-transparent border-0 rounded-none transition-none disabled:opacity-100",
+        unstyled: [
+          "p-0 text-[length:inherit] dark:text-inherit bg-transparent border-0",
+          "rounded-none transition-none disabled:opacity-100",
+        ].join(" "),
       },
       color: {
         light: "",
@@ -85,7 +88,7 @@ export const button = cva(
       {
         color: "slate",
         variant: "solid",
-        className: [  
+        className: [
           "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
           "dark:bg-slate-8 dark:hover:bg-slate-9 dark:disabled:hover:bg-slate-8",
         ].join(" "),
@@ -296,7 +299,7 @@ export const button = cva(
         className: [
           "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9",
           "dark:bg-yellow-9 dark:hover:bg-yellow-10 dark:disabled:hover:bg-yellow-9",
-          "dark:text-black"
+          "dark:text-black",
         ].join(" "),
       },
       {
@@ -305,7 +308,7 @@ export const button = cva(
         className: [
           "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9",
           "dark:bg-yellow-9 dark:hover:bg-yellow-10 dark:disabled:hover:bg-yellow-9",
-            "dark:text-black"
+          "dark:text-black",
         ].join(" "),
       },
       {
@@ -372,7 +375,11 @@ export function Button<E extends ElementType>({
   ...props
 }: ButtonProps<E>) {
   const Component = element ?? "button"
-  const classes = cn(button({ variant, size, color }), "inline-flex shrink-0 whitespace-pre items-center justify-center gap-1", className)
+  const classes = cn(
+    button({ variant, size, color }),
+    "inline-flex shrink-0 whitespace-pre items-center justify-center gap-1",
+    className
+  )
   return (
     <Component className={classes} ref={ref} {...props}>
       {variant !== "unstyled" && icon}
