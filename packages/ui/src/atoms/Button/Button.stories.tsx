@@ -9,7 +9,7 @@ export const AllVariants: Story = () => (
   <div className="flex flex-col gap-12">
     {BUTTON_VARIANTS.map((variant) => (
       <section key={variant} className="flex flex-col gap-4">
-        <Title element="h2" className="capitalize font-poppins">
+        <Title element="h2" className="capitalize font-poppins dark:text-white">
           {variant}
         </Title>
 
@@ -35,7 +35,7 @@ export const DisabledVariants: Story = () => (
   <div className="flex flex-col gap-12">
     {BUTTON_VARIANTS.map((variant) => (
       <section key={variant} className="flex flex-col gap-4">
-        <Title element="h2" className="capitalize font-poppins">
+        <Title element="h2" className="capitalize font-poppins dark:text-white">
           {variant} (disabled)
         </Title>
 
@@ -61,7 +61,7 @@ export const AllVariantsWithIcon: Story = () => (
   <div className="flex flex-col gap-12">
     {BUTTON_VARIANTS.map((variant) => (
       <section key={variant} className="flex flex-col gap-4">
-        <Title element="h2" className="capitalize font-poppins">
+        <Title element="h2" className="capitalize font-poppins dark:text-white">
           {variant}
         </Title>
 
@@ -94,7 +94,7 @@ export const DisabledVariantsWithIcon: Story = () => (
   <div className="flex flex-col gap-12">
     {BUTTON_VARIANTS.map((variant) => (
       <section key={variant} className="flex flex-col gap-4">
-        <Title element="h2" className="capitalize font-poppins">
+        <Title element="h2" className="capitalize font-poppins dark:text-white">
           {variant} (disabled)
         </Title>
 
