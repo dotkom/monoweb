@@ -16,6 +16,7 @@ export const button = cva(
   [
     "font-poppins cursor-pointer appearance-none rounded-md transition-all",
     "disabled:opacity-50 disabled:cursor-not-allowed",
+    "light:text-black dark:text-white"
   ],
   {
     variants: {
@@ -47,45 +48,281 @@ export const button = cva(
       color: "slate",
     },
     compoundVariants: [
-      { color: "light", variant: "solid", className: "bg-slate-3 hover:bg-slate-4 disabled:hover:bg-slate-3" },
-      { color: "light", variant: "pill", className: "bg-slate-3 hover:bg-slate-4 disabled:hover:bg-slate-3" },
-      { color: "light", variant: "outline", className: "border-slate-5 hover:bg-slate-2 disabled:hover:bg-inherit" },
-      { color: "light", variant: "text", className: "hover:bg-slate-3 disabled:hover:bg-inherit" },
+      {
+        color: "light",
+        variant: "solid",
+        className: [
+          "bg-slate-3 hover:bg-slate-4 disabled:hover:bg-slate-3",
+          "dark:bg-slate-11 dark:hover:bg-slate-12 dark:disabled:hover:bg-slate-11",
+        ].join(" "),
+      },
+      {
+        color: "light",
+        variant: "pill",
+        className: [
+          "bg-slate-3 hover:bg-slate-4 disabled:hover:bg-slate-3",
+          "dark:bg-slate-11 dark:hover:bg-slate-12 dark:disabled:hover:bg-slate-11",
+        ].join(" "),
+      },
+      {
+        color: "light",
+        variant: "outline",
+        className: [
+          "border-slate-5 hover:bg-slate-3 disabled:hover:bg-inherit",
+          "dark:border-slate-11 dark:hover:bg-slate-11 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
+      {
+        color: "light",
+        variant: "text",
+        className: [
+          "hover:bg-slate-3 disabled:hover:bg-inherit",
+          "dark:hover:bg-slate-11 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
 
-      { color: "slate", variant: "solid", className: "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5" },
-      { color: "slate", variant: "pill", className: "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5" },
-      { color: "slate", variant: "outline", className: "border-slate-7 hover:bg-slate-3 disabled:hover:bg-inherit" },
-      { color: "slate", variant: "text", className: "hover:bg-slate-3 disabled:hover:bg-inherit" },
+      {
+        color: "slate",
+        variant: "solid",
+        className: [  
+          "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
+          "dark:bg-slate-8 dark:hover:bg-slate-9 dark:disabled:hover:bg-slate-8",
+        ].join(" "),
+      },
+      {
+        color: "slate",
+        variant: "pill",
+        className: [
+          "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
+          "dark:bg-slate-8 dark:hover:bg-slate-9 dark:disabled:hover:bg-slate-8",
+        ].join(" "),
+      },
+      {
+        color: "slate",
+        variant: "outline",
+        className: [
+          "border-slate-7 hover:bg-slate-3 disabled:hover:bg-inherit",
+          "dark:border-slate-9 dark:hover:border-slate-11 dark:hover:bg-slate-11 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
+      {
+        color: "slate",
+        variant: "text",
+        className: [
+          "hover:bg-slate-3 disabled:hover:bg-inherit",
+          "dark:hover:bg-slate-9 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
 
-      { color: "dark", variant: "solid", className: "bg-slate-11 hover:bg-slate-12 disabled:hover:bg-slate-11 text-white" },
-      { color: "dark", variant: "pill", className: "bg-slate-11 hover:bg-slate-12 disabled:hover:bg-slate-11 text-white" },
-      { color: "dark", variant: "outline", className: "border-slate-11 hover:bg-slate-11 disabled:hover:bg-inherit hover:text-white disabled:hover:text-inherit" },
-      { color: "dark", variant: "text", className: "hover:bg-slate-11 disabled:hover:bg-inherit hover:text-white disabled:hover:text-inherit" },
+      {
+        color: "dark",
+        variant: "solid",
+        className: [
+          "bg-slate-11 hover:bg-slate-12 disabled:hover:bg-slate-11",
+          "dark:bg-slate-3 dark:hover:bg-slate-4 dark:disabled:hover:bg-slate-3",
+          "text-white dark:text-black",
+        ].join(" "),
+      },
+      {
+        color: "dark",
+        variant: "pill",
+        className: [
+          "bg-slate-11 hover:bg-slate-12 disabled:hover:bg-slate-11",
+          "dark:bg-slate-3 dark:hover:bg-slate-4 dark:disabled:hover:bg-slate-3",
+          "text-white dark:text-black",
+        ].join(" "),
+      },
+      {
+        color: "dark",
+        variant: "outline",
+        className: [
+          "border-slate-11 hover:bg-slate-11 disabled:hover:bg-inherit",
+          "dark:border-slate-5 dark:hover:bg-slate-7 dark:disabled:hover:bg-inherit",
+          "hover:text-white disabled:hover:text-inherit",
+          "dark:hover:text-black dark:disabled:hover:text-inherit",
+        ].join(" "),
+      },
+      {
+        color: "dark",
+        variant: "text",
+        className: [
+          "hover:bg-slate-11 disabled:hover:bg-inherit",
+          "dark:hover:bg-slate-4 dark:disabled:hover:bg-inherit",
+          "hover:text-white disabled:hover:text-inherit",
+          "dark:hover:text-black dark:disabled:hover:text-inherit",
+        ].join(" "),
+      },
 
-      { color: "brand", variant: "solid", className: "bg-brand-9 hover:bg-brand-10 disabled:hover:bg-brand-9 text-white" },
-      { color: "brand", variant: "pill", className: "bg-brand-9 hover:bg-brand-10 disabled:hover:bg-brand-9 text-white" },
-      { color: "brand", variant: "outline", className: "border-brand-9 text-brand-9 hover:bg-brand-9 disabled:hover:bg-inherit hover:text-white disabled:hover:text-inherit" },
-      { color: "brand", variant: "text", className: "text-brand-9 hover:bg-brand-3 disabled:hover:bg-inherit" },
+      {
+        color: "brand",
+        variant: "solid",
+        className: [
+          "bg-brand-9 hover:bg-brand-10 disabled:hover:bg-brand-9",
+          "dark:bg-brand-9 dark:hover:bg-brand-10 dark:disabled:hover:bg-brand-9",
+          "text-white dark:text-white",
+        ].join(" "),
+      },
+      {
+        color: "brand",
+        variant: "pill",
+        className: [
+          "bg-brand-9 hover:bg-brand-10 disabled:hover:bg-brand-9",
+          "dark:bg-brand-9 dark:hover:bg-brand-10 dark:disabled:hover:bg-brand-9",
+          "text-white dark:text-white",
+        ].join(" "),
+      },
+      {
+        color: "brand",
+        variant: "outline",
+        className: [
+          "border-brand-9 text-brand-9 hover:bg-brand-9 disabled:hover:bg-inherit",
+          "dark:border-brand-9 dark:text-brand-11 dark:hover:bg-brand-9 dark:disabled:hover:bg-inherit",
+          "hover:text-white disabled:hover:text-inherit",
+          "dark:hover:text-white dark:disabled:hover:text-inherit",
+        ].join(" "),
+      },
+      {
+        color: "brand",
+        variant: "text",
+        className: [
+          "text-brand-9 hover:bg-brand-3 disabled:hover:bg-inherit",
+          "dark:text-brand-11 dark:hover:bg-brand-5 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
 
-      { color: "blue", variant: "solid", className: "bg-blue-9 hover:bg-blue-10 disabled:hover:bg-blue-9" },
-      { color: "blue", variant: "pill", className: "bg-blue-9 hover:bg-blue-10 disabled:hover:bg-blue-9" },
-      { color: "blue", variant: "outline", className: "border-blue-8 text-blue-11 hover:bg-blue-3 disabled:hover:bg-inherit" },
-      { color: "blue", variant: "text", className: "text-blue-11 hover:bg-blue-3 disabled:hover:bg-inherit" },
+      {
+        color: "blue",
+        variant: "solid",
+        className: [
+          "bg-blue-9 hover:bg-blue-10 disabled:hover:bg-blue-9",
+          "dark:bg-blue-9 dark:hover:bg-blue-10 dark:disabled:hover:bg-blue-9",
+        ].join(" "),
+      },
+      {
+        color: "blue",
+        variant: "pill",
+        className: [
+          "bg-blue-9 hover:bg-blue-10 disabled:hover:bg-blue-9",
+          "dark:bg-blue-9 dark:hover:bg-blue-10 dark:disabled:hover:bg-blue-9",
+        ].join(" "),
+      },
+      {
+        color: "blue",
+        variant: "outline",
+        className: [
+          "border-blue-8 text-blue-11 hover:bg-blue-3 disabled:hover:bg-inherit",
+          "dark:border-blue-12 dark:text-blue-9 dark:hover:text-white dark:hover:bg-blue-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
+      {
+        color: "blue",
+        variant: "text",
+        className: [
+          "text-blue-11 hover:bg-blue-3 disabled:hover:bg-inherit",
+          "dark:text-blue-4 dark:hover:bg-blue-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
 
-      { color: "green", variant: "solid", className: "bg-green-9 hover:bg-green-10 disabled:hover:bg-green-9" },
-      { color: "green", variant: "pill", className: "bg-green-9 hover:bg-green-10 disabled:hover:bg-green-9" },
-      { color: "green", variant: "outline", className: "border-green-8 text-green-11 hover:bg-green-3 disabled:hover:bg-inherit" },
-      { color: "green", variant: "text", className: "text-green-11 hover:bg-green-3 disabled:hover:bg-inherit" },
+      {
+        color: "green",
+        variant: "solid",
+        className: [
+          "bg-green-9 hover:bg-green-10 disabled:hover:bg-green-9",
+          "dark:bg-green-9 dark:hover:bg-green-10 dark:disabled:hover:bg-green-9",
+        ].join(" "),
+      },
+      {
+        color: "green",
+        variant: "pill",
+        className: [
+          "bg-green-9 hover:bg-green-10 disabled:hover:bg-green-9",
+          "dark:bg-green-9 dark:hover:bg-green-10 dark:disabled:hover:bg-green-9",
+        ].join(" "),
+      },
+      {
+        color: "green",
+        variant: "outline",
+        className: [
+          "border-green-8 text-green-11 hover:bg-green-3 disabled:hover:bg-inherit",
+          "dark:border-green-12 dark:text-green-9 dark:hover:bg-green-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
+      {
+        color: "green",
+        variant: "text",
+        className: [
+          "text-green-11 hover:bg-green-3 disabled:hover:bg-inherit",
+          "dark:text-green-4 dark:hover:bg-green-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
 
-      { color: "red", variant: "solid", className: "bg-red-9 hover:bg-red-10 disabled:hover:bg-red-9" },
-      { color: "red", variant: "pill", className: "bg-red-9 hover:bg-red-10 disabled:hover:bg-red-9" },
-      { color: "red", variant: "outline", className: "border-red-8 text-red-11 hover:bg-red-3 disabled:hover:bg-inherit" },
-      { color: "red", variant: "text", className: "text-red-11 hover:bg-red-3 disabled:hover:bg-inherit" },
+      {
+        color: "red",
+        variant: "solid",
+        className: [
+          "bg-red-9 hover:bg-red-10 disabled:hover:bg-red-9",
+          "dark:bg-red-9 dark:hover:bg-red-10 dark:disabled:hover:bg-red-9",
+        ].join(" "),
+      },
+      {
+        color: "red",
+        variant: "pill",
+        className: [
+          "bg-red-9 hover:bg-red-10 disabled:hover:bg-red-9",
+          "dark:bg-red-9 dark:hover:bg-red-10 dark:disabled:hover:bg-red-9",
+        ].join(" "),
+      },
+      {
+        color: "red",
+        variant: "outline",
+        className: [
+          "border-red-8 text-red-11 hover:bg-red-3 disabled:hover:bg-inherit",
+          "dark:border-red-12 dark:text-red-9 dark:hover:bg-red-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
+      {
+        color: "red",
+        variant: "text",
+        className: [
+          "text-red-11 hover:bg-red-3 disabled:hover:bg-inherit",
+          "dark:text-red-4 dark:hover:bg-red-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
 
-      { color: "yellow", variant: "solid", className: "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9" },
-      { color: "yellow", variant: "pill", className: "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9" },
-      { color: "yellow", variant: "outline", className: "border-yellow-8 text-yellow-11 hover:bg-yellow-3 disabled:hover:bg-inherit" },
-      { color: "yellow", variant: "text", className: "text-yellow-11 hover:bg-yellow-3 disabled:hover:bg-inherit" },
+      {
+        color: "yellow",
+        variant: "solid",
+        className: [
+          "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9",
+          "dark:bg-yellow-9 dark:hover:bg-yellow-10 dark:disabled:hover:bg-yellow-9",
+          "dark:text-black"
+        ].join(" "),
+      },
+      {
+        color: "yellow",
+        variant: "pill",
+        className: [
+          "bg-yellow-9 hover:bg-yellow-10 disabled:hover:bg-yellow-9",
+          "dark:bg-yellow-9 dark:hover:bg-yellow-10 dark:disabled:hover:bg-yellow-9",
+            "dark:text-black"
+        ].join(" "),
+      },
+      {
+        color: "yellow",
+        variant: "outline",
+        className: [
+          "border-yellow-8 text-yellow-11 hover:bg-yellow-3 disabled:hover:bg-inherit",
+          "dark:border-yellow-12 dark:text-yellow-9 dark:hover:bg-yellow-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
+      {
+        color: "yellow",
+        variant: "text",
+        className: [
+          "text-yellow-11 hover:bg-yellow-3 disabled:hover:bg-inherit",
+          "dark:text-yellow-4 dark:hover:bg-yellow-12 dark:disabled:hover:bg-inherit",
+        ].join(" "),
+      },
     ],
   } satisfies {
     variants: {
