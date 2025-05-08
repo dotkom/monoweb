@@ -4,7 +4,7 @@ import { cn } from "../../utils"
 
 // Add variants, colors, or sizes in the arrays below
 // to add them to the component
-export const BUTTON_VARIANTS = ["solid", "outline", "pill", "text"] as const
+export const BUTTON_VARIANTS = ["solid", "outline", "pill", "text", "unstyled"] as const
 export const BUTTON_COLORS = ["light", "slate", "dark", "brand", "blue", "green", "red", "yellow"] as const
 export const BUTTON_SIZES = ["sm", "md", "lg"] as const
 
@@ -356,6 +356,7 @@ export type ButtonProps<E extends ElementType = "button"> = VariantProps<typeof 
     element?: E
     className?: string
     icon?: ReactNode
+    iconRight?: ReactNode
   } & ComponentPropsWithRef<E>
 
 export function Button<E extends ElementType>({
@@ -365,12 +366,13 @@ export function Button<E extends ElementType>({
   size,
   color,
   icon,
+  iconRight,
   className,
   ref,
   ...props
 }: ButtonProps<E>) {
   const Component = element ?? "button"
-  const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
+  const classes = cn(button({ variant, size, color }), "inline-flex shrink-0 whitespace-pre items-center justify-center gap-1", className)
   return (
     <Component className={classes} ref={ref} {...props}>
       {variant !== "unstyled" && icon}

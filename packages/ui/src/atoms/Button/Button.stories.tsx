@@ -3,7 +3,7 @@ import { Icon } from "../Icon/Icon"
 import { Title } from "../Typography/Title"
 import { BUTTON_COLORS, BUTTON_SIZES, BUTTON_VARIANTS, Button, type ButtonSize } from "./Button"
 
-const icon = (size: ButtonSize) => <Icon icon="tabler:bolt" width={size === "sm" ? 16 : size === "md" ? 20 : 24} />
+const icon = (size: ButtonSize) => <Icon icon="tabler:bolt" width={size === "sm" ? 14 : size === "md" ? 17 : 20} />
 
 export const AllVariants: Story = () => (
   <div className="flex flex-col gap-12">
@@ -76,6 +76,7 @@ export const AllVariantsWithIcon: Story = () => (
                     size={size}
                     color={color}
                     icon={icon(size)}
+                    iconRight={icon(size)}
                   >
                     {`${size} ${color}`}
                   </Button>
@@ -108,6 +109,7 @@ export const DisabledVariantsWithIcon: Story = () => (
                     size={size}
                     color={color}
                     icon={icon(size)}
+                    iconRight={icon(size)}
                     disabled
                   >
                     {`${size} ${color}`}
