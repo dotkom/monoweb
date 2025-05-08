@@ -15,7 +15,7 @@ export const button = cva(
     "font-poppins",
     "cursor-pointer appearance-none rounded-md",
     "transition-all",
-    "disabled:pointer-events-none disabled:opacity-40",
+    "disabled:opacity-50 disabled:cursor-not-allowed",
   ],
   {
     variants: {
@@ -44,8 +44,8 @@ export const button = cva(
     },
     compoundVariants: [
       // brand
-      { color: "brand", variant: "solid", className: "bg-brand-9 hover:bg-brand-10 text-white" },
-      { color: "brand", variant: "outline", className: "border-brand-9 text-brand-9 hover:bg-brand-2" },
+      { color: "brand", variant: "solid", className: "bg-brand-9 enabled:hover:bg-brand-10 text-white" },
+      { color: "brand", variant: "outline", className: "border-brand-9 text-brand-9 enabled:hover:bg-brand-2" },
 
       // gradient
       {
@@ -57,24 +57,24 @@ export const button = cva(
         color: "gradient",
         variant: "outline",
         className:
-          "border-gradient-to-r from-[#0D5474] to-[#153E75] text-black hover:bg-gradient-to-r hover:from-[#0D5474]/10 hover:to-[#153E75]/10",
+          "border-gradient-to-r from-[#0D5474] to-[#153E75] text-black enabled:hover:bg-gradient-to-r enabled:hover:from-[#0D5474]/10 enabled:hover:to-[#153E75]/10",
       },
 
       // blue
-      { color: "blue", variant: "solid", className: "bg-blue-9 hover:bg-blue-10" },
-      { color: "blue", variant: "outline", className: "border-blue-8 text-blue-11 hover:bg-blue-3" },
+      { color: "blue", variant: "solid", className: "bg-blue-9 enabled:hover:bg-blue-10" },
+      { color: "blue", variant: "outline", className: "border-blue-8 text-blue-11 enabled:hover:bg-blue-3" },
 
-      // green
-      { color: "green", variant: "solid", className: "bg-green-9 hover:bg-green-10" },
-      { color: "green", variant: "outline", className: "border-green-8 text-green-12 hover:bg-green-3" },
+      // greenenabled:
+      { color: "green", variant: "solid", className: "bg-green-9 enabled:hover:bg-green-10" },
+      { color: "green", variant: "outline", className: "border-green-8 text-green-12 enabled:hover:bg-green-3" },
 
       // red
-      { color: "red", variant: "solid", className: "bg-red-9 hover:bg-red-10" },
-      { color: "red", variant: "outline", className: "border-red-8 text-red-12 hover:bg-red-3" },
+      { color: "red", variant: "solid", className: "bg-red-9 enabled:hover:bg-red-10" },
+      { color: "red", variant: "outline", className: "border-red-8 text-red-12 enabled:hover:bg-red-3" },
 
       // yellow
-      { color: "yellow", variant: "solid", className: "bg-yellow-9 hover:bg-yellow-10" },
-      { color: "yellow", variant: "outline", className: "border-yellow-8 text-yellow-12 hover:bg-yellow-3" },
+      { color: "yellow", variant: "solid", className: "bg-yellow-9 enabled:hover:bg-yellow-10" },
+      { color: "yellow", variant: "outline", className: "border-yellow-8 text-yellow-12 enabled:hover:bg-yellow-3" },
     ],
   } satisfies {
     variants: {
