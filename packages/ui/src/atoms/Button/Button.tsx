@@ -90,7 +90,7 @@ export const button = cva(
         variant: "solid",
         className: [
           "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
-          "dark:bg-slate-8 dark:hover:bg-slate-9 dark:disabled:hover:bg-slate-8",
+          "dark:bg-slate-9 dark:hover:bg-slate-10 dark:disabled:hover:bg-slate-9",
         ].join(" "),
       },
       {
@@ -98,7 +98,7 @@ export const button = cva(
         variant: "pill",
         className: [
           "bg-slate-5 hover:bg-slate-6 disabled:hover:bg-slate-5",
-          "dark:bg-slate-8 dark:hover:bg-slate-9 dark:disabled:hover:bg-slate-8",
+          "dark:bg-slate-9 dark:hover:bg-slate-10 dark:disabled:hover:bg-slate-9",
         ].join(" "),
       },
       {
