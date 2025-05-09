@@ -18,7 +18,13 @@ export const AllVariants: Story = () => (
             <div className="flex flex-col gap-3" key={color}>
               {BUTTON_SIZES.toReversed().map((size) => (
                 <div key={`${variant}-${color}-${size}`}>
-                  <Button key={`${variant}-${color}-${size}`} variant={variant} size={size} color={color} className="flex-shrink-0 whitespace-pre">
+                  <Button
+                    key={`${variant}-${color}-${size}`}
+                    variant={variant}
+                    size={size}
+                    color={color}
+                    className="flex-shrink-0 whitespace-pre"
+                  >
                     {`${size} ${color}`}
                   </Button>
                 </div>
@@ -44,7 +50,14 @@ export const DisabledVariants: Story = () => (
             <div className="flex flex-col gap-3" key={color}>
               {BUTTON_SIZES.toReversed().map((size) => (
                 <div key={`${variant}-${color}-${size}`}>
-                  <Button key={`${variant}-${color}-${size}`} variant={variant} size={size} color={color} className="flex-shrink-0 whitespace-pre" disabled>
+                  <Button
+                    key={`${variant}-${color}-${size}`}
+                    variant={variant}
+                    size={size}
+                    color={color}
+                    className="flex-shrink-0 whitespace-pre"
+                    disabled
+                  >
                     {`${size} ${color}`}
                   </Button>
                 </div>

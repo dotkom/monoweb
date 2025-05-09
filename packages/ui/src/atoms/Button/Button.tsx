@@ -375,11 +375,7 @@ export function Button<E extends ElementType>({
   ...props
 }: ButtonProps<E>) {
   const Component = element ?? "button"
-  const classes = cn(
-    button({ variant, size, color }),
-    "inline-flex items-center justify-center gap-1",
-    className
-  )
+  const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
   return (
     <Component className={classes} ref={ref} {...props}>
       {variant !== "unstyled" && icon}
