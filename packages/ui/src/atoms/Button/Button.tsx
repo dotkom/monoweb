@@ -12,6 +12,43 @@ export type ButtonVariant = (typeof BUTTON_VARIANTS)[number]
 export type ButtonColor = (typeof BUTTON_COLORS)[number]
 export type ButtonSize = (typeof BUTTON_SIZES)[number]
 
+export type ButtonProps<E extends ElementType = "button"> = VariantProps<typeof button> &
+  PropsWithChildren & {
+    /**
+     * The HTML element to render the button as
+     *
+     * Defaults to an HTML <button> element, but can be used with the Link
+     * component from 'next/link' to create a link that looks like a button
+     */
+    element?: E
+    className?: string
+    icon?: ReactNode
+    iconRight?: ReactNode
+  } & ComponentPropsWithRef<E>
+
+export function Button<E extends ElementType = "button">({
+  element,
+  children,
+  variant,
+  size,
+  color,
+  icon,
+  iconRight,
+  className,
+  ref,
+  ...props
+}: ButtonProps<E>) {
+  const Component = element ?? "button"
+  const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
+  return (
+    <Component className={classes} ref={ref} {...props}>
+      {variant !== "unstyled" && icon}
+      {children}
+      {variant !== "unstyled" && iconRight}
+    </Component>
+  )
+}
+
 export const button = cva(
   [
     "font-poppins cursor-pointer appearance-none rounded-md transition-colors",
@@ -347,40 +384,3 @@ export const button = cva(
     }>
   }
 )
-
-export type ButtonProps<E extends ElementType = "button"> = VariantProps<typeof button> &
-  PropsWithChildren & {
-    /**
-     * The HTML element to render the button as
-     *
-     * Defaults to an HTML <button> element, but can be used with the Link
-     * component from 'next/link' to create a link that looks like a button
-     */
-    element?: E
-    className?: string
-    icon?: ReactNode
-    iconRight?: ReactNode
-  } & ComponentPropsWithRef<E>
-
-export function Button<E extends ElementType>({
-  element,
-  children,
-  variant,
-  size,
-  color,
-  icon,
-  iconRight,
-  className,
-  ref,
-  ...props
-}: ButtonProps<E>) {
-  const Component = element ?? "button"
-  const classes = cn(button({ variant, size, color }), "inline-flex items-center justify-center gap-1", className)
-  return (
-    <Component className={classes} ref={ref} {...props}>
-      {variant !== "unstyled" && icon}
-      {children}
-      {variant !== "unstyled" && iconRight}
-    </Component>
-  )
-}
