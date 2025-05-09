@@ -13,14 +13,17 @@ interface TicketButtonProps {
 export const TicketButton = ({ userId }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
 
-  const className =
-    "flex flex-row gap-2 items-center w-full bg-slate-3 hover:bg-slate-4 text-black rounded-lg h-fit min-h-[4rem] p-2 text-left opacity-100 disabled:opacity-100"
+  const className = "w-full rounded-lg h-fit min-h-[4rem] font-medium"
 
   if (!open) {
     return (
-      <Button variant="unstyled" onClick={() => setOpen(true)} className={className}>
-        <Icon icon="tabler:ticket" className="text-lg" />
-        <Text className="font-medium">Vis billett</Text>
+      <Button
+        onClick={() => setOpen(true)}
+        className={className}
+        color="light"
+        icon={<Icon icon="tabler:ticket" className="text-lg" />}
+      >
+        Vis billett
       </Button>
     )
   }

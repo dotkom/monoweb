@@ -73,10 +73,7 @@ export const RegistrationButton: FC<Props> = ({
   )
   const disabled = Boolean(disabledText)
 
-  const className = clsx(
-    "flex flex-row gap-2 items-center w-full rounded-lg h-fit min-h-[4rem] p-2 text-left",
-    getButtonColor(disabled, Boolean(attendee), isPoolFull)
-  )
+  const className = clsx("rounded-lg h-fit min-h-[4rem] p-2", getButtonColor(disabled, Boolean(attendee), isPoolFull))
 
   const buttonContent = isLoading ? (
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
@@ -92,7 +89,6 @@ export const RegistrationButton: FC<Props> = ({
       className={className}
       onClick={attendee ? unregisterForAttendance : registerForAttendance}
       disabled={disabled}
-      variant="unstyled"
       icon={buttonIcon}
     >
       {buttonContent}
