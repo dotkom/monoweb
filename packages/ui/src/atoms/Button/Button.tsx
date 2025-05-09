@@ -377,7 +377,7 @@ export function Button<E extends ElementType>({
   const Component = element ?? "button"
   const classes = cn(
     button({ variant, size, color }),
-    "inline-flex shrink-0 whitespace-pre items-center justify-center gap-1",
+    "inline-flex items-center justify-center gap-1",
     className
   )
   return (
