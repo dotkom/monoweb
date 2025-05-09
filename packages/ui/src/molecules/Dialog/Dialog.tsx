@@ -99,5 +99,7 @@ export const AlertDialogCancel: FC<Omit<ComponentPropsWithRef<typeof AlertDialog
   ref,
   ...props
 }) => {
-  return <Button element={AlertDialogPrimitive.Cancel} {...props} variant="outline" ref={ref} />
+  return (
+    <Button element={AlertDialogPrimitive.Cancel} className={className} {...props} variant="text" size="lg" ref={ref} />
+  )
 }

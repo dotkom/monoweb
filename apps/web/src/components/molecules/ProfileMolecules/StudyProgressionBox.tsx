@@ -28,7 +28,7 @@ export const MembershipBox: FC<MembershipBoxProps> = ({ membership }) => {
         <p className="text-3xl">Ingen medlemsskap</p>
 
         <Link href="/api/auth/authorize?connection=FEIDE&redirectAfter=/profile">
-          <Button color="gradient">Bekreft med FEIDE</Button>
+          <Button color="brand">Bekreft med FEIDE</Button>
         </Link>
       </div>
     )

@@ -7,7 +7,6 @@ import {
   AlertDialogTrigger,
   Button,
   Icon,
-  Text,
   Title,
 } from "@dotkomonline/ui"
 import { AttendeeList } from "./AttendeeList"
@@ -33,9 +32,12 @@ export const ViewAttendeesDialogButton = ({
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="w-full text-black rounded-lg bg-slate-3 hover:bg-slate-4 h-fit min-h-[4rem]">
-          <Icon className="text-lg" icon="tabler:users" />
-          <Text className="font-medium">Vis påmeldte</Text>
+        <Button
+          color="light"
+          className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
+          icon={<Icon className="text-lg" icon="tabler:users" />}
+        >
+          Vis påmeldte
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
@@ -46,10 +48,8 @@ export const ViewAttendeesDialogButton = ({
           <AlertDialogTitle asChild>
             <Title className="font-poppins font-semibold text-2xl">Påmeldingsliste</Title>
           </AlertDialogTitle>
-          <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
-            <Button size="icon" className="h-8 w-8 border-none">
-              <Icon className="text-xl" icon="tabler:x" />
-            </Button>
+          <AlertDialogCancel className="p-2">
+            <Icon className="text-xl" icon="tabler:x" />
           </AlertDialogCancel>
         </div>
 
