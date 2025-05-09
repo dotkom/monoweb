@@ -18,7 +18,7 @@ export const TicketButton = ({ userId }: TicketButtonProps) => {
 
   if (!open) {
     return (
-      <Button onClick={() => setOpen(true)} className={className}>
+      <Button variant="unstyled" onClick={() => setOpen(true)} className={className}>
         <Icon icon="tabler:ticket" className="text-lg" />
         <Text className="font-medium">Vis billett</Text>
       </Button>
