@@ -48,7 +48,7 @@ export const ViewAttendeesDialogButton = ({
           <AlertDialogTitle asChild>
             <Title className="font-poppins font-semibold text-2xl">Påmeldingsliste</Title>
           </AlertDialogTitle>
-          <AlertDialogCancel className="border-0 p-2">
+          <AlertDialogCancel className="p-2">
             <Icon className="text-xl" icon="tabler:x" />
           </AlertDialogCancel>
         </div>
