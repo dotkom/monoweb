@@ -74,7 +74,7 @@ export const RegistrationButton: FC<Props> = ({
   const disabled = Boolean(disabledText)
 
   const className = clsx(
-    "flex flex-row gap-2 items-center w-full text-black rounded-lg h-fit min-h-[4rem] p-2 text-left opacity-100 disabled:opacity-100",
+    "flex flex-row gap-2 items-center w-full rounded-lg h-fit min-h-[4rem] p-2 text-left",
     getButtonColor(disabled, Boolean(attendee), isPoolFull)
   )
 
@@ -92,12 +92,10 @@ export const RegistrationButton: FC<Props> = ({
       className={className}
       onClick={attendee ? unregisterForAttendance : registerForAttendance}
       disabled={disabled}
-      variant="solid"
+      variant="unstyled"
       icon={buttonIcon}
     >
-      <Text element="div" className="font-medium">
-        {buttonContent}
-      </Text>
+      {buttonContent}
     </Button>
   )
 
@@ -108,10 +106,7 @@ export const RegistrationButton: FC<Props> = ({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {/* This div is needed to make the tooltip work with the button since it is disabled */}
-          <div>{registrationButton}</div>
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
         <TooltipContent
           className="border-none text-center bg-slate-1 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
           sideOffset={-10}

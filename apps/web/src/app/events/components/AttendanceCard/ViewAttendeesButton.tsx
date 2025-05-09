@@ -33,7 +33,10 @@ export const ViewAttendeesDialogButton = ({
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="w-full text-black rounded-lg bg-slate-3 hover:bg-slate-4 h-fit min-h-[4rem]">
+        <Button
+          variant="unstyled"
+          className="w-full text-black rounded-lg bg-slate-3 hover:bg-slate-4 h-fit min-h-[4rem]"
+        >
           <Icon className="text-lg" icon="tabler:users" />
           <Text className="font-medium">Vis påmeldte</Text>
         </Button>
@@ -47,7 +50,7 @@ export const ViewAttendeesDialogButton = ({
             <Title className="font-poppins font-semibold text-2xl">Påmeldingsliste</Title>
           </AlertDialogTitle>
           <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
-            <Button size="icon" className="h-8 w-8 border-none">
+            <Button variant="unstyled" className="h-8 w-8">
               <Icon className="text-xl" icon="tabler:x" />
             </Button>
           </AlertDialogCancel>
