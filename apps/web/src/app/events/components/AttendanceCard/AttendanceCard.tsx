@@ -7,8 +7,8 @@ import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
+import { AttendanceBoxNonAttendablePools } from "./AttendanceBoxNonAttendablePools"
 import { AttendanceBoxPool } from "./AttendanceBoxPool"
-import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { RegistrationButton } from "./RegistrationButton"
 import { TicketButton } from "./TicketButton"
@@ -68,7 +68,13 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const attendablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
   const nonAttendablePools = attendance.pools
     .filter((pool) => pool.id !== attendablePool?.id)
-    .sort((a, b) => b.capacity - a.capacity)
+    .sort((a, b) => {
+      if (a.mergeDelayHours && b.mergeDelayHours && a.mergeDelayHours !== b.mergeDelayHours) {
+        return a.mergeDelayHours - b.mergeDelayHours
+      }
+
+      return b.capacity - a.capacity
+    })
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
@@ -103,16 +109,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         hasMembership={hasMembership}
       />
 
-      {nonAttendablePools.length > 0 && (
-        <section className="flex flex-col gap-1.5 p-3 border border-slate-5 rounded-lg">
-          <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
-            Andre grupper
-          </Title>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
-          </div>
-        </section>
-      )}
+      {nonAttendablePools.length > 0 && <AttendanceBoxNonAttendablePools nonAttendablePools={nonAttendablePools} />}
 
       {attendee && user ? (
         <div className="flex flex-col-reverse gap-4 sm:flex-row">

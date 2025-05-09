@@ -1,0 +1,65 @@
+import type { AttendancePool } from "@dotkomonline/types"
+import { Icon, Text, Title, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
+
+interface AttendanceBoxNonAttendablePoolsProps {
+  nonAttendablePools: AttendancePool[]
+}
+
+export const AttendanceBoxNonAttendablePools = ({ nonAttendablePools }: AttendanceBoxNonAttendablePoolsProps) => {
+  return (
+    <section className="flex flex-col gap-1 p-3 border border-slate-5 rounded-lg">
+      <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
+        Andre påmeldingsgrupper
+      </Title>
+      <div className="flex flex-col gap-2 text-slate-11">{nonAttendablePools.map(AttendanceBoxPoolSmall)}</div>
+    </section>
+  )
+}
+
+const DelayPill = ({ mergeDelayHours }: { mergeDelayHours: number | null }) => {
+  const content = mergeDelayHours ? (
+    <Text>Denne gruppen får plasser {mergeDelayHours} timer etter påmeldingsstart</Text>
+  ) : (
+    <Text>Denne påmeldingsgruppen kan få plasser senere</Text>
+  )
+
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={100}>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-slate-4 text-xs">
+            <Icon icon="tabler:clock" />
+            {mergeDelayHours ? <Text>{mergeDelayHours}t</Text> : <Text>TBD</Text>}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          {content}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
+
+const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
+  const isUnprioritized = pool.capacity === 0
+
+  return (
+    <div className="flex flex-row justify-between items-center p-2 bg-slate-2 rounded-lg">
+      <div className="flex flex-row gap-2 items-center">
+        <Text>{pool.title}</Text>
+
+        {!isUnprioritized && <DelayPill mergeDelayHours={24} />}
+      </div>
+
+      <div className="flex flex-row gap-2 items-center">
+        <Text>
+          {pool.numAttendees}/{pool.capacity}
+        </Text>
+
+        {pool.numUnreservedAttendees === 0 && (
+          <Text className="text-slate-10">+{pool.numUnreservedAttendees} i kø</Text>
+        )}
+      </div>
+    </div>
+  )
+}
