@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import type { User } from "@dotkomonline/types"
-import { Button, TextInput, Textarea } from "@dotkomonline/ui"
+import { Button, Icon, TextInput, Textarea } from "@dotkomonline/ui"
 import { useMutation } from "@tanstack/react-query"
 import type { NextPage } from "next"
 import type { JSX } from "react"
@@ -100,8 +100,8 @@ export const Landing: NextPage<{ user: User }> = ({ user }) => {
           </select>
         </div>
       </FormInput>
-      <Button type="submit" className="px-8" loading={updateUserMutation.isPending}>
-        Lagre
+      <Button type="submit" className="px-8">
+        {updateUserMutation.isPending ? <Icon icon="tabler:loader-2" className="animate-spin" /> : "Lagre"}
       </Button>
     </form>
   )
