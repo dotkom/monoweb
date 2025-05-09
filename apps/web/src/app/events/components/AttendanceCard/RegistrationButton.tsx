@@ -104,10 +104,9 @@ export const RegistrationButton: FC<Props> = ({
       <Tooltip>
         <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
         <TooltipContent
-          className="border-none text-center bg-slate-1 p-2 transition-colors duration-300 max-w-80 min-w-60 w-full"
           sideOffset={-10}
         >
-          <Text className="font-medium">{disabledText}</Text>
+          <Text>{disabledText}</Text>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
