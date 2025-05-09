@@ -104,7 +104,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
       />
 
       {nonAttendablePools.length > 0 && (
-        <section className="flex flex-col gap-3 p-3 border border-slate-5 rounded-xl">
+        <section className="flex flex-col gap-1.5 p-3 border border-slate-5 rounded-lg">
           <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
             Andre grupper
           </Title>
