@@ -7,6 +7,7 @@ import {
   FileInput,
   type FileInputProps,
   Flex,
+  Group,
   Image,
   Input,
   MultiSelect,
@@ -42,7 +43,7 @@ import {
   thematicBreakPlugin,
   toolbarPlugin,
 } from "@mdxeditor/editor"
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
 import {
   type Control,
   Controller,
@@ -461,6 +462,7 @@ interface FormBuilderOptions<T extends z.ZodRawShape> {
   }>
   defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
   label: string
+  extraButtons?: ReactNode
   onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
 }
 
@@ -470,6 +472,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   defaultValues,
   label,
   onSubmit,
+  extraButtons,
 }: FormBuilderOptions<T>): FC {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(schema),
@@ -507,7 +510,10 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         <Flex direction="column" gap="md">
           {components}
           <div>
-            <Button type="submit">{label}</Button>
+            <Group>
+              <Button type="submit">{label}</Button>
+              {extraButtons}
+            </Group>
           </div>
         </Flex>
       </form>
