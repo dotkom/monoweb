@@ -40,12 +40,12 @@ import { Fragment } from "react"
 const THEME_OPTIONS = [
   {
     theme: "light",
-    label: "Lysmodus",
+    label: "Lyst tema",
     icon: "tabler:sun",
   },
   {
     theme: "dark",
-    label: "Nattemodus",
+    label: "Mørkt tema",
     icon: "tabler:moon",
   },
   {
