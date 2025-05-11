@@ -77,11 +77,7 @@ export const ProfileMenu = () => {
                   htmlFor={item.theme}
                   className="flex flex-row items-center gap-2 p-2 w-full hover:bg-slate-3 dark:hover:bg-slate-11 rounded-md cursor-pointer"
                 >
-                  <RadioGroupItem
-                    value={item.theme}
-                    id={item.theme}
-                    className="hidden"
-                  />
+                  <RadioGroupItem value={item.theme} id={item.theme} className="hidden" />
                   <div className={cn("w-1 h-4 rounded-full bg-slate-6 invisible", theme === item.theme && "visible")} />
                   <Icon icon={item.icon} className="text-base dark:text-white" />
                   <Text className="dark:text-white">{item.label}</Text>
