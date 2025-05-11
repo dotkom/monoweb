@@ -27,7 +27,7 @@ export const AttendanceBoxNonAttendablePools = ({
         <Icon icon="tabler:chevron-right" className="transition-transform text-base -mt-[1px]" />
       </CollapsibleTrigger>
       <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-        <div className="flex flex-col gap-2 text-slate-12 text-sm">
+        <div className="flex flex-col gap-2 text-slate-12 text-sm mb-1">
           {nonAttendablePools.map(AttendanceBoxPoolSmall)}
         </div>
       </CollapsibleContent>
