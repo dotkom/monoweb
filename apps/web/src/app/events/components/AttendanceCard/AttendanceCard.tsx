@@ -109,7 +109,12 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         hasMembership={hasMembership}
       />
 
-      {nonAttendablePools.length > 0 && <AttendanceBoxNonAttendablePools nonAttendablePools={nonAttendablePools} />}
+      {nonAttendablePools.length > 0 && (
+        <AttendanceBoxNonAttendablePools
+          nonAttendablePools={nonAttendablePools}
+          hasAttendablePool={Boolean(attendablePool)}
+        />
+      )}
 
       {attendee && user ? (
         <div className="flex flex-col-reverse gap-4 sm:flex-row">
