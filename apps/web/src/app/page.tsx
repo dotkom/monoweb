@@ -1,5 +1,5 @@
 import { EventCard } from "@/components/molecules/ComingEvent/ComingEvent"
-import CompanySplash from "@/components/molecules/CompanySplash/CompanySplash"
+import { CompanySplash } from "@/components/molecules/CompanySplash/CompanySplash"
 import { server } from "@/utils/trpc/server"
 import { Button } from "@dotkomonline/ui"
 import Link from "next/link"
