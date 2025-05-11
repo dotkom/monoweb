@@ -65,7 +65,9 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const registerMutation = useRegisterMutation({})
   const deregisterMutation = useDeregisterMutation()
 
-  const attendablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
+  const attendablePool = attendee
+    ? attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+    : user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
   const nonAttendablePools = attendance.pools
     .filter((pool) => pool.id !== attendablePool?.id)
     .sort((a, b) => b.capacity - a.capacity)
