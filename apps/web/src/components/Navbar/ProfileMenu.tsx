@@ -36,8 +36,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { FC, PropsWithChildren } from "react"
 import { Fragment } from "react"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
-import { th } from "date-fns/locale"
 
 const THEME_OPTIONS = [
   {
