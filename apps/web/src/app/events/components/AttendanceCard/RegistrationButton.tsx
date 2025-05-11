@@ -103,9 +103,7 @@ export const RegistrationButton: FC<Props> = ({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
-        <TooltipContent
-          sideOffset={-10}
-        >
+        <TooltipContent sideOffset={-10}>
           <Text>{disabledText}</Text>
         </TooltipContent>
       </Tooltip>
