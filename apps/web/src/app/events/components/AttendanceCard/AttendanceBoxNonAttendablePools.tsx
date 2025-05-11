@@ -8,10 +8,10 @@ interface AttendanceBoxNonAttendablePoolsProps {
 export const AttendanceBoxNonAttendablePools = ({ nonAttendablePools }: AttendanceBoxNonAttendablePoolsProps) => {
   return (
     <section className="flex flex-col gap-1 p-3 border border-slate-5 rounded-lg">
-      <Title element="p" className="text-slate-10 text-xs font-semibold uppercase font-poppins tracking-wider">
+      <Title element="p" className="text-slate-12 text-xs font-semibold uppercase font-poppins tracking-wider">
         Andre påmeldingsgrupper
       </Title>
-      <div className="flex flex-col gap-2 text-slate-11">{nonAttendablePools.map(AttendanceBoxPoolSmall)}</div>
+      <div className="flex flex-col gap-2 text-slate-12 text-sm">{nonAttendablePools.map(AttendanceBoxPoolSmall)}</div>
     </section>
   )
 }
@@ -44,7 +44,7 @@ const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
   const isUnprioritized = pool.capacity === 0
 
   return (
-    <div className="flex flex-row justify-between items-center p-2 bg-slate-2 rounded-lg">
+    <div className="flex flex-row justify-between items-center p-2 bg-slate-2 rounded-lg" key={pool.id}>
       <div className="flex flex-row gap-2 items-center">
         <Text>{pool.title}</Text>
 
