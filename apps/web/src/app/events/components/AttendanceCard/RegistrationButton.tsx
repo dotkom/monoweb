@@ -1,19 +1,13 @@
 import type { Attendance, AttendancePool, AttendanceStatus, Attendee } from "@dotkomonline/types"
-import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@dotkomonline/ui"
-import clsx from "clsx"
+import { Button, Icon, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
 
 const getButtonColor = (disabled: boolean, attendee: boolean, isPoolFull: boolean) => {
-  switch (true) {
-    case disabled:
-      return "bg-slate-3 text-slate-8"
-    case attendee:
-      return "bg-red-7 hover:bg-red-8"
-    case isPoolFull:
-      return "bg-yellow-5 hover:bg-yellow-6"
-    default:
-      return "bg-green-7 hover:bg-green-8"
-  }
+  if (disabled) return "bg-slate-3 text-slate-8 dark:bg-slate-3"
+  if (attendee) return "bg-red-7 hover:bg-red-8 dark:bg-red-7 dark:hover:bg-red-8"
+  if (isPoolFull) return "bg-yellow-5 hover:bg-yellow-6 dark:bg-yellow-10 dark:hover:bg-yellow-11"
+
+  return "bg-green-7 hover:bg-green-8 dark:bg-green-7 dark:hover:bg-green-8"
 }
 
 const getDisabledText = (
@@ -73,12 +67,12 @@ export const RegistrationButton: FC<Props> = ({
   )
   const disabled = Boolean(disabledText)
 
-  const className = clsx("rounded-lg h-fit min-h-[4rem] p-2", getButtonColor(disabled, Boolean(attendee), isPoolFull))
+  const className = cn("rounded-lg h-fit min-h-[4rem] p-2", getButtonColor(disabled, Boolean(attendee), isPoolFull))
 
   const buttonContent = isLoading ? (
     <Icon icon="tabler:loader-2" className="animate-spin text-2xl py-2" />
   ) : (
-    <div className={clsx("flex flex-row gap-2 items-center", disabled ? "text-slate-9" : "text-slate-12")}>
+    <div className={cn("flex flex-row gap-2 items-center", disabled ? "text-slate-9" : "text-slate-12")}>
       <Icon className="text-lg" icon={`tabler:${disabled ? "lock" : attendee ? "user-minus" : "user-plus"}`} />
       <Text className="font-medium">{buttonText}</Text>
     </div>
