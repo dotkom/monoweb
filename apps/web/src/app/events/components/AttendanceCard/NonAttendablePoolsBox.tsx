@@ -11,15 +11,12 @@ import {
   TooltipTrigger,
 } from "@dotkomonline/ui"
 
-interface AttendanceBoxNonAttendablePoolsProps {
-  nonAttendablePools: AttendancePool[]
+interface NonAttendablePoolsBoxProps {
+  pools: AttendancePool[]
   hasAttendablePool: boolean
 }
 
-export const AttendanceBoxNonAttendablePools = ({
-  nonAttendablePools,
-  hasAttendablePool,
-}: AttendanceBoxNonAttendablePoolsProps) => {
+export const NonAttendablePoolsBox = ({ pools, hasAttendablePool }: NonAttendablePoolsBoxProps) => {
   return (
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
       <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 font-medium hover:font-semibold [&[data-state=open]>iconify-icon]:rotate-90">
@@ -27,9 +24,7 @@ export const AttendanceBoxNonAttendablePools = ({
         <Icon icon="tabler:chevron-right" className="transition-transform text-base -mt-[1px]" />
       </CollapsibleTrigger>
       <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-        <div className="flex flex-col gap-2 text-slate-12 text-sm mb-1">
-          {nonAttendablePools.map(AttendanceBoxPoolSmall)}
-        </div>
+        <div className="flex flex-col gap-2 text-slate-12 text-sm mb-1">{pools.map(AttendanceBoxPoolSmall)}</div>
       </CollapsibleContent>
     </Collapsible>
   )

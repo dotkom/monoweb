@@ -7,13 +7,13 @@ import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { AttendanceBoxNonAttendablePools } from "./AttendanceBoxNonAttendablePools"
-import { AttendanceBoxPool } from "./AttendanceBoxPool"
+import { useDeregisterMutation, useRegisterMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
+import { MainPoolCard } from "./MainPoolCard"
+import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { RegistrationButton } from "./RegistrationButton"
 import { TicketButton } from "./TicketButton"
-import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
-import { useDeregisterMutation, useRegisterMutation } from "./mutations"
+import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 const getQueuePosition = (
   attendee: Attendee | undefined,
@@ -34,13 +34,13 @@ const getQueuePosition = (
   return index + 1
 }
 
-interface Props {
+interface AttendanceCardProps {
   initialAttendance: Attendance
   initialAttendees: Attendee[]
   user?: User
 }
 
-export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Props) => {
+export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const { data: attendance, isLoading: attendanceLoading } = useQuery(
     trpc.attendance.getAttendance.queryOptions(
@@ -103,7 +103,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
 
       <AttendanceDateInfo attendance={attendance} />
 
-      <AttendanceBoxPool
+      <MainPoolCard
         pool={attendablePool}
         isAttending={Boolean(attendee)}
         queuePosition={queuePosition}
@@ -112,15 +112,12 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
       />
 
       {nonAttendablePools.length > 0 && (
-        <AttendanceBoxNonAttendablePools
-          nonAttendablePools={nonAttendablePools}
-          hasAttendablePool={Boolean(attendablePool)}
-        />
+        <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
       )}
 
       {attendee && user ? (
         <div className="flex flex-col-reverse gap-4 sm:flex-row">
-          <ViewAttendeesDialogButton
+          <ViewAttendeesButton
             attendeeListOpen={attendeeListOpen}
             setAttendeeListOpen={setAttendeeListOpen}
             attendees={attendees}
@@ -129,7 +126,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
           {isAttendingAndReserved && <TicketButton userId={user.id} />}
         </div>
       ) : (
-        <ViewAttendeesDialogButton
+        <ViewAttendeesButton
           attendeeListOpen={attendeeListOpen}
           setAttendeeListOpen={setAttendeeListOpen}
           attendees={attendees}
