@@ -1,13 +1,13 @@
 "use client"
 
 import { MarkWriteSchema, type PersonalMark } from "@dotkomonline/types"
-import { Box, CloseButton, Group, Title } from "@mantine/core"
+import { Box, CloseButton, Group, Stack, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
 import type { FC } from "react"
 import { GenericTable } from "../../../../components/GenericTable"
-import { useEditMarkMutation } from "../../../../modules/punishment/mutations/use-edit-mark-mutation"
-import { usePersonalMarkGetByMarkId } from "../../../../modules/punishment/queries/use-personal-mark-get-by-mark-id"
+import { useEditMarkMutation } from "../../../../modules/mark/mutations/use-edit-mark-mutation"
+import { usePersonalMarkGetByMarkId } from "../../../../modules/mark/queries/use-personal-mark-get-by-mark-id"
 import { useUserQuery } from "../../../../modules/user/queries"
 import { useMarkWriteForm } from "../write-form"
 import { useMarkDetailsContext } from "./provider"
@@ -46,14 +46,29 @@ export default function MarkEditCard() {
     columns,
   })
 
+  // return (
+  //   <Box p="md">
+
+  //     <Group>
+  //       <CloseButton onClick={() => router.back()} />
+  //       <Title>{mark.title}</Title>
+  //     </Group>
+  //     <FormComponent />
+  //     <GenericTable table={table} />
+  //   </Box>
+  // )
+
+  // the above but with a margin between generic table and form
   return (
     <Box p="md">
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{mark.title}</Title>
       </Group>
-      <FormComponent />
-      <GenericTable table={table} />
+      <Stack gap="xl">
+        <FormComponent />
+        <GenericTable table={table} />
+      </Stack>
     </Box>
   )
 }

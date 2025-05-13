@@ -259,11 +259,11 @@ model EventCompany {
 model Mark {
   id        String         @id @default(uuid())
   title     String
+  description   String?
+  amount    Int
   updatedAt DateTime       @updatedAt
   createdAt DateTime       @default(now())
-  category  String
-  details   String?
-  duration  Int
+  expiresAt DateTime
   users     PersonalMark[]
 
   @@map("mark")

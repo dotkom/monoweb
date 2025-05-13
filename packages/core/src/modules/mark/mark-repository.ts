@@ -1,5 +1,5 @@
 import type { DBClient } from "@dotkomonline/db"
-import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
+import type { Mark, MarkId, MarkWrite, UserId } from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
 export interface MarkRepository {
   getById(id: MarkId): Promise<Mark | null>
@@ -7,6 +7,7 @@ export interface MarkRepository {
   create(markInsert: MarkWrite): Promise<Mark>
   update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | null>
   delete(id: MarkId): Promise<Mark | null>
+  getActiveMarksByUserId(userId: UserId): Promise<Mark[]>
 }
 
 export class MarkRepositoryImpl implements MarkRepository {
@@ -34,5 +35,20 @@ export class MarkRepositoryImpl implements MarkRepository {
 
   async delete(id: MarkId): Promise<Mark | null> {
     return await this.db.mark.delete({ where: { id } })
+  }
+
+  async getActiveMarksByUserId(userId: UserId): Promise<Mark[]> {
+    return await this.db.mark.findMany({
+      where: {
+        users: {
+          some: {
+            userId,
+          },
+        },
+        expiresAt: {
+          gte: new Date(),
+        },
+      },
+    })
   }
 }
