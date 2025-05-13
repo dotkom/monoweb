@@ -1,16 +1,25 @@
 import { useTRPC } from "@/utils/trpc/client"
+import { useSession } from "@dotkomonline/oauth2/react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-export const useUnregisterMutation = () => {
+export const useDeregisterMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const session = useSession()
+
   return useMutation(
     trpc.event.attendance.deregisterForEvent.mutationOptions({
-      onSuccess: async () => {
+      onSuccess: async (_, input) => {
+        if (!session) {
+          return
+        }
+
         await Promise.all([
-          queryClient.refetchQueries(trpc.event.getEventDetail.queryFilter()),
-          queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
+          await queryClient.invalidateQueries(trpc.attendance.getAttendance.queryOptions({ id: input.attendanceId })),
+          await queryClient.invalidateQueries(
+            trpc.attendance.getAttendees.queryOptions({ attendanceId: input.attendanceId })
+          ),
         ])
       },
       onError: (error) => {
@@ -21,7 +30,7 @@ export const useUnregisterMutation = () => {
 }
 
 interface UseRegisterMutationInput {
-  onSuccess: () => void
+  onSuccess?: () => void
 }
 
 export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => {
@@ -30,12 +39,13 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput) => 
 
   return useMutation(
     trpc.event.attendance.registerForEvent.mutationOptions({
-      onSuccess: async () => {
+      onSuccess: async (data) => {
         await Promise.all([
-          queryClient.refetchQueries(trpc.event.getEventDetail.queryFilter()),
-          queryClient.refetchQueries(trpc.event.attendance.getAttendee.queryFilter()),
+          queryClient.invalidateQueries(trpc.attendance.getAttendees.queryOptions({ attendanceId: data.attendanceId })),
+          queryClient.invalidateQueries(trpc.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
         ])
-        onSuccess()
+
+        onSuccess?.()
       },
       onError: (error) => {
         console.error(error)

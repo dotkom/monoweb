@@ -49,7 +49,7 @@ const Card: FC<CardProps> = ({ classNames, children, title }) => {
   )
 }
 
-interface AttendanceBoxPoolProps {
+interface MainPoolCardProps {
   pool: AttendancePool | undefined | null
   isAttending: boolean
   isLoggedIn: boolean
@@ -57,7 +57,7 @@ interface AttendanceBoxPoolProps {
   hasMembership?: boolean
 }
 
-export const AttendanceBoxPool: FC<AttendanceBoxPoolProps> = ({
+export const MainPoolCard: FC<MainPoolCardProps> = ({
   pool,
   isAttending,
   queuePosition,
