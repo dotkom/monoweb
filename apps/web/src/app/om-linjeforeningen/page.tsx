@@ -12,12 +12,12 @@ export default async function AboutOnlinePage() {
 
   return (
     <div>
-      <div className="flex flex-col items-center sm:text-center rounded-xl bg-blue-3 p-8">
+      <div className="flex flex-col items-center sm:text-center rounded-xl bg-blue-3 dark:bg-transparent p-8">
         <Title size="xl" element="h1" className="mb-10">
           Bli kjent med{" "}
           <span className="relative inline-block">
             Online linjeforening
-            <span className="absolute left-0 -bottom-6 h-4 w-full bg-blue-7 rounded-2xl" />
+            <span className="absolute left-0 -bottom-6 h-4 w-full bg-blue-7 dark:bg-blue-8 rounded-2xl" />
           </span>
         </Title>
         <Text>
@@ -107,7 +107,13 @@ const Card: FC<CardProps> = ({ imageUrl, title, description }: CardProps) => {
     <li className="flex items-center text-left">
       <div className="w-[150px] mr-4 flex-shrink-0">
         {imageUrl ? (
-          <Image src={imageUrl} alt={title} className="object-contain h-auto rounded-full" width={150} height={150} />
+          <Image
+            src={imageUrl}
+            alt={title}
+            className="object-contain h-auto rounded-full dark:invert"
+            width={150}
+            height={150}
+          />
         ) : (
           <OnlineIcon width={150} height={150} />
         )}
