@@ -1,5 +1,7 @@
 import type { Attendance } from "@dotkomonline/types"
+import { Box, Title } from "@mantine/core"
 import type { FC } from "react"
+import { WaitlistTable } from "../components/waitlist-table"
 import { useEventDetailsContext } from "./provider"
 
 export const WaitlistPage: FC = () => {
@@ -17,5 +19,12 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ attendance }) => {
-  return <div>TODO</div>
+  return (
+    <Box>
+      <Title mb={10} order={3}>
+        Venteliste
+      </Title>
+      <WaitlistTable attendanceId={attendance.id} />
+    </Box>
+  )
 }
