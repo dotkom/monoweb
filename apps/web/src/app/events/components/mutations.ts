@@ -59,9 +59,9 @@ export const useSetSelectionsOptionsMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation(
-    trpc.event.attendance.updateSelectionResponses.mutationOptions({
-      onSuccess: (data) => {
-        queryClient.invalidateQueries(trpc.event.getEventDetail.queryFilter())
+    trpc.attendance.updateSelectionResponses.mutationOptions({
+      onSuccess: async ({ userId, attendanceId }) => {
+        await queryClient.invalidateQueries(trpc.attendance.getAttendee.queryOptions({ userId, attendanceId }))
       },
       onError: (error) => {
         alert("Noe gikk galt")

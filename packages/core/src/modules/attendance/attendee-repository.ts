@@ -26,6 +26,7 @@ export interface AttendeeRepository {
   poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
   checkCapacityAndReserve(attendeeId: AttendeeId): Promise<void>
   moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId): Promise<void>
+  removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string): Promise<void>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
@@ -142,5 +143,28 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         reserved: true,
       },
     })
+  }
+
+  async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
+    const attendees = (await this.db.attendee.findMany({
+      where: { attendanceId },
+      select: {
+        id: true,
+        selections: true,
+      },
+    })) as Pick<Attendee, "id" | "selections">[]
+
+    const updatedRows = attendees
+      .filter(({ selections }) => selections.length > 0)
+      .map(({ id, selections: oldSelections }) => {
+        const selections = oldSelections.filter((oldSelection) => oldSelection.selectionId !== selectionId)
+
+        return this.db.attendee.update({
+          where: { id },
+          data: { selections },
+        })
+      })
+
+    await this.db.$transaction(updatedRows)
   }
 }

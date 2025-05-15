@@ -18,7 +18,7 @@ export const AttendanceWriteSchema = AttendanceSchema.omit({
 export type Attendance = z.infer<typeof AttendanceSchema>
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
 export type AttendanceId = Attendance["id"]
-export type AttendanceStatus = "NotOpened" | "Open" | "Closed" | "Full"
+export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
 
 export function canRegisterForAttendance(attendance: Attendance, atTime = new Date()) {
   return attendance.registerEnd > atTime && atTime > attendance.registerStart
