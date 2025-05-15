@@ -28,12 +28,12 @@ export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   adminRegisterForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   deregisterForEvent(userId: string, attendanceId: string): Promise<void>
-  adminDeregisterForEvent(id: AttendeeId): Promise<void>
+  adminDeregisterForEvent(id: AttendeeId, reserveNext?: boolean): Promise<void>
   updateSelectionResponses(id: AttendanceId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
-  updateAttended(attended: boolean, id: AttendeeId): Promise<Attendee>
-  tryReserve(attendeeId: AttendeeId, pool: AttendancePool): Promise<Attendee | false>
+  updateAttended(id: AttendeeId, attended: boolean): Promise<Attendee>
+  attemptReserve(attendeeId: Attendee, pool: AttendancePool): Promise<Attendee | false>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
@@ -68,7 +68,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     return await this.attendeeRepository.getByUserId(userId, attendanceId)
   }
 
-  async updateAttended(attended: boolean, id: AttendeeId) {
+  async updateAttended(id: AttendeeId, attended: boolean) {
     const attendee = await this.attendeeRepository.update(id, { attended })
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
@@ -114,19 +114,53 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const registerTime = new Date()
 
+    const displayName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}`.trim() : user.email
+    const userGrade = user.membership ? getMembershipGrade(user.membership) : null
+
     const attendee = await this.attendeeRepository.create({
       userId,
       attendancePoolId,
       attendanceId: attendancePool.attendanceId,
-
-      displayName: user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.email,
-      userGrade: user.membership ? getMembershipGrade(user.membership) : null,
-
+      displayName,
+      userGrade,
       reserveTime: registerTime,
       reserved: true,
     })
 
     return attendee
+  }
+
+  /**
+   * Helper function to attempt to reserve the next attendee in the pool.
+   *
+   * @param pool - The pool to reserve the attendee in.
+   * @param bypassCriteria - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
+   * @returns Returns the attendee if the reservation was successful, false otherwise.
+   * @see {@link attemptReserve}
+   */
+  private async attemptReserveNextAttendee(pool: AttendancePool, bypassCriteria = false) {
+    const nextUnreservedAttendee = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(pool.id)
+
+    if (nextUnreservedAttendee === null) {
+      return false
+    }
+
+    return await this.attemptReserve(nextUnreservedAttendee, pool, bypassCriteria)
+  }
+
+  async adminDeregisterForEvent(id: AttendeeId, reserveNext = true) {
+    const attendance = await this.attendanceRepository.getByAttendeeId(id)
+    const pool = await this.attendanceRepository.getPoolByAttendeeId(id)
+
+    if (attendance === null) {
+      throw new AttendeeDeregistrationError("Attendance not found")
+    }
+
+    await this.attendeeRepository.delete(id)
+
+    if (reserveNext) {
+      await this.attemptReserveNextAttendee(pool, true)
+    }
   }
 
   async registerForEvent(userId: UserId, attendanceId: AttendancePoolId, attendancePoolId: AttendanceId) {
@@ -154,40 +188,52 @@ export class AttendeeServiceImpl implements AttendeeService {
     reserveDelayHours += 0
 
     // If the pool has a merge delay the reserve time is pushed
-    reserveDelayHours +=
-      attendancePool.capacity === 0 && attendancePool.mergeDelayHours ? attendancePool.mergeDelayHours : 0
+    const isMergePool = attendancePool.capacity === 0
+    reserveDelayHours += (isMergePool && attendancePool.mergeDelayHours) || 0
 
     const reserveTime = addHours(registerTime, reserveDelayHours)
+
+    const displayName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}`.trim() : user.email
+    const userGrade = user.membership ? getMembershipGrade(user.membership) : null
 
     const attendee = await this.attendeeRepository.create({
       userId,
       attendancePoolId,
       attendanceId: attendancePool.attendanceId,
-
-      displayName: user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.email,
-      userGrade: user.membership ? getMembershipGrade(user.membership) : null,
-
+      displayName,
+      userGrade,
       reserveTime,
       reserved: false,
     })
 
-    console.log("reserve delay hours:", reserveDelayHours)
-
-    if (reserveDelayHours === 0) {
-      const reservedAttendee = await this.tryReserve(attendee.id, attendancePool)
-
-      if (reservedAttendee) {
-        return reservedAttendee
-      }
+    if (reserveDelayHours > 0) {
+      // TODO: Add a cron job to reserve the attendee after the delay
+      return attendee
     }
 
-    return attendee
+    const reservedAttendee = await this.attemptReserve(attendee, attendancePool)
+
+    return reservedAttendee || attendee
   }
 
-  /** Tries to reserve a spot for an attendee, failing if there is no free pool capacity */
-  async tryReserve(attendeeId: AttendeeId, pool: AttendancePool): Promise<Attendee | false> {
-    if (pool.numAttendees < pool.capacity) {
-      return await this.attendeeRepository.update(attendeeId, { reserved: true })
+  /**
+   * Attempts to reserve the attendee if the following criteria are met:
+   * - The reserve time is now or in the past
+   * - The pool is not at full capacity
+   *
+   * If bypassCriteria is set to true, the criteria will be ignored and the attendee with be reserved regardless.
+   *
+   * @param attendee - The attendee to reserve.
+   * @param pool - The pool to reserve the attendee in, used for capacity checks.
+   * @param [bypassCriteria=false] - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
+   * @returns Returns the attendee if the reservation was successful, false otherwise.
+   */
+  async attemptReserve(attendee: Attendee, pool: AttendancePool, bypassCriteria = false) {
+    const attendeeIsPastReserveTime = attendee.reserveTime <= new Date()
+    const poolHasCapacity = pool.numAttendees < pool.capacity
+
+    if ((attendeeIsPastReserveTime && poolHasCapacity) || bypassCriteria) {
+      return await this.attendeeRepository.update(attendee.id, { reserved: true })
     }
 
     return false
@@ -211,26 +257,10 @@ export class AttendeeServiceImpl implements AttendeeService {
     await this.attendeeRepository.delete(attendee.id)
 
     const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-    const poolIsFull = attendedPool && attendedPool.numAttendees >= attendedPool.capacity
 
-    if (attendee.reserved && poolIsFull) {
-      const nextUnreservedAttendee = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(attendedPool.id)
-      attendedPool.numAttendees -= 1
-
-      if (nextUnreservedAttendee && nextUnreservedAttendee.reserveTime <= new Date()) {
-        await this.tryReserve(nextUnreservedAttendee.id, attendedPool)
-      }
+    if (attendedPool) {
+      await this.attemptReserveNextAttendee(attendedPool)
     }
-  }
-
-  async adminDeregisterForEvent(id: AttendeeId) {
-    const attendance = await this.attendanceRepository.getByAttendeeId(id)
-
-    if (attendance === null) {
-      throw new AttendeeDeregistrationError("Attendance not found")
-    }
-
-    await this.attendeeRepository.delete(id)
   }
 
   async getByAttendanceId(id: AttendanceId) {

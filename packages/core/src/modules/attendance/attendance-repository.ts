@@ -23,6 +23,7 @@ export interface AttendanceRepository {
   update(data: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
   getAll(): Promise<Attendance[]>
   getPoolById(id: AttendancePoolId): Promise<AttendancePool>
+  getPoolByAttendeeId(id: AttendeeId): Promise<AttendancePool>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(id: AttendancePoolId): Promise<AttendancePool>
   updatePool(id: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
@@ -147,6 +148,25 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async getPoolById(id: AttendancePoolId) {
     const pool = await this.db.attendancePool.findUnique({
       where: { id },
+      include: this.includePoolAttendeeCount,
+    })
+
+    if (pool === null) {
+      throw new AttendancePoolNotFoundError("Attendance pool not found")
+    }
+
+    return this.validateAttendancePool(pool)
+  }
+
+  async getPoolByAttendeeId(id: AttendeeId) {
+    const pool = await this.db.attendancePool.findFirst({
+      where: {
+        attendees: {
+          some: {
+            id,
+          },
+        },
+      },
       include: this.includePoolAttendeeCount,
     })
 

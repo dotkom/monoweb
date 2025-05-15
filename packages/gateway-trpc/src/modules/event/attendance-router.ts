@@ -75,9 +75,10 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
+        reserveNext: z.boolean().optional(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id)),
+    .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id, input.reserveNext)),
 
   getSelectionsResults: adminProcedure
     .input(
@@ -94,7 +95,7 @@ export const attendanceRouter = t.router({
         attended: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.attended, input.id)),
+    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.id, input.attended)),
 
   handleQrCodeRegistration: adminProcedure
     .input(
