@@ -1,66 +1,65 @@
-import type { AttendanceId, Attendee, AttendeeId } from "@dotkomonline/types"
+import type { Attendee } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
-import { GenericTable } from "../../../../components/GenericTable"
-import { useEventAttendeesGetQuery } from "../queries"
 
+import type { QueryObserverResult } from "@tanstack/react-query"
+import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useDeregisterForEventMutation, useUpdateEventAttendanceMutation } from "../mutations"
 
-interface CustomCheckboxProps {
-  attendeeId: AttendeeId
-  defaultChecked?: boolean
-}
-const CustomCheckbox = ({ attendeeId, defaultChecked }: CustomCheckboxProps) => {
-  const updateAttendance = useUpdateEventAttendanceMutation()
-
-  const toggleAttendance = (attendeeId: AttendeeId, currentCheckedState: boolean) => {
-    updateAttendance.mutate({ id: attendeeId, attended: currentCheckedState })
-  }
-  return (
-    <Checkbox
-      onChange={(event) => {
-        toggleAttendance(attendeeId, event.currentTarget.checked)
-      }}
-      checked={defaultChecked}
-    />
-  )
-}
-
 interface AllAttendeesTableProps {
-  attendanceId: AttendanceId
+  attendees: Attendee[]
+  refetch: () => Promise<QueryObserverResult<Attendee[], unknown>>
 }
-export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
-  const deregisterMut = useDeregisterForEventMutation()
 
-  const { attendees } = useEventAttendeesGetQuery(attendanceId)
+export const AllAttendeesTable = ({ attendees, refetch }: AllAttendeesTableProps) => {
+  const deregisterMut = useDeregisterForEventMutation()
+  const updateAttendanceMut = useUpdateEventAttendanceMutation()
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((attendee) => attendee, {
-        id: "userId",
-        header: () => "Bruker",
+      columnHelper.accessor("displayName", {
+        header: "Bruker",
+        cell: (info) => info.getValue(),
+        sortingFn: "alphanumeric",
+      }),
+      columnHelper.accessor("attended", {
+        header: "Møtt",
+        filterFn: arrayOrEqualsFilter<Attendee>(),
         cell: (info) => {
-          const attendee = info.getValue()
-          return attendee.displayName
+          const row = info.row.original
+          return (
+            <Checkbox
+              onChange={(event) => {
+                updateAttendanceMut.mutate(
+                  { id: row.id, attended: event.currentTarget.checked },
+                  { onSuccess: () => refetch() }
+                )
+              }}
+              checked={info.getValue()}
+            />
+          )
         },
       }),
       columnHelper.accessor((attendee) => attendee, {
-        id: "attend",
-        header: () => "Møtt",
-        cell: (info) => <CustomCheckbox attendeeId={info.getValue().id} defaultChecked={info.getValue().attended} />,
-      }),
-      columnHelper.accessor((attendee) => attendee, {
         id: "deregister",
+        enableSorting: false,
         header: () => "Meld av",
         cell: (info) => (
           <Button
             color="red"
             onClick={() =>
-              deregisterMut.mutate({
-                id: info.getValue().id,
-              })
+              deregisterMut.mutate(
+                {
+                  id: info.getValue().id,
+                },
+                {
+                  onSuccess: () => {
+                    refetch()
+                  },
+                }
+              )
             }
           >
             X
@@ -68,16 +67,27 @@ export const AllAttendeesTable = ({ attendanceId }: AllAttendeesTableProps) => {
         ),
       }),
     ],
-    [columnHelper, deregisterMut]
+    [columnHelper, deregisterMut, updateAttendanceMut, refetch]
   )
 
-  const table = useReactTable({
-    data: attendees,
-    getCoreRowModel: getCoreRowModel(),
-    columns,
-  })
+  const tableOptions = useMemo(
+    () => ({
+      data: attendees,
+      getCoreRowModel: getCoreRowModel(),
+      columns,
+    }),
+    [attendees, columns]
+  )
 
-  return <GenericTable table={table} />
+  return (
+    <FilterableTable
+      tableOptions={tableOptions}
+      filters={[
+        { columnId: "attended", label: "Møtt", value: true },
+        { columnId: "attended", label: "Ikke møtt", value: false },
+      ]}
+    />
+  )
 }
 
 AllAttendeesTable.displayName = "AllAttendeesTable"
