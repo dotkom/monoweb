@@ -145,13 +145,14 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
       </div>
 
-      {isAttendingAndReserved && status !== "Closed" && attendanceSelections.length > 0 && (
+      {isAttendingAndReserved && attendanceSelections.length > 0 && (
         <div className="w-full mt-2">
           <SelectionsForm
             selections={attendanceSelections}
             // biome-ignore lint/style/noNonNullAssertion: isAttending is true if attendee exists
             defaultValues={{ options: attendee!.selections }}
             onSubmit={handleSelectionChange}
+            disabled={status === "Closed" }
           />
         </div>
       )}

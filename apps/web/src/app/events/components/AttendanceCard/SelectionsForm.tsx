@@ -12,9 +12,10 @@ interface FormProps {
   onSubmit: (selections: AttendanceSelectionResponse[]) => void
   defaultValues?: FormValues
   isLoading?: boolean
+  disabled?: boolean
 }
 
-export function SelectionsForm({ selections, onSubmit, defaultValues: submittedDefaults }: FormProps) {
+export function SelectionsForm({ selections, onSubmit, defaultValues: submittedDefaults, disabled }: FormProps) {
   const defaultValues: FormValues = {
     options: selections.map((sel) => {
       const saved = submittedDefaults?.options?.find((o) => o.selectionId === sel.id)
@@ -63,7 +64,7 @@ export function SelectionsForm({ selections, onSubmit, defaultValues: submittedD
     onSubmit(result)
   }
 
-  const hasError = (index: number) => Boolean(errors.options?.[index]?.optionId)
+  const hasError = (index: number) => !disabled && Boolean(errors.options?.[index]?.optionId)
 
   return (
     <div className="flex flex-col gap-4 bg-green-3 p-3 rounded-md">
@@ -72,12 +73,14 @@ export function SelectionsForm({ selections, onSubmit, defaultValues: submittedD
           <Controller
             control={control}
             name={`options.${index}.optionId`}
+            disabled={disabled}
             rules={{ required: "Du må velge et alternativ" }}
             render={({ field: { onChange, value } }) => (
               <div className="w-full flex flex-col gap-1">
                 <div className="border border-green-5 bg-green-1 rounded-md">
                   <Select
                     value={value}
+                    disabled={disabled}
                     onValueChange={async (val) => {
                       onChange(val)
                       await trigger(`options.${index}.optionId`)
