@@ -145,7 +145,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
       </div>
 
-      {isAttending && status !== "Closed" && attendanceSelections.length > 0 && (
+      {isAttendingAndReserved && status !== "Closed" && attendanceSelections.length > 0 && (
         <div className="w-full mt-2">
           <SelectionsForm
             selections={attendanceSelections}
