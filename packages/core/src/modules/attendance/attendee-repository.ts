@@ -158,7 +158,11 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     })
 
     const attendeesWithSelections = attendees.filter(
-      (attendee) => attendee.selections && typeof attendee.selections === "object" && Array.isArray(attendee.selections)
+      (attendee) =>
+        attendee.selections &&
+        typeof attendee.selections === "object" &&
+        Array.isArray(attendee.selections) &&
+        attendee.selections.length > 0
     ) as { id: AttendeeId; selections: AttendanceSelectionResponse[] }[]
 
     const updatedRows = attendeesWithSelections.map(({ id, selections }) => {
