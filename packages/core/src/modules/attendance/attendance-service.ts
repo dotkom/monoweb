@@ -18,7 +18,7 @@ export interface AttendanceService {
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance>
   update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance>
-  mergeAttendancePools(attendanceId: AttendanceId): Promise<void>
+  mergeAttendancePools(attendanceId: AttendanceId, data: Partial<AttendancePoolWrite>): Promise<void>
   getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[] | null>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(poolId: AttendancePoolId): Promise<AttendancePool>
@@ -152,7 +152,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     return addHours(attendance.registerStart, pool.mergeDelayHours) > mergeTime
   }
 
-  async mergeAttendancePools(attendanceId: AttendanceId, mergeTime = new Date()) {
+  async mergeAttendancePools(attendanceId: AttendanceId, data: Partial<AttendancePoolWrite>, mergeTime = new Date()) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
     const poolsToMerge = attendance.pools.filter((pool) => this.canPoolMerge(pool, attendance, mergeTime))
@@ -161,12 +161,16 @@ export class AttendanceServiceImpl implements AttendanceService {
       return
     }
 
+    const minCapacity = poolsToMerge.reduce((sum, pool) => sum + pool.capacity, 0)
+
     const mergedPool = await this.attendanceRepository.createPool({
       attendanceId,
-      title: "Merged pool",
+      title: data.title ?? "Merged pool",
       mergeDelayHours: null,
-      yearCriteria: poolsToMerge.flatMap((pool) => pool.yearCriteria),
-      capacity: poolsToMerge.reduce((sum, pool) => sum + pool.capacity, 0),
+      yearCriteria: Array.from(
+        new Set([...poolsToMerge.flatMap((pool) => pool.yearCriteria), ...(data.yearCriteria ?? [])])
+      ),
+      capacity: Math.max(data.capacity || 0, minCapacity),
     })
 
     const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)

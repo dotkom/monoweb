@@ -19,10 +19,16 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({
   const onSubmit = (values: PoolFormSchema) => {
     mergeAttendanceMut.mutate({
       attendanceId: attendanceId,
+      attendancePool: {
+        title: values.title,
+        capacity: values.capacity,
+        yearCriteria: values.yearCriteria,
+      },
     })
   }
 
   const disabledYears = attendance ? [...new Set(attendance.pools.flatMap(({ yearCriteria }) => yearCriteria))] : []
+  const capacity = attendance?.pools.reduce((acc, pool) => acc + pool.capacity, 0) ?? 0
 
   return (
     <div>
@@ -38,13 +44,14 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({
       <PoolForm
         defaultValues={{
           yearCriteria: disabledYears,
-          capacity: attendance?.pools.reduce((acc, pool) => acc + pool.capacity, 0) ?? 0,
+          capacity: capacity,
           title: "Generell påmelding",
         }}
         onClose={onClose}
         mode="create"
         onSubmit={onSubmit}
         disabledYears={disabledYears}
+        minCapacity={capacity}
       />
     </div>
   )
