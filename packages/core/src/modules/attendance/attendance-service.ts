@@ -92,21 +92,23 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     // Remove attendees selected options from edited selections
     if (data.selections) {
-      const isIdentical = (a: AttendanceSelection, b: AttendanceSelection) =>
-        a.id !== b.id ||
-        a.name !== b.name ||
-        a.options.length !== b.options.length ||
-        a.options.some((aOption) => {
+      const isIdentical = (a: AttendanceSelection, b: AttendanceSelection) => {
+        if (a.id !== b.id) return false
+        if (a.name !== b.name) return false
+        if (a.options.length !== b.options.length) return false
+
+        return a.options.every((aOption) => {
           const bOption = b.options.find((bOption) => bOption.id === aOption.id)
-          return bOption && bOption.name !== aOption.name
+          return bOption?.name === aOption.name
         })
+      }
 
       const { selections: oldSelections } = await this.getById(id)
 
       const updatedSelections = data.selections.filter((newSelection) => {
         const oldSelection = oldSelections.find((oldSelection) => oldSelection.id === newSelection.id)
 
-        return oldSelection && isIdentical(oldSelection, newSelection)
+        return oldSelection && !isIdentical(oldSelection, newSelection)
       })
 
       await Promise.all(

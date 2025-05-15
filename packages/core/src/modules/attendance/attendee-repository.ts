@@ -2,7 +2,6 @@ import type { DBClient, DBContext } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePoolId,
-  type AttendanceSelectionResponse,
   type Attendee,
   type AttendeeId,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
@@ -147,32 +146,24 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   }
 
   async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
-    const attendees = await this.db.attendee.findMany({
-      where: {
-        attendanceId,
-      },
+    const attendees = (await this.db.attendee.findMany({
+      where: { attendanceId },
       select: {
         id: true,
         selections: true,
       },
-    })
+    })) as Pick<Attendee, "id" | "selections">[]
 
-    const attendeesWithSelections = attendees.filter(
-      (attendee) =>
-        attendee.selections &&
-        typeof attendee.selections === "object" &&
-        Array.isArray(attendee.selections) &&
-        attendee.selections.length > 0
-    ) as { id: AttendeeId; selections: AttendanceSelectionResponse[] }[]
+    const updatedRows = attendees
+      .filter(({ selections }) => selections.length > 0)
+      .map(({ id, selections: oldSelections }) => {
+        const selections = oldSelections.filter((oldSelection) => oldSelection.selectionId !== selectionId)
 
-    const updatedRows = attendeesWithSelections.map(({ id, selections }) => {
-      const selectionsWithoutSpecificSelection = selections.filter((selection) => selection.selectionId !== selectionId)
-
-      return this.db.attendee.update({
-        where: { id },
-        data: { selections: selectionsWithoutSpecificSelection },
+        return this.db.attendee.update({
+          where: { id },
+          data: { selections },
+        })
       })
-    })
 
     await this.db.$transaction(updatedRows)
   }
