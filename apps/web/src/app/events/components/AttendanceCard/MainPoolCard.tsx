@@ -152,7 +152,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             // biome-ignore lint/style/noNonNullAssertion: isAttending is true if attendee exists
             defaultValues={{ options: attendee!.selections }}
             onSubmit={handleSelectionChange}
-            disabled={status === "Closed" }
+            disabled={status === "Closed"}
           />
         </div>
       )}
