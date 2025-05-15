@@ -145,9 +145,12 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
+        attendancePool: AttendancePoolWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.mergeAttendancePools(input.attendanceId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendanceService.mergeAttendancePools(input.attendanceId, input.attendancePool)
+    ),
 
   getSelectionResponseResults: adminProcedure
     .input(
