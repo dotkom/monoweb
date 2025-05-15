@@ -99,6 +99,7 @@ export class AttendanceServiceImpl implements AttendanceService {
 
         return a.options.every((aOption) => {
           const bOption = b.options.find((bOption) => bOption.id === aOption.id)
+
           return bOption?.name === aOption.name
         })
       }
@@ -118,9 +119,7 @@ export class AttendanceServiceImpl implements AttendanceService {
       )
     }
 
-    const attendance = await this.attendanceRepository.update(data, id)
-
-    return attendance
+    return await this.attendanceRepository.update(data, id)
   }
 
   async createPool(data: AttendancePoolWrite) {
