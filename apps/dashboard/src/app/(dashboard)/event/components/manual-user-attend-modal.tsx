@@ -9,6 +9,7 @@ import { useAttendanceGetQuery } from "../queries"
 interface ModalProps {
   userId: string
   attendanceId: string
+  onSuccess?: () => void
 }
 
 const FormSchema = z.object({
@@ -18,18 +19,25 @@ const FormSchema = z.object({
 export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   context,
   id,
-  innerProps: { attendanceId, userId },
+  innerProps: { attendanceId, userId, onSuccess },
 }) => {
   const { mutate: createAttendee } = useAdminRegisterForEventMutation()
 
   const { data: attendance } = useAttendanceGetQuery(attendanceId)
 
   const onSubmit = (userId: string, attendancePoolId: string) => {
-    createAttendee({
-      attendancePoolId: attendancePoolId,
-      attendanceId: attendanceId,
-      userId: userId,
-    })
+    createAttendee(
+      {
+        attendancePoolId: attendancePoolId,
+        attendanceId: attendanceId,
+        userId: userId,
+      },
+      {
+        onSuccess: () => {
+          onSuccess?.()
+        },
+      }
+    )
   }
 
   const Form = useFormBuilder({
@@ -59,9 +67,9 @@ export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   return <Form />
 }
 
-export const openCreateManualUserAttendModal = ({ userId, attendanceId }: ModalProps) =>
+export const openCreateManualUserAttendModal = ({ userId, attendanceId, onSuccess }: ModalProps) =>
   modals.openContextModal({
     modal: "event/attendance/attendee/create",
     title: "Meld på bruker",
-    innerProps: { userId, attendanceId },
+    innerProps: { userId, attendanceId, onSuccess },
   })

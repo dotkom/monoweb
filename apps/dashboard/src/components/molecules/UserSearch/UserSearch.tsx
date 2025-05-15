@@ -5,9 +5,10 @@ import { GenericSearch } from "../../GenericSearch"
 
 interface UserSearchProps {
   onSubmit(data: User): void
+  excludeUserIds?: string[]
 }
 
-export const UserSearch: FC<UserSearchProps> = ({ onSubmit }) => {
+export const UserSearch: FC<UserSearchProps> = ({ onSubmit, excludeUserIds }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const { data: users } = useSearchUsersQuery(searchQuery)
 
@@ -22,8 +23,8 @@ export const UserSearch: FC<UserSearchProps> = ({ onSubmit }) => {
         setSearchQuery("")
         onSubmit(user)
       }}
-      items={users}
-      dataMapper={(item: User) => `${item.email} ${item.firstName} ${item.lastName}`}
+      items={users.filter((user) => !excludeUserIds || !excludeUserIds.includes(user.id))}
+      dataMapper={(item: User) => `${item.email} ${item.firstName ?? ""} ${item.lastName ?? ""}`}
       placeholder="Søk etter bruker..."
       resetOnClick
     />
