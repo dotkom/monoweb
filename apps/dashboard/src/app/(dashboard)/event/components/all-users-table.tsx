@@ -1,4 +1,4 @@
-import type { Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
 import { Button, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
@@ -9,12 +9,35 @@ import { useDeregisterForEventMutation, useUpdateEventAttendanceMutation } from 
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
+  attendance: Attendance
   refetch: () => Promise<QueryObserverResult<Attendee[], unknown>>
 }
 
-export const AllAttendeesTable = ({ attendees, refetch }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttendeesTableProps) => {
   const deregisterMut = useDeregisterForEventMutation()
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
+
+  const pools = useMemo(() => {
+    return (attendance?.pools ?? []).reduce<Record<string, AttendancePool>>((acc, pool) => {
+      acc[pool.id] = pool
+      return acc
+    }, {})
+  }, [attendance?.pools])
+
+  const waitlists = useMemo(() => {
+    return (attendance?.pools ?? []).reduce<Record<string, Record<string, number>>>((acc, pool) => {
+      const waitlist = attendees
+        .filter((a) => a.attendancePoolId === pool.id && !a.reserved)
+        .sort((a, b) => b.reserveTime.getTime() - a.reserveTime.getTime())
+
+      acc[pool.id] = waitlist.reduce<Record<string, number>>((map, attendee, idx) => {
+        map[attendee.id] = idx + 1
+        return map
+      }, {})
+
+      return acc
+    }, {})
+  }, [attendance?.pools, attendees])
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
@@ -42,6 +65,34 @@ export const AllAttendeesTable = ({ attendees, refetch }: AllAttendeesTableProps
           )
         },
       }),
+      columnHelper.accessor(
+        (attendee) => {
+          const spot = waitlists[attendee.attendancePoolId]?.[attendee.id]
+          return spot ?? "-"
+        },
+        {
+          id: "waitlistSpot",
+          header: () => "Venteliste",
+          cell: (info) => info.getValue(),
+          filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId)
+            const isEmpty = value === "-"
+
+            const values = Array.isArray(filterValue) ? filterValue : [filterValue]
+
+            if (values.includes(true) && values.includes(false)) return true
+            if (values.includes(true)) return !isEmpty
+            if (values.includes(false)) return isEmpty
+
+            return false
+          },
+        }
+      ),
+      columnHelper.accessor((attendee) => pools[attendee.attendancePoolId]?.title ?? "", {
+        id: "pool",
+        header: () => "Påmeldingsgruppe",
+        sortingFn: "alphanumeric",
+      }),
       columnHelper.accessor((attendee) => attendee, {
         id: "deregister",
         enableSorting: false,
@@ -67,7 +118,7 @@ export const AllAttendeesTable = ({ attendees, refetch }: AllAttendeesTableProps
         ),
       }),
     ],
-    [columnHelper, deregisterMut, updateAttendanceMut, refetch]
+    [columnHelper, deregisterMut, updateAttendanceMut, refetch, pools, waitlists]
   )
 
   const tableOptions = useMemo(
@@ -85,6 +136,8 @@ export const AllAttendeesTable = ({ attendees, refetch }: AllAttendeesTableProps
       filters={[
         { columnId: "attended", label: "Møtt", value: true },
         { columnId: "attended", label: "Ikke møtt", value: false },
+        { columnId: "waitlistSpot", label: "På venteliste", value: true },
+        { columnId: "waitlistSpot", label: "Ikke på venteliste", value: false },
       ]}
     />
   )
