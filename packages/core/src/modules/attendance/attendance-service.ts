@@ -4,6 +4,7 @@ import type {
   AttendancePool,
   AttendancePoolId,
   AttendancePoolWrite,
+  AttendanceSelection,
   AttendanceWrite,
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
@@ -87,6 +88,32 @@ export class AttendanceServiceImpl implements AttendanceService {
       if ((data.registerStart || existingData.registerStart) > (data.registerEnd || existingData.registerEnd)) {
         throw new AttendanceValidationError("Register start must be before register end")
       }
+    }
+
+    // Remove attendees selected options from edited selections
+    if (data.selections) {
+      const isIdentical = (a: AttendanceSelection, b: AttendanceSelection) =>
+        a.id !== b.id ||
+        a.name !== b.name ||
+        a.options.length !== b.options.length ||
+        a.options.some((aOption) => {
+          const bOption = b.options.find((bOption) => bOption.id === aOption.id)
+          return bOption && bOption.name !== aOption.name
+        })
+
+      const { selections: oldSelections } = await this.getById(id)
+
+      const updatedSelections = data.selections.filter((newSelection) => {
+        const oldSelection = oldSelections.find((oldSelection) => oldSelection.id === newSelection.id)
+
+        return oldSelection && isIdentical(oldSelection, newSelection)
+      })
+
+      await Promise.all(
+        updatedSelections.map(async (selection) =>
+          this.attendeeRepository.removeAllSelectionResponsesForSelection(id, selection.id)
+        )
+      )
     }
 
     const attendance = await this.attendanceRepository.update(data, id)

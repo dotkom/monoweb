@@ -1,7 +1,15 @@
-import type { AttendancePool } from "@dotkomonline/types"
+import type {
+  AttendancePool,
+  AttendanceSelection,
+  AttendanceSelectionResponse,
+  AttendanceStatus,
+  Attendee,
+} from "@dotkomonline/types"
 import { Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
+import { useSetSelectionsOptionsMutation } from "../mutations"
+import { SelectionsForm } from "./SelectionsForm"
 
 const getAttendanceStatusText = (
   isAttendingAndReserved: boolean,
@@ -33,7 +41,7 @@ interface CardProps {
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
   const baseOuterClassName = "flex flex-col w-full min-h-[8rem] bg-slate-3 rounded-lg"
   const baseHeaderClassName = "px-4 py-3 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
-  const baseInnerClassName = "flex flex-grow flex-col gap-2 p-4 items-center text-center justify-center w-full"
+  const baseInnerClassName = "flex flex-col gap-4 p-3 items-center text-center justify-center w-full"
 
   if (!title) {
     return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
@@ -51,18 +59,22 @@ const Card: FC<CardProps> = ({ classNames, children, title }) => {
 
 interface MainPoolCardProps {
   pool: AttendancePool | undefined | null
-  isAttending: boolean
+  attendee: Attendee | undefined | null
   isLoggedIn: boolean
   queuePosition: number | null
-  hasMembership?: boolean
+  hasMembership: boolean
+  attendanceSelections: AttendanceSelection[]
+  status: AttendanceStatus
 }
 
 export const MainPoolCard: FC<MainPoolCardProps> = ({
   pool,
-  isAttending,
+  attendee,
   queuePosition,
   isLoggedIn,
   hasMembership,
+  attendanceSelections,
+  status,
 }) => {
   if (!isLoggedIn) {
     return (
@@ -71,6 +83,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       </Card>
     )
   }
+
+  const isAttending = Boolean(attendee)
 
   if (!hasMembership && !isAttending) {
     return (
@@ -99,6 +113,18 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const isAttendingAndNotReserved = isAttending && queuePosition !== null
   const poolHasQueue = pool.numUnreservedAttendees > 0
 
+  const selectionsMutation = useSetSelectionsOptionsMutation()
+  const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
+    if (!attendee) {
+      return
+    }
+
+    selectionsMutation.mutate({
+      attendeeId: attendee.id,
+      options: selections,
+    })
+  }
+
   return (
     <Card
       classNames={{
@@ -107,15 +133,28 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       }}
       title={pool.title}
     >
-      <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
-        {pool.numAttendees}/{pool.capacity}
-      </Text>
-      {pool.numUnreservedAttendees > 0 && (
-        <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
-          +{pool.numUnreservedAttendees} i kø
+      <div className="flex flex-grow flex-col gap-2 items-center text-center justify-center">
+        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
+          {pool.numAttendees}/{pool.capacity}
         </Text>
+        {pool.numUnreservedAttendees > 0 && (
+          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
+            +{pool.numUnreservedAttendees} i kø
+          </Text>
+        )}
+        <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
+      </div>
+
+      {isAttending && status !== "Closed" && attendanceSelections.length > 0 && (
+        <div className="w-full mt-2">
+          <SelectionsForm
+            selections={attendanceSelections}
+            // biome-ignore lint/style/noNonNullAssertion: isAttending is true if attendee exists
+            defaultValues={{ options: attendee!.selections }}
+            onSubmit={handleSelectionChange}
+          />
+        </div>
       )}
-      <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
     </Card>
   )
 }

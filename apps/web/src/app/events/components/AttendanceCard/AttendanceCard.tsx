@@ -105,10 +105,12 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
 
       <MainPoolCard
         pool={attendablePool}
-        isAttending={Boolean(attendee)}
+        attendee={attendee}
         queuePosition={queuePosition}
         isLoggedIn={isLoggedIn}
         hasMembership={hasMembership}
+        attendanceSelections={attendance.selections}
+        status={attendanceStatus}
       />
 
       {nonAttendablePools.length > 0 && (
