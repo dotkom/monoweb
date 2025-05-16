@@ -78,7 +78,9 @@ export const attendanceRouter = t.router({
         reserveNextAttendee: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id, input.reserveNextAttendee)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendeeService.adminDeregisterForEvent(input.id, input.reserveNextAttendee)
+    ),
 
   getSelectionsResults: adminProcedure
     .input(
