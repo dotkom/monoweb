@@ -55,7 +55,6 @@ export const RegistrationButton: FC<Props> = ({
   const buttonIcon = null
 
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-
   const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
 
   const disabledText = getDisabledText(
