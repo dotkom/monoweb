@@ -28,7 +28,7 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
     return (attendance?.pools ?? []).reduce<Record<string, Record<string, number>>>((acc, pool) => {
       const waitlist = attendees
         .filter((a) => a.attendancePoolId === pool.id && !a.reserved)
-        .sort((a, b) => b.reserveTime.getTime() - a.reserveTime.getTime())
+        .sort((a, b) => a.reserveTime.getTime() - b.reserveTime.getTime())
 
       acc[pool.id] = waitlist.reduce<Record<string, number>>((map, attendee, idx) => {
         map[attendee.id] = idx + 1
