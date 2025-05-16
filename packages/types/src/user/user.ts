@@ -29,3 +29,19 @@ export type User = z.infer<typeof UserSchema>
 export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export type UserId = User["id"]
+
+export function getDisplayName(user: User): string {
+  if (user.firstName && user.lastName) {
+    return `${user.firstName} ${user.lastName}`
+  }
+
+  if (user.lastName) {
+    return user.lastName
+  }
+
+  if (user.firstName) {
+    return user.firstName
+  }
+
+  return user.email
+}
