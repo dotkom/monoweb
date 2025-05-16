@@ -12,6 +12,7 @@ import {
   canDeregisterForAttendance as attendanceOpenForDeregistration,
   canRegisterForAttendance as attendanceOpenForRegistration,
   canUserAttendPool,
+  getDisplayName,
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours } from "date-fns"
@@ -28,7 +29,7 @@ export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   adminRegisterForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   deregisterForEvent(userId: string, attendanceId: string): Promise<void>
-  adminDeregisterForEvent(id: AttendeeId, reserveNext?: boolean): Promise<void>
+  adminDeregisterForEvent(id: AttendeeId, reserveNext: boolean): Promise<void>
   updateSelectionResponses(id: AttendanceId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
@@ -114,8 +115,8 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const registerTime = new Date()
 
-    const displayName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}`.trim() : user.email
-    const userGrade = user.membership ? getMembershipGrade(user.membership) : null
+    const displayName = getDisplayName(user)
+    const userGrade = getMembershipGrade(user.membership)
 
     const attendee = await this.attendeeRepository.create({
       userId,
@@ -138,7 +139,7 @@ export class AttendeeServiceImpl implements AttendeeService {
    * @returns Returns the attendee if the reservation was successful, false otherwise.
    * @see {@link attemptReserve}
    */
-  private async attemptReserveNextAttendee(pool: AttendancePool, bypassCriteria = false) {
+  private async attemptReserveNextAttendee(pool: AttendancePool, bypassCriteria: boolean) {
     const nextUnreservedAttendee = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(pool.id)
 
     if (nextUnreservedAttendee === null) {
@@ -148,7 +149,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     return await this.attemptReserve(nextUnreservedAttendee, pool, bypassCriteria)
   }
 
-  async adminDeregisterForEvent(id: AttendeeId, reserveNext = true) {
+  async adminDeregisterForEvent(id: AttendeeId, reserveNextAttendee: boolean) {
     const attendance = await this.attendanceRepository.getByAttendeeId(id)
     const pool = await this.attendanceRepository.getPoolByAttendeeId(id)
 
@@ -158,7 +159,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     await this.attendeeRepository.delete(id)
 
-    if (reserveNext) {
+    if (reserveNextAttendee) {
       await this.attemptReserveNextAttendee(pool, true)
     }
   }
@@ -193,8 +194,8 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const reserveTime = addHours(registerTime, reserveDelayHours)
 
-    const displayName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}`.trim() : user.email
-    const userGrade = user.membership ? getMembershipGrade(user.membership) : null
+    const displayName = getDisplayName(user)
+    const userGrade = getMembershipGrade(user.membership)
 
     const attendee = await this.attendeeRepository.create({
       userId,
@@ -259,7 +260,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
 
     if (attendedPool) {
-      await this.attemptReserveNextAttendee(attendedPool)
+      await this.attemptReserveNextAttendee(attendedPool, false)
     }
   }
 

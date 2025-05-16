@@ -104,6 +104,7 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
               deregisterMut.mutate(
                 {
                   id: info.getValue().id,
+                  reserveNextAttendee: true,
                 },
                 {
                   onSuccess: () => {
