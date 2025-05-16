@@ -23,7 +23,7 @@ const getDisabledText = (
   if (status === "NotOpened") return "Påmeldinger har ikke åpnet"
   if (status === "Closed" && !attendee) return "Påmeldingen er stengt"
   if (!pool && !attendee) return "Du har ingen påmeldingsgruppe"
-  if (status === "Closed" && isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
+  if (isPastDeregisterDeadline && attendee) return "Avmeldingsfristen har utløpt"
 
   return null
 }
@@ -55,6 +55,11 @@ export const RegistrationButton: FC<Props> = ({
   const buttonIcon = null
 
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
+  console.log(`deregisterDeadline: ${attendance.deregisterDeadline}`)
+  console.log(`date: ${new Date()}`)
+  console.log(`past: ${isPastDeregisterDeadline}`)
+  console.log(`Status: ${status}`)
+
   const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
 
   const disabledText = getDisabledText(
