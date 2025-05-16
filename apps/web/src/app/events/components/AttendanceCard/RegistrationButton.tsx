@@ -55,10 +55,6 @@ export const RegistrationButton: FC<Props> = ({
   const buttonIcon = null
 
   const isPastDeregisterDeadline = new Date() > attendance.deregisterDeadline
-  console.log(`deregisterDeadline: ${attendance.deregisterDeadline}`)
-  console.log(`date: ${new Date()}`)
-  console.log(`past: ${isPastDeregisterDeadline}`)
-  console.log(`Status: ${status}`)
 
   const isPoolFull = pool ? pool.numAttendees >= pool.capacity : false
 
