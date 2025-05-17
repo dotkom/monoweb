@@ -8,9 +8,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
-    "@dotkomonline/environment": "workspace:*"
+    "@dotkomonline/db": "workspace:*",
+    "@dotkomonline/environment": "workspace:*",
+    "commander": "^13.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.2",
