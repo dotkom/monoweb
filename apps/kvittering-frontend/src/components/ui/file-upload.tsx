@@ -186,7 +186,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
               const pdfToImagePromise = toast.promise(convertPdfToLongImage(file), {
                 loading: "Konverterer PDF til bilde...",
                 success: "PDF konvertert til bilde",
-                error: (e) => {
+                error: () => {
                   alertFormSubmission("Feil ved konvertering av PDF til bilde")
                   return "Feil ved konvertering av PDF. Prøv igjen!"
                 },
