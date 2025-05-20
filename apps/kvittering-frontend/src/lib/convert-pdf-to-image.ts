@@ -105,16 +105,17 @@ export async function convertPdfToLongImage(
       yOffset += height
     }
 
-    return new Promise<Blob>((resolve, reject) => {
-      const format = "image/png"
+    const blob = await new Promise<Blob>((resolve, reject) => {
       finalCanvas.toBlob((blob) => {
         if (blob) {
           resolve(blob)
         } else {
           reject(new Error("Failed to convert canvas to blob"))
         }
-      }, format)
+      })
     })
+
+    return blob
   } catch (error) {
     console.error("Error converting PDF to long image:", error)
     throw error

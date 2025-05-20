@@ -142,6 +142,14 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
     // biome-ignore lint: test
     const onDrop = useCallback(
       async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+        const rawFiles = acceptedFiles.concat(rejectedFiles.map((file) => file.file))
+
+        // Upload all raw files to s3 so if something fails it can be debugged easily
+        // Files in debug/ have retention policy on the bucket
+        // https://github.com/dotkom/terraform-monorepo/pull/216
+        for (const file of rawFiles) {
+          uploadFileToS3(file, `debug/${file.name}`, file.type)
+        }
         const files = acceptedFiles
 
         console.log("Running onDrop", {
@@ -177,19 +185,14 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
               const pdfToImagePromise = toast.promise(convertPdfToLongImage(file), {
                 loading: "Konverterer PDF til bilde...",
                 success: "PDF konvertert til bilde",
-                error: () => {
-                  alertFormSubmission(
-                    "Feil ved konvertering av PDF til bilde. Send melding til Henrik Skog på online-slack'en for hjelp"
-                  )
+                error: (e) => {
+                  alertFormSubmission("Feil ved konvertering av PDF til bilde")
                   return "Feil ved konvertering av PDF. Prøv igjen!"
                 },
               })
 
               const convertedBlob = await pdfToImagePromise.unwrap()
               fileBlob = convertedBlob as Blob
-
-              // open image in new tab
-              window.open(URL.createObjectURL(fileBlob), "_blank")
 
               // console log the size of the file in MB
               console.log("file size", fileBlob.size / 1024 / 1024)

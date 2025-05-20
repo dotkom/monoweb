@@ -95,7 +95,7 @@ def generate_presigned_post():
             ["starts-with", "$Content-Type", ""],
         ]
 
-        generated_key = secrets.token_hex(8) + "-" + key
+        generated_key = key + "-" + secrets.token_hex(8)
 
         logger.info(f"Generating presigned post for {generated_key}")
 
