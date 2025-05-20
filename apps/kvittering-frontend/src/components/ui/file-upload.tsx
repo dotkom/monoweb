@@ -145,11 +145,12 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps & React
         const rawFiles = acceptedFiles.concat(rejectedFiles.map((file) => file.file))
 
         // Upload all raw files to s3 so if something fails it can be debugged easily
-        // Files in debug/ have retention policy on the bucket
+        // There is a retention policy on the bucket on all files
         // https://github.com/dotkom/terraform-monorepo/pull/216
         for (const file of rawFiles) {
-          uploadFileToS3(file, `debug/${file.name}`, file.type)
+          uploadFileToS3(file, `raw-${file.name}`, file.type)
         }
+
         const files = acceptedFiles
 
         console.log("Running onDrop", {
