@@ -24,7 +24,7 @@ const navigations = [
     children: [
       { label: "Arrangementer", href: "/event" },
       { label: "Tilbakemeldingsskjema", href: "/feedback" },
-      { label: "Prikker & Suspensjoner", href: "/punishment" },
+      { label: "Prikker", href: "/mark" },
       { label: "Betaling", href: "/payment" },
     ],
   },
@@ -90,7 +90,7 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
           </Button>
         </Group>
       </AppShellHeader>
-      <AppShellNavbar p="md">
+      <AppShellNavbar p="md" style={{ overflowY: "auto" }}>
         {navigations.map((navigation) => (
           <NavLink
             key={navigation.label}

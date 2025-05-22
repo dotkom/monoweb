@@ -2,7 +2,7 @@
 
 import { Loader } from "@mantine/core"
 import { type PropsWithChildren, use } from "react"
-import { useMarkGetQuery } from "../../../../modules/punishment/queries/use-mark-get-query"
+import { useMarkGetQuery } from "../../../../modules/mark/queries/use-mark-get-query"
 import { MarkDetailsContext } from "./provider"
 
 export default function MarkDetailsLayout({
