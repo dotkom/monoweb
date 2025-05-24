@@ -1,3 +1,5 @@
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import type { GroupType } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
 import clsx from "clsx"
 import Image from "next/image"
@@ -10,6 +12,7 @@ export interface GroupListItemProps {
   description: string
   link: string
   isActive?: boolean
+  type: GroupType | "INTERESTGROUP"
 }
 
 export const GroupListItem: FC<GroupListItemProps> = (props: GroupListItemProps) => (
@@ -26,16 +29,24 @@ export const GroupListItem: FC<GroupListItemProps> = (props: GroupListItemProps)
       )}
     >
       {props.image ? (
-        <Image src={props.image} alt={props.title} fill className="object-contain" />
+        <Image
+          src={props.image}
+          alt={props.title}
+          fill
+          className={clsx(
+            "object-contain",
+            (props.type === "COMMITTEE" || props.type === "NODECOMMITTEE") && "dark:invert"
+          )}
+        />
       ) : (
-        <div className="w-full h-full" />
+        <OnlineIcon width={150} height={150} />
       )}
     </div>
 
     <Title element="h2" className="text-3xl mt-4 break-words font-normal">
       {props.title}
     </Title>
-    <Text className="mt-2 mb-6 text-left px-3">{props.description}</Text>
+    <Text className="mt-2 mb-6 text-left px-3 line-clamp-4">{props.description}</Text>
     <Link className="mt-auto text-xl hover:underline" href={props.link}>
       Les mer
     </Link>

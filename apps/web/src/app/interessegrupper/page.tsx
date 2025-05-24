@@ -34,7 +34,7 @@ export default async function InterestPage() {
       <div className="mt-4">
         <Link
           href={"https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"}
-className="mr-4"
+          className="mr-4"
         >
           <Button>Opprett interessegruppe</Button>
         </Link>
@@ -47,7 +47,13 @@ className="mr-4"
         </Link>
       </div>
       <div className="mt-8">
-        <GroupList groups={interestGroups} baseLink="interessegrupper" />
+        <GroupList
+          groups={interestGroups.map((group) => ({
+            ...group,
+            type: "INTERESTGROUP",
+          }))}
+          baseLink="interessegrupper"
+        />
       </div>
     </div>
   )
