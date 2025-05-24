@@ -5,18 +5,19 @@ import {
   type Attendee,
   type AttendeeId,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
-  type AttendeeSelectionResponse,
   AttendeeSelectionResponsesSchema,
   type AttendeeWrite,
-  User,
-  UserFlag,
+  type User,
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { AttendeeWriteError } from "./attendee-error"
 
-type UnparsedAttendee = Omit<Attendee, "selections" | "userFlags"> & { selections?: JsonValue; user: Pick<User, "flags"> }
+type UnparsedAttendee = Omit<Attendee, "selections" | "userFlags"> & {
+  selections?: JsonValue
+  user: Pick<User, "flags">
+}
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
@@ -52,7 +53,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     if (user === null) return null
 
-    const test =  this.parse(user)
+    const test = this.parse(user)
     return test
   }
 
@@ -92,13 +93,21 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
-    const attendees = await this.db.attendee.findMany({ where: { attendanceId }, orderBy: { reserveTime: "asc" }, include: this.includeUserFlags })
+    const attendees = await this.db.attendee.findMany({
+      where: { attendanceId },
+      orderBy: { reserveTime: "asc" },
+      include: this.includeUserFlags,
+    })
 
     return attendees.map(this.parse)
   }
 
   async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
-    const attendees = await this.db.attendee.findMany({ where: { attendancePoolId }, orderBy: { reserveTime: "asc" }, include: this.includeUserFlags })
+    const attendees = await this.db.attendee.findMany({
+      where: { attendancePoolId },
+      orderBy: { reserveTime: "asc" },
+      include: this.includeUserFlags,
+    })
 
     return attendees.map(this.parse)
   }
@@ -107,7 +116,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const attendee = await this.db.attendee.findFirst({
       where: { attendancePoolId, reserved: false },
       orderBy: { reserveTime: "asc" },
-      include: this.includeUserFlags
+      include: this.includeUserFlags,
     })
 
     if (attendee === null) return null

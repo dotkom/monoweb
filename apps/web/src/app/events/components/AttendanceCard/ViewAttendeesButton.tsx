@@ -1,4 +1,4 @@
-import { hasFlag, type Attendee, type User } from "@dotkomonline/types"
+import { type Attendee, type User, hasFlag } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -117,7 +117,7 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
     const isVerified = hasFlag(attendee, "OW_VERIFIED")
     const isUser = attendee.userId === userId
 
-    const displayName = (<Text className="text-sm">{attendee.displayName}</Text>)
+    const displayName = <Text className="text-sm">{attendee.displayName}</Text>
 
     return (
       <div
@@ -142,10 +142,14 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
           </Avatar>
 
           <div>
-            {isVerified ? (<div className="flex items-center gap-1">
-              {displayName}
-              <Icon icon="tabler:rosette-discount-check-filled" className="text-base text-blue-9" />
-              </div>) : displayName}
+            {isVerified ? (
+              <div className="flex items-center gap-1">
+                {displayName}
+                <Icon icon="tabler:rosette-discount-check-filled" className="text-base text-blue-9" />
+              </div>
+            ) : (
+              displayName
+            )}
             <Text className={cn("text-xs", isUser ? "text-slate-12" : "text-slate-10")}>
               {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
             </Text>

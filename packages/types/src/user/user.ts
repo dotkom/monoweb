@@ -52,7 +52,10 @@ export function getDisplayName(user: User): string {
   return user.email
 }
 
-export function hasFlag<T extends { flags: UserFlag[] } | { userFlags: UserFlag[] }> (userResolvable: T, flag: UserFlag): boolean {
+export function hasFlag<T extends { flags: UserFlag[] } | { userFlags: UserFlag[] }>(
+  userResolvable: T,
+  flag: UserFlag
+): boolean {
   if ("flags" in userResolvable) {
     return userResolvable.flags.includes(flag)
   }
