@@ -1,4 +1,4 @@
-import type { Attendee, User } from "@dotkomonline/types"
+import { hasFlag, type Attendee, type User } from "@dotkomonline/types"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -114,6 +114,10 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
 
   return attendees.map((attendee: Attendee, index) => {
     const isLastItem = index === attendees.length - 1
+    const isVerified = hasFlag(attendee, "OW_VERIFIED")
+    const isUser = attendee.userId === userId
+
+    const displayName = (<Text className="text-sm">{attendee.displayName}</Text>)
 
     return (
       <div
@@ -125,17 +129,24 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
         </Text>
 
         <div
-          className={cn("flex items-center gap-4 p-1.5 rounded-lg w-full", attendee.userId === userId && "bg-blue-3")}
+          className={cn(
+            "flex items-center gap-4 p-1.5 rounded-lg w-full",
+            isUser && !isVerified && "bg-blue-3",
+            isVerified && "bg-gradient-to-r from-yellow-4 via-yellow-3"
+          )}
         >
           <Avatar className="h-10 w-10">
-            <AvatarFallback className={attendee.userId === userId ? "bg-blue-6" : "bg-slate-6"}>
+            <AvatarFallback className={isVerified ? "bg-yellow-6" : isUser ? "bg-blue-6" : "bg-slate-6"}>
               <Icon className="text-lg" icon="tabler:user" />
             </AvatarFallback>
           </Avatar>
 
           <div>
-            <Text className="text-sm">{attendee.displayName}</Text>
-            <Text className={cn("text-xs", attendee.userId === userId ? "text-slate-12" : "text-slate-10")}>
+            {isVerified ? (<div className="flex items-center gap-1">
+              {displayName}
+              <Icon icon="tabler:rosette-discount-check-filled" className="text-base text-blue-9" />
+              </div>) : displayName}
+            <Text className={cn("text-xs", isUser ? "text-slate-12" : "text-slate-10")}>
               {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
             </Text>
           </div>

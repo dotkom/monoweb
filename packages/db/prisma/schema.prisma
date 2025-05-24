@@ -102,8 +102,13 @@ model OwUser {
   GroupMemberships          GroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
+  flags                     UserFlag[]
 
   @@map("ow_user")
+}
+
+enum UserFlag {
+  OW_VERIFIED
 }
 
 model Company {
@@ -125,105 +130,102 @@ model Company {
 }
 
 model Group {
-  id                String           @id @default(uuid())
-  createdAt         DateTime         @default(now())
-  name              String
-  description       String
-  email             String
-  image             String?
-  longDescription   String?
-  events            EventHostingGroup[]
-  type              GroupType
-  members           GroupMember[]
+  id              String              @id @default(uuid())
+  createdAt       DateTime            @default(now())
+  name            String
+  description     String
+  email           String
+  image           String?
+  longDescription String?
+  events          EventHostingGroup[]
+  type            GroupType
+  members         GroupMember[]
 
   @@map("group")
 }
 
 model GroupMember {
-  groupId   String
-  group     Group     @relation(fields: [groupId], references: [id])
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id])
 
-  userId    String
-  user      OwUser    @relation(fields: [userId], references: [id])
+  userId String
+  user   OwUser @relation(fields: [userId], references: [id])
 
   @@id([groupId])
-
   @@map("group_member")
 }
 
 model Attendance {
-  id                 String             @id @default(uuid())
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   registerStart      DateTime
   deregisterDeadline DateTime
   registerEnd        DateTime
 
-  selections         Json               @default("[]")
+  selections Json @default("[]")
 
-  pools              AttendancePool[]
-  attendees          Attendee[]
+  pools     AttendancePool[]
+  attendees Attendee[]
 
-  events             Event[]
+  events Event[]
 
   @@map("attendance")
 }
 
 model AttendancePool {
-  id                    String             @id @default(uuid())
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  attendance            Attendance         @relation(fields: [attendanceId], references: [id])
-  attendanceId          String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendanceId String
 
-  title                 String
+  title String
 
-  mergeDelayHours       Int?
-  yearCriteria          Json
-  capacity              Int
+  mergeDelayHours Int?
+  yearCriteria    Json
+  capacity        Int
 
-  attendees             Attendee[]
+  attendees Attendee[]
 
   @@map("attendance_pool")
 }
 
-
 model Attendee {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  attendance       Attendance     @relation(fields: [attendanceId], references: [id])
-  attendanceId     String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendanceId String
 
-  user             OwUser         @relation(fields: [userId], references: [id])
-  userId           String
+  user   OwUser @relation(fields: [userId], references: [id])
+  userId String
 
   attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
 
   /// Which options the user has selected from the Attendance selections
-  selections       Json           @default("[]")
+  selections Json @default("[]")
 
-  displayName      String
-  userGrade        Int?
+  displayName String
+  userGrade   Int?
 
-  reserved         Boolean
-  attended         Boolean        @default(false)
+  reserved Boolean
+  attended Boolean @default(false)
 
-  reserveTime      DateTime
+  reserveTime DateTime
 
   @@unique([attendanceId, userId], name: "attendee_unique")
-
-  @@map("attendee") 
+  @@map("attendee")
 }
 
 model Event {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id              String               @id @default(uuid())
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
   title           String
   start           DateTime
   end             DateTime
@@ -235,7 +237,7 @@ model Event {
   locationTitle   String
   locationAddress String?
   locationLink    String?
-  attendance      Attendance?      @relation(fields: [attendanceId], references: [id])
+  attendance      Attendance?          @relation(fields: [attendanceId], references: [id])
   attendanceId    String?
   type            EventType
   companies       EventCompany[]
@@ -252,7 +254,6 @@ model EventCompany {
   company   Company @relation(fields: [companyId], references: [id])
 
   @@id([eventId, companyId])
-
   @@map("event_company")
 }
 
@@ -276,7 +277,6 @@ model PersonalMark {
   userId String
 
   @@id([markId, userId])
-
   @@map("personal_mark")
 }
 
@@ -320,7 +320,6 @@ model ProductPaymentProvider {
   paymentProviderId String
 
   @@id([productId, paymentProviderId])
-
   @@map("product_payment_provider")
 }
 
@@ -375,13 +374,12 @@ model NotificationPermissions {
 }
 
 model EventHostingGroup {
-  groupId        String
-  eventId        String
-  group          Group @relation(fields: [groupId], references: [id])
-  event          Event @relation(fields: [eventId], references: [id])
+  groupId String
+  eventId String
+  group   Group  @relation(fields: [groupId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id])
 
   @@id([groupId, eventId])
-
   @@map("event_hosting_group")
 }
 
@@ -414,7 +412,6 @@ model JobListingLocation {
   jobListingId String
 
   @@id([name, jobListingId])
-
   @@map("job_listing_location")
 }
 
@@ -460,18 +457,17 @@ model ArticleTagLink {
   tagName   String
 
   @@id([articleId, tagName])
-
   @@map("article_tag_link")
 }
 
 model InterestGroup {
-  id              String   @id @default(uuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              String                @id @default(uuid())
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
   name            String
   description     String
   link            String?
-  isActive        Boolean  @default(true)
+  isActive        Boolean               @default(true)
   longDescription String?
   joinInfo        String?
   image           String?
@@ -483,23 +479,21 @@ model InterestGroup {
 
 model InterestGroupMember {
   interestGroupId String
-  interestGroup   InterestGroup  @relation(fields: [interestGroupId], references: [id])
- 
-  userId          String 
-  user            OwUser         @relation(fields: [userId], references: [id])
+  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
+
+  userId String
+  user   OwUser @relation(fields: [userId], references: [id])
 
   @@id([interestGroupId])
-
   @@map("interest_group_member")
 }
 
 model EventInterestGroup {
-  eventId           String
-  interestGroupId   String
-  event             Event         @relation(fields: [eventId], references: [id])
-  interestGroup     InterestGroup @relation(fields: [interestGroupId], references: [id])
+  eventId         String
+  interestGroupId String
+  event           Event         @relation(fields: [eventId], references: [id])
+  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
 
   @@id([eventId, interestGroupId])
-
   @@map("event_interest_group")
 }

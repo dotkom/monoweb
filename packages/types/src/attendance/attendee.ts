@@ -1,12 +1,13 @@
 import { schemas } from "@dotkomonline/db/schemas"
 import { z } from "zod"
-import type { User } from "../user/user"
+import { UserFlagSchema, type User } from "../user/user"
 import { AttendanceSelectionResponseSchema } from "./attendance-selections"
 
 export const AttendeeSelectionResponsesSchema = z.array(AttendanceSelectionResponseSchema)
 
 export const AttendeeSchema = schemas.AttendeeSchema.extend({
   selections: AttendeeSelectionResponsesSchema,
+  userFlags: UserFlagSchema,
 })
 
 export const AttendeeWriteSchema = AttendeeSchema.omit({

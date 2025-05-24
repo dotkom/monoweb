@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "UserFlag" AS ENUM ('OW_VERIFIED');
+
+-- AlterTable
+ALTER TABLE "ow_user" ADD COLUMN     "flags" "UserFlag"[];
