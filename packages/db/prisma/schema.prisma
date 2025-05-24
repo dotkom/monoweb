@@ -102,8 +102,13 @@ model OwUser {
   GroupMemberships          GroupMember[]
   privacyPermissionsId      String?                  @unique
   notificationPermissionsId String?                  @unique
+  flags                     UserFlag[]
 
   @@map("ow_user")
+}
+
+enum UserFlag {
+  OW_VERIFIED
 }
 
 model Company {
