@@ -114,7 +114,7 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
 
   return attendees.map((attendee: Attendee, index) => {
     const isLastItem = index === attendees.length - 1
-    const isVerified = hasFlag(attendee, "OW_VERIFIED")
+    const isVerified = hasFlag(attendee, "VANITY_VERIFIED")
     const isUser = attendee.userId === userId
 
     const displayName = <Text className="text-sm">{attendee.displayName}</Text>

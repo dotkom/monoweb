@@ -108,7 +108,7 @@ model OwUser {
 }
 
 enum UserFlag {
-  OW_VERIFIED
+  VANITY_VERIFIED
 }
 
 model Company {
