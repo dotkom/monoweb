@@ -26,7 +26,8 @@ const PenaltyAccordion: FC<PenaltyAccordionProps> = (props) => (
       <AccordionContent className="ml-4">
         <div className="flex flex-col space-y-4">
           <p>
-            Du har fått en prikk på grunn av {props.details} den {DateFns.formatDate(props.givenAt, "dd. MMM yyyy HH:mm").toLowerCase()}.
+            Du har fått en prikk på grunn av {props.details} den{" "}
+            {DateFns.formatDate(props.givenAt, "dd. MMM yyyy HH:mm").toLowerCase()}.
           </p>
           <p className="text-lg">
             <span className="font-bold">Katergori: </span>

@@ -8,10 +8,10 @@ import type {
   AttendanceWrite,
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
+import { DateFns } from "@dotkomonline/utils"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
-import { DateFns } from "@dotkomonline/utils"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -149,7 +149,7 @@ export class AttendanceServiceImpl implements AttendanceService {
       return true
     }
 
-    const shouldMergeAt = DateFns.addHours(attendance.registerStart, pool.mergeDelayHours);
+    const shouldMergeAt = DateFns.addHours(attendance.registerStart, pool.mergeDelayHours)
 
     return !DateFns.isBefore(shouldMergeAt, mergeTime)
   }

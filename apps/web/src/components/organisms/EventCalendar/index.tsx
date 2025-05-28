@@ -1,11 +1,11 @@
 import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { server } from "@/utils/trpc/server"
 import { Icon, cn } from "@dotkomonline/ui"
+import { DateFns } from "@dotkomonline/utils"
 import Link from "next/link"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { getCalendarArray } from "./getCalendarArray"
-import { DateFns } from "@dotkomonline/utils"
 
 interface CalendarProps {
   year: number

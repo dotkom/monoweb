@@ -1,8 +1,8 @@
 import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
+import { DateFns } from "@dotkomonline/utils"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
-import { DateFns } from "@dotkomonline/utils"
 
 export interface PersonalMarkService {
   getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]>
@@ -75,7 +75,12 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   adjustDateIfStartingInHoliday(date: Date): Date {
-    if (DateFns.isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
+    if (
+      DateFns.isWithinInterval(date, {
+        start: new Date(date.getFullYear(), 5),
+        end: new Date(date.getFullYear(), 7, 15),
+      })
+    ) {
       return DateFns.set(date, { month: 7, date: 15 })
     }
     if (date.getMonth() === 11) {
@@ -89,7 +94,12 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
 
   adjustDateIfEndingInHoliday(date: Date): Date {
     let additionalDays = 0
-    if (DateFns.isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
+    if (
+      DateFns.isWithinInterval(date, {
+        start: new Date(date.getFullYear(), 5),
+        end: new Date(date.getFullYear(), 7, 15),
+      })
+    ) {
       additionalDays = 75
     } else if (date.getMonth() === 11) {
       additionalDays = 45

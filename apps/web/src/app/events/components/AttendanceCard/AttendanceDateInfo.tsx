@@ -18,9 +18,10 @@ interface AttendanceDateInfoProps {
 }
 
 export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
-  const {registerStart, registerEnd, deregisterDeadline} = attendance
-  
-  const allInCurrentYear = DateFns.isThisYear(registerStart) && DateFns.isThisYear(registerEnd) && DateFns.isThisYear(deregisterDeadline)
+  const { registerStart, registerEnd, deregisterDeadline } = attendance
+
+  const allInCurrentYear =
+    DateFns.isThisYear(registerStart) && DateFns.isThisYear(registerEnd) && DateFns.isThisYear(deregisterDeadline)
   const dateFormat = allInCurrentYear ? "dd. MMMM" : "dd. MMM yyyy"
 
   const isAttendanceStartInPast = DateFns.isPast(registerStart)
@@ -48,7 +49,8 @@ export const AttendanceDateInfo = ({ attendance }: AttendanceDateInfoProps) => {
     {
       key: "deregisterDeadline",
       date: attendance.deregisterDeadline,
-      element: dateComponent("Avmeldingsfrist",
+      element: dateComponent(
+        "Avmeldingsfrist",
         DateFns.formatDate(deregisterDeadline, dateFormat),
         DateFns.formatDate(deregisterDeadline, "HH:mm")
       ),

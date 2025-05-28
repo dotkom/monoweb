@@ -15,6 +15,7 @@ import {
   getDisplayName,
   getMembershipGrade,
 } from "@dotkomonline/types"
+import { DateFns } from "@dotkomonline/utils"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
@@ -23,7 +24,6 @@ import { AttendancePoolNotFoundError, AttendancePoolValidationError } from "./at
 import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
-import { DateFns } from "@dotkomonline/utils"
 
 export interface AttendeeService {
   registerForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>

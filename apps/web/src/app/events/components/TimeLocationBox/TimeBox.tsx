@@ -1,10 +1,9 @@
 import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
+import { DateFns } from "@dotkomonline/utils"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
-import { DateFns } from "@dotkomonline/utils"
-import { format } from "path"
 
 interface TimeBoxProps {
   event: Event

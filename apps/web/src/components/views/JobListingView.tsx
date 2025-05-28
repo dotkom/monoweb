@@ -68,7 +68,11 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <div className="text-blue-9 mb-[-3px] inline">
             <Icon icon="mdi:clock-outline" className="text-blue-9" width={20} height={20} />
           </div>
-          {deadline ? <p className="m-0 pl-2">{DateFns.formatDate(deadline, "dd. MMM yyyy HH:mm").toLowerCase()}</p> : <p className="m-0 pl-2">Ingen frist</p>}
+          {deadline ? (
+            <p className="m-0 pl-2">{DateFns.formatDate(deadline, "dd. MMM yyyy HH:mm").toLowerCase()}</p>
+          ) : (
+            <p className="m-0 pl-2">Ingen frist</p>
+          )}
         </div>
         <div className="bg-slate-9 my-7 h-[0.5px] w-full" />
         <div className="my-3 flex items-center">

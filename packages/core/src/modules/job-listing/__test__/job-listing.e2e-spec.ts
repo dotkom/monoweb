@@ -1,9 +1,9 @@
 import type { Company } from "@dotkomonline/types"
+import { DateFns } from "@dotkomonline/utils"
 import { beforeEach, describe, expect, it } from "vitest"
 import { core } from "../../../../vitest-integration.setup"
 import { getCompanyMock, getJobListingMock } from "../../../mock"
 import { InvalidEndDateError } from "../job-listing-error"
-import { DateFns } from "@dotkomonline/utils"
 
 describe("job-listings", async () => {
   let company: Company

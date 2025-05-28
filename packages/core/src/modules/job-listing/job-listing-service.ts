@@ -1,9 +1,9 @@
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
+import { DateFns } from "@dotkomonline/utils"
 import { assert } from "../../assert"
 import type { Pageable } from "../../query"
 import { InvalidEndDateError } from "./job-listing-error"
 import type { JobListingRepository } from "./job-listing-repository"
-import { DateFns } from "@dotkomonline/utils"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing | null>

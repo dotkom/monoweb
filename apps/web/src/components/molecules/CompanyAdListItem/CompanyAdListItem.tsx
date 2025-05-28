@@ -1,10 +1,10 @@
 import type { JobListing } from "@dotkomonline/types"
 import { Badge, Icon, Text } from "@dotkomonline/ui"
+import { DateFns } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 import { translationJobTypes } from "../CompanyFiltersContainer/CompanyFiltersContainer"
-import { DateFns } from "@dotkomonline/utils"
 
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
