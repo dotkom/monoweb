@@ -1,9 +1,9 @@
 import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/types"
-import { isAfter } from "date-fns"
 import { assert } from "../../assert"
 import type { Pageable } from "../../query"
 import { InvalidEndDateError } from "./job-listing-error"
 import type { JobListingRepository } from "./job-listing-repository"
+import { DateFns } from "@dotkomonline/utils"
 
 export interface JobListingService {
   getById(id: JobListingId): Promise<JobListing | null>
@@ -51,7 +51,7 @@ export class JobListingServiceImpl implements JobListingService {
    */
   private validateWriteModel(input: Partial<JobListingWrite>): void {
     assert(
-      input.start && input.end && isAfter(input.end, input.start),
+      input.start && input.end && DateFns.isAfter(input.end, input.start),
       new InvalidEndDateError("end date cannot be before start date")
     )
   }

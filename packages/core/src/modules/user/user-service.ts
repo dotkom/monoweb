@@ -95,14 +95,14 @@ export class UserServiceImpl implements UserService {
 
     const studyLength = masterProgramme ? 2 : 3
     // Get the newest study plan we can be sure is complete
-    const studyplanYear = getAcademicYear(new Date()) - studyLength
+    const studyplanYear = getAcademicYear() - studyLength
     const studyplanCourses = await this.ntnuStudyplanRepository.getStudyplanCourses(
       relevantProgramme.code,
       studyplanYear
     )
 
     const estimatedStudyGrade = await this.estimateStudyGrade(studyplanCourses, courses)
-    const estimatedStudyYear = getAcademicYear(new Date()) - estimatedStudyGrade + 1
+    const estimatedStudyYear = getAcademicYear() - estimatedStudyGrade + 1
 
     if (masterProgramme) {
       return {

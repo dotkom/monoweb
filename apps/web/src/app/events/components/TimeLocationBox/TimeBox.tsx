@@ -1,24 +1,24 @@
 import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
-import { IntlFormats } from "@dotkomonline/utils"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
+import { DateFns } from "@dotkomonline/utils"
+import { format } from "path"
 
 interface TimeBoxProps {
   event: Event
 }
 
-const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat("nb-NO", format).format(date)
+const formatTime = (date: Date) => DateFns.formatDate(date, "HH:mm")
+const formatDate = (date: Date) => {
+  const format = DateFns.isSameYear(date, new Date()) ? "dd. MMMM" : "dd. MMM yyyy"
+
+  return DateFns.formatDate(date, format).toLowerCase()
+}
 
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const { start, end, locationAddress, description, title: eventSummary } = event
-
-  const multipleDays = start.getDate() !== end.getDate()
-
-  const time = { start: formatWithIntl(start, IntlFormats.Time), end: formatWithIntl(end, IntlFormats.Time) }
-  const date = { start: formatWithIntl(start, IntlFormats.ShortDate), end: formatWithIntl(end, IntlFormats.ShortDate) }
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
@@ -36,17 +36,19 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
       <div className="flex flex-1 flex-col">
         <div className="flex flex-row gap-[2ch] items-center">
           <div className="flex flex-col">
-            <Text>{date.start}</Text>
+            <Text>{formatDate(start)}</Text>
             <Text>
-              {time.start} {!multipleDays ? ` - ${time.end}` : null}
+              {formatTime(start)} {DateFns.isSameDay(start, end) && ` - ${formatTime(end)}`}
             </Text>
           </div>
-          {multipleDays && (
+
+          {!DateFns.isSameDay(start, end) && (
             <>
               <Icon icon={"tabler:arrow-right"} className="text-2xl" />
+
               <div className="flex flex-col">
-                <Text>{date.end}</Text>
-                <Text>{time.end}</Text>
+                <Text>{formatDate(end)}</Text>
+                <Text>{formatTime(end)}</Text>
               </div>
             </>
           )}

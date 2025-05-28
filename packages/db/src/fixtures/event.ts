@@ -1,5 +1,5 @@
+import { DateFns } from "@dotkomonline/utils"
 import type { Prisma } from "@prisma/client"
-import { addHours } from "date-fns"
 
 const now = new Date()
 
@@ -9,8 +9,8 @@ export const getEventFixtures: (attendanceIds: string[]) => Prisma.EventCreateMa
     createdAt: now,
     updatedAt: now,
     title: "Kurs i å lage fixtures",
-    start: addHours(now, 4),
-    end: addHours(now, 8),
+    start: DateFns.addHours(now, 4),
+    end: DateFns.addHours(now, 8),
     status: "PUBLIC",
     type: "SOCIAL",
     public: true,

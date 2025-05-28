@@ -1,11 +1,14 @@
-import _slugify from "slugify"
+import slugify_ from "slugify"
 
-// Slug that is made to be as readable in URL as possible
-// It's stupid that it converts æ to ae, ø to oe, and å to aa but its whatever
+/**
+ * Converts a string to a URL-friendly slug.
+ *
+ * @param text - The string to convert to a slug.
+ * @returns A URL-friendly slug version of the input string.
+ */
 export function slugify(text: string) {
-  return _slugify(text, {
-    lower: true, // convert to lower case, defaults to `false`
-    strict: true, // strip special characters except replacement, defaults to `false`
-    trim: true, // trim leading and trailing replacement chars, defaults to `true`
+  return slugify_(text, {
+    lower: true,
+    strict: true,
   })
 }

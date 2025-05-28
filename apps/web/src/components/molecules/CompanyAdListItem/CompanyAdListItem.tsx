@@ -1,10 +1,10 @@
 import type { JobListing } from "@dotkomonline/types"
-import { Badge, Icon } from "@dotkomonline/ui"
-import { formatRelativeTime } from "@dotkomonline/utils"
+import { Badge, Icon, Text } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 import { translationJobTypes } from "../CompanyFiltersContainer/CompanyFiltersContainer"
+import { DateFns } from "@dotkomonline/utils"
 
 function showLocations(locations: string[]) {
   if (locations.length === 0) {
@@ -53,7 +53,7 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
               </div>
               <div className="flex flex-row gap-1">
                 <Icon width={16} icon={"tabler:clock-hour-3"} />
-                {formatRelativeTime(jobListing.createdAt)}
+                {DateFns.formatDistanceToNow(jobListing.createdAt)}
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
@@ -64,16 +64,12 @@ export const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: Co
               </div>
               <div className="flex flex-row text-right">
                 <Icon width={16} icon={"tabler:calendar-down"} className="mr-1" />
-                <p>
+                <Text>
                   <b>Frist: </b>
                   {jobListing.deadline == null
-                    ? "Ingen Frist"
-                    : jobListing.deadline.toLocaleString("no-NO", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                </p>
+                    ? "Ingen frist"
+                    : DateFns.formatDate(jobListing.deadline, "dd. MMM yyyy HH:mm").toLowerCase()}
+                </Text>
               </div>
             </div>
           </div>

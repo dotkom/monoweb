@@ -1,8 +1,8 @@
 import type { Mark, MarkId, PersonalMark, UserId } from "@dotkomonline/types"
-import { add, compareAsc, isBefore, isWithinInterval, set } from "date-fns"
 import type { MarkService } from "./mark-service"
 import { PersonalMarkNotFoundError } from "./personal-mark-error"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
+import { DateFns } from "@dotkomonline/utils"
 
 export interface PersonalMarkService {
   getPersonalMarksByMarkId(markId: MarkId): Promise<PersonalMark[]>
@@ -75,38 +75,38 @@ export class PersonalMarkServiceImpl implements PersonalMarkService {
   }
 
   adjustDateIfStartingInHoliday(date: Date): Date {
-    if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
-      return set(date, { month: 7, date: 15 })
+    if (DateFns.isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
+      return DateFns.set(date, { month: 7, date: 15 })
     }
     if (date.getMonth() === 11) {
-      return set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
+      return DateFns.set(date, { year: date.getFullYear() + 1, month: 0, date: 15 })
     }
     if (date.getMonth() === 0 && date.getDate() < 15) {
-      return set(date, { month: 0, date: 15 })
+      return DateFns.set(date, { month: 0, date: 15 })
     }
     return date
   }
 
   adjustDateIfEndingInHoliday(date: Date): Date {
     let additionalDays = 0
-    if (isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
+    if (DateFns.isWithinInterval(date, { start: new Date(date.getFullYear(), 5), end: new Date(date.getFullYear(), 7, 15) })) {
       additionalDays = 75
     } else if (date.getMonth() === 11) {
       additionalDays = 45
     } else if (date.getMonth() === 0 && date.getDate() < 15) {
       additionalDays = 45
     }
-    return add(date, { days: additionalDays })
+    return DateFns.add(date, { days: additionalDays })
   }
 
   calculateExpiryDate(marks: { createdAt: Date; duration: number }[]): Date | null {
     const currentTime = new Date()
     let endDate: Date | null = null
-    marks.sort((a, b) => compareAsc(a.createdAt, b.createdAt))
+    marks.sort((a, b) => DateFns.compareAsc(a.createdAt, b.createdAt))
 
     for (const mark of marks) {
       const date =
-        endDate && isBefore(mark.createdAt, endDate)
+        endDate && DateFns.isBefore(mark.createdAt, endDate)
           ? new Date(this.adjustDateIfStartingInHoliday(endDate).getTime())
           : new Date(this.adjustDateIfStartingInHoliday(mark.createdAt).getTime())
       date.setDate(date.getDate() + mark.duration)

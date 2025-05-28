@@ -19,7 +19,7 @@ export function isMembershipValid(membership: Membership) {
 export function getMembershipGrade(membership: Membership | null): number | null {
   if (!membership) return null
 
-  const currentAcademicYear = getAcademicYear(new Date())
+  const currentAcademicYear = getAcademicYear()
   const yearsSinceMembershipStart = currentAcademicYear - membership.start_year
 
   switch (membership.type) {

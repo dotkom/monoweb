@@ -1,11 +1,11 @@
 import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { server } from "@/utils/trpc/server"
 import { Icon, cn } from "@dotkomonline/ui"
-import { getWeek, isThisWeek } from "date-fns"
 import Link from "next/link"
 import type { FC } from "react"
 import { EventCalendarItem } from "./EventCalendarItem"
 import { getCalendarArray } from "./getCalendarArray"
+import { DateFns } from "@dotkomonline/utils"
 
 interface CalendarProps {
   year: number
@@ -88,15 +88,15 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
         ))}
       </div>
       {cal.weeks.map((week, weekIndex) => (
-        <div className="relative min-h-28" key={`week-${getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
+        <div className="relative min-h-28" key={`week-${DateFns.getWeek(week.dates[1])}-${cal.year}-${cal.month}`}>
           <div className="grid grid-cols-7 sm:grid-cols-[auto,1fr,1fr,1fr,1fr,1fr,1fr,1fr] bottom-0 top-0 absolute w-full h-full">
             <div
               className={cn(
                 "hidden sm:flex w-6 pr-2 items-center justify-center",
-                isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-slate-10 text-xs"
+                DateFns.isThisWeek(week.dates[1]) ? "font-semibold text-sm" : "text-slate-10 text-xs"
               )}
             >
-              {getWeek(week.dates[1])}
+              {DateFns.getWeek(week.dates[1])}
             </div>
             {week.dates.map((day) => (
               <div
@@ -126,7 +126,7 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
             {week.events.map((row, rowIndex) => (
               <div
                 className="grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr,1fr,1fr]"
-                key={`week-${getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
+                key={`week-${DateFns.getWeek(week.dates[1])}-row-${rowIndex}-${year}-${month}`}
               >
                 <div className="w-0 sm:w-6 sm:pr-2" />
                 {row.map((event) => (
