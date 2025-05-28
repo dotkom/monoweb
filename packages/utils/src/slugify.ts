@@ -1,4 +1,4 @@
-import slugify_ from "slugify"
+import getSlug from "slugify"
 
 /**
  * Converts a string to a URL-friendly slug.
@@ -7,7 +7,7 @@ import slugify_ from "slugify"
  * @returns A URL-friendly slug version of the input string.
  */
 export function slugify(text: string) {
-  return slugify_(text, {
+  return getSlug(text, {
     lower: true,
     strict: true,
   })
