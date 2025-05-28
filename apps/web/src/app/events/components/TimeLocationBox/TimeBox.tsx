@@ -9,15 +9,11 @@ interface TimeBoxProps {
   event: Event
 }
 
-const formatTime = (date: Date) => DateFns.formatDate(date, "HH:mm")
-const formatDate = (date: Date) => {
-  const format = DateFns.isSameYear(date, new Date()) ? "dd. MMMM" : "dd. MMM yyyy"
-
-  return DateFns.formatDate(date, format).toLowerCase()
-}
-
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const { start, end, locationAddress, description, title: eventSummary } = event
+
+  const allInCurrentYear = DateFns.isThisYear(start) && DateFns.isThisYear(end)
+  const dateFormat = allInCurrentYear ? "dd. MMMM" : "dd. MMM yyyy"
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
@@ -35,9 +31,10 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
       <div className="flex flex-1 flex-col">
         <div className="flex flex-row gap-[2ch] items-center">
           <div className="flex flex-col">
-            <Text>{formatDate(start)}</Text>
+            <Text>{DateFns.formatDate(start, dateFormat)}</Text>
             <Text>
-              {formatTime(start)} {DateFns.isSameDay(start, end) && ` - ${formatTime(end)}`}
+              {DateFns.formatDate(start, "HH:mm")}{" "}
+              {DateFns.isSameDay(start, end) && ` - ${DateFns.formatDate(end, "HH:mm")}`}
             </Text>
           </div>
 
@@ -46,8 +43,8 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
               <Icon icon={"tabler:arrow-right"} className="text-2xl" />
 
               <div className="flex flex-col">
-                <Text>{formatDate(end)}</Text>
-                <Text>{formatTime(end)}</Text>
+                <Text>{DateFns.formatDate(end, dateFormat)}</Text>
+                <Text>{DateFns.formatDate(end, "HH:mm")}</Text>
               </div>
             </>
           )}
