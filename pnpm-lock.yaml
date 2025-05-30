@@ -481,6 +481,9 @@ importers:
       '@aws-sdk/client-sts':
         specifier: ^3.758.0
         version: 3.758.0
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../../packages/db

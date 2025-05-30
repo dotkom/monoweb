@@ -1,4 +1,4 @@
-import { type ServiceLayerOptions, createServiceLayer } from "@dotkomonline/core"
+import type { ServiceLayer } from "@dotkomonline/core"
 import type { inferAsyncReturnType } from "@trpc/server"
 
 export type CreateContextOptions = {
@@ -7,12 +7,11 @@ export type CreateContextOptions = {
 
   // auth0 subs
   adminPrincipals: string[]
-} & ServiceLayerOptions
+}
 
-export const createContext = async ({ principal, adminPrincipals, ...opts }: CreateContextOptions) => {
-  const services = await createServiceLayer(opts)
+export const createContext = async ({ principal, adminPrincipals }: CreateContextOptions, context: ServiceLayer) => {
   return {
-    ...services,
+    ...context,
     principal,
     adminPrincipals,
   }
