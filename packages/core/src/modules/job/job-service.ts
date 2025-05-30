@@ -1,6 +1,6 @@
 import type { JobId, JobWrite } from "@dotkomonline/types"
 import { type ScheduledTask, schedule } from "node-cron"
-import { JobNotEnabledError, JobNotFound, ScheduledTaskNotFound } from "./job-error"
+import { JobNotFound, ScheduledTaskNotFound } from "./job-error"
 import type { JobRepository } from "./job-repository"
 import type { AnyJob, GenericJob } from "./jobs/generic-job"
 
@@ -17,7 +17,7 @@ export type JobService = {
   getAllScheduledJobs: () => AnyJob[]
   scheduleJob: (job: AnyJob) => AnyJob
   createAndScheduleJob: (data: JobWrite) => Promise<AnyJob>
-  scheduleEnabledJobs: () => Promise<number>
+  scheduleAllJobs: () => Promise<number>
   cancelScheduledJob: (id: JobId) => void
   cancelScheduledJobByScheduledTaskId: (scheduledTaskId: ScheduledTaskId) => void
 }
@@ -66,10 +66,6 @@ export class JobServiceImpl implements JobService {
   }
 
   public scheduleJob(job: AnyJob) {
-    if (!job.enabled) {
-      throw new JobNotEnabledError(job.id)
-    }
-
     const task = schedule(job.cronExpression, () => {
       job.handlerFunction(...job.payload)
     })
@@ -104,12 +100,10 @@ export class JobServiceImpl implements JobService {
     return this.scheduleJob(job)
   }
 
-  public async scheduleEnabledJobs() {
-    const jobs = await this.jobsRepository.getEnabledJobs()
+  public async scheduleAllJobs() {
+    const jobs = await this.jobsRepository.getAll()
 
-    for (const job of jobs) {
-      this.scheduleJob(job)
-    }
+    jobs.forEach((job) => this.scheduleJob(job))
 
     return jobs.length
   }

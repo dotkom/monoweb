@@ -30,9 +30,3 @@ export class ScheduledTaskNotFound extends ApplicationError {
     super(PROBLEM_DETAILS.NotFound, `Scheduled task with id ${id} not found`)
   }
 }
-
-export class JobNotEnabledError extends ApplicationError {
-  constructor(id: string) {
-    super(PROBLEM_DETAILS.IllegalState, `Job with id ${id} is not enabled and cannot be scheduled`)
-  }
-}

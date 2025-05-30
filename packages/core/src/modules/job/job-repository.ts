@@ -8,8 +8,7 @@ import type { AnyJob } from "./jobs/generic-job"
 export interface JobRepository {
   create(data: JobWrite): Promise<AnyJob>
   getById(id: JobId): Promise<AnyJob | null>
-  getEnabledJobs(): Promise<AnyJob[]>
-  getAllJobs(): Promise<AnyJob[]>
+  getAll(): Promise<AnyJob[]>
   update(id: string, data: Partial<JobWrite>): Promise<AnyJob>
   delete(id: JobId): Promise<void>
 }
@@ -25,11 +24,11 @@ export class JobsRepositoryImpl implements JobRepository {
   }
 
   private parse(data: Job): AnyJob {
-    switch (data.handlerName) {
-      case AttemptReserveAttendeeJob.handlerName:
+    switch (data.name) {
+      case AttemptReserveAttendeeJob.jobName:
         return new AttemptReserveAttendeeJob(data, this.attendeeService)
       default:
-        throw new JobHandlerNotFound(data.handlerName)
+        throw new JobHandlerNotFound(data.name)
     }
   }
 
@@ -69,17 +68,7 @@ export class JobsRepositoryImpl implements JobRepository {
     return this.parse(result)
   }
 
-  public async getEnabledJobs() {
-    const response = await this.db.job.findMany({
-      where: {
-        enabled: true,
-      },
-    })
-
-    return response.map((job) => this.parse(job))
-  }
-
-  public async getAllJobs() {
+  public async getAll() {
     const response = await this.db.job.findMany()
 
     return response.map((job) => this.parse(job))

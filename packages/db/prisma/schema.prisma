@@ -507,8 +507,7 @@ model EventInterestGroup {
 model Job {
   id             String   @id @default(uuid())
   createdAt      DateTime @default(now())
+  name           String
   cronExpression String
-  enabled        Boolean  @default(true)
-  handlerName    String
   payload        Json?
 }

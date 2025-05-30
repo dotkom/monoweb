@@ -11,11 +11,10 @@ export class GenericJob {
   protected attendeeService: AttendeeService
 
   public readonly id: string
-  public readonly enabled: boolean
+  public readonly createdAt: Date
+  public readonly name: string
   public readonly cronExpression: string
   public readonly rawPayload: JsonValue
-  public readonly handlerName: string
-  public readonly createdAt: Date
 
   public scheduledTask?: ScheduledTask
 
@@ -23,10 +22,9 @@ export class GenericJob {
     this.attendeeService = attendeeService
 
     this.id = data.id
-    this.enabled = data.enabled
-    this.cronExpression = data.cronExpression
-    this.handlerName = data.handlerName
     this.createdAt = data.createdAt
+    this.name = data.name
+    this.cronExpression = data.cronExpression
     this.scheduledTask = undefined
 
     this.rawPayload = data.payload
@@ -38,8 +36,8 @@ export class GenericJob {
 
   public into() {
     // Payload validation is handled in the jobs' constructors. This is to make typing easier
-    switch (this.handlerName) {
-      case AttemptReserveAttendeeJob.handlerName:
+    switch (this.name) {
+      case AttemptReserveAttendeeJob.jobName:
         return new AttemptReserveAttendeeJob(this.toJSON(), this.attendeeService)
 
       default:
@@ -50,11 +48,10 @@ export class GenericJob {
   private toJSON(): Job {
     return {
       id: this.id,
-      enabled: this.enabled,
+      createdAt: this.createdAt,
+      name: this.name,
       cronExpression: this.cronExpression,
       payload: this.rawPayload,
-      handlerName: this.handlerName,
-      createdAt: this.createdAt,
     }
   }
 }
