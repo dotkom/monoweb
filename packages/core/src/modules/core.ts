@@ -35,6 +35,8 @@ import { type InterestGroupRepository, InterestGroupRepositoryImpl } from "./int
 import { type InterestGroupService, InterestGroupServiceImpl } from "./interest-group/interest-group-service"
 import { type JobListingRepository, JobListingRepositoryImpl } from "./job-listing/job-listing-repository"
 import { type JobListingService, JobListingServiceImpl } from "./job-listing/job-listing-service"
+import { type JobRepository, JobsRepositoryImpl } from "./job/job-repository"
+import { type JobService, JobServiceImpl } from "./job/job-service"
 import { type MarkRepository, MarkRepositoryImpl } from "./mark/mark-repository"
 import { type MarkService, MarkServiceImpl } from "./mark/mark-service"
 import { type PersonalMarkRepository, PersonalMarkRepositoryImpl } from "./mark/personal-mark-repository"
@@ -183,6 +185,9 @@ export const createServiceLayer = async ({
     articleTagLinkRepository
   )
 
+  const jobRepository: JobRepository = new JobsRepositoryImpl(db, attendeeService)
+  const jobService: JobService = new JobServiceImpl(jobRepository)
+
   return {
     userService,
     eventService,
@@ -205,5 +210,6 @@ export const createServiceLayer = async ({
     attendeeService,
     interestGroupRepository,
     interestGroupService,
+    jobService,
   }
 }

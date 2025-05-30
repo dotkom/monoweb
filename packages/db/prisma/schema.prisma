@@ -503,3 +503,11 @@ model EventInterestGroup {
 
   @@map("event_interest_group")
 }
+
+model Job {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  name           String
+  cronExpression String
+  payload        Json?
+}

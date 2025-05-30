@@ -34,7 +34,7 @@ export interface AttendeeService {
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(id: AttendeeId, attended: boolean): Promise<Attendee>
-  attemptReserve(attendeeId: Attendee, pool: AttendancePool): Promise<Attendee | false>
+  attemptReserve(attendee: Attendee, pool: AttendancePool): Promise<Attendee | false>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }

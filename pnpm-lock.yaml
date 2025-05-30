@@ -838,6 +838,9 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      node-cron:
+        specifier: ^4.0.7
+        version: 4.0.7
       stripe:
         specifier: ^13.11.0
         version: 13.11.0
@@ -7187,6 +7190,10 @@ packages:
         optional: true
       sass:
         optional: true
+
+  node-cron@4.0.7:
+    resolution: {integrity: sha512-A37UUDpxRT/kWanELr/oMayCWQFk9Zx9BEUoXrAKuKwKzH4XuAX+vMixMBPkgZBkADgJwXv91w5cMRTNSVP/mA==}
+    engines: {node: '>=6.0.0'}
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -15980,6 +15987,8 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+
+  node-cron@4.0.7: {}
 
   node-fetch@2.7.0:
     dependencies:
