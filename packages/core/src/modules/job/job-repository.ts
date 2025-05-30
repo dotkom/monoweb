@@ -5,7 +5,7 @@ import { JobHandlerNotFound } from "./job-error"
 import { AttemptReserveAttendeeJob } from "./jobs/attempt-reserve-attendee-job"
 import type { AnyJob } from "./jobs/generic-job"
 
-export interface JobsRepository {
+export interface JobRepository {
   create(data: JobWrite): Promise<AnyJob>
   getById(id: JobId): Promise<AnyJob | null>
   getEnabledJobs(): Promise<AnyJob[]>
@@ -14,7 +14,7 @@ export interface JobsRepository {
   delete(id: JobId): Promise<void>
 }
 
-export class JobsRepositoryImpl implements JobsRepository {
+export class JobsRepositoryImpl implements JobRepository {
   private readonly db: DBClient
 
   private readonly attendeeService: AttendeeService

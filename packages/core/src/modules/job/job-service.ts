@@ -1,7 +1,7 @@
 import type { JobId, JobWrite } from "@dotkomonline/types"
 import { type ScheduledTask, schedule } from "node-cron"
 import { JobNotEnabledError, JobNotFound, ScheduledTaskNotFound } from "./job-error"
-import type { JobsRepository } from "./job-repository"
+import type { JobRepository } from "./job-repository"
 import type { AnyJob, GenericJob } from "./jobs/generic-job"
 
 type ScheduledTaskId = ScheduledTask["id"]
@@ -23,11 +23,11 @@ export type JobService = {
 }
 
 export class JobServiceImpl implements JobService {
-  private readonly jobsRepository: JobsRepository
+  private readonly jobsRepository: JobRepository
 
   public scheduledJobs: Map<JobId, AnyJob> = new Map()
 
-  constructor(jobsRepository: JobsRepository) {
+  constructor(jobsRepository: JobRepository) {
     this.jobsRepository = jobsRepository
   }
 
