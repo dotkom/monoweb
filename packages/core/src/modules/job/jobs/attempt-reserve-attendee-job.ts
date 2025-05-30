@@ -6,7 +6,7 @@ import { GenericJob } from "./generic-job"
 
 export class AttemptReserveAttendeeJob extends GenericJob {
   public static readonly payloadSchema = z.tuple([AttendeeSchema, AttendancePoolSchema])
-  public static readonly handlerId = "attempt-reserve-attendee"
+  public static readonly handlerName = "attempt-reserve-attendee"
 
   public payload: z.infer<typeof AttemptReserveAttendeeJob.payloadSchema>
 

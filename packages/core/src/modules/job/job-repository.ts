@@ -25,11 +25,11 @@ export class JobsRepositoryImpl implements JobRepository {
   }
 
   private parse(data: Job): AnyJob {
-    switch (data.handler) {
-      case "attempt-reserve-attendee":
+    switch (data.handlerName) {
+      case AttemptReserveAttendeeJob.handlerName:
         return new AttemptReserveAttendeeJob(data, this.attendeeService)
       default:
-        throw new JobHandlerNotFound(data.handler)
+        throw new JobHandlerNotFound(data.handlerName)
     }
   }
 

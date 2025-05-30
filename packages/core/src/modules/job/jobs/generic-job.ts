@@ -14,7 +14,7 @@ export class GenericJob {
   public readonly enabled: boolean
   public readonly cronExpression: string
   public readonly rawPayload: JsonValue
-  public readonly handler: string
+  public readonly handlerName: string
   public readonly createdAt: Date
 
   public scheduledTask?: ScheduledTask
@@ -25,7 +25,7 @@ export class GenericJob {
     this.id = data.id
     this.enabled = data.enabled
     this.cronExpression = data.cronExpression
-    this.handler = data.handler
+    this.handlerName = data.handlerName
     this.createdAt = data.createdAt
     this.scheduledTask = undefined
 
@@ -37,24 +37,14 @@ export class GenericJob {
   }
 
   public into() {
-    const errorMessage = `Job ${this.id} has no handler function defined.`
-
-    switch (this.handler) {
-      case AttemptReserveAttendeeJob.handlerId: {
-        if (!this.isAttemptReserveAttendeeJob()) {
-          throw new JobHandlerNotFound(errorMessage)
-        }
-
+    // Payload validation is handled in the jobs' constructors. This is to make typing easier
+    switch (this.handlerName) {
+      case AttemptReserveAttendeeJob.handlerName:
         return new AttemptReserveAttendeeJob(this.toJSON(), this.attendeeService)
-      }
 
       default:
-        throw new JobHandlerNotFound(errorMessage)
+        throw new JobHandlerNotFound(`Job ${this.id} has no handler function defined.`)
     }
-  }
-
-  public isAttemptReserveAttendeeJob(): this is AttemptReserveAttendeeJob {
-    return this.handler === AttemptReserveAttendeeJob.handlerId
   }
 
   private toJSON(): Job {
@@ -63,7 +53,7 @@ export class GenericJob {
       enabled: this.enabled,
       cronExpression: this.cronExpression,
       payload: this.rawPayload,
-      handler: this.handler,
+      handlerName: this.handlerName,
       createdAt: this.createdAt,
     }
   }

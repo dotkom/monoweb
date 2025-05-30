@@ -505,10 +505,10 @@ model EventInterestGroup {
 }
 
 model Job {
-  id String  @id @default(uuid())
-  createdAt DateTime @default(now())
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
   cronExpression String
-  enabled Boolean @default(true)
-  handler String
-  payload Json?
+  enabled        Boolean  @default(true)
+  handlerName    String
+  payload        Json?
 }
