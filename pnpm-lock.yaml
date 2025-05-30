@@ -481,6 +481,9 @@ importers:
       '@aws-sdk/client-sts':
         specifier: ^3.758.0
         version: 3.758.0
+      '@dotkomonline/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -13473,7 +13476,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.12
       tinyrainbow: 2.0.0
-      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.14.1)(@vitest/ui@3.1.1)(jiti@2.4.2)(jsdom@22.1.0)(msw@2.7.0(@types/node@22.14.1)(typescript@5.8.2))(sugarss@5.0.0(postcss@8.5.3))(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(@vitest/ui@3.1.1)(jiti@2.4.2)(jsdom@22.1.0)(msw@2.7.0(@types/node@22.13.14)(typescript@5.8.2))(sugarss@5.0.0(postcss@8.5.3))(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
 
   '@vitest/utils@3.1.1':
     dependencies:
@@ -17543,7 +17546,7 @@ snapshots:
     dependencies:
       ts-essentials: 10.0.2(typescript@5.8.2)
       typescript: 5.8.2
-      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.14.1)(@vitest/ui@3.1.1)(jiti@2.4.2)(jsdom@22.1.0)(msw@2.7.0(@types/node@22.14.1)(typescript@5.8.2))(sugarss@5.0.0(postcss@8.5.3))(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(@vitest/ui@3.1.1)(jiti@2.4.2)(jsdom@22.1.0)(msw@2.7.0(@types/node@22.13.14)(typescript@5.8.2))(sugarss@5.0.0(postcss@8.5.3))(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
 
   vitest@3.1.1(@types/debug@4.1.12)(@types/node@22.13.14)(@vitest/ui@3.1.1)(jiti@2.4.2)(jsdom@22.1.0)(msw@2.7.0(@types/node@22.13.14)(typescript@5.8.2))(sugarss@5.0.0(postcss@8.5.3))(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0):
     dependencies:
