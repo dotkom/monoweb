@@ -1,8 +1,8 @@
 import { AttendancePoolSchema, AttendeeSchema, type Job } from "@dotkomonline/types"
 import { z } from "zod"
 import type { AttendeeService } from "../../attendance/attendee-service"
+import { JobPayloadValidationError } from "../job-error"
 import { GenericJob } from "./generic-job"
-import { JobPayloadValidationError } from "../job-error.js"
 
 export class AttemptReserveAttendeeJob extends GenericJob {
   public static readonly payloadSchema = z.tuple([AttendeeSchema, AttendancePoolSchema])
@@ -16,7 +16,9 @@ export class AttemptReserveAttendeeJob extends GenericJob {
     const parsedPayload = AttemptReserveAttendeeJob.payloadSchema.safeParse(data.payload)
 
     if (!parsedPayload.success) {
-      throw new JobPayloadValidationError(`Invalid payload for AttemptReserveAttendeeJob: ${parsedPayload.error.message}`)
+      throw new JobPayloadValidationError(
+        `Invalid payload for AttemptReserveAttendeeJob: ${parsedPayload.error.message}`
+      )
     }
 
     this.payload = parsedPayload.data

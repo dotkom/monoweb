@@ -1,9 +1,9 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Job, JobId, JobWrite } from "@dotkomonline/types"
+import type { AttendeeService } from "../attendance/attendee-service"
 import { JobHandlerNotFound } from "./job-error"
 import { AttemptReserveAttendeeJob } from "./jobs/attempt-reserve-attendee-job"
-import type { AnyJob, GenericJob } from "./jobs/generic-job"
-import { AttendeeService } from "../attendance/attendee-service"
+import type { AnyJob } from "./jobs/generic-job"
 
 export interface JobsRepository {
   create(data: JobWrite): Promise<AnyJob>

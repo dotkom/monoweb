@@ -1,9 +1,8 @@
 import type { Job } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { ScheduledTask } from "node-cron"
-import type { z } from "zod"
 import type { AttendeeService } from "../../attendance/attendee-service.js"
-import { JobHandlerDoesNotExistOnGenericJob, JobHandlerNotFound, JobPayloadValidationError } from "../job-error"
+import { JobHandlerDoesNotExistOnGenericJob, JobHandlerNotFound } from "../job-error"
 import { AttemptReserveAttendeeJob } from "./attempt-reserve-attendee-job"
 
 export type AnyJob = ReturnType<typeof GenericJob.prototype.into>
