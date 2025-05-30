@@ -1,0 +1,14 @@
+import { schemas } from "@dotkomonline/db/schemas"
+import type { z } from "zod"
+
+export const JobSchema = schemas.JobSchema.extend({})
+
+export type Job = z.infer<typeof JobSchema>
+export type JobId = Job["id"]
+
+export const JobWriteSchema = JobSchema.omit({
+  id: true,
+  createdAt: true,
+})
+
+export type JobWrite = z.infer<typeof JobWriteSchema>
