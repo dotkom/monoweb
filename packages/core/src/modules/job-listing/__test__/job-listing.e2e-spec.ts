@@ -1,5 +1,5 @@
 import type { Company } from "@dotkomonline/types"
-import { addDays } from "date-fns"
+import { DateFns } from "@dotkomonline/utils"
 import { beforeEach, describe, expect, it } from "vitest"
 import { core } from "../../../../vitest-integration.setup"
 import { getCompanyMock, getJobListingMock } from "../../../mock"
@@ -23,7 +23,7 @@ describe("job-listings", async () => {
     await expect(
       core.jobListingService.create(
         getJobListingMock(company.id, {
-          start: addDays(new Date(), 2),
+          start: DateFns.addDays(new Date(), 2),
           end: new Date(),
         })
       )

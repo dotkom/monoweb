@@ -1,6 +1,6 @@
 import type { Event } from "@dotkomonline/types"
 import { Icon, Text } from "@dotkomonline/ui"
-import { IntlFormats } from "@dotkomonline/utils"
+import { DateFns } from "@dotkomonline/utils"
 import type { FC } from "react"
 import { ActionLink } from "./ActionLink"
 import { createGoogleCalendarLink } from "./utils"
@@ -9,16 +9,11 @@ interface TimeBoxProps {
   event: Event
 }
 
-const formatWithIntl = (date: Date, format: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat("nb-NO", format).format(date)
-
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const { start, end, locationAddress, description, title: eventSummary } = event
 
-  const multipleDays = start.getDate() !== end.getDate()
-
-  const time = { start: formatWithIntl(start, IntlFormats.Time), end: formatWithIntl(end, IntlFormats.Time) }
-  const date = { start: formatWithIntl(start, IntlFormats.ShortDate), end: formatWithIntl(end, IntlFormats.ShortDate) }
+  const allInCurrentYear = DateFns.isThisYear(start) && DateFns.isThisYear(end)
+  const dateFormat = allInCurrentYear ? "dd. MMMM" : "dd. MMM yyyy"
 
   const gcalLink = createGoogleCalendarLink({
     title: eventSummary,
@@ -36,17 +31,20 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
       <div className="flex flex-1 flex-col">
         <div className="flex flex-row gap-[2ch] items-center">
           <div className="flex flex-col">
-            <Text>{date.start}</Text>
+            <Text>{DateFns.formatDate(start, dateFormat)}</Text>
             <Text>
-              {time.start} {!multipleDays ? ` - ${time.end}` : null}
+              {DateFns.formatDate(start, "HH:mm")}{" "}
+              {DateFns.isSameDay(start, end) && ` - ${DateFns.formatDate(end, "HH:mm")}`}
             </Text>
           </div>
-          {multipleDays && (
+
+          {!DateFns.isSameDay(start, end) && (
             <>
               <Icon icon={"tabler:arrow-right"} className="text-2xl" />
+
               <div className="flex flex-col">
-                <Text>{date.end}</Text>
-                <Text>{time.end}</Text>
+                <Text>{DateFns.formatDate(end, dateFormat)}</Text>
+                <Text>{DateFns.formatDate(end, "HH:mm")}</Text>
               </div>
             </>
           )}

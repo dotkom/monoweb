@@ -1,7 +1,7 @@
 "use client"
 
 import type { JobListing } from "@dotkomonline/types"
-import { formatRelativeTime } from "@dotkomonline/utils"
+import { DateFns } from "@dotkomonline/utils"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -26,7 +26,7 @@ export const useJobListingTable = ({ data }: Props) => {
       columnHelper.accessor("end", {
         header: () => "Aktiv til",
         cell: (info) => {
-          return <Text>{formatRelativeTime(info.getValue())}</Text>
+          return <Text>{DateFns.formatDistanceToNow(info.getValue())}</Text>
         },
       }),
       columnHelper.accessor((evt) => evt, {

@@ -1,7 +1,7 @@
 "use client"
 
 import type { Mark, MarkId } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
+import { DateFns } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -22,7 +22,7 @@ const columns = [
   }),
   columnHelper.accessor("createdAt", {
     header: () => "Opprettet",
-    cell: (info) => formatDate(info.getValue()),
+    cell: (info) => DateFns.formatDate(info.getValue(), "yyyy-MM-dd HH:mm"),
   }),
   columnHelper.accessor((mark) => mark, {
     id: "count",

@@ -15,7 +15,7 @@ import {
   getDisplayName,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { addHours } from "date-fns"
+import { DateFns } from "@dotkomonline/utils"
 import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
@@ -188,11 +188,12 @@ export class AttendeeServiceImpl implements AttendeeService {
     // TODO: Use mark service to get delay because of mark
     reserveDelayHours += 0
 
-    // If the pool has a merge delay the reserve time is pushed
     const isMergePool = attendancePool.capacity === 0
+
+    // If the pool has a merge delay the reserve time is pushed
     reserveDelayHours += (isMergePool && attendancePool.mergeDelayHours) || 0
 
-    const reserveTime = addHours(registerTime, reserveDelayHours)
+    const reserveTime = DateFns.addHours(registerTime, reserveDelayHours)
 
     const displayName = getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
@@ -230,7 +231,7 @@ export class AttendeeServiceImpl implements AttendeeService {
    * @returns Returns the attendee if the reservation was successful, false otherwise.
    */
   async attemptReserve(attendee: Attendee, pool: AttendancePool, bypassCriteria = false) {
-    const attendeeIsPastReserveTime = attendee.reserveTime <= new Date()
+    const attendeeIsPastReserveTime = !DateFns.isFuture(attendee.reserveTime)
     const poolHasCapacity = pool.numAttendees < pool.capacity
 
     if ((attendeeIsPastReserveTime && poolHasCapacity) || bypassCriteria) {

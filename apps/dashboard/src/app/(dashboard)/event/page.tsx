@@ -1,7 +1,7 @@
 "use client"
 
 import type { EventDetail } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
+import { DateFns } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
 import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -28,7 +28,7 @@ export default function EventPage() {
       }),
       columnHelper.accessor("event.start", {
         header: () => "Startdato",
-        cell: (info) => formatDate(info.getValue()),
+        cell: (info) => DateFns.formatDate(info.getValue(), "yyyy-MM-dd HH:mm"),
       }),
       columnHelper.accessor((event) => event, {
         id: "organizers",

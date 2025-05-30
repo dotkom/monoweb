@@ -1,11 +1,11 @@
+import { DateFns } from "@dotkomonline/utils"
 import type { Prisma } from "@prisma/client"
-import { addDays } from "date-fns"
 
 export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
   {
     registerStart: new Date(),
-    registerEnd: addDays(new Date(), 7),
-    deregisterDeadline: addDays(new Date(), 7),
+    registerEnd: DateFns.addDays(new Date(), 7),
+    deregisterDeadline: DateFns.addDays(new Date(), 7),
     selections: [
       {
         id: "0",
@@ -47,8 +47,8 @@ export const getAttendanceFixtures = (): Prisma.AttendanceCreateManyInput[] => [
   },
   {
     registerStart: new Date(),
-    registerEnd: addDays(new Date(), 7),
-    deregisterDeadline: addDays(new Date(), 7),
+    registerEnd: DateFns.addDays(new Date(), 7),
+    deregisterDeadline: DateFns.addDays(new Date(), 7),
     selections: [],
   },
 ]

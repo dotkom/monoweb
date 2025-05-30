@@ -1,5 +1,5 @@
 import type { EventWrite } from "@dotkomonline/types"
-import { isBefore } from "date-fns"
+import { DateFns } from "@dotkomonline/utils"
 import type { z } from "zod"
 
 /**
@@ -26,7 +26,7 @@ const isValidMapUrl = (value: string | null) => {
 export const validateEventWrite = (event: EventWrite): z.ZodIssue[] => {
   const issues: z.ZodIssue[] = []
 
-  if (isBefore(event.end, event.start)) {
+  if (DateFns.isBefore(event.end, event.start)) {
     issues.push({ code: "custom", message: "Sluttidspunkt må være etter starttidspunkt", path: ["end"] })
   }
 

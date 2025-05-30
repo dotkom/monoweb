@@ -1,7 +1,7 @@
 "use client"
 
 import type { Offline } from "@dotkomonline/types"
-import { formatDate } from "@dotkomonline/utils"
+import { DateFns } from "@dotkomonline/utils"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -21,7 +21,13 @@ export const useOfflineTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("published", {
         header: () => "Utgivelsesdato",
-        cell: (info) => <Text>{formatDate(info.getValue(), { relativeDateThresholdDays: 7 })}</Text>,
+        cell: (info) => {
+          if (DateFns.differenceInDays(info.getValue(), new Date()) > 7) {
+            return <Text>{DateFns.formatDate(info.getValue(), "yyyy-MM-dd")}</Text>
+          }
+
+          return <Text>{DateFns.formatDistanceToNow(info.getValue())}</Text>
+        },
       }),
       columnHelper.accessor("fileUrl", {
         header: () => "Fil",

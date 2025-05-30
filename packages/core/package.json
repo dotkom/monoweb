@@ -22,7 +22,6 @@
     "@dotkomonline/utils": "workspace:*",
     "@prisma/client": "^6.3.1",
     "auth0": "^4.18.0",
-    "date-fns": "^4.1.0",
     "stripe": "^13.11.0",
     "zod": "^3.22.4"
   },

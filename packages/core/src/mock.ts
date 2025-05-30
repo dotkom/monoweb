@@ -1,5 +1,5 @@
 import type { CompanyWrite, JobListingWrite, UserWrite } from "@dotkomonline/types"
-import { addWeeks, addYears } from "date-fns"
+import { DateFns } from "@dotkomonline/utils"
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   email: "test-mail-that-does-not-exist6123123@gmail.com",
@@ -37,11 +37,11 @@ export const getJobListingMock = (companyId: string, defaults: Partial<JobListin
     "As a Core Developer, you will design, implement, and optimize core functionalities of Vespa, ensuring top-notch performance and reliability.",
   description:
     "You will work on challenging search and recommendation use cases, collaborating with a cross-functional team of engineers and developer advocates.",
-  start: addWeeks(addYears(new Date(), 1), 2),
-  end: addWeeks(addYears(new Date(), 1), 4),
+  start: DateFns.addWeeks(DateFns.addYears(new Date(), 1), 2),
+  end: DateFns.addWeeks(DateFns.addYears(new Date(), 1), 4),
   featured: false,
   hidden: false,
-  deadline: addWeeks(new Date(), 2),
+  deadline: DateFns.addWeeks(new Date(), 2),
   employment: "FULLTIME",
   applicationLink: "https://example.com",
   applicationEmail: "hello@example.com",
