@@ -34,34 +34,32 @@ export class JobExecutor {
   }
 
   private async executorLoop() {
-    console.log("Job executor running...");
+    if (this.running) {
+      return
+    }
 
-      if (this.running) {
-        return
-      }
+    this.running = true
 
-      this.running = true
+    const jobs = await this.jobService.getAllProcessableJobs()
 
-      const jobs = await this.jobService.getAllProcessableJobs()
+    for (const job of jobs) {
+      switch (job.name) {
+        case "AttemptReserveAttendee": {
+          await this.runAttemptReserveAttendeeJob(job.payload)
+            .then(() => this.jobCompleted(job.id))
+            .catch((error) => this.jobFailed(job.id, error))
+          break
+        }
 
-      for (const job of jobs) {
-        switch (job.name) {
-          case "AttemptReserveAttendee": {
-            await this.runAttemptReserveAttendeeJob(job.payload)
-              .then(() => this.jobCompleted(job.id))
-              .catch((error) => this.jobFailed(job.id, error))
-            break
-          }
-
-          default: {
-            console.warn(`Unknown job name: ${job.name}`)
-            await this.jobService.update(job.id, { status: "FAILED" })
-            break
-          }
+        default: {
+          console.warn(`Unknown job name: ${job.name}`)
+          await this.jobService.update(job.id, { status: "FAILED" })
+          break
         }
       }
+    }
 
-      this.running = false
+    this.running = false
   }
 
   public initialize() {
