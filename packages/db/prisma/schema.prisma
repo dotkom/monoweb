@@ -504,10 +504,30 @@ model EventInterestGroup {
   @@map("event_interest_group")
 }
 
+enum JobName {
+  AttemptReserveAttendee
+
+  @@map("job_name")
+}
+
+enum JobStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELED
+
+  @@map("job_status")
+}
+
 model Job {
-  id             String   @id @default(uuid())
-  createdAt      DateTime @default(now())
-  name           String
-  cronExpression String
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  scheduledAt    DateTime  @db.Timestamptz(3)
+  processedAt    DateTime? @db.Timestamptz(3)
+  name           JobName
+  status         JobStatus @default(PENDING)
   payload        Json?
+
+  @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
+  @@map("job")
 }
