@@ -5,6 +5,8 @@ export const JobSchema = schemas.JobSchema.extend({})
 
 export type Job = z.infer<typeof JobSchema>
 export type JobId = Job["id"]
+export type JobStatus = Job["status"]
+export type JobName = Job["name"]
 
 export const JobWriteSchema = JobSchema.omit({
   id: true,

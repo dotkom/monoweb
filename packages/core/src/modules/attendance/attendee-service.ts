@@ -16,13 +16,12 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours } from "date-fns"
-import { AttendeeNotFoundError } from "../event/attendee-error"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotOpenError } from "./attendance-error"
 import { AttendancePoolNotFoundError, AttendancePoolValidationError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError } from "./attendee-error"
+import { AttendeeDeregistrationError, AttendeeNotFoundError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 
 export interface AttendeeService {
@@ -78,13 +77,13 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
-    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
     const user = await this.userService.getById(userId)
-    if (attendee === null) {
-      throw new AttendeeNotFoundError("")
-    }
     if (user === null) {
       throw new UserNotFoundError(userId)
+    }
+    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+    if (attendee === null) {
+      throw new AttendeeNotFoundError(`userid: ${userId}`, attendanceId)
     }
     if (attendee.attended === true) {
       return { attendee, user, alreadyAttended: true }
@@ -252,7 +251,9 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
 
     if (attendee === null) {
-      throw new AttendeeNotFoundError("Could not deregister because not registered")
+      throw new AttendeeDeregistrationError(
+        `Attendee with user id '${userId}' could not deregister in attendance with id '${attendanceId}' because attendee is not registered.`
+      )
     }
 
     await this.attendeeRepository.delete(attendee.id)

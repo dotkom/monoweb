@@ -13,20 +13,14 @@ export class JobPayloadValidationError extends ApplicationError {
   }
 }
 
-export class JobHandlerNotFound extends ApplicationError {
-  constructor(handler: string) {
-    super(PROBLEM_DETAILS.NotFound, `Job handler with name '${handler}' not found`)
+export class PayloadHandlerNotFoundError extends ApplicationError {
+  constructor(name: string) {
+    super(PROBLEM_DETAILS.UnprocessableContent, `Payload handler for job ${name} not found`)
   }
 }
 
-export class JobHandlerDoesNotExistOnGenericJob extends ApplicationError {
-  constructor() {
-    super(PROBLEM_DETAILS.NotFound, "Job handler does not exist on generic job")
-  }
-}
-
-export class ScheduledTaskNotFound extends ApplicationError {
-  constructor(id: string) {
-    super(PROBLEM_DETAILS.NotFound, `Scheduled task with id ${id} not found`)
+export class PayloadNotFoundError extends ApplicationError {
+  constructor(name: string) {
+    super(PROBLEM_DETAILS.UnprocessableContent, `Payload for job ${name} not found, but is required`)
   }
 }

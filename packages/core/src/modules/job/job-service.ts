@@ -1,135 +1,99 @@
-import type { JobId, JobWrite } from "@dotkomonline/types"
-import { type ScheduledTask, schedule } from "node-cron"
-import { JobNotFound, ScheduledTaskNotFound } from "./job-error"
+import type { Job, JobId, JobName, JobWrite } from "@dotkomonline/types"
+import type { JsonValue } from "@prisma/client/runtime/library"
+import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "./job-error"
 import type { JobRepository } from "./job-repository"
-import type { AnyJob, GenericJob } from "./jobs/generic-job"
-
-type ScheduledTaskId = ScheduledTask["id"]
+import { PayloadHandler } from "./payload/"
 
 export type JobService = {
-  create: (data: JobWrite) => Promise<AnyJob>
-  update: (id: JobId, data: Partial<JobWrite>) => Promise<AnyJob>
+  create: (data: JobWrite) => Promise<Job>
+  createMany: (data: JobWrite[]) => Promise<void>
+  update: (id: JobId, data: Partial<JobWrite>) => Promise<Job>
   delete: (id: JobId) => Promise<void>
-  getById: (id: JobId) => Promise<AnyJob | null>
-  getScheduledJobById: (id: string) => AnyJob | null
-  getScheduledJob: (id: JobId) => AnyJob
-  getScheduledJobByScheduledTaskId: (scheduledTaskId: ScheduledTaskId) => AnyJob | null
-  getAllScheduledJobs: () => AnyJob[]
-  scheduleJob: (job: AnyJob) => AnyJob
-  createAndScheduleJob: (data: JobWrite) => Promise<AnyJob>
-  scheduleAllJobs: () => Promise<number>
-  cancelScheduledJob: (id: JobId) => void
-  cancelScheduledJobByScheduledTaskId: (scheduledTaskId: ScheduledTaskId) => void
+  getById: (id: JobId) => Promise<Job | null>
+  getAllProcessableJobs: () => Promise<Job[]>
+  cancel: (id: JobId) => Promise<Job>
+
+  validatePayload: <Name extends JobName>(name: Name, payload: JsonValue) => (typeof PayloadHandler)[Name]["output"]
 }
 
 export class JobServiceImpl implements JobService {
-  private readonly jobsRepository: JobRepository
-
-  public scheduledJobs: Map<JobId, AnyJob> = new Map()
+  private readonly jobRepository: JobRepository
 
   constructor(jobsRepository: JobRepository) {
-    this.jobsRepository = jobsRepository
+    this.jobRepository = jobsRepository
+  }
+
+  private buildJobData<T extends { name: JobWrite["name"]; payload: JobWrite["payload"] }>(data: T): T {
+    const payloadHandler = PayloadHandler[data.name]
+
+    if (!payloadHandler && data.payload) {
+      throw new PayloadHandlerNotFoundError(data.name)
+    }
+
+    if (payloadHandler && !data.payload) {
+      throw new PayloadNotFoundError(data.name)
+    }
+
+    const payload: JsonValue = payloadHandler && data.payload ? payloadHandler.parse(data.payload) : null
+
+    return { ...data, payload }
   }
 
   public async create(data: JobWrite) {
-    return await this.jobsRepository.create(data)
+    return await this.jobRepository.create(this.buildJobData(data))
+  }
+
+  public async createMany(data: JobWrite[]) {
+    if (data.length === 0) {
+      throw new JobNotFound("No jobs to create")
+    }
+
+    return await this.jobRepository.createMany(data.map((job) => this.buildJobData(job)))
   }
 
   public async update(id: JobId, data: Partial<JobWrite>) {
-    return await this.jobsRepository.update(id, data)
+    let jobData: Partial<JobWrite> = data
+
+    if (data.payload) {
+      const name = data.name || (await this.jobRepository.getById(id))?.name
+
+      if (!name) {
+        throw new JobNotFound(`Job with id ${id} not found`)
+      }
+
+      jobData = this.buildJobData({ name, payload: data.payload }) as Partial<JobWrite>
+    }
+
+    return await this.jobRepository.update(id, jobData)
   }
 
   public async delete(id: JobId) {
-    const job = await this.jobsRepository.getById(id)
-
-    if (!job) {
-      throw new JobNotFound(id)
-    }
-
-    // If the job has a scheduled task, cancel it
-    const scheduledJob = this.scheduledJobs.get(id)
-
-    if (scheduledJob) {
-      scheduledJob.scheduledTask?.destroy()
-      this.scheduledJobs.delete(id)
-    }
-
-    await this.jobsRepository.delete(id)
+    await this.jobRepository.delete(id)
   }
 
   public async getById(id: JobId) {
-    return await this.jobsRepository.getById(id)
+    return await this.jobRepository.getById(id)
   }
 
-  public getAllScheduledJobs() {
-    return [...this.scheduledJobs.values()]
+  public async getAllProcessableJobs() {
+    return await this.jobRepository.getAllProcessableJobs()
   }
 
-  public scheduleJob(job: AnyJob) {
-    const task = schedule(job.cronExpression, () => {
-      job.handlerFunction(...job.payload)
-    })
-
-    job.scheduledTask = task
-    this.scheduledJobs.set(job.id, job)
-
-    return job
+  public async cancel(id: JobId) {
+    return await this.update(id, { status: "CANCELED" })
   }
 
-  public getScheduledJob(id: JobId) {
-    const job = this.scheduledJobs.get(id)
-
-    if (!job) {
-      throw new JobNotFound(id)
+  public validatePayload<Name extends JobName>(name: Name, payload: JsonValue) {
+    if (!payload) {
+      throw new PayloadNotFoundError(name)
     }
 
-    return job
-  }
+    const handler = PayloadHandler[name]
 
-  public getScheduledJobById(id: string) {
-    return this.scheduledJobs.get(id) || null
-  }
-
-  public getScheduledJobByScheduledTaskId(scheduledTaskId: ScheduledTaskId) {
-    return this.getAllScheduledJobs().find((job) => job.scheduledTask?.id === scheduledTaskId) || null
-  }
-
-  public async createAndScheduleJob(data: JobWrite) {
-    const job = await this.create(data)
-
-    return this.scheduleJob(job)
-  }
-
-  public async scheduleAllJobs() {
-    const jobs = await this.jobsRepository.getAll()
-
-    jobs.forEach((job) => this.scheduleJob(job))
-
-    return jobs.length
-  }
-
-  private _cancelJob(job: GenericJob) {
-    job.scheduledTask?.destroy()
-    this.scheduledJobs.delete(job.id)
-  }
-
-  public cancelScheduledJobByScheduledTaskId(scheduledTaskId: ScheduledTaskId) {
-    const job = this.getScheduledJobByScheduledTaskId(scheduledTaskId)
-
-    if (!job) {
-      throw new ScheduledTaskNotFound(scheduledTaskId)
+    if (!handler) {
+      throw new JobNotFound(`Job with name ${name} not found`)
     }
 
-    this._cancelJob(job)
-  }
-
-  public cancelScheduledJob(id: JobId) {
-    const job = this.getScheduledJob(id)
-
-    if (!job) {
-      throw new JobNotFound(id)
-    }
-
-    this._cancelJob(job)
+    return handler.parse(payload)
   }
 }

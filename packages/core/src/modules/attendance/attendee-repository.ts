@@ -11,8 +11,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { AttendeeNotFoundError } from "../event/attendee-error"
-import { AttendeeWriteError } from "./attendee-error"
+import { AttendeeNotFoundError, AttendeeWriteError } from "./attendee-error"
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
