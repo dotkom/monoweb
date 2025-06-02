@@ -16,7 +16,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "^3.23.8"
+    "zod": "^3.25.47"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

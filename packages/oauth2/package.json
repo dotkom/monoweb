@@ -34,9 +34,9 @@
   },
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
-    "jose": "^6.0.0",
-    "oauth4webapi": "^3.4.0",
-    "zod": "^3.24.2"
+    "jose": "^6.0.11",
+    "oauth4webapi": "^3.5.1",
+    "zod": "^3.25.47"
   },
   "peerDependencies": {
     "@types/react": "^19",
@@ -56,8 +56,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
-    "typescript": "^5.8",
-    "vitest": "^3.1.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4",
     "vitest-mock-extended": "^3.1.0"
   }
 }
