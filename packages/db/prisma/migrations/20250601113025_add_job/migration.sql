@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "job_name" AS ENUM ('AttemptReserveAttendee');
+CREATE TYPE "job_name" AS ENUM ('ATTEMPT_RESERVE_ATTENDEE');
 
 -- CreateEnum
 CREATE TYPE "job_status" AS ENUM ('PENDING', 'COMPLETED', 'FAILED', 'CANCELED');
@@ -12,7 +12,7 @@ CREATE TABLE "job" (
     "processedAt" TIMESTAMPTZ(3),
     "name" "job_name" NOT NULL,
     "status" "job_status" NOT NULL DEFAULT 'PENDING',
-    "payload" JSONB,
+    "payload" JSONB NOT NULL DEFAULT '{}',
 
     CONSTRAINT "job_pkey" PRIMARY KEY ("id")
 );

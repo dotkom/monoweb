@@ -505,7 +505,7 @@ model EventInterestGroup {
 }
 
 enum JobName {
-  AttemptReserveAttendee
+  ATTEMPT_RESERVE_ATTENDEE
 
   @@map("job_name")
 }
@@ -526,7 +526,7 @@ model Job {
   processedAt    DateTime? @db.Timestamptz(3)
   name           JobName
   status         JobStatus @default(PENDING)
-  payload        Json?
+  payload        Json      @default("{}")
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
   @@map("job")
