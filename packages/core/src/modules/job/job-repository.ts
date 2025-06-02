@@ -3,7 +3,7 @@ import type { Job, JobId, JobWrite } from "@dotkomonline/types"
 
 export interface JobRepository {
   create(data: JobWrite): Promise<Job>
-  createMany(data: JobWrite[]): Promise<void>
+  createMany(data: JobWrite[]): Promise<Job[]>
   update(id: string, data: Partial<JobWrite>): Promise<Job>
   delete(id: JobId): Promise<void>
   getById(id: JobId): Promise<Job | null>
@@ -23,7 +23,7 @@ export class JobsRepositoryImpl implements JobRepository {
   }
 
   public async createMany(data: JobWrite[]) {
-    await this.db.job.createMany({
+    return await this.db.job.createManyAndReturn({
       data: data.map((job) => ({ ...job, payload: job.payload ?? undefined })),
     })
   }

@@ -1,20 +1,22 @@
+import { getLogger } from "@dotkomonline/logger"
 import type { JsonValue } from "@prisma/client/runtime/library"
+import { minutesToMilliseconds } from "date-fns"
 import { AttendanceNotFound } from "../attendance/attendance-error"
 import { AttendancePoolNotFoundError } from "../attendance/attendance-pool-error"
 import type { AttendanceService } from "../attendance/attendance-service"
 import { AttendeeNotFoundError } from "../attendance/attendee-error"
 import type { AttendeeService } from "../attendance/attendee-service"
-import { PayloadNotFoundError } from "./job-error"
+import { JobExecutorAlreadyInitializedError, JobExecutorNotInitializedError, JobNotFound } from "./job-error"
 import type { JobService } from "./job-service"
 
-const ONE_MINUTE_MS = 60_000
-
 export class JobExecutor {
+  private readonly logger = getLogger("job-executor")
+
   private readonly jobService: JobService
   private readonly attendeeService: AttendeeService
   private readonly attendanceService: AttendanceService
 
-  private intervalId: NodeJS.Timeout | null = null
+  private intervalId: ReturnType<typeof setInterval> | null = null
   private running = false
 
   constructor(jobService: JobService, attendeeService: AttendeeService, attendanceService: AttendanceService) {
@@ -23,17 +25,17 @@ export class JobExecutor {
     this.attendanceService = attendanceService
   }
 
-  private async jobCompleted(jobId: string) {
-    console.log(`Job ${jobId} completed successfully.`)
+  private async markCompleted(jobId: string) {
+    this.logger.info(`Job ${jobId} completed successfully.`)
     await this.jobService.update(jobId, { status: "COMPLETED" })
   }
 
-  private async jobFailed(jobId: string, error: Error) {
-    console.error(`Error processing job ${jobId}:`, error)
+  private async markFailed(jobId: string, error: Error) {
+    this.logger.error(`Error processing job ${jobId}:`, error)
     await this.jobService.update(jobId, { status: "FAILED" })
   }
 
-  private async executorLoop() {
+  private async executeAllProcessableJobs() {
     if (this.running) {
       return
     }
@@ -43,20 +45,25 @@ export class JobExecutor {
     const jobs = await this.jobService.getAllProcessableJobs()
 
     for (const job of jobs) {
-      switch (job.name) {
-        case "AttemptReserveAttendee": {
-          await this.runAttemptReserveAttendeeJob(job.payload)
-            .then(() => this.jobCompleted(job.id))
-            .catch((error) => this.jobFailed(job.id, error))
-          break
-        }
+      try {
+        switch (job.name) {
+          case "ATTEMPT_RESERVE_ATTENDEE": {
+            await this.runAttemptReserveAttendeeJob(job.payload)
+            break
+          }
 
-        default: {
-          console.warn(`Unknown job name: ${job.name}`)
-          await this.jobService.update(job.id, { status: "FAILED" })
-          break
+          default: {
+            await this.jobService.update(job.id, { status: "FAILED" })
+
+            throw new JobNotFound(`Job with name ${job.name} not found in executor`)
+          }
         }
+      } catch (error) {
+        this.markFailed(job.id, error as Error)
+        continue
       }
+
+      this.markCompleted(job.id)
     }
 
     this.running = false
@@ -64,25 +71,25 @@ export class JobExecutor {
 
   public initialize() {
     if (this.intervalId) {
-      return this.intervalId
+      throw new JobExecutorAlreadyInitializedError()
     }
 
-    this.executorLoop() // setInterval does not run immediately
-    this.intervalId = setInterval(async () => this.executorLoop(), ONE_MINUTE_MS)
-
-    return this.intervalId
+    this.executeAllProcessableJobs() // setInterval does not run immediately
+    this.intervalId = setInterval(this.executeAllProcessableJobs, minutesToMilliseconds(1))
   }
 
-  public getIntervalId() {
-    return this.intervalId
+  public stop() {
+    if (!this.intervalId) {
+      throw new JobExecutorNotInitializedError()
+    }
+
+    clearInterval(this.intervalId)
+    this.intervalId = null
+    this.running = false
   }
 
   private async runAttemptReserveAttendeeJob(payload: JsonValue) {
-    if (!payload) {
-      throw new PayloadNotFoundError("AttemptReserveAttendee")
-    }
-
-    const { userId, attendanceId } = this.jobService.validatePayload("AttemptReserveAttendee", payload)
+    const { userId, attendanceId } = this.jobService.parsePayload("ATTEMPT_RESERVE_ATTENDEE", payload)
 
     const attendance = await this.attendanceService.getById(attendanceId)
 

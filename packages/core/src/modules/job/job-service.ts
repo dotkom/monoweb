@@ -1,19 +1,23 @@
 import type { Job, JobId, JobName, JobWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
+import type { z } from "zod"
 import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "./job-error"
 import type { JobRepository } from "./job-repository"
-import { PayloadHandler } from "./payload/"
+import { payloadHandlers } from "./payload/"
 
 export type JobService = {
   create: (data: JobWrite) => Promise<Job>
-  createMany: (data: JobWrite[]) => Promise<void>
+  createMany: (data: JobWrite[]) => Promise<Job[]>
   update: (id: JobId, data: Partial<JobWrite>) => Promise<Job>
   delete: (id: JobId) => Promise<void>
   getById: (id: JobId) => Promise<Job | null>
   getAllProcessableJobs: () => Promise<Job[]>
   cancel: (id: JobId) => Promise<Job>
 
-  validatePayload: <Name extends JobName>(name: Name, payload: JsonValue) => (typeof PayloadHandler)[Name]["output"]
+  parsePayload: <Name extends JobName>(
+    name: Name,
+    payload: JsonValue
+  ) => z.infer<(typeof payloadHandlers)[Name]["schema"]>
 }
 
 export class JobServiceImpl implements JobService {
@@ -24,7 +28,7 @@ export class JobServiceImpl implements JobService {
   }
 
   private buildJobData<T extends { name: JobWrite["name"]; payload: JobWrite["payload"] }>(data: T): T {
-    const payloadHandler = PayloadHandler[data.name]
+    const payloadHandler = payloadHandlers[data.name]
 
     if (!payloadHandler && data.payload) {
       throw new PayloadHandlerNotFoundError(data.name)
@@ -34,7 +38,7 @@ export class JobServiceImpl implements JobService {
       throw new PayloadNotFoundError(data.name)
     }
 
-    const payload: JsonValue = payloadHandler && data.payload ? payloadHandler.parse(data.payload) : null
+    const payload: JsonValue = payloadHandler && data.payload ? payloadHandler.parser(data.payload) : null
 
     return { ...data, payload }
   }
@@ -83,17 +87,17 @@ export class JobServiceImpl implements JobService {
     return await this.update(id, { status: "CANCELED" })
   }
 
-  public validatePayload<Name extends JobName>(name: Name, payload: JsonValue) {
+  public parsePayload<Name extends JobName>(name: Name, payload: JsonValue) {
     if (!payload) {
       throw new PayloadNotFoundError(name)
     }
 
-    const handler = PayloadHandler[name]
+    const handler = payloadHandlers[name]
 
     if (!handler) {
-      throw new JobNotFound(`Job with name ${name} not found`)
+      throw new PayloadHandlerNotFoundError(name)
     }
 
-    return handler.parse(payload)
+    return handler.parser(payload)
   }
 }

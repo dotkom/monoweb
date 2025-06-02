@@ -1,14 +1,13 @@
 import type { JobName } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import { attemptReserveAttendeePayload } from "./attempt-reserve-attendee"
+import type { z } from "zod"
+import { attemptReserveAttendeeSchema, parseAttemptReserveAttendeePayload } from "./attempt-reserve-attendee"
 
-export const PayloadHandler = {
-  AttemptReserveAttendee: attemptReserveAttendeePayload,
-} satisfies Record<
-  JobName,
-  {
-    schema: unknown
-    parse: (payload: JsonValue) => unknown
-    output: unknown
-  }
->
+type PayloadHandler = Record<JobName, { schema: z.ZodTypeAny; parser: (payload: JsonValue) => unknown }>
+
+export const payloadHandlers = {
+  ATTEMPT_RESERVE_ATTENDEE: {
+    schema: attemptReserveAttendeeSchema,
+    parser: parseAttemptReserveAttendeePayload,
+  },
+} satisfies PayloadHandler
