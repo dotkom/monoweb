@@ -57,6 +57,9 @@ const serviceLayer = await createServiceLayer({
   managementClient: auth0Client,
 })
 
+// Starts the job executor loop
+serviceLayer.jobExecutor.initialize()
+
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
   if (bearer !== undefined) {

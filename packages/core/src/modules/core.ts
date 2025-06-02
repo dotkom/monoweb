@@ -192,9 +192,6 @@ export const createServiceLayer = async ({
 
   const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
 
-  // Starts the job executor loop
-  jobExecutor.initialize()
-
   return {
     userService,
     eventService,
@@ -218,5 +215,6 @@ export const createServiceLayer = async ({
     interestGroupRepository,
     interestGroupService,
     jobService,
+    jobExecutor,
   }
 }
