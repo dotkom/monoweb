@@ -8,13 +8,13 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dotkomonline/db": "workspace:*",
     "@dotkomonline/core": "workspace:*",
+    "@dotkomonline/db": "workspace:*",
     "@dotkomonline/environment": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.2",
     "tsx": "^3.14.0",
-    "typescript": "^5.8"
+    "typescript": "^5.8.3"
   }
 }
