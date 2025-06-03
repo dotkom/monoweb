@@ -9,6 +9,13 @@ import type { AttendeeService } from "../attendance/attendee-service"
 import { JobExecutorAlreadyInitializedError, JobExecutorNotInitializedError, JobNotFound } from "./job-error"
 import type { JobService } from "./job-service"
 
+/**
+ * JobExecutor is responsible for executing jobs at regular intervals.
+ * 
+ * It fetches all processable jobs from the JobService and executes them.
+ * - If a job is successfully executed, it marks the job as completed.
+ * - If an error occurs during execution, it marks the job as failed.
+ */
 export class JobExecutor {
   private readonly logger = getLogger("job-executor")
 
@@ -69,6 +76,14 @@ export class JobExecutor {
     this.running = false
   }
 
+  /**
+   * Starts the job executor polling loop.
+   * This method will execute all processable jobs periodically every minute.
+   * A job is processable if it is in the "PENDING" state and its `scheduledAt` is now or in the past.
+   * 
+   * @see {@link JobExecutor.stop}
+   * @throws {JobExecutorAlreadyInitializedError} if the executor is already initialized.
+   */
   public initialize() {
     if (this.intervalId) {
       throw new JobExecutorAlreadyInitializedError()
@@ -78,6 +93,13 @@ export class JobExecutor {
     this.intervalId = setInterval(this.executeAllProcessableJobs, minutesToMilliseconds(1))
   }
 
+  /**
+   * Stops the job executor polling loop.
+   * This method will clear the interval and stop executing jobs.
+   * 
+   * @see {@link JobExecutor.initialize}
+   * @throws {JobExecutorNotInitializedError} if the executor is not initialized.
+   */
   public stop() {
     if (!this.intervalId) {
       throw new JobExecutorNotInitializedError()
