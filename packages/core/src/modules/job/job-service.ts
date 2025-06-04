@@ -5,6 +5,8 @@ import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "
 import type { JobRepository } from "./job-repository"
 import { payloadHandlers } from "./payload/"
 
+type PayloadOf<Job extends JobName> = z.infer<typeof payloadHandlers[Job]["schema"]>
+
 export type JobService = {
   create: (data: JobWrite) => Promise<Job>
   createMany: (data: JobWrite[]) => Promise<Job[]>
@@ -14,10 +16,7 @@ export type JobService = {
   getAllProcessableJobs: () => Promise<Job[]>
   cancel: (id: JobId) => Promise<Job>
 
-  parsePayload: <Name extends JobName>(
-    name: Name,
-    payload: JsonValue
-  ) => z.infer<(typeof payloadHandlers)[Name]["schema"]>
+  parsePayload: <Name extends JobName>(name: Name, payload: JsonValue) => PayloadOf<Name>
 }
 
 export class JobServiceImpl implements JobService {
@@ -27,18 +26,12 @@ export class JobServiceImpl implements JobService {
     this.jobRepository = jobsRepository
   }
 
-  private buildJobData<T extends { name: JobWrite["name"]; payload: JobWrite["payload"] }>(data: T): T {
-    const payloadHandler = payloadHandlers[data.name]
+  private buildJobData(data: JobWrite): JobWrite {
+    let payload = data.payload
 
-    if (!payloadHandler && data.payload) {
-      throw new PayloadHandlerNotFoundError(data.name)
+    if (data.payload) {
+      payload = this.parsePayload(data.name, data.payload)
     }
-
-    if (payloadHandler && !data.payload) {
-      throw new PayloadNotFoundError(data.name)
-    }
-
-    const payload: JsonValue = payloadHandler && data.payload ? payloadHandler.parser(data.payload) : null
 
     return { ...data, payload }
   }
@@ -65,7 +58,9 @@ export class JobServiceImpl implements JobService {
         throw new JobNotFound(`Job with id ${id} not found`)
       }
 
-      jobData = this.buildJobData({ name, payload: data.payload }) as Partial<JobWrite>
+      const payload = this.parsePayload(name, data.payload)
+
+      jobData = { ...data, payload }
     }
 
     return await this.jobRepository.update(id, jobData)
