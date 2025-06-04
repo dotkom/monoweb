@@ -1,4 +1,3 @@
-import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePool,
@@ -16,6 +15,8 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours } from "date-fns"
+import { isFuture } from "date-fns"
+import type { JobService } from "../job/job-service"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotOpenError } from "./attendance-error"
@@ -42,22 +43,45 @@ export class AttendeeServiceImpl implements AttendeeService {
   private readonly attendeeRepository: AttendeeRepository
   private readonly attendanceRepository: AttendanceRepository
   private readonly userService: UserService
-  private readonly db: DBClient
+  private readonly jobService: JobService
 
   constructor(
     attendeeRepository: AttendeeRepository,
     attendanceRepository: AttendanceRepository,
     userService: UserService,
-    db: DBClient
+    jobService: JobService
   ) {
     this.attendeeRepository = attendeeRepository
     this.attendanceRepository = attendanceRepository
     this.userService = userService
-    this.db = db
+    this.jobService = jobService
   }
 
-  async create(obj: AttendeeWrite) {
-    return this.attendeeRepository.create(obj)
+  private async create(obj: AttendeeWrite, attendancePool?: AttendancePool) {
+    let attendee = await this.attendeeRepository.create(obj)
+
+    const pool = attendancePool ?? (await this.attendanceRepository.getPoolById(obj.attendancePoolId))
+
+    if (pool.id !== obj.attendancePoolId) {
+      throw new AttendancePoolNotFoundError(
+        `Expected attendance pool with id ${obj.attendancePoolId}, but found ${pool.id}`
+      )
+    }
+
+    const { reserveTime, attendanceId } = obj
+    const userId = obj.userId
+
+    if (!isFuture(reserveTime)) {
+      const newAttendee = await this.attemptReserve(attendee, pool)
+
+      if (newAttendee) {
+        attendee = newAttendee
+      }
+    } else {
+      await this.jobService.scheduleAttemptReserveAttendeeJob(reserveTime, { attendanceId, userId })
+    }
+
+    return attendee
   }
 
   async delete(id: AttendeeId) {
@@ -163,7 +187,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     }
   }
 
-  async registerForEvent(userId: UserId, attendanceId: AttendancePoolId, attendancePoolId: AttendanceId) {
+  async registerForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
     const user = await this.userService.getById(userId)
     const attendance = await this.attendanceRepository.getById(attendanceId)
     const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
@@ -196,24 +220,15 @@ export class AttendeeServiceImpl implements AttendeeService {
     const displayName = getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
 
-    const attendee = await this.attendeeRepository.create({
+    return await this.create({
       userId,
       attendancePoolId,
-      attendanceId: attendancePool.attendanceId,
+      attendanceId,
       displayName,
       userGrade,
       reserveTime,
       reserved: false,
     })
-
-    if (reserveDelayHours > 0) {
-      // TODO: Add a cron job to reserve the attendee after the delay
-      return attendee
-    }
-
-    const reservedAttendee = await this.attemptReserve(attendee, attendancePool)
-
-    return reservedAttendee || attendee
   }
 
   /**

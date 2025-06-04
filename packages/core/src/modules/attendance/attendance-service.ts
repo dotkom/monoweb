@@ -201,13 +201,6 @@ export class AttendanceServiceImpl implements AttendanceService {
       return await this._mergeAttendancePools(attendanceId, newMergePoolData)
     }
 
-    await this.jobService.create({
-      name: "MERGE_POOLS",
-      scheduledAt: mergeTime,
-      payload: {
-        attendanceId,
-        newMergePoolData,
-      },
-    })
+    await this.jobService.scheduleMergePoolsJob(mergeTime, { attendanceId, newMergePoolData })
   }
 }
