@@ -12,8 +12,8 @@ export type JobScheduledAt = Job["scheduledAt"]
 export const JobWriteSchema = JobSchema.omit({
   id: true,
   createdAt: true,
-  processedAt: true,
 }).partial({
+  processedAt: true,
   status: true,
   payload: true,
 })

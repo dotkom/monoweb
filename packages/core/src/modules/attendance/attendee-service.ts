@@ -220,15 +220,18 @@ export class AttendeeServiceImpl implements AttendeeService {
     const displayName = getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
 
-    return await this.create({
-      userId,
-      attendancePoolId,
-      attendanceId,
-      displayName,
-      userGrade,
-      reserveTime,
-      reserved: false,
-    }, attendancePool)
+    return await this.create(
+      {
+        userId,
+        attendancePoolId,
+        attendanceId,
+        displayName,
+        userGrade,
+        reserveTime,
+        reserved: false,
+      },
+      attendancePool
+    )
   }
 
   /**

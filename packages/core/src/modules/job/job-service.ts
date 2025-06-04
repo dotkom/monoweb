@@ -11,6 +11,7 @@ export type JobService = {
   getById: (id: JobId) => Promise<Job | null>
   getAllProcessableJobs: () => Promise<Job[]>
   update: (id: JobId, data: Partial<JobWrite>) => Promise<Job>
+  process: (id: JobId, data: Partial<JobWrite>) => Promise<Job>
   cancel: (id: JobId) => Promise<Job>
 
   parsePayload: <Name extends JobName>(name: Name, payload: JsonValue) => PayloadOf<Name>
@@ -57,6 +58,10 @@ export class JobServiceImpl implements JobService {
     return await this.jobRepository.update(id, jobData)
   }
 
+  public async process(id: JobId, data: Partial<JobWrite>) {
+    return await this.update(id, { ...data, processedAt: new Date() })
+  }
+
   public async getById(id: JobId) {
     return await this.jobRepository.getById(id)
   }
@@ -66,7 +71,7 @@ export class JobServiceImpl implements JobService {
   }
 
   public async cancel(id: JobId) {
-    return await this.update(id, { status: "CANCELED" })
+    return await this.process(id, { status: "CANCELED" })
   }
 
   public parsePayload<Name extends JobName>(name: Name, payload: JsonValue) {

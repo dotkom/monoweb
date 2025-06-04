@@ -1,3 +1,5 @@
+import { clearInterval, setInterval } from "node:timers"
+import { inspect } from "node:util"
 import { getLogger } from "@dotkomonline/logger"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import { minutesToMilliseconds } from "date-fns"
@@ -32,14 +34,14 @@ export class JobExecutor {
     this.attendanceService = attendanceService
   }
 
-  private async markCompleted(jobId: string) {
-    this.logger.info(`Job ${jobId} completed successfully.`)
-    await this.jobService.update(jobId, { status: "COMPLETED" })
+  private async markCompleted(jobId: string, jobName: string) {
+    this.logger.info(`Job ${jobId} (${jobName}) completed successfully.`)
+    await this.jobService.process(jobId, { status: "COMPLETED" })
   }
 
-  private async markFailed(jobId: string, error: Error) {
-    this.logger.error(`Error processing job ${jobId}:`, error)
-    await this.jobService.update(jobId, { status: "FAILED" })
+  private async markFailed(jobId: string, jobName: string, error: Error) {
+    this.logger.error(`Error processing job ${jobId} (${jobName}):\n${inspect(error)}`)
+    await this.jobService.process(jobId, { status: "FAILED" })
   }
 
   private async executeAllProcessableJobs() {
@@ -65,17 +67,15 @@ export class JobExecutor {
           }
 
           default: {
-            await this.jobService.update(job.id, { status: "FAILED" })
-
             throw new JobNotFound(`Job with name ${job.name} not found in executor`)
           }
         }
       } catch (error) {
-        this.markFailed(job.id, error as Error)
+        this.markFailed(job.id, job.name, error as Error)
         continue
       }
 
-      this.markCompleted(job.id)
+      this.markCompleted(job.id, job.name)
     }
 
     this.running = false
