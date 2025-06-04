@@ -31,6 +31,7 @@ const auth0Client = new ManagementClient({
   clientId: env.AUTH0_CLIENT_ID,
   clientSecret: env.AUTH0_CLIENT_SECRET,
 })
+
 const stripeAccounts = {
   trikom: {
     stripe: new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, {
@@ -47,8 +48,10 @@ const stripeAccounts = {
     webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
 }
+
 const adminPrincipals = env.ADMIN_USERS.split(",").map((sub) => sub.trim())
 const prisma = createPrisma(env.DATABASE_URL)
+
 const serviceLayer = await createServiceLayer({
   s3Client,
   s3BucketName: env.AWS_S3_BUCKET,
@@ -57,7 +60,6 @@ const serviceLayer = await createServiceLayer({
   managementClient: auth0Client,
 })
 
-// Starts the job executor loop
 serviceLayer.jobExecutor.initialize()
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
