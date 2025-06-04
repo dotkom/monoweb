@@ -8,7 +8,8 @@ import type {
   AttendanceWrite,
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
-import { addHours } from "date-fns"
+import { addHours, isFuture } from "date-fns"
+import type { JobService } from "../job/job-service.js"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
@@ -18,7 +19,11 @@ export interface AttendanceService {
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance>
   update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance>
-  mergeAttendancePools(attendanceId: AttendanceId, data: Partial<AttendancePoolWrite>): Promise<void>
+  mergeAttendancePools(
+    attendanceId: AttendanceId,
+    newMergePoolData: Partial<AttendancePoolWrite>,
+    mergeTime?: Date
+  ): Promise<void>
   getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[] | null>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(poolId: AttendancePoolId): Promise<AttendancePool>
@@ -28,10 +33,16 @@ export interface AttendanceService {
 export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendanceRepository: AttendanceRepository
   private readonly attendeeRepository: AttendeeRepository
+  private readonly jobService: JobService
 
-  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository) {
+  constructor(
+    attendanceRepository: AttendanceRepository,
+    attendeeRepository: AttendeeRepository,
+    jobService: JobService
+  ) {
     this.attendanceRepository = attendanceRepository
     this.attendeeRepository = attendeeRepository
+    this.jobService = jobService
   }
 
   async getSelectionsResponseSummary(attendanceId: AttendanceId) {
@@ -152,10 +163,10 @@ export class AttendanceServiceImpl implements AttendanceService {
     return addHours(attendance.registerStart, pool.mergeDelayHours) > mergeTime
   }
 
-  async mergeAttendancePools(attendanceId: AttendanceId, data: Partial<AttendancePoolWrite>, mergeTime = new Date()) {
+  private async _mergeAttendancePools(attendanceId: AttendanceId, newMergePoolData: Partial<AttendancePoolWrite>) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
-    const poolsToMerge = attendance.pools.filter((pool) => this.canPoolMerge(pool, attendance, mergeTime))
+    const poolsToMerge = attendance.pools.filter((pool) => this.canPoolMerge(pool, attendance, new Date()))
 
     if (poolsToMerge.length === 0) {
       return
@@ -165,12 +176,12 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     const mergedPool = await this.attendanceRepository.createPool({
       attendanceId,
-      title: data.title ?? "Merged pool",
+      title: newMergePoolData.title ?? "Merged pool",
       mergeDelayHours: null,
       yearCriteria: Array.from(
-        new Set([...poolsToMerge.flatMap((pool) => pool.yearCriteria), ...(data.yearCriteria ?? [])])
+        new Set([...poolsToMerge.flatMap((pool) => pool.yearCriteria), ...(newMergePoolData.yearCriteria ?? [])])
       ),
-      capacity: Math.max(data.capacity || 0, minCapacity),
+      capacity: Math.max(newMergePoolData.capacity || 0, minCapacity),
     })
 
     const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)
@@ -179,5 +190,24 @@ export class AttendanceServiceImpl implements AttendanceService {
     for (const pool of poolsToMerge) {
       await this.attendanceRepository.deletePool(pool.id)
     }
+  }
+
+  public async mergeAttendancePools(
+    attendanceId: AttendanceId,
+    newMergePoolData: Partial<AttendancePoolWrite>,
+    mergeTime?: Date
+  ) {
+    if (!mergeTime || !isFuture(mergeTime)) {
+      return await this._mergeAttendancePools(attendanceId, newMergePoolData)
+    }
+
+    await this.jobService.create({
+      name: "MERGE_POOLS",
+      scheduledAt: mergeTime,
+      payload: {
+        attendanceId,
+        newMergePoolData,
+      },
+    })
   }
 }

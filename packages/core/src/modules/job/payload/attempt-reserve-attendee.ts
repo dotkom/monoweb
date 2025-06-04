@@ -13,7 +13,7 @@ export const parseAttemptReserveAttendeePayload = (payload: JsonValue) => {
 
   if (!parsedPayload.success) {
     throw new JobPayloadValidationError(
-      `Invalid payload for AttemptReserveAttendee job: ${parsedPayload.error.message}`
+      `Invalid payload for ATTEMPT_RESERVE_ATTENDEE job: ${parsedPayload.error.message}`
     )
   }
 

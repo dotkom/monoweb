@@ -506,6 +506,7 @@ model EventInterestGroup {
 
 enum JobName {
   ATTEMPT_RESERVE_ATTENDEE
+  MERGE_POOLS
 
   @@map("job_name")
 }

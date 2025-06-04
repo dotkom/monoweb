@@ -11,7 +11,7 @@ import type { JobService } from "./job-service"
 
 /**
  * JobExecutor is responsible for executing jobs at regular intervals.
- * 
+ *
  * It fetches all processable jobs from the JobService and executes them.
  * - If a job is successfully executed, it marks the job as completed.
  * - If an error occurs during execution, it marks the job as failed.
@@ -59,6 +59,11 @@ export class JobExecutor {
             break
           }
 
+          case "MERGE_POOLS": {
+            await this.runMergePoolsJob(job.payload)
+            break
+          }
+
           default: {
             await this.jobService.update(job.id, { status: "FAILED" })
 
@@ -80,7 +85,7 @@ export class JobExecutor {
    * Starts the job executor polling loop.
    * This method will execute all processable jobs periodically every minute.
    * A job is processable if it is in the "PENDING" state and its `scheduledAt` is now or in the past.
-   * 
+   *
    * @see {@link JobExecutor.stop}
    * @throws {JobExecutorAlreadyInitializedError} if the executor is already initialized.
    */
@@ -96,7 +101,7 @@ export class JobExecutor {
   /**
    * Stops the job executor polling loop.
    * This method will clear the interval and stop executing jobs.
-   * 
+   *
    * @see {@link JobExecutor.initialize}
    * @throws {JobExecutorNotInitializedError} if the executor is not initialized.
    */
@@ -132,5 +137,11 @@ export class JobExecutor {
     }
 
     await this.attendeeService.attemptReserve(attendee, pool)
+  }
+
+  runMergePoolsJob(payload: JsonValue) {
+    const { attendanceId, newMergePoolData } = this.jobService.parsePayload("MERGE_POOLS", payload)
+
+    return this.attendanceService.mergeAttendancePools(attendanceId, newMergePoolData)
   }
 }

@@ -11,6 +11,10 @@ export type JobName = Job["name"]
 export const JobWriteSchema = JobSchema.omit({
   id: true,
   createdAt: true,
+  processedAt: true,
+}).partial({
+  status: true,
+  payload: true,
 })
 
 export type JobWrite = z.infer<typeof JobWriteSchema>
