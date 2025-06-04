@@ -92,6 +92,9 @@ export const createServiceLayer = async ({
   stripeAccounts,
   s3BucketName,
 }: ServiceLayerOptions) => {
+  const jobRepository: JobRepository = new JobsRepositoryImpl(db)
+  const jobService: JobService = new JobServiceImpl(jobRepository)
+
   const s3Repository: S3Repository = new S3RepositoryImpl(s3Client, s3BucketName)
   const eventRepository: EventRepository = new EventRepositoryImpl(db)
   const groupRepository: GroupRepository = new GroupRepositoryImpl(db)
@@ -125,8 +128,6 @@ export const createServiceLayer = async ({
   const feideGroupsRepository: NTNUGroupsRepository = new NTNUGroupsRepositoryImpl()
   const ntnuStudyplanRepository: NTNUStudyplanRepository = new NTNUStudyplanRepositoryImpl()
 
-  const jobRepository: JobRepository = new JobsRepositoryImpl(db)
-
   const userService: UserService = new UserServiceImpl(
     userRepository,
     privacyPermissionsRepository,
@@ -141,7 +142,11 @@ export const createServiceLayer = async ({
   const groupService: GroupService = new GroupServiceImpl(groupRepository)
   const jobListingService: JobListingService = new JobListingServiceImpl(jobListingRepository)
 
-  const attendanceService: AttendanceService = new AttendanceServiceImpl(attendanceRepository, attendeeRepository)
+  const attendanceService: AttendanceService = new AttendanceServiceImpl(
+    attendanceRepository,
+    attendeeRepository,
+    jobService
+  )
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
 
@@ -149,7 +154,7 @@ export const createServiceLayer = async ({
     attendeeRepository,
     attendanceRepository,
     userService,
-    db
+    jobService
   )
 
   const eventCompanyService: EventCompanyService = new EventCompanyServiceImpl(eventCompanyRepository)
@@ -187,8 +192,6 @@ export const createServiceLayer = async ({
     articleTagRepository,
     articleTagLinkRepository
   )
-
-  const jobService: JobService = new JobServiceImpl(jobRepository)
 
   const jobExecutor = new JobExecutor(jobService, attendeeService, attendanceService)
 

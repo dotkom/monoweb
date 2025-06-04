@@ -95,7 +95,7 @@ export class JobExecutor {
     }
 
     this.executeAllProcessableJobs() // setInterval does not run immediately
-    
+
     this.intervalId = setInterval(async () => {
       await this.executeAllProcessableJobs()
     }, minutesToMilliseconds(1))
