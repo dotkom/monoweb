@@ -228,7 +228,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       userGrade,
       reserveTime,
       reserved: false,
-    })
+    }, attendancePool)
   }
 
   /**
