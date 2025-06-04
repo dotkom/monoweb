@@ -8,6 +8,7 @@
     - A function that parses the payload with the schema
     - Add this schema and parser to the `payloadHandlers` object in `./payload/index.ts`
 3. Add a case for the job in the switch statement in `JobExecutor#executeAllProcessableJobs`
-4. Add a new private method in `JobExecutor` that handles the job logic
+4. Add a new private method in `JobExecutor` that handles the job logic. Add any necessary services to the constructor of `JobExecutor` if needed
+5. Add a method in `JobService` to schedule a job of the new type
 
 Then you can use the JobService in your other service to create new jobs with the new job name, and they will be processed automatically.
