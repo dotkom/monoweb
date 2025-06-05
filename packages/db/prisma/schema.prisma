@@ -492,3 +492,32 @@ model EventInterestGroup {
   @@id([eventId, interestGroupId])
   @@map("event_interest_group")
 }
+
+enum JobName {
+  ATTEMPT_RESERVE_ATTENDEE
+  MERGE_POOLS
+
+  @@map("job_name")
+}
+
+enum JobStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELED
+
+  @@map("job_status")
+}
+
+model Job {
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  scheduledAt    DateTime  @db.Timestamptz(3)
+  processedAt    DateTime? @db.Timestamptz(3)
+  name           JobName
+  status         JobStatus @default(PENDING)
+  payload        Json      @default("{}")
+
+  @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
+  @@map("job")
+}

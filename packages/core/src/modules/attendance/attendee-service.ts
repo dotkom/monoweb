@@ -1,4 +1,3 @@
-import type { DBClient } from "@dotkomonline/db"
 import {
   type AttendanceId,
   type AttendancePool,
@@ -16,13 +15,14 @@ import {
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours } from "date-fns"
-import { AttendeeNotFoundError } from "../event/attendee-error"
+import { isFuture } from "date-fns"
+import type { JobService } from "../job/job-service"
 import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
 import { AttendanceDeregisterClosedError, AttendanceNotOpenError } from "./attendance-error"
 import { AttendancePoolNotFoundError, AttendancePoolValidationError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError } from "./attendee-error"
+import { AttendeeDeregistrationError, AttendeeNotFoundError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 
 export interface AttendeeService {
@@ -34,7 +34,7 @@ export interface AttendeeService {
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(id: AttendeeId, attended: boolean): Promise<Attendee>
-  attemptReserve(attendeeId: Attendee, pool: AttendancePool): Promise<Attendee | false>
+  attemptReserve(attendee: Attendee, pool: AttendancePool): Promise<Attendee | false>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
@@ -43,22 +43,45 @@ export class AttendeeServiceImpl implements AttendeeService {
   private readonly attendeeRepository: AttendeeRepository
   private readonly attendanceRepository: AttendanceRepository
   private readonly userService: UserService
-  private readonly db: DBClient
+  private readonly jobService: JobService
 
   constructor(
     attendeeRepository: AttendeeRepository,
     attendanceRepository: AttendanceRepository,
     userService: UserService,
-    db: DBClient
+    jobService: JobService
   ) {
     this.attendeeRepository = attendeeRepository
     this.attendanceRepository = attendanceRepository
     this.userService = userService
-    this.db = db
+    this.jobService = jobService
   }
 
-  async create(obj: AttendeeWrite) {
-    return this.attendeeRepository.create(obj)
+  private async create(obj: AttendeeWrite, attendancePool?: AttendancePool) {
+    let attendee = await this.attendeeRepository.create(obj)
+
+    const pool = attendancePool ?? (await this.attendanceRepository.getPoolById(obj.attendancePoolId))
+
+    if (pool.id !== obj.attendancePoolId) {
+      throw new AttendancePoolNotFoundError(
+        `Expected attendance pool with id ${obj.attendancePoolId}, but found ${pool.id}`
+      )
+    }
+
+    const { reserveTime, attendanceId } = obj
+    const userId = obj.userId
+
+    if (!isFuture(reserveTime)) {
+      const newAttendee = await this.attemptReserve(attendee, pool)
+
+      if (newAttendee) {
+        attendee = newAttendee
+      }
+    } else {
+      await this.jobService.scheduleAttemptReserveAttendeeJob(reserveTime, { attendanceId, userId })
+    }
+
+    return attendee
   }
 
   async delete(id: AttendeeId) {
@@ -78,13 +101,13 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
-    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
     const user = await this.userService.getById(userId)
-    if (attendee === null) {
-      throw new AttendeeNotFoundError("")
-    }
     if (user === null) {
       throw new UserNotFoundError(userId)
+    }
+    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+    if (attendee === null) {
+      throw new AttendeeNotFoundError(`userid: ${userId}`, attendanceId)
     }
     if (attendee.attended === true) {
       return { attendee, user, alreadyAttended: true }
@@ -164,7 +187,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     }
   }
 
-  async registerForEvent(userId: UserId, attendanceId: AttendancePoolId, attendancePoolId: AttendanceId) {
+  async registerForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
     const user = await this.userService.getById(userId)
     const attendance = await this.attendanceRepository.getById(attendanceId)
     const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
@@ -197,24 +220,18 @@ export class AttendeeServiceImpl implements AttendeeService {
     const displayName = getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
 
-    const attendee = await this.attendeeRepository.create({
-      userId,
-      attendancePoolId,
-      attendanceId: attendancePool.attendanceId,
-      displayName,
-      userGrade,
-      reserveTime,
-      reserved: false,
-    })
-
-    if (reserveDelayHours > 0) {
-      // TODO: Add a cron job to reserve the attendee after the delay
-      return attendee
-    }
-
-    const reservedAttendee = await this.attemptReserve(attendee, attendancePool)
-
-    return reservedAttendee || attendee
+    return await this.create(
+      {
+        userId,
+        attendancePoolId,
+        attendanceId,
+        displayName,
+        userGrade,
+        reserveTime,
+        reserved: false,
+      },
+      attendancePool
+    )
   }
 
   /**
@@ -252,7 +269,9 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
 
     if (attendee === null) {
-      throw new AttendeeNotFoundError("Could not deregister because not registered")
+      throw new AttendeeDeregistrationError(
+        `Attendee with user id '${userId}' could not deregister in attendance with id '${attendanceId}' because attendee is not registered.`
+      )
     }
 
     await this.attendeeRepository.delete(attendee.id)
