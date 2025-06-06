@@ -3,7 +3,7 @@ import type { JsonValue } from "@prisma/client/runtime/library"
 import type { z } from "zod"
 import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "./job-error"
 import type { JobRepository } from "./job-repository"
-import { payloadHandlers } from "./payload/"
+import { payloadHandlers } from "./payload/index"
 
 type PayloadOf<Job extends JobName> = z.infer<(typeof payloadHandlers)[Job]["schema"]>
 
