@@ -13,7 +13,6 @@ import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import { AttendancePoolValidationError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeReservationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
 
@@ -51,7 +50,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     this.jobService = jobService
   }
 
-  async getSelectionsResponseSummary(attendanceId: AttendanceId) {
+  public async getSelectionsResponseSummary(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
     if (!attendance) {
@@ -77,7 +76,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     })
   }
 
-  async create(obj: AttendanceWrite) {
+  public async create(obj: AttendanceWrite) {
     if (obj.registerStart > obj.registerEnd) {
       throw new AttendanceValidationError("Register start must be before register end")
     }
@@ -85,11 +84,11 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.create(obj)
   }
 
-  async getById(id: AttendanceId) {
+  public async getById(id: AttendanceId) {
     return this.attendanceRepository.getById(id)
   }
 
-  async delete(id: AttendanceId) {
+  public async delete(id: AttendanceId) {
     const attendees = await this.attendeeRepository.getByAttendanceId(id)
 
     if (attendees.length > 0) {
@@ -99,7 +98,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     await this.attendanceRepository.delete(id)
   }
 
-  async update(id: AttendanceId, data: Partial<AttendanceWrite>) {
+  public async update(id: AttendanceId, data: Partial<AttendanceWrite>) {
     if (data.registerStart || data.registerEnd) {
       const existingData = await this.getById(id)
       if ((data.registerStart || existingData.registerStart) > (data.registerEnd || existingData.registerEnd)) {
@@ -139,11 +138,11 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.update(data, id)
   }
 
-  async createPool(data: AttendancePoolWrite) {
+  public async createPool(data: AttendancePoolWrite) {
     return await this.attendanceRepository.createPool(data)
   }
 
-  async deletePool(poolId: AttendancePoolId) {
+  public async deletePool(poolId: AttendancePoolId) {
     if (await this.attendeeRepository.poolHasAttendees(poolId)) {
       throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
     }
@@ -151,28 +150,32 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.deletePool(poolId)
   }
 
-  async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
-    const currentPool = await this.attendanceRepository.getPoolById(poolId)
-    const newPool = data
-
-    if (newPool.capacity) {
-      // TODO: refactor into own method for changing capacity to make this easier to manage.
-      if (currentPool.numAttendees > newPool.capacity) {
-        throw new AttendancePoolValidationError("Cannot change pool capacity to less than the reserved spots")
-      }
-
-      const attendees = await this.attendeeService.getByAttendancePoolId(poolId) // These are in order of reserveTime
-      const toReserve = attendees.slice(currentPool.capacity, newPool.capacity)
-
-      for (const attendee of toReserve) {
-        const result = await this.attendeeService.attemptReserve(attendee, currentPool)
-        if (!result) {
-          throw new AttendeeReservationError("Failed to reserve attendees")
-        }
-      }
+  private async attemptReserveAttendeesOnCapacityChange(currentPool: AttendancePool, newCapacity: number) {
+    if (currentPool.numAttendees > newCapacity) {
+      throw new AttendancePoolValidationError(
+        "Cannot update pool capacity to less than the number of reserved attendees"
+      )
     }
 
-    return await this.attendanceRepository.updatePool(poolId, newPool)
+    if (currentPool.capacity < newCapacity) {
+      const attendees = await this.attendeeService.getByAttendancePoolId(currentPool.id) // These are in order of reserveTime
+      const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
+      const toAttemptReserve = unreservedAttendees.slice(0, newCapacity - currentPool.capacity)
+
+      for (const attendee of toAttemptReserve) {
+        await this.attendeeService.attemptReserve(attendee, currentPool)
+      }
+    }
+  }
+
+  public async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+    const currentPool = await this.attendanceRepository.getPoolById(poolId)
+
+    if (data.capacity) {
+      this.attemptReserveAttendeesOnCapacityChange(currentPool, data.capacity)
+    }
+
+    return await this.attendanceRepository.updatePool(poolId, data)
   }
 
   private canPoolMerge(pool: AttendancePool, attendance: Attendance, mergeTime: Date) {
