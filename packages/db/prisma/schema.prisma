@@ -108,7 +108,7 @@ model OwUser {
 
 model Company {
   id          String         @id @default(uuid())
-  createdAt   DateTime       @default(now())
+  createdAt   DateTime       @default(now()) @db.Timestamptz(3)
   name        String
   slug        String         @unique
   description String?
@@ -125,108 +125,105 @@ model Company {
 }
 
 model Group {
-  id                String           @id @default(uuid())
-  createdAt         DateTime         @default(now())
-  name              String
-  description       String
-  email             String
-  image             String?
-  longDescription   String?
-  events            EventHostingGroup[]
-  type              GroupType
-  members           GroupMember[]
+  id              String              @id @default(uuid())
+  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
+  name            String
+  description     String
+  email           String
+  image           String?
+  longDescription String?
+  events          EventHostingGroup[]
+  type            GroupType
+  members         GroupMember[]
 
   @@map("group")
 }
 
 model GroupMember {
-  groupId   String
-  group     Group     @relation(fields: [groupId], references: [id])
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id])
 
-  userId    String
-  user      OwUser    @relation(fields: [userId], references: [id])
+  userId String
+  user   OwUser @relation(fields: [userId], references: [id])
 
   @@id([groupId])
-
   @@map("group_member")
 }
 
 model Attendance {
-  id                 String             @id @default(uuid())
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  registerStart      DateTime
-  deregisterDeadline DateTime
-  registerEnd        DateTime
+  registerStart      DateTime @db.Timestamptz(3)
+  deregisterDeadline DateTime @db.Timestamptz(3)
+  registerEnd        DateTime @db.Timestamptz(3)
 
-  selections         Json               @default("[]")
+  selections Json @default("[]")
 
-  pools              AttendancePool[]
-  attendees          Attendee[]
+  pools     AttendancePool[]
+  attendees Attendee[]
 
-  events             Event[]
+  events Event[]
 
   @@map("attendance")
 }
 
 model AttendancePool {
-  id                    String             @id @default(uuid())
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  attendance            Attendance         @relation(fields: [attendanceId], references: [id])
-  attendanceId          String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendanceId String
 
-  title                 String
+  title String
 
-  mergeDelayHours       Int?
-  yearCriteria          Json
-  capacity              Int
+  mergeDelayHours Int?
+  yearCriteria    Json
+  capacity        Int
 
-  attendees             Attendee[]
+  attendees Attendee[]
 
   @@map("attendance_pool")
 }
 
-
 model Attendee {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  attendance       Attendance     @relation(fields: [attendanceId], references: [id])
-  attendanceId     String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendanceId String
 
-  user             OwUser         @relation(fields: [userId], references: [id])
-  userId           String
+  user   OwUser @relation(fields: [userId], references: [id])
+  userId String
 
   attendancePool   AttendancePool @relation(fields: [attendancePoolId], references: [id])
   attendancePoolId String
 
   /// Which options the user has selected from the Attendance selections
-  selections       Json           @default("[]")
+  selections Json @default("[]")
 
-  displayName      String
-  userGrade        Int?
+  displayName String
+  userGrade   Int?
 
-  reserved         Boolean
-  attended         Boolean        @default(false)
+  reserved Boolean
+  attended Boolean @default(false)
 
-  reserveTime      DateTime
+  reserveTime DateTime @db.Timestamptz(3)
 
   @@unique([attendanceId, userId], name: "attendee_unique")
-
-  @@map("attendee") 
+  @@map("attendee")
 }
 
 model Event {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id              String               @id @default(uuid())
+  createdAt       DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime             @updatedAt @db.Timestamptz(3)
   title           String
-  start           DateTime
-  end             DateTime
+  start           DateTime             @db.Timestamptz(3)
+  end             DateTime             @db.Timestamptz(3)
   status          EventStatus
   public          Boolean
   description     String?
@@ -235,7 +232,7 @@ model Event {
   locationTitle   String
   locationAddress String?
   locationLink    String?
-  attendance      Attendance?      @relation(fields: [attendanceId], references: [id])
+  attendance      Attendance?          @relation(fields: [attendanceId], references: [id])
   attendanceId    String?
   type            EventType
   companies       EventCompany[]
@@ -252,15 +249,14 @@ model EventCompany {
   company   Company @relation(fields: [companyId], references: [id])
 
   @@id([eventId, companyId])
-
   @@map("event_company")
 }
 
 model Mark {
   id        String         @id @default(uuid())
   title     String
-  updatedAt DateTime       @updatedAt
-  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt @db.Timestamptz(3)
+  createdAt DateTime       @default(now()) @db.Timestamptz(3)
   category  String
   details   String?
   duration  Int
@@ -276,18 +272,17 @@ model PersonalMark {
   userId String
 
   @@id([markId, userId])
-
   @@map("personal_mark")
 }
 
 model Product {
   id                     String                   @id @default(uuid())
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
+  createdAt              DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime                 @updatedAt @db.Timestamptz(3)
   type                   ProductType
   objectId               String?                  @unique
   amount                 Int
-  deletedAt              DateTime?
+  deletedAt              DateTime?                @db.Timestamptz(3)
   isRefundable           Boolean                  @default(true)
   refundRequiresApproval Boolean                  @default(true)
   payments               Payment[]
@@ -298,8 +293,8 @@ model Product {
 
 model Payment {
   id                       String         @id @default(uuid())
-  createdAt                DateTime       @default(now())
-  updatedAt                DateTime       @updatedAt
+  createdAt                DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt                DateTime       @updatedAt @db.Timestamptz(3)
   product                  Product        @relation(fields: [productId], references: [id])
   productId                String
   user                     OwUser         @relation(fields: [userId], references: [id])
@@ -320,14 +315,13 @@ model ProductPaymentProvider {
   paymentProviderId String
 
   @@id([productId, paymentProviderId])
-
   @@map("product_payment_provider")
 }
 
 model RefundRequest {
   id          String              @id @default(uuid())
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  createdAt   DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime            @updatedAt @db.Timestamptz(3)
   payment     Payment             @relation(fields: [paymentId], references: [id])
   paymentId   String              @unique
   user        OwUser              @relation("RequestedBy", fields: [userId], references: [id])
@@ -342,8 +336,8 @@ model RefundRequest {
 
 model PrivacyPermissions {
   id                String   @id @default(uuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
   user              OwUser   @relation(fields: [userId], references: [id])
   userId            String   @unique
   profileVisible    Boolean  @default(true)
@@ -358,8 +352,8 @@ model PrivacyPermissions {
 
 model NotificationPermissions {
   id                          String   @id @default(uuid())
-  createdAt                   DateTime @default(now())
-  updatedAt                   DateTime @updatedAt
+  createdAt                   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt                   DateTime @updatedAt @db.Timestamptz(3)
   user                        OwUser   @relation(fields: [userId], references: [id])
   userId                      String   @unique
   applications                Boolean  @default(true)
@@ -375,29 +369,28 @@ model NotificationPermissions {
 }
 
 model EventHostingGroup {
-  groupId        String
-  eventId        String
-  group          Group @relation(fields: [groupId], references: [id])
-  event          Event @relation(fields: [eventId], references: [id])
+  groupId String
+  eventId String
+  group   Group  @relation(fields: [groupId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id])
 
   @@id([groupId, eventId])
-
   @@map("event_hosting_group")
 }
 
 model JobListing {
   id               String               @id @default(uuid())
-  createdAt        DateTime             @default(now())
+  createdAt        DateTime             @default(now()) @db.Timestamptz(3)
   company          Company              @relation(fields: [companyId], references: [id])
   companyId        String
   title            String
   ingress          String
   description      String
-  start            DateTime
-  end              DateTime
+  start            DateTime             @db.Timestamptz(3)
+  end              DateTime             @db.Timestamptz(3)
   featured         Boolean
   hidden           Boolean
-  deadline         DateTime?
+  deadline         DateTime?            @db.Timestamptz(3)
   employment       EmploymentType
   applicationLink  String?
   applicationEmail String?
@@ -409,21 +402,20 @@ model JobListing {
 
 model JobListingLocation {
   name         String
-  createdAt    DateTime   @default(now())
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
   jobListing   JobListing @relation(fields: [jobListingId], references: [id])
   jobListingId String
 
   @@id([name, jobListingId])
-
   @@map("job_listing_location")
 }
 
 model Offline {
   id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
   title     String
-  published DateTime
+  published DateTime @db.Timestamptz(3)
   fileUrl   String?
   imageUrl  String?
 
@@ -432,8 +424,8 @@ model Offline {
 
 model Article {
   id           String           @id @default(uuid())
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  createdAt    DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(3)
   title        String
   author       String
   photographer String
@@ -460,18 +452,17 @@ model ArticleTagLink {
   tagName   String
 
   @@id([articleId, tagName])
-
   @@map("article_tag_link")
 }
 
 model InterestGroup {
-  id              String   @id @default(uuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              String                @id @default(uuid())
+  createdAt       DateTime              @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime              @updatedAt @db.Timestamptz(3)
   name            String
   description     String
   link            String?
-  isActive        Boolean  @default(true)
+  isActive        Boolean               @default(true)
   longDescription String?
   joinInfo        String?
   image           String?
@@ -483,23 +474,50 @@ model InterestGroup {
 
 model InterestGroupMember {
   interestGroupId String
-  interestGroup   InterestGroup  @relation(fields: [interestGroupId], references: [id])
- 
-  userId          String 
-  user            OwUser         @relation(fields: [userId], references: [id])
+  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
+
+  userId String
+  user   OwUser @relation(fields: [userId], references: [id])
 
   @@id([interestGroupId])
-
   @@map("interest_group_member")
 }
 
 model EventInterestGroup {
-  eventId           String
-  interestGroupId   String
-  event             Event         @relation(fields: [eventId], references: [id])
-  interestGroup     InterestGroup @relation(fields: [interestGroupId], references: [id])
+  eventId         String
+  interestGroupId String
+  event           Event         @relation(fields: [eventId], references: [id])
+  interestGroup   InterestGroup @relation(fields: [interestGroupId], references: [id])
 
   @@id([eventId, interestGroupId])
-
   @@map("event_interest_group")
+}
+
+enum JobName {
+  ATTEMPT_RESERVE_ATTENDEE
+  MERGE_POOLS
+
+  @@map("job_name")
+}
+
+enum JobStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELED
+
+  @@map("job_status")
+}
+
+model Job {
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  scheduledAt    DateTime  @db.Timestamptz(3)
+  processedAt    DateTime? @db.Timestamptz(3)
+  name           JobName
+  status         JobStatus @default(PENDING)
+  payload        Json      @default("{}")
+
+  @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
+  @@map("job")
 }

@@ -2,8 +2,9 @@
 import "./sentry"
 
 import { S3Client } from "@aws-sdk/client-s3"
+import { createServiceLayer } from "@dotkomonline/core"
 import { createPrisma } from "@dotkomonline/db"
-import { type AppRouter, type CreateContextOptions, appRouter, createContext } from "@dotkomonline/gateway-trpc"
+import { type AppRouter, appRouter, createContext } from "@dotkomonline/gateway-trpc"
 import { getLogger } from "@dotkomonline/logger"
 import { JwtService } from "@dotkomonline/oauth2/jwt"
 import fastifyCors from "@fastify/cors"
@@ -30,6 +31,7 @@ const auth0Client = new ManagementClient({
   clientId: env.AUTH0_CLIENT_ID,
   clientSecret: env.AUTH0_CLIENT_SECRET,
 })
+
 const stripeAccounts = {
   trikom: {
     stripe: new Stripe(env.TRIKOM_STRIPE_SECRET_KEY, {
@@ -46,34 +48,41 @@ const stripeAccounts = {
     webhookSecret: env.FAGKOM_STRIPE_WEBHOOK_SECRET,
   },
 }
+
+const adminPrincipals = env.ADMIN_USERS.split(",").map((sub) => sub.trim())
 const prisma = createPrisma(env.DATABASE_URL)
+
+const serviceLayer = await createServiceLayer({
+  s3Client,
+  s3BucketName: env.AWS_S3_BUCKET,
+  stripeAccounts,
+  db: prisma,
+  managementClient: auth0Client,
+})
+
+serviceLayer.jobExecutor.initialize()
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
   const bearer = req.headers.authorization
-  const adminPrincipals = env.ADMIN_USERS.split(",").map((sub) => sub.trim())
-
-  const context: Omit<CreateContextOptions, "principal"> = {
-    s3Client,
-    s3BucketName: env.AWS_S3_BUCKET,
-    stripeAccounts,
-    managementClient: auth0Client,
-    db: prisma,
-    adminPrincipals,
-  }
-
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)
     const principal = await jwtService.verify(token)
-    return createContext({
-      principal: principal.payload.sub ?? null,
-      ...context,
-    })
+    return createContext(
+      {
+        adminPrincipals,
+        principal: principal.payload.sub ?? null,
+      },
+      serviceLayer
+    )
   }
 
-  return createContext({
-    principal: null,
-    ...context,
-  })
+  return createContext(
+    {
+      adminPrincipals,
+      principal: null,
+    },
+    serviceLayer
+  )
 }
 
 const server = fastify({

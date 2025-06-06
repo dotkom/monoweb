@@ -7,13 +7,13 @@ import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { AttendanceBoxPool } from "./AttendanceBoxPool"
-import { AttendanceBoxPoolSmall } from "./AttendanceBoxPoolSmall"
+import { useDeregisterMutation, useRegisterMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
+import { MainPoolCard } from "./MainPoolCard"
+import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { RegistrationButton } from "./RegistrationButton"
 import { TicketButton } from "./TicketButton"
-import { ViewAttendeesDialogButton } from "./ViewAttendeesButton"
-import { useDeregisterMutation, useRegisterMutation } from "./mutations"
+import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 const getQueuePosition = (
   attendee: Attendee | undefined,
@@ -34,13 +34,13 @@ const getQueuePosition = (
   return index + 1
 }
 
-interface Props {
+interface AttendanceCardProps {
   initialAttendance: Attendance
   initialAttendees: Attendee[]
   user?: User
 }
 
-export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Props) => {
+export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const { data: attendance, isLoading: attendanceLoading } = useQuery(
     trpc.attendance.getAttendance.queryOptions(
@@ -65,10 +65,18 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
   const registerMutation = useRegisterMutation({})
   const deregisterMutation = useDeregisterMutation()
 
-  const attendablePool = user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
+  const attendablePool = attendee
+    ? attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+    : user && attendance.pools.find((pool) => canUserAttendPool(pool, user))
   const nonAttendablePools = attendance.pools
     .filter((pool) => pool.id !== attendablePool?.id)
-    .sort((a, b) => b.capacity - a.capacity)
+    .sort((a, b) => {
+      if (a.mergeDelayHours && b.mergeDelayHours && a.mergeDelayHours !== b.mergeDelayHours) {
+        return a.mergeDelayHours - b.mergeDelayHours
+      }
+
+      return b.capacity - a.capacity
+    })
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
@@ -81,29 +89,37 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
     attendablePool && attendee && deregisterMutation.mutate({ attendanceId: attendance.id })
 
   const isLoading = attendanceLoading || attendeesLoading || deregisterMutation.isPending || registerMutation.isPending
+  const isLoggedIn = Boolean(user)
+  const hasMembership = Boolean(user?.membership)
 
   const queuePosition = getQueuePosition(attendee, attendees, attendablePool)
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
-    <section className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] mb-8 p-6 gap-4">
+    <section className="flex flex-col border border-slate-5 rounded-xl min-h-[6rem] p-4 sm:p-6 gap-4">
       <Title element="h2" className="font-poppins font-semibold text-2xl">
         Påmelding
       </Title>
 
       <AttendanceDateInfo attendance={attendance} />
 
-      <AttendanceBoxPool pool={attendablePool} isAttending={Boolean(attendee)} queuePosition={queuePosition} />
+      <MainPoolCard
+        pool={attendablePool}
+        attendee={attendee}
+        queuePosition={queuePosition}
+        isLoggedIn={isLoggedIn}
+        hasMembership={hasMembership}
+        attendanceSelections={attendance.selections}
+        status={attendanceStatus}
+      />
 
       {nonAttendablePools.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
-          {nonAttendablePools.map((pool) => AttendanceBoxPoolSmall({ pool }))}
-        </div>
+        <NonAttendablePoolsBox pools={nonAttendablePools} hasAttendablePool={Boolean(attendablePool)} />
       )}
 
       {attendee && user ? (
-        <div className="flex flex-row gap-4">
-          <ViewAttendeesDialogButton
+        <div className="flex flex-col-reverse gap-4 sm:flex-row">
+          <ViewAttendeesButton
             attendeeListOpen={attendeeListOpen}
             setAttendeeListOpen={setAttendeeListOpen}
             attendees={attendees}
@@ -112,7 +128,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
           {isAttendingAndReserved && <TicketButton userId={user.id} />}
         </div>
       ) : (
-        <ViewAttendeesDialogButton
+        <ViewAttendeesButton
           attendeeListOpen={attendeeListOpen}
           setAttendeeListOpen={setAttendeeListOpen}
           attendees={attendees}
@@ -127,15 +143,17 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: Pr
         registerForAttendance={registerForAttendance}
         unregisterForAttendance={deregisterForAttendance}
         isLoading={isLoading}
+        isLoggedIn={isLoggedIn}
+        hasMembership={hasMembership}
         status={attendanceStatus}
       />
 
-      <div className="flex flex-row gap-4">
-        <Link href="/profile" className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11">
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <Link href="/profile" className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11">
           <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
           <Text>Oppdater matallergier</Text>
         </Link>
-        <Text className="flex flex-row gap-1 items-center text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
+        <Text className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
           <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
           Arrangementregler
         </Text>

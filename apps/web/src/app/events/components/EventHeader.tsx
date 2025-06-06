@@ -8,18 +8,28 @@ interface Props {
 }
 
 export const EventHeader: FC<Props> = ({ event }) => {
-  const imageUrl = event.imageUrl || "https://placehold.co/1920x1080/png"
+  const imageUrlLight = event.imageUrl || "https://placehold.co/1920x1080/png?text=Arrangementbanner"
+  const imageUrlDark = event.imageUrl || "https://placehold.co/1920x1080/27272a/9f9fa9/png?text=Arrangementbanner"
 
   return (
     <section className="flex flex-col gap-8">
       <Image
-        src={imageUrl}
+        src={imageUrlLight}
         alt="Banner"
         width="0"
         height="0"
         sizes="100%"
         style={{ objectFit: "cover" }}
-        className="w-full rounded-2xl bg-slate-5 aspect-[16/9] md:aspect-[24/9]"
+        className="w-full rounded-2xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] dark:hidden"
+      />
+      <Image
+        src={imageUrlDark}
+        alt="Banner"
+        width="0"
+        height="0"
+        sizes="100%"
+        style={{ objectFit: "cover" }}
+        className="w-full rounded-2xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] hidden dark:block"
       />
       <Title element="h1" className="text-4xl">
         {event.title}

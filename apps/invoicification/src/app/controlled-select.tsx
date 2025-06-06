@@ -1,14 +1,11 @@
 import {
   Select,
   SelectContent,
-  SelectIcon,
   SelectItem,
-  SelectPortal,
   SelectScrollDownButton,
   SelectScrollUpButton,
   SelectTrigger,
   SelectValue,
-  SelectViewport,
 } from "@dotkomonline/ui"
 import type { ComponentPropsWithoutRef } from "react"
 import { type Control, Controller, type FieldValue, type FieldValues } from "react-hook-form"
@@ -32,19 +29,14 @@ export function ControlledSelect<TFieldValues extends FieldValues>({
         <Select value={field.value} onValueChange={field.onChange}>
           <SelectTrigger>
             <SelectValue placeholder={placeholder} />
-            <SelectIcon />
           </SelectTrigger>
-          <SelectPortal>
-            <SelectContent>
-              <SelectScrollUpButton />
-              <SelectViewport>
-                {options.map((props) => (
-                  <SelectItem key={props.value} className="hover:bg-slate-2 focus:bg-slate-2" {...props} />
-                ))}
-              </SelectViewport>
-              <SelectScrollDownButton />
-            </SelectContent>
-          </SelectPortal>
+          <SelectContent>
+            <SelectScrollUpButton />
+            {options.map((props) => (
+              <SelectItem key={props.value} className="hover:bg-slate-2 focus:bg-slate-2" {...props} />
+            ))}
+            <SelectScrollDownButton />
+          </SelectContent>
         </Select>
       )}
       name={name}

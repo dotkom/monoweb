@@ -26,14 +26,14 @@ apps/dashboard        @henrikskog
 apps/rpc              @junlarsen
 apps/invoicification  @junlarsen
 apps/rif              @junlarsen
-apps/web              @jotjern
+apps/web              @jotjern @brage-andreas
 apps/splash-2025      @henrygraesberg @ellawaal @tharyng @madsab
 
 
 # Libraries and packages
 packages/auth         @junlarsen @jotjern
 packages/config
-packages/core         @junlarsen @jotjern @henrikskog @terbau
+packages/core         @junlarsen @jotjern @henrikskog @terbau @brage-andreas
 packages/db           @jotjern
 packages/email
 packages/environment  @junlarsen

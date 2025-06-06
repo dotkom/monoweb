@@ -75,11 +75,14 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         id: AttendeeSchema.shape.id,
+        reserveNextAttendee: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendeeService.adminDeregisterForEvent(input.id)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendeeService.adminDeregisterForEvent(input.id, input.reserveNextAttendee)
+    ),
 
-  getSelectionsResults: adminProcedure
+  getSelectionsResults: protectedProcedure
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
@@ -94,7 +97,7 @@ export const attendanceRouter = t.router({
         attended: z.boolean(),
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.attended, input.id)),
+    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.id, input.attended)),
 
   handleQrCodeRegistration: adminProcedure
     .input(
@@ -107,14 +110,16 @@ export const attendanceRouter = t.router({
       async ({ input, ctx }) => await ctx.attendeeService.handleQrCodeRegistration(ctx.principal, input.attendanceId)
     ),
 
-  updateSelectionResponses: adminProcedure
+  updateSelectionResponses: protectedProcedure
     .input(
       z.object({
-        id: AttendeeSchema.shape.id,
+        attendeeId: AttendeeSchema.shape.id,
         options: AttendeeSelectionResponsesSchema,
       })
     )
-    .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateSelectionResponses(input.id, input.options)),
+    .mutation(
+      async ({ input, ctx }) => await ctx.attendeeService.updateSelectionResponses(input.attendeeId, input.options)
+    ),
 
   getAttendees: publicProcedure
     .input(
@@ -145,9 +150,12 @@ export const attendanceRouter = t.router({
     .input(
       z.object({
         attendanceId: AttendanceSchema.shape.id,
+        attendancePool: AttendancePoolWriteSchema.partial(),
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.attendanceService.mergeAttendancePools(input.attendanceId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.attendanceService.mergeAttendancePools(input.attendanceId, input.attendancePool)
+    ),
 
   getSelectionResponseResults: adminProcedure
     .input(

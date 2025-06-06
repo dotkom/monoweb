@@ -22,6 +22,13 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Icon,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  RadioGroup,
+  RadioGroupItem,
+  Text,
   cn,
 } from "@dotkomonline/ui"
 import { useTheme } from "next-themes"
@@ -29,30 +36,68 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { FC, PropsWithChildren } from "react"
 import { Fragment } from "react"
-import { navigationMenuTriggerStyle } from "./NavigationMenu"
+
+const THEME_OPTIONS = [
+  {
+    theme: "light",
+    label: "Lyst tema",
+    icon: "tabler:sun",
+  },
+  {
+    theme: "dark",
+    label: "Mørkt tema",
+    icon: "tabler:moon",
+  },
+  {
+    theme: "system",
+    label: "Systempreferanse",
+    icon: "tabler:device-desktop",
+  },
+] as const
 
 export const ProfileMenu = () => {
   const session = useSession()
   if (session === null) {
+    const { setTheme, theme } = useTheme()
+
     return (
-      <>
+      <div className="flex flex-row gap-4">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="text" size="sm" className="font-semibold px-3 hover:bg-blue-3">
+              <Icon icon="tabler:sun-moon" className="text-base" />
+              Tema
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-slate-1 dark:bg-slate-12 p-2">
+            <RadioGroup defaultValue={theme} onValueChange={(val) => setTheme(val)} className="flex flex-col gap-2">
+              {THEME_OPTIONS.map((item) => (
+                <Label
+                  key={item.theme}
+                  htmlFor={item.theme}
+                  className="flex flex-row items-center gap-2 p-2 w-full hover:bg-slate-3 dark:hover:bg-slate-11 rounded-md cursor-pointer"
+                >
+                  <RadioGroupItem value={item.theme} id={item.theme} className="hidden" />
+                  <div className={cn("w-1 h-4 rounded-full bg-slate-6 invisible", theme === item.theme && "visible")} />
+                  <Icon icon={item.icon} className="text-base dark:text-white" />
+                  <Text className="dark:text-white">{item.label}</Text>
+                </Label>
+              ))}
+            </RadioGroup>
+          </PopoverContent>
+        </Popover>
+
         <Button
           element="a"
-          variant="outline"
-          className={cn(navigationMenuTriggerStyle(), "hover:translate-y-0 active:translate-y-0")}
+          variant="solid"
+          size="sm"
+          color="brand"
+          className="font-semibold py-2"
           href="/api/auth/authorize"
         >
           Logg inn
         </Button>
-        <Button
-          element="a"
-          color="gradient"
-          className={cn(navigationMenuTriggerStyle(), "ml-3 hover:translate-y-0 active:translate-y-0")}
-          href="/api/auth/logout"
-        >
-          Bli medlem
-        </Button>
-      </>
+      </div>
     )
   }
 
@@ -157,24 +202,6 @@ const AvatarDropdown: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-const items = [
-  {
-    theme: "light",
-    label: "Lysmodus",
-    icon: "tabler:sun",
-  },
-  {
-    theme: "dark",
-    label: "Nattemodus",
-    icon: "tabler:moon",
-  },
-  {
-    theme: "system",
-    label: "Systempreferanse",
-    icon: "tabler:device-desktop",
-  },
-] as const
-
 const ThemeMenuSub = () => {
   const { setTheme, theme } = useTheme()
 
@@ -187,7 +214,7 @@ const ThemeMenuSub = () => {
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           <DropdownMenuRadioGroup value={theme} onValueChange={(val) => setTheme(val)}>
-            {items.map((item) => (
+            {THEME_OPTIONS.map((item) => (
               <DropdownMenuRadioItem className="cursor-pointer" value={item.theme} key={item.theme}>
                 <Icon icon={item.icon} className="mr-2 h-4 w-4" />
                 <span>{item.label}</span>

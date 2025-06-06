@@ -5,26 +5,43 @@ import {
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Avatar,
+  AvatarFallback,
   Button,
   Icon,
   Text,
   Title,
+  cn,
 } from "@dotkomonline/ui"
-import { AttendeeList } from "./AttendeeList"
 
-interface ViewAttendeesDialogButtonProps {
+const getMinWidth = (maxNumberOfAttendees: number) => {
+  switch (maxNumberOfAttendees.toString().length) {
+    case 1:
+      return "min-w-[2ch]"
+    case 2:
+      return "min-w-[3ch]"
+    case 3:
+      return "min-w-[4ch]"
+    case 4:
+      return "min-w-[5ch]"
+    default:
+      return "min-w-[6ch]"
+  }
+}
+
+interface ViewAttendeesButtonProps {
   attendeeListOpen: boolean
   setAttendeeListOpen: (open: boolean) => void
   attendees: Attendee[]
   userId: User["id"] | undefined
 }
 
-export const ViewAttendeesDialogButton = ({
+export const ViewAttendeesButton = ({
   attendeeListOpen,
   setAttendeeListOpen,
   attendees,
   userId,
-}: ViewAttendeesDialogButtonProps) => {
+}: ViewAttendeesButtonProps) => {
   const reservedAttendees = attendees?.filter((attendee) => attendee.reserved)
   const waitlistAttendees = attendees?.filter((attendee) => !attendee.reserved)
 
@@ -33,9 +50,12 @@ export const ViewAttendeesDialogButton = ({
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="w-full text-black rounded-lg bg-slate-3 hover:bg-slate-4 h-fit min-h-[4rem]">
-          <Icon className="text-lg" icon="tabler:users" />
-          <Text className="font-medium">Vis påmeldte</Text>
+        <Button
+          color="light"
+          className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
+          icon={<Icon className="text-lg" icon="tabler:users" />}
+        >
+          Vis påmeldte
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
@@ -46,10 +66,8 @@ export const ViewAttendeesDialogButton = ({
           <AlertDialogTitle asChild>
             <Title className="font-poppins font-semibold text-2xl">Påmeldingsliste</Title>
           </AlertDialogTitle>
-          <AlertDialogCancel asChild className="p-0 hover:bg-transparent">
-            <Button size="icon" className="h-8 w-8 border-none">
-              <Icon className="text-xl" icon="tabler:x" />
-            </Button>
+          <AlertDialogCancel className="p-2">
+            <Icon className="text-xl" icon="tabler:x" />
           </AlertDialogCancel>
         </div>
 
@@ -80,4 +98,49 @@ export const ViewAttendeesDialogButton = ({
       </AlertDialogContent>
     </AlertDialog>
   )
+}
+
+interface AttendeeListProps {
+  attendees: Attendee[]
+  maxNumberOfAttendees: number
+  userId: User["id"] | undefined
+  marginOnLastItem?: boolean
+}
+
+const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastItem = false }: AttendeeListProps) => {
+  if (!attendees.length) {
+    return <Text className="text-slate-10 text-sm">Ingen påmeldte</Text>
+  }
+
+  return attendees.map((attendee: Attendee, index) => {
+    const isLastItem = index === attendees.length - 1
+
+    return (
+      <div
+        key={attendee.id}
+        className={cn("flex flex-row gap-1 items-center", marginOnLastItem && isLastItem && "mb-8")}
+      >
+        <Text className={cn("text-slate-8 text-right text-sm font-mono", getMinWidth(maxNumberOfAttendees))}>
+          {index + 1}.
+        </Text>
+
+        <div
+          className={cn("flex items-center gap-4 p-1.5 rounded-lg w-full", attendee.userId === userId && "bg-blue-3")}
+        >
+          <Avatar className="h-10 w-10">
+            <AvatarFallback className={attendee.userId === userId ? "bg-blue-6" : "bg-slate-6"}>
+              <Icon className="text-lg" icon="tabler:user" />
+            </AvatarFallback>
+          </Avatar>
+
+          <div>
+            <Text className="text-sm">{attendee.displayName}</Text>
+            <Text className={cn("text-xs", attendee.userId === userId ? "text-slate-12" : "text-slate-10")}>
+              {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
+            </Text>
+          </div>
+        </div>
+      </div>
+    )
+  })
 }

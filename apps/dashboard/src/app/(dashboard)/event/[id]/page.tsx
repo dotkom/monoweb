@@ -10,7 +10,6 @@ import { EventCompaniesPage } from "./companies-page"
 import { EventEditCard } from "./edit-card"
 import { useEventDetailsContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
-import { WaitlistPage } from "./waitlist-page"
 
 const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
 
@@ -52,12 +51,6 @@ const SIDEBAR_LINKS = [
     label: "Påmeldte",
     slug: "attendees",
     component: AttendeesPage,
-  },
-  {
-    icon: "tabler:user",
-    label: "Venteliste",
-    slug: "attendee-waitlist",
-    component: WaitlistPage,
   },
   {
     icon: "tabler:calendar-event",

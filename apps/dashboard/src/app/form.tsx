@@ -289,14 +289,21 @@ export function createRichTextInput<F extends FieldValues>({
         <Input.Wrapper>
           <Input.Label required={required}>{label}</Input.Label>
 
-          <div style={{ border: "1px solid lightgrey", borderRadius: "8px", padding: 0 }}>
+          <div
+            style={{
+              border: "1px solid lightgrey",
+              borderRadius: "8px",
+              padding: 0,
+            }}
+          >
             <Controller
               control={control}
               name={name}
               render={({ field }) => (
                 <MDXEditor
                   {...props}
-                  markdown={field.value}
+                  markdown={field.value ?? ""}
+                  contentEditableClassName="mdx-editor-content"
                   plugins={[
                     toolbarPlugin({
                       toolbarContents: () => (
@@ -325,6 +332,18 @@ export function createRichTextInput<F extends FieldValues>({
                 />
               )}
             />
+            <style jsx global>{`
+              .mdx-editor-content {
+                color: var(--mantine-color-text) !important;
+                background-color: var(--mantine-color-body) !important;
+              }
+              .mdx-editor-content * {
+                color: var(--mantine-color-text) !important;
+              }
+              .mdx-editor-content pre {
+                background-color: var(--mantine-color-dark-6) !important;
+              }
+            `}</style>
           </div>
         </Input.Wrapper>
       </>

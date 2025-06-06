@@ -9,7 +9,7 @@ export default async function App() {
 
   return (
     <section className="w-full">
-      <CompanySplash className="hidden md:flex" />
+      <CompanySplash />
       <div className="flex scroll-m-20 justify-between pb-1 tracking-tight transition-colors">
         <Link href="/events" className="hidden text-3xl font-semibold hover:underline sm:block">
           Arrangementer

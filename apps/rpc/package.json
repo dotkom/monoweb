@@ -13,6 +13,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.665.0",
     "@aws-sdk/client-sts": "^3.758.0",
+    "@dotkomonline/core": "workspace:*",
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/gateway-trpc": "workspace:*",

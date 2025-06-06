@@ -1,8 +1,8 @@
 import { auth } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import type { Company, InterestGroup } from "@dotkomonline/types"
-import type { Group } from "@dotkomonline/types"
+import type { Company, Group, GroupType, InterestGroup } from "@dotkomonline/types"
 import { Text } from "@dotkomonline/ui"
+import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
@@ -10,14 +10,31 @@ import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
 import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
 
-const mapToImageAndName = (item: Group | Company | InterestGroup) => (
-  // TODO: Href link to all events by committee or company
+type OrganizerType = GroupType | "INTERESTGROUP" | "COMPANY"
+
+const organizerTypeToLink: Record<OrganizerType, string> = {
+  COMMITTEE: "/komiteer",
+  INTERESTGROUP: "/interessegrupper",
+  COMPANY: "/karriere",
+  NODECOMMITTEE: "/nodekomiteer",
+  OTHERGROUP: "/andre-grupper",
+}
+
+const mapToImageAndName = (item: Group | Company | InterestGroup, type: OrganizerType) => (
   <Link
-    href="/"
+    href={`${organizerTypeToLink[type]}/${item.id}`}
     key={item.name}
-    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-slate-3 hover:bg-slate-2"
+    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-slate-3 hover:bg-slate-2 dark:hover:bg-slate-11"
   >
-    {item.image && <Image src={item.image} alt={item.name} width={22} height={22} />}
+    {item.image && (
+      <Image
+        src={item.image}
+        alt={item.name}
+        width={22}
+        height={22}
+        className={clsx((type === "COMMITTEE" || type === "NODECOMMITTEE") && "dark:invert")}
+      />
+    )}
     <Text>{item.name}</Text>
   </Link>
 )
@@ -33,24 +50,27 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
       })
     : []
 
-  const hostingGroups = eventDetail.hostingGroups.map(mapToImageAndName)
-  const hostingInterestGroups = eventDetail.hostingInterestGroups.map(mapToImageAndName)
-  const companyList = eventDetail.hostingCompanies.map(mapToImageAndName)
+  const hostingGroups = eventDetail.hostingGroups.map((group) => mapToImageAndName(group, group.type))
+  const hostingInterestGroups = eventDetail.hostingInterestGroups.map((interestGroup) =>
+    mapToImageAndName(interestGroup, "INTERESTGROUP")
+  )
+  const companyList = eventDetail.hostingCompanies.map((company) => mapToImageAndName(company, "COMPANY"))
   const organizers = [...companyList, ...hostingGroups, ...hostingInterestGroups]
 
   return (
     <div className="flex flex-col gap-8">
       <EventHeader event={eventDetail.event} />
-      <div className="flex w-full flex-col md:flex-row">
-        <section className="mr-10 w-full flex flex-col space-y-4 md:w-[60%]">
+      <div className="flex w-full flex-col gap-8 md:flex-row">
+        <div className="w-full flex flex-col gap-4 px-2 md:px-0 md:w-[60%]">
           {organizers.length > 0 ? (
-            <div className="flex flex-row space-x-2">{organizers}</div>
+            <div className="flex flex-row gap-2">{organizers}</div>
           ) : (
             <Text className="text-slate-10">Ingen arrangører</Text>
           )}
-          <EventDescription description={eventDetail.event.description ?? ""} />
-        </section>
-        <div className="flex-1 flex-col">
+          <EventDescription description={eventDetail.event.description} />
+        </div>
+
+        <div className="flex flex-1 flex-col gap-4">
           {eventDetail.attendance !== null && (
             <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendees={attendees} user={user} />
           )}

@@ -98,26 +98,34 @@ export const JobListingView: FC<JobListingViewProps> = (props: JobListingViewPro
           <p className="m-0 text-4xl font-bold">{company.name}</p>
           <p className="m-0 text-3xl">{title}</p>
         </div>
-        <div
-          className="[&_[dir='ltr']]:text-white
-                      [&_[dir='ltr']]:border-amber-9
-                        [&_[dir='ltr']]:border-l-[1px]
-                        [&_[dir='ltr']]:pl-4
-                        mb-12 ml-8 flex flex-col"
-        >
-          <MDXEditor
-            readOnly
-            markdown={description}
-            plugins={[
-              listsPlugin(),
-              headingsPlugin(),
-              linkPlugin(),
-              linkDialogPlugin(),
-              thematicBreakPlugin(),
-              frontmatterPlugin(),
-              markdownShortcutPlugin(),
-            ]}
-          />
+        <div className="ml-[26px]">
+          <div
+            className="
+                [&_ul]:list-disc
+                [&_ul]:pl-10
+                [&_ol]:list-decimal
+                [&_ol]:pl-10
+                [&_[dir='ltr']]:text-black
+              [&_[dir='ltr']]:dark:text-white
+                [&_[dir='ltr']:not(ul):not(ol):not(li)]:border-amber-9
+                [&_[dir='ltr']:not(ul):not(ol):not(li)]:border-l-[1px]
+                [&_[dir='ltr']:not(ul):not(ol):not(li)]:pl-5
+              "
+          >
+            <MDXEditor
+              readOnly
+              markdown={description}
+              plugins={[
+                listsPlugin(),
+                headingsPlugin(),
+                linkPlugin(),
+                linkDialogPlugin(),
+                thematicBreakPlugin(),
+                frontmatterPlugin(),
+                markdownShortcutPlugin(),
+              ]}
+            />
+          </div>
         </div>
       </div>
     </div>

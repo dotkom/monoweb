@@ -8,8 +8,8 @@ export default async function OtherGroupsPage() {
   return (
     <div>
       <div className="border-slate-7 border-b">
-        <div className="flex flex-col py-5">
-          <Title element="h1" className="mt-4 text-3xl">
+        <div className="flex flex-col pb-5">
+          <Title element="h1" className="text-3xl">
             Grupper tilknyttet Online
           </Title>
           <Text className="pt-2">

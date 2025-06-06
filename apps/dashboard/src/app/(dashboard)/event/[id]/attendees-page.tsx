@@ -5,6 +5,7 @@ import { UserSearch } from "../../../../components/molecules/UserSearch/UserSear
 import { AllAttendeesTable } from "../components/all-users-table"
 import { openCreateManualUserAttendModal } from "../components/manual-user-attend-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
+import { useEventAttendeesGetQuery } from "../queries"
 import { useEventDetailsContext } from "./provider"
 
 export const AttendeesPage: FC = () => {
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ attendance }) => {
+  const { attendees, refetch } = useEventAttendeesGetQuery(attendance.id)
   return (
     <Box>
       <Box>
@@ -33,17 +35,21 @@ const Page: FC<Props> = ({ attendance }) => {
             openCreateManualUserAttendModal({
               attendanceId: attendance.id,
               userId: values.id,
+              onSuccess: refetch,
             })
           }}
+          excludeUserIds={attendees.map((attendee) => attendee.userId)}
         />
       </Box>
-      <Divider my={32} />
-      <QrCodeScanner attendanceId={attendance.id} />
       <Box>
-        <Title mb={10} order={3}>
+        <Divider my={32} />
+        <QrCodeScanner attendanceId={attendance.id} />
+      </Box>
+      <Box>
+        <Title my={10} order={3}>
           Alle påmeldte
         </Title>
-        <AllAttendeesTable attendanceId={attendance.id} />
+        <AllAttendeesTable attendees={attendees} attendance={attendance} refetch={refetch} />
       </Box>
     </Box>
   )

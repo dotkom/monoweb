@@ -10,6 +10,7 @@ export interface PoolFormProps {
   onClose(): void
   defaultValues: PoolFormSchema
   mode: "create" | "update"
+  minCapacity?: number
 }
 
 export const PoolFormSchema = z.object({
@@ -41,6 +42,7 @@ export const usePoolForm = (props: PoolFormProps) => {
       }),
       capacity: createNumberInput({
         label: "Kapasitet",
+        min: props.minCapacity ?? 0,
       }),
     },
     label: props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe",

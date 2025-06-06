@@ -21,8 +21,8 @@ export const PersonalInfo: FC<PersonalInfoProps> = ({ user, className }) => {
         </AvatarFallback>
       </Avatar>
       <p className="text-lg text-slate-10">{user.email}</p>
-      <Button color="gradient" className="self-auto">
-        <Link href="/settings">Profil Innstillinger</Link>
+      <Button color="brand" className="self-auto">
+        <Link href="/settings">Profilinnstillinger</Link>
       </Button>
       {/* <ChangeAvatar {...user} /> */}
     </div>
