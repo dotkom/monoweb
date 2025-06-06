@@ -13,7 +13,7 @@ import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import { AttendancePoolValidationError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeRegistrationError, AttendeeReservationError } from "./attendee-error"
+import { AttendeeReservationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
 
@@ -154,7 +154,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
     const currentPool = await this.attendanceRepository.getPoolById(poolId)
     const newPool = data
-    
+
     if (newPool.capacity) {
       // TODO: refactor into own method for changing capacity to make this easier to manage.
       if (currentPool.numAttendees > newPool.capacity) {
@@ -163,7 +163,7 @@ export class AttendanceServiceImpl implements AttendanceService {
 
       const attendees = await this.attendeeService.getByAttendancePoolId(poolId) // These are in order of reserveTime
       const toReserve = attendees.slice(currentPool.capacity, newPool.capacity)
-  
+
       for (const attendee of toReserve) {
         const result = await this.attendeeService.attemptReserve(attendee, currentPool)
         if (!result) {
