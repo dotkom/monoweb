@@ -9,7 +9,7 @@ import type {
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
 import { addHours, isFuture } from "date-fns"
-import type { JobService } from "../job/job-service.js"
+import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"

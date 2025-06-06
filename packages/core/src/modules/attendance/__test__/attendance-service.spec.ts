@@ -1,5 +1,5 @@
 import { describe, vi } from "vitest"
-import { JobServiceImpl } from "../../job/job-service.js"
+import { JobServiceImpl } from "../../job/job-service"
 import { AttendanceRepositoryImpl } from "../attendance-repository"
 import { AttendanceServiceImpl } from "../attendance-service"
 import { AttendeeRepositoryImpl } from "../attendee-repository"
