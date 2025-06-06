@@ -127,7 +127,7 @@ export class AttendanceServiceImpl implements AttendanceService {
       const attendeesThatAreNowReserved = attendees.slice(pool.capacity, data.capacity)
       for (const attendee of attendeesThatAreNowReserved) {
         const result = await this.attendeeService.tryReserve(attendee.id, pool)
-        if (result === false) {
+        if (!result) {
           throw new AttendanceValidationError("Failed to reserve attendees")
         }
       }
