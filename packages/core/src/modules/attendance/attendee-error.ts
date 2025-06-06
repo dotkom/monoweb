@@ -36,3 +36,9 @@ export class AttendeeAlreadyRegisteredError extends ApplicationError {
     )
   }
 }
+
+export class AttendeeReservationError extends ApplicationError {
+  constructor(attendeeId: string) {
+    super(PROBLEM_DETAILS.BadRequest, `Attendee with id '${attendeeId}' could not be reserved`)
+  }
+}  

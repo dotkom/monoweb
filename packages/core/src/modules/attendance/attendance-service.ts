@@ -11,7 +11,9 @@ import type {
 import { addHours, isFuture } from "date-fns"
 import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
+import { AttendancePoolValidationError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
+import { AttendeeRegistrationError, AttendeeReservationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
 
@@ -150,28 +152,27 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
-    const pool = await this.attendanceRepository.getPoolById(poolId)
+    const currentPool = await this.attendanceRepository.getPoolById(poolId)
+    const newPool = data
+    
+    if (newPool.capacity) {
+      // TODO: refactor into own method for changing capacity to make this easier to manage.
+      if (currentPool.numAttendees > newPool.capacity) {
+        throw new AttendancePoolValidationError("Cannot change pool capacity to less than the reserved spots")
+      }
 
-    // FIXME: refactor into own method for changing capacity to make this easier to manage.
-    if (data.capacity && pool.numAttendees > data.capacity) {
-      throw new AttendanceValidationError("Cannot change pool capacity to less than the reserved spots")
-    }
-
-    if (!data.capacity || data.capacity <= pool.capacity) {
-      return pool
-    }
-
-    const attendees = await this.attendeeService.getByAttendancePoolId(poolId) // These are in order of reserveTime
-    const toReserve = attendees.slice(pool.capacity, data.capacity)
-
-    for (const attendee of toReserve) {
-      const result = await this.attendeeService.attemptReserve(attendee, pool)
-      if (!result) {
-        throw new AttendanceValidationError("Failed to reserve attendees")
+      const attendees = await this.attendeeService.getByAttendancePoolId(poolId) // These are in order of reserveTime
+      const toReserve = attendees.slice(currentPool.capacity, newPool.capacity)
+  
+      for (const attendee of toReserve) {
+        const result = await this.attendeeService.attemptReserve(attendee, currentPool)
+        if (!result) {
+          throw new AttendeeReservationError("Failed to reserve attendees")
+        }
       }
     }
 
-    return await this.attendanceRepository.updatePool(poolId, data)
+    return await this.attendanceRepository.updatePool(poolId, newPool)
   }
 
   private canPoolMerge(pool: AttendancePool, attendance: Attendance, mergeTime: Date) {
