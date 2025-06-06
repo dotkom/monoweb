@@ -159,11 +159,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     const toAttemptReserve = unreservedAttendees.slice(0, newCapacity - currentPool.capacity)
 
     for (const attendee of toAttemptReserve) {
-      const result = await this.attendeeService.attemptReserve(attendee, currentPool)
-
-      if (!result) {
-        break
-      }
+      await this.attendeeService.attemptReserve(attendee, currentPool)
     }
   }
 
