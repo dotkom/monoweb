@@ -34,6 +34,18 @@ export interface AttendeeService {
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(id: AttendeeId, attended: boolean): Promise<Attendee>
+  /**
+   * Attempts to reserve the attendee if the following criteria are met:
+   * - The reserve time is now or in the past
+   * - The pool is not at full capacity
+   *
+   * If bypassCriteria is set to true, the criteria will be ignored and the attendee with be reserved regardless.
+   *
+   * @param attendee - The attendee to reserve.
+   * @param pool - The pool to reserve the attendee in, used for capacity checks.
+   * @param [bypassCriteria=false] - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
+   * @returns Returns the attendee if the reservation was successful, false otherwise.
+   */
   attemptReserve(attendee: Attendee, pool: AttendancePool): Promise<Attendee | false>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
@@ -234,18 +246,6 @@ export class AttendeeServiceImpl implements AttendeeService {
     )
   }
 
-  /**
-   * Attempts to reserve the attendee if the following criteria are met:
-   * - The reserve time is now or in the past
-   * - The pool is not at full capacity
-   *
-   * If bypassCriteria is set to true, the criteria will be ignored and the attendee with be reserved regardless.
-   *
-   * @param attendee - The attendee to reserve.
-   * @param pool - The pool to reserve the attendee in, used for capacity checks.
-   * @param [bypassCriteria=false] - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
-   * @returns Returns the attendee if the reservation was successful, false otherwise.
-   */
   async attemptReserve(attendee: Attendee, pool: AttendancePool, bypassCriteria = false) {
     const attendeeIsPastReserveTime = attendee.reserveTime <= new Date()
     const poolHasCapacity = pool.numAttendees < pool.capacity

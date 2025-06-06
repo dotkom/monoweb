@@ -149,17 +149,23 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.deletePool(poolId)
   }
 
-  private async attemptReserveAttendeesOnCapacityChange(currentPool: AttendancePool, newCapacity: number) {
-    if (newCapacity <= currentPool.capacity) {
+  private async attemptReserveAttendeesOnCapacityChange(oldCapacity: number, newPool: AttendancePool) {
+    const capacityDifference = newPool.capacity - oldCapacity
+
+    if (capacityDifference <= 0) {
       return
     }
 
-    const attendees = await this.attendeeService.getByAttendancePoolId(currentPool.id) // These are in order of reserveTime
+    const attendees = await this.attendeeService.getByAttendancePoolId(newPool.id) // These are in order of reserveTime
     const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
-    const toAttemptReserve = unreservedAttendees.slice(0, newCapacity - currentPool.capacity)
+    const toAttemptReserve = unreservedAttendees.slice(0, capacityDifference)
 
     for (const attendee of toAttemptReserve) {
-      await this.attendeeService.attemptReserve(attendee, currentPool)
+      const result = await this.attendeeService.attemptReserve(attendee, newPool)
+      // reserveTime and pool capacity are the only metrics we use to reserve. If one fail the next will also fail
+      if (!result) {
+        break
+      }
     }
   }
 
@@ -168,7 +174,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     const newPool = await this.attendanceRepository.updatePool(poolId, data)
 
     if (data.capacity) {
-      await this.attemptReserveAttendeesOnCapacityChange(currentPool, data.capacity)
+      await this.attemptReserveAttendeesOnCapacityChange(currentPool.capacity, newPool)
     }
 
     return newPool
