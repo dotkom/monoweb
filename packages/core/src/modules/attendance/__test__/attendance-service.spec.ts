@@ -11,5 +11,10 @@ describe("AttendanceService", () => {
   const attendeeService = vi.mocked(AttendeeServiceImpl.prototype)
   const jobService = vi.mocked(JobServiceImpl.prototype)
 
-  const attendanceService = new AttendanceServiceImpl(attendanceRepository, attendeeRepository, attendeeService, jobService)
+  const attendanceService = new AttendanceServiceImpl(
+    attendanceRepository,
+    attendeeRepository,
+    attendeeService,
+    jobService
+  )
 })
