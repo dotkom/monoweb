@@ -152,7 +152,8 @@ export const createServiceLayer = async ({
   const attendanceService: AttendanceService = new AttendanceServiceImpl(
     attendanceRepository,
     attendeeRepository,
-    attendeeService
+    attendeeService,
+    jobService
   )
   const interestGroupRepository: InterestGroupRepository = new InterestGroupRepositoryImpl(db)
   const interestGroupService: InterestGroupService = new InterestGroupServiceImpl(interestGroupRepository)
