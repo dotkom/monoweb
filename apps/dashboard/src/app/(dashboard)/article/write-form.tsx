@@ -1,5 +1,5 @@
 import { type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
-import { createTextInput, createTextareaInput, useFormBuilder } from "../../form"
+import { createRichTextInput, createTextInput, useFormBuilder } from "../../form"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
 
@@ -46,15 +46,15 @@ export const useArticleWriteForm = ({
         placeholder: "fadderuka-2023",
         withAsterisk: true,
       }),
-      excerpt: createTextareaInput({
+      excerpt: createRichTextInput({
         label: "Ingress",
-        withAsterisk: true,
-        rows: 5,
+        markdown: "",
+        required: true,
       }),
-      content: createTextareaInput({
+      content: createRichTextInput({
         label: "Innhold",
-        withAsterisk: true,
-        rows: 20,
+        markdown: "",
+        required: true,
       }),
     },
   })
