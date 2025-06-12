@@ -6,17 +6,7 @@ import Link from "next/link"
 
 const OfflinePage = async () => {
   const offlines = await server.offline.all.query()
-
-  const offlinesByYear = offlines
-    .sort((a, b) => b.published.getTime() - a.published.getTime())
-    .reduce<Record<number, Offline[]>>((acc, offline) => {
-      const year = offline.published.getFullYear()
-
-      acc[year] ??= []
-      acc[year].push(offline)
-
-      return acc
-    }, {})
+  const offlinesByYear = groupOfflinesByYear(offlines)
 
   return (
     <div>
@@ -37,6 +27,19 @@ const OfflinePage = async () => {
         ))}
     </div>
   )
+}
+
+function groupOfflinesByYear(offlines: Offline[]) {
+  return offlines
+    .sort((a, b) => b.published.getTime() - a.published.getTime())
+    .reduce<Record<number, Offline[]>>((acc, offline) => {
+      const year = offline.published.getFullYear()
+
+      acc[year] ??= []
+      acc[year].push(offline)
+
+      return acc
+    }, {})
 }
 
 interface OfflineYearSectionProps {
