@@ -71,6 +71,11 @@ const links: MenuLink[] = [
         href: "https://wiki.online.ntnu.no/",
         description: "Online sin åpne wiki.",
       },
+      {
+        title: "Offline",
+        href: "/offline",
+        description: "Online sitt eget tidsskrift.",
+      },
     ],
   },
   {
