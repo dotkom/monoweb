@@ -1,4 +1,5 @@
 import { GroupListItem } from "@/components/molecules/GroupListItem"
+import type { GroupType } from "@dotkomonline/types"
 import type { FC } from "react"
 
 interface Group {
@@ -7,6 +8,7 @@ interface Group {
   description: string
   image: string | null
   isActive?: boolean
+  type: GroupType | "INTERESTGROUP"
 }
 
 interface GroupListProps {
@@ -25,6 +27,7 @@ export const GroupList: FC<GroupListProps> = ({ groups, baseLink }) => (
           link={`/${baseLink}/${group.id}`}
           image={group.image}
           isActive={group.isActive}
+          type={group.type}
         />
       ))}
     </div>

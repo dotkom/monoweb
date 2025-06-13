@@ -8,17 +8,23 @@ import type {
   AttendanceWrite,
   AttendanceSelectionResults as SelectionResponseSummary,
 } from "@dotkomonline/types"
-import { addHours } from "date-fns"
+import { addHours, isFuture } from "date-fns"
+import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
+import type { AttendeeService } from "./attendee-service"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
   delete(id: AttendanceId): Promise<void>
   getById(id: AttendanceId): Promise<Attendance>
   update(id: AttendanceId, obj: Partial<AttendanceWrite>): Promise<Attendance>
-  mergeAttendancePools(attendanceId: AttendanceId, data: Partial<AttendancePoolWrite>): Promise<void>
+  mergeAttendancePools(
+    attendanceId: AttendanceId,
+    newMergePoolData: Partial<AttendancePoolWrite>,
+    mergeTime?: Date
+  ): Promise<void>
   getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[] | null>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(poolId: AttendancePoolId): Promise<AttendancePool>
@@ -28,13 +34,22 @@ export interface AttendanceService {
 export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendanceRepository: AttendanceRepository
   private readonly attendeeRepository: AttendeeRepository
+  private readonly attendeeService: AttendeeService
+  private readonly jobService: JobService
 
-  constructor(attendanceRepository: AttendanceRepository, attendeeRepository: AttendeeRepository) {
+  constructor(
+    attendanceRepository: AttendanceRepository,
+    attendeeRepository: AttendeeRepository,
+    attendeeService: AttendeeService,
+    jobService: JobService
+  ) {
     this.attendanceRepository = attendanceRepository
     this.attendeeRepository = attendeeRepository
+    this.attendeeService = attendeeService
+    this.jobService = jobService
   }
 
-  async getSelectionsResponseSummary(attendanceId: AttendanceId) {
+  public async getSelectionsResponseSummary(attendanceId: AttendanceId) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
     if (!attendance) {
@@ -60,7 +75,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     })
   }
 
-  async create(obj: AttendanceWrite) {
+  public async create(obj: AttendanceWrite) {
     if (obj.registerStart > obj.registerEnd) {
       throw new AttendanceValidationError("Register start must be before register end")
     }
@@ -68,11 +83,11 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.create(obj)
   }
 
-  async getById(id: AttendanceId) {
+  public async getById(id: AttendanceId) {
     return this.attendanceRepository.getById(id)
   }
 
-  async delete(id: AttendanceId) {
+  public async delete(id: AttendanceId) {
     const attendees = await this.attendeeRepository.getByAttendanceId(id)
 
     if (attendees.length > 0) {
@@ -82,7 +97,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     await this.attendanceRepository.delete(id)
   }
 
-  async update(id: AttendanceId, data: Partial<AttendanceWrite>) {
+  public async update(id: AttendanceId, data: Partial<AttendanceWrite>) {
     if (data.registerStart || data.registerEnd) {
       const existingData = await this.getById(id)
       if ((data.registerStart || existingData.registerStart) > (data.registerEnd || existingData.registerEnd)) {
@@ -122,11 +137,11 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.update(data, id)
   }
 
-  async createPool(data: AttendancePoolWrite) {
+  public async createPool(data: AttendancePoolWrite) {
     return await this.attendanceRepository.createPool(data)
   }
 
-  async deletePool(poolId: AttendancePoolId) {
+  public async deletePool(poolId: AttendancePoolId) {
     if (await this.attendeeRepository.poolHasAttendees(poolId)) {
       throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
     }
@@ -134,14 +149,35 @@ export class AttendanceServiceImpl implements AttendanceService {
     return await this.attendanceRepository.deletePool(poolId)
   }
 
-  async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
-    const pool = await this.attendanceRepository.getPoolById(poolId)
+  private async attemptReserveAttendeesOnCapacityChange(oldCapacity: number, newPool: AttendancePool) {
+    const capacityDifference = newPool.capacity - oldCapacity
 
-    if (data.capacity && pool.numAttendees > data.capacity) {
-      throw new AttendanceValidationError("Cannot change pool capacity to less than the reserved spots")
+    if (capacityDifference <= 0) {
+      return
     }
 
-    return await this.attendanceRepository.updatePool(poolId, data)
+    const attendees = await this.attendeeService.getByAttendancePoolId(newPool.id) // These are in order of reserveTime
+    const unreservedAttendees = attendees.filter((attendee) => !attendee.reserved)
+    const toAttemptReserve = unreservedAttendees.slice(0, capacityDifference)
+
+    for (const attendee of toAttemptReserve) {
+      const result = await this.attendeeService.attemptReserve(attendee, newPool)
+      // reserveTime and pool capacity are the only metrics we use to reserve. If one fail the next will also fail
+      if (!result) {
+        break
+      }
+    }
+  }
+
+  public async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+    const currentPool = await this.attendanceRepository.getPoolById(poolId)
+    const newPool = await this.attendanceRepository.updatePool(poolId, data)
+
+    if (data.capacity) {
+      await this.attemptReserveAttendeesOnCapacityChange(currentPool.capacity, newPool)
+    }
+
+    return newPool
   }
 
   private canPoolMerge(pool: AttendancePool, attendance: Attendance, mergeTime: Date) {
@@ -152,10 +188,10 @@ export class AttendanceServiceImpl implements AttendanceService {
     return addHours(attendance.registerStart, pool.mergeDelayHours) > mergeTime
   }
 
-  async mergeAttendancePools(attendanceId: AttendanceId, data: Partial<AttendancePoolWrite>, mergeTime = new Date()) {
+  private async _mergeAttendancePools(attendanceId: AttendanceId, newMergePoolData: Partial<AttendancePoolWrite>) {
     const attendance = await this.attendanceRepository.getById(attendanceId)
 
-    const poolsToMerge = attendance.pools.filter((pool) => this.canPoolMerge(pool, attendance, mergeTime))
+    const poolsToMerge = attendance.pools.filter((pool) => this.canPoolMerge(pool, attendance, new Date()))
 
     if (poolsToMerge.length === 0) {
       return
@@ -165,12 +201,12 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     const mergedPool = await this.attendanceRepository.createPool({
       attendanceId,
-      title: data.title ?? "Merged pool",
+      title: newMergePoolData.title ?? "Merged pool",
       mergeDelayHours: null,
       yearCriteria: Array.from(
-        new Set([...poolsToMerge.flatMap((pool) => pool.yearCriteria), ...(data.yearCriteria ?? [])])
+        new Set([...poolsToMerge.flatMap((pool) => pool.yearCriteria), ...(newMergePoolData.yearCriteria ?? [])])
       ),
-      capacity: Math.max(data.capacity || 0, minCapacity),
+      capacity: Math.max(newMergePoolData.capacity || 0, minCapacity),
     })
 
     const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)
@@ -179,5 +215,17 @@ export class AttendanceServiceImpl implements AttendanceService {
     for (const pool of poolsToMerge) {
       await this.attendanceRepository.deletePool(pool.id)
     }
+  }
+
+  public async mergeAttendancePools(
+    attendanceId: AttendanceId,
+    newMergePoolData: Partial<AttendancePoolWrite>,
+    mergeTime?: Date
+  ) {
+    if (!mergeTime || !isFuture(mergeTime)) {
+      return await this._mergeAttendancePools(attendanceId, newMergePoolData)
+    }
+
+    await this.jobService.scheduleMergePoolsJob(mergeTime, { attendanceId, newMergePoolData })
   }
 }
