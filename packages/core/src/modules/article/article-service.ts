@@ -15,6 +15,7 @@ export interface ArticleService {
   getTags(): Promise<ArticleTag[]>
   addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
   removeTag(id: ArticleId, tag: ArticleTagName): Promise<void>
+  setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
 }
 
 export class ArticleServiceImpl implements ArticleService {
@@ -98,5 +99,19 @@ export class ArticleServiceImpl implements ArticleService {
     if (!isTagStillInUse) {
       await this.articleTagRepository.delete(tag)
     }
+  }
+
+  async setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]> {
+    const currentTags = (await this.articleTagRepository.getAllByArticle(id)).map(tag => tag.name)
+
+    const tagsToAdd = tags.filter((tag) => !currentTags.includes(tag))
+    const tagsToRemove = currentTags.filter((tag) => !tags.includes(tag))
+
+    const removePromises = tagsToRemove.map(async (tag) => this.removeTag(id, tag))
+    const addPromises = tagsToAdd.map(async (tag) => this.addTag(id, tag))
+
+    await Promise.all([...removePromises, ...addPromises])
+
+    return currentTags.filter((tag) => !tagsToRemove.includes(tag)).concat(tagsToAdd)
   }
 }

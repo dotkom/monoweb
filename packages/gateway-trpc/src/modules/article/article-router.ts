@@ -5,8 +5,20 @@ import { adminProcedure, publicProcedure, t } from "../../trpc"
 
 export const articleRouter = t.router({
   create: adminProcedure
-    .input(ArticleWriteSchema)
-    .mutation(async ({ input, ctx }) => await ctx.articleService.create(input)),
+    .input(
+      z.object({
+        article: ArticleWriteSchema,
+        tags: ArticleSchema.shape.tags,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const article = await ctx.articleService.create(input.article)
+      const tags = await ctx.articleService.setTags(article.id, input.tags)
+      return {
+        ...article,
+        tags,
+      }
+    }),
   edit: adminProcedure
     .input(
       z.object({
@@ -15,6 +27,20 @@ export const articleRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => await ctx.articleService.update(input.id, input.input)),
+  editWithTags: adminProcedure
+    .input(
+      z.object({
+        id: ArticleSchema.shape.id,
+        article: ArticleWriteSchema.partial(),
+        tags: ArticleSchema.shape.tags,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const article = await ctx.articleService.update(input.id, input.article)
+      const tags = await ctx.articleService.setTags(input.id, input.tags)
+
+      return { ...article, tags }
+    }),
   all: publicProcedure
     .input(PaginateInputSchema)
     .query(async ({ input, ctx }) => await ctx.articleService.getAll(input)),

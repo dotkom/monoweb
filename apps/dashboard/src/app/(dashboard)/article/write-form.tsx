@@ -1,10 +1,16 @@
-import { type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
-import { createRichTextInput, createTextInput, useFormBuilder } from "../../form"
+import { ArticleSchema, type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
+import { useTagsAllQuery } from "src/modules/article/queries/use-tags-all-query"
+import type { z } from "zod"
+import { createRichTextInput, createTagInput, createTextInput, useFormBuilder } from "../../form"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
 
+export const ArticleWriteFormSchema = ArticleWriteSchema.extend({
+  tags: ArticleSchema.shape.tags,
+})
+
 interface UseArticleWriteFormProps {
-  onSubmit(data: ArticleWrite): void
+  onSubmit(data: z.infer<typeof ArticleWriteFormSchema>): void
   defaultValues?: Partial<ArticleWrite>
   label?: string
 }
@@ -13,9 +19,10 @@ export const useArticleWriteForm = ({
   onSubmit,
   label = "Legg inn ny artikkel",
   defaultValues = ARTICLE_FORM_DEFAULT_VALUES,
-}: UseArticleWriteFormProps) =>
-  useFormBuilder({
-    schema: ArticleWriteSchema,
+}: UseArticleWriteFormProps) => {
+  const { tags } = useTagsAllQuery()
+  return useFormBuilder({
+    schema: ArticleWriteFormSchema,
     defaultValues,
     onSubmit,
     label,
@@ -23,28 +30,28 @@ export const useArticleWriteForm = ({
       title: createTextInput({
         label: "Tittel",
         placeholder: "Fadderuka 2023",
-        withAsterisk: true,
+        required: true,
       }),
       author: createTextInput({
         label: "Forfattere",
         placeholder: "Ola Nordmann, Trond-Viggo Torgersen",
-        withAsterisk: true,
+        required: true,
       }),
       photographer: createTextInput({
         label: "Fotograf",
         placeholder: "Jahn Teigen",
-        withAsterisk: true,
+        required: true,
       }),
       imageUrl: createTextInput({
         type: "url",
         label: "Cover bilde",
         placeholder: "https://s3.amazonaws.com/mitt-bilde.png",
-        withAsterisk: true,
+        required: true,
       }),
       slug: createTextInput({
         label: "Slug",
         placeholder: "fadderuka-2023",
-        withAsterisk: true,
+        required: true,
       }),
       excerpt: createRichTextInput({
         label: "Ingress",
@@ -56,5 +63,11 @@ export const useArticleWriteForm = ({
         markdown: "",
         required: true,
       }),
+      tags: createTagInput({
+        label: "Tags",
+        data: tags.map((tag) => tag.name),
+        required: true,
+      }),
     },
   })
+}
