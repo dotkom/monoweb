@@ -1,6 +1,6 @@
 import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
-import { ArticleNotFoundError } from "./article-error"
+import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
@@ -34,6 +34,10 @@ export class ArticleServiceImpl implements ArticleService {
   }
 
   async create(input: ArticleWrite): Promise<Article> {
+    if (await this.getBySlug(input.slug)) {
+      throw new ArticleWithSlugAlreadyExistsError()
+    }
+
     return await this.articleRepository.create(input)
   }
 
@@ -47,6 +51,11 @@ export class ArticleServiceImpl implements ArticleService {
     if (match === null) {
       throw new ArticleNotFoundError(id)
     }
+
+    if (input.slug !== match.slug && input.slug && (await this.getBySlug(input.slug))) {
+      throw new ArticleWithSlugAlreadyExistsError()
+    }
+    
     return await this.articleRepository.update(match.id, input)
   }
 
