@@ -5,22 +5,30 @@ import type {
   AttendanceStatus,
   Attendee,
 } from "@dotkomonline/types"
-import { Icon, Text, cn } from "@dotkomonline/ui"
+import { Card, Icon, Text, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
-import type { FC, ReactNode } from "react"
+import type { FC } from "react"
 import { useSetSelectionsOptionsMutation } from "../mutations"
 import { SelectionsForm } from "./SelectionsForm"
 
-const getAttendanceStatusText = (
-  isAttendingAndReserved: boolean,
-  isAttendingAndNotReserved: boolean,
-  queuePosition: number | null
-) => {
-  if (isAttendingAndReserved) {
+const getCardBackgroundColor = (isAttending: boolean, isReserved: boolean, darker?: boolean) => {
+  if (isAttending && isReserved) {
+    return darker ? "bg-green-5" : "bg-green-4"
+  }
+
+  if (isAttending && !isReserved) {
+    return darker ? "bg-yellow-5" : "bg-yellow-4"
+  }
+
+  return darker ? "bg-slate-5" : "bg-slate-3"
+}
+
+const getAttendanceStatusText = (isAttending: boolean, isReserved: boolean, queuePosition: number | null) => {
+  if (isAttending && isReserved) {
     return "Du er påmeldt"
   }
 
-  if (isAttendingAndNotReserved) {
+  if (isAttending && !isReserved) {
     // Should never happen, but just in case
     if (!queuePosition) {
       return "Du er i køen"
@@ -30,31 +38,6 @@ const getAttendanceStatusText = (
   }
 
   return "Du er ikke påmeldt"
-}
-
-interface CardProps {
-  classNames?: { outer?: string; inner?: string; title?: string }
-  title?: string
-  children: ReactNode
-}
-
-const Card: FC<CardProps> = ({ classNames, children, title }) => {
-  const baseOuterClassName = "flex flex-col w-full min-h-[8rem] bg-slate-3 rounded-lg"
-  const baseHeaderClassName = "px-4 py-3 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
-  const baseInnerClassName = "flex flex-col gap-4 p-3 items-center text-center justify-center w-full"
-
-  if (!title) {
-    return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
-  }
-
-  return (
-    <section className={cn(baseOuterClassName, classNames?.outer)}>
-      <div className={cn(baseHeaderClassName, classNames?.title)}>
-        <Text className="font-semibold">{title}</Text>
-      </div>
-      <div className={cn(baseInnerClassName, "rounded-b-lg", classNames?.inner)}>{children}</div>
-    </section>
-  )
 }
 
 interface MainPoolCardProps {
@@ -78,7 +61,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 }) => {
   if (!isLoggedIn) {
     return (
-      <Card>
+      <Card size="lg" variant="solid" smallRounding centerContent className="min-h-[10rem]">
         <Text>Du er ikke innlogget</Text>
       </Card>
     )
@@ -88,7 +71,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   if (!hasMembership && !isAttending) {
     return (
-      <Card>
+      <Card size="lg" variant="solid" smallRounding centerContent className="min-h-[10rem]">
         <Text>Du har ikke registert medlemskap</Text>
         <div className="flex gap-[0.5ch] text-sm">
           <Text>Gå til</Text>
@@ -103,14 +86,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   if (!pool) {
     return (
-      <Card>
+      <Card size="lg" variant="solid" smallRounding centerContent className="min-h-[10rem]">
         <Text>Du kan ikke melde deg på dette arrangementet</Text>
       </Card>
     )
   }
 
-  const isAttendingAndReserved = isAttending && queuePosition === null
-  const isAttendingAndNotReserved = isAttending && queuePosition !== null
+  const isReserved = Boolean(attendee?.reserved)
   const poolHasQueue = pool.numUnreservedAttendees > 0
 
   const selectionsMutation = useSetSelectionsOptionsMutation()
@@ -125,27 +107,32 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     })
   }
 
+  const cardTitleBackground = getCardBackgroundColor(isAttending, isReserved, true)
+  const cardBackground = getCardBackgroundColor(isAttending, isReserved)
+
   return (
     <Card
-      classNames={{
-        outer: isAttendingAndReserved ? "bg-green-4" : isAttendingAndNotReserved ? "bg-yellow-4" : "bg-slate-3",
-        title: isAttendingAndReserved ? "bg-green-5" : isAttendingAndNotReserved ? "bg-yellow-5" : "bg-slate-5",
-      }}
-      title={pool.title}
+      size="lg"
+      variant="solid"
+      smallRounding
+      centerContent
+      title={<Text>TEST</Text>}
+      className={cardBackground}
+      titleClassName={cardTitleBackground}
     >
-      <div className="flex flex-grow flex-col gap-2 items-center text-center justify-center">
-        <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttendingAndReserved && "bg-green-5 rounded-lg")}>
-          {pool.numAttendees}/{pool.capacity}
-        </Text>
-        {pool.numUnreservedAttendees > 0 && (
-          <Text className={cn("text-lg px-2 py-0.5", isAttendingAndNotReserved && "bg-yellow-5 rounded-lg")}>
-            +{pool.numUnreservedAttendees} i kø
-          </Text>
-        )}
-        <Text>{getAttendanceStatusText(isAttendingAndReserved, isAttendingAndNotReserved, queuePosition)}</Text>
-      </div>
+      <Text className={cn("text-3xl px-2 py-1", poolHasQueue && isAttending && isReserved && "bg-green-5 rounded-lg")}>
+        {pool.numAttendees}/{pool.capacity}
+      </Text>
 
-      {isAttendingAndReserved && attendanceSelections.length > 0 && (
+      {pool.numUnreservedAttendees > 0 && (
+        <Text className={cn("text-lg px-2 py-0.5", isAttending && !isReserved && "bg-yellow-5 rounded-lg")}>
+          +{pool.numUnreservedAttendees} i kø
+        </Text>
+      )}
+
+      <Text>{getAttendanceStatusText(isAttending, isReserved, queuePosition)}</Text>
+
+      {isAttending && isReserved && attendanceSelections.length > 0 && (
         <div className="w-full mt-2">
           <SelectionsForm
             selections={attendanceSelections}
