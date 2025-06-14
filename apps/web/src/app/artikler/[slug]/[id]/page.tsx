@@ -1,6 +1,7 @@
 import { server } from "@/utils/trpc/server"
 import type { Article } from "@dotkomonline/types"
 import { Button, Text, Title } from "@dotkomonline/ui"
+import { formatDate } from "@dotkomonline/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -24,7 +25,7 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
             height="0"
             sizes="100%"
             style={{ objectFit: "cover" }}
-            className="w-full rounded-2xl bg-slate-5 aspect-[16/9]"
+            className="w-full rounded-2xl aspect-[16/9]"
           />
           <Text className="mt-2">
             <span className="text-slate-12 dark:text-slate-2 font-medium">Fotograf: </span>
@@ -43,7 +44,7 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
       <Byline author={article.author} createdAt={article.createdAt} updatedAt={article.updatedAt} />
 
       <section>
-        <Text className="mt-4 text-slate-11 dark:text-slate-6">{article.excerpt}</Text>
+        <Text className="whitespace-pre-line mt-4 text-slate-11 dark:text-slate-6">{article.excerpt}</Text>
         <Text className="whitespace-pre-line mt-8">{article.content}</Text>
       </section>
 
@@ -70,12 +71,12 @@ const Byline = ({ author, createdAt, updatedAt }: BylineProps) => (
     </Text>
     <Text className="whitespace-nowrap">
       <span className="text-slate-12 dark:text-slate-2 font-medium">Publisert </span>
-      {createdAt.toLocaleDateString()}
+      {formatDate(createdAt)}
     </Text>
     {createdAt.getTime() !== updatedAt.getTime() && (
       <Text className="whitespace-nowrap">
         <span className="text-slate-12 dark:text-slate-2 font-medium">Sist endret </span>
-        {updatedAt.toLocaleDateString()}
+        {formatDate(updatedAt)}
       </Text>
     )}
   </div>
@@ -104,7 +105,7 @@ interface TagListProps {
 const TagList = ({ tags }: TagListProps) => {
   return (
     <section className="md:pl-4 pb-2 gap-2 md:border-l-2 border-slate-10 flex flex-col">
-      <Title element="h3" size="md" className="font-semibold text-slate-12 font-poppins">
+      <Title element="h3" size="md" className="font-semibold text-slate-12 dark:text-slate-2 font-poppins">
         Tags
       </Title>
 
@@ -141,7 +142,7 @@ interface ArticleCardProps {
 const ArticleCard = ({ article }: ArticleCardProps) => {
   return (
     <Link href="/">
-      <div className="flex flex-col rounded-lg sm:max-w-72 overflow-hidden shadow-md bg-white text-black duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg">
+      <div className="flex flex-col rounded-lg sm:max-w-72 overflow-hidden shadow-md duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg">
         <Image
           src="https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/wide/e3f8b563-fd2c-4bae-a56a-a26773281ec9.png"
           alt="Article banner"
@@ -149,11 +150,11 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
           height={0}
           sizes="100%"
           style={{ objectFit: "cover" }}
-          className="w-full bg-slate-5 aspect-[16/9]"
+          className="w-full aspect-[16/9]"
         />
         <div className="p-4">
           <Text className="font-semibold text-lg leading-tight">{article.title}</Text>
-          <p className="text-slate-11 text-sm mt-1">{article.updatedAt.toLocaleDateString()}</p>
+          <p className="text-slate-11 dark:text-slate-6 text-sm mt-1">{formatDate(article.updatedAt)}</p>
         </div>
       </div>
     </Link>
