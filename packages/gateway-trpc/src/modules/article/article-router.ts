@@ -50,6 +50,12 @@ export const articleRouter = t.router({
   getBySlug: publicProcedure
     .input(ArticleSchema.shape.slug)
     .query(async ({ input, ctx }) => await ctx.articleService.getBySlug(input)),
+  allByTags: publicProcedure
+    .input(z.array(ArticleTagSchema.shape.name))
+    .query(async ({ input, ctx }) => await ctx.articleService.getAllByTags(input)),
+  related: publicProcedure
+    .input(ArticleSchema)
+    .query(async ({ input, ctx }) => await ctx.articleService.getRelated(input)),
   getTags: publicProcedure.query(async ({ ctx }) => await ctx.articleService.getTags()),
   addTag: adminProcedure
     .input(

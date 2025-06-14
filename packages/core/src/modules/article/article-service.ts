@@ -9,8 +9,10 @@ export interface ArticleService {
   create(input: ArticleWrite): Promise<Article>
   update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(page: Pageable): Promise<Article[]>
+  getAllByTags(tags: ArticleTagName[]): Promise<Article[]>
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
+  getRelated(article: Article): Promise<Article[]>
 
   getTags(): Promise<ArticleTag[]>
   addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
@@ -55,12 +57,16 @@ export class ArticleServiceImpl implements ArticleService {
     if (input.slug !== match.slug && input.slug && (await this.getBySlug(input.slug))) {
       throw new ArticleWithSlugAlreadyExistsError()
     }
-    
+
     return await this.articleRepository.update(match.id, input)
   }
 
   async getAll(page: Pageable): Promise<Article[]> {
     return await this.articleRepository.getAll(page)
+  }
+
+  async getAllByTags(tags: ArticleTagName[]): Promise<Article[]> {
+    return await this.articleRepository.getByTags(tags)
   }
 
   async getById(id: ArticleId): Promise<Article | null> {
@@ -73,6 +79,40 @@ export class ArticleServiceImpl implements ArticleService {
 
   async getTags(): Promise<ArticleTag[]> {
     return await this.articleTagRepository.getAll()
+  }
+
+  /**
+   * Gets the top 10 related articles based on tags
+   */
+  async getRelated(article: Article): Promise<Article[]> {
+    const articleTags = new Set(article.tags)
+    const relatedArticles = await this.getAllByTags(article.tags)
+
+    return relatedArticles
+      .filter((related) => related.id !== article.id)
+      .map((related) => {
+        const matchCount = related.tags.filter((tag) => articleTags.has(tag)).length
+        const nonMatchCount = related.tags.length - matchCount
+
+        return {
+          article: related,
+          matchCount,
+          nonMatchCount,
+        }
+      })
+      .sort((a, b) => {
+        if (b.matchCount !== a.matchCount) {
+          return b.matchCount - a.matchCount
+        }
+
+        if (a.nonMatchCount !== b.nonMatchCount) {
+          return a.nonMatchCount - b.nonMatchCount
+        }
+
+        return b.article.updatedAt.getTime() - a.article.updatedAt.getTime()
+      })
+      .map(({ article }) => article)
+      .slice(0, 10)
   }
 
   /**
@@ -111,7 +151,7 @@ export class ArticleServiceImpl implements ArticleService {
   }
 
   async setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]> {
-    const currentTags = (await this.articleTagRepository.getAllByArticle(id)).map(tag => tag.name)
+    const currentTags = (await this.articleTagRepository.getAllByArticle(id)).map((tag) => tag.name)
 
     const tagsToAdd = tags.filter((tag) => !currentTags.includes(tag))
     const tagsToRemove = currentTags.filter((tag) => !tags.includes(tag))

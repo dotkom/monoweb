@@ -14,10 +14,12 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
     return notFound()
   }
 
+  const relatedArticles = (await server.article.related.query(article)).slice(0, 6)
+
   return (
     <div>
       <div className="flex w-full flex-col gap-8 md:flex-row">
-        <div className="w-full flex flex-col md:w-[70%]">
+        <figure className="w-full flex flex-col md:w-[70%]">
           <Image
             src={article.imageUrl}
             alt="Banner"
@@ -27,11 +29,13 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
             style={{ objectFit: "cover" }}
             className="w-full rounded-2xl aspect-[16/9]"
           />
-          <Text className="mt-2">
-            <span className="text-slate-12 dark:text-slate-2 font-medium">Fotograf: </span>
-            {article.photographer}
-          </Text>
-        </div>
+          <figcaption>
+            <Text className="mt-2">
+              <span className="text-slate-12 dark:text-slate-2 font-medium">Fotograf: </span>
+              {article.photographer}
+            </Text>
+          </figcaption>
+        </figure>
         <div className="hidden md:flex flex-1 flex-col gap-4 justify-evenly">
           <AuthorSection author={article.author} />
           <TagList tags={article.tags} />
@@ -52,7 +56,7 @@ const ArticlePage = async ({ params }: { params: Promise<{ id: string; slug: str
         <TagList tags={article.tags} />
       </div>
 
-      <RelatedArticles article={article} />
+      <RelatedArticles articles={relatedArticles} />
     </div>
   )
 }
@@ -111,9 +115,7 @@ const TagList = ({ tags }: TagListProps) => {
 
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <Tag link="/" key={tag}>
-            {tag}
-          </Tag>
+          <Tag tag={tag} key={tag} />
         ))}
       </div>
     </section>
@@ -121,16 +123,13 @@ const TagList = ({ tags }: TagListProps) => {
 }
 
 interface TagProps {
-  children: string
-  link: string
+  tag: string
 }
 
-const Tag = ({ children, link }: TagProps) => {
+const Tag = ({ tag }: TagProps) => {
   return (
-    <Link href={link}>
-      <Text className="bg-[#153e75] hover:bg-blue-12 py-1 px-2.5 rounded-full text-white font-semibold">
-        {children}
-      </Text>
+    <Link href={"/"}>
+      <Text className="bg-[#153e75] hover:bg-blue-12 py-1 px-2.5 rounded-full text-white font-semibold">{tag}</Text>
     </Link>
   )
 }
@@ -141,31 +140,32 @@ interface ArticleCardProps {
 
 const ArticleCard = ({ article }: ArticleCardProps) => {
   return (
-    <Link href="/">
-      <div className="flex flex-col rounded-lg sm:max-w-72 overflow-hidden shadow-md duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg">
-        <Image
-          src="https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/wide/e3f8b563-fd2c-4bae-a56a-a26773281ec9.png"
-          alt="Article banner"
-          width={0}
-          height={0}
-          sizes="100%"
-          style={{ objectFit: "cover" }}
-          className="w-full aspect-[16/9]"
-        />
-        <div className="p-4">
-          <Text className="font-semibold text-lg leading-tight">{article.title}</Text>
-          <p className="text-slate-11 dark:text-slate-6 text-sm mt-1">{formatDate(article.updatedAt)}</p>
-        </div>
+    <Link
+      href={`/artikler/${article.slug}/${article.id}`}
+      className="flex flex-col flex-1 h-full rounded-lg max-w-md overflow-hidden shadow-md duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg"
+    >
+      <Image
+        src={article.imageUrl}
+        alt="Article banner"
+        width={0}
+        height={0}
+        sizes="100%"
+        style={{ objectFit: "cover" }}
+        className="w-full aspect-[16/9]"
+      />
+      <div className="p-4 justify-between flex flex-col flex-1">
+        <Text className="font-semibold text-lg leading-tight line-clamp-3">{article.title}</Text>
+        <p className="text-slate-11 dark:text-slate-6 text-sm mt-1">{formatDate(article.updatedAt)}</p>
       </div>
     </Link>
   )
 }
 
 interface RelatedArticlesProps {
-  article: Article
+  articles: Article[]
 }
 
-const RelatedArticles = ({ article }: RelatedArticlesProps) => {
+const RelatedArticles = ({ articles }: RelatedArticlesProps) => {
   return (
     <section className="mt-6 md:mt-12">
       <div className="flex scroll-m-20 justify-between pb-1 tracking-tight transition-colors">
@@ -178,12 +178,10 @@ const RelatedArticles = ({ article }: RelatedArticlesProps) => {
           <Button>Flere artikler</Button>
         </Link>
       </div>
-      <div className="flex mt-2 flex-wrap gap-12">
-        <ArticleCard article={article} />
-        <ArticleCard article={article} />
-        <ArticleCard article={article} />
-        <ArticleCard article={article} />
-        <ArticleCard article={article} />
+      <div className="h-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-2 auto-rows-fr">
+        {articles.map((article) => (
+          <ArticleCard article={article} key={article.id} />
+        ))}
       </div>
     </section>
   )
