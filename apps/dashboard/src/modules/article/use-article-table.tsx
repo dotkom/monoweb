@@ -1,7 +1,7 @@
 "use client"
 
 import type { Article } from "@dotkomonline/types"
-import { Anchor } from "@mantine/core"
+import { Anchor, Group as MantineGroup } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -28,10 +28,27 @@ export const useArticleTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("imageUrl", {
         header: () => "Bilde",
+        cell: (info) => {
+          const val = info.getValue()
+          if (!val) {
+            return "Ingen bilde"
+          }
+
+          return (
+            <Anchor target="_blank" rel="noreferrer noopener" size="sm" href={info.getValue()}>
+              Link
+            </Anchor>
+          )
+        },
+      }),
+      columnHelper.accessor("tags", {
+        header: () => "Tags",
         cell: (info) => (
-          <Anchor target="_blank" rel="noreferrer noopener" size="sm" href={info.getValue()}>
-            {info.getValue()}
-          </Anchor>
+          <MantineGroup>
+            {info.getValue().map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </MantineGroup>
         ),
       }),
       columnHelper.accessor((evt) => evt, {

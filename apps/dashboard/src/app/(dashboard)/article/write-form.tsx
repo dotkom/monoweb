@@ -53,6 +53,11 @@ export const useArticleWriteForm = ({
         placeholder: "fadderuka-2023",
         required: true,
       }),
+      tags: createTagInput({
+        label: "Tags",
+        data: tags.map((tag) => tag.name),
+        required: true,
+      }),
       excerpt: createRichTextInput({
         label: "Ingress",
         markdown: "",
@@ -61,11 +66,6 @@ export const useArticleWriteForm = ({
       content: createRichTextInput({
         label: "Innhold",
         markdown: "",
-        required: true,
-      }),
-      tags: createTagInput({
-        label: "Tags",
-        data: tags.map((tag) => tag.name),
         required: true,
       }),
     },

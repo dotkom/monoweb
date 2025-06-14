@@ -15,7 +15,7 @@ const SIDEBAR_LINKS = [
   },
 ] as const
 
-export default function CompanyDetailsPage() {
+export default function ArticleDetailsPage() {
   const { article } = useArticleDetailsContext()
   const router = useRouter()
   return (

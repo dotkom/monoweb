@@ -23,5 +23,6 @@ export const useCreateArticleModal = () => () =>
   modals.openContextModal({
     modal: "article/create",
     title: "Legg inn ny artikkel",
+    size: "lg",
     innerProps: {},
   })
