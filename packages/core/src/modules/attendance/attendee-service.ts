@@ -161,6 +161,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       userGrade,
       reserveTime: registerTime,
       reserved: true,
+      userFlags: user.flags,
     })
 
     return attendee
@@ -241,6 +242,7 @@ export class AttendeeServiceImpl implements AttendeeService {
         userGrade,
         reserveTime,
         reserved: false,
+        flags: user.flags,
       },
       attendancePool
     )
@@ -251,7 +253,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     const poolHasCapacity = pool.numAttendees < pool.capacity
 
     if ((attendeeIsPastReserveTime && poolHasCapacity) || bypassCriteria) {
-      return await this.attendeeRepository.update(attendee.id, { reserved: true })
+      return await this.attendeeRepository.reserveAttendee(attendee.id)
     }
 
     return false
