@@ -8,7 +8,7 @@ export const useEditArticleMutation = () => {
   const notification = useQueryNotification()
 
   return useMutation(
-    trpc.article.edit.mutationOptions({
+    trpc.article.editWithTags.mutationOptions({
       onMutate: () => {
         notification.loading({
           title: "Oppdaterer artikkel...",

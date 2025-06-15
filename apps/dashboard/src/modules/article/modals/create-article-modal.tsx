@@ -8,7 +8,11 @@ export const CreateArticleModal: FC<ContextModalProps> = ({ context, id }) => {
   const create = useCreateArticleMutation()
   const FormComponent = useArticleWriteForm({
     onSubmit: (data) => {
-      create.mutate(data)
+      const { tags, ...article } = data
+      create.mutate({
+        article,
+        tags,
+      })
       close()
     },
   })
@@ -19,5 +23,6 @@ export const useCreateArticleModal = () => () =>
   modals.openContextModal({
     modal: "article/create",
     title: "Legg inn ny artikkel",
+    size: "lg",
     innerProps: {},
   })
