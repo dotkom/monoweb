@@ -1,7 +1,7 @@
 "use client"
 
 import type { Article } from "@dotkomonline/types"
-import { Anchor, Group as MantineGroup } from "@mantine/core"
+import { Anchor, Group } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -44,11 +44,11 @@ export const useArticleTable = ({ data }: Props) => {
       columnHelper.accessor("tags", {
         header: () => "Tags",
         cell: (info) => (
-          <MantineGroup>
+          <Group>
             {info.getValue().map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
-          </MantineGroup>
+          </Group>
         ),
       }),
       columnHelper.accessor((evt) => evt, {

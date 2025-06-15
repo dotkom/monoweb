@@ -5,6 +5,7 @@ import type { Article, ArticleTagName } from "@dotkomonline/types"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
+import { isEqual } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
@@ -83,7 +84,7 @@ const Byline = ({ author, createdAt, updatedAt }: BylineProps) => (
   <div className="flex flex-wrap gap-x-4 mt-2 border-b-2 border-slate-6 pb-2">
     <BylineItem label="Skrevet av" value={author} className="md:hidden" />
     <BylineItem label="Publisert" value={formatDate(createdAt)} />
-    {createdAt.getTime() !== updatedAt.getTime() && <BylineItem label="Sist endret" value={formatDate(updatedAt)} />}
+    {!isEqual(createdAt, updatedAt) && <BylineItem label="Sist endret" value={formatDate(updatedAt)} />}
   </div>
 )
 

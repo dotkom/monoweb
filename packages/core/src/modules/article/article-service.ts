@@ -1,4 +1,5 @@
 import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import { compareAsc } from "date-fns"
 import type { Pageable } from "../../query"
 import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
@@ -109,7 +110,7 @@ export class ArticleServiceImpl implements ArticleService {
           return a.nonMatchCount - b.nonMatchCount
         }
 
-        return b.article.updatedAt.getTime() - a.article.updatedAt.getTime()
+        return compareAsc(b.article.updatedAt, a.article.updatedAt)
       })
       .map(({ article }) => article)
       .slice(0, 10)
