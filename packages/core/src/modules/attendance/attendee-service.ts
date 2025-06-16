@@ -11,7 +11,6 @@ import {
   canDeregisterForAttendance as attendanceOpenForDeregistration,
   canRegisterForAttendance as attendanceOpenForRegistration,
   canUserAttendPool,
-  getDisplayName,
   getMembershipGrade,
 } from "@dotkomonline/types"
 import { addHours } from "date-fns"
