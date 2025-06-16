@@ -227,7 +227,6 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const reserveTime = addHours(registerTime, reserveDelayHours)
 
-    const displayName = user.displayName || getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
 
     return await this.create(
