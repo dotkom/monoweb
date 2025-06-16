@@ -14,6 +14,7 @@ export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({
   compiled: false,
   rfid: null,
   biography: null,
+  displayName: "Test Test",
   ...defaults,
 })
 

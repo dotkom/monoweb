@@ -150,14 +150,12 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const registerTime = new Date()
 
-    const displayName = getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
 
     const attendee = await this.attendeeRepository.create({
       userId,
       attendancePoolId,
       attendanceId: attendancePool.attendanceId,
-      displayName,
       userGrade,
       reserveTime: registerTime,
       reserved: true,
@@ -229,7 +227,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const reserveTime = addHours(registerTime, reserveDelayHours)
 
-    const displayName = getDisplayName(user)
+    const displayName = user.displayName || getDisplayName(user)
     const userGrade = getMembershipGrade(user.membership)
 
     return await this.create(
@@ -237,7 +235,6 @@ export class AttendeeServiceImpl implements AttendeeService {
         userId,
         attendancePoolId,
         attendanceId,
-        displayName,
         userGrade,
         reserveTime,
         reserved: false,
