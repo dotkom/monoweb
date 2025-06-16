@@ -11,7 +11,7 @@ import {
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import type { UserRepository } from "../user/user-repository.js"
+import type { UserRepository } from "../user/user-repository"
 import { AttendeeNotFoundError, AttendeeWriteError } from "./attendee-error"
 
 export interface AttendeeRepository {
@@ -92,7 +92,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const attendees = await this.db.attendee.findMany({
       where: { attendanceId },
       orderBy: { reserveTime: "asc" },
-      include: { user: true },
     })
 
     const users = await Promise.all(attendees.map((attendee) => this.userRepository.getById(attendee.userId)))
@@ -104,7 +103,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const attendees = await this.db.attendee.findMany({
       where: { attendancePoolId },
       orderBy: { reserveTime: "asc" },
-      include: { user: true },
     })
 
     const users = await Promise.all(attendees.map((attendee) => this.userRepository.getById(attendee.userId)))
@@ -116,7 +114,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const attendee = await this.db.attendee.findFirst({
       where: { attendancePoolId, reserved: false },
       orderBy: { reserveTime: "asc" },
-      include: { user: true },
     })
 
     if (!attendee) {
