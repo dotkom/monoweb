@@ -76,6 +76,11 @@ const links: MenuLink[] = [
         href: "/offline",
         description: "Online sitt eget tidsskrift.",
       },
+      {
+        title: "Artikler",
+        href: "/artikler",
+        description: "Artikler skrevet av studenter.",
+      },
     ],
   },
   {
