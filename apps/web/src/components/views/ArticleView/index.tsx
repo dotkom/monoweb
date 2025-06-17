@@ -151,7 +151,7 @@ const RelatedArticles = ({ articles }: RelatedArticlesProps) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-3 auto-rows-fr">
         {articles.map((article) => (
-          <ArticleListItem article={article} key={article.id} />
+          <ArticleListItem article={article} key={article.id} orientation="vertical" />
         ))}
       </div>
     </section>
