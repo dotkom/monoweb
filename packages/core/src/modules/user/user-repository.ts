@@ -114,8 +114,6 @@ export class UserRepositoryImpl implements UserRepository {
       throw new UserCreationError(response.status, "User creation returned a 201 but user could not be fetched")
     }
 
-    this.cache.set(user.id, user)
-
     return user
   }
 
