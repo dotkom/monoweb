@@ -37,6 +37,21 @@ export const useOfflineTable = ({ data }: Props) => {
           )
         },
       }),
+      columnHelper.accessor("imageUrl", {
+        header: () => "Bilde",
+        cell: (info) => {
+          const val = info.getValue()
+          if (!val) {
+            return "Ingen bilde"
+          }
+
+          return (
+            <Anchor target="_blank" href={val} rel="noopenere">
+              Link
+            </Anchor>
+          )
+        },
+      }),
       columnHelper.accessor((evt) => evt, {
         id: "actions",
         header: () => "Detaljer",
