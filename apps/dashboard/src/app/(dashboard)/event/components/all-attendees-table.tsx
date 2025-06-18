@@ -42,9 +42,9 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("displayName", {
+      columnHelper.accessor("user", {
         header: "Bruker",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue().displayName,
         sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("attended", {

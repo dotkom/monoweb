@@ -18,6 +18,7 @@ export const UserSchema = z.object({
   address: z.string().nullable().default(null),
 
   membership: MembershipSchema.nullable().default(null),
+  displayName: z.string().nullable().default(null),
 })
 
 export const UserWriteSchema = UserSchema.omit({
@@ -30,18 +31,15 @@ export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export type UserId = User["id"]
 
-export function getDisplayName(user: User): string {
-  if (user.firstName && user.lastName) {
-    return `${user.firstName} ${user.lastName}`
+type UserNameResolvable = { name: string | null; firstName: string | null; lastName: string | null }
+export function getDisplayName<T extends UserNameResolvable>({ name, firstName, lastName }: T): string {
+  if (name) {
+    return name
   }
 
-  if (user.lastName) {
-    return user.lastName
+  if (firstName && lastName) {
+    return `${firstName} ${lastName}`
   }
 
-  if (user.firstName) {
-    return user.firstName
-  }
-
-  return user.email
+  return lastName || firstName || "Ukjent bruker"
 }

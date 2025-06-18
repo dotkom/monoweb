@@ -134,7 +134,7 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
           </Avatar>
 
           <div>
-            <Text className="text-sm">{attendee.displayName}</Text>
+            <Text className="text-sm">{attendee.user.displayName}</Text>
             <Text className={cn("text-xs", attendee.userId === userId ? "text-slate-12" : "text-slate-10")}>
               {attendee.userGrade ? `${attendee.userGrade}. klasse` : "Ingen klasse"}
             </Text>

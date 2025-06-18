@@ -1,7 +1,17 @@
 import type { DBClient } from "@dotkomonline/db"
-import { GenderSchema, MembershipSchema, type User, type UserId, type UserWrite } from "@dotkomonline/types"
+import {
+  GenderSchema,
+  MembershipSchema,
+  type User,
+  type UserId,
+  type UserWrite,
+  getDisplayName,
+} from "@dotkomonline/types"
 import type { GetUsers200ResponseOneOfInner, ManagementClient, UserCreate, UserUpdate } from "auth0"
+import { hoursToMilliseconds } from "date-fns"
+import { LRUCache } from "lru-cache"
 import { z } from "zod"
+import { BulkUserFetchError, UserCreationError, UserFetchError, UserNotFoundError } from "./user-error"
 
 export interface UserRepository {
   getById(id: UserId): Promise<User>
@@ -15,11 +25,14 @@ export interface UserRepository {
 
 const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
   const appMetadata: Record<string, unknown> = auth0User.app_metadata ?? {}
+  const firstName = auth0User.given_name ?? null
+  const lastName = auth0User.family_name ?? null
+  const displayName = getDisplayName({ name: auth0User.name, firstName, lastName })
 
   return {
     id: auth0User.user_id,
-    firstName: auth0User.given_name,
-    lastName: auth0User.family_name,
+    firstName,
+    lastName,
     email: auth0User.email,
     image: auth0User.picture,
     biography: z.string().safeParse(appMetadata.biography).data ?? null,
@@ -30,6 +43,7 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     gender: GenderSchema.safeParse(appMetadata.gender).data ?? null,
     phone: z.string().safeParse(appMetadata.phone).data ?? null,
     membership: MembershipSchema.safeParse(appMetadata.membership).data ?? null,
+    displayName,
   }
 }
 
@@ -77,22 +91,27 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
 export class UserRepositoryImpl implements UserRepository {
   private readonly client: ManagementClient
   private readonly db: DBClient
+  private readonly cache: LRUCache<UserId, User> = new LRUCache<UserId, User>({
+    max: 1000,
+    ttl: hoursToMilliseconds(1),
+  })
 
   constructor(client: ManagementClient, db: DBClient) {
     this.client = client
     this.db = db
   }
 
-  async create(data: Omit<User, "id">, password: string): Promise<User> {
+  async create(data: UserWrite, password: string): Promise<User> {
     const response = await this.client.users.create(mapUserToAuth0UserCreate(data, password))
 
     if (response.status !== 201) {
-      throw new Error(`Failed to create user: ${response.statusText}`)
+      throw new UserCreationError(response.status, response.statusText)
     }
 
     const user = await this.getById(response.data.user_id)
-    if (user === null) {
-      throw new Error("Failed to fetch user after creation")
+
+    if (!user) {
+      throw new UserCreationError(response.status, "User creation returned a 201 but user could not be fetched")
     }
 
     return user
@@ -113,58 +132,84 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async getById(id: UserId): Promise<User> {
-    const user = await this.client.users.get({ id: id })
+    const cachedUser = this.cache.get(id)
 
-    switch (user.status) {
-      case 200:
-        return mapAuth0UserToUser(user.data)
+    if (cachedUser) {
+      return cachedUser
+    }
+
+    const response = await this.client.users.get({ id: id })
+
+    switch (response.status) {
+      case 200: {
+        const user = mapAuth0UserToUser(response.data)
+        this.cache.set(user.id, user)
+
+        return user
+      }
       case 404:
-        throw new Error(`Could not find user ${id}`)
+        throw new UserNotFoundError(id)
       default:
-        throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
+        throw new UserFetchError(id, response.status, response.statusText)
     }
   }
 
   async getByIdWithFeideAccessToken(id: UserId): Promise<{ user: User | null; feideAccessToken: string | null }> {
-    const user = await this.client.users.get({ id })
+    const response = await this.client.users.get({ id })
 
-    if (user.status !== 200) {
+    if (response.status !== 200) {
       return { user: null, feideAccessToken: null }
     }
 
-    for (const identity of user.data.identities) {
+    const user = mapAuth0UserToUser(response.data)
+    this.cache.set(user.id, user)
+
+    for (const identity of response.data.identities) {
       if (identity.connection === "FEIDE") {
-        return { user: mapAuth0UserToUser(user.data), feideAccessToken: identity.access_token }
+        return { user, feideAccessToken: identity.access_token }
       }
     }
 
-    return { user: mapAuth0UserToUser(user.data), feideAccessToken: null }
+    return { user, feideAccessToken: null }
   }
 
   async getAll(limit: number, page: number): Promise<User[]> {
-    const users = await this.client.users.getAll({ per_page: limit, page: page })
+    const response = await this.client.users.getAll({ per_page: limit, page: page })
 
-    if (users.status !== 200) {
-      throw new Error(`Failed to fetch users: ${users.statusText}`)
+    if (response.status !== 200) {
+      throw new BulkUserFetchError(response.status, response.statusText)
     }
 
-    return users.data.map(mapAuth0UserToUser)
+    return response.data.map((auth0User) => {
+      const user = mapAuth0UserToUser(auth0User)
+      this.cache.set(user.id, user)
+
+      return user
+    })
   }
 
   // https://auth0.com/docs/manage-users/user-search/user-search-query-syntax
   async searchForUser(query: string, limit: number, page: number): Promise<User[]> {
-    const users = await this.client.users.getAll({ q: query, per_page: limit, page: page })
+    const response = await this.client.users.getAll({ q: query, per_page: limit, page: page })
 
-    return users.data.map(mapAuth0UserToUser)
+    return response.data.map((auth0User) => {
+      const user = mapAuth0UserToUser(auth0User)
+      this.cache.set(user.id, user)
+
+      return user
+    })
   }
 
   async update(id: UserId, data: Partial<UserWrite>) {
-    const user = await this.client.users.update({ id }, mapUserWriteToPatch(data))
+    const response = await this.client.users.update({ id }, mapUserWriteToPatch(data))
 
-    if (user.status !== 200) {
-      throw new Error(`Failed to fetch user with id ${id}: ${user.statusText}`)
+    if (response.status !== 200) {
+      throw new UserFetchError(id, response.status, response.statusText)
     }
 
-    return mapAuth0UserToUser(user.data)
+    const user = mapAuth0UserToUser(response.data)
+    this.cache.set(user.id, user)
+
+    return user
   }
 }
