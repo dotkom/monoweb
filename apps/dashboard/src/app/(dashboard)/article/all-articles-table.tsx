@@ -1,33 +1,37 @@
-"use client"
-
 import type { Article } from "@dotkomonline/types"
 import { Anchor, Group } from "@mantine/core"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
 
-interface Props {
-  data: Article[]
+import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
+
+interface AllArticlesTableProps {
+  articles: Article[]
 }
 
-export const useArticleTable = ({ data }: Props) => {
+export const AllArticlesTable = ({ articles }: AllArticlesTableProps) => {
   const columnHelper = createColumnHelper<Article>()
   const columns = useMemo(
     () => [
       columnHelper.accessor("title", {
         header: () => "Tittel",
         cell: (info) => info.getValue(),
+        sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("author", {
         header: () => "Forfatter",
         cell: (info) => info.getValue(),
+        sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("photographer", {
         header: () => "Fotograf",
         cell: (info) => info.getValue(),
+        sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("imageUrl", {
         header: () => "Bilde",
+        enableSorting: false,
         cell: (info) => {
           const val = info.getValue()
           if (!val) {
@@ -44,12 +48,14 @@ export const useArticleTable = ({ data }: Props) => {
       columnHelper.accessor("isFeatured", {
         header: () => "Fremhevet",
         cell: (info) => (info.getValue() ? "Ja" : "Nei"),
+        filterFn: arrayOrEqualsFilter<Article>(),
       }),
-      columnHelper.accessor("tags", {
+      columnHelper.accessor((article) => article.tags.join(" "), {
+        id: "Tags",
         header: () => "Tags",
         cell: (info) => (
           <Group>
-            {info.getValue().map((tag) => (
+            {info.row.original.tags.map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
           </Group>
@@ -58,6 +64,7 @@ export const useArticleTable = ({ data }: Props) => {
       columnHelper.accessor((evt) => evt, {
         id: "actions",
         header: () => "Detaljer",
+        enableSorting: false,
         cell: (info) => (
           <Anchor component={Link} size="sm" href={`/article/${info.getValue().id}`}>
             Se mer
@@ -68,9 +75,22 @@ export const useArticleTable = ({ data }: Props) => {
     [columnHelper]
   )
 
-  return useReactTable({
-    data,
-    getCoreRowModel: getCoreRowModel(),
-    columns,
-  })
+  const tableOptions = useMemo(
+    () => ({
+      data: articles,
+      getCoreRowModel: getCoreRowModel(),
+      columns,
+    }),
+    [articles, columns]
+  )
+
+  return (
+    <FilterableTable
+      tableOptions={tableOptions}
+      filters={[
+        { columnId: "isFeatured", label: "Fremhevet", value: true },
+        { columnId: "isFeatured", label: "Ikke fremhevet", value: false },
+      ]}
+    />
+  )
 }
