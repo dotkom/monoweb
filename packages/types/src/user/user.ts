@@ -31,8 +31,12 @@ export type UserWrite = z.infer<typeof UserWriteSchema>
 
 export type UserId = User["id"]
 
-type UserNameResolvable = { firstName: string | null; lastName: string | null }
-export function getDisplayName<T extends UserNameResolvable>({ firstName, lastName }: T): string {
+type UserNameResolvable = { name: string | null; firstName: string | null; lastName: string | null }
+export function getDisplayName<T extends UserNameResolvable>({ name, firstName, lastName }: T): string {
+  if (name) {
+    return name
+  }
+
   if (firstName && lastName) {
     return `${firstName} ${lastName}`
   }
