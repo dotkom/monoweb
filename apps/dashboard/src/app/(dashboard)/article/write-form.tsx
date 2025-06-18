@@ -1,7 +1,7 @@
 import { ArticleSchema, type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
 import { useTagsAllQuery } from "src/modules/article/queries/use-tags-all-query"
 import type { z } from "zod"
-import { createRichTextInput, createTagInput, createTextInput, useFormBuilder } from "../../form"
+import { createCheckboxInput, createRichTextInput, createTagInput, createTextInput, useFormBuilder } from "../../form"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
 
@@ -57,6 +57,9 @@ export const useArticleWriteForm = ({
         label: "Tags",
         data: tags.map((tag) => tag.name),
         required: true,
+      }),
+      isFeatured: createCheckboxInput({
+        label: "Fremhevet",
       }),
       excerpt: createRichTextInput({
         label: "Ingress",

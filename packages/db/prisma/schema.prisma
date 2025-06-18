@@ -433,6 +433,7 @@ model Article {
   slug         String           @unique
   excerpt      String
   content      String
+  isFeatured   Boolean          @default(false)
   tags         ArticleTagLink[]
 
   @@map("article")

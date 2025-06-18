@@ -9,6 +9,7 @@ export interface ArticleRepository {
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
   getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
+  getFeatured(): Promise<Article[]>
 }
 
 type ArticleWithTagLinks = Omit<Article, "tags"> & {
@@ -69,6 +70,17 @@ export class ArticleRepositoryImpl implements ArticleRepository {
         },
       },
       ...pageQuery(page),
+      include: this.includeTags,
+    })
+
+    return articles.map(this.mapArticle)
+  }
+
+  async getFeatured(): Promise<Article[]> {
+    const articles = await this.db.article.findMany({
+      where: {
+        isFeatured: true,
+      },
       include: this.includeTags,
     })
 

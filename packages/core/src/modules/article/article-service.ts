@@ -1,5 +1,5 @@
 import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
-import { compareAsc } from "date-fns"
+import { compareAsc, compareDesc } from "date-fns"
 import type { Pageable } from "../../query"
 import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
@@ -14,6 +14,7 @@ export interface ArticleService {
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
   getRelated(article: Article): Promise<Article[]>
+  getFeatured(): Promise<Article[]>
 
   getTags(): Promise<ArticleTag[]>
   addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
@@ -114,6 +115,11 @@ export class ArticleServiceImpl implements ArticleService {
       })
       .map(({ article }) => article)
       .slice(0, 10)
+  }
+
+  async getFeatured(): Promise<Article[]> {
+    const articles = await this.articleRepository.getFeatured()
+    return articles.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
   }
 
   /**
