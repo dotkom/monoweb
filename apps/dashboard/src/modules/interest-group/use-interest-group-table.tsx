@@ -30,7 +30,7 @@ export const useInterestGroupTable = ({ data }: Props) => {
             return "Ingen bilde"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopenere">
+            <Anchor target="_blank" href={val} rel="noopener">
               Link
             </Anchor>
           )

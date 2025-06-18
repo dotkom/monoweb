@@ -31,7 +31,7 @@ export const useOfflineTable = ({ data }: Props) => {
             return "Ingen fil"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopenere">
+            <Anchor target="_blank" href={val} rel="noopener">
               Link
             </Anchor>
           )
@@ -46,7 +46,7 @@ export const useOfflineTable = ({ data }: Props) => {
           }
 
           return (
-            <Anchor target="_blank" href={val} rel="noopenere">
+            <Anchor target="_blank" href={val} rel="noopener">
               Link
             </Anchor>
           )

@@ -8,8 +8,8 @@ import Link from "next/link"
 
 export default async function App() {
   const events = await server.event.all.query()
-  const featuredArticles = (await server.article.featured.query()).slice(0, 6)
-  const offlines = (await server.offline.all.query()).slice(0, 5)
+  const featuredArticles = await server.article.featured.query()
+  const offlines = await server.offline.all.query()
 
   return (
     <section className="w-full">
@@ -36,7 +36,7 @@ export default async function App() {
         </Link>
       </div>
       <div className="grid gap-4 mt-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {featuredArticles.map((article) => (
+        {featuredArticles.slice(0, 6).map((article) => (
           <ArticleListItem article={article} key={article.id} orientation="vertical" />
         ))}
       </div>
@@ -49,7 +49,7 @@ export default async function App() {
         </Link>
       </div>
       <div className="grid gap-8 mt-2 grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {offlines.map((offline) => (
+        {offlines.slice(0, 5).map((offline) => (
           <OfflineCard offline={offline} key={offline.id} />
         ))}
       </div>
