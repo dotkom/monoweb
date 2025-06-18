@@ -41,6 +41,10 @@ export const useArticleTable = ({ data }: Props) => {
           )
         },
       }),
+      columnHelper.accessor("isFeatured", {
+        header: () => "Fremhevet",
+        cell: (info) => (info.getValue() ? "Ja" : "Nei"),
+      }),
       columnHelper.accessor("tags", {
         header: () => "Tags",
         cell: (info) => (
