@@ -118,7 +118,8 @@ export class ArticleServiceImpl implements ArticleService {
   }
 
   async getFeatured(): Promise<Article[]> {
-    return (await this.articleRepository.getFeatured()).sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
+    const articles = await this.articleRepository.getFeatured()
+    return articles.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
   }
 
   /**

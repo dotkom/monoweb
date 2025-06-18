@@ -4,7 +4,7 @@ import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
 
-import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
+import { FilterableTable, arrayOrEqualsFilter } from "../../../components/molecules/FilterableTable/FilterableTable"
 
 interface AllArticlesTableProps {
   articles: Article[]
