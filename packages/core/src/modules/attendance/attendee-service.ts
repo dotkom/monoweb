@@ -158,7 +158,6 @@ export class AttendeeServiceImpl implements AttendeeService {
       userGrade,
       reserveTime: registerTime,
       reserved: true,
-      userFlags: user.flags,
     })
 
     return attendee
@@ -237,7 +236,6 @@ export class AttendeeServiceImpl implements AttendeeService {
         userGrade,
         reserveTime,
         reserved: false,
-        flags: user.flags,
       },
       attendancePool
     )
