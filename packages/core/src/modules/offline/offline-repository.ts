@@ -29,6 +29,6 @@ export class OfflineRepositoryImpl implements OfflineRepository {
   }
 
   async getAll(page: Pageable): Promise<Offline[]> {
-    return await this.db.offline.findMany({ ...pageQuery(page) })
+    return await this.db.offline.findMany({ ...pageQuery(page), orderBy: { published: "desc" } })
   }
 }

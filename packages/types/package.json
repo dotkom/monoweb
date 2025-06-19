@@ -11,14 +11,14 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "^3.22.4",
+    "@dotkomonline/db": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
-    "@dotkomonline/db": "workspace:*"
+    "zod": "^3.25.47"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@dotkomonline/config": "workspace:*",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.8"
+    "@types/node": "^22.15.29",
+    "typescript": "^5.8.3"
   }
 }

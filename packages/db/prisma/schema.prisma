@@ -210,7 +210,7 @@ model Attendee {
   /// Which options the user has selected from the Attendance selections
   selections Json @default("[]")
 
-  displayName String
+  /// To preserve the user's grade at the time of registration
   userGrade   Int?
 
   reserved Boolean
@@ -438,6 +438,7 @@ model Article {
   slug         String           @unique
   excerpt      String
   content      String
+  isFeatured   Boolean          @default(false)
   tags         ArticleTagLink[]
 
   @@map("article")

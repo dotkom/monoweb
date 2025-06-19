@@ -10,7 +10,8 @@ export const ArticleEditCard: FC = () => {
   const FormComponent = useArticleWriteForm({
     label: "Oppdater artikkel",
     onSubmit: (data) => {
-      edit.mutate({ id: article.id, input: data })
+      const { tags, ...articleData } = data
+      edit.mutate({ id: article.id, article: articleData, tags })
     },
     defaultValues: { ...article },
   })

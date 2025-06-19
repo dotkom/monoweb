@@ -1,6 +1,7 @@
 import type { Article, ArticleId, ArticleSlug, ArticleTag, ArticleTagName, ArticleWrite } from "@dotkomonline/types"
+import { compareAsc, compareDesc } from "date-fns"
 import type { Pageable } from "../../query"
-import { ArticleNotFoundError } from "./article-error"
+import { ArticleNotFoundError, ArticleWithSlugAlreadyExistsError } from "./article-error"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
@@ -9,12 +10,16 @@ export interface ArticleService {
   create(input: ArticleWrite): Promise<Article>
   update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(page: Pageable): Promise<Article[]>
+  getAllByTags(tags: ArticleTagName[]): Promise<Article[]>
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
+  getRelated(article: Article): Promise<Article[]>
+  getFeatured(): Promise<Article[]>
 
   getTags(): Promise<ArticleTag[]>
   addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
   removeTag(id: ArticleId, tag: ArticleTagName): Promise<void>
+  setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
 }
 
 export class ArticleServiceImpl implements ArticleService {
@@ -33,6 +38,10 @@ export class ArticleServiceImpl implements ArticleService {
   }
 
   async create(input: ArticleWrite): Promise<Article> {
+    if (await this.getBySlug(input.slug)) {
+      throw new ArticleWithSlugAlreadyExistsError()
+    }
+
     return await this.articleRepository.create(input)
   }
 
@@ -46,11 +55,20 @@ export class ArticleServiceImpl implements ArticleService {
     if (match === null) {
       throw new ArticleNotFoundError(id)
     }
+
+    if (input.slug !== match.slug && input.slug && (await this.getBySlug(input.slug))) {
+      throw new ArticleWithSlugAlreadyExistsError()
+    }
+
     return await this.articleRepository.update(match.id, input)
   }
 
   async getAll(page: Pageable): Promise<Article[]> {
     return await this.articleRepository.getAll(page)
+  }
+
+  async getAllByTags(tags: ArticleTagName[]): Promise<Article[]> {
+    return await this.articleRepository.getByTags(tags)
   }
 
   async getById(id: ArticleId): Promise<Article | null> {
@@ -63,6 +81,45 @@ export class ArticleServiceImpl implements ArticleService {
 
   async getTags(): Promise<ArticleTag[]> {
     return await this.articleTagRepository.getAll()
+  }
+
+  /**
+   * Gets the top 10 related articles based on tags
+   */
+  async getRelated(article: Article): Promise<Article[]> {
+    const articleTags = new Set(article.tags)
+    const relatedArticles = await this.getAllByTags(article.tags)
+
+    return relatedArticles
+      .filter((related) => related.id !== article.id)
+      .map((related) => {
+        const matchCount = related.tags.filter((tag) => articleTags.has(tag)).length
+        const nonMatchCount = related.tags.length - matchCount
+
+        return {
+          article: related,
+          matchCount,
+          nonMatchCount,
+        }
+      })
+      .sort((a, b) => {
+        if (b.matchCount !== a.matchCount) {
+          return b.matchCount - a.matchCount
+        }
+
+        if (a.nonMatchCount !== b.nonMatchCount) {
+          return a.nonMatchCount - b.nonMatchCount
+        }
+
+        return compareAsc(b.article.updatedAt, a.article.updatedAt)
+      })
+      .map(({ article }) => article)
+      .slice(0, 10)
+  }
+
+  async getFeatured(): Promise<Article[]> {
+    const articles = await this.articleRepository.getFeatured()
+    return articles.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
   }
 
   /**
@@ -98,5 +155,19 @@ export class ArticleServiceImpl implements ArticleService {
     if (!isTagStillInUse) {
       await this.articleTagRepository.delete(tag)
     }
+  }
+
+  async setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]> {
+    const currentTags = (await this.articleTagRepository.getAllByArticle(id)).map((tag) => tag.name)
+
+    const tagsToAdd = tags.filter((tag) => !currentTags.includes(tag))
+    const tagsToRemove = currentTags.filter((tag) => !tags.includes(tag))
+
+    const removePromises = tagsToRemove.map(async (tag) => this.removeTag(id, tag))
+    const addPromises = tagsToAdd.map(async (tag) => this.addTag(id, tag))
+
+    await Promise.all([...removePromises, ...addPromises])
+
+    return currentTags.filter((tag) => !tagsToRemove.includes(tag)).concat(tagsToAdd)
   }
 }

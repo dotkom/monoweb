@@ -1,8 +1,7 @@
+import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
 import type { Offline } from "@dotkomonline/types"
 import { Text, Title } from "@dotkomonline/ui"
-import Image from "next/image"
-import Link from "next/link"
 
 const OfflinePage = async () => {
   const offlines = await server.offline.all.query()
@@ -30,16 +29,14 @@ const OfflinePage = async () => {
 }
 
 function groupOfflinesByYear(offlines: Offline[]) {
-  return offlines
-    .sort((a, b) => b.published.getTime() - a.published.getTime())
-    .reduce<Record<number, Offline[]>>((acc, offline) => {
-      const year = offline.published.getFullYear()
+  return offlines.reduce<Record<number, Offline[]>>((acc, offline) => {
+    const year = offline.published.getFullYear()
 
-      acc[year] ??= []
-      acc[year].push(offline)
+    acc[year] ??= []
+    acc[year].push(offline)
 
-      return acc
-    }, {})
+    return acc
+  }, {})
 }
 
 interface OfflineYearSectionProps {
@@ -59,29 +56,6 @@ const OfflineYearSection = ({ offlines, year }: OfflineYearSectionProps) => {
           <OfflineCard offline={offline} key={offline.id} />
         ))}
       </div>
-    </div>
-  )
-}
-
-interface OfflineCardProps {
-  offline: Offline
-}
-
-const OfflineCard = ({ offline }: OfflineCardProps) => {
-  return (
-    <div className="flex flex-col gap-3 text-wrap w-56">
-      {offline.imageUrl && offline.fileUrl && (
-        <Link href={offline.fileUrl}>
-          <Image
-            src={offline.imageUrl}
-            width={200}
-            height={250}
-            alt={offline.title}
-            className="rounded cursor-pointer w-auto transition-transform duration-200 hover:scale-105 shadow-sm hover:shadow-md"
-          />
-        </Link>
-      )}
-      <Text className="text-slate-11">{offline.title}</Text>
     </div>
   )
 }

@@ -22,6 +22,7 @@ export const UserSchema = z.object({
   flags: schemas.UserFlagSchema.array().default([]),
 
   membership: MembershipSchema.nullable().default(null),
+  displayName: z.string().nullable().default(null),
 })
 
 export const UserWriteSchema = UserSchema.omit({
@@ -36,29 +37,15 @@ export type UserId = User["id"]
 
 export type UserFlag = schemas.UserFlagType
 
-export function getDisplayName(user: User): string {
-  if (user.firstName && user.lastName) {
-    return `${user.firstName} ${user.lastName}`
+type UserNameResolvable = { name: string | null; firstName: string | null; lastName: string | null }
+export function getDisplayName<T extends UserNameResolvable>({ name, firstName, lastName }: T): string {
+  if (name) {
+    return name
   }
 
-  if (user.lastName) {
-    return user.lastName
+  if (firstName && lastName) {
+    return `${firstName} ${lastName}`
   }
 
-  if (user.firstName) {
-    return user.firstName
-  }
-
-  return user.email
-}
-
-export function hasFlag<T extends { flags: UserFlag[] } | { userFlags: UserFlag[] }>(
-  userResolvable: T,
-  flag: UserFlag
-): boolean {
-  if ("flags" in userResolvable) {
-    return userResolvable.flags.includes(flag)
-  }
-
-  return userResolvable.userFlags.includes(flag)
+  return lastName || firstName || "Ukjent bruker"
 }
