@@ -19,7 +19,7 @@ export const UserSchema = z.object({
   rfid: z.string().nullable().default(null),
   allergies: z.string().nullable().default(null),
   address: z.string().nullable().default(null),
-  flags: schemas.UserFlagSchema.array().default([]),
+  flags: UserFlagSchema,
 
   membership: MembershipSchema.nullable().default(null),
   displayName: z.string().nullable().default(null),
