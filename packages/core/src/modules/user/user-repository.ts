@@ -3,6 +3,7 @@ import {
   GenderSchema,
   MembershipSchema,
   type User,
+  UserFlagSchema,
   type UserId,
   type UserWrite,
   getDisplayName,
@@ -44,6 +45,7 @@ const mapAuth0UserToUser = (auth0User: GetUsers200ResponseOneOfInner): User => {
     phone: z.string().safeParse(appMetadata.phone).data ?? null,
     membership: MembershipSchema.safeParse(appMetadata.membership).data ?? null,
     displayName,
+    flags: UserFlagSchema.safeParse(appMetadata.flags).data ?? [],
   }
 }
 
@@ -64,6 +66,7 @@ const mapUserToAuth0UserCreate = (user: UserWrite, password: string): UserCreate
     gender: user.gender,
     phone: user.phone,
     membership: user.membership,
+    flags: user.flags,
   },
 })
 
@@ -82,6 +85,7 @@ const mapUserWriteToPatch = (data: Partial<UserWrite>): UserUpdate => {
       gender: data.gender,
       phone: data.phone,
       membership: data.membership,
+      flags: data.flags,
     },
   }
 
