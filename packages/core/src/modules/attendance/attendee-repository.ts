@@ -5,14 +5,18 @@ import {
   type Attendee,
   type AttendeeId,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
-  type AttendeeSelectionResponse,
   AttendeeSelectionResponsesSchema,
   type AttendeeWrite,
+  type User,
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { UserRepository } from "../user/user-repository"
 import { AttendeeNotFoundError, AttendeeWriteError } from "./attendee-error"
+
+type UnparsedAttendee = Omit<Attendee, "user" | "selections"> & {
+  selections?: JsonValue
+}
 
 export interface AttendeeRepository {
   create(obj: AttendeeWrite): Promise<Attendee>
@@ -24,7 +28,7 @@ export interface AttendeeRepository {
   getFirstUnreservedByAttendancePoolId(id: AttendancePoolId): Promise<Attendee | null>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
   poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
-  checkCapacityAndReserve(attendeeId: AttendeeId): Promise<void>
+  reserveAttendee(attendeeId: AttendeeId): Promise<Attendee>
   moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId): Promise<void>
   removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string): Promise<void>
 }
@@ -47,7 +51,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const user = await this.userRepository.getById(userId)
 
-    return this.parseSelectionResponses({ ...attendee, user })
+    return this.parse(attendee, user)
   }
 
   async poolHasAttendees(attendancePoolId: AttendancePoolId): Promise<boolean> {
@@ -67,13 +71,13 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const attendee = await this.db.attendee.create({ data })
     const user = await this.userRepository.getById(attendee.userId)
 
-    return this.parseSelectionResponses({ ...attendee, user })
+    return this.parse(attendee, user)
   }
 
   async delete(id: AttendeeId) {
     const deletedUser = await this.db.attendee.delete({ where: { id } })
 
-    return this.parseSelectionResponses(deletedUser)
+    return this.parse(deletedUser)
   }
 
   async getById(id: AttendeeId): Promise<Attendee> {
@@ -85,7 +89,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const user = await this.userRepository.getById(attendee.userId)
 
-    return this.parseSelectionResponses({ ...attendee, user })
+    return this.parse(attendee, user)
   }
 
   async getByAttendanceId(attendanceId: AttendanceId) {
@@ -96,7 +100,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const users = await Promise.all(attendees.map((attendee) => this.userRepository.getById(attendee.userId)))
 
-    return attendees.map((attendee, index) => this.parseSelectionResponses({ ...attendee, user: users[index] }))
+    return attendees.map((attendee, index) => this.parse(attendee, users[index]))
   }
 
   async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
@@ -107,7 +111,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const users = await Promise.all(attendees.map((attendee) => this.userRepository.getById(attendee.userId)))
 
-    return attendees.map((attendee, index) => this.parseSelectionResponses({ ...attendee, user: users[index] }))
+    return attendees.map((attendee, index) => this.parse(attendee, users[index]))
   }
 
   async getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId) {
@@ -122,7 +126,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
 
     const user = await this.userRepository.getById(attendee.userId)
 
-    return this.parseSelectionResponses({ ...attendee, user })
+    return this.parse(attendee, user)
   }
 
   async update(id: AttendeeId, data: Partial<AttendeeWrite>) {
@@ -131,7 +135,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     const updatedAttendee = await this.db.attendee.update({ where: { id }, data })
     const user = await this.userRepository.getById(updatedAttendee.userId)
 
-    return this.parseSelectionResponses({ ...updatedAttendee, user })
+    return this.parse(updatedAttendee, user)
   }
 
   async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {
@@ -153,15 +157,22 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     }
   }
 
-  private parseSelectionResponses<T extends { selections: JsonValue }>({
-    selections,
-    ...obj
-  }: T): Omit<T, "selections"> & { selections: AttendeeSelectionResponse } {
-    return { ...obj, selections: AttendeeSelectionResponsesSchema.parse(selections) }
+  private parse(unparsedAttendee: UnparsedAttendee, user: User): Attendee
+  private parse(unparsedAttendee: UnparsedAttendee, user?: undefined): Omit<Attendee, "user">
+  private parse(unparsedAttendee: UnparsedAttendee, user?: User): Attendee | Omit<Attendee, "user"> {
+    const parsedSelections = unparsedAttendee.selections
+      ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
+      : []
+
+    return {
+      ...unparsedAttendee,
+      user,
+      selections: parsedSelections,
+    }
   }
 
-  async checkCapacityAndReserve(id: AttendeeId) {
-    await this.db.attendee.updateMany({
+  async reserveAttendee(id: AttendeeId) {
+    const attendee = await this.db.attendee.update({
       where: {
         id,
       },
@@ -169,6 +180,10 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
         reserved: true,
       },
     })
+
+    const user = await this.userRepository.getById(attendee.userId)
+
+    return this.parse(attendee, user)
   }
 
   async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {

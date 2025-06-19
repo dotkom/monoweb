@@ -246,7 +246,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     const poolHasCapacity = pool.numAttendees < pool.capacity
 
     if ((attendeeIsPastReserveTime && poolHasCapacity) || bypassCriteria) {
-      return await this.attendeeRepository.update(attendee.id, { reserved: true })
+      return await this.attendeeRepository.reserveAttendee(attendee.id)
     }
 
     return false
