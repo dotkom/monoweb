@@ -18,9 +18,9 @@ export const useInterestGroupTable = ({ data }: Props) => {
         header: () => "Navn",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("description", {
-        header: () => "Kort beskrivelse",
-        cell: (info) => info.getValue(),
+      columnHelper.accessor("isActive", {
+        header: () => "Aktiv",
+        cell: (info) => (info.getValue() ? "Aktiv" : "Inaktiv"),
       }),
       columnHelper.accessor("image", {
         header: () => "Bilde",
