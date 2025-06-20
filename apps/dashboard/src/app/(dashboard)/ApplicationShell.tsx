@@ -15,6 +15,7 @@ import {
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import type { FC, PropsWithChildren } from "react"
 
 const navigations = [
@@ -66,6 +67,7 @@ const navigations = [
 export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
+  const pathname = usePathname()
 
   return (
     <AppShell
@@ -105,6 +107,8 @@ export const ApplicationShell: FC<PropsWithChildren> = ({ children }) => {
                 key={child.label}
                 label={child.label}
                 href={child.href}
+                active={pathname.startsWith(child.href)}
+                variant="subtle"
                 onNavigate={() => {
                   mobileOpened && toggleMobile()
                 }}
