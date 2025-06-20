@@ -11,8 +11,6 @@ import { EventEditCard } from "./edit-card"
 import { useEventDetailsContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
 
-const EventDetailsCompanies: FC = () => <h1>Bedrifter</h1>
-
 const EventDetailsFeedbackForms: FC = () => <h1>Tilbakemelding</h1>
 
 const SIDEBAR_LINKS = [
@@ -27,12 +25,6 @@ const SIDEBAR_LINKS = [
     label: "Bedrifter",
     slug: "event",
     component: EventCompaniesPage,
-  },
-  {
-    icon: "tabler:tent",
-    label: "Komiteer",
-    slug: "committee",
-    component: EventDetailsCompanies,
   },
   {
     icon: "tabler:forms",
