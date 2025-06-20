@@ -15,9 +15,14 @@ export const useOfflineTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<Offline>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("title", {
+      columnHelper.accessor((offline) => offline, {
+        id: "title",
         header: () => "Tittel",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/offline/${info.getValue().id}`}>
+            {info.getValue().title}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("published", {
         header: () => "Utgivelsesdato",
@@ -51,15 +56,6 @@ export const useOfflineTable = ({ data }: Props) => {
             </Anchor>
           )
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/offline/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]
