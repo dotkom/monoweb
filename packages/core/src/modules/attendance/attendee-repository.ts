@@ -43,7 +43,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     this.userRepository = userRepository
   }
 
-  async getByUserId(userId: UserId, attendanceId: AttendanceId) {
+  public async getByUserId(userId: UserId, attendanceId: AttendanceId) {
     const attendee = await this.db.attendee.findFirst({ where: { userId, attendanceId } })
 
     if (!attendee) {
@@ -55,26 +55,26 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async poolHasAttendees(attendancePoolId: AttendancePoolId) {
+  public async poolHasAttendees(attendancePoolId: AttendancePoolId) {
     const numberOfAttendees = await this.db.attendee.count({ where: { attendancePoolId } })
 
     return numberOfAttendees > 0
   }
 
-  async attendanceHasAttendees(attendanceId: AttendanceId) {
+  public async attendanceHasAttendees(attendanceId: AttendanceId) {
     const numberOfAttendees = await this.db.attendee.count({ where: { attendanceId } })
 
     return numberOfAttendees > 0
   }
 
-  async moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId) {
+  public async moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId) {
     await this.db.attendee.updateMany({
       where: { attendancePoolId: { in: fromPoolIds } },
       data: { attendancePoolId: toPoolId },
     })
   }
 
-  async create(data: AttendeeWrite) {
+  public async create(data: AttendeeWrite) {
     this.validateWrite(data)
 
     const attendee = await this.db.attendee.create({ data })
@@ -83,11 +83,11 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async delete(attendeeId: AttendeeId) {
+  public async delete(attendeeId: AttendeeId) {
     await this.db.attendee.delete({ where: { id: attendeeId } })
   }
 
-  async getById(attendeeId: AttendeeId) {
+  public async getById(attendeeId: AttendeeId) {
     const attendee = await this.db.attendee.findUnique({ where: { id: attendeeId } })
 
     if (!attendee) {
@@ -99,7 +99,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async getByAttendanceId(attendanceId: AttendanceId) {
+  public async getByAttendanceId(attendanceId: AttendanceId) {
     const attendees = await this.db.attendee.findMany({
       where: { attendanceId },
       orderBy: { reserveTime: "asc" },
@@ -110,7 +110,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return attendees.map((attendee, index) => this.parse(attendee, users[index]))
   }
 
-  async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
+  public async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
     const attendees = await this.db.attendee.findMany({
       where: { attendancePoolId },
       orderBy: { reserveTime: "asc" },
@@ -121,7 +121,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return attendees.map((attendee, index) => this.parse(attendee, users[index]))
   }
 
-  async getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId) {
+  public async getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId) {
     const attendee = await this.db.attendee.findFirst({
       where: { attendancePoolId, reserved: false },
       orderBy: { reserveTime: "asc" },
@@ -136,7 +136,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>) {
+  public async update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>) {
     this.validateWrite(data)
 
     const updatedAttendee = await this.db.attendee.update({ where: { id: attendeeId }, data })
@@ -145,7 +145,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(updatedAttendee, user)
   }
 
-  async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {
+  public async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {
     const result: number =
       await tx.$queryRaw`SELECT count(*) FROM attendee WHERE "attendancePoolId" = ${attendancePoolId} FOR UPDATE`
 
@@ -178,7 +178,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     }
   }
 
-  async reserveAttendee(attendeeId: AttendeeId) {
+  public async reserveAttendee(attendeeId: AttendeeId) {
     const attendee = await this.db.attendee.update({
       where: {
         id: attendeeId,
@@ -191,7 +191,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return attendee.reserved
   }
 
-  async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
+  public async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
     const attendees = (await this.db.attendee.findMany({
       where: { attendanceId },
       select: {

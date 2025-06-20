@@ -28,43 +28,43 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
     this.db = db
   }
 
-  async getById(interestGroupId: InterestGroupId) {
+  public async getById(interestGroupId: InterestGroupId) {
     return await this.db.interestGroup.findUnique({ where: { id: interestGroupId } })
   }
 
-  async getAll() {
-    return await this.db.interestGroup.findMany({})
+  public async getAll() {
+    return await this.db.interestGroup.findMany()
   }
 
-  async create(data: InterestGroupWrite) {
+  public async create(data: InterestGroupWrite) {
     return await this.db.interestGroup.create({ data })
   }
 
-  async update(interestGroupId: InterestGroupId, data: Partial<InterestGroupWrite>) {
+  public async update(interestGroupId: InterestGroupId, data: Partial<InterestGroupWrite>) {
     return await this.db.interestGroup.update({ where: { id: interestGroupId }, data })
   }
 
-  async delete(interestGroupId: InterestGroupId) {
+  public async delete(interestGroupId: InterestGroupId) {
     await this.db.interestGroup.delete({ where: { id: interestGroupId } })
   }
 
-  async getAllMembers(interestGroupId: InterestGroupId) {
+  public async getAllMembers(interestGroupId: InterestGroupId) {
     return await this.db.interestGroupMember.findMany({ where: { interestGroupId } })
   }
 
-  async getAllByMember(userId: UserId) {
+  public async getAllByMember(userId: UserId) {
     return await this.db.interestGroup.findMany({ where: { members: { some: { userId } } } })
   }
 
-  async addMember(interestGroupId: InterestGroupId, userId: UserId) {
+  public async addMember(interestGroupId: InterestGroupId, userId: UserId) {
     return await this.db.interestGroupMember.create({ data: { interestGroupId, userId } })
   }
 
-  async removeMember(interestGroupId: InterestGroupId, userId: UserId) {
+  public async removeMember(interestGroupId: InterestGroupId, userId: UserId) {
     await this.db.interestGroupMember.delete({ where: { interestGroupId, userId } })
   }
 
-  async getAllByEventId(eventId: EventId) {
+  public async getAllByEventId(eventId: EventId) {
     return await this.db.interestGroup.findMany({
       where: {
         events: {

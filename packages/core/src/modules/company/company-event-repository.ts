@@ -14,11 +14,11 @@ export class CompanyEventRepositoryImpl implements CompanyEventRepository {
     this.db = db
   }
 
-  async getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]> {
+  public async getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]> {
     return this.db.event.findMany({ where: { companies: { some: { companyId } } }, ...pageQuery(page) })
   }
 
-  async getCompaniesByEventId(eventId: EventId) {
+  public async getCompaniesByEventId(eventId: EventId) {
     return this.db.company.findMany({ where: { events: { some: { eventId } } } })
   }
 }

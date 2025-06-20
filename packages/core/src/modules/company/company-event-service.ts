@@ -14,11 +14,11 @@ export class CompanyEventServiceImpl implements CompanyEventService {
     this.companyEventRepository = companyEventRepository
   }
 
-  async getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]> {
+  public async getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]> {
     return this.companyEventRepository.getEventsByCompanyId(companyId, page)
   }
 
-  async getCompaniesByEventId(eventId: EventId): Promise<Company[]> {
+  public async getCompaniesByEventId(eventId: EventId): Promise<Company[]> {
     return this.companyEventRepository.getCompaniesByEventId(eventId)
   }
 }

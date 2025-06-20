@@ -17,23 +17,23 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     this.db = db
   }
 
-  async getById(id: string): Promise<Company | null> {
+  public async getById(id: string): Promise<Company | null> {
     return await this.db.company.findUnique({ where: { id } })
   }
 
-  async getBySlug(slug: string): Promise<Company | null> {
+  public async getBySlug(slug: string): Promise<Company | null> {
     return await this.db.company.findUnique({ where: { slug } })
   }
 
-  async getAll(page: Pageable): Promise<Company[]> {
+  public async getAll(page: Pageable): Promise<Company[]> {
     return await this.db.company.findMany({ ...pageQuery(page) })
   }
 
-  async create(data: CompanyWrite): Promise<Company> {
+  public async create(data: CompanyWrite): Promise<Company> {
     return await this.db.company.create({ data })
   }
 
-  async update(id: CompanyId, data: Omit<CompanyWrite, "id">): Promise<Company> {
+  public async update(id: CompanyId, data: Omit<CompanyWrite, "id">): Promise<Company> {
     return await this.db.company.update({ where: { id }, data })
   }
 }

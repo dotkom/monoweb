@@ -10,15 +10,15 @@ import {
   StripeAccountNotFoundError,
   UnrefundablePaymentError,
 } from "./payment-error"
-import type { PaymentRepository } from "./payment-repository.js"
+import type { PaymentRepository } from "./payment-repository"
 import { ProductNotFoundError, ProductProviderMismatchError } from "./product-error"
-import type { ProductRepository } from "./product-repository.js"
+import type { ProductRepository } from "./product-repository"
 import {
   InvalidRefundRequestStatusError,
   RefundProcessingFailureError,
   RefundRequestNotFoundError,
 } from "./refund-request-error"
-import type { RefundRequestRepository } from "./refund-request-repository.js"
+import type { RefundRequestRepository } from "./refund-request-repository"
 
 export interface StripeAccount {
   stripe: Stripe

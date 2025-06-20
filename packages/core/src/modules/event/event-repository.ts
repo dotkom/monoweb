@@ -10,7 +10,7 @@ export interface EventRepository {
   getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getAllByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
   getById(id: string): Promise<Event | null>
-  addAttendance(eventId: EventId, attendanceId: string): Promise<Event | null>
+  addAttendance(eventId: EventId, attendanceId: string): Promise<Event>
   addEventToInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<EventInterestGroup>
   removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<void>
 }
@@ -26,15 +26,15 @@ export class EventRepositoryImpl implements EventRepository {
     return await this.db.event.update({ where: { id }, data: { attendanceId } })
   }
 
-  async create(data: EventWrite): Promise<Event> {
+  async create(data: EventWrite) {
     return await this.db.event.create({ data })
   }
 
-  async update(id: EventId, data: Partial<EventWrite>): Promise<Event> {
+  async update(id: EventId, data: Partial<EventWrite>) {
     return await this.db.event.update({ where: { id }, data })
   }
 
-  async getAll(page?: Pageable, filter?: EventFilter): Promise<Event[]> {
+  async getAll(page?: Pageable, filter?: EventFilter) {
     return await this.db.event.findMany({
       ...pageQuery(page ?? { take: 100 }),
 
@@ -72,7 +72,7 @@ export class EventRepositoryImpl implements EventRepository {
     })
   }
 
-  async getAllByUserAttending(userId: string): Promise<Event[]> {
+  async getAllByUserAttending(userId: string) {
     return await this.db.event.findMany({
       where: {
         status: { not: "DELETED" },
@@ -92,7 +92,7 @@ export class EventRepositoryImpl implements EventRepository {
     })
   }
 
-  async getAllByHostingGroupId(groupId: string, page: Pageable): Promise<Event[]> {
+  async getAllByHostingGroupId(groupId: string, page: Pageable) {
     return await this.db.event.findMany({
       where: {
         status: { not: "DELETED" },
@@ -104,11 +104,11 @@ export class EventRepositoryImpl implements EventRepository {
     })
   }
 
-  async getById(id: string): Promise<Event | null> {
+  async getById(id: string) {
     return await this.db.event.findUnique({ where: { id, status: { not: "DELETED" } } })
   }
 
-  async getAllByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]> {
+  async getAllByInterestGroupId(interestGroupId: string, page: Pageable) {
     return await this.db.event.findMany({
       where: {
         status: { not: "DELETED" },
@@ -120,11 +120,11 @@ export class EventRepositoryImpl implements EventRepository {
     })
   }
 
-  async addEventToInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<EventInterestGroup> {
+  async addEventToInterestGroup(eventId: EventId, interestGroupId: InterestGroupId) {
     return await this.db.eventInterestGroup.create({ data: { interestGroupId, eventId } })
   }
 
-  async removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId): Promise<void> {
+  async removeEventFromInterestGroup(eventId: EventId, interestGroupId: InterestGroupId) {
     await this.db.eventInterestGroup.delete({ where: { eventId_interestGroupId: { interestGroupId, eventId } } })
   }
 }

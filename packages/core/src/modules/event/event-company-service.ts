@@ -14,16 +14,16 @@ export class EventCompanyServiceImpl implements EventCompanyService {
     this.eventCompanyRepository = eventCompanyRepository
   }
 
-  async createCompany(eventId: EventId, companyId: CompanyId) {
+  public async createCompany(eventId: EventId, companyId: CompanyId) {
     const companies = await this.eventCompanyRepository.createCompany(eventId, companyId)
     return companies
   }
 
-  async deleteCompany(eventId: EventId, companyId: CompanyId) {
+  public async deleteCompany(eventId: EventId, companyId: CompanyId) {
     await this.eventCompanyRepository.deleteCompany(eventId, companyId)
   }
 
-  async getCompaniesByEventId(eventId: EventId) {
+  public async getCompaniesByEventId(eventId: EventId) {
     return await this.eventCompanyRepository.getCompaniesByEventId(eventId)
   }
 }

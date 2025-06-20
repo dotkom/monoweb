@@ -34,8 +34,10 @@ export type ProductWrite = z.infer<typeof ProductWriteSchema>
 
 export const PaymentSchema = schemas.PaymentSchema.extend({})
 
-export type PaymentId = Payment["id"]
 export type Payment = z.infer<typeof PaymentSchema>
+export type PaymentId = Payment["id"]
+export type PaymentProviderOrderId = Payment["paymentProviderOrderId"]
+export type PaymentProviderSessionId = Payment["paymentProviderSessionId"]
 
 export const PaymentWriteSchema = PaymentSchema.partial({
   paymentProviderOrderId: true,

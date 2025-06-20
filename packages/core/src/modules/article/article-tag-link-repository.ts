@@ -13,11 +13,11 @@ export class ArticleTagLinkRepositoryImpl implements ArticleTagLinkRepository {
     this.db = db
   }
 
-  async add(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
+  public async add(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
     await this.db.articleTagLink.create({ data: { articleId, tagName } })
   }
 
-  async remove(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
+  public async remove(articleId: ArticleId, tagName: ArticleTagName): Promise<void> {
     await this.db.articleTagLink.delete({ where: { articleId_tagName: { articleId, tagName } } })
   }
 }

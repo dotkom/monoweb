@@ -51,7 +51,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     this.db = db
   }
 
-  async getAll() {
+  public async getAll() {
     const attendances = await this.db.attendance.findMany({
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
@@ -59,7 +59,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return attendances.map(this.mapAttendance)
   }
 
-  async create(data: AttendanceWrite) {
+  public async create(data: AttendanceWrite) {
     const createdAttendance = await this.db.attendance.create({
       data,
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
@@ -68,7 +68,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.mapAttendance(createdAttendance)
   }
 
-  async update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>) {
+  public async update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>) {
     const updatedAttendance = await this.db.attendance.update({
       data,
       where: { id: attendanceId },
@@ -78,7 +78,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.mapAttendance(updatedAttendance)
   }
 
-  async delete(attendanceId: AttendanceId) {
+  public async delete(attendanceId: AttendanceId) {
     const deletedAttendance = await this.db.attendance.delete({
       where: { id: attendanceId },
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
@@ -86,7 +86,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.mapAttendance(deletedAttendance)
   }
 
-  async getById(attendanceId: AttendanceId) {
+  public async getById(attendanceId: AttendanceId) {
     const attendance = await this.db.attendance.findUnique({
       where: { id: attendanceId },
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
@@ -95,7 +95,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return attendance && this.mapAttendance(attendance)
   }
 
-  async getByAttendeeId(attendeeId: AttendeeId) {
+  public async getByAttendeeId(attendeeId: AttendeeId) {
     const attendance = await this.db.attendance.findFirst({
       where: {
         attendees: {
@@ -110,7 +110,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return attendance && this.mapAttendance(attendance)
   }
 
-  async createPool(data: AttendancePoolWrite) {
+  public async createPool(data: AttendancePoolWrite) {
     const createdPool = await this.db.attendancePool.create({
       data,
       include: POOL_ATTENDEE_COUNT_INCLUDE,
@@ -119,7 +119,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(createdPool)
   }
 
-  async deletePool(attendancePoolId: AttendancePoolId) {
+  public async deletePool(attendancePoolId: AttendancePoolId) {
     const deletedPool = await this.db.attendancePool.delete({
       where: { id: attendancePoolId },
       include: POOL_ATTENDEE_COUNT_INCLUDE,
@@ -128,7 +128,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(deletedPool)
   }
 
-  async updatePool(attendancePoolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+  public async updatePool(attendancePoolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
     const updatedPool = await this.db.attendancePool.update({
       where: { id: attendancePoolId },
       data,
@@ -138,7 +138,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(updatedPool)
   }
 
-  async getPoolById(attendancePoolId: AttendancePoolId) {
+  public async getPoolById(attendancePoolId: AttendancePoolId) {
     const pool = await this.db.attendancePool.findUnique({
       where: { id: attendancePoolId },
       include: POOL_ATTENDEE_COUNT_INCLUDE,
@@ -151,7 +151,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(pool)
   }
 
-  async getPoolByAttendeeId(attendeeId: AttendeeId) {
+  public async getPoolByAttendeeId(attendeeId: AttendeeId) {
     const pool = await this.db.attendancePool.findFirst({
       where: {
         attendees: {

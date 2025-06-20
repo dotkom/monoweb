@@ -16,21 +16,21 @@ export class EventCompanyRepositoryImpl implements EventCompanyRepository {
     this.db = db
   }
 
-  async createCompany(eventId: EventId, companyId: CompanyId) {
+  public async createCompany(eventId: EventId, companyId: CompanyId) {
     await this.db.eventCompany.create({ data: { eventId, companyId } })
   }
 
-  async deleteCompany(eventId: EventId, companyId: CompanyId) {
+  public async deleteCompany(eventId: EventId, companyId: CompanyId) {
     await this.db.eventCompany.delete({ where: { eventId_companyId: { eventId, companyId } } })
   }
 
-  async getCompaniesByEventId(eventId: EventId) {
+  public async getCompaniesByEventId(eventId: EventId) {
     const eventCompanies = await this.db.eventCompany.findMany({ where: { eventId }, include: { company: true } })
 
     return eventCompanies.map((eventCompany) => eventCompany.company)
   }
 
-  async getEventsByCompanyId(companyId: string, page: Pageable): Promise<Event[]> {
+  public async getEventsByCompanyId(companyId: string, page: Pageable): Promise<Event[]> {
     return await this.db.event.findMany({
       where: {
         companies: { some: { companyId } },

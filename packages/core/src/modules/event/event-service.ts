@@ -11,28 +11,27 @@ import type {
 import type { Pageable } from "../../query"
 import type { AttendanceService } from "../attendance/attendance-service"
 import type { InterestGroupService } from "../interest-group/interest-group-service"
-import type { EventCompanyService } from "./event-company-service.js"
+import type { EventCompanyService } from "./event-company-service"
 import { EventNotFoundError } from "./event-error"
 import type { EventHostingGroupService } from "./event-hosting-group-service"
-import type { EventRepository } from "./event-repository.js"
+import type { EventRepository } from "./event-repository"
 
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
-  updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
-
+  updateEvent(eventId: EventId, data: EventWrite): Promise<Event>
   /**
    * Get an event by its id
    *
    * @throws {EventNotFoundError} if the event does not exist
    */
-  getEventById(id: EventId): Promise<Event>
+  getEventById(eventId: EventId): Promise<Event>
   getEvents(page?: Pageable, filter?: EventFilter): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
-  addAttendance(eventId: EventId, obj: AttendanceWrite): Promise<Event | null>
-  getEventDetail(id: EventId): Promise<EventDetail>
-  setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]>
+  addAttendance(eventId: EventId, data: AttendanceWrite): Promise<Event>
+  getEventDetail(eventId: EventId): Promise<EventDetail>
+  setEventInterestGroups(eventId: EventId, interestGroupsIds: InterestGroupId[]): Promise<EventInterestGroup[]>
 }
 
 export class EventServiceImpl implements EventService {
@@ -56,52 +55,52 @@ export class EventServiceImpl implements EventService {
     this.interestGroupService = interestGroupService
   }
 
-  async addAttendance(eventId: EventId, obj: AttendanceWrite) {
-    const attendance = await this.attendanceService.create(obj)
-    const event = this.eventRepository.addAttendance(eventId, attendance.id)
+  async addAttendance(eventId: EventId, data: AttendanceWrite) {
+    const attendance = await this.attendanceService.create(data)
+    const event = await this.eventRepository.addAttendance(eventId, attendance.id)
 
     return event
   }
 
-  async createEvent(eventCreate: EventWrite): Promise<Event> {
+  async createEvent(eventCreate: EventWrite) {
     const event = await this.eventRepository.create(eventCreate)
     return event
   }
 
-  async getEvents(page?: Pageable, filter?: EventFilter): Promise<Event[]> {
+  async getEvents(page?: Pageable, filter?: EventFilter) {
     const events = await this.eventRepository.getAll(page, filter)
     return events
   }
 
-  async getEventsByUserAttending(userId: string): Promise<Event[]> {
+  async getEventsByUserAttending(userId: string) {
     const events = await this.eventRepository.getAllByUserAttending(userId)
     return events
   }
 
-  async getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]> {
+  async getEventsByGroupId(groupId: string, page: Pageable) {
     const events = await this.eventRepository.getAllByHostingGroupId(groupId, page)
     return events
   }
 
-  async getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]> {
+  async getEventsByInterestGroupId(interestGroupId: string, page: Pageable) {
     const events = await this.eventRepository.getAllByInterestGroupId(interestGroupId, page)
     return events
   }
 
-  async getEventById(id: EventId): Promise<Event> {
-    const event = await this.eventRepository.getById(id)
+  async getEventById(eventId: EventId) {
+    const event = await this.eventRepository.getById(eventId)
     if (!event) {
-      throw new EventNotFoundError(id)
+      throw new EventNotFoundError(eventId)
     }
     return event
   }
 
-  async updateEvent(id: EventId, eventUpdate: Omit<EventWrite, "id">): Promise<Event> {
-    return await this.eventRepository.update(id, eventUpdate)
+  async updateEvent(eventId: EventId, data: EventWrite) {
+    return await this.eventRepository.update(eventId, data)
   }
 
-  async getEventDetail(id: EventId): Promise<EventDetail> {
-    const event = await this.getEventById(id)
+  async getEventDetail(eventId: EventId) {
+    const event = await this.getEventById(eventId)
     const hostingCompanies = await this.eventCompanyService.getCompaniesByEventId(event.id)
     const attendance = event.attendanceId ? await this.attendanceService.getById(event.attendanceId) : null
 
@@ -117,7 +116,7 @@ export class EventServiceImpl implements EventService {
     }
   }
 
-  async setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]> {
+  async setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]) {
     const eventInterestGroups = await this.interestGroupService.getAllByEventId(eventId)
     const currentInterestGroupIds = eventInterestGroups.map((interestGroup) => interestGroup.id)
 

@@ -33,7 +33,7 @@ export class CompanyServiceImpl implements CompanyService {
     this.companyRepository = companyRepository
   }
 
-  async getCompanyById(id: CompanyId): Promise<Company> {
+  public async getCompanyById(id: CompanyId): Promise<Company> {
     const company = await this.companyRepository.getById(id)
     if (!company) {
       throw new CompanyNotFoundError(id)
@@ -41,7 +41,7 @@ export class CompanyServiceImpl implements CompanyService {
     return company
   }
 
-  async getCompanyBySlug(slug: string): Promise<Company> {
+  public async getCompanyBySlug(slug: string): Promise<Company> {
     const company = await this.companyRepository.getBySlug(slug)
     if (!company) {
       throw new CompanyNotFoundError(slug)
@@ -49,17 +49,17 @@ export class CompanyServiceImpl implements CompanyService {
     return company
   }
 
-  async getCompanies(page: Pageable): Promise<Company[]> {
+  public async getCompanies(page: Pageable): Promise<Company[]> {
     const companies = await this.companyRepository.getAll(page)
     return companies
   }
 
-  async createCompany(payload: CompanyWrite): Promise<Company> {
+  public async createCompany(payload: CompanyWrite): Promise<Company> {
     const company = await this.companyRepository.create(payload)
     return company
   }
 
-  async updateCompany(id: CompanyId, companyUpdate: CompanyWrite): Promise<Company> {
+  public async updateCompany(id: CompanyId, companyUpdate: CompanyWrite): Promise<Company> {
     const company = await this.companyRepository.update(id, companyUpdate)
     return company
   }

@@ -47,11 +47,7 @@ export interface AttendeeService {
    * @param options.bypassCriteria - If true, the criteria for reserving the attendee will be ignored.
    * @returns True if the reservation was successful, false otherwise.
    */
-  attemptReserve(
-    attendee: Attendee,
-    pool: AttendancePool,
-    options: { bypassCriteria: boolean }
-  ): Promise<boolean>
+  attemptReserve(attendee: Attendee, pool: AttendancePool, options: { bypassCriteria: boolean }): Promise<boolean>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -72,23 +68,17 @@ export class AttendeeServiceImpl implements AttendeeService {
     this.jobService = jobService
   }
 
-  private async create(data: AttendeeWrite, attendancePool?: AttendancePool) {
-    let attendee = await this.attendeeRepository.create(data)
+  private async create(data: AttendeeWrite, attendancePool: AttendancePool) {
+    const attendee = await this.attendeeRepository.create(data)
 
-    const pool = attendancePool ?? (await this.attendanceRepository.getPoolById(data.attendancePoolId))
-
-    if (!pool) {
-      throw new AttendancePoolNotFoundError(data.attendancePoolId)
-    }
-
-    if (pool.id !== data.attendancePoolId) {
-      throw new WrongAttendancePoolError(data.attendancePoolId, pool.id)
+    if (attendancePool.id !== data.attendancePoolId) {
+      throw new WrongAttendancePoolError(data.attendancePoolId, attendancePool.id)
     }
 
     const { reserveTime, attendanceId, userId } = data
 
     if (!isFuture(reserveTime)) {
-      attendee.reserved = await this.attemptReserve(attendee, pool, { bypassCriteria: false })
+      attendee.reserved = await this.attemptReserve(attendee, attendancePool, { bypassCriteria: false })
     } else {
       await this.jobService.scheduleAttemptReserveAttendeeJob(reserveTime, { attendanceId, userId })
     }

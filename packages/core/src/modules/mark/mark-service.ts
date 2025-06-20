@@ -4,11 +4,26 @@ import { MarkNotFoundError } from "./mark-error"
 import type { MarkRepository } from "./mark-repository"
 
 export interface MarkService {
-  getMark(id: MarkId): Promise<Mark>
+  /**
+   * Get a mark by its id
+   *
+   * @throws {MarkNotFoundError} if the mark does not exist
+   */
+  getMark(markId: MarkId): Promise<Mark>
   getMarks(page: Pageable): Promise<Mark[]>
-  createMark(payload: MarkWrite): Promise<Mark>
-  updateMark(id: MarkId, payload: MarkWrite): Promise<Mark>
-  deleteMark(id: MarkId): Promise<Mark>
+  createMark(data: MarkWrite): Promise<Mark>
+  /**
+   * Update a mark by its id
+   *
+   * @throws {MarkNotFoundError} if the mark does not exist
+   */
+  updateMark(markId: MarkId, data: MarkWrite): Promise<Mark>
+  /**
+   * Delete a mark by its id
+   *
+   * @throws {MarkNotFoundError} if the mark does not exist
+   */
+  deleteMark(markId: MarkId): Promise<Mark>
 }
 
 export class MarkServiceImpl implements MarkService {
@@ -18,52 +33,31 @@ export class MarkServiceImpl implements MarkService {
     this.markRepository = markRepository
   }
 
-  /**
-   * Get a mark by its id
-   *
-   * @throws {MarkNotFoundError} if the mark does not exist
-   */
-  async getMark(id: MarkId): Promise<Mark> {
-    const mark = await this.markRepository.getById(id)
+  public async getMark(markId: MarkId) {
+    const mark = await this.markRepository.getById(markId)
     if (!mark) {
-      throw new MarkNotFoundError(id)
+      throw new MarkNotFoundError(markId)
     }
     return mark
   }
 
-  async getMarks(page: Pageable): Promise<Mark[]> {
+  public async getMarks(page: Pageable) {
     const marks = await this.markRepository.getAll(page)
     return marks
   }
 
-  async createMark(payload: MarkWrite): Promise<Mark> {
-    const mark = await this.markRepository.create(payload)
+  public async createMark(data: MarkWrite) {
+    const mark = await this.markRepository.create(data)
     return mark
   }
 
-  /**
-   * Update a mark by its id
-   *
-   * @throws {MarkNotFoundError} if the mark does not exist
-   */
-  async updateMark(id: MarkId, payload: MarkWrite): Promise<Mark> {
-    const mark = await this.markRepository.update(id, payload)
-    if (!mark) {
-      throw new MarkNotFoundError(id)
-    }
+  public async updateMark(markId: MarkId, data: MarkWrite) {
+    const mark = await this.markRepository.update(markId, data)
     return mark
   }
 
-  /**
-   * Delete a mark by its id
-   *
-   * @throws {MarkNotFoundError} if the mark does not exist
-   */
-  async deleteMark(id: MarkId): Promise<Mark> {
-    const mark = await this.markRepository.delete(id)
-    if (!mark) {
-      throw new MarkNotFoundError(id)
-    }
+  public async deleteMark(markId: MarkId) {
+    const mark = await this.markRepository.delete(markId)
     return mark
   }
 }

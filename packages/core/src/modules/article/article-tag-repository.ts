@@ -16,25 +16,25 @@ export class ArticleTagRepositoryImpl implements ArticleTagRepository {
     this.db = db
   }
 
-  async getAll(): Promise<ArticleTag[]> {
+  public async getAll(): Promise<ArticleTag[]> {
     return await this.db.articleTag.findMany()
   }
 
-  async create(tagName: ArticleTagName): Promise<ArticleTag> {
+  public async create(tagName: ArticleTagName): Promise<ArticleTag> {
     return await this.db.articleTag.create({
       data: { name: tagName },
     })
   }
 
-  async delete(tagName: ArticleTagName): Promise<ArticleTag> {
+  public async delete(tagName: ArticleTagName): Promise<ArticleTag> {
     return await this.db.articleTag.delete({ where: { name: tagName } })
   }
 
-  async getByName(tagName: ArticleTagName): Promise<ArticleTag | null> {
+  public async getByName(tagName: ArticleTagName): Promise<ArticleTag | null> {
     return await this.db.articleTag.findUnique({ where: { name: tagName } })
   }
 
-  async getAllByArticle(articleId: ArticleId): Promise<ArticleTag[]> {
+  public async getAllByArticle(articleId: ArticleId): Promise<ArticleTag[]> {
     return await this.db.articleTag.findMany({
       where: {
         articles: {

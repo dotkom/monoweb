@@ -24,51 +24,51 @@ export class GroupRepositoryImpl implements GroupRepository {
     this.db = db
   }
 
-  async getById(groupId: GroupId) {
+  public async getById(groupId: GroupId) {
     return await this.db.group.findUnique({ where: { id: groupId } })
   }
 
-  async getAll() {
+  public async getAll() {
     return await this.db.group.findMany()
   }
 
-  async getAllByType(groupType: GroupType) {
+  public async getAllByType(groupType: GroupType) {
     return await this.db.group.findMany({ where: { type: groupType } })
   }
 
-  async create(data: GroupWrite) {
+  public async create(data: GroupWrite) {
     return await this.db.group.create({ data })
   }
 
-  async update(groupId: GroupId, data: Partial<GroupWrite>) {
+  public async update(groupId: GroupId, data: Partial<GroupWrite>) {
     return await this.db.group.update({ where: { id: groupId }, data })
   }
 
-  async delete(groupId: GroupId) {
+  public async delete(groupId: GroupId) {
     await this.db.group.delete({ where: { id: groupId } })
   }
 
-  async getAllIds() {
+  public async getAllIds() {
     return (await this.db.group.findMany({ select: { id: true } })).map((group) => group.id)
   }
 
-  async getAllIdsByType(groupType: GroupType) {
+  public async getAllIdsByType(groupType: GroupType) {
     return (await this.db.group.findMany({ where: { type: groupType }, select: { id: true } })).map((group) => group.id)
   }
 
-  async getMembers(groupId: GroupId) {
+  public async getMembers(groupId: GroupId) {
     return await this.db.groupMember.findMany({ where: { groupId: groupId } })
   }
 
-  async getAllByMember(userId: UserId) {
+  public async getAllByMember(userId: UserId) {
     return await this.db.group.findMany({ where: { members: { some: { userId } } } })
   }
 
-  async addMember(data: GroupMemberWrite) {
+  public async addMember(data: GroupMemberWrite) {
     return await this.db.groupMember.create({ data: data })
   }
 
-  async removeMember(userId: UserId, groupId: GroupId) {
+  public async removeMember(userId: UserId, groupId: GroupId) {
     await this.db.groupMember.delete({ where: { userId: userId, groupId: groupId } })
   }
 }

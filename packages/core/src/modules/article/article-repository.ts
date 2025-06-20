@@ -29,17 +29,17 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     tags: { include: { tag: true } },
   }
 
-  async create(input: ArticleWrite): Promise<Article> {
+  public async create(input: ArticleWrite): Promise<Article> {
     const article = await this.db.article.create({ data: input, include: this.includeTags })
     return this.mapArticle(article)
   }
 
-  async update(articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
+  public async update(articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
     const article = await this.db.article.update({ where: { id: articleId }, data: input, include: this.includeTags })
     return this.mapArticle(article)
   }
 
-  async getAll(page: Pageable): Promise<Article[]> {
+  public async getAll(page: Pageable): Promise<Article[]> {
     const articles = await this.db.article.findMany({
       include: this.includeTags,
       ...pageQuery(page),
@@ -48,17 +48,17 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return articles.map(this.mapArticle)
   }
 
-  async getById(articleId: ArticleId): Promise<Article | null> {
+  public async getById(articleId: ArticleId): Promise<Article | null> {
     const article = await this.db.article.findUnique({ where: { id: articleId }, include: this.includeTags })
     return article ? this.mapArticle(article) : null
   }
 
-  async getBySlug(slug: ArticleSlug): Promise<Article | null> {
+  public async getBySlug(slug: ArticleSlug): Promise<Article | null> {
     const article = await this.db.article.findUnique({ where: { slug }, include: this.includeTags })
     return article ? this.mapArticle(article) : null
   }
 
-  async getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]> {
+  public async getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]> {
     const articles = await this.db.article.findMany({
       where: {
         tags: {
@@ -76,7 +76,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return articles.map(this.mapArticle)
   }
 
-  async getFeatured(): Promise<Article[]> {
+  public async getFeatured(): Promise<Article[]> {
     const articles = await this.db.article.findMany({
       where: {
         isFeatured: true,
