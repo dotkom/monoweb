@@ -3,13 +3,14 @@ import { MembershipSchema } from "./membership"
 
 export const GenderSchema = z.enum(["male", "female", "other"])
 
-const UserFlagEnum = z.enum([
+export const USER_FLAGS = [
   // Add flags here
   "VANITY_VERIFIED",
-])
+] as const
 
 export const UserFlagSchema = z
-  .array(UserFlagEnum)
+  .enum(USER_FLAGS)
+  .array()
   .refine((flags) => new Set(flags).size === flags.length, { message: "Flags must be unique" })
 
 export const UserSchema = z.object({
