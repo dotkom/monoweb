@@ -1,7 +1,7 @@
 import type { Job, JobId, JobName, JobScheduledAt, JobWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { z } from "zod"
-import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError, JobPayloadValidationError } from "./job-error"
+import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "./job-error"
 import type { JobRepository } from "./job-repository"
 import { payloadHandler } from "./payload/index"
 
@@ -10,13 +10,9 @@ type PayloadOf<Job extends JobName> = z.infer<(typeof payloadHandler)[Job]["sche
 export type JobService = {
   getById: (jobId: JobId) => Promise<Job | null>
   getAllProcessableJobs: () => Promise<Job[]>
-
   /**
    * Updates a job
    *
-   * @param jobId
-   * @param data
-   * @returns The updated job
    * @throws {JobNotFound} If `data.name` is not provided and the job with the given ID does not exist
    */
   update: (jobId: JobId, data: Partial<JobWrite>) => Promise<Job>
@@ -26,9 +22,6 @@ export type JobService = {
   /**
    * Parses the payload for a job
    *
-   * @param jobName - The name of the job
-   * @param payload - The payload to parse
-   * @returns The parsed payload
    * @throws {PayloadNotFoundError} If the payload is not found
    * @throws {PayloadHandlerNotFoundError} If the payload handler for the job is not found
    * @throws {JobPayloadValidationError} If the payload is invalid

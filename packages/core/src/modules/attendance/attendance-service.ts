@@ -11,10 +11,10 @@ import type {
 import { addHours, isFuture } from "date-fns"
 import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
-import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>

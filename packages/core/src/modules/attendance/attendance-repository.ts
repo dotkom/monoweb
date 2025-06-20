@@ -13,7 +13,6 @@ import {
 import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool, Prisma } from "@prisma/client"
 import { z } from "zod"
 import { AttendanceNotFound } from "./attendance-error"
-import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 
 export interface AttendanceRepository {
   create(obj: AttendanceWrite): Promise<Attendance>
