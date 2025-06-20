@@ -414,6 +414,7 @@ export function createFileInput<F extends FieldValues>({
         render={({ field }) => (
           <FileInput
             {...props}
+            style={{ wordBreak: "break-word" }}
             placeholder={field.value ?? props.existingFileUrl ?? "Klikk for å velge fil"}
             onChange={async (file) => {
               if (file === null) {
