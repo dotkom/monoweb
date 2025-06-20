@@ -2,8 +2,8 @@ import type { DBClient } from "@dotkomonline/db"
 import type { ArticleId, ArticleTagName } from "@dotkomonline/types"
 
 export interface ArticleTagLinkRepository {
-  add(article: ArticleId, tag: ArticleTagName): Promise<void>
-  remove(article: ArticleId, tag: ArticleTagName): Promise<void>
+  add(articleId: ArticleId, tagName: ArticleTagName): Promise<void>
+  remove(articleId: ArticleId, tagName: ArticleTagName): Promise<void>
 }
 
 export class ArticleTagLinkRepositoryImpl implements ArticleTagLinkRepository {

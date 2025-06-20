@@ -3,10 +3,10 @@ import type { ArticleId, ArticleTag, ArticleTagName } from "@dotkomonline/types"
 
 export interface ArticleTagRepository {
   getAll(): Promise<ArticleTag[]>
-  create(name: ArticleTagName): Promise<ArticleTag>
-  delete(name: ArticleTagName): Promise<ArticleTag>
-  getByName(name: ArticleTagName): Promise<ArticleTag | null>
-  getAllByArticle(id: ArticleId): Promise<ArticleTag[]>
+  create(tagName: ArticleTagName): Promise<ArticleTag>
+  delete(tagName: ArticleTagName): Promise<ArticleTag>
+  getByName(tagName: ArticleTagName): Promise<ArticleTag | null>
+  getAllByArticle(articleId: ArticleId): Promise<ArticleTag[]>
 }
 
 export class ArticleTagRepositoryImpl implements ArticleTagRepository {
@@ -20,27 +20,27 @@ export class ArticleTagRepositoryImpl implements ArticleTagRepository {
     return await this.db.articleTag.findMany()
   }
 
-  async create(name: ArticleTagName): Promise<ArticleTag> {
+  async create(tagName: ArticleTagName): Promise<ArticleTag> {
     return await this.db.articleTag.create({
-      data: { name },
+      data: { name: tagName },
     })
   }
 
-  async delete(name: ArticleTagName): Promise<ArticleTag> {
-    return await this.db.articleTag.delete({ where: { name } })
+  async delete(tagName: ArticleTagName): Promise<ArticleTag> {
+    return await this.db.articleTag.delete({ where: { name: tagName } })
   }
 
-  async getByName(name: ArticleTagName): Promise<ArticleTag | null> {
-    return await this.db.articleTag.findUnique({ where: { name } })
+  async getByName(tagName: ArticleTagName): Promise<ArticleTag | null> {
+    return await this.db.articleTag.findUnique({ where: { name: tagName } })
   }
 
-  async getAllByArticle(id: ArticleId): Promise<ArticleTag[]> {
+  async getAllByArticle(articleId: ArticleId): Promise<ArticleTag[]> {
     return await this.db.articleTag.findMany({
       where: {
         articles: {
           some: {
             articleId: {
-              equals: id,
+              equals: articleId,
             },
           },
         },

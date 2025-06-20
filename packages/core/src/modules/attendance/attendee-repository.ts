@@ -12,24 +12,25 @@ import {
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { UserRepository } from "../user/user-repository"
-import { AttendeeNotFoundError, AttendeeWriteError } from "./attendee-error"
+import { AttendeeWriteError } from "./attendee-error"
 
 type UnparsedAttendee = Omit<Attendee, "user" | "selections"> & {
   selections?: JsonValue
 }
 
 export interface AttendeeRepository {
-  create(obj: AttendeeWrite): Promise<Attendee>
-  delete(id: AttendeeId): Promise<Omit<Attendee, "user">>
-  getById(id: AttendeeId): Promise<Attendee>
-  update(id: AttendeeId, obj: Partial<AttendeeWrite>): Promise<Attendee>
-  getByAttendanceId(id: AttendanceId): Promise<Attendee[]>
-  getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
-  getFirstUnreservedByAttendancePoolId(id: AttendancePoolId): Promise<Attendee | null>
+  create(data: AttendeeWrite): Promise<Attendee>
+  delete(attendeeId: AttendeeId): Promise<void>
+  getById(attendeeId: AttendeeId): Promise<Attendee | null>
+  update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<Attendee[]>
+  getByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<Attendee[]>
+  getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<Attendee | null>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
   poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
-  reserveAttendee(attendeeId: AttendeeId): Promise<Attendee>
-  moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId): Promise<void>
+  attendanceHasAttendees(attendanceId: AttendanceId): Promise<boolean>
+  reserveAttendee(attendeeId: AttendeeId): Promise<boolean>
+  moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId): Promise<void>
   removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string): Promise<void>
 }
 
@@ -54,18 +55,26 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async poolHasAttendees(attendancePoolId: AttendancePoolId): Promise<boolean> {
-    return (await this.db.attendee.count({ where: { attendancePoolId } })) > 0
+  async poolHasAttendees(attendancePoolId: AttendancePoolId) {
+    const numberOfAttendees = await this.db.attendee.count({ where: { attendancePoolId } })
+
+    return numberOfAttendees > 0
   }
 
-  async moveFromMultiplePoolsToPool(oldPoolIds: AttendancePoolId[], newPoolId: AttendancePoolId) {
+  async attendanceHasAttendees(attendanceId: AttendanceId) {
+    const numberOfAttendees = await this.db.attendee.count({ where: { attendanceId } })
+
+    return numberOfAttendees > 0
+  }
+
+  async moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId) {
     await this.db.attendee.updateMany({
-      where: { attendancePoolId: { in: oldPoolIds } },
-      data: { attendancePoolId: newPoolId },
+      where: { attendancePoolId: { in: fromPoolIds } },
+      data: { attendancePoolId: toPoolId },
     })
   }
 
-  async create(data: AttendeeWrite): Promise<Attendee> {
+  async create(data: AttendeeWrite) {
     this.validateWrite(data)
 
     const attendee = await this.db.attendee.create({ data })
@@ -74,17 +83,15 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async delete(id: AttendeeId) {
-    const deletedUser = await this.db.attendee.delete({ where: { id } })
-
-    return this.parse(deletedUser)
+  async delete(attendeeId: AttendeeId) {
+    await this.db.attendee.delete({ where: { id: attendeeId } })
   }
 
-  async getById(id: AttendeeId): Promise<Attendee> {
-    const attendee = await this.db.attendee.findUnique({ where: { id } })
+  async getById(attendeeId: AttendeeId) {
+    const attendee = await this.db.attendee.findUnique({ where: { id: attendeeId } })
 
     if (!attendee) {
-      throw new AttendeeNotFoundError(id)
+      return null
     }
 
     const user = await this.userRepository.getById(attendee.userId)
@@ -129,10 +136,10 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee, user)
   }
 
-  async update(id: AttendeeId, data: Partial<AttendeeWrite>) {
+  async update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>) {
     this.validateWrite(data)
 
-    const updatedAttendee = await this.db.attendee.update({ where: { id }, data })
+    const updatedAttendee = await this.db.attendee.update({ where: { id: attendeeId }, data })
     const user = await this.userRepository.getById(updatedAttendee.userId)
 
     return this.parse(updatedAttendee, user)
@@ -171,19 +178,17 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     }
   }
 
-  async reserveAttendee(id: AttendeeId) {
+  async reserveAttendee(attendeeId: AttendeeId) {
     const attendee = await this.db.attendee.update({
       where: {
-        id,
+        id: attendeeId,
       },
       data: {
         reserved: true,
       },
     })
 
-    const user = await this.userRepository.getById(attendee.userId)
-
-    return this.parse(attendee, user)
+    return attendee.reserved
   }
 
   async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {

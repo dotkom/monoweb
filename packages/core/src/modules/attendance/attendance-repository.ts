@@ -12,21 +12,8 @@ import {
 } from "@dotkomonline/types"
 import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool, Prisma } from "@prisma/client"
 import { z } from "zod"
-import { AttendanceNotFound } from "./attendance-error"
 
-export interface AttendanceRepository {
-  create(obj: AttendanceWrite): Promise<Attendance>
-  delete(id: AttendanceId): Promise<Attendance>
-  getById(id: AttendanceId): Promise<Attendance>
-  getByAttendeeId(id: AttendeeId): Promise<Attendance>
-  update(data: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
-  getAll(): Promise<Attendance[]>
-  getPoolById(id: AttendancePoolId): Promise<AttendancePool | null>
-  getPoolByAttendeeId(id: AttendeeId): Promise<AttendancePool | null>
-  createPool(data: AttendancePoolWrite): Promise<AttendancePool>
-  deletePool(id: AttendancePoolId): Promise<AttendancePool>
-  updatePool(id: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
-}
+type UnmappedAttendancePool = DBAttendancePool & { _count: { attendees: number } }
 
 const POOL_ATTENDEE_COUNT_INCLUDE = {
   _count: {
@@ -41,6 +28,21 @@ const ATTENDANCE_ATTENDEE_COUNT_INCLUDE = {
     include: POOL_ATTENDEE_COUNT_INCLUDE,
   },
 } satisfies Prisma.AttendanceInclude
+
+export interface AttendanceRepository {
+  create(data: AttendanceWrite): Promise<Attendance>
+  delete(attendanceId: AttendanceId): Promise<Attendance>
+  getById(attendanceId: AttendanceId): Promise<Attendance | null>
+  getByAttendeeId(attendeeId: AttendeeId): Promise<Attendance | null>
+  update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
+  getAll(): Promise<Attendance[]>
+
+  getPoolById(attendancePoolId: AttendancePoolId): Promise<AttendancePool | null>
+  getPoolByAttendeeId(attendeeId: AttendeeId): Promise<AttendancePool | null>
+  createPool(data: AttendancePoolWrite): Promise<AttendancePool>
+  deletePool(attendancePoolId: AttendancePoolId): Promise<AttendancePool>
+  updatePool(attendancePoolId: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
+}
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   private readonly db: DBClient
@@ -66,54 +68,46 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.mapAttendance(createdAttendance)
   }
 
-  async update(data: Partial<AttendanceWrite>, id: AttendanceId) {
+  async update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>) {
     const updatedAttendance = await this.db.attendance.update({
       data,
-      where: { id },
+      where: { id: attendanceId },
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.mapAttendance(updatedAttendance)
   }
 
-  async delete(id: AttendanceId) {
+  async delete(attendanceId: AttendanceId) {
     const deletedAttendance = await this.db.attendance.delete({
-      where: { id },
+      where: { id: attendanceId },
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
     return this.mapAttendance(deletedAttendance)
   }
 
-  async getById(id: AttendanceId) {
+  async getById(attendanceId: AttendanceId) {
     const attendance = await this.db.attendance.findUnique({
-      where: { id },
+      where: { id: attendanceId },
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
-    if (!attendance) {
-      throw new AttendanceNotFound(id)
-    }
-
-    return this.mapAttendance(attendance)
+    return attendance && this.mapAttendance(attendance)
   }
 
-  async getByAttendeeId(id: AttendeeId): Promise<Attendance> {
+  async getByAttendeeId(attendeeId: AttendeeId) {
     const attendance = await this.db.attendance.findFirst({
       where: {
         attendees: {
           some: {
-            id,
+            id: attendeeId,
           },
         },
       },
       include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
-    if (attendance === null) {
-      throw new AttendanceNotFound(id)
-    }
-
-    return this.mapAttendance(attendance)
+    return attendance && this.mapAttendance(attendance)
   }
 
   async createPool(data: AttendancePoolWrite) {
@@ -125,18 +119,18 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(createdPool)
   }
 
-  async deletePool(id: AttendancePoolId) {
+  async deletePool(attendancePoolId: AttendancePoolId) {
     const deletedPool = await this.db.attendancePool.delete({
-      where: { id },
+      where: { id: attendancePoolId },
       include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.validateAttendancePool(deletedPool)
   }
 
-  async updatePool(id: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
+  async updatePool(attendancePoolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
     const updatedPool = await this.db.attendancePool.update({
-      where: { id },
+      where: { id: attendancePoolId },
       data,
       include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
@@ -144,9 +138,9 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(updatedPool)
   }
 
-  async getPoolById(id: AttendancePoolId) {
+  async getPoolById(attendancePoolId: AttendancePoolId) {
     const pool = await this.db.attendancePool.findUnique({
-      where: { id },
+      where: { id: attendancePoolId },
       include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
@@ -157,12 +151,12 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(pool)
   }
 
-  async getPoolByAttendeeId(id: AttendeeId) {
+  async getPoolByAttendeeId(attendeeId: AttendeeId) {
     const pool = await this.db.attendancePool.findFirst({
       where: {
         attendees: {
           some: {
-            id,
+            id: attendeeId,
           },
         },
       },
@@ -176,7 +170,9 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     return this.validateAttendancePool(pool)
   }
 
-  /** Parses the selections with AttendanceSelectionSchema and maps the pools */
+  /**
+   * Parses the selections with AttendanceSelectionSchema and maps the pools
+   */
   private mapAttendance({
     selections,
     pools,
@@ -194,10 +190,9 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     yearCriteria,
     ...attendee
   }: UnmappedAttendancePool): AttendancePool {
+    // TODO: fix this
     const numAttendees = Math.min(totalAttendees, attendee.capacity)
     const numUnreservedAttendees = Math.max(0, totalAttendees - numAttendees)
     return { numAttendees, numUnreservedAttendees, yearCriteria: YearCriteriaSchema.parse(yearCriteria), ...attendee }
   }
 }
-
-type UnmappedAttendancePool = DBAttendancePool & { _count: { attendees: number } }

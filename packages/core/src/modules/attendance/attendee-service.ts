@@ -6,49 +6,52 @@ import {
   type Attendee,
   type AttendeeId,
   type AttendeeWrite,
-  type QrCodeRegistrationAttendee,
   type UserId,
   canDeregisterForAttendance as attendanceOpenForDeregistration,
   canRegisterForAttendance as attendanceOpenForRegistration,
   canUserAttendPool,
   getMembershipGrade,
 } from "@dotkomonline/types"
-import { addHours } from "date-fns"
-import { isFuture } from "date-fns"
+import { addHours, isFuture } from "date-fns"
 import type { JobService } from "../job/job-service"
-import { UserNotFoundError } from "../user/user-error"
 import type { UserService } from "../user/user-service"
-import { AttendanceDeregisterClosedError, AttendanceNotOpenError } from "./attendance-error"
-import { AttendancePoolNotFoundError, AttendancePoolValidationError } from "./attendance-pool-error"
+import { AttendanceDeregisterClosedError, AttendanceNotFound, AttendanceNotOpenError } from "./attendance-error"
+import { AttendancePoolNotFoundError, WrongAttendancePoolError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import { AttendeeDeregistrationError, AttendeeNotFoundError } from "./attendee-error"
+import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 
+type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNext: boolean }
+
 export interface AttendeeService {
+  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee>
   registerForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   adminRegisterForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   deregisterForEvent(userId: string, attendanceId: string): Promise<void>
-  adminDeregisterForEvent(id: AttendeeId, reserveNext: boolean): Promise<void>
-  delete(id: AttendeeId): Promise<void>
+  adminDeregisterForEvent(attendeeId: AttendeeId, options: AdminDeregisterForEventOptions): Promise<void>
+  delete(attendeeId: AttendeeId): Promise<void>
   updateSelectionResponses(id: AttendeeId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
-  getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
-  updateAttended(id: AttendeeId, attended: boolean): Promise<Attendee>
+  getByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<Attendee[]>
+  updateAttended(attendeeId: AttendeeId, attended: boolean): Promise<Attendee>
   /**
    * Attempts to reserve the attendee if the following criteria are met:
    * - The reserve time is now or in the past
    * - The pool is not at full capacity
    *
-   * If bypassCriteria is set to true, the criteria will be ignored and the attendee with be reserved regardless.
+   * If `options.bypassCriteria` is set to true, the criteria will be ignored and the attendee with be reserved regardless.
    *
    * @param attendee - The attendee to reserve.
    * @param pool - The pool to reserve the attendee in, used for capacity checks.
-   * @param [bypassCriteria=false] - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
-   * @returns Returns the attendee if the reservation was successful, false otherwise.
+   * @param options - Options for the reservation attempt.
+   * @param options.bypassCriteria - If true, the criteria for reserving the attendee will be ignored.
+   * @returns True if the reservation was successful, false otherwise.
    */
-  attemptReserve(attendee: Attendee, pool: AttendancePool, bypassCriteria?: boolean): Promise<Attendee | false>
-  handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
-  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
+  attemptReserve(
+    attendee: Attendee,
+    pool: AttendancePool,
+    options: { bypassCriteria: boolean }
+  ): Promise<boolean>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -69,26 +72,23 @@ export class AttendeeServiceImpl implements AttendeeService {
     this.jobService = jobService
   }
 
-  private async create(obj: AttendeeWrite, attendancePool?: AttendancePool) {
-    let attendee = await this.attendeeRepository.create(obj)
+  private async create(data: AttendeeWrite, attendancePool?: AttendancePool) {
+    let attendee = await this.attendeeRepository.create(data)
 
-    const pool = attendancePool ?? (await this.attendanceRepository.getPoolById(obj.attendancePoolId))
+    const pool = attendancePool ?? (await this.attendanceRepository.getPoolById(data.attendancePoolId))
 
-    if (pool.id !== obj.attendancePoolId) {
-      throw new AttendancePoolNotFoundError(
-        `Expected attendance pool with id ${obj.attendancePoolId}, but found ${pool.id}`
-      )
+    if (!pool) {
+      throw new AttendancePoolNotFoundError(data.attendancePoolId)
     }
 
-    const { reserveTime, attendanceId } = obj
-    const userId = obj.userId
+    if (pool.id !== data.attendancePoolId) {
+      throw new WrongAttendancePoolError(data.attendancePoolId, pool.id)
+    }
+
+    const { reserveTime, attendanceId, userId } = data
 
     if (!isFuture(reserveTime)) {
-      const newAttendee = await this.attemptReserve(attendee, pool)
-
-      if (newAttendee) {
-        attendee = newAttendee
-      }
+      attendee.reserved = await this.attemptReserve(attendee, pool, { bypassCriteria: false })
     } else {
       await this.jobService.scheduleAttemptReserveAttendeeJob(reserveTime, { attendanceId, userId })
     }
@@ -96,60 +96,48 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async delete(id: AttendeeId) {
+  public async delete(id: AttendeeId) {
     await this.attendeeRepository.delete(id)
   }
 
-  async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    return await this.attendeeRepository.getByUserId(userId, attendanceId)
-  }
-
-  async updateAttended(id: AttendeeId, attended: boolean) {
-    const attendee = await this.attendeeRepository.update(id, { attended })
-    if (attendee === null) {
-      throw new AttendeeNotFoundError(id)
-    }
-    return attendee
-  }
-
-  async handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId) {
-    const user = await this.userService.getById(userId)
-    if (user === null) {
-      throw new UserNotFoundError(userId)
-    }
+  public async getByUserId(userId: UserId, attendanceId: AttendanceId) {
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
-    if (attendee === null) {
-      throw new AttendeeNotFoundError(`userid: ${userId}`, attendanceId)
-    }
-    if (attendee.attended === true) {
-      return { attendee, user, alreadyAttended: true }
-    }
-    await this.attendeeRepository.update(attendee.id, { attended: true })
 
-    return { attendee, user, alreadyAttended: false }
-  }
-
-  async updateSelectionResponses(id: AttendeeId, responses: AttendanceSelectionResponse[]) {
-    const attendee = await this.attendeeRepository.update(id, { selections: responses })
-
-    if (attendee === null) {
-      throw new AttendeeNotFoundError(id)
+    if (!attendee) {
+      throw new AttendeeNotFoundError(userId, attendanceId)
     }
 
     return attendee
   }
 
-  async adminRegisterForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
-    const user = await this.userService.getById(userId)
-    const attendance = await this.attendanceRepository.getById(attendanceId)
-    const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
+  public async updateAttended(id: AttendeeId, attended: boolean) {
+    const attendee = await this.attendeeRepository.update(id, { attended })
 
-    if (attendancePool === undefined) {
-      throw new AttendancePoolNotFoundError("Tried to register to unknown attendance pool")
-    }
+    return attendee
+  }
 
+  public async updateSelectionResponses(attendeeId: AttendeeId, responses: AttendanceSelectionResponse[]) {
+    const attendee = await this.attendeeRepository.update(attendeeId, { selections: responses })
+
+    return attendee
+  }
+
+  public async adminRegisterForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
     const registerTime = new Date()
 
+    const attendance = await this.attendanceRepository.getById(attendanceId)
+
+    if (!attendance) {
+      throw new AttendanceNotFound(attendanceId)
+    }
+
+    const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
+
+    if (!attendancePool) {
+      throw new AttendancePoolNotFoundError(attendancePoolId)
+    }
+
+    const user = await this.userService.getById(userId)
     const userGrade = getMembershipGrade(user.membership)
 
     const attendee = await this.attendeeRepository.create({
@@ -168,63 +156,68 @@ export class AttendeeServiceImpl implements AttendeeService {
    * Helper function to attempt to reserve the next attendee in the pool.
    *
    * @param pool - The pool to reserve the attendee in.
-   * @param bypassCriteria - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
+   * @param bypassCriteria - If true, the criteria for reserving the attendee will be ignored.
    * @returns Returns the attendee if the reservation was successful, false otherwise.
    * @see {@link attemptReserve}
    */
-  private async attemptReserveNextAttendee(pool: AttendancePool, bypassCriteria: boolean) {
+  private async attemptReserveNextAttendee(pool: AttendancePool, { bypassCriteria }: { bypassCriteria: boolean }) {
     const nextUnreservedAttendee = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(pool.id)
 
-    if (nextUnreservedAttendee === null) {
+    if (!nextUnreservedAttendee) {
       return false
     }
 
-    return await this.attemptReserve(nextUnreservedAttendee, pool, bypassCriteria)
+    return await this.attemptReserve(nextUnreservedAttendee, pool, { bypassCriteria })
   }
 
-  async adminDeregisterForEvent(id: AttendeeId, reserveNextAttendee: boolean) {
-    const attendance = await this.attendanceRepository.getByAttendeeId(id)
-    const pool = await this.attendanceRepository.getPoolByAttendeeId(id)
+  public async adminDeregisterForEvent(
+    attendeeId: AttendeeId,
+    { reserveNextAttendee, bypassCriteriaOnReserveNext }: AdminDeregisterForEventOptions
+  ) {
+    const pool = await this.attendanceRepository.getPoolByAttendeeId(attendeeId)
 
-    if (attendance === null) {
-      throw new AttendeeDeregistrationError("Attendance not found")
+    if (!pool) {
+      throw new AttendancePoolNotFoundError(`${attendeeId} (attendee id)`)
     }
 
-    await this.attendeeRepository.delete(id)
+    await this.attendeeRepository.delete(attendeeId)
 
     if (reserveNextAttendee) {
-      await this.attemptReserveNextAttendee(pool, true)
+      await this.attemptReserveNextAttendee(pool, { bypassCriteria: bypassCriteriaOnReserveNext })
     }
   }
 
-  async registerForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
-    const user = await this.userService.getById(userId)
-    const attendance = await this.attendanceRepository.getById(attendanceId)
-    const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
+  public async registerForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
+    const registerTime = new Date()
 
-    if (attendancePool === undefined) {
-      throw new AttendancePoolNotFoundError("Tried to register to unknown attendance pool")
+    const attendance = await this.attendanceRepository.getById(attendanceId)
+
+    if (!attendance) {
+      throw new AttendanceNotFound(attendanceId)
     }
 
-    const registerTime = new Date()
+    const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)
+
+    if (!attendancePool) {
+      throw new AttendancePoolNotFoundError(attendancePoolId)
+    }
 
     if (!attendanceOpenForRegistration(attendance, registerTime)) {
       throw new AttendanceNotOpenError()
     }
 
+    const user = await this.userService.getById(userId)
+
     if (!canUserAttendPool(attendancePool, user)) {
-      throw new AttendancePoolValidationError("User does not qualify for pool")
+      throw new AttendeeRegistrationError(`User ${user.id} does not qualify for pool ${attendancePool.id}`)
     }
 
-    let reserveDelayHours = 0
-
-    // TODO: Use mark service to get delay because of mark
-    reserveDelayHours += 0
-
-    // If the pool has a merge delay the reserve time is pushed
     const isMergePool = attendancePool.capacity === 0
-    reserveDelayHours += (isMergePool && attendancePool.mergeDelayHours) || 0
 
+    const markDelayHours = 0 // TODO
+    const mergePoolDelayHours = (isMergePool && attendancePool.mergeDelayHours) || 0
+
+    const reserveDelayHours = markDelayHours + mergePoolDelayHours
     const reserveTime = addHours(registerTime, reserveDelayHours)
 
     const userGrade = getMembershipGrade(user.membership)
@@ -242,21 +235,33 @@ export class AttendeeServiceImpl implements AttendeeService {
     )
   }
 
-  async attemptReserve(attendee: Attendee, pool: AttendancePool, bypassCriteria = false) {
-    const attendeeIsPastReserveTime = attendee.reserveTime <= new Date()
+  public async attemptReserve(
+    attendee: Attendee,
+    pool: AttendancePool,
+    { bypassCriteria }: { bypassCriteria: boolean }
+  ) {
+    if (attendee.reserved) {
+      return true
+    }
+
+    const isPastReserveTime = !isFuture(attendee.reserveTime)
     const poolHasCapacity = pool.numAttendees < pool.capacity
 
-    if ((attendeeIsPastReserveTime && poolHasCapacity) || bypassCriteria) {
+    if ((isPastReserveTime && poolHasCapacity) || bypassCriteria) {
       return await this.attendeeRepository.reserveAttendee(attendee.id)
     }
 
     return false
   }
 
-  async deregisterForEvent(userId: string, attendanceId: AttendanceId) {
+  public async deregisterForEvent(userId: string, attendanceId: AttendanceId) {
     const deregisterTime = new Date()
 
     const attendance = await this.attendanceRepository.getById(attendanceId)
+
+    if (!attendance) {
+      throw new AttendanceNotFound(attendanceId)
+    }
 
     if (!attendanceOpenForDeregistration(attendance, deregisterTime)) {
       throw new AttendanceDeregisterClosedError()
@@ -264,9 +269,9 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
 
-    if (attendee === null) {
+    if (!attendee) {
       throw new AttendeeDeregistrationError(
-        `Attendee with user id '${userId}' could not deregister in attendance with id '${attendanceId}' because attendee is not registered.`
+        `Tried to deregister attendee with user id '${userId}' in attendance with id '${attendanceId}' but attendee is not registered.`
       )
     }
 
@@ -275,15 +280,15 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendedPool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
 
     if (attendedPool) {
-      await this.attemptReserveNextAttendee(attendedPool, false)
+      await this.attemptReserveNextAttendee(attendedPool, { bypassCriteria: false })
     }
   }
 
-  async getByAttendanceId(id: AttendanceId) {
-    return this.attendeeRepository.getByAttendanceId(id)
+  public async getByAttendanceId(attendanceId: AttendanceId) {
+    return this.attendeeRepository.getByAttendanceId(attendanceId)
   }
 
-  async getByAttendancePoolId(id: AttendancePoolId) {
-    return await this.attendeeRepository.getByAttendancePoolId(id)
+  public async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
+    return await this.attendeeRepository.getByAttendancePoolId(attendancePoolId)
   }
 }

@@ -4,9 +4,9 @@ import { type Pageable, pageQuery } from "../../query"
 
 export interface ArticleRepository {
   create(input: ArticleWrite): Promise<Article>
-  update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
+  update(articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(page: Pageable): Promise<Article[]>
-  getById(id: ArticleId): Promise<Article | null>
+  getById(articleId: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
   getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]>
   getFeatured(): Promise<Article[]>
@@ -34,8 +34,8 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return this.mapArticle(article)
   }
 
-  async update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
-    const article = await this.db.article.update({ where: { id }, data: input, include: this.includeTags })
+  async update(articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
+    const article = await this.db.article.update({ where: { id: articleId }, data: input, include: this.includeTags })
     return this.mapArticle(article)
   }
 
@@ -48,8 +48,8 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return articles.map(this.mapArticle)
   }
 
-  async getById(id: ArticleId): Promise<Article | null> {
-    const article = await this.db.article.findUnique({ where: { id }, include: this.includeTags })
+  async getById(articleId: ArticleId): Promise<Article | null> {
+    const article = await this.db.article.findUnique({ where: { id: articleId }, include: this.includeTags })
     return article ? this.mapArticle(article) : null
   }
 

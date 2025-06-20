@@ -13,10 +13,10 @@ export interface ArticleService {
    *
    * @throws {ArticleNotFoundError} if the article does not exist
    */
-  update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
+  update(articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(page: Pageable): Promise<Article[]>
   getAllByTags(tags: ArticleTagName[]): Promise<Article[]>
-  getById(id: ArticleId): Promise<Article | null>
+  getById(articleId: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
   /**
    * Gets the top 10 related articles based on tags
@@ -29,14 +29,14 @@ export interface ArticleService {
    *
    * @throws {ArticleNotFoundError} if the article does not exist
    */
-  addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
+  addTag(articleId: ArticleId, tag: ArticleTagName): Promise<void>
   /**
    * Remove a tag from an article
    *
    * @throws {ArticleNotFoundError} if the article does not exist
    */
-  removeTag(id: ArticleId, tag: ArticleTagName): Promise<void>
-  setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
+  removeTag(articleId: ArticleId, tag: ArticleTagName): Promise<void>
+  setTags(articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
 }
 
 export class ArticleServiceImpl implements ArticleService {
@@ -62,10 +62,10 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleRepository.create(input)
   }
 
-  async update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
-    const match = await this.articleRepository.getById(id)
+  async update(articleId: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
+    const match = await this.articleRepository.getById(articleId)
     if (match === null) {
-      throw new ArticleNotFoundError(id)
+      throw new ArticleNotFoundError(articleId)
     }
 
     if (input.slug !== match.slug && input.slug && (await this.getBySlug(input.slug))) {
@@ -83,8 +83,8 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleRepository.getByTags(tags)
   }
 
-  async getById(id: ArticleId): Promise<Article | null> {
-    return await this.articleRepository.getById(id)
+  async getById(articleId: ArticleId): Promise<Article | null> {
+    return await this.articleRepository.getById(articleId)
   }
 
   async getBySlug(slug: ArticleSlug): Promise<Article | null> {
@@ -131,24 +131,24 @@ export class ArticleServiceImpl implements ArticleService {
     return articles.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
   }
 
-  async addTag(id: ArticleId, tag: ArticleTagName): Promise<void> {
-    const match = await this.articleRepository.getById(id)
+  async addTag(articleId: ArticleId, tag: ArticleTagName): Promise<void> {
+    const match = await this.articleRepository.getById(articleId)
     if (!match) {
-      throw new ArticleNotFoundError(id)
+      throw new ArticleNotFoundError(articleId)
     }
     let name = await this.articleTagRepository.getByName(tag)
     if (name === null) {
       name = await this.articleTagRepository.create(tag)
     }
-    return await this.articleTagLinkRepository.add(id, name.name)
+    return await this.articleTagLinkRepository.add(articleId, name.name)
   }
 
-  async removeTag(id: ArticleId, tag: ArticleTagName): Promise<void> {
-    const match = await this.articleRepository.getById(id)
+  async removeTag(articleId: ArticleId, tag: ArticleTagName): Promise<void> {
+    const match = await this.articleRepository.getById(articleId)
     if (!match) {
-      throw new ArticleNotFoundError(id)
+      throw new ArticleNotFoundError(articleId)
     }
-    await this.articleTagLinkRepository.remove(id, tag)
+    await this.articleTagLinkRepository.remove(articleId, tag)
     const articlesWithTag = await this.articleRepository.getByTags([tag])
     const isTagStillInUse = articlesWithTag.length !== 0
     if (!isTagStillInUse) {
@@ -156,14 +156,14 @@ export class ArticleServiceImpl implements ArticleService {
     }
   }
 
-  async setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]> {
-    const currentTags = (await this.articleTagRepository.getAllByArticle(id)).map((tag) => tag.name)
+  async setTags(articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]> {
+    const currentTags = (await this.articleTagRepository.getAllByArticle(articleId)).map((tag) => tag.name)
 
     const tagsToAdd = tags.filter((tag) => !currentTags.includes(tag))
     const tagsToRemove = currentTags.filter((tag) => !tags.includes(tag))
 
-    const removePromises = tagsToRemove.map(async (tag) => this.removeTag(id, tag))
-    const addPromises = tagsToAdd.map(async (tag) => this.addTag(id, tag))
+    const removePromises = tagsToRemove.map(async (tag) => this.removeTag(articleId, tag))
+    const addPromises = tagsToAdd.map(async (tag) => this.addTag(articleId, tag))
 
     await Promise.all([...removePromises, ...addPromises])
 
