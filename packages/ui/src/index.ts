@@ -15,6 +15,7 @@ export * from "./atoms/Tooltip/Tooltip"
 export * from "./atoms/Collapsible/Collapsible"
 export * from "./atoms/Popover/Popover"
 export * from "./atoms/RadioGroup/RadioGroup"
+export * from "./atoms/Video/Video"
 
 export * from "./molecules/Accordion/Accordion"
 export * from "./molecules/Alert/Alert"

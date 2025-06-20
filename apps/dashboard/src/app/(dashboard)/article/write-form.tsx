@@ -48,6 +48,10 @@ export const useArticleWriteForm = ({
         placeholder: "https://s3.amazonaws.com/mitt-bilde.png",
         required: true,
       }),
+      vimeoId: createTextInput({
+        label: "Vimeo id",
+        placeholder: "84024464",
+      }),
       slug: createTextInput({
         label: "Slug",
         placeholder: "fadderuka-2023",

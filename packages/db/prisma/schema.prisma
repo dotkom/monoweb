@@ -434,6 +434,7 @@ model Article {
   excerpt      String
   content      String
   isFeatured   Boolean          @default(false)
+  vimeoId      String?
   tags         ArticleTagLink[]
 
   @@map("article")
