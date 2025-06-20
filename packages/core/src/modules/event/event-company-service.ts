@@ -2,9 +2,9 @@ import type { Company, CompanyId, EventId } from "@dotkomonline/types"
 import type { EventCompanyRepository } from "./event-company-repository"
 
 export interface EventCompanyService {
-  createCompany(id: EventId, company: CompanyId): Promise<void>
-  deleteCompany(id: EventId, company: CompanyId): Promise<void>
-  getCompaniesByEventId(id: EventId): Promise<Company[]>
+  createCompany(eventId: EventId, companyId: CompanyId): Promise<void>
+  deleteCompany(eventId: EventId, companyId: CompanyId): Promise<void>
+  getCompaniesByEventId(eventId: EventId): Promise<Company[]>
 }
 
 export class EventCompanyServiceImpl implements EventCompanyService {
@@ -14,16 +14,16 @@ export class EventCompanyServiceImpl implements EventCompanyService {
     this.eventCompanyRepository = eventCompanyRepository
   }
 
-  async createCompany(id: EventId, company: CompanyId) {
-    const companies = await this.eventCompanyRepository.createCompany(id, company)
+  async createCompany(eventId: EventId, companyId: CompanyId) {
+    const companies = await this.eventCompanyRepository.createCompany(eventId, companyId)
     return companies
   }
 
-  async deleteCompany(id: EventId, company: CompanyId) {
-    await this.eventCompanyRepository.deleteCompany(id, company)
+  async deleteCompany(eventId: EventId, companyId: CompanyId) {
+    await this.eventCompanyRepository.deleteCompany(eventId, companyId)
   }
 
-  async getCompaniesByEventId(id: EventId) {
-    return await this.eventCompanyRepository.getCompaniesByEventId(id)
+  async getCompaniesByEventId(eventId: EventId) {
+    return await this.eventCompanyRepository.getCompaniesByEventId(eventId)
   }
 }

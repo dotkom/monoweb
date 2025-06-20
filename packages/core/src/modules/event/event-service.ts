@@ -19,12 +19,18 @@ import type { EventRepository } from "./event-repository.js"
 export interface EventService {
   createEvent(eventCreate: EventWrite): Promise<Event>
   updateEvent(id: EventId, payload: Omit<EventWrite, "id">): Promise<Event>
+
+  /**
+   * Get an event by its id
+   *
+   * @throws {EventNotFoundError} if the event does not exist
+   */
   getEventById(id: EventId): Promise<Event>
   getEvents(page?: Pageable, filter?: EventFilter): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
   getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
   getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
-  addAttendance(eventId: EventId, obj: Partial<AttendanceWrite>): Promise<Event | null>
+  addAttendance(eventId: EventId, obj: AttendanceWrite): Promise<Event | null>
   getEventDetail(id: EventId): Promise<EventDetail>
   setEventInterestGroups(eventId: EventId, interestGroups: InterestGroupId[]): Promise<EventInterestGroup[]>
 }
@@ -82,11 +88,6 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  /**
-   * Get an event by its id
-   *
-   * @throws {EventNotFoundError} if the event does not exist
-   */
   async getEventById(id: EventId): Promise<Event> {
     const event = await this.eventRepository.getById(id)
     if (!event) {

@@ -14,6 +14,7 @@ import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError 
 import type { AttendanceRepository } from "./attendance-repository"
 import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
+import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 
 export interface AttendanceService {
   create(obj: AttendanceWrite): Promise<Attendance>
@@ -25,7 +26,7 @@ export interface AttendanceService {
     newMergePoolData: Partial<AttendancePoolWrite>,
     mergeTime?: Date
   ): Promise<void>
-  getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[] | null>
+  getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[]>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(poolId: AttendancePoolId): Promise<AttendancePool>
   updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
@@ -171,6 +172,11 @@ export class AttendanceServiceImpl implements AttendanceService {
 
   public async updatePool(poolId: AttendancePoolId, data: Partial<AttendancePoolWrite>) {
     const currentPool = await this.attendanceRepository.getPoolById(poolId)
+
+    if (!currentPool) {
+      throw new AttendancePoolNotFoundError(poolId)
+    }
+
     const newPool = await this.attendanceRepository.updatePool(poolId, data)
 
     if (data.capacity) {

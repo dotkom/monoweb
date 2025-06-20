@@ -58,7 +58,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     return article ? this.mapArticle(article) : null
   }
 
-  async getByTags(tags: ArticleTagName[], page: Pageable): Promise<Article[]> {
+  async getByTags(tags: ArticleTagName[], page?: Pageable): Promise<Article[]> {
     const articles = await this.db.article.findMany({
       where: {
         tags: {
@@ -69,7 +69,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
           },
         },
       },
-      ...pageQuery(page),
+      ...(page ? pageQuery(page) : {}),
       include: this.includeTags,
     })
 

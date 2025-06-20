@@ -10,7 +10,7 @@ import {
   type AttendeeId,
   YearCriteriaSchema,
 } from "@dotkomonline/types"
-import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool } from "@prisma/client"
+import type { Attendance as DBAttendance, AttendancePool as DBAttendancePool, Prisma } from "@prisma/client"
 import { z } from "zod"
 import { AttendanceNotFound } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
@@ -22,12 +22,26 @@ export interface AttendanceRepository {
   getByAttendeeId(id: AttendeeId): Promise<Attendance>
   update(data: Partial<AttendanceWrite>, id: AttendanceId): Promise<Attendance>
   getAll(): Promise<Attendance[]>
-  getPoolById(id: AttendancePoolId): Promise<AttendancePool>
-  getPoolByAttendeeId(id: AttendeeId): Promise<AttendancePool>
+  getPoolById(id: AttendancePoolId): Promise<AttendancePool | null>
+  getPoolByAttendeeId(id: AttendeeId): Promise<AttendancePool | null>
   createPool(data: AttendancePoolWrite): Promise<AttendancePool>
   deletePool(id: AttendancePoolId): Promise<AttendancePool>
   updatePool(id: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
 }
+
+const POOL_ATTENDEE_COUNT_INCLUDE = {
+  _count: {
+    select: {
+      attendees: true,
+    },
+  },
+} satisfies Prisma.AttendancePoolInclude
+
+const ATTENDANCE_ATTENDEE_COUNT_INCLUDE = {
+  pools: {
+    include: POOL_ATTENDEE_COUNT_INCLUDE,
+  },
+} satisfies Prisma.AttendanceInclude
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   private readonly db: DBClient
@@ -36,23 +50,9 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     this.db = db
   }
 
-  private includePoolAttendeeCount = {
-    _count: {
-      select: {
-        attendees: true,
-      },
-    },
-  }
-
-  private includePools = {
-    pools: {
-      include: this.includePoolAttendeeCount,
-    },
-  }
-
   async getAll() {
     const attendances = await this.db.attendance.findMany({
-      include: this.includePools,
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
     return attendances.map(this.mapAttendance)
@@ -61,7 +61,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async create(data: AttendanceWrite) {
     const createdAttendance = await this.db.attendance.create({
       data,
-      include: this.includePools,
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.mapAttendance(createdAttendance)
@@ -71,7 +71,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const updatedAttendance = await this.db.attendance.update({
       data,
       where: { id },
-      include: this.includePools,
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.mapAttendance(updatedAttendance)
@@ -80,7 +80,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async delete(id: AttendanceId) {
     const deletedAttendance = await this.db.attendance.delete({
       where: { id },
-      include: this.includePools,
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
     return this.mapAttendance(deletedAttendance)
   }
@@ -88,7 +88,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async getById(id: AttendanceId) {
     const attendance = await this.db.attendance.findUnique({
       where: { id },
-      include: this.includePools,
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
     if (!attendance) {
@@ -107,7 +107,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
           },
         },
       },
-      include: this.includePools,
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
     })
 
     if (attendance === null) {
@@ -120,7 +120,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async createPool(data: AttendancePoolWrite) {
     const createdPool = await this.db.attendancePool.create({
       data,
-      include: this.includePoolAttendeeCount,
+      include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.validateAttendancePool(createdPool)
@@ -129,7 +129,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async deletePool(id: AttendancePoolId) {
     const deletedPool = await this.db.attendancePool.delete({
       where: { id },
-      include: this.includePoolAttendeeCount,
+      include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.validateAttendancePool(deletedPool)
@@ -139,7 +139,7 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     const updatedPool = await this.db.attendancePool.update({
       where: { id },
       data,
-      include: this.includePoolAttendeeCount,
+      include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
     return this.validateAttendancePool(updatedPool)
@@ -148,11 +148,11 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   async getPoolById(id: AttendancePoolId) {
     const pool = await this.db.attendancePool.findUnique({
       where: { id },
-      include: this.includePoolAttendeeCount,
+      include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
-    if (pool === null) {
-      throw new AttendancePoolNotFoundError("Attendance pool not found")
+    if (!pool) {
+      return null
     }
 
     return this.validateAttendancePool(pool)
@@ -167,11 +167,11 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
           },
         },
       },
-      include: this.includePoolAttendeeCount,
+      include: POOL_ATTENDEE_COUNT_INCLUDE,
     })
 
-    if (pool === null) {
-      throw new AttendancePoolNotFoundError("Attendance pool not found")
+    if (!pool) {
+      return null
     }
 
     return this.validateAttendancePool(pool)

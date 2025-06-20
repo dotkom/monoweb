@@ -8,16 +8,33 @@ import type { ArticleTagRepository } from "./article-tag-repository"
 
 export interface ArticleService {
   create(input: ArticleWrite): Promise<Article>
+  /**
+   * Update an article by its id
+   *
+   * @throws {ArticleNotFoundError} if the article does not exist
+   */
   update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article>
   getAll(page: Pageable): Promise<Article[]>
   getAllByTags(tags: ArticleTagName[]): Promise<Article[]>
   getById(id: ArticleId): Promise<Article | null>
   getBySlug(slug: ArticleSlug): Promise<Article | null>
+  /**
+   * Gets the top 10 related articles based on tags
+   */
   getRelated(article: Article): Promise<Article[]>
   getFeatured(): Promise<Article[]>
-
   getTags(): Promise<ArticleTag[]>
+  /**
+   * Add a tag to an article
+   *
+   * @throws {ArticleNotFoundError} if the article does not exist
+   */
   addTag(id: ArticleId, tag: ArticleTagName): Promise<void>
+  /**
+   * Remove a tag from an article
+   *
+   * @throws {ArticleNotFoundError} if the article does not exist
+   */
   removeTag(id: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(id: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
 }
@@ -45,11 +62,6 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleRepository.create(input)
   }
 
-  /**
-   * Update an article by its id
-   *
-   * @throws {ArticleNotFoundError} if the article does not exist
-   */
   async update(id: ArticleId, input: Partial<ArticleWrite>): Promise<Article> {
     const match = await this.articleRepository.getById(id)
     if (match === null) {
@@ -83,9 +95,6 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleTagRepository.getAll()
   }
 
-  /**
-   * Gets the top 10 related articles based on tags
-   */
   async getRelated(article: Article): Promise<Article[]> {
     const articleTags = new Set(article.tags)
     const relatedArticles = await this.getAllByTags(article.tags)
@@ -122,14 +131,9 @@ export class ArticleServiceImpl implements ArticleService {
     return articles.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
   }
 
-  /**
-   * Add a tag to an article
-   *
-   * @throws {ArticleNotFoundError} if the article does not exist
-   */
   async addTag(id: ArticleId, tag: ArticleTagName): Promise<void> {
     const match = await this.articleRepository.getById(id)
-    if (match === undefined) {
+    if (!match) {
       throw new ArticleNotFoundError(id)
     }
     let name = await this.articleTagRepository.getByName(tag)
@@ -139,14 +143,9 @@ export class ArticleServiceImpl implements ArticleService {
     return await this.articleTagLinkRepository.add(id, name.name)
   }
 
-  /**
-   * Remove a tag from an article
-   *
-   * @throws {ArticleNotFoundError} if the article does not exist
-   */
   async removeTag(id: ArticleId, tag: ArticleTagName): Promise<void> {
     const match = await this.articleRepository.getById(id)
-    if (match === undefined) {
+    if (!match) {
       throw new ArticleNotFoundError(id)
     }
     await this.articleTagLinkRepository.remove(id, tag)

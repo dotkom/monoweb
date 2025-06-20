@@ -3,10 +3,10 @@ import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface EventCompanyRepository {
-  createCompany(id: EventId, company: CompanyId): Promise<void>
-  deleteCompany(id: EventId, company: CompanyId): Promise<void>
-  getCompaniesByEventId(id: EventId): Promise<Company[]>
-  getEventsByCompanyId(id: CompanyId, page: Pageable): Promise<Event[]>
+  createCompany(eventId: EventId, companyId: CompanyId): Promise<void>
+  deleteCompany(eventId: EventId, companyId: CompanyId): Promise<void>
+  getCompaniesByEventId(eventId: EventId): Promise<Company[]>
+  getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]>
 }
 
 export class EventCompanyRepositoryImpl implements EventCompanyRepository {

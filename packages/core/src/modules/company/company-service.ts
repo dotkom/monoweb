@@ -4,11 +4,26 @@ import { CompanyNotFoundError } from "./company-error"
 import type { CompanyRepository } from "./company-repository"
 
 export interface CompanyService {
+  /**
+   * Get a company by its id
+   *
+   * @throws {CompanyNotFoundError} if the company does not exist
+   */
   getCompanyById(id: CompanyId): Promise<Company>
+  /**
+   * Get a company by its slug
+   *
+   * @throws {CompanyNotFoundError} if the company does not exist
+   */
   getCompanyBySlug(slug: string): Promise<Company>
   getCompanies(page: Pageable): Promise<Company[]>
   createCompany(payload: CompanyWrite): Promise<Company>
-  updateCompany(id: CompanyId, payload: Omit<CompanyWrite, "id">): Promise<Company>
+  /**
+   * Update an existing company
+   *
+   * @throws {CompanyNotFoundError} if the company does not exist
+   */
+  updateCompany(id: CompanyId, payload: CompanyWrite): Promise<Company>
 }
 
 export class CompanyServiceImpl implements CompanyService {
@@ -18,11 +33,6 @@ export class CompanyServiceImpl implements CompanyService {
     this.companyRepository = companyRepository
   }
 
-  /**
-   * Get a company by its id
-   *
-   * @throws {CompanyNotFoundError} if the company does not exist
-   */
   async getCompanyById(id: CompanyId): Promise<Company> {
     const company = await this.companyRepository.getById(id)
     if (!company) {
@@ -49,7 +59,7 @@ export class CompanyServiceImpl implements CompanyService {
     return company
   }
 
-  async updateCompany(id: CompanyId, companyUpdate: Omit<CompanyWrite, "id">): Promise<Company> {
+  async updateCompany(id: CompanyId, companyUpdate: CompanyWrite): Promise<Company> {
     const company = await this.companyRepository.update(id, companyUpdate)
     return company
   }

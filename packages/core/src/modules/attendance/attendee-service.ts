@@ -29,7 +29,8 @@ export interface AttendeeService {
   adminRegisterForEvent(userId: string, attendanceId: string, attendancePoolId: string): Promise<Attendee>
   deregisterForEvent(userId: string, attendanceId: string): Promise<void>
   adminDeregisterForEvent(id: AttendeeId, reserveNext: boolean): Promise<void>
-  updateSelectionResponses(id: AttendanceId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
+  delete(id: AttendeeId): Promise<void>
+  updateSelectionResponses(id: AttendeeId, responses: AttendanceSelectionResponse[]): Promise<Attendee>
   getByAttendanceId(attendanceId: string): Promise<Attendee[]>
   getByAttendancePoolId(id: AttendancePoolId): Promise<Attendee[]>
   updateAttended(id: AttendeeId, attended: boolean): Promise<Attendee>
@@ -45,7 +46,7 @@ export interface AttendeeService {
    * @param [bypassCriteria=false] - If true, the criteria for reserving the attendee will be ignored. Defaults to false.
    * @returns Returns the attendee if the reservation was successful, false otherwise.
    */
-  attemptReserve(attendee: Attendee, pool: AttendancePool): Promise<Attendee | false>
+  attemptReserve(attendee: Attendee, pool: AttendancePool, bypassCriteria?: boolean): Promise<Attendee | false>
   handleQrCodeRegistration(userId: UserId, attendanceId: AttendanceId): Promise<QrCodeRegistrationAttendee>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
 }
@@ -128,8 +129,8 @@ export class AttendeeServiceImpl implements AttendeeService {
     return { attendee, user, alreadyAttended: false }
   }
 
-  async updateSelectionResponses(id: AttendeeId, selections: AttendanceSelectionResponse[]) {
-    const attendee = await this.attendeeRepository.update(id, { selections })
+  async updateSelectionResponses(id: AttendeeId, responses: AttendanceSelectionResponse[]) {
+    const attendee = await this.attendeeRepository.update(id, { selections: responses })
 
     if (attendee === null) {
       throw new AttendeeNotFoundError(id)
@@ -138,7 +139,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
-  async adminRegisterForEvent(userId: UserId, attendanceId: AttendancePoolId, attendancePoolId: AttendanceId) {
+  async adminRegisterForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
     const user = await this.userService.getById(userId)
     const attendance = await this.attendanceRepository.getById(attendanceId)
     const attendancePool = attendance.pools.find((pool) => pool.id === attendancePoolId)

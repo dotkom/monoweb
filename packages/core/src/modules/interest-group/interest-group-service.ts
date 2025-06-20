@@ -9,12 +9,12 @@ import type {
 import type { InterestGroupRepository } from "./interest-group-repository"
 
 export interface InterestGroupService {
-  getById(id: InterestGroupId): Promise<InterestGroup | null>
+  getById(interestGroupId: InterestGroupId): Promise<InterestGroup | null>
   getAll(): Promise<InterestGroup[]>
   create(values: InterestGroupWrite): Promise<InterestGroup>
-  update(id: InterestGroupId, values: InterestGroupWrite): Promise<InterestGroup>
-  delete(id: InterestGroupId): Promise<void>
-  getMembers(id: InterestGroupId): Promise<InterestGroupMember[]>
+  update(interestGroupId: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
+  delete(interestGroupId: InterestGroupId): Promise<void>
+  getMembers(interestGroupId: InterestGroupId): Promise<InterestGroupMember[]>
   getByMember(userId: UserId): Promise<InterestGroup[]>
   addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
   removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
@@ -28,43 +28,43 @@ export class InterestGroupServiceImpl implements InterestGroupService {
     this.interestGroupRepository = interestGroupRepository
   }
 
-  async getById(id: InterestGroupId): Promise<InterestGroup | null> {
-    return this.interestGroupRepository.getById(id)
+  async getById(interestGroupId: InterestGroupId) {
+    return this.interestGroupRepository.getById(interestGroupId)
   }
 
-  async getAll(): Promise<InterestGroup[]> {
+  async getAll() {
     return this.interestGroupRepository.getAll()
   }
 
-  async getAllByEventId(eventId: EventId): Promise<InterestGroup[]> {
+  async getAllByEventId(eventId: EventId) {
     return this.interestGroupRepository.getAllByEventId(eventId)
   }
 
-  async create(values: InterestGroupWrite): Promise<InterestGroup> {
+  async create(values: InterestGroupWrite) {
     return this.interestGroupRepository.create(values)
   }
 
-  async update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup> {
-    return this.interestGroupRepository.update(id, values)
+  async update(interestGroupId: InterestGroupId, values: Partial<InterestGroupWrite>) {
+    return this.interestGroupRepository.update(interestGroupId, values)
   }
 
-  async delete(id: InterestGroupId): Promise<void> {
-    return this.interestGroupRepository.delete(id)
+  async delete(interestGroupId: InterestGroupId) {
+    return this.interestGroupRepository.delete(interestGroupId)
   }
 
-  async getMembers(id: InterestGroupId): Promise<InterestGroupMember[]> {
-    return this.interestGroupRepository.getAllMembers(id)
+  async getMembers(interestGroupId: InterestGroupId) {
+    return this.interestGroupRepository.getAllMembers(interestGroupId)
   }
 
-  async getByMember(userId: UserId): Promise<InterestGroup[]> {
+  async getByMember(userId: UserId) {
     return this.interestGroupRepository.getAllByMember(userId)
   }
 
-  async addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember> {
+  async addMember(interestGroupId: InterestGroupId, userId: UserId) {
     return this.interestGroupRepository.addMember(interestGroupId, userId)
   }
 
-  async removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void> {
-    this.interestGroupRepository.removeMember(interestGroupId, userId)
+  async removeMember(interestGroupId: InterestGroupId, userId: UserId) {
+    return this.interestGroupRepository.removeMember(interestGroupId, userId)
   }
 }

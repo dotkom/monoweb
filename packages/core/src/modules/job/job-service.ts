@@ -1,26 +1,45 @@
 import type { Job, JobId, JobName, JobScheduledAt, JobWrite } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
 import type { z } from "zod"
-import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError } from "./job-error"
+import { JobNotFound, PayloadHandlerNotFoundError, PayloadNotFoundError, JobPayloadValidationError } from "./job-error"
 import type { JobRepository } from "./job-repository"
-import { payloadHandlers } from "./payload/index"
+import { payloadHandler } from "./payload/index"
 
-type PayloadOf<Job extends JobName> = z.infer<(typeof payloadHandlers)[Job]["schema"]>
+type PayloadOf<Job extends JobName> = z.infer<(typeof payloadHandler)[Job]["schema"]>
 
 export type JobService = {
-  getById: (id: JobId) => Promise<Job | null>
+  getById: (jobId: JobId) => Promise<Job | null>
   getAllProcessableJobs: () => Promise<Job[]>
-  update: (id: JobId, data: Partial<JobWrite>) => Promise<Job>
-  process: (id: JobId, data: Partial<JobWrite>) => Promise<Job>
-  cancel: (id: JobId) => Promise<Job>
 
-  parsePayload: <Name extends JobName>(name: Name, payload: JsonValue) => PayloadOf<Name>
+  /**
+   * Updates a job
+   *
+   * @param jobId
+   * @param data
+   * @returns The updated job
+   * @throws {JobNotFound} If `data.name` is not provided and the job with the given ID does not exist
+   */
+  update: (jobId: JobId, data: Partial<JobWrite>) => Promise<Job>
+  process: (jobId: JobId, data: Partial<JobWrite>) => Promise<Job>
+  cancel: (jobId: JobId) => Promise<Job>
+
+  /**
+   * Parses the payload for a job
+   *
+   * @param jobName - The name of the job
+   * @param payload - The payload to parse
+   * @returns The parsed payload
+   * @throws {PayloadNotFoundError} If the payload is not found
+   * @throws {PayloadHandlerNotFoundError} If the payload handler for the job is not found
+   * @throws {JobPayloadValidationError} If the payload is invalid
+   */
+  parsePayload: <Job extends JobName>(jobName: Job, payload: JsonValue) => PayloadOf<Job>
 
   scheduleAttemptReserveAttendeeJob: (
-    scheduledAt: JobScheduledAt,
+    scheduleAt: JobScheduledAt,
     payload: PayloadOf<"ATTEMPT_RESERVE_ATTENDEE">
   ) => Promise<Job>
-  scheduleMergePoolsJob: (scheduledAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">) => Promise<Job>
+  scheduleMergePoolsJob: (scheduleAt: JobScheduledAt, payload: PayloadOf<"MERGE_POOLS">) => Promise<Job>
 }
 
 export class JobServiceImpl implements JobService {
@@ -40,14 +59,14 @@ export class JobServiceImpl implements JobService {
     return await this.jobRepository.create({ ...data, payload })
   }
 
-  public async update(id: JobId, data: Partial<JobWrite>) {
+  public async update(jobId: JobId, data: Partial<JobWrite>) {
     let jobData: Partial<JobWrite> = data
 
     if (data.payload) {
-      const name = data.name || (await this.jobRepository.getById(id))?.name
+      const name = data.name || (await this.jobRepository.getById(jobId))?.name
 
       if (!name) {
-        throw new JobNotFound(`Job with id ${id} not found`)
+        throw new JobNotFound(`Job with id ${jobId} not found`)
       }
 
       const payload = this.parsePayload(name, data.payload)
@@ -55,34 +74,34 @@ export class JobServiceImpl implements JobService {
       jobData = { ...data, payload }
     }
 
-    return await this.jobRepository.update(id, jobData)
+    return await this.jobRepository.update(jobId, jobData)
   }
 
-  public async process(id: JobId, data: Partial<JobWrite>) {
-    return await this.update(id, { ...data, processedAt: new Date() })
+  public async process(jobId: JobId, data: Partial<JobWrite>) {
+    return await this.update(jobId, { ...data, processedAt: new Date() })
   }
 
-  public async getById(id: JobId) {
-    return await this.jobRepository.getById(id)
+  public async getById(jobId: JobId) {
+    return await this.jobRepository.getById(jobId)
   }
 
   public async getAllProcessableJobs() {
     return await this.jobRepository.getAllProcessableJobs()
   }
 
-  public async cancel(id: JobId) {
-    return await this.process(id, { status: "CANCELED" })
+  public async cancel(jobId: JobId) {
+    return await this.process(jobId, { status: "CANCELED" })
   }
 
-  public parsePayload<Name extends JobName>(name: Name, payload: JsonValue) {
+  public parsePayload<Name extends JobName>(jobName: Name, payload: JsonValue) {
     if (!payload) {
-      throw new PayloadNotFoundError(name)
+      throw new PayloadNotFoundError(jobName)
     }
 
-    const handler = payloadHandlers[name]
+    const handler = payloadHandler[jobName]
 
     if (!handler) {
-      throw new PayloadHandlerNotFoundError(name)
+      throw new PayloadHandlerNotFoundError(jobName)
     }
 
     return handler.parser(payload)

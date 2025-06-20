@@ -6,7 +6,7 @@ import { mergePoolsSchema, parseMergePoolsPayload } from "./merge-pools"
 
 type PayloadHandler = Record<JobName, { schema: z.ZodTypeAny; parser: (payload: JsonValue) => unknown }>
 
-export const payloadHandlers = {
+export const payloadHandler = {
   ATTEMPT_RESERVE_ATTENDEE: {
     schema: attemptReserveAttendeeSchema,
     parser: parseAttemptReserveAttendeePayload,

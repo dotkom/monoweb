@@ -9,12 +9,12 @@ import type {
 } from "@dotkomonline/types"
 
 export interface InterestGroupRepository {
-  getById(id: InterestGroupId): Promise<InterestGroup | null>
+  getById(interestGroupId: InterestGroupId): Promise<InterestGroup | null>
   getAll(): Promise<InterestGroup[]>
   create(values: InterestGroupWrite): Promise<InterestGroup>
-  update(id: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
-  delete(id: InterestGroupId): Promise<void>
-  getAllMembers(id: InterestGroupId): Promise<InterestGroupMember[]>
+  update(interestGroupId: InterestGroupId, values: Partial<InterestGroupWrite>): Promise<InterestGroup>
+  delete(interestGroupId: InterestGroupId): Promise<void>
+  getAllMembers(interestGroupId: InterestGroupId): Promise<InterestGroupMember[]>
   getAllByMember(userId: UserId): Promise<InterestGroup[]>
   addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember>
   removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void>
@@ -28,43 +28,43 @@ export class InterestGroupRepositoryImpl implements InterestGroupRepository {
     this.db = db
   }
 
-  async getById(id: InterestGroupId): Promise<InterestGroup | null> {
-    return await this.db.interestGroup.findUnique({ where: { id } })
+  async getById(interestGroupId: InterestGroupId) {
+    return await this.db.interestGroup.findUnique({ where: { id: interestGroupId } })
   }
 
-  async getAll(): Promise<InterestGroup[]> {
+  async getAll() {
     return await this.db.interestGroup.findMany({})
   }
 
-  async create(data: InterestGroupWrite): Promise<InterestGroup> {
+  async create(data: InterestGroupWrite) {
     return await this.db.interestGroup.create({ data })
   }
 
-  async update(id: InterestGroupId, data: Partial<InterestGroupWrite>): Promise<InterestGroup> {
-    return await this.db.interestGroup.update({ where: { id }, data })
+  async update(interestGroupId: InterestGroupId, data: Partial<InterestGroupWrite>) {
+    return await this.db.interestGroup.update({ where: { id: interestGroupId }, data })
   }
 
-  async delete(id: InterestGroupId): Promise<void> {
-    await this.db.interestGroup.delete({ where: { id } })
+  async delete(interestGroupId: InterestGroupId) {
+    await this.db.interestGroup.delete({ where: { id: interestGroupId } })
   }
 
-  async getAllMembers(interestGroupId: InterestGroupId): Promise<InterestGroupMember[]> {
+  async getAllMembers(interestGroupId: InterestGroupId) {
     return await this.db.interestGroupMember.findMany({ where: { interestGroupId } })
   }
 
-  async getAllByMember(userId: UserId): Promise<InterestGroup[]> {
+  async getAllByMember(userId: UserId) {
     return await this.db.interestGroup.findMany({ where: { members: { some: { userId } } } })
   }
 
-  async addMember(interestGroupId: InterestGroupId, userId: UserId): Promise<InterestGroupMember> {
+  async addMember(interestGroupId: InterestGroupId, userId: UserId) {
     return await this.db.interestGroupMember.create({ data: { interestGroupId, userId } })
   }
 
-  async removeMember(interestGroupId: InterestGroupId, userId: UserId): Promise<void> {
+  async removeMember(interestGroupId: InterestGroupId, userId: UserId) {
     await this.db.interestGroupMember.delete({ where: { interestGroupId, userId } })
   }
 
-  async getAllByEventId(eventId: EventId): Promise<InterestGroup[]> {
+  async getAllByEventId(eventId: EventId) {
     return await this.db.interestGroup.findMany({
       where: {
         events: {
