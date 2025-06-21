@@ -25,6 +25,7 @@ export const QrCodeScanner: FC = () => {
   return (
     <div>
       <Button onClick={() => setScannerOpen(false)}>Lukk scanner</Button>
+      {/* biome-ignore lint/a11y/useMediaCaption: caption what */}
       <video ref={ref} style={{ transform: "scaleX(-1)" }} />
     </div>
   )
