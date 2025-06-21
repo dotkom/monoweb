@@ -11,8 +11,7 @@ export const CompanyEditCard: FC = () => {
   const FormComponent = useCompanyWriteForm({
     label: "Oppdater bedrift",
     onSubmit: (data) => {
-      const result = CompanyWriteSchema.required({ id: true }).parse(data)
-      edit.mutate({ id: company.id, input: result })
+      edit.mutate({ id: company.id, input: data })
     },
     defaultValues: { ...company },
   })
