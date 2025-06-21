@@ -5,7 +5,9 @@ import {
   type AttendanceSelectionResponse,
   type Attendee,
   type AttendeeId,
+  type AttendeeWithoutUser,
   type AttendeeWrite,
+  type User,
   type UserId,
   canDeregisterForAttendance as attendanceOpenForDeregistration,
   canRegisterForAttendance as attendanceOpenForRegistration,
@@ -68,8 +70,15 @@ export class AttendeeServiceImpl implements AttendeeService {
     this.jobService = jobService
   }
 
-  private async create(data: AttendeeWrite, attendancePool: AttendancePool) {
-    const attendee = await this.attendeeRepository.create(data)
+  private async addUserToAttendee(attendeeWithoutUser: AttendeeWithoutUser, user?: User): Promise<Attendee> {
+    const resolvedUser = user ?? (await this.userService.getById(attendeeWithoutUser.userId))
+
+    return { ...attendeeWithoutUser, user: resolvedUser }
+  }
+
+  private async create(data: AttendeeWrite, attendancePool: AttendancePool, user: User): Promise<Attendee> {
+    const attendeeWithoutUser = await this.attendeeRepository.create(data)
+    const attendee = await this.addUserToAttendee(attendeeWithoutUser, user)
 
     if (attendancePool.id !== data.attendancePoolId) {
       throw new WrongAttendancePoolError(data.attendancePoolId, attendancePool.id)
@@ -86,30 +95,52 @@ export class AttendeeServiceImpl implements AttendeeService {
     return attendee
   }
 
+  /**
+   * Helper function to attempt to reserve the next attendee in the pool.
+   *
+   * @param pool - The pool to reserve the attendee in.
+   * @param bypassCriteria - If true, the criteria for reserving the attendee will be ignored.
+   * @returns Returns the attendee if the reservation was successful, false otherwise.
+   * @see {@link attemptReserve}
+   */
+  private async attemptReserveNextAttendee(pool: AttendancePool, { bypassCriteria }: { bypassCriteria: boolean }) {
+    const nextUnreservedAttendeeWithoutUser = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(
+      pool.id
+    )
+
+    if (!nextUnreservedAttendeeWithoutUser) {
+      return false
+    }
+
+    const nextUnreservedAttendee = await this.addUserToAttendee(nextUnreservedAttendeeWithoutUser)
+
+    return await this.attemptReserve(nextUnreservedAttendee, pool, { bypassCriteria })
+  }
+
   public async delete(id: AttendeeId) {
     await this.attendeeRepository.delete(id)
   }
 
   public async getByUserId(userId: UserId, attendanceId: AttendanceId) {
-    const attendee = await this.attendeeRepository.getByUserId(userId, attendanceId)
+    const attendeeWithoutUser = await this.attendeeRepository.getByUserId(userId, attendanceId)
 
-    if (!attendee) {
+    if (!attendeeWithoutUser) {
       throw new AttendeeNotFoundError(userId, attendanceId)
     }
 
-    return attendee
+    return await this.addUserToAttendee(attendeeWithoutUser)
   }
 
   public async updateAttended(id: AttendeeId, attended: boolean) {
-    const attendee = await this.attendeeRepository.update(id, { attended })
+    const attendeeWithoutUser = await this.attendeeRepository.update(id, { attended })
 
-    return attendee
+    return await this.addUserToAttendee(attendeeWithoutUser)
   }
 
   public async updateSelectionResponses(attendeeId: AttendeeId, responses: AttendanceSelectionResponse[]) {
-    const attendee = await this.attendeeRepository.update(attendeeId, { selections: responses })
+    const attendeeWithoutUser = await this.attendeeRepository.update(attendeeId, { selections: responses })
 
-    return attendee
+    return await this.addUserToAttendee(attendeeWithoutUser)
   }
 
   public async adminRegisterForEvent(userId: UserId, attendanceId: AttendanceId, attendancePoolId: AttendancePoolId) {
@@ -130,7 +161,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     const user = await this.userService.getById(userId)
     const userGrade = getMembershipGrade(user.membership)
 
-    const attendee = await this.attendeeRepository.create({
+    const attendeeWithoutUser = await this.attendeeRepository.create({
       userId,
       attendancePoolId,
       attendanceId: attendancePool.attendanceId,
@@ -139,25 +170,7 @@ export class AttendeeServiceImpl implements AttendeeService {
       reserved: true,
     })
 
-    return attendee
-  }
-
-  /**
-   * Helper function to attempt to reserve the next attendee in the pool.
-   *
-   * @param pool - The pool to reserve the attendee in.
-   * @param bypassCriteria - If true, the criteria for reserving the attendee will be ignored.
-   * @returns Returns the attendee if the reservation was successful, false otherwise.
-   * @see {@link attemptReserve}
-   */
-  private async attemptReserveNextAttendee(pool: AttendancePool, { bypassCriteria }: { bypassCriteria: boolean }) {
-    const nextUnreservedAttendee = await this.attendeeRepository.getFirstUnreservedByAttendancePoolId(pool.id)
-
-    if (!nextUnreservedAttendee) {
-      return false
-    }
-
-    return await this.attemptReserve(nextUnreservedAttendee, pool, { bypassCriteria })
+    return this.addUserToAttendee(attendeeWithoutUser, user)
   }
 
   public async adminDeregisterForEvent(
@@ -212,7 +225,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
     const userGrade = getMembershipGrade(user.membership)
 
-    return await this.create(
+    const attendeeWithoutUser = await this.create(
       {
         userId,
         attendancePoolId,
@@ -221,8 +234,11 @@ export class AttendeeServiceImpl implements AttendeeService {
         reserveTime,
         reserved: false,
       },
-      attendancePool
+      attendancePool,
+      user
     )
+
+    return await this.addUserToAttendee(attendeeWithoutUser, user)
   }
 
   public async attemptReserve(
@@ -275,10 +291,18 @@ export class AttendeeServiceImpl implements AttendeeService {
   }
 
   public async getByAttendanceId(attendanceId: AttendanceId) {
-    return this.attendeeRepository.getByAttendanceId(attendanceId)
+    const attendeesWithoutUsers = await this.attendeeRepository.getByAttendanceId(attendanceId)
+
+    const attendees = await Promise.all(attendeesWithoutUsers.map((attendee) => this.addUserToAttendee(attendee)))
+
+    return attendees
   }
 
   public async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
-    return await this.attendeeRepository.getByAttendancePoolId(attendancePoolId)
+    const attendeesWithoutUsers = await this.attendeeRepository.getByAttendancePoolId(attendancePoolId)
+
+    const attendees = await Promise.all(attendeesWithoutUsers.map((attendee) => this.addUserToAttendee(attendee)))
+
+    return attendees
   }
 }

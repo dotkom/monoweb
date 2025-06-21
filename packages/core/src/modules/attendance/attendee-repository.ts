@@ -6,27 +6,26 @@ import {
   type AttendeeId,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
   AttendeeSelectionResponsesSchema,
+  type AttendeeWithoutUser,
   type AttendeeWrite,
-  type User,
   type UserId,
 } from "@dotkomonline/types"
 import type { JsonValue } from "@prisma/client/runtime/library"
-import type { UserRepository } from "../user/user-repository"
 import { AttendeeWriteError } from "./attendee-error"
 
-type UnparsedAttendee = Omit<Attendee, "user" | "selections"> & {
+type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
   selections?: JsonValue
 }
 
 export interface AttendeeRepository {
-  create(data: AttendeeWrite): Promise<Attendee>
+  create(data: AttendeeWrite): Promise<AttendeeWithoutUser>
   delete(attendeeId: AttendeeId): Promise<void>
-  getById(attendeeId: AttendeeId): Promise<Attendee | null>
-  update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
-  getByAttendanceId(attendanceId: AttendanceId): Promise<Attendee[]>
-  getByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<Attendee[]>
-  getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<Attendee | null>
-  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee | null>
+  getById(attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
+  update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
+  getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
+  getByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
+  getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser | null>
+  getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser | null>
   poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
   attendanceHasAttendees(attendanceId: AttendanceId): Promise<boolean>
   reserveAttendee(attendeeId: AttendeeId): Promise<boolean>
@@ -36,11 +35,32 @@ export interface AttendeeRepository {
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
   private readonly db: DBClient
-  private readonly userRepository: UserRepository
 
-  constructor(db: DBClient, userRepository: UserRepository) {
+  constructor(db: DBClient) {
     this.db = db
-    this.userRepository = userRepository
+  }
+
+  private validateWrite(data: Partial<AttendeeWrite>) {
+    if (!data.selections) {
+      return
+    }
+
+    const selectionResponseParseResult = AttendeeSelectionOptionSchema.safeParse(data.selections)
+
+    if (!selectionResponseParseResult.success) {
+      throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
+    }
+  }
+
+  private parse(unparsedAttendee: UnparsedAttendeeWithoutUser): AttendeeWithoutUser {
+    const parsedSelections = unparsedAttendee.selections
+      ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
+      : []
+
+    return {
+      ...unparsedAttendee,
+      selections: parsedSelections,
+    }
   }
 
   public async getByUserId(userId: UserId, attendanceId: AttendanceId) {
@@ -50,9 +70,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       return null
     }
 
-    const user = await this.userRepository.getById(userId)
-
-    return this.parse(attendee, user)
+    return this.parse(attendee)
   }
 
   public async poolHasAttendees(attendancePoolId: AttendancePoolId) {
@@ -78,9 +96,8 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     this.validateWrite(data)
 
     const attendee = await this.db.attendee.create({ data })
-    const user = await this.userRepository.getById(attendee.userId)
 
-    return this.parse(attendee, user)
+    return this.parse(attendee)
   }
 
   public async delete(attendeeId: AttendeeId) {
@@ -94,9 +111,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       return null
     }
 
-    const user = await this.userRepository.getById(attendee.userId)
-
-    return this.parse(attendee, user)
+    return this.parse(attendee)
   }
 
   public async getByAttendanceId(attendanceId: AttendanceId) {
@@ -105,9 +120,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       orderBy: { reserveTime: "asc" },
     })
 
-    const users = await Promise.all(attendees.map((attendee) => this.userRepository.getById(attendee.userId)))
-
-    return attendees.map((attendee, index) => this.parse(attendee, users[index]))
+    return attendees.map((attendee) => this.parse(attendee))
   }
 
   public async getByAttendancePoolId(attendancePoolId: AttendancePoolId) {
@@ -116,9 +129,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       orderBy: { reserveTime: "asc" },
     })
 
-    const users = await Promise.all(attendees.map((attendee) => this.userRepository.getById(attendee.userId)))
-
-    return attendees.map((attendee, index) => this.parse(attendee, users[index]))
+    return attendees.map((attendee) => this.parse(attendee))
   }
 
   public async getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId) {
@@ -131,18 +142,15 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       return null
     }
 
-    const user = await this.userRepository.getById(attendee.userId)
-
-    return this.parse(attendee, user)
+    return this.parse(attendee)
   }
 
   public async update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>) {
     this.validateWrite(data)
 
     const updatedAttendee = await this.db.attendee.update({ where: { id: attendeeId }, data })
-    const user = await this.userRepository.getById(updatedAttendee.userId)
 
-    return this.parse(updatedAttendee, user)
+    return this.parse(updatedAttendee)
   }
 
   public async countReservedCapacityForUpdate(attendancePoolId: AttendancePoolId, tx: DBContext) {
@@ -150,32 +158,6 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       await tx.$queryRaw`SELECT count(*) FROM attendee WHERE "attendancePoolId" = ${attendancePoolId} FOR UPDATE`
 
     return result
-  }
-
-  private validateWrite(data: Partial<AttendeeWrite>) {
-    if (!data.selections) {
-      return
-    }
-
-    const selectionResponseParseResult = AttendeeSelectionOptionSchema.safeParse(data.selections)
-
-    if (!selectionResponseParseResult.success) {
-      throw new AttendeeWriteError("Invalid JSON data in AttendeeWrite field selectionResponses")
-    }
-  }
-
-  private parse(unparsedAttendee: UnparsedAttendee, user: User): Attendee
-  private parse(unparsedAttendee: UnparsedAttendee, user?: undefined): Omit<Attendee, "user">
-  private parse(unparsedAttendee: UnparsedAttendee, user?: User): Attendee | Omit<Attendee, "user"> {
-    const parsedSelections = unparsedAttendee.selections
-      ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
-      : []
-
-    return {
-      ...unparsedAttendee,
-      user,
-      selections: parsedSelections,
-    }
   }
 
   public async reserveAttendee(attendeeId: AttendeeId) {
