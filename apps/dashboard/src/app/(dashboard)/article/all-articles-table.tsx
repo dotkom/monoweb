@@ -14,10 +14,15 @@ export const AllArticlesTable = ({ articles }: AllArticlesTableProps) => {
   const columnHelper = createColumnHelper<Article>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("title", {
+      columnHelper.accessor((article) => article.title, {
+        id: "title",
         header: () => "Tittel",
-        cell: (info) => info.getValue(),
         sortingFn: "alphanumeric",
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/article/${info.row.original.id}`}>
+            {info.getValue()}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("author", {
         header: () => "Forfatter",
@@ -59,16 +64,6 @@ export const AllArticlesTable = ({ articles }: AllArticlesTableProps) => {
               <span key={tag}>{tag}</span>
             ))}
           </Group>
-        ),
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        enableSorting: false,
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/article/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
         ),
       }),
     ],

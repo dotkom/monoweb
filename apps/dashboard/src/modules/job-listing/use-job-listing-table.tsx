@@ -15,9 +15,14 @@ export const useJobListingTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<JobListing>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("company", {
+      columnHelper.accessor((company) => company, {
+        id: "company",
         header: () => "Bedrift",
-        cell: (info) => info.getValue().name,
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/job-listing/${info.getValue().id}`}>
+            {info.getValue().company.name}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("title", {
         header: () => "Tittel",
@@ -28,15 +33,6 @@ export const useJobListingTable = ({ data }: Props) => {
         cell: (info) => {
           return <Text>{formatRelativeTime(info.getValue())}</Text>
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/job-listing/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]

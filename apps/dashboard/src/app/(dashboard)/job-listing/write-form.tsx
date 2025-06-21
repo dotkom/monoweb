@@ -41,6 +41,7 @@ export const useJobListingWriteForm = ({
       companyId: createSelectInput({
         label: "Selskap",
         data: companies.map((company) => ({ value: company.id, label: company.name })),
+        searchable: true,
       }),
       title: createTextInput({
         label: "Tittel",

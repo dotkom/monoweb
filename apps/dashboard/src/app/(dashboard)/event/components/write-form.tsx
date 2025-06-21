@@ -93,11 +93,13 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Arrangerende komité",
         placeholder: "Arrkom",
         data: groups.map((group) => ({ value: group.id, label: group.name })),
+        searchable: true,
       }),
       interestGroupIds: createMultipleSelectInput({
         label: "Arrangerende interessegruppe",
         placeholder: "Stipendsushi",
         data: interestGroups.map((interestGroup) => ({ value: interestGroup.id, label: interestGroup.name })),
+        searchable: true,
       }),
       status: createSelectInput({
         label: "Event status",

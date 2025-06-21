@@ -14,13 +14,18 @@ export const useInterestGroupTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<InterestGroup>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("name", {
+      columnHelper.accessor((interestGroup) => interestGroup, {
+        id: "name",
         header: () => "Navn",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/interest-group/${info.getValue().id}`}>
+            {info.getValue().name}
+          </Anchor>
+        ),
       }),
-      columnHelper.accessor("description", {
-        header: () => "Kort beskrivelse",
-        cell: (info) => info.getValue(),
+      columnHelper.accessor("isActive", {
+        header: () => "Aktiv",
+        cell: (info) => (info.getValue() ? "Aktiv" : "Inaktiv"),
       }),
       columnHelper.accessor("image", {
         header: () => "Bilde",
@@ -48,15 +53,6 @@ export const useInterestGroupTable = ({ data }: Props) => {
             </Anchor>
           )
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/interest-group/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]

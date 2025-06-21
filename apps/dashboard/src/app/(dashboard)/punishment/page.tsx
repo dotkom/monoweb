@@ -17,8 +17,14 @@ function MarkUserCount({ markId }: Readonly<{ markId: MarkId }>) {
 
 const columnHelper = createColumnHelper<Mark>()
 const columns = [
-  columnHelper.accessor("title", {
+  columnHelper.accessor((mark) => mark, {
+    id: "title",
     header: () => "Navn",
+    cell: (info) => (
+      <Anchor component={Link} size="sm" href={`/punishment/${info.getValue().id}`}>
+        {info.getValue().title}
+      </Anchor>
+    ),
   }),
   columnHelper.accessor("createdAt", {
     header: () => "Opprettet",
@@ -28,15 +34,6 @@ const columns = [
     id: "count",
     header: () => "Antall",
     cell: (info) => <MarkUserCount markId={info.getValue().id} />,
-  }),
-  columnHelper.accessor((mark) => mark, {
-    id: "actions",
-    header: () => "Detaljer",
-    cell: (info) => (
-      <Anchor component={Link} size="sm" href={`/punishment/${info.getValue().id}`}>
-        Se mer
-      </Anchor>
-    ),
   }),
 ]
 

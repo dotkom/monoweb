@@ -1,7 +1,14 @@
 import { ArticleSchema, type ArticleWrite, ArticleWriteSchema } from "@dotkomonline/types"
 import { useTagsAllQuery } from "src/modules/article/queries/use-tags-all-query"
 import type { z } from "zod"
-import { createCheckboxInput, createRichTextInput, createTagInput, createTextInput, useFormBuilder } from "../../form"
+import {
+  createCheckboxInput,
+  createFileInput,
+  createRichTextInput,
+  createTagInput,
+  createTextInput,
+  useFormBuilder,
+} from "../../form"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWrite> = {}
 
@@ -42,10 +49,9 @@ export const useArticleWriteForm = ({
         placeholder: "Jahn Teigen",
         required: true,
       }),
-      imageUrl: createTextInput({
-        type: "url",
+      imageUrl: createFileInput({
         label: "Cover bilde",
-        placeholder: "https://s3.amazonaws.com/mitt-bilde.png",
+        placeholder: "Last opp",
         required: true,
       }),
       vimeoId: createTextInput({

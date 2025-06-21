@@ -3,7 +3,7 @@
 import type { EventDetail } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
 import { Icon } from "@iconify/react"
-import { Anchor, Button, ButtonGroup, Group as GroupContainer, Skeleton, Stack } from "@mantine/core"
+import { Anchor, Box, Button, ButtonGroup, Skeleton, Stack } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -57,20 +57,20 @@ export default function EventPage() {
   return (
     <Skeleton visible={isEventsLoading}>
       <Stack>
-        <GenericTable table={table} />
-        <GroupContainer justify="space-between">
+        <Box>
           <Button component={Link} href="/event/register">
             Nytt arrangement
           </Button>
-          <ButtonGroup>
-            <Button variant="subtle">
-              <Icon icon="tabler:caret-left" />
-            </Button>
-            <Button variant="subtle">
-              <Icon icon="tabler:caret-right" />
-            </Button>
-          </ButtonGroup>
-        </GroupContainer>
+        </Box>
+        <GenericTable table={table} />
+        <ButtonGroup ml="auto">
+          <Button variant="subtle">
+            <Icon icon="tabler:caret-left" />
+          </Button>
+          <Button variant="subtle">
+            <Icon icon="tabler:caret-right" />
+          </Button>
+        </ButtonGroup>
       </Stack>
     </Skeleton>
   )
