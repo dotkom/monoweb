@@ -21,7 +21,7 @@ export const QrCodeScanner: FC = () => {
   if (!scannerOpen) {
     return <Button onClick={() => setScannerOpen(true)}>Åpne scanner</Button>
   }
-  
+
   return (
     <div>
       <Button onClick={() => setScannerOpen(false)}>Lukk scanner</Button>
