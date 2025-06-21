@@ -34,5 +34,7 @@ export const paymentRouter = t.router({
         paymentId: PaymentSchema.shape.id,
       })
     )
-    .mutation(async ({ input, ctx }) => ctx.paymentService.refundPaymentById(input.paymentId)),
+    .mutation(async ({ input, ctx }) =>
+      ctx.paymentService.refundPaymentById(input.paymentId, { checkRefundApproval: true })
+    ),
 })

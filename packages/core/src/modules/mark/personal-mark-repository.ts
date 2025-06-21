@@ -6,7 +6,7 @@ export interface PersonalMarkRepository {
   getAllByUserId(userId: UserId): Promise<PersonalMark[]>
   getAllMarksByUserId(userId: UserId): Promise<Mark[]>
   addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
-  removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null>
+  removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark>
   getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null>
   countUsersByMarkId(markId: MarkId): Promise<number>
 }
@@ -18,33 +18,33 @@ export class PersonalMarkRepositoryImpl implements PersonalMarkRepository {
     this.db = db
   }
 
-  async getAllByUserId(userId: UserId): Promise<PersonalMark[]> {
+  public async getAllByUserId(userId: UserId) {
     return await this.db.personalMark.findMany({ where: { userId } })
   }
 
-  async getAllMarksByUserId(userId: UserId): Promise<Mark[]> {
+  public async getAllMarksByUserId(userId: UserId) {
     const personalMarks = await this.db.personalMark.findMany({ where: { userId }, select: { mark: true } })
 
     return personalMarks.map((personalMark) => personalMark.mark)
   }
 
-  async getByMarkId(markId: MarkId): Promise<PersonalMark[]> {
+  public async getByMarkId(markId: MarkId) {
     return await this.db.personalMark.findMany({ where: { markId } })
   }
 
-  async addToUserId(userId: UserId, markId: MarkId): Promise<PersonalMark> {
+  public async addToUserId(userId: UserId, markId: MarkId) {
     return await this.db.personalMark.create({ data: { userId, markId } })
   }
 
-  async removeFromUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null> {
+  public async removeFromUserId(userId: UserId, markId: MarkId) {
     return await this.db.personalMark.delete({ where: { markId_userId: { userId, markId } } })
   }
 
-  async getByUserId(userId: UserId, markId: MarkId): Promise<PersonalMark | null> {
+  public async getByUserId(userId: UserId, markId: MarkId) {
     return await this.db.personalMark.findUnique({ where: { markId_userId: { userId, markId } } })
   }
 
-  async countUsersByMarkId(markId: MarkId): Promise<number> {
+  public async countUsersByMarkId(markId: MarkId) {
     return await this.db.personalMark.count({ where: { markId } })
   }
 }

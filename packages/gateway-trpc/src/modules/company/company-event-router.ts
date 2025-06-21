@@ -11,7 +11,5 @@ export const companyEventRouter = t.router({
         pagination: PaginateInputSchema,
       })
     )
-    .query(async ({ input, ctx }) =>
-      ctx.companyEventService.getEventsByCompanyId(input.id, input.pagination.take, input.pagination.cursor)
-    ),
+    .query(async ({ input, ctx }) => ctx.companyEventService.getEventsByCompanyId(input.id, input.pagination)),
 })

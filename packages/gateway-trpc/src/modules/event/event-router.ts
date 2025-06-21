@@ -98,9 +98,7 @@ export const eventRouter = t.router({
 
   allByCompany: publicProcedure
     .input(z.object({ id: CompanySchema.shape.id, paginate: PaginateInputSchema }))
-    .query(async ({ input, ctx }) =>
-      ctx.companyEventService.getEventsByCompanyId(input.id, input.paginate.take, input.paginate.cursor)
-    ),
+    .query(async ({ input, ctx }) => ctx.companyEventService.getEventsByCompanyId(input.id, input.paginate)),
   allByUserId: publicProcedure
     .input(z.object({ id: UserSchema.shape.id }))
     .query(async ({ input, ctx }) => ctx.eventService.getEventsByUserAttending(input.id)),
@@ -117,7 +115,7 @@ export const eventRouter = t.router({
   addAttendance: adminProcedure
     .input(
       z.object({
-        values: AttendanceWriteSchema.partial(),
+        values: AttendanceWriteSchema,
         eventId: EventSchema.shape.id,
       })
     )

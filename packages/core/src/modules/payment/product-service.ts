@@ -4,8 +4,13 @@ import { ProductNotFoundError } from "./product-error"
 import type { ProductRepository } from "./product-repository"
 
 export interface ProductService {
-  createProduct(productCreate: ProductWrite): Promise<Product>
-  getProductById(id: ProductId): Promise<Product>
+  create(data: ProductWrite): Promise<Product>
+  /**
+   * Get product by id
+   *
+   * @throws {ProductNotFoundError} if product is not found
+   */
+  getById(productId: ProductId): Promise<Product>
   getProducts(page: Pageable): Promise<Product[]>
 }
 
@@ -16,25 +21,20 @@ export class ProductServiceImpl implements ProductService {
     this.productRepository = productRepository
   }
 
-  async createProduct(productCreate: ProductWrite): Promise<Product> {
-    const product = await this.productRepository.create(productCreate)
+  public async create(data: ProductWrite) {
+    const product = await this.productRepository.create(data)
     return product
   }
 
-  /**
-   * Get product by id
-   *
-   * @throws {ProductNotFoundError} if product is not found
-   */
-  async getProductById(id: ProductId): Promise<Product> {
-    const product = await this.productRepository.getById(id)
+  public async getById(productId: ProductId) {
+    const product = await this.productRepository.getById(productId)
     if (!product) {
-      throw new ProductNotFoundError(id)
+      throw new ProductNotFoundError(productId)
     }
     return product
   }
 
-  async getProducts(page: Pageable): Promise<Product[]> {
+  public async getProducts(page: Pageable) {
     const products = await this.productRepository.getAll(page)
     return products
   }

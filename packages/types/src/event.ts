@@ -5,7 +5,7 @@ import { schemas } from "@dotkomonline/db/schemas"
 import { AttendanceSchema } from "./attendance/attendance"
 import { CompanySchema } from "./company"
 import { GroupSchema } from "./group"
-import { InterestGroupSchema } from "./interest-group"
+import { InterestGroupSchema } from "./interest-group/interest-group"
 
 export const EventSchema = schemas.EventSchema.extend({})
 

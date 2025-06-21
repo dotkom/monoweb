@@ -217,7 +217,7 @@ describe("PaymentService", () => {
     refundRequestRepository,
     stripeAccounts
   )
-  vi.spyOn(paymentService, "findStripeSdkByPublicKey").mockReturnValue(stripe)
+  vi.spyOn(paymentService, "getStripeSdkByPublicKey").mockReturnValue(stripe)
 
   const paymentPayloadExtended: Payment = {
     ...paymentPayload,
@@ -257,7 +257,7 @@ describe("PaymentService", () => {
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(productPayloadExtended)
     vi.spyOn(eventRepository, "getById").mockResolvedValueOnce(eventPayloadExtended)
     vi.spyOn(stripe.checkout.sessions, "create").mockResolvedValueOnce(stripeResponseCheckoutSessionPayloadExtended)
-    vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(null)
+    vi.spyOn(paymentRepository, "create").mockResolvedValueOnce(paymentPayloadExtended)
     expect(
       await paymentService.createStripeCheckoutSessionForProductId(
         productPayloadExtended.id,
@@ -279,7 +279,7 @@ describe("PaymentService", () => {
       status: "PAID",
     })
     await expect(
-      paymentService.fullfillStripeCheckoutSession(sessionId, paymentProviderOrderId as string)
+      paymentService.fulfillStripeCheckoutSession(sessionId, paymentProviderOrderId as string)
     ).resolves.toEqual(undefined)
     expect(paymentRepository.updateByPaymentProviderSessionId).toHaveBeenCalledWith(sessionId, {
       status: "PAID",
@@ -291,7 +291,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "PAID" })
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: false })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(UnrefundablePaymentError)
   })
 
@@ -299,7 +299,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "UNPAID" })
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(InvalidPaymentStatusError)
   })
 
@@ -307,7 +307,7 @@ describe("PaymentService", () => {
     vi.spyOn(paymentRepository, "getById").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "REFUNDED" })
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ ...productPayloadExtended, isRefundable: true })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(InvalidPaymentStatusError)
   })
 
@@ -320,7 +320,7 @@ describe("PaymentService", () => {
     })
     vi.spyOn(refundRequestRepository, "getByPaymentId").mockResolvedValueOnce(null)
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).rejects.toThrow(RefundRequestNotFoundError)
   })
 
@@ -340,7 +340,7 @@ describe("PaymentService", () => {
     vi.spyOn(stripe.refunds, "create").mockResolvedValueOnce(stripeResponseRefundPayload)
     vi.spyOn(paymentRepository, "update").mockResolvedValueOnce({ ...paymentPayloadExtended, status: "REFUNDED" })
 
-    const call = paymentService.refundPaymentById(paymentPayloadExtended.id)
+    const call = paymentService.refundPaymentById(paymentPayloadExtended.id, { checkRefundApproval: true })
     await expect(call).resolves.toEqual(undefined)
     expect(paymentRepository.update).toHaveBeenCalledWith(paymentPayloadExtended.id, { status: "REFUNDED" })
   })

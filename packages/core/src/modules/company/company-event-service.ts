@@ -1,9 +1,9 @@
 import type { Company, CompanyId, Event, EventId } from "@dotkomonline/types"
-import type { Cursor } from "../../query"
+import type { Pageable } from "../../query"
 import type { CompanyEventRepository } from "./company-event-repository"
 
 export interface CompanyEventService {
-  getEventsByCompanyId(companyId: CompanyId, take: number, cursor?: Cursor): Promise<Event[]>
+  getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]>
   getCompaniesByEventId(eventId: EventId): Promise<Company[]>
 }
 
@@ -14,11 +14,11 @@ export class CompanyEventServiceImpl implements CompanyEventService {
     this.companyEventRepository = companyEventRepository
   }
 
-  async getEventsByCompanyId(company: CompanyId): Promise<Event[]> {
-    return this.companyEventRepository.getEventsByCompanyId(company)
+  public async getEventsByCompanyId(companyId: CompanyId, page: Pageable): Promise<Event[]> {
+    return this.companyEventRepository.getEventsByCompanyId(companyId, page)
   }
 
-  async getCompaniesByEventId(event: EventId): Promise<Company[]> {
-    return this.companyEventRepository.getCompaniesByEventId(event)
+  public async getCompaniesByEventId(eventId: EventId): Promise<Company[]> {
+    return this.companyEventRepository.getCompaniesByEventId(eventId)
   }
 }

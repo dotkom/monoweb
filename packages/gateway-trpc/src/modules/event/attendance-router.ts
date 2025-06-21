@@ -76,10 +76,14 @@ export const attendanceRouter = t.router({
       z.object({
         id: AttendeeSchema.shape.id,
         reserveNextAttendee: z.boolean(),
+        bypassCriteriaOnReserveNext: z.boolean().optional().default(false),
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.adminDeregisterForEvent(input.id, input.reserveNextAttendee)
+      ctx.attendeeService.adminDeregisterForEvent(input.id, {
+        reserveNextAttendee: input.reserveNextAttendee,
+        bypassCriteriaOnReserveNext: input.bypassCriteriaOnReserveNext,
+      })
     ),
 
   getSelectionsResults: protectedProcedure
@@ -98,17 +102,6 @@ export const attendanceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => await ctx.attendeeService.updateAttended(input.id, input.attended)),
-
-  handleQrCodeRegistration: adminProcedure
-    .input(
-      z.object({
-        userId: UserSchema.shape.id,
-        attendanceId: AttendanceSchema.shape.id,
-      })
-    )
-    .mutation(
-      async ({ input, ctx }) => await ctx.attendeeService.handleQrCodeRegistration(ctx.principal, input.attendanceId)
-    ),
 
   updateSelectionResponses: protectedProcedure
     .input(

@@ -1,36 +1,32 @@
-import type { AttendanceId } from "@dotkomonline/types"
 import { Button } from "@mantine/core"
 import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
-import { useHandleQrCodeRegistration } from "../queries"
+import { useUpdateEventAttendanceMutation } from "../mutations"
 
-export type QrCodeScannerProps = {
-  attendanceId: AttendanceId
-}
-
-export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendanceId }) => {
-  const registerAttendance = useHandleQrCodeRegistration()
+export const QrCodeScanner: FC = () => {
+  const registerAttendance = useUpdateEventAttendanceMutation()
   const [scannerOpen, setScannerOpen] = useState(false)
+
   const { ref } = useZxing({
-    onDecodeResult: async (result) => {
-      const userId = result.getText()
-      await registerAttendance({
-        userId,
-        attendanceId,
+    onDecodeResult: (result) => {
+      const attendeeId = result.getText()
+      registerAttendance.mutate({
+        id: attendeeId,
+        attended: true,
       })
     },
     paused: !scannerOpen,
   })
 
-  if (scannerOpen && ref === null) {
-    return (
-      <div>
-        <Button onClick={() => setScannerOpen(false)}>Lukk scanner</Button>
-        <video ref={ref} style={{ transform: "scaleX(-1)" }}>
-          <track kind="captions" src="" srcLang="en" label="English" default />
-        </video>
-      </div>
-    )
+  if (!scannerOpen) {
+    return <Button onClick={() => setScannerOpen(true)}>Åpne scanner</Button>
   }
-  return <Button onClick={() => setScannerOpen(true)}>Åpne scanner</Button>
+
+  return (
+    <div>
+      <Button onClick={() => setScannerOpen(false)}>Lukk scanner</Button>
+      {/* biome-ignore lint/a11y/useMediaCaption: caption what */}
+      <video ref={ref} style={{ transform: "scaleX(-1)" }} />
+    </div>
+  )
 }

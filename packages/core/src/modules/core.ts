@@ -107,7 +107,7 @@ export const createServiceLayer = async ({
   const userRepository: UserRepository = new UserRepositoryImpl(managementClient, db)
 
   const attendanceRepository: AttendanceRepository = new AttendanceRepositoryImpl(db)
-  const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db, userRepository)
+  const attendeeRepository: AttendeeRepository = new AttendeeRepositoryImpl(db)
 
   const productRepository: ProductRepository = new ProductRepositoryImpl(db)
   const paymentRepository: PaymentRepository = new PaymentRepositoryImpl(db)

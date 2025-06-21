@@ -1,12 +1,13 @@
 import type { DBClient } from "@dotkomonline/db"
 import type { Mark, MarkId, MarkWrite } from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
+
 export interface MarkRepository {
-  getById(id: MarkId): Promise<Mark | null>
+  getById(markId: MarkId): Promise<Mark | null>
   getAll(page: Pageable): Promise<Mark[]>
-  create(markInsert: MarkWrite): Promise<Mark>
-  update(id: MarkId, markUpdate: MarkWrite): Promise<Mark | null>
-  delete(id: MarkId): Promise<Mark | null>
+  create(data: MarkWrite): Promise<Mark>
+  update(markId: MarkId, data: MarkWrite): Promise<Mark>
+  delete(markId: MarkId): Promise<Mark>
 }
 
 export class MarkRepositoryImpl implements MarkRepository {
@@ -16,23 +17,23 @@ export class MarkRepositoryImpl implements MarkRepository {
     this.db = db
   }
 
-  async getById(id: MarkId): Promise<Mark | null> {
-    return await this.db.mark.findUnique({ where: { id } })
+  public async getById(markId: MarkId) {
+    return await this.db.mark.findUnique({ where: { id: markId } })
   }
 
-  async getAll(page: Pageable): Promise<Mark[]> {
+  public async getAll(page: Pageable) {
     return await this.db.mark.findMany({ ...pageQuery(page) })
   }
 
-  async create(data: MarkWrite): Promise<Mark> {
+  public async create(data: MarkWrite) {
     return await this.db.mark.create({ data })
   }
 
-  async update(id: MarkId, data: MarkWrite): Promise<Mark | null> {
-    return await this.db.mark.update({ where: { id }, data })
+  public async update(markId: MarkId, data: MarkWrite) {
+    return await this.db.mark.update({ where: { id: markId }, data })
   }
 
-  async delete(id: MarkId): Promise<Mark | null> {
-    return await this.db.mark.delete({ where: { id } })
+  public async delete(markId: MarkId) {
+    return await this.db.mark.delete({ where: { id: markId } })
   }
 }

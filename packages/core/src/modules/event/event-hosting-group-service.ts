@@ -14,17 +14,17 @@ export class EventHostingGroupServiceImpl implements EventHostingGroupService {
     this.eventHostingGroupRepository = eventHostingGroupRepository
   }
 
-  async getGroupsForEvent(eventId: EventId): Promise<Group[]> {
+  public async getGroupsForEvent(eventId: EventId): Promise<Group[]> {
     const groups = await this.eventHostingGroupRepository.getAllGroups(eventId)
     return groups
   }
 
-  async getHostingGroupsForEvent(eventId: EventId): Promise<Group[]> {
+  public async getHostingGroupsForEvent(eventId: EventId): Promise<Group[]> {
     const hostingGroups = await this.eventHostingGroupRepository.getAllEventHostingGroups(eventId)
     return hostingGroups
   }
 
-  async setEventHostingGroups(eventId: EventId, groups: GroupId[]): Promise<EventHostingGroup[]> {
+  public async setEventHostingGroups(eventId: EventId, groups: GroupId[]): Promise<EventHostingGroup[]> {
     // Fetch all groups associated with the event
     const eventHostingGroups = await this.getHostingGroupsForEvent(eventId)
     const currentHostingGroupIds = eventHostingGroups.map((hostingGroup) => hostingGroup.id)

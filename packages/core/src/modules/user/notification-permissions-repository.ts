@@ -4,10 +4,7 @@ import type { NotificationPermissions, NotificationPermissionsWrite, UserId } fr
 export interface NotificationPermissionsRepository {
   getByUserId(id: UserId): Promise<NotificationPermissions | null>
   create(data: Partial<NotificationPermissionsWrite>): Promise<NotificationPermissions>
-  update(
-    userId: UserId,
-    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ): Promise<NotificationPermissions | null>
+  update(userId: UserId, data: Partial<Omit<NotificationPermissionsWrite, "userId">>): Promise<NotificationPermissions>
 }
 
 export class NotificationPermissionsRepositoryImpl implements NotificationPermissionsRepository {
@@ -17,18 +14,15 @@ export class NotificationPermissionsRepositoryImpl implements NotificationPermis
     this.db = db
   }
 
-  async getByUserId(userId: UserId): Promise<NotificationPermissions | null> {
+  public async getByUserId(userId: UserId) {
     return await this.db.notificationPermissions.findUnique({ where: { userId } })
   }
 
-  async create(data: NotificationPermissionsWrite): Promise<NotificationPermissions> {
+  public async create(data: NotificationPermissionsWrite) {
     return await this.db.notificationPermissions.create({ data })
   }
 
-  async update(
-    userId: UserId,
-    data: Partial<Omit<NotificationPermissionsWrite, "userId">>
-  ): Promise<NotificationPermissions | null> {
+  public async update(userId: UserId, data: Partial<Omit<NotificationPermissionsWrite, "userId">>) {
     return await this.db.notificationPermissions.update({ where: { userId }, data })
   }
 }

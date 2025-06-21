@@ -6,7 +6,7 @@ export const CompanySchema = schemas.CompanySchema.extend({})
 export type CompanyId = Company["id"]
 export type Company = z.infer<typeof CompanySchema>
 
-export const CompanyWriteSchema = CompanySchema.partial({
+export const CompanyWriteSchema = CompanySchema.omit({
   id: true,
   createdAt: true,
 })

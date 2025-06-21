@@ -4,10 +4,16 @@ import type { Job, JobId, JobWrite } from "@dotkomonline/types"
 export interface JobRepository {
   create(data: JobWrite): Promise<Job>
   createMany(data: JobWrite[]): Promise<Job[]>
-  update(id: string, data: Partial<JobWrite>): Promise<Job>
-  delete(id: JobId): Promise<void>
-  getById(id: JobId): Promise<Job | null>
+  update(jobId: string, data: Partial<JobWrite>): Promise<Job>
+  delete(jobId: JobId): Promise<void>
+  getById(jobId: JobId): Promise<Job | null>
   getAll(): Promise<Job[]>
+
+  /**
+   * Get all jobs that are processable. A job is processable if:
+   * - It is scheduled to run at or before the current time
+   * - Its status is "PENDING"
+   */
   getAllProcessableJobs(): Promise<Job[]>
 }
 
@@ -28,22 +34,22 @@ export class JobsRepositoryImpl implements JobRepository {
     })
   }
 
-  public async update(id: JobId, data: Partial<JobWrite>) {
+  public async update(jobId: JobId, data: Partial<JobWrite>) {
     return await this.db.job.update({
-      where: { id },
+      where: { id: jobId },
       data: { ...data, payload: data.payload ?? undefined },
     })
   }
 
-  public async delete(id: JobId) {
+  public async delete(jobId: JobId) {
     await this.db.job.delete({
-      where: { id },
+      where: { id: jobId },
     })
   }
 
-  public async getById(id: JobId) {
+  public async getById(jobId: JobId) {
     return await this.db.job.findUnique({
-      where: { id },
+      where: { id: jobId },
     })
   }
 
