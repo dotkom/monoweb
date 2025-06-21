@@ -1,4 +1,3 @@
-import { CompanyWriteSchema } from "@dotkomonline/types"
 import type { FC } from "react"
 import { useCompanyWriteForm } from "../components/write-form"
 import { useEditCompanyMutation } from "../mutations"
