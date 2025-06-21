@@ -39,6 +39,8 @@ const StudyDirectionSchema = z.object({
   studyWaypoints: z.array(StudyWaypointSchema),
 })
 
+type StudyDirection = z.infer<typeof StudyDirectionSchema>
+
 const StudyPeriodSchema = z.object({
   periodNumber: z.string(),
   direction: StudyDirectionSchema,
@@ -72,17 +74,50 @@ const STATIC_FALLBACK_DATA: Record<string, Studyplan> = {
 }
 
 export interface NTNUStudyplanRepository {
+  getStudyplan(code: string, year: number): Promise<Studyplan>
   getStudyplanCourses(code: string, year: number): Promise<StudyplanCourse[]>
 }
 
-/*
-This repository gathers information about what courses are in, and what year they are in to be used to estimate a student's class grade
-This is not a documented API, so it might not be reliable. In case it fails we have a fallback to static data for relevant study programmes
-*/
+/**
+ * This repository gathers information about what courses are in, and what year they are in to be used to estimate a student's class grade
+ * This is not a documented API, so it might not be reliable. In case it fails we have a fallback to static data for relevant study programmes
+ */
 export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
   private readonly endpoint = "https://www.ntnu.no/web/studier/studieplan"
 
-  async getStudyplan(code: string, year: number): Promise<z.infer<typeof StudyplanSchema>> {
+  private getStudyDirectionCourses(direction: StudyDirection, periodNumber: string) {
+    const courses: StudyplanCourse[] = []
+
+    // periodNumber is semester, so we calculate year from it
+    // 1st and 2nd semester is year 1, 3rd and 4th semester is year 2, etc.
+    const year = Math.floor((Number.parseInt(periodNumber) + 1) / 2)
+
+    for (const courseGroup of direction.courseGroups ?? []) {
+      const directionInfo = direction.code && direction.name ? { code: direction.code, name: direction.name } : null
+
+      for (const course of courseGroup.courses) {
+        courses.push({
+          code: course.code,
+          name: course.name,
+          year,
+          direction: directionInfo,
+          planCode: course.studyChoice.code,
+          credit: course.credit ?? null,
+        })
+      }
+    }
+
+    for (const waypoint of direction.studyWaypoints) {
+      for (const direction of waypoint.studyDirections) {
+        courses.push(...this.getStudyDirectionCourses(direction, periodNumber))
+      }
+    }
+
+    return courses
+  }
+
+  public async getStudyplan(code: string, year: number) {
+    // magic
     const params = new URLSearchParams({
       p_p_id: "studyprogrammeplannerportlet_WAR_studyprogrammeplannerportlet_INSTANCE_qtfMiH5FDLzu",
       p_p_lifecycle: "2",
@@ -116,33 +151,7 @@ export class NTNUStudyplanRepositoryImpl implements NTNUStudyplanRepository {
     return StudyplanEndpointSchema.parse(data).studyplan
   }
 
-  private getStudyDirectionCourses(direction: z.infer<typeof StudyDirectionSchema>, periodNumber: string) {
-    const courses: StudyplanCourse[] = []
-
-    for (const courseGroup of direction.courseGroups ?? []) {
-      for (const course of courseGroup.courses) {
-        courses.push({
-          code: course.code,
-          name: course.name,
-          // periodNumber is semester, calculate year from it (1st semester is year 1, 2nd semester is year 1, 3rd semester is year 2, etc)
-          year: Math.floor((Number.parseInt(periodNumber) + 1) / 2),
-          direction: direction.code && direction.name ? { code: direction.code, name: direction.name } : null,
-          planCode: course.studyChoice.code,
-          credit: course.credit ?? null,
-        })
-      }
-    }
-
-    for (const waypoint of direction.studyWaypoints) {
-      for (const direction of waypoint.studyDirections) {
-        courses.push(...this.getStudyDirectionCourses(direction, periodNumber))
-      }
-    }
-
-    return courses
-  }
-
-  async getStudyplanCourses(code: string, year: number): Promise<StudyplanCourse[]> {
+  public async getStudyplanCourses(code: string, year: number) {
     const studyplan = await this.getStudyplan(code, year)
 
     return studyplan.studyPeriods.flatMap((period) =>

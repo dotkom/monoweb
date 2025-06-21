@@ -279,7 +279,7 @@ describe("PaymentService", () => {
       status: "PAID",
     })
     await expect(
-      paymentService.fullfillStripeCheckoutSession(sessionId, paymentProviderOrderId as string)
+      paymentService.fulfillStripeCheckoutSession(sessionId, paymentProviderOrderId as string)
     ).resolves.toEqual(undefined)
     expect(paymentRepository.updateByPaymentProviderSessionId).toHaveBeenCalledWith(sessionId, {
       status: "PAID",
