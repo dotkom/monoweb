@@ -33,19 +33,19 @@ export const AttendancePoolWithoutAttendeeCount = AttendancePoolSchema.omit({
 export type AttendancePoolWithoutAttendeeCount = z.infer<typeof AttendancePoolWithoutAttendeeCount>
 
 export function canUserAttendPool(pool: AttendancePool, user: User) {
-  if (pool.yearCriteria.length > 0) {
-    if (user.membership === null) {
-      return false
-    }
-
-    const grade = getMembershipGrade(user.membership)
-
-    if (grade === null) {
-      return false
-    }
-
-    return pool.yearCriteria.includes(grade)
+  if (user.membership === null) {
+    return false
   }
 
-  return true
+  if (pool.yearCriteria.length === 0) {
+    return true
+  }
+
+  const grade = getMembershipGrade(user.membership)
+
+  if (grade === null) {
+    return false
+  }
+
+  return pool.yearCriteria.includes(grade)
 }

@@ -14,7 +14,7 @@ export const offlineRouter = t.router({
     )
     .mutation(async ({ input: changes, ctx }) => ctx.offlineService.update(changes.id, changes.input)),
   all: publicProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.offlineService.getAll(input)),
-  get: publicProcedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.get(input)),
+  get: publicProcedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => ctx.offlineService.getById(input)),
   createPresignedPost: adminProcedure
     .input(
       z.object({

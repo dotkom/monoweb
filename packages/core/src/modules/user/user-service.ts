@@ -1,5 +1,6 @@
 import type {
   Membership,
+  NTNUGroup,
   NotificationPermissions,
   NotificationPermissionsWrite,
   PrivacyPermissions,
@@ -7,7 +8,6 @@ import type {
   User,
   UserId,
   UserWrite,
-  NTNUGroup,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
 import type { NTNUGroupsRepository } from "../external/feide-groups-repository"
@@ -17,8 +17,8 @@ import type {
 } from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
-import type { UserRepository } from "./user-repository"
 import { UserNotFoundError } from "./user-error"
+import type { UserRepository } from "./user-repository"
 
 export interface UserService {
   getById(id: UserId): Promise<User>
