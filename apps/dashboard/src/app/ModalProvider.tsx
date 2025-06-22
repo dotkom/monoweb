@@ -13,11 +13,13 @@ import { CreateAttendanceSelectionsModal } from "./(dashboard)/event/components/
 import { CreatePoolModal } from "./(dashboard)/event/components/create-pool-modal"
 import { UpdateAttendanceSelectionsModal } from "./(dashboard)/event/components/edit-event-selections-modal"
 import { EditPoolModal } from "./(dashboard)/event/components/edit-pool-modal"
-import { CreateManualUserAttendModal } from "./(dashboard)/event/components/manual-user-attend-modal"
+import { ManualCreateUserAttendModal } from "./(dashboard)/event/components/manual-create-user-attend-modal"
+import { ManualDeleteUserAttendModal } from "./(dashboard)/event/components/manual-delete-user-attend-modal"
 import { MergePoolsModal } from "./(dashboard)/event/components/merge-pools-modal"
 
 const modals = {
-  "event/attendance/attendee/create": CreateManualUserAttendModal,
+  "event/attendance/attendee/create": ManualCreateUserAttendModal,
+  "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "event/attendance/pool/merge": MergePoolsModal,

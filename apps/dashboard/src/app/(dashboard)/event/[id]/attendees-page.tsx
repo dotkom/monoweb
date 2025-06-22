@@ -3,7 +3,7 @@ import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { AllAttendeesTable } from "../components/all-attendees-table"
-import { openCreateManualUserAttendModal } from "../components/manual-user-attend-modal"
+import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
 import { useEventAttendeesGetQuery } from "../queries"
 import { useEventDetailsContext } from "./provider"
@@ -32,7 +32,7 @@ const Page: FC<Props> = ({ attendance }) => {
         </Title>
         <UserSearch
           onSubmit={(values) => {
-            openCreateManualUserAttendModal({
+            openManualCreateUserAttendModal({
               attendanceId: attendance.id,
               userId: values.id,
               onSuccess: refetch,

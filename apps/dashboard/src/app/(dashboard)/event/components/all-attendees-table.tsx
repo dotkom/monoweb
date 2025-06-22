@@ -6,7 +6,8 @@ import { useMemo } from "react"
 
 import type { QueryObserverResult } from "@tanstack/react-query"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
-import { useDeregisterForEventMutation, useUpdateEventAttendanceMutation } from "../mutations"
+import { useUpdateEventAttendanceMutation } from "../mutations"
+import { openDeleteManualUserAttendModal } from "./manual-delete-user-attend-modal"
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
@@ -15,7 +16,6 @@ interface AllAttendeesTableProps {
 }
 
 export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttendeesTableProps) => {
-  const deregisterMut = useDeregisterForEventMutation()
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
 
   const pools = useMemo(() => {
@@ -101,26 +101,23 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
         cell: (info) => (
           <ActionIcon
             color="red"
-            onClick={() =>
-              deregisterMut.mutate(
-                {
-                  id: info.getValue().id,
-                  reserveNextAttendee: true,
+            onClick={() => {
+              openDeleteManualUserAttendModal({
+                attendeeId: info.getValue().id,
+                attendeeDisplayName: info.getValue().user.displayName || "bruker",
+                poolName: pools[info.getValue().attendancePoolId]?.title ?? "gruppen",
+                onSuccess: () => {
+                  refetch()
                 },
-                {
-                  onSuccess: () => {
-                    refetch()
-                  },
-                }
-              )
-            }
+              })
+            }}
           >
             <Icon icon="tabler:x" />
           </ActionIcon>
         ),
       }),
     ],
-    [columnHelper, deregisterMut, updateAttendanceMut, refetch, pools, waitlists]
+    [columnHelper, updateAttendanceMut, refetch, pools, waitlists]
   )
 
   const tableOptions = useMemo(
