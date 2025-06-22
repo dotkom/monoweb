@@ -42,7 +42,7 @@ export const useCreateEventMutation = () => {
           message: `Arrangementet "${data.title}" har blitt opprettet.`,
         })
 
-        router.push(`/event/${data.id}`)
+        router.replace(`/event/${data.id}`)
       },
       onError: (err) => {
         notification.fail({

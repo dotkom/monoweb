@@ -22,7 +22,7 @@ export const useCreateCompanyMutation = () => {
           message: `Bedriften "${data.name}" har blitt opprettet.`,
         })
 
-        router.push(`/company/${data.id}`)
+        router.replace(`/company/${data.id}`)
       },
       onError: (err) => {
         notification.fail({
