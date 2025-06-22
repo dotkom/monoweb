@@ -41,11 +41,13 @@ export const useGroupWriteForm = ({
       email: createTextInput({
         label: "Kontakt-e-post",
         withAsterisk: true,
+        type: "email",
         required: true,
       }),
       image: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
+        required: true,
       }),
       type: createSelectInput({
         label: "Type",

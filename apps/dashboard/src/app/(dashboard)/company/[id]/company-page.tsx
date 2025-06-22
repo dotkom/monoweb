@@ -18,7 +18,7 @@ export const CompanyEventsPage: FC = () => {
         id: "companyEvent",
         header: () => "Navn",
         cell: (info) => (
-          <Anchor component={Link} href={`/event/${info.getValue().id}`}>
+          <Anchor component={Link} size="sm" href={`/event/${info.getValue().id}`}>
             {info.getValue().title}
           </Anchor>
         ),

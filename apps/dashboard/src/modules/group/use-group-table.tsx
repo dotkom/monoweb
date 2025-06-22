@@ -41,7 +41,7 @@ export const useGroupTable = ({ data }: Props) => {
             return "Ingen bilde"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopener">
+            <Anchor component={Link} size="sm" target="_blank" href={val} rel="noopener">
               Link
             </Anchor>
           )

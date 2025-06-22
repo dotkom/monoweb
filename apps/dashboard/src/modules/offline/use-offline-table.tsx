@@ -2,7 +2,7 @@
 
 import type { Offline } from "@dotkomonline/types"
 import { formatDate } from "@dotkomonline/utils"
-import { Anchor, Text } from "@mantine/core"
+import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -26,7 +26,7 @@ export const useOfflineTable = ({ data }: Props) => {
       }),
       columnHelper.accessor("published", {
         header: () => "Utgivelsesdato",
-        cell: (info) => <Text>{formatDate(info.getValue(), { relativeDateThresholdDays: 7 })}</Text>,
+        cell: (info) => formatDate(info.getValue(), { relativeDateThresholdDays: 7 }),
       }),
       columnHelper.accessor("fileUrl", {
         header: () => "Fil",
@@ -36,7 +36,7 @@ export const useOfflineTable = ({ data }: Props) => {
             return "Ingen fil"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopener">
+            <Anchor target="_blank" size="sm" href={val} rel="noopener">
               Link
             </Anchor>
           )
@@ -51,7 +51,7 @@ export const useOfflineTable = ({ data }: Props) => {
           }
 
           return (
-            <Anchor target="_blank" href={val} rel="noopener">
+            <Anchor target="_blank" size="sm" href={val} rel="noopener">
               Link
             </Anchor>
           )
