@@ -2,7 +2,7 @@ import { useRouter } from "next/navigation"
 import { useTRPC } from "../../../trpc"
 import { useQueryNotification } from "../../notifications"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useCreateCompanyMutation = () => {
   const trpc = useTRPC()
@@ -36,6 +36,7 @@ export const useCreateCompanyMutation = () => {
 
 export const useEditCompanyMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -46,11 +47,13 @@ export const useEditCompanyMutation = () => {
           message: "Bedriften blir oppdatert.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Bedrift oppdatert",
           message: `Bedriften "${data.name}" har blitt oppdatert.`,
         })
+
+        await queryClient.invalidateQueries(trpc.company.getById.queryOptions(data.id))
       },
       onError: (err) => {
         notification.fail({

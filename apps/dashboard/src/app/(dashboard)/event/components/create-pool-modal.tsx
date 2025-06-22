@@ -1,3 +1,4 @@
+import type { AttendanceId } from "@dotkomonline/types"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useCreatePoolMutation } from "../mutations"
@@ -5,7 +6,7 @@ import { useAttendanceGetQuery } from "../queries"
 import { PoolForm, type PoolFormSchema } from "./pool-form"
 
 interface CreatePoolModalProps {
-  attendanceId: string
+  attendanceId: AttendanceId
 }
 export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
   context,
@@ -23,6 +24,8 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
       title: values.title,
       mergeDelayHours: null,
     })
+
+    context.closeModal(id)
   }
   const pools = attendance?.pools
 

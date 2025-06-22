@@ -1,5 +1,5 @@
 import type { AttendanceId, EventId } from "@dotkomonline/types"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useTRPC } from "../../../trpc"
 import { useQueryNotification } from "../../notifications"
 import { openAttendanceRegisteredModal } from "./components/attendance-registered-modal"
@@ -59,6 +59,7 @@ export const useEventAttendeesGetQuery = (attendanceId: AttendanceId) => {
 
 export const useHandleQrCodeRegistration = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
   const mutation = useMutation(
     trpc.event.attendance.handleQrCodeRegistration.mutationOptions({
@@ -68,7 +69,7 @@ export const useHandleQrCodeRegistration = () => {
           message: "Brukeren blir registrert på arrangementet.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         if (data.alreadyAttended) {
           openAlreadyAttendedModal({ user: data.user })()
           notification.fail({
@@ -81,6 +82,12 @@ export const useHandleQrCodeRegistration = () => {
             title: "Registrering vellykket",
             message: "Bruker ble registrert på arrangementet.",
           })
+
+          await queryClient.invalidateQueries(
+            trpc.event.attendance.getAttendees.queryOptions({
+              attendanceId: data.attendee.attendanceId,
+            })
+          )
         }
       },
       onError: (err) => {

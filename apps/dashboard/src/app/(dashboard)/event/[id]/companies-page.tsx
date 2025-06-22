@@ -72,6 +72,7 @@ export const EventCompaniesPage: FC = () => {
     fields: {
       company: createSelectInput({
         label: "Bedriftsnavn",
+        searchable: true,
         data: companies
           .filter((company) => !eventCompanies.map((x) => x.id).includes(company.id))
           .map((company) => ({ label: company.name, value: company.id })),

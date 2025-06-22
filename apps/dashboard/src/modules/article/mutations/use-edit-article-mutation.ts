@@ -1,10 +1,11 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useEditArticleMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -15,7 +16,11 @@ export const useEditArticleMutation = () => {
           message: "Artikkelen blir oppdatert.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries(trpc.article.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.article.all.queryOptions())
+        await queryClient.invalidateQueries(trpc.article.getTags.queryOptions())
+
         notification.complete({
           title: "Artikkelen oppdatert",
           message: `Artikkelen "${data.title}" har blitt oppdatert.`,
