@@ -1,5 +1,6 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
-import { Button, Checkbox } from "@mantine/core"
+import { Icon } from "@iconify/react"
+import { ActionIcon, Center, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
 
@@ -98,7 +99,7 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
         enableSorting: false,
         header: () => "Meld av",
         cell: (info) => (
-          <Button
+          <ActionIcon
             color="red"
             onClick={() =>
               deregisterMut.mutate(
@@ -113,9 +114,9 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
                 }
               )
             }
-          >
-            X
-          </Button>
+            >
+            <Icon icon="tabler:x" />
+          </ActionIcon>
         ),
       }),
     ],
