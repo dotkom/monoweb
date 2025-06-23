@@ -41,13 +41,7 @@ export interface AttendeeService {
    * - The reserve time is now or in the past
    * - The pool is not at full capacity
    *
-   * If `options.bypassCriteria` is set to true, the criteria will be ignored and the attendee with be reserved regardless.
-   *
-   * @param attendee - The attendee to reserve.
-   * @param pool - The pool to reserve the attendee in, used for capacity checks.
-   * @param options - Options for the reservation attempt.
-   * @param options.bypassCriteria - If true, the criteria for reserving the attendee will be ignored.
-   * @returns True if the reservation was successful, false otherwise.
+   * If bypassCriteria is true, then the criteria will be ignored.
    */
   attemptReserve(attendee: Attendee, pool: AttendancePool, options: { bypassCriteria: boolean }): Promise<boolean>
 }
