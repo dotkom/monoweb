@@ -1,5 +1,5 @@
 import type { Attendance } from "@dotkomonline/types"
-import { Box, Divider, Title } from "@mantine/core"
+import { Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { UserSearch } from "../../../../components/molecules/UserSearch/UserSearch"
 import { AllAttendeesTable } from "../components/all-attendees-table"
@@ -25,8 +25,8 @@ interface Props {
 const Page: FC<Props> = ({ attendance }) => {
   const { attendees } = useEventAttendeesGetQuery(attendance.id)
   return (
-    <Box>
-      <Box>
+    <Stack gap="xl">
+      <Stack gap="xs">
         <Title mb={10} order={3}>
           Meld på bruker
         </Title>
@@ -39,17 +39,21 @@ const Page: FC<Props> = ({ attendance }) => {
           }}
           excludeUserIds={attendees.map((attendee) => attendee.userId)}
         />
-      </Box>
-      <Box>
-        <Divider my={32} />
+      </Stack>
+
+      <Stack>
+        <Title my={10} order={3}>
+          Registrer oppmøte med QR-kode
+        </Title>
         <QrCodeScanner />
-      </Box>
-      <Box>
+      </Stack>
+
+      <Stack>
         <Title my={10} order={3}>
           Alle påmeldte
         </Title>
         <AllAttendeesTable attendees={attendees} attendance={attendance} />
-      </Box>
-    </Box>
+      </Stack>
+    </Stack>
   )
 }
