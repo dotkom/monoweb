@@ -27,7 +27,7 @@ describe("ProductService", () => {
   it("creates a new product", async () => {
     const id = randomUUID()
     vi.spyOn(productRepository, "create").mockResolvedValueOnce({ id, ...productPayload })
-    const product = await productService.createProduct(productPayload)
+    const product = await productService.create(productPayload)
     expect(product).toEqual({ id, ...productPayload })
     expect(productRepository.create).toHaveBeenCalledWith(productPayload)
   })
@@ -35,10 +35,10 @@ describe("ProductService", () => {
   it("finds products by id", async () => {
     const id = randomUUID()
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce(null)
-    const missing = productService.getProductById(id)
+    const missing = productService.getById(id)
     await expect(missing).rejects.toThrow(ProductNotFoundError)
     vi.spyOn(productRepository, "getById").mockResolvedValueOnce({ id, ...productPayload })
-    const real = await productService.getProductById(id)
+    const real = await productService.getById(id)
     expect(real).toEqual({ id, ...productPayload })
   })
 })

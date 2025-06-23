@@ -24,51 +24,51 @@ export class GroupRepositoryImpl implements GroupRepository {
     this.db = db
   }
 
-  async getById(id: GroupId) {
-    return await this.db.group.findUnique({ where: { id } })
+  public async getById(groupId: GroupId) {
+    return await this.db.group.findUnique({ where: { id: groupId } })
   }
 
-  async getAll() {
-    return await this.db.group.findMany({})
+  public async getAll() {
+    return await this.db.group.findMany()
   }
 
-  async getAllByType(type: GroupType) {
-    return await this.db.group.findMany({ where: { type: type } })
+  public async getAllByType(groupType: GroupType) {
+    return await this.db.group.findMany({ where: { type: groupType } })
   }
 
-  async create(data: GroupWrite) {
+  public async create(data: GroupWrite) {
     return await this.db.group.create({ data })
   }
 
-  async update(id: GroupId, data: Partial<GroupWrite>): Promise<Group> {
-    return await this.db.group.update({ where: { id }, data })
+  public async update(groupId: GroupId, data: Partial<GroupWrite>) {
+    return await this.db.group.update({ where: { id: groupId }, data })
   }
 
-  async delete(id: GroupId): Promise<void> {
-    await this.db.group.delete({ where: { id } })
+  public async delete(groupId: GroupId) {
+    await this.db.group.delete({ where: { id: groupId } })
   }
 
-  async getAllIds() {
+  public async getAllIds() {
     return (await this.db.group.findMany({ select: { id: true } })).map((group) => group.id)
   }
 
-  async getAllIdsByType(type: GroupType) {
-    return (await this.db.group.findMany({ where: { type: type }, select: { id: true } })).map((group) => group.id)
+  public async getAllIdsByType(groupType: GroupType) {
+    return (await this.db.group.findMany({ where: { type: groupType }, select: { id: true } })).map((group) => group.id)
   }
 
-  async getMembers(id: GroupId): Promise<GroupMember[]> {
-    return await this.db.groupMember.findMany({ where: { groupId: id } })
+  public async getMembers(groupId: GroupId) {
+    return await this.db.groupMember.findMany({ where: { groupId: groupId } })
   }
 
-  async getAllByMember(userId: UserId): Promise<Group[]> {
+  public async getAllByMember(userId: UserId) {
     return await this.db.group.findMany({ where: { members: { some: { userId } } } })
   }
 
-  async addMember(data: GroupMemberWrite): Promise<GroupMember> {
+  public async addMember(data: GroupMemberWrite) {
     return await this.db.groupMember.create({ data: data })
   }
 
-  async removeMember(userId: UserId, groupId: GroupId): Promise<void> {
+  public async removeMember(userId: UserId, groupId: GroupId) {
     await this.db.groupMember.delete({ where: { userId: userId, groupId: groupId } })
   }
 }

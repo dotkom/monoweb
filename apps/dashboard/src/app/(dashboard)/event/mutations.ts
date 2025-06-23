@@ -1,10 +1,11 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useTRPC } from "../../../trpc"
 import { useQueryGenericMutationNotification, useQueryNotification } from "../../notifications"
 
 export const useAddCompanyToEventMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
     trpc.event.company.create.mutationOptions({
@@ -14,11 +15,14 @@ export const useAddCompanyToEventMutation = () => {
           message: "Legger til bedriften som arrangør av dette arrangementet.",
         })
       },
-      onSuccess: () => {
+      onSuccess: async (_, input) => {
         notification.complete({
           title: "Bedrift lagt til",
           message: "Bedriften har blitt lagt til arrangørlisten.",
         })
+
+        await queryClient.invalidateQueries(trpc.event.company.get.queryOptions({ id: input.id }))
+        await queryClient.invalidateQueries(trpc.event.all.queryOptions())
       },
     })
   )
@@ -27,6 +31,7 @@ export const useAddCompanyToEventMutation = () => {
 export const useCreateEventMutation = () => {
   const trpc = useTRPC()
   const router = useRouter()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
     trpc.event.create.mutationOptions({
@@ -36,13 +41,15 @@ export const useCreateEventMutation = () => {
           message: "Arrangementet blir opprettet, og du vil bli videresendt til arrangementsiden.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Arrangement opprettet",
           message: `Arrangementet "${data.title}" har blitt opprettet.`,
         })
 
-        router.push(`/event/${data.id}`)
+        await queryClient.invalidateQueries(trpc.event.all.queryOptions())
+
+        router.replace(`/event/${data.id}`)
       },
       onError: (err) => {
         notification.fail({
@@ -56,6 +63,7 @@ export const useCreateEventMutation = () => {
 
 export const useEditEventWithGroupsMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -66,11 +74,13 @@ export const useEditEventWithGroupsMutation = () => {
           message: "Arrangementet blir oppdatert.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Arrangement oppdatert",
           message: `Arrangementet "${data.title}" har blitt oppdatert.`,
         })
+
+        await queryClient.invalidateQueries(trpc.event.getEventDetail.queryOptions(data.id))
       },
       onError: (err) => {
         notification.fail({
@@ -84,6 +94,7 @@ export const useEditEventWithGroupsMutation = () => {
 
 export const useRemoveCompanyFromEventMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
     trpc.event.company.delete.mutationOptions({
@@ -93,11 +104,14 @@ export const useRemoveCompanyFromEventMutation = () => {
           message: "Fjerner bedriften fra arrangørlisten til dette arrangementet.",
         })
       },
-      onSuccess: () => {
+      onSuccess: async (_, input) => {
         notification.complete({
           title: "Bedrift fjernet",
           message: "Bedriften har blitt fjernet fra arrangørlisten.",
         })
+
+        await queryClient.invalidateQueries(trpc.event.company.get.queryOptions({ id: input.id }))
+        await queryClient.invalidateQueries(trpc.event.all.queryOptions())
       },
     })
   )
@@ -105,6 +119,7 @@ export const useRemoveCompanyFromEventMutation = () => {
 
 export const useDeletePoolMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "delete",
   })
@@ -113,13 +128,18 @@ export const useDeletePoolMutation = () => {
     trpc.event.attendance.deletePool.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: complete,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries()
+      },
     })
   )
 }
 
 export const useCreatePoolMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "create",
   })
@@ -128,13 +148,18 @@ export const useCreatePoolMutation = () => {
     trpc.event.attendance.createPool.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: complete,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries()
+      },
     })
   )
 }
 
 export const useUpdatePoolMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "update",
   })
@@ -143,13 +168,18 @@ export const useUpdatePoolMutation = () => {
     trpc.event.attendance.updatePool.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: complete,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries()
+      },
     })
   )
 }
 
 export const useAdminForEventMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -160,11 +190,13 @@ export const useAdminForEventMutation = () => {
           message: "Brukeren blir meldt på arrangementet.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async () => {
         notification.complete({
           title: "Påmelding vellykket",
           message: "Bruker ble påmeldt arrangementet.",
         })
+
+        await queryClient.invalidateQueries()
       },
       onError: (err) => {
         notification.fail({
@@ -178,6 +210,7 @@ export const useAdminForEventMutation = () => {
 
 export const useRegisterForEventMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -188,11 +221,13 @@ export const useRegisterForEventMutation = () => {
           message: "Brukeren blir meldt på arrangementet.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async () => {
         notification.complete({
           title: "Påmelding vellykket",
           message: "Bruker ble påmeldt arrangementet.",
         })
+
+        await queryClient.invalidateQueries()
       },
       onError: (err) => {
         notification.fail({
@@ -206,6 +241,7 @@ export const useRegisterForEventMutation = () => {
 
 export const useDeregisterForEventMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -216,11 +252,13 @@ export const useDeregisterForEventMutation = () => {
           message: "Brukeren blir meldt av arrangementet.",
         })
       },
-      onSuccess: () => {
+      onSuccess: async () => {
         notification.complete({
           title: "Avmelding vellykket",
           message: "Bruker ble meldt av arrangementet.",
         })
+
+        await queryClient.invalidateQueries()
       },
       onError: (err) => {
         notification.fail({
@@ -234,6 +272,7 @@ export const useDeregisterForEventMutation = () => {
 
 export const useUpdateEventAttendanceMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
     trpc.event.attendance.registerAttendance.mutationOptions({
@@ -243,11 +282,13 @@ export const useUpdateEventAttendanceMutation = () => {
           message: "Brukerens oppmøte blir oppdatert.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Oppmøte oppdatert",
           message: `Oppmøte er ${data.attended ? "registrert" : "fjernet"}. `,
         })
+
+        await queryClient.invalidateQueries()
       },
       onError: (err) => {
         notification.fail({
@@ -261,6 +302,7 @@ export const useUpdateEventAttendanceMutation = () => {
 
 export const useAddAttendanceMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "create",
   })
@@ -269,13 +311,18 @@ export const useAddAttendanceMutation = () => {
     trpc.event.addAttendance.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: complete,
+      onSuccess: async (_, input) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.event.getEventDetail.queryOptions(input.eventId))
+      },
     })
   )
 }
 
 export const useUpdateAttendanceMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "update",
   })
@@ -284,13 +331,18 @@ export const useUpdateAttendanceMutation = () => {
     trpc.event.attendance.updateAttendance.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: complete,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries()
+      },
     })
   )
 }
 
 export const useMergeAttendanceMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "update",
   })
@@ -299,7 +351,11 @@ export const useMergeAttendanceMutation = () => {
     trpc.event.attendance.mergeAttendancePools.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: complete,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries()
+      },
     })
   )
 }

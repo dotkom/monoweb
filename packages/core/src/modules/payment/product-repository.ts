@@ -1,14 +1,20 @@
-import type { DBClient } from "@dotkomonline/db"
+import type { DBClient, Prisma } from "@dotkomonline/db"
 import type { Product, ProductId, ProductWrite } from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
 
+const includePaymentProviders = {
+  paymentProviders: {
+    omit: { productId: true },
+  },
+} satisfies Prisma.ProductInclude
+
 export interface ProductRepository {
   create(data: ProductWrite): Promise<Product>
-  update(id: ProductId, data: ProductWrite): Promise<Product>
-  getById(id: string): Promise<Product | null>
+  update(productId: ProductId, data: ProductWrite): Promise<Product>
+  getById(productId: ProductId): Promise<Product | null>
   getAll(page: Pageable): Promise<Product[]>
-  delete(id: ProductId): Promise<void>
-  undelete(id: ProductId): Promise<void>
+  delete(productId: ProductId): Promise<void>
+  undelete(productId: ProductId): Promise<void>
 }
 
 export class ProductRepositoryImpl implements ProductRepository {
@@ -18,27 +24,27 @@ export class ProductRepositoryImpl implements ProductRepository {
     this.db = db
   }
 
-  async create(data: ProductWrite): Promise<Product> {
-    return await this.db.product.create({ data, include: { paymentProviders: true } })
+  public async create(data: ProductWrite) {
+    return await this.db.product.create({ data, include: includePaymentProviders })
   }
 
-  async update(id: ProductId, data: ProductWrite): Promise<Product> {
-    return await this.db.product.update({ where: { id }, data, include: { paymentProviders: true } })
+  public async update(productId: ProductId, data: ProductWrite) {
+    return await this.db.product.update({ where: { id: productId }, data, include: includePaymentProviders })
   }
 
-  async getById(id: string): Promise<Product | null> {
-    return await this.db.product.findUnique({ where: { id }, include: { paymentProviders: true } })
+  public async getById(productId: ProductId) {
+    return await this.db.product.findUnique({ where: { id: productId }, include: includePaymentProviders })
   }
 
-  async getAll(page: Pageable): Promise<Product[]> {
-    return await this.db.product.findMany({ include: { paymentProviders: true }, ...pageQuery(page) })
+  public async getAll(page: Pageable) {
+    return await this.db.product.findMany({ include: includePaymentProviders, ...pageQuery(page) })
   }
 
-  async delete(id: ProductId): Promise<void> {
-    await this.db.product.update({ data: { deletedAt: new Date() }, where: { id } })
+  public async delete(productId: ProductId) {
+    await this.db.product.update({ data: { deletedAt: new Date() }, where: { id: productId } })
   }
 
-  async undelete(id: ProductId): Promise<void> {
-    await this.db.product.update({ data: { deletedAt: null }, where: { id } })
+  public async undelete(productId: ProductId) {
+    await this.db.product.update({ data: { deletedAt: null }, where: { id: productId } })
   }
 }

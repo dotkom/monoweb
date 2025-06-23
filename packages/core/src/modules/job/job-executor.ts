@@ -139,10 +139,10 @@ export class JobExecutor {
       throw new AttendancePoolNotFoundError(attendee.attendancePoolId)
     }
 
-    await this.attendeeService.attemptReserve(attendee, pool)
+    await this.attendeeService.attemptReserve(attendee, pool, { bypassCriteria: false })
   }
 
-  runMergePoolsJob(payload: JsonValue) {
+  public runMergePoolsJob(payload: JsonValue) {
     const { attendanceId, newMergePoolData } = this.jobService.parsePayload("MERGE_POOLS", payload)
 
     return this.attendanceService.mergeAttendancePools(attendanceId, newMergePoolData)

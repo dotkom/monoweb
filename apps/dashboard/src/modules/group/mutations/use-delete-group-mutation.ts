@@ -1,10 +1,11 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useDeleteGroupMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -15,11 +16,13 @@ export const useDeleteGroupMutation = () => {
           message: "Gruppen slettes. Vennligst vent.",
         })
       },
-      onSuccess: () => {
+      onSuccess: async () => {
         notification.complete({
           title: "Gruppen er slettet",
           message: "Gruppen er fjernet fra systemet.",
         })
+
+        await queryClient.invalidateQueries(trpc.group.all.queryOptions())
       },
       onError: (err) => {
         notification.fail({

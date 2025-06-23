@@ -3,16 +3,26 @@ import { GroupNotFoundError } from "./group-error"
 import type { GroupRepository } from "./group-repository"
 
 export interface GroupService {
-  getGroup(id: GroupId): Promise<Group>
-  getGroupByType(id: GroupId, type: GroupType): Promise<Group>
+  /**
+   * Get a group by its id
+   *
+   * @throws {GroupNotFoundError} if the group does not exist
+   */
+  getGroup(groupId: GroupId): Promise<Group>
+  /**
+   * Get a group by its id and type
+   *
+   * @throws {GroupNotFoundError} if the group does not exist
+   */
+  getGroupByType(groupId: GroupId, groupType: GroupType): Promise<Group>
   getGroups(): Promise<Group[]>
-  getGroupsByType(type: GroupType): Promise<Group[]>
+  getGroupsByType(groupType: GroupType): Promise<Group[]>
   createGroup(payload: GroupWrite): Promise<Group>
-  updateGroup(id: GroupId, values: Partial<GroupWrite>): Promise<Group>
-  deleteGroup(id: GroupId): Promise<void>
+  updateGroup(groupId: GroupId, values: Partial<GroupWrite>): Promise<Group>
+  deleteGroup(groupId: GroupId): Promise<void>
   getAllGroupIds(): Promise<GroupId[]>
-  getAllGroupIdsByType(type: GroupType): Promise<GroupId[]>
-  getMembers(id: GroupId): Promise<GroupMember[]>
+  getAllGroupIdsByType(groupType: GroupType): Promise<GroupId[]>
+  getMembers(groupId: GroupId): Promise<GroupMember[]>
   getGroupsByMember(userId: UserId): Promise<Group[]>
   addMember(data: GroupMemberWrite): Promise<GroupMember>
   removeMember(userId: UserId, groupId: GroupId): Promise<void>
@@ -25,73 +35,63 @@ export class GroupServiceImpl implements GroupService {
     this.groupRepository = groupRepository
   }
 
-  /**
-   * Get a group by its id
-   *
-   * @throws {GroupNotFoundError} if the group does not exist
-   */
-  async getGroup(id: GroupId) {
-    const group = await this.groupRepository.getById(id)
+  public async getGroup(groupId: GroupId) {
+    const group = await this.groupRepository.getById(groupId)
     if (!group) {
-      throw new GroupNotFoundError(id)
+      throw new GroupNotFoundError(groupId)
     }
     return group
   }
 
-  /**
-   * Get a group by its id and type
-   *
-   * @throws {GroupNotFoundError} if the group does not exist
-   */
-  async getGroupByType(id: GroupId, type: GroupType) {
-    const group = await this.groupRepository.getById(id)
-    if (!group || group.type !== type) {
-      throw new GroupNotFoundError(id)
+  public async getGroupByType(groupId: GroupId, groupType: GroupType) {
+    const group = await this.groupRepository.getById(groupId)
+    if (!group || group.type !== groupType) {
+      throw new GroupNotFoundError(groupId)
     }
     return group
   }
 
-  async createGroup(payload: GroupWrite) {
+  public async createGroup(payload: GroupWrite) {
     return await this.groupRepository.create(payload)
   }
 
-  async updateGroup(id: GroupId, values: Partial<GroupWrite>): Promise<Group> {
-    return await this.groupRepository.update(id, values)
+  public async updateGroup(groupId: GroupId, values: Partial<GroupWrite>) {
+    return await this.groupRepository.update(groupId, values)
   }
 
-  async deleteGroup(id: GroupId): Promise<void> {
-    await this.groupRepository.delete(id)
+  public async deleteGroup(groupId: GroupId) {
+    await this.groupRepository.delete(groupId)
   }
 
-  async getGroups() {
+  public async getGroups() {
     return await this.groupRepository.getAll()
   }
 
-  async getGroupsByType(type: GroupType) {
-    return await this.groupRepository.getAllByType(type)
+  public async getGroupsByType(groupType: GroupType) {
+    return await this.groupRepository.getAllByType(groupType)
   }
 
-  async getAllGroupIds() {
+  public async getAllGroupIds() {
     return await this.groupRepository.getAllIds()
   }
 
-  async getAllGroupIdsByType(type: GroupType) {
-    return await this.groupRepository.getAllIdsByType(type)
+  public async getAllGroupIdsByType(groupType: GroupType) {
+    return await this.groupRepository.getAllIdsByType(groupType)
   }
 
-  async getMembers(id: GroupId): Promise<GroupMember[]> {
-    return await this.groupRepository.getMembers(id)
+  public async getMembers(groupId: GroupId) {
+    return await this.groupRepository.getMembers(groupId)
   }
 
-  async getGroupsByMember(userId: UserId): Promise<Group[]> {
+  public async getGroupsByMember(userId: UserId) {
     return await this.groupRepository.getAllByMember(userId)
   }
 
-  async addMember(data: GroupMemberWrite): Promise<GroupMember> {
+  public async addMember(data: GroupMemberWrite) {
     return await this.groupRepository.addMember(data)
   }
 
-  async removeMember(userId: UserId, groupId: GroupId): Promise<void> {
+  public async removeMember(userId: UserId, groupId: GroupId) {
     await this.groupRepository.removeMember(userId, groupId)
   }
 }

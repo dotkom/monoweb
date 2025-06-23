@@ -4,12 +4,8 @@ import { z } from "zod"
 import { adminProcedure, t } from "../../trpc"
 
 export const productRouter = t.router({
-  create: adminProcedure
-    .input(ProductWriteSchema)
-    .mutation(async ({ input, ctx }) => ctx.productService.createProduct(input)),
-  get: adminProcedure
-    .input(ProductSchema.shape.id)
-    .query(async ({ input, ctx }) => ctx.productService.getProductById(input)),
+  create: adminProcedure.input(ProductWriteSchema).mutation(async ({ input, ctx }) => ctx.productService.create(input)),
+  get: adminProcedure.input(ProductSchema.shape.id).query(async ({ input, ctx }) => ctx.productService.getById(input)),
   all: adminProcedure.input(PaginateInputSchema).query(async ({ input, ctx }) => ctx.productService.getProducts(input)),
   addPaymentProvider: adminProcedure
     .input(ProductPaymentProviderWriteSchema)

@@ -19,3 +19,8 @@ export const useCompanyEventsAllQuery = (id: CompanyId) => {
 
   return { companyEvents: companyEvents as Event[], ...query }
 }
+
+export const useCompanyByIdQuery = (id: CompanyId) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.company.getById.queryOptions(id))
+}

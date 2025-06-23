@@ -21,6 +21,7 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
       title: createTextInput({
         label: "Tittel",
         placeholder: "Offline #50",
+        required: true,
       }),
       published: createDateTimeInput({
         label: "Utgivelsesdato",
@@ -29,10 +30,12 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
       fileUrl: createFileInput({
         label: "Fil",
         placeholder: "Last opp",
+        required: true,
       }),
       imageUrl: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
+        required: true,
       }),
     },
   })

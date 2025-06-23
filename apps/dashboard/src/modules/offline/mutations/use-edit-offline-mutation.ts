@@ -1,10 +1,11 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useEditOfflineMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -15,11 +16,14 @@ export const useEditOfflineMutation = () => {
           message: "Ressursen blir oppdatert.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Ressursen oppdatert",
           message: `Ressursen "${data.title}" har blitt oppdatert.`,
         })
+
+        await queryClient.invalidateQueries(trpc.offline.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.offline.all.queryOptions())
       },
       onError: (err) => {
         notification.fail({

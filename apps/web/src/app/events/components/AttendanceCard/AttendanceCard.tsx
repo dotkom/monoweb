@@ -125,7 +125,7 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
             attendees={attendees}
             userId={user.id}
           />
-          {isAttendingAndReserved && <TicketButton userId={user.id} />}
+          {isAttendingAndReserved && <TicketButton attendeeId={attendee.id} />}
         </div>
       ) : (
         <ViewAttendeesButton

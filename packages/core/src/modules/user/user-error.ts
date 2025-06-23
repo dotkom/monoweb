@@ -25,6 +25,12 @@ export class UserCreationError extends ApplicationError {
   }
 }
 
+export class UserUpdateError extends ApplicationError {
+  constructor(id: string, status: number, statusText: string) {
+    super(PROBLEM_DETAILS.InternalServerError, `Failed to update user with ID '${id}': ${status} ${statusText}`)
+  }
+}
+
 export class UserNoFeideTokenError extends ApplicationError {
   constructor(id: string) {
     super(PROBLEM_DETAILS.BadRequest, `User with ID:${id} does not have a stored FEIDE token`)

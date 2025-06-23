@@ -2,10 +2,11 @@ import { useRouter } from "next/navigation"
 import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useCreateArticleMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const router = useRouter()
   const notification = useQueryNotification()
   return useMutation(
@@ -16,7 +17,11 @@ export const useCreateArticleMutation = () => {
           message: "Artikkelen blir opprettet, og du vil bli videresendt til artikkelsiden.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries(trpc.article.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.article.all.queryOptions())
+        await queryClient.invalidateQueries(trpc.article.getTags.queryOptions())
+
         notification.complete({
           title: "Artikkel opprettet",
           message: `Artikkeln "${data.title}" har blitt opprettet.`,

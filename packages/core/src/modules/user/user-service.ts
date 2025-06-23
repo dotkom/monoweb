@@ -1,5 +1,6 @@
 import type {
   Membership,
+  NTNUGroup,
   NotificationPermissions,
   NotificationPermissionsWrite,
   PrivacyPermissions,
@@ -9,13 +10,14 @@ import type {
   UserWrite,
 } from "@dotkomonline/types"
 import { getAcademicYear } from "@dotkomonline/utils"
-import type { NTNUGroup, NTNUGroupsRepository } from "../external/feide-groups-repository"
+import type { NTNUGroupsRepository } from "../external/feide-groups-repository"
 import type {
   NTNUStudyplanRepository,
   StudyplanCourse,
 } from "../external/ntnu-studyplan-repository/ntnu-studyplan-repository"
 import type { NotificationPermissionsRepository } from "./notification-permissions-repository"
 import type { PrivacyPermissionsRepository } from "./privacy-permissions-repository"
+import { UserNotFoundError } from "./user-error"
 import type { UserRepository } from "./user-repository"
 
 export interface UserService {
@@ -182,8 +184,14 @@ export class UserServiceImpl implements UserService {
     return false
   }
 
-  async getById(auth0Id: string) {
-    return this.userRepository.getById(auth0Id)
+  async getById(userId: UserId) {
+    const user = await this.userRepository.getById(userId)
+
+    if (!user) {
+      throw new UserNotFoundError(userId)
+    }
+
+    return user
   }
 
   async update(userId: UserId, data: Partial<UserWrite>): Promise<User> {

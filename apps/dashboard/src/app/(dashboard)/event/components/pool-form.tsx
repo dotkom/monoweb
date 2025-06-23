@@ -39,6 +39,7 @@ export const usePoolForm = (props: PoolFormProps) => {
       }),
       title: createTextInput({
         label: "Tittel",
+        withAsterisk: true,
       }),
       capacity: createNumberInput({
         label: "Kapasitet",

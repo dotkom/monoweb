@@ -1,17 +1,28 @@
 import type { DBClient } from "@dotkomonline/db"
-import type { Payment, PaymentId, PaymentWrite, ProductId, UserId } from "@dotkomonline/types"
+import type {
+  Payment,
+  PaymentId,
+  PaymentProviderOrderId,
+  PaymentProviderSessionId,
+  PaymentWrite,
+  ProductId,
+  UserId,
+} from "@dotkomonline/types"
 import { type Pageable, pageQuery } from "../../query"
 
 export interface PaymentRepository {
-  create(data: PaymentWrite): Promise<Payment | null>
-  update(id: PaymentId, data: Partial<PaymentWrite>): Promise<Payment>
-  updateByPaymentProviderSessionId(paymentProviderSessionId: string, data: Partial<PaymentWrite>): Promise<Payment>
-  getById(id: PaymentId): Promise<Payment | null>
-  getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | null>
+  create(data: PaymentWrite): Promise<Payment>
+  update(paymentId: PaymentId, data: Partial<PaymentWrite>): Promise<Payment>
+  updateByPaymentProviderSessionId(
+    paymentProviderSessionId: PaymentProviderSessionId,
+    data: Partial<PaymentWrite>
+  ): Promise<Payment>
+  getById(paymentId: PaymentId): Promise<Payment | null>
+  getByPaymentProviderOrderId(paymentProviderOrderId: PaymentProviderOrderId): Promise<Payment | null>
   getAll(page: Pageable): Promise<Payment[]>
-  getAllByUserId(id: UserId, page: Pageable): Promise<Payment[]>
-  getAllByProductId(id: ProductId, page: Pageable): Promise<Payment[]>
-  delete(id: PaymentId): Promise<void>
+  getAllByUserId(userId: UserId, page: Pageable): Promise<Payment[]>
+  getAllByProductId(productId: ProductId, page: Pageable): Promise<Payment[]>
+  delete(paymentId: PaymentId): Promise<void>
   deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void>
 }
 
@@ -22,18 +33,18 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     this.db = db
   }
 
-  async create(data: PaymentWrite): Promise<Payment | null> {
+  public async create(data: PaymentWrite) {
     return await this.db.payment.create({ data })
   }
 
-  async update(id: PaymentId, data: Partial<Omit<PaymentWrite, "id">>): Promise<Payment> {
-    return await this.db.payment.update({ where: { id }, data })
+  public async update(paymentId: PaymentId, data: Partial<PaymentWrite>) {
+    return await this.db.payment.update({ where: { id: paymentId }, data })
   }
 
-  async updateByPaymentProviderSessionId(
-    paymentProviderSessionId: string,
-    data: Partial<Omit<PaymentWrite, "id">>
-  ): Promise<Payment> {
+  public async updateByPaymentProviderSessionId(
+    paymentProviderSessionId: PaymentProviderSessionId,
+    data: Partial<PaymentWrite>
+  ) {
     const payments = await this.db.payment.updateManyAndReturn({
       data,
       where: {
@@ -48,31 +59,31 @@ export class PaymentRepositoryImpl implements PaymentRepository {
     return payments[0]
   }
 
-  async getById(id: PaymentId): Promise<Payment | null> {
-    return await this.db.payment.findUnique({ where: { id } })
+  public async getById(paymentId: PaymentId) {
+    return await this.db.payment.findUnique({ where: { id: paymentId } })
   }
 
-  async getByPaymentProviderOrderId(paymentProviderOrderId: string): Promise<Payment | null> {
+  public async getByPaymentProviderOrderId(paymentProviderOrderId: PaymentProviderOrderId) {
     return await this.db.payment.findFirst({ where: { paymentProviderOrderId } })
   }
 
-  async getAll(page: Pageable): Promise<Payment[]> {
+  public async getAll(page: Pageable) {
     return await this.db.payment.findMany({ ...pageQuery(page) })
   }
 
-  async getAllByUserId(userId: UserId, page: Pageable): Promise<Payment[]> {
+  public async getAllByUserId(userId: UserId, page: Pageable) {
     return this.db.payment.findMany({ where: { userId }, ...pageQuery(page) })
   }
 
-  async getAllByProductId(productId: ProductId, page: Pageable): Promise<Payment[]> {
+  public async getAllByProductId(productId: ProductId, page: Pageable) {
     return this.db.payment.findMany({ where: { productId }, ...pageQuery(page) })
   }
 
-  async delete(id: PaymentId): Promise<void> {
-    await this.db.payment.delete({ where: { id } })
+  public async delete(paymentId: PaymentId) {
+    await this.db.payment.delete({ where: { id: paymentId } })
   }
 
-  async deleteByPaymentProviderSessionId(paymentProviderSessionId: string): Promise<void> {
+  public async deleteByPaymentProviderSessionId(paymentProviderSessionId: PaymentProviderSessionId) {
     await this.db.payment.deleteMany({ where: { paymentProviderSessionId } })
   }
 }
