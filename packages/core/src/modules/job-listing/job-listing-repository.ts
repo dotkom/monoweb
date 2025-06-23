@@ -3,11 +3,11 @@ import type { JobListing, JobListingId, JobListingWrite } from "@dotkomonline/ty
 import { type Pageable, pageQuery } from "../../query"
 
 export interface JobListingRepository {
-  getById(id: JobListingId): Promise<JobListing | null>
+  getById(jobListingId: JobListingId): Promise<JobListing | null>
   getAll(page: Pageable): Promise<JobListing[]>
   getActive(page: Pageable): Promise<JobListing[]>
-  createJobListing(values: JobListingWrite): Promise<JobListing>
-  update(id: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
+  createJobListing(data: JobListingWrite): Promise<JobListing>
+  update(jobListingId: JobListingId, data: Partial<JobListingWrite>): Promise<JobListing>
   getLocations(): Promise<string[]>
 }
 
@@ -18,10 +18,23 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     this.db = db
   }
 
-  async createJobListing({ companyId, locations, ...rest }: JobListingWrite): Promise<JobListing> {
+  /**
+   * Takes the locations attribute and turns it from { name: "...", ...}[] to just "..."[]
+   */
+  private flattenJobListingLocations<T extends { locations: { name: string }[] }>({
+    locations,
+    ...jobListing
+  }: T): Omit<T, "locations"> & { locations: string[] } {
+    return {
+      ...jobListing,
+      locations: locations.map((location) => location.name),
+    }
+  }
+
+  public async createJobListing({ companyId, locations, ...jobListingWrite }: JobListingWrite) {
     const jobListing = await this.db.jobListing.create({
       data: {
-        ...rest,
+        ...jobListingWrite,
         company: {
           connect: {
             id: companyId,
@@ -42,11 +55,11 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     return this.flattenJobListingLocations(jobListing)
   }
 
-  async update(id: JobListingId, { locations, ...rest }: Partial<JobListingWrite>): Promise<JobListing> {
+  public async update(id: JobListingId, { locations, ...jobListingWrite }: Partial<JobListingWrite>) {
     const updatedJobListing = await this.db.jobListing.update({
       where: { id },
       data: {
-        ...rest,
+        ...jobListingWrite,
         locations: {
           connectOrCreate: locations?.map((name) => ({
             create: { name },
@@ -75,7 +88,7 @@ export class JobListingRepositoryImpl implements JobListingRepository {
     return this.flattenJobListingLocations(updatedJobListing)
   }
 
-  async getById(id: string): Promise<JobListing | null> {
+  public async getById(id: string) {
     const jobListing = await this.db.jobListing.findUnique({
       where: { id },
       include: {
@@ -84,21 +97,23 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       },
     })
 
-    if (jobListing === null) return null
+    if (!jobListing) {
+      return null
+    }
 
     return this.flattenJobListingLocations(jobListing)
   }
 
-  async getAll(page: Pageable): Promise<JobListing[]> {
+  public async getAll(page: Pageable) {
     const jobListings = await this.db.jobListing.findMany({
       include: { company: true, locations: true },
       ...pageQuery(page),
     })
 
-    return await jobListings.map(this.flattenJobListingLocations)
+    return jobListings.map(this.flattenJobListingLocations)
   }
 
-  async getActive(page: Pageable): Promise<JobListing[]> {
+  public async getActive(page: Pageable) {
     const jobListings = await this.db.jobListing.findMany({
       where: {
         start: {
@@ -113,22 +128,14 @@ export class JobListingRepositoryImpl implements JobListingRepository {
       ...pageQuery(page),
     })
 
-    return await jobListings.map(this.flattenJobListingLocations)
+    return jobListings.map(this.flattenJobListingLocations)
   }
 
-  async getLocations(): Promise<string[]> {
+  public async getLocations() {
     const allLocations = await this.db.jobListingLocation.findMany({
       distinct: "name",
     })
 
     return allLocations.map((loc) => loc.name)
-  }
-
-  // Takes the locations attribute and turns it from { name: "...", ...}[] to just "..."[]
-  private flattenJobListingLocations<V extends { name: string }, T extends { locations: V[] }>({
-    locations,
-    ...obj
-  }: T): Omit<T, "locations"> & { locations: string[] } {
-    return { ...obj, locations: locations.map(({ name }) => name) }
   }
 }

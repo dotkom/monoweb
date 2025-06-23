@@ -1,16 +1,16 @@
 "use client"
 
-import type { UserId } from "@dotkomonline/types"
+import type { AttendeeId } from "@dotkomonline/types"
 import { Button, Icon, Text, Title } from "@dotkomonline/ui"
 import { Cross2Icon } from "@radix-ui/react-icons"
 import { QRCodeSVG } from "qrcode.react"
 import { useState } from "react"
 
 interface TicketButtonProps {
-  userId: UserId | null
+  attendeeId: AttendeeId | null
 }
 
-export const TicketButton = ({ userId }: TicketButtonProps) => {
+export const TicketButton = ({ attendeeId }: TicketButtonProps) => {
   const [open, setOpen] = useState(false)
 
   const className = "w-full rounded-lg h-fit min-h-[4rem] font-medium"
@@ -43,9 +43,9 @@ export const TicketButton = ({ userId }: TicketButtonProps) => {
           <Text className="text-lg">Dette er din billett til arrangementet</Text>
         </div>
         <div className="pt-10">
-          {userId && (
+          {attendeeId && (
             <QRCodeSVG
-              value={userId}
+              value={attendeeId}
               size={256}
               imageSettings={{
                 src: "https://old.online.ntnu.no/wiki/70/plugin/attachments/download/680/",

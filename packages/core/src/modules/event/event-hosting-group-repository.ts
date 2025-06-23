@@ -15,7 +15,7 @@ export class EventHostingGroupRepositoryImpl implements EventHostingGroupReposit
     this.db = db
   }
 
-  async getAllEventHostingGroups(eventId: EventId): Promise<Group[]> {
+  public async getAllEventHostingGroups(eventId: EventId): Promise<Group[]> {
     const eventHostingGroups = await this.db.eventHostingGroup.findMany({
       where: { eventId },
       select: { group: true },
@@ -24,15 +24,15 @@ export class EventHostingGroupRepositoryImpl implements EventHostingGroupReposit
     return eventHostingGroups.map((eventHostingGroup) => eventHostingGroup.group)
   }
 
-  async getAllGroups(eventId: EventId): Promise<Group[]> {
+  public async getAllGroups(eventId: EventId): Promise<Group[]> {
     return await this.getAllEventHostingGroups(eventId)
   }
 
-  async addHostingGroupToEvent(eventId: EventId, groupId: GroupId): Promise<void> {
+  public async addHostingGroupToEvent(eventId: EventId, groupId: GroupId): Promise<void> {
     await this.db.eventHostingGroup.create({ data: { eventId, groupId } })
   }
 
-  async removeHostingGroupFromEvent(eventId: EventId, groupId: GroupId): Promise<void> {
+  public async removeHostingGroupFromEvent(eventId: EventId, groupId: GroupId): Promise<void> {
     await this.db.eventHostingGroup.delete({ where: { groupId_eventId: { eventId, groupId } } })
   }
 }

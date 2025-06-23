@@ -42,7 +42,7 @@ const Page: FC<Props> = ({ attendance }) => {
       </Box>
       <Box>
         <Divider my={32} />
-        <QrCodeScanner attendanceId={attendance.id} />
+        <QrCodeScanner />
       </Box>
       <Box>
         <Title my={10} order={3}>
