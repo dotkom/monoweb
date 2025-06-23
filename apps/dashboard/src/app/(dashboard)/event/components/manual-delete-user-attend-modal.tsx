@@ -19,6 +19,8 @@ const FormSchema = z.object({
 })
 
 export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
+  context,
+  id,
   innerProps: { attendeeId, poolName, onSuccess },
 }) => {
   const { mutate: deregisterAttendee } = useDeregisterForEventMutation()
@@ -36,6 +38,8 @@ export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
         },
       }
     )
+
+    context.closeModal(id)
   }
 
   const Form = useFormBuilder({
