@@ -61,7 +61,7 @@ export const ManualCreateUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   return <Form />
 }
 
-export const openCreateManualUserAttendModal = ({ userId, attendanceId }: ModalProps) =>
+export const openManualCreateUserAttendModal = ({ userId, attendanceId }: ModalProps) =>
   modals.openContextModal({
     modal: "event/attendance/attendee/create",
     title: "Meld på bruker",
