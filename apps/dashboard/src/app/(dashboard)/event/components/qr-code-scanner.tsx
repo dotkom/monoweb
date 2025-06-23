@@ -1,19 +1,21 @@
 import { AspectRatio, Button, Collapse, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { type FC, useEffect, useState } from "react"
+import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
 import { useUpdateEventAttendanceMutation } from "../mutations"
 
 export const QrCodeScanner: FC = () => {
   const registerAttendance = useUpdateEventAttendanceMutation()
-  const [scannerOpen, { toggle }] = useDisclosure(false)
+  const [scannerOpen, { toggle: toggleScanner }] = useDisclosure(false)
   const [videoReady, setVideoReady] = useState(false)
 
-  useEffect(() => {
+  const handleToggle = () => {
+    toggleScanner()
+
     if (!scannerOpen) {
       setVideoReady(false)
     }
-  }, [scannerOpen])
+  }
 
   const { ref } = useZxing({
     onDecodeResult: (result) => {
@@ -29,7 +31,7 @@ export const QrCodeScanner: FC = () => {
   return (
     <Stack gap="xs" align="flex-start">
       <Group>
-        <Button onClick={toggle}>{scannerOpen ? "Lukk scanner" : "Åpne scanner"}</Button>
+        <Button onClick={handleToggle}>{scannerOpen ? "Lukk scanner" : "Åpne scanner"}</Button>
         {scannerOpen && (
           <Group gap="xs">
             {videoReady ? (
