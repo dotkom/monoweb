@@ -23,7 +23,7 @@ import type { AttendanceRepository } from "./attendance-repository"
 import { AttendeeDeregistrationError, AttendeeNotFoundError, AttendeeRegistrationError } from "./attendee-error"
 import type { AttendeeRepository } from "./attendee-repository"
 
-type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNext: boolean }
+type AdminDeregisterForEventOptions = { reserveNextAttendee: boolean; bypassCriteriaOnReserveNextAttendee: boolean }
 
 export interface AttendeeService {
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<Attendee>
@@ -169,7 +169,7 @@ export class AttendeeServiceImpl implements AttendeeService {
 
   public async adminDeregisterForEvent(
     attendeeId: AttendeeId,
-    { reserveNextAttendee, bypassCriteriaOnReserveNext }: AdminDeregisterForEventOptions
+    { reserveNextAttendee, bypassCriteriaOnReserveNextAttendee }: AdminDeregisterForEventOptions
   ) {
     const pool = await this.attendanceRepository.getPoolByAttendeeId(attendeeId)
 
@@ -180,7 +180,7 @@ export class AttendeeServiceImpl implements AttendeeService {
     await this.attendeeRepository.delete(attendeeId)
 
     if (reserveNextAttendee) {
-      await this.attemptReserveNextAttendee(pool, { bypassCriteria: bypassCriteriaOnReserveNext })
+      await this.attemptReserveNextAttendee(pool, { bypassCriteria: bypassCriteriaOnReserveNextAttendee })
     }
   }
 

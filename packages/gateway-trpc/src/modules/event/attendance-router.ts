@@ -74,15 +74,15 @@ export const attendanceRouter = t.router({
   adminDeregisterForEvent: adminProcedure
     .input(
       z.object({
-        id: AttendeeSchema.shape.id,
+        attendeeId: AttendeeSchema.shape.id,
         reserveNextAttendee: z.boolean(),
-        bypassCriteriaOnReserveNext: z.boolean().optional().default(false),
+        bypassCriteriaOnReserveNextAttendee: z.boolean().optional().default(false),
       })
     )
     .mutation(async ({ input, ctx }) =>
-      ctx.attendeeService.adminDeregisterForEvent(input.id, {
+      ctx.attendeeService.adminDeregisterForEvent(input.attendeeId, {
         reserveNextAttendee: input.reserveNextAttendee,
-        bypassCriteriaOnReserveNext: input.bypassCriteriaOnReserveNext,
+        bypassCriteriaOnReserveNextAttendee: input.bypassCriteriaOnReserveNextAttendee,
       })
     ),
 

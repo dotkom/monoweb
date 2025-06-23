@@ -15,7 +15,7 @@ const FormSchema = z.object({
   poolId: z.string(),
 })
 
-export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
+export const ManualCreateUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   context,
   id,
   innerProps: { attendanceId, userId },
@@ -61,7 +61,7 @@ export const CreateManualUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
   return <Form />
 }
 
-export const openCreateManualUserAttendModal = ({ userId, attendanceId }: ModalProps) =>
+export const openManualCreateUserAttendModal = ({ userId, attendanceId }: ModalProps) =>
   modals.openContextModal({
     modal: "event/attendance/attendee/create",
     title: "Meld på bruker",
