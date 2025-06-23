@@ -23,7 +23,7 @@ interface Props {
 }
 
 const Page: FC<Props> = ({ attendance }) => {
-  const { attendees, refetch } = useEventAttendeesGetQuery(attendance.id)
+  const { attendees } = useEventAttendeesGetQuery(attendance.id)
   return (
     <Box>
       <Box>
@@ -35,7 +35,6 @@ const Page: FC<Props> = ({ attendance }) => {
             openCreateManualUserAttendModal({
               attendanceId: attendance.id,
               userId: values.id,
-              onSuccess: refetch,
             })
           }}
           excludeUserIds={attendees.map((attendee) => attendee.userId)}
@@ -49,7 +48,7 @@ const Page: FC<Props> = ({ attendance }) => {
         <Title my={10} order={3}>
           Alle påmeldte
         </Title>
-        <AllAttendeesTable attendees={attendees} attendance={attendance} refetch={refetch} />
+        <AllAttendeesTable attendees={attendees} attendance={attendance} />
       </Box>
     </Box>
   )

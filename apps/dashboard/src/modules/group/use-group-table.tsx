@@ -20,9 +20,14 @@ export const useGroupTable = ({ data }: Props) => {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("name", {
+      columnHelper.accessor((group) => group, {
+        id: "name",
         header: () => "Navn",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/group/${info.getValue().id}`}>
+            {info.getValue().name}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("email", {
         header: () => "Kontakt-e-post",
@@ -36,7 +41,7 @@ export const useGroupTable = ({ data }: Props) => {
             return "Ingen bilde"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopener">
+            <Anchor component={Link} size="sm" target="_blank" href={val} rel="noopener">
               Link
             </Anchor>
           )
@@ -47,15 +52,6 @@ export const useGroupTable = ({ data }: Props) => {
         cell: (info) => {
           return groupTypeLabels[info.getValue()] ?? info.getValue()
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/group/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]

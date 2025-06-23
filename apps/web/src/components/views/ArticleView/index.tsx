@@ -2,7 +2,7 @@ import { ArticleListItem } from "@/components/molecules/ArticleListItem"
 import { ArticleTag } from "@/components/molecules/ArticleTag"
 import { server } from "@/utils/trpc/server"
 import type { Article, ArticleTagName } from "@dotkomonline/types"
-import { Button, Text, Title } from "@dotkomonline/ui"
+import { Button, Text, Title, Video } from "@dotkomonline/ui"
 import { formatDate } from "@dotkomonline/utils"
 import clsx from "clsx"
 import { isEqual } from "date-fns"
@@ -47,14 +47,22 @@ const ArticleHeader = ({ article }: ArticleHeaderProps) => {
     <section>
       <div className="flex w-full flex-col gap-8 md:flex-row">
         <figure className="w-full flex flex-col md:w-[70%]">
-          <Image
-            src={article.imageUrl}
-            alt={article.title}
-            width="0"
-            height="0"
-            sizes="100%"
-            className="w-full rounded-2xl aspect-[16/9] object-cover"
-          />
+          {article.vimeoId ? (
+            <Video
+              src={`https://player.vimeo.com/video/${article.vimeoId}`}
+              title={article.title}
+              className="w-full rounded-2xl aspect-[16/9] object-cover"
+            />
+          ) : (
+            <Image
+              src={article.imageUrl}
+              alt={article.title}
+              width="0"
+              height="0"
+              sizes="100%"
+              className="w-full rounded-2xl aspect-[16/9] object-cover"
+            />
+          )}
           <figcaption>
             <Text className="mt-2">
               <span className="text-slate-12 dark:text-slate-2 font-medium">Fotograf: </span>

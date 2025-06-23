@@ -14,13 +14,18 @@ export const useInterestGroupTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<InterestGroup>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("name", {
+      columnHelper.accessor((interestGroup) => interestGroup, {
+        id: "name",
         header: () => "Navn",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/interest-group/${info.getValue().id}`}>
+            {info.getValue().name}
+          </Anchor>
+        ),
       }),
-      columnHelper.accessor("description", {
-        header: () => "Kort beskrivelse",
-        cell: (info) => info.getValue(),
+      columnHelper.accessor("isActive", {
+        header: () => "Aktiv",
+        cell: (info) => (info.getValue() ? "Aktiv" : "Inaktiv"),
       }),
       columnHelper.accessor("image", {
         header: () => "Bilde",
@@ -30,7 +35,7 @@ export const useInterestGroupTable = ({ data }: Props) => {
             return "Ingen bilde"
           }
           return (
-            <Anchor target="_blank" href={val} rel="noopener">
+            <Anchor component={Link} size="sm" target="_blank" href={val} rel="noopener">
               Link
             </Anchor>
           )
@@ -43,20 +48,11 @@ export const useInterestGroupTable = ({ data }: Props) => {
           if (!link) return
 
           return (
-            <Anchor href={link} target="_blank" rel="noopener noreferrer">
+            <Anchor component={Link} size="sm" href={link} target="_blank" rel="noopener noreferrer">
               Wiki
             </Anchor>
           )
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/interest-group/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]

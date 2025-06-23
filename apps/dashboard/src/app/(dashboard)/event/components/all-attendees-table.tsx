@@ -1,19 +1,18 @@
 import type { Attendance, AttendancePool, Attendee } from "@dotkomonline/types"
-import { Button, Checkbox } from "@mantine/core"
+import { Icon } from "@iconify/react"
+import { ActionIcon, Checkbox } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
 
-import type { QueryObserverResult } from "@tanstack/react-query"
 import { FilterableTable, arrayOrEqualsFilter } from "src/components/molecules/FilterableTable/FilterableTable"
 import { useDeregisterForEventMutation, useUpdateEventAttendanceMutation } from "../mutations"
 
 interface AllAttendeesTableProps {
   attendees: Attendee[]
   attendance: Attendance
-  refetch: () => Promise<QueryObserverResult<Attendee[], unknown>>
 }
 
-export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({ attendees, attendance }: AllAttendeesTableProps) => {
   const deregisterMut = useDeregisterForEventMutation()
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
 
@@ -42,9 +41,10 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("user", {
+      columnHelper.accessor((attendee) => attendee.user.displayName, {
+        id: "user",
         header: "Bruker",
-        cell: (info) => info.getValue().displayName,
+        cell: (info) => info.getValue(),
         sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("attended", {
@@ -55,10 +55,7 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
           return (
             <Checkbox
               onChange={(event) => {
-                updateAttendanceMut.mutate(
-                  { id: row.id, attended: event.currentTarget.checked },
-                  { onSuccess: () => refetch() }
-                )
+                updateAttendanceMut.mutate({ id: row.id, attended: event.currentTarget.checked })
               }}
               checked={info.getValue()}
             />
@@ -98,28 +95,21 @@ export const AllAttendeesTable = ({ attendees, attendance, refetch }: AllAttende
         enableSorting: false,
         header: () => "Meld av",
         cell: (info) => (
-          <Button
+          <ActionIcon
             color="red"
             onClick={() =>
-              deregisterMut.mutate(
-                {
-                  id: info.getValue().id,
-                  reserveNextAttendee: true,
-                },
-                {
-                  onSuccess: () => {
-                    refetch()
-                  },
-                }
-              )
+              deregisterMut.mutate({
+                id: info.getValue().id,
+                reserveNextAttendee: true,
+              })
             }
           >
-            X
-          </Button>
+            <Icon icon="tabler:x" />
+          </ActionIcon>
         ),
       }),
     ],
-    [columnHelper, deregisterMut, updateAttendanceMut, refetch, pools, waitlists]
+    [columnHelper, deregisterMut, updateAttendanceMut, pools, waitlists]
   )
 
   const tableOptions = useMemo(

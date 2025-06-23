@@ -1,5 +1,5 @@
 "use client"
-import { Button, Card, Group, Skeleton, Stack } from "@mantine/core"
+import { Box, Button, Skeleton, Stack } from "@mantine/core"
 import { GenericTable } from "src/components/GenericTable"
 import { useCreateInterestGroupModal } from "src/modules/interest-group/modals/create-interest-group-modal"
 import { useInterestGroupAllQuery } from "src/modules/interest-group/queries/use-interest-group-all-query"
@@ -12,12 +12,10 @@ const InterestGroupPage = () => {
   return (
     <Skeleton visible={isInterestGroupsLoading}>
       <Stack>
-        <Card withBorder>
-          <GenericTable table={table} />
-        </Card>
-        <Group justify="space-between">
+        <Box>
           <Button onClick={open}>Opprett interessegruppe</Button>
-        </Group>
+        </Box>
+        <GenericTable table={table} />
       </Stack>
     </Skeleton>
   )

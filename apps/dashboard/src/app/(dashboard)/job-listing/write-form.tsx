@@ -38,19 +38,21 @@ export const useJobListingWriteForm = ({
     onSubmit,
     label,
     fields: {
-      companyId: createSelectInput({
-        label: "Selskap",
-        data: companies.map((company) => ({ value: company.id, label: company.name })),
-      }),
       title: createTextInput({
         label: "Tittel",
         placeholder: "Frontend-utvikler",
         withAsterisk: true,
       }),
+      companyId: createSelectInput({
+        label: "Selskap",
+        data: companies.map((company) => ({ value: company.id, label: company.name })),
+        searchable: true,
+        withAsterisk: true,
+      }),
       ingress: createTextareaInput({
         label: "Ingress",
         placeholder: "Kort introduksjon om stillingen...",
-        withAsterisk: true,
+        required: true,
         rows: 4,
       }),
       description: createRichTextInput({
@@ -82,6 +84,7 @@ export const useJobListingWriteForm = ({
           value: employment,
           label: employment,
         })),
+        withAsterisk: true,
       }),
       applicationLink: createTextInput({
         label: "Søknadslenke",
@@ -99,6 +102,7 @@ export const useJobListingWriteForm = ({
         label: "Sted",
         data: locations,
         name: "locations",
+        withAsterisk: true,
       }),
     },
   })

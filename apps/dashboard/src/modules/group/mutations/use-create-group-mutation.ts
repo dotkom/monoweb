@@ -1,10 +1,11 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useCreateGroupMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -15,11 +16,13 @@ export const useCreateGroupMutation = () => {
           message: "Gruppen blir opprettet.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Gruppen er opprettet",
           message: `Gruppen "${data.name}" har blitt oppdatert.`,
         })
+
+        await queryClient.invalidateQueries(trpc.group.all.queryOptions())
       },
       onError: (err) => {
         notification.fail({

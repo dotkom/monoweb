@@ -25,6 +25,8 @@ export const MergePoolsModal: FC<ContextModalProps<MergePoolsModalProps>> = ({
         yearCriteria: values.yearCriteria,
       },
     })
+
+    context.closeModal(id)
   }
 
   const disabledYears = attendance ? [...new Set(attendance.pools.flatMap(({ yearCriteria }) => yearCriteria))] : []

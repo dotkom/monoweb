@@ -1,10 +1,11 @@
 import { useQueryNotification } from "../../../app/notifications"
 import { useTRPC } from "../../../trpc"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useCreateInterestGroupMutation = () => {
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -15,11 +16,13 @@ export const useCreateInterestGroupMutation = () => {
           message: "Interessegruppen blir opprettet.",
         })
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         notification.complete({
           title: "Interessegruppen er opprettet",
           message: `Interessegruppen "${data.name}" har blitt oppdatert.`,
         })
+
+        await queryClient.invalidateQueries(trpc.interestGroup.all.queryOptions())
       },
       onError: (err) => {
         notification.fail({

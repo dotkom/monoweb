@@ -2,7 +2,7 @@
 
 import type { JobListing } from "@dotkomonline/types"
 import { formatRelativeTime } from "@dotkomonline/utils"
-import { Anchor, Text } from "@mantine/core"
+import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -15,28 +15,29 @@ export const useJobListingTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<JobListing>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("company", {
-        header: () => "Bedrift",
-        cell: (info) => info.getValue().name,
-      }),
-      columnHelper.accessor("title", {
+      columnHelper.accessor((company) => company, {
+        id: "title",
         header: () => "Tittel",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/job-listing/${info.getValue().id}`}>
+            {info.getValue().title}
+          </Anchor>
+        ),
+      }),
+      columnHelper.accessor((company) => company, {
+        id: "company",
+        header: () => "Bedrift",
+        cell: (info) => (
+          <Anchor component={Link} size="sm" href={`/company/${info.getValue().company.id}`}>
+            {info.getValue().company.name}
+          </Anchor>
+        ),
       }),
       columnHelper.accessor("end", {
         header: () => "Aktiv til",
         cell: (info) => {
-          return <Text>{formatRelativeTime(info.getValue())}</Text>
+          return formatRelativeTime(info.getValue())
         },
-      }),
-      columnHelper.accessor((evt) => evt, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/job-listing/${info.getValue().id}`}>
-            Se mer
-          </Anchor>
-        ),
       }),
     ],
     [columnHelper]

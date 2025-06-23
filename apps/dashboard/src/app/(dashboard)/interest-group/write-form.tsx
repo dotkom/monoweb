@@ -46,6 +46,7 @@ export const useInterestGroupWriteForm = ({
       image: createFileInput({
         label: "Bilde",
         placeholder: "Last opp",
+        withAsterisk: true,
       }),
       joinInfo: createTextareaInput({
         label: "Hvordan bli med",
