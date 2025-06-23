@@ -15,18 +15,20 @@ interface ModalProps {
 
 const FormSchema = z.object({
   shouldReserveNextAttendee: z.boolean(),
+  bypassCriteriaOnReserveNextAttendee: z.boolean(),
 })
 
 export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
-  innerProps: { attendeeId, attendeeDisplayName, poolName, onSuccess },
+  innerProps: { attendeeId, poolName, onSuccess },
 }) => {
   const { mutate: deregisterAttendee } = useDeregisterForEventMutation()
 
-  const onSubmit = (attendeeId: string, reserveNextAttendee: boolean) => {
+  const onSubmit = (attendeeId: string, reserveNextAttendee: boolean, bypassCriteriaOnReserveNextAttendee: boolean) => {
     deregisterAttendee(
       {
         attendeeId,
         reserveNextAttendee,
+        bypassCriteriaOnReserveNextAttendee,
       },
       {
         onSuccess: () => {
@@ -40,14 +42,21 @@ export const ManualDeleteUserAttendModal: FC<ContextModalProps<ModalProps>> = ({
     schema: FormSchema,
     fields: {
       shouldReserveNextAttendee: createCheckboxInput({
-        label: `Påmeld neste tilgjengelige i ${poolName}`,
+        label: "Påmeld neste bruker i venteliste",
         defaultChecked: true,
+        description: `Påmeld neste bruker som oppfyller kriteriene for påmelding i ${poolName}.`,
+      }),
+      bypassCriteriaOnReserveNextAttendee: createCheckboxInput({
+        label: "Ignorer kriterier for påmelding av neste bruker",
+        defaultChecked: false,
+        description:
+          "Hvis sant, neste bruker vil bli påmeldt selv om de ikke oppfyller kriteriene for påmelding. Bruk dette om påmeldingsfristen er utløpt men du vil påmelde neste bruker.",
       }),
     },
     label: "Meld av bruker",
     onSubmit: (values) => {
       try {
-        onSubmit(attendeeId, values.shouldReserveNextAttendee)
+        onSubmit(attendeeId, values.shouldReserveNextAttendee, values.bypassCriteriaOnReserveNextAttendee)
       } catch (e) {
         notifyFail({
           title: "Oops!",
