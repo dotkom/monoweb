@@ -4,7 +4,9 @@ import {
   type AttendancePoolId,
   type Attendee,
   type AttendeeId,
+  type AttendeeSelectionId,
   AttendeeSelectionResponsesSchema as AttendeeSelectionOptionSchema,
+  type AttendeeSelectionResponse,
   AttendeeSelectionResponsesSchema,
   type AttendeeWithoutUser,
   type AttendeeWrite,
@@ -19,18 +21,20 @@ type UnparsedAttendeeWithoutUser = Omit<AttendeeWithoutUser, "selections"> & {
 
 export interface AttendeeRepository {
   create(data: AttendeeWrite): Promise<AttendeeWithoutUser>
-  delete(attendeeId: AttendeeId): Promise<void>
+  delete(attendeeId: AttendeeId): Promise<AttendeeWithoutUser>
+  deleteUserAttendance(userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser>
   getById(attendeeId: AttendeeId): Promise<AttendeeWithoutUser | null>
   update(attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<AttendeeWithoutUser>
   getByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeWithoutUser[]>
   getByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser[]>
   getFirstUnreservedByAttendancePoolId(attendancePoolId: AttendancePoolId): Promise<AttendeeWithoutUser | null>
   getByUserId(userId: UserId, attendanceId: AttendanceId): Promise<AttendeeWithoutUser | null>
-  poolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
+  attendancePoolHasAttendees(poolId: AttendancePoolId): Promise<boolean>
   attendanceHasAttendees(attendanceId: AttendanceId): Promise<boolean>
   reserveAttendee(attendeeId: AttendeeId): Promise<boolean>
   moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId): Promise<void>
-  removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string): Promise<void>
+  removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: AttendeeSelectionId): Promise<void>
+  getAttendeeSelectionsByAttendanceId(attendanceId: AttendanceId): Promise<AttendeeSelectionResponse>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
@@ -52,10 +56,12 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     }
   }
 
+  private parseSelections(selections: unknown) {
+    return AttendeeSelectionResponsesSchema.parse(selections)
+  }
+
   private parse(unparsedAttendee: UnparsedAttendeeWithoutUser): AttendeeWithoutUser {
-    const parsedSelections = unparsedAttendee.selections
-      ? AttendeeSelectionResponsesSchema.parse(unparsedAttendee.selections)
-      : []
+    const parsedSelections = unparsedAttendee.selections ? this.parseSelections(unparsedAttendee.selections) : []
 
     return {
       ...unparsedAttendee,
@@ -73,7 +79,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return this.parse(attendee)
   }
 
-  public async poolHasAttendees(attendancePoolId: AttendancePoolId) {
+  public async attendancePoolHasAttendees(attendancePoolId: AttendancePoolId) {
     const numberOfAttendees = await this.db.attendee.count({ where: { attendancePoolId } })
 
     return numberOfAttendees > 0
@@ -101,7 +107,15 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
   }
 
   public async delete(attendeeId: AttendeeId) {
-    await this.db.attendee.delete({ where: { id: attendeeId } })
+    const attendee = await this.db.attendee.delete({ where: { id: attendeeId } })
+
+    return this.parse(attendee)
+  }
+
+  public async deleteUserAttendance(userId: UserId, attendanceId: AttendanceId) {
+    const attendee = await this.db.attendee.delete({ where: { attendee_unique: { userId, attendanceId } } })
+
+    return this.parse(attendee)
   }
 
   public async getById(attendeeId: AttendeeId) {
@@ -173,7 +187,7 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
     return attendee.reserved
   }
 
-  public async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string) {
+  public async removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: AttendeeSelectionId) {
     const attendees = (await this.db.attendee.findMany({
       where: { attendanceId },
       select: {
@@ -194,5 +208,17 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       })
 
     await this.db.$transaction(updatedRows)
+  }
+
+  public async getAttendeeSelectionsByAttendanceId(attendanceId: AttendanceId) {
+    const result = await this.db.attendee.findMany({
+      where: { attendanceId },
+      orderBy: { createdAt: "asc" },
+      select: {
+        selections: true,
+      },
+    })
+
+    return this.parseSelections(result.map((res) => res.selections))
   }
 }

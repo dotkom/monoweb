@@ -24,4 +24,6 @@ export type Attendee = z.infer<typeof AttendeeSchema>
 export type AttendeeWithoutUser = Omit<Attendee, "user">
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export type AttendeeId = Attendee["id"]
+
 export type AttendeeSelectionResponse = z.infer<typeof AttendeeSelectionResponsesSchema>
+export type AttendeeSelectionId = AttendeeSelectionResponse[number]["selectionId"]

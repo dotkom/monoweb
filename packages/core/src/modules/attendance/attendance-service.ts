@@ -13,7 +13,6 @@ import type { JobService } from "../job/job-service"
 import { AttendanceDeletionError, AttendanceNotFound, AttendanceValidationError } from "./attendance-error"
 import { AttendancePoolNotFoundError } from "./attendance-pool-error"
 import type { AttendanceRepository } from "./attendance-repository"
-import type { AttendeeRepository } from "./attendee-repository"
 import type { AttendeeService } from "./attendee-service"
 
 const areSelectionsEqual = (a: AttendanceSelection, b: AttendanceSelection) => {
@@ -33,31 +32,25 @@ export interface AttendanceService {
   delete(attendanceId: AttendanceId): Promise<void>
   getById(attendanceId: AttendanceId): Promise<Attendance>
   update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
+  createPool(data: AttendancePoolWrite): Promise<AttendancePool>
+  deletePool(attendancePoolId: AttendancePoolId): Promise<AttendancePool>
+  getPoolById(attendancePoolId: AttendancePoolId): Promise<AttendancePool>
+  updatePool(attendancePoolId: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
   mergeAttendancePools(
     attendanceId: AttendanceId,
     newMergePoolData: Partial<AttendancePoolWrite>,
     mergeTime?: Date
   ): Promise<void>
   getSelectionsResponseSummary(attendanceId: AttendanceId): Promise<SelectionResponseSummary[]>
-  createPool(data: AttendancePoolWrite): Promise<AttendancePool>
-  deletePool(attendancePoolId: AttendancePoolId): Promise<AttendancePool>
-  updatePool(attendancePoolId: AttendancePoolId, data: Partial<AttendancePoolWrite>): Promise<AttendancePool>
 }
 
 export class AttendanceServiceImpl implements AttendanceService {
   private readonly attendanceRepository: AttendanceRepository
-  private readonly attendeeRepository: AttendeeRepository
   private readonly attendeeService: AttendeeService
   private readonly jobService: JobService
 
-  constructor(
-    attendanceRepository: AttendanceRepository,
-    attendeeRepository: AttendeeRepository,
-    attendeeService: AttendeeService,
-    jobService: JobService
-  ) {
+  constructor(attendanceRepository: AttendanceRepository, attendeeService: AttendeeService, jobService: JobService) {
     this.attendanceRepository = attendanceRepository
-    this.attendeeRepository = attendeeRepository
     this.attendeeService = attendeeService
     this.jobService = jobService
   }
@@ -69,11 +62,10 @@ export class AttendanceServiceImpl implements AttendanceService {
       throw new AttendanceNotFound(attendanceId)
     }
 
-    const attendees = await this.attendeeRepository.getByAttendanceId(attendanceId)
-    const allSelectionResponses = attendees.flatMap((attendee) => attendee.selections)
+    const selections = await this.attendeeService.getAttendeeSelectionsByAttendanceId(attendanceId)
 
     return attendance.selections.map((selection) => {
-      const selectionResponses = allSelectionResponses.filter((response) => response.selectionId === selection.id)
+      const selectionResponses = selections.filter((response) => response.selectionId === selection.id)
 
       return {
         id: selection.id,
@@ -107,7 +99,7 @@ export class AttendanceServiceImpl implements AttendanceService {
 
     await Promise.all(
       updatedSelections.map(async (selection) =>
-        this.attendeeRepository.removeAllSelectionResponsesForSelection(attendanceId, selection.id)
+        this.attendeeService.removeAllSelectionResponsesForSelection(attendanceId, selection.id)
       )
     )
   }
@@ -129,7 +121,7 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   public async delete(attendanceId: AttendanceId) {
-    const poolHasAttendees = await this.attendeeRepository.attendanceHasAttendees(attendanceId)
+    const poolHasAttendees = await this.attendeeService.attendanceHasAttendees(attendanceId)
 
     if (poolHasAttendees) {
       throw new AttendanceDeletionError("Cannot delete attendance with attendees")
@@ -164,11 +156,21 @@ export class AttendanceServiceImpl implements AttendanceService {
   }
 
   public async deletePool(poolId: AttendancePoolId) {
-    if (await this.attendeeRepository.poolHasAttendees(poolId)) {
+    if (await this.attendeeService.attendancePoolHasAttendees(poolId)) {
       throw new AttendanceDeletionError("Cannot delete attendance pool with attendees")
     }
 
     return await this.attendanceRepository.deletePool(poolId)
+  }
+
+  public async getPoolById(poolId: AttendancePoolId) {
+    const pool = await this.attendanceRepository.getPoolById(poolId)
+
+    if (!pool) {
+      throw new AttendancePoolNotFoundError(poolId)
+    }
+
+    return pool
   }
 
   private async attemptReserveAttendeesOnCapacityChange(oldCapacity: number, newPool: AttendancePool) {
@@ -248,7 +250,7 @@ export class AttendanceServiceImpl implements AttendanceService {
     })
 
     const poolsToMergeIds = poolsToMerge.map((pool) => pool.id)
-    await this.attendeeRepository.moveFromMultiplePoolsToPool(poolsToMergeIds, newMergePool.id)
+    await this.attendeeService.moveFromMultiplePoolsToPool(poolsToMergeIds, newMergePool.id)
 
     for (const pool of poolsToMerge) {
       await this.attendanceRepository.deletePool(pool.id)
