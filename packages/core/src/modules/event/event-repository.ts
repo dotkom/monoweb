@@ -37,6 +37,7 @@ export class EventRepositoryImpl implements EventRepository {
   async getAll(page?: Pageable, filter?: EventFilter) {
     return await this.db.event.findMany({
       ...pageQuery(page ?? { take: 100 }),
+      orderBy: { start: "desc" },
 
       where: {
         status: { not: "DELETED" },

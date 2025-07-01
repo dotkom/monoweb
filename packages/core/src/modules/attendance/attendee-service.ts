@@ -44,6 +44,10 @@ export interface AttendeeService {
    * If bypassCriteria is true, then the criteria will be ignored.
    */
   attemptReserve(attendee: Attendee, pool: AttendancePool, options: { bypassCriteria: boolean }): Promise<boolean>
+  getAttendeeStatuses(
+    userId: UserId,
+    attendanceIds: AttendanceId[]
+  ): Promise<Map<AttendanceId, "RESERVED" | "UNRESERVED">>
 }
 
 export class AttendeeServiceImpl implements AttendeeService {
@@ -298,5 +302,9 @@ export class AttendeeServiceImpl implements AttendeeService {
     const attendees = await Promise.all(attendeesWithoutUsers.map((attendee) => this.addUserToAttendee(attendee)))
 
     return attendees
+  }
+
+  public async getAttendeeStatuses(userId: UserId, attendanceIds: AttendanceId[]) {
+    return this.attendeeRepository.getAttendeeStatuses(userId, attendanceIds)
   }
 }

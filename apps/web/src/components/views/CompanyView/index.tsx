@@ -1,13 +1,13 @@
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { Company, Event } from "@dotkomonline/types"
-import { Icon } from "@dotkomonline/ui"
+import type { AttendanceEvent, Company } from "@dotkomonline/types"
+import { Icon, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 
 interface CompanyViewProps {
   company: Company
-  events: Event[]
+  attendanceEvents: AttendanceEvent[]
 }
 
 export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
@@ -37,7 +37,7 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
               <div key={icon} className="flex items-center gap-x-2">
                 <Icon icon={icon} width="28" />
                 {href === null ? (
-                  <span>{text}</span>
+                  <Text element="span">{text}</Text>
                 ) : (
                   <a className="text-blue-11 hover:text-blue-10" href={href} target="_blank" rel="noreferrer">
                     {text}
@@ -47,14 +47,12 @@ export const CompanyView: FC<CompanyViewProps> = (props: CompanyViewProps) => {
             ))}
           </div>
         </div>
-        <p>{description}</p>
+        <Text>{description}</Text>
       </div>
       {/* TODO: Redesign later */}
-      <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <h2>Kommende arrangementer</h2>
-        <EventList events={props.events} />
-        <h2>Tidligere arrangement</h2>
-        nope... {/* TODO: Separate listings list later */}
+      <div className="mt-6 flex flex-col gap-2">
+        <Title element="h2">Arrangementer</Title>
+        <EventList attendanceEvents={props.attendanceEvents} />
       </div>
     </EntryDetailLayout>
   )

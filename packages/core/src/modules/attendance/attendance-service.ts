@@ -32,6 +32,7 @@ export interface AttendanceService {
   create(data: AttendanceWrite): Promise<Attendance>
   delete(attendanceId: AttendanceId): Promise<void>
   getById(attendanceId: AttendanceId): Promise<Attendance>
+  getByIds(attendanceIds: AttendanceId[]): Promise<Map<AttendanceId, Attendance>>
   update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
   mergeAttendancePools(
     attendanceId: AttendanceId,
@@ -126,6 +127,18 @@ export class AttendanceServiceImpl implements AttendanceService {
     }
 
     return attendance
+  }
+
+  public async getByIds(attendanceIds: AttendanceId[]) {
+    const attendances = await this.attendanceRepository.getByIds(attendanceIds)
+
+    if (attendances.size !== attendanceIds.length) {
+      const missingIds = attendanceIds.filter((id) => !attendances.has(id))
+
+      throw new AttendanceNotFound(missingIds.join(", "))
+    }
+
+    return attendances
   }
 
   public async delete(attendanceId: AttendanceId) {

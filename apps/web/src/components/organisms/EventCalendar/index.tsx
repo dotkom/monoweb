@@ -1,4 +1,3 @@
-import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { server } from "@/utils/trpc/server"
 import { Icon, cn } from "@dotkomonline/ui"
 import { getWeek, isThisWeek } from "date-fns"
@@ -51,7 +50,6 @@ export const EventCalendar: FC<CalendarProps> = async ({ year, month }) => {
   return (
     <div className="mb-10">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <EventsViewToggle active="cal" />
         <div className="w-full flex items-center gap-4 justify-between sm:justify-end">
           <h2>
             {months[month]} {year}
