@@ -10,16 +10,20 @@ interface LocationBoxProps {
 export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
   const { locationAddress, locationTitle, locationLink } = event
 
+  if (!locationTitle) {
+    return null
+  }
+
   return (
-    <div className="flex">
-      <div className="w-12 flex items-center">
-        <Icon icon="tabler:map-pin" width={24} height={24} />
-      </div>
-      <div className="flex flex-1 flex-col justify-center">
-        <Text className="text-lg">{locationTitle}</Text>
+    <section className="flex flex-row gap-4 items-center">
+      <Icon icon="tabler:map-pin" className="text-xl" />
+
+      <div className="flex flex-col flex-grow justify-center">
+        <Text>{locationTitle}</Text>
         <Text>{locationAddress}</Text>
       </div>
+
       {locationLink && <LocationLink link={locationLink} />}
-    </div>
+    </section>
   )
 }

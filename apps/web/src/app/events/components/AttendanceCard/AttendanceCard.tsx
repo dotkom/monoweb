@@ -96,8 +96,8 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
   const isAttendingAndReserved = Boolean(attendee) && queuePosition === null
 
   return (
-    <section className="flex flex-col border border-slate-3 rounded-xl min-h-[6rem] p-4 sm:p-6 gap-4">
-      <Title element="h2" className="font-poppins font-semibold text-2xl">
+    <section className="flex flex-col gap-4 min-h-[6rem] rounded-lg sm:border sm:border-slate-3 sm:p-4 sm:rounded-xl">
+      <Title element="h2" size="lg">
         Påmelding
       </Title>
 
@@ -148,15 +148,21 @@ export const AttendanceCard = ({ user, initialAttendance, initialAttendees }: At
         status={attendanceStatus}
       />
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-        <Link href="/profile" className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11">
-          <Icon className="inline-block align-middle text-lg" icon="tabler:edit" />
-          <Text>Oppdater matallergier</Text>
-        </Link>
-        <Text className="flex flex-row gap-1 items-center sm:text-sm text-slate-12 hover:text-slate-11 cursor-pointer">
-          <Icon className="inline-block align-middle text-lg" icon="tabler:book-2" />
-          Arrangementregler
-        </Text>
+      <div className="hidden sm:block">
+        <div className="flex flex-row gap-4">
+          <div className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-12 transition-colors cursor-pointer">
+            <Icon icon="tabler:book-2" className="text-lg" />
+            <Text>Arrangementregler</Text>
+          </div>
+
+          <Link
+            href="/profile"
+            className="flex flex-row gap-1 items-center text-sm text-slate-9 hover:text-slate-12 transition-colors"
+          >
+            <Icon icon="tabler:edit" className="text-lg" />
+            <Text>Oppdater matallergier</Text>
+          </Link>
+        </div>
       </div>
     </section>
   )

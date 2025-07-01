@@ -5,7 +5,7 @@ import type {
   AttendanceStatus,
   Attendee,
 } from "@dotkomonline/types"
-import { Icon, Text, cn } from "@dotkomonline/ui"
+import { Icon, Text, Title, cn } from "@dotkomonline/ui"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
 import { useSetSelectionsOptionsMutation } from "../mutations"
@@ -39,9 +39,9 @@ interface CardProps {
 }
 
 const Card: FC<CardProps> = ({ classNames, children, title }) => {
-  const baseOuterClassName = "flex flex-col w-full min-h-[8rem] bg-slate-3 rounded-lg"
-  const baseHeaderClassName = "px-4 py-3 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
-  const baseInnerClassName = "flex flex-col gap-4 p-3 items-center text-center justify-center w-full"
+  const baseOuterClassName = "flex flex-col w-full bg-slate-3 rounded-lg"
+  const baseHeaderClassName = "p-2 bg-slate-5 rounded-t-lg text-center text-sm font-bold"
+  const baseInnerClassName = "flex flex-col min-h-[10rem] gap-4 p-3 items-center text-center justify-center w-full"
 
   if (!title) {
     return <section className={cn(baseOuterClassName, baseInnerClassName, classNames?.inner)}>{children}</section>
@@ -50,7 +50,9 @@ const Card: FC<CardProps> = ({ classNames, children, title }) => {
   return (
     <section className={cn(baseOuterClassName, classNames?.outer)}>
       <div className={cn(baseHeaderClassName, classNames?.title)}>
-        <Text className="font-semibold">{title}</Text>
+        <Title element="p" className="text-base">
+          {title}
+        </Title>
       </div>
       <div className={cn(baseInnerClassName, "rounded-b-lg", classNames?.inner)}>{children}</div>
     </section>
@@ -146,7 +148,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       </div>
 
       {isAttendingAndReserved && attendanceSelections.length > 0 && (
-        <div className="w-full mt-2">
+        <div className="w-[70%] mt-2">
           <SelectionsForm
             selections={attendanceSelections}
             // biome-ignore lint/style/noNonNullAssertion: isAttending is true if attendee exists

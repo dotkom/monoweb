@@ -20,7 +20,7 @@ export const EventHeader: FC<Props> = ({ event }) => {
         height="0"
         sizes="100%"
         style={{ objectFit: "cover" }}
-        className="w-full rounded-2xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] dark:hidden"
+        className="w-full rounded-xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] dark:hidden"
       />
       <Image
         src={imageUrlDark}
@@ -29,9 +29,10 @@ export const EventHeader: FC<Props> = ({ event }) => {
         height="0"
         sizes="100%"
         style={{ objectFit: "cover" }}
-        className="w-full rounded-2xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] hidden dark:block"
+        className="w-full rounded-xl bg-slate-5 aspect-[16/9] md:aspect-[24/9] hidden dark:block"
       />
-      <Title element="h1" className="text-4xl">
+
+      <Title element="h1" size="xl" className="text-4xl">
         {event.title}
       </Title>
     </section>

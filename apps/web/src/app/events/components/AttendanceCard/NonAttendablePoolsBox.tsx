@@ -63,7 +63,8 @@ const AttendanceBoxPoolSmall = (pool: AttendancePool) => {
 
       <div className="flex flex-row gap-2 items-center">
         <Text>
-          {pool.numAttendees}/{pool.capacity}
+          {pool.numAttendees}
+          {pool.capacity > 0 && `/${pool.capacity}`}
         </Text>
 
         {pool.numUnreservedAttendees > 0 && <Text className="text-slate-10">+{pool.numUnreservedAttendees} i kø</Text>}

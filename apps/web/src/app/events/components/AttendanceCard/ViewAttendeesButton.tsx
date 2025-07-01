@@ -7,6 +7,7 @@ import {
   AlertDialogTrigger,
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Button,
   Icon,
   Text,
@@ -42,10 +43,12 @@ export const ViewAttendeesButton = ({
   attendees,
   userId,
 }: ViewAttendeesButtonProps) => {
-  const reservedAttendees = attendees?.filter((attendee) => attendee.reserved)
-  const waitlistAttendees = attendees?.filter((attendee) => !attendee.reserved)
+  const reservedAttendees = attendees.filter((attendee) => attendee.reserved)
+  const waitlistAttendees = attendees.filter((attendee) => !attendee.reserved)
 
-  const maxAttendees = Math.max(reservedAttendees?.length ?? 0, waitlistAttendees?.length ?? 0)
+  const maxAttendees = Math.max(reservedAttendees.length, waitlistAttendees.length)
+
+  const hasWaitlist = waitlistAttendees.length > 0
 
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
@@ -64,33 +67,30 @@ export const ViewAttendeesButton = ({
       >
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <AlertDialogTitle asChild>
-            <Title className="font-poppins font-semibold text-2xl">Påmeldingsliste</Title>
+            <Title element="h1" size="xl">
+              Påmeldingsliste
+            </Title>
           </AlertDialogTitle>
           <AlertDialogCancel className="p-2">
             <Icon className="text-xl" icon="tabler:x" />
           </AlertDialogCancel>
         </div>
 
-        <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg max-h-[75dvh] overflow-y-auto">
+        <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
-            <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">
-              Påmeldte
-            </Title>
-            {reservedAttendees !== undefined && (
-              <AttendeeList
-                attendees={reservedAttendees}
-                maxNumberOfAttendees={maxAttendees}
-                userId={userId}
-                marginOnLastItem
-              />
-            )}
+            <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0">Påmeldte</Title>
+
+            <AttendeeList
+              attendees={reservedAttendees}
+              maxNumberOfAttendees={maxAttendees}
+              userId={userId}
+              marginOnLastItem={hasWaitlist}
+            />
           </div>
 
-          {waitlistAttendees && waitlistAttendees.length > 0 && (
+          {hasWaitlist && (
             <div className="flex flex-col gap-2">
-              <Title className="font-poppins font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">
-                Venteliste
-              </Title>
+              <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0">Venteliste</Title>
               <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
             </div>
           )}
@@ -109,22 +109,18 @@ interface AttendeeListProps {
 
 const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastItem = false }: AttendeeListProps) => {
   if (!attendees.length) {
-    return <Text className="text-slate-10 text-sm">Ingen påmeldte</Text>
+    return <Text className="text-slate-10 text-sm mx-2">Ingen påmeldte</Text>
   }
 
-  return attendees.map((attendee: Attendee, index) => {
-    const isLastItem = index === attendees.length - 1
+  return attendees.map((attendee, index) => {
+    const minWidth = getMinWidth(maxNumberOfAttendees)
+
     const isVerified = attendee.user.flags.includes("VANITY_VERIFIED")
     const isUser = attendee.userId === userId
 
     return (
-      <div
-        key={attendee.id}
-        className={cn("flex flex-row gap-1 items-center", marginOnLastItem && isLastItem && "mb-8")}
-      >
-        <Text className={cn("text-slate-8 text-right text-sm font-mono", getMinWidth(maxNumberOfAttendees))}>
-          {index + 1}.
-        </Text>
+      <div key={attendee.id} className="flex flex-row gap-1 items-center">
+        <Text className={cn("text-slate-8 text-right text-sm font-mono", minWidth)}>{index + 1}.</Text>
 
         <div
           className={cn(
@@ -134,12 +130,13 @@ const AttendeeList = ({ attendees, maxNumberOfAttendees, userId, marginOnLastIte
           )}
         >
           <Avatar className="h-10 w-10">
+            <AvatarImage src={attendee.user.image ?? undefined} />
             <AvatarFallback className={isVerified ? "bg-yellow-6" : isUser ? "bg-blue-6" : "bg-slate-6"}>
               <Icon className="text-lg" icon="tabler:user" />
             </AvatarFallback>
           </Avatar>
 
-          <div>
+          <div className="flex flex-col gap-0.5">
             {isVerified ? (
               <div className="flex items-center gap-1">
                 <Text className="text-sm">{attendee.user.displayName}</Text>

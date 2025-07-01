@@ -29,32 +29,28 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   })
 
   return (
-    <div className="flex">
-      <div className="w-12 flex items-center">
-        <Icon icon="tabler:clock" width={24} height={24} />
-      </div>
-      <div className="flex flex-1 flex-col">
-        <div className="flex flex-row gap-[2ch] items-center">
-          <div className="flex flex-col">
-            <Text>{date.start}</Text>
-            <Text>
-              {time.start} {!multipleDays ? ` - ${time.end}` : null}
-            </Text>
-          </div>
-          {multipleDays && (
-            <>
-              <Icon icon={"tabler:arrow-right"} className="text-2xl" />
-              <div className="flex flex-col">
-                <Text>{date.end}</Text>
-                <Text>{time.end}</Text>
-              </div>
-            </>
-          )}
+    <div className="flex flex-row gap-4 items-center">
+      <Icon icon="tabler:clock" className="text-xl" />
+
+      <div className="flex flex-row flex-grow gap-4 items-center">
+        <div className="flex flex-col">
+          <Text>{date.start}</Text>
+          <Text>
+            {time.start} {!multipleDays ? ` - ${time.end}` : null}
+          </Text>
         </div>
+        {multipleDays && (
+          <>
+            <Icon icon="tabler:arrow-right" className="text-2xl" />
+            <div className="flex flex-col">
+              <Text>{date.end}</Text>
+              <Text>{time.end}</Text>
+            </div>
+          </>
+        )}
       </div>
-      <div className="flex items-center">
-        <ActionLink href={gcalLink} label="Se på Google Calendar" />
-      </div>
+
+      {gcalLink && <ActionLink href={gcalLink} label="Se på Google Calendar" />}
     </div>
   )
 }

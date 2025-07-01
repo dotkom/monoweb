@@ -67,7 +67,7 @@ export function SelectionsForm({ selections, onSubmit, defaultValues: submittedD
   const hasError = (index: number) => !disabled && Boolean(errors.options?.[index]?.optionId)
 
   return (
-    <div className="flex flex-col gap-4 bg-green-3 p-3 rounded-md">
+    <div className="flex flex-col gap-4">
       {fields.map((field, index) => (
         <div key={field.id} className={cn("w-full flex flex-col gap-2", hasError(index) && "bg-red-2 rounded-md p-2")}>
           <Controller
@@ -77,44 +77,42 @@ export function SelectionsForm({ selections, onSubmit, defaultValues: submittedD
             rules={{ required: "Du må velge et alternativ" }}
             render={({ field: { onChange, value } }) => (
               <div className="w-full flex flex-col gap-1">
-                <div className="border border-green-5 bg-green-1 rounded-md">
-                  <Select
-                    value={value}
-                    disabled={disabled}
-                    onValueChange={async (val) => {
-                      onChange(val)
-                      await trigger(`options.${index}.optionId`)
-                      submitHandler()
-                    }}
+                <Select
+                  value={value}
+                  disabled={disabled}
+                  onValueChange={async (val) => {
+                    onChange(val)
+                    await trigger(`options.${index}.optionId`)
+                    submitHandler()
+                  }}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      "w-full transition-all border-green-5",
+                      hasError(index) && "border-red-9 focus:ring-red-9 focus:border-red-9"
+                    )}
                   >
-                    <SelectTrigger
+                    <SelectValue
+                      placeholder={selections[index].name}
                       className={cn(
-                        "w-full transition-all",
-                        hasError(index) && "border-red-9 focus:ring-red-9 focus:border-red-9"
+                        "placeholder:text-slate-8 transition-all",
+                        hasError(index) && "text-red-11 placeholder:text-red-9"
                       )}
-                    >
-                      <SelectValue
-                        placeholder={selections[index].name}
-                        className={cn(
-                          "placeholder:text-slate-8 transition-all",
-                          hasError(index) && "text-red-11 placeholder:text-red-9"
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem key={"label"} value={"label"} disabled>
-                        <Text className="text-slate-11 text-xs font-medium text-left">{selections[index].name}</Text>
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem key={"label"} value={"label"} disabled>
+                      <Text className="text-slate-11 text-xs font-medium text-left">{selections[index].name}</Text>
+                    </SelectItem>
+                    {selections[index].options.map(({ id, name }) => (
+                      <SelectItem key={id} value={id}>
+                        {name}
                       </SelectItem>
-                      {selections[index].options.map(({ id, name }) => (
-                        <SelectItem key={id} value={id}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {hasError(index) && (
-                  <Text className="text-red-11 text-xs tracking-wider uppercase font-semibold text-left transition-all fade-in fade-out">
+                  <Text className="text-red-11 text-xs text-left transition-all fade-in fade-out">
                     {errors.options?.[index]?.optionId?.message}
                   </Text>
                 )}

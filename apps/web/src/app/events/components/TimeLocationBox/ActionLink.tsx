@@ -9,7 +9,7 @@ interface Props {
 
 export const ActionLink = ({ href, label }: Props) => (
   <TooltipProvider>
-    <Tooltip delayDuration={100}>
+    <Tooltip delayDuration={150}>
       <TooltipTrigger>
         <Link
           className={clsx("border border-slate-3 hover:bg-slate-2 p-1.5 rounded-lg flex items-center")}
@@ -17,10 +17,10 @@ export const ActionLink = ({ href, label }: Props) => (
           target="_blank"
           rel="noreferrer"
         >
-          <Icon icon="tabler:arrow-up-right" width={24} height={24} />
+          <Icon icon="tabler:arrow-up-right" className="text-2xl" />
         </Link>
       </TooltipTrigger>
-      <TooltipContent className="bg-white border border-slate-5">
+      <TooltipContent>
         <Text>{label}</Text>
       </TooltipContent>
     </Tooltip>

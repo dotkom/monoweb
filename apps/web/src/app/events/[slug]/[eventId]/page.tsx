@@ -70,10 +70,15 @@ const EventDetailPage = async ({ params }: { params: Promise<{ eventId: string }
           <EventDescription description={eventDetail.event.description} />
         </div>
 
-        <div className="flex flex-1 flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-8 sm:gap-4">
+          <div className="sm:hidden h-1 rounded-full w-full bg-slate-3" />
+
           {eventDetail.attendance !== null && (
             <AttendanceCard initialAttendance={eventDetail.attendance} initialAttendees={attendees} user={user} />
           )}
+
+          <div className="sm:hidden h-1 rounded-full w-full bg-slate-3" />
+
           <TimeLocationBox event={eventDetail.event} />
         </div>
       </div>
