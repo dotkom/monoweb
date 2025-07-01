@@ -25,8 +25,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        fraunces: ["var(--font-fraunces, 'Fraunces')"],
-        poppins: ["var(--font-poppins, 'Poppins')"],
+        title: ["var(--font-title, 'Figtree')"],
+        body: ["var(--font-body, 'Inter')"],
         mono: ["Roboto Mono", "monospace"],
       },
       colors: {
@@ -84,5 +84,3 @@ module.exports = {
     require("tailwindcss-animate"),
   ],
 }
-
-// #FFCB47 #fab759

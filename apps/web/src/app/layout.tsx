@@ -5,7 +5,7 @@ import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { SessionProvider } from "@dotkomonline/oauth2/react"
 import { cn } from "@dotkomonline/ui"
 import { ThemeProvider } from "next-themes"
-import { Fraunces, Poppins } from "next/font/google"
+import { Figtree, Inter } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import "@mdxeditor/editor/style.css"
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   },
 }
 
-const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
-const fraunces = Fraunces({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-fraunces" })
+const fontBody = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body" })
+const fontTitle = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-title" })
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth.getServerSession()
@@ -58,8 +58,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          fraunces.variable,
-          poppins.variable,
+          fontTitle.variable,
+          fontBody.variable,
           "bg-white dark:bg-[#282828] transition-colors duration-1000"
         )}
       >

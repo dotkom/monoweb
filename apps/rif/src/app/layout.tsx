@@ -1,12 +1,12 @@
 import { cn } from "@dotkomonline/ui"
 import type { Metadata } from "next"
-import { Fraunces, Poppins } from "next/font/google"
+import { Figtree, Inter } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import { QueryProvider } from "./query-provider"
 import "../root.css"
 
-const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins" })
-const fraunces = Fraunces({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-fraunces" })
+const fontBody = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body" })
+const fontTitle = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-title" })
 
 export const metadata: Metadata = {
   title: "Online Interesseskjema for Bedrifter",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={cn(poppins.variable, fraunces.variable)}>
+      <body className={cn(fontBody.variable, fontTitle.variable)}>
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>

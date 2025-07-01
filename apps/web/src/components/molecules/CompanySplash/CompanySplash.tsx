@@ -65,7 +65,7 @@ export const CompanySplash: FC = () => {
         <div className="w-full lg:w-[50%] px-6 lg:pr-0 lg:pl-16 lg:pb-8 transition-opacity duration-700 delay-100">
           <Title className="relative font-bold pb-2 transition-opacity duration-700 delay-200">
             {/* Transparent text over the logo to make "Online" selectable and screen-reader accessible. Makes the logo behave like part of the text during selection. */}
-            <span className="font-poppins absolute text-transparent text-[94px] leading-[80px] tracking-[-2px] height-[80px] inset-0 lg:inset-auto">
+            <span className="font-body absolute text-transparent text-[94px] leading-[80px] tracking-[-2px] height-[80px] inset-0 lg:inset-auto">
               Online
             </span>
             <span
@@ -74,11 +74,11 @@ export const CompanySplash: FC = () => {
             >
               <Logo />
             </span>
-            <span className="font-fraunces text-2xl lg:text-3xl block transition-opacity duration-700 delay-400">
+            <span className="font-title text-2xl lg:text-3xl block transition-opacity duration-700 delay-400">
               Linjeforeningen for Informatikk ved NTNU
             </span>
           </Title>
-          <p className="font-poppins text-md md:text-lg max-w-xl mb-4 lg:mb-8 mx-auto lg:mx-0 transition-opacity duration-700 delay-500">
+          <p className="font-body text-md md:text-lg max-w-xl mb-4 lg:mb-8 mx-auto lg:mx-0 transition-opacity duration-700 delay-500">
             {/* Informatikkstudiet hører til Institutt for datateknologi og 
             informatikk (IDI). Dette innebærer blant annet å lære om utvikling, 
             forbedring, evaluering og bruk av datasystemer. For mer informasjon 

@@ -17,7 +17,7 @@ export const SelectTrigger = ({ className, children, ref, ...props }: SelectTrig
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "font-poppins flex h-10 w-full items-center justify-between rounded-md border",
+      "font-body flex h-10 w-full items-center justify-between rounded-md border",
       "border-slate-5 bg-slate-1 px-3 py-2 text-sm ring-offset-background",
       "data-[placeholder]:text-slate-10 focus:outline-none focus:ring-2",
       "focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
@@ -64,7 +64,7 @@ export const SelectContent = ({ className, children, position = "popper", ref, .
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "font-poppins relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem]",
+        "font-body relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem]",
         "overflow-y-auto overflow-x-hidden rounded-md border border-slate-5 bg-slate-1 text-slate-12",
         "shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95",
@@ -98,7 +98,7 @@ type SelectLabelProps = React.ComponentPropsWithRef<typeof SelectPrimitive.Label
 export const SelectLabel = ({ className, ref, ...props }: SelectLabelProps) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("font-poppins py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
+    className={cn("font-body py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
     {...props}
   />
 )
@@ -109,7 +109,7 @@ export const SelectItem = ({ className, children, ref, ...props }: SelectItemPro
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "font-poppins relative flex w-full cursor-default select-none items-center",
+      "font-body relative flex w-full cursor-default select-none items-center",
       "rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none bg-slate-1 focus:bg-slate-3",
       "focus:text-slate-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className

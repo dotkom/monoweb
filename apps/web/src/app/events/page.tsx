@@ -8,7 +8,7 @@ const EventPage = async () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Title element="h1" className="font-semibold font-poppins text-3xl">
+      <Title element="h1" size="xl">
         Arrangementer
       </Title>
 
