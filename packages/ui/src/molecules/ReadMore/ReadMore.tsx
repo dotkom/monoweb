@@ -44,9 +44,11 @@ export const ReadMore = ({
   outerClassName,
 }: ReadMoreProps) => {
   const [open, setOpen] = useState(false)
-
+  const [isOverflowed, setIsOverflowed] = useState(false)
   const [previousHeight, setPreviousHeight] = useState<number | null>(null)
+
   const containerRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLParagraphElement>(null)
 
   const lineClamp = !open && getLineClamp(lines)
 
@@ -65,6 +67,15 @@ export const ReadMore = ({
     setPreviousHeight(0)
   }, [open, previousHeight])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This uses these dependencies indirectly
+  useLayoutEffect(() => {
+    const element = textRef.current
+
+    if (element) {
+      setIsOverflowed(element.scrollHeight > element.clientHeight)
+    }
+  }, [text, lines])
+
   const handleToggle = () => {
     if (open && containerRef.current) {
       setPreviousHeight(containerRef.current.getBoundingClientRect().height)
@@ -73,11 +84,19 @@ export const ReadMore = ({
     setOpen(!open)
   }
 
+  const textElement = (
+    <Text ref={textRef} className={cn("mb-2 whitespace-pre-line overflow-hidden", lineClamp, textClassName)}>
+      {text}
+    </Text>
+  )
+
+  if (!isOverflowed) {
+    return textElement
+  }
+
   return (
     <Collapsible ref={containerRef} open={open} onOpenChange={setOpen} className={cn(outerClassName)}>
-      <CollapsibleContent forceMount>
-        <Text className={cn("mb-2 whitespace-pre-line overflow-hidden", lineClamp, textClassName)}>{text}</Text>
-      </CollapsibleContent>
+      <CollapsibleContent forceMount>{textElement}</CollapsibleContent>
       <CollapsibleTrigger
         asChild
         onClick={handleToggle}
