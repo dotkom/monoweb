@@ -31,6 +31,10 @@ export interface AttendeeRepository {
   reserveAttendee(attendeeId: AttendeeId): Promise<boolean>
   moveFromMultiplePoolsToPool(fromPoolIds: AttendancePoolId[], toPoolId: AttendancePoolId): Promise<void>
   removeAllSelectionResponsesForSelection(attendanceId: AttendanceId, selectionId: string): Promise<void>
+  getAttendeeStatuses(
+    userId: UserId,
+    attendanceIds: AttendanceId[]
+  ): Promise<Map<AttendanceId, "RESERVED" | "UNRESERVED">>
 }
 
 export class AttendeeRepositoryImpl implements AttendeeRepository {
@@ -194,5 +198,22 @@ export class AttendeeRepositoryImpl implements AttendeeRepository {
       })
 
     await this.db.$transaction(updatedRows)
+  }
+
+  public async getAttendeeStatuses(userId: UserId, attendanceIds: AttendanceId[]) {
+    return this.db.attendee
+      .findMany({
+        where: { userId, attendanceId: { in: attendanceIds } },
+        select: { attendanceId: true, reserved: true },
+      })
+      .then((attendees) => {
+        const statusMap: Map<AttendanceId, "RESERVED" | "UNRESERVED"> = new Map()
+
+        for (const { attendanceId, reserved } of attendees) {
+          statusMap.set(attendanceId, reserved ? "RESERVED" : "UNRESERVED")
+        }
+
+        return statusMap
+      })
   }
 }

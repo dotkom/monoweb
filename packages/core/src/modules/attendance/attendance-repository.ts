@@ -34,6 +34,7 @@ export interface AttendanceRepository {
   delete(attendanceId: AttendanceId): Promise<Attendance>
   getById(attendanceId: AttendanceId): Promise<Attendance | null>
   getByAttendeeId(attendeeId: AttendeeId): Promise<Attendance | null>
+  getByIds(attendanceIds: AttendanceId[]): Promise<Map<AttendanceId, Attendance>>
   update(attendanceId: AttendanceId, data: Partial<AttendanceWrite>): Promise<Attendance>
   getAll(): Promise<Attendance[]>
 
@@ -108,6 +109,21 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
     })
 
     return attendance && this.mapAttendance(attendance)
+  }
+
+  public async getByIds(attendanceIds: AttendanceId[]) {
+    const attendances = await this.db.attendance.findMany({
+      where: { id: { in: attendanceIds } },
+      include: ATTENDANCE_ATTENDEE_COUNT_INCLUDE,
+    })
+
+    const result = new Map<AttendanceId, Attendance>()
+
+    for (const attendance of attendances) {
+      result.set(attendance.id, this.mapAttendance(attendance))
+    }
+
+    return result
   }
 
   public async createPool(data: AttendancePoolWrite) {

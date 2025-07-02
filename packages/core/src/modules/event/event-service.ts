@@ -1,4 +1,6 @@
 import type {
+  AttendanceEvent,
+  AttendanceId,
   AttendanceWrite,
   Event,
   EventDetail,
@@ -6,7 +8,9 @@ import type {
   EventId,
   EventInterestGroup,
   EventWrite,
+  GroupId,
   InterestGroupId,
+  UserId,
 } from "@dotkomonline/types"
 import type { Pageable } from "../../query"
 import type { AttendanceService } from "../attendance/attendance-service"
@@ -27,8 +31,8 @@ export interface EventService {
   getEventById(eventId: EventId): Promise<Event>
   getEvents(page?: Pageable, filter?: EventFilter): Promise<Event[]>
   getEventsByUserAttending(userId: string): Promise<Event[]>
-  getEventsByGroupId(groupId: string, page: Pageable): Promise<Event[]>
-  getEventsByInterestGroupId(interestGroupId: string, page: Pageable): Promise<Event[]>
+  getAttendanceEventsByGroupId(groupId: GroupId, page: Pageable): Promise<AttendanceEvent[]>
+  getAttendanceEventsByInterestGroupId(interestGroupId: InterestGroupId, page: Pageable): Promise<AttendanceEvent[]>
   addAttendance(eventId: EventId, data: AttendanceWrite): Promise<Event>
   getEventDetail(eventId: EventId): Promise<EventDetail>
   setEventInterestGroups(eventId: EventId, interestGroupsIds: InterestGroupId[]): Promise<EventInterestGroup[]>
@@ -72,19 +76,39 @@ export class EventServiceImpl implements EventService {
     return events
   }
 
-  async getEventsByUserAttending(userId: string) {
+  async getEventsByUserAttending(userId: UserId) {
     const events = await this.eventRepository.getAllByUserAttending(userId)
     return events
   }
 
-  async getEventsByGroupId(groupId: string, page: Pageable) {
+  async getAttendanceEventsByGroupId(groupId: GroupId, page: Pageable) {
     const events = await this.eventRepository.getAllByHostingGroupId(groupId, page)
-    return events
+
+    const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
+    const attendances = await this.attendanceService.getByIds(attendanceIds)
+
+    const attendanceEvents: AttendanceEvent[] = events.map((event) => {
+      const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
+
+      return { ...event, attendance }
+    })
+
+    return attendanceEvents
   }
 
-  async getEventsByInterestGroupId(interestGroupId: string, page: Pageable) {
+  async getAttendanceEventsByInterestGroupId(interestGroupId: InterestGroupId, page: Pageable) {
     const events = await this.eventRepository.getAllByInterestGroupId(interestGroupId, page)
-    return events
+
+    const attendanceIds = events.map((event) => event.attendanceId).filter(Boolean) as AttendanceId[]
+    const attendances = await this.attendanceService.getByIds(attendanceIds)
+
+    const attendanceEvents: AttendanceEvent[] = events.map((event) => {
+      const attendance = (event.attendanceId && attendances.get(event.attendanceId)) || null
+
+      return { ...event, attendance }
+    })
+
+    return attendanceEvents
   }
 
   async getEventById(eventId: EventId) {

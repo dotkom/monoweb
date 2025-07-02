@@ -1,13 +1,13 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
 import { EventList } from "@/components/organisms/EventList"
-import type { Event, Group, GroupMember } from "@dotkomonline/types"
+import type { AttendanceEvent, Group, GroupMember } from "@dotkomonline/types"
 import { Icon } from "@dotkomonline/ui"
 import type { FC } from "react"
 
 interface CommitteeViewProps {
   committee: Group
-  events: Event[]
+  attendanceEvents: AttendanceEvent[]
   members: GroupMember[]
 }
 
@@ -45,10 +45,9 @@ export const CommitteeView: FC<CommitteeViewProps> = (props: CommitteeViewProps)
         </div>
         <p>{longDescription}</p>
       </div>
-      {/* TODO: Redesign later */}
+
       <div className="mt-6 flex flex-col gap-x-16 gap-y-12 lg:flex-row">
-        <EventList events={props.events} />
-        {/* TODO: Separate logic for earlier eventlist later */}
+        <EventList attendanceEvents={props.attendanceEvents} />
       </div>
     </EntryDetailLayout>
   )

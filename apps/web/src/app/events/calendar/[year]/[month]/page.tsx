@@ -1,4 +1,6 @@
+import { EventsViewToggle } from "@/components/molecules/EventsViewToggle"
 import { EventCalendar } from "@/components/organisms/EventCalendar"
+import { Title } from "@dotkomonline/ui"
 import { redirect } from "next/navigation"
 
 const EventPage = async ({ params }: { params: Promise<{ year: number; month: number }> }) => {
@@ -9,10 +11,16 @@ const EventPage = async ({ params }: { params: Promise<{ year: number; month: nu
   }
 
   return (
-    <>
-      <h1 className="py-6">Arrangement</h1>
-      <EventCalendar year={year} month={month - 1} />
-    </>
+    <div className="flex flex-col gap-4">
+      <Title element="h1" className="font-semibold font-poppins text-3xl">
+        Arrangementer
+      </Title>
+
+      <div className="flex flex-col gap-4">
+        <EventsViewToggle active="cal" />
+        <EventCalendar year={year} month={month - 1} />
+      </div>
+    </div>
   )
 }
 

@@ -33,6 +33,12 @@ export const EventDetailSchema = z.object({
 
 export type EventDetail = z.infer<typeof EventDetailSchema>
 
+const AttendanceEventSchema = EventSchema.extend({
+  attendance: AttendanceSchema.nullable(),
+})
+
+export type AttendanceEvent = z.infer<typeof AttendanceEventSchema>
+
 export const EventFilterSchema = z.object({
   query: z.string().optional(),
   before: z.date().optional(),
