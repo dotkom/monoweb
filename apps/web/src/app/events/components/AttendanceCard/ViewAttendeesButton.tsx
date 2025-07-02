@@ -78,7 +78,7 @@ export const ViewAttendeesButton = ({
 
         <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
-            <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0">Påmeldte</Title>
+            <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">Påmeldte</Title>
 
             <AttendeeList
               attendees={reservedAttendees}
@@ -90,7 +90,7 @@ export const ViewAttendeesButton = ({
 
           {hasWaitlist && (
             <div className="flex flex-col gap-2">
-              <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0">Venteliste</Title>
+              <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">Venteliste</Title>
               <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} userId={userId} />
             </div>
           )}
