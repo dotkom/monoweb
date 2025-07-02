@@ -12,8 +12,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fontsource/fraunces": "^5.2.6",
-    "@fontsource/poppins": "^5.2.6",
+    "@fontsource/figtree": "^5.2.8",
+    "@fontsource/inter": "^5.2.6",
     "@iconify-icon/react": "^2.0.0",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-accordion": "^1.2.11",

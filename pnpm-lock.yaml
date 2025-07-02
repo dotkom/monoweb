@@ -1104,10 +1104,10 @@ importers:
 
   packages/ui:
     dependencies:
-      '@fontsource/fraunces':
-        specifier: ^5.2.6
-        version: 5.2.6
-      '@fontsource/poppins':
+      '@fontsource/figtree':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource/inter':
         specifier: ^5.2.6
         version: 5.2.6
       '@iconify-icon/react':
@@ -2218,14 +2218,8 @@ packages:
   '@fontsource/figtree@5.2.8':
     resolution: {integrity: sha512-FC+t9RSdZDUK402+h+D7kKBXEo1L5xw/ff8SpTo9ZO0xHzqFJ0u78PmNyAju5D77oXPsR3wfs+rjZvWPx4diSA==}
 
-  '@fontsource/fraunces@5.2.6':
-    resolution: {integrity: sha512-jif5QR10IW7bbIN1CLh/dOj2KXf7KKzeyDNbodeKGPbONIUYARzZ4CemD0aooZqbvx8OFnL4/1Jt0M2j2CYbhw==}
-
   '@fontsource/inter@5.2.6':
     resolution: {integrity: sha512-CZs9S1CrjD0jPwsNy9W6j0BhsmRSQrgwlTNkgQXTsAeDRM42LBRLo3eo9gCzfH4GvV7zpyf78Ozfl773826csw==}
-
-  '@fontsource/poppins@5.2.6':
-    resolution: {integrity: sha512-NFr0121+vWCfzLDVvSZOzwAjRUaNj6QHA9gtUh/KHHoWf1Qn23EkwVFs63XZ6UtF5K1b3UNmCx77YEMGgV7BOQ==}
 
   '@grpc/grpc-js@1.13.4':
     resolution: {integrity: sha512-GsFaMXCkMqkKIvwCQjCrwH+GHbPKBjhwo/8ZuUkWHqbI73Kky9I+pQltrlT0+MWpedCoosda53lgjYfyEPgxBg==}
@@ -9682,11 +9676,7 @@ snapshots:
 
   '@fontsource/figtree@5.2.8': {}
 
-  '@fontsource/fraunces@5.2.6': {}
-
   '@fontsource/inter@5.2.6': {}
-
-  '@fontsource/poppins@5.2.6': {}
 
   '@grpc/grpc-js@1.13.4':
     dependencies:
