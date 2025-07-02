@@ -45,7 +45,7 @@ export const EventListItem: FC<EventListItemProps> = ({ attendanceEvent, attende
         <Thumbnail imageUrl={imageUrl} alt={title} startInPast={startInPast} eventType={type} />
 
         <div className="flex flex-col gap-2">
-          <Title element="h3" className="font-poppins font-normal text-lg">
+          <Title element="h3" size="sm" className="font-normal">
             {title}
           </Title>
 
