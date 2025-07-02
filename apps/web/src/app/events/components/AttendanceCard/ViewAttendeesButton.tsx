@@ -89,7 +89,7 @@ export const ViewAttendeesButton = ({
           </div>
 
           {hasWaitlist && (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 mt-6">
               <Title className="font-normal text-base px-2 py-1 bg-slate-3 rounded-md sticky top-0 z-10">
                 Venteliste
               </Title>
